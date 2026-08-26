@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaBuildSession
+import org.jetbrains.kotlin.compilerRunner.btapi.jpsBtaBuildSessionKey
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.KotlinModuleKind
 import org.jetbrains.kotlin.config.Services
@@ -66,6 +68,18 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val useDependencyGraph = System.getProperty("jps.use.dependency.graph", "false")!!.toBoolean()
         val isKotlinBuilderInDumbMode = System.getProperty("kotlin.jps.dumb.mode", "false")!!.toBoolean()
         val enableLookupStorageFillingInDumbMode = System.getProperty("kotlin.jps.enable.lookups.in.dumb.mode", "false")!!.toBoolean()
+
+        /**
+         * OSIP-499 (spike): route Kotlin/JVM compilation through the Build Tools API instead of the legacy
+         * module.xml + compiler daemon path.
+         *
+         * Off by default. Multi-target (circular) chunks always take the legacy path, because the Build Tools API
+         * has no way to describe more than one module in a single compilation.
+         *
+         * Read on every access rather than cached, so that tests can flip it around a single build.
+         */
+        val useBuildToolsApi: Boolean
+            get() = System.getProperty("kotlin.jps.useBuildToolsApi", "false")!!.toBoolean()
 
         private val classesToLoadByParentFromRegistry =
             System.getProperty("kotlin.jps.classesToLoadByParent")?.split(',')?.map { it.trim() } ?: emptyList()
@@ -106,6 +120,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val reportService = JpsStatisticsReportService.create()
         context.putUserData(statisticsReportServiceKey, reportService)
         reportService.buildStarted(context)
+        if (useBuildToolsApi) {
+            context.putUserData(jpsBtaBuildSessionKey, JpsBtaBuildSession())
+        }
     }
 
     private fun logSettings(context: CompileContext) {
@@ -165,6 +182,10 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
     override fun buildFinished(context: CompileContext) {
         ensureKotlinContextDisposed(context)
+        context.getUserData(jpsBtaBuildSessionKey)?.let {
+            context.putUserData(jpsBtaBuildSessionKey, null)
+            it.close()
+        }
         val reportService = JpsStatisticsReportService.getFromContext(context)
         reportService.buildFinish(context)
     }
@@ -617,7 +638,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             classesToLoadByParent,
             messageCollector,
             OutputItemsCollectorImpl(),
-            ProgressReporterImpl(context, chunk)
+            ProgressReporterImpl(context, chunk),
+            context.getUserData(jpsBtaBuildSessionKey),
         )
     }
 

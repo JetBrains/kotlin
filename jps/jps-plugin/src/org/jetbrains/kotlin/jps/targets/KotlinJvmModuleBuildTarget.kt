@@ -25,6 +25,9 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
+import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaBuildSession
+import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaCompilerRunner
+import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaJvmCompilationRequest
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.*
@@ -114,6 +117,13 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
             )
         }
 
+        // OSIP-499 (spike): the Build Tools API rejects `-Xbuild-file`, so a chunk has to be described through plain
+        // compiler arguments. That is only expressible for a single-target chunk; circular chunks keep the legacy path.
+        val btaBuildSession = environment.btaBuildSession
+        if (KotlinBuilder.useBuildToolsApi && btaBuildSession != null && chunk.targets.size == 1) {
+            return compileModuleChunkWithBuildToolsApi(commonArguments, dirtyFilesHolder, environment, btaBuildSession)
+        }
+
         val filesSet = dirtyFilesHolder.allDirtyFiles
 
         val moduleFile = generateChunkModuleDescription(dirtyFilesHolder)
@@ -154,6 +164,72 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                 moduleFile.delete()
             }
         }
+
+        return true
+    }
+
+    /**
+     * The Build Tools API counterpart of the `generateChunkModuleDescription` + [JpsKotlinCompilerRunner] pair above.
+     *
+     * Everything `generateChunkModuleDescription` writes into module.xml is collected here as plain values instead;
+     * see [JpsBtaJvmCompilationRequest].
+     *
+     * @return `false` when nothing had to be compiled, which JPS turns into `NOTHING_DONE` - the same contract as a
+     * `null` module file on the legacy path.
+     */
+    private fun compileModuleChunkWithBuildToolsApi(
+        commonArguments: CommonCompilerArguments,
+        dirtyFilesHolder: KotlinDirtySourceFilesHolder,
+        environment: JpsCompilerEnvironment,
+        btaBuildSession: JpsBtaBuildSession,
+    ): Boolean {
+        // `KotlinModuleXmlBuilder.processClasspath` drops the chunk's own output directories from the class path
+        // only when incremental compilation is *off* - a non-incremental compilation must not see the previous
+        // build's leftovers. With IC on they stay: that is what lets the compiler index the output directory and
+        // read what earlier rounds produced (`createIncrementalCompilationScope`). Mirror that exactly.
+        val outputDirsToFilterOut = when {
+            IncrementalCompilation.isEnabledForJvm() -> emptySet()
+            else -> chunk.targets.mapNotNullTo(mutableSetOf()) { (it as? KotlinJvmModuleBuildTarget)?.outputDir }
+        }
+
+        val sources = collectSourcesToCompile(dirtyFilesHolder)
+        if (!sources.logFiles()) {
+            if (KotlinBuilder.LOG.isDebugEnabled) {
+                KotlinBuilder.LOG.debug("Not compiling, because no files affected: " + chunk.presentableShortName)
+            }
+            return false
+        }
+
+        if (KotlinBuilder.LOG.isDebugEnabled) {
+            val totalRemovedFiles = dirtyFilesHolder.allRemovedFilesFiles.size
+            KotlinBuilder.LOG.debug(
+                "Compiling to JVM through the Build Tools API ${dirtyFilesHolder.allDirtyFiles.size} files"
+                        + (if (totalRemovedFiles == 0) "" else " ($totalRemovedFiles removed files)")
+                        + " in " + chunk.presentableShortName
+            )
+        }
+
+        val request = JpsBtaJvmCompilationRequest(
+            targetId = targetId,
+            sources = preprocessSources(sources.allFiles),
+            commonSources = preprocessSources(sources.crossCompiledFiles),
+            outputDirectory = outputDir,
+            classpathRoots = findClassPathRoots().filter { it !in outputDirsToFilterOut },
+            // `JvmSourceRoot.packagePrefix` has no CLI equivalent, so a Java source root with a package prefix is lost.
+            javaSourceRoots = findJavaSourceRoots(dirtyFilesHolder.context).map { it.file },
+            friendDirectories = friendOutputDirs,
+            modularJdkRoot = findModularJdkRoot(),
+        )
+
+        JpsBtaCompilerRunner().runJvmCompilation(
+            request,
+            commonArguments,
+            module.k2JvmCompilerArguments,
+            module.kotlinCompilerSettings,
+            environment,
+            btaBuildSession,
+            dirtyFilesHolder.context,
+        )
 
         return true
     }
