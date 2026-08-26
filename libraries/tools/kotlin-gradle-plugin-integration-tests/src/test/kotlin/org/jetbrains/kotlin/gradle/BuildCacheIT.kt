@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.util.capitalize
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
+import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -331,6 +332,38 @@ class BuildCacheIT : KGPBaseTest() {
                     listOf(projectPath.relativize(testFileToEdit)),
                     ":app"
                 )
+            }
+        }
+    }
+
+    @DisplayName("GRADLE_BUILD_CACHE_USED fus metric should be reported when build cache is enabled")
+    @GradleTest
+    fun testFusMetricForBuildCache(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            enableLocalBuildCache(localBuildCacheDir)
+
+            validateFusFiles("assemble") { fusFiles ->
+                assertFilesCombinedContains(fusFiles, "${BooleanMetrics.GRADLE_BUILD_CACHE_USED.name}=true")
+            }
+
+            validateFusFiles("clean", "assemble") { fusFiles ->
+                assertFilesCombinedContains(fusFiles, "${BooleanMetrics.GRADLE_BUILD_CACHE_USED.name}=true")
+            }
+        }
+    }
+
+    @DisplayName("GRADLE_BUILD_CACHE_USED fus metric should not be reported when build cache is disabled")
+    @GradleTest
+    fun testFusMetricForDisabledBuildCache(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(buildCacheEnabled = false)) {
+            //even when build cache is configured but not requested, the metric should not be reported
+            enableLocalBuildCache(localBuildCacheDir)
+            validateFusFiles("assemble") { fusFiles ->
+                assertFilesCombinedContains(fusFiles, "${BooleanMetrics.GRADLE_BUILD_CACHE_USED.name}=false")
+            }
+
+            validateFusFiles("clean", "assemble") { fusFiles ->
+                assertFilesCombinedContains(fusFiles, "${BooleanMetrics.GRADLE_BUILD_CACHE_USED.name}=false")
             }
         }
     }

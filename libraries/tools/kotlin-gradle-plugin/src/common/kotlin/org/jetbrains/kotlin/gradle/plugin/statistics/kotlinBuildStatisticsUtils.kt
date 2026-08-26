@@ -32,6 +32,7 @@ internal fun collectGeneralConfigurationTimeMetrics(
     isProjectIsolationEnabled: Boolean,
     isProjectIsolationRequested: Boolean,
     isConfigurationCacheRequested: Boolean,
+    isBuildCacheUsed: Boolean
 ): MetricContainer {
     val configurationTimeMetrics = MetricContainer()
 
@@ -60,6 +61,7 @@ internal fun collectGeneralConfigurationTimeMetrics(
 
         configurationTimeMetrics.put(BooleanMetrics.GRADLE_CONFIGURATION_CACHE_ENABLED, isConfigurationCacheRequested)
         configurationTimeMetrics.put(BooleanMetrics.GRADLE_PROJECT_ISOLATION_ENABLED, isProjectIsolationRequested)
+        configurationTimeMetrics.put(BooleanMetrics.GRADLE_BUILD_CACHE_USED, isBuildCacheUsed)
     }
     configurationTimeMetrics.put(NumericalMetrics.STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD, statisticOverhead)
 
