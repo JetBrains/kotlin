@@ -838,8 +838,14 @@ val konanDir
 
 /**
  * On changing test kit dir location update related location in 'cleanTestKitCache' task.
+ *
+ * When running tests in parallel (which kotlin-gradle-plugin-integration-tests does, see maxParallelTestForks in build.gradle.kts)
+ * it is important to use a unique testKitDir for each test worker to avoid potential clashes; this is done here by appending the value of
+ * the org.gradle.test.worker property to the directory name. A particular type of problem this prevents is Gradle Kotlin DSL script
+ * compilation cache corruption, which may happen if multiple test workers attempt to write to the same cache directory simultaneously.
+ * See https://docs.gradle.org/current/userguide/java_testing.html#sec:test_execution for more info.
  */
-internal val testKitDir: Path get() = Path("./build/testKitCache")
+internal val testKitDir: Path get() = Path("./build/testKitCache/worker-${System.getProperty("org.gradle.test.worker") ?: "0"}")
 
 /**
  * Use this directory to store some cross-test information, such as [BuildOptions.customKotlinDaemonRunFilesDirectory]
