@@ -20,6 +20,35 @@ val analysisApiNativeModules = listOf(
     ":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests",
 )
 
+/**
+ * Projects whose API surface the Analysis API tracks: the API itself, its PSI foundation, the `:core` modules
+ * the surface exposes, and the published artifacts that assemble them.
+ *
+ * Each of them collects the checks it opted into under the `checkApiSurface` and `updateApiSurface` lifecycle tasks
+ * that `common-configuration` registers, so depending on those two paths needs no cross-project access and picks up
+ * a newly declared check with no further wiring here.
+ */
+val publicApiProjects = buildSet {
+    addAll(CompilerModules.analysisApiSurfaceDependencies)
+    addAll(CompilerModules.analysisApiModules)
+    addAll(CompilerModules.psiModules)
+    addAll(CompilerModules.analysisApiArtifacts)
+}
+
+tasks.register("checkAnalysisApiSurface") {
+    group = "verification"
+    description = "Verifies the API surface dumps of the Analysis API against its sources"
+
+    dependsOn(publicApiProjects.map { "$it:checkApiSurface" })
+}
+
+tasks.register("updateAnalysisApiSurface") {
+    group = "verification"
+    description = "Rewrites the API surface dumps of the Analysis API from its sources"
+
+    dependsOn(publicApiProjects.map { "$it:updateApiSurface" })
+}
+
 val analysisApiArtifactTests = tasks.register("analysisApiArtifactTests") {
     group = "verification"
     description = "Checks the published Analysis API artifacts"

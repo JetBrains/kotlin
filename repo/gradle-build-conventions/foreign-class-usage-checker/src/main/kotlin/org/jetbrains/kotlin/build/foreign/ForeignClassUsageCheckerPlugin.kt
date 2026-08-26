@@ -65,7 +65,7 @@ fun Project.registerForeignClassUsageTasks(
     nameSuffix: String = "",
     configure: ForeignClassUsageTask.() -> Unit,
 ) {
-    tasks.register<ForeignClassUsageTask>("updateForeignClassUsage$nameSuffix") {
+    val updateTask = tasks.register<ForeignClassUsageTask>("updateForeignClassUsage$nameSuffix") {
         description = "Rewrites the dump of the foreign classes used in the public API"
         overwriteDump.set(true)
         configure()
@@ -97,6 +97,10 @@ fun Project.registerForeignClassUsageTasks(
     }
 
     tasks.named("check").configure { dependsOn(checkTask) }
+
+    // The foreign classes a public API leaks are part of the project's API surface.
+    tasks.named("checkApiSurface").configure { dependsOn(checkTask) }
+    tasks.named("updateApiSurface").configure { dependsOn(updateTask) }
 }
 
 abstract class ForeignClassUsageTask : DefaultTask() {

@@ -50,13 +50,13 @@ declare more than one dump in a module, as `:analysis:analysis-api` does for its
 
 ### 3. Run the Tasks
 
-The verifying task is added to the `check` task, so it runs during:
+The verifying task is added to the `check` and `checkApiSurface` lifecycle tasks, so it runs during:
 
 ```bash
 ./gradlew check
 ```
 
-You can also run either task separately:
+The rewriting task is added to `updateApiSurface`. You can also run either separately:
 
 ```bash
 ./gradlew checkForeignClassUsage
