@@ -43,12 +43,17 @@ import java.util.concurrent.ConcurrentHashMap
 
 private var IrClass.layoutBuilder: ClassLayoutBuilder? by irAttribute(copyByDefault = false)
 
+/**
+ * @property irModules The list of IR module fragments in the reverse topological order. This list only contains IR modules
+ *   that are treated as "useful", i.e. each of them either was explicitly passed via CLI argument to the compiler or was loaded
+ *   from the Kotlin/Native distribution implicitly and has at least one declaration that has been loaded/linked from it.
+ */
 internal class NativeBackendContext(
         config: NativeSecondStageCompilationConfig,
         @OptIn(K1Deprecation::class)
         val builtIns: KonanBuiltIns,
         override val irBuiltIns: IrBuiltIns,
-        val irModules: Map<Path, IrModuleFragment>,
+        val irModules: List<IrModuleFragment>,
         val irLinker: KonanIrLinker,
         override val symbols: BackendNativeSymbols,
         override val symbolTable: ReferenceSymbolTable,
