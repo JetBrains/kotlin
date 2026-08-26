@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -45,7 +44,6 @@ open class IncrementalJsCache(
         private const val TRANSLATION_RESULT_MAP = "translation-result"
         private const val IR_TRANSLATION_RESULT_MAP = "ir-translation-result"
         private const val INLINE_FUNCTIONS = "inline-functions"
-        private const val PACKAGE_META_FILE = "packages-meta"
         private const val SOURCE_TO_JS_OUTPUT = "source-to-js-output"
     }
 
@@ -55,7 +53,6 @@ open class IncrementalJsCache(
     override val dirtyOutputClassesMap = registerMap(DirtyClassesFqNameMap(DIRTY_OUTPUT_CLASSES.storageFile, icContext))
     private val translationResults = registerMap(TranslationResultMap(TRANSLATION_RESULT_MAP.storageFile, protoData, icContext))
     private val irTranslationResults = registerMap(IrTranslationResultMap(IR_TRANSLATION_RESULT_MAP.storageFile, icContext))
-    private val packageMetadata = registerMap(PackageMetadataMap(PACKAGE_META_FILE.storageFile, icContext))
     private val sourceToJsOutputsMap = registerMap(SourceToJsOutputMap(SOURCE_TO_JS_OUTPUT.storageFile, icContext))
 
     private val dirtySources = hashSetOf<File>()
@@ -63,10 +60,6 @@ open class IncrementalJsCache(
     override fun markDirty(removedAndCompiledSources: Collection<File>) {
         removedAndCompiledSources.forEach { sourceFile ->
             sourceToJsOutputsMap.remove(sourceFile)
-            // The common prefix of all FQN parents has to be the file package
-            sourceToClassesMap[sourceFile].orEmpty().map { it.parentOrNull()?.asString() ?: "" }.minByOrNull { it.length }?.let {
-                packageMetadata.remove(it)
-            }
         }
         super.markDirty(removedAndCompiledSources)
         dirtySources.addAll(removedAndCompiledSources)
@@ -106,10 +99,6 @@ open class IncrementalJsCache(
             translationResults.put(srcFile, data.metadata)
         }
 
-        for ([packageName, metadata] in incrementalResults.packageMetadata) {
-            packageMetadata[packageName] = metadata
-        }
-
         for ([srcFile, irData] in incrementalResults.irFileData) {
             (val fileData, val types, val signatures, val strings, val declarations, val bodies, val fqn, val fileMetadata, val debugInfos = debugInfo, val fileEntries) = irData
             irTranslationResults.put(
@@ -142,12 +131,6 @@ open class IncrementalJsCache(
                 }
             }
         }
-
-    fun packageMetadata(): Map<String, ByteArray> = hashMapOf<String, ByteArray>().apply {
-        for (fqNameString in packageMetadata.keys()) {
-            put(fqNameString, packageMetadata[fqNameString]!!)
-        }
-    }
 
     fun nonDirtyIrParts(): Map<File, IrTranslationResultValue> =
         hashMapOf<File, IrTranslationResultValue>().apply {
@@ -331,32 +314,4 @@ private class ProtoDataProvider(private val serializerProtocol: SerializerExtens
 
         return classes
     }
-}
-
-private object ByteArrayExternalizer : DataExternalizer<ByteArray> {
-    override fun save(output: DataOutput, value: ByteArray) {
-        output.writeInt(value.size)
-        output.write(value)
-    }
-
-    override fun read(input: DataInput): ByteArray {
-        val size = input.readInt()
-        val array = ByteArray(size)
-        input.readFully(array)
-        return array
-    }
-}
-
-
-private class PackageMetadataMap(
-    storageFile: File,
-    icContext: IncrementalCompilationContext,
-) : BasicStringMap<ByteArray>(storageFile, ByteArrayExternalizer, icContext) {
-    fun put(packageName: String, newMetadata: ByteArray) {
-        storage[packageName] = newMetadata
-    }
-
-    fun keys() = storage.keys
-
-    override fun dumpValue(value: ByteArray): String = "Package metadata: ${value.md5()}"
 }
