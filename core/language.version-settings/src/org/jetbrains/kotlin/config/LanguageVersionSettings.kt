@@ -543,7 +543,7 @@ enum class LanguageFeature(
     // kind does not run at all, so this one has no effect.
     // TODO: Remove it once EliminateSecondKindIncorporation is being released under 2.5
     EnhancementsOfSecondIncorporationKind25(KOTLIN_2_5, "KT-85879"),
-    EliminateSecondKindIncorporation(sinceVersion = KOTLIN_2_5, issue = "KT-86022"),
+    EliminateSecondKindIncorporation(sinceVersion = KOTLIN_2_5, issue = "KT-85879"),
     NoWhenBranchMatchedExceptionWithMessage(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_5, issue = "KT-86518"),
     NameBasedDestructuring(sinceVersion = KOTLIN_2_5, "KT-19627"),
     JsAllowExportingAnnotationClasses(sinceVersion = KOTLIN_2_5, "KT-85599"),

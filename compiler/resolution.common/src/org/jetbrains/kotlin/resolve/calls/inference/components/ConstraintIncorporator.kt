@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorCachesPerConfiguration
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.utils.SmartSet
 import java.util.*
 
@@ -38,13 +39,14 @@ class ConstraintIncorporator(
     private val enhancementOfSecondIncorporationKindEnabled =
         languageVersionSettings.supportsFeature(LanguageFeature.EnhancementsOfSecondIncorporationKind25)
 
-    private val secondIncorporationKindRestrictedToFixation =
+    private val eliminateSecondKindIncorporation =
         languageVersionSettings.supportsFeature(LanguageFeature.EliminateSecondKindIncorporation)
 
     interface Context : TypeSystemInferenceExtensionContext {
         val allTypeVariablesWithConstraints: Collection<VariableWithConstraints>
         val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
 
+        @OnlyForDefaultLanguageFeatureDisabled(LanguageFeature.EliminateSecondKindIncorporation)
         fun getVariablesWithConstraintsContainingGivenTypeVariable(
             variableConstructorMarker: TypeConstructorMarker,
         ): Collection<VariableWithConstraints>
@@ -82,7 +84,11 @@ class ConstraintIncorporator(
         if (constraint.areThereRecursiveConstraints(typeVariable)) return
 
         directWithVariable(typeVariable, constraint)
-        insideOtherConstraint(typeVariable, constraint, isCausedByFixation)
+
+        if (!eliminateSecondKindIncorporation) {
+            @OptIn(OnlyForDefaultLanguageFeatureDisabled::class) // EliminateSecondKindIncorporation
+            insideOtherConstraint(typeVariable, constraint, isCausedByFixation)
+        }
     }
 
     context(c: Context)
@@ -179,14 +185,13 @@ class ConstraintIncorporator(
     }
 
     // \alpha <: Number, \beta <: Inv<\alpha> => \beta <: Inv<out Number>
+    @OnlyForDefaultLanguageFeatureDisabled(LanguageFeature.EliminateSecondKindIncorporation)
     context(c: Context)
     private fun insideOtherConstraint(
         typeVariable: TypeVariableMarker,
         constraint: Constraint,
         isCausedByFixation: Boolean,
     ) {
-        if (secondIncorporationKindRestrictedToFixation) return
-
         if (typeVariable in constraint.derivedFrom) return
         val freshTypeConstructor = typeVariable.freshTypeConstructor()
         for (storageForOtherVariable in c.getVariablesWithConstraintsContainingGivenTypeVariable(freshTypeConstructor)) {
@@ -210,6 +215,7 @@ class ConstraintIncorporator(
 
     // By "Second" we mean `insideOtherConstraint` here
     // \alpha <: Number, \beta <: Inv<\alpha> => \beta <: Inv<out Number>
+    @OnlyForDefaultLanguageFeatureDisabled(LanguageFeature.EliminateSecondKindIncorporation)
     context(c: Context)
     private fun generateNewConstraintForSecondIncorporationKind(
         // \alpha
@@ -279,6 +285,7 @@ class ConstraintIncorporator(
      *
      *  @return `Pair(Inv<Captured(out Number)>, true)`
      */
+    @OnlyForDefaultLanguageFeatureDisabled(LanguageFeature.EliminateSecondKindIncorporation)
     context(c: Context)
     private fun computeConstraintTypeForSecondIncorporationKind(
         // \alpha
@@ -344,6 +351,7 @@ class ConstraintIncorporator(
 
     // By "Second" we mean `insideOtherConstraint` here
     // \alpha <: Number, \beta <: Inv<\alpha> => \beta <: Inv<out Number>
+    @OnlyForDefaultLanguageFeatureDisabled(LanguageFeature.EliminateSecondKindIncorporation)
     context(c: Context)
     private fun addNewConstraintForSecondIncorporationKind(
         // \alpha
@@ -406,6 +414,7 @@ class ConstraintIncorporator(
         c.addNewIncorporatedConstraint(targetVariable, newConstraintType, constraintContext)
     }
 
+    @OnlyForDefaultLanguageFeatureDisabled(LanguageFeature.EliminateSecondKindIncorporation)
     context(c: Context)
     private fun KotlinTypeMarker.containsConstrainingTypeWithoutProjection(otherConstraint: Constraint): Boolean {
         return anyNestedArgument {
@@ -413,6 +422,7 @@ class ConstraintIncorporator(
         }
     }
 
+    @OnlyForDefaultLanguageFeatureDisabled(LanguageFeature.EliminateSecondKindIncorporation)
     context(c: Context)
     private fun KotlinTypeMarker.isPotentialUsefulNullabilityConstraint(otherConstraint: KotlinTypeMarker, kind: ConstraintKind): Boolean {
         if (trivialConstraintTypeInferenceOracle.isSuitableResultedType(this)) return false
@@ -425,6 +435,7 @@ class ConstraintIncorporator(
         return otherConstraintCanAddNullabilityToNewOne || newConstraintCanAddNullabilityToOtherOne
     }
 
+    @OnlyForDefaultLanguageFeatureDisabled(LanguageFeature.EliminateSecondKindIncorporation)
     context(c: Context)
     private fun KotlinTypeMarker.containsNestedTypeVariable(targetVariable: TypeVariableMarker): Boolean {
         return anyNestedArgument { typeArgument ->
@@ -432,12 +443,14 @@ class ConstraintIncorporator(
         }
     }
 
+    @OnlyForDefaultLanguageFeatureDisabled(LanguageFeature.EliminateSecondKindIncorporation)
     context(c: Context)
     private fun KotlinTypeMarker.substitute(typeVariable: TypeVariableMarker, value: KotlinTypeMarker): KotlinTypeMarker {
         val substitutor = c.typeSubstitutorByTypeConstructor(mapOf(typeVariable.freshTypeConstructor(c) to value))
         return substitutor.safeSubstitute(c, this)
     }
 
+    @OnlyForDefaultLanguageFeatureDisabled(LanguageFeature.EliminateSecondKindIncorporation)
     context(c: Context)
     private fun approximateCapturedTypes(type: KotlinTypeMarker, toSuper: Boolean): KotlinTypeMarker =
         when {
@@ -452,6 +465,7 @@ class ConstraintIncorporator(
         }
 }
 
+@OnlyForDefaultLanguageFeatureDisabled(LanguageFeature.EliminateSecondKindIncorporation)
 context(c: TypeSystemInferenceExtensionContext)
 private inline fun KotlinTypeMarker.anyNestedArgument(predicate: (TypeArgumentMarker) -> Boolean): Boolean {
     val stack = ArrayDeque<TypeArgumentMarker>()
