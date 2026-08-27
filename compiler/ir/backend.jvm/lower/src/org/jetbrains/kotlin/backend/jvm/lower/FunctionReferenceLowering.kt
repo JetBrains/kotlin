@@ -194,8 +194,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         // the function in question. Yet we still need to record it as the "receiver" in CallableReference in order for reflection
         // to work correctly.
         private val boundReceivers: Map<IrValueParameter, IrExpression> =
-            if (callee.isJvmStaticInObject()) mapOf(createFakeBoundReceiverForJvmStaticInObject())
-            else (irFunctionReference.invokeFunction.parameters zip irFunctionReference.boundValues).toMap()
+            (irFunctionReference.invokeFunction.parameters zip irFunctionReference.boundValues).toMap()
 
         // The type of the reference is KFunction<in A1, ..., in An, out R>
         private val parameterTypes = (irFunctionReference.type as IrSimpleType).arguments.map {
@@ -553,18 +552,6 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 )
             }
 
-        private fun createFakeBoundReceiverForJvmStaticInObject(): Pair<IrValueParameter, IrGetObjectValueImpl> {
-            // JvmStatic functions in objects are special in that they are generated as static methods in the bytecode, and JVM IR lowers
-            // both declarations and call sites early on in jvmStaticInObjectPhase because it's easier that way in subsequent lowerings.
-            // However from the point of view of Kotlin language (and thus reflection), these functions still take the dispatch receiver
-            // parameter of the object type. So we pretend here that a JvmStatic function in object has an additional dispatch receiver
-            // parameter, so that the correct function reference object will be created and reflective calls will work at runtime.
-            val objectClass = callee.parentAsClass
-            return buildValueParameter(callee) {
-                name = Name.identifier("\$this")
-                type = objectClass.typeWith()
-            } to IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, objectClass.typeWith(), objectClass.symbol)
-        }
     }
 
     companion object {
