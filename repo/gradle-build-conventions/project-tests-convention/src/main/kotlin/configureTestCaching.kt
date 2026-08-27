@@ -1,12 +1,12 @@
-import org.gradle.api.GradleException
-import org.gradle.api.Project
-import org.gradle.api.tasks.testing.Test
-import org.gradle.kotlin.dsl.withType
-
 /*
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+import org.gradle.api.GradleException
+import org.gradle.api.Project
+import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.withType
 
 internal fun Project.configureTestCaching() {
     tasks.withType<Test>().configureEach {
