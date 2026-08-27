@@ -5,12 +5,14 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType.FIELD
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.calls.Caller
 import kotlin.reflect.jvm.internal.calls.CallerImpl
+import kotlin.reflect.jvm.internal.types.AbstractKType
 
 internal abstract class JavaFieldKProperty<out V>(
     container: KDeclarationContainerImpl,
@@ -24,7 +26,10 @@ internal abstract class JavaFieldKProperty<out V>(
         get() = jField.jvmSignature
 
     override val returnType: KType by lazy(PUBLICATION) {
-        substituteType(jField.genericType.toKType(emptyMap()))
+        val type = substituteType(jField.genericType.toKType(emptyMap())) as AbstractKType
+        with(ReflectSignatureParts(FIELD, jField.declaredAnnotations.toList())) {
+            type.enhance(type.computeIndexedQualifiers(emptyList(), null))
+        }
     }
 
     override val isConst: Boolean
