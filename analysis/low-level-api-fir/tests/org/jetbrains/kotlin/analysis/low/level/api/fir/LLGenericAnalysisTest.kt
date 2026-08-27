@@ -148,6 +148,16 @@ class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("testData/generic
         assertAnnotationsOnMyClass(ktFile, testServices, "other.MyAnnotation")
     }
 
+    /**
+     * A regression test for KT-88945.
+     *
+     * @see redeclaredPluginAnnotation
+     */
+    @Test
+    fun cyclicAnnotationTypeAlias(ktFile: KtFile, testServices: TestServices) {
+        assertAnnotationsOnMyClass(ktFile, testServices, "test.MyAnnotation")
+    }
+
     private fun assertAnnotationsOnMyClass(ktFile: KtFile, testServices: TestServices, vararg expected: String) {
         val project = ktFile.project
         val ktClass = ktFile.declarations.single { it.name == "MyClass" } as KtClass
