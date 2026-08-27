@@ -1,6 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM_IR
-// IGNORE_HMPP: JVM_IR
 // WITH_STDLIB
 // ISSUE: KT-88770
 
@@ -18,7 +17,7 @@ abstract class Base {
 // MODULE: app-common(lib-common)
 class Derived : Base() {
     fun foo(): String {
-        return <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC{PLATFORM}!>s<!>
+        return s
     }
 }
 
