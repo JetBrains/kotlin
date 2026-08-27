@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 /**
  * This implementation works only for FQN annotations usages (`@foo.Bar` instead of `@Bar`).
@@ -114,14 +113,16 @@ private class KotlinStandaloneAnnotationsResolver(
 
     fun FqName.resolveToClassIds(to: MutableSet<ClassId>) {
         toClassIdSequence().mapNotNullTo(to) { classId ->
-            val classes = declarationProvider.getAllClassesByClassId(classId)
-            val typeAliases = declarationProvider.getAllTypeAliasesByClassId(classId)
-            typeAliases.singleOrNull()?.getTypeReference()?.resolveAnnotationClassIds(to)
-
-            val annotations = classes.filterIsInstanceAnd<KtClass> { it.isAnnotation() }
-            annotations.singleOrNull()?.let {
-                classId
+            // The same class id may be provided by several declarations, e.g., by a source declaration and by a library
+            // declaration shadowed by it. The resolver is allowed to report false positives, so every declaration
+            // contributes instead of only an unambiguous one
+            for (typeAlias in declarationProvider.getAllTypeAliasesByClassId(classId)) {
+                typeAlias.getTypeReference()?.resolveAnnotationClassIds(to)
             }
+
+            val classes = declarationProvider.getAllClassesByClassId(classId)
+            val isAnnotation = classes.any { it is KtClass && it.isAnnotation() }
+            classId.takeIf { isAnnotation }
         }
     }
 }
