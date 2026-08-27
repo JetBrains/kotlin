@@ -4,5 +4,3 @@ fun f(x: Throwable) {
         val x = <expr>x</expr>
     }
 }
-
-// IGNORE_LOOKUP_LOCALLY
