@@ -550,6 +550,10 @@ private val KaSymbol.supportsOnlyPsiBasedPointersByDesign: Boolean
         is KaAnonymousObjectSymbol,
         is KaAnonymousFunctionSymbol,
         is KaLocalVariableSymbol,
+            // Destructuring declarations could be non-local and restorable in scripts.
+            // But now they are all local and PSI-only.
+            // Can be reconsidered after KT-61451/KT-76360
+        is KaDestructuringDeclarationSymbol
             -> true
 
         is KaNamedFunctionSymbol,
