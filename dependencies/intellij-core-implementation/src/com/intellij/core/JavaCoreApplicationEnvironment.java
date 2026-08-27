@@ -36,6 +36,7 @@ import com.intellij.psi.impl.compiled.ClassFileStubBuilder;
 import com.intellij.psi.impl.compiled.ClsDecompilerImpl;
 import com.intellij.psi.impl.file.PsiPackageImplementationHelper;
 import com.intellij.psi.impl.java.stubs.JavaStubRegistryExtension;
+import com.intellij.psi.impl.search.MethodSuperSearcher;
 import com.intellij.psi.impl.source.tree.JavaASTFactory;
 import com.intellij.psi.impl.source.tree.PlainTextASTFactory;
 import com.intellij.psi.presentation.java.*;
@@ -114,6 +115,7 @@ public class JavaCoreApplicationEnvironment extends CoreApplicationEnvironment {
         });
 
         registerApplicationExtensionPoint(SuperMethodsSearch.EP_NAME, QueryExecutor.class);
+        addExtension(SuperMethodsSearch.EP_NAME, new MethodSuperSearcher());
 
         registerApplicationDynamicExtensionPoint("com.intellij.filetype.decompiler", BinaryFileTypeDecompilers.class);
         registerApplicationDynamicExtensionPoint("com.intellij.psi.classFileDecompiler", ClassFileDecompilers.Decompiler.class);
