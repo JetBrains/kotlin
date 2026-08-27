@@ -36,6 +36,18 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-08-27 — comment self-check promoted to a non-negotiable rule
+- **Change**: three of the four instruction fixes proposed after the repeated comment passes.
+  The self-check moved from the closing paragraph of the comment section into the
+  `⚠ Non-Negotiable Rules` block as rule 6, with the `git diff -U0 | grep` command that found the
+  violations both times; a "Rejected comments and their replacements" table added next to the gate
+  (narrative / counterfactual / restatement / fact in two places, real lines from this module); and a
+  rule against carrying the register of an analysis or review reply into code comments. The
+  root-`AGENTS.md` pointer (proposal C) was left out on request.
+- **Files**: `AGENT_INSTRUCTIONS_COMMON.md` (+24 lines).
+- **Tests**: not run — docs-only.
+- **Result**: green.
+
 ### 2026-08-27 — third comment pass: comments restating the code deleted
 - **Change**: review find — several comments narrated the lines below them. Deleted the static-outer chain
   note (the loop's own condition), the prose list of the three single-name lookup calls (the javac

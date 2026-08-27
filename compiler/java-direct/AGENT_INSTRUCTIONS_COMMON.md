@@ -24,6 +24,15 @@ and module-specific patterns, and references this file instead of repeating it
    and **NEVER modify shared test data to make a module's tests pass** — fix the
    implementation, or document the difference in the module's iteration log with evidence.
 
+6. **Before reporting any change that touched source files, reread the diff's comment lines alone**
+   against the Source Comment Conventions below, and delete everything that fails the gate:
+   ```bash
+   git diff -U0 | grep '^+' | grep -E '//|\*'
+   ```
+   This is a step of the change, not a review afterthought: unlike code, comments have no red/green
+   signal, so nothing else catches them. Both cleanup passes this module needed were found by exactly
+   this command, after the change had already been reported as done.
+
 ---
 
 ## Shell Discipline
@@ -102,6 +111,21 @@ in this codebase are terse declarative fragments; match them.
   how surrounding code already names it (e.g. "previous snippets", not "priors";
   `simpleImports`/`starImports`, not singleType/onDemand). Non-standard vocabulary reads
   as foreign and triggers review questions.
+- **After writing an analysis, a design doc or a review reply, do not carry that register into
+  code comments.** Explanatory prose, justification and comparison with the rejected option are
+  correct there and a violation here. The transition is the most reliable predictor of a failed
+  comment pass in this module: switch register deliberately before the first edit.
+
+### Rejected comments and their replacements
+
+Four recurring shapes, taken from review finds in `compiler/java-direct/`:
+
+| Shape | Rejected | Replacement |
+|---|---|---|
+| Narrative | `// In-scope (AST/model) navigation, kept as a distinct pass *before* the [resolve] fallback below: it needs no FirSession symbol provider, unlike [resolve]'s class-existence probe (so it also serves parser-only tests); even with a session it avoids a round-trip per segment.` | `// Unlike [resolve] below, needs no FirSession symbol provider: serves parser-only tests, and saves a symbol-provider round-trip per segment.` |
+| Counterfactual | `// …so nested residuals get the same treatment, instead of silently degrading to List<*>.` | *(deleted)* |
+| Restatement | `// A static outer contributes its parameters but severs the chain above itself.` above `outer = if (outer.isStatic) null else outer.outerClass` | *(deleted)* |
+| Fact in two places | the declaration-chain explanation repeated at the `firBackedJavaType` call site | *(deleted at the call site; kept on the function's KDoc)* |
 
 ### Specific prohibitions
 
@@ -134,9 +158,9 @@ change behavior, **grep for comments mentioning it** (in the whole module, not j
 edited file) and fix or delete them in the same change. A comment justifying complexity
 must be re-verified against the *current* code, not carried forward from an earlier round.
 
-Self-check before finishing any change: reread the diff's comment lines alone. If a
-comment would survive neither the gate above nor a reviewer asking "what does this tell
-me that the code doesn't?", remove it.
+The self-check is Non-Negotiable Rule 6: a comment that survives neither the gate above nor a
+reviewer asking "what does this tell me that the code doesn't?" is removed before the change is
+reported.
 
 ---
 
