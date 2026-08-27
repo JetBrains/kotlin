@@ -238,16 +238,6 @@ enum class JunitTag {
     SwiftPMImportKGP
 }
 
-/*
-Running those integration tests is resource intensive
-We use this service as semaphore, allowing only one test task to be executed at once.
-This approach allows calling multiple tests tasks at once without having to pass the --no-parallel flag
-*/
-abstract class TestSemaphoreService : BuildService<BuildServiceParameters.None>
-val testSemaphore = gradle.sharedServices.registerIfAbsent("$path.testSemaphore", TestSemaphoreService::class.java) {
-    maxParallelUsages = 1
-}
-
 if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
     val junitTags = JunitTag.values().filter { it !in setOf(JunitTag.SwiftExportKGP, JunitTag.SwiftPMImportKGP) }.map { it.name }
     val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
@@ -426,7 +416,6 @@ tasks.withType<Test>().configureEach {
 
     // Keep in sync with the default value for [enableGradleDaemonMemoryLimitInMb] in testDsl.kt for runs withDebug to not OOM
     maxHeapSize = testMaxHeapSizeSmall.toJvmArg()
-    usesService(testSemaphore)
 
     dependsOn(":kotlin-gradle-plugin:validatePlugins")
     dependsOnKotlinGradlePluginInstall()
