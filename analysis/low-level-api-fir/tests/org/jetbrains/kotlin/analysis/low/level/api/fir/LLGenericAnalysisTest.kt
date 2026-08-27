@@ -125,14 +125,7 @@ class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("testData/generic
      */
     @Test
     fun redeclaredPluginAnnotation(ktFile: KtFile, testServices: TestServices) {
-        val project = ktFile.project
-        val ktClass = ktFile.declarations.single { it.name == "MyClass" } as KtClass
-        val annotationsResolver = project.createAnnotationResolver(GlobalSearchScope.allScope(project))
-
-        testServices.assertions.assertEquals(
-            expected = setOf(ClassId.topLevel(FqName("org.jetbrains.kotlin.plugin.sandbox.CompanionWithFoo"))),
-            actual = annotationsResolver.annotationsOnDeclaration(ktClass),
-        )
+        assertAnnotationsOnMyClass(ktFile, testServices, "org.jetbrains.kotlin.plugin.sandbox.CompanionWithFoo")
     }
 
     /**
@@ -142,12 +135,26 @@ class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("testData/generic
      */
     @Test
     fun redeclaredAnnotationTypeAlias(ktFile: KtFile, testServices: TestServices) {
+        assertAnnotationsOnMyClass(ktFile, testServices, "test.MyAnnotation")
+    }
+
+    /**
+     * A regression test for KT-88945.
+     *
+     * @see redeclaredPluginAnnotation
+     */
+    @Test
+    fun qualifiedAnnotationTypeAlias(ktFile: KtFile, testServices: TestServices) {
+        assertAnnotationsOnMyClass(ktFile, testServices, "other.MyAnnotation")
+    }
+
+    private fun assertAnnotationsOnMyClass(ktFile: KtFile, testServices: TestServices, vararg expected: String) {
         val project = ktFile.project
         val ktClass = ktFile.declarations.single { it.name == "MyClass" } as KtClass
         val annotationsResolver = project.createAnnotationResolver(GlobalSearchScope.allScope(project))
 
         testServices.assertions.assertEquals(
-            expected = setOf(ClassId.topLevel(FqName("test.MyAnnotation"))),
+            expected = expected.mapTo(mutableSetOf()) { ClassId.topLevel(FqName(it)) },
             actual = annotationsResolver.annotationsOnDeclaration(ktClass),
         )
     }
