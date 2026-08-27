@@ -51,6 +51,11 @@ val validateClasspath = tasks.register("validateClasspath", CacheableProguardTas
     )
 }
 
+val validateNoDuplicateClasses = tasks.register("validateNoDuplicateClasses", VerifyNoDuplicateClasspathEntriesTask::class) {
+    classpath.from(configurations.runtimeClasspath)
+    permittedDuplicatesFile = layout.projectDirectory.file("api/analysis-api.permitted-duplicates")
+}
+
 tasks.check {
-    dependsOn(validateClasspath)
+    dependsOn(validateClasspath, validateNoDuplicateClasses)
 }
