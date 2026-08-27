@@ -41,7 +41,6 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(project(":libraries:tools:abi-comparator"))
-    testFixturesApi(project(":compiler:tests-mutes:mutes-junit5"))
 
     /*
      * Actually those dependencies are needed only at runtime, but they

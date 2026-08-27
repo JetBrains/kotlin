@@ -18,8 +18,6 @@ val testFixturesModules = listOf(
 
 val mainModules = listOf(
     ":generators",
-    ":compiler:tests-mutes",
-    ":compiler:tests-mutes:mutes-junit5",
 )
 
 dependencies {

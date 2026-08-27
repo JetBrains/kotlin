@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 open class TestFederationExtension @Inject constructor(project: Project) {
     /**
-     * The module 'repo:test-federation-runtime' is added to test's as a default dependency.
+     * The module 'repo:test-runtime' is added to test's as a default dependency.
      * This property can be used to disable this default.
      */
     val defaultDependencyEnabled: Property<Boolean> = project.objects.property(Boolean::class.java).convention(true)
