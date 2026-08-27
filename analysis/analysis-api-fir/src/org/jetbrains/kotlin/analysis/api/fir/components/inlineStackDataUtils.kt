@@ -168,7 +168,7 @@ private fun collectInlineLambdaParameters(
         override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
             propertyAccessExpression.acceptChildren(this)
             val valueParam = propertyAccessExpression.toResolvedCallableSymbol() as? FirValueParameterSymbol ?: return
-            if (valueParam.fir.isInlinable(session)) unsubstitutedInlineLambdaParameters.add(valueParam)
+            if (valueParam.isInlinable(session)) unsubstitutedInlineLambdaParameters.add(valueParam)
         }
     })
 }

@@ -52,7 +52,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
     }
 
     class InlineFunctionBodyContext(
-        val inlineFunction: FirFunction,
+        val inlineFunction: FirFunctionSymbol<*>,
         val inlineFunEffectiveVisibility: EffectiveVisibility,
         override val session: FirSession,
         val parentInlineContext: InlineFunctionBodyContext?,
@@ -96,21 +96,21 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
                         source,
                         getNonPublicCallFromPublicInlineFactory(accessExpression, accessedSymbol, source),
                         accessedSymbol,
-                        inlineFunction.symbol,
+                        inlineFunction,
                     )
                 accessedDataCopyVisibility != null &&
                         shouldReportNonPublicCallFromPublicInline(accessedDataCopyVisibility) ->
                     reporter.reportOn(
                         source,
                         FirErrors.NON_PUBLIC_DATA_COPY_CALL_FROM_PUBLIC_INLINE,
-                        inlineFunction.symbol
+                        inlineFunction
                     )
                 !isEffectivelyPrivateApiFunction && accessedSymbol.isInsidePrivateClass() ->
                     reporter.reportOn(
                         source,
                         FirErrors.PRIVATE_CLASS_MEMBER_FROM_INLINE,
                         accessedSymbol,
-                        inlineFunction.symbol,
+                        inlineFunction,
                     )
                 // We don't need to check inside public inline functions because we already report
                 // NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE, PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR and other diagnostics there.
@@ -222,7 +222,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
                     isConstructorCall -> FirErrors.PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE
                     else -> FirErrors.PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR
                 }
-                reporter.reportOn(source, factory, inlineFunction.symbol, calledDeclaration)
+                reporter.reportOn(source, factory, inlineFunction, calledDeclaration)
             }
         }
 
@@ -263,7 +263,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             targetSymbol: FirBasedSymbol<*>,
             source: KtSourceElement,
         ) {
-            if (targetSymbol == inlineFunction.symbol) {
+            if (targetSymbol == inlineFunction) {
                 reporter.reportOn(source, FirErrors.RECURSION_IN_INLINE, targetSymbol)
             }
         }
@@ -397,7 +397,8 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
         if (function.typeParameters.any { it.symbol.isReified }) return
         val session = context.session
         val hasInlinableParameters =
-            function.valueParameters.any { it.isInlinable(context.session) } || function.contextParameters.any { it.isInlinable(context.session) }
+            function.valueParameters.any { it.symbol.isInlinable(context.session) } ||
+                    function.contextParameters.any { it.symbol.isInlinable(context.session) }
         if (hasInlinableParameters) return
         if (function.isInlineOnly(session)) return
 
@@ -448,7 +449,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
 }
 
 fun createInlineFunctionBodyContext(
-    function: FirFunction,
+    function: FirFunctionSymbol<*>,
     session: FirSession,
     parentInlineContext: FirInlineDeclarationChecker.InlineFunctionBodyContext?
 ): FirInlineDeclarationChecker.InlineFunctionBodyContext {

@@ -29,13 +29,13 @@ object FirInlineBodyNamedFunctionChecker : FirNamedFunctionChecker(MppCheckerKin
     context(context: CheckerContext)
     fun isInsideInlineContext(declaration: FirDeclaration): Boolean {
         var outerInlineContext = when {
-            declaration == context.inlineFunctionBodyContext?.inlineFunction -> context.inlineFunctionBodyContext?.parentInlineContext
+            declaration.symbol == context.inlineFunctionBodyContext?.inlineFunction -> context.inlineFunctionBodyContext?.parentInlineContext
             else -> context.inlineFunctionBodyContext
         }
         for (it in context.containingDeclarations.asReversed()) {
             when {
-                it == outerInlineContext?.inlineFunction?.symbol -> when {
-                    outerInlineContext.inlineFunction.symbol.rawStatus.visibility != Visibilities.Local -> return true
+                it == outerInlineContext?.inlineFunction -> when {
+                    outerInlineContext.inlineFunction.rawStatus.visibility != Visibilities.Local -> return true
                     else -> outerInlineContext = outerInlineContext.parentInlineContext
                 }
                 it.isObject -> return false

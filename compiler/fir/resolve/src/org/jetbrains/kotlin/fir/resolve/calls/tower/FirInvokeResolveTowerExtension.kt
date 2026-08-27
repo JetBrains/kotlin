@@ -407,7 +407,7 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
 
         val extraType = when (symbol) {
             is FirPropertySymbol -> {
-                symbol.tryAccessExplicitFieldSymbol(inlineFunction, session, candidate.hasVisibleBackingField)?.resolvedReturnType
+                symbol.tryAccessExplicitFieldSymbol(inlineFunction?.symbol, session, candidate.hasVisibleBackingField)?.resolvedReturnType
             }
             is FirValueParameterSymbol if LanguageFeature.StrictEquals.isEnabled() -> {
                 symbol.equalityBoundType
