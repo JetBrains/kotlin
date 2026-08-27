@@ -560,6 +560,14 @@ private val KaSymbol.supportsOnlyPsiBasedPointersByDesign: Boolean
         is KaPropertySymbol,
             -> location == KaSymbolLocation.LOCAL
 
+        is KaNamedClassSymbol -> {
+            when (location) {
+                KaSymbolLocation.LOCAL -> true
+                KaSymbolLocation.CLASS -> classId == null && origin != KaSymbolOrigin.PLUGIN
+                else -> false
+            }
+        }
+
         else -> false
     }
 
