@@ -1,0 +1,27 @@
+FILE fqName:<root> fileName:/smartCastToNothing.kt
+  FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR name:result type:kotlin.String [val]
+        CALL 'public final fun produce (): kotlin.String declared in <root>' type=kotlin.String origin=null
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+            ARG arg0: GET_VAR 'val result: kotlin.String declared in <root>.main' type=kotlin.String origin=null
+            ARG arg1: CONST Null type=kotlin.Nothing? value=null
+          then: BLOCK type=kotlin.Unit origin=null
+            CALL 'public final fun take <T> (value: T of <root>.take?): T of <root>.take declared in <root>' type=kotlin.Nothing origin=null
+              TYPE_ARG T: kotlin.Nothing
+              ARG value: TYPE_OP type=kotlin.Nothing origin=IMPLICIT_CAST typeOperand=kotlin.Nothing
+                GET_VAR 'val result: kotlin.String declared in <root>.main' type=kotlin.String origin=null
+  FUN name:produce visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun produce (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="x"
+  FUN name:take visibility:public modality:FINAL returnType:T of <root>.take
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
+    VALUE_PARAMETER kind:Regular name:value index:0 type:T of <root>.take?
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun take <T> (value: T of <root>.take?): T of <root>.take declared in <root>'
+        CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={T of <root>.take & Any} origin=EXCLEXCL
+          TYPE_ARG T0: {T of <root>.take & Any}
+          ARG arg0: GET_VAR 'value: T of <root>.take? declared in <root>.take' type=T of <root>.take? origin=null
