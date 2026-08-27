@@ -267,7 +267,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
     }
 
     @Test
-    fun testSplitCompilationPipelineWithKlibResolverFlags() {
+    fun testSplitCompilationPipelineWithKlibLoaderFlags() {
         Assumptions.assumeFalse(HostManager.hostIsMingw &&
                                         testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG
         ) // KT-65963
@@ -293,10 +293,10 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
             "-l", libFile2.absolutePath,
             "-Xklib-duplicated-unique-name-strategy=allow-all-with-warning",
         ).let {
+            val expectedMessage = "warning: KLIB loader: The same 'unique_name=lib' found in more than one library"
             assertTrue(
-                it.stderr.contains("warning: KLIB resolver: The same 'unique_name=lib' found in more than one library"),
-                "`warning: KLIB resolver: The same 'unique_name=lib' found in more than one library` must be in stdout." +
-                        "\nSTDOUT: ${it.stdout}\nSTDERR: ${it.stderr}\n---"
+                it.stderr.contains(expectedMessage),
+                "`$expectedMessage` must be in stdout.\nSTDOUT: ${it.stdout}\nSTDERR: ${it.stderr}\n---"
             )
         }
     }
