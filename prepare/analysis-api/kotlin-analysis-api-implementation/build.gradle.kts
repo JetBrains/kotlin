@@ -9,6 +9,7 @@ plugins {
 val analysisApiSurfaceDependencies: List<String> = CompilerModules.analysisApiSurfaceDependencies
 val compilerModules: Array<String> = CompilerModules.compilerModules
 val analysisApiSurfaceModules: Array<String> = CompilerModules.analysisApiSurfaceModules
+val analysisApiPlatformInterfaceModules: Array<String> = CompilerModules.analysisApiPlatformInterfaceModules
 val analysisApiStandaloneModules: Array<String> = CompilerModules.analysisApiStandaloneModules
 val analysisApiModules: Array<String> = CompilerModules.analysisApiModules
 
@@ -58,6 +59,9 @@ analysisApiArtifact {
             // Avoid copying content of 'kotlin-analysis-api-surface'
             removeAll(analysisApiSurfaceDependencies)
             removeAll(analysisApiSurfaceModules)
+
+            // Avoid copying content of 'kotlin-analysis-api-platform-interface'
+            removeAll(analysisApiPlatformInterfaceModules)
 
             // Standalone modules are shipped by the dedicated standalone artifacts
             removeAll(analysisApiStandaloneModules)
