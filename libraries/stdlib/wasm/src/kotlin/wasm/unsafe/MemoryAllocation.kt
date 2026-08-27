@@ -8,6 +8,7 @@ package kotlin.wasm.unsafe
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.internal.DoNotInlineOnFirstStage
+import kotlin.wasm.ExperimentalWasmInterop
 import kotlin.wasm.internal.wasm_memory_copy
 import kotlin.wasm.internal.wasm_memory_grow
 import kotlin.wasm.internal.wasm_memory_size
@@ -16,6 +17,7 @@ import kotlin.wasm.internal.wasm_memory_size
  * WebAssembly linear memory allocator.
  */
 @UnsafeWasmMemoryApi
+@ExperimentalWasmInterop
 public abstract class MemoryAllocator {
     /**
      * Allocates a block of uninitialized linear memory of the given [size] in bytes.
@@ -51,6 +53,7 @@ public abstract class MemoryAllocator {
  * WARNING! Accessing the allocator outside of the [block] scope will throw [IllegalStateException].
  */
 @UnsafeWasmMemoryApi
+@ExperimentalWasmInterop
 @DoNotInlineOnFirstStage
 public inline fun <T> withScopedMemoryAllocator(
     block: (allocator: MemoryAllocator) -> T
@@ -68,6 +71,7 @@ public inline fun <T> withScopedMemoryAllocator(
 
 @PublishedApi
 @UnsafeWasmMemoryApi
+@ExperimentalWasmInterop
 internal fun createAllocatorInTheNewScope(): ScopedMemoryAllocator {
     check(reallocAllocator == null) {
         "Can't create new allocators while realloc-allocated memory is not freed"
@@ -81,11 +85,13 @@ internal fun createAllocatorInTheNewScope(): ScopedMemoryAllocator {
 
 @PublishedApi
 @UnsafeWasmMemoryApi
+@ExperimentalWasmInterop
 internal var currentAllocator: ScopedMemoryAllocator? = null
 
 // TODO(KT-58041): Consider switching back to using ULong
 @PublishedApi
 @UnsafeWasmMemoryApi
+@ExperimentalWasmInterop
 internal class ScopedMemoryAllocator(
     startAddress: Int,
     // Allocator from parent scope or null for top-level scope.
@@ -149,7 +155,7 @@ internal class ScopedMemoryAllocator(
 
 private const val WASM_PAGE_SIZE_IN_BYTES = 65_536  // 64 KiB
 
-@OptIn(UnsafeWasmMemoryApi::class)
+@OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
 private var reallocAllocator: ScopedMemoryAllocator? = null
 
 private var lastReallocAllocatedAddress: Int? = null
@@ -160,7 +166,7 @@ private var lastReallocAllocatedAddress: Int? = null
  * Memory allocated by this function must be freed
  * by calling [freeAllComponentModelReallocAllocatedMemory] before calling any [withScopedMemoryAllocator].
  */
-@OptIn(UnsafeWasmMemoryApi::class)
+@OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
 @ComponentModelInternalApi
 public fun componentModelRealloc(
     originalPtr: Int,
@@ -199,7 +205,7 @@ public fun componentModelRealloc(
 /**
  *  Frees memory allocated by all previous calls of [componentModelRealloc]. 
  */
-@OptIn(UnsafeWasmMemoryApi::class)
+@OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
 @ComponentModelInternalApi
 public fun freeAllComponentModelReallocAllocatedMemory() {
     if (reallocAllocator != null) {

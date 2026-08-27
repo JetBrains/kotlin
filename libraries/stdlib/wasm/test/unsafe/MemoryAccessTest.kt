@@ -2,8 +2,9 @@ package test.wasm.unsafe
 
 import kotlin.wasm.unsafe.*
 import kotlin.test.*
+import kotlin.wasm.ExperimentalWasmInterop
 
-@OptIn(UnsafeWasmMemoryApi::class)
+@OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
 class MemoryAccessTestTest {
     @Test
     fun testPointer() {
