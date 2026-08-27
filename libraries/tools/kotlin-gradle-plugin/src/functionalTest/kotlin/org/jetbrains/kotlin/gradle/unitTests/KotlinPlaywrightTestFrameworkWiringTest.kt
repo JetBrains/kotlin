@@ -33,13 +33,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.net.URI
 import java.nio.file.Path
 import java.time.Duration
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertIs
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.to
@@ -56,28 +50,6 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         }
 
         assertIs<KotlinPlaywrightJsTestFramework>(setup.jsBrowserTestTask.testFramework)
-    }
-
-    @Test
-    fun `without runners the default karma framework is kept and bundle task stays disabled`() {
-        val setup = buildBrowserTestProject {}
-
-        assertIs<KotlinKarma>(setup.jsBrowserTestTask.testFramework)
-
-        val bundleTask = setup.webpackBundleTask
-        setup.mockJsTestLinkOutput()
-        assertFalse(
-            bundleTask.browserRunnersDeclared.get(),
-            "Expected the bundle task to stay disabled when no browser runners are declared"
-        )
-        assertTrue(
-            bundleTask.requiredNpmDependencies.isEmpty(),
-            "Expected no npm dependencies to be contributed while the bundle task is disabled"
-        )
-        assertFalse(
-            bundleTask.onlyIf.isSatisfiedBy(bundleTask),
-            "Expected the bundle task to be skipped, as no browser runners are declared"
-        )
     }
 
     @Test
@@ -162,13 +134,46 @@ class KotlinPlaywrightTestFrameworkWiringTest {
     }
 
     @Test
-    fun `without runners no playwright install task is registered`() {
+    fun `without runners default playwright install task is registered`() {
         val setup = buildBrowserTestProject {}
 
-        PwBrowserKind.entries.forEach {
+        val defaultBrowserKind = PwBrowserKind.CHROMIUM
+        val defaultInstallTask = setup.project.tasks.findByName(defaultBrowserKind.getPwInstallBrowserTaskName())
+        assertNotNull(defaultInstallTask, "Expected ${defaultBrowserKind.getPwInstallBrowserTaskName()} task is created for a default browser")
+
+        PwBrowserKind.entries.filter { it != defaultBrowserKind }.forEach {
             val installTask = setup.project.tasks.findByName(it.getPwInstallBrowserTaskName())
             assertNull(installTask, "Expected no ${it.getPwInstallBrowserTaskName()} task when no runners declared")
         }
+    }
+
+    @Test
+    fun `without touching the test DSL no playwright test framework is created`() {
+        val project = buildProjectWithMPP {
+            with(multiplatformExtension) {
+                js {
+                    browser {}
+                }
+            }
+        }
+        project.evaluate()
+
+        val testTask = project.tasks.getByName("jsBrowserTest") as KotlinJsTest
+        assertIs<KotlinKarma>(
+            testTask.testFramework,
+            "Expected karma to stay the test framework when browser.test was never touched"
+        )
+
+        PwBrowserKind.entries.forEach {
+            assertNull(
+                project.tasks.findByName(it.getPwInstallBrowserTaskName()),
+                "Expected no ${it.getPwInstallBrowserTaskName()} task when the new browser test DSL is not used"
+            )
+        }
+        assertNull(
+            project.tasks.findByName("prepareWebpackBundleForKotlinJsTests"),
+            "Expected no test bundle task when the new browser test DSL is not used"
+        )
     }
 
     @Test

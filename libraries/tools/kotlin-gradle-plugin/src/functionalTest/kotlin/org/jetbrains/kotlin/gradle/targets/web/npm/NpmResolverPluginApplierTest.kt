@@ -140,7 +140,6 @@ sealed class NpmResolverPluginApplierTest(
                 "wasmJsBrowserProductionRun",
                 "wasmJsBrowserProductionWebpack",
                 "wasmJsBrowserTest",
-                "wasmJsTestBundleAsEsm",
             )
         )
     }
@@ -157,7 +156,6 @@ sealed class NpmResolverPluginApplierTest(
                 "jsBrowserProductionRun",
                 "jsBrowserProductionWebpack",
                 "jsBrowserTest",
-                "prepareWebpackBundleForKotlinJsTests",
             )
         )
     }

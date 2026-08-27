@@ -2466,6 +2466,33 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object NoBrowserSpecifiedForJsBrowserTestFramework : ToolingDiagnosticFactory(
+        predefinedSeverity = WARNING,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(targetName: String) = build {
+            title { "No browser runner is specified for the $targetName browser test configuration" }
+                .description {
+                    """
+                    Chromium runner will be used as default.
+                    
+                    kotlin {
+                      $targetName {
+                        browser {
+                          test {
+                            // no browser runners configured
+                            // chromium() will be used as default
+                          }
+                        }
+                      }
+                    }
+                    """.trimIndent()
+                }
+                .solution { "Please specify at least one browser runner explicitly" }
+                .documentationLink(URI("https://kotl.in/new-js-browser-test-dsl"))
+        }
+    }
+
     internal object SwiftPMLinkagePackageNotIntegratedInXcodeProject : ToolingDiagnosticFactory(
         FATAL,
         DiagnosticGroup.Kgp.Misconfiguration,
