@@ -27,7 +27,7 @@ import kotlin.time.Duration.Companion.seconds
 
 /**
  * This test will launch a build in different [TestFederationMode] and affected [Domain]s.
- * The build launches the ':repo:test-federation-runtime:test' task and parses the output to check if the tests were executed correctly.
+ * The build launches the ':repo:test-runtime:test' task and parses the output to check if the tests were executed correctly.
  * (e.g., the compiler contract test is expected to only be executed when the compiler subsystem is affected, or the full test mode is specified)
  */
 class TestFederationFunctionalTest {
@@ -209,7 +209,7 @@ class TestFederationFunctionalTest {
             additionalCliArgs = buildCacheArgs,
             rerun = false
         ).apply {
-            assertEquals(TaskOutcome.SUCCESS, buildResult.requireTask(":repo:test-federation-runtime:test").outcome)
+            assertEquals(TaskOutcome.SUCCESS, buildResult.requireTask(":repo:test-runtime:test").outcome)
             cache.listDirectoryEntries().filterNot { it.name == "gc.properties" }.ifEmpty {
                 fail("No build cache entries produced after first build")
             }
@@ -223,7 +223,7 @@ class TestFederationFunctionalTest {
             rerun = false,
             testFederationEnabled = false
         ).apply {
-            assertEquals(TaskOutcome.FROM_CACHE, buildResult.requireTask(":repo:test-federation-runtime:test").outcome)
+            assertEquals(TaskOutcome.FROM_CACHE, buildResult.requireTask(":repo:test-runtime:test").outcome)
         }
     }
 
@@ -243,7 +243,7 @@ class TestFederationFunctionalTest {
             rerun = false,
             testFederationEnabled = false
         ).apply {
-            assertEquals(TaskOutcome.SUCCESS, buildResult.requireTask(":repo:test-federation-runtime:test").outcome)
+            assertEquals(TaskOutcome.SUCCESS, buildResult.requireTask(":repo:test-runtime:test").outcome)
             cache.listDirectoryEntries().filterNot { it.name == "gc.properties" }.ifEmpty {
                 fail("No build cache entries produced after first build")
             }
@@ -257,7 +257,7 @@ class TestFederationFunctionalTest {
             rerun = false,
             testFederationEnabled = true
         ).apply {
-            assertEquals(TaskOutcome.FROM_CACHE, buildResult.requireTask(":repo:test-federation-runtime:test").outcome)
+            assertEquals(TaskOutcome.FROM_CACHE, buildResult.requireTask(":repo:test-runtime:test").outcome)
         }
     }
 
@@ -276,7 +276,7 @@ class TestFederationFunctionalTest {
             rerun = false,
             testFederationEnabled = false
         ).apply {
-            assertEquals(TaskOutcome.SUCCESS, buildResult.requireTask(":repo:test-federation-runtime:test").outcome)
+            assertEquals(TaskOutcome.SUCCESS, buildResult.requireTask(":repo:test-runtime:test").outcome)
             cache.listDirectoryEntries().filterNot { it.name == "gc.properties" }.ifEmpty {
                 fail("No build cache entries produced after first build")
             }
@@ -291,7 +291,7 @@ class TestFederationFunctionalTest {
             rerun = false,
             testFederationEnabled = true
         ).apply {
-            assertEquals(TaskOutcome.FROM_CACHE, buildResult.requireTask(":repo:test-federation-runtime:test").outcome)
+            assertEquals(TaskOutcome.FROM_CACHE, buildResult.requireTask(":repo:test-runtime:test").outcome)
         }
     }
 
@@ -307,7 +307,7 @@ class TestFederationFunctionalTest {
             rerun = false,
             testFederationEnabled = false
         ).apply {
-            assertEquals(TaskOutcome.SUCCESS, buildResult.requireTask(":repo:test-federation-runtime:test").outcome)
+            assertEquals(TaskOutcome.SUCCESS, buildResult.requireTask(":repo:test-runtime:test").outcome)
             cache.listDirectoryEntries().filterNot { it.name == "gc.properties" }.ifEmpty {
                 fail("No build cache entries produced after first build")
             }
@@ -320,7 +320,7 @@ class TestFederationFunctionalTest {
             rerun = false,
             testFederationEnabled = true
         ).apply {
-            assertEquals(TaskOutcome.SUCCESS, buildResult.requireTask(":repo:test-federation-runtime:test").outcome)
+            assertEquals(TaskOutcome.SUCCESS, buildResult.requireTask(":repo:test-runtime:test").outcome)
             assertEquals(setOf(TestResult("PseudoTest", "smoke test")), executedTests)
         }
     }
@@ -335,7 +335,7 @@ class TestFederationFunctionalTest {
             additionalCliArgs = buildCacheArgs,
             rerun = false,
         ).apply {
-            assertEquals(TaskOutcome.SUCCESS, buildResult.requireTask(":repo:test-federation-runtime:test").outcome)
+            assertEquals(TaskOutcome.SUCCESS, buildResult.requireTask(":repo:test-runtime:test").outcome)
             assertEquals(setOf(TestResult("PseudoTest", "smoke test"), TestResult("PseudoTest", "js contract test")), executedTests)
         }
 
@@ -346,7 +346,7 @@ class TestFederationFunctionalTest {
             additionalCliArgs = buildCacheArgs,
             rerun = false,
         ).apply {
-            assertEquals(TaskOutcome.FROM_CACHE, buildResult.requireTask(":repo:test-federation-runtime:test").outcome)
+            assertEquals(TaskOutcome.FROM_CACHE, buildResult.requireTask(":repo:test-runtime:test").outcome)
         }
 
         cleanTest()
@@ -356,7 +356,7 @@ class TestFederationFunctionalTest {
             additionalCliArgs = buildCacheArgs,
             rerun = false,
         ).apply {
-            assertEquals(TaskOutcome.SUCCESS, buildResult.requireTask(":repo:test-federation-runtime:test").outcome)
+            assertEquals(TaskOutcome.SUCCESS, buildResult.requireTask(":repo:test-runtime:test").outcome)
             assertEquals(setOf(TestResult("PseudoTest", "smoke test"), TestResult("PseudoTest", "wasm contract test")), executedTests)
         }
     }
@@ -405,7 +405,7 @@ private data class TestBuildResult(
 }
 
 /**
- * Executes all tests in ':repo:test-federation-runtime:test' with the given [mode] and [changed].
+ * Executes all tests in ':repo:test-runtime:test' with the given [mode] and [changed].
  * All executed tests are parsed and returned in [TestBuildResult.executedTests].
  */
 private fun runTestBuild(
@@ -451,7 +451,7 @@ private fun runTestBuild(
     }
 
     val arguments = buildList {
-        add(":repo:test-federation-runtime:test")
+        add(":repo:test-runtime:test")
         add("-P$TEST_FEDERATION_ENABLED_KEY=$testFederationEnabled")
         if (nightly != null) add("-Pnightly=$nightly")
         add("-Dorg.gradle.daemon.idletimeout=${5.seconds.inWholeMilliseconds}")
@@ -490,7 +490,7 @@ private fun runTestBuild(
 private fun cleanTest(): BuildResult {
     return try {
         createGradleRunner().withArguments(
-            ":repo:test-federation-runtime:cleanTest",
+            ":repo:test-runtime:cleanTest",
             "-Dorg.gradle.daemon.idletimeout=${10.seconds.inWholeMilliseconds}",
         ).build()
     } catch (failure: UnexpectedBuildFailure) {

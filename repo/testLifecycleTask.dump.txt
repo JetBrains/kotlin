@@ -555,7 +555,7 @@ Not connected to any 'lifecycleTestTask':
   - :plugins:js-plain-objects:runtime:jsBrowserTest [CompilerPlugins]
   - :plugins:js-plain-objects:runtime:jsNodeTest [CompilerPlugins]
   - :repo:artifacts-tests:test [BuildInfrastructure]
-  - :repo:test-federation-runtime:test [BuildInfrastructure]
+  - :repo:test-runtime:test [BuildInfrastructure]
   - :test-instrumenter:test [Unknown]
   - :wasm:wasm.tests:klib-compatibility:test [Wasm]
   - :wasm:wasm.tests:klib-compatibility:testCustomFirstStage_1_9_20 [Wasm]
