@@ -124,12 +124,17 @@ internal fun KaFirPsiSymbol<*, *>.psiOrSymbolEquals(other: Any?): Boolean {
 }
 
 /**
- * Note: This function is supposed only for simple cases there annotations can be declared only
- * directly on the underlying [KtAnnotated], so cases like property accessors or
- * generated constructor property are not supported.
+ * Provides [KaAnnotationList] for the given symbol.
+ *
+ * [anchorPsi] is used for the PSI-based optimization, set to [backingPsi] by default.
+ * In rare cases, a custom [anchorPsi] could be provided when annotations are not placed directly on the [backingPsi].
+ * E.g., some anonymous declarations with [KtAnnotated] backing PSI could have no annotation entries or not be a subject of
+ * some [KtAnnotatedExpression]. Instead, the corresponding annotations are placed on some parent PSI expression instead.
+ * Then, this PSI parent should be provided as [anchorPsi].
+ * See [KaFirAnonymousObjectSymbol.annotations] and [KaFirAnonymousFunctionSymbol.annotations] as examples.
  */
-internal fun KaFirKtBasedSymbol<KtAnnotated, *>.psiOrSymbolAnnotationList(): KaAnnotationList {
-    if (backingPsi?.hasAnnotations == false) {
+internal fun KaFirKtBasedSymbol<*, *>.psiOrSymbolAnnotationList(anchorPsi: KtElement? = backingPsi): KaAnnotationList {
+    if (anchorPsi?.hasAnnotations == false) {
         return KaBaseEmptyAnnotationList(token)
     }
 

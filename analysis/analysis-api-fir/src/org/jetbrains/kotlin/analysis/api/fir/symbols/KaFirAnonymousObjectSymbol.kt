@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
 
 internal open class KaFirAnonymousObjectSymbol private constructor(
     override val backingPsi: KtObjectDeclaration?,
@@ -38,7 +39,19 @@ internal open class KaFirAnonymousObjectSymbol private constructor(
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {
-            psiOrSymbolAnnotationList()
+            /**
+             * For object literals, [backingPsi] is [KtObjectDeclaration].
+             * However, annotations are placed on the enclosing [KtObjectLiteralExpression], i.e.,
+             * it has a [org.jetbrains.kotlin.psi.KtAnnotatedExpression] parent.
+             *
+             * So an adjusted PSI should be provided for the PSI-based optimization.
+             *
+             * ```kotlin
+             * @MyAnnotation object : MyInterface {}
+             * ```
+             */
+            val adjustedPsi = backingPsi?.parent as? KtObjectLiteralExpression
+            psiOrSymbolAnnotationList(adjustedPsi ?: backingPsi)
         }
 
     override val superTypes: List<KaType>
