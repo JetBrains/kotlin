@@ -3,31 +3,52 @@ plugins {
     id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     `java-library`
+    kotlin("jvm")
+    id("intellij-patched-fat-jar")
 }
 
 // See ":dependencies:intellij-core" for the complete list of modules included in "intellij-core"
 
 val intellijVersion = kotlinBuildProperties.versionsProperty("intellijSdk").get()
 
+val intellijArtifacts = listOf(
+    "com.jetbrains.intellij.platform:util-base-multiplatform:$intellijVersion",
+    "com.jetbrains.intellij.platform:util-class-loader:$intellijVersion",
+    "com.jetbrains.intellij.platform:util-multiplatform:$intellijVersion",
+    "com.jetbrains.intellij.platform:util-rt:$intellijVersion",
+    "com.jetbrains.intellij.platform:util-xml-dom:$intellijVersion",
+    "com.jetbrains.intellij.java:java-frontback-psi-impl:$intellijVersion",
+    "com.jetbrains.intellij.java:java-psi-impl:$intellijVersion",
+    "com.jetbrains.intellij.java:java-syntax:$intellijVersion",
+    "com.jetbrains.intellij.platform:eel:$intellijVersion",
+    "com.jetbrains.intellij.platform:plugin-system-parser-impl:$intellijVersion",
+    "com.jetbrains.intellij.platform:syntax:$intellijVersion",
+    "com.jetbrains.intellij.platform:syntax-extensions:$intellijVersion",
+    "com.jetbrains.intellij.platform:syntax-psi:$intellijVersion",
+    "com.jetbrains.intellij.platform:diagnostic:$intellijVersion",
+    "com.jetbrains.intellij.platform:diagnostic-telemetry:$intellijVersion",
+    "com.jetbrains.intellij.platform:syntax-i18-n:$intellijVersion",
+    "com.jetbrains.intellij.platform:syntax-util:$intellijVersion",
+    "com.jetbrains.intellij.platform:util-progress:$intellijVersion",
+    "com.jetbrains.intellij.platform:util-coroutines:$intellijVersion",
+)
+
 dependencies {
-    api("com.jetbrains.intellij.platform:util-base-multiplatform:$intellijVersion") { isTransitive = false }
-    api("com.jetbrains.intellij.platform:util-class-loader:$intellijVersion") { isTransitive = false }
-    api("com.jetbrains.intellij.platform:util-multiplatform:$intellijVersion") { isTransitive = false }
-    api("com.jetbrains.intellij.platform:util-rt:$intellijVersion") { isTransitive = false }
-    api("com.jetbrains.intellij.platform:util-xml-dom:$intellijVersion") { isTransitive = false }
-    api("com.jetbrains.intellij.java:java-frontback-psi-impl:$intellijVersion") { isTransitive = false }
-    api("com.jetbrains.intellij.java:java-psi-impl:$intellijVersion") { isTransitive = false }
-    api("com.jetbrains.intellij.java:java-syntax:$intellijVersion") { isTransitive = false }
-    api("com.jetbrains.intellij.platform:eel:$intellijVersion") { isTransitive = false }
-    api("com.jetbrains.intellij.platform:plugin-system-parser-impl:$intellijVersion") { isTransitive = false }
-    api("com.jetbrains.intellij.platform:syntax:$intellijVersion") { isTransitive = false }
-    api("com.jetbrains.intellij.platform:syntax-extensions:$intellijVersion") { isTransitive = false }
-    api("com.jetbrains.intellij.platform:syntax-psi:$intellijVersion") { isTransitive = false }
-    runtimeOnly("com.jetbrains.intellij.platform:diagnostic:$intellijVersion") { isTransitive = false }
-    runtimeOnly("com.jetbrains.intellij.platform:diagnostic-telemetry:$intellijVersion") { isTransitive = false }
-    runtimeOnly("com.jetbrains.intellij.platform:syntax-i18-n:$intellijVersion") { isTransitive = false }
-    runtimeOnly("com.jetbrains.intellij.platform:syntax-util:$intellijVersion") { isTransitive = false }
-    runtimeOnly("com.jetbrains.intellij.platform:util-progress:$intellijVersion") { isTransitive = false }
-    runtimeOnly("com.jetbrains.intellij.platform:util-coroutines:$intellijVersion") { isTransitive = false }
-    runtimeOnly(libs.opentelemetry.api) { isTransitive = false }
+    intellijArtifacts.forEach {
+        compileOnly(it) { isTransitive = false }
+        embedded(it) { isTransitive = false }
+    }
+
+    embedded(libs.opentelemetry.api) { isTransitive = false }
+
+    compileOnly(project(":dependencies:intellij-java-psi-api"))
+    compileOnly(kotlinStdlib())
+    compileOnly(libs.intellij.fastutil)
+    compileOnly(libs.org.jetbrains.annotations)
+}
+
+sourceSets {
+    "main" {
+        projectDefault()
+    }
 }
