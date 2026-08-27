@@ -56,7 +56,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> error("Dynamic casts are not supported in Wasm backend")
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> expression
             IrTypeOperator.IMPLICIT_INTEGER_COERCION -> lowerIntegerCoercion(expression)
-            IrTypeOperator.IMPLICIT_NOTNULL -> lowerImplicitCast(expression)
+            IrTypeOperator.IMPLICIT_NOTNULL -> lowerCast(expression, isSafe = false)
             IrTypeOperator.INSTANCEOF -> lowerInstanceOf(expression, inverted = false)
             IrTypeOperator.NOT_INSTANCEOF -> lowerInstanceOf(expression, inverted = true)
             IrTypeOperator.CAST -> lowerCast(expression, isSafe = false)
