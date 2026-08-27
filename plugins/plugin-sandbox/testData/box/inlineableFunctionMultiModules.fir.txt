@@ -3,6 +3,7 @@ FILE: foo.kt
     package p3
 
     @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() public final fun Foo(text: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>|): R|kotlin/Unit| {
+        R|<local>/text|.R|SubstitutionOverride<some/MyInlineableFunction0.invoke: R|kotlin/Unit|>|()
     }
     @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() public final fun FooReturn(): R|some/MyInlineableFunction0<kotlin/Unit>| {
         ^FooReturn @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
@@ -12,13 +13,17 @@ FILE: foo.kt
     }
 Module: main
 FILE: main.kt
+    public final var log: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): R|kotlin/Unit|
     @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() public final fun Bar(): R|kotlin/Unit| {
         R|p3/Foo|(Foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            ^@Foo Unit
+            R|/log| = R|/log|.R|kotlin/String.plus|(String(O))
         }
         )
         R|p3/FooReturn|().R|SubstitutionOverride<some/MyInlineableFunction0.invoke: R|kotlin/Unit|>|()
     }
     public final fun box(): R|kotlin/String| {
-        ^box String(OK)
+        R|/Bar|()
+        ^box R|/log|.R|kotlin/String.plus|(String(K))
     }

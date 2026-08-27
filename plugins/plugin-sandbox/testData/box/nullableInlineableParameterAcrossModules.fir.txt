@@ -1,9 +1,14 @@
 Module: a
 FILE: a.kt
     public final fun RMenuItem(onClick: R|(() -> kotlin/Unit)?| = Null(null), trailing: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>?| = Null(null)): R|kotlin/Unit| {
+        R|<local>/onClick|?.{ $subj$.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|() }
+        R|<local>/trailing|?.{ $subj$.R|SubstitutionOverride<some/MyInlineableFunction0.invoke: R|kotlin/Unit|>|() }
     }
 Module: b
 FILE: b.kt
+    public final var log: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): R|kotlin/Unit|
     public final fun bar(onClick: R|(() -> kotlin/Unit)?| = Null(null)): R|kotlin/Unit| {
         R|/RMenuItem|(R|<local>/onClick|, R|<local>/onClick|?.{ $subj$.R|kotlin/let|<R|() -> kotlin/Unit|, R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>?|>(<L> = let@fun <anonymous>(it: R|() -> kotlin/Unit|): R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>?| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ let@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
@@ -14,5 +19,10 @@ FILE: b.kt
         ) })
     }
     public final fun box(): R|kotlin/String| {
-        ^box String(OK)
+        R|/bar|()
+        R|/bar|(bar@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/log| = R|/log|.R|kotlin/String.plus|(String(O))
+        }
+        )
+        ^box R|/log|.R|kotlin/String.plus|(String(K))
     }
