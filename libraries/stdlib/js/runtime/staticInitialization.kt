@@ -18,3 +18,8 @@ internal fun checkStaticInitializationState(state: Int, ctor: Ctor?): Boolean {
     }
     return state == INITIALIZATION_STATE_INITIALIZED
 }
+
+@UsedFromCompilerGeneratedCode
+internal fun staticInitializationFailureWithClassName(ctor: Ctor?) {
+    staticInitializationFailure(null, ctor?.`$metadata$`?.simpleName)
+}
