@@ -32,8 +32,26 @@ import java.io.File
  */
 class IncrementalJavaClassFromPreviousOutputTest : AbstractIncrementalK2JvmCompilerRunnerTest() {
 
+    /**
+     * The reference as `javac` records it. The `InnerClasses` attribute tells the reader `p/Lib$Nested` is
+     * nested without loading anything, and the recorded `ClassId` reaches `JavaTypeConversion` (KT-87507),
+     * so the reference resolves without the classpath-wide lookup.
+     */
     @Test
     fun testTheReferenceOfAPreviousOutputClassIsResolvedInTheLibraries() {
+        doTestReferenceOfAPreviousOutputClass(forgetNesting = false)
+    }
+
+    /**
+     * The same reference with the `InnerClasses` attribute stripped, which is what makes the reader load the
+     * referenced class through the classpath-wide lookup — see [forgetWhichClassesAreNested].
+     */
+    @Test
+    fun testTheReferenceOfAPreviousOutputClassWithoutNestingInfoIsResolvedInTheLibraries() {
+        doTestReferenceOfAPreviousOutputClass(forgetNesting = true)
+    }
+
+    private fun doTestReferenceOfAPreviousOutputClass(forgetNesting: Boolean) {
         val sourceRoot = File(workingDir, "src").apply { mkdirs() }
         val outputDirectory = File(workingDir, "out").apply { mkdirs() }
         val cacheDirectory = File(workingDir, "caches").apply { mkdirs() }
@@ -47,7 +65,9 @@ class IncrementalJavaClassFromPreviousOutputTest : AbstractIncrementalK2JvmCompi
             "p/Ref.java" to "package p; public class Ref { public Lib.Nested get() { return null; } }",
             classpath = library,
         )
-        forgetWhichClassesAreNested(File(previousJavaOutput, "p/Ref.class"))
+        if (forgetNesting) {
+            forgetWhichClassesAreNested(File(previousJavaOutput, "p/Ref.class"))
+        }
 
         val usage = File(sourceRoot, "usage.kt")
         usage.writeText("package p\n\nfun unrelated(): Int = 1\n")

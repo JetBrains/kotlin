@@ -36,6 +36,54 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-08-27 — third comment pass: comments restating the code deleted
+- **Change**: review find — several comments narrated the lines below them. Deleted the static-outer chain
+  note (the loop's own condition), the prose list of the three single-name lookup calls (the javac
+  divergence and the two pinning testData files kept), the `finderOver` KDoc, and the recovery half of the
+  out-of-scope note; the type-parameter identity trap moved to the return that hands the declaring class's
+  own instances over, and `firBackedJavaType`'s KDoc reduced to what `declarationChainRoot` is.
+- **Files**: `model/JavaTypeOverAst.kt`, `JavaParsingImplicitOuterTypeArgumentsTest.kt` (−13 comment lines).
+- **Tests**: `:compiler:java-direct:test` green.
+- **Result**: green — comments only, no behavior change.
+
+### 2026-08-27 — comment pass over `JavaClassifierTypeOverAst.computeClassifier`
+- **Change**: reread the pre-existing comments in the body of `computeClassifier` against the comment
+  conventions. The numbered walkthrough of the single-name lookup order collapsed to the javac divergence
+  and the two testData files that pin it; the justification of the in-scope pass shortened to why it runs
+  before the `resolve` fallback; the cross-file comment deleted (`classifierAdapterFor` documents it) and
+  the duplicated KT-87797 TODO dropped (it lives on `findInheritedTypeParameter`).
+- **Files**: `model/JavaTypeOverAst.kt` (−14 comment lines).
+- **Tests**: box + phased + module unit tests green.
+- **Result**: green — comments only, no behavior change.
+
+### 2026-08-27 — comment pass over the raw-type change
+- **Change**: reread the comment lines of the previous entry's diff against the comment conventions.
+  Deleted the KDoc of `unknownArguments` and three narrative block comments in the tests, dropped the
+  counterfactual passages (rejected fallback, "instead of degrading to `List<*>`") and the coverage
+  meta-commentary in the incremental test, moved the type-parameter identity trap to a single place
+  (`firBackedJavaType`), and shortened the two new testData headers.
+- **Files**: `model/JavaTypeOverAst.kt`, `resolution/JavaTypeResolver.kt`,
+  `JavaParsingImplicitOuterTypeArgumentsTest.kt`, `JavaParsingTypeSystemTest.kt`,
+  `IncrementalJavaClassFromPreviousOutputTest.kt`, 2 `testData/diagnostics/tests/j+k/*.kt` (−45 comment lines).
+- **Tests**: box + phased + module unit tests green; PSI and light-tree phased gates green.
+- **Result**: green — comments only, no behavior change.
+
+### 2026-08-27 — raw-ness derived from `null` type arguments; `firBackedJavaType` gets a declaration-chain root
+- **Change**: second review round on PR #7500. `JavaClassifierTypeOverAst.typeArguments` now emits one entry
+  per type parameter it has to supply and `null` where nothing is known (PSI's contract and order), and
+  `isRaw` is read off it — `computeIsRaw` and `isQualifiedByInheritor` deleted. Fixes the case where a
+  simple-name reference to an inner class of a generic outer, from a class that neither encloses nor inherits
+  it, produced `ConeErrorType(ConeUnresolvedNameError)` instead of a raw type. `firBackedJavaType` takes a
+  `declarationChainRoot` and owns the flexible unwrap plus an explicit `ConeTypeParameterType` arm, so nested
+  recovered arguments no longer degrade to `*`; `recoveredOuterTypeArgument` collapsed into one call.
+  `IncrementalJavaClassFromPreviousOutputTest` split into the attribute-present and attribute-stripped pair.
+- **Files**: `model/JavaTypeOverAst.kt`, `resolution/JavaTypeResolver.kt`,
+  `JavaParsingImplicitOuterTypeArgumentsTest.kt`, `JavaParsingTypeSystemTest.kt`,
+  `IncrementalJavaClassFromPreviousOutputTest.kt`, 2 new `testData/diagnostics/tests/j+k/*.kt`.
+- **Tests**: box + phased green; module unit tests 154/154; PSI and light-tree phased gates green;
+  both new testData files verified red without the fix.
+- **Result**: green — rationale in `implDocs/RAW_TYPE_ARGUMENT_UNIFICATION_2026_08_27.md`.
+
 ### 2026-08-26 — docs pass: log archived, instructions split into common + module parts
 - **Change**: archived the iteration log and the fully-landed `MERGED_REFACTORING_PLAN_2026_05_04.md`;
   split `AGENT_INSTRUCTIONS.md` into a module-independent `AGENT_INSTRUCTIONS_COMMON.md`

@@ -1,5 +1,12 @@
 # Implicit Outer Type Arguments — Review Decisions (2026-08-26)
 
+> **Partly superseded (2026-08-27).** A second round of review threads on the same PR changed two of
+> the decisions below: §4's separate `computeIsRaw` walk and §5's "a type parameter cannot go through
+> `firBackedJavaType`" are both gone. Raw-ness is now derived from `null` entries in
+> `typeArguments`, and `firBackedJavaType` takes a `declarationChainRoot`. Read
+> `RAW_TYPE_ARGUMENT_UNIFICATION_2026_08_27.md` first; §§1–3 and 6 here are unaffected and still
+> the reference for the per-outer scope check and the `classId` fallback.
+
 Rationale for the design decisions taken in response to the review of PR #7500 ("Drop PSI-based
 `JavaClassFinder` fallback in java-direct") on the two files that carry the implicit-outer-type-argument
 logic:
