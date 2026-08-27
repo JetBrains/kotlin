@@ -78,7 +78,8 @@ private class KotlinStandaloneAnnotationsResolver(
 
         if (!referencedName.parent().isRoot) {
             // we assume here that the annotation is used by its fully-qualified name
-            return buildSet { referencedName.resolveToClassIds(this) }
+            referencedName.resolveToClassIds(candidates)
+            return candidates
         }
 
         val targetName = referencedName.shortName()
