@@ -194,7 +194,7 @@ private fun LinkKlibsContext.scheduleDependenciesForDeserialization(
                 // associated KLIBs. Also, the current module is not supposed to ever participate in the deserialization process.
                 it.isForwardDeclarationModule || it.klibModuleOrigin is CurrentKlibModuleOrigin
             }
-            .associateBy { it.kotlinLibrary }
+            .associateBy { (it.klibModuleOrigin as DeserializedKlibModuleOrigin).library }
 
     // First, schedule all the dependencies for the deserialization using the CLI-order.
     for (library in loadedKlibs.all) {
