@@ -1447,7 +1447,7 @@ abstract class FirDataFlowAnalyzer(
 
     private fun processBackingFieldAccess(flow: MutableFlow, qualifiedAccess: FirQualifiedAccessExpression) {
         val callee = qualifiedAccess.calleeReference as? FirPropertyWithExplicitBackingFieldResolvedNamedReference ?: return
-        val fieldSymbol = callee.tryAccessExplicitFieldSymbol(components.context.publicApiInlineFunction, session) ?: return
+        val fieldSymbol = callee.tryAccessExplicitFieldSymbol(components.context.publicApiInlineFunction?.symbol, session) ?: return
         if (isPrivateToThisInvisibleAccess(qualifiedAccess, session, fieldSymbol)) return
         val variable = flow.getOrCreateVariable(qualifiedAccess) ?: return
         val returnType = components.returnTypeCalculator.tryCalculateReturnType(fieldSymbol).coneType

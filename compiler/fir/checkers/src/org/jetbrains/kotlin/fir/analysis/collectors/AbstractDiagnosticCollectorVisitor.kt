@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -329,21 +330,21 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     /**
-     * The inline contexts are built from the [function]'s resolved signature, so they must not be requested for a declaration which is
-     * not going to be visited: such a declaration may well be unresolved, as nobody had a reason to resolve it (KT-88889).
+     * The inline contexts are built from the [function]'s signature, so requesting them for a declaration which is not going to be
+     * visited resolves that declaration for nothing (KT-88889).
      *
      * @see shouldVisitDeclaration
      */
     private fun visitWithFunction(function: FirFunction, isInline: Boolean) {
         if (!shouldVisitDeclaration(function)) return
 
-        withInlineFunctionBodyIfApplicable(function, isInline) {
+        withInlineFunctionBodyIfApplicable(function.symbol, isInline) {
             visitWithDeclaration(function)
         }
     }
 
     @OptIn(PrivateForInline::class)
-    private inline fun <T> withInlineFunctionBodyIfApplicable(function: FirFunction, isInline: Boolean, block: () -> T): T {
+    private inline fun <T> withInlineFunctionBodyIfApplicable(function: FirFunctionSymbol<*>, isInline: Boolean, block: () -> T): T {
         val oldBodyContext = context.inlineFunctionBodyContext
         val oldInlinableParameterContext = context.inlinableParameterContext
         return try {

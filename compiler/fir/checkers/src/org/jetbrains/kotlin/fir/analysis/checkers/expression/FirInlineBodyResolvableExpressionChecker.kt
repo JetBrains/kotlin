@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isArrayLambdaConstructor
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.isInlinable
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
@@ -36,7 +35,7 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
     }
 
     class InlinableParameterContext(
-        private val inlineFunction: FirFunction,
+        private val inlineFunction: FirFunctionSymbol<*>,
         private val inlinableParameters: List<FirValueParameterSymbol>,
         private val session: FirSession,
     ) {
@@ -96,7 +95,7 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
         context(context: CheckerContext)
         private fun isNonLocalReturnAllowed(): Boolean {
             val declarations = context.containingDeclarations
-            val inlineFunctionIndex = declarations.indexOf(inlineFunction.symbol)
+            val inlineFunctionIndex = declarations.indexOf(inlineFunction)
             if (inlineFunctionIndex == -1) return true
 
             for (i in (inlineFunctionIndex + 1) until declarations.size) {
@@ -152,7 +151,7 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
                             calledFunctionSymbol.isArrayLambdaConstructor()
                     val factory = when {
                         calledFunctionIsInline -> when {
-                            !valueParameter.isInlinable(session) -> {
+                            !valueParameter.symbol.isInlinable(session) -> {
                                 FirErrors.USAGE_IS_NOT_INLINABLE
                             }
                             !valueParameterOfOriginalInlineFunction.isCrossinline &&
@@ -195,7 +194,10 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
     }
 }
 
-fun createInlinableParameterContext(function: FirFunction, session: FirSession): FirInlineBodyResolvableExpressionChecker.InlinableParameterContext {
-    val inlinableParameters = function.valueParameters.mapNotNull { p -> p.takeIf { it.isInlinable(session) }?.symbol }
+fun createInlinableParameterContext(
+    function: FirFunctionSymbol<*>,
+    session: FirSession,
+): FirInlineBodyResolvableExpressionChecker.InlinableParameterContext {
+    val inlinableParameters = function.valueParameterSymbols.filter { it.isInlinable(session) }
     return FirInlineBodyResolvableExpressionChecker.InlinableParameterContext(function, inlinableParameters, session)
 }
