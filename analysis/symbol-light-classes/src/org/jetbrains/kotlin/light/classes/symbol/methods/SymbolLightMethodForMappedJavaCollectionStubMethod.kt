@@ -53,7 +53,12 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
     private val hasImplementation: Boolean,
     private val substituteObjectWith: PsiType?,
     private val providedSignature: MethodSignature?,
-) : SymbolLightMethodBase(lightMemberOrigin = null, containingClass, methodIndex = METHOD_INDEX_BASE, isJvmExposedBoxed = false),
+) : SymbolLightMethodBase(
+    lightMemberOrigin = null,
+    containingClass = containingClass,
+    methodIndex = METHOD_INDEX_BASE,
+    jvmExposeBoxedKind = JvmExposeBoxedKind.REGULAR,
+),
     SyntheticElement {
 
     init {

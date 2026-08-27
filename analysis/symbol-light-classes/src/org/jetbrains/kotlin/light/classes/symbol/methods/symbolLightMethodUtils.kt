@@ -65,7 +65,33 @@ internal fun jvmExposeBoxedMode(callableSymbol: KaCallableSymbol): JvmExposeBoxe
     return if (isFeatureEnabled) JvmExposeBoxedMode.IMPLICIT else JvmExposeBoxedMode.NONE
 }
 
-internal class MethodGenerationResult(val isRegularMethodRequired: Boolean, val isBoxedMethodRequired: Boolean) {
+/**
+ * Which JVM declaration of a Kotlin callable a light method stands for.
+ *
+ * A callable exposed by [JvmExposeBoxed] normally has two JVM declarations, a [REGULAR] one and a [BOXED] one. When the
+ * signature has no value class to box, the JVM backend leaves the declaration alone instead of splitting it, which is
+ * [EXPOSED_AS_IS].
+ */
+internal enum class JvmExposeBoxedKind {
+    /** The declaration Kotlin itself calls: value classes are unboxed, and [JvmExposeBoxed] belongs to its boxed counterpart */
+    REGULAR,
+
+    /** The Java-facing declaration: value classes are boxed, the exposed name wins over [JvmName], and [JvmName] is hidden */
+    BOXED,
+
+    /**
+     * The single declaration of an explicitly exposed callable which has no value class to box. As the JVM backend neither
+     * replaces nor bridges it, it keeps both [JvmExposeBoxed] and [JvmName], and [JvmName] wins over the exposed name.
+     */
+    EXPOSED_AS_IS,
+}
+
+internal class MethodGenerationResult(
+    val isRegularMethodRequired: Boolean,
+    val isBoxedMethodRequired: Boolean,
+    /** The kind of the regular method; see [JvmExposeBoxedKind.EXPOSED_AS_IS] */
+    val regularMethodKind: JvmExposeBoxedKind,
+) {
     val isAnyMethodRequired: Boolean get() = isRegularMethodRequired || isBoxedMethodRequired
 }
 
@@ -153,6 +179,12 @@ internal fun methodGeneration(
         // Two methods with the same JVM signature cannot coexist, so the JVM backend keeps only the boxed one
         isRegularMethodRequired = isRegularAccessorRequired && !(isBoxedAccessorRequired && hasSameJvmSignatureWhenExposed()),
         isBoxedMethodRequired = isBoxedAccessorRequired,
+        // An explicit annotation stays on the declaration as long as the JVM backend doesn't split it into two methods
+        regularMethodKind = if (exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT && !isAffectedByValueClass && !isBoxedAccessorRequired) {
+            JvmExposeBoxedKind.EXPOSED_AS_IS
+        } else {
+            JvmExposeBoxedKind.REGULAR
+        },
     )
 }
 
