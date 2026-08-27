@@ -94,7 +94,7 @@ dependencies {
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-compat"))
     api(testFixtures(project(":compiler:test-infrastructure-utils"))) // for `@TestDataPath`/`@TestMetadata`
-    api(testRuntime)
+    api(project(":repo:test-runtime"))
 
     api(platform(libs.junit.bom))
     compileOnly(libs.junit.jupiter.engine)
