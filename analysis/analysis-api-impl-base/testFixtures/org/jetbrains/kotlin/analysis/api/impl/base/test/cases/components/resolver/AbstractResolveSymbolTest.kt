@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver
 
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.endOffset
+import com.intellij.psi.util.startOffset
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.expressions.contextSensitiveResolutionStatus
@@ -14,10 +17,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.findSpe
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExperimentalApi
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.psi.lookupLocally
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -59,27 +59,13 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
             assertSpecificResolutionApi(testServices, symbolAttempt, mainElement)
         }
 
-        @OptIn(KtExperimentalApi::class)
-        val localLookup = (mainElement as? KtSimpleNameExpression)?.lookupLocally()
-
-        if (localLookup != null) {
-            val resolved = symbolAttempt?.successfulSymbols?.singleOrNull()?.psi
-            testServices.assertions.assertNotNull(resolved) {
-                "${stringRepresentation(mainElement)} via lookupLocally resolved to ${stringRepresentation(localLookup)} which is not null, " +
-                        "but symbol attempt is ${stringRepresentation(symbolAttempt)}"
-            }
-            ignoreStabilityIfNeeded {
-                testServices.assertions.assertTrue(resolved!!.isEquivalentTo(localLookup)) {
-                    "${stringRepresentation(resolved)} != ${stringRepresentation(localLookup)}"
-                }
-            }
-        }
+        val localLookup = checkLookupLocally(mainElement, symbolAttempt, testServices)
 
         prettyPrint {
             if (mainElement is KtSimpleNameExpression) {
                 appendLine("isImplicitReferenceToCompanion: ${mainElement.isImplicitReferenceToCompanion}")
                 appendLine("contextSensitiveResolutionStatus: ${mainElement.contextSensitiveResolutionStatus}")
-                appendLine("lookupLocally: ${localLookup != null}")
+                appendLine("lookupLocally: $localLookup")
             }
 
             val representation = stringRepresentation(symbolAttempt)
@@ -113,9 +99,53 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
         null
     }
 
+    @OptIn(KtExperimentalApi::class)
+    context(_: KaSession)
+    private fun checkLookupLocally(
+        mainElement: KtElement,
+        symbolAttempt: KaSymbolResolutionAttempt?,
+        testServices: TestServices,
+    ): Boolean {
+        if (mainElement !is KtSimpleNameExpression) return true
+
+        val localLookup = mainElement.lookupLocally()
+        val resolved = symbolAttempt?.successfulSymbols?.singleOrNull()?.psi
+
+        val isSuppressed = Directives.IGNORE_LOOKUP_LOCALLY in testServices.moduleStructure.allDirectives
+        val isConsistent = areEquivalent(localLookup, resolved)
+
+        if (isSuppressed) {
+            if (isConsistent) {
+                testServices.assertions.fail {
+                    "IGNORE_LOOKUP_LOCALLY was used, but the resolution was consistent. Remove the IGNORE_LOOKUP_LOCALLY directive."
+                }
+            }
+
+            return localLookup != null
+        }
+
+        if (localLookup != null) {
+            testServices.assertions.assertNotNull(resolved) {
+                "${stringRepresentation(mainElement)} via lookupLocally resolved to ${stringRepresentation(localLookup)} which is not null, " +
+                        "but symbol attempt is ${stringRepresentation(symbolAttempt)}"
+            }
+            ignoreStabilityIfNeeded {
+                testServices.assertions.assertTrue(isConsistent) {
+                    "${stringRepresentation(resolved)} != ${stringRepresentation(localLookup)}"
+                }
+            }
+        }
+
+        return localLookup != null
+    }
+
     private object Directives : SimpleDirectivesContainer() {
         val RENDER_PSI_CLASS_NAME by directive(
             "Render also PSI class name for resolved symbols"
+        )
+
+        val IGNORE_LOOKUP_LOCALLY by directive(
+            "Ignore the local lookup check"
         )
     }
 }
@@ -147,4 +177,24 @@ internal fun assertSpecificResolutionApi(
             }
         }
     }
+}
+
+private fun areEquivalent(e1: PsiElement?, e2: PsiElement?): Boolean {
+    // work around default impl of PsiElementBase#isEquivalentTo, which currently has only a === check.
+    // that is problematic because in our tests we create copies of the source file of the test, and sometimes we
+    // can get different instances of the same logical element.
+    //
+    // This is just a workaround, we compare the position of the elements, and we check that the files they belong to match.
+    if (e1 == null) return e2 == null
+    if (e2 == null) return false
+
+    if (e1.startOffset != e2.startOffset || e1.endOffset != e2.endOffset) return false
+
+    val containingFile1 = e1.containingFile
+    val containingFile2 = e2.containingFile
+
+    if (containingFile1.isEquivalentTo(containingFile2)) return true
+    if (containingFile1.originalFile.isEquivalentTo(containingFile2)) return true
+    if (containingFile2.originalFile.isEquivalentTo(containingFile1)) return true
+    return false
 }
