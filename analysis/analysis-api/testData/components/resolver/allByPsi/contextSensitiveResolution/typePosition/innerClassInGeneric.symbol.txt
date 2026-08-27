@@ -58,7 +58,7 @@ KtUserType(119,128): 'A<String>'
 KtNameReferenceExpression(119,120): 'A'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A
@@ -178,7 +178,7 @@ KtUserType(191,200): 'A<String>'
 KtNameReferenceExpression(191,192): 'A'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A
@@ -295,7 +295,7 @@ KtUserType(255,261): 'A<Int>'
 KtNameReferenceExpression(255,256): 'A'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A

@@ -76,7 +76,7 @@ KtUserType(159,174): 'SealedInterface'
 KtNameReferenceExpression(159,174): 'SealedInterface'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedInterface
@@ -139,7 +139,7 @@ KtUserType(269,276): 'MyClass'
 KtNameReferenceExpression(269,276): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass

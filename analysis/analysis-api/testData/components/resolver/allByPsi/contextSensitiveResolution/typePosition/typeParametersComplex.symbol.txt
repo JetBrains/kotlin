@@ -91,7 +91,7 @@ KtUserType(150,166): 'SealedGeneric<T>'
 KtNameReferenceExpression(150,163): 'SealedGeneric'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
@@ -196,7 +196,7 @@ KtUserType(209,225): 'SealedGeneric<T>'
 KtNameReferenceExpression(209,222): 'SealedGeneric'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
