@@ -6,27 +6,47 @@
 package org.jetbrains.kotlin.gradle.mpp.publication
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.UnresolvedDependencyResult
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.GradleProjectBuildScriptInjectionContext
 import org.jetbrains.kotlin.gradle.testbase.GradleProject
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
+import java.io.Serializable
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
-import kotlin.io.path.appendText
-import kotlin.io.path.readText
-import kotlin.io.path.writeText
+
+/**
+ * A single (producer, consumer configuration) pair to be checked inside one consumer build.
+ *
+ * Instead of declaring the producer as a dependency of the consumer's source sets and resolving the real
+ * configuration, a "probe" configuration is created: it mirrors [mirroredConfiguration] (same attributes, same
+ * inherited dependencies) and additionally declares [producerCoordinates], if the producer is visible from that
+ * configuration at all. This way many producers can be checked in a single build without them affecting each other.
+ */
+internal data class ResolutionProbe(
+    val producerId: String,
+    val producerCoordinates: String?,
+    val mirroredConfiguration: String,
+) : Serializable {
+    /**
+     * Deliberately does not end with [mirroredConfiguration]: plugins often react to configuration names by suffix.
+     */
+    val probeConfigurationName get() = "probe_${mirroredConfiguration}_for_$producerId"
+
+    val reportPath get() = "$producerId/$mirroredConfiguration.txt"
+}
 
 fun GradleProject.prepareConsumerProject(
     consumer: Scenario.Project,
-    dependencies: List<Scenario.Project>,
+    producers: List<Scenario.Project>,
     localRepoDir: Path,
 ) {
     settingsGradleKts.replaceText("""dependencyResolutionManagement {""", """
@@ -37,51 +57,25 @@ fun GradleProject.prepareConsumerProject(
                 
     """.trimIndent())
 
-    when (consumer.variant) {
-        ProjectVariant.AndroidOnly -> prepareAndroidConsumer(dependencies)
-        ProjectVariant.JavaOnly -> prepareJavaConsumer(dependencies)
-        is ProjectVariant.Kmp -> prepareKmpConsumer(consumer, dependencies)
-    }
-}
+    if (consumer.variant is ProjectVariant.Kmp) enableKmpConsumerTargets(consumer)
 
-private fun GradleProject.prepareAndroidConsumer(dependencies: List<Scenario.Project>) {
-    buildGradleKts.appendText(
-        """
-            
-            dependencies {
-            ${dependencies.asDependenciesBlock()}
-            }
-        """.trimIndent()
-    )
+    val probes = producers.flatMap { producer ->
+        consumer.resolvedConfigurationsNames.map { configurationName ->
+            ResolutionProbe(
+                producerId = producer.id,
+                producerCoordinates = "${producer.packageName}:${producer.artifactName}:1.0"
+                    .takeIf { producer.isVisibleFrom(configurationName, consumer) },
+                mirroredConfiguration = configurationName,
+            )
+        }
+    }
 
     buildScriptInjection {
-        registerResolveDependenciesTask(
-            "flavor1DebugCompileClasspath",
-            "flavor1ReleaseCompileClasspath"
-        )
+        registerResolveDependenciesTask(probes)
     }
 }
 
-private fun List<Scenario.Project>.asDependenciesBlock(): String = joinToString("\n") {
-    """   api("${it.packageName}:${it.artifactName}:1.0") """
-}
-
-private fun GradleProject.prepareJavaConsumer(dependencies: List<Scenario.Project>) {
-    buildGradleKts.appendText(
-        """
-            
-            dependencies {
-            ${dependencies.asDependenciesBlock()}
-            }
-        """.trimIndent()
-    )
-
-    buildScriptInjection {
-        registerResolveDependenciesTask("compileClasspath")
-    }
-}
-
-private fun GradleProject.prepareKmpConsumer(consumer: Scenario.Project, dependencies: List<Scenario.Project>) {
+private fun GradleProject.enableKmpConsumerTargets(consumer: Scenario.Project) {
     val projectVariant = consumer.variant
     check(projectVariant is ProjectVariant.Kmp)
     val kotlinVersion = checkNotNull(consumer.kotlinVersion)
@@ -98,54 +92,28 @@ private fun GradleProject.prepareKmpConsumer(consumer: Scenario.Project, depende
         buildGradleKts.replaceText("/* Begin AGP", "// /* Begin AGP")
         buildGradleKts.replaceText("End AGP */", "// End AGP */")
     }
+}
 
-    val [commonMainDependencies, targetSpecificDependencies] = dependencies.partition { projectVariant.isCommonMainDependableOn(it.variant) }
+/**
+ * Repeats the source set placement of the producer dependency: a producer that can't be declared in `commonMain` is
+ * only visible from the compile classpaths of the targets its own source sets were added to.
+ */
+private fun Scenario.Project.isVisibleFrom(configurationName: String, consumer: Scenario.Project): Boolean {
+    val consumerVariant = consumer.variant
+    if (consumerVariant !is ProjectVariant.Kmp) return true
+    if (consumerVariant.isCommonMainDependableOn(variant)) return true
 
-    fun List<Scenario.Project>.asSourceSetDependenciesBlock(sourceSetName: String) = """
-
-        sourceSets.getByName("$sourceSetName").dependencies {
-        ${this.asDependenciesBlock()}
-        }
-    """.trimIndent()
-
-    val targetSpecificDependenciesBlock = buildString {
-        if (projectVariant.withJvm) {
-            appendLine(targetSpecificDependencies.filter { it.hasJvm }.asSourceSetDependenciesBlock("jvmMain"))
-        }
-        if (projectVariant.withAndroid) {
-            appendLine(targetSpecificDependencies.filter { it.hasAndroid }.asSourceSetDependenciesBlock("androidMain"))
-        }
-
-        val deps = targetSpecificDependencies.filter { it.isKmp }
-        listOf("linuxX64Main", "linuxArm64Main").forEach { appendLine(deps.asSourceSetDependenciesBlock(it)) }
-    }
-
-    buildGradleKts.appendText(
-        """
-            
-            kotlin { 
-              sourceSets.getByName("commonMain").dependencies {
-               ${commonMainDependencies.asDependenciesBlock()}
-              }
-              $targetSpecificDependenciesBlock
-            }           
-        """.trimIndent()
-    )
-
-    buildScriptInjection {
-        registerResolveDependenciesTask(
-            "jvmCompileClasspath",
-            "flavor1ReleaseCompileClasspath",
-            "flavor1DebugCompileClasspath",
-            "linuxX64CompileKlibraries",
-            "linuxArm64CompileKlibraries"
-        )
+    return when (configurationName) {
+        "jvmCompileClasspath" -> hasJvm
+        "flavor1DebugCompileClasspath", "flavor1ReleaseCompileClasspath" -> hasAndroid
+        "linuxX64CompileKlibraries", "linuxArm64CompileKlibraries" -> isKmp
+        else -> error("Unexpected resolved configuration name: $configurationName")
     }
 }
 
-
 private abstract class ResolveDependenciesTask : DefaultTask() {
-    private class ResolutionResult(
+    private class Report(
+        val probe: ResolutionProbe,
         val dependencies: Set<DependencyResult>,
         val components: Set<ResolvedComponentResult>,
     )
@@ -153,45 +121,68 @@ private abstract class ResolveDependenciesTask : DefaultTask() {
     @get:OutputDirectory
     val outDir: File = project.file("resolvedDependenciesReports")
 
-    private val configurations = mutableMapOf<String, ResolveDependenciesTask.ResolutionResult>()
-    fun reportForConfiguration(name: String) {
-        val configuration = project.configurations.findByName(name) ?: return
-        configurations[name] = configuration.incoming.resolutionResult.let { result ->
-            ResolutionResult(result.allDependencies, result.allComponents)
+    private val reports = mutableListOf<Report>()
+
+    fun reportForProbe(probe: ResolutionProbe) {
+        val mirroredConfiguration = project.configurations.findByName(probe.mirroredConfiguration) ?: return
+        val probeConfiguration = createProbeConfiguration(probe, mirroredConfiguration)
+        reports += probeConfiguration.incoming.resolutionResult.let { result ->
+            Report(probe, result.allDependencies, result.allComponents)
         }
     }
+
+    private fun createProbeConfiguration(probe: ResolutionProbe, mirroredConfiguration: Configuration): Configuration =
+        project.configurations.create(probe.probeConfigurationName) { probeConfiguration ->
+            probeConfiguration.isCanBeConsumed = false
+            probeConfiguration.isCanBeResolved = true
+            // inherits the dependencies the consumer project declares itself, including the ones added lazily by plugins
+            probeConfiguration.extendsFrom(mirroredConfiguration)
+            for (attribute in mirroredConfiguration.attributes.keySet()) {
+                @Suppress("UNCHECKED_CAST")
+                probeConfiguration.attributes.attribute(
+                    attribute as Attribute<Any>,
+                    mirroredConfiguration.attributes.getAttribute(attribute)!!,
+                )
+            }
+            probe.producerCoordinates?.let {
+                probeConfiguration.dependencies.add(project.dependencies.create(it))
+            }
+        }
 
     @TaskAction
     fun action() {
-        configurations.forEach { [name, artifacts] ->
-            reportResolutionResult(name, artifacts)
-        }
+        reports.forEach { report -> reportResolutionResult(report) }
     }
 
-    private fun reportResolutionResult(name: String, resolutionResult: ResolveDependenciesTask.ResolutionResult) {
+    private fun reportResolutionResult(report: Report) {
+        // the probe configuration stands in for the real one: report it under the name of the mirrored configuration
+        fun String.asMirroredConfiguration() = replace(report.probe.probeConfigurationName, report.probe.mirroredConfiguration)
+
         val content = buildString {
             // report errors if any
-            resolutionResult.dependencies
+            report.dependencies
                 .filterIsInstance<UnresolvedDependencyResult>()
                 .forEach {
-                    appendLine("ERROR: ${it.attempted} -> ${it.failure}")
+                    appendLine("ERROR: ${it.attempted} -> ${it.failure}".asMirroredConfiguration())
                 }
 
-            resolutionResult.components
-                .map { component -> "${component.id} => ${component.variants.map { it.displayName }}" }
+            report.components
+                .map { component -> "${component.id} => ${component.variants.map { it.displayName }}".asMirroredConfiguration() }
                 .sorted()
                 .joinToString("\n")
                 .also { append(it) }
         }
 
-        outDir.resolve("${name}.txt").writeText(content)
+        val reportFile = outDir.resolve(report.probe.reportPath)
+        reportFile.parentFile.mkdirs()
+        reportFile.writeText(content)
     }
 }
 
-internal fun GradleProjectBuildScriptInjectionContext.registerResolveDependenciesTask(vararg configurationNames: String) {
+internal fun GradleProjectBuildScriptInjectionContext.registerResolveDependenciesTask(probes: List<ResolutionProbe>) {
     project.tasks.register("resolveDependencies", ResolveDependenciesTask::class.java) { task ->
-        for (configurationName in configurationNames) {
-            task.reportForConfiguration(configurationName)
+        for (probe in probes) {
+            task.reportForProbe(probe)
         }
     }
 }

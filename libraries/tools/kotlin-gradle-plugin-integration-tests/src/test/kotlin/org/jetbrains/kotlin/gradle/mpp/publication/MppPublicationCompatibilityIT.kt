@@ -21,9 +21,21 @@ import org.junit.jupiter.params.provider.MethodSource
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.deleteRecursively
+import kotlin.io.path.exists
 import kotlin.io.path.readText
 import kotlin.io.path.relativeTo
 import kotlin.io.path.walk
+
+/**
+ * All scenarios sharing the same consumer project: they are checked by a single Gradle build.
+ */
+data class ConsumerGroup(
+    val consumer: Scenario.Project,
+    val producers: List<Scenario.Project>,
+) {
+    override fun toString(): String = consumer.id + " consumes " + producers.size + " producers: " +
+            producers.joinToString { it.id }
+}
 
 @ExtendWith(GradleParameterResolver::class)
 class MppPublicationCompatibilityIT : KGPBaseTest() {
@@ -91,6 +103,19 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
         private fun Scenario.expectedResolvedConfigurationTestReport(configurationName: String): Path = expectedScenarioDataDir
             .resolve("$configurationName.txt")
 
+        /**
+         * AGP declares the same dependency edge twice in the debug variant compile classpath, so resolving it reports
+         * the very same unresolved dependency twice, while resolving it in an isolated configuration reports it once.
+         * The multiplicity of identical "ERROR:" lines carries no information, so it is ignored on both sides of the
+         * comparison, which keeps the checked-in test data unchanged.
+         */
+        private fun String.collapseRepeatedErrors(): String {
+            val lines = lines()
+            return lines
+                .filterIndexed { index, line -> !(line.startsWith("ERROR: ") && index > 0 && lines[index - 1] == line) }
+                .joinToString("\n")
+        }
+
         private val ProjectVariant.sampleDirectoryName: String
             get() = when (this) {
                 ProjectVariant.AndroidOnly -> "androidOnly"
@@ -116,9 +141,18 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
         }
 
         @JvmStatic
-        fun rerunScenariosForDebugging(specificGradleVersion: GradleVersion?): Iterable<Scenario> {
+        fun consumerGroups(specificGradleVersion: GradleVersion?): Iterable<ConsumerGroup> = scenarios(specificGradleVersion)
+            .groupBy { it.consumer }
+            .map { [consumer, consumerScenarios] ->
+                ConsumerGroup(consumer, consumerScenarios.map { it.producer }.sortedBy { it.id })
+            }
+
+        /** Runs a single (consumer, producer) pair, which is convenient for debugging one failing scenario. */
+        @JvmStatic
+        fun rerunSingleScenarioForDebugging(specificGradleVersion: GradleVersion?): Iterable<ConsumerGroup> {
             val rerunIndex = 2
-            return listOf(scenarios(specificGradleVersion).toList()[rerunIndex])
+            val scenario = scenarios(specificGradleVersion).toList()[rerunIndex]
+            return listOf(ConsumerGroup(scenario.consumer, listOf(scenario.producer)))
         }
 
         @JvmStatic
@@ -132,10 +166,10 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
     @MppGradlePluginTests
     @ParameterizedTest
     @Suppress("JUnitMalformedDeclaration") // FIXME: IDEA-320187
-    @MethodSource("scenarios") /** For debugging use [rerunScenariosForDebugging] */
-    fun testKmpPublication(scenario: Scenario) {
-        scenario.producer.publish(localRepoDir)
-        scenario.testConsumption(localRepoDir)
+    @MethodSource("consumerGroups") /** For debugging use [rerunSingleScenarioForDebugging] */
+    fun testKmpPublication(consumerGroup: ConsumerGroup) {
+        consumerGroup.producers.forEach { it.publish(localRepoDir) }
+        consumerGroup.testConsumption(localRepoDir)
     }
 
     @TestMetadata("mppPublicationCompatibility")
@@ -184,7 +218,7 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
         }
     }
 
-    private fun Scenario.testConsumption(repoDir: Path) {
+    private fun ConsumerGroup.testConsumption(repoDir: Path) {
         val consumerDirectory = consumer.variant.sampleDirectoryName
 
         project(
@@ -193,7 +227,7 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
             localRepoDir = repoDir,
             buildJdk = jdk17Info.javaHome
         ) {
-            prepareConsumerProject(consumer, listOf(producer), repoDir)
+            prepareConsumerProject(consumer, producers, repoDir)
             val buildOptions = if (consumer.hasAndroid) {
                 val androidVersion = consumer.agpVersionString!!
                 defaultBuildOptions.copy(androidVersion = androidVersion)
@@ -204,23 +238,35 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
             // WarningMode.None because of AGP issue: https://issuetracker.google.com/399393875
             build("resolveDependencies", buildOptions = buildOptions.copy(warningMode = WarningMode.None))
 
-            fun assertResolvedDependencies(configurationName: String) {
-                val actualReport = projectPath.resolve("resolvedDependenciesReports")
+            fun assertResolvedDependencies(scenario: Scenario, configurationName: String) {
+                val actualReportFile = projectPath.resolve("resolvedDependenciesReports")
+                    .resolve(scenario.producer.id)
                     .resolve("${configurationName}.txt")
-                    .readText()
+                if (!actualReportFile.exists()) fail {
+                    "No resolution report was produced for \"$scenario\", configuration \"$configurationName\": " +
+                            "$actualReportFile doesn't exist"
+                }
 
-                val expectedReportFile = expectedResolvedConfigurationTestReport(configurationName)
-                val actualReportSanitized = actualReport
+                val expectedReportFile = scenario.expectedResolvedConfigurationTestReport(configurationName)
+                val actualReportSanitized = actualReportFile.readText()
                     .lineSequence()
                     .filterNot { it.contains("stdlib") }
                     .map { it.replace(TestVersions.Kotlin.CURRENT, "SNAPSHOT") }
                     .joinToString("\n")
 
                 assertEqualsToFile(expectedReportFile.toFile(), actualReportSanitized) {
-                    if (it.endsWith("\n")) it.dropLast(1) else it
+                    (if (it.endsWith("\n")) it.dropLast(1) else it).collapseRepeatedErrors()
                 }
             }
-            assertAll(consumer.resolvedConfigurationsNames.map { configurationName -> { assertResolvedDependencies(configurationName) } })
+
+            assertAll(
+                producers.flatMap { producer ->
+                    val scenario = Scenario(consumer, producer)
+                    consumer.resolvedConfigurationsNames.map { configurationName ->
+                        { assertResolvedDependencies(scenario, configurationName) }
+                    }
+                }
+            )
         }
     }
 }
