@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.generators.tests
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
+import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
+import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlinx.atomicfu.incremental.AbstractIncrementalJVMWithAtomicfuRunnerTest
 import org.jetbrains.kotlinx.atomicfu.runners.*
@@ -80,4 +82,10 @@ fun main(args: Array<String>) {
 private fun atomicfuNative() = arrayOf(
     annotation(Tag::class.java, "atomicfu-native"),
     annotation(EnforcedHostTarget::class.java), // TODO(KT-65977): Make atomicfu tests run on all targets.
+
+    annotation(
+        EnforcedProperty::class.java,
+        "property" to ClassLevelProperty.DEPEND_ON_PLATFORM_LIBS,
+        "propertyValue" to "true"
+    ),
 )
