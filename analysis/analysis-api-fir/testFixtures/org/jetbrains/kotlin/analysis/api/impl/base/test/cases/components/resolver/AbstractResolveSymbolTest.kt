@@ -48,27 +48,13 @@ internal fun AbstractResolveByElementTest.generateSymbolOutput(mainElement: KtEl
         assertSpecificResolutionApi(testServices, symbolAttempt, mainElement)
     }
 
-    @OptIn(KtExperimentalApi::class)
-    val localLookup = (mainElement as? KtSimpleNameExpression)?.lookupLocally()
-
-    if (localLookup != null) {
-        val resolved = symbolAttempt?.successfulSymbols?.singleOrNull()?.psi
-        testServices.assertions.assertNotNull(resolved) {
-            "${stringRepresentation(mainElement)} via lookupLocally resolved to ${stringRepresentation(localLookup)} which is not null, " +
-                    "but symbol attempt is ${stringRepresentation(symbolAttempt)}"
-        }
-        ignoreStabilityIfNeeded {
-            testServices.assertions.assertTrue(resolved!!.isEquivalentTo(localLookup)) {
-                "${stringRepresentation(resolved)} != ${stringRepresentation(localLookup)}"
-            }
-        }
-    }
+    val localLookup = checkLookupLocally(mainElement, symbolAttempt, testServices)
 
     return prettyPrint {
         if (mainElement is KtSimpleNameExpression) {
             appendLine("isImplicitReferenceToCompanion: ${mainElement.isImplicitReferenceToCompanion}")
             appendLine("contextSensitiveResolutionStatus: ${mainElement.contextSensitiveResolutionStatus}")
-            appendLine("lookupLocally: ${localLookup != null}")
+            appendLine("lookupLocally: $localLookup")
         }
 
         val representation = stringRepresentation(symbolAttempt)
@@ -103,6 +89,10 @@ internal object ResolveSymbolTestDirectives : SimpleDirectivesContainer() {
     val RENDER_PSI_CLASS_NAME by directive(
         "Render also PSI class name for resolved symbols"
     )
+
+    val IGNORE_LOOKUP_LOCALLY by directive(
+        "Ignore the local lookup check"
+    )
 }
 
 /**
@@ -132,4 +122,47 @@ internal fun assertSpecificResolutionApi(
             }
         }
     }
+}
+
+@OptIn(KtExperimentalApi::class)
+context(_: KaSession)
+private fun AbstractResolveByElementTest.checkLookupLocally(
+    mainElement: KtElement,
+    symbolAttempt: KaSymbolResolutionAttempt?,
+    testServices: TestServices,
+): Boolean {
+    if (mainElement !is KtSimpleNameExpression) return true
+
+    val localLookup = mainElement.lookupLocally()
+    val resolved = symbolAttempt?.successfulSymbols?.singleOrNull()?.psi
+
+    val isSuppressed = ResolveSymbolTestDirectives.IGNORE_LOOKUP_LOCALLY in testServices.moduleStructure.allDirectives
+    val isConsistent = when {
+        localLookup == null -> resolved == null
+        else -> localLookup.isEquivalentTo(resolved)
+    }
+
+    if (isSuppressed) {
+        if (isConsistent) {
+            testServices.assertions.fail {
+                "IGNORE_LOOKUP_LOCALLY was used, but the resolution was consistent. Remove the IGNORE_LOOKUP_LOCALLY directive."
+            }
+        }
+
+        return localLookup != null
+    }
+
+    if (localLookup != null) {
+        testServices.assertions.assertNotNull(resolved) {
+            "${stringRepresentation(mainElement)} via lookupLocally resolved to ${stringRepresentation(localLookup)} which is not null, " +
+                    "but symbol attempt is ${stringRepresentation(symbolAttempt)}"
+        }
+        ignoreStabilityIfNeeded {
+            testServices.assertions.assertTrue(isConsistent) {
+                "${stringRepresentation(resolved)} != ${stringRepresentation(localLookup)}"
+            }
+        }
+    }
+
+    return localLookup != null
 }
