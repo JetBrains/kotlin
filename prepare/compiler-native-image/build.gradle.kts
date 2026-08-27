@@ -150,8 +150,6 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
     val classpathFiles = files(nativeImageClasspath, resources)
 
     val basicNativeArgs = listOf(
-        "-J-Xmx10g",
-        "-J-XX:MaxHeapFreeRatio=30",
         "-Os",
         "-H:+AddAllCharsets",
         "-H:+UnlockExperimentalVMOptions",
@@ -169,6 +167,7 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
             .asText.get()
             .trim()
             .lineSequence()
+            .filterNot { it.isBlank() || it.startsWith("#") }
             .map { "-H:Preserve=package=$it" }
             .toList().toTypedArray(),
     ) else emptyList()

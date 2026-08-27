@@ -1,54 +1,28 @@
-java.io
-java.lang
-java.lang.annotation
-java.lang.invoke
-java.lang.ref
-java.lang.reflect
-java.math
-java.net
-java.nio
-java.nio.channels
-java.nio.charset
-java.nio.file
-java.nio.file.spi
-java.security
-java.text
-java.time
-java.util
-java.util.concurrent
-java.util.concurrent.atomic
-java.util.function
-java.util.jar
-java.util.regex
-java.util.stream
-java.util.zip
+java.*
+# we can't preserve the whole `kotlin.*` because of the bug in GraalVM
+# https://github.com/oracle/graal/issues/13990
 kotlin
 kotlin.collections
 kotlin.jvm.internal
 kotlin.ranges
 kotlin.text
 kotlin.sequences
+# using `org,jetbrains.kotlin.*` significantly increases the size of the image
+# because we're using the embedded Kotlin compiler
+# thus, we're trying to preserve only the 'compiler' packages that are used by
+# plugins
 org.jetbrains.kotlin
-org.jetbrains.kotlin.backend.common
-org.jetbrains.kotlin.backend.common.extensions
-org.jetbrains.kotlin.backend.common.ir
-org.jetbrains.kotlin.backend.common.lower
-org.jetbrains.kotlin.backend.common.output
-org.jetbrains.kotlin.backend.jvm
-org.jetbrains.kotlin.backend.jvm.codegen
-org.jetbrains.kotlin.backend.jvm.intrinsics
-org.jetbrains.kotlin.backend.jvm.lower
-org.jetbrains.kotlin.cli
-org.jetbrains.kotlin.config
-org.jetbrains.kotlin.contracts.description
-org.jetbrains.kotlin.compiler.plugin
-org.jetbrains.kotlin.descriptors
-org.jetbrains.kotlin.diagnostics
-org.jetbrains.kotlin.diagnostics.rendering
+org.jetbrains.kotlin.backend.*
+org.jetbrains.kotlin.cli.*
+org.jetbrains.kotlin.config.*
+org.jetbrains.kotlin.contracts.*
+org.jetbrains.kotlin.compiler.*
+org.jetbrains.kotlin.descriptors.*
+org.jetbrains.kotlin.diagnostics.*
 org.jetbrains.kotlin.fir.*
 org.jetbrains.kotlin.ir.*
-org.jetbrains.kotlin.load.kotlin
-org.jetbrains.kotlin.name
-org.jetbrains.kotlin.platform.konan
-org.jetbrains.kotlin.types
-org.jetbrains.kotlin.util
+org.jetbrains.kotlin.load.*
+org.jetbrains.kotlin.name.*
+org.jetbrains.kotlin.platform.*
+org.jetbrains.kotlin.types.*
+org.jetbrains.kotlin.util.*

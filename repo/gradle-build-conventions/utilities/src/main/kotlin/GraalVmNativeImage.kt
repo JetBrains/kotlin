@@ -50,6 +50,6 @@ fun JavaLauncher.resolveNativeImageExecutable(isWindows: Boolean = false): Path 
 
 private fun String.asSemVer(): List<Int> {
     return split(".").map { it.toInt() }.also {
-        if (it.size != 3) throw GradleException("Unexpected GRAALVM_VERSION format: \'$this\'")
-    }
+        if (it.size < 3) throw GradleException("Unexpected GRAALVM_VERSION format: \'$this\'")
+    }.take(3)
 }
