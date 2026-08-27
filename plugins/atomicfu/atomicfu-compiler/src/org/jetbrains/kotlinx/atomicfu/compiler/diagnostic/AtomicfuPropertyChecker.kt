@@ -24,10 +24,9 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.text
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.AtomicfuStandardClassIds
 
-private const val KOTLINX_ATOMICFU = "kotlinx.atomicfu"
-
-private fun FirProperty.isKotlinxAtomicfu(): Boolean = returnTypeRef.coneType.classId?.packageFqName?.asString() == KOTLINX_ATOMICFU
+private fun FirProperty.isKotlinxAtomicfu(): Boolean = returnTypeRef.coneType.classId?.packageFqName == AtomicfuStandardClassIds.BASE_ATOMICFU_PACKAGE
 
 private val FirProperty.resolvedVisibility: EffectiveVisibility
     get() = publishedApiEffectiveVisibility ?: effectiveVisibility

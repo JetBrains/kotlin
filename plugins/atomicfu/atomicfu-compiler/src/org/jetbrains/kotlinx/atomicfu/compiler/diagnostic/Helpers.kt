@@ -9,47 +9,34 @@ import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.AtomicfuStandardClassIds
 
-private const val KOTLINX_ATOMICFU = "kotlinx.atomicfu"
 private val ATOMIC_SCALAR_TYPES = setOf(
-    "AtomicInt",
-    "AtomicLong",
-    "AtomicBoolean",
-    "AtomicRef",
+    AtomicfuStandardClassIds.AtomicInt,
+    AtomicfuStandardClassIds.AtomicLong,
+    AtomicfuStandardClassIds.AtomicBoolean,
+    AtomicfuStandardClassIds.AtomicRef
 )
 private val ATOMIC_ARRAY_TYPES = setOf(
-    "AtomicIntArray",
-    "AtomicLongArray",
-    "AtomicBooleanArray",
-    "AtomicArray"
+    AtomicfuStandardClassIds.AtomicArray,
+    AtomicfuStandardClassIds.AtomicIntArray,
+    AtomicfuStandardClassIds.AtomicLongArray,
+    AtomicfuStandardClassIds.AtomicBooleanArray
 )
-private val ATOMIC_FACTORIES = setOf("atomic", "atomicArrayOfNulls")
+private val ATOMIC_FACTORIES: Set<Name> = setOf(Name.identifier("atomic"), Name.identifier("atomicArrayOfNulls"))
+    .plus(ATOMIC_SCALAR_TYPES.map { it.shortClassName })
+    .plus(ATOMIC_ARRAY_TYPES.map { it.shortClassName })
 
 /** Atomic scalar or array type */
-internal fun ClassId.isAtomicType(): Boolean {
-    if (packageFqName.toString() != KOTLINX_ATOMICFU) return false
-    val className = relativeClassName.toString()
-    return className in ATOMIC_SCALAR_TYPES || className in ATOMIC_ARRAY_TYPES
-}
+internal fun ClassId.isAtomicType(): Boolean = this in ATOMIC_SCALAR_TYPES || isAtomicArrayType()
 
-internal fun ClassId.isAtomicArrayType(): Boolean {
-    if (packageFqName.toString() != KOTLINX_ATOMICFU) return false
-    val className = relativeClassName.toString()
-    return className in ATOMIC_ARRAY_TYPES
-}
+internal fun ClassId.isAtomicArrayType(): Boolean = this in ATOMIC_ARRAY_TYPES
 
-internal fun ClassId.isAtomicRefType(): Boolean {
-    if (packageFqName.toString() != KOTLINX_ATOMICFU) return false
-    return relativeClassName.toString() == "AtomicRef"
-}
+internal fun ClassId.isAtomicRefType(): Boolean = this == AtomicfuStandardClassIds.AtomicRef
 
-internal fun ClassId.isAtomicRefArrayType(): Boolean {
-    if (packageFqName.toString() != KOTLINX_ATOMICFU) return false
-    return relativeClassName.toString() == "AtomicArray"
-}
+internal fun ClassId.isAtomicRefArrayType(): Boolean = this == AtomicfuStandardClassIds.AtomicArray
 
 internal fun FirNamedReference.isAtomicFactory(): Boolean {
-    if (symbol?.packageFqName()?.asString() != KOTLINX_ATOMICFU) return false
-    val nameStr = name.asString()
-    return nameStr in ATOMIC_SCALAR_TYPES || nameStr in ATOMIC_ARRAY_TYPES || nameStr in ATOMIC_FACTORIES
+    return symbol?.packageFqName() == AtomicfuStandardClassIds.BASE_ATOMICFU_PACKAGE && name in ATOMIC_FACTORIES
 }
