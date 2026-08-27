@@ -558,6 +558,7 @@ private val KaSymbol.supportsOnlyPsiBasedPointersByDesign: Boolean
 
         is KaNamedFunctionSymbol,
         is KaPropertySymbol,
+        is KaTypeAliasSymbol,
             -> location == KaSymbolLocation.LOCAL
 
         is KaNamedClassSymbol -> {
