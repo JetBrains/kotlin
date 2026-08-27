@@ -324,6 +324,17 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
     }
 
     override fun visitClass(klass: KtClass) {
+        if (contextKind == LocalLookupContextKind.VALUE && name == klass.nameAsSafeName) {
+//            object A
+//            fun f() {
+//                class A { companion object }
+//                A
+//                ^ this A should resolve to the companion object
+//            }
+            klass.companionObjects.firstOrNull()
+                ?.takeIf(::isValidCandidate)
+                ?.let(::found)
+        }
         foundIfNameMatches(klass)
     }
 
@@ -364,11 +375,11 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
         _found = element
     }
 
-    private fun nameMatchesAndIsValidCandidate(element: KtNamedDeclaration): Boolean =
-        element.nameAsSafeName == name && !isIgnored(element) && typeMatchesGivenContext(element, contextKind)
+    private fun isValidCandidate(element: KtNamedDeclaration): Boolean =
+        !isIgnored(element) && typeMatchesGivenContext(element, contextKind)
 
     private fun foundIfNameMatches(element: KtNamedDeclaration) {
-        if (nameMatchesAndIsValidCandidate(element)) {
+        if (element.nameAsSafeName == name && isValidCandidate(element)) {
             found(element)
         }
     }
