@@ -59,9 +59,12 @@ internal class JavaKConstructor(
 
     override val overridden: Collection<ReflectKFunction> = emptyList()
 
-    override val allParameters: List<KParameter> by lazy(PUBLICATION) {
+    override val originalParameters: List<KParameter> by lazy(PUBLICATION) {
         computeParameters()
     }
+
+    override val allParameters: List<KParameter>
+        get() = enhancedSignature?.allParameters ?: originalParameters
 
     override val caller: Caller<*> by lazy(PUBLICATION) {
         if (isBound) CallerImpl.BoundConstructor(jConstructor, boundReceiver)
