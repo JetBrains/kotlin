@@ -23,7 +23,7 @@ dependencies {
 
     testImplementation(testFixtures("org.jetbrains.kotlin:repo-test-fixtures"))
     testImplementation("org.jetbrains.kotlin:test-federation-convention")
-    testImplementation(testRuntime)
+    testImplementation(project(":repo:test-runtime"))
     testImplementation("org.jetbrains.kotlin:buildsrc-compat") {
         isTransitive = false
     }

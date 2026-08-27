@@ -14,7 +14,7 @@ dependencies {
     testFixturesImplementation(project(":native:external-projects-test-utils"))
     testFixturesImplementation(project(":kotlin-util-klib-metadata"))
     testFixturesApi(testFixtures(project(":native:native.tests")))
-    testFixturesCompileOnly(testRuntime)
+    testFixturesCompileOnly(project(":repo:test-runtime"))
 }
 
 sourceSets {
