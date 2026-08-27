@@ -41,7 +41,7 @@ dependencies {
     api(project(":core:util.runtime"))
 
     api(intellijCore())
-    api(libs.analysis.api.intellij.patched.kotlinx.coroutines.core.jvm)
+    api(libs.intellij.patched.kotlinx.coroutines.core.jvm)
     implementation(intellijJDom())
 
     // Dependencies of 'intellijCore()' available on Maven Central
