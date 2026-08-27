@@ -26,7 +26,7 @@ The infrastructure team monitors the health of the 'main' aggregate.
 
 https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_KotlinDev_Aggregate_smoke
 
-The 'smoke' aggregate identifies incidents that prevent all commits from being verified.
+The 'smoke' aggregate identifies incidents that prevent all commits passing the quality gate before merging to the master branch.
 
 Examples of such problems:
 
@@ -46,7 +46,7 @@ This build will be monitored by the infrastructure team.
 (e.g., JS)
 https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_KotlinDev_Domain_Js
 
-Each domain build runs the tests associated with that domain.
+Each domain build runs the tests associated with that domain. (*1)
 The corresponding development team owns the build and is primarily responsible for monitoring it.
 Conceptually, these builds are analogous to what the domains' CI builds would be if the domains were maintained in separate repositories.
 
@@ -97,3 +97,11 @@ such situations more quickly. In this case, the infrastructure engineer may crea
 also have an AI agent suggest a solution that can be reviewed by the development team. Automated analysis works well in such
 cases because the domain that was recently changed is considered healthy. The behavior being relied upon is expected to be more isolated
 and easier to fix.
+
+
+___ 
+
+Footnotes
+
+*1: As part of the migration towards this new System, some builds may contain tests from multiple domains which then can leak
+into those Domain aggregates.
