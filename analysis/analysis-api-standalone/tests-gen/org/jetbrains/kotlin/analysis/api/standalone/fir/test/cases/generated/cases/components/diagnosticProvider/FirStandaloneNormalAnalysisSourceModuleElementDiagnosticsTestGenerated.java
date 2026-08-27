@@ -80,6 +80,12 @@ public class FirStandaloneNormalAnalysisSourceModuleElementDiagnosticsTestGenera
   }
 
   @Test
+  @TestMetadata("fileWithInlineFunction.kt")
+  public void testFileWithInlineFunction() {
+    run("fileWithInlineFunction.kt");
+  }
+
+  @Test
   @TestMetadata("hiddenFromObjectiveC.kt")
   public void testHiddenFromObjectiveC() {
     run("hiddenFromObjectiveC.kt");
