@@ -40,7 +40,7 @@ KtUserType(45,46): 'A'
 KtNameReferenceExpression(45,46): 'A'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A
@@ -76,7 +76,7 @@ KtUserType(87,88): 'A'
 KtNameReferenceExpression(87,88): 'A'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A
@@ -112,7 +112,7 @@ KtUserType(129,130): 'A'
 KtNameReferenceExpression(129,130): 'A'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A
@@ -148,7 +148,7 @@ KtUserType(169,170): 'A'
 KtNameReferenceExpression(169,170): 'A'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A
@@ -184,7 +184,7 @@ KtUserType(209,210): 'A'
 KtNameReferenceExpression(209,210): 'A'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A

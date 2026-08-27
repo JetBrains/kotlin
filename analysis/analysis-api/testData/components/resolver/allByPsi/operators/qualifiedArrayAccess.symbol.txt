@@ -67,7 +67,7 @@ KtUserType(72,79): 'MyClass'
 KtNameReferenceExpression(72,79): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -118,7 +118,7 @@ KtUserType(116,123): 'MyClass'
 KtNameReferenceExpression(116,123): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -166,7 +166,7 @@ KtUserType(159,166): 'MyClass'
 KtNameReferenceExpression(159,166): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -214,7 +214,7 @@ KtUserType(202,209): 'MyClass'
 KtNameReferenceExpression(202,209): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -292,7 +292,7 @@ KtUserType(254,261): 'MyClass'
 KtNameReferenceExpression(254,261): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -1112,7 +1112,7 @@ KtUserType(738,747): 'SmartNode'
 KtNameReferenceExpression(738,747): 'SmartNode'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SmartNode

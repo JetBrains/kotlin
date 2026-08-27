@@ -43,7 +43,7 @@ KtUserType(20,21): 'A'
 KtNameReferenceExpression(20,21): 'A'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A

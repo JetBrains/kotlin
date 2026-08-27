@@ -73,7 +73,7 @@ KtUserType(139,146): 'Base<T>'
 KtNameReferenceExpression(139,143): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Base
