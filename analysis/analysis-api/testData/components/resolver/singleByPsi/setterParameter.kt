@@ -5,5 +5,4 @@ class A {
         }
 }
 
-// IGNORE_LOOKUP_LOCALLY
 // ISSUE: KT-88734

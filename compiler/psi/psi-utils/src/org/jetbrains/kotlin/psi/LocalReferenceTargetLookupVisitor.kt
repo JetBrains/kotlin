@@ -386,6 +386,10 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
         foundIfNameMatches(decl)
     }
 
+    override fun visitPropertyAccessor(accessor: KtPropertyAccessor) {
+        accessor.valueParameters.processMany(::processParameter)
+    }
+
     private inline fun <T> Iterable<T>.processMany(f: (T) -> Unit) {
         if (_found != null) return
 
