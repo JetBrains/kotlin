@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.IrBasedFunctionFactory.Companion.isFunctionInterfaceFile
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.library.isImplicitlyLoadedFromKotlinNativeDistribution
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isHeader
+import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.impl.isForwardDeclarationModule
@@ -125,7 +128,7 @@ internal fun LinkKlibsContext.linkKlibs(
     // so to make the pipeline more deterministic, the files are to be sorted.
     // This concerns in the first place global initializers order for the eager initialization strategy,
     // where the files are being initialized in order one by one.
-    sortedUsefulModuleDependencies.allDependencies.forEach { module -> module.files.sortBy { it.fileEntry.name } }
+    sortedUsefulModuleDependencies.sortFilesAndDeclarationsToKeepPipelineDeterministic()
 
     if (stdlibIsBeingCached) {
         val maxArity = 255 // See [BuiltInFictitiousFunctionClassFactory].
@@ -286,6 +289,21 @@ private fun IrModuleDependencies.filterOutUnusedPlatformLibraryModules(linker: K
 
 private fun IrModuleDependencies.reverseTopoOrder(linker: KonanIrLinker): IrModuleDependencies {
     return linker.moduleDependencyTracker.reverseTopoOrder(this)
+}
+
+private fun IrModuleDependencies.sortFilesAndDeclarationsToKeepPipelineDeterministic() {
+    allDependencies.forEach { module ->
+        module.files.sortBy { file -> file.fileEntry.name }
+
+        // Sort also synthetic `*Function` classes is special function interface files inside the standard library.
+        if (module.kotlinLibrary?.isNativeStdlib == true) {
+            module.files.forEach { file ->
+                if (file.isFunctionInterfaceFile) {
+                    file.declarations.sortBy { declaration -> (declaration as IrDeclarationWithName).name }
+                }
+            }
+        }
+    }
 }
 
 internal class KonanCInteropModuleDeserializerFactory(
