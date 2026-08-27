@@ -1,3 +1,12 @@
+public final class InternalConstructor /* InternalConstructor*/ {
+  @kotlin.jvm.JvmExposeBoxed()
+  public  InternalConstructor(@org.jetbrains.annotations.NotNull() InternalValue, @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function0<kotlin.Unit>);//  .ctor(InternalValue, kotlin.jvm.functions.Function0<kotlin.Unit>)
+
+  private  InternalConstructor(long, kotlin.jvm.functions.Function0<kotlin.Unit>);//  .ctor(long, kotlin.jvm.functions.Function0<kotlin.Unit>)
+
+  private static final kotlin.Unit _init_$lambda$0();//  _init_$lambda$0()
+}
+
 public final class InternalNames /* InternalNames*/ {
   @kotlin.jvm.JvmExposeBoxed(jvmName = "explicitBoxedName")
   @org.jetbrains.annotations.NotNull()
@@ -14,6 +23,29 @@ public final class InternalNames /* InternalNames*/ {
   public final int jvmNamed(int);//  jvmNamed(int)
 
   public  InternalNames();//  .ctor()
+}
+
+@kotlin.jvm.JvmInline()
+public final class InternalValue /* InternalValue*/ {
+  private final long value;
+
+  public boolean equals(java.lang.Object);//  equals(java.lang.Object)
+
+  public final long getValue();//  getValue()
+
+  public int hashCode();//  hashCode()
+
+  public java.lang.String toString();//  toString()
+
+  public static boolean equals-impl(long, java.lang.Object);//  equals-impl(long, java.lang.Object)
+
+  public static final boolean equals-impl0(long, long);//  equals-impl0(long, long)
+
+  public static int hashCode-impl(long);//  hashCode-impl(long)
+
+  public static java.lang.String toString-impl(long);//  toString-impl(long)
+
+  public static long constructor-impl(long);//  constructor-impl(long)
 }
 
 @kotlin.jvm.JvmInline()
