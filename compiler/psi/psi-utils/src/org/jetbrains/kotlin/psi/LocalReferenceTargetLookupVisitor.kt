@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.psi
 import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
 import com.intellij.psi.util.elementType
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
@@ -30,6 +31,17 @@ fun KtNameReferenceExpression.lookupLocally(): KtNamedDeclaration? {
 
     return LocalReferenceTargetLookupVisitor(this, contextKind).lookup()
 }
+
+/**
+ * Returns `true` if can perform a local lookup from the given starting expression.
+ *
+ * This API is marked as an implementation detail of the Kotlin PSI API
+ * and is not intended for public or external use. It may change or be removed
+ * without notice.
+ */
+@TestOnly
+@KtImplementationDetail
+fun KtNameReferenceExpression.canPerformLocalLookup(): Boolean = localLookupContextKind != null
 
 private val KtElement.nonContainerParent: KtElement?
     get() {
