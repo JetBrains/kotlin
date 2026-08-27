@@ -22,22 +22,6 @@ import java.io.File
 import java.nio.file.Files
 import javax.inject.Inject
 
-private abstract class MuteWithDatabaseArgumentProvider @Inject constructor(objects: ObjectFactory) : CommandLineArgumentProvider {
-    @get:InputFile
-    @get:PathSensitive(PathSensitivity.NONE)
-    val mutesFile: RegularFileProperty = objects.fileProperty()
-
-    override fun asArguments(): Iterable<String> =
-        listOf("-Dorg.jetbrains.kotlin.test.mutes.file=${mutesFile.get().asFile.canonicalPath}")
-}
-
-private fun Test.muteWithDatabase() {
-    jvmArgumentProviders.add(
-        project.objects.newInstance<MuteWithDatabaseArgumentProvider>().apply {
-            mutesFile.fileValue(File(project.rootDir, "tests/mute-common.csv"))
-        })
-    systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
-}
 
 abstract class GeneralTestArgumentProvider @Inject constructor() : CommandLineArgumentProvider {
     @get:Inject
@@ -114,8 +98,6 @@ internal fun Project.createGeneralTestTask(
             classpath.from(ideaHomeForTests)
             directory.value(ideaHomePathForTests())
         })
-
-        muteWithDatabase()
 
         if (shouldInstrument) {
             val agentJar = configurations.detachedConfiguration(dependencies.project(":test-instrumenter")).apply { isTransitive = false }
