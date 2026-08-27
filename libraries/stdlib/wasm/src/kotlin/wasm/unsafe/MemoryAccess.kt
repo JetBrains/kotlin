@@ -5,6 +5,7 @@
 
 package kotlin.wasm.unsafe
 
+import kotlin.wasm.ExperimentalWasmInterop
 import kotlin.wasm.internal.*
 
 /**
@@ -12,6 +13,7 @@ import kotlin.wasm.internal.*
  * Corresponds to `i32` type on 32-bit Wasm architecture.
  */
 @UnsafeWasmMemoryApi
+@ExperimentalWasmInterop
 public value class Pointer public constructor(public val address: UInt) {
 
     /** Adds an [Int] to the address of this [Pointer] */

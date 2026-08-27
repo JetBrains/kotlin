@@ -569,6 +569,7 @@ kotlin {
             }
             languageSettings {
                 optIn("kotlin.wasm.unsafe.UnsafeWasmMemoryApi")
+                optIn("kotlin.wasm.ExperimentalWasmInterop")
             }
         }
         val wasmWasiTest = getByName("wasmWasiTest") {
