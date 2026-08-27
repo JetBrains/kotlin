@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotResolveEqualityBoundType
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
@@ -638,10 +639,19 @@ open class FirTypeResolveTransformer(
                     }
                     // In the property-param mode,
                     // we should apply annotation also to the property (or to the field) if it's allowed
-                    PROPERTY in allowedTargets -> true
+                    PROPERTY in allowedTargets -> {
+                        // Because
+                        // useSiteTarget == null && annotated is FirProperty && annotated.fromPrimaryConstructor == true && CONSTRUCTOR_PARAMETER in allowedTargets
+                        // we know that the annotation is also on the constructor parameter, so this annotation gets a fake source kind
+                        setFakeSourceKind()
+                        true
+                    }
                     annotated.backingField != null && propertyAnnotationShouldBeMovedToField(allowedTargets) -> {
                         if (classDeclarationsStack.lastOrNull()?.classKind != ClassKind.ANNOTATION_CLASS) {
                             val backingField = annotated.backingField!!
+                            // Same as above,
+                            // we know that the annotation is also on the constructor parameter, so this one gets a fake source kind
+                            setFakeSourceKind()
                             backingField.replaceAnnotations(backingField.annotations + this)
                         }
                         false
@@ -689,6 +699,12 @@ open class FirTypeResolveTransformer(
                         }
                     }
                     replaceAnnotations(annotations + copy)
+
+                    if (addedSomewhere || PROPERTY in allowedTargets) {
+                        // This is definitely not the only instance of the annotation, so we apply the fake source kind
+                        copy.setFakeSourceKind()
+                    }
+
                     addedSomewhere = true
                 }
 
@@ -704,6 +720,10 @@ open class FirTypeResolveTransformer(
                 if (CONSTRUCTOR_PARAMETER in allowedTargets && annotated.fromPrimaryConstructor == true) {
                     // It's already on a constructor parameter, but we set the flag to prevent reporting an error
                     addedSomewhere = true
+                    // Because
+                    // useSiteTarget == ALL && annotated is FirProperty && annotated.fromPrimaryConstructor == true && CONSTRUCTOR_PARAMETER in allowedTargets
+                    // we know that the annotation is also on the constructor parameter, so this annotation gets a fake source kind
+                    setFakeSourceKind()
                 }
                 // If annotation isn't applicable anywhere or the property is delegated, we keep it at property to report an error later
                 PROPERTY in allowedTargets || !addedSomewhere || annotated.delegate != null
@@ -712,6 +732,11 @@ open class FirTypeResolveTransformer(
                 true
             }
         }
+    }
+
+    @OptIn(FirImplementationDetail::class)
+    private fun FirAnnotation.setFakeSourceKind() {
+        replaceSource(source?.fakeElement(KtFakeSourceElementKind.AnnotationCopyFromConstructorParameter))
     }
 
     /**
