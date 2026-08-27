@@ -112,7 +112,7 @@ private class KotlinStandaloneAnnotationsResolver(
     }
 
     fun FqName.resolveToClassIds(to: MutableSet<ClassId>) {
-        toClassIdSequence().mapNotNullTo(to) { classId ->
+        for (classId in toClassIdSequence()) {
             // The same class id may be provided by several declarations, e.g., by a source declaration and by a library
             // declaration shadowed by it. The resolver is allowed to report false positives, so every declaration
             // contributes instead of only an unambiguous one
@@ -121,8 +121,9 @@ private class KotlinStandaloneAnnotationsResolver(
             }
 
             val classes = declarationProvider.getAllClassesByClassId(classId)
-            val isAnnotation = classes.any { it is KtClass && it.isAnnotation() }
-            classId.takeIf { isAnnotation }
+            if (classes.any { it is KtClass && it.isAnnotation() }) {
+                to += classId
+            }
         }
     }
 }
