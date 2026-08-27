@@ -211,6 +211,13 @@ object CompilerModules {
         ":analysis:analysis-api-standalone",
     )
 
+    /**
+     * The array of modules shipped in the 'kotlin-analysis-api-platform-interface' artifact.
+     */
+    val analysisApiPlatformInterfaceModules = arrayOf(
+        ":analysis:analysis-api-platform-interface",
+    )
+
     val analysisApiStandaloneModules = arrayOf(
         *analysisApiStandaloneSurfaceModules,
         ":analysis:analysis-api-standalone:analysis-api-standalone-fir",
@@ -222,11 +229,11 @@ object CompilerModules {
      */
     val analysisApiModules = arrayOf(
         *analysisApiSurfaceModules,
+        *analysisApiPlatformInterfaceModules,
         *analysisApiStandaloneModules,
         ":analysis:analysis-api-fir",
         ":analysis:analysis-api-fir-diagnostics",
         ":analysis:analysis-api-impl-base",
-        ":analysis:analysis-api-platform-interface",
         ":analysis:analysis-internal-utils",
         ":analysis:decompiled:decompiler-js",
         ":analysis:decompiled:decompiler-native",
