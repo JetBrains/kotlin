@@ -37,6 +37,7 @@ kotlin {
             dependencies {
                 implementation(project(":compiler:psi:psi-api"))
                 implementation(intellijCore())
+                implementation(libs.opentelemetry.api)
                 runtimeOnly(libs.intellij.fastutil)
                 runtimeOnly(commonDependency("com.fasterxml:aalto-xml"))
                 implementation(project.dependencies.testFixtures(project(":compiler:test-infrastructure-utils")))
