@@ -160,7 +160,7 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScop
             ?: return this
 
         return applyIf(!argumentTypeWithoutNullableNothing.isSubtypeOf(expectedType.approximateForIrOrSelf(), session)) {
-            check(argumentTypeLowerBound.isNullableNothing) { "Expected argument type to be Nothing?" }
+            check(argumentTypeLowerBound.isNothingOrNullableNothing) { "Expected argument type to be Nothing or Nothing?" }
             generateImplicitCast(this, argumentTypeLowerBound.toIrType(conversionScope.defaultConversionTypeOrigin()))
         }
     }
