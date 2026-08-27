@@ -4,10 +4,8 @@ import org.gradle.kotlin.dsl.testRuntimeOnly
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
-    id("project-tests-convention")
 }
 
 sourceSets {

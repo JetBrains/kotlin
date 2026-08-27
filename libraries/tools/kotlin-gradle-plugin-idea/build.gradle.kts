@@ -3,13 +3,11 @@ import plugins.KotlinBuildPublishingPlugin.Companion.ADHOC_COMPONENT_NAME
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     `java-test-fixtures`
     `maven-publish`
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
-    id("project-tests-convention")
     id("test-inputs-check")
 }
 

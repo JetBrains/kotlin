@@ -5,13 +5,11 @@
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("d8-configuration")
     id("share-foreign-java-nullability-annotations")
     id("java-test-fixtures")
-    id("project-tests-convention")
     id("test-inputs-check")
     id("require-explicit-types")
 }

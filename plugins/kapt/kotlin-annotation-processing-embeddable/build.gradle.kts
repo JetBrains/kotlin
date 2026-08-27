@@ -7,7 +7,6 @@ description = "Annotation Processor for Kotlin (for using with embeddable compil
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     `java-library`
 }

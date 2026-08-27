@@ -5,11 +5,9 @@ import kotlin.io.path.readLines
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     application
     kotlin("jvm")
-    id("project-tests-convention")
 }
 
 

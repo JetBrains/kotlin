@@ -1,7 +1,6 @@
 // This artifact is deprecated and will be remove in the near future. Use `kotlin-jps-plugin` instead
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
 }
 

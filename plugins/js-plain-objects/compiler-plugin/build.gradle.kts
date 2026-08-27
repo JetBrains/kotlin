@@ -6,12 +6,10 @@ description = "JavaScript Plain Objects Compiler Plugin"
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
     id("d8-configuration")
-    id("project-tests-convention")
     id("test-inputs-check")
 }
 
