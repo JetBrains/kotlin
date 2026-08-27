@@ -49,6 +49,15 @@ public fun KaType.mapToJvmTypeDescriptor(): String {
 
 /**
  * Whether the given [KaType] is backed by a single JVM primitive type.
+ *
+ * This is `true` for non-nullable primitive types and for non-nullable inline value class types whose single underlying property is
+ * primitive-backed, recursively. It is `false` for nullable types, regular reference types, and types without a single primitive-backed
+ * representation.
+ *
+ * This property describes the type's underlying representation. It does not imply that every use of the type is emitted as a JVM primitive,
+ * as boxing can still be required by the use-site context.
+ *
+ * For non-JVM modules, the result describes the equivalent JVM representation inferred from the Kotlin declaration.
  */
 @KaExperimentalApi
 context(session: KaSession)
@@ -56,6 +65,23 @@ public val KaType.isPrimitiveBacked: Boolean
     get() {
         @OptIn(KaImplementationDetail::class)
         return internals.javaInteroperabilityComponent.isPrimitiveBacked(this)
+    }
+
+/**
+ * Whether the given [KaNamedClassSymbol] is represented as an inline class on the JVM.
+ *
+ * This is `true` for classes declared with the deprecated `inline class` syntax and for `value class` declarations annotated with
+ * [JvmInline]. The result does not depend on whether the `FullValueClasses` language feature is enabled.
+ *
+ * For declarations from common modules, the result describes their representation when compiled for the JVM. For declarations from
+ * platform-specific non-JVM modules, this is always `false`.
+ */
+@KaExperimentalApi
+context(session: KaSession)
+public val KaNamedClassSymbol.isJvmInline: Boolean
+    get() {
+        @OptIn(KaImplementationDetail::class)
+        return internals.javaInteroperabilityComponent.isJvmInline(this)
     }
 
 /**

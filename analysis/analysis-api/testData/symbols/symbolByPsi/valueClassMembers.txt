@@ -12,6 +12,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: TOP_LEVEL
   modality: FINAL
   name: OriginalClass
@@ -878,6 +879,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: CLASS
   modality: FINAL
   name: Companion
@@ -915,6 +917,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: true
   isInner: false
+  isValue: true
   location: TOP_LEVEL
   modality: FINAL
   name: ValueClass

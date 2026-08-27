@@ -219,6 +219,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleRendererTestGenerated extend
   }
 
   @Test
+  @TestMetadata("valueClasses.kt")
+  public void testValueClasses() {
+    run("valueClasses.kt");
+  }
+
+  @Test
   @TestMetadata("vararg.kt")
   public void testVararg() {
     run("vararg.kt");

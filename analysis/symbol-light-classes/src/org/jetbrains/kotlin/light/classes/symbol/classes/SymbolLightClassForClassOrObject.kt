@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.javaInterop.isJvmInline
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
@@ -60,13 +61,14 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         ktModule: KaModule,
         classSymbol: KaNamedClassSymbol,
         manager: PsiManager,
+        isValueClass: Boolean,
     ) : super(
         ktModule = ktModule,
         classSymbol = classSymbol,
         manager = manager,
     ) {
         require(classSymbol.classKind != KaClassKind.INTERFACE && classSymbol.classKind != KaClassKind.ANNOTATION_CLASS)
-        isValueClass = classSymbol.isInline
+        this.isValueClass = isValueClass
     }
 
     @OptIn(KaImplementationDetail::class)
@@ -218,7 +220,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
     context(session: KaSession)
     private fun generateMethodsFromAny(classSymbol: KaNamedClassSymbol, result: MutableList<PsiMethod>): Unit = with(session) {
-        if (!classSymbol.isData && !classSymbol.isInline) return
+        if (!classSymbol.isData && !classSymbol.isJvmInline) return
 
         // Compiler will generate 'equals/hashCode/toString' for data/value class if they are not final.
         // We want to mimic that.

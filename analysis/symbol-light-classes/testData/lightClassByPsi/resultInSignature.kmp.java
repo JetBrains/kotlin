@@ -3,7 +3,7 @@ public final class ClassWithResultConstructor /* ClassWithResultConstructor*/ {
 }
 
 public final class ClassWithValueClassConstructor /* ClassWithValueClassConstructor*/ {
-  private  ClassWithValueClassConstructor(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
+  public  ClassWithValueClassConstructor(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
 }
 
 public final class RegularClass /* RegularClass*/ {
@@ -13,9 +13,30 @@ public final class RegularClass /* RegularClass*/ {
   @org.jetbrains.annotations.Nullable()
   private @org.jetbrains.annotations.Nullable() kotlin.Result<@org.jetbrains.annotations.NotNull() java.lang.Integer> classNullableResultProp = null /* initializer type: null */;
 
+  @<error>()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() java.lang.Object classResultInReturnWithJvmName();//  classResultInReturnWithJvmName()
+
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() java.lang.Object classResultInReturn();//  classResultInReturn()
+
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() java.lang.Object getClassResultProp();//  getClassResultProp()
+
+  @org.jetbrains.annotations.Nullable()
+  public final @org.jetbrains.annotations.Nullable() java.lang.Object classSuspendResultInReturn(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.coroutines.Continuation<? super @org.jetbrains.annotations.NotNull() kotlin.Result<@org.jetbrains.annotations.NotNull() java.lang.Integer>>);//  classSuspendResultInReturn(@org.jetbrains.annotations.NotNull() kotlin.coroutines.Continuation<? super @org.jetbrains.annotations.NotNull() kotlin.Result<@org.jetbrains.annotations.NotNull() java.lang.Integer>>)
+
+  @org.jetbrains.annotations.Nullable()
+  public final @org.jetbrains.annotations.Nullable() kotlin.Result<@org.jetbrains.annotations.NotNull() java.lang.Integer> classNullableResultInReturn();//  classNullableResultInReturn()
+
+  @org.jetbrains.annotations.Nullable()
+  public final @org.jetbrains.annotations.Nullable() kotlin.Result<@org.jetbrains.annotations.NotNull() java.lang.Integer> getClassNullableResultProp();//  getClassNullableResultProp()
+
   public  RegularClass();//  .ctor()
 
   public final int getClassPropInResultExtension(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object);//  getClassPropInResultExtension(@org.jetbrains.annotations.NotNull() java.lang.Object)
+
+  public final void classResultAndValueClassInParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  classResultAndValueClassInParameter(@org.jetbrains.annotations.NotNull() java.lang.Object, @org.jetbrains.annotations.NotNull() java.lang.String)
 
   public final void classResultInContext(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object);//  classResultInContext(@org.jetbrains.annotations.NotNull() java.lang.Object)
 
@@ -31,6 +52,12 @@ public final class RegularClass /* RegularClass*/ {
 }
 
 public abstract interface RegularInterface /* RegularInterface*/ {
+  @org.jetbrains.annotations.NotNull()
+  public abstract @org.jetbrains.annotations.NotNull() java.lang.Object getInterfaceResultProp();//  getInterfaceResultProp()
+
+  @org.jetbrains.annotations.NotNull()
+  public abstract @org.jetbrains.annotations.NotNull() java.lang.Object interfaceResultInReturn();//  interfaceResultInReturn()
+
   public abstract void interfaceResultInParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object);//  interfaceResultInParameter(@org.jetbrains.annotations.NotNull() java.lang.Object)
 
   public abstract void setInterfaceResultProp(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object);//  setInterfaceResultProp(@org.jetbrains.annotations.NotNull() java.lang.Object)
@@ -61,14 +88,7 @@ public final class Some /* Some*/ {
   private final @org.jetbrains.annotations.NotNull() java.lang.String value;
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
-
-  @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getValue();//  getValue()
-
-  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
-
-  public int hashCode();//  hashCode()
 }
 
 @<error>()
@@ -77,9 +97,5 @@ public final class ValueClassWithResult /* ValueClassWithResult*/ {
   private final @org.jetbrains.annotations.NotNull() java.lang.Object r;
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
-
-  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
-
-  public int hashCode();//  hashCode()
+  public final @org.jetbrains.annotations.NotNull() java.lang.Object getR();//  getR()
 }

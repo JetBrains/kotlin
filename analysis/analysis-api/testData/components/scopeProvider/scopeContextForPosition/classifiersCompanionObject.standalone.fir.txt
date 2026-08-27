@@ -46,6 +46,7 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        isValue: false
         location: CLASS
         modality: FINAL
         name: Companion
@@ -335,6 +336,7 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        isValue: false
         location: CLASS
         modality: FINAL
         name: Companion
@@ -369,6 +371,7 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        isValue: false
         location: CLASS
         modality: FINAL
         name: Nested
@@ -403,6 +406,7 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        isValue: false
         location: CLASS
         modality: FINAL
         name: Nested
@@ -686,6 +690,7 @@ scopes:
         isFun: false
         isInline: false
         isInner: false
+        isValue: false
         location: TOP_LEVEL
         modality: OPEN
         name: Base

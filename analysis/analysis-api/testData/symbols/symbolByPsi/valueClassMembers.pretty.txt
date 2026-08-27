@@ -1,7 +1,7 @@
 class OriginalClass
 
 @kotlin.jvm.JvmInline
-inline class ValueClass(original: OriginalClass) {
+value class ValueClass(original: OriginalClass) {
   val original: OriginalClass
 
   fun funWithoutParameters()

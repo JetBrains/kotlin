@@ -7,23 +7,14 @@ public final class A /* A*/ {
   public  A(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
-
-  @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getValue();//  getValue()
-
-  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
-
-  public int hashCode();//  hashCode()
 }
 
 public final class GlobalVariableContextAndReceiverKt /* GlobalVariableContextAndReceiverKt*/ {
-  @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() java.lang.String getF(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Z, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A);//  getF(@org.jetbrains.annotations.NotNull() Z, @org.jetbrains.annotations.NotNull() A)
+  public static final @org.jetbrains.annotations.NotNull() java.lang.String getF(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  getF(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String)
 
-  @kotlin.jvm.JvmExposeBoxed()
-  public static final void setF(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Z, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setF(@org.jetbrains.annotations.NotNull() Z, @org.jetbrains.annotations.NotNull() A, @org.jetbrains.annotations.NotNull() java.lang.String)
+  public static final void setF(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setF(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String)
 }
 
 @<error>()
@@ -35,12 +26,5 @@ public final class Z /* Z*/ {
   public  Z(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
-
-  @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getValue();//  getValue()
-
-  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
-
-  public int hashCode();//  hashCode()
 }

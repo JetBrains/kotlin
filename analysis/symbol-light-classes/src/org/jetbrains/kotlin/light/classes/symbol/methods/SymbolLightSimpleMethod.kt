@@ -229,7 +229,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
         /**
          * @param suppressValueClass whether suppress the [containingClass] check for [isValueClass]
          * @param staticsFromCompanion whether this function was called to materialize static members from a companion object
-         *  * inside the containing class
+         * inside the containing class
          */
         context(_: KaSession)
         internal fun createSimpleMethods(

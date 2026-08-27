@@ -17,7 +17,7 @@ public final class ValueClass /* pack.ValueClass*/ {
 
   @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() pack.ValueClass getPropertyWithValueClassType();//  getPropertyWithValueClassType()
+  public final @org.jetbrains.annotations.NotNull() pack.OriginalClass getPropertyWithValueClassType();//  getPropertyWithValueClassType()
 
   @kotlin.jvm.JvmExposeBoxed()
   public  ValueClass(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() pack.OriginalClass);//  .ctor(@org.jetbrains.annotations.NotNull() pack.OriginalClass)
@@ -26,20 +26,13 @@ public final class ValueClass /* pack.ValueClass*/ {
   public final int getProperty();//  getProperty()
 
   @kotlin.jvm.JvmExposeBoxed()
-  public final void funWithSelfParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() pack.ValueClass);//  funWithSelfParameter(@org.jetbrains.annotations.NotNull() pack.ValueClass)
+  public final void funWithSelfParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() pack.OriginalClass);//  funWithSelfParameter(@org.jetbrains.annotations.NotNull() pack.OriginalClass)
 
   @kotlin.jvm.JvmExposeBoxed()
   public final void funWithoutParameters();//  funWithoutParameters()
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
-
-  @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() pack.OriginalClass getOriginal();//  getOriginal()
-
-  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
-
-  public int hashCode();//  hashCode()
 
   class Companion ...
 
@@ -47,13 +40,11 @@ public final class ValueClass /* pack.ValueClass*/ {
 }
 
 public static final class Companion /* pack.ValueClass.Companion*/ {
-  @kotlin.jvm.JvmExposeBoxed()
-  @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.Nullable() pack.ValueClass companionFunctionWithValueClassType();//  companionFunctionWithValueClassType()
+  @org.jetbrains.annotations.Nullable()
+  public final @org.jetbrains.annotations.Nullable() pack.OriginalClass companionFunctionWithValueClassType();//  companionFunctionWithValueClassType()
 
-  @kotlin.jvm.JvmExposeBoxed()
-  @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.Nullable() pack.ValueClass getCompanionPropertyWithValueClassType();//  getCompanionPropertyWithValueClassType()
+  @org.jetbrains.annotations.Nullable()
+  public final @org.jetbrains.annotations.Nullable() pack.OriginalClass getCompanionPropertyWithValueClassType();//  getCompanionPropertyWithValueClassType()
 
   private  Companion();//  .ctor()
 

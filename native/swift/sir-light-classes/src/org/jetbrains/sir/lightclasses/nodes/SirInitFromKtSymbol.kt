@@ -148,7 +148,7 @@ internal class SirRegularInitFromKtSymbol(
                             SirTypeNamer.KotlinNameType.PARAMETRIZED
                         )
                     }>(${args.joinToString()})${
-                        if ((ktSymbol.containingDeclaration as KaNamedClassSymbol).isInline) " as Any?" else ""
+                        if ((ktSymbol.containingDeclaration as KaNamedClassSymbol).isValue) " as Any?" else ""
                     }"
                 }.orEmpty()
             )

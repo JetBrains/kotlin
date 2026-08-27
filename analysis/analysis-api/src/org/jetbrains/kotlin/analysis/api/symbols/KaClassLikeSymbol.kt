@@ -219,9 +219,58 @@ public abstract class KaNamedClassSymbol : KaClassSymbol(),
     public abstract val isData: Boolean
 
     /**
-     * Whether the class is an [inline class](https://kotlinlang.org/docs/inline-classes.html).
+     * Whether the class uses Kotlin's single-field [inline value class](https://kotlinlang.org/docs/inline-classes.html) representation.
+     *
+     * This is a declaration-level property. It does not predict whether a value is boxed at a particular use site, nor whether a backend
+     * can optimize a compatible
+     * [full value class](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md)
+     * to an unboxed form. In particular, a full value class with exactly one primary property still returns `false`. Use [isValue] to
+     * recognize both inline and full value classes.
+     *
+     * For valid declarations, the experimental `FullValueClasses` language feature affects this property as follows:
+     *
+     * - With the feature disabled, a single-property `value class` on Common or a non-JVM target uses the inline representation and returns
+     *   `true`. A concrete JVM `value class` additionally requires `@JvmInline`.
+     * - With the feature enabled, an unannotated `value class` uses the full representation and returns `false` on every target, even if it
+     *   has exactly one primary property.
+     * - On the JVM, `@JvmInline` selects the inline representation for a single-property value class, so this property returns `true` with
+     *   either feature setting. Only the JVM target treats this annotation as a representation selector; it does not make this property
+     *   `true` for a Common or non-JVM symbol.
+     * - The deprecated `inline class` form uses the inline representation and returns `true` with either feature setting.
+     *
+     * `value object`s always use the full representation and return `false`.
+     *
+     * @see isValue
      */
     public abstract val isInline: Boolean
+
+    /**
+     * Whether the class is any Kotlin value declaration: an inline value class, a
+     * [full value class](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md),
+     * or a value object.
+     *
+     * This property describes language-level value semantics independently of runtime representation. It does not imply that values are
+     * unboxed: boxing depends on the target and use site.
+     *
+     * For valid declarations, this property is `true` for all of the following:
+     *
+     * - A single-property inline value class. This includes the deprecated `inline class` form on every target and, on the JVM, a
+     *   `@JvmInline value class`.
+     * - An unannotated `value class` compiled with the experimental `FullValueClasses` language feature, regardless of its number of
+     *   primary properties or target platform.
+     * - A `value object` compiled with `FullValueClasses`.
+     *
+     * With `FullValueClasses` disabled, a valid single-property `value class` on Common or a non-JVM target has this property and
+     * [isInline] set to `true`. With the feature enabled, the same unannotated declaration has this property set to `true` and [isInline]
+     * set to `false` on every target. On the JVM, `@JvmInline` changes the latter back to `true`; it does not change this property.
+     *
+     * This property is `false` for ordinary Kotlin classes and Java classes. To distinguish inline from full value declarations, use
+     * [isInline].
+     *
+     * @see isInline
+     */
+    @KaExperimentalApi
+    public abstract val isValue: Boolean
 
     /**
      * Indicates whether the class is a [functional interface](https://kotlinlang.org/docs/fun-interfaces.html)
@@ -325,8 +374,8 @@ public enum class KaClassKind {
      *
      * ```kotlin
      * val runnable = object : Runnable {
-     *  *     override fun run() {}
-     *  * }
+     *     override fun run() {}
+     * }
      * ```
      *
      * @see KaAnonymousObjectSymbol

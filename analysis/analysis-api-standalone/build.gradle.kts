@@ -13,6 +13,10 @@ plugins {
     id("test-inputs-check")
 }
 
+val jvmAbiGenPlugin = configurations.create("jvmAbiGenPlugin") {
+    isTransitive = false
+}
+
 dependencies {
     implementation(intellijCore())
     implementation(project(":core:descriptors.jvm"))
@@ -39,6 +43,8 @@ dependencies {
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+
+    jvmAbiGenPlugin(project(":plugins:jvm-abi-gen"))
 }
 
 kotlin {
@@ -74,6 +80,8 @@ sourceSets {
 
 projectTests {
     testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_21_0)) {
+        addClasspathProperty(jvmAbiGenPlugin, "kotlin.jvm.abi.jar.path")
+
         if (!kotlinBuildProperties.isTeamcityBuild.get()) {
             // Ensure golden tests run first
             mustRunAfter(":analysis:analysis-api-fir:test")

@@ -14,6 +14,10 @@ public abstract class CList2 /* test.CList2*/ implements java.util.List<@org.jet
 
   @kotlin.js.JsExport.Ignore()
   @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() int get(int);//  get(int)
+
+  @kotlin.js.JsExport.Ignore()
+  @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() kotlin.UInt> iterator();//  iterator()
 
   @kotlin.js.JsExport.Ignore()
@@ -29,10 +33,19 @@ public abstract class CList2 /* test.CList2*/ implements java.util.List<@org.jet
   public @org.jetbrains.annotations.NotNull() java.util.ListIterator<@org.jetbrains.annotations.NotNull() kotlin.UInt> listIterator(int);//  listIterator(int)
 
   @kotlin.js.JsExport.Ignore()
+  public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() int);//  contains(@org.jetbrains.annotations.NotNull() int)
+
+  @kotlin.js.JsExport.Ignore()
   public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() kotlin.UInt>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() kotlin.UInt>)
 
   @kotlin.js.JsExport.Ignore()
   public boolean isEmpty();//  isEmpty()
+
+  @kotlin.js.JsExport.Ignore()
+  public int indexOf(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() int);//  indexOf(@org.jetbrains.annotations.NotNull() int)
+
+  @kotlin.js.JsExport.Ignore()
+  public int lastIndexOf(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() int);//  lastIndexOf(@org.jetbrains.annotations.NotNull() int)
 
   public  CList2();//  .ctor()
 
@@ -40,6 +53,9 @@ public abstract class CList2 /* test.CList2*/ implements java.util.List<@org.jet
 }
 
 public class CList3 /* test.CList3*/ implements java.util.List<@org.jetbrains.annotations.NotNull() kotlin.UInt>, kotlin.jvm.internal.markers.KMappedMarker {
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() int get(int);//  get(int)
+
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() kotlin.UInt> iterator();//  iterator()
 
@@ -54,9 +70,15 @@ public class CList3 /* test.CList3*/ implements java.util.List<@org.jetbrains.an
 
   public  CList3();//  .ctor()
 
+  public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() int);//  contains(@org.jetbrains.annotations.NotNull() int)
+
   public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() kotlin.UInt>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() kotlin.UInt>)
 
   public boolean isEmpty();//  isEmpty()
 
   public int getSize();//  getSize()
+
+  public int indexOf(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() int);//  indexOf(@org.jetbrains.annotations.NotNull() int)
+
+  public int lastIndexOf(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() int);//  lastIndexOf(@org.jetbrains.annotations.NotNull() int)
 }

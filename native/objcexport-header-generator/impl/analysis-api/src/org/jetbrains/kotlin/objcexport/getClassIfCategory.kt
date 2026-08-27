@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.objcexport
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -40,10 +41,11 @@ fun KaSession.getClassIfCategory(symbol: KaCallableSymbol): KaClassSymbol? {
  *
  * See K1 [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapperKt.getClassIfCategory(org.jetbrains.kotlin.types.KotlinType)]
  */
+@OptIn(KaExperimentalApi::class)
 fun KaSession.getClassIfCategory(type: KaType?): KaClassSymbol? {
     if (type == null) return null
     val isInterface = (type.symbol as? KaClassSymbol)?.classKind == KaClassKind.INTERFACE
-    val isInline = (type.symbol as? KaNamedClassSymbol)?.isInline
+    val isInline = (type.symbol as? KaNamedClassSymbol)?.isValue
     return if (!isInterface && isInline == false && !type.isAnyType && !isMappedObjCType(type))
         type.symbol as? KaClassSymbol else null
 }

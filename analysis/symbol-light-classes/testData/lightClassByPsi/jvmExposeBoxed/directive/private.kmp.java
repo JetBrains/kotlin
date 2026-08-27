@@ -7,14 +7,7 @@ public final class IC /* IC*/ {
   public  IC(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
-
-  @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getS();//  getS()
-
-  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
-
-  public int hashCode();//  hashCode()
 }
 
 final class PrivateClass /* PrivateClass*/ {
@@ -24,12 +17,26 @@ final class PrivateClass /* PrivateClass*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String ic;
 
-  private  PrivateClass(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String getIc();//  getIc()
+
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String getProperty();//  getProperty()
+
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String member(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  member(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  public  PrivateClass(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  public final void setProperty(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setProperty(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   class Nested ...
 }
 
 public static final class Nested /* PrivateClass.Nested*/ {
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String nestedMember(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  nestedMember(@org.jetbrains.annotations.NotNull() java.lang.String)
+
   public  Nested();//  .ctor()
 }
 
@@ -39,6 +46,10 @@ public final class PrivateKt /* PrivateKt*/ {
 
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() java.lang.String getPrivateTopLevelSetter();//  getPrivateTopLevelSetter()
+
+  private static final @org.jetbrains.annotations.NotNull() java.lang.String privateTopLevel(@org.jetbrains.annotations.NotNull() java.lang.String);//  privateTopLevel(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  private static final void setPrivateTopLevelSetter(@org.jetbrains.annotations.NotNull() java.lang.String);//  setPrivateTopLevelSetter(@org.jetbrains.annotations.NotNull() java.lang.String)
 }
 
 public final class Public /* Public*/ {
@@ -48,9 +59,10 @@ public final class Public /* Public*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String ic;
 
-  @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() IC getIc();//  getIc()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String getIc();//  getIc()
 
   private  Public(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  private final @org.jetbrains.annotations.NotNull() java.lang.String privateMember(@org.jetbrains.annotations.NotNull() java.lang.String);//  privateMember(@org.jetbrains.annotations.NotNull() java.lang.String)
 }
