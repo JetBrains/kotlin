@@ -6,6 +6,7 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
+import java.lang.reflect.Method
 import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 import kotlin.LazyThreadSafetyMode.PUBLICATION
@@ -214,11 +215,25 @@ internal fun <T : EqualityMode> ReflectKCallable<*>.toEquatableCallableSignature
         typeParameters,
         kotlinParameterTypes,
         javaParameterTypes,
-        { (this as? ReflectKFunction)?.javaMethod?.genericParameterTypes.orEmpty().toList() },
+        { (this as? ReflectKFunction)?.originalJavaMethod?.genericParameterTypes.orEmpty().toList() },
         isStatic,
         equalityMode,
     )
 }
+
+// Returns the same method as `javaMethod`, unless the latter is a bridge method, in which case, for a fake override, returns the Java
+// method of the original declaration in the class where the member is really declared. For example, for the fake override `invoke` in
+// a Java class implementing `Function1<String, Integer>`, `javaMethod` returns the synthetic bridge `invoke(Object): Object` declared
+// in the Java class, whose generic parameter types are erased, while this property returns `Function1.invoke(P1)` whose generic
+// parameter type is the type variable `P1`.
+private val ReflectKFunction.originalJavaMethod: Method?
+    get() {
+        val method = javaMethod ?: return null
+        if (!method.isBridge) return method
+        val originalContainer = overriddenStorage.originalContainerIfFakeOverride ?: return method
+        val jvmName = signature.substringBeforeLast('(')
+        return originalContainer.findMethodBySignature(jvmName, signature.substring(jvmName.length)) ?: method
+    }
 
 internal val Class<*>.isKotlinClassOrPackage: Boolean
     get() = getAnnotation(Metadata::class.java) != null
