@@ -13,15 +13,18 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.UntrackedTask
 import org.gradle.kotlin.dsl.getByType
+import org.jetbrains.kotlin.XcodeProvisioningSpec
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
+import org.jetbrains.kotlin.provisionXcodeOrFail
 
 /**
  * Downloader of native dependencies.
  *
- * Serves as a Gradle task wrapper around [DependencyProcessor].
+ * Serves as a Gradle task wrapper around [DependencyProcessor], plus — for an Apple target with whole-Xcode
+ * provisioning on — around `XcodeProvisioner`: see [xcodeProvisioning].
  */
 @UntrackedTask(because = "Output is large and work avoidance is performed in DependencyProcessor anyway")
 abstract class NativeDependenciesDownloader : DefaultTask() {
@@ -43,10 +46,18 @@ abstract class NativeDependenciesDownloader : DefaultTask() {
     @get:Internal
     abstract val repositoryURL: Property<String>
 
+    /**
+     * The whole Xcode to provision for [target], or absent when there is nothing to provision
+     */
+    @get:Internal
+    abstract val xcodeProvisioning: Property<XcodeProvisioningSpec>
+
     private val platformManager = project.extensions.getByType<PlatformManager>()
 
     @TaskAction
     fun downloadAndExtract() {
+        xcodeProvisioning.orNull?.let { provisionXcodeOrFail(it) }
+
         val loader = platformManager.loader(target.get())
         check(loader is KonanPropertiesLoader)
         val dependencyProcessor =

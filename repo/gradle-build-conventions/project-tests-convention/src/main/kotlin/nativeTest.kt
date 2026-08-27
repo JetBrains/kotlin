@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import java.io.File
+import java.util.Properties
 import javax.inject.Inject
 
 private enum class TestProperty(shortName: String) {
@@ -320,6 +322,34 @@ private abstract class JdkVersionDependentFlagsProvider : CommandLineArgumentPro
 private fun ProviderFactory.testProperty(property: TestProperty) =
     gradleProperty(property.fullName).orElse(gradleProperty(property.shortName))
 
+private fun Project.hostXcodeConfiguration(): Configuration =
+    configurations.findByName(HOST_XCODE_CONFIGURATION) ?: run {
+        val hostXcode = dependencies.project(":kotlin-native:dependencies", "hostXcode")
+        configurations.create(HOST_XCODE_CONFIGURATION) {
+            isCanBeConsumed = false
+            isCanBeResolved = true
+            dependencies.add(hostXcode)
+        }
+    }
+
+private fun Project.expectedXcodeDeveloperDir(): Provider<String> {
+    val konanProperties = project(":kotlin-native").isolated.projectDirectory.file("konan/konan.properties")
+    val dependenciesRoot = DependencyDirectories.getDependenciesRoot(
+        providers.gradleProperty("konan.data.dir").orNull
+    )
+    return providers.fileContents(konanProperties).asText.map { text ->
+        val properties = Properties().apply { text.reader().use { load(it) } }
+        fun requiredProperty(name: String) = properties.getProperty(name)
+            ?: error("No '$name' property in ${konanProperties.asFile.absolutePath}")
+        dependenciesRoot
+            .resolve("xcode_${requiredProperty("xcodeVersion")}_${requiredProperty("xcodeBuild")}")
+            .resolve("Contents/Developer")
+            .absolutePath
+    }
+}
+
+private const val HOST_XCODE_CONFIGURATION = "nativeTestHostXcode"
+
 /**
  * @param taskName Name of Gradle task.
  * @param tag Optional JUnit test tag. See https://junit.org/junit5/docs/current/user-guide/#writing-tests-tagging-and-filtering
@@ -425,6 +455,13 @@ fun ProjectTestsExtension.nativeTestTask(
 
         // Pass the current Gradle task name so test can use it in logging.
         environment("GRADLE_TASK_NAME", path)
+
+        if (HostManager.hostIsMac &&
+            kotlinBuildProperties.booleanProperty("kotlin.native.internalServer.wholeXcode", false).get()
+        ) {
+            dependsOn(project.hostXcodeConfiguration())
+            environment("DEVELOPER_DIR", project.expectedXcodeDeveloperDir().get())
+        }
 
         useJUnitPlatform {
             // Note: arbitrary JUnit tag expressions can be used in this property.
