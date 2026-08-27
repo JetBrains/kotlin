@@ -104,7 +104,8 @@ fun Project.configureJavaCompile() {
     }
 }
 
-val kotlinApiVersionForProjectsDependingOnStableStdlib: Provider<String> = project.providers.gradleProperty("kotlinApiVersionForProjectsDependingOnStableStdlib")
+val kotlinApiVersionForProjectsDependingOnStableStdlib: Provider<String> =
+    project.providers.gradleProperty("kotlinApiVersionForProjectsDependingOnStableStdlib")
 
 fun Project.configureKotlinCompilationOptions() {
     plugins.withType<KotlinBasePluginWrapper> {
@@ -138,7 +139,7 @@ fun Project.configureKotlinCompilationOptions() {
                 }
 
                 freeCompilerArgs.addAll(commonCompilerArgs)
-                languageVersion.set(kotlinLanguageVersion.map{ KotlinVersion.fromVersion(it) })
+                languageVersion.set(kotlinLanguageVersion.map { KotlinVersion.fromVersion(it) })
                 apiVersion.set(kotlinLanguageVersion.map { KotlinVersion.fromVersion(it) })
                 freeCompilerArgs.add("-Xskip-prerelease-check")
 
@@ -316,137 +317,8 @@ fun Project.configureArtifacts() {
 }
 
 fun Project.configureTests() {
-    val concurrencyLimitService = project.gradle.sharedServices.registerIfAbsent(
-        "concurrencyLimitService",
-        ConcurrencyLimitService::class
-    ) {
-        maxParallelUsages.set(1)
-    }
-
-    tasks.withType<Test>().configureEach {
-        val notCacheableTestProjects: List<String> = listOf(
-            ":analysis:analysis-api-standalone:analysis-api-standalone-native",
-            ":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests",
-            ":compiler:build-tools:kotlin-build-tools-api",
-            ":compiler:build-tools:kotlin-build-tools-compat",
-            ":compiler:build-tools:kotlin-build-tools-generator",
-            ":compiler:fir:modularized-tests",
-            ":compiler:fir:raw-fir:light-tree2fir",
-            ":compiler:fir:raw-fir:psi2fir",
-            ":compiler:multiplatform-parsing",
-            ":compiler:test-infrastructure-utils",
-            ":compiler:tests-integration",
-            ":compose-compiler-gradle-plugin",
-            ":examples:scripting-jvm-embeddable-host",
-            ":examples:scripting-jvm-maven-deps-host",
-            ":examples:scripting-jvm-simple-script-host",
-            ":generators",
-            ":jps:jps-common",
-            ":jps:jps-plugin",
-            ":kotlin-annotation-processing",
-            ":kotlin-annotation-processing-base",
-            ":kotlin-build-common",
-            ":kotlin-compiler-client-embeddable",
-            ":kotlin-compiler-embeddable",
-            ":kotlin-daemon-client",
-            ":kotlin-gradle-plugin",
-            ":kotlin-gradle-plugin-dsl-codegen",
-            ":kotlin-gradle-plugin-integration-tests",
-            ":kotlin-gradle-statistics",
-            ":kotlin-main-kts",
-            ":kotlin-main-kts-test",
-            ":kotlin-metadata-jvm",
-            ":kotlin-power-assert-runtime", // TODO(KTI-3056): 'test-inputs-check' cannot be combined with 'multiplatform' projects
-            ":kotlin-scripting-common",
-            ":kotlin-scripting-dependencies",
-            ":kotlin-scripting-dependencies-maven",
-            ":kotlin-scripting-dependencies-maven-all",
-            ":kotlin-scripting-ide-services-test",
-            ":kotlin-scripting-jsr223-test",
-            ":kotlin-scripting-jvm",
-            ":kotlin-scripting-jvm-host-test",
-            ":kotlin-stdlib",
-            ":kotlin-stdlib-jdk8",
-            ":kotlin-stdlib:samples",
-            ":kotlin-test",
-            ":kotlin-util-klib",
-            ":kotlinx-metadata-klib",
-            ":libraries:tools:abi-validation:abi-tools",
-            ":libraries:tools:abi-validation:abi-tools-api",
-            ":libraries:tools:abi-validation:abi-tools-tests",
-            ":libraries:tools:abi-validation:kgp-integration-tests",
-
-            ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests",
-            ":plugins:scripting:scripting-tests",
-            ":plugins:scripting:scripting-tests:runtime",
-            ":repo:auto-code-review", // Runs processes, traverses all repo files. Quick.
-            ":repo:artifacts-tests",
-            ":repo:codebase-tests",
-            ":tools:binary-compatibility-validator",
-            ":tools:ide-plugin-dependencies-validator",
-            ":benchmarks",
-            ":test-instrumenter"
-        )
-        val projectPath = project.path
-        val hasTestInputCheckPlugin = plugins.hasPlugin("test-inputs-check")
-        if (!hasTestInputCheckPlugin) {
-            outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { true }
-        }
-        doFirst {
-            if (!hasTestInputCheckPlugin) {
-                if (projectPath !in notCacheableTestProjects) {
-                    throw GradleException(
-                        """
-                        Tests are not cacheable in: $projectPath
-                        Apply id("test-inputs-check") to the project to make the tests cacheable.
-                    """.trimIndent()
-                    )
-                }
-            } else {
-                if (projectPath in notCacheableTestProjects) {
-                    throw GradleException("Tests are cacheable in: ${projectPath}, but we listed it in `notCacheableTestProjects`")
-                }
-            }
-        }
-        if (project.kotlinBuildProperties.limitTestTasksConcurrency) {
-            usesService(concurrencyLimitService)
-        }
-
-        /*
-        We're disabling test reports on teamcity for Gradle 9.4 as we experienced failures like
-        'File name too long' when upgrading to Gradle 9.4 while generating those reports.
-        https://github.com/gradle/gradle/issues/36996
-         */
-        reports {
-            configureEach {
-                if (GradleVersion.current() == GradleVersion.version("9.4.0")) {
-                    this.required = false
-                }
-            }
-        }
-
-    }
-
-    tasks.withType<AbstractTestTask>().configureEach {
-        val disableVerificationTasks: Provider<Boolean> = providers.gradleProperty("kotlin.build.disable.verification.tasks")
-            .map { it.toBoolean() }
-            .orElse(false)
-        inputs.property("kotlin.build.disable.verification.tasks", disableVerificationTasks)
-
-        val testInventoryListener = TestInventoryListener(name, project.layout.buildDirectory.asFile)
-        addTestListener(testInventoryListener)
-        outputs.file(testInventoryListener.inventoryFile)
-
-        doFirst {
-            if (disableVerificationTasks.get()) {
-                logger.warn("Task $path is disabled because `kotlin.build.disable.verification.tasks` is true")
-                throw StopExecutionException("Verification tasks are disabled.")
-            }
-        }
-    }
-    // Aggregate task for build related checks
-    tasks.register("checkBuild")
-    configureTestRetriesForTestTasks()
+    plugins.apply("project-tests-convention")
+    plugins.apply("test-federation-convention")
 }
 
 // TODO: migrate remaining modules to the new JVM default scheme.
