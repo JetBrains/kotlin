@@ -4,5 +4,3 @@ class A {
             field = <expr>id</expr>
         }
 }
-
-// IGNORE_LOOKUP_LOCALLY
