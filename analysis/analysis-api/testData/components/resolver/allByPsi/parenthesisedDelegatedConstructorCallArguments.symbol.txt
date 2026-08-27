@@ -136,7 +136,7 @@ KtParenthesizedExpression(68,71): '(i)'
 KtNameReferenceExpression(69,70): 'i'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       i: T
@@ -238,7 +238,7 @@ KtParenthesizedExpression(122,125): '(i)'
 KtNameReferenceExpression(123,124): 'i'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       i: T
@@ -409,7 +409,7 @@ KtParenthesizedExpression(232,239): '(value)'
 KtNameReferenceExpression(233,238): 'value'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       value: kotlin.Int
