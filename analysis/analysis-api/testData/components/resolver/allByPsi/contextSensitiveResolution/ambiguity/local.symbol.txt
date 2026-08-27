@@ -61,7 +61,7 @@ KtUserType(114,120): 'Sealed'
 KtNameReferenceExpression(114,120): 'Sealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -136,7 +136,7 @@ KtUserType(154,160): 'Sealed'
 KtNameReferenceExpression(154,160): 'Sealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -181,7 +181,7 @@ KtUserType(183,189): 'Sealed'
 KtNameReferenceExpression(183,189): 'Sealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -256,7 +256,7 @@ KtUserType(223,229): 'Sealed'
 KtNameReferenceExpression(223,229): 'Sealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -346,7 +346,7 @@ KtUserType(278,284): 'Sealed'
 KtNameReferenceExpression(278,284): 'Sealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -1405,7 +1405,7 @@ KtUserType(1333,1337): 'Test'
 KtNameReferenceExpression(1333,1337): 'Test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       foo/Test
