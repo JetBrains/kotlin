@@ -99,6 +99,8 @@ internal fun isEffectivelyPrivate(symbol: KaDeclarationSymbol): Boolean {
  * @param hasJvmNameAnnotation Whether the method has a [JvmName] annotation.
  * @param isOverridable Whether the method can be overridden.
  * @param isEffectivelyPrivate Whether the method is effectively private and therefore must not be exposed. @see isEffectivelyPrivate
+ * @param hasSameJvmSignatureWhenExposed Whether the boxed method would occupy the same JVM signature as the regular one.
+ * Computed lazily, as it matters only when both methods are otherwise required. @see hasSameJvmSignatureWhenExposed
  */
 internal fun methodGeneration(
     exposeBoxedMode: JvmExposeBoxedMode,
@@ -109,6 +111,7 @@ internal fun methodGeneration(
     isSuspend: Boolean,
     isOverridable: Boolean,
     isEffectivelyPrivate: Boolean,
+    hasSameJvmSignatureWhenExposed: () -> Boolean,
 ): MethodGenerationResult {
     // Explicit mode -> a boxed method is requested (even if it is a JVM name clash)
     val isBoxedAccessorRequestedExplicitly = exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT &&
@@ -147,7 +150,8 @@ internal fun methodGeneration(
     }
 
     return MethodGenerationResult(
-        isRegularMethodRequired = isRegularAccessorRequired,
+        // Two methods with the same JVM signature cannot coexist, so the JVM backend keeps only the boxed one
+        isRegularMethodRequired = isRegularAccessorRequired && !(isBoxedAccessorRequired && hasSameJvmSignatureWhenExposed()),
         isBoxedMethodRequired = isBoxedAccessorRequired,
     )
 }

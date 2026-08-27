@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.config.jvmDefaultMode
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.annotations.getIntroducedAtVersionFromAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.getJvmExposeBoxedNameFromAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmSyntheticAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.copy
@@ -774,6 +775,86 @@ internal fun hasManglingValueClassInParameterPosition(
     skipValueParametersCheck = false,
     valueParameterPickMask = valueParameterPickMask,
 ) { parameterTypeRequiresMangling(it) }
+
+/**
+ * Whether every value class in a parameter position of [callableSymbol] is nullable, and so is treated by the JVM backend as
+ * already boxed.
+ *
+ * A constructor cannot be renamed, so a regular constructor and the one requested by [JvmExposeBoxed] are distinguishable only
+ * by their parameter types. When there is nothing left to box, the JVM backend emits the exposed constructor alone.
+ *
+ * The same check is performed by `isBoxedInlineClassType` in `org.jetbrains.kotlin.backend.jvm.lower.JvmInlineClassLowering`.
+ */
+context(_: KaSession)
+internal fun hasOnlyNullableValueClassesInParameterPosition(
+    callableSymbol: KaCallableSymbol,
+    valueParameterPickMask: BitSet? = null,
+): Boolean = !hasValueClassInParameterPosition(
+    callableSymbol = callableSymbol,
+    skipValueParametersCheck = false,
+    valueParameterPickMask = valueParameterPickMask,
+) { typeForValueClass(it) && !it.isNullable }
+
+/**
+ * Whether the declaration requested by [JvmExposeBoxed] would occupy the same JVM signature as the regular declaration, so the
+ * JVM backend emits only the exposed one.
+ *
+ * Usually the two are distinguishable: a value class in a parameter position mangles the name of the regular declaration, so the
+ * names differ. `kotlin.Result` is the exception, as the JVM backend excludes it from mangling (see
+ * [parameterTypeRequiresMangling]). A nullable `Result` is mapped to `kotlin/Result` in both modes, so nothing distinguishes the
+ * two declarations unless [JvmExposeBoxed] renames the exposed one. A non-nullable `Result` is mapped to `java/lang/Object`
+ * without boxing, so it keeps the parameter types apart.
+ *
+ * The same check is performed by `acceptsNullableResultWithoutRenaming` in
+ * `org.jetbrains.kotlin.backend.jvm.lower.JvmInlineClassLowering`.
+ *
+ * @param exposedNameOwner the symbol carrying the [JvmExposeBoxed] annotation; for a property accessor it is the accessor itself
+ * @param propertyTypeAsParameter the type of the property for a setter, as the setter takes it as a value parameter
+ */
+context(_: KaSession)
+internal fun hasSameJvmSignatureWhenExposed(
+    callableSymbol: KaCallableSymbol,
+    exposedNameOwner: KaAnnotatedSymbol,
+    valueParameterPickMask: BitSet? = null,
+    propertyTypeAsParameter: KaType? = null,
+): Boolean {
+    // A renamed exposed declaration never clashes with the regular one
+    if (exposedNameOwner.getJvmExposeBoxedNameFromAnnotation() != null) return false
+
+    fun hasParameterOfKind(kind: ExposedParameterKind): Boolean = exposedParameterKind(propertyTypeAsParameter) == kind ||
+            hasValueClassInParameterPosition(
+                callableSymbol = callableSymbol,
+                skipValueParametersCheck = false,
+                valueParameterPickMask = valueParameterPickMask,
+            ) { exposedParameterKind(it) == kind }
+
+    return !hasParameterOfKind(ExposedParameterKind.DISTINGUISHING) && hasParameterOfKind(ExposedParameterKind.INDISTINGUISHABLE)
+}
+
+/**
+ * How a parameter type affects the difference between the regular JVM signature of a declaration and the one requested by
+ * [JvmExposeBoxed].
+ */
+private enum class ExposedParameterKind {
+    /** Not a value class, so the parameter is mapped the same way in both signatures */
+    IRRELEVANT,
+
+    /** A value class which is mapped identically in both signatures and doesn't mangle the name */
+    INDISTINGUISHABLE,
+
+    /** A value class which either mangles the name of the regular declaration or is mapped differently in the two signatures */
+    DISTINGUISHING,
+}
+
+context(_: KaSession)
+private fun exposedParameterKind(type: KaType?): ExposedParameterKind {
+    val valueClass = type?.let { valueClassSymbol(it) } ?: return ExposedParameterKind.IRRELEVANT
+    return if (valueClass.classId == StandardClassIds.Result && type.isNullable) {
+        ExposedParameterKind.INDISTINGUISHABLE
+    } else {
+        ExposedParameterKind.DISTINGUISHING
+    }
+}
 
 context(_: KaSession)
 private inline fun hasValueClassInParameterPosition(

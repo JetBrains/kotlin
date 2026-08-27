@@ -9,12 +9,6 @@ public final class ExposedResult /* ExposedResult*/ {
   public final void consume(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() kotlin.Result<@org.jetbrains.annotations.NotNull() java.lang.String>);//  consume(@org.jetbrains.annotations.Nullable() kotlin.Result<@org.jetbrains.annotations.NotNull() java.lang.String>)
 
   public  ExposedResult();//  .ctor()
-
-  public final <T extends kotlin.Result<? extends @org.jetbrains.annotations.NotNull() java.lang.String>> void consume1(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() T);// <T extends kotlin.Result<? extends @org.jetbrains.annotations.NotNull() java.lang.String>>  consume1(@org.jetbrains.annotations.Nullable() T)
-
-  public final <T extends kotlin.Result<? extends @org.jetbrains.annotations.NotNull() java.lang.String>> void consume2(T);// <T extends kotlin.Result<? extends @org.jetbrains.annotations.NotNull() java.lang.String>>  consume2(T)
-
-  public final void consume(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() kotlin.Result<@org.jetbrains.annotations.NotNull() java.lang.String>);//  consume(@org.jetbrains.annotations.Nullable() kotlin.Result<@org.jetbrains.annotations.NotNull() java.lang.String>)
 }
 
 @kotlin.jvm.JvmInline()
