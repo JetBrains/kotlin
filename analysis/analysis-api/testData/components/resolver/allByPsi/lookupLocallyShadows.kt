@@ -6,6 +6,16 @@ fun shadowing(x: Int) {
     }
     {x: Int -> x}
     x + 1
+    class A(val x: Int) {
+        val v: Int = x
+            get() = x
+        inner class B(x: Int) {
+            val x: Int = x
+                get() = x
+            val v: Int = x
+                get() = x
+        }
+    }
     return
 }
 
