@@ -90,4 +90,5 @@ projectTests {
     withScriptingPlugin()
     withTestScriptDefinition()
     withPluginSandboxAnnotations()
+    withPluginSandboxJar()
 }

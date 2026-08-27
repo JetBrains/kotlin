@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.services.libraries
 
+import org.jetbrains.kotlin.analysis.test.framework.directives.CompilerPluginsDirectives
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -140,6 +141,13 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
 
         if (LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in module.directives) {
             add(CommonCompilerArguments::allowKotlinPackage.cliArgument)
+        }
+
+        if (CompilerPluginsDirectives.WITH_FIR_TEST_COMPILER_PLUGIN in module.directives) {
+            // Libraries are compiled by a separate CLI compiler invocation, which doesn't see the plugin registered for the
+            // analysis session, so the plugin JAR has to be passed explicitly.
+            val pluginJar = ForTestCompileRuntime.pluginSandboxJarForTests()
+            add(CommonCompilerArguments::pluginClasspaths.cliArgument(pluginJar.absolutePath))
         }
 
         addAll(module.directives[Directives.COMPILER_ARGUMENTS])
