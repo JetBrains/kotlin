@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationTarget
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaKlibDecompiledFileAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbolBase
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPackageSymbol
@@ -183,7 +182,7 @@ internal class KaFirSymbolInformationProvider(
 
         val containingFile = with(analysisSession) { symbol.containingFile }
         if (containingFile != null) {
-            return KaFirAnnotationListForDeclaration.create(containingFile.firSymbol, analysisSession.firSymbolBuilder)
+            return containingFile.annotations
         }
 
         /**
