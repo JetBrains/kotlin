@@ -44,8 +44,8 @@ internal abstract class JavaKFunction(
     protected val enhancedSignature: EnhancedSignature? by lazy(PUBLICATION) {
         val predefinedEnhancementInfo = predefinedEnhancementInfo
 
-        // Callables in Kotlin classes (even fake overrides of Java methods) are not enhanced from supertypes/JSR-305 annotations. The only
-        // enhancement that still applies to them is the predefined enhancement of additional built-in members (see `getAdditionalFunctions`).
+        // Callables in Kotlin classes (even fake overrides of Java methods) are not enhanced from supertypes/nullability annotations.
+        // Only the predefined enhancement of additional built-in members applies to them (see `getAdditionalFunctions`).
         val isKotlinContainer = (container as KClassImpl<*>).kmClass != null
         if (isKotlinContainer && predefinedEnhancementInfo == null) return@lazy null
 
@@ -53,13 +53,24 @@ internal abstract class JavaKFunction(
             ?: return@lazy null
 
         val enhancedReturnType = originalReturnType?.let { originalReturnType ->
-            with(ReflectSignatureParts(METHOD_RETURN_TYPE)) {
+            val returnTypeAnnotations =
+                if (isKotlinContainer) emptyList() else (member as Method).declaredAnnotations.toList()
+            with(ReflectSignatureParts(METHOD_RETURN_TYPE, returnTypeAnnotations)) {
                 val qualifiers = originalReturnType.computeIndexedQualifiers(
                     overridden.map { it.returnType as AbstractKType }, predefinedEnhancementInfo?.returnTypeInfo,
                 )
                 originalReturnType.enhance(qualifiers)
             }
         }
+
+        val parameterAnnotations: Array<Array<Annotation>>? = when {
+            isKotlinContainer -> null
+            member is Method -> member.parameterAnnotations
+            member is Constructor<*> -> member.parameterAnnotations
+            else -> null
+        }
+
+        val hasInstanceParameter = originalParameters.firstOrNull() is InstanceParameter
 
         var valueParameterIndex = 0
         val enhancedParameters = originalParameters.map { p ->
@@ -68,7 +79,10 @@ internal abstract class JavaKFunction(
 
             // `parametersInfo` is indexed by value parameter, while `p.index` also counts the instance parameter.
             val predefinedParameterInfo = predefinedEnhancementInfo?.parametersInfo?.getOrNull(valueParameterIndex++)
-            with(ReflectSignatureParts(VALUE_PARAMETER, containerIsVarargParameter = p.isVararg)) {
+            val annotations = parameterAnnotations
+                ?.getOrNull(computeJavaParameterAnnotationIndexWithWorkarounds(member, p.index, hasInstanceParameter))
+                ?.toList().orEmpty()
+            with(ReflectSignatureParts(VALUE_PARAMETER, annotations, containerIsVarargParameter = p.isVararg)) {
                 val type = p.type as AbstractKType
                 val qualifiers = type.computeIndexedQualifiers(
                     overridden.map { it.parameters[p.index].type as AbstractKType }, predefinedParameterInfo,
@@ -79,7 +93,9 @@ internal abstract class JavaKFunction(
             }
         }
 
-        // kotlin-reflect doesn't support JSR-305 annotations yet, so there's no need to enhance type parameter bounds.
+        // Java type parameter bounds are not enhanced from annotations because JSR-305 type qualifier defaults
+        // (e.g. `@ParametersAreNonnullByDefault`) are not supported in kotlin-reflect, and nullability annotations directly on type
+        // parameter declarations are not loaded via `getParameterAnnotations`/`getDeclaredAnnotations`.
         EnhancedSignature(enhancedParameters, enhancedReturnType)
     }
 
