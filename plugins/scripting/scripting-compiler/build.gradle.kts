@@ -4,7 +4,6 @@ description = "Kotlin Scripting Compiler Plugin"
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("test-inputs-check")

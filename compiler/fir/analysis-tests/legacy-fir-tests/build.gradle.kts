@@ -8,11 +8,9 @@ import JdkMajorVersion.JDK_21_0
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
-    id("project-tests-convention")
     id("test-inputs-check")
     id("require-explicit-types")
 }

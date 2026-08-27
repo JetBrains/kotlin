@@ -4,7 +4,6 @@ import gradle.GradleApiKt
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     id("java-gradle-plugin")
     id("org.jetbrains.kotlin.jvm")

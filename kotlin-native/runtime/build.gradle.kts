@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     id("base")
     id("compile-to-bitcode")

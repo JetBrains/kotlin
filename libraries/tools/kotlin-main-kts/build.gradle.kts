@@ -5,7 +5,6 @@ description = "Kotlin \"main\" script definition"
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }

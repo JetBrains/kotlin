@@ -5,12 +5,10 @@ group = "org.jetbrains.kotlin"
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
     id("org.jetbrains.dokka")
-    id("project-tests-convention")
 }
 
 

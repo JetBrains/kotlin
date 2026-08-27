@@ -3,11 +3,9 @@ import kotlinx.benchmark.gradle.benchmark
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     alias(libs.plugins.kotlinx.benchmark)
-    id("project-tests-convention")
     id("java-test-fixtures")
 }
 

@@ -5,7 +5,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     kotlin("jvm")
 }
 

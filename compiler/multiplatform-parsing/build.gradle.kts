@@ -3,7 +3,6 @@ import java.net.URI
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("multiplatform")
     id("generated-sources")

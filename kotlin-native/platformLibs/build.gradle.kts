@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.utils.reproducibilityCompilerFlags
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     id("base")
     id("platform-manager")

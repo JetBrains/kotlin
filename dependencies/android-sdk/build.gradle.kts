@@ -6,7 +6,6 @@ import java.util.Properties
 // Repo content: https://dl.google.com/android/repository/repository2-1.xml
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
 }
 

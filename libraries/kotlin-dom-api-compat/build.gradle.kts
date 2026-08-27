@@ -3,7 +3,6 @@ import plugins.configureKotlinPomAttributes
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     `maven-publish`
     kotlin("multiplatform")

@@ -15,14 +15,12 @@ import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     id("gradle-plugin-common-configuration")
     id("kotlin-git.gradle-build-conventions.binary-compatibility-extended")
     id("kotlin-git.gradle-build-conventions.kgp-npm-tooling-helper")
     id("android-sdk-provisioner")
     id("asm-deprecating-transformer")
-    id("project-tests-convention")
     id("native-bootstrap-distribution-provisioner")
     `java-test-fixtures`
     `jvm-test-suite`

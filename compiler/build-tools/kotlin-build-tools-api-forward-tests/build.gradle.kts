@@ -3,11 +3,9 @@ import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     kotlin("jvm")
     `jvm-test-suite`
     id("test-symlink-transformation")
-    id("project-tests-convention")
     id("test-inputs-check")
 }
 
