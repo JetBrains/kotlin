@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
@@ -614,19 +613,17 @@ open class FirTypeResolveTransformer(
      */
     private fun FirVariable.moveOrDeleteIrrelevantAnnotations() {
         if (annotations.isEmpty()) return
-        val languageVersionSettings = session.languageVersionSettings
         replaceAnnotations(annotations.filter { annotation ->
             when (annotation.useSiteTarget) {
-                null -> annotation.multiplexWithoutUseSiteTarget(this, languageVersionSettings)
-                ALL -> annotation.multiplexWithAllUseSiteTarget(this, languageVersionSettings)
+                null -> annotation.multiplexWithoutUseSiteTarget(this)
+                ALL -> annotation.multiplexWithAllUseSiteTarget(this)
                 else -> true
             }
         })
     }
 
     private fun FirAnnotation.multiplexWithoutUseSiteTarget(
-        annotated: FirDeclaration,
-        languageVersionSettings: LanguageVersionSettings
+        annotated: FirDeclaration
     ): Boolean {
         val allowedTargets = useSiteTargetsFromMetaAnnotation(session)
         return when (annotated) {
@@ -636,7 +633,7 @@ open class FirTypeResolveTransformer(
             }
             is FirProperty if annotated.fromPrimaryConstructor == true && CONSTRUCTOR_PARAMETER in allowedTargets -> {
                 when {
-                    !languageVersionSettings.supportsFeature(LanguageFeature.PropertyParamAnnotationDefaultTargetMode) -> {
+                    LanguageFeature.PropertyParamAnnotationDefaultTargetMode.isDisabled() -> {
                         false
                     }
                     // In the property-param mode,
@@ -668,10 +665,9 @@ open class FirTypeResolveTransformer(
     }
 
     private fun FirAnnotation.multiplexWithAllUseSiteTarget(
-        annotated: FirDeclaration,
-        languageVersionSettings: LanguageVersionSettings
+        annotated: FirDeclaration
     ): Boolean {
-        if (!languageVersionSettings.supportsFeature(LanguageFeature.AnnotationAllUseSiteTarget)) {
+        if (LanguageFeature.AnnotationAllUseSiteTarget.isDisabled()) {
             return true
         }
         val allowedTargets = useSiteTargetsFromMetaAnnotation(session)
