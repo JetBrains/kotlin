@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.fir.expressions
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -37,10 +38,10 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.annotation]
  */
 abstract class FirAnnotation : FirExpression() {
-    abstract override val source: KtSourceElement?
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: List<FirAnnotation>
+    abstract override val source: KtSourceElement?
     abstract val useSiteTarget: AnnotationUseSiteTarget?
     abstract val annotationTypeRef: FirTypeRef
     abstract val argumentMapping: FirAnnotationArgumentMapping
@@ -56,6 +57,9 @@ abstract class FirAnnotation : FirExpression() {
     abstract override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    @FirImplementationDetail
+    abstract fun replaceSource(newSource: KtSourceElement?)
 
     abstract fun replaceUseSiteTarget(newUseSiteTarget: AnnotationUseSiteTarget?)
 

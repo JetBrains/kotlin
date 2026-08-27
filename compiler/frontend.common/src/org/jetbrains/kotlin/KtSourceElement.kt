@@ -738,6 +738,13 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object FromUseSiteTarget : KtFakeSourceElementKind()
 
     /**
+     * for annotation on constructor property when the use site target allows both the parameter and the property,
+     * in that case the annotation on the parameter keeps the real source kind and the copy on the property
+     * gets this fake kind.
+     */
+    object AnnotationCopyFromConstructorParameter : KtFakeSourceElementKind()
+
+    /**
      * for `@ParameterName` annotation call added to function types with names in the notation
      * with a fake source that refers to the value parameter in the function type notation
      * e.g., `(x: Int) -> Unit` becomes `Function1<@ParameterName("x") Int, Unit>`
