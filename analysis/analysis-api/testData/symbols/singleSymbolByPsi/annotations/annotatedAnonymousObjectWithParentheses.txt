@@ -1,6 +1,9 @@
 KaAnonymousObjectSymbol:
   anchorPsi: KtObjectDeclaration
-  annotations: []
+  annotations: [
+    A(a = 42, c = "")
+      psi: KtAnnotationEntry
+  ]
   classId: null
   classKind: ANONYMOUS_OBJECT
   isActual: false

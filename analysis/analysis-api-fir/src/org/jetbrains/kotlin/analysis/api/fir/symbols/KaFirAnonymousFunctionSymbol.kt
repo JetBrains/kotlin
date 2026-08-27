@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 
@@ -46,7 +47,24 @@ internal class KaFirAnonymousFunctionSymbol private constructor(
         analysisSession = session,
     )
 
-    override val annotations: KaAnnotationList get() = withValidityAssertion { psiOrSymbolAnnotationList() }
+    override val annotations: KaAnnotationList
+        get() = withValidityAssertion {
+            /**
+             * If this anonymous function is a function literal, [backingPsi] is [KtFunctionLiteral].
+             * However, annotations are placed on the enclosing [KtLambdaExpression], i.e.,
+             * it has a [org.jetbrains.kotlin.psi.KtAnnotatedExpression] parent.
+             *
+             * So an adjusted PSI should be provided for the PSI-based optimization.
+             * ```kotlin
+             * @MyAnnotation {
+             *     // Something
+             * }
+             * ```
+             */
+            val adjustedPsi = (backingPsi as? KtFunctionLiteral)?.parent as? KtLambdaExpression
+            psiOrSymbolAnnotationList(adjustedPsi ?: backingPsi)
+        }
+
     override val returnType: KaType get() = withValidityAssertion { createReturnType() }
 
     override val receiverParameter: KaReceiverParameterSymbol?
