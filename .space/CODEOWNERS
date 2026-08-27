@@ -31,6 +31,7 @@
 # SPACE_OWNER: "Kotlin Release"
 # SPACE_OWNER: "Kotlin Language Evolution"
 # SPACE_OWNER: "Kotlin for Data Science"
+# SPACE_OWNER: "Kotlin Technical Writing"
 
 # USER_OWNER: dmitriy.novozhilov@jetbrains.com demiurg906
 # USER_OWNER: kirill.rakhman@jetbrains.com cypressious
@@ -354,6 +355,7 @@
 /libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/binaryen/ "Kotlin Wasm"
 /libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/d8/ "Kotlin Wasm" "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/web/ "Kotlin Wasm" "Kotlin Build Tools"
+/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingDiagnostics.kt "Kotlin Technical Writing" "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-annotations/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-api/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-dsl-codegen/ "Kotlin Build Tools"
