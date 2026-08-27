@@ -1,9 +1,7 @@
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     kotlin("jvm")
     application
-    id("project-tests-convention")
 }
 
 dependencies {

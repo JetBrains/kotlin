@@ -4,10 +4,8 @@ description = "Kotlin Compiler (embeddable)"
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
-    id("project-tests-convention")
 }
 
 val testCompilationClasspath = configurations.create("testCompilationClasspath")

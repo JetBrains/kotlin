@@ -2,7 +2,6 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     java
     id("gradle-plugin-compiler-dependency-configuration")

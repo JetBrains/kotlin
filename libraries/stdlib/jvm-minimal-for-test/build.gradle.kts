@@ -2,7 +2,6 @@ description = "Kotlin Mock Runtime for Tests"
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("multiplatform")
     `maven-publish`

@@ -3,12 +3,10 @@ import java.util.zip.ZipFile
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     java
     kotlin("jvm")
     id("java-test-fixtures")
-    id("project-tests-convention")
     id("test-inputs-check")
 }
 

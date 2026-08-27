@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.konan.util.DependencyDirectories
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     id("native-dependencies-downloader")
     id("native-dependencies")

@@ -2,10 +2,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     kotlin("jvm")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
-    id("project-tests-convention")
     id("generated-sources")
 }
 

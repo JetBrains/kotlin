@@ -2,12 +2,10 @@ import org.gradle.api.tasks.compile.JavaCompile
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("gradle-plugin-compiler-dependency-configuration")
     id("generated-sources")
-    id("project-tests-convention")
     id("test-inputs-check")
 }
 

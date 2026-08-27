@@ -4,7 +4,6 @@ description = "Kotlin Scripting Compiler extension providing code completion and
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
