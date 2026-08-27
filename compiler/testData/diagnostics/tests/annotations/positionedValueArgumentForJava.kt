@@ -13,9 +13,9 @@ import java.lang.Deprecated as deprecated
 
 @TestAnn(<!POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION!>"message"<!>)
 class A {
-    @get:TestAnn("message") @get:deprecated
+    @get:TestAnn(<!POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION!>"message"<!>) <!DEPRECATED_JAVA_ANNOTATION!>@get:deprecated<!>
     val x: Int = 10
-    fun test() = TestAnn("message")
+    fun test() = TestAnn(<!POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION!>"message"<!>)
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetPropertyGetter, classDeclaration, functionDeclaration, integerLiteral,

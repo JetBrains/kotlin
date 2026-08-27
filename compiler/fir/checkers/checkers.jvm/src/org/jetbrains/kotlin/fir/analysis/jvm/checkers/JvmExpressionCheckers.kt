@@ -52,6 +52,7 @@ object JvmExpressionCheckers : ExpressionCheckers() {
             FirJvmAtomicReferenceToPrimitiveCallChecker,
             FirJvmAtomicReferenceArrayToPrimitiveCallChecker,
             FirJavaSamConstructorNullabilityChecker,
+            FirJavaAnnotationsConstructorCallChecker,
         )
 
     override val annotationCheckers: Set<FirAnnotationChecker>
