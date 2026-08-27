@@ -34,6 +34,7 @@ interface LoweringContext : LoggingContext, ErrorReportingContext {
     val irBuiltIns: IrBuiltIns
     val irFactory: IrFactory
     val sharedVariablesManager: SharedVariablesManager
+    val useExplicitCastsForInlining: Boolean get() = false
 
     override fun log(message: String) {
         configuration.reportLog(message)

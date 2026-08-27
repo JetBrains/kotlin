@@ -96,7 +96,7 @@ abstract class FunctionInlining(
             context = context,
             currentFileEntry = fileEntriesStack.getLast(),
             currentFile = data.file,
-            parent = data as? IrDeclarationParent ?: data.parent
+            parent = data as? IrDeclarationParent ?: data.parent,
         ).inline(expression, actualCallee)
     }
 }
@@ -110,7 +110,7 @@ private class CallInlining(
     private val context: LoweringContext,
     private val currentFileEntry: IrFileEntry,
     private val currentFile: IrFile,
-    private val parent: IrDeclarationParent
+    private val parent: IrDeclarationParent,
 ) {
     private val parents = (parent as? IrDeclaration)?.parentsWithSelf?.toSet() ?: setOf(parent)
 
@@ -233,7 +233,7 @@ private class CallInlining(
             expression.transformChildrenVoid(this)
             if (expression.returnTargetSymbol == inlinedFunctionSymbol) {
                 expression.returnTargetSymbol = returnableBlockSymbol
-                expression.value = expression.value.doImplicitCastIfNeededTo(returnType)
+                expression.value = expression.value.doCastIfNeededTo(returnType)
             }
             return expression
         }
@@ -306,10 +306,17 @@ private class CallInlining(
         }
     }
 
-    private fun IrExpression.doImplicitCastIfNeededTo(type: IrType): IrExpression {
+    private fun IrExpression.doCastIfNeededTo(type: IrType): IrExpression {
         return when {
             type.isUnit() -> this.coerceToUnit(context.irBuiltIns)
-            else -> this.implicitCastIfNeededTo(type)
+            !context.useExplicitCastsForInlining -> this.implicitCastIfNeededTo(type)
+            else -> {
+                if (this.type.isMarkedNullable() && !type.isMarkedNullable()) {
+                    this.explicitCastIfNeededTo(type.makeNullable()).implicitCastIfNeededTo(type)
+                } else {
+                    this.explicitCastIfNeededTo(type)
+                }
+            }
         }
     }
 
@@ -403,7 +410,7 @@ private class CallInlining(
                             irExpression.symbol
                         } else {
                             evaluationBuilder.at(irExpression).irTemporary(
-                                value = irExpression.doImplicitCastIfNeededTo(boundParameter.type),
+                                value = irExpression.doCastIfNeededTo(boundParameter.type),
                                 nameHint = callee.symbol.owner.name.asStringStripSpecialMarkers() + "_${boundParameter.name.asStringStripSpecialMarkers()}",
                                 isMutable = false,
                             ).symbol
@@ -418,7 +425,7 @@ private class CallInlining(
                 continue
             }
 
-            val castedArgumentValue = argumentValue.doImplicitCastIfNeededTo(parameter.type)
+            val castedArgumentValue = argumentValue.doCastIfNeededTo(parameter.type)
 
             val valueForTmpVar = if (isDefaultArg) {
                 castedArgumentValue

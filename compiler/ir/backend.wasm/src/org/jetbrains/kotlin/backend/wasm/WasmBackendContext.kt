@@ -56,6 +56,7 @@ class WasmBackendContext(
     val idSignatureRetriever: IdSignatureRetriever = irFactory as IdSignatureRetriever
 
     val isWasmJsTarget: Boolean = configuration.wasmTarget == WasmTarget.JS
+    override val useExplicitCastsForInlining: Boolean get() = true
 
     // Place to store declarations excluded from code generation
     private val excludedDeclarations = mutableMapOf<FqName, IrPackageFragment>()
