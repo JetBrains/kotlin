@@ -9,6 +9,8 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget;
+import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty;
+import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
@@ -23,6 +25,7 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @Tag("atomicfu-native")
 @EnforcedHostTarget
+@EnforcedProperty(property = ClassLevelProperty.DEPEND_ON_PLATFORM_LIBS, propertyValue = "true")
 @UseExtTestCaseGroupProvider
 public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   private void run(String fileName) {
@@ -39,6 +42,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
   @EnforcedHostTarget
+  @EnforcedProperty(property = ClassLevelProperty.DEPEND_ON_PLATFORM_LIBS, propertyValue = "true")
   @UseExtTestCaseGroupProvider
   public class Atomic_extensions {
     private void run(String fileName) {
@@ -128,6 +132,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
   @EnforcedHostTarget
+  @EnforcedProperty(property = ClassLevelProperty.DEPEND_ON_PLATFORM_LIBS, propertyValue = "true")
   @UseExtTestCaseGroupProvider
   public class Atomics_basic {
     private void run(String fileName) {
@@ -247,6 +252,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
   @EnforcedHostTarget
+  @EnforcedProperty(property = ClassLevelProperty.DEPEND_ON_PLATFORM_LIBS, propertyValue = "true")
   @UseExtTestCaseGroupProvider
   public class Companion_blocks {
     private void run(String fileName) {
@@ -300,6 +306,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
   @EnforcedHostTarget
+  @EnforcedProperty(property = ClassLevelProperty.DEPEND_ON_PLATFORM_LIBS, propertyValue = "true")
   @UseExtTestCaseGroupProvider
   public class Context_parameters {
     private void run(String fileName) {
@@ -323,6 +330,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
   @EnforcedHostTarget
+  @EnforcedProperty(property = ClassLevelProperty.DEPEND_ON_PLATFORM_LIBS, propertyValue = "true")
   @UseExtTestCaseGroupProvider
   public class Delegated {
     private void run(String fileName) {
@@ -352,6 +360,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
   @EnforcedHostTarget
+  @EnforcedProperty(property = ClassLevelProperty.DEPEND_ON_PLATFORM_LIBS, propertyValue = "true")
   @UseExtTestCaseGroupProvider
   public class Locks {
     private void run(String fileName) {
@@ -381,6 +390,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
   @EnforcedHostTarget
+  @EnforcedProperty(property = ClassLevelProperty.DEPEND_ON_PLATFORM_LIBS, propertyValue = "true")
   @UseExtTestCaseGroupProvider
   public class Top_level {
     private void run(String fileName) {
@@ -416,6 +426,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
   @EnforcedHostTarget
+  @EnforcedProperty(property = ClassLevelProperty.DEPEND_ON_PLATFORM_LIBS, propertyValue = "true")
   @UseExtTestCaseGroupProvider
   public class Trace {
     private void run(String fileName) {

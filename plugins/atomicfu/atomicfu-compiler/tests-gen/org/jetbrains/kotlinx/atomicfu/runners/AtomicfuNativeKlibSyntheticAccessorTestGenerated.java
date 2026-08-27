@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 @UseExtTestCaseGroupProvider
 @Tag("atomicfu-native")
 @EnforcedHostTarget
+@EnforcedProperty(property = ClassLevelProperty.DEPEND_ON_PLATFORM_LIBS, propertyValue = "true")
 public class AtomicfuNativeKlibSyntheticAccessorTestGenerated extends AbstractAtomicfuNativeKlibSyntheticAccessorTest {
   private void run(String fileName) {
     runTest("plugins/atomicfu/atomicfu-compiler/testData/box/" + fileName);
@@ -46,6 +47,7 @@ public class AtomicfuNativeKlibSyntheticAccessorTestGenerated extends AbstractAt
   @UseExtTestCaseGroupProvider
   @Tag("atomicfu-native")
   @EnforcedHostTarget
+  @EnforcedProperty(property = ClassLevelProperty.DEPEND_ON_PLATFORM_LIBS, propertyValue = "true")
   public class Atomic_extensions {
     private void run(String fileName) {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions/" + fileName);
@@ -137,6 +139,7 @@ public class AtomicfuNativeKlibSyntheticAccessorTestGenerated extends AbstractAt
   @UseExtTestCaseGroupProvider
   @Tag("atomicfu-native")
   @EnforcedHostTarget
+  @EnforcedProperty(property = ClassLevelProperty.DEPEND_ON_PLATFORM_LIBS, propertyValue = "true")
   public class Atomics_basic {
     private void run(String fileName) {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/" + fileName);
@@ -258,6 +261,7 @@ public class AtomicfuNativeKlibSyntheticAccessorTestGenerated extends AbstractAt
   @UseExtTestCaseGroupProvider
   @Tag("atomicfu-native")
   @EnforcedHostTarget
+  @EnforcedProperty(property = ClassLevelProperty.DEPEND_ON_PLATFORM_LIBS, propertyValue = "true")
   public class Companion_blocks {
     private void run(String fileName) {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/companion_blocks/" + fileName);
@@ -313,6 +317,7 @@ public class AtomicfuNativeKlibSyntheticAccessorTestGenerated extends AbstractAt
   @UseExtTestCaseGroupProvider
   @Tag("atomicfu-native")
   @EnforcedHostTarget
+  @EnforcedProperty(property = ClassLevelProperty.DEPEND_ON_PLATFORM_LIBS, propertyValue = "true")
   public class Context_parameters {
     private void run(String fileName) {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/context_parameters/" + fileName);
@@ -338,6 +343,7 @@ public class AtomicfuNativeKlibSyntheticAccessorTestGenerated extends AbstractAt
   @UseExtTestCaseGroupProvider
   @Tag("atomicfu-native")
   @EnforcedHostTarget
+  @EnforcedProperty(property = ClassLevelProperty.DEPEND_ON_PLATFORM_LIBS, propertyValue = "true")
   public class Delegated {
     private void run(String fileName) {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/delegated/" + fileName);
@@ -369,6 +375,7 @@ public class AtomicfuNativeKlibSyntheticAccessorTestGenerated extends AbstractAt
   @UseExtTestCaseGroupProvider
   @Tag("atomicfu-native")
   @EnforcedHostTarget
+  @EnforcedProperty(property = ClassLevelProperty.DEPEND_ON_PLATFORM_LIBS, propertyValue = "true")
   public class Locks {
     private void run(String fileName) {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/locks/" + fileName);
@@ -400,6 +407,7 @@ public class AtomicfuNativeKlibSyntheticAccessorTestGenerated extends AbstractAt
   @UseExtTestCaseGroupProvider
   @Tag("atomicfu-native")
   @EnforcedHostTarget
+  @EnforcedProperty(property = ClassLevelProperty.DEPEND_ON_PLATFORM_LIBS, propertyValue = "true")
   public class Top_level {
     private void run(String fileName) {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/top-level/" + fileName);
@@ -437,6 +445,7 @@ public class AtomicfuNativeKlibSyntheticAccessorTestGenerated extends AbstractAt
   @UseExtTestCaseGroupProvider
   @Tag("atomicfu-native")
   @EnforcedHostTarget
+  @EnforcedProperty(property = ClassLevelProperty.DEPEND_ON_PLATFORM_LIBS, propertyValue = "true")
   public class Trace {
     private void run(String fileName) {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/trace/" + fileName);
