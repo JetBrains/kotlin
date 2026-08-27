@@ -835,7 +835,6 @@ org.jetbrains.kotlin.psi.psiUtil.astReplace(PsiElement)
 org.jetbrains.kotlin.psi.psiUtil.createSmartPointer()
 org.jetbrains.kotlin.psi.psiUtil.getOrCreateParameterList()
 org.jetbrains.kotlin.psi.psiUtil.getOrCreateValueArgumentList()
-org.jetbrains.kotlin.psi.psiUtil.parentSubstitute
 org.jetbrains.kotlin.psi.psiUtil.replaceFileAnnotationList(KtFile, KtFileAnnotationList)
 org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 org.jetbrains.kotlin.psi.stubs.ConstantValueKind.BOOLEAN_CONSTANT
