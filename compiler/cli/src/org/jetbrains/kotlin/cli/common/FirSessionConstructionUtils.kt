@@ -320,7 +320,8 @@ object SessionConstructionUtils {
                 listOf(
                     createSingleSession(
                         nonScriptFiles, rootModuleName, libraryList, targetPlatform,
-                        sessionConfigurator, createSourceSession
+                        sessionConfigurator, createSourceSession,
+                        metadataCompilationMode = metadataCompilationMode
                     )
                 )
             }
@@ -370,7 +371,8 @@ object SessionConstructionUtils {
                 libraryList.moduleDataProvider
             ),
             targetPlatform,
-            sessionConfigurator, createSourceSession
+            sessionConfigurator, createSourceSession,
+            metadataCompilationMode = false
         )
 
     private fun <F> createSingleSession(
@@ -380,6 +382,7 @@ object SessionConstructionUtils {
         targetPlatform: TargetPlatform,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
         sourceSessionProducer: FirSessionProducer,
+        metadataCompilationMode: Boolean,
     ): SessionWithSources<F> {
         val platformModuleData = FirSourceModuleData(
             rootModuleName,
@@ -387,6 +390,7 @@ object SessionConstructionUtils {
             libraryList.dependsOnDependencies,
             libraryList.friendDependencies,
             targetPlatform,
+            isCommon = metadataCompilationMode,
         )
 
         val session = sourceSessionProducer.createSession(platformModuleData, kmpModuleKind = KmpModuleKind.SingleModule) {
