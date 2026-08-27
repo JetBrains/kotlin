@@ -33,7 +33,8 @@ data class ConsumerGroup(
     val consumer: Scenario.Project,
     val producers: List<Scenario.Project>,
 ) {
-    override fun toString(): String = consumer.id + " consumes " + producers.size + " producers"
+    override fun toString(): String = consumer.id + " consumes " + producers.size + " producers: " +
+            producers.joinToString { it.id }
 }
 
 @ExtendWith(GradleParameterResolver::class)
