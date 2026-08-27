@@ -7,5 +7,3 @@ fun f() {
         <expr>A</expr>
     }
 }
-
-// IGNORE_LOOKUP_LOCALLY
