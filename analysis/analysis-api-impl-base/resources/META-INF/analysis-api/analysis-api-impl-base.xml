@@ -37,7 +37,6 @@
     <extensionPoint
         qualifiedName="org.jetbrains.kotlin.kaSessionListener"
         interface="org.jetbrains.kotlin.analysis.api.platform.KaSessionListener"
-        area="IDEA_PROJECT"
         dynamic="true"
     />
   </extensionPoints>

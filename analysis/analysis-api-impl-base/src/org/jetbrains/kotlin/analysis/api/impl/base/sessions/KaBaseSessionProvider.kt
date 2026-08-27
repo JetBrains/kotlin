@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.sessions
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseWriteAction
 import org.jetbrains.kotlin.analysis.api.impl.base.restrictedAnalysis.KaBaseRestrictedAnalysisException
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
+import org.jetbrains.kotlin.analysis.api.platform.KaSessionListener
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
@@ -24,9 +24,7 @@ import org.jetbrains.kotlin.analysis.api.platform.restrictedAnalysis.KotlinRestr
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.isResolvable
-import org.jetbrains.kotlin.analysis.api.platform.KaSessionListener
 import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.shouldIjPlatformExceptionBeRethrown
 
@@ -60,9 +58,6 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
 
     private val writeActionStartedChecker = KaBaseWriteActionStartedChecker(this)
 
-    protected val listeners: List<KaSessionListener>
-        get() = KaSessionListener.EP_NAME.getExtensionList(project)
-
     protected fun checkUseSiteModule(useSiteModule: KaModule) {
         if (useSiteModule is KaLibraryModule && !kotlinPlatformSettings.allowUseSiteLibraryModuleAnalysis) {
             throw KaBaseUseSiteLibraryModuleAnalysisException(useSiteModule)
@@ -80,14 +75,14 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
         // Catch issues with analysis on invalid PSI as early as possible.
         PsiUtilCore.ensureValid(useSiteElement)
 
-        beforeEnteringAnalysisInternal(session, useSiteElement as? KtElement)
+        beforeEnteringAnalysisInternal(session, session.useSiteModule, useSiteElement)
     }
 
     override fun beforeEnteringAnalysis(session: KaSession, useSiteModule: KaModule) {
-        beforeEnteringAnalysisInternal(session, null)
+        beforeEnteringAnalysisInternal(session, useSiteModule, null)
     }
 
-    private fun beforeEnteringAnalysisInternal(session: KaSession, useSiteElement: KtElement?) {
+    private fun beforeEnteringAnalysisInternal(session: KaSession, useSiteModule: KaModule, useSiteElement: PsiElement?) {
         if (!permissionChecker.isAnalysisAllowed()) {
             throw ProhibitedAnalysisException("Analysis is not allowed: ${permissionChecker.getRejectionReason()}")
         }
@@ -103,19 +98,23 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
         lifetimeTracker.beforeEnteringAnalysis(session)
         writeActionStartedChecker.beforeEnteringAnalysis()
 
-        notifyListeners { beforeEnteringAnalysis(session, useSiteElement) }
+        KaSessionListener.EP_NAME.forEachExtensionSafe { it.beforeEnteringAnalysis(useSiteModule, useSiteElement) }
     }
 
     override fun handleAnalysisException(throwable: Throwable, session: KaSession, useSiteElement: PsiElement): Nothing {
-        handleAnalysisExceptionInternal(throwable, session, useSiteElement as? KtElement)
+        handleAnalysisExceptionInternal(throwable, session.useSiteModule, useSiteElement)
     }
 
     override fun handleAnalysisException(throwable: Throwable, session: KaSession, useSiteModule: KaModule): Nothing {
-        handleAnalysisExceptionInternal(throwable, session, null)
+        handleAnalysisExceptionInternal(throwable, useSiteModule, null)
     }
 
-    private fun handleAnalysisExceptionInternal(throwable: Throwable, session: KaSession, useSiteElement: KtElement?): Nothing {
-        notifyListeners { onAnalysisException(session, useSiteElement, throwable) }
+    private fun handleAnalysisExceptionInternal(
+        throwable: Throwable,
+        useSiteModule: KaModule,
+        useSiteElement: PsiElement?,
+    ): Nothing {
+        KaSessionListener.EP_NAME.forEachExtensionSafe { it.onAnalysisException(useSiteModule, useSiteElement, throwable) }
 
         if (
             restrictedAnalysisService?.isAnalysisRestricted == true &&
@@ -129,33 +128,21 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
     }
 
     override fun afterLeavingAnalysis(session: KaSession, useSiteElement: PsiElement) {
-        afterLeavingAnalysisInternal(session, useSiteElement as? KtElement)
+        afterLeavingAnalysisInternal(session, session.useSiteModule, useSiteElement)
     }
 
     override fun afterLeavingAnalysis(session: KaSession, useSiteModule: KaModule) {
-        afterLeavingAnalysisInternal(session, null)
+        afterLeavingAnalysisInternal(session, useSiteModule, null)
     }
 
-    private fun afterLeavingAnalysisInternal(session: KaSession, useSiteElement: KtElement?) {
-        notifyListeners { afterLeavingAnalysis(session, useSiteElement) }
+    private fun afterLeavingAnalysisInternal(session: KaSession, useSiteModule: KaModule, useSiteElement: PsiElement?) {
+        KaSessionListener.EP_NAME.forEachExtensionSafe { it.afterLeavingAnalysis(useSiteModule, useSiteElement) }
 
         try {
             // `writeActionStartedChecker` might throw an "illegal write action" exception.
             writeActionStartedChecker.afterLeavingAnalysis()
         } finally {
             lifetimeTracker.afterLeavingAnalysis(session)
-        }
-    }
-
-    private val LOG: Logger = Logger.getInstance(KaSessionListener::class.java)
-
-    protected fun notifyListeners(action: KaSessionListener.() -> Unit) {
-        for (listener in listeners) {
-            try {
-                listener.action()
-            } catch (t: Throwable) {
-                LOG.error("Exception thrown by KaSessionListener '${listener::class.java.name}'", t)
-            }
         }
     }
 }

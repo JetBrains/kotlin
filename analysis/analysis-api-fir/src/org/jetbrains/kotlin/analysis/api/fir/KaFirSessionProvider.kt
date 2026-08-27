@@ -16,7 +16,6 @@ import com.intellij.openapi.util.LowMemoryWatcher
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
 import com.intellij.util.concurrency.AppExecutorUtil
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirCacheCleaner
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseSessionProvider
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.util.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
+import org.jetbrains.kotlin.analysis.api.platform.KaSessionListener
 import org.jetbrains.kotlin.analysis.api.platform.KotlinAnalysisInWriteActionListener
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinReadActionConfinementLifetimeToken
@@ -100,7 +100,7 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
 
     override fun getAnalysisSession(useSiteElement: PsiElement): KaSession {
         val module = KotlinProjectStructureProvider.getModule(project, useSiteElement, useSiteModule = null)
-        return acquireSessionWithListeners(module, useSiteElement as? KtElement)
+        return acquireSessionWithListeners(module, useSiteElement)
     }
 
     override fun getAnalysisSession(useSiteModule: KaModule): KaSession {
@@ -109,17 +109,17 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
 
     private fun acquireSessionWithListeners(
         useSiteModule: KaModule,
-        useSiteElement: KtElement?,
+        useSiteElement: PsiElement?,
     ): KaSession {
-        notifyListeners { beforeAcquiringSession(useSiteModule, useSiteElement) }
+        KaSessionListener.EP_NAME.forEachExtensionSafe { it.beforeAcquiringSession(useSiteModule, useSiteElement) }
 
         return try {
             acquireAnalysisSession(useSiteModule)
         } catch (t: Throwable) {
-            notifyListeners { onSessionAcquisitionException(useSiteModule, useSiteElement, t) }
+            KaSessionListener.EP_NAME.forEachExtensionSafe { it.onSessionAcquisitionException(useSiteModule, useSiteElement, t) }
             throw t
         } finally {
-            notifyListeners { afterAcquiringSession(useSiteModule, useSiteElement) }
+            KaSessionListener.EP_NAME.forEachExtensionSafe { it.afterAcquiringSession(useSiteModule, useSiteElement) }
         }
     }
 
