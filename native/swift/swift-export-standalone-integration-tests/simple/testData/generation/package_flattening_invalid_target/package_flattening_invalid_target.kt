@@ -1,6 +1,6 @@
 // KIND: STANDALONE
 // MODULE: main
-// SWIFT_EXPORT_CONFIG: packageRoot=org.kotlin.?
+// SWIFT_EXPORT_CONFIG: rootPackages=org.kotlin.?
 // FILE: main.kt
 package org.kotlin
 

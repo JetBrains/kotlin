@@ -1,6 +1,6 @@
 // KIND: STANDALONE
 // MODULE: main
-// SWIFT_EXPORT_CONFIG: packageRoot=org.kotlin.foo
+// SWIFT_EXPORT_CONFIG: rootPackages=org.kotlin.foo,org.kotlin.bar
 // FILE: baz.kt
 package org.kotlin.baz
 
@@ -9,6 +9,10 @@ typealias Integer = Int
 package org.kotlin.foo.bar
 
 typealias Integer = Int
+// FILE: bar.kt
+package org.kotlin.bar
+
+class Bar
 // FILE: foo.kt
 package org.kotlin.foo
 

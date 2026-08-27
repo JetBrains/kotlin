@@ -188,7 +188,11 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
         return testModule.constructSwiftInput(
             originalTestCase.freeCompilerArgs,
             SwiftModuleConfig(
-                rootPackage = config?.get(SwiftModuleConfig.ROOT_PACKAGE),
+                rootPackages = config?.get(SwiftModuleConfig.ROOT_PACKAGES).let {
+                    if (it == null) return@let emptySet()
+                    if (it == "<null>") return@let null
+                    it.split(',').toSet()
+                },
                 unsupportedDeclarationReporterKind = getUnsupportedDeclarationsReporterKind(config),
                 exportMode = exportMode,
             )

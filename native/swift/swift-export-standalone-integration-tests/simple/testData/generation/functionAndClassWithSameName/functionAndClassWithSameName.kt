@@ -106,7 +106,7 @@ package test.factory.modules
 class ClassFromDependency
 
 // MODULE: flattened
-// SWIFT_EXPORT_CONFIG: packageRoot=flattenedPackage
+// SWIFT_EXPORT_CONFIG: rootPackages=flattenedPackage
 // FILE: flattenedPackage.kt
 package flattenedPackage
 

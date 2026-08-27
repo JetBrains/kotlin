@@ -50,7 +50,7 @@ abstract class AbstractExternalProjectGenerationTest : AbstractSwiftExportWithBi
             testLibraryKotlinxSerializationCoreKlibFile,
             targets.testTarget,
             "KotlinSerialization",
-            "kotlinx.serialization",
+            setOf("kotlinx.serialization"),
         )
         validateFullLibraryDump(klibSettings, "kotlinx-serialization-core")
     }
@@ -62,7 +62,7 @@ abstract class AbstractExternalProjectGenerationTest : AbstractSwiftExportWithBi
     ) {
         val config = klib.createConfig(outputPath = tmpdir.toPath().resolve(klib.swiftModuleName))
         val inputModule = klib.createInputModule(
-            SwiftModuleConfig(rootPackage = klib.rootPackage, exportMode = SwiftModuleExportMode.Full)
+            SwiftModuleConfig(rootPackages = klib.rootPackages, exportMode = SwiftModuleExportMode.Full)
         )
         val result = runSwiftExport(setOf(inputModule), config).getOrThrow()
         validateSwiftExportOutput(testDataDir.resolve(goldenData), result, validateKotlinBridge)

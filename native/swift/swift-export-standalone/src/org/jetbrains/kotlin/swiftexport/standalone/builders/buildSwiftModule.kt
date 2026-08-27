@@ -44,7 +44,7 @@ internal fun buildSirSession(
         platformLibs = kaModules.platformLibraries,
         cinteropReexportLib = kaModules.cinteropReexportLibrary?.let { it to it.reexportedObjCModuleNames() },
     ),
-    targetPackageFqName = moduleConfig.targetPackageFqName,
+    rootPackageFqNames = moduleConfig.rootPackageFqNames,
     referencedTypeHandler = referenceHandler,
     enableCoroutinesSupport = config.enableCoroutinesSupport,
     hiddenModules = kaModules.hiddenModules,

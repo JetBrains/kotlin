@@ -76,7 +76,7 @@ internal fun Project.registerSwiftExportTask(
             mainCompilation.internal.configurations.compileDependencyConfiguration
         ),
         mainCompilation = mainCompilation,
-        swiftApiFlattenPackage = swiftExportExtension.flattenPackage,
+        swiftApiRootPackages = swiftExportExtension.rootPackages,
         exportedModules = swiftExportExtension.exportedModules,
         customSetting = swiftExportExtension.advancedConfiguration.settings
     )
@@ -166,7 +166,7 @@ private fun Project.registerSwiftExportRun(
     swiftApiModuleName: Provider<String>,
     exportConfiguration: Configuration,
     mainCompilation: KotlinNativeCompilation,
-    swiftApiFlattenPackage: Provider<String>,
+    swiftApiRootPackages: Provider<Set<String>>,
     exportedModules: Provider<Set<SwiftExportedDependency>>,
     customSetting: Provider<Map<String, String>>,
 ): TaskProvider<SwiftExportTask> {
@@ -201,7 +201,7 @@ private fun Project.registerSwiftExportRun(
 
         task.ignoreExperimentalDiagnostic.set(kotlinPropertiesProvider.swiftExportIgnoreExperimental)
         task.mainModuleInput.moduleName.set(swiftApiModuleName)
-        task.mainModuleInput.flattenPackage.set(swiftApiFlattenPackage)
+        task.mainModuleInput.rootPackages.set(swiftApiRootPackages)
         task.kotlinNativeProvider.set(
             mainCompilation.compileTaskProvider.flatMap { it.kotlinNativeProvider }
         )
