@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.psi.psiUtil
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.stubs.StubElement
@@ -985,11 +984,6 @@ fun KtExpression.getLabeledParent(labelName: String): KtLabeledExpression? {
 fun PsiElement.astReplace(newElement: PsiElement) {
     KtPsiMutationService.getInstance().astReplace(this, newElement)
 }
-
-@Deprecated(
-    message = "The API is deprecated and is preserved only for compatibility with K1",
-)
-var KtElement.parentSubstitute: PsiElement? by UserDataProperty(Key.create("PARENT_SUBSTITUTE"))
 
 private val HARD_KEYWORDS: Set<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
     KtTokens.KEYWORDS.types.mapTo(HashSet()) { (it as KtKeywordToken).value }

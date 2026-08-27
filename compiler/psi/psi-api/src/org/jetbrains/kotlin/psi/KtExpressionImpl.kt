@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.psi.psiUtil.parentSubstitute
 
 /**
  * Base implementation of [KtExpression] backed directly by the AST tree.
@@ -31,10 +30,6 @@ abstract class KtExpressionImpl : KtElementImpl, KtExpression {
     @OptIn(KtNonPublicApi::class)
     override fun replace(newElement: PsiElement): PsiElement =
         KtPsiMutationService.getInstance().replaceExpression(this, newElement, true) { super.replace(it) }
-
-    // HasPlatformType is used to preserve the flexible type to not break source compatibility
-    @Suppress("DEPRECATION", "HasPlatformType")
-    override fun getParent() = parentSubstitute ?: super.getParent()
 
     companion object {
         @Deprecated(

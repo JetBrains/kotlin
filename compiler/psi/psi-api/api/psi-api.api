@@ -1532,7 +1532,6 @@ public abstract class org/jetbrains/kotlin/psi/KtExpressionImpl : org/jetbrains/
 	public static final field Companion Lorg/jetbrains/kotlin/psi/KtExpressionImpl$Companion;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	protected final fun findExpressionUnder (Lcom/intellij/psi/tree/IElementType;)Lorg/jetbrains/kotlin/psi/KtExpression;
-	public fun getParent ()Lcom/intellij/psi/PsiElement;
 	public fun replace (Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/PsiElement;
 }
 
@@ -1543,7 +1542,6 @@ public final class org/jetbrains/kotlin/psi/KtExpressionImpl$Companion {
 
 public abstract class org/jetbrains/kotlin/psi/KtExpressionImplStub : org/jetbrains/kotlin/psi/KtElementImplStub, org/jetbrains/kotlin/psi/KtExpression {
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
-	public fun getParent ()Lcom/intellij/psi/PsiElement;
 	public fun rawReplace (Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/PsiElement;
 	public fun replace (Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/PsiElement;
 }
@@ -3664,7 +3662,6 @@ public final class org/jetbrains/kotlin/psi/psiUtil/KtPsiUtilKt {
 	public static final fun getOrCreateParameterList (Lorg/jetbrains/kotlin/psi/KtFunctionLiteral;)Lorg/jetbrains/kotlin/psi/KtParameterList;
 	public static final fun getOrCreateValueArgumentList (Lorg/jetbrains/kotlin/psi/KtCallExpression;)Lorg/jetbrains/kotlin/psi/KtValueArgumentList;
 	public static final fun getOutermostParenthesizerOrThis (Lorg/jetbrains/kotlin/psi/KtExpression;)Lorg/jetbrains/kotlin/psi/KtExpression;
-	public static final fun getParentSubstitute (Lorg/jetbrains/kotlin/psi/KtElement;)Lcom/intellij/psi/PsiElement;
 	public static final fun getPlainContent (Lorg/jetbrains/kotlin/psi/KtStringTemplateExpression;)Ljava/lang/String;
 	public static final fun getPossiblyQualifiedCallExpression (Lorg/jetbrains/kotlin/psi/KtExpression;)Lorg/jetbrains/kotlin/psi/KtCallExpression;
 	public static final fun getQualifiedElement (Lorg/jetbrains/kotlin/psi/KtSimpleNameExpression;)Lorg/jetbrains/kotlin/psi/KtElement;
@@ -3725,7 +3722,6 @@ public final class org/jetbrains/kotlin/psi/psiUtil/KtPsiUtilKt {
 	public static final fun safeFqNameForLazyResolve (Lorg/jetbrains/kotlin/psi/KtNamedDeclaration;)Lorg/jetbrains/kotlin/name/FqName;
 	public static final fun safeNameForLazyResolve (Lorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/name/Name;
 	public static final fun safeNameForLazyResolve (Lorg/jetbrains/kotlin/psi/KtNamedDeclaration;)Lorg/jetbrains/kotlin/name/Name;
-	public static final fun setParentSubstitute (Lorg/jetbrains/kotlin/psi/KtElement;Lcom/intellij/psi/PsiElement;)V
 	public static final fun topParenthesizedParentOrMe (Lorg/jetbrains/kotlin/psi/KtExpression;)Lorg/jetbrains/kotlin/psi/KtExpression;
 	public static final fun unwrapNullability (Lorg/jetbrains/kotlin/psi/KtTypeElement;)Lorg/jetbrains/kotlin/psi/KtTypeElement;
 	public static final fun visibilityModifier (Lorg/jetbrains/kotlin/psi/KtModifierList;)Lcom/intellij/psi/PsiElement;
