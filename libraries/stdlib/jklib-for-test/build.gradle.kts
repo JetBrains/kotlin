@@ -31,6 +31,8 @@ dependencies {
     substrateStdlibCompilerDependencies(intellijCore())
 
     // Transitive dependencies pulled by IntellijCore
+    // Required by 'NoopTelemetryManager', queried through 'CoreProgressManager'
+    substrateStdlibCompilerDependencies(libs.opentelemetry.api)
     // Used for IR interning and seriliazation and other things
     substrateStdlibCompilerDependencies(libs.intellij.fastutil)
     // Used to read XML metadata files inside META-INF

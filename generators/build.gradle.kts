@@ -48,6 +48,7 @@ dependencies {
     implementation(libs.apache.commons.lang)
     implementation(libs.apache.commons.compress)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.opentelemetry.api) { isTransitive = false }
 
     builtinsApi("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion") { isTransitive = false }
     evaluateApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
