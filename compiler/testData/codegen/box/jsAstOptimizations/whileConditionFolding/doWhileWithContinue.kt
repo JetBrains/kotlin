@@ -7,7 +7,8 @@ fun foo(x: Int): Int {
     return x
 }
 
-// EXPECT_GENERATED_JS: function=box expect=doWhileWithContinue.optimized.js
+// EXPECT_GENERATED_JS: function=box expect=doWhileWithContinue.optimized.js TARGET_BACKENDS=JS_IR
+// EXPECT_GENERATED_JS: function=box expect=doWhileWithContinue.optimized.es6.js TARGET_BACKENDS=JS_IR_ES6
 fun box(): String {
     var i = 0
     do {

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilerResult
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragments
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import org.jetbrains.kotlin.js.config.artifactConfigurations
+import org.jetbrains.kotlin.js.config.useEs6ConstLet
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import java.io.File
@@ -61,6 +62,7 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<
             artifactConfiguration,
             sourceMapsInfo = SourceMapsInfo.from(configuration),
             caches = icCaches,
+            configuration.useEs6ConstLet,
         )
         (val outputs = compilationOut, val rebuiltModules = buildModules) = jsExecutableProducer.buildExecutable(outJsProgram = false)
         outputs.writeAll()

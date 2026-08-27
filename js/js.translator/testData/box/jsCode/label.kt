@@ -50,10 +50,28 @@ fun testContinueInFor() {
     assertEquals(10, c, "testContinueInFor")
 }
 
+fun testContinueInForUninitializedCounter() {
+    var c: Int = 0
+
+    js("""
+        outer: for (var i; typeof i === 'undefined' || i < 10; i = typeof i === 'undefined' ? 0 : i + 1) {
+            for (var j; typeof j === 'undefined' || j < 10; j = typeof j === 'undefined' ? 0 : j + 1) {
+                if (typeof i !== 'undefined' && i >= 1) {
+                    continue outer;
+                }
+                c += 1;
+            }
+        }
+    """)
+
+    assertEquals(11, c, "testContinueInForUninitializedCounter")
+}
+
 fun box(): String {
     testLabelledBlock()
     testBreakInFor()
     testContinueInFor()
+    testContinueInForUninitializedCounter()
 
     return "OK"
 }

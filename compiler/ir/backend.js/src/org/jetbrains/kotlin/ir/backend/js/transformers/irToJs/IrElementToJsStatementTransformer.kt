@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.utils.toSmartList
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext>() {
-
     override fun visitFunction(declaration: IrFunction, data: JsGenerationContext): JsStatement {
         irError("All functions must be already lowered") {
             withIrEntry("declaration", declaration)
@@ -171,7 +170,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
             }
 
             SwitchOptimizer(context, isExpression = true, transformer).tryOptimize(value)?.let {
-                return JsBlock(JsVars(JsVars.Variant.Var, JsVars.JsVar(varName)), it).withSource(declaration, context)
+                return JsBlock(JsVars(context.varVariant(isMutable = true), JsVars.JsVar(varName)), it).withSource(declaration, context)
             }
         }
 
@@ -189,7 +188,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
             synthetic = syntheticVariable
             wasMovedFromItsDeclarationPlace = declaration.wasMovedFromItsDeclarationPlace
         }
-        return JsVars(JsVars.Variant.Var, variable).apply { synthetic = syntheticVariable }
+        return JsVars(context.varVariant(declaration.isVar), variable).apply { synthetic = syntheticVariable }
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, context: JsGenerationContext): JsStatement {

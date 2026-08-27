@@ -1,5 +1,6 @@
 // CHECK_OPTIMIZED_JS
-// EXPECT_GENERATED_JS: function=box expect=conditionInVariable.optimized.js
+// EXPECT_GENERATED_JS: function=box expect=conditionInVariable.optimized.js TARGET_BACKENDS=JS_IR
+// EXPECT_GENERATED_JS: function=box expect=conditionInVariable.optimized.es6.js TARGET_BACKENDS=JS_IR_ES6
 
 fun box(): String {
     var i = 0

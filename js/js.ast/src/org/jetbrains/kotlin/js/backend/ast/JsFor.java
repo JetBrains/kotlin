@@ -116,7 +116,7 @@ public class JsFor extends SourceInfoAwareJsNode implements JsLoop {
                     initVars = null;
                     if (newInitVars instanceof JsExpressionStatement) {
                         initExpression = ((JsExpressionStatement) newInitVars).getExpression();
-                    } else if (newInitVars != null) {
+                    } else if (newInitVars != null && !(newInitVars instanceof JsBlock && ((JsBlock) newInitVars).isEmpty())) {
                         ctx.addPrevious(newInitVars);
                     }
                 }
