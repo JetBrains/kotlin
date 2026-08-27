@@ -5,5 +5,4 @@ fun f(x: Throwable) {
     }
 }
 
-// IGNORE_LOOKUP_LOCALLY
 // ISSUE: KT-89149
