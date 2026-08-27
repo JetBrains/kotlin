@@ -205,7 +205,7 @@ KtValueArgument(176,178): 'ci'
 KtNameReferenceExpression(176,178): 'ci'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       ci: kotlin.Int
@@ -262,7 +262,7 @@ KtValueArgument(216,218): 'cs'
 KtNameReferenceExpression(216,218): 'cs'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       cs: kotlin.String
