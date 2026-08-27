@@ -150,6 +150,7 @@ projectTests {
     withScriptingPlugin()
     withTestScriptDefinition()
     withPluginSandboxAnnotations()
+    withPluginSandboxJar()
 
     @OptIn(KotlinCompilerDistUsage::class)
     withDist()

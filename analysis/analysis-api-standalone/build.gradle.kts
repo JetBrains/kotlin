@@ -92,6 +92,7 @@ projectTests {
     withMockJdkAnnotationsJar()
     withScriptRuntime()
     withPluginSandboxAnnotations()
+    withPluginSandboxJar()
     withWasmRuntime()
 
     @OptIn(KotlinCompilerDistUsage::class)
