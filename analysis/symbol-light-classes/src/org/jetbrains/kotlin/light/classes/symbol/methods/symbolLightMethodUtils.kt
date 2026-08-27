@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
+import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmExposeBoxedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.name.JvmStandardClassIds
+import java.util.*
 
 internal fun isSuppressedFinalModifier(string: String, containingClass: SymbolLightClassBase, symbol: KaCallableSymbol): Boolean {
     return string == PsiModifier.FINAL && (containingClass.isEnum && symbol.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED || containingClass.isInterface)
@@ -84,6 +86,29 @@ internal enum class JvmExposeBoxedKind {
      * replaces nor bridges it, it keeps both [JvmExposeBoxed] and [JvmName], and [JvmName] wins over the exposed name.
      */
     EXPOSED_AS_IS,
+}
+
+/**
+ * A historical overload which the JVM backend generates for a callable with [kotlin.IntroducedAt] parameters.
+ *
+ * Parameters are grouped by the version they were introduced at, and every group but the newest one yields an overload
+ * keeping that group and everything older.
+ *
+ * Mirrors `org.jetbrains.kotlin.backend.common.lower.VersionOverloadsLowering`.
+ *
+ * @param pickMask value parameters of the original declaration which this overload keeps
+ * @param version the API boundary this overload corresponds to, or `null` for the state before any versioned parameter
+ */
+internal class VersionOverload(val pickMask: BitSet, val version: MavenComparableVersion?) {
+    /** The message of the `@Deprecated` annotation which the JVM backend puts on this overload */
+    val deprecationMessage: String
+        get() = "This method is kept for binary compatibility purposes, please use the main overload. " +
+                "This overload corresponds to ${version?.let { "version $it" } ?: "the initial version"}."
+
+    override fun equals(other: Any?): Boolean = this === other ||
+            other is VersionOverload && pickMask == other.pickMask && version == other.version
+
+    override fun hashCode(): Int = pickMask.hashCode()
 }
 
 internal class MethodGenerationResult(

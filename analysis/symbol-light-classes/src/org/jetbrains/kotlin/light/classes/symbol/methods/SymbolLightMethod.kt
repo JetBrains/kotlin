@@ -42,11 +42,13 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
     protected val functionDeclaration: KtCallableDeclaration?,
     override val kotlinOrigin: KtDeclaration?,
     jvmExposeBoxedKind: JvmExposeBoxedKind,
+    versionOverload: VersionOverload?,
 ) : SymbolLightMethodBase(
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     methodIndex = methodIndex,
     jvmExposeBoxedKind = jvmExposeBoxedKind,
+    versionOverload = versionOverload,
 ) {
     internal constructor(
         functionSymbol: FType,
@@ -55,6 +57,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
         methodIndex: Int,
         jvmExposeBoxedKind: JvmExposeBoxedKind,
         valueParameterPickMask: BitSet? = null,
+        versionOverload: VersionOverload? = null,
     ) : this(
         functionSymbolPointer = kotlin.run {
             @Suppress("UNCHECKED_CAST")
@@ -67,6 +70,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
         functionDeclaration = functionSymbol.sourcePsiSafe(),
         kotlinOrigin = functionSymbol.sourcePsiSafe() ?: lightMemberOrigin?.originalElement ?: functionSymbol.psiSafe<KtDeclaration>(),
         jvmExposeBoxedKind = jvmExposeBoxedKind,
+        versionOverload = versionOverload,
     )
 
     protected inline fun <T> withFunctionSymbol(crossinline action: context(KaSession) (FType) -> T): T =
@@ -106,7 +110,8 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
     }
 
     private val _isDeprecated: Boolean by lazyPub {
-        withFunctionSymbol { functionSymbol ->
+        // A version compatibility overload is always deprecated with an error
+        versionOverload != null || withFunctionSymbol { functionSymbol ->
             functionSymbol.hasDeprecatedAnnotation()
         }
     }
@@ -140,6 +145,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
             other::class != this::class ||
             (other as SymbolLightMethod<*>).methodIndex != methodIndex ||
             other.jvmExposeBoxedKind != jvmExposeBoxedKind ||
+            other.versionOverload != versionOverload ||
             other.ktModule != ktModule ||
             other.valueParameterPickMask != valueParameterPickMask
         ) return false

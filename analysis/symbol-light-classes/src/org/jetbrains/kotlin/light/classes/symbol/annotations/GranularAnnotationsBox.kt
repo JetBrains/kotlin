@@ -76,7 +76,7 @@ internal class GranularAnnotationsBox(
         }
 
         val specialAnnotationClassId = specialAnnotationsList[qualifiedName]
-        return if (specialAnnotationClassId != null) {
+        return if (specialAnnotationClassId != null && !additionalAnnotationsProvider.canAddAnnotation(qualifiedName)) {
             specialAnnotationClassId in annotationsProvider
         } else {
             getOrComputeCachedAnnotations(owner).any { it.qualifiedName == qualifiedName }

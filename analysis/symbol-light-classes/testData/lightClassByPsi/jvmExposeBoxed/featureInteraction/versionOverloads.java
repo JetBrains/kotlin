@@ -1,4 +1,16 @@
 public final class Exposed /* Exposed*/ {
+  @kotlin.Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level = kotlin.DeprecationLevel.ERROR)
+  @kotlin.Suppress(names = {"CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION", "NON_ASCENDING_VERSION_ANNOTATION"})
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "fooExposed")
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String fooExposed(float);//  fooExposed(float)
+
+  @kotlin.Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 2.", level = kotlin.DeprecationLevel.ERROR)
+  @kotlin.Suppress(names = {"CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION", "NON_ASCENDING_VERSION_ANNOTATION"})
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "fooExposed")
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String fooExposed(float, @kotlin.IntroducedAt(version = "2") boolean);//  fooExposed(float, boolean)
+
   @kotlin.Suppress(names = {"CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION", "NON_ASCENDING_VERSION_ANNOTATION"})
   @kotlin.jvm.JvmExposeBoxed(jvmName = "fooExposed")
   @kotlin.jvm.JvmOverloads()
@@ -21,6 +33,20 @@ public final class Exposed /* Exposed*/ {
 }
 
 public final class ExposedAndRenamed /* ExposedAndRenamed*/ {
+  @kotlin.Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level = kotlin.DeprecationLevel.ERROR)
+  @kotlin.Suppress(names = {"CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION", "NON_ASCENDING_VERSION_ANNOTATION"})
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "fooExposed")
+  @kotlin.jvm.JvmName(name = "fooRenamed")
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String fooRenamed(float);//  fooRenamed(float)
+
+  @kotlin.Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 2.", level = kotlin.DeprecationLevel.ERROR)
+  @kotlin.Suppress(names = {"CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION", "NON_ASCENDING_VERSION_ANNOTATION"})
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "fooExposed")
+  @kotlin.jvm.JvmName(name = "fooRenamed")
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String fooRenamed(float, @kotlin.IntroducedAt(version = "2") boolean);//  fooRenamed(float, boolean)
+
   @kotlin.Suppress(names = {"CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION", "NON_ASCENDING_VERSION_ANNOTATION"})
   @kotlin.jvm.JvmExposeBoxed(jvmName = "fooExposed")
   @kotlin.jvm.JvmName(name = "fooRenamed")

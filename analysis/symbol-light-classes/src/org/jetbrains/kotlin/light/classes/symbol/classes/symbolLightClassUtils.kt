@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.light.classes.symbol.isJvmField
 import org.jetbrains.kotlin.light.classes.symbol.mapType
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod.Companion.createPropertyAccessors
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod.Companion.createSimpleMethods
+import org.jetbrains.kotlin.light.classes.symbol.methods.VersionOverload
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -184,33 +185,43 @@ internal fun interface LightMethodCreator {
      * @param methodIndex The index of the method to be created.
      * @param valueParameterPickMask An optional [BitSet] that specifies arguments to pick; can be null
      * @param hasValueClassInParameterType Indicates whether the method has a value class in its parameters.
+     * @param versionOverload The historical API boundary the method stands for; `null` for the declaration itself.
      */
     fun create(
         methodIndex: Int,
         valueParameterPickMask: BitSet?,
         hasValueClassInParameterType: Boolean,
+        versionOverload: VersionOverload?,
     )
 }
 
-/** @see LightMethodCreator */
+/**
+ * Creates the declaration itself and every overload the JVM backend derives from its default parameter values:
+ * the [IntroducedAt] version compatibility overloads first, as the backend generates them first, and then the
+ * [JvmOverloads] ones which do not clash with them.
+ *
+ * @see LightMethodCreator
+ */
 context(_: KaSession)
 internal fun <T : KaFunctionSymbol> createMethodsJvmOverloadsAware(
     declaration: T,
     methodIndexBase: Int,
     lightMethodCreator: LightMethodCreator,
 ) {
+    val valueParameters = declaration.valueParameters
+    val parameterCount = valueParameters.size
+    val versionOverloads = versionOverloads(declaration, valueParameters)
+
     val hasJvmOverloadsAnnotation = declaration.hasJvmOverloadsAnnotation()
     val hasValueClassInParameterType = hasValueClassInSignature(
         declaration,
         // value parameters would be checked separately for each overload
-        skipValueParametersCheck = hasJvmOverloadsAnnotation,
+        skipValueParametersCheck = hasJvmOverloadsAnnotation || versionOverloads.isNotEmpty(),
 
         // return type processing is up to the call site
         skipReturnTypeCheck = true,
     )
 
-    val valueParameters = declaration.valueParameters
-    val parameterCount = valueParameters.size
     val valueClassMask = if (hasValueClassInParameterType) {
         // Optimization to avoid redundant iteration if the signature anyway has a value class
         null
@@ -229,17 +240,28 @@ internal fun <T : KaFunctionSymbol> createMethodsJvmOverloadsAware(
         methodIndex = methodIndexBase,
         valueParameterPickMask = null,
         hasValueClassInParameterType = hasValueClassInParameterType || valueClassMask?.isEmpty == false,
+        versionOverload = null,
     )
+
+    var methodIndex = methodIndexBase
+    for (versionOverload in versionOverloads) {
+        val pickMask = versionOverload.pickMask
+        lightMethodCreator.create(
+            methodIndex = methodIndex++,
+            valueParameterPickMask = pickMask,
+            hasValueClassInParameterType = hasValueClassInParameterType || valueClassMask?.intersects(pickMask) == true,
+            versionOverload = versionOverload,
+        )
+    }
 
     if (!hasJvmOverloadsAnnotation) return
 
-    var methodIndex = methodIndexBase
     val pickMask = BitSet(parameterCount)
     pickMask.set(0, parameterCount)
 
-    val parameterMaskFilter = valueParameterMaskFilter(valueParameters, parameterCount)
-
+    val parameterMaskFilter = valueParameterMaskFilter(valueParameters, versionOverloads)
     val defaultValueMask = defaultParameterValueMask(declaration)
+
     for (index in parameterCount - 1 downTo 0) {
         if (!defaultValueMask[index] || !pickMask[index]) continue
         pickMask.clear(index)
@@ -249,6 +271,7 @@ internal fun <T : KaFunctionSymbol> createMethodsJvmOverloadsAware(
                 methodIndex = methodIndex++,
                 valueParameterPickMask = pickMask.copy(),
                 hasValueClassInParameterType = hasValueClassInParameterType || valueClassMask?.intersects(pickMask) == true,
+                versionOverload = null,
             )
         }
     }
@@ -303,46 +326,40 @@ private sealed class ValueParameterMaskFilter {
 private val ERROR_CLASS_ID: ClassId = ClassId.topLevel(StandardNames.NON_EXISTENT_CLASS)
 
 /**
- * Represents a filter for value parameter masks based on [IntroducedAt] annotations.
+ * Rejects [JvmOverloads] masks whose JVM signature is already occupied by an [IntroducedAt] version compatibility
+ * overload, as the JVM backend skips such wrappers.
  *
- * @param deprecatedMasks a set of masks that represent deprecated versions of the method
+ * Comparing masks is not enough, because a mask which picks different parameters of the same type still produces the
+ * same JVM signature.
+ *
+ * ### Example
+ * ```kotlin
+ * @JvmOverloads
+ * fun randomSameType(
+ *     a: Int = 1,
+ *     @IntroducedAt("3") b: Int = 3,
+ *     @IntroducedAt("2") c: Int = 2,
+ *     @IntroducedAt("4") d: Int = 4,
+ * ) {
+ * }
+ * ```
+ *
+ * here the version overloads are `(1000)`, `(1010)` and `(1110)`, while the `@JvmOverloads` masks are `(1110)`,
+ * `(1100)` and `(1000)`: only `(1100)` is new as a mask, but its signature clashes with `(1010)`.
+ *
+ * Mirrors the conflict check of `org.jetbrains.kotlin.backend.jvm.lower.JvmOverloadsAnnotationLowering`.
+ *
+ * @param versionOverloadMasks masks of the version compatibility overloads
  * @param valueParameters value parameters of the method
- * @param isAscending whether the version ordering is ascending (from oldest to newest)
  * @param session the session in which [valueParameters] were obtained
  */
 private class ValueParameterMaskFilterByIntroducedAt(
-    private val deprecatedMasks: Set<BitSet>,
+    private val versionOverloadMasks: Set<BitSet>,
     private val valueParameters: List<KaValueParameterSymbol>,
-    isAscending: Boolean,
     private val session: KaSession,
 ) : ValueParameterMaskFilter() {
-    /**
-     * In the case of non-ascending version order, it is not enough to just check the signature mask because
-     * the real deprecated mask might be different if the parameter types are the same.
-     *
-     * ### Example
-     * ```kotlin
-     * @JvmOverloads
-     * fun randomSameType(
-     *     a: Int = 1,
-     *     @IntroducedAt("3") b: Int = 3,
-     *     @IntroducedAt("2") c: Int = 2,
-     *     @IntroducedAt("4") d: Int = 4,
-     * ) {
-     * }
-     * ```
-     *
-     * in this case the basic ([deprecatedMasks]) will cover only [(1000), (1010), (1110)] cases, but the real
-     * deprecated mask will be [(1000), (1100), (1110)] since we have parameter types clash.
-     */
-    private val nonAscendingDeprecatedSignatures = if (isAscending) {
-        null
-    } else {
-        lazy(LazyThreadSafetyMode.NONE) {
-            deprecatedMasks.mapTo(HashSet()) { pickMask ->
-                createSignature(pickMask)
-            }
-        }
+    private val versionOverloadSignatures by lazy(LazyThreadSafetyMode.NONE) {
+        versionOverloadMasks.mapTo(HashSet(), ::createSignature)
     }
 
     /**
@@ -380,33 +397,40 @@ private class ValueParameterMaskFilterByIntroducedAt(
         return classIds.let(::MethodSignature)
     }
 
-    override fun accepts(pickMask: BitSet): Boolean {
-        if (pickMask in deprecatedMasks) {
-            return false
-        }
-
-        val deprecatedSignatures = nonAscendingDeprecatedSignatures?.value ?: return true
-        val signatureToCheck = createSignature(pickMask)
-        return signatureToCheck !in deprecatedSignatures
-    }
+    override fun accepts(pickMask: BitSet): Boolean =
+        pickMask !in versionOverloadMasks && createSignature(pickMask) !in versionOverloadSignatures
 }
 
 /**
- * Returns a set of parameter masks for already generated by [IntroducedAt] feature hidden functions
+ * The historical overloads the JVM backend generates for the [IntroducedAt] annotations of [declaration].
+ *
+ * Parameters are grouped by the version they were introduced at, the oldest group first, and every group but the newest
+ * one yields an overload which keeps that group and everything older. The newest group is the declaration itself, so a
+ * declaration without a versioned parameter produces nothing.
+ *
+ * Unlike [JvmOverloads] wrappers, these follow the *effective* default values: the JVM backend generates them for an
+ * override which inherits its defaults from the overridden declaration as well.
+ *
+ * Mirrors `org.jetbrains.kotlin.backend.common.lower.VersionOverloadsLowering.generateVersionOverloads`.
  */
-context(session: KaSession)
-private fun valueParameterMaskFilter(
+context(_: KaSession)
+private fun versionOverloads(
+    declaration: KaFunctionSymbol,
     valueParameters: List<KaValueParameterSymbol>,
-    parameterCount: Int,
-): ValueParameterMaskFilter {
-    val versionSortedMap = TreeMap<MavenComparableVersion?, MutableList<Int>>(
+): List<VersionOverload> {
+    // Only a defaulted parameter can be versioned, and asking for an inherited default value is not free
+    if (valueParameters.none { it.hasDeclaredDefaultValue } && !declaration.canInheritDefaultParameterValues) {
+        return emptyList()
+    }
+
+    val parametersByVersion = TreeMap<MavenComparableVersion?, MutableList<Int>>(
         nullsFirst(compareBy { it }),
     ).apply {
         // We always have the base method without versions
         put(null, mutableListOf())
 
         valueParameters.forEachIndexed { index, valueParameter ->
-            val version = if (valueParameter.hasDeclaredDefaultValue) {
+            val version = if (valueParameter.hasDefaultValue) {
                 valueParameter.getIntroducedAtVersionFromAnnotation()?.let(::MavenComparableVersion)
             } else {
                 null
@@ -416,49 +440,46 @@ private fun valueParameterMaskFilter(
         }
     }
 
-    val lastIndex = versionSortedMap.size - 1
+    // The newest group is the declaration itself
+    val overloadCount = parametersByVersion.size - 1
+    if (overloadCount == 0) return emptyList()
 
-    // We always have the base method without versions
-    val hasVersioning = lastIndex > 0
-    return if (hasVersioning) {
-        var isAscending = true
-        val deprecatedMaks = HashSet<BitSet>().apply {
-            var currentMask = BitSet(parameterCount)
-            versionSortedMap.values.forEachIndexed { index, indices ->
-                // The last iteration represents the actual non-deprecated method
-                if (index == lastIndex) {
-                    return@forEachIndexed
-                }
+    val result = ArrayList<VersionOverload>(overloadCount)
+    val pickMask = BitSet(valueParameters.size)
+    for ([version, indices] in parametersByVersion) {
+        if (result.size == overloadCount) break
 
-                // To accurately exclude the exact method signature
-                val newMask = currentMask.copyAndModify {
-                    indices.forEach(this::set)
-                }
-
-                currentMask = newMask.also(this::add)
-
-                // The last parameter wasn't changed -> the change is not ascending
-                if (currentMask.length() == newMask.length()) {
-                    isAscending = false
-                }
-            }
-        }
-
-        ValueParameterMaskFilterByIntroducedAt(
-            deprecatedMasks = deprecatedMaks,
-            valueParameters = valueParameters,
-            isAscending = isAscending,
-            session = session,
-        )
-    } else {
-        ValueParameterMaskFilter.AcceptAll
+        indices.forEach(pickMask::set)
+        result += VersionOverload(pickMask.copy(), version)
     }
+
+    return result
 }
 
-private inline fun BitSet.copyAndModify(block: BitSet.() -> Unit): BitSet {
-    val copy = clone() as BitSet
-    block(copy)
-    return copy
+/**
+ * Whether a value parameter of this declaration may have a default value which is not declared on the parameter itself.
+ *
+ * @see KaValueParameterSymbol.hasDefaultValue
+ */
+context(_: KaSession)
+private val KaFunctionSymbol.canInheritDefaultParameterValues: Boolean
+    get() = isActual || (this as? KaNamedFunctionSymbol)?.isOverride == true
+
+/**
+ * @return a filter which rejects [JvmOverloads] masks already covered by [versionOverloads]
+ */
+context(session: KaSession)
+private fun valueParameterMaskFilter(
+    valueParameters: List<KaValueParameterSymbol>,
+    versionOverloads: List<VersionOverload>,
+): ValueParameterMaskFilter = if (versionOverloads.isEmpty()) {
+    ValueParameterMaskFilter.AcceptAll
+} else {
+    ValueParameterMaskFilterByIntroducedAt(
+        versionOverloadMasks = versionOverloads.mapTo(HashSet(), VersionOverload::pickMask),
+        valueParameters = valueParameters,
+        session = session,
+    )
 }
 
 internal fun createAndAddField(

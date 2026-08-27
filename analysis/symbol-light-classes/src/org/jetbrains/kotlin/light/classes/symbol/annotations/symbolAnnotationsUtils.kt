@@ -71,8 +71,6 @@ internal fun KaAnnotatedSymbol.hasJvmFieldAnnotation(): Boolean = JvmStandardCla
 
 internal fun KaAnnotatedSymbol.hasDeprecatedAnnotation(): Boolean = StandardClassIds.Annotations.Deprecated in annotations
 
-internal fun KaAnnotatedSymbol.hasIntroducedAtAnnotation(): Boolean = StandardClassIds.Annotations.IntroducedAt in annotations
-
 internal fun KaAnnotatedSymbol.hasJvmOverloadsAnnotation(): Boolean = JVM_OVERLOADS_CLASS_ID in annotations
 
 internal fun KaAnnotatedSymbol.hasJvmNameAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmName in annotations

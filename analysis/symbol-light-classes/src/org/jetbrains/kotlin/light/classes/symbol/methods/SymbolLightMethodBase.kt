@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.SymbolLightMemberBase
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AlwaysAllowedAnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AnnotationFilter
+import org.jetbrains.kotlin.light.classes.symbol.annotations.CompositeAnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ExcludeAnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.getJvmExposeBoxedNameFromAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmNameAnnotation
@@ -39,6 +40,8 @@ internal abstract class SymbolLightMethodBase(
     containingClass: SymbolLightClassBase,
     protected val methodIndex: Int,
     val jvmExposeBoxedKind: JvmExposeBoxedKind,
+    /** The historical API boundary this method stands for, or `null` if it stands for the declaration itself */
+    val versionOverload: VersionOverload? = null,
 ) : SymbolLightMemberBase<PsiMethod>(lightMemberOrigin, containingClass), KtLightMethod {
     /** Whether this method is the Java-facing declaration with boxed value classes. @see JvmExposeBoxedKind.BOXED */
     val isJvmExposedBoxed: Boolean get() = jvmExposeBoxedKind == JvmExposeBoxedKind.BOXED
@@ -148,11 +151,17 @@ internal abstract class SymbolLightMethodBase(
     internal open fun suppressWildcards(): Boolean? = null
 
     protected val jvmExposeBoxedAwareAnnotationFilter: AnnotationFilter
-        get() = when (jvmExposeBoxedKind) {
-            JvmExposeBoxedKind.BOXED -> ExcludeAnnotationFilter.JvmName
-            JvmExposeBoxedKind.REGULAR -> ExcludeAnnotationFilter.JvmExposeBoxed
-            // The JVM backend keeps the declaration and its annotations untouched
-            JvmExposeBoxedKind.EXPOSED_AS_IS -> AlwaysAllowedAnnotationFilter
+        get() {
+            val exposeBoxedFilter = when (jvmExposeBoxedKind) {
+                JvmExposeBoxedKind.BOXED -> ExcludeAnnotationFilter.JvmName
+                JvmExposeBoxedKind.REGULAR -> ExcludeAnnotationFilter.JvmExposeBoxed
+                // The JVM backend keeps the declaration and its annotations untouched
+                JvmExposeBoxedKind.EXPOSED_AS_IS -> AlwaysAllowedAnnotationFilter
+            }
+
+            // A version compatibility overload must not spawn overloads of its own, so the JVM backend strips the annotation
+            if (versionOverload == null) return exposeBoxedFilter
+            return CompositeAnnotationFilter(listOf(exposeBoxedFilter, ExcludeAnnotationFilter.JvmOverloads))
         }
 
     // Inspired by KotlinTypeMapper#forceBoxedReturnType

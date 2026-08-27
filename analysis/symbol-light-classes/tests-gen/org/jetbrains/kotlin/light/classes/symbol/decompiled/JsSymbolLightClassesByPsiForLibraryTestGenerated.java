@@ -2388,6 +2388,12 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
     }
 
     @Test
+    @TestMetadata("constructors.kt")
+    public void testConstructors() {
+      run("constructors.kt");
+    }
+
+    @Test
     @TestMetadata("functions.kt")
     public void testFunctions() {
       run("functions.kt");
@@ -2400,9 +2406,21 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
     }
 
     @Test
+    @TestMetadata("members.kt")
+    public void testMembers() {
+      run("members.kt");
+    }
+
+    @Test
     @TestMetadata("nonAscending.kt")
     public void testNonAscending() {
       run("nonAscending.kt");
+    }
+
+    @Test
+    @TestMetadata("overrides.kt")
+    public void testOverrides() {
+      run("overrides.kt");
     }
 
     @Test

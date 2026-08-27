@@ -37,6 +37,7 @@ internal class SymbolLightConstructor private constructor(
     methodIndex: Int,
     jvmExposeBoxedKind: JvmExposeBoxedKind,
     valueParameterPickMask: BitSet? = null,
+    versionOverload: VersionOverload? = null,
 ) : SymbolLightMethod<KaConstructorSymbol>(
     functionSymbol = constructorSymbol,
     lightMemberOrigin = null,
@@ -44,6 +45,7 @@ internal class SymbolLightConstructor private constructor(
     methodIndex = methodIndex,
     jvmExposeBoxedKind = jvmExposeBoxedKind,
     valueParameterPickMask = valueParameterPickMask,
+    versionOverload = versionOverload,
 ) {
     private val _name: String? = containingClass.name
 
@@ -75,7 +77,10 @@ internal class SymbolLightConstructor private constructor(
                     annotatedSymbolPointer = functionSymbolPointer,
                 ),
                 annotationFilter = jvmExposeBoxedAwareAnnotationFilter,
-                additionalAnnotationsProvider = JvmExposeBoxedAdditionalAnnotationsProvider,
+                additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
+                    VersionOverloadAdditionalAnnotationsProvider,
+                    JvmExposeBoxedAdditionalAnnotationsProvider,
+                ),
             ),
         )
     }
@@ -124,7 +129,7 @@ internal class SymbolLightConstructor private constructor(
                 createMethodsJvmOverloadsAware(
                     declaration = constructor,
                     methodIndexBase = METHOD_INDEX_BASE,
-                ) { methodIndex, valueParameterPickMask, hasValueClassInParameterType ->
+                ) { methodIndex, valueParameterPickMask, hasValueClassInParameterType, versionOverload ->
                     val isBoxedConstructorRequired = exposeBoxedMode != JvmExposeBoxedMode.NONE &&
                             (hasValueClassInParameterType || destinationClassIsValueClass) &&
                             // Private declarations are inaccessible from Java, so they are never exposed as boxed
@@ -137,6 +142,7 @@ internal class SymbolLightConstructor private constructor(
                             methodIndex = methodIndex,
                             valueParameterPickMask = valueParameterPickMask,
                             jvmExposeBoxedKind = JvmExposeBoxedKind.BOXED,
+                            versionOverload = versionOverload,
                         )
                     }
 
@@ -156,6 +162,7 @@ internal class SymbolLightConstructor private constructor(
                             } else {
                                 JvmExposeBoxedKind.REGULAR
                             },
+                            versionOverload = versionOverload,
                         )
                     }
                 }
@@ -193,7 +200,9 @@ internal class SymbolLightConstructor private constructor(
             return !classOrObject.hasModifier(INNER_KEYWORD) &&
                     !classOrObject.hasModifier(SEALED_KEYWORD) &&
                     !lightClass.isEnum &&
-                    valueParameters.indices.all { defaultValueMask[it] && !valueParameters[it].hasIntroducedAtAnnotation() } &&
+                    valueParameters.indices.all { defaultValueMask[it] } &&
+                    // Once every parameter is versioned, the oldest version compatibility constructor is parameterless already
+                    valueParameters.any { it.getIntroducedAtVersionFromAnnotation() == null } &&
                     constructors.none { it.isEffectivelyParameterless } &&
                     primaryConstructor.visibility != KaSymbolVisibility.PRIVATE
         }

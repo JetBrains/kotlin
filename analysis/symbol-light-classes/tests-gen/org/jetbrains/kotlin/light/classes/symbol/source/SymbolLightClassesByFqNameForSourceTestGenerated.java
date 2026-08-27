@@ -850,6 +850,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     }
 
     @Test
+    @TestMetadata("IntroducedAtActualWithInheritedDefaults.kt")
+    public void testIntroducedAtActualWithInheritedDefaults() {
+      run("IntroducedAtActualWithInheritedDefaults.kt");
+    }
+
+    @Test
     @TestMetadata("JvmOverloadsActualConstructorWithInheritedDefaults.kt")
     public void testJvmOverloadsActualConstructorWithInheritedDefaults() {
       run("JvmOverloadsActualConstructorWithInheritedDefaults.kt");

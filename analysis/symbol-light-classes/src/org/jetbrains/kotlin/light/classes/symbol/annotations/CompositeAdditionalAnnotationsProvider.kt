@@ -28,4 +28,6 @@ internal class CompositeAdditionalAnnotationsProvider(val providers: List<Additi
     ): PsiAnnotation? = providers.firstNotNullOfOrNull { provider -> provider.findSpecialAnnotation(annotationsBox, qualifiedName, owner) }
 
     override fun isSpecialQualifier(qualifiedName: String): Boolean = providers.any { it.isSpecialQualifier(qualifiedName) }
+
+    override fun canAddAnnotation(qualifiedName: String): Boolean = providers.any { it.canAddAnnotation(qualifiedName) }
 }

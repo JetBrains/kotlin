@@ -47,6 +47,12 @@ internal sealed interface AdditionalAnnotationsProvider {
     fun findSpecialAnnotation(annotationsBox: GranularAnnotationsBox, qualifiedName: String, owner: PsiElement): PsiAnnotation?
 
     /**
+     * @return **true** if [addAllAnnotations] may add an annotation with [qualifiedName] which [AnnotationsProvider]
+     * doesn't know about. [GranularAnnotationsBox.hasAnnotation] cannot take its shortcut for such a qualifier.
+     */
+    fun canAddAnnotation(qualifiedName: String): Boolean = false
+
+    /**
      * Adds a new annotation with [qualifier] name to [currentRawAnnotations] and [foundQualifiers] if not already present
      */
     fun addSimpleAnnotationIfMissing(
