@@ -4062,6 +4062,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("cyclicAliasedAnnotation.kt")
+    public void testCyclicAliasedAnnotation() {
+      run("cyclicAliasedAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("dataClassComponent1.kt")
     public void testDataClassComponent1() {
       run("dataClassComponent1.kt");
