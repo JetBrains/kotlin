@@ -112,9 +112,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitNamedFunction(namedFunction: FirNamedFunction, data: Nothing?) {
         withAnnotationContainer(namedFunction) {
-            withInlineFunctionBodyIfApplicable(namedFunction, namedFunction.isInline) {
-                visitWithDeclaration(namedFunction)
-            }
+            visitWithFunction(namedFunction, namedFunction.isInline)
         }
     }
 
@@ -163,9 +161,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Nothing?) {
         val property = context.containingDeclarations.last() as FirPropertySymbol
         withAnnotationContainer(propertyAccessor) {
-            withInlineFunctionBodyIfApplicable(propertyAccessor, propertyAccessor.isInline || property.isInline) {
-                visitWithDeclaration(propertyAccessor)
-            }
+            visitWithFunction(propertyAccessor, propertyAccessor.isInline || property.isInline)
         }
     }
 
@@ -329,6 +325,20 @@ abstract class AbstractDiagnosticCollectorVisitor(
     ) {
         withFile(file) {
             visitWithDeclaration(file, block)
+        }
+    }
+
+    /**
+     * The inline contexts are built from the [function]'s resolved signature, so they must not be requested for a declaration which is
+     * not going to be visited: such a declaration may well be unresolved, as nobody had a reason to resolve it (KT-88889).
+     *
+     * @see shouldVisitDeclaration
+     */
+    private fun visitWithFunction(function: FirFunction, isInline: Boolean) {
+        if (!shouldVisitDeclaration(function)) return
+
+        withInlineFunctionBodyIfApplicable(function, isInline) {
+            visitWithDeclaration(function)
         }
     }
 
