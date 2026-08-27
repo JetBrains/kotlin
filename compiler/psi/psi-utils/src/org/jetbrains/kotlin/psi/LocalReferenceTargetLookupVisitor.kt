@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.TokenType
+import com.intellij.psi.util.elementType
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -31,9 +34,9 @@ fun KtNameReferenceExpression.lookupLocally(): KtNamedDeclaration? {
 
 private val KtElement.nonContainerParent: KtElement?
     get() {
-        var e = parent
-        while (e is KtContainerNode) {
-            e = e.parent
+        var e = parent ?: context
+        while (e != null && (e is KtContainerNode || e is KtCodeFragment)) {
+            e = e.parent ?: e.context
         }
         return e as? KtElement
     }
@@ -162,13 +165,14 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
     private var myLastDirection: LastDirection = LastDirection.INITIAL
 
     private fun isStopElement(element: KtElement): Boolean =
-        element is KtNamedFunction && lastDirectionIs(LastDirection.PARENT)
-                || element is KtProperty && !element.isLocal && lastDirectionIs(LastDirection.PARENT)
+        element is KtNamedFunction && element.isTopLevel && lastDirectionIs(LastDirection.PARENT)
+                || element is KtProperty && element.isTopLevel && lastDirectionIs(LastDirection.PARENT)
+                || (element is KtClassOrObject && lastDirectionIs(LastDirection.PARENT) &&
+                (element.isTopLevel() || element is KtObjectDeclaration && element.isCompanion()))
+                || (element.parent is KtBlockExpression && element.parent.parent is KtScript)
 
     private fun shouldStopBeforeProcessing(element: KtElement): Boolean =
-        element is KtClassOrObject && lastDirectionIs(LastDirection.PARENT)
-                || element is KtFile || (element.parent is KtBlockExpression && element.parent.parent is KtScript)
-                || element is KtAnonymousInitializer
+        element is KtFile && element !is KtCodeFragment
 
     /**
      * Given the current element, this function returns the next element we should visit.
