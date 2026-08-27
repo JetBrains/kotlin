@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.tooling.core.withLinearClosure
 import java.nio.file.FileSystem
 import java.nio.file.Path
-import kotlin.io.path.isDirectory
 
 sealed interface DomainInfo {
 

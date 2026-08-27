@@ -142,8 +142,6 @@ dependencies {
     testImplementation(libs.junit.jupiter.params)
     testImplementation(libs.oshi.core)
 
-    testImplementation(project(":compiler:tests-mutes:mutes-junit5"))
-
     testCompileOnly(libs.intellij.asm)
 
     testImplementation(project(":compose-compiler-gradle-plugin"))

@@ -98,9 +98,6 @@ internal fun Project.createGeneralTestTask(
     val effectiveXms = properties.testXms.orElse(minHeapSize)
     val effectiveGC = properties.testGarbageCollector.orElse(provider { garbageCollector })
 
-    project.dependencies {
-        "testRuntimeOnly"(project(":compiler:tests-mutes:mutes-junit5"))
-    }
     val shouldInstrument = project.providers.gradleProperty("kotlin.test.instrumentation.disable")
         .orNull?.toBoolean() != true
     return getOrCreateTask<Test>(taskName) {

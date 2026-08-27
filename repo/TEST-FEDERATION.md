@@ -149,7 +149,7 @@ run in smoke mode. When only `test.federation.affected.domains` is specified, th
 - no domains (`<none>`)
 
 For other properties and their values, see
-[runtimeEnvironment.kt](./test-federation-runtime/src/main/kotlin/org/jetbrains/kotlin/testFederation/runtimeEnvironment.kt).
+[runtimeEnvironment.kt](test-runtime/src/main/kotlin/org.jetbrains.kotlin.testFederation/runtimeEnvironment.kt).
 
 ### Smoke Tests: Verifying commits on the federal level
 

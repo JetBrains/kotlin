@@ -14,7 +14,6 @@ dependencies {
     testFixturesApi(project(":core:descriptors.jvm"))
     testFixturesApi(project(":core:deserialization"))
     testFixturesApi(project(":compiler:util"))
-    testFixturesApi(project(":compiler:tests-mutes"))
     testFixturesApi(project(":compiler:backend"))
     testFixturesApi(project(":compiler:frontend"))
     testFixturesApi(project(":compiler:frontend.java"))

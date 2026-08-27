@@ -150,7 +150,7 @@ private class RuntimeTestCompiler(
                 Classpath.jarFor(kotlin.test.asserter::class.java.canonicalName), // kotlin-test metadata
                 Classpath.jarFor<kotlin.test.Asserter>(), // kotlin-test
                 Classpath.jarFor<Test>(), // junit
-                Classpath.jarFor<SmokeTest>() // test-federation-runtime
+                Classpath.jarFor<SmokeTest>() // test-runtime
             )
         )
 

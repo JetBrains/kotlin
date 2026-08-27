@@ -7,10 +7,10 @@ import org.jetbrains.kotlin.testFederation.*
 val extension = extensions.create<TestFederationExtension>("testFederation")
 
 project.dependencies.extensions.add(
-    ProjectDependency::class.java, "testFederationRuntime", dependencies.project(":repo:test-federation-runtime")
+    ProjectDependency::class.java, "testRuntime", dependencies.project(":repo:test-runtime")
 )
 
-val testFederationRuntime = configurations.detachedConfiguration(dependencies.project(":repo:test-federation-runtime")).apply {
+val testRuntime = configurations.detachedConfiguration(dependencies.project(":repo:test-runtime")).apply {
     isTransitive = false
 }.incoming.files
 
@@ -37,7 +37,7 @@ tasks.withType<Test>().configureEach {
         if (mode == TestFederationMode.Smoke) domains.toArgumentString() else "*"
     })
 
-    val testFederationRuntime = testFederationRuntime
+    val testRuntime = testRuntime
     val projectPath = project.buildTreePath
     val scan = project.extensions.getByType(DevelocityConfiguration::class).buildScan
 
@@ -128,7 +128,7 @@ tasks.withType<Test>().configureEach {
         systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
 
         /* Check if classpath contains test federation runtime */
-        if (!classpath.files.containsAll(testFederationRuntime.files)) {
+        if (!classpath.files.containsAll(testRuntime.files)) {
             error("Test Federation Runtime is not available on the classpath")
         }
 
@@ -141,7 +141,7 @@ tasks.withType<Test>().configureEach {
 
 afterEvaluate {
     tasks.withType<Test>().configureEach {
-        classpath += testFederationRuntime
+        classpath += testRuntime
         /*
         When running in smoke test mode, a given test task might actually not provide any smoke test
         */
@@ -163,9 +163,9 @@ afterEvaluate {
 afterEvaluate {
     if (extension.defaultDependencyEnabled.get()) {
         dependencies {
-            configurations.findByName("testImplementation")?.name(project(":repo:test-federation-runtime"))
-            configurations.findByName("jvmTestImplementation")?.name(project(":repo:test-federation-runtime"))
-            configurations.findByName("testFixturesCompileOnly")?.name(project(":repo:test-federation-runtime"))
+            configurations.findByName("testImplementation")?.name(project(":repo:test-runtime"))
+            configurations.findByName("jvmTestImplementation")?.name(project(":repo:test-runtime"))
+            configurations.findByName("testFixturesCompileOnly")?.name(project(":repo:test-runtime"))
         }
     }
 }

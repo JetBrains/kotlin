@@ -67,7 +67,9 @@ abstract class GenerateTestFederationRuntimeCodeTask : DefaultTask() {
                 for (domain in domains) {
                     this += "|    ${domain.name},"
                 }
+                this += "|    ;"
                 this += "|"
+                this += "|    companion object"
                 this += "|}"
                 this += "|"
             }.trimMargin()
