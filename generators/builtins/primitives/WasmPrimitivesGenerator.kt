@@ -86,6 +86,9 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
     override fun MethodBuilder.modifyGeneratedBinaryOperation(thisKind: PrimitiveType, otherKind: PrimitiveType) {
         val sign = operatorSign(methodName)
         if (thisKind != PrimitiveType.BYTE && thisKind != PrimitiveType.SHORT && thisKind == otherKind) {
+            if (methodName in associativeOps) {
+                annotations += "kotlin.wasm.internal.AssociativeOp"
+            }
             val type = thisKind.capitalized
             when (methodName) {
                 "div" -> {
@@ -184,6 +187,7 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
             return
         }
 
+        annotations += "kotlin.wasm.internal.AssociativeOp"
         implementAsIntrinsic(thisKind, methodName)
     }
 
@@ -281,6 +285,8 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
 
     companion object {
         internal const val implementedAsIntrinsic = "implementedAsIntrinsic"
+
+        private val associativeOps = setOf("plus", "times")
 
         private fun String.toWasmOperator(): String {
             return when (this) {
