@@ -10,9 +10,6 @@ public final class Exposed /* Exposed*/ {
   @kotlin.jvm.JvmName(name = "regularName")
   public final int regularName(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() kotlin.Result<@org.jetbrains.annotations.NotNull() java.lang.String>);//  regularName(@org.jetbrains.annotations.Nullable() kotlin.Result<@org.jetbrains.annotations.NotNull() java.lang.String>)
 
-  @kotlin.jvm.JvmName(name = "renamed")
-  public final int renamed(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() kotlin.Result<@org.jetbrains.annotations.NotNull() java.lang.String>);//  renamed(@org.jetbrains.annotations.Nullable() kotlin.Result<@org.jetbrains.annotations.NotNull() java.lang.String>)
-
   public  Exposed();//  .ctor()
 }
 

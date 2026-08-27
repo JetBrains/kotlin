@@ -68,8 +68,6 @@ public final class NullableDataClass /* one.NullableDataClass*/ {
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
 
-  private  NullableDataClass(@org.jetbrains.annotations.Nullable() java.lang.String);//  .ctor(@org.jetbrains.annotations.Nullable() java.lang.String)
-
   public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
 
   public int hashCode();//  hashCode()
@@ -96,8 +94,6 @@ public final class NullableUnderlyingDataClass /* one.NullableUnderlyingDataClas
 
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
-
-  private  NullableUnderlyingDataClass(@org.jetbrains.annotations.Nullable() one.NullableUnderlyingValueClass);//  .ctor(@org.jetbrains.annotations.Nullable() one.NullableUnderlyingValueClass)
 
   public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
 

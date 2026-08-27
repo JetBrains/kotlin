@@ -18,8 +18,6 @@ public final class ExposedResult /* ExposedResult*/ {
 
   public final <T extends kotlin.Result<? extends @org.jetbrains.annotations.NotNull() java.lang.String>> void withNotNullTypeParameter(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() kotlin.Result<@org.jetbrains.annotations.NotNull() java.lang.String>, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() T);// <T extends kotlin.Result<? extends @org.jetbrains.annotations.NotNull() java.lang.String>>  withNotNullTypeParameter(@org.jetbrains.annotations.Nullable() kotlin.Result<@org.jetbrains.annotations.NotNull() java.lang.String>, @org.jetbrains.annotations.NotNull() T)
 
-  public final void onlyNullableResult(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() kotlin.Result<@org.jetbrains.annotations.NotNull() java.lang.String>);//  onlyNullableResult(@org.jetbrains.annotations.Nullable() kotlin.Result<@org.jetbrains.annotations.NotNull() java.lang.String>)
-
   public final void withNotNullResult(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() kotlin.Result<@org.jetbrains.annotations.NotNull() java.lang.String>, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object);//  withNotNullResult(@org.jetbrains.annotations.Nullable() kotlin.Result<@org.jetbrains.annotations.NotNull() java.lang.String>, @org.jetbrains.annotations.NotNull() java.lang.Object)
 }
 

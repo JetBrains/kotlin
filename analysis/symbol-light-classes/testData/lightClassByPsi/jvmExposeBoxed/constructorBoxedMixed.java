@@ -15,8 +15,6 @@ public final class AllNullable /* AllNullable*/ {
 
   @kotlin.jvm.JvmExposeBoxed()
   public  AllNullable(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() StringWrapper, @org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() IntWrapper);//  .ctor(@org.jetbrains.annotations.Nullable() StringWrapper, @org.jetbrains.annotations.Nullable() IntWrapper)
-
-  private  AllNullable(@org.jetbrains.annotations.Nullable() StringWrapper, @org.jetbrains.annotations.Nullable() IntWrapper);//  .ctor(@org.jetbrains.annotations.Nullable() StringWrapper, @org.jetbrains.annotations.Nullable() IntWrapper)
 }
 
 @kotlin.jvm.JvmInline()

@@ -125,11 +125,12 @@ internal class SymbolLightConstructor private constructor(
                     declaration = constructor,
                     methodIndexBase = METHOD_INDEX_BASE,
                 ) { methodIndex, valueParameterPickMask, hasValueClassInParameterType ->
-                    if (exposeBoxedMode != JvmExposeBoxedMode.NONE &&
-                        (hasValueClassInParameterType || destinationClassIsValueClass) &&
-                        // Private declarations are inaccessible from Java, so they are never exposed as boxed
-                        !isEffectivelyPrivate(constructor)
-                    ) {
+                    val isBoxedConstructorRequired = exposeBoxedMode != JvmExposeBoxedMode.NONE &&
+                            (hasValueClassInParameterType || destinationClassIsValueClass) &&
+                            // Private declarations are inaccessible from Java, so they are never exposed as boxed
+                            !isEffectivelyPrivate(constructor)
+
+                    if (isBoxedConstructorRequired) {
                         result += SymbolLightConstructor(
                             constructorSymbol = constructor,
                             containingClass = lightClass,
@@ -139,7 +140,11 @@ internal class SymbolLightConstructor private constructor(
                         )
                     }
 
-                    if (!destinationClassIsValueClass) {
+                    // Two constructors with the same JVM signature cannot coexist, so the JVM backend keeps only the boxed one
+                    val isShadowedByBoxedConstructor = isBoxedConstructorRequired &&
+                            hasOnlyNullableValueClassesInParameterPosition(constructor, valueParameterPickMask)
+
+                    if (!destinationClassIsValueClass && !isShadowedByBoxedConstructor) {
                         result += SymbolLightConstructor(
                             constructorSymbol = constructor,
                             containingClass = lightClass,

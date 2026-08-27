@@ -533,6 +533,15 @@ internal class SymbolLightAccessorMethod private constructor(
                 isOverridable = accessor.isOverridable(),
                 // An accessor may be private while its property is not (e.g. `var p: IC; private set(value) {}`)
                 isEffectivelyPrivate = accessor.visibility == KaSymbolVisibility.PRIVATE || isEffectivelyPrivate(property),
+                hasSameJvmSignatureWhenExposed = {
+                    hasSameJvmSignatureWhenExposed(
+                        // On the JVM, an accessor has the receiver and the context parameters of its property
+                        callableSymbol = property,
+                        exposedNameOwner = accessor,
+                        // A setter takes the type of the property as its value parameter
+                        propertyTypeAsParameter = property.returnType.takeIf { accessor is KaPropertySetterSymbol },
+                    )
+                },
             )
 
             if (!generationResult.isAnyMethodRequired) return
