@@ -116,7 +116,6 @@ org.jetbrains.kotlin.psi.stubs.impl.KClassData
 org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationUseSiteTargetStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinBackingFieldStubImpl
-org.jetbrains.kotlin.psi.stubs.impl.KotlinBackingFieldStubImpl:constructor(StubElement<?>, boolean)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinBlockStringTemplateEntryStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinCollectionLiteralExpressionStubImpl
