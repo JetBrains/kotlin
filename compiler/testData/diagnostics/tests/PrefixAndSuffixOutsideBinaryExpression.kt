@@ -3,11 +3,11 @@
 // ISSUE: KT-88961
 
 // COMPARE_WITH_LIGHT_TREE
-// REASON: the light-tree checker misses prefixes/suffixes outside binary expressions
+// REASON: guards that both checker implementations agree on these, see KT-88961
 
 // Here the literal sits at the edge of a parent that is not a binary expression, so the adjacent leaf can only be
-// reached by walking further up the tree. `FirPrefixAndSuffixSyntaxChecker.getLeaf` stops climbing at the first
-// parent that is not a `BINARY_EXPRESSION`, so the light tree misses these while PSI reports them.
+// reached by walking further up the tree. The light-tree half of `FirPrefixAndSuffixSyntaxChecker` used to stop at
+// the first parent that is not a `BINARY_EXPRESSION` and missed these, while the PSI half reported them.
 
 // Note there is no integer counterpart for the prefix cases: a keyword directly followed by a digit lexes as a single
 // identifier (`in1`), so only the suffix cases in NumberPrefixAndSuffix.kt are reachable.
@@ -17,12 +17,12 @@ fun testReturn(): String {
 }
 
 fun testFor() {
-    for (c <!UNSUPPORTED{PSI}!>in<!>"abc") {}
-    for (c <!UNSUPPORTED{PSI}!>in<!>'a'..'z') {}
+    for (c <!UNSUPPORTED!>in<!>"abc") {}
+    for (c <!UNSUPPORTED!>in<!>'a'..'z') {}
 }
 
 fun testElse(): String {
-    return if (true) "a" <!UNSUPPORTED{PSI}!>else<!>"b"
+    return if (true) "a" <!UNSUPPORTED!>else<!>"b"
 }
 
 fun testNoFalsePositives() {
