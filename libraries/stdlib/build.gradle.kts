@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmWasiTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
 import org.jetbrains.kotlin.library.KOTLIN_JS_STDLIB_NAME
 import org.jetbrains.kotlin.library.KOTLIN_WASM_STDLIB_NAME
@@ -101,11 +102,13 @@ kotlin {
         compilations {
             all {
                 compileTaskProvider.configure {
+                    this as KotlinCompileCommon
+                    @Suppress("DEPRECATION")
+                    moduleName = "kotlin-stdlib-common"
                     compilerOptions {
                         freeCompilerArgs.set(
                             listOfNotNull(
                                 "-Xallow-kotlin-package",
-                                "-module-name", "kotlin-stdlib-common",
                                 "-Xexpect-actual-classes",
                                 "-Xexplicit-api=strict",
                                 diagnosticNamesArg,
