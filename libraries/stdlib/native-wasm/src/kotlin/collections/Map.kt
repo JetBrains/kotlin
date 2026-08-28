@@ -185,8 +185,7 @@ public actual interface MutableMap<K, V> : Map<K, V> {
     /**
      * Updates this map with key/value pairs from the specified map [from].
      *
-     * The effect of this call is equivalent to calling [put] for each entry of [from], so the key instances
-     * stored in this map are retained.
+     * The effect of this call is equivalent to calling [put] for each entry of [from].
      *
      * @sample samples.collections.Maps.CoreApi.putAll
      */
