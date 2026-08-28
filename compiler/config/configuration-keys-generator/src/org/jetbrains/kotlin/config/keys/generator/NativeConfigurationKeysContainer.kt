@@ -29,6 +29,7 @@ object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.ko
     val INCREMENTAL_CACHE_DIR by key<String>("Path to the directory where to put incremental build caches.")
     val DUMP_BUILT_CACHES_TO by key<String>("Path to a file where the list of all cache archives produced by this build should be written.")
     val COMPILATION_SCHEME by key<CompilationScheme>("Compilation scheme used by the compiler, 'split-host' is used to have hot-reload enabled binaries.")
+    val SPLIT_FORCE_LINK_CACHE_PACKAGES by key<List<String>>("KLIB package FQNs whose caches are statically linked into the split host executable.")
     val CACHED_LIBRARIES by key<Map<String, String>>("Mapping from library paths to cache paths.")
     val FILES_TO_CACHE by key<List<String>>("Which files should be compiled to cache.")
     val MAKE_PER_FILE_CACHE by key<Boolean>()

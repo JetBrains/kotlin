@@ -1,0 +1,10 @@
+$TESTDATA_DIR$/splitCompilationScheme.kt
+-o
+$TEMP_DIR$/splitCompilationSchemeUnsupportedTarget
+-g
+-target
+linux_x64
+-Xcompilation-scheme=split
+-Xenable-incremental-compilation
+-Xic-cache-dir=$TEMP_DIR$/ic-cache
+-Xbinary=perFileCacheForStdlib=false

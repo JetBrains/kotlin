@@ -600,7 +600,7 @@ class NativeSecondStageCompilationConfig(
         if (runtimeLogsEnabled)
             append("-runtime_logs_enabled")
         if (isUsingSplitCompilationScheme)
-            append("-hot_reload_enabled")
+            append("-with_hot_reload_runtime")
     }
 
     private val userCacheFlavorString = buildString {
@@ -630,6 +630,7 @@ class NativeSecondStageCompilationConfig(
     internal val compilationScheme: CompilationScheme = configuration.compilationScheme ?: CompilationScheme.DEFAULT
     internal val isUsingSplitCompilationScheme: Boolean
         get() = compilationScheme == CompilationScheme.SPLIT_HOST
+    internal val splitCompilationForceLinkCachePackages: Set<String> by lazy { configuration.splitForceLinkCachePackages.toSet() }
 
     internal val ignoreCacheReason = when {
         optimizationsEnabled && !enableReleaseBinaryCache -> "with global optimizations"

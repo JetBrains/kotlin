@@ -1,0 +1,2 @@
+error: split compilation is an experimental feature available only on Darwin platforms.
+COMPILATION_ERROR

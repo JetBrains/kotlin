@@ -73,6 +73,10 @@ object NativeConfigurationKeys {
     @JvmField
     val COMPILATION_SCHEME = CompilerConfigurationKey.create<CompilationScheme>("COMPILATION_SCHEME")
 
+    // KLIB package FQNs whose caches are statically linked into the split host executable.
+    @JvmField
+    val SPLIT_FORCE_LINK_CACHE_PACKAGES = CompilerConfigurationKey.create<List<String>>("SPLIT_FORCE_LINK_CACHE_PACKAGES")
+
     // Mapping from library paths to cache paths.
     @JvmField
     val CACHED_LIBRARIES = CompilerConfigurationKey.create<Map<String, String>>("CACHED_LIBRARIES")
@@ -334,6 +338,10 @@ var CompilerConfiguration.dumpBuiltCachesTo: String?
 var CompilerConfiguration.compilationScheme: CompilationScheme?
     get() = get(NativeConfigurationKeys.COMPILATION_SCHEME)
     set(value) { put(NativeConfigurationKeys.COMPILATION_SCHEME, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.splitForceLinkCachePackages: List<String>
+    get() = getList(NativeConfigurationKeys.SPLIT_FORCE_LINK_CACHE_PACKAGES)
+    set(value) { put(NativeConfigurationKeys.SPLIT_FORCE_LINK_CACHE_PACKAGES, value) }
 
 var CompilerConfiguration.cachedLibraries: Map<String, String>
     get() = getMap(NativeConfigurationKeys.CACHED_LIBRARIES)
