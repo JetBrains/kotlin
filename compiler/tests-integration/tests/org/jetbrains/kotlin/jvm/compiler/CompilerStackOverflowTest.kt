@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File
-import kotlin.test.Ignore
 
 /**
  * Compiles generated sources that are known to stress the compiler stack and asserts that they still compile.
@@ -34,7 +33,6 @@ class CompilerStackOverflowTest : AbstractKotlinCompilerIntegrationTest() {
     override val testDataPath: String
         get() = File(tmpdir, "testData").path
 
-    @Ignore // TODO: remove after fixing of KT-88399
     @Test
     fun testLongStringConcatenationWithLightTree() {
         assertCompiles(LONG_STRING_CONCATENATION_FILE_NAME, longStringConcatenation(), Parser.LIGHT_TREE)
