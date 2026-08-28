@@ -87,6 +87,10 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitExpression(literalExpression)
     }
 
+    override fun visitNumericClassConversion(numericClassConversion: FirNumericClassConversion) {
+        visitExpression(numericClassConversion)
+    }
+
     override fun visitIntegerLiteralOperatorCall(integerLiteralOperatorCall: FirIntegerLiteralOperatorCall) {
         visitFunctionCall(integerLiteralOperatorCall)
     }

@@ -143,6 +143,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: D): R =
         visitElement(literalExpression, data)
 
+    open fun visitNumericClassConversion(numericClassConversion: FirNumericClassConversion, data: D): R =
+        visitElement(numericClassConversion, data)
+
     open fun visitFunctionCall(functionCall: FirFunctionCall, data: D): R =
         visitElement(functionCall, data)
 
