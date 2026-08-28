@@ -19,18 +19,15 @@ private val ScriptCompilationConfigurationKeys.rootBindingsConfigured by Propert
 
 private const val SYNTHETIC_SNIPPET_PREFIX = "\$\$synthetic_jsr223_"
 
-// Engine-internal binding keys that must not be exposed as snippet properties.
 private val ENGINE_INTERNAL_BINDING_KEYS = setOf(
     KOTLIN_SCRIPT_STATE_BINDINGS_KEY,
     KOTLIN_SCRIPT_ENGINE_BINDINGS_KEY,
 )
 
 /**
- * Characters that can't appear in a Kotlin identifier under any quoting. These are the JVM
- * member-name characters rejected outright (`. ; [ ] / < > : \`), plus the backtick itself
- * (can't nest inside a backtick-quoted name) and raw line breaks. A name containing one of these
- * must go through [encodeBindingNameToMarkerIdentifier]. Every other name is legal as a
- * backtick-quoted identifier (see [encodeBindingNameToKotlinIdentifier]).
+ * Characters that make a name unusable as an identifier even backtick-quoted, so it has to go
+ * through [encodeBindingNameToMarkerIdentifier]: the JVM member-name characters, the backtick
+ * itself and raw line breaks.
  */
 private val NEEDS_MARKER_ENCODING_CHARS: Set<Char> =
     setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\', '`', '\n', '\r')
@@ -39,11 +36,10 @@ private fun Char.isAsciiIdentifierChar(): Boolean =
     this in 'A'..'Z' || this in 'a'..'z' || this in '0'..'9' || this == '_'
 
 /**
- * Encodes a binding [name] that can't be a plain or backtick-quoted identifier into a plain Kotlin
- * identifier by replacing every problematic character with a `__u<hex>__` marker for its Unicode
- * code point (e.g. `a.b` -> `a__u002e__b`). Only injectivity is required: the generated accessor
- * reaches the value through the raw binding key, not by decoding this identifier. A raw name
- * spelled exactly like an emitted marker is therefore unsupported.
+ * Encodes a binding [name] into a plain Kotlin identifier, replacing every problematic character with
+ * a `__u<hex>__` marker for its code point (e.g. `a.b` -> `a__u002e__b`). Only injectivity is
+ * required, since the value is reached through the raw binding key rather than by decoding the
+ * identifier back, so a raw name spelled exactly like an emitted marker is unsupported.
  */
 private fun encodeBindingNameToMarkerIdentifier(name: String): String {
     val sb = StringBuilder(name.length + 8)
@@ -54,54 +50,43 @@ private fun encodeBindingNameToMarkerIdentifier(name: String): String {
             sb.append("__u").append(ch.code.toString(16).padStart(4, '0')).append("__")
         }
     }
-    // A leading digit is not a legal identifier start. Markers begin with `_`, so this only fires
-    // when the name itself starts with a kept digit (e.g. `1.2` -> `1__u002e__2`).
     if (sb.isNotEmpty() && sb[0] in '0'..'9') sb.insert(0, '_')
     return sb.toString()
 }
 
 /**
  * Returns a Kotlin identifier that references a JSR-223 binding [name] from snippet source, or null
- * if [name] is empty. Plain identifiers are used verbatim. Any other name is backtick-quoted, or
- * reversibly encoded via [encodeBindingNameToMarkerIdentifier] if it contains a character from
- * [NEEDS_MARKER_ENCODING_CHARS].
+ * if [name] is empty.
  *
- * A backtick-quoted name must not be declared with a hardcoded `get()`/`set()` accessor. Every
- * generated snippet also declares `val bindings = getBindings(...)`, which is an
- * implicit-context-receiver call. Having both a backtick-quoted property with hand-written
- * accessors and that call in the same live REPL session makes the K2 REPL/script-snippet parser
- * fail with a spurious "Property getter or setter expected" error.
- * [generateBindingSnippetIfNeeded] sidesteps this by declaring every backtick-quoted property with
- * a delegate (`by ...`) instead, which parses through a different path.
+ * A backtick-quoted result must not be declared with a hardcoded `get()`/`set()`: combined with the
+ * implicit-context-receiver `getBindings(...)` call that every generated snippet contains, it makes
+ * the K2 snippet parser fail with a spurious "Property getter or setter expected". Hence the
+ * delegated declarations in [renderBindingProperty].
  */
 private fun encodeBindingNameToKotlinIdentifier(name: String): String? =
     when {
         name.isEmpty() -> null
-        // Plain identifier: ASCII letters/digits/underscores, not digit-leading, not all-underscore.
         name.all { it.isAsciiIdentifierChar() } && name[0] !in '0'..'9' && name.any { it != '_' } -> name
         name.any { it in NEEDS_MARKER_ENCODING_CHARS } -> encodeBindingNameToMarkerIdentifier(name)
-        // Everything else is safe as a backtick-quoted identifier, declared via a delegate (see above).
         else -> "`$name`"
     }
 
 /**
- * Returns true if [name] is a valid JVM unqualified member name (JVM spec 4.2.2). Duplicated from
- * `org.jetbrains.kotlin.name.Name.isValidIdentifier` so this module doesn't depend on the compiler.
+ * A valid JVM unqualified member name (JVM spec 4.2.2). Duplicated from
+ * `org.jetbrains.kotlin.name.Name.isValidIdentifier` so that this module doesn't depend on the compiler.
  */
 private fun isValidJvmUnqualifiedName(name: String): Boolean =
     name.isNotEmpty() && !name.startsWith("<") && name.none { it == '.' || it == ';' || it == '[' || it == '/' }
 
 /**
- * Returns true if [qualifiedName] is a dot-separated identifier chain the Kotlin parser accepts as a
- * type reference. Filters out synthetic/anonymous names (e.g. indy-lambda classes containing `/` or
- * `<`) that have a non-null `KClass.qualifiedName` on some JDKs but can't be embedded into source.
+ * A dot-separated identifier chain the Kotlin parser accepts as a type reference. Filters out
+ * synthetic names that have a non-null `KClass.qualifiedName` on some JDKs but cannot be embedded.
  */
 private fun isParseableKotlinQualifiedName(qualifiedName: String): Boolean {
     if (qualifiedName.isEmpty()) return false
     return qualifiedName.split('.').all { isValidJvmUnqualifiedName(it) }
 }
 
-/** Escapes a string for embedding inside a Kotlin regular string literal ("..."). */
 private fun escapeForKotlinStringLiteral(s: String): String = buildString {
     for (c in s) {
         when (c) {
@@ -120,20 +105,12 @@ fun configureExposedJsr223Context(context: ScriptConfigurationRefinementContext)
     if (context.compilationConfiguration[ScriptCompilationConfiguration.jsr223.getScriptContext]?.invoke() == null)
         return context.compilationConfiguration.asSuccess()
 
-    // Implicit receivers exposed to every JSR-223 snippet: ScriptContext (the JSR-223 scopes and
-    // attributes API) and ScriptTemplateWithBindings (the K1-era bindings-only shape). Their members
-    // do not collide under normal use.
-    //
-    // Computed here rather than as a top-level property. A top-level list literal would be evaluated
-    // by this file's static initializer on first call, forcing javax.script.* classes to load even
-    // for non-JSR-223 compilations (MainKtsScriptDefinition wires this callback unconditionally).
-    // That previously caused a spurious NoClassDefFoundError on plain .main.kts scripts.
+    // Not a top-level property: its initializer would load javax.script.* on the first call even for
+    // non-JSR-223 compilations, since MainKtsScriptDefinition wires this callback unconditionally.
     val requiredImplicitReceivers = listOf(ScriptContext::class, ScriptTemplateWithBindings::class)
 
-    // Add each receiver only once. The engine threads a single, mutated ScriptCompilationConfiguration
-    // across evals, including nested eval-in-eval. Appending unconditionally would grow the receiver
-    // list per eval while the evaluator always passes exactly one of each, which surfaces as
-    // `IllegalArgumentException: wrong number of arguments`
+    // The engine threads a single, mutated configuration across evals, so appending unconditionally
+    // would grow the receiver list per eval, while the evaluator always passes exactly one of each
     // (KotlinJsr223ScriptEngineIT.testSimpleEvalInEval).
     val existingReceivers = context.compilationConfiguration[ScriptCompilationConfiguration.implicitReceivers].orEmpty()
     val missingReceivers = requiredImplicitReceivers.filter { KotlinType(it) !in existingReceivers }
@@ -145,9 +122,8 @@ fun configureExposedJsr223Context(context: ScriptConfigurationRefinementContext)
 }
 
 /**
- * Renders the `var $encodedName: $renderedType ...` declaration for one exposed (or [removed]) binding.
- * A backtick-quoted [encodedName] is declared with a [__Jsr223BindingDelegate] (`by ...`) instead of a
- * hardcoded `get()`/`set()`. See the doc comment on [encodeBindingNameToKotlinIdentifier] for why.
+ * Renders the declaration of one exposed (or [removed]) binding. A backtick-quoted [encodedName] has
+ * to be declared with a delegate, see [encodeBindingNameToKotlinIdentifier].
  */
 private fun renderBindingProperty(encodedName: String, renderedType: String, safeKey: String, removed: Boolean): String =
     if (encodedName.startsWith("`")) {
@@ -182,15 +158,14 @@ fun generateBindingSnippetIfNeeded(context: ScriptConfigurationRefinementContext
 
     var bindingsSnippet = ""
 
-    // Declared in every synthetic snippet so each snippet's property accessors resolve `bindings`
-    // from their own class (the ScriptContext active at that eval), not from synthetic-snippet-0.
-    // That avoids stale-context bugs when eval is called with a custom Bindings argument.
+    // Declared in every synthetic snippet, so that the property accessors resolve `bindings` from
+    // their own class, i.e. the ScriptContext active at that eval.
     bindingsSnippet += "val bindings: javax.script.Bindings = getBindings(javax.script.ScriptContext.ENGINE_SCOPE)\n\n"
 
     if (context.compilationConfiguration[ScriptCompilationConfiguration.rootBindingsConfigured] != true) {
-        // Declared only once, in the first synthetic snippet. The helpers reference snippet-0's
-        // `bindings` (the default ENGINE_SCOPE), which is what eval-in-eval needs to save and restore.
-        // Uses .put() and explicit null checks instead of [] = to avoid @InlineOnly stdlib operators.
+        // Declared once, in the first synthetic snippet, so that these helpers reference the default
+        // ENGINE_SCOPE bindings, which is what eval-in-eval needs to save and restore. `.put()` and
+        // explicit null checks avoid the @InlineOnly stdlib operators.
         bindingsSnippet += """
 fun eval(script: String): Any? {
     @Suppress("UNCHECKED_CAST")
@@ -216,10 +191,8 @@ fun eval(script: String, newBindings: javax.script.Bindings): Any? {
     return result
 }
 
-// A property delegate used only for backtick-quoted binding properties. See the doc comment on
-// [encodeBindingNameToKotlinIdentifier] for why these can't be declared with a hardcoded get()/set().
-// [removed] renders the same "no longer available" diagnostic that a removed binding's shadowing
-// accessor used to throw from its getter.
+// A property delegate used only for backtick-quoted binding properties, which cannot be declared
+// with a hardcoded get()/set().
 class __Jsr223BindingDelegate<T>(private val bindings: javax.script.Bindings, private val key: String, private val removed: Boolean = false) {
     @Suppress("UNCHECKED_CAST")
     operator fun getValue(thisRef: Any?, property: kotlin.reflect.KProperty<*>): T {
@@ -234,8 +207,6 @@ class __Jsr223BindingDelegate<T>(private val bindings: javax.script.Bindings, pr
 
     val knownBindings =
         context.compilationConfiguration[ScriptCompilationConfiguration.exposedBindings] ?: hashMapOf()
-    // Recomputed below when `importAllBindings` is on, then written back into `exposedBindings` so
-    // the next snippet can diff against it (add, retype, or remove).
     var updatedBindings: Map<String, KotlinType> = knownBindings
 
     if (
@@ -247,9 +218,7 @@ class __Jsr223BindingDelegate<T>(private val bindings: javax.script.Bindings, pr
             if (engineBindings != null)
                 putAll(engineBindings)
         }
-        // Bindings whose name is a usable identifier and whose value type can be embedded as a Kotlin
-        // type reference are exposed as typed properties. The rest, including indy lambdas and
-        // local/anonymous classes, stay reachable only via `bindings["..."]`.
+        // Bindings that cannot be exposed as typed properties stay reachable via `bindings["..."]`.
         val currentBindings = LinkedHashMap<String, KotlinType>()
         for ([k, v] in allBindings) {
             if (k in ENGINE_INTERNAL_BINDING_KEYS) continue
@@ -261,23 +230,18 @@ class __Jsr223BindingDelegate<T>(private val bindings: javax.script.Bindings, pr
             currentBindings[k] = if (v == null) KotlinType(Any::class, isNullable = true) else KotlinType(v::class)
         }
 
-        // Emit a fresh accessor for each binding that is new or retyped since it was last exposed
-        // (compared by type name and nullability). The fresh accessor shadows the stale one in
-        // subsequent snippets.
+        // A new or retyped binding gets a fresh accessor, shadowing the stale one in later snippets.
         for ([name, type] in currentBindings) {
             if (knownBindings[name] == type) continue
             val encodedName = encodeBindingNameToKotlinIdentifier(name)!!
             val safeKey = escapeForKotlinStringLiteral(name)
-            // KotlinType.typeName strips the trailing `?`, so nullability must be appended explicitly.
-            // Otherwise a null-valued binding would emit a non-null getter cast that NPEs on that value.
+            // KotlinType.typeName strips the trailing `?`, and a non-null cast would NPE on a null value.
             val renderedType = if (type.isNullable) "${type.typeName}?" else type.typeName
             bindingsSnippet += renderBindingProperty(encodedName, renderedType, safeKey, removed = false)
         }
 
-        // A binding that was exposed before but is no longer present gets a shadowing accessor that
-        // keeps the old type, so existing user code still type-checks, but throws a clear diagnostic
-        // instead of the stale getter's NPE. Re-adding the binding later emits a fresh accessor that
-        // shadows this one.
+        // A removed binding keeps a shadowing accessor of the previous type, so that existing user
+        // code still type-checks, but throws a clear diagnostic instead of the stale getter's NPE.
         for (removedName in knownBindings.keys - currentBindings.keys) {
             val encodedName = encodeBindingNameToKotlinIdentifier(removedName) ?: continue
             val safeKey = escapeForKotlinStringLiteral(removedName)
@@ -296,17 +260,15 @@ class __Jsr223BindingDelegate<T>(private val bindings: javax.script.Bindings, pr
             } to source).asSuccess()
 }
 
-// Concrete subclass of the abstract ScriptTemplateWithBindings. It wraps the same live, mutable
-// Bindings map that already backs ScriptContext's ENGINE_SCOPE, so both receivers see the same data
-// without separate synchronization.
+// Wraps the same live, mutable Bindings map that backs ScriptContext's ENGINE_SCOPE, so that both
+// receivers see the same data.
 private class Jsr223ScriptTemplateWithBindings(bindings: Map<String, Any?>) : ScriptTemplateWithBindings(bindings)
 
 fun configureExposedJsr223Context(context: ScriptEvaluationConfigurationRefinementContext): ResultWithDiagnostics<ScriptEvaluationConfiguration> {
     val jsr223context = context.evaluationConfiguration[ScriptEvaluationConfiguration.jsr223.getScriptContext]?.invoke()
         ?: return context.evaluationConfiguration.asSuccess() // likely an error
 
-    // Order matches the compile-time overload of configureExposedJsr223Context above:
-    // ScriptContext first, then ScriptTemplateWithBindings.
+    // The order has to match the compile-time overload above.
     val engineBindings = jsr223context.getBindings(ScriptContext.ENGINE_SCOPE) ?: emptyMap<String, Any?>()
     return context.evaluationConfiguration.with {
         implicitReceivers(jsr223context, Jsr223ScriptTemplateWithBindings(engineBindings))

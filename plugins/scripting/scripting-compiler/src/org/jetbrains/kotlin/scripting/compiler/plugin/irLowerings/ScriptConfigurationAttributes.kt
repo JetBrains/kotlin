@@ -23,12 +23,5 @@ var IrClass.scriptResultFieldDataAttr: ScriptResultFieldData? by irAttribute(cop
 
 var IrScript.scriptCompilationConfiguration: ScriptCompilationConfiguration? by irAttribute(copyByDefault = true)
 
-/**
- * Protobuf-wire-encoded `SnippetArtifactSidecar` bytes assembled from the frontend in
- * `Fir2IrReplSnippetConfiguratorExtensionImpl.prepareSnippet` and consumed by
- * `ReplSnippetsToClassesLowering.finalizeReplSnippetClass`, which embeds them into the snippet
- * wrapper class's `.kotlin_metadata`.
- *
- * Set only when a sidecar was assembled for this snippet; otherwise left `null`.
- */
+/** Encoded `SnippetArtifactSidecar` bytes to embed into the snippet wrapper class's `.kotlin_metadata`. */
 var IrReplSnippet.replSidecarMetadataAttr: ByteArray? by irAttribute(copyByDefault = false)

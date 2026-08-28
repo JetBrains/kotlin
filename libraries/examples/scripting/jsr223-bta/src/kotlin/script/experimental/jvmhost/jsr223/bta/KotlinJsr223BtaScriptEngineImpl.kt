@@ -3,12 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.script.experimental.jvmhost.jsr223.daemon
+package kotlin.script.experimental.jvmhost.jsr223.bta
 
-import org.jetbrains.kotlin.daemon.common.DaemonJVMOptions
-import org.jetbrains.kotlin.daemon.common.DaemonLogOptions
-import org.jetbrains.kotlin.daemon.common.DaemonOptions
-import java.io.File
 import java.nio.file.Path
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import javax.script.ScriptEngine
@@ -20,32 +16,34 @@ import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.jvm.K2ReplEvaluator
 import kotlin.script.experimental.jvm.jsr223.base.KotlinJsr223JvmScriptEngineBase
 
-/** Per-JSR-223-session state for the daemon-backed engine. */
-data class DaemonReplState(
-    val compiler: DaemonReplCompiler,
+data class BtaReplState(
+    val compiler: BtaReplCompiler,
     val evaluator: K2ReplEvaluator,
     var snippetCounter: Int = 0,
 )
 
 /**
- * A JSR-223 [ScriptEngine] that compiles every snippet out-of-process on the Kotlin compile
- * daemon's regular compile path, with [DaemonReplCompiler] supplying compilation. `Invocable` is
- * unsupported. Call [close] once this engine is no longer needed.
+ * A JSR-223 [ScriptEngine] that compiles every snippet out-of-process through the Build Tools API,
+ * reusing the stock [KotlinJsr223JvmScriptEngineBase] plumbing and [K2ReplEvaluator]. `Invocable` is
+ * unsupported. [close] must be called once the engine is no longer needed.
  *
- * [baseCompilationConfiguration]/[baseEvaluationConfiguration] accept a script definition's own
- * configurations, but its `refineConfiguration` hooks (`@file:DependsOn` and the like) never run on
- * this path, as there is no local refinement step; evaluation-time configuration is honored.
+ * [baseCompilationConfiguration]/[baseEvaluationConfiguration] allow plugging in a script
+ * definition's own configurations (e.g. `MainKtsScript`'s). Only their evaluation-time part is
+ * honored in full: the definition's `refineConfiguration` handlers (`@file:DependsOn` resolution and
+ * the like) are not run on this path, since compilation happens in another process.
  */
-class KotlinJsr223DaemonScriptEngineImpl(
+class KotlinJsr223BtaScriptEngineImpl(
     factory: ScriptEngineFactory,
-    private val compilerClasspath: List<File>,
+    private val compilerClasspath: List<Path>,
+    private val scriptingPluginClasspath: List<Path>,
     private val additionalClasspath: List<Path> = emptyList(),
-    private val daemonJVMOptions: DaemonJVMOptions? = null,
-    private val daemonOptions: DaemonOptions? = null,
-    private val daemonLogOptions: DaemonLogOptions? = null,
+    private val daemonJvmArguments: List<String>? = null,
+    private val daemonRunFilesPath: Path? = null,
+    private val daemonLogsPath: Path? = null,
+    private val daemonShutdownDelayMillis: Long? = null,
     baseCompilationConfiguration: ScriptCompilationConfiguration = ScriptCompilationConfiguration(),
     baseEvaluationConfiguration: ScriptEvaluationConfiguration = ScriptEvaluationConfiguration(),
-) : KotlinJsr223JvmScriptEngineBase<DaemonReplState>(factory) {
+) : KotlinJsr223JvmScriptEngineBase<BtaReplState>(factory) {
 
     override var compilationConfiguration: ScriptCompilationConfiguration =
         ScriptCompilationConfiguration(baseCompilationConfiguration) {
@@ -57,27 +55,24 @@ class KotlinJsr223DaemonScriptEngineImpl(
             hostConfiguration.update { it.withDefaultsFrom(jsr223HostConfiguration) }
         }
 
-    override val replCompiler: DaemonReplCompiler get() = getCurrentState(getContext()).compiler
+    override val replCompiler: BtaReplCompiler get() = getCurrentState(getContext()).compiler
     override val replEvaluator: K2ReplEvaluator get() = getCurrentState(getContext()).evaluator
 
-    override fun createState(lock: ReentrantReadWriteLock): DaemonReplState =
-        DaemonReplState(
-            DaemonReplCompiler(
-                compilerClasspath, additionalClasspath,
-                daemonJVMOptions = daemonJVMOptions, daemonOptions = daemonOptions, daemonLogOptions = daemonLogOptions,
+    override fun createState(lock: ReentrantReadWriteLock): BtaReplState =
+        BtaReplState(
+            BtaReplCompiler(
+                compilerClasspath, scriptingPluginClasspath, additionalClasspath,
+                daemonJvmArguments = daemonJvmArguments,
+                daemonRunFilesPath = daemonRunFilesPath,
+                daemonLogsPath = daemonLogsPath,
+                daemonShutdownDelayMillis = daemonShutdownDelayMillis,
             ),
             K2ReplEvaluator(),
         )
 
     override fun nextSnippetNo(): Int = getCurrentState(getContext()).snippetCounter++
 
-    /** Releases the underlying [DaemonReplCompiler]'s compile-daemon session. */
     fun close() {
         replCompiler.close()
-    }
-
-    /** See [DaemonReplCompiler.forceShutdownDaemon]. */
-    fun forceShutdownDaemonForTests() {
-        replCompiler.forceShutdownDaemon()
     }
 }

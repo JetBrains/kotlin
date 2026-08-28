@@ -129,9 +129,8 @@ class K2ReplCompiler(
                 add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, ReplCompilerPluginRegistrar(hostConfiguration))
             }
 
-            // Resolves this session's own script definition via the standard `isScript` extension
-            // check: every source here is named with a `.repl.<fileExtension>` (or plain) suffix
-            // matching this definition's `fileExtension` (e.g. `.repl.main.kts` for `MainKtsScript`).
+            // Snippet sources are named `.repl.<fileExtension>`, so this definition is found by the
+            // standard `isScript` extension check
             val compilerConfiguration = compilerContext.environment.configuration
             compilerConfiguration.add(
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
@@ -149,10 +148,8 @@ class K2ReplCompiler(
                 scriptCompilationConfigurationProvider(ScriptCompilationConfigurationProviderOverDefinitionProvider(scriptDefinitionProvider))
                 scriptRefinedCompilationConfigurationsCache(ScriptRefinedCompilationConfigurationCacheImpl())
             }
-            // Passed directly via `FirScriptCompilationComponent` rather than via
-            // `compilerConfiguration.scriptingHostConfiguration`. `FirScriptDefinitionProviderService`
-            // prefers a session's own `scriptCompilationComponent.hostConfiguration` over its
-            // lazily cached, classpath-discovery-based fallback, so this is picked up unambiguously.
+            // Passed via FirScriptCompilationComponent: FirScriptDefinitionProviderService prefers a
+            // session's own hostConfiguration over its classpath-discovery-based fallback
 
             val project = compilerContext.environment.project
             val languageVersionSettings = compilerContext.environment.configuration.languageVersionSettings

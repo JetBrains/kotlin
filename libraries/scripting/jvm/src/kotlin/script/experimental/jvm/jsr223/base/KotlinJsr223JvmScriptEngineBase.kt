@@ -52,20 +52,12 @@ interface InvokeWrapper {
 }
 
 /**
- * The JSR-223 scaffolding shared by every Kotlin JSR-223 engine. It covers the `Bindings`-based
- * session state (see [getCurrentState]), the live [ScriptContext] the bindings-exposure machinery
- * relies on (see [jsr223HostConfiguration]), and the compile/eval loop over a [ReplCompiler] and
- * [ReplEvaluator] pair.
+ * The JSR-223 scaffolding shared by every Kotlin JSR-223 engine: `Bindings`-based session state and
+ * the compile/eval loop over a [ReplCompiler]/[ReplEvaluator] pair supplied by a subclass.
  *
- * The compiler and evaluator are declared as the generic [ReplCompiler]/[ReplEvaluator] interfaces
- * rather than concrete implementations, so an alternative compiler (for example one driving snippet
- * compilation through an out-of-process compile daemon) can reuse everything here.
- *
- * A subclass supplies [replCompiler], [replEvaluator], and the [State] holding them (see
- * [createState]). It also supplies [compilationConfiguration] and [evaluationConfiguration], which
- * should be built with `hostConfiguration.update { it.withDefaultsFrom(jsr223HostConfiguration) }`
- * so the bindings-exposure refinement hooks can reach this engine's live [ScriptContext], and
- * [nextSnippetNo].
+ * [compilationConfiguration] and [evaluationConfiguration] must be built with
+ * `hostConfiguration.update { it.withDefaultsFrom(jsr223HostConfiguration) }`, otherwise the
+ * bindings-exposure refinement hooks cannot reach this engine's live [ScriptContext].
  */
 abstract class KotlinJsr223JvmScriptEngineBase<State>(
     protected val myFactory: ScriptEngineFactory
@@ -75,32 +67,27 @@ abstract class KotlinJsr223JvmScriptEngineBase<State>(
     protected abstract val replEvaluator: ReplEvaluator<CompiledSnippet, KJvmEvaluatedSnippet>
 
     /**
-     * The compilation configuration every snippet is compiled with. It is a `var` because each
-     * compile's resulting configuration is threaded forward into the next (see [compileSnippet]).
-     * A synthetic-snippet-generating refinement hook (for example `generateBindingSnippetIfNeeded`)
-     * records which bindings are already exposed as typed properties, and with which types, in it.
+     * The configuration every snippet is compiled with. A `var` because each compile's resulting
+     * configuration is threaded forward into the next one, carrying the refinement hooks' state.
      */
     protected abstract var compilationConfiguration: ScriptCompilationConfiguration
 
     protected abstract val evaluationConfiguration: ScriptEvaluationConfiguration
 
     /**
-     * The number the next compiled snippet's synthetic source name is built from (see
-     * [compileSnippet]). Must come from the *default* context's [State] so snippet names stay unique
-     * across the shared [replCompiler]. Taking it from a custom context's freshly created state would
-     * restart the numbering and collide with names an outer session already compiled.
+     * The number the next snippet's synthetic source name is built from. Must come from the *default*
+     * context's [State]: a custom context's freshly created state would restart the numbering and
+     * collide with names an outer session already compiled.
      */
     protected abstract fun nextSnippetNo(): Int
 
-    // The custom Bindings-scoped ScriptContext of the call currently in flight, if any. It must be
-    // visible to that call's synthetic-snippet generation (for example generateBindingSnippetIfNeeded),
-    // not just to the default context.
+    // The ScriptContext of the call currently in flight, needed by that call's synthetic-snippet generation.
     @Volatile
     private var lastScriptContext: ScriptContext? = null
 
     /**
-     * Exposes this engine's live [ScriptContext] to the compilation and evaluation configurations'
-     * refinement hooks. This is what makes JSR-223 bindings visible to a snippet as properties.
+     * Exposes this engine's live [ScriptContext] to the refinement hooks that make JSR-223 bindings
+     * visible to a snippet as properties.
      */
     val jsr223HostConfiguration: ScriptingHostConfiguration =
         ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
@@ -162,18 +149,12 @@ abstract class KotlinJsr223JvmScriptEngineBase<State>(
         }
     }
 
-    /**
-     * Hook for a compiler-specific per-snippet configuration tweak (for example setting
-     * `repl.currentLineId`). Called for every snippet, with the already threaded-forward
-     * [compilationConfiguration] as the base.
-     */
+    /** Hook for a compiler-specific per-snippet configuration tweak, e.g. setting `repl.currentLineId`. */
     protected open fun snippetCompilationConfiguration(snippet: SourceCode, snippetNo: Int): ScriptCompilationConfiguration =
         compilationConfiguration
 
     private suspend fun compileSnippet(script: String, snippetNo: Int): ResultWithDiagnostics<LinkedSnippet<CompiledSnippet>> {
-        // Suffixed onto the host template's own fileExtension (for example `main.kts`) rather than
-        // hard-coded to `.kts`, so the synthetic snippet name still matches the host's own script
-        // definition.
+        // The host template's own extension (e.g. `main.kts`), so the synthetic name still matches its script definition.
         val fileExtension = compilationConfiguration[ScriptCompilationConfiguration.fileExtension]
         val snippet = script.toScriptSource("snippet_$snippetNo.repl.$fileExtension")
         return replCompiler.compile(snippet, snippetCompilationConfiguration(snippet, snippetNo)).also {
@@ -220,11 +201,7 @@ abstract class KotlinJsr223JvmScriptEngineBase<State>(
         }
     }
 
-    /**
-     * A [CompiledScript] produced by [compile]. The snippet is compiled and recorded into
-     * [replCompiler]'s history, but not yet run. [eval] runs it via the same [replEvaluator] path
-     * that [compileAndEval] uses.
-     */
+    /** A snippet already compiled into [replCompiler]'s history, but not yet run. */
     class CompiledKotlinSnippet internal constructor(
         val engine: KotlinJsr223JvmScriptEngineBase<*>,
         val compiledSnippet: LinkedSnippet<CompiledSnippet>,

@@ -20,15 +20,10 @@ import java.nio.file.Path
 import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
 
 /**
- * Ports a few jsr223-specific main-kts tests (see `MainKtsJsr223Test` in `kotlin-main-kts-test`) to
- * exercise [KotlinJsr223DaemonScriptEngineFactory]'s custom-script-definition support with a real,
- * non-trivial script definition ([MainKtsScript]), rather than the plain, definition-less default
- * every other test in this module uses.
- *
- * The engine is manually instantiated via [KotlinJsr223DaemonScriptEngineFactory] rather than
- * looked up through `javax.script.ScriptEngineManager`. See [KotlinJsr223DaemonScriptEngineTest]'s
- * KDoc for why. Only the scenario that does not depend on functionality out of this pipeline's
- * scope is actually run; the other two are ported as [Disabled] tests documenting why.
+ * Ports a few jsr223-specific main-kts tests (`MainKtsJsr223Test` in `kotlin-main-kts-test`) to
+ * exercise [KotlinJsr223DaemonScriptEngineFactory]'s custom-script-definition support with a real
+ * script definition ([MainKtsScript]) instead of the definition-less default used elsewhere in this
+ * module. Scenarios depending on functionality out of this pipeline's scope are [Disabled].
  */
 class KotlinJsr223DaemonScriptEngineMainKtsTest {
 
@@ -41,17 +36,15 @@ class KotlinJsr223DaemonScriptEngineMainKtsTest {
         File(KotlinVersion::class.java.protectionDomain.codeSource.location.toURI())
     }
 
-    // With the main-kts script definition wired in, every snippet's synthetic bindings-exposing
-    // snippet declares an implicit ScriptTemplateWithBindings receiver, so kotlin-script-runtime
-    // (which defines that class) must also be on the daemon compile classpath.
+    // The synthetic bindings-exposing snippet declares an implicit ScriptTemplateWithBindings
+    // receiver, so kotlin-script-runtime must be on the daemon compile classpath too.
     private val scriptRuntime: File by lazy {
         File(kotlin.script.templates.standard.ScriptTemplateWithBindings::class.java.protectionDomain.codeSource.location.toURI())
     }
 
     private val mainKtsScriptDefinition = createJvmScriptDefinitionFromTemplate<MainKtsScript>()
 
-    // The daemon connection is leased once and cached for the engine's whole lifetime, so tests
-    // must shut it down explicitly.
+    // The daemon connection is cached for the engine's whole lifetime, so tests must shut it down.
     private val enginesToShutDown = mutableListOf<KotlinJsr223DaemonScriptEngineImpl>()
 
     private fun newEngine(): KotlinJsr223DaemonScriptEngineImpl {
@@ -77,7 +70,6 @@ class KotlinJsr223DaemonScriptEngineMainKtsTest {
         enginesToShutDown.clear()
     }
 
-    // Port of MainKtsJsr223Test.testSimpleEval.
     @Test
     fun testSimpleEval() {
         val engine = newEngine()
@@ -87,8 +79,7 @@ class KotlinJsr223DaemonScriptEngineMainKtsTest {
         assertEquals(5, res2)
     }
 
-    // Port of MainKtsJsr223Test.testWithDirectBindings. A value put directly into the engine's
-    // default ScriptContext ENGINE_SCOPE Bindings is visible to a snippet as an ordinary property.
+    // A value put into the engine's ENGINE_SCOPE Bindings is visible to a snippet as a property.
     @Test
     fun testWithDirectBindings() {
         val engine = newEngine()
@@ -99,7 +90,6 @@ class KotlinJsr223DaemonScriptEngineMainKtsTest {
         assertEquals(42, res2)
     }
 
-    // Port of MainKtsJsr223Test.testWithImport.
     @Test
     @Disabled(
         "MainKtsScriptDefinition's refineConfiguration hooks (MainKtsConfigurator's @file:Import " +

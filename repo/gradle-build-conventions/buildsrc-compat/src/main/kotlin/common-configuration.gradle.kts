@@ -341,6 +341,7 @@ fun Project.configureTests() {
             ":compose-compiler-gradle-plugin",
             ":examples:scripting-jvm-embeddable-host",
             ":examples:scripting-jsr223-daemon",
+            ":examples:scripting-jsr223-bta",
             ":examples:scripting-jvm-maven-deps-host",
             ":examples:scripting-jvm-simple-script-host",
             ":generators",
