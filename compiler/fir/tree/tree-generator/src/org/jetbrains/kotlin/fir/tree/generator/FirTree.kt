@@ -368,6 +368,17 @@ object FirTree : AbstractFirTreeBuilder() {
         """.trimIndent()
     }
 
+    val numericClassConversion: Element by element(Expression) {
+        parent(expression)
+
+        +field("originalExpression", expression)
+
+        kDoc = """
+            Represents a point of implicit conversion between an object of a builtin numeric type and an expect numeric class annotated with
+            `@NumericClass` annotation.
+        """.trimIndent()
+    }
+
     val functionCall: Element by element(Expression) {
         parent(qualifiedAccessExpression)
         parent(call)
