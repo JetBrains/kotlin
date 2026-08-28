@@ -209,7 +209,6 @@ org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeBean.nullable
 org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeParameterStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeParameterTypeBean
 org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeProjectionStubImpl
-org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeProjectionStubImpl:constructor(StubElement<?>, int)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinValueArgumentStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.ModifierMaskUtils
 org.jetbrains.kotlin.psi.stubs.impl.ModifierMaskUtils.computeMask((KtModifierKeywordToken) -> Boolean)

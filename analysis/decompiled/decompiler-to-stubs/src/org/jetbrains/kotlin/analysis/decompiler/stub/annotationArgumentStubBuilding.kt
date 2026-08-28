@@ -251,7 +251,10 @@ private fun createArrayTypeStub(parent: StubElement<*>, classId: ClassId, arrayD
 
 private fun createTypeArgumentListStub(parent: StubElement<*>, createType: (StubElement<*>) -> Unit) {
     val typeArgumentList = KotlinPlaceHolderStubImpl<KtTypeArgumentList>(parent, KtNodeTypes.TYPE_ARGUMENT_LIST)
-    val typeProjection = KotlinTypeProjectionStubImpl(typeArgumentList, KtProjectionKind.NONE.ordinal)
+    val typeProjection = KotlinTypeProjectionStubImpl(
+        parent = typeArgumentList,
+        projectionKindOrdinal = KtProjectionKind.NONE.ordinal,
+    )
     val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(typeProjection, KtNodeTypes.TYPE_REFERENCE)
     createType(typeReference)
 }

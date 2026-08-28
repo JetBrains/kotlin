@@ -24,7 +24,10 @@ internal object KtTypeProjectionStubSerializingElementFactory :
     override fun createStub(
         psi: KtTypeProjection,
         parentStub: StubElement<*>?,
-    ): KotlinTypeProjectionStubImpl = KotlinTypeProjectionStubImpl(parentStub, psi.projectionKind.ordinal)
+    ): KotlinTypeProjectionStubImpl = KotlinTypeProjectionStubImpl(
+        parent = parentStub,
+        projectionKindOrdinal = psi.projectionKind.ordinal,
+    )
 
     override fun serialize(stub: KotlinTypeProjectionStubImpl, dataStream: StubOutputStream) {
         dataStream.writeVarInt(stub.projectionKind.ordinal)
@@ -34,7 +37,7 @@ internal object KtTypeProjectionStubSerializingElementFactory :
         dataStream: StubInputStream,
         parentStub: StubElement<*>?,
     ): KotlinTypeProjectionStubImpl = KotlinTypeProjectionStubImpl(
-        parentStub,
-        /* projectionKindOrdinal = */ dataStream.readVarInt(),
+        parent = parentStub,
+        projectionKindOrdinal = dataStream.readVarInt(),
     )
 }
