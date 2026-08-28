@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
+import org.jetbrains.kotlin.fir.EqualsOverrideContract
+import org.jetbrains.kotlin.fir.FirEqualsOverrideContractCalculator
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.collectUpperBounds
@@ -43,6 +45,15 @@ internal val TypeInfo.isNullableEnum get() = isEnumClass && type.isMarkedOrFlexi
 
 internal fun TypeInfo.isIdentityLess(session: FirSession): Boolean =
     session.identityLessPlatformDeterminer.isIdentityLess(this) || isValueClass
+
+context(context: CheckerContext)
+internal fun TypeInfo.isIdentityLessWithTrustedEquals(): Boolean =
+    context.session.identityLessPlatformDeterminer.isIdentityLess(this) || isValueClass && hasTrustedEquals()
+
+context(context: CheckerContext)
+private fun TypeInfo.hasTrustedEquals(): Boolean =
+    FirEqualsOverrideContractCalculator(context.session, context.scopeSession)
+        .computeFor(notNullType) != EqualsOverrideContract.UNKNOWN
 
 internal val TypeInfo.isNotNullPrimitive get() = isPrimitive && !type.isMarkedOrFlexiblyNullable
 
