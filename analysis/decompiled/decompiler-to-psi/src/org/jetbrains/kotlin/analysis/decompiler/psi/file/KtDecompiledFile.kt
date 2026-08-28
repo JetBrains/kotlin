@@ -2,6 +2,7 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(KtImplementationDetail::class)
 
 package org.jetbrains.kotlin.analysis.decompiler.psi.file
 
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 @SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KtDecompiledFile(private val provider: KotlinDecompiledFileViewProvider) : KtFile(provider, true) {
-    @OptIn(KtImplementationDetail::class)
     override val customStubBuilder: StubBuilder?
         get() = CompiledStubBuilder
 
@@ -56,7 +56,6 @@ private object CompiledStubBuilder : StubBuilder {
         val stub = readOrBuildCompiledStub(file)
 
         // A copy is required because stubs are stateful and mutable, so they cannot be shared as they are
-        @OptIn(KtImplementationDetail::class)
         val clonedStub = stub.deepCopy()
         clonedStub.psi = file
         return clonedStub

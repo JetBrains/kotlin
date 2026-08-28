@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 
-@OptIn(KtImplementationDetail::class)
+@KtImplementationDetail
 class KotlinNameReferenceExpressionStubImpl(
     parent: StubElement<*>?,
     private val referencedNameRef: StringRef,

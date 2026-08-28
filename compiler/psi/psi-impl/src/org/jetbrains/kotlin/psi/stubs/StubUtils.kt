@@ -2,6 +2,7 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(KtImplementationDetail::class)
 
 package org.jetbrains.kotlin.psi.stubs
 
@@ -75,7 +76,6 @@ internal object StubUtils {
     private fun KotlinScriptStub.createClassId(currentDeclaration: KtClassLikeDeclaration): ClassId? {
         val fileStub = parentStub as? KotlinFileStub ?: return null
 
-        @OptIn(KtImplementationDetail::class)
         return if (isReplSnippet) {
             val snippetClassName = fqName.shortName()
             fileStub.createTopLevelClassId(snippetClassName).createNestedClassId(currentDeclaration.nameAsSafeName)

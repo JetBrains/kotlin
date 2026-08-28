@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub
 
-@OptIn(KtImplementationDetail::class)
+@KtImplementationDetail
 class KotlinValueArgumentStubImpl<T : KtValueArgument>(
     parent: StubElement<*>?,
     elementType: IElementType,

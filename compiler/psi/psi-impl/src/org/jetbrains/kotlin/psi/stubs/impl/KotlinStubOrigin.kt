@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 
+@KtImplementationDetail
 sealed class KotlinStubOrigin {
     companion object {
         private const val FACADE_KIND = 1

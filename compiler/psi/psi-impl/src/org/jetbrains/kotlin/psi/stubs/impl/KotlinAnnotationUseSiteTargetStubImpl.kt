@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 
-@OptIn(KtImplementationDetail::class)
+@KtImplementationDetail
 class KotlinAnnotationUseSiteTargetStubImpl(
     parent: StubElement<*>?,
     private val useSiteTargetRef: StringRef,

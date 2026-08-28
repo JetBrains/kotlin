@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinCollectionLiteralExpressionStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 
-@OptIn(KtImplementationDetail::class)
+@KtImplementationDetail
 class KotlinCollectionLiteralExpressionStubImpl(
     parent: StubElement<*>?,
     override val innerExpressionCount: Int,

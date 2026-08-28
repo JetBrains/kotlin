@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.KtTypeProjection
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeProjectionStub
 
-@OptIn(KtImplementationDetail::class)
+@KtImplementationDetail
 class KotlinTypeProjectionStubImpl(
     parent: StubElement<*>?,
     private val projectionKindOrdinal: Int,
