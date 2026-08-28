@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.nativeBinaryOptions.*
 import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.native.pipeline.NativeKlibConfigurationUpdater
 import kotlin.io.path.Path
@@ -224,11 +226,14 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
             CompilationScheme.CLOSED
         }
     }
+
     if (compilationScheme != CompilationScheme.CLOSED) {
         // Split-Compilation requires debug enabled (to disable some aggressive optimizations, and for symbol resolution).
         // In addition to that, symbol names should be stable across the host's bootstrap object and cached objects.
         // To do so, we need incremental cache enabled in split-compilation.
-        report(KONAN_ARGUMENT_WARNING, "Split compilation is an experimental feature, available only on Darwin platforms, the final artifact may not work as expected.")
+
+        reportSplitCompilationAvailability(HostManager().targetManager(arguments.target).target)
+
         if (!getBoolean(NativeConfigurationKeys.DEBUG)) {
             report(KONAN_ARGUMENT_ERROR, "Split compilation requires debugging information enabled. Please compile by passing '-g' as argument.")
         }
@@ -258,6 +263,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         }
     }
     put(COMPILATION_SCHEME, compilationScheme)
+    put(SPLIT_FORCE_LINK_CACHE_PACKAGES, arguments.splitForceLinkCachePackages.toList())
 
     arguments.externalDependencies?.let { put(EXTERNAL_DEPENDENCIES, it) }
     putIfNotNull(LLVM_VARIANT, when (val variant = arguments.llvmVariant) {
@@ -298,7 +304,13 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     }
 }
 
-private fun String.absoluteNormalizedFile() = java.io.File(this).absoluteFile.normalize()
+private fun CompilerConfiguration.reportSplitCompilationAvailability(target: KonanTarget) {
+    if (target.family.isAppleFamily) {
+        report(KONAN_ARGUMENT_WARNING, "Split compilation is an experimental feature, available only on Darwin platforms, the final artifact may not work as expected.")
+    } else {
+        report(KONAN_ARGUMENT_ERROR, "Split compilation is an experimental feature available only on Darwin platforms.")
+    }
+}
 
 internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSecondStageCompilationConfig) = with(NativeConfigurationKeys) {
     konanTarget = config.target.toString()

@@ -493,7 +493,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLink(
                 val prelinkResult = temporaryFiles.create("withStaticCaches", ".o")
                 runAndMeasurePhase(PreLinkCachesPhase, PreLinkCachesInput(listOf(compilationResult), resolvedCacheBinaries, prelinkResult))
                 // Static caches are linked into binary, so we don't need to pass them.
-                prelinkResult to ResolvedCacheBinaries(emptyList(), resolvedCacheBinaries.dynamic)
+                prelinkResult to resolvedCacheBinaries.copy(staticLibraries = emptyList())
             }
             else -> {
                 compilationResult to resolvedCacheBinaries

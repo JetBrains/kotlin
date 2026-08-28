@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases.split
 
-import com.intellij.openapi.util.io.toNioPathOrNull
 import llvm.*
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.*
@@ -49,60 +48,6 @@ private fun buildKaldoLinkerFlagsFrom(configurables: Configurables): List<String
     add("-all_load") // We need to import all KN runtimes symbols
     add("-export_dynamic")
     addAll(listOf("-rpath", "${configurables.absoluteLlvmHome}/lib"))
-}
-
-/**
- * Deduplicates an `.a` archive by extracting members and re-archiving unique ones.
- * This is a hacky solution, duplicated objects **should not** exist within archives.
- *
- * If the archive has no duplicates, it returns the original path unchanged.
- */
-private fun deduplicateArchive(
-        archiveFilename: String,
-        dedupDirPath: Path,
-        config: NativeSecondStageCompilationConfig,
-): String {
-    // TODO(Gabriele): this function is a temporary fix, it needs to be removed. Symbol duplication should not happen.
-    // TODO(Gabriele): Some cache archives (e.g. skiko) contain duplicate `.o` members which cause
-    // TODO(Gabriele): "duplicate symbol" errors when used with `-force_load`.
-
-    val archivePath = archiveFilename.toNioPathOrNull() ?: return archiveFilename
-
-    val ar = "${config.platform.configurables.absoluteLlvmHome}/bin/llvm-ar"
-
-    val listProcess = ProcessBuilder(ar, "t", archiveFilename)
-            .redirectErrorStream(true).start()
-
-    val members = listProcess.inputStream.bufferedReader().readLines()
-    require(listProcess.waitFor() == 0) {
-        "ar (listing) failed with exit code different from zero"
-    }
-
-    if (members.size == members.toSet().size) return archiveFilename
-
-    val name = archivePath.nameWithoutExtension
-    val extractDir = dedupDirPath.resolve(name).also { it.createDirectory() }
-    val arExtractProcess = ProcessBuilder(ar, "x", archiveFilename)
-            .directory(extractDir.toFile())
-            .redirectErrorStream(true)
-            .start()
-
-    require(arExtractProcess.waitFor() == 0) {
-        "ar (extraction) failed with exit code different from zero"
-    }
-
-    val dedupPath = dedupDirPath.resolve("${name}-dedup.a")
-    val objectFiles = extractDir.listDirectoryEntries("*.o").map { it.name }
-    val arCreateProcess = ProcessBuilder(listOf(ar, "rcs", dedupPath.absolutePathString()) + objectFiles)
-            .directory(extractDir.toFile())
-            .redirectErrorStream(true)
-            .start()
-
-    check(arCreateProcess.waitFor() == 0) {
-        "ar (creation) failed with exit code different from zero"
-    }
-
-    return dedupPath.absolutePathString()
 }
 
 /**
@@ -207,14 +152,12 @@ internal fun PhaseEngine<NativeGenerationState>.compileAndLinkForSplitHost(
         outputFiles: OutputFiles,
         temporaryFiles: TempFiles,
 ) {
-    // TODO(Gabriele): the linker use -filelist.
-    // TODO(Gabriele): but this is interesting, on theory since we're using cache we don't need to create
-    // TODO(Gabriele): an extra object for the bootstrap but we can load it directly from the cache.
     val configurables = context.config.platform.configurables
-    val hostObjectFile = temporaryFiles.create(outputFiles.outputName, ".host.o")
+    val outputName = Path(outputFiles.outputName).nameWithoutExtension
+    val hostObjectFile = temporaryFiles.create(outputName, ".host.o")
     runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(splitCompilationOutput.hostBitcodePath, hostObjectFile))
 
-    val bootstrapObjectPath = temporaryFiles.create(outputFiles.outputName, ".bootstrap.o")
+    val bootstrapObjectPath = temporaryFiles.create(outputName, ".bootstrap.o")
     runAndMeasurePhase(
             ObjectFilesPhase,
             ObjectFilesPhaseInput(splitCompilationOutput.bootstrapBitcodePath, bootstrapObjectPath),
@@ -222,14 +165,6 @@ internal fun PhaseEngine<NativeGenerationState>.compileAndLinkForSplitHost(
 
     val manifest = resolveBootstrapMetadata(splitCompilationOutput.dependenciesTrackingResult, bootstrapObjectPath)
     val manifestObjectPath = generateManifestObject(manifest, temporaryFiles)
-
-    val allLoadCaches = manifest.forceLoadCaches
-    val resolvedCaches = manifest.resolvedCaches
-
-    val dedupDir = temporaryFiles.create("dedup", "").also { it.createDirectory() }
-    val allLoadList = allLoadCaches.map { archivePath ->
-        deduplicateArchive(archivePath, dedupDir, context.config)
-    }
 
     val kaldoLinkerFlags = buildKaldoLinkerFlagsFrom(configurables)
 
@@ -241,7 +176,7 @@ internal fun PhaseEngine<NativeGenerationState>.compileAndLinkForSplitHost(
             splitCompilationOutput.dependenciesTrackingResult,
             outputFiles,
             temporaryFiles,
-            ResolvedCacheBinaries(allLoadList, resolvedCaches.dynamic),
+            ResolvedCacheBinaries(manifest.forceLoadCaches, manifest.resolvedCaches.dynamicLibraries),
             kaldoLinkerFlags
     )
 
@@ -264,8 +199,6 @@ internal fun PhaseEngine<NativeGenerationState>.compileAndLinkSplitFramework(
     val manifest = resolveBootstrapMetadata(moduleOutput.dependenciesTrackingResult, bootstrapObjectPath)
     val manifestObjectPath = generateManifestObject(manifest, temporaryFiles)
 
-    val resolvedCaches = resolveCacheBinaries(context.config.cachedLibraries, moduleOutput.dependenciesTrackingResult)
-
     val kaldoLinkerFlags = buildKaldoLinkerFlagsFrom(configurables)
 
     val linkerOutputKind = determineLinkerOutput(context)
@@ -276,7 +209,7 @@ internal fun PhaseEngine<NativeGenerationState>.compileAndLinkSplitFramework(
             moduleOutput.dependenciesTrackingResult,
             outputFiles,
             temporaryFiles,
-            ResolvedCacheBinaries(resolvedCaches.static, resolvedCaches.dynamic),
+            manifest.resolvedCaches,
             kaldoLinkerFlags,
     )
     runAndMeasurePhase(LinkerPhase, linkerPhaseInput)

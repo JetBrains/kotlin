@@ -11,13 +11,16 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.DependenciesTrackingResult
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.ResolvedCacheBinaries
-import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.ResolvedLibraryCacheBinaries
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
 import org.jetbrains.kotlin.backend.konan.resolveCacheBinaries
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.TempFiles
+import org.jetbrains.kotlin.konan.library.isImplicitlyLoadedFromKotlinNativeDistribution
+import org.jetbrains.kotlin.library.isNativeStdlib
+import org.jetbrains.kotlin.library.packageFqName
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.file.Path
@@ -31,22 +34,8 @@ private const val FORMAT_IDENTIFIER: String = "KALD0"
 private const val MANIFEST_HEADER_SIZE: Long = 5L + Long.SIZE_BYTES + Long.SIZE_BYTES + Int.SIZE_BYTES
 private const val MANIFEST_ENTRY_SIZE: Long = 1L + Long.SIZE_BYTES + Long.SIZE_BYTES
 
-private val FORCE_LOADED_CACHES_FQN = setOf(
-        "kotlin.native.internal", // This points to the Runtime code
-        "org.jetbrains.kotlin.native.platform.",
-        "skiko",
-        "libkotlin",
-        "libstdlib-cache"
-)
-
-/**
- * Does this library need to be force-loaded into the host executable?
- */
-private val String.isForceLoadCache: Boolean
-    get() = FORCE_LOADED_CACHES_FQN.any { this@isForceLoadCache.contains(it) }
-
 internal data class BootstrapCompilationMetadata(
-        val forceLoadCaches: List<String>,
+        val forceLoadCaches: List<ResolvedLibraryCacheBinaries>,
         val payloadsToLoadAtRuntime: List<String>,
         val resolvedCaches: ResolvedCacheBinaries
 )
@@ -166,16 +155,21 @@ private fun LLVMModuleRef.embedBootstrapManifest(
     }
 }
 
-internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.resolveBootstrapMetadata(
+internal fun PhaseEngine<NativeGenerationState>.resolveBootstrapMetadata(
         dependenciesTrackingResult: DependenciesTrackingResult,
         bootstrapObjectPath: Path,
 ): BootstrapCompilationMetadata {
+
     // Resolve cache binaries (stdlib, platform libs, etc.) that the host must link against
     val resolvedCaches = resolveCacheBinaries(context.config.cachedLibraries, dependenciesTrackingResult)
-    val [forceLoadCaches, jitCaches] = resolvedCaches.static.partition { it.isForceLoadCache }
+    val [forceLoadCaches, jitCaches] = resolvedCaches.staticLibraries.partition { [library, _] ->
+        library.isNativeStdlib ||
+                library.isImplicitlyLoadedFromKotlinNativeDistribution ||
+                library.packageFqName?.let { it in context.config.splitCompilationForceLinkCachePackages } == true
+    }
     return BootstrapCompilationMetadata(
             forceLoadCaches,
-            listOf(bootstrapObjectPath.absolutePathString()) + jitCaches,
+            listOf(bootstrapObjectPath.absolutePathString()) + jitCaches.flatMap { it.binaries },
             resolvedCaches,
     )
 }

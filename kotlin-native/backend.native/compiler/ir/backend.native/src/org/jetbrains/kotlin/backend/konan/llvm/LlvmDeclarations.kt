@@ -400,7 +400,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
 
         val containingClass = declaration.parent as? IrClass
         if (containingClass != null && !declaration.isStatic) {
-            if (isExternal(containingClass)) return
+            if (generationState.config.isUsingSplitCompilationScheme && isExternal(containingClass)) return
             if (!containingClass.requiresRtti()) return
             val classDeclarations = (containingClass.metadata as? KonanMetadata.Class)?.llvm
                     ?: error(containingClass.render())

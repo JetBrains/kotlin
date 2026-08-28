@@ -84,6 +84,7 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.serializedDependencies = from.serializedDependencies
     to.shortModuleName = from.shortModuleName
     to.singleLinkerArguments = from.singleLinkerArguments.copyOf()
+    to.splitForceLinkCachePackages = from.splitForceLinkCachePackages.copyOf()
     to.staticFramework = from.staticFramework
     to.target = from.target
     to.temporaryFilesDir = from.temporaryFilesDir

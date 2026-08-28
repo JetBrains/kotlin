@@ -569,6 +569,17 @@ This library must be one of the ones passed with '-library'.""",
         }
 
     @Argument(
+        value = "-Xsplit-force-link-cache-packages",
+        description = "Comma-separated KLIB package FQNs whose caches are statically linked into the host executable when split compilation is enabled.",
+        delimiter = Argument.Delimiters.default,
+    )
+    var splitForceLinkCachePackages: Array<String> = emptyArray()
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xstatic-framework",
         description = "Create a framework with a static library instead of a dynamic one.",
     )

@@ -30,12 +30,6 @@ class SplitSchemeHostArtifactTest : AbstractNativeSimpleTest() {
 
     companion object {
         const val TEST_SUITE_PATH = "native/native.tests/testData/splitScheme"
-
-        // Caches force-loaded straight into the host (see BootstrapMetadata.FORCE_LOADED_CACHES_FQN);
-        // they are linked directly, so their paths are NOT embedded in the runtime manifest.
-        private val FORCE_LOADED = listOf("kotlin.native.internal", "skiko", "libkotlin", "libstdlib-cache")
-
-        private val USER_SYMBOLS = listOf("SplitSchemeProbe", "topLevelProbeEntry")
     }
 
     @BeforeEach
@@ -45,49 +39,68 @@ class SplitSchemeHostArtifactTest : AbstractNativeSimpleTest() {
     }
 
     @Test
-    @TestMetadata("symbolConsistency")
-    fun testHostExcludesUserCodeAndEmbedsRuntimeCachePaths() {
-        val rootDir = ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/symbolConsistency")
-        val icCacheDir = buildDir.resolve("ic_cache").also { it.mkdirs() }
+    @TestMetadata("forceLinkCachePackages")
+    fun testForceLinkCachePackagesLinksMatchingFacadeIntoHost() {
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/forceLinkCachePackages")
+        val facade = compileToLibrary(
+            rootDir.resolve("facade"),
+            buildDir,
+            TestCompilerArgs("-manifest", rootDir.resolve("facade.properties").absolutePath),
+            emptyList(),
+        )
 
-        val lib = compileToLibrary(rootDir.resolve("lib"))
-        val host = compileToExecutableInOneStage(
-            rootDir.resolve("main"),
-            tryPassSystemCacheDirectory = false,
-            freeCompilerArgs = TestCompilerArgs(
-                [
-                    "-Xverbose-phases=Linker",
-                    "-Xcompilation-scheme=split",
-                    "-g",
-                    "-Xbinary=perFileCacheForStdlib=false",
-                    "-Xenable-incremental-compilation",
-                    "-Xic-cache-dir=${icCacheDir.absolutePath}",
-                ]
-            ),
-            lib,
-        ).executableFile
-
-        val stringsDefinedInExecutable = strings(host)
-
-        // User code was split out into the bootstrap object, so the host binary must not contain it.
-        USER_SYMBOLS.forEach { symbol ->
-            assertFalse(stringsDefinedInExecutable.any { symbol in it }, "host binary must not contain user symbol '$symbol'")
+        fun hostSymbols(forceLinkCachePackage: String, cacheDirName: String): List<String> {
+            val icCacheDir = buildDir.resolve(cacheDirName).also { it.mkdirs() }
+            val host = compileToExecutableInOneStage(
+                rootDir.resolve("main"),
+                tryPassSystemCacheDirectory = false,
+                freeCompilerArgs = TestCompilerArgs(
+                    [
+                        "-Xverbose-phases=Linker",
+                        "-Xcompilation-scheme=split",
+                        "-Xsplit-force-link-cache-packages=$forceLinkCachePackage",
+                        "-g",
+                        "-Xbinary=perFileCacheForStdlib=false",
+                        "-Xenable-incremental-compilation",
+                        "-Xic-cache-dir=${icCacheDir.absolutePath}",
+                    ]
+                ),
+                facade,
+            ).executableFile
+            return host.definedSymbols
         }
 
-        // The runtime manifest embeds absolute paths to the caches the host loads at startup,
-        // exactly the ones that are not force-loaded.
-        val cachePaths = stringsDefinedInExecutable.filter { "/" in it && it.endsWith(".a") }
+        val symbolsWithUnmatchedFqn = hostSymbols(
+            forceLinkCachePackage = "org.jetbrains.kotlin.native.test.unmatched",
+            cacheDirName = "unmatched_ic_cache",
+        )
+        val unmatchedFacadeSymbols = symbolsWithUnmatchedFqn.filter { "facadeProbe" in it }
+        assertFalse(
+            unmatchedFacadeSymbols.isNotEmpty(),
+            "the facade cache must not be linked into the host for an unmatched package FQN: $unmatchedFacadeSymbols",
+        )
+
+        val symbolsWithFacadeFqn = hostSymbols(
+            forceLinkCachePackage = "org.jetbrains.kotlin.native.test.facade",
+            cacheDirName = "facade_ic_cache",
+        )
+        val matchingFacadeSymbols = symbolsWithFacadeFqn.filter { "facadeProbe" in it }
         assertTrue(
-            cachePaths.any { path -> FORCE_LOADED.none { it in path } },
-            "expected a non-force-loaded cache path embedded in the host binary, found: $cachePaths"
+            matchingFacadeSymbols.isNotEmpty(),
+            "expected the matching facade cache symbols in the host binary: $matchingFacadeSymbols",
         )
     }
 
-    private fun strings(file: File): List<String> {
-        val llvmStrings = "${testRunSettings.configurables.absoluteLlvmHome}/bin/llvm-strings"
-        val process = ProcessBuilder(llvmStrings, file.absolutePath).redirectErrorStream(true).start()
-        val lines = process.inputStream.bufferedReader().readLines()
-        check(process.waitFor() == 0) { "`$llvmStrings ${file.absolutePath}` exited with a non-zero code" }
-        return lines
-    }
+    private val File.definedSymbols: List<String>
+        get() {
+            val llvmNm = "${testRunSettings.configurables.absoluteLlvmHome}/bin/llvm-nm"
+            val process = ProcessBuilder(llvmNm, "--defined-only", this.absolutePath)
+                .redirectErrorStream(true)
+                .start()
+            val lines = process.inputStream.bufferedReader().readLines()
+            check(process.waitFor() == 0) {
+                "`$llvmNm --defined-only ${this.absolutePath}` exited with a non-zero code"
+            }
+            return lines
+        }
 }

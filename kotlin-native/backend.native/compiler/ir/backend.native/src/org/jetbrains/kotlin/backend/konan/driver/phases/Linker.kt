@@ -41,7 +41,7 @@ internal val LinkerPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseCont
             input.resolvedCacheBinaries,
             input.extraLinkerFlags
     )
-    runLinkerCommands(context, commands, cachingInvolved = !input.resolvedCacheBinaries.isEmpty())
+    runLinkerCommands(context, commands, cachingInvolved = !input.resolvedCacheBinaries.isEmpty)
 }
 
 internal data class PreLinkCachesInput(
@@ -53,7 +53,7 @@ internal data class PreLinkCachesInput(
 internal val PreLinkCachesPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, PreLinkCachesInput>(
         name = "PreLinkCaches",
 ) { context, input ->
-    val inputFiles = input.objectPaths.map { it.absoluteNormalizedPathString() } + input.caches.static
+    val inputFiles = input.objectPaths.map { it.absoluteNormalizedPathString() } + input.caches.staticBinaryPaths
     val commands = context.config.platform.linker.preLinkCommands(inputFiles, input.outputObjectPath.absoluteNormalizedPathString())
     runLinkerCommands(context, commands, cachingInvolved = true)
 }

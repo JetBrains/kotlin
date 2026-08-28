@@ -111,6 +111,9 @@ private fun CodeGenerator.setWritableTypeInfo(
         writableTypeInfoValue: Struct,
 ) {
     if (isExternal(irClass)) {
+        // A split build reuses metadata from the host or another cached module.
+        // Therefore, an external class already has a WritableTypeInfo.
+        // Defining it again in this module would create conflicting global symbols.
         if (context.config.isUsingSplitCompilationScheme) return
 
         // Note: this global replaces the external one with common linkage.

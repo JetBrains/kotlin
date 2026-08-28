@@ -420,6 +420,18 @@ By default caches will be placed into the kotlin-native system cache directory."
     }
 
     compilerArgument {
+        name = "Xsplit-force-link-cache-packages"
+        compilerName = "splitForceLinkCachePackages"
+        description =
+            "Comma-separated KLIB package FQNs whose caches are statically linked into the host executable when split compilation is enabled.".asReleaseDependent()
+        valueType = StringArrayType.defaultNull
+        delimiter = KotlinCompilerArgument.Delimiter.Default
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0
+        )
+    }
+
+    compilerArgument {
         name = "Xcheck-dependencies"
         deprecatedName = "-check_dependencies"
         description = "Check dependencies and download the missing ones.".asReleaseDependent()

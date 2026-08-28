@@ -18353,6 +18353,51 @@
                                         "deprecatedMessage": null
                                     },
                                     {
+                                        "name": "Xsplit-force-link-cache-packages",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Comma-separated KLIB package FQNs whose caches are statically linked into the host executable when split compilation is enabled.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": "Default",
+                                        "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            },
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.5.0",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        },
+                                        "argumentType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            },
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "deprecatedMessage": null
+                                    },
+                                    {
                                         "name": "Xstatic-framework",
                                         "shortName": null,
                                         "deprecatedName": null,
