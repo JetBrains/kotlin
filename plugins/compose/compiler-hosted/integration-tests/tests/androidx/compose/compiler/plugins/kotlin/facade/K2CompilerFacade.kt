@@ -68,7 +68,7 @@ class FirAnalysisResult(
 ) : AnalysisResult {
     override val diagnostics: Map<String, List<AnalysisResult.Diagnostic>>
         get() = reporter.diagnostics.filterIsInstance<KtDiagnosticWithSource>().filter { it.element is KtPsiSourceElement }.groupBy(
-            keySelector = { it.psiElement.containingFile.name },
+            keySelector = { (it.element as KtPsiSourceElement).psi.containingFile.name },
             valueTransform = { AnalysisResult.Diagnostic(it.factoryName, it.textRanges) }
         )
 }

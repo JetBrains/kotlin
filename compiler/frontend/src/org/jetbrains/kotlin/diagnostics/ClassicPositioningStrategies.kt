@@ -125,7 +125,7 @@ object ClassicPositioningStrategies {
         override fun markDiagnostic(diagnostic: DiagnosticMarker): List<TextRange> {
             @Suppress("UNCHECKED_CAST")
             val unreachableCode = diagnostic as DiagnosticWithParameters2Marker<Set<KtElement>, Set<KtElement>>
-            return UnreachableCode.getUnreachableTextRanges(unreachableCode.psiElement as KtElement, unreachableCode.a, unreachableCode.b)
+            return UnreachableCode.getUnreachableTextRanges(diagnostic.psiElement as KtElement, unreachableCode.a, unreachableCode.b)
         }
     }
 

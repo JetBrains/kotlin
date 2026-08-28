@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLDiagnostic
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.psi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -46,7 +47,7 @@ internal class LLFirDiagnosticReporter : PendingDiagnosticReporter() {
         }
 
         val pendingDiagnostic = PendingDiagnostic(psiDiagnostic, isSuppressed = context.isDiagnosticSuppressed(diagnostic))
-        pendingDiagnostics.addValueFor(psiDiagnostic.psiElement, pendingDiagnostic)
+        pendingDiagnostics.addValueFor(psiDiagnostic.psi, pendingDiagnostic)
     }
 
     override fun checkAndCommitReportsOn(element: AbstractKtSourceElement, context: DiagnosticContext, commitEverything: Boolean) {
@@ -84,7 +85,7 @@ private fun KtDiagnosticWithSource.isInside(element: AbstractKtSourceElement): B
     val elementPsi = (element as? KtPsiSourceElement)?.psi
         ?: return this.element.startOffset >= element.startOffset && this.element.endOffset <= element.endOffset
 
-    return elementPsi.isAncestor(psiElement, strict = false)
+    return elementPsi.isAncestor(psi, strict = false)
 }
 
 @OptIn(SuspiciousFakeSourceCheck::class)

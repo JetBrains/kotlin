@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.diagnostics
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.AbstractKtSourceElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 
@@ -57,6 +58,7 @@ sealed class KtDiagnosticWithSource : KtDiagnostic(), DiagnosticMarker {
     final override val firstRange: TextRange
         get() = DiagnosticRangeUtils.firstRange(textRanges)
 
+    @K1Deprecation
     final override val psiElement: PsiElement
         get() = (element as KtPsiSourceElement).psi
 }

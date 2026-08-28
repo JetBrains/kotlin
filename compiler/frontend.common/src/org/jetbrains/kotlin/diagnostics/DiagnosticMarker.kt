@@ -7,10 +7,17 @@ package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 
 interface DiagnosticMarker {
+
+    /**
+     * When working with [KtDiagnosticWithSource] consider using [KtDiagnosticWithSource.element] instead
+     */
+    @K1Deprecation
     val psiElement: PsiElement
         get() = error("psiElement should be called only on diagnostics with KtPsiSourceElement inside")
+
     val factoryName: String
     val severity: Severity
     val textRanges: List<TextRange>
