@@ -10,5 +10,14 @@ fun outer() {
     }
 }
 
+fun outerWithLocalClass() {
+    class Local {
+        fun <!INVALID_VERSIONING_ON_LOCAL_FUNCTION!>member<!>(
+            value: String,
+            @IntroducedAt("1") suffix: String = "!",
+        ) = value + suffix
+    }
+}
+
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, anonymousObjectExpression, classReference, functionDeclaration,
 integerLiteral, localFunction, propertyDeclaration, stringLiteral */
