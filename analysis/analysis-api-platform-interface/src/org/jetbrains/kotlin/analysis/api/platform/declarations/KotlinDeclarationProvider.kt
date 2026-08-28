@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.declarations
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinComposableProvider
 import org.jetbrains.kotlin.name.CallableId
@@ -51,12 +52,33 @@ public interface KotlinDeclarationProvider : KotlinComposableProvider {
 
     public fun getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName: FqName): Set<Name>
 
+    /**
+     * A native check of whether the declaration provider may contain a top-level Kotlin class-like declaration with the given class ID.
+     * The check may produce false positives, but not false negatives.
+     *
+     * `null` if the declaration provider has no such native check. In this case, [getTopLevelKotlinClassLikeDeclarationNamesInPackage] is
+     * used instead.
+     */
+    @KaExperimentalApi
+    public val mayHaveTopLevelKotlinClassLikeDeclaration: ((classId: ClassId) -> Boolean)?
+        get() = null
+
     public fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty>
     public fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction>
 
     public fun getTopLevelCallableFiles(callableId: CallableId): Collection<KtFile>
 
     public fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>
+
+    /**
+     * A native check of whether the declaration provider may contain a top-level callable with the given name in the given package. The
+     * check may produce false positives, but not false negatives.
+     *
+     * `null` if the declaration provider has no such native check. In this case, [getTopLevelCallableNamesInPackage] is used instead.
+     */
+    @KaExperimentalApi
+    public val mayHaveTopLevelCallable: ((packageFqName: FqName, name: Name) -> Boolean)?
+        get() = null
 
     public fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile>
 
