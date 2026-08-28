@@ -30,28 +30,15 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactSideca
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.replMemberOverloadSignature
 
 /**
- * A [FirReplHistoryProvider] that serves two kinds of previous REPL snippets for the same compile
- * session, combined in history order:
+ * A [FirReplHistoryProvider] for a compiler that keeps no state between snippets: history is
+ * reconstructed from the compiled wrapper classes of [priorClassIds] on the classpath plus their
+ * embedded `.kotlin_metadata` sidecars, and combined with the live same-batch siblings reported
+ * through [putSnippet], which have no bytecode yet.
  *
- *  * **Classpath-reconstructed** ([priorClassIds]): snippets compiled in an earlier,
- *    already-finished compile call. Their `FirReplSnippetSymbol` views are reconstructed purely
- *    from their [ClassId]s, which are reachable via the regular classpath. Declarations,
- *    visibilities, and imports come from each class's embedded `.kotlin_metadata` sidecar (see
- *    `readEmbeddedSidecar`, `restampVisibility`, and `findEvalSymbol` in
- *    `StatelessReplSnippetSupport.kt`).
- *  * **Live, same-batch siblings** ([putSnippet]): snippets compiled in this very call, whose FIR
- *    is already live in this session. They have no compiled bytecode yet, so they cannot be
- *    resolved through the classpath-and-sidecar mechanism above.
+ * [getSnippets] must return the reconstructed snippets before the live siblings: that is history order.
  *
- * [getSnippets] returns the classpath-reconstructed snippets first, then the live same-batch
- * siblings in the exact order [putSnippet] was called. That is always true history order,
- * regardless of which mechanism a given snippet came through.
- *
- * @param priorClassIds ordered [ClassId]s of previous snippets; their compiled classes must already
- *   be on this compile's classpath.
- * @param sourceSessionProvider callback for the source session that has the previous snippets'
- *   wrapper classes available. May return `null` until the session is built; [getSnippets] then
- *   returns only the live siblings observed so far and retries the classpath lookup on the next call.
+ * @param sourceSessionProvider may return `null` until the session is built; the classpath lookup
+ *   is then retried on the next [getSnippets] call.
  */
 internal class ClasspathBackedFirReplHistoryProvider(
     private val priorClassIds: List<ClassId>,
@@ -61,7 +48,6 @@ internal class ClasspathBackedFirReplHistoryProvider(
     @Volatile
     private var classpathSnippets: List<FirReplSnippetSymbol>? = null
 
-    // Filled in history order by putSnippet only; never by materialize() or getSnippets().
     private val liveBatchSnippets = mutableListOf<FirReplSnippetSymbol>()
 
     private val symbolToEmbeddedSidecar: MutableMap<FirReplSnippetSymbol, SnippetArtifactSidecar?> = HashMap()
@@ -158,13 +144,7 @@ internal class ClasspathBackedFirReplHistoryProvider(
         return result
     }
 
-    /**
-     * Pairs a deserialized declaration [fir] (named [name]) with the [SnippetArtifactSidecar.MemberRef]
-     * it originated from, among [candidates] that share that name. A single candidate is returned
-     * directly. Overloads are matched by their [replMemberOverloadSignature] so each gets its own
-     * visibility. If no signature matches, falls back to the first candidate and logs via
-     * [statelessReplDebug].
-     */
+    /** Picks the [SnippetArtifactSidecar.MemberRef] a deserialized declaration originated from, disambiguating overloads by signature. */
     private fun matchMemberRef(
         name: String,
         fir: FirDeclaration,

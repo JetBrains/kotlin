@@ -19,11 +19,7 @@ package kotlin.script.experimental.jvmhost.jsr223.base
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import kotlin.script.experimental.jvm.jsr223.base.KotlinJsr223ScriptEngineFactoryBase
 
-/**
- * A [KotlinJsr223ScriptEngineFactoryBase] that reports the bundled Kotlin compiler's version.
- * This is the only part of the JSR-223 factory boilerplate that requires the compiler on the
- * classpath, and therefore the only part that is not in the `kotlin-scripting-jvm` artifact.
- */
+/** A [KotlinJsr223ScriptEngineFactoryBase] that reports the bundled Kotlin compiler's version. */
 abstract class KotlinJsr223JvmScriptEngineFactoryBase : KotlinJsr223ScriptEngineFactoryBase() {
 
     override fun getLanguageVersion(): String = KotlinCompilerVersion.VERSION

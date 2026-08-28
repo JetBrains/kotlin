@@ -112,10 +112,8 @@ class ScriptingK2CompilerPluginRegistrar : CompilerPluginRegistrar() {
             ?: defaultJvmScriptingHostConfiguration
         CompilerConfigurationExtension.registerExtension(ScriptingCompilerConfigurationExtension(hostConfiguration, scriptDefinitionProvider))
 
-        // Regular-pipeline REPL-snippet compilation (see ScriptingConfigurationKeys.REPL_SNIPPET_REGULAR_MODE):
-        // register a dedicated ScriptDefinition matching `.repl.<extension>` so a marked REPL-snippet
-        // source resolves a ScriptCompilationConfiguration with a real resultField (needed to capture
-        // the snippet's last-expression value) instead of falling back to the default one.
+        // A dedicated definition matching `.repl.<extension>`, so that a snippet resolves a configuration
+        // with a real resultField instead of the default one, which cannot capture the last expression's value
         if (configuration.getBoolean(ScriptingConfigurationKeys.REPL_SNIPPET_REGULAR_MODE)) {
             val implicitReceiverTypes = configuration.getList(ScriptingConfigurationKeys.REPL_SNIPPET_IMPLICIT_RECEIVERS)
                 .map { KotlinType(it) }

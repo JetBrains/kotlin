@@ -447,6 +447,7 @@ include(
     ":examples:scripting-jvm-maven-deps-host",
     ":examples:scripting-jvm-embeddable-host",
     ":examples:scripting-jsr223-daemon",
+    ":examples:scripting-jsr223-bta",
     ":libraries:kotlin-prepush-hook",
     ":libraries:tools:mutability-annotations-compat",
     ":plugins:jvm-abi-gen",
@@ -975,6 +976,7 @@ project(":examples:scripting-jvm-maven-deps").projectDir = File("$rootDir/librar
 project(":examples:scripting-jvm-maven-deps-host").projectDir = File("$rootDir/libraries/examples/scripting/jvm-maven-deps/host")
 project(":examples:scripting-jvm-embeddable-host").projectDir = File("$rootDir/libraries/examples/scripting/jvm-embeddable-host")
 project(":examples:scripting-jsr223-daemon").projectDir = File("$rootDir/libraries/examples/scripting/jsr223-daemon")
+project(":examples:scripting-jsr223-bta").projectDir = File("$rootDir/libraries/examples/scripting/jsr223-bta")
 project(":libraries:kotlin-prepush-hook").projectDir = File("$rootDir/libraries/tools/kotlin-prepush-hook")
 project(":plugins:jvm-abi-gen").projectDir = File("$rootDir/plugins/jvm-abi-gen")
 project(":plugins:jvm-abi-gen-embeddable").projectDir = File("$rootDir/plugins/jvm-abi-gen/embeddable")

@@ -43,9 +43,7 @@ class FirScriptingCompilerExtensionRegistrar(
         +FirScriptResolutionConfigurationExtensionImpl.getFactory()
         +Fir2IrScriptConfiguratorExtensionImpl.getFactory()
 
-        // Regular-pipeline REPL-snippet compilation (see ScriptingConfigurationKeys.REPL_SNIPPET_REGULAR_MODE):
-        // a source marked as a REPL snippet has its previous snippets, given as classpath-reachable
-        // ClassIds via REPL_SNIPPET_PRIOR_CLASSES, resolved by a ClasspathBackedFirReplHistoryProvider.
+        // See ScriptingConfigurationKeys.REPL_SNIPPET_REGULAR_MODE
         if (compilerConfiguration.getBoolean(ScriptingConfigurationKeys.REPL_SNIPPET_REGULAR_MODE)) {
             val priorClassIds = compilerConfiguration.getList(ScriptingConfigurationKeys.REPL_SNIPPET_PRIOR_CLASSES)
             var capturedSession: FirSession? = null

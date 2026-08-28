@@ -31,10 +31,7 @@ data class K2ReplState(
     var lineCounter: Int = 0,
 )
 
-/**
- * The in-process Kotlin JSR-223 engine. It runs [KotlinJsr223JvmScriptEngineBase]'s compile/eval
- * loop over the [K2ReplCompiler] and [K2ReplEvaluator] pair.
- */
+/** The in-process Kotlin JSR-223 engine, over the [K2ReplCompiler]/[K2ReplEvaluator] pair. */
 class KotlinJsr223ScriptEngineImpl(
     factory: ScriptEngineFactory,
     baseCompilationConfiguration: ScriptCompilationConfiguration,
@@ -82,8 +79,6 @@ class KotlinJsr223ScriptEngineImpl(
             ).asSuccess()
         }.valueOrThrow() // TODO: consider error reporting
 
-    // Uses the default context's lineCounter so snippet names stay unique across the shared
-    // replCompiler. A custom context's lineCounter would restart at 0 and collide.
     override fun nextSnippetNo(): Int = getCurrentState(getContext()).lineCounter++
 
     override fun snippetCompilationConfiguration(snippet: SourceCode, snippetNo: Int): ScriptCompilationConfiguration =

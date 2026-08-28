@@ -34,10 +34,8 @@ import kotlin.script.experimental.util.add
 import kotlin.test.*
 
 /**
- * Exercises REPL-snippet chaining on the regular JVM frontend/backend via `K2JVMCompiler`, using
- * the same `repl-snippet-regular-mode`/`repl-snippet-prior-class` invocation shape as
- * `DaemonReplCompiler`, plus the [SnippetArtifactSidecar] wire-format round-trip that
- * `ClasspathBackedFirReplHistoryProvider` relies on.
+ * REPL-snippet chaining on the regular JVM frontend/backend, using the same invocation shape as
+ * `DaemonReplCompiler`, plus the [SnippetArtifactSidecar] wire-format round-trip.
  */
 class ReplSnippetRegularPipelineTest {
 
@@ -55,9 +53,8 @@ class ReplSnippetRegularPipelineTest {
             val classFiles1 = compiler.lastOutputDir.classFileNames()
             assertTrue(classFiles1.isNotEmpty(), "snippet 1 must emit at least one .class file")
 
-            // Snippet 2 resolving `x` proves cross-snippet declaration lookup: the regular pipeline
-            // carries no artifact header, so declarations come from snippet 1's own
-            // `.kotlin_metadata` via `ClasspathBackedFirReplHistoryProvider`.
+            // Resolving `x` here goes through snippet 1's `.kotlin_metadata`: the regular pipeline
+            // carries no artifact header.
             compiler.compile("x + 1", "s2.repl.kts")
             val classFiles2 = compiler.lastOutputDir.classFileNames()
             assertTrue(classFiles2.isNotEmpty(), "snippet 2 must emit at least one .class file")
@@ -81,8 +78,7 @@ class ReplSnippetRegularPipelineTest {
             val evaluator = K2ReplEvaluator()
             var chain: LinkedSnippetImpl<CompiledSnippet>? = null
 
-            // Mirrors the compile-then-eval loop `KotlinJsr223JvmScriptEngineBase` drives, in-process
-            // via `RegularPipelineReplCompiler` and without a compile daemon.
+            // Mirrors the compile-then-eval loop `KotlinJsr223JvmScriptEngineBase` drives.
             chain = chain.add(compiler.compile("val x = 42", "s1.repl.kts"))
             val evaluated1 = evalOrThrow(evaluator, chain, "snippet 1 eval failed")
 
@@ -110,9 +106,8 @@ class ReplSnippetRegularPipelineTest {
             val evaluator = K2ReplEvaluator()
             var chain: LinkedSnippetImpl<CompiledSnippet>? = null
 
-            // Two overloads sharing name `f` — name-only reconstruction (associateBy { it.name })
-            // would collapse them; overload-safe reconstruction pairs each with its own MemberRef
-            // via the serialized overload signature (MemberRef.descriptor).
+            // Two overloads sharing name `f`: name-only reconstruction would collapse them, only the
+            // serialized MemberRef.descriptor keeps them apart.
             chain = chain.add(compiler.compile("fun f(a: Int) = a + 1\nfun f(a: String) = a.length", "s1.repl.kts"))
             evalOrThrow(evaluator, chain, "snippet 1 eval failed")
 
@@ -130,7 +125,6 @@ class ReplSnippetRegularPipelineTest {
         val original = SnippetArtifactSidecar(
             sidecarVersion = SnippetArtifactSidecar.CURRENT_VERSION,
             replSnippetDeclarations = listOf(
-                // PROPERTY with PUBLIC visibility + a concrete return type signature — the common case.
                 SnippetArtifactSidecar.MemberRef(
                     kind = SnippetArtifactSidecar.MemberRef.Kind.PROPERTY,
                     name = "x",
@@ -138,7 +132,6 @@ class ReplSnippetRegularPipelineTest {
                     visibility = SnippetArtifactSidecar.MemberRef.Visibility.PUBLIC,
                     returnTypeSignature = "kotlin.Int",
                 ),
-                // FUNCTION with INTERNAL visibility + a function-shaped return type signature.
                 SnippetArtifactSidecar.MemberRef(
                     kind = SnippetArtifactSidecar.MemberRef.Kind.FUNCTION,
                     name = "foo",
@@ -146,7 +139,6 @@ class ReplSnippetRegularPipelineTest {
                     visibility = SnippetArtifactSidecar.MemberRef.Visibility.INTERNAL,
                     returnTypeSignature = "kotlin.Unit",
                 ),
-                // CLASS with PROTECTED visibility and *no* return type (the type *is* the declaration).
                 SnippetArtifactSidecar.MemberRef(
                     kind = SnippetArtifactSidecar.MemberRef.Kind.CLASS,
                     name = "Nested",
@@ -154,7 +146,7 @@ class ReplSnippetRegularPipelineTest {
                     visibility = SnippetArtifactSidecar.MemberRef.Visibility.PROTECTED,
                     returnTypeSignature = null,
                 ),
-                // TYPEALIAS with PRIVATE visibility — exercises the consumer-side filter.
+                // PRIVATE exercises the consumer-side visibility filter.
                 SnippetArtifactSidecar.MemberRef(
                     kind = SnippetArtifactSidecar.MemberRef.Kind.TYPEALIAS,
                     name = "Alias",
@@ -162,7 +154,7 @@ class ReplSnippetRegularPipelineTest {
                     visibility = SnippetArtifactSidecar.MemberRef.Visibility.PRIVATE,
                     returnTypeSignature = null,
                 ),
-                // UNKNOWN — pre-v3 producers can omit visibility; the field defaults gracefully.
+                // Pre-v3 producers can omit visibility, hence UNKNOWN.
                 SnippetArtifactSidecar.MemberRef(
                     kind = SnippetArtifactSidecar.MemberRef.Kind.PROPERTY,
                     name = "unknownVisibility",
@@ -180,8 +172,7 @@ class ReplSnippetRegularPipelineTest {
         val decoded = SnippetArtifactSidecarProtoCodec.decode(bytes)
         assertEquals(original, decoded, "sidecar must round-trip through protobuf without loss")
 
-        // A declaration-only sidecar (no imports) must also round-trip — an empty repeated field
-        // decodes back to an empty list, not a distinct value.
+        // An empty repeated field must decode back to an empty list, not to a distinct value.
         val noImports = original.copy(imports = emptyList())
         val decoded2 = SnippetArtifactSidecarProtoCodec.decode(SnippetArtifactSidecarProtoCodec.encode(noImports))
         assertEquals(noImports, decoded2)
@@ -202,8 +193,7 @@ class ReplSnippetRegularPipelineTest {
         val older = SnippetArtifactSidecar(SnippetArtifactSidecar.MIN_SUPPORTED_VERSION, listOf(member), emptyList())
         assertEquals(older, SnippetArtifactSidecarProtoCodec.decode(SnippetArtifactSidecarProtoCodec.encode(older)))
 
-        // A payload tagged with a version newer than this codec knows decodes best-effort (forward
-        // compatible) rather than throwing — any not-yet-known fields would simply be skipped.
+        // A version newer than this codec knows must decode best-effort rather than throw.
         val newer = SnippetArtifactSidecar(SnippetArtifactSidecar.CURRENT_VERSION + 7, listOf(member), emptyList())
         assertEquals(newer, SnippetArtifactSidecarProtoCodec.decode(SnippetArtifactSidecarProtoCodec.encode(newer)))
 
@@ -217,8 +207,6 @@ class ReplSnippetRegularPipelineTest {
             "unexpected error message: ${ex.message}",
         )
     }
-
-    // ----- helpers -----
 
     private fun <T> ResultWithDiagnostics<T>.valueOrThrowExplained(context: String): T {
         return when (this) {
@@ -242,24 +230,19 @@ class ReplSnippetRegularPipelineTest {
 }
 
 /**
- * In-process counterpart of `DaemonReplCompiler`: compiles a `.repl.kts` source as a chained REPL
- * snippet on the regular JVM frontend/backend via `K2JVMCompiler` directly, using the same
- * `-Xallow-any-scripts-in-source-roots`/`repl-snippet-regular-mode`/`repl-snippet-prior-class`
- * invocation shape (see `DaemonReplCompiler.buildSnippetCompilerArguments`'s KDoc), without any
- * daemon RMI plumbing. Each snippet's classes land in their own `-d` directory under [workRoot];
- * prior snippets are fed back purely via the classpath plus their predicted [ClassId]
- * ([NameUtils.getSnippetTargetClassName]).
+ * In-process counterpart of `DaemonReplCompiler`, driving `K2JVMCompiler` directly with the same
+ * argument shape (see `DaemonReplCompiler.buildSnippetCompilerArguments`). Each snippet compiles
+ * into its own `-d` directory under [workRoot]; prior snippets are fed back purely via the
+ * classpath plus their predicted [ClassId].
  */
 private class RegularPipelineReplCompiler(private val workRoot: File) {
     private val priorOutputDirs = mutableListOf<File>()
     private val priorClassIds = mutableListOf<ClassId>()
     private var counter = 0
 
-    /** The `-d` output directory of the most recently compiled snippet. */
     lateinit var lastOutputDir: File
         private set
 
-    /** The predicted [ClassId] of the most recently compiled snippet's wrapper class. */
     lateinit var lastClassId: ClassId
         private set
 
@@ -307,11 +290,9 @@ private class RegularPipelineReplCompiler(private val workRoot: File) {
     }
 }
 
-/** Names of every `.class` file emitted directly or nested under this directory. */
 private fun File.classFileNames(): List<String> =
     walkTopDown().filter { it.isFile && it.extension == "class" }.map { it.name }.toList()
 
-/** Reflectively reads declared field [fieldName] off this evaluated snippet's instance. */
 private fun LinkedSnippet<KJvmEvaluatedSnippet>.readDeclaredField(fieldName: String): Any? {
     val result = get().result
     val scriptClass = result.scriptClass ?: fail("evaluated snippet has no scriptClass (result=$result)")

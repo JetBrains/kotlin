@@ -20,9 +20,8 @@ import javax.script.ScriptEngine
 import javax.script.ScriptEngineFactory
 
 /**
- * The language-version-agnostic part of a Kotlin JSR-223 [ScriptEngineFactory]. Everything except
- * [getLanguageVersion] and [getEngineVersion] lives here; those are left abstract because reporting
- * the Kotlin compiler version requires the compiler on the classpath.
+ * The compiler-independent part of a Kotlin JSR-223 [ScriptEngineFactory]. [getLanguageVersion] and
+ * [getEngineVersion] stay abstract: reporting the version requires the compiler on the classpath.
  */
 abstract class KotlinJsr223ScriptEngineFactoryBase : ScriptEngineFactory {
 

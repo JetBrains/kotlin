@@ -10,23 +10,15 @@ import kotlin.script.experimental.api.KotlinType
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.SourceCode
 
-/**
- * The default [ScriptCompilationConfiguration.resultField] name. A snippet's last-expression
- * value is emitted under this field unless a script definition overrides it.
- */
+/** The default [ScriptCompilationConfiguration.resultField] name. */
 const val DEFAULT_SNIPPET_RESULT_FIELD_NAME = "\$\$result"
 
 private const val SNIPPET_RESULT_FIELD_TYPE_NAME = "kotlin.Any"
 
 /**
- * Wraps an already-compiled REPL snippet's output classes into a [KJvmCompiledScript], loading
- * them through a plain [KJvmCompiledModuleFromClassPath] classloader over [classPath]. This goes
- * through the same cross-snippet classloader chaining as [getOrCreateActualClassloader].
- *
- * Intended for an out-of-process snippet compiler that compiles straight to an output directory
- * and only needs to name the resulting wrapper class ([snippetClassFQName]).
- *
- * Pass `resultFieldName = null` for a snippet with no result field.
+ * Wraps an already-compiled REPL snippet's output classes into a [KJvmCompiledScript] loaded from
+ * [classPath], keeping the same cross-snippet classloader chaining as [getOrCreateActualClassloader].
+ * [resultFieldName] is `null` for a snippet with no result field.
  */
 fun compiledSnippetFromClassPath(
     classPath: List<File>,

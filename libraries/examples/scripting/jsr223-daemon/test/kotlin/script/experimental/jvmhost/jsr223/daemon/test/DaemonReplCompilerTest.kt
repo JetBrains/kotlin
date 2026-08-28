@@ -23,10 +23,8 @@ import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.util.LinkedSnippet
 
 /**
- * Exercises [DaemonReplCompiler] directly (bypassing the
- * [kotlin.script.experimental.jvmhost.jsr223.daemon.KotlinJsr223DaemonScriptEngineImpl] layer) to
- * verify its message-collector handling. A snippet's (non-error) messages, e.g. warnings, must be
- * surfaced on a *successful* compile too, and must never leak into a *later* snippet's report.
+ * Exercises [DaemonReplCompiler]'s message-collector handling directly: warnings must be surfaced on
+ * a *successful* compile too, and must never leak into a *later* snippet's report.
  */
 class DaemonReplCompilerTest {
 
@@ -39,8 +37,7 @@ class DaemonReplCompilerTest {
         File(KotlinVersion::class.java.protectionDomain.codeSource.location.toURI())
     }
 
-    // The daemon connection is leased once and cached for the compiler's whole lifetime, so tests
-    // must shut it down explicitly.
+    // The daemon connection is cached for the compiler's whole lifetime, so tests must shut it down.
     private val compilersToShutDown = mutableListOf<DaemonReplCompiler>()
 
     private fun newCompiler(): DaemonReplCompiler =
@@ -70,9 +67,8 @@ class DaemonReplCompilerTest {
     ): ResultWithDiagnostics<LinkedSnippet<*>> =
         internalScriptingRunSuspend { compiler.compile(source.toScriptSource(name), ScriptCompilationConfiguration()) }
 
-    // The daemon always reports a handful of fixed, snippet-independent warnings on every compile:
-    // a deprecated-flag notice, plus "jar not found in the Kotlin home directory" notices, since
-    // this classpath never has a "Kotlin home" of its own.
+    // The daemon always reports fixed, snippet-independent warnings: a deprecated-flag notice, plus
+    // "jar not found in the Kotlin home directory" ones, as this classpath has no "Kotlin home".
     @Test
     fun testMessagesAreReportedOnSuccessfulCompile() {
         val compiler = newCompiler()
@@ -84,8 +80,6 @@ class DaemonReplCompilerTest {
         )
     }
 
-    // If messageCollector were not reset before each compile, this second successful compile would
-    // report both compiles' fixed warnings together.
     @Test
     fun testMessagesDoNotAccumulateAcrossCompilations() {
         val compiler = newCompiler()

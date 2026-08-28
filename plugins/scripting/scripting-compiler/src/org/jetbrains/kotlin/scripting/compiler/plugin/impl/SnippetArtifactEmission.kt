@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 
-/**
- * Builds the sidecar from the frontend alone: [firSnippet]'s `isReplSnippetDeclaration` members
- * (including their visibilities) and the file-level imports from [session] for that snippet.
- */
+/** Builds the sidecar from the frontend alone, before any lowering has run. */
 @OptIn(DirectDeclarationsAccess::class)
 internal fun buildReplSidecarFromFir(
     firSnippet: FirReplSnippet,
@@ -50,8 +47,7 @@ internal fun buildReplSidecarFromFir(
                 is FirNamedFunction -> SnippetArtifactSidecar.MemberRef(
                     kind = SnippetArtifactSidecar.MemberRef.Kind.FUNCTION,
                     name = decl.name.asString(),
-                    // Only functions may share a name within a snippet, so only this kind carries
-                    // a non-null descriptor.
+                    // Only functions may share a name within a snippet.
                     descriptor = replMemberOverloadSignature(decl),
                     visibility = decl.toMemberRefVisibility(),
                     returnTypeSignature = decl.returnTypeRef.toRenderableSignature(),
@@ -90,11 +86,6 @@ internal fun buildReplSidecarFromFir(
     )
 }
 
-/**
- * Projects a FIR visibility onto the sidecar's [SnippetArtifactSidecar.MemberRef.Visibility].
- * Anything outside the four well-known visibilities maps to
- * [UNKNOWN][SnippetArtifactSidecar.MemberRef.Visibility.UNKNOWN].
- */
 private fun FirMemberDeclaration.toMemberRefVisibility(): SnippetArtifactSidecar.MemberRef.Visibility {
     val v: KotlinVisibility = status.visibility
     return when (v) {
@@ -107,24 +98,14 @@ private fun FirMemberDeclaration.toMemberRefVisibility(): SnippetArtifactSidecar
     }
 }
 
-/**
- * Renders this type into the string carried on `MemberRef.returnTypeSignature`.
- * Returns `null` if the type cannot be derived (for example an unresolved or error type).
- * This is not a JVM descriptor.
- */
 private fun FirTypeRef.toRenderableSignature(): String? =
     coneTypeOrNull?.toString()?.takeIf { it.isNotBlank() }
 
 /**
- * Best-effort overload-discriminating signature key carried on
- * [SnippetArtifactSidecar.MemberRef.descriptor]. Computed identically on the write side (live
- * FIR) and the read side (deserialized FIR) so both sides produce the same key for the same
- * overload. Returns `null` for non-function declarations, whose name is already unique.
- *
- * This is not a JVM descriptor. It is a string built from the renderable cone types
- * (`ConeKotlinType.toString()`) of the receiver, context parameters, and value parameters.
- * Unresolved parameter types render as `?`, so overloads that differ only in an unresolvable type
- * cannot be told apart; the read side then falls back to name-only matching.
+ * Overload-discriminating key for [SnippetArtifactSidecar.MemberRef.descriptor], computed
+ * identically over live FIR (write side) and deserialized FIR (read side) so both agree.
+ * Unresolved types render as `?`, so overloads differing only there collide and the read side
+ * falls back to name-only matching.
  */
 internal fun replMemberOverloadSignature(declaration: FirCallableDeclaration): String? {
     if (declaration !is FirFunction) return null
