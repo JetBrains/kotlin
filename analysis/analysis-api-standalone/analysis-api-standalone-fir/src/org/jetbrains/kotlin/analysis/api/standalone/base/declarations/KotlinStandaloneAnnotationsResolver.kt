@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,11 +17,8 @@ import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.psi.*
 
 /**
- * This implementation works only for FQN annotations usages (`@foo.Bar` instead of `@Bar`).
- * It does not perform the full resolve of the annotation call, but it checks whether the annotation
- * with such FQN is present in the [scope] with [KotlinDeclarationProvider].
- *
- * Required for and used only in the test infrastructure.
+ * This implementation doesn't perform the full resolve of the annotation call,
+ * but it checks whether the annotation with such FQN is present in the [scope] with [KotlinDeclarationProvider].
  */
 private class KotlinStandaloneAnnotationsResolver(
     private val project: Project,
