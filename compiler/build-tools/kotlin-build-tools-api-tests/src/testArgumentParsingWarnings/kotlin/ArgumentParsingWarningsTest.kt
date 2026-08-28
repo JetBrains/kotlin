@@ -116,6 +116,26 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
         }
     }
 
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
+    @DisplayName("An unknown 'stable' flag fails compilation")
+    @TestMetadata("basic-multimodule-project/module-1")
+    fun testUnknownStableFlagReportsWarning(project: ProjectCreator) {
+        project {
+            val module = module("basic-multimodule-project/module-1")
+            module.compile(compilationConfigAction = {
+                it.compilerArguments.applyArgumentStrings(listOf("-not-a-real-flag"))
+            }) {
+                expectFail()
+                // an unknown -X flag is not an error, the compilation is expected to succeed
+                assertLogContainsPatternExactlyTimes(
+                    LogLevel.ERROR,
+                    ".*Invalid argument: -not-a-real-flag.*".toRegex(RegexOption.IGNORE_CASE),
+                    1,
+                )
+            }
+        }
+    }
+
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("A deprecated argument name is reported")
     @TestMetadata("basic-multimodule-project/module-1")
