@@ -574,6 +574,7 @@ enum class LanguageFeature(
     ForbidJavaClassPropertyReferences(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-375"),
     ReportSubclassCantCallCompanionProtectedNonStaticWithGenerics(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-412"),
     ConcurrentMapPurelyImplemented(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-416"),
+    EnforceNamedArgumentsOnJavaAnnotationInAccessors(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-418"),
     JsIntegerDivisionCheck(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-17719"),
 
     // End of 2.* language features --------------------------------------------------
