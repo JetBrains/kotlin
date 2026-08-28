@@ -17,6 +17,17 @@ import org.jetbrains.kotlin.psi.KtProjectionKind
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import java.lang.reflect.Modifier
 
+/**
+ * Members that [extractAdditionInfo] must not render, keyed by the class declaring them.
+ *
+ * The key is the concrete stub class and not just the member name, so an unrelated stub
+ * with a same-named member is still rendered.
+ */
+private val IGNORED_ADDITIONAL_PROPERTIES: Map<Class<out StubElement<*>>, Set<String>> = mapOf(
+    // 'KotlinModifierListStubImpl.toString()' already renders the mask symbolically, e.g., 'MODIFIER_LIST[enum]'
+    KotlinModifierListStubImpl::class.java to setOf("hasAnyModifier"),
+)
+
 internal fun extractAdditionalStubInfo(stub: KotlinFileStubImpl): String {
     return buildIndentedText(indentation = IndentedTextBuilder.TWO_SPACES) {
         extractAdditionInfo(stub)
@@ -30,10 +41,18 @@ private fun IndentedTextBuilder.extractAdditionInfo(stub: StubElement<*>) {
     appendLine(adjustedStubText)
 
     withIndent {
+        val ignoredProperties = IGNORED_ADDITIONAL_PROPERTIES[stub::class.java].orEmpty()
         val additionalProperties = stub::class.java
             .declaredMethods
-            // All "public" information from stub interfaces is already rendered via regular toString()
-            .filter { it.parameterTypes.isEmpty() && Modifier.isFinal(it.modifiers) }
+            .filter { method ->
+                // All "public" information from stub interfaces is already rendered via regular toString().
+                // A Kotlin implementation leaves such an override non-final, so 'final' selects what the class declares itself
+                method.parameterTypes.isEmpty() &&
+                        Modifier.isFinal(method.modifiers) &&
+                        // An 'internal' member is mangled into "name$moduleName" and is plumbing rather than stub content
+                        '$' !in method.name &&
+                        method.name !in ignoredProperties
+            }
             .sortedBy { it.name }
 
         for (method in additionalProperties) {
