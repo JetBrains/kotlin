@@ -543,6 +543,7 @@ private data class PointerWithRenderedSymbol(
  *
  * The property must not be used to hide some errors.
  */
+context(_: KaSession)
 private val KaSymbol.supportsOnlyPsiBasedPointersByDesign: Boolean
     get() = when (this) {
         is KaFileSymbol,
@@ -558,6 +559,12 @@ private val KaSymbol.supportsOnlyPsiBasedPointersByDesign: Boolean
 
         is KaReceiverParameterSymbol
             -> owningCallableSymbol.supportsOnlyPsiBasedPointersByDesign
+
+        is KaContextParameterSymbol
+            // Do not restore pointers for dangling / invalid context parameters
+            -> containingDeclaration !is KaNamedFunctionSymbol
+                && containingDeclaration !is KaAnonymousFunctionSymbol
+                && containingDeclaration !is KaKotlinPropertySymbol
 
         is KaNamedFunctionSymbol,
         is KaPropertySymbol,
