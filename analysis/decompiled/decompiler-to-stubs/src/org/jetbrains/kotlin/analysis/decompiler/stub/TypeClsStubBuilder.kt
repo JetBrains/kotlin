@@ -238,7 +238,10 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         val typeArgumentsListStub = KotlinPlaceHolderStubImpl<KtTypeArgumentList>(typeStub, KtNodeTypes.TYPE_ARGUMENT_LIST)
         typeArgumentProtoList.forEach { typeArgumentProto ->
             val projectionKind = typeArgumentProto.projection.toProjectionKind()
-            val typeProjection = KotlinTypeProjectionStubImpl(typeArgumentsListStub, projectionKind.ordinal)
+            val typeProjection = KotlinTypeProjectionStubImpl(
+                parent = typeArgumentsListStub,
+                projectionKindOrdinal = projectionKind.ordinal,
+            )
             if (projectionKind != KtProjectionKind.STAR) {
                 val modifierKeywordToken = projectionKind.token as? KtModifierKeywordToken
                 createModifierListStub(
