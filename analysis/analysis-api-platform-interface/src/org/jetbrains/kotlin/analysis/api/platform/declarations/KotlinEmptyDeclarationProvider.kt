@@ -18,10 +18,14 @@ public object KotlinEmptyDeclarationProvider : KotlinDeclarationProvider {
     override fun getAllClassesByClassId(classId: ClassId): List<KtClassOrObject> = emptyList()
     override fun getAllTypeAliasesByClassId(classId: ClassId): List<KtTypeAlias> = emptyList()
     override fun getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
+    override val hasMayHaveTopLevelKotlinClassLikeDeclarationImplementation: Boolean get() = true
+    override fun mayHaveTopLevelKotlinClassLikeDeclaration(classId: ClassId): Boolean = false
     override fun getTopLevelProperties(callableId: CallableId): List<KtProperty> = emptyList()
     override fun getTopLevelFunctions(callableId: CallableId): List<KtNamedFunction> = emptyList()
     override fun getTopLevelCallableFiles(callableId: CallableId): List<KtFile> = emptyList()
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
+    override val hasMayHaveTopLevelCallableImplementation: Boolean get() = true
+    override fun mayHaveTopLevelCallable(classId: ClassId): Boolean = false
     override fun findFilesForFacadeByPackage(packageFqName: FqName): List<KtFile> = emptyList()
     override fun findFilesForFacade(facadeFqName: FqName): List<KtFile> = emptyList()
     override fun findInternalFilesForFacade(facadeFqName: FqName): List<KtFile> = emptyList()

@@ -136,6 +136,17 @@ class FirDelegatingCachedSymbolNamesProvider(
         get() = delegate.mayHaveSyntheticFunctionTypes
 
     override fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean = delegate.mayHaveSyntheticFunctionType(classId)
+
+    override val hasSpecificMayHaveTopLevelClassifierImplementation: Boolean
+        get() = delegate.hasSpecificMayHaveTopLevelClassifierImplementation
+
+    override fun specificMayHaveTopLevelClassifier(classId: ClassId): Boolean = delegate.mayHaveTopLevelClassifier(classId)
+
+    override val hasSpecificMayHaveTopLevelCallableImplementation: Boolean
+        get() = delegate.hasSpecificMayHaveTopLevelCallableImplementation
+
+    override fun specificMayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean =
+        delegate.mayHaveTopLevelCallable(packageFqName, name)
 }
 
 open class FirCompositeCachedSymbolNamesProvider(
@@ -170,6 +181,20 @@ open class FirCompositeCachedSymbolNamesProvider(
         // `session`. So we might miss some other session's synthetic function type.
         return providers.any { it.mayHaveSyntheticFunctionType(classId) }
     }
+
+    // A specific implementation is only possible if *every* provider has one, because a "names in package" set has to be built for each
+    // provider which doesn't, and such sets are merged across all providers anyway.
+    override val hasSpecificMayHaveTopLevelClassifierImplementation: Boolean =
+        providers.all { it.hasSpecificMayHaveTopLevelClassifierImplementation }
+
+    override fun specificMayHaveTopLevelClassifier(classId: ClassId): Boolean =
+        providers.any { it.mayHaveTopLevelClassifier(classId) }
+
+    override val hasSpecificMayHaveTopLevelCallableImplementation: Boolean =
+        providers.all { it.hasSpecificMayHaveTopLevelCallableImplementation }
+
+    override fun specificMayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean =
+        providers.any { it.mayHaveTopLevelCallable(packageFqName, name) }
 
     companion object {
         fun create(session: FirSession, providers: List<FirSymbolNamesProvider>): FirSymbolNamesProvider = when (providers.size) {

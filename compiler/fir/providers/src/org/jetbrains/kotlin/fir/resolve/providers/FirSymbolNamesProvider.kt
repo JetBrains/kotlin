@@ -97,22 +97,45 @@ abstract class FirSymbolNamesProvider {
      */
     open fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean = mayHaveSyntheticFunctionTypes
 
+    open val hasSpecificMayHaveTopLevelClassifierImplementation: Boolean
+        get() = false
+
+    open fun specificMayHaveTopLevelClassifier(classId: ClassId): Boolean {
+        if (hasSpecificMayHaveTopLevelClassifierImplementation) {
+            TODO("Since ${::hasSpecificMayHaveTopLevelClassifierImplementation.name} is true, this function has to be implemented, but wasn't")
+        } else {
+            TODO("Since ${::hasSpecificMayHaveTopLevelClassifierImplementation.name} is false, this function should never be called")
+        }
+    }
+
     /**
      * Checks if the provider's scope may contain a top-level classifier (class, interface, object, or type alias) with the given [classId].
      */
     open fun mayHaveTopLevelClassifier(classId: ClassId): Boolean {
         if (mayHaveSyntheticFunctionTypes && mayHaveSyntheticFunctionType(classId)) return true
 
+        val classIdToCheck = if (classId.isNestedClass) classId.outermostClassId else classId
+
+        if (hasSpecificMayHaveTopLevelClassifierImplementation) {
+            return classIdToCheck.shortClassName.isSpecial || specificMayHaveTopLevelClassifier(classIdToCheck)
+        }
+
         // `packageNamesWithTopLevelClassifiers` is checked in `FirCachedSymbolNamesProvider.getTopLevelClassifierNamesInPackage`. It is not
         // worth checking it in uncached situations, since building the package set is as or more expensive as just building the "names in
         // package" set.
-        val names = getTopLevelClassifierNamesInPackage(classId.packageFqName) ?: return true
-        if (classId.outerClassId == null) {
-            if (!names.mayContainTopLevelClassifier(classId.shortClassName)) return false
+        val names = getTopLevelClassifierNamesInPackage(classIdToCheck.packageFqName) ?: return true
+        return names.mayContainTopLevelClassifier(classIdToCheck.shortClassName)
+    }
+
+    open val hasSpecificMayHaveTopLevelCallableImplementation: Boolean
+        get() = false
+
+    open fun specificMayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean {
+        if (hasSpecificMayHaveTopLevelCallableImplementation) {
+            TODO("Since ${::hasSpecificMayHaveTopLevelCallableImplementation.name} is true, this function has to be implemented, but wasn't")
         } else {
-            if (!names.mayContainTopLevelClassifier(classId.outermostClassId.shortClassName)) return false
+            TODO("Since ${::hasSpecificMayHaveTopLevelCallableImplementation.name} is false, this function should never be called")
         }
-        return true
     }
 
     /**
@@ -122,6 +145,10 @@ abstract class FirSymbolNamesProvider {
     open fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean {
         // Symbol providers can potentially provide symbols for special names. Hence, special names have to be allowed.
         if (name.isSpecial) return true
+
+        if (hasSpecificMayHaveTopLevelCallableImplementation) {
+            return specificMayHaveTopLevelCallable(packageFqName, name)
+        }
 
         // `packageNamesWithTopLevelCallables` is checked in `FirCachedSymbolNamesProvider.getTopLevelCallableNamesInPackage`. It is not
         // worth checking it in uncached situations, since building the package set is as or more expensive as just building the "names in
@@ -204,6 +231,20 @@ open class FirCompositeSymbolNamesProvider(val providers: List<FirSymbolNamesPro
     override val mayHaveSyntheticFunctionTypes: Boolean = providers.any { it.mayHaveSyntheticFunctionTypes }
 
     override fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean = providers.any { it.mayHaveSyntheticFunctionType(classId) }
+
+    // A specific implementation is only possible if *every* provider has one, because a "names in package" set has to be built for each
+    // provider which doesn't, and such sets are merged across all providers anyway.
+    override val hasSpecificMayHaveTopLevelClassifierImplementation: Boolean =
+        providers.all { it.hasSpecificMayHaveTopLevelClassifierImplementation }
+
+    override fun specificMayHaveTopLevelClassifier(classId: ClassId): Boolean =
+        providers.any { it.mayHaveTopLevelClassifier(classId) }
+
+    override val hasSpecificMayHaveTopLevelCallableImplementation: Boolean =
+        providers.all { it.hasSpecificMayHaveTopLevelCallableImplementation }
+
+    override fun specificMayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean =
+        providers.any { it.mayHaveTopLevelCallable(packageFqName, name) }
 
     companion object {
         fun create(providers: List<FirSymbolNamesProvider>): FirSymbolNamesProvider = when (providers.size) {

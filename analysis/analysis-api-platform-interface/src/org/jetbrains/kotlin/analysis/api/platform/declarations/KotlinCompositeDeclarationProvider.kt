@@ -39,6 +39,13 @@ public class KotlinCompositeDeclarationProvider private constructor(
         return providers.flatMapTo(mutableSetOf()) { it.getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName) }
     }
 
+    override val hasMayHaveTopLevelKotlinClassLikeDeclarationImplementation: Boolean
+        get() = providers.all { it.hasMayHaveTopLevelKotlinClassLikeDeclarationImplementation }
+
+    override fun mayHaveTopLevelKotlinClassLikeDeclaration(classId: ClassId): Boolean {
+        return providers.any { it.mayHaveTopLevelKotlinClassLikeDeclaration(classId) }
+    }
+
     override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> {
         return providers.flatMapTo(mutableListOf()) { it.getTopLevelProperties(callableId) }
     }
@@ -53,6 +60,13 @@ public class KotlinCompositeDeclarationProvider private constructor(
 
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> {
         return providers.flatMapTo(mutableSetOf()) { it.getTopLevelCallableNamesInPackage(packageFqName) }
+    }
+
+    override val hasMayHaveTopLevelCallableImplementation: Boolean
+        get() = providers.all { it.hasMayHaveTopLevelCallableImplementation }
+
+    override fun mayHaveTopLevelCallable(classId: ClassId): Boolean {
+        return providers.any { it.mayHaveTopLevelCallable(classId) }
     }
 
     override fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile> {

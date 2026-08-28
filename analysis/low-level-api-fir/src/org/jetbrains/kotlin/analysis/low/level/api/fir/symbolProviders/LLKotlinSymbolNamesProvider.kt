@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirCachedSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirDelegatingCachedSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.filterToSetOrEmpty
@@ -34,10 +35,16 @@ internal open class LLFirKotlinSymbolNamesProvider(
             ?.excludeKotlinPackageNamesIfNecessary()
 
     override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> {
-        if (allowKotlinPackage == false && packageFqName.isKotlinPackage()) return emptySet()
+        if (isExcludedKotlinPackage(packageFqName)) return emptySet()
 
         return declarationProvider.getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName)
     }
+
+    override val hasSpecificMayHaveTopLevelClassifierImplementation: Boolean
+        get() = declarationProvider.hasMayHaveTopLevelKotlinClassLikeDeclarationImplementation
+
+    override fun specificMayHaveTopLevelClassifier(classId: ClassId): Boolean =
+        !isExcludedKotlinPackage(classId.packageFqName) && declarationProvider.mayHaveTopLevelKotlinClassLikeDeclaration(classId)
 
     override val hasSpecificCallablePackageNamesComputation: Boolean
         get() = declarationProvider.hasSpecificCallablePackageNamesComputation
@@ -48,10 +55,19 @@ internal open class LLFirKotlinSymbolNamesProvider(
             ?.excludeKotlinPackageNamesIfNecessary()
 
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> {
-        if (allowKotlinPackage == false && packageFqName.isKotlinPackage()) return emptySet()
+        if (isExcludedKotlinPackage(packageFqName)) return emptySet()
 
         return declarationProvider.getTopLevelCallableNamesInPackage(packageFqName).ifEmpty { emptySet() }
     }
+
+    override val hasSpecificMayHaveTopLevelCallableImplementation: Boolean
+        get() = declarationProvider.hasMayHaveTopLevelCallableImplementation
+
+    override fun specificMayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean =
+        !isExcludedKotlinPackage(packageFqName) && declarationProvider.mayHaveTopLevelCallable(ClassId(packageFqName, name))
+
+    private fun isExcludedKotlinPackage(packageFqName: FqName): Boolean =
+        allowKotlinPackage == false && packageFqName.isKotlinPackage()
 
     private fun Set<String>.excludeKotlinPackageNamesIfNecessary(): Set<String> {
         if (allowKotlinPackage == false && any { it.isKotlinPackage() }) {

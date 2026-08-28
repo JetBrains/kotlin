@@ -143,6 +143,8 @@ public final class org/jetbrains/kotlin/analysis/api/platform/declarations/Kotli
 	public fun getAllClassesByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Ljava/util/Collection;
 	public fun getAllTypeAliasesByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Ljava/util/Collection;
 	public fun getClassLikeDeclarationByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Lorg/jetbrains/kotlin/psi/KtClassLikeDeclaration;
+	public fun getHasMayHaveTopLevelCallableImplementation ()Z
+	public fun getHasMayHaveTopLevelKotlinClassLikeDeclarationImplementation ()Z
 	public fun getHasSpecificCallablePackageNamesComputation ()Z
 	public fun getHasSpecificClassifierPackageNamesComputation ()Z
 	public fun getProviders ()Ljava/util/List;
@@ -151,6 +153,8 @@ public final class org/jetbrains/kotlin/analysis/api/platform/declarations/Kotli
 	public fun getTopLevelFunctions (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelKotlinClassLikeDeclarationNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
 	public fun getTopLevelProperties (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+	public fun mayHaveTopLevelCallable (Lorg/jetbrains/kotlin/name/ClassId;)Z
+	public fun mayHaveTopLevelKotlinClassLikeDeclaration (Lorg/jetbrains/kotlin/name/ClassId;)Z
 }
 
 public final class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinCompositeDeclarationProvider$Companion {
@@ -230,6 +234,8 @@ public final class org/jetbrains/kotlin/analysis/api/platform/declarations/Kotli
 	public synthetic fun getAllTypeAliasesByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Ljava/util/Collection;
 	public fun getAllTypeAliasesByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Ljava/util/List;
 	public fun getClassLikeDeclarationByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Lorg/jetbrains/kotlin/psi/KtClassLikeDeclaration;
+	public fun getHasMayHaveTopLevelCallableImplementation ()Z
+	public fun getHasMayHaveTopLevelKotlinClassLikeDeclarationImplementation ()Z
 	public fun getHasSpecificCallablePackageNamesComputation ()Z
 	public fun getHasSpecificClassifierPackageNamesComputation ()Z
 	public synthetic fun getTopLevelCallableFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
@@ -240,6 +246,8 @@ public final class org/jetbrains/kotlin/analysis/api/platform/declarations/Kotli
 	public fun getTopLevelKotlinClassLikeDeclarationNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
 	public synthetic fun getTopLevelProperties (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public fun getTopLevelProperties (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/List;
+	public fun mayHaveTopLevelCallable (Lorg/jetbrains/kotlin/name/ClassId;)Z
+	public fun mayHaveTopLevelKotlinClassLikeDeclaration (Lorg/jetbrains/kotlin/name/ClassId;)Z
 }
 
 public final class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinFileBasedDeclarationProvider : org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProvider {
