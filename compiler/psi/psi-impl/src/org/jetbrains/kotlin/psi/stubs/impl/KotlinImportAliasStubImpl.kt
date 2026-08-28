@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 
 @OptIn(KtImplementationDetail::class)
-class KotlinImportAliasStubImpl(
+internal class KotlinImportAliasStubImpl(
     parent: StubElement<*>?,
     private val name: StringRef?,
 ) : KotlinStubBaseImpl<KtImportAlias>(parent, KtNodeTypes.IMPORT_ALIAS), KotlinImportAliasStub {

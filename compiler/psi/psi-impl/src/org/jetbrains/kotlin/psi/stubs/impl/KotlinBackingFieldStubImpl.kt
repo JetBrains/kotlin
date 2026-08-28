@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 
 @OptIn(KtImplementationDetail::class)
-class KotlinBackingFieldStubImpl(
+internal class KotlinBackingFieldStubImpl(
     parent: StubElement<*>?,
     override val hasInitializer: Boolean,
 ) : KotlinStubBaseImpl<KtBackingField>(parent, KtNodeTypes.BACKING_FIELD), KotlinBackingFieldStub {
