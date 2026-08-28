@@ -71,6 +71,9 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: D): R =
         visitExpression(literalExpression, data)
 
+    override fun visitNumericClassConversion(numericClassConversion: FirNumericClassConversion, data: D): R =
+        visitExpression(numericClassConversion, data)
+
     override fun visitIntegerLiteralOperatorCall(integerLiteralOperatorCall: FirIntegerLiteralOperatorCall, data: D): R =
         visitFunctionCall(integerLiteralOperatorCall, data)
 

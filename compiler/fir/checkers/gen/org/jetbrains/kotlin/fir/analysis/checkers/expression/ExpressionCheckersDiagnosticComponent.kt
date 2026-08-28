@@ -239,6 +239,10 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allBasicExpressionCheckers.check(qualifiedErrorAccessExpression, data)
     }
 
+    override fun visitNumericClassConversion(numericClassConversion: FirNumericClassConversion, data: CheckerContext) {
+        checkers.allBasicExpressionCheckers.check(numericClassConversion, data)
+    }
+
     override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: CheckerContext) {
         checkers.allCallCheckers.check(delegatedConstructorCall, data)
     }
