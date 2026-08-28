@@ -3,43 +3,28 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.psi.stubs.impl;
+package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.intellij.psi.stubs.StubElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.psi.KtBackingField;
-import org.jetbrains.kotlin.psi.KtImplementationDetail;
-import org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub;
-import org.jetbrains.kotlin.psi.stubs.KotlinStubElement;
+import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.psi.KtBackingField
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 
-public class KotlinBackingFieldStubImpl extends KotlinStubBaseImpl<KtBackingField>
-        implements KotlinBackingFieldStub {
-    private final boolean hasInitializer;
-
-    public KotlinBackingFieldStubImpl(StubElement<?> parent, boolean hasInitializer) {
-        super(parent, KtNodeTypes.BACKING_FIELD);
-        this.hasInitializer = hasInitializer;
-    }
-
-    @Override
-    public boolean getHasInitializer() {
-        return hasInitializer;
-    }
-
-    @Override
+@OptIn(KtImplementationDetail::class)
+class KotlinBackingFieldStubImpl(
+    parent: StubElement<*>?,
+    override val hasInitializer: Boolean,
+) : KotlinStubBaseImpl<KtBackingField>(parent, KtNodeTypes.BACKING_FIELD), KotlinBackingFieldStub {
     @KtImplementationDetail
-    public @NotNull KotlinBackingFieldStubImpl copyInto(@Nullable StubElement<?> newParent) {
-        return new KotlinBackingFieldStubImpl(
-                newParent,
-                hasInitializer
-        );
-    }
+    override fun copyInto(newParent: StubElement<*>?): KotlinBackingFieldStubImpl = KotlinBackingFieldStubImpl(
+        parent = newParent,
+        hasInitializer = hasInitializer,
+    )
 
-    @Override
-    public boolean isEquivalentTo(@NotNull KotlinStubElement<?> other) {
-        if (!(other instanceof KotlinBackingFieldStubImpl)) return false;
-        return hasInitializer == ((KotlinBackingFieldStubImpl) other).hasInitializer;
-    }
+    @KtImplementationDetail
+    override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
+        other is KotlinBackingFieldStubImpl &&
+                other.hasInitializer == hasInitializer
 }

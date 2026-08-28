@@ -26,8 +26,8 @@ internal object KtBackingFieldStubSerializingElementFactory :
         psi: KtBackingField,
         parentStub: StubElement<*>?,
     ): KotlinBackingFieldStubImpl = KotlinBackingFieldStubImpl(
-        /* parent = */ parentStub,
-        /* hasInitializer = */ psi.hasInitializer(),
+        parent = parentStub,
+        hasInitializer = psi.hasInitializer(),
     )
 
     override fun serialize(stub: KotlinBackingFieldStubImpl, dataStream: StubOutputStream) {
@@ -36,6 +36,6 @@ internal object KtBackingFieldStubSerializingElementFactory :
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinBackingFieldStubImpl {
         val hasInitializer = dataStream.readBoolean()
-        return KotlinBackingFieldStubImpl(parentStub, hasInitializer)
+        return KotlinBackingFieldStubImpl(parent = parentStub, hasInitializer = hasInitializer)
     }
 }
