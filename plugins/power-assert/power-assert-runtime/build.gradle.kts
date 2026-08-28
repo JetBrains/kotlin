@@ -1,5 +1,7 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.konan.target.HostManager
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
@@ -28,8 +30,6 @@ kotlin {
         freeCompilerArgs.addAll(
             "-Xreturn-value-checker=full",
             "-Xallow-kotlin-package",
-            // TODO(KT-50876) Required for reproducible builds.
-            "-Xklib-relative-path-base=${layout.buildDirectory.get().asFile},${layout.projectDirectory.asFile},$rootDir",
         )
     }
 
@@ -51,6 +51,12 @@ kotlin {
                     KotlinPlatformType.androidJvm -> error("unexpected platform type; was a JVM android target added accidentally?")
                 },
             )
+        }
+        if (this !is KotlinJvmTarget && this is HasConfigurableKotlinCompilerOptions<*>) {
+            compilerOptions {
+                // TODO(KT-50876) Required for reproducible builds.
+                freeCompilerArgs.add("-Xklib-relative-path-base=${layout.buildDirectory.get().asFile},${layout.projectDirectory.asFile},$rootDir",)
+            }
         }
     }
 
