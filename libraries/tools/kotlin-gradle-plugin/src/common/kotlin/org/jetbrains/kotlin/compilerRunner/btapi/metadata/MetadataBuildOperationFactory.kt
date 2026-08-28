@@ -19,6 +19,12 @@ import kotlin.io.path.Path
 internal class MetadataKlibBuildOperationFactory(private val compilerArgs: List<String>) :
     BuildOperationFactory<KotlinMetadataKlibCompilationOperation.Builder> {
     override fun createOperation(kotlinToolchains: KotlinToolchains): KotlinMetadataKlibCompilationOperation.Builder {
+        /*
+         * GradleCompilerRunner.runCompilerAsync transforms arguments adding the freeArgs separator (`--`)
+         * This way, even incorrect arguments are surviving the `parseCommandLineArguments` call (by staying in `args.freeArgs`)
+         * and can be passed to BTA.
+         * If you rework this, please make sure that the freeArgs separator is not reaching BTA.
+         */
         val args: K2MetadataCompilerArguments = parseCommandLineArguments(compilerArgs)
         val destination = Path(requireNotNull(args.destination))
         val compilationOperationBuilder =

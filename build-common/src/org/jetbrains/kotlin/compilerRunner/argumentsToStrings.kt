@@ -30,12 +30,14 @@ fun CommonToolArguments.toArgumentStrings(
     shortArgumentKeys: Boolean = false,
     compactArgumentValues: Boolean = true,
     allowArgFileInValues: Boolean = true,
+    addFreeArgsDelimiter: Boolean = false,
 ): List<String> {
     return toArgumentStrings(
         this, this::class as KClass<CommonToolArguments>,
         shortArgumentKeys = shortArgumentKeys,
         compactArgumentValues = compactArgumentValues,
         allowArgFileInValues = allowArgFileInValues,
+        addFreeArgsDelimiter = addFreeArgsDelimiter,
     )
 }
 
@@ -53,6 +55,7 @@ internal fun <T : CommonToolArguments> toArgumentStrings(
     shortArgumentKeys: Boolean,
     compactArgumentValues: Boolean,
     allowArgFileInValues: Boolean = true,
+    addFreeArgsDelimiter: Boolean = false,
 ): List<String> = ArrayList<String>().apply {
     val defaultArguments = type.newArgumentsInstance()
     type.memberProperties.forEach { property ->
@@ -107,8 +110,11 @@ internal fun <T : CommonToolArguments> toArgumentStrings(
         }
     }
 
-    addAll(thisArguments.freeArgs)
     addAll(thisArguments.internalArguments.map { it.stringRepresentation })
+    if (addFreeArgsDelimiter && thisArguments.freeArgs.isNotEmpty()) {
+        add("--")
+    }
+    addAll(thisArguments.freeArgs)
 }
 
 private fun shouldHandleArgFileInValues(argumentValue: String, allowArgFileInValues: Boolean): Boolean {

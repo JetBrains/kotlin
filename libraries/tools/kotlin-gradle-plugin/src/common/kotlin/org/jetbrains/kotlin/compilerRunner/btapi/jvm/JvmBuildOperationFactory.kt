@@ -19,6 +19,12 @@ import org.jetbrains.kotlin.gradle.utils.destinationAsFile
 internal class JvmBuildOperationFactory(val compilerArgs: List<String>, val kotlinScriptExtensions: List<String>) :
     BuildOperationFactory<JvmCompilationOperation.Builder> {
     override fun createOperation(kotlinToolchains: KotlinToolchains): JvmCompilationOperation.Builder {
+        /*
+         * GradleCompilerRunner.runCompilerAsync transforms arguments adding the freeArgs separator (`--`)
+         * This way, even incorrect arguments are surviving the `parseCommandLineArguments` call (by staying in `args.freeArgs`)
+         * and can be passed to BTA.
+         * If you rework this, please make sure that the freeArgs separator is not reaching BTA.
+         */
         val args: K2JVMCompilerArguments = parseCommandLineArguments(compilerArgs)
         val compilationOperationBuilder = kotlinToolchains.jvm.jvmCompilationOperationBuilder(
             extractSourceFiles(args.freeArgs),

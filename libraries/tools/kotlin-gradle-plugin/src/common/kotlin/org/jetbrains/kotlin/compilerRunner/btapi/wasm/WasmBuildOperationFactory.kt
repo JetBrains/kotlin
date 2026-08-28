@@ -20,11 +20,16 @@ import kotlin.io.path.Path
 internal class WasmKlibBuildOperationFactory(private val compilerArgs: List<String>) :
     BuildOperationFactory<WasmKlibCompilationOperation.Builder> {
     override fun createOperation(kotlinToolchains: KotlinToolchains): WasmKlibCompilationOperation.Builder {
+        /*
+         * GradleCompilerRunner.runCompilerAsync transforms arguments adding the freeArgs separator (`--`)
+         * This way, even incorrect arguments are surviving the `parseCommandLineArguments` call and can be passed to BTA.
+         * If you rework this, please make sure that the freeArgs separator is not reaching BTA.
+         */
         val args: KotlinWasmCompilerArguments = parseCommandLineArguments(compilerArgs)
         val destination = Path(requireNotNull(args.outputDir))
         val compilationOperationBuilder =
             kotlinToolchains.wasm.wasmKlibCompilationOperationBuilder(extractSourceFiles(args.freeArgs), destination)
-        @OptIn(ExperimentalCompilerArgument::class) compilationOperationBuilder.compilerArguments.applyArgumentStrings(
+        compilationOperationBuilder.compilerArguments.applyArgumentStrings(
             args.toArgumentStrings(
                 allowArgFileInValues = false
             )
@@ -35,11 +40,17 @@ internal class WasmKlibBuildOperationFactory(private val compilerArgs: List<Stri
 
 internal class WasmLinkingBuildOperationFactory(private val compilerArgs: List<String>) : BuildOperationFactory<WasmLinkingOperation.Builder> {
     override fun createOperation(kotlinToolchains: KotlinToolchains): WasmLinkingOperation.Builder {
+        /*
+         * GradleCompilerRunner.runCompilerAsync transforms arguments adding the freeArgs separator (`--`)
+         * This way, even incorrect arguments are surviving the `parseCommandLineArguments` call (by staying in `args.freeArgs`)
+         * and can be passed to BTA.
+         * If you rework this, please make sure that the freeArgs separator is not reaching BTA.
+         */
         val args: KotlinWasmCompilerArguments = parseCommandLineArguments(compilerArgs)
         val destination = Path(requireNotNull(args.outputDir))
         val includes = Path(requireNotNull(args.includes))
         val compilationOperationBuilder = kotlinToolchains.wasm.wasmLinkingOperationBuilder(includes, destination)
-        @OptIn(ExperimentalCompilerArgument::class) compilationOperationBuilder.compilerArguments.applyArgumentStrings(
+        compilationOperationBuilder.compilerArguments.applyArgumentStrings(
             args.toArgumentStrings(
                 allowArgFileInValues = false
             )
