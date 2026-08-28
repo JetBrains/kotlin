@@ -2,6 +2,7 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(KtImplementationDetail::class)
 
 package org.jetbrains.kotlin.analysis.stubs
 
@@ -42,7 +43,6 @@ class SourceStubsTest : AbstractAnalysisApiExecutionTest("testData/source/custom
         // The assertion to ensure that the parent is computed correctly even for dangling stubs
         testServices.assertions.assertEquals(KtBlockExpression::class.java, localFunctionStub.psi.parent::class.java)
 
-        @OptIn(KtImplementationDetail::class)
         val fileStubCopy = fileStub.deepCopy()
         val localFunctionStubCopy = fileStubCopy.findLocalFunction()
         validateLocalFunctionStub(localFunctionStubCopy)

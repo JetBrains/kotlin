@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 
-@OptIn(KtImplementationDetail::class)
+@KtImplementationDetail
 class KotlinPropertyAccessorStubImpl(
     parent: StubElement<*>?,
     override val isGetter: Boolean,

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 
-@OptIn(KtImplementationDetail::class)
+@KtImplementationDetail
 class KotlinModifierListStubImpl(
     parent: StubElement<*>?,
     internal val mask: Long,

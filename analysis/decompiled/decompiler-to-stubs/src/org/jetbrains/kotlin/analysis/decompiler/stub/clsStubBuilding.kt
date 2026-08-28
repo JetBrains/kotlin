@@ -2,6 +2,7 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(KtImplementationDetail::class)
 
 package org.jetbrains.kotlin.analysis.decompiler.stub
 
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.impl.*
@@ -263,7 +265,6 @@ fun createModifierListStub(
 
     val regularMask = ModifierMaskUtils.computeMask { it in modifiers }
 
-    @OptIn(KtImplementationDetail::class)
     val specialMask = ModifierMaskUtils.computeMaskForSpecialFlags { flag ->
         when (flag) {
             KotlinModifierListStub.SpecialFlag.MustUseReturnValue   -> returnValueStatus == ProtoBuf.ReturnValueStatus.MUST_USE

@@ -2,6 +2,7 @@
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(KtImplementationDetail::class)
 
 package org.jetbrains.kotlin.analysis.stubs
 
@@ -79,7 +80,6 @@ private fun IndentedTextBuilder.extractAdditionInfo(stub: StubElement<*>) {
     }
 }
 
-@OptIn(KtImplementationDetail::class)
 private fun IndentedTextBuilder.appendValue(value: Any?) {
     when (value) {
         is Map<*, *> -> appendValue(value.entries)
@@ -125,7 +125,6 @@ private fun IndentedTextBuilder.appendValue(value: Any?) {
     }
 }
 
-@OptIn(KtImplementationDetail::class)
 private fun IndentedTextBuilder.appendValueClassRepresentation(representation: KotlinValueClassRepresentation) {
     val kind = when (representation) {
         is KotlinInlineClassRepresentation -> "inline"

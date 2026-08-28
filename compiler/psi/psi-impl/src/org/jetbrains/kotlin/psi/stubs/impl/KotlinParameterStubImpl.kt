@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
  * @param constantInitializer The compile-time constant the property this parameter declares is initialized with.
  * It is only present in stubs built from binaries, where the value comes from the metadata rather than from the sources.
  */
-@OptIn(KtImplementationDetail::class)
+@KtImplementationDetail
 class KotlinParameterStubImpl(
     parent: StubElement<*>?,
     private val fqNameRef: StringRef?,

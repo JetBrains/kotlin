@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.*
 import java.lang.reflect.Method
 
+@KtImplementationDetail
 val STUB_TO_STRING_PREFIX = "KotlinStub$"
 
 private val IGNORED_NULL_VALUES: Map<Class<out StubElement<*>>, Set<String>> = buildMap {
@@ -25,7 +26,7 @@ private val IGNORED_NULL_VALUES: Map<Class<out StubElement<*>>, Set<String>> = b
     put(KotlinObjectStub::class.java, setOf(KotlinClassOrObjectStub<*>::kdocText.name))
 }
 
-@OptIn(KtImplementationDetail::class)
+@KtImplementationDetail
 abstract class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?, elementType: IElementType) :
     StubBase<T>(parent, elementType), KotlinStubElement<T> {
 

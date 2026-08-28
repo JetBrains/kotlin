@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.utils.toConstantExpressionElementType
 
-@OptIn(KtImplementationDetail::class)
+@KtImplementationDetail
 class KotlinConstantExpressionStubImpl(
     parent: StubElement<*>?,
     override val kind: ConstantValueKind,

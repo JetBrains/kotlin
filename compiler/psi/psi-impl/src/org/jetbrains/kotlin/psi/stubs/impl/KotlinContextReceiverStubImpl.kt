@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 
-@OptIn(KtImplementationDetail::class)
+@KtImplementationDetail
 class KotlinContextReceiverStubImpl(
     parent: StubElement<*>?,
     private val labelRef: StringRef?,

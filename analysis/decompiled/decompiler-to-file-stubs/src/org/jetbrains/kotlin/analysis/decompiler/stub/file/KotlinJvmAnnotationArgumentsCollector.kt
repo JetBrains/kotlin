@@ -2,6 +2,7 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(KtImplementationDetail::class)
 
 package org.jetbrains.kotlin.analysis.decompiler.stub
 
@@ -9,6 +10,7 @@ import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.impl.AnnotationData
 import org.jetbrains.kotlin.psi.stubs.impl.EnumData
 import org.jetbrains.kotlin.psi.stubs.impl.KClassData

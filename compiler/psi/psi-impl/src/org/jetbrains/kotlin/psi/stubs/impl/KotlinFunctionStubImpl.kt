@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 
-@OptIn(KtImplementationDetail::class)
+@KtImplementationDetail
 class KotlinFunctionStubImpl(
     parent: StubElement<*>?,
     private val nameRef: StringRef?,
