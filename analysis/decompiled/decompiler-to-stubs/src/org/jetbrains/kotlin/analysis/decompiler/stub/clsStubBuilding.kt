@@ -269,15 +269,15 @@ fun createModifierListStub(
     }
 
     return KotlinModifierListStubImpl(
-        parent,
-        regularMask or specialMask
+        parent = parent,
+        mask = regularMask or specialMask,
     )
 }
 
 fun createEmptyModifierListStub(parent: KotlinStubBaseImpl<*>): KotlinModifierListStubImpl {
     return KotlinModifierListStubImpl(
-        parent,
-        ModifierMaskUtils.computeMask { false }
+        parent = parent,
+        mask = ModifierMaskUtils.computeMask { false },
     )
 }
 

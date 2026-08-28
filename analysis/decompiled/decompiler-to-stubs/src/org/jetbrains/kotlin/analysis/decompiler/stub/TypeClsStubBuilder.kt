@@ -215,7 +215,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         val typeModifiers = getTypeModifiersAsWritten(type)
         if (annotations.isEmpty() && typeModifiers.isEmpty()) return
         val typeModifiersMask = ModifierMaskUtils.computeMask { it in typeModifiers }
-        val modifiersList = KotlinModifierListStubImpl(parent, typeModifiersMask)
+        val modifiersList = KotlinModifierListStubImpl(parent = parent, mask = typeModifiersMask)
         createTargetedAnnotationStubs(annotations, modifiersList)
     }
 

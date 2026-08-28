@@ -3,63 +3,38 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.psi.stubs.impl;
+package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.intellij.psi.stubs.StubElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
-import org.jetbrains.kotlin.psi.KtDeclarationModifierList;
-import org.jetbrains.kotlin.psi.KtImplementationDetail;
-import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub;
-import org.jetbrains.kotlin.psi.stubs.KotlinStubElement;
+import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.psi.KtDeclarationModifierList
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 
-public class KotlinModifierListStubImpl extends KotlinStubBaseImpl<KtDeclarationModifierList> implements KotlinModifierListStub {
+@OptIn(KtImplementationDetail::class)
+class KotlinModifierListStubImpl(
+    parent: StubElement<*>?,
+    internal val mask: Long,
+) : KotlinStubBaseImpl<KtDeclarationModifierList>(parent, KtNodeTypes.MODIFIER_LIST), KotlinModifierListStub {
+    override fun hasModifier(modifierToken: KtModifierKeywordToken): Boolean = ModifierMaskUtils.maskHasModifier(mask, modifierToken)
 
-    private final long mask;
-
-    public KotlinModifierListStubImpl(@Nullable StubElement<?> parent, long mask) {
-        super(parent, KtNodeTypes.MODIFIER_LIST);
-        this.mask = mask;
-    }
-
-    public long getMask() {
-        return mask;
-    }
-
-    @Override
-    public boolean hasModifier(@NotNull KtModifierKeywordToken modifierToken) {
-        return ModifierMaskUtils.maskHasModifier(mask, modifierToken);
-    }
-
-    @Override
-    public boolean hasSpecialFlag(@NotNull SpecialFlag flag) {
-        return ModifierMaskUtils.maskHasSpecialFlag(mask, flag);
-    }
-
-    @NotNull
-    @Override
-    public String toString() {
-        return super.toString() + ModifierMaskUtils.maskToString(mask);
-    }
-
-    public boolean hasAnyModifier() {
-        return mask != 0;
-    }
-
-    @Override
     @KtImplementationDetail
-    public @NotNull KotlinModifierListStubImpl copyInto(@Nullable StubElement<?> newParent) {
-        return new KotlinModifierListStubImpl(
-                newParent,
-                mask
-        );
-    }
+    override fun hasSpecialFlag(flag: KotlinModifierListStub.SpecialFlag): Boolean = ModifierMaskUtils.maskHasSpecialFlag(mask, flag)
 
-    @Override
-    public boolean isEquivalentTo(@NotNull KotlinStubElement<?> other) {
-        if (!(other instanceof KotlinModifierListStubImpl)) return false;
-        return this.mask == ((KotlinModifierListStubImpl) other).mask;
-    }
+    fun hasAnyModifier(): Boolean = mask != 0L
+
+    override fun toString(): String = super.toString() + ModifierMaskUtils.maskToString(mask)
+
+    @KtImplementationDetail
+    override fun copyInto(newParent: StubElement<*>?): KotlinModifierListStubImpl = KotlinModifierListStubImpl(
+        parent = newParent,
+        mask = mask,
+    )
+
+    @KtImplementationDetail
+    override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
+        other is KotlinModifierListStubImpl &&
+                other.mask == mask
 }

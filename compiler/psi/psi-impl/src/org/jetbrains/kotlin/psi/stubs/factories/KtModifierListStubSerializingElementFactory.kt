@@ -29,8 +29,8 @@ internal object KtModifierListStubSerializingElementFactory :
         psi: KtDeclarationModifierList,
         parentStub: StubElement<*>?,
     ): KotlinModifierListStubImpl = KotlinModifierListStubImpl(
-        parentStub,
-        ModifierMaskUtils.computeMaskFromModifierList(psi),
+        parent = parentStub,
+        mask = ModifierMaskUtils.computeMaskFromModifierList(psi),
     )
 
     override fun serialize(stub: KotlinModifierListStubImpl, dataStream: StubOutputStream) {
@@ -41,7 +41,7 @@ internal object KtModifierListStubSerializingElementFactory :
         dataStream: StubInputStream,
         parentStub: StubElement<*>?,
     ): KotlinModifierListStubImpl = KotlinModifierListStubImpl(
-        parentStub,
-        /* mask = */ DataInputOutputUtil.readLONG(dataStream),
+        parent = parentStub,
+        mask = DataInputOutputUtil.readLONG(dataStream),
     )
 }

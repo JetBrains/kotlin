@@ -180,9 +180,7 @@ org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinImportAliasStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinImportDirectiveStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl
-org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl:constructor(StubElement<?>, long)
-org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl:getMask()
-org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl:hasAnyModifier()
+org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl.hasAnyModifier()
 org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinObjectStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
