@@ -166,7 +166,7 @@ fun serializeModuleToMetadata(
         specificFeatures = mapOf(
             LanguageFeature.MultiPlatformProjects to LanguageFeature.State.ENABLED,
             LanguageFeature.AllowExpectValueClassesWithNoPrimaryConstructor to LanguageFeature.State.ENABLED,
-            LanguageFeature.AllowMultipleExpectsForSameActual to LanguageFeature.State.ENABLED,
+            LanguageFeature.AllowMultipleExpectsForSingleActual to LanguageFeature.State.ENABLED,
         ),
     )
 

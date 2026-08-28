@@ -362,7 +362,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             .sortedBy { it.name.asString() }
             .toList()
 
-        if (filesWithMatchedExpects.size > 1 && LanguageFeature.AllowMultipleExpectsForSameActual.isDisabled()) {
+        if (filesWithMatchedExpects.size > 1 && LanguageFeature.AllowMultipleExpectsForSingleActual.isDisabled()) {
             reporter.reportOn(
                 actualDeclaration.source,
                 FirErrors.AMBIGUOUS_EXPECTS,

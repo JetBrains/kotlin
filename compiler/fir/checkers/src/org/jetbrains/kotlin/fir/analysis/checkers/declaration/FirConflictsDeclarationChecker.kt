@@ -157,7 +157,7 @@ abstract class FirConflictsDeclarationChecker(kind: MppCheckerKind) : FirBasicDe
 
             // `expect`s may clash with non-`expect`s, but we want to allow `expect`s that don't clash before actualization.
             if (
-                LanguageFeature.AllowMultipleExpectsForSameActual.isEnabled() &&
+                LanguageFeature.AllowMultipleExpectsForSingleActual.isEnabled() &&
                 (mppKind == MppCheckerKind.Common) != conflictingDeclaration.isExpect() && symbols.all { it.isExpect() }
             ) {
                 return@forEach
