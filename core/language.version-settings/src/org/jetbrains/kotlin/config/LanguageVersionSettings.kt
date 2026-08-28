@@ -609,7 +609,7 @@ enum class LanguageFeature(
     NoAdditionalErrorsInK1DiagnosticReporter(sinceVersion = null, NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
 
     // Only used for compiling the commonizer's support library with numeric expect classes.
-    AllowExpectValueClassesWithNoPrimaryConstructor(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-69909", enabledInLatestLVTests = false),
+    AllowExpectValueClassesWithNoPrimaryConstructor(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-85824", enabledInLatestLVTests = false),
     AllowMultipleExpectsForSingleActual(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-88307", enabledInLatestLVTests = false),
 
     // Just a safety mechanism to revert the change in inference behavior that was required for a performance problem fix.
