@@ -184,7 +184,6 @@ org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl.hasAnyModifier()
 org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinObjectStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
-org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl:constructor(StubElement<?>, IElementType)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderWithTextStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPrimaryConstructorStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl

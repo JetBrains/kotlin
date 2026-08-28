@@ -26,7 +26,7 @@ internal open class KtPlaceHolderStubSerializingElementFactory<Psi : KtElementIm
     override fun createStub(
         psi: Psi,
         parentStub: StubElement<*>?,
-    ): KotlinPlaceHolderStubImpl<Psi> = KotlinPlaceHolderStubImpl(parentStub, type)
+    ): KotlinPlaceHolderStubImpl<Psi> = KotlinPlaceHolderStubImpl(parent = parentStub, elementType = type)
 
     override fun serialize(stub: KotlinPlaceHolderStubImpl<Psi>, dataStream: StubOutputStream) {
         // there is nothing to serialize
@@ -35,5 +35,5 @@ internal open class KtPlaceHolderStubSerializingElementFactory<Psi : KtElementIm
     override fun deserialize(
         dataStream: StubInputStream,
         parentStub: StubElement<*>?,
-    ): KotlinPlaceHolderStubImpl<Psi> = KotlinPlaceHolderStubImpl(parentStub, type)
+    ): KotlinPlaceHolderStubImpl<Psi> = KotlinPlaceHolderStubImpl(parent = parentStub, elementType = type)
 }
