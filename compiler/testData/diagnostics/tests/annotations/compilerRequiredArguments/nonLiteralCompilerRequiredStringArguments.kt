@@ -8,10 +8,10 @@ package p
 
 const val NAME = "name"
 
-@JvmName(NAME)
+@JvmName(<!COMPILER_REQUIRED_ANNOTATION_ARGUMENT_MUST_BE_LITERAL_ERROR!>NAME<!>)
 fun jvmNameConst() {}
 
-@JvmName("a" + "b")
+@JvmName(<!COMPILER_REQUIRED_ANNOTATION_ARGUMENT_MUST_BE_LITERAL_ERROR!>"a" + "b"<!>)
 fun jvmNameConcatenation() {}
 
 @JvmName("literal")
@@ -23,7 +23,7 @@ package kotlin.sub
 const val SINCE = "1.0"
 
 @Deprecated("")
-@DeprecatedSinceKotlin(warningSince = SINCE)
+@DeprecatedSinceKotlin(warningSince = <!COMPILER_REQUIRED_ANNOTATION_ARGUMENT_MUST_BE_LITERAL_ERROR!>SINCE<!>)
 fun deprecatedSinceConst() {}
 
 @Deprecated("")

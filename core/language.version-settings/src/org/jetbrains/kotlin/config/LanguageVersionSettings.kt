@@ -564,6 +564,7 @@ enum class LanguageFeature(
     ForbidValueClassRecursionViaTypeParameters(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, issue = "KT-85848"),
     IrCrossModuleInlinerBeforeKlibSerialization(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_3, forcesPreReleaseBinaries = true, issue = "KT-71896"),
     JvmSupportRecursiveTypeOf(sinceVersion = KOTLIN_2_5, issue = "KT-87339"),
+    ForbidNonLiteralStringArgumentsForCompilerRequiredAnnotationParameters(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, issue = "KT-87072"),
     JsAllowExportTypealiases(sinceVersion = KOTLIN_2_5, "KT-49795"),
     IntrinsicConstEvaluation(sinceVersion = KOTLIN_2_5, issue = "KT-49303"),
 

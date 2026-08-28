@@ -1827,6 +1827,24 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface CompilerRequiredAnnotationArgumentMustBeLiteralError : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass: KClass<CompilerRequiredAnnotationArgumentMustBeLiteralError>
+            get() = CompilerRequiredAnnotationArgumentMustBeLiteralError::class
+
+        public val name: Name
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface CompilerRequiredAnnotationArgumentMustBeLiteralWarning : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass: KClass<CompilerRequiredAnnotationArgumentMustBeLiteralWarning>
+            get() = CompilerRequiredAnnotationArgumentMustBeLiteralWarning::class
+
+        public val name: Name
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface VolatileOnValue : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass: KClass<VolatileOnValue>
             get() = VolatileOnValue::class
