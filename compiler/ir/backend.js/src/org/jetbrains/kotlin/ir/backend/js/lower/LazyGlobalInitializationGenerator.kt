@@ -40,10 +40,32 @@ abstract class LazyGlobalInitializationGenerator {
         const val ERROR: Int = 2
     }
 
-    protected abstract fun IrBuilderWithScope.generateStaticInitializationStateChecks(
+    private fun IrBuilderWithScope.generateStaticInitializationStateChecks(
         getStateField: IrGetField,
         klass: IrClass?
-    ): List<IrStatement>
+    ): List<IrStatement> {
+        val errorInitializationBranch = irCall(backendContext.symbols.staticInitializationFailureWithClassName).apply {
+            arguments[0] = klass?.let { kClassReference(it.symbol.starProjectedType) } ?: undefinedOrNull()
+        }
+
+        val state = scope.createTemporaryVariable(
+            getStateField,
+            nameHint = "state",
+            inventUniqueName = false,
+        )
+
+        return listOf(
+            state,
+            irIfThen(
+                irEqeqeq(irGet(state), irInt(InitializationState.INITIALIZED)),
+                irReturnUnit()
+            ),
+            irIfThen(
+                irEqeqeq(irGet(state), irInt(InitializationState.ERROR)),
+                errorInitializationBranch
+            )
+        )
+    }
 
     protected open fun IrBuilderWithScope.undefinedOrNull(): IrExpression = irNull()
 
@@ -118,29 +140,6 @@ abstract class LazyGlobalInitializationGenerator {
 }
 
 class JsLazyGlobalInitializationGenerator(override val backendContext: JsIrBackendContext) : LazyGlobalInitializationGenerator() {
-    override fun IrBuilderWithScope.generateStaticInitializationStateChecks(getStateField: IrGetField, klass: IrClass?): List<IrStatement> {
-        val errorInitializationBranch = irCall(backendContext.symbols.staticInitializationFailureWithClassName).apply {
-            arguments[0] = klass?.jsConstructorReference(backendContext) ?: backendContext.getVoid()
-        }
-
-        val state = scope.createTemporaryVariable(
-            getStateField,
-            nameHint = "state",
-            inventUniqueName = false,
-        )
-
-        return listOf(
-            state,
-            irIfThen(
-                irEqeqeq(irGet(state), irInt(InitializationState.INITIALIZED)),
-                irReturnUnit()
-            ),
-            irIfThen(
-                irEqeqeq(irGet(state), irInt(InitializationState.ERROR)),
-                errorInitializationBranch
-            )
-        )
-    }
 
     override fun IrBuilderWithScope.undefinedOrNull(): IrExpression = backendContext.getVoid()
 

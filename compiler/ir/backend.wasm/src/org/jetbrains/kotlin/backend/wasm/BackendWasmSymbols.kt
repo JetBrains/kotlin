@@ -326,8 +326,6 @@ class BackendWasmSymbols(
 
     val wasmAnyRefClass = ClassIds.anyref.classSymbol()
 
-    val staticInitializationFailureWithClassName by CallableIds.staticInitializationFailureWithClassName.functionSymbol()
-
     inner class JsInteropAdapters {
         val kotlinToJsStringAdapter by CallableIds.kotlinToJsStringAdapter.functionSymbol()
         val kotlinToJsAnyAdapter by CallableIds.kotlinToJsAnyAdapter.functionSymbol()
@@ -445,6 +443,7 @@ class BackendWasmSymbols(
         }
     }
 
+    override val staticInitializationFailureWithClassName by CallableIds.staticInitializationFailureWithClassName.functionSymbol()
 }
 
 private object ClassIds {
