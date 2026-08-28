@@ -1,11 +1,15 @@
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
+import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.get
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 import org.jetbrains.kotlin.ideaExt.idea
 
@@ -81,7 +85,19 @@ val JavaPluginExtension.codebaseTestSourceSet: SourceSet
 fun Project.mainJavaPluginSourceSet() = findJavaPluginExtension()?.sourceSets?.findByName("main")
 fun Project.mainKotlinSourceSet() =
     (extensions.findByName("kotlin") as? KotlinSourceSetContainer)?.sourceSets?.findByName("main")
-fun Project.sources() = mainJavaPluginSourceSet()?.allSource ?: mainKotlinSourceSet()?.kotlin
+
+@OptIn(ExperimentalKotlinGradlePluginApi::class)
+fun Project.sources(): FileCollection? {
+    extensions.findByType(KotlinMultiplatformExtension::class.java)?.let { kotlin ->
+        // A KMP project has no Java "main" source set, so collect every source set compiled into its single JVM main compilation.
+        kotlin.targets.singleOrNull { it.platformType == KotlinPlatformType.jvm }?.let { jvmTarget ->
+            return files(jvmTarget.compilations.getByName("main").allKotlinSourceSets.map { it.allKotlinSources })
+        }
+    }
+
+    mainJavaPluginSourceSet()?.let { return it.allSource }
+    return mainKotlinSourceSet()?.kotlin
+}
 
 fun SourceSet.generatedDir(project: Project, generationRoot: Provider<Directory>) {
     java.srcDir(generationRoot)
