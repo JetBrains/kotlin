@@ -39,6 +39,9 @@ private fun IndentedTextBuilder.extractAdditionInfo(stub: StubElement<*>) {
         for (method in additionalProperties) {
             val value = method(stub) ?: continue
 
+            // 'false' says as little as a missing value
+            if (value == false) continue
+
             val methodName = method.name
             val name = if (methodName.startsWith("get")) {
                 methodName.substring(3).replaceFirstChar(Char::lowercaseChar)
@@ -87,6 +90,7 @@ private fun IndentedTextBuilder.appendValue(value: Any?) {
         is KotlinTypeBean -> appendTypeInfo(value)
         is KotlinValueClassRepresentation -> appendValueClassRepresentation(value)
         is Name -> append(value.asString())
+        is Boolean -> append(value.toString())
         is Enum<*> -> append(value.name)
         is String -> append("\"").append(value).append("\"")
         is FqName -> append(value.asString())

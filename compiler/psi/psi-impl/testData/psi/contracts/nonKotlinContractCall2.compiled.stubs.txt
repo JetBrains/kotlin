@@ -14,6 +14,7 @@ MainKt.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
           REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=lambda]
           TYPE_REFERENCE
@@ -22,15 +23,18 @@ MainKt.class:
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Test]
+                      isClassRef: true
               VALUE_PARAMETER_LIST
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Unit]
+                    isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Test]
+            isClassRef: true
     FUNCTION[fqName=test, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test]
       origin: Facade(className=MainKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -40,6 +44,7 @@ MainKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
     FUNCTION[fqName=contract, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contract]
       origin: Facade(className=MainKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -48,11 +53,13 @@ MainKt.class:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Test]
+                isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
 
 
 Test.class:

@@ -10,6 +10,7 @@
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
     CLASS[classId=/StringLiteral, fqName=StringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=StringLiteral, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
@@ -23,6 +24,7 @@
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=StringLiteral.s2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s2]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -30,6 +32,7 @@
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=StringLiteral.s3, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s3]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -37,6 +40,7 @@
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -44,6 +48,7 @@
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -63,6 +68,7 @@
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=StringLiteral]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -101,6 +107,7 @@
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=StringLiteral]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -139,6 +146,7 @@
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=StringLiteral]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -176,6 +184,7 @@
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=StringLiteral]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME

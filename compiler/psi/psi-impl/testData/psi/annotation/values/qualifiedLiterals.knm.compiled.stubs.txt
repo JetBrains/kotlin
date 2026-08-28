@@ -12,6 +12,7 @@
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=Simple]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -42,6 +43,7 @@
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -49,6 +51,7 @@
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
         OBJECT_DECLARATION[classId=test/Simple.Companion, fqName=test.Simple.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
           MODIFIER_LIST[public companion]
@@ -61,6 +64,7 @@
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
+                    isClassRef: true
               INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
             PROPERTY[fqName=test.Simple.Companion.CONST2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST2]
               constantInitializer: 2
@@ -70,6 +74,7 @@
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
+                    isClassRef: true
               INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
 
 
@@ -87,6 +92,7 @@
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=Simple]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -114,6 +120,7 @@
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=Simple]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -139,6 +146,7 @@
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=Simple]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -164,6 +172,7 @@
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=Simple]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME

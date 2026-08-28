@@ -12,6 +12,7 @@ Aliased.class:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Base]
+                isClassRef: true
       CLASS_BODY
         FUNCTION[fqName=Aliased.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
           MODIFIER_LIST[public open operator MustUseReturnValue]
@@ -24,11 +25,13 @@ Aliased.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Any]
+                      isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Boolean]
+                isClassRef: true
 
 
 Base.class:
@@ -49,11 +52,13 @@ Base.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Any]
+                      isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Boolean]
+                isClassRef: true
 
 
 Data.class:
@@ -71,6 +76,7 @@ Data.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
       CLASS_BODY
         PROPERTY[fqName=Data.value, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=value]
           MODIFIER_LIST[public final]
@@ -79,6 +85,7 @@ Data.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
         FUNCTION[fqName=Data.component1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=component1]
           MODIFIER_LIST[public final operator]
           VALUE_PARAMETER_LIST
@@ -87,6 +94,7 @@ Data.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
         FUNCTION[fqName=Data.copy, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=copy]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
@@ -96,10 +104,12 @@ Data.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
+                    isClassRef: true
               REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Data]
+                isClassRef: true
         FUNCTION[fqName=Data.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
           MODIFIER_LIST[public open operator MustUseReturnValue]
           VALUE_PARAMETER_LIST
@@ -111,11 +121,13 @@ Data.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Any]
+                      isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Boolean]
+                isClassRef: true
         FUNCTION[fqName=Data.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
           MODIFIER_LIST[public open MustUseReturnValue]
           VALUE_PARAMETER_LIST
@@ -124,6 +136,7 @@ Data.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
         FUNCTION[fqName=Data.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
           MODIFIER_LIST[public open MustUseReturnValue]
           VALUE_PARAMETER_LIST
@@ -132,6 +145,7 @@ Data.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
 
 
 EqualityBoundKt.class:
@@ -145,6 +159,7 @@ EqualityBoundKt.class:
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Base]
+            isClassRef: true
 
 
 Generic.class:
@@ -170,11 +185,13 @@ Generic.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Any]
+                      isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Boolean]
+                isClassRef: true
 
 
 Inherited.class:
@@ -191,6 +208,7 @@ Inherited.class:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Base]
+                isClassRef: true
       CLASS_BODY
         FUNCTION[fqName=Inherited.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
           MODIFIER_LIST[public open operator MustUseReturnValue]
@@ -203,8 +221,10 @@ Inherited.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Any]
+                      isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Boolean]
+                isClassRef: true

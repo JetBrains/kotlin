@@ -16,6 +16,7 @@ Annotation.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
         FUNCTION[fqName=Annotation.getQuickFixes, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=getQuickFixes]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
@@ -24,6 +25,7 @@ Annotation.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
 
 
 AnnotationAsArgComplexKt.class:
@@ -40,8 +42,10 @@ AnnotationAsArgComplexKt.class:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true

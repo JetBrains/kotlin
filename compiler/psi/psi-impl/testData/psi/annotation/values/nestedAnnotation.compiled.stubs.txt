@@ -15,6 +15,7 @@ Nested.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=foo.Nested.s, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -22,6 +23,7 @@ Nested.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -29,6 +31,7 @@ Nested.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -48,6 +51,7 @@ Outer.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=Outer.nested, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=nested]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -55,6 +59,7 @@ Outer.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=foo]
                 REFERENCE_EXPRESSION[referencedName=Nested]
+                  isClassRef: true
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -62,6 +67,7 @@ Outer.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -80,6 +86,7 @@ WithNested.class:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Outer]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -124,6 +131,7 @@ WithQualifiedNested.class:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Outer]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME

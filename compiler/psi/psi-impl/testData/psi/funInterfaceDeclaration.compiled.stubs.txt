@@ -19,6 +19,7 @@ FILE[kind=File[packageFqName=test]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
+                  isClassRef: true
       CLASS[classId=test/FunInterfaceDeclaration.GenericKRunnable, fqName=test.FunInterfaceDeclaration.GenericKRunnable, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=false, name=GenericKRunnable, superNames=[]]
         MODIFIER_LIST[public fun]
         TYPE_PARAMETER_LIST
@@ -32,6 +33,8 @@ FILE[kind=File[packageFqName=test]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
+                      isClassRef: true
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=R]
+                  isClassRef: true

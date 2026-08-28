@@ -14,6 +14,7 @@ MyRepeatableAnnotation.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Repeatable]
+                  isClassRef: true
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=MyRepeatableAnnotation]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
@@ -24,6 +25,7 @@ MyRepeatableAnnotation.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -31,6 +33,7 @@ MyRepeatableAnnotation.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -52,6 +55,7 @@ RepeatableAnnotation.class:
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=MyRepeatableAnnotation]
+                      isClassRef: true
               VALUE_ARGUMENT_LIST
                 VALUE_ARGUMENT[isSpread=false]
                   VALUE_ARGUMENT_NAME
@@ -69,6 +73,7 @@ RepeatableAnnotation.class:
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=MyRepeatableAnnotation]
+                      isClassRef: true
               VALUE_ARGUMENT_LIST
                 VALUE_ARGUMENT[isSpread=false]
                   VALUE_ARGUMENT_NAME
@@ -80,6 +85,7 @@ RepeatableAnnotation.class:
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=MyRepeatableAnnotation]
+                      isClassRef: true
               VALUE_ARGUMENT_LIST
                 VALUE_ARGUMENT[isSpread=false]
                   VALUE_ARGUMENT_NAME
@@ -97,6 +103,7 @@ RepeatableAnnotation.class:
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=MyRepeatableAnnotation]
+                      isClassRef: true
               VALUE_ARGUMENT_LIST
                 VALUE_ARGUMENT[isSpread=false]
                   VALUE_ARGUMENT_NAME
@@ -108,6 +115,7 @@ RepeatableAnnotation.class:
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=MyRepeatableAnnotation]
+                      isClassRef: true
               VALUE_ARGUMENT_LIST
                 VALUE_ARGUMENT[isSpread=false]
                   VALUE_ARGUMENT_NAME
@@ -119,6 +127,7 @@ RepeatableAnnotation.class:
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=MyRepeatableAnnotation]
+                      isClassRef: true
               VALUE_ARGUMENT_LIST
                 VALUE_ARGUMENT[isSpread=false]
                   VALUE_ARGUMENT_NAME

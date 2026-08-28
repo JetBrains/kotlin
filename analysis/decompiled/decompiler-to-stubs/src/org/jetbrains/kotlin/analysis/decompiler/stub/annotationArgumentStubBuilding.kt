@@ -279,7 +279,7 @@ private fun createConstantStub(parent: StubElement<*>, kind: ConstantValueKind, 
 }
 
 private fun createNameReferenceStub(parent: StubElement<*>, name: Name) {
-    KotlinNameReferenceExpressionStubImpl(parent, name.ref(), /* myClassRef = */ false)
+    KotlinNameReferenceExpressionStubImpl(parent = parent, referencedNameRef = name.ref(), isClassRef = false)
 }
 
 /**

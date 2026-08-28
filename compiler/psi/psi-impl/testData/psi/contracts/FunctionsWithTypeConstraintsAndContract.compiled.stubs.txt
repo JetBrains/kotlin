@@ -12,16 +12,19 @@ MainKt.class:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=MyClass]
+                isClassRef: true
         TYPE_PARAMETER[fqName=null, name=E]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=MyOtherClass]
+                isClassRef: true
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=arg]
           TYPE_REFERENCE
             NULLABLE_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=E]
+                  isClassRef: true
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=block]
           TYPE_REFERENCE
             FUNCTION_TYPE
@@ -29,11 +32,13 @@ MainKt.class:
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=T]
+                    isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
     FUNCTION[fqName=anotherFunctionWithTypeConstraints, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=anotherFunctionWithTypeConstraints]
       origin: Facade(className=MainKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -42,21 +47,25 @@ MainKt.class:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=SuperType]
+                isClassRef: true
         TYPE_PARAMETER[fqName=null, name=T]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=SomeType]
+                isClassRef: true
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=data]
           TYPE_REFERENCE
             NULLABLE_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=D]
+                  isClassRef: true
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=arg]
           TYPE_REFERENCE
             NULLABLE_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
+                  isClassRef: true
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=block]
           TYPE_REFERENCE
             FUNCTION_TYPE
@@ -66,11 +75,13 @@ MainKt.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Unit]
+                    isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
 
 
 MyClass.class:

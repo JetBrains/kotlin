@@ -12,3 +12,4 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=RawStringsWithManyQuotesKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true

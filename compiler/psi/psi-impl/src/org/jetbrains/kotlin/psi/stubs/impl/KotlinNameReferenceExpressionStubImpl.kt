@@ -3,58 +3,35 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.psi.stubs.impl;
+package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.util.io.StringRef;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.psi.KtImplementationDetail;
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression;
-import org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub;
-import org.jetbrains.kotlin.psi.stubs.KotlinStubElement;
+import com.intellij.psi.stubs.StubElement
+import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 
-public class KotlinNameReferenceExpressionStubImpl extends KotlinStubBaseImpl<KtNameReferenceExpression> implements
-                                                                                                       KotlinNameReferenceExpressionStub {
-    @NotNull
-    private final StringRef referencedName;
-    private final boolean myClassRef;
+@OptIn(KtImplementationDetail::class)
+class KotlinNameReferenceExpressionStubImpl(
+    parent: StubElement<*>?,
+    private val referencedNameRef: StringRef,
+    val isClassRef: Boolean,
+) : KotlinStubBaseImpl<KtNameReferenceExpression>(parent, KtNodeTypes.REFERENCE_EXPRESSION), KotlinNameReferenceExpressionStub {
+    override val referencedName: String
+        get() = referencedNameRef.string
 
-    public KotlinNameReferenceExpressionStubImpl(
-            @Nullable StubElement<?> parent,
-            @NotNull StringRef referencedName,
-            boolean myClassRef
-    ) {
-        super(parent, KtNodeTypes.REFERENCE_EXPRESSION);
-        this.referencedName = referencedName;
-        this.myClassRef = myClassRef;
-    }
-
-    public boolean isClassRef() {
-        return myClassRef;
-    }
-
-    @NotNull
-    @Override
-    public String getReferencedName() {
-        return referencedName.getString();
-    }
-
-    @Override
     @KtImplementationDetail
-    public @NotNull KotlinNameReferenceExpressionStubImpl copyInto(@Nullable StubElement<?> newParent) {
-        return new KotlinNameReferenceExpressionStubImpl(
-                newParent,
-                referencedName,
-                myClassRef
-        );
-    }
+    override fun copyInto(newParent: StubElement<*>?): KotlinNameReferenceExpressionStubImpl = KotlinNameReferenceExpressionStubImpl(
+        parent = newParent,
+        referencedNameRef = referencedNameRef,
+        isClassRef = isClassRef,
+    )
 
-    @Override
-    public boolean isEquivalentTo(@NotNull KotlinStubElement<?> other) {
-        if (!(other instanceof KotlinNameReferenceExpressionStubImpl)) return false;
-        if (this.myClassRef != ((KotlinNameReferenceExpressionStubImpl) other).myClassRef) return false;
-        return this.referencedName.equals(((KotlinNameReferenceExpressionStubImpl) other).referencedName);
-    }
+    @KtImplementationDetail
+    override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
+        other is KotlinNameReferenceExpressionStubImpl &&
+                other.isClassRef == isClassRef &&
+                other.referencedNameRef == referencedNameRef
 }

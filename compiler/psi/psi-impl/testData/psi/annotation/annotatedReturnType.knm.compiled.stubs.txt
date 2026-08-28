@@ -13,6 +13,7 @@
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=RegularAnno]
+                      isClassRef: true
           TYPE_REFERENCE
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=TypeAnno]
@@ -21,10 +22,12 @@
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=TypeAnno]
+                        isClassRef: true
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
         FUNCTION[fqName=MyInterface.function, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=function]
           MODIFIER_LIST[public abstract]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=RegularAnno]
@@ -33,6 +36,7 @@
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=RegularAnno]
+                      isClassRef: true
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=argument]
               MODIFIER_LIST[]
@@ -42,6 +46,7 @@
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=RegularAnno]
+                          isClassRef: true
               TYPE_REFERENCE
                 MODIFIER_LIST[]
                   ANNOTATION_ENTRY[hasValueArguments=false, shortName=TypeAnno]
@@ -50,10 +55,12 @@
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=TypeAnno]
+                            isClassRef: true
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
+                    isClassRef: true
           TYPE_REFERENCE
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=TypeAnno]
@@ -62,10 +69,12 @@
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=TypeAnno]
+                        isClassRef: true
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
 
 
 1_.knm:
@@ -84,6 +93,7 @@
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -103,6 +113,7 @@
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -125,4 +136,5 @@
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY

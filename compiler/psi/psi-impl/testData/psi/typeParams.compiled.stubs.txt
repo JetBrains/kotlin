@@ -12,6 +12,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Any]
+              isClassRef: true
       TYPE_PARAMETER[fqName=null, name=T2]
         MODIFIER_LIST[out]
         TYPE_REFERENCE
@@ -19,6 +20,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
+              isClassRef: true
       TYPE_PARAMETER[fqName=null, name=T3]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -29,21 +31,25 @@ FILE[kind=File[packageFqName=test]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Int]
+                      isClassRef: true
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
       TYPE_PARAMETER[fqName=null, name=T4]
       TYPE_PARAMETER[fqName=null, name=T5]
       TYPE_PARAMETER[fqName=null, name=T6]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T5]
+              isClassRef: true
       TYPE_PARAMETER[fqName=null, name=T7]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T6]
+              isClassRef: true
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TypeParams]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
@@ -56,6 +62,7 @@ FILE[kind=File[packageFqName=test]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Cloneable]
+                isClassRef: true
       TYPE_CONSTRAINT
         REFERENCE_EXPRESSION[referencedName=T1]
         TYPE_REFERENCE
@@ -65,6 +72,7 @@ FILE[kind=File[packageFqName=test]]
                 REFERENCE_EXPRESSION[referencedName=java]
               REFERENCE_EXPRESSION[referencedName=io]
             REFERENCE_EXPRESSION[referencedName=Serializable]
+              isClassRef: true
     CLASS_BODY
       PROPERTY[fqName=test.TypeParams.withOwnParam, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=withOwnParam]
         MODIFIER_LIST[public final]
@@ -73,9 +81,11 @@ FILE[kind=File[packageFqName=test]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=G1]
+              isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=G1]
+              isClassRef: true
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
@@ -89,12 +99,15 @@ FILE[kind=File[packageFqName=test]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
+                    isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=G1]
+              isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=G1]
+              isClassRef: true
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
@@ -105,12 +118,15 @@ FILE[kind=File[packageFqName=test]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T4]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=G1]
+              isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=G1]
+              isClassRef: true
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
@@ -119,6 +135,7 @@ FILE[kind=File[packageFqName=test]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T2]
+              isClassRef: true
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
@@ -129,6 +146,7 @@ FILE[kind=File[packageFqName=test]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T1]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p2]
             TYPE_REFERENCE
               FUNCTION_TYPE
@@ -137,28 +155,34 @@ FILE[kind=File[packageFqName=test]]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=T2]
+                          isClassRef: true
                 TYPE_REFERENCE
                   USER_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Unit]
+                      isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p3]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T3]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p4]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T4]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=P5]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T5]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
       FUNCTION[fqName=test.TypeParams.useParamsInOtherOrder, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=useParamsInOtherOrder]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -166,27 +190,33 @@ FILE[kind=File[packageFqName=test]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T3]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p2]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T3]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p3]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T1]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p4]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T5]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=P5]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T1]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
       FUNCTION[fqName=test.TypeParams.useParamsInTypeArg, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=useParamsInTypeArg]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -198,11 +228,13 @@ FILE[kind=File[packageFqName=test]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=collections]
                 REFERENCE_EXPRESSION[referencedName=List]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=T1]
+                          isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p2]
             TYPE_REFERENCE
               USER_TYPE
@@ -211,17 +243,20 @@ FILE[kind=File[packageFqName=test]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=collections]
                 REFERENCE_EXPRESSION[referencedName=Map]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       NULLABLE_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=T4]
+                            isClassRef: true
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       NULLABLE_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=T5]
+                            isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p3]
             TYPE_REFERENCE
               FUNCTION_TYPE
@@ -229,23 +264,28 @@ FILE[kind=File[packageFqName=test]]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=T4]
+                        isClassRef: true
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=T2]
+                          isClassRef: true
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=T3]
+                          isClassRef: true
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T1]
+                      isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
       FUNCTION[fqName=test.TypeParams.withOwnParams, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=withOwnParams]
         MODIFIER_LIST[public final]
         TYPE_PARAMETER_LIST
@@ -257,18 +297,22 @@ FILE[kind=File[packageFqName=test]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=G1]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p2]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=G2]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p3]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=G3]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p4]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T1]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p5]
             TYPE_REFERENCE
               FUNCTION_TYPE
@@ -277,16 +321,19 @@ FILE[kind=File[packageFqName=test]]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=T2]
+                          isClassRef: true
                 TYPE_REFERENCE
                   USER_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Unit]
+                      isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
       FUNCTION[fqName=test.TypeParams.withOwnParamsAndTypeConstraints, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=withOwnParamsAndTypeConstraints]
         MODIFIER_LIST[public final]
         TYPE_PARAMETER_LIST
@@ -295,33 +342,40 @@ FILE[kind=File[packageFqName=test]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=G1]
+                  isClassRef: true
           TYPE_PARAMETER[fqName=null, name=G3]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
           TYPE_PARAMETER[fqName=null, name=G4]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=G1]
+                  isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=G1]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p2]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=G2]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p3]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=G3]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p4]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T1]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p5]
             TYPE_REFERENCE
               FUNCTION_TYPE
@@ -330,16 +384,19 @@ FILE[kind=File[packageFqName=test]]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=T2]
+                          isClassRef: true
                 TYPE_REFERENCE
                   USER_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Unit]
+                      isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
         TYPE_CONSTRAINT_LIST
           TYPE_CONSTRAINT
             REFERENCE_EXPRESSION[referencedName=G3]
@@ -351,6 +408,7 @@ FILE[kind=File[packageFqName=test]]
                       REFERENCE_EXPRESSION[referencedName=java]
                     REFERENCE_EXPRESSION[referencedName=io]
                   REFERENCE_EXPRESSION[referencedName=Serializable]
+                    isClassRef: true
       FUNCTION[fqName=test.TypeParams.withOwnParamsClashing, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=withOwnParamsClashing]
         MODIFIER_LIST[public final]
         TYPE_PARAMETER_LIST
@@ -362,27 +420,33 @@ FILE[kind=File[packageFqName=test]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T1]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p2]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T2]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p3]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T3]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p4]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T4]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p5]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T5]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
       FUNCTION[fqName=test.TypeParams.withOwnParamExtension, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=withOwnParamExtension]
         MODIFIER_LIST[public final]
         TYPE_PARAMETER_LIST
@@ -390,16 +454,19 @@ FILE[kind=File[packageFqName=test]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T1]
+              isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T1]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
       FUNCTION[fqName=test.TypeParams.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         MODIFIER_LIST[public final inline]
         TYPE_PARAMETER_LIST
@@ -412,6 +479,7 @@ FILE[kind=File[packageFqName=test]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=G]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=body]
             TYPE_REFERENCE
               FUNCTION_TYPE
@@ -420,9 +488,12 @@ FILE[kind=File[packageFqName=test]]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=G]
+                          isClassRef: true
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
+                      isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
+              isClassRef: true

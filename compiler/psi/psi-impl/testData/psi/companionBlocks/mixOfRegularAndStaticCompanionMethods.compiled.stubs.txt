@@ -22,11 +22,13 @@ MixOfRegularAndStaticCompanionMethodsKt.class:
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Foo]
+            isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -36,11 +38,13 @@ MixOfRegularAndStaticCompanionMethodsKt.class:
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Foo]
+            isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -50,11 +54,13 @@ MixOfRegularAndStaticCompanionMethodsKt.class:
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Foo]
+            isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Long]
+            isClassRef: true
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -64,33 +70,39 @@ MixOfRegularAndStaticCompanionMethodsKt.class:
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Foo]
+            isClassRef: true
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
     FUNCTION[fqName=regular3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=regular3]
       origin: Facade(className=MixOfRegularAndStaticCompanionMethodsKt, jvmClassName=null)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Foo]
+            isClassRef: true
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
     FUNCTION[fqName=static3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=static3]
       origin: Facade(className=MixOfRegularAndStaticCompanionMethodsKt, jvmClassName=null)
       MODIFIER_LIST[public companion]
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Foo]
+            isClassRef: true
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true

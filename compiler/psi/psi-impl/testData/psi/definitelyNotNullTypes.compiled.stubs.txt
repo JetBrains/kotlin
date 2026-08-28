@@ -14,11 +14,13 @@ FILE[kind=File[packageFqName=<root>]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=T]
+                    isClassRef: true
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Any]
+                    isClassRef: true
     CLASS_BODY
       PROPERTY[fqName=DefinitelyNotNullTypes.x, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=x]
         MODIFIER_LIST[private final]
@@ -27,11 +29,13 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
+                  isClassRef: true
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Any]
+                  isClassRef: true
       FUNCTION[fqName=DefinitelyNotNullTypes.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -43,6 +47,7 @@ FILE[kind=File[packageFqName=<root>]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=collections]
                 REFERENCE_EXPRESSION[referencedName=List]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
@@ -50,21 +55,25 @@ FILE[kind=File[packageFqName=<root>]]
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=T]
+                              isClassRef: true
                         TYPE_REFERENCE
                           USER_TYPE
                             USER_TYPE
                               REFERENCE_EXPRESSION[referencedName=kotlin]
                             REFERENCE_EXPRESSION[referencedName=Any]
+                              isClassRef: true
         TYPE_REFERENCE
           INTERSECTION_TYPE
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
+                  isClassRef: true
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Any]
+                  isClassRef: true
       FUNCTION[fqName=DefinitelyNotNullTypes.bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
         MODIFIER_LIST[public final]
         TYPE_PARAMETER_LIST
@@ -76,11 +85,13 @@ FILE[kind=File[packageFqName=<root>]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=R]
+                      isClassRef: true
                 TYPE_REFERENCE
                   USER_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Any]
+                      isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=action]
             TYPE_REFERENCE
               FUNCTION_TYPE
@@ -91,28 +102,34 @@ FILE[kind=File[packageFqName=<root>]]
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=R]
+                              isClassRef: true
                         TYPE_REFERENCE
                           USER_TYPE
                             USER_TYPE
                               REFERENCE_EXPRESSION[referencedName=kotlin]
                             REFERENCE_EXPRESSION[referencedName=Any]
+                              isClassRef: true
                 TYPE_REFERENCE
                   INTERSECTION_TYPE
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=R]
+                          isClassRef: true
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Any]
+                          isClassRef: true
         TYPE_REFERENCE
           INTERSECTION_TYPE
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=R]
+                  isClassRef: true
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Any]
+                  isClassRef: true

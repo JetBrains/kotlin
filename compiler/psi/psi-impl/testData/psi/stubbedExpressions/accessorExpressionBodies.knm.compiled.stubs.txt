@@ -9,6 +9,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
       MODIFIER_LIST[public final]
       VALUE_PARAMETER_LIST
@@ -19,6 +20,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
+          isClassRef: true
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
       MODIFIER_LIST[public final]
       VALUE_PARAMETER_LIST
@@ -29,6 +31,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
       MODIFIER_LIST[public final]
       VALUE_PARAMETER_LIST
@@ -41,6 +44,7 @@ FILE[kind=File[packageFqName=test]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
   CLASS[classId=test/WithMember, fqName=test.WithMember, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithMember, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithMember]
@@ -54,6 +58,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Char]
+              isClassRef: true
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST

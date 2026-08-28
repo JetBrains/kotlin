@@ -13,6 +13,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithInfixFunctionKt]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
         TYPE_REFERENCE
@@ -20,9 +21,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithInfixFunctionKt]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
+              isClassRef: true
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true

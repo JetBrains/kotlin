@@ -13,6 +13,7 @@ WithoutFileAnnotationAndPackageDeclarationKt.class:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=ann]
+                  isClassRef: true
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
         NULLABLE_TYPE
@@ -20,6 +21,7 @@ WithoutFileAnnotationAndPackageDeclarationKt.class:
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
+              isClassRef: true
 
 
 ann.class:
@@ -38,4 +40,5 @@ ann.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY

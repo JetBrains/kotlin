@@ -12,3 +12,4 @@ FILE[kind=File[packageFqName=p1.p2]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true
