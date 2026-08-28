@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
-object Utils {
+internal object Utils {
     fun wrapStrings(names: List<String>): Array<StringRef> = if (names.isEmpty())
         StringRef.EMPTY_ARRAY
     else

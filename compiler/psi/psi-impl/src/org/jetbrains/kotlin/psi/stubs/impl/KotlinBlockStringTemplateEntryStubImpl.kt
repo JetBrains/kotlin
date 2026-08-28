@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinBlockStringTemplateEntryStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 
 @OptIn(KtImplementationDetail::class)
-class KotlinBlockStringTemplateEntryStubImpl(
+internal class KotlinBlockStringTemplateEntryStubImpl(
     parent: StubElement<*>?,
     override val hasMultipleExpressions: Boolean,
     override val text: String,
