@@ -46,25 +46,37 @@ object KotlinLightParser {
         fun onError(startOffset: Int, endOffset: Int, message: String?)
     }
 
+    /**
+     * Reports every [TokenType.ERROR_ELEMENT] in the tree rooted at [root], in document order.
+     *
+     * Recursion is emulated with an explicit stack to avoid stack overflows on deeply nested trees. A source such as
+     * `val x = "a0" + "a1" + ... + "a9999"`, which machine-generated code produces regularly, nests one binary
+     * expression per operand, so descending with one frame per level exhausts the stack (KT-88399).
+     */
     private fun reportErrors(
-        node: LighterASTNode,
+        root: LighterASTNode,
         tree: FlyweightCapableTreeStructure<LighterASTNode>,
         errorListener: LightTreeParsingErrorListener,
-        ref: Ref<Array<LighterASTNode?>> = Ref<Array<LighterASTNode?>>(),
     ) {
-        tree.getChildren(node, ref)
-        val childrenArray = ref.get() ?: return
+        val stack = ArrayDeque<LighterASTNode>()
+        stack.addLast(root)
+        val ref = Ref<Array<LighterASTNode?>>()
 
-        for (child in childrenArray) {
-            if (child == null) break
-            val tokenType = child.tokenType
-            if (tokenType == TokenType.ERROR_ELEMENT) {
-                val message = PsiBuilderImpl.getErrorMessage(child)
-                errorListener.onError(child.startOffset, child.endOffset, message)
+        while (stack.isNotEmpty()) {
+            val node = stack.removeLast()
+            if (node !== root && node.tokenType == TokenType.ERROR_ELEMENT) {
+                val message = PsiBuilderImpl.getErrorMessage(node)
+                errorListener.onError(node.startOffset, node.endOffset, message)
             }
 
             ref.set(null)
-            reportErrors(child, tree, errorListener, ref)
+            val count = tree.getChildren(node, ref)
+            val childrenArray = ref.get() ?: continue
+
+            // Push in reverse so that the children are popped left to right, keeping the original document order.
+            for (index in minOf(count, childrenArray.size) - 1 downTo 0) {
+                stack.addLast(childrenArray[index] ?: continue)
+            }
         }
     }
 }
