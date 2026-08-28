@@ -75,7 +75,7 @@ class KtDiagnosticFactory0(
         context: DiagnosticBaseContext,
     ): KtSimpleDiagnostic? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
-        return KtRegularSimpleDiagnostic(
+        return KtSimpleDiagnostic(
             element,
             effectiveSeverity,
             this,
@@ -100,7 +100,7 @@ class KtDiagnosticFactory1<A>(
         context: DiagnosticBaseContext,
     ): KtDiagnosticWithParameters1<A>? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
-        return KtRegularDiagnosticWithParameters1(
+        return KtDiagnosticWithParameters1(
             element,
             a,
             effectiveSeverity,
@@ -127,7 +127,7 @@ class KtDiagnosticFactory2<A, B>(
         context: DiagnosticBaseContext,
     ): KtDiagnosticWithParameters2<A, B>? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
-        return KtRegularDiagnosticWithParameters2(
+        return KtDiagnosticWithParameters2(
             element,
             a,
             b,
@@ -156,7 +156,7 @@ class KtDiagnosticFactory3<A, B, C>(
         context: DiagnosticBaseContext,
     ): KtDiagnosticWithParameters3<A, B, C>? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
-        return KtRegularDiagnosticWithParameters3(
+        return KtDiagnosticWithParameters3(
             element,
             a,
             b,
@@ -187,7 +187,7 @@ class KtDiagnosticFactory4<A, B, C, D>(
         context: DiagnosticBaseContext,
     ): KtDiagnosticWithParameters4<A, B, C, D>? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
-        return KtRegularDiagnosticWithParameters4(
+        return KtDiagnosticWithParameters4(
             element,
             a,
             b,

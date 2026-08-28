@@ -58,7 +58,6 @@ import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
-import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.METADATA_ONLY_COMPILATION
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.SEPARATE_KMP_COMPILATION
@@ -72,6 +71,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirOutputPartForDependsOnModule
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.utils.AbstractTwoAttributesMetaInfoProcessor
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -497,7 +497,7 @@ private class DebugDiagnosticConsumer(
             return
         }
 
-        val diagnostic = KtRegularSimpleDiagnostic(
+        val diagnostic = KtSimpleDiagnostic(
             sourceElement,
             factory.severity,
             factory,
@@ -524,7 +524,7 @@ private class DebugDiagnosticConsumer(
             return
         }
 
-        val diagnostic = KtRegularDiagnosticWithParameters1(
+        val diagnostic = KtDiagnosticWithParameters1(
             positionedElement,
             argumentFactory(),
             factory.severity,
