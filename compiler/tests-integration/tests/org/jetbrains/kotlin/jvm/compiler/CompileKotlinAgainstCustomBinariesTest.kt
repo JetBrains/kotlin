@@ -60,6 +60,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         additionalOptions: List<String>,
         expectedFileName: String?,
         additionalSources: List<String>,
+        stackSize: Long?,
         sanitizeCompilerOutput: (String) -> String,
     ): Pair<String, ExitCode> {
         val options =
@@ -72,7 +73,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         return super.compileKotlin(
             fileName, output, classpath, compiler, options,
             if (expectedFirFile != null && languageVersion.usesK2 && expectedFirFile.exists()) expectedFirFile.name else expectedFileName,
-            additionalSources, sanitizeCompilerOutput
+            additionalSources, stackSize, sanitizeCompilerOutput
         )
     }
 
