@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.tests
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.LANGUAGE_VERSION
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.WERROR
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatternExactlyTimes
@@ -209,6 +210,23 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Escalated argument parsing warning fails the build")
+    @TestMetadata("basic-multimodule-project/module-1")
+    fun testEscalatedArgumentParsingWarningFailsBuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmProject(strategyConfig) {
+            val module = module("basic-multimodule-project/module-1")
+            module.compile(compilationConfigAction = {
+                it.compilerArguments.applyArgumentStrings(listOf("-language-version=2.4"))
+                it.compilerArguments.applyArgumentStrings(listOf("-language-version=2.5"))
+                it.compilerArguments[WERROR] = true
+            }) {
+                expectFail()
+                assertPassedMultipleTimes("-language-version", "2.4", "2.5", logLevel = LogLevel.ERROR)
+            }
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("An argument set via two separate applyArgumentStrings calls is reported")
     @TestMetadata("basic-multimodule-project/module-1")
     fun testArgumentSetViaTwoArgumentStringsCallsReportsWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
@@ -227,10 +245,10 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
      * [values] are expected in configuration order — the compiler reports them in the order they were supplied, and
      * the last one is the one it actually uses.
      */
-    private fun CompilationOutcome.assertPassedMultipleTimes(arg: String, vararg values: String) {
+    private fun CompilationOutcome.assertPassedMultipleTimes(arg: String, vararg values: String, logLevel: LogLevel = LogLevel.WARN) {
         val renderedValues = values.joinToString("', '")
         assertLogContainsPatternExactlyTimes(
-            LogLevel.WARN,
+            logLevel,
             ".*Argument '$arg' is passed multiple times: '$renderedValues'\\. The last value will be used\\..*"
                 .toRegex(RegexOption.IGNORE_CASE),
             1,
