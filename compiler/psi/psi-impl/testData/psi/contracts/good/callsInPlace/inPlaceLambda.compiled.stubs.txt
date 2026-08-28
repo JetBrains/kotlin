@@ -17,11 +17,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InPlaceLambdaKt]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
+                  isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true
   FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=foo]
     contract: [ effect:CallsInPlace(param(0), AT_LEAST_ONCE) ]
     origin: Facade(className=InPlaceLambdaKt, jvmClassName=null)
@@ -36,8 +38,10 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InPlaceLambdaKt]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
+                  isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true

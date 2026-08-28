@@ -17,6 +17,7 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     PROPERTY[fqName=test.p1ExtVal, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p1ExtVal]
       origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass)
       MODIFIER_LIST[public]
@@ -25,11 +26,13 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -41,6 +44,7 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     PROPERTY[fqName=test.annotatedConstVal, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=annotatedConstVal]
       constantInitializer: 42
       origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass)
@@ -53,6 +57,7 @@ MultifileClass.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Deprecated]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -64,6 +69,7 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
     FUNCTION[fqName=test.p1Fun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1Fun]
       origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass)
@@ -74,6 +80,7 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
     FUNCTION[fqName=test.p1ExtFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p1ExtFun]
       origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass)
       MODIFIER_LIST[public]
@@ -82,12 +89,14 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
     FUNCTION[fqName=test.p1ExprFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1ExprFun]
       origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass)
       MODIFIER_LIST[public]
@@ -97,6 +106,7 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     FUNCTION[fqName=test.p1FunWithParams, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1FunWithParams]
       origin: MultiFileFacade(className=test/MultifileClass__MultifileClassKt, facadeClassName=test/MultifileClass)
       MODIFIER_LIST[public]
@@ -107,11 +117,13 @@ MultifileClass.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     PROPERTY[fqName=test.p3Val, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p3Val]
       origin: MultiFileFacade(className=test/MultifileClass__MultifileClass__PartKt, facadeClassName=test/MultifileClass)
       MODIFIER_LIST[public]
@@ -120,6 +132,7 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     PROPERTY[fqName=test.p3ExtVal, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p3ExtVal]
       origin: MultiFileFacade(className=test/MultifileClass__MultifileClass__PartKt, facadeClassName=test/MultifileClass)
       MODIFIER_LIST[public]
@@ -128,11 +141,13 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -145,6 +160,7 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
     FUNCTION[fqName=test.p3ExtFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p3ExtFun]
       origin: MultiFileFacade(className=test/MultifileClass__MultifileClass__PartKt, facadeClassName=test/MultifileClass)
       MODIFIER_LIST[public]
@@ -153,12 +169,14 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
     PROPERTY[fqName=test.p2Val, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p2Val]
       origin: MultiFileFacade(className=test/MultifileClass__PartKt, facadeClassName=test/MultifileClass)
       MODIFIER_LIST[public]
@@ -167,6 +185,7 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     PROPERTY[fqName=test.p2ExtVal, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p2ExtVal]
       origin: MultiFileFacade(className=test/MultifileClass__PartKt, facadeClassName=test/MultifileClass)
       MODIFIER_LIST[public]
@@ -175,11 +194,13 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -192,6 +213,7 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
     FUNCTION[fqName=test.p2ExtFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p2ExtFun]
       origin: MultiFileFacade(className=test/MultifileClass__PartKt, facadeClassName=test/MultifileClass)
       MODIFIER_LIST[public]
@@ -200,12 +222,14 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
 
 
 MultifileClass__MultifileClassKt.class:
@@ -223,6 +247,7 @@ MultifileClass__MultifileClassKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     PROPERTY[fqName=test.p1ExtVal, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p1ExtVal]
       origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -231,11 +256,13 @@ MultifileClass__MultifileClassKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -247,6 +274,7 @@ MultifileClass__MultifileClassKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     PROPERTY[fqName=test.annotatedConstVal, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=annotatedConstVal]
       origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null)
       MODIFIER_LIST[public const]
@@ -258,6 +286,7 @@ MultifileClass__MultifileClassKt.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Deprecated]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -269,6 +298,7 @@ MultifileClass__MultifileClassKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     FUNCTION[fqName=test.p1Fun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1Fun]
       origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -278,6 +308,7 @@ MultifileClass__MultifileClassKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
     FUNCTION[fqName=test.p1ExtFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p1ExtFun]
       origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -286,12 +317,14 @@ MultifileClass__MultifileClassKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
     FUNCTION[fqName=test.p1ExprFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1ExprFun]
       origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -301,6 +334,7 @@ MultifileClass__MultifileClassKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     FUNCTION[fqName=test.p1FunWithParams, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1FunWithParams]
       origin: Facade(className=test/MultifileClass__MultifileClassKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -311,11 +345,13 @@ MultifileClass__MultifileClassKt.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
 
 
 MultifileClass__MultifileClass__PartKt.class:
@@ -333,6 +369,7 @@ MultifileClass__MultifileClass__PartKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     PROPERTY[fqName=test.p3ExtVal, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p3ExtVal]
       origin: Facade(className=test/MultifileClass__MultifileClass__PartKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -341,11 +378,13 @@ MultifileClass__MultifileClass__PartKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -358,6 +397,7 @@ MultifileClass__MultifileClass__PartKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
     FUNCTION[fqName=test.p3ExtFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p3ExtFun]
       origin: Facade(className=test/MultifileClass__MultifileClass__PartKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -366,12 +406,14 @@ MultifileClass__MultifileClass__PartKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
 
 
 MultifileClass__PartKt.class:
@@ -389,6 +431,7 @@ MultifileClass__PartKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     PROPERTY[fqName=test.p2ExtVal, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p2ExtVal]
       origin: Facade(className=test/MultifileClass__PartKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -397,11 +440,13 @@ MultifileClass__PartKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -414,6 +459,7 @@ MultifileClass__PartKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
     FUNCTION[fqName=test.p2ExtFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p2ExtFun]
       origin: Facade(className=test/MultifileClass__PartKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -422,9 +468,11 @@ MultifileClass__PartKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true

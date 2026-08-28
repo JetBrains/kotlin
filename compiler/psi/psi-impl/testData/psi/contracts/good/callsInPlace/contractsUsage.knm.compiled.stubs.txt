@@ -14,11 +14,13 @@ FILE[kind=File[packageFqName=<root>]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
+                  isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true
   FUNCTION[fqName=baz, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=baz]
     contract: [ effect:CallsInPlace(param(-1), AT_MOST_ONCE) ]
     MODIFIER_LIST[public]
@@ -30,12 +32,14 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true
   FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=foo]
     contract: [
       effect:CallsInPlace(param(0), AT_LEAST_ONCE)
@@ -52,6 +56,7 @@ FILE[kind=File[packageFqName=<root>]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
+                  isClassRef: true
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=y]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -61,8 +66,10 @@ FILE[kind=File[packageFqName=<root>]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
+                  isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true

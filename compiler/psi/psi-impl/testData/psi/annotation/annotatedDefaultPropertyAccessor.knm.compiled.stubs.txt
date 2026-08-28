@@ -14,6 +14,7 @@
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -32,18 +33,21 @@
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=withDefaultSetter]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=both]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
       CLASS_BODY
         PROPERTY[fqName=Foo.withDefaultGetter, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=withDefaultGetter]
           MODIFIER_LIST[public final]
@@ -52,6 +56,7 @@
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
           PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
@@ -60,6 +65,7 @@
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Anno]
+                        isClassRef: true
         PROPERTY[fqName=Foo.withDefaultSetter, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=withDefaultSetter]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
@@ -67,6 +73,7 @@
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
           PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
@@ -75,6 +82,7 @@
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Anno]
+                        isClassRef: true
         PROPERTY[fqName=Foo.both, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=both]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
@@ -82,6 +90,7 @@
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
           PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
@@ -90,6 +99,7 @@
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Anno]
+                        isClassRef: true
           PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
@@ -98,3 +108,4 @@
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Anno]
+                        isClassRef: true

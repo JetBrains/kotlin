@@ -13,12 +13,14 @@ Box.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
       CLASS_BODY
         PROPERTY[fqName=Box.key, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=key]
           MODIFIER_LIST[public final]
@@ -27,6 +29,7 @@ Box.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
         PROPERTY[fqName=Box.value, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=value]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
@@ -34,6 +37,7 @@ Box.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
         FUNCTION[fqName=Box.component1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=component1]
           MODIFIER_LIST[public final operator]
           VALUE_PARAMETER_LIST
@@ -42,6 +46,7 @@ Box.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
         FUNCTION[fqName=Box.component2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=component2]
           MODIFIER_LIST[public final operator]
           VALUE_PARAMETER_LIST
@@ -50,6 +55,7 @@ Box.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
         FUNCTION[fqName=Box.copy, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=copy]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
@@ -59,6 +65,7 @@ Box.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=String]
+                    isClassRef: true
               REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
             VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=value]
               TYPE_REFERENCE
@@ -66,10 +73,12 @@ Box.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=String]
+                    isClassRef: true
               REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Box]
+                isClassRef: true
         FUNCTION[fqName=Box.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
           MODIFIER_LIST[public open operator MustUseReturnValue]
           VALUE_PARAMETER_LIST
@@ -80,11 +89,13 @@ Box.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Any]
+                      isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Boolean]
+                isClassRef: true
         FUNCTION[fqName=Box.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
           MODIFIER_LIST[public open MustUseReturnValue]
           VALUE_PARAMETER_LIST
@@ -93,6 +104,7 @@ Box.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
         FUNCTION[fqName=Box.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
           MODIFIER_LIST[public open MustUseReturnValue]
           VALUE_PARAMETER_LIST
@@ -101,6 +113,7 @@ Box.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
 
 
 VariableNamedValueInSquareBracketsKt.class:
@@ -117,6 +130,7 @@ VariableNamedValueInSquareBracketsKt.class:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Box]
+                isClassRef: true
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=l]
           TYPE_REFERENCE
             USER_TYPE
@@ -125,16 +139,19 @@ VariableNamedValueInSquareBracketsKt.class:
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=collections]
               REFERENCE_EXPRESSION[referencedName=List]
+                isClassRef: true
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Box]
+                        isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
     FUNCTION[fqName=foo2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo2]
       origin: Facade(className=VariableNamedValueInSquareBracketsKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -143,6 +160,7 @@ VariableNamedValueInSquareBracketsKt.class:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Box]
+                isClassRef: true
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=l]
           TYPE_REFERENCE
             USER_TYPE
@@ -151,16 +169,19 @@ VariableNamedValueInSquareBracketsKt.class:
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=collections]
               REFERENCE_EXPRESSION[referencedName=List]
+                isClassRef: true
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Box]
+                        isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
     FUNCTION[fqName=foo3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo3]
       origin: Facade(className=VariableNamedValueInSquareBracketsKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -169,6 +190,7 @@ VariableNamedValueInSquareBracketsKt.class:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Box]
+                isClassRef: true
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=l]
           TYPE_REFERENCE
             USER_TYPE
@@ -177,16 +199,19 @@ VariableNamedValueInSquareBracketsKt.class:
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=collections]
               REFERENCE_EXPRESSION[referencedName=List]
+                isClassRef: true
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Box]
+                        isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
     FUNCTION[fqName=foo4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo4]
       origin: Facade(className=VariableNamedValueInSquareBracketsKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -195,6 +220,7 @@ VariableNamedValueInSquareBracketsKt.class:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Box]
+                isClassRef: true
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=l]
           TYPE_REFERENCE
             USER_TYPE
@@ -203,13 +229,16 @@ VariableNamedValueInSquareBracketsKt.class:
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=collections]
               REFERENCE_EXPRESSION[referencedName=List]
+                isClassRef: true
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Box]
+                        isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true

@@ -12,6 +12,7 @@ Marked.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=MustUseReturnValues]
+                  isClassRef: true
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Marked]
         MODIFIER_LIST[public MustUseReturnValue]
         VALUE_PARAMETER_LIST
@@ -23,6 +24,7 @@ Marked.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
           PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
             MODIFIER_LIST[public final]
             VALUE_PARAMETER_LIST
@@ -35,6 +37,7 @@ Marked.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=String]
+                      isClassRef: true
         FUNCTION[fqName=Marked.alreadyApplied, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=alreadyApplied]
           MODIFIER_LIST[public final MustUseReturnValue]
           VALUE_PARAMETER_LIST
@@ -43,6 +46,7 @@ Marked.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
         FUNCTION[fqName=Marked.ignorable, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
           MODIFIER_LIST[public final IgnorableReturnValue]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
@@ -53,12 +57,14 @@ Marked.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                      isClassRef: true
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
 
 
 MarkedTopLevelKt.class:
@@ -75,6 +81,7 @@ MarkedTopLevelKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -87,6 +94,7 @@ MarkedTopLevelKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
     FUNCTION[fqName=ignorableTopLvl, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=ignorableTopLvl]
       origin: Facade(className=MarkedTopLevelKt, jvmClassName=null)
       MODIFIER_LIST[public IgnorableReturnValue]
@@ -98,12 +106,14 @@ MarkedTopLevelKt.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                  isClassRef: true
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
 
 
 MyEnum.class:
@@ -122,11 +132,13 @@ MyEnum.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Enum]
+                isClassRef: true
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=MyEnum]
+                        isClassRef: true
       CLASS_BODY
         ENUM_ENTRY[classId=null, fqName=MyEnum.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
         ENUM_ENTRY[classId=null, fqName=MyEnum.B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
@@ -138,6 +150,7 @@ MyEnum.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
 
 
 Unmarked.class:
@@ -157,6 +170,7 @@ Unmarked.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
           PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
             MODIFIER_LIST[public final]
             VALUE_PARAMETER_LIST
@@ -169,6 +183,7 @@ Unmarked.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=String]
+                      isClassRef: true
         FUNCTION[fqName=Unmarked.getStuff, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=getStuff]
           MODIFIER_LIST[public final MustUseReturnValue]
           VALUE_PARAMETER_LIST
@@ -177,6 +192,7 @@ Unmarked.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
         FUNCTION[fqName=Unmarked.ignorable, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
           MODIFIER_LIST[public final IgnorableReturnValue]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
@@ -187,12 +203,14 @@ Unmarked.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                      isClassRef: true
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
 
 
 UnmarkedTopLevelKt.class:
@@ -209,6 +227,7 @@ UnmarkedTopLevelKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -221,3 +240,4 @@ UnmarkedTopLevelKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true

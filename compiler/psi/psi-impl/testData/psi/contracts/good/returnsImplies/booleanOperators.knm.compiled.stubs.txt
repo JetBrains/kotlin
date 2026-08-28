@@ -11,11 +11,13 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true
   FUNCTION[fqName=myRequireAnd, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=myRequireAnd]
     contract: [ effect:Returns(WILDCARD) -> param(0) && param(1) ]
     MODIFIER_LIST[public]
@@ -26,17 +28,20 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b2]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true
   FUNCTION[fqName=myRequireOr, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=myRequireOr]
     contract: [ effect:Returns(WILDCARD) -> param(0) || param(1) ]
     MODIFIER_LIST[public]
@@ -47,17 +52,20 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b2]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true
   FUNCTION[fqName=myRequireNot, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=myRequireNot]
     contract: [ effect:Returns(WILDCARD) -> param(0) ]
     MODIFIER_LIST[public]
@@ -68,8 +76,10 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true

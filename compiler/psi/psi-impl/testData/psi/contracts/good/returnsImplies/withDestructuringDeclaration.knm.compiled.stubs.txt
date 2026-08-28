@@ -10,15 +10,18 @@ FILE[kind=File[packageFqName=<root>]]
       NULLABLE_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=PairList]
+            isClassRef: true
           TYPE_ARGUMENT_LIST
             TYPE_PROJECTION[projectionKind=NONE]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=T]
+                    isClassRef: true
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=T]
+          isClassRef: true
   CLASS[classId=/PairList, fqName=PairList, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PairList, superNames=[]]
     MODIFIER_LIST[public final]
     TYPE_PARAMETER_LIST
@@ -34,11 +37,13 @@ FILE[kind=File[packageFqName=<root>]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=collections]
               REFERENCE_EXPRESSION[referencedName=List]
+                isClassRef: true
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=T]
+                        isClassRef: true
     CLASS_BODY
       PROPERTY[fqName=PairList.items, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=items]
         MODIFIER_LIST[public final]
@@ -49,8 +54,10 @@ FILE[kind=File[packageFqName=<root>]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=List]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
+                      isClassRef: true

@@ -21,6 +21,7 @@ Objects.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
         FUNCTION[fqName=Objects.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
@@ -29,6 +30,7 @@ Objects.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
         FUNCTION[fqName=Objects.g, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=g]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
@@ -37,6 +39,7 @@ Objects.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
         OBJECT_DECLARATION[classId=/Objects.InnerObject, fqName=Objects.InnerObject, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=InnerObject, superNames=[A]]
           MODIFIER_LIST[private]
           SUPER_TYPE_LIST
@@ -44,6 +47,7 @@ Objects.class:
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=A]
+                    isClassRef: true
           CLASS_BODY
             PROPERTY[fqName=Objects.InnerObject.c, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
               MODIFIER_LIST[public final]
@@ -52,6 +56,7 @@ Objects.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
+                    isClassRef: true
             FUNCTION[fqName=Objects.InnerObject.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
               MODIFIER_LIST[public final]
               VALUE_PARAMETER_LIST
@@ -60,6 +65,7 @@ Objects.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Unit]
+                    isClassRef: true
         OBJECT_DECLARATION[classId=/Objects.OtherObject, fqName=Objects.OtherObject, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=OtherObject, superNames=[NestedClass]]
           MODIFIER_LIST[public]
           SUPER_TYPE_LIST
@@ -68,7 +74,9 @@ Objects.class:
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Objects]
+                      isClassRef: true
                   REFERENCE_EXPRESSION[referencedName=NestedClass]
+                    isClassRef: true
           CLASS_BODY
             PROPERTY[fqName=Objects.OtherObject.c, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
               MODIFIER_LIST[public final]
@@ -77,6 +85,7 @@ Objects.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
+                    isClassRef: true
             FUNCTION[fqName=Objects.OtherObject.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
               MODIFIER_LIST[public final]
               VALUE_PARAMETER_LIST
@@ -85,6 +94,7 @@ Objects.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Unit]
+                    isClassRef: true
         CLASS[classId=/Objects.NestedClass, fqName=Objects.NestedClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=NestedClass, superNames=[]]
           MODIFIER_LIST[public open]
           PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=NestedClass]

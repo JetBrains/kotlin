@@ -14,6 +14,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Annotation]
+              isClassRef: true
     CLASS_BODY
   CLASS[classId=test/AnnoB, fqName=test.AnnoB, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoB, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
@@ -27,6 +28,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Annotation]
+              isClassRef: true
     CLASS_BODY
   CLASS[classId=test/AnnotatedParameterInInnerClassConstructor, fqName=test.AnnotatedParameterInInnerClassConstructor, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotatedParameterInInnerClassConstructor, superNames=[]]
     MODIFIER_LIST[public final]
@@ -49,11 +51,13 @@ FILE[kind=File[packageFqName=test]]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=test]
                         REFERENCE_EXPRESSION[referencedName=AnnoA]
+                          isClassRef: true
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=String]
+                    isClassRef: true
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
               MODIFIER_LIST[]
                 ANNOTATION_ENTRY[hasValueArguments=false, shortName=AnnoB]
@@ -64,11 +68,13 @@ FILE[kind=File[packageFqName=test]]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=test]
                         REFERENCE_EXPRESSION[referencedName=AnnoB]
+                          isClassRef: true
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=String]
+                    isClassRef: true
         CLASS_BODY
       CLASS[classId=test/AnnotatedParameterInInnerClassConstructor.InnerGeneric, fqName=test.AnnotatedParameterInInnerClassConstructor.InnerGeneric, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=InnerGeneric, superNames=[]]
         MODIFIER_LIST[public final inner]
@@ -87,9 +93,11 @@ FILE[kind=File[packageFqName=test]]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=test]
                         REFERENCE_EXPRESSION[referencedName=AnnoA]
+                          isClassRef: true
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=T]
+                    isClassRef: true
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
               MODIFIER_LIST[]
                 ANNOTATION_ENTRY[hasValueArguments=false, shortName=AnnoB]
@@ -100,9 +108,11 @@ FILE[kind=File[packageFqName=test]]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=test]
                         REFERENCE_EXPRESSION[referencedName=AnnoB]
+                          isClassRef: true
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=String]
+                    isClassRef: true
         CLASS_BODY

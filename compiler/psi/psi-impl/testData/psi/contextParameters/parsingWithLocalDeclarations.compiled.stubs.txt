@@ -12,6 +12,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarations
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true
   FUNCTION[fqName=contextFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun]
     origin: Facade(className=ParsingWithLocalDeclarationsKt, jvmClassName=null)
     MODIFIER_LIST[public]
@@ -22,12 +23,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarations
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Any]
+                isClassRef: true
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true
   FUNCTION[fqName=contextFun2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun2]
     origin: Facade(className=ParsingWithLocalDeclarationsKt, jvmClassName=null)
     MODIFIER_LIST[public]
@@ -38,6 +41,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarations
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=y]
           TYPE_REFERENCE
             FUNCTION_TYPE
@@ -47,12 +51,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarations
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Unit]
+                    isClassRef: true
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true
   FUNCTION[fqName=contextFun3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun3]
     origin: Facade(className=ParsingWithLocalDeclarationsKt, jvmClassName=null)
     MODIFIER_LIST[public]
@@ -66,18 +72,21 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarations
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Unit]
+                    isClassRef: true
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=y]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true
   FUNCTION[fqName=contextFun4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contextFun4]
     origin: Facade(className=ParsingWithLocalDeclarationsKt, jvmClassName=null)
     MODIFIER_LIST[public]
@@ -90,6 +99,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarations
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=reflect]
               REFERENCE_EXPRESSION[referencedName=KClass]
+                isClassRef: true
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=STAR]
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=y]
@@ -101,9 +111,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ParsingWithLocalDeclarations
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Unit]
+                    isClassRef: true
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true

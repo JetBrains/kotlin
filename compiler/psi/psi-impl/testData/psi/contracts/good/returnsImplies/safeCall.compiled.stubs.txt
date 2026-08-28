@@ -15,12 +15,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SafeCallKt]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
   FUNCTION[fqName=test2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test2]
     contract: [ effect:Returns(NOT_NULL) -> param(0) is KotlinClassTypeBean(classId=kotlin/String, arguments=[], nullable=false, abbreviatedType=null) ]
     origin: Facade(className=SafeCallKt, jvmClassName=null)
@@ -33,9 +35,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SafeCallKt]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true

@@ -15,12 +15,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BaseConditionsKt]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
   FUNCTION[fqName=decodeFake, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=decodeFake]
     contract: [ effect:param(0) == null -> Returns(NOT_NULL) ]
     origin: Facade(className=BaseConditionsKt, jvmClassName=null)
@@ -33,12 +35,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BaseConditionsKt]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
   FUNCTION[fqName=decodeIfString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=decodeIfString]
     contract: [ effect:param(0) is KotlinClassTypeBean(classId=kotlin/String, arguments=[], nullable=false, abbreviatedType=null) -> Returns(NOT_NULL) ]
     origin: Facade(className=BaseConditionsKt, jvmClassName=null)
@@ -50,12 +54,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BaseConditionsKt]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Any]
+              isClassRef: true
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
   FUNCTION[fqName=decodeNotNumber, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=decodeNotNumber]
     contract: [ effect:param(0) !is KotlinClassTypeBean(classId=kotlin/Number, arguments=[], nullable=false, abbreviatedType=null) -> Returns(NOT_NULL) ]
     origin: Facade(className=BaseConditionsKt, jvmClassName=null)
@@ -67,9 +73,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BaseConditionsKt]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Any]
+              isClassRef: true
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true

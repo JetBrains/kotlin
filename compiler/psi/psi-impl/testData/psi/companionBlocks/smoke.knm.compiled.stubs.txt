@@ -27,6 +27,7 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
       COMPANION_BLOCK
         MODIFIER_LIST[companion]
         CLASS_BODY
@@ -38,6 +39,7 @@ FILE[kind=File[packageFqName=<root>]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
+                  isClassRef: true
   CLASS[classId=/C4, fqName=C4, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=C4, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=C4]
@@ -52,6 +54,7 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
       COMPANION_BLOCK
         MODIFIER_LIST[companion]
         CLASS_BODY
@@ -63,6 +66,7 @@ FILE[kind=File[packageFqName=<root>]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
+                  isClassRef: true
           FUNCTION[fqName=C4.baz, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=baz]
             MODIFIER_LIST[public final]
             VALUE_PARAMETER_LIST
@@ -71,3 +75,4 @@ FILE[kind=File[packageFqName=<root>]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
+                  isClassRef: true

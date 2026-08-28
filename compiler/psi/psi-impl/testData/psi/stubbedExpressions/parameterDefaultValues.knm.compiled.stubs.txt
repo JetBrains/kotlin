@@ -10,6 +10,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
   FUNCTION[fqName=test.withDefaults, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=withDefaults]
     MODIFIER_LIST[public]
@@ -20,6 +21,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
         REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
       VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=string]
         TYPE_REFERENCE
@@ -27,6 +29,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
+              isClassRef: true
         REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
       VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=negative]
         TYPE_REFERENCE
@@ -34,6 +37,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
         REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
       VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=reference]
         TYPE_REFERENCE
@@ -41,12 +45,14 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
         REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true
   CLASS[classId=test/WithArrayDefaults, fqName=test.WithArrayDefaults, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithArrayDefaults, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithArrayDefaults]
@@ -60,6 +66,7 @@ FILE[kind=File[packageFqName=test]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=IntArray]
+                isClassRef: true
           COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
         VALUE_PARAMETER[fqName=test.WithArrayDefaults.filled, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=filled]
           constantInitializer: [4, 5]
@@ -69,6 +76,7 @@ FILE[kind=File[packageFqName=test]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=IntArray]
+                isClassRef: true
           COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=2]
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4]
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]
@@ -79,6 +87,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Annotation]
+              isClassRef: true
     CLASS_BODY
   CLASS[classId=test/WithConstructorDefaults, fqName=test.WithConstructorDefaults, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithConstructorDefaults, superNames=[]]
     MODIFIER_LIST[public final]
@@ -91,6 +100,7 @@ FILE[kind=File[packageFqName=test]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
           REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=text]
           TYPE_REFERENCE
@@ -98,6 +108,7 @@ FILE[kind=File[packageFqName=test]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
           REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
     CLASS_BODY
       PROPERTY[fqName=test.WithConstructorDefaults.value, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=value]
@@ -107,3 +118,4 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true

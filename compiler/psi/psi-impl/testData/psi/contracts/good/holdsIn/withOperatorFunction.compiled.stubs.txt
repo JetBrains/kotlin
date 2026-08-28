@@ -12,6 +12,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithOperatorFunctionKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Boolean]
+          isClassRef: true
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=block]
         TYPE_REFERENCE
@@ -22,8 +23,10 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithOperatorFunctionKt]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
+                  isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true

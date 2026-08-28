@@ -13,6 +13,7 @@ FILE[kind=File[packageFqName=test]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
     CLASS_BODY
       PROPERTY[fqName=test.Modifiers.x, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=x]
         MODIFIER_LIST[public final]
@@ -21,6 +22,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
       PROPERTY[fqName=test.Modifiers.extVar, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=extVar]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
@@ -28,6 +30,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[public final external]
           VALUE_PARAMETER_LIST
@@ -40,6 +43,7 @@ FILE[kind=File[packageFqName=test]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
+                    isClassRef: true
       FUNCTION[fqName=test.Modifiers.extFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=extFun]
         MODIFIER_LIST[public final external]
         VALUE_PARAMETER_LIST
@@ -48,6 +52,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
       FUNCTION[fqName=test.Modifiers.sum, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=sum]
         MODIFIER_LIST[public final tailrec]
         VALUE_PARAMETER_LIST
@@ -57,17 +62,20 @@ FILE[kind=File[packageFqName=test]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Long]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=sum]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Long]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Long]
+              isClassRef: true
       FUNCTION[fqName=test.Modifiers.inlined, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=inlined]
         MODIFIER_LIST[public final inline]
         VALUE_PARAMETER_LIST
@@ -81,6 +89,7 @@ FILE[kind=File[packageFqName=test]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Unit]
+                      isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=arg2]
             MODIFIER_LIST[noinline]
             TYPE_REFERENCE
@@ -91,11 +100,13 @@ FILE[kind=File[packageFqName=test]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Unit]
+                      isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
       FUNCTION[fqName=test.Modifiers.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
@@ -106,11 +117,13 @@ FILE[kind=File[packageFqName=test]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Any]
+                    isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
       FUNCTION[fqName=test.Modifiers.suspend, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=suspend]
         MODIFIER_LIST[public final suspend]
         VALUE_PARAMETER_LIST
@@ -122,6 +135,7 @@ FILE[kind=File[packageFqName=test]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=coroutines]
                 REFERENCE_EXPRESSION[referencedName=Continuation]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
@@ -129,11 +143,13 @@ FILE[kind=File[packageFqName=test]]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Int]
+                          isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
       FUNCTION[fqName=test.Modifiers.builder, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=builder]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -147,17 +163,20 @@ FILE[kind=File[packageFqName=test]]
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
                       REFERENCE_EXPRESSION[referencedName=Any]
+                        isClassRef: true
                 VALUE_PARAMETER_LIST
                 TYPE_REFERENCE
                   USER_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Unit]
+                      isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
       FUNCTION[fqName=test.Modifiers.component1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=component1]
         MODIFIER_LIST[public final operator]
         VALUE_PARAMETER_LIST
@@ -166,6 +185,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
       FUNCTION[fqName=test.Modifiers.copy, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=copy]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -175,12 +195,14 @@ FILE[kind=File[packageFqName=test]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=test]
             REFERENCE_EXPRESSION[referencedName=Modifiers]
+              isClassRef: true
       FUNCTION[fqName=test.Modifiers.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
@@ -189,6 +211,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
       FUNCTION[fqName=test.Modifiers.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
@@ -197,6 +220,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
+              isClassRef: true
       CLASS[classId=test/Modifiers.Ann, fqName=test.Modifiers.Ann, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Ann, superNames=[Annotation]]
         MODIFIER_LIST[public final annotation]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Ann]
@@ -209,4 +233,5 @@ FILE[kind=File[packageFqName=test]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Annotation]
+                  isClassRef: true
         CLASS_BODY

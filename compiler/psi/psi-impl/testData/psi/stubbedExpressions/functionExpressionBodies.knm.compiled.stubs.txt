@@ -10,6 +10,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
   FUNCTION[fqName=test.int, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=int]
     MODIFIER_LIST[public]
@@ -19,6 +20,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
   FUNCTION[fqName=test.string, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=string]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -27,6 +29,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
+          isClassRef: true
   FUNCTION[fqName=test.negative, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=negative]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -35,6 +38,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
   FUNCTION[fqName=test.reference, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=reference]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -43,6 +47,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
   FUNCTION[fqName=test.qualified, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=qualified]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -51,6 +56,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
   FUNCTION[fqName=test.inferred, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=inferred]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -59,6 +65,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
   FUNCTION[fqName=test.generic, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=generic]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
@@ -68,9 +75,11 @@ FILE[kind=File[packageFqName=test]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
+              isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=T]
+          isClassRef: true
   CLASS[classId=test/WithMember, fqName=test.WithMember, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithMember, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithMember]
@@ -85,3 +94,4 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true

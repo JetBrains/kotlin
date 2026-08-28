@@ -16,6 +16,7 @@ MainKt.class:
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=MyAnnotation]
+                        isClassRef: true
             TYPE_REFERENCE
               MODIFIER_LIST[]
                 ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
@@ -24,8 +25,10 @@ MainKt.class:
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=MyAnnotation]
+                          isClassRef: true
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=ParameterizedInterface]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
@@ -36,15 +39,18 @@ MainKt.class:
                             TYPE_REFERENCE
                               USER_TYPE
                                 REFERENCE_EXPRESSION[referencedName=MyAnnotation]
+                                  isClassRef: true
                       USER_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=String]
+                          isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -60,6 +66,7 @@ MainKt.class:
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=MyAnnotation]
+                        isClassRef: true
             TYPE_REFERENCE
               MODIFIER_LIST[]
                 ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
@@ -68,8 +75,10 @@ MainKt.class:
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=MyAnnotation]
+                          isClassRef: true
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=ParameterizedInterface]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
@@ -80,16 +89,19 @@ MainKt.class:
                             TYPE_REFERENCE
                               USER_TYPE
                                 REFERENCE_EXPRESSION[referencedName=MyAnnotation]
+                                  isClassRef: true
                       USER_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=String]
+                          isClassRef: true
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
 
 
 MyAnnotation.class:
@@ -108,6 +120,7 @@ MyAnnotation.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -137,6 +150,7 @@ MyAnnotation.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 

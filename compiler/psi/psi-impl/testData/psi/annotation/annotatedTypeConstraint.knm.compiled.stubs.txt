@@ -14,6 +14,7 @@
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -43,6 +44,7 @@
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -62,6 +64,7 @@
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -91,6 +94,7 @@
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -127,24 +131,29 @@
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Anno1]
+                      isClassRef: true
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno2]
               valueArguments: [ ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Anno2]
+                      isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=I1]
+                isClassRef: true
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
       TYPE_CONSTRAINT_LIST
         TYPE_CONSTRAINT
           REFERENCE_EXPRESSION[referencedName=T]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=I2]
+                isClassRef: true

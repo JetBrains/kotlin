@@ -16,6 +16,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithReturnsImpliesKt]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=block]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -23,6 +24,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithReturnsImpliesKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=R]
+                  isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=R]
+          isClassRef: true

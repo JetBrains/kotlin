@@ -17,12 +17,14 @@ FILE[kind=File[packageFqName=a.b.c]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=j]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
     CLASS_BODY
       PROPERTY[fqName=a.b.c.DataClass.i, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
         MODIFIER_LIST[public final]
@@ -31,6 +33,7 @@ FILE[kind=File[packageFqName=a.b.c]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
       PROPERTY[fqName=a.b.c.DataClass.j, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=j]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
@@ -38,6 +41,7 @@ FILE[kind=File[packageFqName=a.b.c]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
+              isClassRef: true
       FUNCTION[fqName=a.b.c.DataClass.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -46,6 +50,7 @@ FILE[kind=File[packageFqName=a.b.c]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
       FUNCTION[fqName=a.b.c.DataClass.component1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=component1]
         MODIFIER_LIST[public final operator]
         VALUE_PARAMETER_LIST
@@ -54,6 +59,7 @@ FILE[kind=File[packageFqName=a.b.c]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
       FUNCTION[fqName=a.b.c.DataClass.component2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=component2]
         MODIFIER_LIST[public final operator]
         VALUE_PARAMETER_LIST
@@ -62,6 +68,7 @@ FILE[kind=File[packageFqName=a.b.c]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
+              isClassRef: true
       FUNCTION[fqName=a.b.c.DataClass.copy, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=copy]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -71,6 +78,7 @@ FILE[kind=File[packageFqName=a.b.c]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=j]
             TYPE_REFERENCE
@@ -78,6 +86,7 @@ FILE[kind=File[packageFqName=a.b.c]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         TYPE_REFERENCE
           USER_TYPE
@@ -88,6 +97,7 @@ FILE[kind=File[packageFqName=a.b.c]]
                 REFERENCE_EXPRESSION[referencedName=b]
               REFERENCE_EXPRESSION[referencedName=c]
             REFERENCE_EXPRESSION[referencedName=DataClass]
+              isClassRef: true
       FUNCTION[fqName=a.b.c.DataClass.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
         MODIFIER_LIST[public open operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
@@ -98,11 +108,13 @@ FILE[kind=File[packageFqName=a.b.c]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Any]
+                    isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
       FUNCTION[fqName=a.b.c.DataClass.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
@@ -111,6 +123,7 @@ FILE[kind=File[packageFqName=a.b.c]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
       FUNCTION[fqName=a.b.c.DataClass.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
@@ -119,3 +132,4 @@ FILE[kind=File[packageFqName=a.b.c]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
+              isClassRef: true

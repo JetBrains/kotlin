@@ -13,6 +13,7 @@ FILE[kind=File[packageFqName=<root>]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
     CLASS_BODY
       PROPERTY[fqName=PublicValue.value, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=value]
         MODIFIER_LIST[public final]
@@ -21,6 +22,7 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
+              isClassRef: true
       PROPERTY[fqName=PublicValue.value, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=value]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
@@ -28,11 +30,13 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
@@ -45,11 +49,13 @@ FILE[kind=File[packageFqName=<root>]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Boolean]
+                    isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
@@ -63,11 +69,13 @@ FILE[kind=File[packageFqName=<root>]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Any]
+                    isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
       FUNCTION[fqName=PublicValue.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
@@ -76,6 +84,7 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
       FUNCTION[fqName=PublicValue.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
         MODIFIER_LIST[public open MustUseReturnValue]
         VALUE_PARAMETER_LIST
@@ -84,3 +93,4 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
+              isClassRef: true

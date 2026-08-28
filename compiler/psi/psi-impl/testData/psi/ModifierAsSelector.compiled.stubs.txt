@@ -14,6 +14,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ModifierAsSelectorKt]]
             REFERENCE_EXPRESSION[referencedName=java]
           REFERENCE_EXPRESSION[referencedName=io]
         REFERENCE_EXPRESSION[referencedName=PrintStream]
+          isClassRef: true
   FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     origin: Facade(className=ModifierAsSelectorKt, jvmClassName=null)
     MODIFIER_LIST[public]
@@ -23,3 +24,4 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ModifierAsSelectorKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true

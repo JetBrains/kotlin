@@ -14,6 +14,7 @@ FunctionExpressionBodiesKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
     FUNCTION[fqName=test.int, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=int]
       origin: Facade(className=test/FunctionExpressionBodiesKt, jvmClassName=null)
@@ -24,6 +25,7 @@ FunctionExpressionBodiesKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     FUNCTION[fqName=test.string, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=string]
       origin: Facade(className=test/FunctionExpressionBodiesKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -33,6 +35,7 @@ FunctionExpressionBodiesKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
     FUNCTION[fqName=test.negative, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=negative]
       origin: Facade(className=test/FunctionExpressionBodiesKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -42,6 +45,7 @@ FunctionExpressionBodiesKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     FUNCTION[fqName=test.reference, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=reference]
       origin: Facade(className=test/FunctionExpressionBodiesKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -51,6 +55,7 @@ FunctionExpressionBodiesKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     FUNCTION[fqName=test.qualified, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=qualified]
       origin: Facade(className=test/FunctionExpressionBodiesKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -60,6 +65,7 @@ FunctionExpressionBodiesKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     FUNCTION[fqName=test.inferred, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=inferred]
       origin: Facade(className=test/FunctionExpressionBodiesKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -69,6 +75,7 @@ FunctionExpressionBodiesKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     FUNCTION[fqName=test.generic, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=generic]
       origin: Facade(className=test/FunctionExpressionBodiesKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -79,9 +86,11 @@ FunctionExpressionBodiesKt.class:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=T]
+                isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=T]
+            isClassRef: true
 
 
 WithMember.class:
@@ -103,3 +112,4 @@ WithMember.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true

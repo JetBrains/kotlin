@@ -15,12 +15,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=NestedCallOfImpliesReturnsCo
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
   FUNCTION[fqName=returnNotNullImplies, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=returnNotNullImplies]
     contract: [ effect:Returns(NOT_NULL) -> param(0) is KotlinClassTypeBean(classId=kotlin/String, arguments=[], nullable=false, abbreviatedType=null) ]
     origin: Facade(className=NestedCallOfImpliesReturnsContractKt, jvmClassName=null)
@@ -33,9 +35,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=NestedCallOfImpliesReturnsCo
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Any]
+                isClassRef: true
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true

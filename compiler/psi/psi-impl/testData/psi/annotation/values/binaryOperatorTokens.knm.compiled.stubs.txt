@@ -15,6 +15,7 @@
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
           VALUE_PARAMETER[fqName=Binary.b, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=b]
             constantInitializer: false
@@ -24,6 +25,7 @@
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Boolean]
+                  isClassRef: true
             BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
@@ -32,6 +34,7 @@
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -47,6 +50,7 @@
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Binary]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -70,6 +74,7 @@
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Binary]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -93,6 +98,7 @@
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Binary]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -116,6 +122,7 @@
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Binary]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -139,6 +146,7 @@
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Binary]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME

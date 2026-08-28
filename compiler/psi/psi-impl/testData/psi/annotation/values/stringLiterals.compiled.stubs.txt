@@ -14,6 +14,7 @@ StringLiteral.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=StringLiteral.s2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s2]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -21,6 +22,7 @@ StringLiteral.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=StringLiteral.s3, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s3]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -28,6 +30,7 @@ StringLiteral.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -35,6 +38,7 @@ StringLiteral.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -53,6 +57,7 @@ StringLiteralKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
 
 
@@ -72,6 +77,7 @@ WithStringConstant.class:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=StringLiteral]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -110,6 +116,7 @@ WithStringInterpolationPrefix.class:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=StringLiteral]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -148,6 +155,7 @@ WithStringLiteral.class:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=StringLiteral]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -185,6 +193,7 @@ WithStringLiteralConcat.class:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=StringLiteral]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME

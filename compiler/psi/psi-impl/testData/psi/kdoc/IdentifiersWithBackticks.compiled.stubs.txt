@@ -13,6 +13,7 @@ IdentifiersWithBackticksKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
     FUNCTION[fqName=top level, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=top level]
       origin: Facade(className=IdentifiersWithBackticksKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -22,6 +23,7 @@ IdentifiersWithBackticksKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
 
 
 O.class:
@@ -39,6 +41,7 @@ O.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
         FUNCTION[fqName=O.without_space, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=without_space]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
@@ -47,3 +50,4 @@ O.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true

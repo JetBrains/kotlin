@@ -14,6 +14,7 @@ Anno.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -33,11 +34,13 @@ Direction.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Enum]
+                isClassRef: true
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Direction]
+                        isClassRef: true
       CLASS_BODY
         ENUM_ENTRY[classId=null, fqName=Direction.SOUTH, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=SOUTH, superNames=[]]
 
@@ -56,6 +59,7 @@ ExportedKdocKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -69,11 +73,13 @@ ExportedKdocKt.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
     TYPEALIAS[classId=/MyString, fqName=MyString, isTopLevel=true, name=MyString]
       MODIFIER_LIST[public]
       TYPE_REFERENCE
@@ -81,6 +87,7 @@ ExportedKdocKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
 
 
 Foo.class:
@@ -98,6 +105,7 @@ Foo.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
       CLASS_BODY
         OBJECT_DECLARATION[classId=/Foo.Companion, fqName=Foo.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
           MODIFIER_LIST[public companion]
@@ -111,6 +119,7 @@ Foo.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
+                    isClassRef: true
         PROPERTY[fqName=Foo.value, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=value]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
@@ -118,6 +127,7 @@ Foo.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
         PROPERTY[fqName=Foo.prop, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=prop]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
@@ -125,6 +135,7 @@ Foo.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
         FUNCTION[fqName=Foo.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
@@ -133,6 +144,7 @@ Foo.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
 
 
 Obj.class:

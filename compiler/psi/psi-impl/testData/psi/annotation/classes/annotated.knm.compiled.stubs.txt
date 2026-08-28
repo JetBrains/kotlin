@@ -14,6 +14,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Annotation]
+              isClassRef: true
     CLASS_BODY
   CLASS[classId=test/Targeted, fqName=test.Targeted, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Targeted, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
@@ -31,6 +32,7 @@ FILE[kind=File[packageFqName=test]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=Marker]
+                      isClassRef: true
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Marker]
               valueArguments: [ ]
               ANNOTATION_TARGET[useSiteTarget=PROPERTY]
@@ -40,11 +42,13 @@ FILE[kind=File[packageFqName=test]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=Marker]
+                      isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
         VALUE_PARAMETER[fqName=test.Targeted.onProperty, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=onProperty]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Marker]
@@ -56,11 +60,13 @@ FILE[kind=File[packageFqName=test]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=Marker]
+                      isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
         VALUE_PARAMETER[fqName=test.Targeted.onGetter, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=onGetter]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Marker]
@@ -72,11 +78,13 @@ FILE[kind=File[packageFqName=test]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=Marker]
+                      isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
         VALUE_PARAMETER[fqName=test.Targeted.onEveryTarget, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=onEveryTarget]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Marker]
@@ -88,6 +96,7 @@ FILE[kind=File[packageFqName=test]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=Marker]
+                      isClassRef: true
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Marker]
               valueArguments: [ ]
               ANNOTATION_TARGET[useSiteTarget=PROPERTY]
@@ -97,6 +106,7 @@ FILE[kind=File[packageFqName=test]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=Marker]
+                      isClassRef: true
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Marker]
               valueArguments: [ ]
               ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
@@ -106,11 +116,13 @@ FILE[kind=File[packageFqName=test]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=Marker]
+                      isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE
@@ -118,4 +130,5 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Annotation]
+              isClassRef: true
     CLASS_BODY
