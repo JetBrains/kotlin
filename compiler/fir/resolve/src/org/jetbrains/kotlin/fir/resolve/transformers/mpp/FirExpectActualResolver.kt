@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.mpp
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirExpectActualMatchingContext
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.mpp.CallableSymbolMarker
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 object FirExpectActualResolver {
@@ -76,7 +79,9 @@ object FirExpectActualResolver {
                                             expectSymbol.moduleData in transitiveDependsOn &&
                                             expectSymbol.isCompanionExtension == actualSymbol.isCompanionExtension
                                 }
-                                .filterContainedInTheFirstWaveOfDependsOnDominatorTree(graphStartingNode = actualSymbol.moduleData)
+                                .applyIf(!useSiteSession.languageVersionSettings.supportsFeature(LanguageFeature.AllowMultipleExpectsForSingleActual)) {
+                                    filterContainedInTheFirstWaveOfDependsOnDominatorTree(graphStartingNode = actualSymbol.moduleData)
+                                }
                         }
                     }
                     candidates
@@ -105,7 +110,9 @@ object FirExpectActualResolver {
                         .filter { it.isExpect && it.moduleData in transitiveDependsOn }
                         .filterIsInstance<FirRegularClassSymbol>()
                         .distinct()
-                        .filterContainedInTheFirstWaveOfDependsOnDominatorTree(graphStartingNode = actualSymbol.moduleData)
+                        .applyIf(!useSiteSession.languageVersionSettings.supportsFeature(LanguageFeature.AllowMultipleExpectsForSingleActual)) {
+                            filterContainedInTheFirstWaveOfDependsOnDominatorTree(graphStartingNode = actualSymbol.moduleData)
+                        }
                         .groupBy { AbstractExpectActualMatcher.matchClassifiers(expectClassSymbol = it, actualSymbol, context) }
                 }
                 else -> emptyMap()
