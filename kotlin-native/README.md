@@ -27,7 +27,7 @@ More information can be found in the overviews of
 [Kotlin/Native](https://kotlinlang.org/docs/native-overview.html)
 and [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html).
 
-On macOS Kotlin/Native requires Xcode 12.5 or newer.
+On macOS Kotlin/Native requires Xcode 15.4 or newer.
 
 ## Contributing
 
