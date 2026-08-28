@@ -133,6 +133,13 @@ public actual open class HashSet<E> : AbstractMutableSet<E>, MutableSet<E> {
      */
     public actual constructor(initialCapacity: Int) : this(initialCapacity, 1.0f)
 
+    /**
+     * Adds the specified element to the set.
+     *
+     * If the set already contains [element], the element instance stored in the set is retained.
+     *
+     * @return `true` if the element has been added, `false` if the element is already contained in the set.
+     */
     @IgnorableReturnValue
     actual override fun add(element: E): Boolean {
         return internalMap.put(element, true) == null
