@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.fir.asKaDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.api.types.*
-import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
@@ -292,7 +292,7 @@ internal fun ConeDiagnostic.asKaDiagnostic(
 ): KaDiagnosticWithPsi<*>? {
     with(analysisSession) {
         val firDiagnostic = toFirDiagnostics(firSession, source, callOrAssignmentSource = null).firstOrNull() ?: return null
-        check(firDiagnostic is KtPsiDiagnostic)
+        check(firDiagnostic is KtDiagnosticWithSource)
         return firDiagnostic.asKaDiagnostic()
     }
 }
