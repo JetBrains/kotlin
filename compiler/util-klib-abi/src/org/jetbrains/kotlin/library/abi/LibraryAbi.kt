@@ -297,6 +297,8 @@ interface AbiEnumEntry : AbiDeclaration
  *   Important: All value parameters of the function are stored in the single place, in the [valueParameters] list in
  *   a well-defined order: context parameters, extension receiver, regular parameters.
  * @property returnType The function's return type. Always `null` for constructors.
+ * @property declarationOrigin Where this function comes from, so the ABI reader can tell origins apart.
+ *   This information is not a part of the ABI and must not be relied upon for binary-compatibility decisions.
  */
 @ExperimentalLibraryAbiReader
 interface AbiFunction : AbiDeclarationWithModality, AbiTypeParametersContainer {
@@ -318,6 +320,27 @@ interface AbiFunction : AbiDeclarationWithModality, AbiTypeParametersContainer {
     val companionExtensionsClass: AbiClassifierReference.ClassReference?
     val valueParameters: List<AbiValueParameter>
     val returnType: AbiType?
+    val declarationOrigin: AbiDeclarationOrigin
+}
+
+/**
+ * The declaration origins that the ABI reader can tell apart. Anything it does not recognize is [OTHER].
+ * Textual ABI dumps do not render origins at all, so everything parsed back from a dump is [OTHER].
+ *
+ * Only [AbiFunction] carries an origin so far, as every origin below applies to functions and constructors.
+ * Should a lowering ever start adding classes or properties to the ABI, this would need to move up to [AbiDeclaration].
+ */
+@ExperimentalLibraryAbiReader
+enum class AbiDeclarationOrigin {
+    /** Anything different from the origins below, including every declaration that was written by hand. */
+    OTHER,
+
+    /** An accessor that the IR inliner generates so that an inline function body can reach a private declaration from another module. */
+    SYNTHETIC_ACCESSOR,
+
+    /** An overload wrapper synthesized for a declaration that has `@IntroducedAt` parameters. */
+    VERSION_OVERLOAD_WRAPPER,
+
 }
 
 /**
