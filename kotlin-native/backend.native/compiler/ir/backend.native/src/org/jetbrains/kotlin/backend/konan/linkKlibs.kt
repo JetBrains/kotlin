@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.serialization.*
+import org.jetbrains.kotlin.backend.konan.util.sortDeclarationsInFunctionInterfaceFile
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -19,8 +20,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.IrBasedFunctionFactory.Companion.isFunctionInterfaceFile
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
@@ -236,24 +235,6 @@ private fun generateImplForCStructsAndEnums(linker: KonanIrLinker, builtIns: IrB
 }
 
 private fun IrModuleDependencies.sortFilesAndDeclarationsToKeepPipelineDeterministic() {
-    data class SortingKey(val prefix: String, val index: Int?) : Comparable<SortingKey> {
-        override fun compareTo(other: SortingKey): Int {
-            val prefixDiff = prefix.compareTo(other.prefix)
-            return if (prefixDiff != 0) prefixDiff else when (index) {
-                other.index -> 0
-                null -> -1
-                else -> 1
-            }
-        }
-    }
-
-    fun IrDeclaration.toSortingKey(): SortingKey {
-        val name = (this as IrDeclarationWithName).name.asString()
-        val prefix = name.trimEnd { it.isDigit() }
-        val index = name.substringAfter(prefix).toIntOrNull()
-        return SortingKey(prefix, index)
-    }
-
     allDependencies.forEach { module ->
         module.files.sortBy { file -> file.fileEntry.name }
 
@@ -262,9 +243,7 @@ private fun IrModuleDependencies.sortFilesAndDeclarationsToKeepPipelineDetermini
         // the deserialization queue).
         if (module.kotlinLibrary?.isNativeStdlib == true) {
             module.files.forEach { file ->
-                if (file.isFunctionInterfaceFile) {
-                    file.declarations.sortBy { it.toSortingKey() }
-                }
+                if (file.isFunctionInterfaceFile) sortDeclarationsInFunctionInterfaceFile(file)
             }
         }
     }
