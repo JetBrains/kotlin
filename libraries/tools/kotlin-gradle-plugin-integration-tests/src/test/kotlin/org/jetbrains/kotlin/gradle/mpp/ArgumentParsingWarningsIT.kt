@@ -132,7 +132,20 @@ class ArgumentParsingWarningsIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @DisplayName("A deprecated argument name is reported once")
+    @DisplayName("An unknown 'stable' argument fails the build")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
+    fun testUnknownStableArgumentFailsBuild(gradleVersion: GradleVersion) {
+        multiplatformProject(gradleVersion, freeCompilerArgs = listOf("-not-a-real-flag")) {
+            // `--continue` so that every platform is attempted, not just the first compilation to fail
+            buildAndFail(*ALL_COMPILE_TASKS.toTypedArray(), "--continue") {
+                assertTasksFailed(ALL_COMPILE_TASKS)
+                assertOutputContains("Invalid argument: -not-a-real-flag")
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("A deprecated argument name is reported even though the compiler receives the new one")
     @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
     fun testDeprecatedArgumentNameReportsWarning(gradleVersion: GradleVersion) {
         // `-Xjsr305-annotations` is a JVM-only argument
@@ -147,7 +160,7 @@ class ArgumentParsingWarningsIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @DisplayName("A deprecated argument is reported and not duplicated")
+    @DisplayName("A deprecated argument that the compiler reports itself is not duplicated")
     @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
     fun testDeprecatedLifecycleArgumentIsNotDuplicated(gradleVersion: GradleVersion) {
         multiplatformProject(gradleVersion, freeCompilerArgs = listOf("-Xsuppress-warning=NOTHING_TO_INLINE")) {
