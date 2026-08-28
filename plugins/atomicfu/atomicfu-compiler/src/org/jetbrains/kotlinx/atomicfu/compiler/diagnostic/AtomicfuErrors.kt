@@ -20,7 +20,7 @@ object AtomicfuErrors : KtDiagnosticsContainer() {
     val PUBLIC_ATOMICS_ARE_FORBIDDEN by error1<KtProperty, String>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val PUBLISHED_API_ATOMICS_ARE_FORBIDDEN by error1<KtProperty, String>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val ATOMIC_PROPERTIES_SHOULD_BE_VAL by error1<KtProperty, String>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
-    val NON_PRIVATE_ATOMIC_COMPANIONS_ARE_FORBIDDEN by error1<KtProperty, String>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
+    val NON_PRIVATE_ATOMIC_COMPANIONS_ARE_FORBIDDEN by error0<KtProperty>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val ATOMIC_FUNCTION_CALLABLE_REFERENCES_ARE_FORBIDDEN by error0<KtCallableReferenceExpression>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY by error0<KtCallExpression>(SourceElementPositioningStrategies.DEFAULT)
     val ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD by error0<KtProperty>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
