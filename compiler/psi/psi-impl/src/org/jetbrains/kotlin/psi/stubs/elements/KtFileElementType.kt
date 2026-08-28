@@ -11,8 +11,8 @@ import com.intellij.psi.tree.IFileElementType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.parsing.KotlinParser
 
-object KtFileElementType : IFileElementType(KtFileElementType.NAME, KotlinLanguage.INSTANCE) {
-    internal const val NAME: String = "kotlin.FILE"
+internal object KtFileElementType : IFileElementType(KtFileElementType.NAME, KotlinLanguage.INSTANCE) {
+    const val NAME: String = "kotlin.FILE"
 
     override fun doParseContents(chameleon: ASTNode, psi: PsiElement): ASTNode? {
         val project = psi.project
