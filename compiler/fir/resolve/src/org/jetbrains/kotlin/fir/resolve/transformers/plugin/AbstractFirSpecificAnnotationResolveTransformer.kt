@@ -184,7 +184,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             return false
         }
 
-        override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement {
+        override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirExpression {
             // transform arrayOf arguments to handle `@Foo(bar = arrayOf(X))`
             functionCall.transformChildren(transformer, data)
             return functionCall

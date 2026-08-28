@@ -991,14 +991,14 @@ abstract class FirDataFlowAnalyzer(
 
     // ----------------------------------- While Loop -----------------------------------
 
-    fun enterWhileLoop(loop: FirLoop) {
+    fun enterWhileLoop(loop: FirWhileLoop) {
         val assignedInside = context.variableAssignmentAnalyzer.enterLoop(loop)
         val [loopEnterNode, loopConditionEnterNode] = graphBuilder.enterWhileLoop(loop)
         loopEnterNode.mergeIncomingFlow()
         loopConditionEnterNode.mergeIncomingFlow { _, flow -> enterRepeatableStatement(flow, assignedInside) }
     }
 
-    fun exitWhileLoopCondition(loop: FirLoop) {
+    fun exitWhileLoopCondition(loop: FirWhileLoop) {
         val [loopConditionExitNode, loopBlockEnterNode] = graphBuilder.exitWhileLoopCondition(loop)
         loopConditionExitNode.mergeIncomingFlow()
         loopBlockEnterNode.mergeIncomingFlow { _, flow ->
@@ -1009,7 +1009,7 @@ abstract class FirDataFlowAnalyzer(
         }
     }
 
-    fun exitWhileLoop(loop: FirLoop) {
+    fun exitWhileLoop(loop: FirWhileLoop) {
         val assignedInside = context.variableAssignmentAnalyzer.exitLoop()
         val [conditionEnterNode, blockExitNode, exitNode] = graphBuilder.exitWhileLoop(loop)
         blockExitNode.mergeIncomingFlow()
@@ -1068,20 +1068,20 @@ abstract class FirDataFlowAnalyzer(
 
     // ----------------------------------- Do while Loop -----------------------------------
 
-    fun enterDoWhileLoop(loop: FirLoop) {
+    fun enterDoWhileLoop(loop: FirDoWhileLoop) {
         val assignedInside = context.variableAssignmentAnalyzer.enterLoop(loop)
         val [loopEnterNode, loopBlockEnterNode] = graphBuilder.enterDoWhileLoop(loop)
         loopEnterNode.mergeIncomingFlow { _, flow -> enterRepeatableStatement(flow, assignedInside) }
         loopBlockEnterNode.mergeIncomingFlow()
     }
 
-    fun enterDoWhileLoopCondition(loop: FirLoop) {
+    fun enterDoWhileLoopCondition(loop: FirDoWhileLoop) {
         val [loopBlockExitNode, loopConditionEnterNode] = graphBuilder.enterDoWhileLoopCondition(loop)
         loopBlockExitNode.mergeIncomingFlow()
         loopConditionEnterNode.mergeIncomingFlow()
     }
 
-    fun exitDoWhileLoop(loop: FirLoop) {
+    fun exitDoWhileLoop(loop: FirDoWhileLoop) {
         context.variableAssignmentAnalyzer.exitLoop()
         val [loopConditionExitNode, loopExitNode] = graphBuilder.exitDoWhileLoop(loop)
         loopConditionExitNode.mergeIncomingFlow()

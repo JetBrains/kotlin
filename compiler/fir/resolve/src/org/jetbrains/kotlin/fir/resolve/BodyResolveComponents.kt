@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirEqualsOverrideContractCalculator
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirForLoop
 import org.jetbrains.kotlin.fir.resolve.calls.FirCallResolver
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
@@ -53,6 +54,8 @@ abstract class BodyResolveComponents : SessionAndScopeSessionHolder {
     abstract val inlineFunction: FirFunction?
     abstract val context: BodyResolveContext
     abstract val resolutionContext: ResolutionContext
+
+    abstract val forLoopDesugaringKinds: MutableMap<FirForLoop, ForLoopDesugaringKind<*>>
 }
 
 // --------------------------------------- Utils ---------------------------------------

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 
 @FirBuilderDsl
@@ -23,7 +22,6 @@ interface FirLoopBuilder {
     abstract var source: KtSourceElement?
     abstract val annotations: MutableList<FirAnnotation>
     abstract var block: FirBlock
-    abstract var condition: FirExpression
     abstract var label: FirLabel?
     fun build(): FirLoop
 }

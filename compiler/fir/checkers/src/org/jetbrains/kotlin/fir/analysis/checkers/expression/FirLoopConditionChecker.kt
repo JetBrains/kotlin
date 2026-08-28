@@ -9,14 +9,15 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkCondition
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
+import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirLoop
+import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 
 object FirLoopConditionChecker : FirLoopExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(expression: FirLoop) {
-        if (expression is FirErrorLoop) return
-        val condition = expression.condition
-        checkCondition(condition)
+    override fun check(expression: FirLoop): Unit = when (expression) {
+        is FirWhileLoop -> checkCondition(expression.condition)
+        is FirDoWhileLoop -> checkCondition(expression.condition)
+        else -> Unit
     }
 }

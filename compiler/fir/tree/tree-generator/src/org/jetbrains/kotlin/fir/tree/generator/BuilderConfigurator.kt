@@ -187,6 +187,11 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             defaultNull("label")
         }
 
+        builder(forLoop) {
+            parents += loopBuilder
+            defaultNull("label")
+        }
+
         builder(errorExpression) {
             defaultNull("expression")
         }

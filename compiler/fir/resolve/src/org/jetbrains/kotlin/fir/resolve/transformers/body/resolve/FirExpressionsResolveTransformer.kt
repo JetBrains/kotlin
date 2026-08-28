@@ -124,6 +124,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             return qualifiedAccessExpression
         }
 
+        // Transform the for-loop value parameter to the desugared iterator-based loop parameter if applicable
+        qualifiedAccessExpression.transformIteratorForLoopParameter()
+
         qualifiedAccessExpression.transformAnnotations(this, data)
         qualifiedAccessExpression.transformTypeArguments(transformer, ContextIndependent)
 
@@ -727,7 +730,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }, data)
     }
 
-    override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement =
+    override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirExpression =
         transformFunctionCallInternal(functionCall, data, CallResolutionMode.REGULAR)
 
     internal enum class CallResolutionMode {
@@ -751,7 +754,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         functionCall: FirFunctionCall,
         data: ResolutionMode,
         callResolutionMode: CallResolutionMode,
-    ): FirStatement =
+    ): FirExpression =
         whileAnalysing(session, functionCall) {
             val calleeReference = functionCall.calleeReference
             if (
@@ -2455,6 +2458,105 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 collectionLiteral
             }
         }
+    }
+
+    private fun FirExpression.buildUnresolvedIteratorCall(): FirFunctionCall = buildFunctionCall {
+        source = this@buildUnresolvedIteratorCall.source?.fakeElement(KtFakeSourceElementKind.DesugaredForLoop)
+        calleeReference = buildSimpleNamedReference {
+            source = this@buildFunctionCall.source
+            name = OperatorNameConventions.ITERATOR
+        }
+        explicitReceiver = this@buildUnresolvedIteratorCall
+        origin = FirFunctionCallOrigin.Operator
+    }
+
+    private fun FirExpression.tryResolvingIteratorCall(data: ResolutionMode): FirExpression {
+        val unresolvedCall = buildUnresolvedIteratorCall()
+        return transformFunctionCall(unresolvedCall, data)
+    }
+
+    @OptIn(UnresolvedExpressionTypeAccess::class)
+    private fun FirExpression.desugarAndResolveIteratorCall(forLoop: FirForLoop): FirBlock =
+        buildBlock {
+            val rangeSource = this@desugarAndResolveIteratorCall.source
+            source = forLoop.source?.fakeElement(KtFakeSourceElementKind.DesugaredForLoop)
+            val iteratorVal = generateTemporaryVariable(
+                moduleData = session.moduleData,
+                source = rangeSource,
+                name = SpecialNames.ITERATOR,
+                initializer = this@desugarAndResolveIteratorCall,
+                typeRef = this@desugarAndResolveIteratorCall.coneTypeOrNull?.toFirResolvedTypeRef(rangeSource)
+            )
+            statements += iteratorVal
+            val whileLoop = buildWhileLoop {
+                source = forLoop.source
+                condition = buildFunctionCall {
+                    source = rangeSource
+                    calleeReference = buildSimpleNamedReference {
+                        source = rangeSource
+                        name = OperatorNameConventions.HAS_NEXT
+                    }
+                    explicitReceiver = buildPropertyAccessExpression {
+                        source = rangeSource
+                        calleeReference = buildResolvedNamedReference {
+                            source = rangeSource
+                            name = iteratorVal.name
+                            resolvedSymbol = iteratorVal.symbol
+                        }
+                    }
+                    origin = FirFunctionCallOrigin.Operator
+                }
+                label = forLoop.label
+                block = buildBlock {
+                    source = forLoop.block.source
+                    val loopParameter = generateTemporaryVariable(
+                        moduleData = session.moduleData,
+                        source = forLoop.valueParameter.source,
+                        name = forLoop.valueParameter.name,
+                        initializer = buildFunctionCall {
+                            source = rangeSource
+                            calleeReference = buildSimpleNamedReference {
+                                source = rangeSource
+                                name = OperatorNameConventions.NEXT
+                            }
+                            explicitReceiver = buildPropertyAccessExpression {
+                                source = rangeSource
+                                calleeReference = buildResolvedNamedReference {
+                                    source = rangeSource
+                                    name = iteratorVal.name
+                                    resolvedSymbol = iteratorVal.symbol
+                                }
+                            }
+                            origin = FirFunctionCallOrigin.Operator
+                        },
+                        typeRef = forLoop.valueParameter.returnTypeRef,
+                        extractedAnnotations = forLoop.valueParameter.annotations,
+                    ).apply {
+                        isForLoopParameter = true
+                    }
+                    // Remember the generated loop parameter for later desugaring of destructuring declarations with resolved references
+                    forLoop.valueParameter assignForLoopParameter loopParameter.symbol
+                    statements += loopParameter
+                    // The block statements may contain destructuring declarations referencing the value parameter from the FirForLoop
+                    // These cases are handled when transforming qualified access expressions
+                    statements += forLoop.block.statements
+                }
+            }
+            val target = FirLoopTarget(forLoop.label?.name)
+            target.bind(whileLoop)
+            components.forLoopDesugaringKinds[forLoop] = ForLoopDesugaringKind.IteratorOperator(target)
+            statements += whileLoop
+        }
+
+    private fun FirExpression.tryResolvingForEachCall(data: ResolutionMode): FirFunctionCall? = null
+
+    override fun transformForLoop(forLoop: FirForLoop, data: ResolutionMode): FirStatement {
+        // Two options:
+        // 1. Check if it's possible to find an `operator fun iterator()` on the range:
+        // - Create a fake call to the operator with the range expression as an explicit receiver
+        val block = transformBlock(forLoop.range.tryResolvingIteratorCall(data).desugarAndResolveIteratorCall(forLoop), data)
+        components.forLoopDesugaringKinds.remove(forLoop)
+        return block
     }
 
     override fun transformStringConcatenationCall(

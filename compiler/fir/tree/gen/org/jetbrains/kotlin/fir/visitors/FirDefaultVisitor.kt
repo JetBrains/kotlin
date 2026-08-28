@@ -68,6 +68,9 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: D): R =
         visitLoop(doWhileLoop, data)
 
+    override fun visitForLoop(forLoop: FirForLoop, data: D): R =
+        visitLoop(forLoop, data)
+
     override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: D): R =
         visitExpression(literalExpression, data)
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,36 +11,39 @@ package org.jetbrains.kotlin.fir.expressions
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.errorLoop]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.forLoop]
  */
-abstract class FirErrorLoop : FirLoop(), FirDiagnosticHolder {
+abstract class FirForLoop : FirLoop() {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
     abstract override val block: FirBlock
     abstract override val label: FirLabel?
-    abstract override val diagnostic: ConeDiagnostic
-    abstract val condition: FirExpression
+    abstract val valueParameter: FirValueParameter
+    abstract val range: FirExpression
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitErrorLoop(this, data)
+        visitor.visitForLoop(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
-        transformer.transformErrorLoop(this, data) as E
+        transformer.transformForLoop(this, data) as E
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorLoop
+    abstract fun replaceValueParameter(newValueParameter: FirValueParameter)
 
-    abstract override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirErrorLoop
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirForLoop
 
-    abstract override fun <D> transformLabel(transformer: FirTransformer<D>, data: D): FirErrorLoop
+    abstract override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirForLoop
 
-    abstract fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirErrorLoop
+    abstract override fun <D> transformLabel(transformer: FirTransformer<D>, data: D): FirForLoop
+
+    abstract fun <D> transformValueParameter(transformer: FirTransformer<D>, data: D): FirForLoop
+
+    abstract fun <D> transformRange(transformer: FirTransformer<D>, data: D): FirForLoop
 }

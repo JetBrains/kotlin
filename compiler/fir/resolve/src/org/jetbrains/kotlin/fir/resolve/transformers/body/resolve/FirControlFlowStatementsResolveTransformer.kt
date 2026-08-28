@@ -179,6 +179,20 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         return result
     }
 
+    override fun transformBreakExpression(breakExpression: FirBreakExpression, data: ResolutionMode): FirStatement {
+        val actualBreakExpression = (breakExpression.target.labeledElement as? FirForLoop)
+            ?.let(components.forLoopDesugaringKinds::get)
+            ?.desugarBreakExpression(breakExpression) ?: breakExpression
+        return transformJump(actualBreakExpression, data)
+    }
+
+    override fun transformContinueExpression(continueExpression: FirContinueExpression, data: ResolutionMode): FirStatement {
+        val actualContinueExpression = (continueExpression.target.labeledElement as? FirForLoop)
+            ?.let(components.forLoopDesugaringKinds::get)
+            ?.desugarContinueExpression(continueExpression) ?: continueExpression
+        return transformJump(actualContinueExpression, data)
+    }
+
     override fun transformReturnExpression(
         returnExpression: FirReturnExpression,
         data: ResolutionMode

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirLazyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirForLoop
 import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -174,5 +175,9 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
 
         override val resolutionContext: ResolutionContext
             get() = transformer.resolutionContext
+
+        override val forLoopDesugaringKinds: MutableMap<FirForLoop, ForLoopDesugaringKind<*>> by lazy(LazyThreadSafetyMode.NONE) {
+            mutableMapOf()
+        }
     }
 }

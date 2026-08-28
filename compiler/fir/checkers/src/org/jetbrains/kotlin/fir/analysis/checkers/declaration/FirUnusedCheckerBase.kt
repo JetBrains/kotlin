@@ -69,7 +69,7 @@ abstract class FirUnusedCheckerBase : FirBasicDeclarationChecker(MppCheckerKind.
     ) : FirDefaultVisitor<Unit, UsageState>() {
 
         abstract fun checkExpression(expression: FirExpression, data: UsageState)
-        
+
         override fun visitElement(element: FirElement, data: UsageState) {
             if (element is FirDeclaration) return // The checker handles nested declarations, see FirUnusedCheckerBase.check
             if (element is FirExpression && element.source != null) {
@@ -124,9 +124,19 @@ abstract class FirUnusedCheckerBase : FirBasicDeclarationChecker(MppCheckerKind.
             }
         }
 
-        override fun visitLoop(loop: FirLoop, data: UsageState) {
-            loop.condition.accept(this, UsageState.Used)
-            loop.block.accept(this, UsageState.Unused)
+        override fun visitWhileLoop(whileLoop: FirWhileLoop, data: UsageState) {
+            whileLoop.condition.accept(this, UsageState.Used)
+            whileLoop.block.accept(this, UsageState.Unused)
+        }
+
+        override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: UsageState) {
+            doWhileLoop.condition.accept(this, UsageState.Used)
+            doWhileLoop.block.accept(this, UsageState.Unused)
+        }
+
+        override fun visitForLoop(forLoop: FirForLoop, data: UsageState) {
+            forLoop.range.accept(this, UsageState.Used)
+            forLoop.block.accept(this, UsageState.Unused)
         }
     }
 }

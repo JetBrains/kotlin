@@ -1289,97 +1289,66 @@ class LightTreeRawFirExpressionBuilder(
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseFor
      * @see org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.visitForExpression
      */
-    private fun convertFor(forLoop: LighterASTNode): FirBlock {
+    private fun convertFor(forLoop: LighterASTNode): FirLoop {
         var parameter: ValueParameter? = null
         var rangeExpression: FirExpression? = null
         var blockNode: LighterASTNode? = null
         forLoop.forEachChildren {
             when (it.tokenType) {
-                VALUE_PARAMETER -> parameter = declarationBuilder.convertValueParameter(it, null, ValueParameterDeclaration.FOR_LOOP)
+                // The value parameter gets an anonymous function symbol which will then be used for forEach lambda desugaring
+                VALUE_PARAMETER -> parameter = declarationBuilder.convertValueParameter(it, FirAnonymousFunctionSymbol(), ValueParameterDeclaration.FOR_LOOP)
                 LOOP_RANGE -> rangeExpression = getAsFirExpression(it, "No range in for loop")
                 BODY -> blockNode = it
             }
         }
-
-        val calculatedRangeExpression =
-            rangeExpression ?: buildErrorExpression(forLoop.toFirSourceElement(), ConeSyntaxDiagnostic("No range in for loop"))
-        val fakeSource = forLoop.toFirSourceElement(KtFakeSourceElementKind.DesugaredForLoop)
-        val rangeSource = calculatedRangeExpression.source?.fakeElement(KtFakeSourceElementKind.DesugaredForLoop) ?: fakeSource
         val target: FirLoopTarget
-        // NB: FirForLoopChecker relies on this block existence and structure
-        return buildBlock {
-            source = fakeSource
-            val iteratorVal = generateTemporaryVariable(
-                baseModuleData,
-                rangeSource,
-                SpecialNames.ITERATOR,
-                buildFunctionCall {
-                    source = rangeSource
-                    calleeReference = buildSimpleNamedReference {
-                        source = rangeSource
-                        name = OperatorNameConventions.ITERATOR
-                    }
-                    explicitReceiver = calculatedRangeExpression
-                    origin = FirFunctionCallOrigin.Operator
+        val destructuringStatements = mutableListOf<FirStatement>()
+        val sourceElement = forLoop.toFirSourceElement()
+        return FirForLoopBuilder().apply {
+            source = sourceElement
+            range = rangeExpression ?: buildErrorExpression(sourceElement, ConeSyntaxDiagnostic("No range in for loop"))
+            val parameter = parameter
+                ?: return buildErrorLoop(sourceElement, ConeSyntaxDiagnostic("No value parameter in for loop"))
+            valueParameter = parameter.destructuringDeclaration?.let { multiDeclaration ->
+                val multiParameter = buildValueParameter {
+                    source = parameter.firValueParameter.source
+                    containingDeclarationSymbol = parameter.firValueParameter.symbol
+                    moduleData = baseModuleData
+                    origin = FirDeclarationOrigin.Source
+                    returnTypeRef = parameter.firValueParameter.returnTypeRef
+                    name = SpecialNames.DESTRUCT
+                    symbol = FirValueParameterSymbol()
+                    defaultValue = null
+                    isCrossinline = false
+                    isNoinline = false
+                    isVararg = false
                 }
-            )
-            statements += iteratorVal
-            statements += FirWhileLoopBuilder().apply {
-                source = fakeSource
-                condition = buildFunctionCall {
-                    source = rangeSource
-                    calleeReference = buildSimpleNamedReference {
-                        source = rangeSource
-                        name = OperatorNameConventions.HAS_NEXT
+                addDestructuringStatements(
+                    destructuringStatements,
+                    baseModuleData,
+                    multiDeclaration,
+                    multiParameter,
+                    isTmpVariable = false,
+                    forceLocal = true,
+                )
+                multiParameter
+            } ?: run {
+                val valueParameter = parameter.firValueParameter
+                buildValueParameterCopy(valueParameter) {
+                    symbol = valueParameter.symbol
+                    val quotedName = parameter.source.lighterASTNode.getChildNodeByType(IDENTIFIER)?.asText
+                    name = when {
+                        quotedName == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                        else -> parameter.name
                     }
-                    explicitReceiver = generateResolvedAccessExpression(rangeSource, iteratorVal)
-                    origin = FirFunctionCallOrigin.Operator
                 }
-                // break/continue in the for loop condition will refer to an outer loop if any.
-                // So, prepare the loop target after building the condition.
-                target = prepareTarget(forLoop)
-            }.configure(target) {
-                buildBlock block@{
-                    source = blockNode?.toFirSourceElement()
-                    val valueParameter = parameter ?: return@block
-                    val multiDeclaration = valueParameter.destructuringDeclaration
-                    val quotedName = valueParameter.source.lighterASTNode.getChildNodeByType(IDENTIFIER)?.asText
-                    val firLoopParameter = generateTemporaryVariable(
-                        baseModuleData,
-                        valueParameter.source,
-                        name = when {
-                            multiDeclaration != null -> SpecialNames.DESTRUCT
-                            quotedName == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-                            else -> valueParameter.name
-                        },
-                        buildFunctionCall {
-                            source = rangeSource
-                            calleeReference = buildSimpleNamedReference {
-                                source = rangeSource
-                                name = OperatorNameConventions.NEXT
-                            }
-                            explicitReceiver = generateResolvedAccessExpression(rangeSource, iteratorVal)
-                            origin = FirFunctionCallOrigin.Operator
-                        },
-                        valueParameter.returnTypeRef,
-                        extractedAnnotations = valueParameter.annotations
-                    ).apply {
-                        isForLoopParameter = true
-                    }
-                    if (multiDeclaration != null) {
-                        addDestructuringStatements(
-                            statements,
-                            baseModuleData,
-                            multiDeclaration,
-                            firLoopParameter,
-                            isTmpVariable = true,
-                            forceLocal = true,
-                        )
-                    } else {
-                        statements.add(firLoopParameter)
-                    }
-                    statements += convertLoopBody(blockNode)
-                }
+            }
+            target = prepareTarget(forLoop)
+        }.configure(target) {
+            buildBlock {
+                source = blockNode?.toFirSourceElement()
+                statements += destructuringStatements
+                statements += convertLoopBody(blockNode)
             }
         }
     }

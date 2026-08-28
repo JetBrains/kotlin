@@ -36,15 +36,15 @@ internal class FirErrorLoopImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         block.accept(visitor, data)
-        condition.accept(visitor, data)
         label?.accept(visitor, data)
+        condition.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorLoopImpl {
         transformAnnotations(transformer, data)
         transformBlock(transformer, data)
-        transformCondition(transformer, data)
         transformLabel(transformer, data)
+        transformCondition(transformer, data)
         return this
     }
 
@@ -58,13 +58,13 @@ internal class FirErrorLoopImpl(
         return this
     }
 
-    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirErrorLoopImpl {
-        condition = condition.transform(transformer, data)
+    override fun <D> transformLabel(transformer: FirTransformer<D>, data: D): FirErrorLoopImpl {
+        label = label?.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformLabel(transformer: FirTransformer<D>, data: D): FirErrorLoopImpl {
-        label = label?.transform(transformer, data)
+    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirErrorLoopImpl {
+        condition = condition.transform(transformer, data)
         return this
     }
 

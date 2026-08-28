@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,58 +14,71 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
+import org.jetbrains.kotlin.fir.expressions.FirForLoop
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 
-internal class FirWhileLoopImpl(
+internal class FirForLoopImpl(
     override val source: KtSourceElement?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var block: FirBlock,
     override var label: FirLabel?,
-    override var condition: FirExpression,
-) : FirWhileLoop() {
+    override var valueParameter: FirValueParameter,
+    override var range: FirExpression,
+) : FirForLoop() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         block.accept(visitor, data)
         label?.accept(visitor, data)
-        condition.accept(visitor, data)
+        valueParameter.accept(visitor, data)
+        range.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirWhileLoopImpl {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirForLoopImpl {
         transformAnnotations(transformer, data)
         transformBlock(transformer, data)
         transformLabel(transformer, data)
-        transformCondition(transformer, data)
+        transformValueParameter(transformer, data)
+        transformRange(transformer, data)
         return this
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWhileLoopImpl {
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirForLoopImpl {
         annotations.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirWhileLoopImpl {
+    override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirForLoopImpl {
         block = block.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformLabel(transformer: FirTransformer<D>, data: D): FirWhileLoopImpl {
+    override fun <D> transformLabel(transformer: FirTransformer<D>, data: D): FirForLoopImpl {
         label = label?.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhileLoopImpl {
-        condition = condition.transform(transformer, data)
+    override fun <D> transformValueParameter(transformer: FirTransformer<D>, data: D): FirForLoopImpl {
+        valueParameter = valueParameter.transform(transformer, data)
+        return this
+    }
+
+    override fun <D> transformRange(transformer: FirTransformer<D>, data: D): FirForLoopImpl {
+        range = range.transform(transformer, data)
         return this
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
+    }
+
+    override fun replaceValueParameter(newValueParameter: FirValueParameter) {
+        valueParameter = newValueParameter
     }
 }

@@ -27,16 +27,16 @@ class FirDoWhileLoopBuilder : FirLoopBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
     override val annotations: MutableList<FirAnnotation> = []
     override lateinit var block: FirBlock
-    override lateinit var condition: FirExpression
     override var label: FirLabel? = null
+    lateinit var condition: FirExpression
 
     override fun build(): FirDoWhileLoop {
         return FirDoWhileLoopImpl(
             source,
             annotations.toMutableOrEmpty(),
             block,
-            condition,
             label,
+            condition,
         )
     }
 

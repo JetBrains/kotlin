@@ -283,6 +283,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformDoWhileLoop(doWhileLoop, data)
     }
 
+    open fun transformForLoop(forLoop: FirForLoop, data: D): FirStatement {
+        return transformElement(forLoop, data)
+    }
+
+    final override fun visitForLoop(forLoop: FirForLoop, data: D): FirStatement {
+        return transformForLoop(forLoop, data)
+    }
+
     open fun transformErrorLoop(errorLoop: FirErrorLoop, data: D): FirStatement {
         return transformElement(errorLoop, data)
     }

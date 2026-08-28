@@ -713,7 +713,12 @@ class FirRenderer(
             val target = loopJump.target
             val labeledElement = target.labeledElement
             print("@@@[")
-            labeledElement.condition.accept(this)
+            when (labeledElement) {
+                is FirForLoop -> labeledElement.range.accept(this)
+                is FirDoWhileLoop -> labeledElement.condition.accept(this)
+                is FirWhileLoop -> labeledElement.condition.accept(this)
+                is FirErrorLoop -> labeledElement.condition.accept(this)
+            }
             print("] ")
             loopJumpStack.pop()
         }

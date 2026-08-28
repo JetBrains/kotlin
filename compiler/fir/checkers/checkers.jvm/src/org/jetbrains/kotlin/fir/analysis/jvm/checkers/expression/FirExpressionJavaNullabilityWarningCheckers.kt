@@ -222,10 +222,10 @@ object FirLogicExpressionTypeJavaNullabilityWarningChecker : FirBooleanOperatorE
 
 object FirLoopConditionJavaNullabilityWarningChecker : FirLoopExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(expression: FirLoop) {
-        if (expression is FirErrorLoop) return
-        val condition = expression.condition
-        condition.checkConditionForEnhancedTypeMismatch()
+    override fun check(expression: FirLoop): Unit = when (expression) {
+        is FirWhileLoop -> expression.condition.checkConditionForEnhancedTypeMismatch()
+        is FirDoWhileLoop -> expression.condition.checkConditionForEnhancedTypeMismatch()
+        else -> Unit
     }
 }
 

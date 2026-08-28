@@ -3371,84 +3371,58 @@ open class PsiRawFirBuilder(
                 "No range in for loop",
                 sourceWhenInvalidExpression = expression.getChildNodeByType(KtNodeTypes.LOOP_RANGE) as? KtElement ?: expression
             )
-            val ktParameter = expression.loopParameter
-            val fakeSource = expression.toKtPsiSourceElement(KtFakeSourceElementKind.DesugaredForLoop)
-            val rangeSource = expression.loopRange?.toFirSourceElement(KtFakeSourceElementKind.DesugaredForLoop) ?: fakeSource
-
             val target: FirLoopTarget
-            // NB: FirForLoopChecker relies on this block existence and structure
-            return buildBlock {
-                source = fakeSource
-                val iteratorVal = generateTemporaryVariable(
-                    baseModuleData, rangeSource, SpecialNames.ITERATOR,
-                    buildFunctionCall {
-                        source = rangeSource
-                        calleeReference = buildSimpleNamedReference {
-                            source = rangeSource
-                            name = OperatorNameConventions.ITERATOR
-                        }
-                        explicitReceiver = rangeExpression
-                        origin = FirFunctionCallOrigin.Operator
-                    },
-                )
-                statements += iteratorVal
-                statements += FirWhileLoopBuilder().apply {
-                    source = expression.toFirSourceElement()
-                    condition = buildFunctionCall {
-                        source = rangeSource
-                        calleeReference = buildSimpleNamedReference {
-                            source = rangeSource
-                            name = OperatorNameConventions.HAS_NEXT
-                        }
-                        explicitReceiver = generateResolvedAccessExpression(rangeSource, iteratorVal)
-                        origin = FirFunctionCallOrigin.Operator
+            val destructuringStatements = mutableListOf<FirStatement>()
+            val sourceElement = expression.toKtPsiSourceElement()
+            return FirForLoopBuilder().apply {
+                source = sourceElement
+                range = rangeExpression
+                val parameter = expression.loopParameter
+                    ?: return buildErrorLoop(sourceElement, ConeSyntaxDiagnostic("No value parameter in for loop"))
+                val typeRef = parameter.typeReference.toFirOrImplicitType()
+                valueParameter = parameter.destructuringDeclaration?.let { multiDeclaration ->
+                    val multiParameter = buildValueParameter {
+                        source = parameter.toFirSourceElement()
+                        // The value parameter gets an anonymous function symbol which will then be used for forEach lambda desugaring
+                        containingDeclarationSymbol = FirAnonymousFunctionSymbol()
+                        moduleData = baseModuleData
+                        origin = FirDeclarationOrigin.Source
+                        returnTypeRef = parameter.typeReference.toFirOrImplicitType()
+                        name = SpecialNames.DESTRUCT
+                        symbol = FirValueParameterSymbol()
+                        defaultValue = null
+                        isCrossinline = false
+                        isNoinline = false
+                        isVararg = false
+                        parameter.modifierList?.annotationEntries?.map { it.convert<FirAnnotation>() }?.let { annotations += it }
                     }
-                    // break/continue in the for loop condition will refer to an outer loop if any.
-                    // So, prepare the loop target after building the condition.
-                    target = prepareTarget(expression)
-                }.configure(target) {
-                    val blockBuilder = FirBlockBuilder().apply {
-                        source = expression.toFirSourceElement()
-                    }
-                    if (ktParameter != null) {
-                        val multiDeclaration = ktParameter.destructuringDeclaration
-                        val firLoopParameter = generateTemporaryVariable(
-                            moduleData = baseModuleData,
-                            source = ktParameter.toFirSourceElement(),
-                            name = when {
-                                multiDeclaration != null -> SpecialNames.DESTRUCT
-                                ktParameter.nameIdentifier?.asText == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-                                else -> ktParameter.nameAsSafeName
-                            },
-                            initializer = buildFunctionCall {
-                                source = rangeSource
-                                calleeReference = buildSimpleNamedReference {
-                                    source = rangeSource
-                                    name = OperatorNameConventions.NEXT
-                                }
-                                explicitReceiver = generateResolvedAccessExpression(rangeSource, iteratorVal)
-                                origin = FirFunctionCallOrigin.Operator
-                            },
-                            typeRef = ktParameter.typeReference.toFirOrImplicitType(),
-                            extractedAnnotations = ktParameter.modifierList?.annotationEntries?.map { it.convert<FirAnnotation>() },
-                        ).apply {
-                            isForLoopParameter = true
-                        }
-                        if (multiDeclaration != null) {
-                            addDestructuringVariables(
-                                blockBuilder.statements,
-                                baseModuleData,
-                                multiDeclaration = multiDeclaration,
-                                container = firLoopParameter,
-                                tmpVariable = true,
-                                forceLocal = true,
-                            )
-                        } else {
-                            blockBuilder.statements.add(firLoopParameter)
+                    addDestructuringVariables(
+                        destructuringStatements,
+                        baseModuleData,
+                        multiDeclaration,
+                        multiParameter,
+                        tmpVariable = false,
+                        forceLocal = true,
+                    )
+                    multiParameter
+                } ?: run {
+                    // The value parameter gets an anonymous function symbol which will then be used for forEach lambda desugaring
+                    val valueParameter = parameter.toFirValueParameter(typeRef, FirAnonymousFunctionSymbol(), ValueParameterDeclaration.FOR_LOOP)
+                    buildValueParameterCopy(valueParameter) {
+                        symbol = valueParameter.symbol
+                        val quotedName = parameter.nameIdentifier?.asText
+                        name = when {
+                            quotedName == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                            else -> parameter.nameAsSafeName
                         }
                     }
-                    blockBuilder.statements.add(expression.body.toFirBlock())
-                    blockBuilder.build()
+                }
+                target = prepareTarget(expression)
+            }.configure(target) {
+                buildBlock {
+                    source = sourceElement
+                    statements += destructuringStatements
+                    statements += expression.body.toFirBlock()
                 }
             }
         }

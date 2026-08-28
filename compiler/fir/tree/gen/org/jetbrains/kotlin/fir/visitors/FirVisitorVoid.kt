@@ -283,6 +283,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(doWhileLoop)
     }
 
+    final override fun visitForLoop(forLoop: FirForLoop, data: Nothing?) {
+        visitForLoop(forLoop)
+    }
+
+    open fun visitForLoop(forLoop: FirForLoop) {
+        visitElement(forLoop)
+    }
+
     final override fun visitErrorLoop(errorLoop: FirErrorLoop, data: Nothing?) {
         visitErrorLoop(errorLoop)
     }

@@ -451,6 +451,9 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         FirExpressionsResolveTransformer::transformSmartCastExpression,
     )
 
+    override fun transformForLoop(forLoop: FirForLoop, data: ResolutionMode): FirStatement =
+        expressionTransformation(forLoop, data, FirExpressionsResolveTransformer::transformForLoop)
+
     // ------------------------------------- Declarations -------------------------------------
 
     private inline fun <T : R, R : FirElement> declarationTransformation(
@@ -732,6 +735,12 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         data,
         FirControlFlowStatementsResolveTransformer::transformCatch,
     )
+
+    override fun transformBreakExpression(breakExpression: FirBreakExpression, data: ResolutionMode): FirStatement =
+        controlFlowStatementsTransformation(breakExpression, data, FirControlFlowStatementsResolveTransformer::transformBreakExpression)
+
+    override fun transformContinueExpression(continueExpression: FirContinueExpression, data: ResolutionMode): FirStatement =
+        controlFlowStatementsTransformation(continueExpression, data, FirControlFlowStatementsResolveTransformer::transformContinueExpression)
 
     override fun <E : FirTargetElement> transformJump(
         jump: FirJump<E>,

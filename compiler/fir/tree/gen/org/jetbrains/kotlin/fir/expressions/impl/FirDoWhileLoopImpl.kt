@@ -26,22 +26,22 @@ internal class FirDoWhileLoopImpl(
     override val source: KtSourceElement?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var block: FirBlock,
-    override var condition: FirExpression,
     override var label: FirLabel?,
+    override var condition: FirExpression,
 ) : FirDoWhileLoop() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         block.accept(visitor, data)
-        condition.accept(visitor, data)
         label?.accept(visitor, data)
+        condition.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDoWhileLoopImpl {
         transformAnnotations(transformer, data)
         transformBlock(transformer, data)
-        transformCondition(transformer, data)
         transformLabel(transformer, data)
+        transformCondition(transformer, data)
         return this
     }
 
@@ -55,13 +55,13 @@ internal class FirDoWhileLoopImpl(
         return this
     }
 
-    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirDoWhileLoopImpl {
-        condition = condition.transform(transformer, data)
+    override fun <D> transformLabel(transformer: FirTransformer<D>, data: D): FirDoWhileLoopImpl {
+        label = label?.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformLabel(transformer: FirTransformer<D>, data: D): FirDoWhileLoopImpl {
-        label = label?.transform(transformer, data)
+    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirDoWhileLoopImpl {
+        condition = condition.transform(transformer, data)
         return this
     }
 

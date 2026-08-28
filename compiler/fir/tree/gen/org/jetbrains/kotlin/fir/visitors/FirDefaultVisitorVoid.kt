@@ -83,6 +83,10 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitLoop(doWhileLoop)
     }
 
+    override fun visitForLoop(forLoop: FirForLoop) {
+        visitLoop(forLoop)
+    }
+
     override fun visitLiteralExpression(literalExpression: FirLiteralExpression) {
         visitExpression(literalExpression)
     }

@@ -23,7 +23,6 @@ sealed class FirLoop : FirPureAbstractElement(), FirStatement, FirTargetElement 
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
     abstract val block: FirBlock
-    abstract val condition: FirExpression
     abstract val label: FirLabel?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
@@ -38,8 +37,6 @@ sealed class FirLoop : FirPureAbstractElement(), FirStatement, FirTargetElement 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirLoop
 
     abstract fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirLoop
-
-    abstract fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirLoop
 
     abstract fun <D> transformLabel(transformer: FirTransformer<D>, data: D): FirLoop
 }

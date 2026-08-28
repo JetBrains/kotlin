@@ -119,6 +119,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: D): R =
         visitElement(doWhileLoop, data)
 
+    open fun visitForLoop(forLoop: FirForLoop, data: D): R =
+        visitElement(forLoop, data)
+
     open fun visitErrorLoop(errorLoop: FirErrorLoop, data: D): R =
         visitElement(errorLoop, data)
 

@@ -280,7 +280,6 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(targetElement)
 
         +field(block, withTransform = true)
-        +field("condition", expression, withTransform = true)
         +field(label, nullable = true, withTransform = true)
     }
 
@@ -288,16 +287,26 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(loop)
 
         +field("condition", expression, withTransform = true)
-        +field(block, withTransform = true)
     }
 
     val doWhileLoop: Element by element(Expression) {
         parent(loop)
+
+        +field("condition", expression, withTransform = true)
+    }
+
+    val forLoop: Element by element(Expression) {
+        parent(loop)
+
+        +field(valueParameter, withReplace = true, withTransform = true)
+        +field("range", expression, withTransform = true)
     }
 
     val errorLoop: Element by element(Expression) {
         parent(loop)
         parent(diagnosticHolder)
+
+        +field("condition", expression, withTransform = true)
     }
 
     val catchClause: Element by element(Expression, name = "Catch") {
