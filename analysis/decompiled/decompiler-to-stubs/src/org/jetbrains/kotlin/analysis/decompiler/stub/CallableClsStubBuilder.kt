@@ -101,14 +101,14 @@ fun createDeclarationsStubs(
 @OptIn(KtExperimentalApi::class)
 private fun buildCompanionBlockWithBody(parentStub: StubElement<out PsiElement>): StubElement<out PsiElement> {
     val companionBlockStub = KotlinPlaceHolderStubImpl<KtCompanionBlock>(
-        parentStub,
-        KtNodeTypes.COMPANION_BLOCK,
+        parent = parentStub,
+        elementType = KtNodeTypes.COMPANION_BLOCK,
     )
 
     // Parser treats companion keyword as a modifier, so we need to create a modifier list stub for it
     createModifierListStub(companionBlockStub, listOf(KtTokens.COMPANION_KEYWORD), ProtoBuf.ReturnValueStatus.UNSPECIFIED)
 
-    return KotlinPlaceHolderStubImpl<KtClassBody>(companionBlockStub, KtNodeTypes.CLASS_BODY)
+    return KotlinPlaceHolderStubImpl<KtClassBody>(parent = companionBlockStub, elementType = KtNodeTypes.CLASS_BODY)
 }
 
 fun createTypeAliasesStubs(
@@ -217,8 +217,8 @@ abstract class CallableClsStubBuilder(
         }
 
         val contextReceiverListStub = KotlinPlaceHolderStubImpl<KtContextParameterList>(
-            modifierListStub,
-            KtNodeTypes.CONTEXT_PARAMETER_LIST,
+            parent = modifierListStub,
+            elementType = KtNodeTypes.CONTEXT_PARAMETER_LIST,
         )
 
         typeStubBuilder.createValueParameterStubs(
@@ -486,7 +486,7 @@ private class PropertyClsStubBuilder(
 
         // Getter with a body expect to have a value parameter list
         if (isNotDefault) {
-            KotlinPlaceHolderStubImpl<KtParameterList>(getterStub, KtNodeTypes.VALUE_PARAMETER_LIST)
+            KotlinPlaceHolderStubImpl<KtParameterList>(parent = getterStub, elementType = KtNodeTypes.VALUE_PARAMETER_LIST)
         }
     }
 
