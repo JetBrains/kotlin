@@ -336,6 +336,12 @@ private fun KaDiagnosticConverterBuilder.addConversions0() {
             token,
         )
     }
+    add(FirJvmErrors.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION_WARNING) { firDiagnostic ->
+        PositionedValueArgumentForJavaAnnotationWarningImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirJsErrors.JS_NO_RUNTIME_WRONG_TARGET) { firDiagnostic ->
         JsNoRuntimeWrongTargetImpl(
             firDiagnostic as KtDiagnosticWithSource,

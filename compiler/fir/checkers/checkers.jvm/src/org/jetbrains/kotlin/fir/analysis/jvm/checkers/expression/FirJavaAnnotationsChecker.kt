@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.isAnnotationClass
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -67,7 +70,17 @@ object FirJavaAnnotationsChecker : FirAnnotationChecker(MppCheckerKind.Common) {
         }
 
         if (expression is FirAnnotationCall) {
-            checkArgumentList(expression.argumentList)
+            val factory = if (
+                context.containingDeclarations.lastOrNull()?.source?.kind != KtRealSourceElementKind &&
+                LanguageFeature.EnforceNamedArgumentsOnJavaAnnotationInAccessors.isDisabled()
+            ) {
+                FirJvmErrors.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION_WARNING
+            } else {
+                FirJvmErrors.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION
+            }
+            checkArgumentList(
+                expression.argumentList, factory
+            )
         }
     }
 }
@@ -81,12 +94,17 @@ object FirJavaAnnotationsConstructorCallChecker : FirFunctionCallChecker(MppChec
         if (classSymbol.origin !is FirDeclarationOrigin.Java) return
         if (classSymbol.classKind?.isAnnotationClass != true) return
 
-        checkArgumentList(expression.argumentList)
+        val factory = if (LanguageFeature.EnforceNamedArgumentsOnJavaAnnotationInAccessors.isDisabled()) {
+            FirJvmErrors.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION_WARNING
+        } else {
+            FirJvmErrors.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION
+        }
+        checkArgumentList(expression.argumentList, factory)
     }
 }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
-private fun checkArgumentList(argumentList: FirArgumentList) {
+private fun checkArgumentList(argumentList: FirArgumentList, factory: KtDiagnosticFactory0) {
     if (argumentList is FirResolvedArgumentList) {
         val arguments = argumentList.originalArgumentList?.arguments ?: return
         for (key in arguments) {
@@ -94,7 +112,7 @@ private fun checkArgumentList(argumentList: FirArgumentList) {
                 key !is FirErrorExpression &&
                 argumentList.mapping[key]?.name.let { it != null && it != Annotations.ParameterNames.value }
             ) {
-                reporter.reportOn(key.source, FirJvmErrors.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION)
+                reporter.reportOn(key.source, factory)
             }
         }
     }

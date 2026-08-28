@@ -8814,6 +8814,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface PositionedValueArgumentForJavaAnnotationWarning : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass: KClass<PositionedValueArgumentForJavaAnnotationWarning>
+            get() = PositionedValueArgumentForJavaAnnotationWarning::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface RedundantRepeatableAnnotation : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass: KClass<RedundantRepeatableAnnotation>
             get() = RedundantRepeatableAnnotation::class
