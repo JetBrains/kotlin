@@ -73,42 +73,42 @@ data class KtSimpleDiagnostic(
 
 data class KtDiagnosticWithParameters1<A>(
     override val element: AbstractKtSourceElement,
-    override val a: A,
+    val a: A,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory1<A>,
     override val positioningStrategy: AbstractSourceElementPositioningStrategy,
     override val context: DiagnosticBaseContext,
-) : KtDiagnosticWithSource(), DiagnosticWithParameters1Marker<A>
+) : KtDiagnosticWithSource()
 
 data class KtDiagnosticWithParameters2<A, B>(
     override val element: AbstractKtSourceElement,
-    override val a: A,
-    override val b: B,
+    val a: A,
+    val b: B,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory2<A, B>,
     override val positioningStrategy: AbstractSourceElementPositioningStrategy,
     override val context: DiagnosticBaseContext,
-) : KtDiagnosticWithSource(), DiagnosticWithParameters2Marker<A, B>
+) : KtDiagnosticWithSource()
 
 data class KtDiagnosticWithParameters3<A, B, C>(
     override val element: AbstractKtSourceElement,
-    override val a: A,
-    override val b: B,
-    override val c: C,
+    val a: A,
+    val b: B,
+    val c: C,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory3<A, B, C>,
     override val positioningStrategy: AbstractSourceElementPositioningStrategy,
     override val context: DiagnosticBaseContext,
-) : KtDiagnosticWithSource(), DiagnosticWithParameters3Marker<A, B, C>
+) : KtDiagnosticWithSource()
 
 data class KtDiagnosticWithParameters4<A, B, C, D>(
     override val element: AbstractKtSourceElement,
-    override val a: A,
-    override val b: B,
-    override val c: C,
-    override val d: D,
+    val a: A,
+    val b: B,
+    val c: C,
+    val d: D,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory4<A, B, C, D>,
     override val positioningStrategy: AbstractSourceElementPositioningStrategy,
     override val context: DiagnosticBaseContext,
-) : KtDiagnosticWithSource(), DiagnosticWithParameters4Marker<A, B, C, D>
+) : KtDiagnosticWithSource()
