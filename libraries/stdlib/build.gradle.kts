@@ -1,6 +1,7 @@
 @file:Suppress("UNUSED_VARIABLE", "NAME_SHADOWING", "DEPRECATION")
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
@@ -162,11 +163,11 @@ kotlin {
                     compilerOptions {
                         moduleName = "kotlin-stdlib"
                         jvmTarget = JvmTarget.JVM_1_8
+                        jvmDefault = JvmDefaultMode.DISABLE
                         // providing exhaustive list of args here
                         freeCompilerArgs.set(
                             listOfNotNull(
                                 "-Xjdk-release=6",
-                                "-jvm-default=disable",
                                 "-Xallow-kotlin-package",
                                 "-Xexpect-actual-classes",
                                 "-Xmultifile-parts-inherit",
@@ -194,10 +195,10 @@ kotlin {
                     compilerOptions {
                         moduleName = "kotlin-stdlib-jdk7"
                         jvmTarget = JvmTarget.JVM_1_8
+                        jvmDefault = JvmDefaultMode.DISABLE
                         freeCompilerArgs.set(
                             listOfNotNull(
                                 "-Xjdk-release=7",
-                                "-jvm-default=disable",
                                 "-Xallow-kotlin-package",
                                 "-Xexpect-actual-classes",
                                 "-Xmultifile-parts-inherit",
@@ -217,10 +218,10 @@ kotlin {
                 compileTaskProvider.configure {
                     compilerOptions {
                         moduleName = "kotlin-stdlib-jdk8"
+                        jvmDefault = JvmDefaultMode.DISABLE
                         freeCompilerArgs.set(
                             listOfNotNull(
                                 "-Xallow-kotlin-package",
-                                "-jvm-default=disable",
                                 "-Xmultifile-parts-inherit",
                                 "-Xno-new-java-annotation-targets",
                                 "-Xexplicit-api=strict",

@@ -200,32 +200,14 @@ fun Project.configureKotlinCompilationOptions() {
                 }
 
                 if (!skipJvmDefaultForModule(project.path)) {
-                    freeCompilerArgs.add(
-                        if (project.shouldUseOldJvmDefaultArgument())
-                            "-Xjvm-default=all"
-                        else
-                            "-jvm-default=no-compatibility"
-                    )
+                    jvmDefault = JvmDefaultMode.NO_COMPATIBILITY
                 } else {
-                    freeCompilerArgs.add(
-                        if (project.shouldUseOldJvmDefaultArgument())
-                            "-Xjvm-default=disable"
-                        else
-                            "-jvm-default=disable"
-                    )
+                    jvmDefault = JvmDefaultMode.DISABLE
                 }
 
             }
         }
     }
-}
-
-private fun Project.shouldUseOldJvmDefaultArgument(): Boolean {
-    @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
-    val isOldCompilerVersion =
-        KotlinToolingVersion(kotlinExtension.compilerVersion.get()) < KotlinToolingVersion("2.2")
-
-    return isOldCompilerVersion
 }
 
 private val libs = project.the<LibrariesForLibs>()

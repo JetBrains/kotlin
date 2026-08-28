@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
@@ -20,10 +21,10 @@ sourceSets {
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.jvmDefault = JvmDefaultMode.NO_COMPATIBILITY
     compilerOptions.freeCompilerArgs.addAll(
         listOf(
             "-Xallow-kotlin-package",
-            "-jvm-default=no-compatibility",
         )
     )
 }
