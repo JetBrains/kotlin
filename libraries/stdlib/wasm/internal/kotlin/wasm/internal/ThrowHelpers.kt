@@ -73,10 +73,20 @@ internal fun rangeCheck(index: Int, size: Int) {
 private const val INITIALIZATION_STATE_INITIALIZED: Int = 1
 private const val INITIALIZATION_STATE_ERROR: Int = 2
 
+// TODO: Remove after bootstrap
 @UsedFromCompilerGeneratedCode
 internal fun checkStaticInitializationState(state: Int, klass: KClass<*>?): Boolean {
     if (state == INITIALIZATION_STATE_ERROR) {
         staticInitializationFailure(null, klass?.qualifiedName ?: klass?.simpleName)
     }
     return state == INITIALIZATION_STATE_INITIALIZED
+}
+
+@UsedFromCompilerGeneratedCode
+internal fun staticInitializationFailureWithClassName(klass: KClass<*>?): Nothing {
+    var className: String? = null
+    if (klass != null) {
+        className = klass.qualifiedName ?: klass.simpleName
+    }
+    staticInitializationFailure(null, className)
 }

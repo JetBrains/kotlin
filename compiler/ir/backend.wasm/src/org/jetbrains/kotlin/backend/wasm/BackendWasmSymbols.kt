@@ -326,7 +326,7 @@ class BackendWasmSymbols(
 
     val wasmAnyRefClass = ClassIds.anyref.classSymbol()
 
-    val checkStaticInitializationState by CallableIds.checkStaticInitializationState.functionSymbol()
+    override val staticInitializationFailureWithClassName by CallableIds.staticInitializationFailureWithClassName.functionSymbol()
 
     inner class JsInteropAdapters {
         val kotlinToJsStringAdapter by CallableIds.kotlinToJsStringAdapter.functionSymbol()
@@ -686,7 +686,7 @@ private object CallableIds {
     val js = CallableId(JsStandardClassIds.BASE_JS_PACKAGE, Name.identifier("js"))
     val registerRootSuiteBlock = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("registerRootSuiteBlock"))
     val runRootSuites = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("runRootSuites"))
-    val checkStaticInitializationState = "checkStaticInitializationState".wasmCallableId
+    val staticInitializationFailureWithClassName = "staticInitializationFailureWithClassName".wasmCallableId
     val cabiRealloc = "cabi_realloc".wasmCallableId
 }
 
