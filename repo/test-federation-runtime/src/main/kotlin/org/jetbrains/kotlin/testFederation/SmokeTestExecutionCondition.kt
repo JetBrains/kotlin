@@ -17,36 +17,50 @@ import kotlin.math.absoluteValue
 class SmokeTestExecutionCondition : ExecutionCondition {
     override fun evaluateExecutionCondition(context: ExtensionContext): ConditionEvaluationResult {
         if (!context.testMethod.isPresent) return enabled("Test Class is always enabled")
+
         val allContracts = contracts(context)
         if (!contractsAllowed(allContracts)) {
             throw ExtensionConfigurationException(
                 """
                 This test has contract for domains that are not declared at the Gradle level:
-                ${(allContracts - testFederationAllowAffectedBy).joinToString("\n") { "- $it" }}
+                ${(allContracts - testFederationDeclareAffectedBy).joinToString("\n") { "- $it" }}
                 
                 HOW TO FIX:
                 testTask {
-                    testFederationAllowAffectedBy = setOf(${(allContracts - testFederationCurrentDomains).sorted().joinToString(", ") { "Domain.$it" }})
+                    testFederationDeclareAffectedBy = setOf(${(allContracts - testFederationCurrentDomains).sorted().joinToString(", ") { "Domain.$it" }})
                 }
                 """.trimIndent()
             )
         }
-        if (testFederationMode == null) return enabled("$TEST_FEDERATION_MODE_KEY is not set")
-        if (testFederationMode == TestFederationMode.Full) return enabled("'TestFederationMode.Full' is set")
 
-        if (isAutoSmokeTest(context)) return enabled("Auto smoke test selected")
-        if (isSmokeTest(context)) return enabled("@${SmokeTest::class.java.simpleName}")
+        if (testFederationMode == null) {
+            return enabled("$TEST_FEDERATION_MODE_KEY is not set")
+        }
+
+        if (testFederationMode == TestFederationMode.Full) {
+            return enabled("'TestFederationMode.Full' is set")
+        }
+
+        if (isAutoSmokeTest(context)) {
+            return enabled("Auto smoke test selected")
+        }
+        if (isSmokeTest(context)) {
+            return enabled("@${SmokeTest::class.java.simpleName}")
+        }
 
         /* Check contract */
         val changedDomains = testFederationChangedDomains
             ?: return disabled("Missing '${TEST_FEDERATION_CHANGED_DOMAINS_KEY}'")
         val contracts = changedDomains.intersect(allContracts)
-        if (contracts.isNotEmpty()) return enabled("Contracts: ${contracts.joinToString(", ")}")
+        if (contracts.isNotEmpty()) {
+            return enabled("Contracts: ${contracts.joinToString(", ")}")
+        }
+
         return disabled("Not a smoke test / Not a contract test")
     }
 }
 
-private fun contractsAllowed(allContracts: Set<Domain>): Boolean = testFederationAllowAffectedBy.containsAll(allContracts)
+private fun contractsAllowed(allContracts: Set<Domain>): Boolean = testFederationDeclareAffectedBy.containsAll(allContracts)
 
 /**
  * Tests tasks can be configured so that a given percentage of tests are automatically selected as smoke tests.

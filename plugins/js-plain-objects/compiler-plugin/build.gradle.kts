@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.testFederation.Domain
-import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
+import org.jetbrains.kotlin.testFederation.testFederationDeclareAffectedBy
 
 description = "JavaScript Plain Objects Compiler Plugin"
 
@@ -74,7 +74,7 @@ projectTests {
     testTask {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
         addClasspathProperty(jsoIrRuntimeForTests, "jso.runtime.path")
-        testFederationAllowAffectedBy = setOf(Domain.Js, Domain.CompilerInfrastructure)
+        testFederationDeclareAffectedBy = setOf(Domain.Js, Domain.CompilerInfrastructure)
     }
 
     testGenerator("org.jetbrains.kotlinx.jspo.TestGeneratorKt", generateTestsInBuildDirectory = true)

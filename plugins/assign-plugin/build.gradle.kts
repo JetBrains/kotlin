@@ -1,5 +1,5 @@
 import org.jetbrains.kotlin.testFederation.Domain
-import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
+import org.jetbrains.kotlin.testFederation.testFederationDeclareAffectedBy
 
 description = "Kotlin Assignment Compiler Plugin"
 
@@ -60,6 +60,6 @@ projectTests {
     withTestJar()
 
     testTask {
-        testFederationAllowAffectedBy = setOf(Domain.AnalysisApi, Domain.CompilerInfrastructure)
+        testFederationDeclareAffectedBy = setOf(Domain.AnalysisApi, Domain.CompilerInfrastructure)
     }
 }

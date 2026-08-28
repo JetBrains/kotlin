@@ -1,5 +1,5 @@
 import org.jetbrains.kotlin.testFederation.Domain
-import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
+import org.jetbrains.kotlin.testFederation.testFederationDeclareAffectedBy
 
 plugins {
     id("common-configuration")
@@ -53,7 +53,7 @@ projectTests {
 
     testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_1_8)) {
         addClasspathProperty(dataframeRuntimeClasspath, "kotlin.dataframe.plugin.test.classpath")
-        testFederationAllowAffectedBy = setOf(Domain.CompilerInfrastructure, Domain.AnalysisApi)
+        testFederationDeclareAffectedBy = setOf(Domain.CompilerInfrastructure, Domain.AnalysisApi)
     }
 
     testGenerator("org.jetbrains.kotlin.fir.dataframe.TestGeneratorKt", generateTestsInBuildDirectory = true)

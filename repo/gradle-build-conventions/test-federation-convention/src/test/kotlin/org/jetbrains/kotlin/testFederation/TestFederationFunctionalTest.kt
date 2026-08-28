@@ -83,7 +83,7 @@ class TestFederationFunctionalTest {
     fun `test - smoke - unused contract`() {
         val result = runTestBuild(TestFederationMode.Smoke, Domain.Maven)
         assertEquals(
-            setOf("<none>"),
+            setOf(),
             result.affectedDomains
         )
         assertEquals(

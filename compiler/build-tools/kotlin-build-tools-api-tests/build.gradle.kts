@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.testFederation.Domain
-import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
+import org.jetbrains.kotlin.testFederation.testFederationDeclareAffectedBy
 
 plugins {
     id("common-configuration")
@@ -247,7 +247,7 @@ testing {
                             skipInLocalBuild = false,
                             garbageCollector = GarbageCollector.Parallel
                         ) {
-                            testFederationAllowAffectedBy = setOf(Domain.CompilerPlugins)
+                            testFederationDeclareAffectedBy = setOf(Domain.CompilerPlugins)
                             ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
                         }
@@ -279,7 +279,7 @@ testing {
                             skipInLocalBuild = false,
                             garbageCollector = GarbageCollector.Parallel
                         ) {
-                            testFederationAllowAffectedBy = setOf(Domain.CompilerPlugins)
+                            testFederationDeclareAffectedBy = setOf(Domain.CompilerPlugins)
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
 
                         }

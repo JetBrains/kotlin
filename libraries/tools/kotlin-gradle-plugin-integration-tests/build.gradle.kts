@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.testFederation.Domain
-import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
+import org.jetbrains.kotlin.testFederation.testFederationDeclareAffectedBy
 import java.nio.file.Paths
 
 plugins {
@@ -244,7 +244,7 @@ tasks.register<Test>("kgpAllParallelTests") {
     group = KGP_TEST_TASKS_GROUP
     description = "Runs all tests for Kotlin Gradle plugins except daemon ones"
     maxParallelForks = maxParallelTestForks
-    testFederationAllowAffectedBy = setOf(Domain.CompilerInfrastructure, Domain.BuildToolsApi, Domain.Native, Domain.Js, Domain.CompilerPlugins, Domain.SwiftExport)
+    testFederationDeclareAffectedBy = setOf(Domain.CompilerInfrastructure, Domain.BuildToolsApi, Domain.Native, Domain.Js, Domain.CompilerPlugins, Domain.SwiftExport)
 
     classpath = sourceSets["test"].runtimeClasspath
     testClassesDirs = sourceSets["test"].output.classesDirs
@@ -336,7 +336,7 @@ val perTagJunitTasks = JunitTag.values().map { junitTag ->
                 group = gradleVersionTaskGroup
                 description = junitTask.description + " against Gradle $gradleVersion"
                 maxParallelForks = maxParallelTestForks
-                testFederationAllowAffectedBy = junitTask.domains
+                testFederationDeclareAffectedBy = junitTask.domains
 
                 classpath = sourceSets["test"].runtimeClasspath
                 testClassesDirs = sourceSets["test"].output.classesDirs
@@ -361,7 +361,7 @@ val perTagJunitTasks = JunitTag.values().map { junitTag ->
         description = junitTask.description
         maxParallelForks = junitTask.maxParallelForks
 
-        testFederationAllowAffectedBy = junitTask.domains
+        testFederationDeclareAffectedBy = junitTask.domains
         useJUnitPlatform {
             includeTags(junitTask.junitTag.name)
             excludeTags(*JunitTag.entries.filterNot { it == junitTask.junitTag }.map { it.name }.toTypedArray())

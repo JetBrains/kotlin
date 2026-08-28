@@ -1,5 +1,5 @@
 import org.jetbrains.kotlin.testFederation.Domain
-import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
+import org.jetbrains.kotlin.testFederation.testFederationDeclareAffectedBy
 
 plugins {
     id("common-configuration")
@@ -42,7 +42,7 @@ projectTests {
     testTask {
         outputs.dir(layout.buildDirectory.dir("t"))
         useJUnitPlatform()
-        testFederationAllowAffectedBy = setOf(Domain.Js)
+        testFederationDeclareAffectedBy = setOf(Domain.Js)
     }
 
     testGenerator("org.jetbrains.kotlin.library.abi.GenerateLibraryAbiReaderTestsKt", generateTestsInBuildDirectory = true)

@@ -16,7 +16,8 @@ val testFederationRuntime = configurations.detachedConfiguration(dependencies.pr
 
 tasks.withType<Test>().configureEach {
     val currentDomain = testFederationDomains
-    val allowAffectedBy: SetProperty<Domain> = testFederationAllowAffectedBy
+    val declaredAffectedBy: SetProperty<Domain> = testFederationDeclareAffectedBy
+
     val changedDomains = project.testFederationChangedDomains
     val areNightlyTestsEnabled = project.areNightlyTestsEnabled
 
@@ -98,9 +99,9 @@ tasks.withType<Test>().configureEach {
         environment(TEST_FEDERATION_CURRENT_DOMAINS_ENV_KEY, formattedCurrentDomain)
 
         // currentDomain is always allowed because it will cause TestFederationMode.Full
-        val formattedAllowAffectedBy = (allowAffectedBy.get() + currentDomain.get()).toArgumentString()
-        systemProperty(TEST_FEDERATION_ALLOW_AFFECTED_BY_KEY, formattedAllowAffectedBy)
-        environment(TEST_FEDERATION_ALLOW_AFFECTED_BY_ENV_KEY, formattedAllowAffectedBy)
+        val formattedAllowAffectedBy = (declaredAffectedBy.get() + currentDomain.get()).toArgumentString()
+        systemProperty(TEST_FEDERATION_DECLARE_AFFECTED_BY_KEY, formattedAllowAffectedBy)
+        environment(TEST_FEDERATION_DECLARE_AFFECTED_BY_ENV_KEY, formattedAllowAffectedBy)
 
         systemProperty(TEST_FEDERATION_NIGHTLY_KEY, areNightlyTestsEnabled.get())
         environment(TEST_FEDERATION_NIGHTLY_ENV_KEY, areNightlyTestsEnabled.get())

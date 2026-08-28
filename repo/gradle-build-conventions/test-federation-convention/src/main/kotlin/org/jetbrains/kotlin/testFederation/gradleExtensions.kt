@@ -174,7 +174,7 @@ val AbstractTestTask.smokeTestConfig: Property<SmokeTestConfig> by extensionProp
 /**
  * Domains that may be used to declare contracts via `@AffectedBy...` in tests
  */
-val AbstractTestTask.testFederationAllowAffectedBy: SetProperty<Domain> by extensionProperty {
+val AbstractTestTask.testFederationDeclareAffectedBy: SetProperty<Domain> by extensionProperty {
     project.objects.setProperty(Domain::class.java)
 }
 

@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.testFederation.Domain
-import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
+import org.jetbrains.kotlin.testFederation.testFederationDeclareAffectedBy
 
 description = "Kotlin Power-Assert Compiler Plugin"
 
@@ -76,7 +76,7 @@ projectTests {
         addClasspathProperty(junit5Classpath, "junit5.classpath")
         addClasspathProperty(powerAssertJvmRuntimeClasspath, "powerAssertRuntime.jvm.classpath")
         addClasspathProperty(powerAssertJsRuntimeClasspath, "powerAssertRuntime.js.classpath")
-        testFederationAllowAffectedBy = setOf(Domain.CompilerInfrastructure)
+        testFederationDeclareAffectedBy = setOf(Domain.CompilerInfrastructure)
     }
 
     testGenerator("org.jetbrains.kotlin.powerassert.TestGeneratorKt", generateTestsInBuildDirectory = true)

@@ -1,5 +1,5 @@
 import org.jetbrains.kotlin.testFederation.Domain
-import org.jetbrains.kotlin.testFederation.testFederationAllowAffectedBy
+import org.jetbrains.kotlin.testFederation.testFederationDeclareAffectedBy
 
 plugins {
     id("common-configuration")
@@ -65,7 +65,7 @@ projectTests {
         )
     ) {
         useJUnitPlatform()
-        testFederationAllowAffectedBy = setOf(Domain.CompilerInfrastructure)
+        testFederationDeclareAffectedBy = setOf(Domain.CompilerInfrastructure)
 
         addClasspathProperty(beforePluginClasspath, "plugin.classpath.before")
         addClasspathProperty(middlePluginClasspath, "plugin.classpath.middle")

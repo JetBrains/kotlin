@@ -11,8 +11,8 @@ internal const val TEST_FEDERATION_MODE_KEY = "test.federation.mode"
 internal const val TEST_FEDERATION_MODE_ENV_KEY = "TEST_FEDERATION_MODE"
 internal const val TEST_FEDERATION_CURRENT_DOMAINS_KEY = "test.federation.current.domains"
 internal const val TEST_FEDERATION_CURRENT_DOMAINS_ENV_KEY = "TEST_FEDERATION_CURRENT_DOMAINS"
-internal const val TEST_FEDERATION_ALLOW_AFFECTED_KEY = "test.federation.allowAffectedBy"
-internal const val TEST_FEDERATION_ALLOW_AFFECTED_ENV_KEY = "TEST_FEDERATION_ALLOW_AFFECTED_BY"
+internal const val TEST_FEDERATION_DECLARE_AFFECTED_KEY = "test.federation.declareAffectedBy"
+internal const val TEST_FEDERATION_DECLARE_AFFECTED_ENV_KEY = "TEST_FEDERATION_DECLARE_AFFECTED_BY"
 internal const val TEST_FEDERATION_CHANGED_DOMAINS_KEY = "test.federation.changed.domains"
 internal const val TEST_FEDERATION_CHANGED_DOMAINS_ENV_KEY = "TEST_FEDERATION_CHANGED_DOMAINS"
 internal const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_KEY = "test.federation.auto.smoke.test.percentage"
@@ -38,8 +38,8 @@ val testFederationMode: TestFederationMode? = run {
 /**
  * @return List of [Domain]s enabled for this test task
  */
-val testFederationAllowAffectedBy: Set<Domain>
-    get() = Domain.fromArgumentStringOrThrow(resolve(TEST_FEDERATION_ALLOW_AFFECTED_KEY, TEST_FEDERATION_ALLOW_AFFECTED_ENV_KEY) ?: "")
+val testFederationDeclareAffectedBy: Set<Domain>
+    get() = Domain.fromArgumentStringOrThrow(resolve(TEST_FEDERATION_DECLARE_AFFECTED_KEY, TEST_FEDERATION_DECLARE_AFFECTED_ENV_KEY) ?: "")
 
 /**
  * @return The [Domain]s of this test task
