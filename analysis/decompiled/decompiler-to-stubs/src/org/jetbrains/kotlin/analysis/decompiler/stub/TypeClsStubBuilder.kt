@@ -483,9 +483,9 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                     createValueStub(parameterStub, foldedInitializer, containerClassId = (container as? ProtoContainer.Class)?.classId)
                 } else {
                     KotlinNameReferenceExpressionStubImpl(
-                        /* parent = */ parameterStub,
-                        /* referencedName = */ StringRef.fromString(COMPILED_DEFAULT_PARAMETER_VALUE),
-                        /* myClassRef = */ false,
+                        parent = parameterStub,
+                        referencedNameRef = StringRef.fromString(COMPILED_DEFAULT_PARAMETER_VALUE),
+                        isClassRef = false,
                     )
                 }
             }
@@ -535,9 +535,9 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
             val typeConstraintStub = KotlinPlaceHolderStubImpl<KtTypeConstraint>(typeConstraintListStub, KtNodeTypes.TYPE_CONSTRAINT)
             KotlinNameReferenceExpressionStubImpl(
-                /* parent = */ typeConstraintStub,
-                /* referencedName = */ name.ref(),
-                /* myClassRef = */ false,
+                parent = typeConstraintStub,
+                referencedNameRef = name.ref(),
+                isClassRef = false,
             )
 
             createTypeReferenceStub(typeConstraintStub, type)

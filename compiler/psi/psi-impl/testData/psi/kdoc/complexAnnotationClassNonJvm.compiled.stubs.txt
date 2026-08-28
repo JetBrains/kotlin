@@ -14,6 +14,7 @@ FILE[kind=File[packageFqName=myPack]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Retention]
+                isClassRef: true
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             VALUE_ARGUMENT_NAME
@@ -35,6 +36,7 @@ FILE[kind=File[packageFqName=myPack]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Target]
+                isClassRef: true
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             VALUE_ARGUMENT_NAME
@@ -55,6 +57,7 @@ FILE[kind=File[packageFqName=myPack]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+                isClassRef: true
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             VALUE_ARGUMENT_NAME
@@ -72,6 +75,7 @@ FILE[kind=File[packageFqName=myPack]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
           INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
         VALUE_PARAMETER[fqName=myPack.MyMetadata.metadataVersion, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=metadataVersion]
           constantInitializer: []
@@ -81,6 +85,7 @@ FILE[kind=File[packageFqName=myPack]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=IntArray]
+                isClassRef: true
           COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
         VALUE_PARAMETER[fqName=myPack.MyMetadata.bytecodeVersion, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=bytecodeVersion]
           constantInitializer: [1, 0, 3]
@@ -90,6 +95,7 @@ FILE[kind=File[packageFqName=myPack]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=IntArray]
+                isClassRef: true
           COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=3]
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
@@ -102,6 +108,7 @@ FILE[kind=File[packageFqName=myPack]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Array]
+                isClassRef: true
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
@@ -109,6 +116,7 @@ FILE[kind=File[packageFqName=myPack]]
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
                       REFERENCE_EXPRESSION[referencedName=String]
+                        isClassRef: true
           COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
         VALUE_PARAMETER[fqName=myPack.MyMetadata.data2, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=data2]
           constantInitializer: []
@@ -118,6 +126,7 @@ FILE[kind=File[packageFqName=myPack]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Array]
+                isClassRef: true
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
@@ -125,6 +134,7 @@ FILE[kind=File[packageFqName=myPack]]
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
                       REFERENCE_EXPRESSION[referencedName=String]
+                        isClassRef: true
           COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
         VALUE_PARAMETER[fqName=myPack.MyMetadata.extraString, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=extraString]
           constantInitializer: ""
@@ -134,6 +144,7 @@ FILE[kind=File[packageFqName=myPack]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
           STRING_TEMPLATE
         VALUE_PARAMETER[fqName=myPack.MyMetadata.packageName, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=packageName]
           constantInitializer: ""
@@ -143,6 +154,7 @@ FILE[kind=File[packageFqName=myPack]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
           STRING_TEMPLATE
         VALUE_PARAMETER[fqName=myPack.MyMetadata.extraInt, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=extraInt]
           constantInitializer: 0
@@ -152,6 +164,7 @@ FILE[kind=File[packageFqName=myPack]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
           INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
@@ -160,4 +173,5 @@ FILE[kind=File[packageFqName=myPack]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Annotation]
+              isClassRef: true
     CLASS_BODY

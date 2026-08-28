@@ -14,6 +14,7 @@
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=UByte]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=Unsigned.us, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=us]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -21,6 +22,7 @@
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=UShort]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=Unsigned.ui, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ui]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -28,6 +30,7 @@
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=UInt]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=Unsigned.ul, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ul]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -35,6 +38,7 @@
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=ULong]
+                  isClassRef: true
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -42,6 +46,7 @@
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -62,6 +67,7 @@
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unsigned]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -102,6 +108,7 @@
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unsigned]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME

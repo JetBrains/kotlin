@@ -12,6 +12,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CodeSpanWithLineBreaksKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true
   FUNCTION[fqName=foo1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo1]
     origin: Facade(className=CodeSpanWithLineBreaksKt, jvmClassName=null)
     MODIFIER_LIST[public]
@@ -21,6 +22,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CodeSpanWithLineBreaksKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true
   FUNCTION[fqName=foo2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo2]
     origin: Facade(className=CodeSpanWithLineBreaksKt, jvmClassName=null)
     MODIFIER_LIST[public]
@@ -30,3 +32,4 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CodeSpanWithLineBreaksKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true

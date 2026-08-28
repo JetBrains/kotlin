@@ -11,6 +11,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertyAccessorsKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
       MODIFIER_LIST[private final]
       VALUE_PARAMETER_LIST
@@ -20,6 +21,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertyAccessorsKt]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
   PROPERTY[fqName=privateVarPrivateSetter, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=privateVarPrivateSetter]
     origin: Facade(className=PropertyAccessorsKt, jvmClassName=null)
     MODIFIER_LIST[private]
@@ -28,6 +30,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertyAccessorsKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
   PROPERTY[fqName=explicitPublicGetter, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=explicitPublicGetter]
     origin: Facade(className=PropertyAccessorsKt, jvmClassName=null)
     MODIFIER_LIST[public]
@@ -36,6 +39,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertyAccessorsKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
   PROPERTY[fqName=inlineProperty, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=inlineProperty]
     origin: Facade(className=PropertyAccessorsKt, jvmClassName=null)
     MODIFIER_LIST[public]
@@ -44,6 +48,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertyAccessorsKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
       MODIFIER_LIST[public final inline]
       VALUE_PARAMETER_LIST

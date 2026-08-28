@@ -153,9 +153,9 @@ fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtP
             -1 -> return
             0 -> {
                 KotlinNameReferenceExpressionStubImpl(
-                    /* parent = */ current,
-                    /* referencedName = */ iterator.previous().ref(),
-                    /* myClassRef = */ false,
+                    parent = current,
+                    referencedNameRef = iterator.previous().ref(),
+                    isClassRef = false,
                 )
 
                 return
@@ -165,9 +165,9 @@ fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtP
                 val receiver = KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(current, KtNodeTypes.DOT_QUALIFIED_EXPRESSION)
                 recCreateStubForPackageName(receiver)
                 KotlinNameReferenceExpressionStubImpl(
-                    /* parent = */ receiver,
-                    /* referencedName = */ lastSegment.ref(),
-                    /* myClassRef = */ false,
+                    parent = receiver,
+                    referencedNameRef = lastSegment.ref(),
+                    isClassRef = false,
                 )
             }
         }
@@ -217,9 +217,9 @@ fun createStubForTypeName(
         }
 
         KotlinNameReferenceExpressionStubImpl(
-            /* parent = */ userTypeStub,
-            /* referencedName = */ lastSegment.ref(),
-            /* myClassRef = */ level < classesNestedLevel,
+            parent = userTypeStub,
+            referencedNameRef = lastSegment.ref(),
+            isClassRef = level < classesNestedLevel,
         )
 
         if (!substituteWithAny) {

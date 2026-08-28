@@ -17,6 +17,7 @@ FILE[kind=Facade[packageFqName=some.other, facadeFqName=some.other.jvm.OtherKt]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+                isClassRef: true
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             VALUE_ARGUMENT_NAME
@@ -29,3 +30,4 @@ FILE[kind=Facade[packageFqName=some.other, facadeFqName=some.other.jvm.OtherKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true

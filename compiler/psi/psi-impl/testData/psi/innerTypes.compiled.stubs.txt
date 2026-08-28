@@ -21,6 +21,7 @@ FILE[kind=File[packageFqName=test]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=InnerTypes]
+                    isClassRef: true
                   TYPE_ARGUMENT_LIST
                     TYPE_PROJECTION[projectionKind=NONE]
                       TYPE_REFERENCE
@@ -28,13 +29,16 @@ FILE[kind=File[packageFqName=test]]
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=kotlin]
                           REFERENCE_EXPRESSION[referencedName=String]
+                            isClassRef: true
                     TYPE_PROJECTION[projectionKind=NONE]
                       TYPE_REFERENCE
                         USER_TYPE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=kotlin]
                           REFERENCE_EXPRESSION[referencedName=Double]
+                            isClassRef: true
                 REFERENCE_EXPRESSION[referencedName=Inner2]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=y]
             TYPE_REFERENCE
               USER_TYPE
@@ -42,21 +46,26 @@ FILE[kind=File[packageFqName=test]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=InnerTypes]
+                    isClassRef: true
                   TYPE_ARGUMENT_LIST
                     TYPE_PROJECTION[projectionKind=NONE]
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=E]
+                            isClassRef: true
                     TYPE_PROJECTION[projectionKind=NONE]
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=F]
+                            isClassRef: true
                 REFERENCE_EXPRESSION[referencedName=Inner2]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
       CLASS[classId=test/InnerTypes.Inner, fqName=test.InnerTypes.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
         MODIFIER_LIST[public final inner]
         TYPE_PARAMETER_LIST
@@ -84,6 +93,7 @@ FILE[kind=File[packageFqName=test]]
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=test]
                           REFERENCE_EXPRESSION[referencedName=InnerTypes]
+                            isClassRef: true
                           TYPE_ARGUMENT_LIST
                             TYPE_PROJECTION[projectionKind=NONE]
                               TYPE_REFERENCE
@@ -91,22 +101,27 @@ FILE[kind=File[packageFqName=test]]
                                   USER_TYPE
                                     REFERENCE_EXPRESSION[referencedName=kotlin]
                                   REFERENCE_EXPRESSION[referencedName=String]
+                                    isClassRef: true
                             TYPE_PROJECTION[projectionKind=NONE]
                               TYPE_REFERENCE
                                 USER_TYPE
                                   REFERENCE_EXPRESSION[referencedName=F]
+                                    isClassRef: true
                         REFERENCE_EXPRESSION[referencedName=Inner]
+                          isClassRef: true
                         TYPE_ARGUMENT_LIST
                           TYPE_PROJECTION[projectionKind=NONE]
                             TYPE_REFERENCE
                               USER_TYPE
                                 REFERENCE_EXPRESSION[referencedName=G]
+                                  isClassRef: true
                           TYPE_PROJECTION[projectionKind=NONE]
                             TYPE_REFERENCE
                               USER_TYPE
                                 USER_TYPE
                                   REFERENCE_EXPRESSION[referencedName=kotlin]
                                 REFERENCE_EXPRESSION[referencedName=Int]
+                                  isClassRef: true
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=y]
                     TYPE_REFERENCE
                       USER_TYPE
@@ -114,27 +129,33 @@ FILE[kind=File[packageFqName=test]]
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=test]
                           REFERENCE_EXPRESSION[referencedName=InnerTypes]
+                            isClassRef: true
                           TYPE_ARGUMENT_LIST
                             TYPE_PROJECTION[projectionKind=NONE]
                               TYPE_REFERENCE
                                 USER_TYPE
                                   REFERENCE_EXPRESSION[referencedName=E]
+                                    isClassRef: true
                             TYPE_PROJECTION[projectionKind=NONE]
                               TYPE_REFERENCE
                                 USER_TYPE
                                   REFERENCE_EXPRESSION[referencedName=F]
+                                    isClassRef: true
                         REFERENCE_EXPRESSION[referencedName=Inner]
+                          isClassRef: true
                         TYPE_ARGUMENT_LIST
                           TYPE_PROJECTION[projectionKind=NONE]
                             TYPE_REFERENCE
                               USER_TYPE
                                 REFERENCE_EXPRESSION[referencedName=E]
+                                  isClassRef: true
                           TYPE_PROJECTION[projectionKind=NONE]
                             TYPE_REFERENCE
                               USER_TYPE
                                 USER_TYPE
                                   REFERENCE_EXPRESSION[referencedName=kotlin]
                                 REFERENCE_EXPRESSION[referencedName=Double]
+                                  isClassRef: true
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=z]
                     TYPE_REFERENCE
                       USER_TYPE
@@ -143,6 +164,7 @@ FILE[kind=File[packageFqName=test]]
                             USER_TYPE
                               REFERENCE_EXPRESSION[referencedName=test]
                             REFERENCE_EXPRESSION[referencedName=InnerTypes]
+                              isClassRef: true
                             TYPE_ARGUMENT_LIST
                               TYPE_PROJECTION[projectionKind=NONE]
                                 TYPE_REFERENCE
@@ -150,23 +172,29 @@ FILE[kind=File[packageFqName=test]]
                                     USER_TYPE
                                       REFERENCE_EXPRESSION[referencedName=kotlin]
                                     REFERENCE_EXPRESSION[referencedName=String]
+                                      isClassRef: true
                               TYPE_PROJECTION[projectionKind=NONE]
                                 TYPE_REFERENCE
                                   USER_TYPE
                                     REFERENCE_EXPRESSION[referencedName=F]
+                                      isClassRef: true
                           REFERENCE_EXPRESSION[referencedName=Inner]
+                            isClassRef: true
                           TYPE_ARGUMENT_LIST
                             TYPE_PROJECTION[projectionKind=NONE]
                               TYPE_REFERENCE
                                 USER_TYPE
                                   REFERENCE_EXPRESSION[referencedName=G]
+                                    isClassRef: true
                             TYPE_PROJECTION[projectionKind=NONE]
                               TYPE_REFERENCE
                                 USER_TYPE
                                   USER_TYPE
                                     REFERENCE_EXPRESSION[referencedName=kotlin]
                                   REFERENCE_EXPRESSION[referencedName=Int]
+                                    isClassRef: true
                         REFERENCE_EXPRESSION[referencedName=Inner3]
+                          isClassRef: true
                         TYPE_ARGUMENT_LIST
                           TYPE_PROJECTION[projectionKind=NONE]
                             TYPE_REFERENCE
@@ -174,6 +202,7 @@ FILE[kind=File[packageFqName=test]]
                                 USER_TYPE
                                   REFERENCE_EXPRESSION[referencedName=kotlin]
                                 REFERENCE_EXPRESSION[referencedName=Double]
+                                  isClassRef: true
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=w]
                     TYPE_REFERENCE
                       USER_TYPE
@@ -182,26 +211,33 @@ FILE[kind=File[packageFqName=test]]
                             USER_TYPE
                               REFERENCE_EXPRESSION[referencedName=test]
                             REFERENCE_EXPRESSION[referencedName=InnerTypes]
+                              isClassRef: true
                             TYPE_ARGUMENT_LIST
                               TYPE_PROJECTION[projectionKind=NONE]
                                 TYPE_REFERENCE
                                   USER_TYPE
                                     REFERENCE_EXPRESSION[referencedName=E]
+                                      isClassRef: true
                               TYPE_PROJECTION[projectionKind=NONE]
                                 TYPE_REFERENCE
                                   USER_TYPE
                                     REFERENCE_EXPRESSION[referencedName=F]
+                                      isClassRef: true
                           REFERENCE_EXPRESSION[referencedName=Inner]
+                            isClassRef: true
                           TYPE_ARGUMENT_LIST
                             TYPE_PROJECTION[projectionKind=NONE]
                               TYPE_REFERENCE
                                 USER_TYPE
                                   REFERENCE_EXPRESSION[referencedName=G]
+                                    isClassRef: true
                             TYPE_PROJECTION[projectionKind=NONE]
                               TYPE_REFERENCE
                                 USER_TYPE
                                   REFERENCE_EXPRESSION[referencedName=H]
+                                    isClassRef: true
                         REFERENCE_EXPRESSION[referencedName=Inner3]
+                          isClassRef: true
                         TYPE_ARGUMENT_LIST
                           TYPE_PROJECTION[projectionKind=STAR]
                 TYPE_REFERENCE
@@ -209,6 +245,7 @@ FILE[kind=File[packageFqName=test]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Unit]
+                      isClassRef: true
       CLASS[classId=test/InnerTypes.Inner2, fqName=test.InnerTypes.Inner2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner2, superNames=[]]
         MODIFIER_LIST[public final inner]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Inner2]

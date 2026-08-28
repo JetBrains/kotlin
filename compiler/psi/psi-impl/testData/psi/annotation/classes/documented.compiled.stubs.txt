@@ -15,6 +15,7 @@ FILE[kind=File[packageFqName=test]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
           INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
@@ -23,4 +24,5 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Annotation]
+              isClassRef: true
     CLASS_BODY

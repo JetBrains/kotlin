@@ -13,6 +13,7 @@ CallInitializersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     PROPERTY[fqName=test.callWithArguments, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=callWithArguments]
       origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -21,6 +22,7 @@ CallInitializersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     PROPERTY[fqName=test.callWithNamedArguments, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=callWithNamedArguments]
       origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -29,6 +31,7 @@ CallInitializersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     PROPERTY[fqName=test.nestedCall, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=nestedCall]
       origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -37,6 +40,7 @@ CallInitializersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     PROPERTY[fqName=test.qualifiedCall, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=qualifiedCall]
       origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -45,6 +49,7 @@ CallInitializersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
     PROPERTY[fqName=test.parenthesizedCall, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=parenthesizedCall]
       origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -53,6 +58,7 @@ CallInitializersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     PROPERTY[fqName=test.doublyParenthesizedCall, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=doublyParenthesizedCall]
       origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -61,6 +67,7 @@ CallInitializersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     PROPERTY[fqName=test.callWithParenthesizedArguments, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=callWithParenthesizedArguments]
       origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -69,6 +76,7 @@ CallInitializersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     PROPERTY[fqName=test.getterCall, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=getterCall]
       origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -77,6 +85,7 @@ CallInitializersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -89,6 +98,7 @@ CallInitializersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     FUNCTION[fqName=test.sum, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=sum]
       origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -99,17 +109,20 @@ CallInitializersKt.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=right]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     FUNCTION[fqName=test.expressionBodyCall, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionBodyCall]
       origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -119,6 +132,7 @@ CallInitializersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     FUNCTION[fqName=test.expressionBodyNestedCall, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionBodyNestedCall]
       origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -128,6 +142,7 @@ CallInitializersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     FUNCTION[fqName=test.expressionBodyParenthesizedCall, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionBodyParenthesizedCall]
       origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -137,6 +152,7 @@ CallInitializersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
     FUNCTION[fqName=test.withCallDefault, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=withCallDefault]
       origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
       MODIFIER_LIST[public]
@@ -147,12 +163,14 @@ CallInitializersKt.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
           REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
 
 
 WithConstructorCallDefault.class:
@@ -171,6 +189,7 @@ WithConstructorCallDefault.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
       CLASS_BODY
         PROPERTY[fqName=test.WithConstructorCallDefault.value, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=value]
@@ -180,3 +199,4 @@ WithConstructorCallDefault.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true

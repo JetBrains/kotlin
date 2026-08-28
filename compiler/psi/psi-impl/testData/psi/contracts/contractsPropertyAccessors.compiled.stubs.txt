@@ -12,11 +12,13 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.ContractsPropertyAccessor
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Boolean]
+          isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Boolean]
+          isClassRef: true
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=true]
       contract: [ effect:Returns(TRUE) -> param(-1) ]
       MODIFIER_LIST[public final]

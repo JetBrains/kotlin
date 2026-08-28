@@ -17,6 +17,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
       FUNCTION[fqName=test.NestedClasses.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -25,6 +26,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
       CLASS[classId=test/NestedClasses.Nested, fqName=test.NestedClasses.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
         MODIFIER_LIST[private final]
         TYPE_PARAMETER_LIST
@@ -40,6 +42,7 @@ FILE[kind=File[packageFqName=test]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
           FUNCTION[fqName=test.NestedClasses.Nested.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
             MODIFIER_LIST[public final]
             VALUE_PARAMETER_LIST
@@ -47,11 +50,13 @@ FILE[kind=File[packageFqName=test]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=TN]
+                      isClassRef: true
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
+                  isClassRef: true
           CLASS[classId=test/NestedClasses.Nested.NN, fqName=test.NestedClasses.Nested.NN, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=NN, superNames=[]]
             MODIFIER_LIST[public final]
             TYPE_PARAMETER_LIST
@@ -67,6 +72,7 @@ FILE[kind=File[packageFqName=test]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Int]
+                      isClassRef: true
               FUNCTION[fqName=test.NestedClasses.Nested.NN.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
                 MODIFIER_LIST[public final]
                 VALUE_PARAMETER_LIST
@@ -74,11 +80,13 @@ FILE[kind=File[packageFqName=test]]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=TNN]
+                          isClassRef: true
                 TYPE_REFERENCE
                   USER_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Unit]
+                      isClassRef: true
           CLASS[classId=test/NestedClasses.Nested.NI, fqName=test.NestedClasses.Nested.NI, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=NI, superNames=[]]
             MODIFIER_LIST[public final inner]
             TYPE_PARAMETER_LIST
@@ -86,6 +94,7 @@ FILE[kind=File[packageFqName=test]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=TN]
+                      isClassRef: true
             PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=NI]
               MODIFIER_LIST[public]
               VALUE_PARAMETER_LIST
@@ -97,15 +106,18 @@ FILE[kind=File[packageFqName=test]]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=TN]
+                          isClassRef: true
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p2]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=TNI]
+                          isClassRef: true
                 TYPE_REFERENCE
                   USER_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Unit]
+                      isClassRef: true
       CLASS[classId=test/NestedClasses.Inner, fqName=test.NestedClasses.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
         MODIFIER_LIST[public final inner]
         TYPE_PARAMETER_LIST
@@ -113,6 +125,7 @@ FILE[kind=File[packageFqName=test]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=TOuter]
+                  isClassRef: true
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Inner]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
@@ -124,11 +137,13 @@ FILE[kind=File[packageFqName=test]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=TI]
+                      isClassRef: true
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
+                  isClassRef: true
           CLASS[classId=test/NestedClasses.Inner.II, fqName=test.NestedClasses.Inner.II, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=II, superNames=[]]
             MODIFIER_LIST[private final inner]
             TYPE_PARAMETER_LIST
@@ -144,6 +159,7 @@ FILE[kind=File[packageFqName=test]]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=TII]
+                          isClassRef: true
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p2]
                     TYPE_REFERENCE
                       USER_TYPE
@@ -152,18 +168,23 @@ FILE[kind=File[packageFqName=test]]
                             USER_TYPE
                               REFERENCE_EXPRESSION[referencedName=test]
                             REFERENCE_EXPRESSION[referencedName=NestedClasses]
+                              isClassRef: true
                             TYPE_ARGUMENT_LIST
                               TYPE_PROJECTION[projectionKind=NONE]
                                 TYPE_REFERENCE
                                   USER_TYPE
                                     REFERENCE_EXPRESSION[referencedName=TOuter]
+                                      isClassRef: true
                           REFERENCE_EXPRESSION[referencedName=Inner]
+                            isClassRef: true
                           TYPE_ARGUMENT_LIST
                             TYPE_PROJECTION[projectionKind=NONE]
                               TYPE_REFERENCE
                                 USER_TYPE
                                   REFERENCE_EXPRESSION[referencedName=TI]
+                                    isClassRef: true
                         REFERENCE_EXPRESSION[referencedName=II]
+                          isClassRef: true
                         TYPE_ARGUMENT_LIST
                           TYPE_PROJECTION[projectionKind=NONE]
                             TYPE_REFERENCE
@@ -171,17 +192,21 @@ FILE[kind=File[packageFqName=test]]
                                 USER_TYPE
                                   REFERENCE_EXPRESSION[referencedName=test]
                                 REFERENCE_EXPRESSION[referencedName=NestedClasses]
+                                  isClassRef: true
                                 TYPE_ARGUMENT_LIST
                                   TYPE_PROJECTION[projectionKind=NONE]
                                     TYPE_REFERENCE
                                       USER_TYPE
                                         REFERENCE_EXPRESSION[referencedName=TOuter]
+                                          isClassRef: true
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p3]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=TOuter]
+                          isClassRef: true
                 TYPE_REFERENCE
                   USER_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Unit]
+                      isClassRef: true

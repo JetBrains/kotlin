@@ -16,6 +16,7 @@ FILE[kind=File[packageFqName=test.a]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
         VALUE_PARAMETER[fqName=test.a.AnnotationClass.j, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=j]
           constantInitializer: "a"
           MODIFIER_LIST[public final]
@@ -24,6 +25,7 @@ FILE[kind=File[packageFqName=test.a]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
           STRING_TEMPLATE
             LITERAL_STRING_TEMPLATE_ENTRY[text=a]
     SUPER_TYPE_LIST
@@ -33,4 +35,5 @@ FILE[kind=File[packageFqName=test.a]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Annotation]
+              isClassRef: true
     CLASS_BODY

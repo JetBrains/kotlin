@@ -15,6 +15,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Any]
+              isClassRef: true
       PROPERTY[fqName=test.LocalClass.sam, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=sam]
         MODIFIER_LIST[private final]
         TYPE_REFERENCE
@@ -24,6 +25,7 @@ FILE[kind=File[packageFqName=test]]
                 REFERENCE_EXPRESSION[referencedName=java]
               REFERENCE_EXPRESSION[referencedName=lang]
             REFERENCE_EXPRESSION[referencedName=Runnable]
+              isClassRef: true
       PROPERTY[fqName=test.LocalClass.sub, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=sub]
         MODIFIER_LIST[private final]
         TYPE_REFERENCE
@@ -31,6 +33,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Any]
+              isClassRef: true
       FUNCTION[fqName=test.LocalClass.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         MODIFIER_LIST[private final]
         VALUE_PARAMETER_LIST
@@ -39,3 +42,4 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Any]
+              isClassRef: true

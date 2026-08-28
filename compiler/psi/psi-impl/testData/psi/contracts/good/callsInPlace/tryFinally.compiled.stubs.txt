@@ -17,11 +17,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TryFinallyKt]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
+                  isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true
   FUNCTION[fqName=test_2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test_2]
     contract: [ effect:CallsInPlace(param(0), EXACTLY_ONCE) ]
     origin: Facade(className=TryFinallyKt, jvmClassName=null)
@@ -36,11 +38,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TryFinallyKt]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
   FUNCTION[fqName=test_4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test_4]
     contract: [ effect:CallsInPlace(param(0), EXACTLY_ONCE) ]
     origin: Facade(className=TryFinallyKt, jvmClassName=null)
@@ -55,11 +59,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TryFinallyKt]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
+                  isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true
   FUNCTION[fqName=test_5, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test_5]
     contract: [ effect:CallsInPlace(param(0), EXACTLY_ONCE) ]
     origin: Facade(className=TryFinallyKt, jvmClassName=null)
@@ -74,11 +80,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TryFinallyKt]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
+                  isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true
   FUNCTION[fqName=test_6, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test_6]
     contract: [ effect:CallsInPlace(param(0), EXACTLY_ONCE) ]
     origin: Facade(className=TryFinallyKt, jvmClassName=null)
@@ -93,8 +101,10 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TryFinallyKt]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true

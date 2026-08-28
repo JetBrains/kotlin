@@ -17,11 +17,13 @@ FILE[kind=File[packageFqName=<root>]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=A]
+                      isClassRef: true
           FUNCTION_TYPE
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
+                  isClassRef: true
       PROPERTY[fqName=AnnotationsOnParenthesizedTypes.lambdaParameter, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaParameter]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
@@ -36,11 +38,14 @@ FILE[kind=File[packageFqName=<root>]]
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=A]
+                              isClassRef: true
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=C]
+                      isClassRef: true
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
+                  isClassRef: true
       PROPERTY[fqName=AnnotationsOnParenthesizedTypes.lambdaReturnValue, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaReturnValue]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
@@ -54,8 +59,10 @@ FILE[kind=File[packageFqName=<root>]]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=A]
+                          isClassRef: true
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
+                  isClassRef: true
       PROPERTY[fqName=AnnotationsOnParenthesizedTypes.lambdaReceiver, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaReceiver]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
@@ -69,12 +76,15 @@ FILE[kind=File[packageFqName=<root>]]
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=A]
+                            isClassRef: true
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=C]
+                    isClassRef: true
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
+                  isClassRef: true
       PROPERTY[fqName=AnnotationsOnParenthesizedTypes.lambdaTypeWithNullableReceiver, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaTypeWithNullableReceiver]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
@@ -88,18 +98,22 @@ FILE[kind=File[packageFqName=<root>]]
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=A]
+                            isClassRef: true
                 NULLABLE_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=C]
+                      isClassRef: true
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
+                  isClassRef: true
       FUNCTION[fqName=AnnotationsOnParenthesizedTypes.receiverArgument, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=receiverArgument]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=B]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
@@ -110,14 +124,17 @@ FILE[kind=File[packageFqName=<root>]]
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=A]
+                              isClassRef: true
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=C]
+                      isClassRef: true
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
       FUNCTION[fqName=AnnotationsOnParenthesizedTypes.parameter, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parameter]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -130,13 +147,16 @@ FILE[kind=File[packageFqName=<root>]]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=A]
+                          isClassRef: true
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
       FUNCTION[fqName=AnnotationsOnParenthesizedTypes.parameterArgument, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parameterArgument]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -144,6 +164,7 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=B]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
@@ -154,13 +175,16 @@ FILE[kind=File[packageFqName=<root>]]
                             TYPE_REFERENCE
                               USER_TYPE
                                 REFERENCE_EXPRESSION[referencedName=A]
+                                  isClassRef: true
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=C]
+                          isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
       FUNCTION[fqName=AnnotationsOnParenthesizedTypes.returnValue, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnValue]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -172,8 +196,10 @@ FILE[kind=File[packageFqName=<root>]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=A]
+                      isClassRef: true
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=C]
+              isClassRef: true
       FUNCTION[fqName=AnnotationsOnParenthesizedTypes.returnTypeParameterValue, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnTypeParameterValue]
         MODIFIER_LIST[public final]
         TYPE_PARAMETER_LIST
@@ -187,14 +213,17 @@ FILE[kind=File[packageFqName=<root>]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=A]
+                      isClassRef: true
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
+              isClassRef: true
       FUNCTION[fqName=AnnotationsOnParenthesizedTypes.returnArgument, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnArgument]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=B]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
@@ -205,8 +234,10 @@ FILE[kind=File[packageFqName=<root>]]
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=A]
+                              isClassRef: true
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=C]
+                      isClassRef: true
   CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
@@ -219,6 +250,7 @@ FILE[kind=File[packageFqName=<root>]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Target]
+                isClassRef: true
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             VALUE_ARGUMENT_NAME
@@ -248,6 +280,7 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Annotation]
+              isClassRef: true
     CLASS_BODY
   CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=B, superNames=[]]
     MODIFIER_LIST[public]

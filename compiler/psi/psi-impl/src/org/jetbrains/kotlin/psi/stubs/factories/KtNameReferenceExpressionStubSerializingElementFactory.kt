@@ -28,9 +28,9 @@ internal object KtNameReferenceExpressionStubSerializingElementFactory :
         psi: KtNameReferenceExpression,
         parentStub: StubElement<*>?,
     ): KotlinNameReferenceExpressionStubImpl = KotlinNameReferenceExpressionStubImpl(
-        parentStub,
-        StringRef.fromString(psi.getReferencedName())!!,
-        /* myClassRef = */ false,
+        parent = parentStub,
+        referencedNameRef = StringRef.fromString(psi.getReferencedName())!!,
+        isClassRef = false,
     )
 
     override fun serialize(stub: KotlinNameReferenceExpressionStubImpl, dataStream: StubOutputStream) {
@@ -42,8 +42,8 @@ internal object KtNameReferenceExpressionStubSerializingElementFactory :
         dataStream: StubInputStream,
         parentStub: StubElement<*>?,
     ): KotlinNameReferenceExpressionStubImpl = KotlinNameReferenceExpressionStubImpl(
-        parentStub,
-        dataStream.readName()!!,
-        /* myClassRef = */ dataStream.readBoolean(),
+        parent = parentStub,
+        referencedNameRef = dataStream.readName()!!,
+        isClassRef = dataStream.readBoolean(),
     )
 }

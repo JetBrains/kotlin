@@ -20,6 +20,7 @@ FILE[kind=File[packageFqName=test.class_object]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
           FUNCTION[fqName=test.class_object.ClassObject.Companion.z, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=z]
             MODIFIER_LIST[public final]
             VALUE_PARAMETER_LIST
@@ -28,6 +29,7 @@ FILE[kind=File[packageFqName=test.class_object]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
           CLASS[classId=test/class_object/ClassObject.Companion.A, fqName=test.class_object.ClassObject.Companion.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
             MODIFIER_LIST[public final]
             PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
@@ -47,6 +49,7 @@ FILE[kind=File[packageFqName=test.class_object]]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Int]
+                          isClassRef: true
                   FUNCTION[fqName=test.class_object.ClassObject.Companion.A.B.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
                     MODIFIER_LIST[public final]
                     VALUE_PARAMETER_LIST
@@ -55,6 +58,7 @@ FILE[kind=File[packageFqName=test.class_object]]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Int]
+                          isClassRef: true
       PROPERTY[fqName=test.class_object.ClassObject.c, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
@@ -62,6 +66,7 @@ FILE[kind=File[packageFqName=test.class_object]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
       FUNCTION[fqName=test.class_object.ClassObject.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -70,6 +75,7 @@ FILE[kind=File[packageFqName=test.class_object]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
       CLASS[classId=test/class_object/ClassObject.B, fqName=test.class_object.ClassObject.B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
         MODIFIER_LIST[public final]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=B]
@@ -104,6 +110,7 @@ FILE[kind=File[packageFqName=test.class_object]]
                                     USER_TYPE
                                       REFERENCE_EXPRESSION[referencedName=kotlin]
                                     REFERENCE_EXPRESSION[referencedName=Int]
+                                      isClassRef: true
                               FUNCTION[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
                                 MODIFIER_LIST[public final]
                                 VALUE_PARAMETER_LIST
@@ -112,6 +119,7 @@ FILE[kind=File[packageFqName=test.class_object]]
                                     USER_TYPE
                                       REFERENCE_EXPRESSION[referencedName=kotlin]
                                     REFERENCE_EXPRESSION[referencedName=Unit]
+                                      isClassRef: true
                               CLASS[classId=test/class_object/ClassObject.B.Companion.C.Companion.D.Companion.En, fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.En, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=En, superNames=[Enum]]
                                 MODIFIER_LIST[public final enum]
                                 PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=En]
@@ -124,6 +132,7 @@ FILE[kind=File[packageFqName=test.class_object]]
                                         USER_TYPE
                                           REFERENCE_EXPRESSION[referencedName=kotlin]
                                         REFERENCE_EXPRESSION[referencedName=Enum]
+                                          isClassRef: true
                                         TYPE_ARGUMENT_LIST
                                           TYPE_PROJECTION[projectionKind=NONE]
                                             TYPE_REFERENCE
@@ -140,13 +149,21 @@ FILE[kind=File[packageFqName=test.class_object]]
                                                                   REFERENCE_EXPRESSION[referencedName=test]
                                                                 REFERENCE_EXPRESSION[referencedName=class_object]
                                                               REFERENCE_EXPRESSION[referencedName=ClassObject]
+                                                                isClassRef: true
                                                             REFERENCE_EXPRESSION[referencedName=B]
+                                                              isClassRef: true
                                                           REFERENCE_EXPRESSION[referencedName=Companion]
+                                                            isClassRef: true
                                                         REFERENCE_EXPRESSION[referencedName=C]
+                                                          isClassRef: true
                                                       REFERENCE_EXPRESSION[referencedName=Companion]
+                                                        isClassRef: true
                                                     REFERENCE_EXPRESSION[referencedName=D]
+                                                      isClassRef: true
                                                   REFERENCE_EXPRESSION[referencedName=Companion]
+                                                    isClassRef: true
                                                 REFERENCE_EXPRESSION[referencedName=En]
+                                                  isClassRef: true
                                 CLASS_BODY
                               CLASS[classId=test/class_object/ClassObject.B.Companion.C.Companion.D.Companion.Anno, fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.Anno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Anno, superNames=[Annotation]]
                                 MODIFIER_LIST[public final annotation]
@@ -160,4 +177,5 @@ FILE[kind=File[packageFqName=test.class_object]]
                                         USER_TYPE
                                           REFERENCE_EXPRESSION[referencedName=kotlin]
                                         REFERENCE_EXPRESSION[referencedName=Annotation]
+                                          isClassRef: true
                                 CLASS_BODY

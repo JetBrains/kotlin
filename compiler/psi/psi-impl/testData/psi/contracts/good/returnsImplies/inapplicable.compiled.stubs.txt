@@ -15,11 +15,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InapplicableKt]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Boolean]
+          isClassRef: true
   FUNCTION[fqName=wrongTrue, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=wrongTrue]
     contract: [ effect:Returns(TRUE) -> param(0) != null ]
     origin: Facade(className=InapplicableKt, jvmClassName=null)
@@ -32,11 +34,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InapplicableKt]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Boolean]
+          isClassRef: true
   FUNCTION[fqName=nullableConstant, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=nullableConstant]
     origin: Facade(className=InapplicableKt, jvmClassName=null)
     MODIFIER_LIST[public]
@@ -48,12 +52,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InapplicableKt]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
+            isClassRef: true
   FUNCTION[fqName=string, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=string]
     origin: Facade(className=InapplicableKt, jvmClassName=null)
     MODIFIER_LIST[public]
@@ -63,6 +69,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InapplicableKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
+          isClassRef: true
   FUNCTION[fqName=nullableReturn, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=nullableReturn]
     origin: Facade(className=InapplicableKt, jvmClassName=null)
     MODIFIER_LIST[public]
@@ -74,12 +81,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InapplicableKt]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
+            isClassRef: true
   FUNCTION[fqName=returnsNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=returnsNull]
     contract: [ effect:Returns(NOT_NULL) -> param(0) != null ]
     origin: Facade(className=InapplicableKt, jvmClassName=null)
@@ -92,12 +101,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InapplicableKt]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
+            isClassRef: true
   FUNCTION[fqName=wrongReturnType, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=wrongReturnType]
     contract: [ effect:Returns(TRUE) -> param(0) != null ]
     origin: Facade(className=InapplicableKt, jvmClassName=null)
@@ -110,9 +121,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InapplicableKt]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
+            isClassRef: true

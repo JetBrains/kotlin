@@ -20,6 +20,7 @@ FILE[kind=File[packageFqName=test]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=Sealed]
+                  isClassRef: true
         CLASS_BODY
       OBJECT_DECLARATION[classId=test/Sealed.Top, fqName=test.Sealed.Top, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Top, superNames=[Sealed]]
         MODIFIER_LIST[public]
@@ -30,4 +31,5 @@ FILE[kind=File[packageFqName=test]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=Sealed]
+                  isClassRef: true
         CLASS_BODY

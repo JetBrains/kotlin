@@ -15,6 +15,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ReturnValueContractsKt]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=T]
+          isClassRef: true
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=block]
         TYPE_REFERENCE
@@ -24,14 +25,17 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ReturnValueContractsKt]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
+                      isClassRef: true
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
+                  isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=T]
+          isClassRef: true
   FUNCTION[fqName=myLet, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=true, mayHaveContract=true, name=myLet]
     contract: [
       effect:CallsInPlace(param(0), EXACTLY_ONCE)
@@ -45,6 +49,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ReturnValueContractsKt]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=T]
+          isClassRef: true
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=block]
         TYPE_REFERENCE
@@ -54,9 +59,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ReturnValueContractsKt]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
+                      isClassRef: true
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=R]
+                  isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=R]
+          isClassRef: true

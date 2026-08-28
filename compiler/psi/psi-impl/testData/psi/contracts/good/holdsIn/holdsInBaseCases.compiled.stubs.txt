@@ -16,6 +16,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HoldsInBaseCasesKt]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=block]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -23,10 +24,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HoldsInBaseCasesKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=R]
+                  isClassRef: true
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=R]
+            isClassRef: true
   FUNCTION[fqName=runIfNot, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=runIfNot]
     contract: [ effect:param(0) HoldsIn(param(1)) ]
     origin: Facade(className=HoldsInBaseCasesKt, jvmClassName=null)
@@ -40,6 +43,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HoldsInBaseCasesKt]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=block]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -47,10 +51,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HoldsInBaseCasesKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=R]
+                  isClassRef: true
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=R]
+            isClassRef: true
   FUNCTION[fqName=runIfElse, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=runIfElse]
     contract: [
       effect:param(0) HoldsIn(param(1))
@@ -70,6 +76,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HoldsInBaseCasesKt]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=ifTrue]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -77,6 +84,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HoldsInBaseCasesKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=R]
+                  isClassRef: true
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=ifFalse]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -84,6 +92,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HoldsInBaseCasesKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=R]
+                  isClassRef: true
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=unrelated]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -93,7 +102,9 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HoldsInBaseCasesKt]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
+                  isClassRef: true
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=R]
+            isClassRef: true

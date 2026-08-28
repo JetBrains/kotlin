@@ -15,6 +15,7 @@ A.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Retention]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -36,6 +37,7 @@ A.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -61,6 +63,7 @@ PrivateConstField.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
+                    isClassRef: true
               INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]
             PROPERTY[fqName=test.PrivateConstField.Companion.CONST_WITH_ANNOTATION, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST_WITH_ANNOTATION]
               constantInitializer: 10
@@ -73,6 +76,7 @@ PrivateConstField.class:
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=test]
                         REFERENCE_EXPRESSION[referencedName=A]
+                          isClassRef: true
                 ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
                   valueArguments: [ ]
                   ANNOTATION_TARGET[useSiteTarget=FIELD]
@@ -84,11 +88,13 @@ PrivateConstField.class:
                             REFERENCE_EXPRESSION[referencedName=java]
                           REFERENCE_EXPRESSION[referencedName=lang]
                         REFERENCE_EXPRESSION[referencedName=Deprecated]
+                          isClassRef: true
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
+                    isClassRef: true
               INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]
             PROPERTY[fqName=test.PrivateConstField.Companion.field, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=field]
               MODIFIER_LIST[public final]
@@ -97,6 +103,7 @@ PrivateConstField.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
+                    isClassRef: true
             PROPERTY[fqName=test.PrivateConstField.Companion.fieldWithAnnotation, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=fieldWithAnnotation]
               MODIFIER_LIST[public final]
                 ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
@@ -107,8 +114,10 @@ PrivateConstField.class:
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=test]
                         REFERENCE_EXPRESSION[referencedName=A]
+                          isClassRef: true
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
+                    isClassRef: true

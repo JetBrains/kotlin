@@ -16,6 +16,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ImpliesReturnsWithIncrementK
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
+            isClassRef: true
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       NULLABLE_TYPE
@@ -23,3 +24,4 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ImpliesReturnsWithIncrementK
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true

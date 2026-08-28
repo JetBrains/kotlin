@@ -62,7 +62,9 @@
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=dependency]
                 REFERENCE_EXPRESSION[referencedName=D]
+                  isClassRef: true
               REFERENCE_EXPRESSION[referencedName=Nested]
+                isClassRef: true
       CLASS_BODY
         FUNCTION[fqName=test.DependencyOnNestedClasses.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
           MODIFIER_LIST[public final]
@@ -75,8 +77,11 @@
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=dependency]
                       REFERENCE_EXPRESSION[referencedName=D]
+                        isClassRef: true
                     REFERENCE_EXPRESSION[referencedName=Companion]
+                      isClassRef: true
                   REFERENCE_EXPRESSION[referencedName=NestedInClassObject]
+                    isClassRef: true
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
               TYPE_REFERENCE
                 USER_TYPE
@@ -84,7 +89,9 @@
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=dependency]
                     REFERENCE_EXPRESSION[referencedName=D]
+                      isClassRef: true
                   REFERENCE_EXPRESSION[referencedName=Inner]
+                    isClassRef: true
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=ii]
               TYPE_REFERENCE
                 USER_TYPE
@@ -93,8 +100,11 @@
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=dependency]
                       REFERENCE_EXPRESSION[referencedName=D]
+                        isClassRef: true
                     REFERENCE_EXPRESSION[referencedName=Inner]
+                      isClassRef: true
                   REFERENCE_EXPRESSION[referencedName=Inner]
+                    isClassRef: true
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=nn]
               TYPE_REFERENCE
                 USER_TYPE
@@ -103,12 +113,17 @@
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=dependency]
                       REFERENCE_EXPRESSION[referencedName=D]
+                        isClassRef: true
                     REFERENCE_EXPRESSION[referencedName=Nested]
+                      isClassRef: true
                   REFERENCE_EXPRESSION[referencedName=Nested]
+                    isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=dependency]
                 REFERENCE_EXPRESSION[referencedName=D]
+                  isClassRef: true
               REFERENCE_EXPRESSION[referencedName=Nested]
+                isClassRef: true

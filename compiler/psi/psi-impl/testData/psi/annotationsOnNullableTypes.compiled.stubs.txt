@@ -14,6 +14,7 @@ A.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -50,6 +51,7 @@ A.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -73,12 +75,14 @@ AnnotationsOnNullableTypes.class:
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=A]
+                        isClassRef: true
             NULLABLE_TYPE
               FUNCTION_TYPE
                 VALUE_PARAMETER_LIST
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=C]
+                      isClassRef: true
         PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaParameter, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaParameter]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
@@ -93,12 +97,15 @@ AnnotationsOnNullableTypes.class:
                           TYPE_REFERENCE
                             USER_TYPE
                               REFERENCE_EXPRESSION[referencedName=A]
+                                isClassRef: true
                     NULLABLE_TYPE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=C]
+                          isClassRef: true
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=C]
+                    isClassRef: true
         PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaReturnValue, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaReturnValue]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
@@ -112,9 +119,11 @@ AnnotationsOnNullableTypes.class:
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=A]
+                            isClassRef: true
                 NULLABLE_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=C]
+                      isClassRef: true
         PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaReceiver, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaReceiver]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
@@ -128,13 +137,16 @@ AnnotationsOnNullableTypes.class:
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=A]
+                              isClassRef: true
                   NULLABLE_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=C]
+                        isClassRef: true
               VALUE_PARAMETER_LIST
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=C]
+                    isClassRef: true
         PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaTypeWithNullableReceiver, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaTypeWithNullableReceiver]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
@@ -145,21 +157,25 @@ AnnotationsOnNullableTypes.class:
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=A]
+                        isClassRef: true
             FUNCTION_TYPE
               FUNCTION_TYPE_RECEIVER
                 TYPE_REFERENCE
                   NULLABLE_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=C]
+                        isClassRef: true
               VALUE_PARAMETER_LIST
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=C]
+                    isClassRef: true
         FUNCTION[fqName=AnnotationsOnNullableTypes.receiverArgument, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=receiverArgument]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=B]
+                isClassRef: true
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
@@ -170,15 +186,18 @@ AnnotationsOnNullableTypes.class:
                           TYPE_REFERENCE
                             USER_TYPE
                               REFERENCE_EXPRESSION[referencedName=A]
+                                isClassRef: true
                     NULLABLE_TYPE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=C]
+                          isClassRef: true
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
         FUNCTION[fqName=AnnotationsOnNullableTypes.parameter, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parameter]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
@@ -191,14 +210,17 @@ AnnotationsOnNullableTypes.class:
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=A]
+                            isClassRef: true
                 NULLABLE_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=C]
+                      isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
         FUNCTION[fqName=AnnotationsOnNullableTypes.parameterArgument, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parameterArgument]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
@@ -206,6 +228,7 @@ AnnotationsOnNullableTypes.class:
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=B]
+                    isClassRef: true
                   TYPE_ARGUMENT_LIST
                     TYPE_PROJECTION[projectionKind=NONE]
                       TYPE_REFERENCE
@@ -216,14 +239,17 @@ AnnotationsOnNullableTypes.class:
                               TYPE_REFERENCE
                                 USER_TYPE
                                   REFERENCE_EXPRESSION[referencedName=A]
+                                    isClassRef: true
                         NULLABLE_TYPE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=C]
+                              isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
         FUNCTION[fqName=AnnotationsOnNullableTypes.returnValue, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnValue]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
@@ -235,9 +261,11 @@ AnnotationsOnNullableTypes.class:
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=A]
+                        isClassRef: true
             NULLABLE_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
+                  isClassRef: true
         FUNCTION[fqName=AnnotationsOnNullableTypes.returnTypeParameterValue, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnTypeParameterValue]
           MODIFIER_LIST[public final]
           TYPE_PARAMETER_LIST
@@ -251,15 +279,18 @@ AnnotationsOnNullableTypes.class:
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=A]
+                        isClassRef: true
             NULLABLE_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
+                  isClassRef: true
         FUNCTION[fqName=AnnotationsOnNullableTypes.returnArgument, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnArgument]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=B]
+                isClassRef: true
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
@@ -270,9 +301,11 @@ AnnotationsOnNullableTypes.class:
                           TYPE_REFERENCE
                             USER_TYPE
                               REFERENCE_EXPRESSION[referencedName=A]
+                                isClassRef: true
                     NULLABLE_TYPE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=C]
+                          isClassRef: true
         FUNCTION[fqName=AnnotationsOnNullableTypes.functionWithAnnotatedReceiver, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=functionWithAnnotatedReceiver]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
@@ -284,15 +317,18 @@ AnnotationsOnNullableTypes.class:
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=A]
+                        isClassRef: true
             NULLABLE_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
+                  isClassRef: true
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
         FUNCTION[fqName=AnnotationsOnNullableTypes.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=foo]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
@@ -303,17 +339,20 @@ AnnotationsOnNullableTypes.class:
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=A]
+                        isClassRef: true
             NULLABLE_TYPE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
         FUNCTION[fqName=AnnotationsOnNullableTypes.functionWithAnnotatedReceiver2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=functionWithAnnotatedReceiver2]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
@@ -325,6 +364,7 @@ AnnotationsOnNullableTypes.class:
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=A]
+                        isClassRef: true
             FUNCTION_TYPE
               VALUE_PARAMETER_LIST
               TYPE_REFERENCE
@@ -333,12 +373,14 @@ AnnotationsOnNullableTypes.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Unit]
+                      isClassRef: true
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
         FUNCTION[fqName=AnnotationsOnNullableTypes.functionWithAnnotatedReceiver3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=functionWithAnnotatedReceiver3]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
@@ -350,6 +392,7 @@ AnnotationsOnNullableTypes.class:
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=A]
+                        isClassRef: true
             NULLABLE_TYPE
               FUNCTION_TYPE
                 VALUE_PARAMETER_LIST
@@ -358,12 +401,14 @@ AnnotationsOnNullableTypes.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Unit]
+                      isClassRef: true
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
 
 
 B.class:

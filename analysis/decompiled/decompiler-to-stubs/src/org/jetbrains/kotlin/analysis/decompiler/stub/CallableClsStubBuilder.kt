@@ -441,9 +441,9 @@ private class PropertyClsStubBuilder(
             createValueStub(propertyStub, value, containerClassId = (protoContainer as? ProtoContainer.Class)?.classId)
         } else {
             KotlinNameReferenceExpressionStubImpl(
-                propertyStub,
-                StringRef.fromString(COMPILED_DEFAULT_INITIALIZER),
-                false,
+                parent = propertyStub,
+                referencedNameRef = StringRef.fromString(COMPILED_DEFAULT_INITIALIZER),
+                isClassRef = false,
             )
         }
     }

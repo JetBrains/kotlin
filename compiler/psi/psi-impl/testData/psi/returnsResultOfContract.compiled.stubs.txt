@@ -19,6 +19,7 @@ FILE[kind=File[packageFqName=<root>]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
+              isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=block]
             TYPE_REFERENCE
@@ -28,9 +29,12 @@ FILE[kind=File[packageFqName=<root>]]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=T]
+                          isClassRef: true
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=R]
+                      isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=R]
+              isClassRef: true

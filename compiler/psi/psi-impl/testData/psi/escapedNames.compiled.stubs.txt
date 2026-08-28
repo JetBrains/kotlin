@@ -17,6 +17,7 @@ Annotated Class.class:
                     REFERENCE_EXPRESSION[referencedName=one two]
                   REFERENCE_EXPRESSION[referencedName=three four]
                 REFERENCE_EXPRESSION[referencedName=Annotation Class With Arguments]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -55,6 +56,7 @@ Annotation Class With Arguments.class:
                     REFERENCE_EXPRESSION[referencedName=one two]
                   REFERENCE_EXPRESSION[referencedName=three four]
                 REFERENCE_EXPRESSION[referencedName=Enum Class]
+                  isClassRef: true
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -62,6 +64,7 @@ Annotation Class With Arguments.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -84,6 +87,7 @@ Annotation Class.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -127,6 +131,7 @@ Annotation Class.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -149,6 +154,7 @@ Enum Class.class:
                     REFERENCE_EXPRESSION[referencedName=one two]
                   REFERENCE_EXPRESSION[referencedName=three four]
                 REFERENCE_EXPRESSION[referencedName=Annotation Class]
+                  isClassRef: true
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Enum Class]
         MODIFIER_LIST[private]
         VALUE_PARAMETER_LIST
@@ -159,6 +165,7 @@ Enum Class.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Enum]
+                isClassRef: true
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
@@ -168,6 +175,7 @@ Enum Class.class:
                           REFERENCE_EXPRESSION[referencedName=one two]
                         REFERENCE_EXPRESSION[referencedName=three four]
                       REFERENCE_EXPRESSION[referencedName=Enum Class]
+                        isClassRef: true
       CLASS_BODY
         ENUM_ENTRY[classId=null, fqName=one two.three four.Enum Class.Enum Entry, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Enum Entry, superNames=[]]
           MODIFIER_LIST[]
@@ -181,6 +189,7 @@ Enum Class.class:
                         REFERENCE_EXPRESSION[referencedName=one two]
                       REFERENCE_EXPRESSION[referencedName=three four]
                     REFERENCE_EXPRESSION[referencedName=Annotation Class]
+                      isClassRef: true
 
 
 EscapedNamesKt.class:
@@ -203,11 +212,13 @@ EscapedNamesKt.class:
               REFERENCE_EXPRESSION[referencedName=one two]
             REFERENCE_EXPRESSION[referencedName=three four]
           REFERENCE_EXPRESSION[referencedName=Top Level Class]
+            isClassRef: true
           TYPE_ARGUMENT_LIST
             TYPE_PROJECTION[projectionKind=NONE]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Type Parameter]
+                    isClassRef: true
 
 
 Top Level Class.class:
@@ -229,6 +240,7 @@ Top Level Class.class:
                     REFERENCE_EXPRESSION[referencedName=one two]
                   REFERENCE_EXPRESSION[referencedName=three four]
                 REFERENCE_EXPRESSION[referencedName=Annotation Class]
+                  isClassRef: true
       TYPE_PARAMETER_LIST
         TYPE_PARAMETER[fqName=null, name=Type Parameter]
           TYPE_REFERENCE
@@ -239,7 +251,9 @@ Top Level Class.class:
                     REFERENCE_EXPRESSION[referencedName=one two]
                   REFERENCE_EXPRESSION[referencedName=three four]
                 REFERENCE_EXPRESSION[referencedName=Top Level Object]
+                  isClassRef: true
               REFERENCE_EXPRESSION[referencedName=Member Level Interface]
+                isClassRef: true
       CLASS_BODY
         SECONDARY_CONSTRUCTOR[fqName=null, hasBody=true, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Top Level Class]
           MODIFIER_LIST[public]
@@ -252,6 +266,7 @@ Top Level Class.class:
                       REFERENCE_EXPRESSION[referencedName=one two]
                     REFERENCE_EXPRESSION[referencedName=three four]
                   REFERENCE_EXPRESSION[referencedName=Top Level Object]
+                    isClassRef: true
         PROPERTY[fqName=one two.three four.Top Level Class.member property, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=member property]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
@@ -262,11 +277,13 @@ Top Level Class.class:
                   REFERENCE_EXPRESSION[referencedName=one two]
                 REFERENCE_EXPRESSION[referencedName=three four]
               REFERENCE_EXPRESSION[referencedName=Top Level Class]
+                isClassRef: true
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Type Parameter]
+                        isClassRef: true
           TYPE_REFERENCE
             NULLABLE_TYPE
               USER_TYPE
@@ -275,11 +292,13 @@ Top Level Class.class:
                     REFERENCE_EXPRESSION[referencedName=one two]
                   REFERENCE_EXPRESSION[referencedName=three four]
                 REFERENCE_EXPRESSION[referencedName=Top Level Class]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=Type Parameter]
+                          isClassRef: true
           PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
             MODIFIER_LIST[public final]
             VALUE_PARAMETER_LIST
@@ -295,11 +314,13 @@ Top Level Class.class:
                           REFERENCE_EXPRESSION[referencedName=one two]
                         REFERENCE_EXPRESSION[referencedName=three four]
                       REFERENCE_EXPRESSION[referencedName=Top Level Class]
+                        isClassRef: true
                       TYPE_ARGUMENT_LIST
                         TYPE_PROJECTION[projectionKind=NONE]
                           TYPE_REFERENCE
                             USER_TYPE
                               REFERENCE_EXPRESSION[referencedName=Type Parameter]
+                                isClassRef: true
         FUNCTION[fqName=one two.three four.Top Level Class.member function, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=member function]
           MODIFIER_LIST[public final]
             CONTEXT_PARAMETER_LIST
@@ -312,11 +333,13 @@ Top Level Class.class:
                         REFERENCE_EXPRESSION[referencedName=one two]
                       REFERENCE_EXPRESSION[referencedName=three four]
                     REFERENCE_EXPRESSION[referencedName=Top Level Class]
+                      isClassRef: true
                     TYPE_ARGUMENT_LIST
                       TYPE_PROJECTION[projectionKind=NONE]
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=Type Parameter]
+                              isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -325,7 +348,9 @@ Top Level Class.class:
                     REFERENCE_EXPRESSION[referencedName=one two]
                   REFERENCE_EXPRESSION[referencedName=three four]
                 REFERENCE_EXPRESSION[referencedName=Top Level Object]
+                  isClassRef: true
               REFERENCE_EXPRESSION[referencedName=Member Level Interface]
+                isClassRef: true
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=parameter name]
               TYPE_REFERENCE
@@ -335,16 +360,19 @@ Top Level Class.class:
                       REFERENCE_EXPRESSION[referencedName=one two]
                     REFERENCE_EXPRESSION[referencedName=three four]
                   REFERENCE_EXPRESSION[referencedName=Top Level Class]
+                    isClassRef: true
                   TYPE_ARGUMENT_LIST
                     TYPE_PROJECTION[projectionKind=NONE]
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=Type Parameter]
+                            isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
         TYPEALIAS[classId=one two/three four/Top Level Class.Member Level TypeAlias, fqName=one two.three four.Top Level Class.Member Level TypeAlias, isTopLevel=false, name=Member Level TypeAlias]
           MODIFIER_LIST[public]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Annotation Class]
@@ -357,6 +385,7 @@ Top Level Class.class:
                         REFERENCE_EXPRESSION[referencedName=one two]
                       REFERENCE_EXPRESSION[referencedName=three four]
                     REFERENCE_EXPRESSION[referencedName=Annotation Class]
+                      isClassRef: true
           TYPE_PARAMETER_LIST
             TYPE_PARAMETER[fqName=null, name=T]
           TYPE_REFERENCE
@@ -366,11 +395,13 @@ Top Level Class.class:
                   REFERENCE_EXPRESSION[referencedName=one two]
                 REFERENCE_EXPRESSION[referencedName=three four]
               REFERENCE_EXPRESSION[referencedName=Top Level Class]
+                isClassRef: true
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=T]
+                        isClassRef: true
 
 
 Top Level Interface.class:
@@ -403,6 +434,7 @@ Top Level Object.class:
                   REFERENCE_EXPRESSION[referencedName=one two]
                 REFERENCE_EXPRESSION[referencedName=three four]
               REFERENCE_EXPRESSION[referencedName=Top Level Interface]
+                isClassRef: true
       CLASS_BODY
         CLASS[classId=one two/three four/Top Level Object.Member Level Interface, fqName=one two.three four.Top Level Object.Member Level Interface, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=false, name=Member Level Interface, superNames=[]]
           MODIFIER_LIST[public]

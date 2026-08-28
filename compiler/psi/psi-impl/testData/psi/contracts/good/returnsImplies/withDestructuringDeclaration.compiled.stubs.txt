@@ -17,11 +17,13 @@ PairList.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=collections]
                 REFERENCE_EXPRESSION[referencedName=List]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=T]
+                          isClassRef: true
       CLASS_BODY
         PROPERTY[fqName=PairList.items, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=items]
           MODIFIER_LIST[public final]
@@ -32,11 +34,13 @@ PairList.class:
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=collections]
               REFERENCE_EXPRESSION[referencedName=List]
+                isClassRef: true
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=T]
+                        isClassRef: true
 
 
 WithDestructuringDeclarationKt.class:
@@ -55,12 +59,15 @@ WithDestructuringDeclarationKt.class:
         NULLABLE_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=PairList]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
+                      isClassRef: true
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=T]
+            isClassRef: true

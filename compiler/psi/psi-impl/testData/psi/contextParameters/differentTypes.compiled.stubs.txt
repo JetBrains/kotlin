@@ -14,6 +14,7 @@ Anno.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -43,6 +44,7 @@ Anno.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -67,6 +69,7 @@ Foo.class:
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=Anno]
+                            isClassRef: true
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
                     ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
@@ -75,6 +78,7 @@ Foo.class:
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=Anno]
+                              isClassRef: true
                   FUNCTION_TYPE
                     VALUE_PARAMETER_LIST
                     TYPE_REFERENCE
@@ -82,6 +86,7 @@ Foo.class:
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Unit]
+                          isClassRef: true
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
@@ -92,17 +97,20 @@ Foo.class:
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=kotlin]
                           REFERENCE_EXPRESSION[referencedName=String]
+                            isClassRef: true
                     VALUE_PARAMETER_LIST
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Int]
+                          isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
           PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
             MODIFIER_LIST[public final]
             VALUE_PARAMETER_LIST
@@ -115,22 +123,26 @@ Foo.class:
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=A]
+                          isClassRef: true
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Any]
+                          isClassRef: true
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 TYPE_REFERENCE
                   INTERSECTION_TYPE
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=B]
+                          isClassRef: true
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Any]
+                          isClassRef: true
           TYPE_PARAMETER_LIST
             TYPE_PARAMETER[fqName=null, name=A]
             TYPE_PARAMETER[fqName=null, name=B]
@@ -140,16 +152,19 @@ Foo.class:
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=C]
+                    isClassRef: true
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Any]
+                    isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
           PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
             MODIFIER_LIST[public final]
             VALUE_PARAMETER_LIST
@@ -164,6 +179,7 @@ Foo.class:
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=Anno]
+                            isClassRef: true
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
                     ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
@@ -172,6 +188,7 @@ Foo.class:
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=Anno]
+                              isClassRef: true
                   FUNCTION_TYPE
                     CONTEXT_PARAMETER_LIST
                       CONTEXT_RECEIVER[label=null]
@@ -180,12 +197,14 @@ Foo.class:
                             USER_TYPE
                               REFERENCE_EXPRESSION[referencedName=kotlin]
                             REFERENCE_EXPRESSION[referencedName=Int]
+                              isClassRef: true
                     VALUE_PARAMETER_LIST
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Unit]
+                          isClassRef: true
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
@@ -197,17 +216,20 @@ Foo.class:
                             USER_TYPE
                               REFERENCE_EXPRESSION[referencedName=kotlin]
                             REFERENCE_EXPRESSION[referencedName=String]
+                              isClassRef: true
                     VALUE_PARAMETER_LIST
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Boolean]
+                          isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
           PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
             MODIFIER_LIST[public final]
             VALUE_PARAMETER_LIST
@@ -221,6 +243,7 @@ Foo.class:
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Anno]
+                        isClassRef: true
             FUNCTION_TYPE
               CONTEXT_PARAMETER_LIST
                 CONTEXT_RECEIVER[label=null]
@@ -229,12 +252,14 @@ Foo.class:
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
                       REFERENCE_EXPRESSION[referencedName=Int]
+                        isClassRef: true
               VALUE_PARAMETER_LIST
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Unit]
+                    isClassRef: true
           PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
             MODIFIER_LIST[public final]
             VALUE_PARAMETER_LIST
@@ -249,6 +274,7 @@ Foo.class:
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=Anno]
+                            isClassRef: true
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
                     ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
@@ -257,6 +283,7 @@ Foo.class:
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=Anno]
+                              isClassRef: true
                   FUNCTION_TYPE
                     VALUE_PARAMETER_LIST
                     TYPE_REFERENCE
@@ -264,6 +291,7 @@ Foo.class:
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Unit]
+                          isClassRef: true
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
@@ -274,18 +302,21 @@ Foo.class:
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=kotlin]
                           REFERENCE_EXPRESSION[referencedName=String]
+                            isClassRef: true
                     VALUE_PARAMETER_LIST
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Int]
+                          isClassRef: true
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
         FUNCTION[fqName=Foo.dnnF, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=dnnF]
           MODIFIER_LIST[public final]
             CONTEXT_PARAMETER_LIST
@@ -295,22 +326,26 @@ Foo.class:
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=A]
+                          isClassRef: true
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Any]
+                          isClassRef: true
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 TYPE_REFERENCE
                   INTERSECTION_TYPE
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=B]
+                          isClassRef: true
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Any]
+                          isClassRef: true
           TYPE_PARAMETER_LIST
             TYPE_PARAMETER[fqName=null, name=A]
             TYPE_PARAMETER[fqName=null, name=B]
@@ -320,17 +355,20 @@ Foo.class:
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=C]
+                    isClassRef: true
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Any]
+                    isClassRef: true
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
         FUNCTION[fqName=Foo.contextParameter4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contextParameter4]
           MODIFIER_LIST[public final]
             CONTEXT_PARAMETER_LIST
@@ -342,6 +380,7 @@ Foo.class:
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=Anno]
+                            isClassRef: true
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
                     ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
@@ -350,6 +389,7 @@ Foo.class:
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=Anno]
+                              isClassRef: true
                   FUNCTION_TYPE
                     CONTEXT_PARAMETER_LIST
                       CONTEXT_RECEIVER[label=null]
@@ -358,12 +398,14 @@ Foo.class:
                             USER_TYPE
                               REFERENCE_EXPRESSION[referencedName=kotlin]
                             REFERENCE_EXPRESSION[referencedName=Int]
+                              isClassRef: true
                     VALUE_PARAMETER_LIST
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Unit]
+                          isClassRef: true
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
@@ -375,15 +417,18 @@ Foo.class:
                             USER_TYPE
                               REFERENCE_EXPRESSION[referencedName=kotlin]
                             REFERENCE_EXPRESSION[referencedName=String]
+                              isClassRef: true
                     VALUE_PARAMETER_LIST
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Boolean]
+                          isClassRef: true
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true

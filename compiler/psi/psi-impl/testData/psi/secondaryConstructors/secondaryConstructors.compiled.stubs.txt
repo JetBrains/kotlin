@@ -14,6 +14,7 @@ SecondaryConstructors.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Boolean]
+                  isClassRef: true
       CLASS_BODY
         SECONDARY_CONSTRUCTOR[fqName=null, hasBody=true, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=SecondaryConstructors]
           MODIFIER_LIST[public]
@@ -25,6 +26,7 @@ SecondaryConstructors.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=anno]
+                      isClassRef: true
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
               TYPE_REFERENCE
@@ -32,6 +34,7 @@ SecondaryConstructors.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=String]
+                    isClassRef: true
         SECONDARY_CONSTRUCTOR[fqName=null, hasBody=true, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=SecondaryConstructors]
           MODIFIER_LIST[private]
           VALUE_PARAMETER_LIST
@@ -41,6 +44,7 @@ SecondaryConstructors.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
+                    isClassRef: true
         CLASS[classId=test/SecondaryConstructors.Inner, fqName=test.SecondaryConstructors.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
           MODIFIER_LIST[public final inner]
           TYPE_PARAMETER_LIST
@@ -50,12 +54,14 @@ SecondaryConstructors.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=String]
+                    isClassRef: true
             TYPE_PARAMETER[fqName=null, name=G]
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
+                    isClassRef: true
           TYPE_CONSTRAINT_LIST
             TYPE_CONSTRAINT
               REFERENCE_EXPRESSION[referencedName=G]
@@ -66,6 +72,7 @@ SecondaryConstructors.class:
                       REFERENCE_EXPRESSION[referencedName=java]
                     REFERENCE_EXPRESSION[referencedName=io]
                   REFERENCE_EXPRESSION[referencedName=Serializable]
+                    isClassRef: true
           CLASS_BODY
             SECONDARY_CONSTRUCTOR[fqName=null, hasBody=true, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Inner]
               MODIFIER_LIST[public]
@@ -74,10 +81,12 @@ SecondaryConstructors.class:
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=T]
+                        isClassRef: true
                 VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=g]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=G]
+                        isClassRef: true
         CLASS[classId=test/SecondaryConstructors.Nested, fqName=test.SecondaryConstructors.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
           MODIFIER_LIST[public final]
           CLASS_BODY
@@ -91,6 +100,7 @@ SecondaryConstructors.class:
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=test]
                         REFERENCE_EXPRESSION[referencedName=anno]
+                          isClassRef: true
               VALUE_PARAMETER_LIST
                 VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=z]
                   TYPE_REFERENCE
@@ -98,6 +108,7 @@ SecondaryConstructors.class:
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
                       REFERENCE_EXPRESSION[referencedName=Int]
+                        isClassRef: true
             SECONDARY_CONSTRUCTOR[fqName=null, hasBody=true, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nested]
               MODIFIER_LIST[internal]
               VALUE_PARAMETER_LIST
@@ -120,4 +131,5 @@ anno.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY

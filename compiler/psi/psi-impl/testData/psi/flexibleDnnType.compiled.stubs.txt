@@ -17,6 +17,7 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
+                  isClassRef: true
       PROPERTY[fqName=FlexibleDnnType.propertyWithFlexibleDnnImplicitType, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=propertyWithFlexibleDnnImplicitType]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
@@ -29,6 +30,7 @@ FILE[kind=File[packageFqName=<root>]]
                 REFERENCE_EXPRESSION[referencedName=util]
               REFERENCE_EXPRESSION[referencedName=function]
             REFERENCE_EXPRESSION[referencedName=Function]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
@@ -37,6 +39,7 @@ FILE[kind=File[packageFqName=<root>]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=String]
+                      isClassRef: true
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   INTERSECTION_TYPE
@@ -44,8 +47,10 @@ FILE[kind=File[packageFqName=<root>]]
                       USER_TYPE
                         upperBound: T?
                         REFERENCE_EXPRESSION[referencedName=T]
+                          isClassRef: true
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Any]
+                          isClassRef: true

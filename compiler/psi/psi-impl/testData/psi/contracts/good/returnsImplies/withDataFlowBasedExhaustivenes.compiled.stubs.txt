@@ -13,6 +13,7 @@ Variants.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
         OBJECT_DECLARATION[classId=/Variants.A, fqName=Variants.A, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=A, superNames=[Variants]]
           MODIFIER_LIST[public data]
           SUPER_TYPE_LIST
@@ -20,6 +21,7 @@ Variants.class:
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Variants]
+                    isClassRef: true
           CLASS_BODY
             FUNCTION[fqName=Variants.A.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
               MODIFIER_LIST[public open operator MustUseReturnValue]
@@ -31,11 +33,13 @@ Variants.class:
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Any]
+                          isClassRef: true
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Boolean]
+                    isClassRef: true
             FUNCTION[fqName=Variants.A.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
               MODIFIER_LIST[public open MustUseReturnValue]
               VALUE_PARAMETER_LIST
@@ -44,6 +48,7 @@ Variants.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
+                    isClassRef: true
             FUNCTION[fqName=Variants.A.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
               MODIFIER_LIST[public open MustUseReturnValue]
               VALUE_PARAMETER_LIST
@@ -52,6 +57,7 @@ Variants.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=String]
+                    isClassRef: true
         OBJECT_DECLARATION[classId=/Variants.B, fqName=Variants.B, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=B, superNames=[Variants]]
           MODIFIER_LIST[public data]
           SUPER_TYPE_LIST
@@ -59,6 +65,7 @@ Variants.class:
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Variants]
+                    isClassRef: true
           CLASS_BODY
             FUNCTION[fqName=Variants.B.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
               MODIFIER_LIST[public open operator MustUseReturnValue]
@@ -70,11 +77,13 @@ Variants.class:
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Any]
+                          isClassRef: true
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Boolean]
+                    isClassRef: true
             FUNCTION[fqName=Variants.B.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
               MODIFIER_LIST[public open MustUseReturnValue]
               VALUE_PARAMETER_LIST
@@ -83,6 +92,7 @@ Variants.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
+                    isClassRef: true
             FUNCTION[fqName=Variants.B.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
               MODIFIER_LIST[public open MustUseReturnValue]
               VALUE_PARAMETER_LIST
@@ -91,6 +101,7 @@ Variants.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=String]
+                    isClassRef: true
 
 
 WithDataFlowBasedExhaustivenesKt.class:
@@ -108,7 +119,9 @@ WithDataFlowBasedExhaustivenesKt.class:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Variants]
+                isClassRef: true
       TYPE_REFERENCE
         NULLABLE_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Variants]
+              isClassRef: true

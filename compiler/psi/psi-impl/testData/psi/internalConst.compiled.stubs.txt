@@ -12,6 +12,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InternalConstKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Double]
+          isClassRef: true
     FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.14]
   PROPERTY[fqName=FOO, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=FOO]
     constantInitializer: 6.28.toDouble()
@@ -22,4 +23,5 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InternalConstKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Double]
+          isClassRef: true
     FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=6.28]

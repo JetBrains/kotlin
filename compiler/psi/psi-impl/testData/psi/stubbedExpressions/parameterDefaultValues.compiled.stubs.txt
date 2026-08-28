@@ -14,6 +14,7 @@ ParameterDefaultValuesKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
     FUNCTION[fqName=test.withDefaults, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=withDefaults]
       origin: Facade(className=test/ParameterDefaultValuesKt, jvmClassName=null)
@@ -25,6 +26,7 @@ ParameterDefaultValuesKt.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
           REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=string]
           TYPE_REFERENCE
@@ -32,6 +34,7 @@ ParameterDefaultValuesKt.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
           REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=negative]
           TYPE_REFERENCE
@@ -39,6 +42,7 @@ ParameterDefaultValuesKt.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
           REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=reference]
           TYPE_REFERENCE
@@ -46,12 +50,14 @@ ParameterDefaultValuesKt.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true
           REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
 
 
 WithArrayDefaults.class:
@@ -72,6 +78,7 @@ WithArrayDefaults.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=IntArray]
+                  isClassRef: true
             COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
           VALUE_PARAMETER[fqName=test.WithArrayDefaults.filled, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=filled]
             constantInitializer: [4, 5]
@@ -81,6 +88,7 @@ WithArrayDefaults.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=IntArray]
+                  isClassRef: true
             COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=2]
               INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4]
               INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]
@@ -91,6 +99,7 @@ WithArrayDefaults.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -110,6 +119,7 @@ WithConstructorDefaults.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=text]
             TYPE_REFERENCE
@@ -117,6 +127,7 @@ WithConstructorDefaults.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
       CLASS_BODY
         PROPERTY[fqName=test.WithConstructorDefaults.value, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=value]
@@ -126,3 +137,4 @@ WithConstructorDefaults.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+                isClassRef: true

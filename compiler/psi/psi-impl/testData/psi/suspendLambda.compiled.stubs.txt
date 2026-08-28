@@ -15,6 +15,7 @@ A.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -44,6 +45,7 @@ A.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -106,11 +108,13 @@ SuspendLambda.class:
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=test]
                         REFERENCE_EXPRESSION[referencedName=P]
+                          isClassRef: true
                 TYPE_REFERENCE
                   USER_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Unit]
+                      isClassRef: true
         PROPERTY[fqName=test.SuspendLambda.nullableSuspendWithReceiver, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=nullableSuspendWithReceiver]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
@@ -123,6 +127,7 @@ SuspendLambda.class:
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=test]
                       REFERENCE_EXPRESSION[referencedName=RS]
+                        isClassRef: true
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                     TYPE_REFERENCE
@@ -130,11 +135,13 @@ SuspendLambda.class:
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=test]
                         REFERENCE_EXPRESSION[referencedName=P]
+                          isClassRef: true
                 TYPE_REFERENCE
                   USER_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Unit]
+                      isClassRef: true
         PROPERTY[fqName=test.SuspendLambda.nullableSuspendWithNullableParameter, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=nullableSuspendWithNullableParameter]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
@@ -149,11 +156,13 @@ SuspendLambda.class:
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=test]
                           REFERENCE_EXPRESSION[referencedName=P]
+                            isClassRef: true
                 TYPE_REFERENCE
                   USER_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Unit]
+                      isClassRef: true
         PROPERTY[fqName=test.SuspendLambda.nullableSuspendWithNullableReceiver, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=nullableSuspendWithNullableReceiver]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
@@ -167,6 +176,7 @@ SuspendLambda.class:
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=test]
                         REFERENCE_EXPRESSION[referencedName=RS]
+                          isClassRef: true
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                     TYPE_REFERENCE
@@ -174,11 +184,13 @@ SuspendLambda.class:
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=test]
                         REFERENCE_EXPRESSION[referencedName=P]
+                          isClassRef: true
                 TYPE_REFERENCE
                   USER_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Unit]
+                      isClassRef: true
         PROPERTY[fqName=test.SuspendLambda.nullableSuspendWithAnnotation, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=nullableSuspendWithAnnotation]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
@@ -192,6 +204,7 @@ SuspendLambda.class:
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=test]
                         REFERENCE_EXPRESSION[referencedName=A]
+                          isClassRef: true
               FUNCTION_TYPE
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
@@ -200,11 +213,13 @@ SuspendLambda.class:
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=test]
                         REFERENCE_EXPRESSION[referencedName=P]
+                          isClassRef: true
                 TYPE_REFERENCE
                   USER_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Unit]
+                      isClassRef: true
         FUNCTION[fqName=test.SuspendLambda.createCoroutine1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=createCoroutine1]
           MODIFIER_LIST[public final]
           TYPE_PARAMETER_LIST
@@ -216,6 +231,7 @@ SuspendLambda.class:
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=T]
+                    isClassRef: true
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=completion]
               TYPE_REFERENCE
@@ -223,16 +239,19 @@ SuspendLambda.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=Continuation]
+                    isClassRef: true
                   TYPE_ARGUMENT_LIST
                     TYPE_PROJECTION[projectionKind=NONE]
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=T]
+                            isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
         FUNCTION[fqName=test.SuspendLambda.createCoroutine2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=createCoroutine2]
           MODIFIER_LIST[public final]
           TYPE_PARAMETER_LIST
@@ -245,31 +264,37 @@ SuspendLambda.class:
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=R]
+                      isClassRef: true
               VALUE_PARAMETER_LIST
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=T]
+                    isClassRef: true
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=receiver]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=R]
+                    isClassRef: true
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=completion]
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=Continuation]
+                    isClassRef: true
                   TYPE_ARGUMENT_LIST
                     TYPE_PROJECTION[projectionKind=NONE]
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=T]
+                            isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
         FUNCTION[fqName=test.SuspendLambda.createCoroutineAnother, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=createCoroutineAnother]
           MODIFIER_LIST[public final]
           TYPE_PARAMETER_LIST
@@ -286,21 +311,25 @@ SuspendLambda.class:
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=test]
                       REFERENCE_EXPRESSION[referencedName=A]
+                        isClassRef: true
             FUNCTION_TYPE
               FUNCTION_TYPE_RECEIVER
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=R]
+                      isClassRef: true
               VALUE_PARAMETER_LIST
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=T]
+                    isClassRef: true
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
         FUNCTION[fqName=test.SuspendLambda.testCoroutine, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=testCoroutine]
           MODIFIER_LIST[public final]
           TYPE_PARAMETER_LIST
@@ -317,15 +346,18 @@ SuspendLambda.class:
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=kotlin]
                           REFERENCE_EXPRESSION[referencedName=Int]
+                            isClassRef: true
                   TYPE_REFERENCE
                     NULLABLE_TYPE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=T]
+                          isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
         FUNCTION[fqName=test.SuspendLambda.testCoroutineWithAnnotation, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=testCoroutineWithAnnotation]
           MODIFIER_LIST[public final]
           TYPE_PARAMETER_LIST
@@ -342,6 +374,7 @@ SuspendLambda.class:
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=kotlin]
                           REFERENCE_EXPRESSION[referencedName=Int]
+                            isClassRef: true
                   TYPE_REFERENCE
                     MODIFIER_LIST[]
                       ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
@@ -352,14 +385,17 @@ SuspendLambda.class:
                               USER_TYPE
                                 REFERENCE_EXPRESSION[referencedName=test]
                               REFERENCE_EXPRESSION[referencedName=A]
+                                isClassRef: true
                     NULLABLE_TYPE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=T]
+                          isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
         FUNCTION[fqName=test.SuspendLambda.override, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=override]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
@@ -369,6 +405,7 @@ SuspendLambda.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=String]
+                    isClassRef: true
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
               TYPE_REFERENCE
                 MODIFIER_LIST[suspend]
@@ -380,17 +417,20 @@ SuspendLambda.class:
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=test]
                           REFERENCE_EXPRESSION[referencedName=P]
+                            isClassRef: true
                   TYPE_REFERENCE
                     USER_TYPE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
                       REFERENCE_EXPRESSION[referencedName=Unit]
+                        isClassRef: true
           TYPE_REFERENCE
             NULLABLE_TYPE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Nothing]
+                  isClassRef: true
         FUNCTION[fqName=test.SuspendLambda.override, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=override]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
@@ -405,17 +445,20 @@ SuspendLambda.class:
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=test]
                           REFERENCE_EXPRESSION[referencedName=P]
+                            isClassRef: true
                   TYPE_REFERENCE
                     USER_TYPE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
                       REFERENCE_EXPRESSION[referencedName=Unit]
+                        isClassRef: true
           TYPE_REFERENCE
             NULLABLE_TYPE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Nothing]
+                  isClassRef: true
         FUNCTION[fqName=test.SuspendLambda.annotatedReturnSuspend, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=annotatedReturnSuspend]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
@@ -429,6 +472,7 @@ SuspendLambda.class:
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=test]
                       REFERENCE_EXPRESSION[referencedName=A]
+                        isClassRef: true
             FUNCTION_TYPE
               VALUE_PARAMETER_LIST
                 VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
@@ -437,11 +481,13 @@ SuspendLambda.class:
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=test]
                       REFERENCE_EXPRESSION[referencedName=P]
+                        isClassRef: true
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Unit]
+                    isClassRef: true
         FUNCTION[fqName=test.SuspendLambda.returnSuspend, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnSuspend]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
@@ -455,8 +501,10 @@ SuspendLambda.class:
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=test]
                       REFERENCE_EXPRESSION[referencedName=P]
+                        isClassRef: true
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Unit]
+                    isClassRef: true

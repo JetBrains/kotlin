@@ -19,6 +19,7 @@ FILE[kind=File[packageFqName=a]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
+                    isClassRef: true
               REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         SUPER_TYPE_LIST
           SUPER_TYPE_ENTRY
@@ -28,7 +29,9 @@ FILE[kind=File[packageFqName=a]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=a]
                   REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                    isClassRef: true
                 REFERENCE_EXPRESSION[referencedName=C]
+                  isClassRef: true
         CLASS_BODY
           PROPERTY[fqName=a.InheritingClasses.A.c, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
             MODIFIER_LIST[public open]
@@ -37,6 +40,7 @@ FILE[kind=File[packageFqName=a]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
           PROPERTY[fqName=a.InheritingClasses.A.op, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=op]
             MODIFIER_LIST[public open]
             TYPE_REFERENCE
@@ -44,6 +48,7 @@ FILE[kind=File[packageFqName=a]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
           PROPERTY[fqName=a.InheritingClasses.A.ap, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ap]
             MODIFIER_LIST[public abstract]
             TYPE_REFERENCE
@@ -51,6 +56,7 @@ FILE[kind=File[packageFqName=a]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
           FUNCTION[fqName=a.InheritingClasses.A.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
             MODIFIER_LIST[public open]
             VALUE_PARAMETER_LIST
@@ -59,6 +65,7 @@ FILE[kind=File[packageFqName=a]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
           FUNCTION[fqName=a.InheritingClasses.A.af, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=af]
             MODIFIER_LIST[public abstract]
             VALUE_PARAMETER_LIST
@@ -67,6 +74,7 @@ FILE[kind=File[packageFqName=a]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
       CLASS[classId=a/InheritingClasses.B, fqName=a.InheritingClasses.B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[A]]
         MODIFIER_LIST[public open]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=B]
@@ -80,7 +88,9 @@ FILE[kind=File[packageFqName=a]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=a]
                   REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                    isClassRef: true
                 REFERENCE_EXPRESSION[referencedName=A]
+                  isClassRef: true
         CLASS_BODY
           PROPERTY[fqName=a.InheritingClasses.B.op, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=op]
             MODIFIER_LIST[public open]
@@ -89,6 +99,7 @@ FILE[kind=File[packageFqName=a]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
           PROPERTY[fqName=a.InheritingClasses.B.ap, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ap]
             MODIFIER_LIST[public open]
             TYPE_REFERENCE
@@ -96,6 +107,7 @@ FILE[kind=File[packageFqName=a]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
           FUNCTION[fqName=a.InheritingClasses.B.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
             MODIFIER_LIST[public open]
             VALUE_PARAMETER_LIST
@@ -104,6 +116,7 @@ FILE[kind=File[packageFqName=a]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
           FUNCTION[fqName=a.InheritingClasses.B.af, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=af]
             MODIFIER_LIST[public open]
             VALUE_PARAMETER_LIST
@@ -112,6 +125,7 @@ FILE[kind=File[packageFqName=a]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
       CLASS[classId=a/InheritingClasses.C, fqName=a.InheritingClasses.C, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=false, name=C, superNames=[]]
         MODIFIER_LIST[public]
         CLASS_BODY
@@ -122,6 +136,7 @@ FILE[kind=File[packageFqName=a]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
       CLASS[classId=a/InheritingClasses.D, fqName=a.InheritingClasses.D, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=false, name=D, superNames=[C]]
         MODIFIER_LIST[public]
         TYPE_PARAMETER_LIST
@@ -134,7 +149,9 @@ FILE[kind=File[packageFqName=a]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=a]
                   REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                    isClassRef: true
                 REFERENCE_EXPRESSION[referencedName=C]
+                  isClassRef: true
         CLASS_BODY
           PROPERTY[fqName=a.InheritingClasses.D.c, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
             MODIFIER_LIST[public abstract]
@@ -143,6 +160,7 @@ FILE[kind=File[packageFqName=a]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
       CLASS[classId=a/InheritingClasses.E, fqName=a.InheritingClasses.E, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=false, name=E, superNames=[]]
         MODIFIER_LIST[public]
         CLASS_BODY
@@ -159,7 +177,9 @@ FILE[kind=File[packageFqName=a]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=a]
                   REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                    isClassRef: true
                 REFERENCE_EXPRESSION[referencedName=B]
+                  isClassRef: true
           SUPER_TYPE_ENTRY
             TYPE_REFERENCE
               USER_TYPE
@@ -167,7 +187,9 @@ FILE[kind=File[packageFqName=a]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=a]
                   REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                    isClassRef: true
                 REFERENCE_EXPRESSION[referencedName=C]
+                  isClassRef: true
           SUPER_TYPE_ENTRY
             TYPE_REFERENCE
               USER_TYPE
@@ -175,7 +197,9 @@ FILE[kind=File[packageFqName=a]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=a]
                   REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                    isClassRef: true
                 REFERENCE_EXPRESSION[referencedName=D]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
@@ -183,6 +207,7 @@ FILE[kind=File[packageFqName=a]]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Int]
+                          isClassRef: true
           SUPER_TYPE_ENTRY
             TYPE_REFERENCE
               USER_TYPE
@@ -190,7 +215,9 @@ FILE[kind=File[packageFqName=a]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=a]
                   REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                    isClassRef: true
                 REFERENCE_EXPRESSION[referencedName=E]
+                  isClassRef: true
         CLASS_BODY
       CLASS[classId=a/InheritingClasses.InheritAny, fqName=a.InheritingClasses.InheritAny, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=InheritAny, superNames=[]]
         MODIFIER_LIST[public final]
@@ -230,8 +257,11 @@ FILE[kind=File[packageFqName=a]]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=a]
                         REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                          isClassRef: true
                       REFERENCE_EXPRESSION[referencedName=InheritAny]
+                        isClassRef: true
                     REFERENCE_EXPRESSION[referencedName=SomeTrait]
+                      isClassRef: true
             CLASS_BODY
           CLASS[classId=a/InheritingClasses.InheritAny.OnlyTraits, fqName=a.InheritingClasses.InheritAny.OnlyTraits, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=OnlyTraits, superNames=[SomeTrait, SomeTrait2]]
             MODIFIER_LIST[public final]
@@ -247,8 +277,11 @@ FILE[kind=File[packageFqName=a]]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=a]
                         REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                          isClassRef: true
                       REFERENCE_EXPRESSION[referencedName=InheritAny]
+                        isClassRef: true
                     REFERENCE_EXPRESSION[referencedName=SomeTrait]
+                      isClassRef: true
               SUPER_TYPE_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
@@ -257,8 +290,11 @@ FILE[kind=File[packageFqName=a]]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=a]
                         REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                          isClassRef: true
                       REFERENCE_EXPRESSION[referencedName=InheritAny]
+                        isClassRef: true
                     REFERENCE_EXPRESSION[referencedName=SomeTrait2]
+                      isClassRef: true
             CLASS_BODY
           CLASS[classId=a/InheritingClasses.InheritAny.TraitWithExplicitAny, fqName=a.InheritingClasses.InheritAny.TraitWithExplicitAny, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=TraitWithExplicitAny, superNames=[Any, SomeTrait]]
             MODIFIER_LIST[public final]
@@ -272,6 +308,7 @@ FILE[kind=File[packageFqName=a]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Any]
+                      isClassRef: true
               SUPER_TYPE_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
@@ -280,8 +317,11 @@ FILE[kind=File[packageFqName=a]]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=a]
                         REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                          isClassRef: true
                       REFERENCE_EXPRESSION[referencedName=InheritAny]
+                        isClassRef: true
                     REFERENCE_EXPRESSION[referencedName=SomeTrait]
+                      isClassRef: true
             CLASS_BODY
           CLASS[classId=a/InheritingClasses.InheritAny.TraitsWithExplicitAny, fqName=a.InheritingClasses.InheritAny.TraitsWithExplicitAny, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=TraitsWithExplicitAny, superNames=[SomeTrait2, Any, SomeTrait]]
             MODIFIER_LIST[public final]
@@ -297,14 +337,18 @@ FILE[kind=File[packageFqName=a]]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=a]
                         REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                          isClassRef: true
                       REFERENCE_EXPRESSION[referencedName=InheritAny]
+                        isClassRef: true
                     REFERENCE_EXPRESSION[referencedName=SomeTrait2]
+                      isClassRef: true
               SUPER_TYPE_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Any]
+                      isClassRef: true
               SUPER_TYPE_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
@@ -313,8 +357,11 @@ FILE[kind=File[packageFqName=a]]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=a]
                         REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                          isClassRef: true
                       REFERENCE_EXPRESSION[referencedName=InheritAny]
+                        isClassRef: true
                     REFERENCE_EXPRESSION[referencedName=SomeTrait]
+                      isClassRef: true
             CLASS_BODY
       CLASS[classId=a/InheritingClasses.InheritFunctionType, fqName=a.InheritingClasses.InheritFunctionType, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=InheritFunctionType, superNames=[]]
         MODIFIER_LIST[public abstract]
@@ -332,15 +379,18 @@ FILE[kind=File[packageFqName=a]]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Int]
+                          isClassRef: true
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=String]
+                          isClassRef: true
                 TYPE_REFERENCE
                   USER_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Int]
+                      isClassRef: true
         CLASS_BODY

@@ -16,6 +16,7 @@ Defaults.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
           VALUE_PARAMETER[fqName=test.Defaults.string, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=string]
             constantInitializer: "s"
@@ -25,6 +26,7 @@ Defaults.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
             STRING_TEMPLATE
               LITERAL_STRING_TEMPLATE_ENTRY[text=s]
           VALUE_PARAMETER[fqName=test.Defaults.array, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=array]
@@ -35,6 +37,7 @@ Defaults.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=IntArray]
+                  isClassRef: true
             COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=2]
               INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
               INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
@@ -45,6 +48,7 @@ Defaults.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -65,6 +69,7 @@ Empty.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -85,6 +90,7 @@ Single.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -92,6 +98,7 @@ Single.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -112,6 +119,7 @@ Varargs.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -119,4 +127,5 @@ Varargs.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
