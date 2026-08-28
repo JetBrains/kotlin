@@ -192,7 +192,8 @@ internal open class GradleCompilerRunner(
             )
             compilerArgs.version = false
         }
-        val argsArray = ArgumentUtils.convertArgumentsToStringList(compilerArgs).toTypedArray()
+        // adds -- to separate free args from other args to survive KGP's parsing back until reaching BTA
+        val argsArray = compilerArgs.toArgumentStrings(false, addFreeArgsDelimiter = this is GradleBuildToolsApiCompilerRunner).toTypedArray()
 
         fusMetricsConsumer.orNull?.let { metricsConsumer ->
             CompilerArgumentMetrics.collectMetrics(compilerArgs, argsArray, metricsConsumer)
