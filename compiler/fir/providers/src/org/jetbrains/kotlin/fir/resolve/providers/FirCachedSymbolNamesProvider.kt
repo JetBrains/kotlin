@@ -136,6 +136,12 @@ class FirDelegatingCachedSymbolNamesProvider(
         get() = delegate.mayHaveSyntheticFunctionTypes
 
     override fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean = delegate.mayHaveSyntheticFunctionType(classId)
+
+    override val specificMayHaveTopLevelClassifier: ((classId: ClassId) -> Boolean)? =
+        delegate.specificMayHaveTopLevelClassifier?.let { delegate::mayHaveTopLevelClassifier }
+
+    override val specificMayHaveTopLevelCallable: ((packageFqName: FqName, name: Name) -> Boolean)? =
+        delegate.specificMayHaveTopLevelCallable?.let { delegate::mayHaveTopLevelCallable }
 }
 
 open class FirCompositeCachedSymbolNamesProvider(
@@ -170,6 +176,18 @@ open class FirCompositeCachedSymbolNamesProvider(
         // `session`. So we might miss some other session's synthetic function type.
         return providers.any { it.mayHaveSyntheticFunctionType(classId) }
     }
+
+    // A specific implementation is only possible if *every* provider has one, because a "names in package" set has to be built for each
+    // provider which doesn't, and such sets are merged across all providers anyway.
+    override val specificMayHaveTopLevelClassifier: ((classId: ClassId) -> Boolean)? =
+        if (providers.all { it.specificMayHaveTopLevelClassifier != null }) {
+            { classId -> providers.any { it.mayHaveTopLevelClassifier(classId) } }
+        } else null
+
+    override val specificMayHaveTopLevelCallable: ((packageFqName: FqName, name: Name) -> Boolean)? =
+        if (providers.all { it.specificMayHaveTopLevelCallable != null }) {
+            { packageFqName, name -> providers.any { it.mayHaveTopLevelCallable(packageFqName, name) } }
+        } else null
 
     companion object {
         fun create(session: FirSession, providers: List<FirSymbolNamesProvider>): FirSymbolNamesProvider = when (providers.size) {
