@@ -30,6 +30,8 @@ fun <T> runSuspendIdentity(block: suspend () -> T): T {
     return result!!.getOrThrow()
 }
 
+fun <T> identityWithIntroducedFallback(value: T, @IntroducedAt("1") fallback: T = value): T = fallback
+
 fun box(): String {
     val factory = GenericPairFactory("prefix")
     if (factory.create(1) != ("prefix" to 1)) return "FAIL member generic return"
@@ -43,5 +45,8 @@ fun box(): String {
 
     if (tailrecIdentity("O") != "O") return "FAIL tailrec default"
     if (tailrecIdentity("O", "K") != "K") return "FAIL tailrec explicit"
+
+    if (identityWithIntroducedFallback("OK") != "OK") return "fail identityWithIntroducedFallback"
+
     return "OK"
 }
