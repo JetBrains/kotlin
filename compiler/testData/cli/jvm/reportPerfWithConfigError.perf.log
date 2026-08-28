@@ -1,5 +1,5 @@
 Kotlin to JVM compiler performance report
-                INIT        $UINT>>$ ms
+                     INIT        $UINT>>$ ms
 GC time for <GC> is $UINT$ ms, $UINT$ collections
 GC time for <GC> is $UINT$ ms, $UINT$ collections
 JIT time is $UINT$ ms

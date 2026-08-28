@@ -252,6 +252,9 @@ val phaseTypeName = mapOf(
     PhaseType.Backend to "BACKEND",
 )
 
+private val maxWidth = phaseTypeName.values.maxBy { it.length }.length + 4
+private val phaseNameFormat = "%${maxWidth}s"
+
 val phaseSideTypeName = mapOf(
     PhaseSideType.FindJavaClass to "Find Java class",
     PhaseSideType.BinaryClassFromKotlinFile to "Binary class from Kotlin file"
@@ -263,7 +266,7 @@ fun PerformanceManager.forEachStringMeasurement(action: (String) -> Unit) {
             if (time == null) return@forEachPhaseMeasurement
 
             action(
-                "%20s%8s ms".format(phaseTypeName.getValue(phaseType), time.millis) +
+                "${phaseNameFormat}%8s ms".format(phaseTypeName.getValue(phaseType), time.millis) +
                         if (phaseType != PhaseType.Initialization && linesCount != 0) {
                             "%12.3f loc/s".format(Locale.ENGLISH, getLinesPerSecond(time))
                         } else {
@@ -275,7 +278,7 @@ fun PerformanceManager.forEachStringMeasurement(action: (String) -> Unit) {
                 if (detailedPerf) {
                     filteredDynamicStats.forEach { (val _ = parentPhaseType, val dynamicName = name, val dynamicTime = time) ->
                         action(
-                            "%20s%8s ms".format("DYNAMIC PHASE", dynamicTime.millis) +
+                            "${phaseNameFormat}%8s ms".format("DYNAMIC PHASE", dynamicTime.millis) +
                                     if (linesCount != 0) {
                                         "%12.3f loc/s ($dynamicName)".format(Locale.ENGLISH, getLinesPerSecond(dynamicTime))
                                     } else {
@@ -290,7 +293,7 @@ fun PerformanceManager.forEachStringMeasurement(action: (String) -> Unit) {
                             totTime += it.time
                         }
                         action(
-                            "%20s%8s ms".format("DYNAMIC PHASES", totTime.millis) +
+                            "${phaseNameFormat}%8s ms".format("DYNAMIC PHASES", totTime.millis) +
                                     if (linesCount != 0) "%12.3f loc/s".format(Locale.ENGLISH, getLinesPerSecond(totTime)) else ""
                         )
                     }
