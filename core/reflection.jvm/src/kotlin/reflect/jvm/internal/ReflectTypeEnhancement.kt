@@ -110,7 +110,9 @@ private fun AbstractKType.enhancePossiblyFlexible(
             lowerBound.enhanceInflexible(qualifiers, index, TypeComponentPosition.FLEXIBLE_LOWER, isRawType, isSuperTypesEnhancement)
         val upperResult =
             upperBound.enhanceInflexible(qualifiers, index, TypeComponentPosition.FLEXIBLE_UPPER, isRawType, isSuperTypesEnhancement)
-        assert(lowerResult.subtreeSize == upperResult.subtreeSize) {
+        // We don't try to create raw types exactly in the same way as in the compiler, see createRawJavaType in ConvertFromJava.kt.
+        // So, for raw types we sometimes produce trees of different sizes, but it's OK, since the underlying algorithm handles it fine.
+        assert(isRawType || lowerResult.subtreeSize == upperResult.subtreeSize) {
             "Different tree sizes of bounds: " +
                     "lower = ($lowerBound, ${lowerResult.subtreeSize}), " +
                     "upper = ($upperBound, ${upperResult.subtreeSize})"

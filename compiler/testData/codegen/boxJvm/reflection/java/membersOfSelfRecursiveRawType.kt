@@ -10,12 +10,18 @@ public class JBase<T extends JBase, F extends T> {
 // FILE: JChild.java
 public class JChild extends JBase {}
 
+// FILE: KtSubclass.kt
+open class KtSubclass : JChild()
+
+// FILE: JChildChild.java
+public class JChildChild extends KtSubclass {
+    public JBase method() { return null; }
+}
+
 // FILE: box.kt
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.test.assertEquals
-
-class KtSubclass : JChild()
 
 fun check(expected: String, reference: KCallable<*>, klass: KClass<*>) {
     assertEquals(expected, reference.toString())
@@ -33,6 +39,9 @@ fun box(): String {
 
     check("var KtSubclass.field: JBase<(raw) JBase<*, *>!, (raw) JBase<*, *>!>", KtSubclass::field, KtSubclass::class)
     check("fun KtSubclass.method(): JBase<(raw) JBase<*, *>!, (raw) JBase<*, *>!>", KtSubclass::method, KtSubclass::class)
+
+    check("var JChildChild.field: JBase<(raw) JBase<*, *>!, (raw) JBase<*, *>!>", JChildChild::field, JChildChild::class)
+    check("fun JChildChild.method(): JBase<(raw) JBase<*, *>!, (raw) JBase<*, *>!>", JChildChild::method, JChildChild::class)
 
     return "OK"
 }
