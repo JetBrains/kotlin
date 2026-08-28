@@ -1652,6 +1652,9 @@ public class org/jetbrains/kotlin/psi/KtFunctionTypeReceiver : org/jetbrains/kot
 	public fun getTypeReference ()Lorg/jetbrains/kotlin/psi/KtTypeReference;
 }
 
+public abstract interface annotation class org/jetbrains/kotlin/psi/KtIdeApi : java/lang/annotation/Annotation {
+}
+
 public class org/jetbrains/kotlin/psi/KtIfExpression : org/jetbrains/kotlin/psi/KtExpressionImpl {
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getCondition ()Lorg/jetbrains/kotlin/psi/KtExpression;
@@ -2019,6 +2022,9 @@ public class org/jetbrains/kotlin/psi/KtParameterList : org/jetbrains/kotlin/psi
 public class org/jetbrains/kotlin/psi/KtParenthesizedExpression : org/jetbrains/kotlin/psi/KtExpressionImplStub {
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getExpression ()Lorg/jetbrains/kotlin/psi/KtExpression;
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/psi/KtPlatformInterface : java/lang/annotation/Annotation {
 }
 
 public class org/jetbrains/kotlin/psi/KtPostfixExpression : org/jetbrains/kotlin/psi/KtUnaryExpression {
@@ -2522,6 +2528,9 @@ public final class org/jetbrains/kotlin/psi/KtSimpleNameExpressionImpl$Companion
 
 public class org/jetbrains/kotlin/psi/KtSimpleNameStringTemplateEntry : org/jetbrains/kotlin/psi/KtStringTemplateEntryWithExpression {
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/psi/KtSpiExtensionPoint : java/lang/annotation/Annotation {
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/KtStatementExpression {

@@ -83,6 +83,9 @@ Converting Java PSI classes to Kotlin is NOT always possible. Before attempting:
 - `@KtExperimentalApi` — Experimental public API
 - `@KtImplementationDetail` — Internal implementation
 - `@KtNonPublicApi` — JetBrains-internal APIs
+- `@KtIdeApi` — APIs designed for and internal to the Kotlin IntelliJ plugin
+- `@KtPlatformInterface` — APIs forming a contract with the Analysis API engine and its platforms (stub building, element types, indexing)
+- `@KtSpi`/`@KtSpiExtensionPoint` — Service provider interfaces and their members, designed to be implemented rather than called
 - `@KtPsiInconsistencyHandling` — Code handling inconsistent PSI states
 
 **Java-Kotlin interop:** See the "Java-Kotlin Interoperability" section in [api-development.md](../../analysis/docs/contribution-guide/api-development.md).

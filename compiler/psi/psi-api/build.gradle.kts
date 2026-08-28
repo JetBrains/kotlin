@@ -42,7 +42,9 @@ sourceSets {
 private val stableNonPublicMarkers = listOf(
     "org.jetbrains.kotlin.psi.KtImplementationDetail",
     "org.jetbrains.kotlin.psi.KtNonPublicApi",
+    "org.jetbrains.kotlin.psi.KtIdeApi",
     "org.jetbrains.kotlin.psi.KtExperimentalApi",
+    "org.jetbrains.kotlin.psi.KtPlatformInterface",
 )
 
 kotlin {
