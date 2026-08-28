@@ -2,12 +2,14 @@
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(KtImplementationDetail::class)
 
 package org.jetbrains.kotlin.analysis.api.standalone.base.declarations
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.util.containers.CollectionFactory
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 
 /**

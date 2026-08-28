@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 
-@OptIn(KtImplementationDetail::class)
+@KtImplementationDetail
 class KotlinPlaceHolderWithTextStubImpl<T : KtElementImplStub<*>>(
     parent: StubElement<*>?,
     elementType: IElementType,

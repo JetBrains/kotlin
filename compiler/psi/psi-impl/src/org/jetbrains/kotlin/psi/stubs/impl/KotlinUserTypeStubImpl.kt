@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.types.model.TypeArgumentMarker
  * @param abbreviatedType The type alias application from which this type was originally expanded. It can be used to render or navigate to
  *  the original type alias instead of the expanded type.
  */
-@OptIn(KtImplementationDetail::class)
+@KtImplementationDetail
 class KotlinUserTypeStubImpl(
     parent: StubElement<*>?,
     val upperBound: KotlinTypeBean?,
@@ -44,6 +44,7 @@ class KotlinUserTypeStubImpl(
                 other.upperBound == upperBound
 }
 
+@KtImplementationDetail
 sealed interface KotlinTypeBean : KotlinTypeMarker {
     val nullable: Boolean
 }
@@ -51,8 +52,10 @@ sealed interface KotlinTypeBean : KotlinTypeMarker {
 /**
  * A [KotlinTypeBean] which is not a [flexible type][KotlinFlexibleTypeBean].
  */
+@KtImplementationDetail
 sealed interface KotlinRigidTypeBean : KotlinTypeBean
 
+@KtImplementationDetail
 data class KotlinFlexibleTypeBean(val lowerBound: KotlinTypeBean, val upperBound: KotlinTypeBean) : KotlinTypeBean, FlexibleTypeMarker {
     override val nullable: Boolean
         get() = lowerBound.nullable
@@ -99,6 +102,7 @@ data class KotlinFlexibleTypeBean(val lowerBound: KotlinTypeBean, val upperBound
  *   ),
  * ```
  */
+@KtImplementationDetail
 data class KotlinClassTypeBean(
     val classId: ClassId,
     val arguments: List<KotlinTypeArgumentBean>,
@@ -106,8 +110,10 @@ data class KotlinClassTypeBean(
     val abbreviatedType: KotlinClassTypeBean?,
 ) : KotlinRigidTypeBean, SimpleTypeMarker
 
+@KtImplementationDetail
 data class KotlinTypeArgumentBean(val projectionKind: KtProjectionKind, val type: KotlinTypeBean?) : TypeArgumentMarker
 
+@KtImplementationDetail
 data class KotlinTypeParameterTypeBean(
     val typeParameterName: String,
     override val nullable: Boolean,

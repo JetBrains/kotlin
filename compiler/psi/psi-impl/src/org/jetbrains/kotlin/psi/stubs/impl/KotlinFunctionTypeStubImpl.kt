@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
  * @param abbreviatedType The type alias application from which this type was originally expanded. It can be used to render or navigate to
  *  the original type alias instead of the expanded type.
  */
-@OptIn(KtImplementationDetail::class)
+@KtImplementationDetail
 class KotlinFunctionTypeStubImpl(
     parent: StubElement<*>?,
     val abbreviatedType: KotlinClassTypeBean?,

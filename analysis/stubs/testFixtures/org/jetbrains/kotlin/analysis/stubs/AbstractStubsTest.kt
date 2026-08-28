@@ -2,6 +2,7 @@
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(KtImplementationDetail::class)
 
 package org.jetbrains.kotlin.analysis.stubs
 
@@ -56,7 +57,6 @@ abstract class AbstractStubsTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    @OptIn(KtImplementationDetail::class)
     private fun assertEquality(fileStub: KotlinFileStubImpl) {
         val deepCopy = fileStub.deepCopy()
         fileStub.stubList.zip(deepCopy.stubList).forEach { [stub1, stub2] ->

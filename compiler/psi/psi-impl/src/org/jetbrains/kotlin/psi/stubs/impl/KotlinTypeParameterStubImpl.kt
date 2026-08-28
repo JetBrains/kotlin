@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeParameterStub
 
-@OptIn(KtImplementationDetail::class)
+@KtImplementationDetail
 class KotlinTypeParameterStubImpl(
     parent: StubElement<*>?,
     private val name: StringRef?,

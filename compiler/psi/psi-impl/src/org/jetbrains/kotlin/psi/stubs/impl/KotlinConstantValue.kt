@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.StubUtils
 
 internal enum class KotlinConstantValueKind {
@@ -185,9 +186,16 @@ private class KotlinConstantValueSerializationVisitor(private val dataStream: St
     }
 }
 
+@KtImplementationDetail
 data class AnnotationData(val annoClassId: ClassId, val args: Map<Name, ConstantValue<*>>)
+
+@KtImplementationDetail
 data class EnumData(val enumClassId: ClassId, val enumEntryName: Name)
+
+@KtImplementationDetail
 data class KClassData(val classId: ClassId, val arrayNestedness: Int)
+
+@KtImplementationDetail
 fun createConstantValue(value: Any?): ConstantValue<*> {
     return when (value) {
         is Byte -> ByteValue(value)
@@ -216,6 +224,7 @@ fun createConstantValue(value: Any?): ConstantValue<*> {
     }
 }
 
+@KtImplementationDetail
 fun createConstantValue(value: ProtoBuf.Annotation.Argument.Value, nameResolver: NameResolver): ConstantValue<*> {
     val isUnsigned = Flags.IS_UNSIGNED.get(value.flags)
 

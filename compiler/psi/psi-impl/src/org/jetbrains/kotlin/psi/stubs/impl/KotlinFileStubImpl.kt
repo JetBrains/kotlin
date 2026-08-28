@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-@OptIn(KtImplementationDetail::class)
-class KotlinFileStubImpl @KtImplementationDetail internal constructor(
+@KtImplementationDetail
+class KotlinFileStubImpl internal constructor(
     file: KtFile?,
     override val kind: KotlinFileStubKind,
 ) : PsiFileStubImpl<KtFile>(file), KotlinFileStub {
@@ -53,7 +53,6 @@ class KotlinFileStubImpl @KtImplementationDetail internal constructor(
         other is KotlinFileStubImpl &&
                 other.kind == kind
 
-    @OptIn(KtImplementationDetail::class)
     companion object {
         fun forFile(packageFqName: FqName): KotlinFileStubImpl = KotlinFileStubImpl(
             file = null,

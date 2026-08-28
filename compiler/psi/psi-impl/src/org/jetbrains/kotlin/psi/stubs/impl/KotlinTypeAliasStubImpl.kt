@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub
 
-@OptIn(KtImplementationDetail::class)
+@KtImplementationDetail
 class KotlinTypeAliasStubImpl(
     parent: StubElement<*>?,
     private val name: StringRef?,

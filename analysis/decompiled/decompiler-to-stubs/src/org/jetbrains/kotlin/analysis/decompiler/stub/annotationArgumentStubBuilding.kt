@@ -2,6 +2,7 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(KtImplementationDetail::class)
 
 package org.jetbrains.kotlin.analysis.decompiler.stub
 
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.impl.*
 
@@ -108,7 +110,6 @@ internal fun createValueStub(parent: StubElement<*>, value: ConstantValue<*>, co
  * Note: the absolute value of a minimal value doesn't fit into its type, but this is a compilation
  * error and not a parsing one, so the same tree is built for the reparsed text.
  */
-@OptIn(KtImplementationDetail::class)
 private fun createNumberStub(parent: StubElement<*>, kind: ConstantValueKind, text: String) {
     val positiveText = text.removePrefix("-")
     if (positiveText.length == text.length) {
@@ -151,7 +152,6 @@ private fun createFloatingPointStub(
 /**
  * Creates a stub for the expression [constantName] is defined by, e.g., `1.0/0.0` for [Double.POSITIVE_INFINITY].
  */
-@OptIn(KtImplementationDetail::class)
 private fun createFloatingPointDefinitionStub(parent: StubElement<*>, constantName: Name, isFloat: Boolean) {
     val suffix = if (isFloat) FLOAT_SUFFIX else ""
     val zero = "0.0$suffix"
@@ -178,7 +178,6 @@ private fun createFloatingPointDefinitionStub(parent: StubElement<*>, constantNa
     }
 }
 
-@OptIn(KtImplementationDetail::class)
 private fun createDivisionStub(parent: StubElement<*>, dividend: String, divisor: String) {
     val binaryExpression = KotlinPlaceHolderStubImpl<KtBinaryExpression>(parent = parent, elementType = KtNodeTypes.BINARY_EXPRESSION)
     createNumberStub(binaryExpression, ConstantValueKind.FLOAT_CONSTANT, dividend)
