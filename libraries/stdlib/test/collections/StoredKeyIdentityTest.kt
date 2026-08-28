@@ -7,6 +7,11 @@ package test.collections
 
 import kotlin.test.*
 
+/**
+ * Checks that `put`, `putAll`, `add`, and `addAll` retain the key or element instance already stored
+ * when an equal instance is inserted. The retention is observable only through `===`, so the test uses
+ * keys that are equal but not identical.
+ */
 class StoredKeyIdentityTest {
 
     @Test
@@ -50,10 +55,13 @@ class StoredKeyIdentityTest {
         buildSet { operations() }
     }
 
+    // 12 keys sharing a hash are enough for java.util.HashMap to treeify the bin, 3 stay in a short
+    // linked bin, and 4 do not collide; in the open-addressing stdlib maps the same groups produce
+    // long and short probe chains. The hash values are arbitrary, only their distinctness matters.
     private fun storedKeys(): List<Key> =
         List(12) { Key(it, LONG_COLLISION_HASH) } +
-            List(3) { Key(50 + it, SHORT_COLLISION_HASH) } +
-            List(4) { Key(100 + it) }
+                List(3) { Key(50 + it, SHORT_COLLISION_HASH) } +
+                List(4) { Key(100 + it) }
 
     private fun Set<Key>.assertRetained(expected: List<Key>) {
         for (key in expected) assertSame(key, first { it == key }, "the instance already stored must be retained")
