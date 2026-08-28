@@ -148,6 +148,8 @@ class KotlinBuildProperties internal constructor(
 
     val jarCompression: Boolean get() = booleanProperty("kotlin.build.jar.compression", isTeamcityBuild).get()
 
+    val hideExtraTestTasksInGradleIntegrationTests: Provider<Boolean> = booleanProperty("kotlin.test.gradle.it.hide.extra.tasks")
+
     private fun Provider<String>.toBoolean(defaultValue: Boolean = false): Provider<Boolean> = map {
         if (it.isEmpty()) return@map true // has property without value means 'true'
         return@map it.trim().toBoolean()
