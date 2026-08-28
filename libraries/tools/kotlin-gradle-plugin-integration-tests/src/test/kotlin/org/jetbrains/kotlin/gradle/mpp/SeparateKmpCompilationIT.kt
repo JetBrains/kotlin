@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.gradle.uklibs.*
 import org.jetbrains.kotlin.gradle.util.capitalize
 import org.jetbrains.kotlin.gradle.util.resolveRepoArtifactPath
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
+import org.jetbrains.kotlin.testFederation.AffectedByFrontend
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -678,6 +680,47 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 "compileKotlinLinuxX64",
                 buildOptions = defaultBuildOptions.copy(separateCompilation = true)
             )
+        }
+    }
+
+    @DisplayName("JVM metadata serialization for IC enabled with separate compilation")
+    @GradleTest
+    @AffectedByFrontend
+    @Disabled
+    fun jvmIcEnabledWithSeparateCompilation(gradleVersion: GradleVersion) {
+        defaultProject(
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(enableJvmIncrementalCompilationOfCommonSources = true),
+            targetsToInclude = listOf("jvm", "js"),
+        ) {
+            kotlinSourcesDir("commonMain").source("common.kt") {
+                """
+                    package repro
+                    
+                    expect fun platformName(): String
+                    expect class Container(value: Int) {
+                        val value: Int
+                    }
+                    
+                    fun greet(): String = "hello"
+                """.trimIndent()
+            }
+
+            kotlinSourcesDir("jvmMain").source("jvm.kt") {
+                """
+                    package repro
+    
+                    actual fun platformName(): String = "jvm"
+    
+                    actual class Container actual constructor(actual val value: Int)
+    
+                    fun main() {
+                        println(greet())
+                    }
+                """.trimIndent()
+            }
+
+            build("compileKotlinJvm")
         }
     }
 
