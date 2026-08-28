@@ -51,12 +51,34 @@ public interface KotlinDeclarationProvider : KotlinComposableProvider {
 
     public fun getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName: FqName): Set<Name>
 
+    public val hasMayHaveTopLevelKotlinClassLikeDeclarationImplementation: Boolean
+        get() = false
+
+    public fun mayHaveTopLevelKotlinClassLikeDeclaration(classId: ClassId): Boolean {
+        if (hasMayHaveTopLevelKotlinClassLikeDeclarationImplementation) {
+            TODO("Since ${::hasMayHaveTopLevelKotlinClassLikeDeclarationImplementation.name} is true, this function has to be implemented, but wasn't")
+        } else {
+            TODO("Since ${::hasMayHaveTopLevelKotlinClassLikeDeclarationImplementation.name} is false, this function should never be called")
+        }
+    }
+
     public fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty>
     public fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction>
 
     public fun getTopLevelCallableFiles(callableId: CallableId): Collection<KtFile>
 
     public fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>
+
+    public val hasMayHaveTopLevelCallableImplementation: Boolean
+        get() = false
+
+    public fun mayHaveTopLevelCallable(classId: ClassId): Boolean {
+        if (hasMayHaveTopLevelCallableImplementation) {
+            TODO("Since ${::hasMayHaveTopLevelCallableImplementation.name} is true, this function has to be implemented, but wasn't")
+        } else {
+            TODO("Since ${::hasMayHaveTopLevelCallableImplementation.name} is false, this function should never be called")
+        }
+    }
 
     public fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile>
 

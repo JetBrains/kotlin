@@ -169,6 +169,8 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/platform/decla
 	public abstract fun getAllClassesByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Ljava/util/Collection;
 	public abstract fun getAllTypeAliasesByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Ljava/util/Collection;
 	public abstract fun getClassLikeDeclarationByClassId (Lorg/jetbrains/kotlin/name/ClassId;)Lorg/jetbrains/kotlin/psi/KtClassLikeDeclaration;
+	public fun getHasMayHaveTopLevelCallableImplementation ()Z
+	public fun getHasMayHaveTopLevelKotlinClassLikeDeclarationImplementation ()Z
 	public abstract fun getHasSpecificCallablePackageNamesComputation ()Z
 	public abstract fun getHasSpecificClassifierPackageNamesComputation ()Z
 	public abstract fun getTopLevelCallableFiles (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
@@ -176,6 +178,8 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/platform/decla
 	public abstract fun getTopLevelFunctions (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
 	public abstract fun getTopLevelKotlinClassLikeDeclarationNamesInPackage (Lorg/jetbrains/kotlin/name/FqName;)Ljava/util/Set;
 	public abstract fun getTopLevelProperties (Lorg/jetbrains/kotlin/name/CallableId;)Ljava/util/Collection;
+	public fun mayHaveTopLevelCallable (Lorg/jetbrains/kotlin/name/ClassId;)Z
+	public fun mayHaveTopLevelKotlinClassLikeDeclaration (Lorg/jetbrains/kotlin/name/ClassId;)Z
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/platform/declarations/KotlinDeclarationProviderFactory : org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent {
