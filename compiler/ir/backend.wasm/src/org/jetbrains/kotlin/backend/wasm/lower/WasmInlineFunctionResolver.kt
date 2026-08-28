@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.inline.InlineFunctionResolver
 import org.jetbrains.kotlin.ir.inline.InlineMode
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.util.isBuiltInSuspendCoroutineUninterceptedOrReturn
 import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrSelf
 
 class WasmInlineFunctionResolver(
@@ -22,7 +23,9 @@ class WasmInlineFunctionResolver(
         val realOwner = symbol.owner.resolveFakeOverrideOrSelf()
 
         val substituteSuspendCoroutineIntrinsic =
-            realOwner.symbol == context.symbols.suspendCoroutineUninterceptedOrReturnIntrinsic
+            realOwner.isBuiltInSuspendCoroutineUninterceptedOrReturn() ||
+                realOwner.symbol == context.symbols.suspendCoroutineUninterceptedOrReturn ||
+                realOwner.symbol == context.symbols.suspendCoroutineUninterceptedOrReturnIntrinsic
 
         val suspendCoroutineUninterceptedOrReturnIntrinsic =
             if (context.wasmUseStackSwitching)
