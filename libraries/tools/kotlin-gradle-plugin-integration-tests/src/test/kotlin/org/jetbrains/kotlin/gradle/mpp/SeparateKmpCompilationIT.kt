@@ -686,7 +686,6 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
     @DisplayName("JVM metadata serialization for IC enabled with separate compilation")
     @GradleTest
     @AffectedByFrontend
-    @Disabled
     fun jvmIcEnabledWithSeparateCompilation(gradleVersion: GradleVersion) {
         defaultProject(
             gradleVersion,
