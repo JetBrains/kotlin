@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedT
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCodeFragmentSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -1770,7 +1771,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 symbol.constructType()
             }
             else -> {
-                if (!shouldComputeTypeOfGetClassCallWithNotQualifierInLhs(getClassCall)) return transformedGetClassCall
                 val resultType = lhs.resolvedType
                 if (resultType is ConeErrorType) {
                     resultType
@@ -1783,10 +1783,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         transformedGetClassCall.resultType = StandardClassIds.KClass.constructClassLikeType(arrayOf(typeOfExpression), false)
         dataFlowAnalyzer.exitGetClassCall(transformedGetClassCall)
         return transformedGetClassCall
-    }
-
-    protected open fun shouldComputeTypeOfGetClassCallWithNotQualifierInLhs(getClassCall: FirGetClassCall): Boolean {
-        return true
     }
 
     override fun transformLiteralExpression(
@@ -1860,10 +1856,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             val result = callResolver.resolveAnnotationCall(annotationCall)
             dataFlowAnalyzer.exitAnnotation()
             callCompleter.completeCall(result, ContextIndependent)
-            (result.argumentList as FirResolvedArgumentList).let {
-                annotationCall.replaceArgumentMapping(it.toAnnotationArgumentMapping())
-                evaluateAndReplaceArgumentMapping(annotationCall)
-            }
+            replaceAndEvaluateArgumentMapping(annotationCall, result.argumentList as FirResolvedArgumentList)
             annotationCall
         }
     }
@@ -1890,12 +1883,64 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         callCompleter.completeCall(result, ContextIndependent)
         result.transformSingle(arrayOfCallTransformer, session)
-        (result.argumentList as FirResolvedArgumentList).let {
-            annotationCall.replaceArgumentMapping(it.toAnnotationArgumentMapping())
-            evaluateAndReplaceArgumentMapping(annotationCall)
-        }
+        replaceAndEvaluateArgumentMapping(annotationCall, result.argumentList as FirResolvedArgumentList)
         dataFlowAnalyzer.exitAnnotationCall()
         annotationCall
+    }
+
+    private fun replaceAndEvaluateArgumentMapping(annotationCall: FirAnnotationCall, argumentList: FirResolvedArgumentList) {
+        val mappingFromCompilerRequiredPhase = annotationCall.argumentMapping.mapping
+        annotationCall.replaceArgumentMapping(argumentList.toAnnotationArgumentMapping())
+        reportAmbiguouslyResolvedCompilerRequiredArguments(annotationCall, mappingFromCompilerRequiredPhase)
+        evaluateAndReplaceArgumentMapping(annotationCall)
+    }
+
+    /**
+     * Likely, [ConeAmbiguouslyResolvedAnnotationArgument] is not really needed: it is always accompanied by another diagnostic.
+     * TODO(KT-88979): Consider removing this logic and the diagnostic.
+     */
+    private fun reportAmbiguouslyResolvedCompilerRequiredArguments(
+        annotationCall: FirAnnotationCall,
+        mappingFromCompilerRequiredPhase: Map<Name, FirExpression>,
+    ) {
+        val annotationClassId = annotationCall.toAnnotationClassId(session) ?: return
+        val parameters = session.annotationPlatformSupport.requiredAnnotationsWithArguments[annotationClassId] ?: return
+
+        for ((name, kind) in parameters) {
+            // non-literal arguments are reported in the checker
+            if (kind !is FirCraParameterKind.EnumParameter) continue
+
+            val fromCompilerRequiredPhase = mappingFromCompilerRequiredPhase[name] ?: continue
+            val fromArgumentsPhase = annotationCall.argumentMapping.mapping[name] ?: continue
+
+            val guessedArguments = fromCompilerRequiredPhase.unwrapAndFlattenArgument(flattenArrays = true)
+            val resolvedArguments = fromArgumentsPhase.unwrapAndFlattenArgument(flattenArrays = true)
+            // Something else should be reported
+            if (guessedArguments.size != resolvedArguments.size) continue
+
+            for ([guessedArgument, resolvedArgument] in guessedArguments.zip(resolvedArguments)) {
+                // Something else should be reported
+                if (resolvedArgument !is FirPropertyAccessExpression) continue
+                val calleeReference = resolvedArgument.calleeReference
+                if (calleeReference.isError()) continue
+                val symbolFromArgumentsPhase = calleeReference.toResolvedBaseSymbol() ?: continue
+
+                val symbolFromCompilerPhase =
+                    (guessedArgument as? FirPropertyAccessExpression)?.calleeReference?.toResolvedEnumEntrySymbol()
+
+                if (symbolFromCompilerPhase != symbolFromArgumentsPhase) {
+                    resolvedArgument.replaceCalleeReference(
+                        buildResolvedErrorReference {
+                            resolvedSymbol = symbolFromArgumentsPhase
+                            resolvedSymbolOrigin = calleeReference.resolvedSymbolOrigin
+                            source = calleeReference.source
+                            this.name = calleeReference.name
+                            diagnostic = ConeAmbiguouslyResolvedAnnotationArgument(symbolFromCompilerPhase, symbolFromArgumentsPhase)
+                        }
+                    )
+                }
+            }
+        }
     }
 
     private fun evaluateAndReplaceArgumentMapping(annotationCall: FirAnnotationCall) {

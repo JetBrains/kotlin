@@ -8,10 +8,10 @@ object Holder {
     val ERROR: DeprecationLevel = DeprecationLevel.WARNING
 }
 
-@Deprecated("", level = <!ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST!>ERROR<!>)
+@Deprecated("", level = <!AMBIGUOUS_ANNOTATION_ARGUMENT, ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST!>ERROR<!>)
 fun shadowedByTopLevelProperty() {}
 
-@Deprecated("", level = <!ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST!>Holder.ERROR<!>)
+@Deprecated("", level = <!ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST!>Holder.<!AMBIGUOUS_ANNOTATION_ARGUMENT!>ERROR<!><!>)
 fun shadowedByObjectProperty() {}
 
 fun use() {

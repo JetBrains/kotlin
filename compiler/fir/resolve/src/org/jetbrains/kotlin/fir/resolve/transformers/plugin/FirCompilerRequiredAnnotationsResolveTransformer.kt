@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.*
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -294,7 +293,6 @@ fun <F : FirClassLikeDeclaration> F.runCompilerRequiredAnnotationsResolvePhaseFo
     localClassesNavigationInfo: LocalClassesNavigationInfo,
     useSiteFile: FirFile,
     containingDeclarations: List<FirDeclaration>,
-    bodyResolveContext: BodyResolveContext,
 ): F {
     @OptIn(FirImplementationDetail::class)
     val computationSession = session.jumpingPhaseComputationSessionForLocalClassesProvider.compilerRequiredAnnotationPhaseSession()
@@ -304,7 +302,6 @@ fun <F : FirClassLikeDeclaration> F.runCompilerRequiredAnnotationsResolvePhaseFo
         computationSession,
         containingDeclarations,
         localClassesNavigationInfo,
-        bodyResolveContext,
     )
     return annotationsResolveTransformer.withFileScopesAndImports(useSiteFile) {
         this.transformSingle(annotationsResolveTransformer, null)
@@ -317,13 +314,11 @@ private class FirSpecificAnnotationForLocalClassesResolveTransformer(
     computationSession: CompilerRequiredAnnotationsComputationSession,
     containingDeclarations: List<FirDeclaration>,
     private val localClassesNavigationInfo: LocalClassesNavigationInfo,
-    outerBodyResolveContext: BodyResolveContext,
 ) : AbstractFirSpecificAnnotationResolveTransformer(
     session,
     scopeSession,
     computationSession,
     containingDeclarations,
-    outerBodyResolveContext
 ) {
     override fun shouldTransformDeclaration(declaration: FirDeclaration): Boolean {
         return when (declaration) {

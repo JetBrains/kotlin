@@ -8,7 +8,7 @@ public enum JavaTarget {
 // FILE: MyAnnotation.kt
 import JavaTarget.*
 
-@Target(<!ARGUMENT_TYPE_MISMATCH!>ANNOTATION_CLASS<!>)
+@Target(<!AMBIGUOUS_ANNOTATION_ARGUMENT, ARGUMENT_TYPE_MISMATCH!>ANNOTATION_CLASS<!>)
 annotation class MyAnnotation
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, javaProperty, javaType */

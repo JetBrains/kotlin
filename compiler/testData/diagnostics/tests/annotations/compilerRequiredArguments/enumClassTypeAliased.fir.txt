@@ -11,7 +11,7 @@ FILE: enumClassTypeAliased.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|ViaTypeAlias|() public final val a: R|kotlin/Int| = Int(1)
+        field:@R|ViaTypeAlias|() public final val a: R|kotlin/Int| = Int(1)
             public get(): R|kotlin/Int|
 
     }

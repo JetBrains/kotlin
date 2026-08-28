@@ -5,25 +5,25 @@ FILE: typeArgumentsAndAnnotations.kt
         }
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class Annotated1 : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(@R|Marker|() @<ERROR TYPE REF: Symbol not found for Unresolved>() Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(@R|Marker|() @<ERROR TYPE REF: Symbol not found for Unresolved>() Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class Annotated1 : R|kotlin/Annotation| {
         public constructor(): R|Annotated1| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class Annotated2 : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(@R|Marker|() @<ERROR TYPE REF: Symbol not found for Unresolved>() Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(@R|Marker|() @<ERROR TYPE REF: Symbol not found for Unresolved>() Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class Annotated2 : R|kotlin/Annotation| {
         public constructor(): R|Annotated2| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class Annotated3 : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(@R|Marker|() @<ERROR TYPE REF: Symbol not found for Unresolved>() Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(@R|Marker|() @<ERROR TYPE REF: Symbol not found for Unresolved>() Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class Annotated3 : R|kotlin/Annotation| {
         public constructor(): R|Annotated3| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class Annotated4 : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(@R|Marker|() @<ERROR TYPE REF: Symbol not found for Unresolved>() Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(@R|Marker|() @<ERROR TYPE REF: Symbol not found for Unresolved>() Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class Annotated4 : R|kotlin/Annotation| {
         public constructor(): R|Annotated4| {
             super<R|kotlin/Any|>()
         }
@@ -35,25 +35,25 @@ FILE: typeArgumentsAndAnnotations.kt
         }
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class Annotated5 : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(@R|Marker|() @<ERROR TYPE REF: Symbol not found for Unresolved>() <Unresolved name: kotlin>#.<Unresolved name: annotation>#.<Unresolved name: AnnotationTarget>#.<Unresolved name: FIELD>#) [evaluated = vararg(@R|Marker|() @<ERROR TYPE REF: Symbol not found for Unresolved>() <Unresolved name: kotlin>#.<Unresolved name: annotation>#.<Unresolved name: AnnotationTarget>#.<Unresolved name: FIELD>#)]) public final annotation class Annotated5 : R|kotlin/Annotation| {
         public constructor(): R|Annotated5| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class Annotated6 : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(@R|Marker|() @<ERROR TYPE REF: Symbol not found for Unresolved>() R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(@R|Marker|() @<ERROR TYPE REF: Symbol not found for Unresolved>() R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class Annotated6 : R|kotlin/Annotation| {
         public constructor(): R|Annotated6| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class TypeArgumentOnFirstPart : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(<Unresolved name: kotlin>#<R|kotlin/Int|>.<Unresolved name: annotation>#.<Unresolved name: AnnotationTarget>#.<Unresolved name: FIELD>#) [evaluated = vararg(<Unresolved name: kotlin>#<R|kotlin/Int|>.<Unresolved name: annotation>#.<Unresolved name: AnnotationTarget>#.<Unresolved name: FIELD>#)]) public final annotation class TypeArgumentOnFirstPart : R|kotlin/Annotation| {
         public constructor(): R|TypeArgumentOnFirstPart| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class TypeArgumentOnSecondPart : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin|.<Unresolved name: annotation>#<R|kotlin/Int|>.<Unresolved name: AnnotationTarget>#.<Unresolved name: FIELD>#) [evaluated = vararg(Q|kotlin|.<Unresolved name: annotation>#<R|kotlin/Int|>.<Unresolved name: AnnotationTarget>#.<Unresolved name: FIELD>#)]) public final annotation class TypeArgumentOnSecondPart : R|kotlin/Annotation| {
         public constructor(): R|TypeArgumentOnSecondPart| {
             super<R|kotlin/Any|>()
         }

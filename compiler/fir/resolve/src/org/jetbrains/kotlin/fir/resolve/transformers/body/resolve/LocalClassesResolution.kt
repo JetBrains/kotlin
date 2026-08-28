@@ -40,7 +40,6 @@ fun <F : FirClassLikeDeclaration> F.runAllPhasesForLocalClassLikeDeclarations(
         localClassesNavigationInfo,
         components.file,
         components.containingDeclarations,
-        components.context,
     )
     runCompanionGenerationPhaseForLocalClass(components.session)
     runSupertypeResolvePhaseForLocalClass(

@@ -11,7 +11,7 @@ interface MyInterface<T> {
 
 object MyObject : MyInterface<Int>
 
-@Target(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, ARGUMENT_TYPE_MISMATCH!>foo<!>)
+@Target(<!AMBIGUOUS_ANNOTATION_ARGUMENT, ANNOTATION_ARGUMENT_MUST_BE_CONST, ARGUMENT_TYPE_MISMATCH!>foo<!>)
 annotation class MyAnnotation
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, getter, interfaceDeclaration, nullableType, objectDeclaration,

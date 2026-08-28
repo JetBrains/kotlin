@@ -106,7 +106,7 @@ private fun computeTargetAnnotationArguments(
     annotationParameterName: Name,
     nameMapper: (String) -> String?,
 ): List<KaNamedAnnotationValue> {
-    val rawValues = annotation.findFromRawArguments(expectedEnumClass = expectedEnumClassId, nameMapper)
+    val rawValues = annotation.findFromArgumentMapping(expectedEnumClass = expectedEnumClassId, nameMapper)
 
     if (rawValues.isNotEmpty()) {
         val token = builder.token
@@ -146,7 +146,7 @@ private fun computeJavaTargetAnnotationArguments(annotation: FirAnnotation, buil
     }
 }
 
-private fun <T> FirAnnotation.findFromRawArguments(expectedEnumClass: ClassId, transformer: (String) -> T?): Set<T> = buildSet {
+private fun <T> FirAnnotation.findFromArgumentMapping(expectedEnumClass: ClassId, transformer: (String) -> T?): Set<T> = buildSet {
     fun addIfMatching(arg: FirExpression) {
         if (arg !is FirQualifiedAccessExpression) return
         val callableSymbol = arg.calleeReference.toResolvedCallableSymbol() ?: return
@@ -155,10 +155,8 @@ private fun <T> FirAnnotation.findFromRawArguments(expectedEnumClass: ClassId, t
         transformer(identifier)?.let(::add)
     }
 
-    if (this@findFromRawArguments is FirAnnotationCall) {
-        for (arg in argumentList.arguments) {
-            arg.unwrapAndFlattenArgument(flattenArrays = true).forEach(::addIfMatching)
-        }
+    for (arg in argumentMapping.mapping.values) {
+        arg.unwrapAndFlattenArgument(flattenArrays = true).forEach(::addIfMatching)
     }
 }
 

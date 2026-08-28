@@ -7,7 +7,7 @@ open class Foo {
 }
 
 class Bar : Foo() {
-    @Target(allowedTargets = [AnnotationTarget.<!AMBIGUOUS_ANNOTATION_ARGUMENT!>VALUE_PARAMETER<!>])
+    @Target(allowedTargets = [AnnotationTarget.<!UNRESOLVED_REFERENCE!>VALUE_PARAMETER<!>])
     annotation class A
 }
 

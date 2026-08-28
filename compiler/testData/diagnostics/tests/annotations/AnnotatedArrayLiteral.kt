@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE_FEATURE_TOGGLED: AllowAnnotationsOnArgumentsOfAnnotations
 
 annotation class X(val value: Array<Y>)
