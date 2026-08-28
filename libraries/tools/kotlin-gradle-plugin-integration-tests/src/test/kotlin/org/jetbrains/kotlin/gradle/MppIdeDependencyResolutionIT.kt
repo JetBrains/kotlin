@@ -51,11 +51,6 @@ import kotlin.test.fail
 @DisplayName("Multiplatform IDE dependency resolution")
 class MppIdeDependencyResolutionIT : KGPBaseTest() {
 
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(
-            gradleDaemonMemoryLimitInMb = 3 * 1024
-        )
-
     @GradleTest
     fun `import of modular dependencies in platform source sets - passes only platform artifacts to IDE and doesn't leak artifacts to source sets where the dependency is not declared`(
         gradleVersion: GradleVersion,

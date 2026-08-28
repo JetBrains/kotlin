@@ -421,7 +421,7 @@ tasks.withType<Test>().configureEach {
     )
 
     // Keep in sync with the default value for [enableGradleDaemonMemoryLimitInMb] in testDsl.kt for runs withDebug to not OOM
-    maxHeapSize = testMaxHeapSizeSmall.toJvmArg()
+    maxHeapSize = testMaxHeapSizeMedium.toJvmArg()
     usesService(testSemaphore)
 
     dependsOn(":kotlin-gradle-plugin:validatePlugins")
