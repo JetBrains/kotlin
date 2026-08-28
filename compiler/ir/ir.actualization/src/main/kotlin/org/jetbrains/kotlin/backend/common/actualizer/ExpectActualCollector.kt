@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.hmppProvidersEnabled
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -495,7 +494,7 @@ internal class ExpectActualLinkCollector {
                 }
             }
 
-            if (isActualMissing && !languageVersionSettings.supportsFeature(LanguageFeature.AllowMultipleExpectsForSameActual)) {
+            if (isActualMissing) {
                 diagnosticsReporter.reportMissingActual(expectSymbol)
             }
             for ([incompatibility, actualMemberSymbols] in actualSymbolsByIncompatibility) {
