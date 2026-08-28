@@ -166,6 +166,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
         additionalOptions: List<String> = emptyList(),
         expectedFileName: String? = "output.txt",
         additionalSources: List<String> = emptyList(),
+        stackSize: Long? = null,
         sanitizeCompilerOutput: (String) -> String = { it },
     ): Pair<String, ExitCode> {
         val args = mutableListOf<String>()
@@ -196,11 +197,38 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
 
         args.addAll(additionalOptions)
 
-        val result = AbstractCliTest.executeCompilerGrabOutput(compiler, args)
+        val result = executeCompiler(compiler, args, stackSize)
         if (expectedFileName != null) {
             TestDataAssertions.assertEqualsToFile(File(testDataDirectory, expectedFileName), sanitizeCompilerOutput(normalizeOutput(result)))
         }
         return result
+    }
+
+    /**
+     * Runs the compiler on a thread with an explicit [stackSize] when one is given, so that a test can pin how much
+     * stack the whole pipeline gets instead of depending on the JVM default, which differs per platform (1 MB on
+     * x86_64, 2 MB on aarch64). Any [Throwable] from that thread is rethrown on the caller's thread.
+     */
+    private fun executeCompiler(
+        compiler: CLICompiler<*>,
+        args: List<String>,
+        stackSize: Long?,
+    ): Pair<String, ExitCode> {
+        if (stackSize == null) return AbstractCliTest.executeCompilerGrabOutput(compiler, args)
+
+        var result: Pair<String, ExitCode>? = null
+        var thrown: Throwable? = null
+        val thread = Thread(null, {
+            try {
+                result = AbstractCliTest.executeCompilerGrabOutput(compiler, args)
+            } catch (t: Throwable) {
+                thrown = t
+            }
+        }, "compiler-with-$stackSize-bytes-of-stack", stackSize)
+        thread.start()
+        thread.join()
+        thrown?.let { throw it }
+        return result ?: error("The compiler thread produced neither a result nor a failure")
     }
 
     companion object {
