@@ -57,11 +57,7 @@ object AtomicfuPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
             // Companion block's properties and companion extension properties will be supported in the plugin
             // at the same exact time they become available for our users,
             // and it's a chance to make things right from the beginning and support only private properties.
-            reporter.reportOn(
-                declaration.source,
-                AtomicfuErrors.NON_PRIVATE_ATOMIC_COMPANIONS_ARE_FORBIDDEN,
-                declaration.source.text.toString()
-            )
+            reporter.reportOn(declaration.source, AtomicfuErrors.NON_PRIVATE_ATOMIC_COMPANIONS_ARE_FORBIDDEN)
         } else if (!declaration.effectiveVisibility.publicApi && declaration.resolvedVisibility.publicApi) {
             reporter.reportOn(
                 declaration.source,
