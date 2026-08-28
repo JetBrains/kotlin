@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.common.fir
 
 import org.jetbrains.kotlin.KtInMemoryTextSourceFile
 import org.jetbrains.kotlin.KtIoFileSourceFile
+import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.cli.common.messages.*
@@ -83,7 +84,7 @@ object FirDiagnosticsCompilerResultsReporter {
                 val offsetsToPositions = positionFinder.value?.let { finder ->
                     val sortedOffsets = TreeSet<Int>().apply {
                         for (diagnostic in diagnosticList) {
-                            if (diagnostic is KtDiagnosticWithSource && diagnostic !is KtPsiDiagnostic) {
+                            if (diagnostic is KtDiagnosticWithSource && diagnostic.element !is KtPsiSourceElement) {
                                 val range = diagnostic.firstRange
                                 add(range.startOffset)
                                 add(range.endOffset)
@@ -96,9 +97,9 @@ object FirDiagnosticsCompilerResultsReporter {
                 for (diagnostic in diagnosticList.sortedWith(InFileDiagnosticsComparator)) {
                     val location = when (diagnostic) {
                         is KtDiagnosticWithoutSource -> diagnostic.location
-                        is KtDiagnosticWithSource -> when (diagnostic) {
-                            is KtPsiDiagnostic -> {
-                                val file = diagnostic.element.psi.containingFile
+                        is KtDiagnosticWithSource -> when (val element = diagnostic.element) {
+                            is KtPsiSourceElement -> {
+                                val file = element.psi.containingFile
                                 MessageUtil.psiFileToMessageLocation(
                                     file,
                                     file.name,
