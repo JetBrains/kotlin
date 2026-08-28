@@ -125,6 +125,11 @@ class JsModule(
             compilationConfigAction(this)
             compilerArguments[LIBRARIES] = dependencyFiles
 
+            // TODO: workaround to be removed after KT-86169
+            if (compilerArguments[IR_OUTPUT_NAME] == null) {
+                compilerArguments[IR_OUTPUT_NAME] = moduleName
+            }
+
             lastCompileProducedPackedKlib = !compilerArguments[NOPACK]
             lastCompileIrOutputName = compilerArguments[IR_OUTPUT_NAME] ?: moduleName
         }
