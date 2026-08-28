@@ -146,6 +146,9 @@ class KotlinBuildProperties internal constructor(
 
     val verificationTasksDisabled: Provider<Boolean> = booleanProperty("kotlin.build.disable.verification.tasks")
 
+    /** Disables the "Re-generation needed!" check of code generators on TeamCity. Used during version branching, see KT-88942. */
+    val regenerationCheckDisabled: Provider<Boolean> = booleanProperty("kotlin.build.disable.regeneration.check")
+
     val jarCompression: Boolean get() = booleanProperty("kotlin.build.jar.compression", isTeamcityBuild).get()
 
     val hideExtraTestTasksInGradleIntegrationTests: Provider<Boolean> = booleanProperty("kotlin.test.gradle.it.hide.extra.tasks")
