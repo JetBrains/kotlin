@@ -737,15 +737,12 @@ class Collections {
             assertFalse(set.add('c'))
             assertPrints(set, "[a, b, c]")
 
-            class User(val id: Int, val name: String) {
-                override fun equals(other: Any?): Boolean = other is User && id == other.id
-                override fun hashCode(): Int = id
-                override fun toString(): String = name
-            }
+            data class User(val name: String)
 
-            val users = mutableSetOf(User(1, "Alice"))
-            users.add(User(1, "Alicia"))
-            assertPrints(users, "[Alice]")
+            val alice = User("Alice")
+            val users = mutableSetOf(alice)
+            assertPrints(users.add(User("Alice")), "false")
+            assertPrints(users.single() === alice, "true")
         }
 
         @Sample
