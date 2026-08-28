@@ -1,10 +1,10 @@
 Kotlin to JVM compiler performance report
-                INIT        $UINT>>$ ms
-             ANALYZE        $UINT>>$ ms            $REAL>>$ loc/s
-   TRANSLATION to IR        $UINT>>$ ms            $REAL>>$ loc/s
-KLIB METADATA WRITING        $UINT>>$ ms            $REAL>>$ loc/s
-         IR LOWERING        $UINT>>$ ms            $REAL>>$ loc/s
-             BACKEND        $UINT>>$ ms            $REAL>>$ loc/s
+                     INIT        $UINT>>$ ms
+                  ANALYZE        $UINT>>$ ms            $REAL>>$ loc/s
+        TRANSLATION to IR        $UINT>>$ ms            $REAL>>$ loc/s
+    KLIB METADATA WRITING        $UINT>>$ ms            $REAL>>$ loc/s
+              IR LOWERING        $UINT>>$ ms            $REAL>>$ loc/s
+                  BACKEND        $UINT>>$ ms            $REAL>>$ loc/s
 Find Java class performed 1 times, total time $UINT$ ms
 Binary class from Kotlin file performed $UINT$ times, total time $UINT$ ms
 GC time for <GC> is $UINT$ ms, $UINT$ collections
