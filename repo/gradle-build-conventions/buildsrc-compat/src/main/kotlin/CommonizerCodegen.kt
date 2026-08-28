@@ -6,6 +6,7 @@
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
@@ -13,6 +14,8 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import java.io.File
+import kotlin.collections.flatMapTo
+import kotlin.collections.getOrPut
 
 /*
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
@@ -35,49 +38,75 @@ abstract class GenerateSupportSources : DefaultTask() {
     @get:Input
     abstract val bootstrapEnabled: Property<Boolean>
 
+    @get:Input
+    abstract val supportHierarchy: MapProperty<String, String>
+
+    private val leafSourceSets by lazy {
+        buildSet {
+            addAll(supportHierarchy.get().keys)
+            removeAll(supportHierarchy.get().values)
+        }
+    }
+
+    private val String.expandsToBuiltin: Boolean
+        get() = this in listOf("Byte", "Short", "Int", "Long", "UByte", "UShort", "UInt", "ULong", "Float", "Double")
+
     @TaskAction
     fun run() {
+        val rawSourceLocation = rawSourceDir.get().asFile
         val output = outputDir.get().asFile
         output.deleteRecursively()
 
         val immediateActualizations = mutableMapOf<String, MutableSet<String>>()
+        val sourceSetToImmediateBuiltinExpansions = mutableMapOf<String, MutableSet<Pair<String, String>>>()
 
-        traverseRawSources(rawSourceDir.get().asFile) { file, _, _ ->
+        fun collectAllBuiltinExpansionsInHierarchyOf(sourceSet: String): MutableSet<Pair<String, String>> {
+            var current: String? = sourceSet
+            val result = mutableSetOf<Pair<String, String>>()
+
+            while (current != null) {
+                result += sourceSetToImmediateBuiltinExpansions[current].orEmpty()
+                current = supportHierarchy.get()[current]
+            }
+
+            return result
+        }
+
+        traverseRawSourcesInSourceSets(supportHierarchy, rawSourceLocation) { file, _, generatedSourceSet ->
             val contents = file.readText()
+            val sourceSet = generatedSourceSet.name
 
             for (nextMatch in actualTypealiasPattern.findAll(contents)) {
                 val (_, name, expansion) = nextMatch.groupValues
                 immediateActualizations.getOrPut(name) { mutableSetOf() }.add(expansion)
+
+                if (expansion.expandsToBuiltin) {
+                    sourceSetToImmediateBuiltinExpansions.getOrPut(sourceSet, ::mutableSetOf).add(name to expansion)
+                }
             }
         }
 
-        fun String.leafExpansions(cache: MutableMap<String, Set<String>>): Set<String> =
-            cache.getOrPut(this) {
-                immediateActualizations[this]?.flatMapTo(mutableSetOf()) { it.leafExpansions(cache) }
-                    ?: setOf(this)
-            }
-
-        val leafActualizations = mutableMapOf<String, Set<String>>().apply {
-            immediateActualizations.keys.forEach { it.leafExpansions(this) }
-        }
-
+        val leafActualizations = immediateActualizations.toLeafExpansions()
         val similarToSearchIndex = substituteAllInclusions(buildClassToContentsMap(sourceTemplateDir.get().asFile))
         val classesThatNeedRange = mutableSetOf<String>()
         val classesThatNeedIterator = mutableSetOf<String>()
         val classesThatNeedVar = mutableSetOf<String>()
 
-        val kotlinxCinteropFilesMapByDestination = mutableMapOf<File, File>()
-        val kotlinRangesFilesMapByDestination = mutableMapOf<File, File>()
+        val kotlinxCinteropBridgeGenerator = HelperFileGenerator("kotlinx" / "cinterop")
+        val kotlinRangesBridgeGenerator = HelperFileGenerator("kotlin" / "ranges")
 
         fun List<String>.toSuppressCall() = when {
             isEmpty() -> null
             else -> joinToString(", ") { "\"$it\"" }.let { "@Suppress($it)" }
         }
 
-        traverseRawSources(rawSourceDir.get().asFile) { file, destination, destinationRoot ->
-            var contents = file.readText().replace("package support.raw", "package support")
-            val kotlinxXCinteropFileContents = mutableListOf<String>()
-            val kotlinRangesFileContents = mutableListOf<String>()
+        val deprecation = "@Deprecated(\"Ues the overload from the standard library instead.\", level = DeprecationLevel.HIDDEN)"
+
+        traverseRawSourcesInSourceSets(supportHierarchy, rawSourceLocation) { file, destination, generatedSourceSet ->
+            var contents = file.readText().replace("""^(package .*)\.raw$""".toRegex(RegexOption.MULTILINE), "$1")
+
+            val kotlinxXCinteropFileContents = kotlinxCinteropBridgeGenerator.getBuilderFor(generatedSourceSet)
+            val kotlinRangesFileContents = kotlinRangesBridgeGenerator.getBuilderFor(generatedSourceSet)
 
             for (nextMatch in expectNumberClassPattern.findAll(contents)) {
                 val (entireMatch, name) = nextMatch.groupValues
@@ -97,7 +126,7 @@ abstract class GenerateSupportSources : DefaultTask() {
                 val nonBootstrapSuppressions = when {
                     !bootstrapEnabled.getOrElse(false) -> listOf(
                         "WRONG_ANNOTATION_TARGET", "ACTUAL_WITHOUT_EXPECT",
-                        "AMBIGUOUS_EXPECTS", "NO_ACTUAL_FOR_EXPECT", "REDECLARATION", "CONFLICTING_OVERLOADS",
+                        "AMBIGUOUS_EXPECTS", "REDECLARATION", "CONFLICTING_OVERLOADS",
                     )
                     else -> emptyList()
                 }
@@ -172,27 +201,9 @@ abstract class GenerateSupportSources : DefaultTask() {
 
             destination.parentFile.mkdirs()
             destination.writeText(contents)
-
-            if (kotlinxXCinteropFileContents.isNotEmpty()) {
-                val cinteropFile = kotlinxCinteropFilesMapByDestination.getOrPut(destinationRoot) {
-                    val cinteropFolder = destinationRoot.resolve("kotlinx").resolve("cinterop").also { it.mkdirs() }
-                    cinteropFolder.resolve("Bridges.kt").also { it.writeText("package kotlinx.cinterop\n") }
-                }
-
-                cinteropFile.appendText("\n" + kotlinxXCinteropFileContents.joinToString("\n\n") + "\n")
-            }
-
-            if (kotlinRangesFileContents.isNotEmpty()) {
-                val rangesFile = kotlinRangesFilesMapByDestination.getOrPut(destinationRoot) {
-                    val cinteropFolder = destinationRoot.resolve("kotlin").resolve("ranges").also { it.mkdirs() }
-                    cinteropFolder.resolve("Bridges.kt").also { it.writeText("package kotlin.ranges\n") }
-                }
-
-                rangesFile.appendText("\n" + kotlinRangesFileContents.joinToString("\n\n") + "\n")
-            }
         }
 
-        traverseRawSources(rawSourceDir.get().asFile) { _, destination, _ ->
+        traverseRawSourcesInSourceSets(supportHierarchy, rawSourceLocation) { _, destination, _ ->
             var contents = destination.readText()
 
             for (nextMatch in actualTypealiasPattern.findAll(contents)) {
@@ -206,23 +217,6 @@ abstract class GenerateSupportSources : DefaultTask() {
                         actual typealias ${name}VarOf<T> = ${expansion}VarOf<T>
                     """.trimIndent()
 
-                    val expandsToBuiltin = expansion in listOf("Byte", "Short", "Int", "Long", "UByte", "UShort", "UInt", "ULong", "Float", "Double")
-                    val getterBody = when {
-                        expandsToBuiltin -> "valueFromCinterop"
-                        else -> "${expansion}Value"
-                    }
-                    val setterBody = when {
-                        expandsToBuiltin -> "valueFromCinterop = newValue"
-                        else -> "${expansion}Value = newValue"
-                    }
-                    val valueAccessor = """    
-                        @Suppress("FINAL_UPPER_BOUND")
-                        actual inline var <T : $name> ${name}VarOf<T>.${name}Value: T
-                            get() = $getterBody
-                            set(newValue) { $setterBody }
-                    """.trimIndent()
-
-//                    "\n$varOfVariant\n\n$valueAccessor\n"
                     "\n$varOfVariant\n"
                 } else {
                     ""
@@ -236,6 +230,46 @@ abstract class GenerateSupportSources : DefaultTask() {
 
             destination.writeText(contents)
         }
+
+        rawSourceLocation.traverseSourceSetsOf(supportHierarchy) { sourceSetDirectory, generatedSourceSet ->
+            val sourceSet = sourceSetDirectory.name
+            val isLeafSourceSet = sourceSet in leafSourceSets
+            if (!isLeafSourceSet) return@traverseSourceSetsOf
+
+            val kotlinxXCinteropFileContents = kotlinxCinteropBridgeGenerator.getBuilderFor(generatedSourceSet)
+            val kotlinRangesFileContents = kotlinRangesBridgeGenerator.getBuilderFor(generatedSourceSet)
+
+            for ((name, expansion) in collectAllBuiltinExpansionsInHierarchyOf(sourceSet)) {
+                if (name in classesThatNeedVar) {
+                    kotlinxXCinteropFileContents += """
+                                @Suppress("FINAL_UPPER_BOUND", "AMBIGUOUS_EXPECTS", "ACTUAL_WITHOUT_EXPECT")
+                                @ExperimentalForeignApi
+                                $deprecation
+                                actual inline var <T : $expansion> ${expansion}VarOf<T>.value: T
+                                    get() = error("Should not be called")
+                                    set(_) { error("Should not be called") }
+                            """.trimIndent()
+                }
+
+                kotlinxXCinteropFileContents += """
+                            @Suppress("FINAL_UPPER_BOUND", "AMBIGUOUS_EXPECTS", "ACTUAL_WITHOUT_EXPECT")
+                            @ExperimentalForeignApi
+                            $deprecation
+                            actual inline fun <T : $expansion> NativePlacement.alloc(value: T): ${expansion}VarOf<T> = error("Should not be called")
+                        """.trimIndent()
+
+                if (name in classesThatNeedRange) {
+                    kotlinRangesFileContents += """
+                                @Suppress("AMBIGUOUS_EXPECTS", "ACTUAL_WITHOUT_EXPECT")
+                                $deprecation
+                                actual inline infix fun $expansion.until(to: $expansion): ${expansion}Range = error("Should not be called")
+                            """.trimIndent()
+                }
+            }
+        }
+
+        kotlinxCinteropBridgeGenerator.write()
+        kotlinRangesBridgeGenerator.write()
     }
 }
 
@@ -314,34 +348,102 @@ private fun substituteAllInclusions(classToContents: Map<String, String>): Map<S
     return newMap
 }
 
-private fun String.withAppendixIfMentioned(variants: List<String>, classToContents: Map<String, String>, transformFor: String.(String) -> String): String {
+private fun String.withAppendixIfMentioned(
+    variants: List<String>,
+    classToContents: Map<String, String>,
+    transformFor: String.(String) -> String,
+): String {
     val variant = variants.firstOrNull { it in this } ?: return this
     val appendix = classToContents[variant] ?: error("$variant not found")
     return this.plus("\n\n").plus(appendix).transformFor(variant)
 }
 
-private inline fun traverseRawSources(location: File, block: (File, File, File) -> Unit) {
-    location.traverseTopDown { file ->
-        val relativeToSrc = file.relativeTo(location)
-        val sourceSetName = relativeToSrc.toPath().firstOrNull()?.toString() ?: return@traverseTopDown
+private fun File.toGeneratedFile(
+    rawSourceSet: File,
+    generatedSourceSet: File,
+): File? {
+    val relativeToPrefix = when {
+        parentFile.name != "raw" -> return null
+        // `relativeToOrNull` can also give a sequence of `../../..`.
+        absolutePath.startsWith(rawSourceSet.absolutePath) -> relativeToOrNull(rawSourceSet) ?: return null
+        else -> return null
+    }
+    return generatedSourceSet.resolve(relativeToPrefix.parentFile.parentFile).resolve(name)
+}
 
-        val prefixDir = location.resolve(sourceSetName).resolve("kotlin")
-            .resolve("support").resolve("raw")
-        val relativeToPrefix = when {
-            // `relativeToOrNull` can also give a sequence of `../../..`.
-            file.absolutePath.startsWith(prefixDir.absolutePath) -> file.relativeToOrNull(prefixDir) ?: return@traverseTopDown
-            else -> return@traverseTopDown
-        }
-
-        val destinationRoot = location.resolve("../build/src-gen/").resolve(sourceSetName).resolve("kotlin")
-        val destination = destinationRoot
-            .resolve("support")
-            .resolve(relativeToPrefix)
-
-        block(file, destination, destinationRoot)
+private inline fun File.traverseSourceSetsOf(
+    supportHierarchy: MapProperty<String, String>,
+    block: (File, File) -> Unit,
+) {
+    for (sourceSetName in supportHierarchy.get().keys) {
+        val generatedSourceSet = resolve("../build/src-gen/").resolve(sourceSetName)
+        block(resolve(sourceSetName), generatedSourceSet)
     }
 }
+
+private inline fun File.traverseRawSources(
+    generatedSourceSet: File,
+    block: (File, File) -> Unit,
+): Unit {
+    traverseTopDown { file ->
+        file.toGeneratedFile(rawSourceSet = this, generatedSourceSet)?.let { block(file, it) }
+    }
+}
+
+private inline fun traverseRawSourcesInSourceSets(
+    supportHierarchy: MapProperty<String, String>,
+    location: File,
+    block: (File, File, File) -> Unit,
+): Unit = location.traverseSourceSetsOf(supportHierarchy) { rawSourceSet, generatedSourceSet ->
+    rawSourceSet.traverseRawSources(generatedSourceSet) { file, destination ->
+        block(file, destination, generatedSourceSet)
+    }
+}
+
+private fun File.resolvePackage(packageSegments: List<String>): File =
+    packageSegments.fold(this) { destination, segment -> destination.resolve(segment) }
 
 private inline fun File.traverseTopDown(block: (File) -> Unit) = walkTopDown()
     .filter { it.isFile }
     .forEach(block)
+
+private class HelperFileGenerator(
+    private val packageSegments: List<String>,
+    private val fileName: String = "Bridges.kt",
+) {
+    private val naivePackageFqName get() = packageSegments.joinToString(separator = ".")
+
+    private val buildersByDestination = mutableMapOf<File, MutableSet<String>>()
+
+    fun getBuilderFor(generatedSourceSet: File): MutableSet<String> =
+        buildersByDestination.getOrPut(generatedSourceSet) { mutableSetOf() }
+
+    fun write() {
+        val filesMapByDestination = mutableMapOf<File, File>()
+
+        for ((generatedSourceSet, contentBlocks) in buildersByDestination) {
+            if (contentBlocks.isEmpty()) continue
+
+            val file = filesMapByDestination.getOrPut(generatedSourceSet) {
+                generatedSourceSet.resolve("kotlin")
+                    .resolvePackage(packageSegments).also { it.mkdirs() }
+                    .resolve(fileName).also { it.writeText("package $naivePackageFqName\n") }
+            }
+
+            file.appendText("\n" + contentBlocks.joinToString("\n\n") + "\n")
+        }
+    }
+}
+
+private operator fun String.div(other: String) = listOf(this) / other
+private operator fun List<String>.div(other: String) = this + other
+
+private fun <T> T.leafExpansion(immediateExpansions: Map<T, Set<T>>, cache: MutableMap<T, Set<T>> = mutableMapOf()): Set<T> =
+    cache.getOrPut(this) {
+        immediateExpansions[this]?.flatMapTo(mutableSetOf()) { it.leafExpansion(immediateExpansions, cache) }
+            ?: setOf(this)
+    }
+
+private fun <T> Map<T, Set<T>>.toLeafExpansions(): Map<T, Set<T>> = buildMap {
+    this@toLeafExpansions.keys.forEach { it.leafExpansion(this@toLeafExpansions, this) }
+}

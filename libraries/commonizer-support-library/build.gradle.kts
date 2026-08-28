@@ -38,6 +38,15 @@ val generateSources = tasks.register<GenerateSupportSources>("generateSources") 
     rawSourceDir.set(layout.projectDirectory.dir("src"))
     outputDir.set(layout.buildDirectory.dir("src-gen"))
     bootstrapEnabled.set(project.kotlinBuildProperties.localBootstrap)
+
+    supportHierarchy.set(provider {
+        kotlin.sourceSets.associate { sourceSet ->
+            val parentName = sourceSet.dependsOn.firstOrNull()?.name ?: "none"
+            sourceSet.name to parentName
+        }.filterKeys {
+            it.endsWith("Main")
+        }
+    })
 }
 
 kotlin {
