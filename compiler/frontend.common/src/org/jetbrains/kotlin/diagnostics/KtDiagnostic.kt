@@ -56,65 +56,29 @@ sealed class KtDiagnosticWithSource : KtDiagnostic(), DiagnosticMarker {
 
     final override val firstRange: TextRange
         get() = DiagnosticRangeUtils.firstRange(textRanges)
-}
 
-abstract class KtSimpleDiagnostic : KtDiagnosticWithSource() {
-    abstract override val factory: KtDiagnosticFactory0
-}
-
-abstract class KtDiagnosticWithParameters1<A> : KtDiagnosticWithSource(), DiagnosticWithParameters1Marker<A> {
-    abstract override val a: A
-    abstract override val factory: KtDiagnosticFactory1<A>
-}
-
-abstract class KtDiagnosticWithParameters2<A, B> : KtDiagnosticWithSource(), DiagnosticWithParameters2Marker<A, B> {
-    abstract override val a: A
-    abstract override val b: B
-    abstract override val factory: KtDiagnosticFactory2<A, B>
-}
-
-abstract class KtDiagnosticWithParameters3<A, B, C> : KtDiagnosticWithSource(), DiagnosticWithParameters3Marker<A, B, C> {
-    abstract override val a: A
-    abstract override val b: B
-    abstract override val c: C
-    abstract override val factory: KtDiagnosticFactory3<A, B, C>
-}
-
-abstract class KtDiagnosticWithParameters4<A, B, C, D> : KtDiagnosticWithSource(), DiagnosticWithParameters4Marker<A, B, C, D> {
-    abstract override val a: A
-    abstract override val b: B
-    abstract override val c: C
-    abstract override val d: D
-    abstract override val factory: KtDiagnosticFactory4<A, B, C, D>
-}
-
-// ------------------------------ regular (non-PSI) diagnostics ------------------------------
-
-interface KtRegularDiagnostic : DiagnosticMarker {
-    val element: AbstractKtSourceElement
-
-    override val psiElement: PsiElement
+    final override val psiElement: PsiElement
         get() = (element as KtPsiSourceElement).psi
 }
 
-data class KtRegularSimpleDiagnostic(
+data class KtSimpleDiagnostic(
     override val element: AbstractKtSourceElement,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory0,
     override val positioningStrategy: AbstractSourceElementPositioningStrategy,
     override val context: DiagnosticBaseContext,
-) : KtSimpleDiagnostic(), KtRegularDiagnostic
+) : KtDiagnosticWithSource()
 
-data class KtRegularDiagnosticWithParameters1<A>(
+data class KtDiagnosticWithParameters1<A>(
     override val element: AbstractKtSourceElement,
     override val a: A,
     override val severity: Severity,
     override val factory: KtDiagnosticFactory1<A>,
     override val positioningStrategy: AbstractSourceElementPositioningStrategy,
     override val context: DiagnosticBaseContext,
-) : KtDiagnosticWithParameters1<A>(), KtRegularDiagnostic
+) : KtDiagnosticWithSource(), DiagnosticWithParameters1Marker<A>
 
-data class KtRegularDiagnosticWithParameters2<A, B>(
+data class KtDiagnosticWithParameters2<A, B>(
     override val element: AbstractKtSourceElement,
     override val a: A,
     override val b: B,
@@ -122,9 +86,9 @@ data class KtRegularDiagnosticWithParameters2<A, B>(
     override val factory: KtDiagnosticFactory2<A, B>,
     override val positioningStrategy: AbstractSourceElementPositioningStrategy,
     override val context: DiagnosticBaseContext,
-) : KtDiagnosticWithParameters2<A, B>(), KtRegularDiagnostic
+) : KtDiagnosticWithSource(), DiagnosticWithParameters2Marker<A, B>
 
-data class KtRegularDiagnosticWithParameters3<A, B, C>(
+data class KtDiagnosticWithParameters3<A, B, C>(
     override val element: AbstractKtSourceElement,
     override val a: A,
     override val b: B,
@@ -133,9 +97,9 @@ data class KtRegularDiagnosticWithParameters3<A, B, C>(
     override val factory: KtDiagnosticFactory3<A, B, C>,
     override val positioningStrategy: AbstractSourceElementPositioningStrategy,
     override val context: DiagnosticBaseContext,
-) : KtDiagnosticWithParameters3<A, B, C>(), KtRegularDiagnostic
+) : KtDiagnosticWithSource(), DiagnosticWithParameters3Marker<A, B, C>
 
-data class KtRegularDiagnosticWithParameters4<A, B, C, D>(
+data class KtDiagnosticWithParameters4<A, B, C, D>(
     override val element: AbstractKtSourceElement,
     override val a: A,
     override val b: B,
@@ -145,4 +109,4 @@ data class KtRegularDiagnosticWithParameters4<A, B, C, D>(
     override val factory: KtDiagnosticFactory4<A, B, C, D>,
     override val positioningStrategy: AbstractSourceElementPositioningStrategy,
     override val context: DiagnosticBaseContext,
-) : KtDiagnosticWithParameters4<A, B, C, D>(), KtRegularDiagnostic
+) : KtDiagnosticWithSource(), DiagnosticWithParameters4Marker<A, B, C, D>
