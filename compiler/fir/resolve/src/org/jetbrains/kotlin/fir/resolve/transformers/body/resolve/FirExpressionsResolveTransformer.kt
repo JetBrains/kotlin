@@ -1191,7 +1191,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val expression = incrementDecrementExpression.expression.transformSingle(transformer, ContextIndependent)
 
         @OptIn(FirImplementationDetail::class)
-        if (expression is FirQualifiedAccessExpression) expression.replaceSource(expression.source?.fakeElement(fakeSourceKind))
+        if (expression is FirQualifiedAccessExpression) expression.replaceSource(expression.source?.fakeElement(fakeSourceKind.forPrimaryReceiver))
 
         val desugaredSource = incrementDecrementExpression.source?.fakeElement(fakeSourceKind)
         val receiverVariableSource = incrementDecrementExpression.source?.fakeElement(fakeSourceKind.forReceiverVariable)
