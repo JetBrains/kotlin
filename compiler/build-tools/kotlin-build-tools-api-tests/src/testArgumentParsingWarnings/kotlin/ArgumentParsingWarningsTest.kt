@@ -119,14 +119,13 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     @BtaV2StrategyAndPlatformAgnosticCompilationTest
     @DisplayName("An unknown 'stable' flag fails compilation")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testUnknownStableFlagReportsWarning(project: ProjectCreator) {
+    fun testUnknownStableFlagFailsCompilation(project: ProjectCreator) {
         project {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments.applyArgumentStrings(listOf("-not-a-real-flag"))
             }) {
                 expectFail()
-                // an unknown -X flag is not an error, the compilation is expected to succeed
                 assertLogContainsPatternExactlyTimes(
                     LogLevel.ERROR,
                     ".*Invalid argument: -not-a-real-flag.*".toRegex(RegexOption.IGNORE_CASE),
@@ -137,7 +136,7 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
-    @DisplayName("A deprecated argument name is reported")
+    @DisplayName("A deprecated argument name is reported even though the compiler receives the new one")
     @TestMetadata("basic-multimodule-project/module-1")
     fun testDeprecatedArgumentNameReportsWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
@@ -173,7 +172,7 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
-    @DisplayName("A lifecycle-deprecated argument is reported")
+    @DisplayName("A deprecated argument that the compiler reports itself is not duplicated")
     @TestMetadata("basic-multimodule-project/module-1")
     fun testDeprecatedLifecycleArgumentReportsWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
         // unlike a removed argument, a deprecated one does reach the compiler, which reports `DEPRECATED_CLI_ARG`
