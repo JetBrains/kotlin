@@ -251,6 +251,7 @@ class KlibDumpParser(klibDump: String, private val filePath: String? = null) {
             valueParameters = contextAndReceiverParams + valueParameters,
             returnType = returnType,
             companionExtensionsClass = companionExtensionsClass,
+            declarationOrigin = AbiDeclarationOrigin.OTHER, // declaration origins aren't part of klib dumps
         )
     }
 
@@ -273,6 +274,7 @@ class KlibDumpParser(klibDump: String, private val filePath: String? = null) {
             annotations = AbiAnnotationListImpl.EMPTY, // annotations aren't part of klib dumps
             isInline = false, // constructors cannot be inline
             valueParameters = valueParameters,
+            declarationOrigin = AbiDeclarationOrigin.OTHER, // declaration origins aren't part of klib dumps
         )
     }
 
