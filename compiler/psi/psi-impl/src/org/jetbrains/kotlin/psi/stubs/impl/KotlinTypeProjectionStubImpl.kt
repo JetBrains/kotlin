@@ -3,46 +3,32 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.psi.stubs.impl;
+package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.intellij.psi.stubs.StubElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.psi.KtImplementationDetail;
-import org.jetbrains.kotlin.psi.KtProjectionKind;
-import org.jetbrains.kotlin.psi.KtTypeProjection;
-import org.jetbrains.kotlin.psi.stubs.KotlinStubElement;
-import org.jetbrains.kotlin.psi.stubs.KotlinTypeProjectionStub;
+import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.KtProjectionKind
+import org.jetbrains.kotlin.psi.KtTypeProjection
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
+import org.jetbrains.kotlin.psi.stubs.KotlinTypeProjectionStub
 
-public class KotlinTypeProjectionStubImpl extends KotlinStubBaseImpl<KtTypeProjection> implements KotlinTypeProjectionStub {
+@OptIn(KtImplementationDetail::class)
+class KotlinTypeProjectionStubImpl(
+    parent: StubElement<*>?,
+    private val projectionKindOrdinal: Int,
+) : KotlinStubBaseImpl<KtTypeProjection>(parent, KtNodeTypes.TYPE_PROJECTION), KotlinTypeProjectionStub {
+    override val projectionKind: KtProjectionKind
+        get() = KtProjectionKind.entries[projectionKindOrdinal]
 
-    private final int projectionKindOrdinal;
-
-    public KotlinTypeProjectionStubImpl(@Nullable StubElement<?> parent, int projectionKindOrdinal) {
-        super(parent, KtNodeTypes.TYPE_PROJECTION);
-        this.projectionKindOrdinal = projectionKindOrdinal;
-    }
-
-    @NotNull
-    @Override
-    public KtProjectionKind getProjectionKind() {
-        return KtProjectionKind.values()[projectionKindOrdinal];
-    }
-
-    @Override
-    @NotNull
     @KtImplementationDetail
-    public KotlinTypeProjectionStubImpl copyInto(@Nullable StubElement<?> newParent) {
-        return new KotlinTypeProjectionStubImpl(
-                newParent,
-                projectionKindOrdinal
-        );
-    }
+    override fun copyInto(newParent: StubElement<*>?): KotlinTypeProjectionStubImpl = KotlinTypeProjectionStubImpl(
+        parent = newParent,
+        projectionKindOrdinal = projectionKindOrdinal,
+    )
 
-    @Override
-    public boolean isEquivalentTo(@NotNull KotlinStubElement<?> other) {
-        if (!(other instanceof KotlinTypeProjectionStubImpl)) return false;
-        return this.projectionKindOrdinal == ((KotlinTypeProjectionStubImpl) other).projectionKindOrdinal;
-    }
+    @KtImplementationDetail
+    override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
+        other is KotlinTypeProjectionStubImpl &&
+                other.projectionKindOrdinal == projectionKindOrdinal
 }
