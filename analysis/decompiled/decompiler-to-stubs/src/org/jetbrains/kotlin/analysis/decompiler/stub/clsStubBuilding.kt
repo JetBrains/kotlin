@@ -139,9 +139,9 @@ fun createFileStub(packageFqName: FqName, isScript: Boolean): KotlinFileStubImpl
 }
 
 private fun setupFileStub(fileStub: KotlinFileStubImpl) {
-    val packageDirectiveStub = KotlinPlaceHolderStubImpl<KtPackageDirective>(fileStub, KtNodeTypes.PACKAGE_DIRECTIVE)
+    val packageDirectiveStub = KotlinPlaceHolderStubImpl<KtPackageDirective>(parent = fileStub, elementType = KtNodeTypes.PACKAGE_DIRECTIVE)
     createStubForPackageName(packageDirectiveStub, fileStub.getPackageFqName())
-    KotlinPlaceHolderStubImpl<KtImportList>(fileStub, KtNodeTypes.IMPORT_LIST)
+    KotlinPlaceHolderStubImpl<KtImportList>(parent = fileStub, elementType = KtNodeTypes.IMPORT_LIST)
 }
 
 fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtPackageDirective>, packageFqName: FqName) {
@@ -162,7 +162,10 @@ fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtP
             }
             else -> {
                 val lastSegment = iterator.previous()
-                val receiver = KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(current, KtNodeTypes.DOT_QUALIFIED_EXPRESSION)
+                val receiver = KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(
+                    parent = current,
+                    elementType = KtNodeTypes.DOT_QUALIFIED_EXPRESSION,
+                )
                 recCreateStubForPackageName(receiver)
                 KotlinNameReferenceExpressionStubImpl(
                     parent = receiver,
@@ -305,8 +308,11 @@ fun createTargetedAnnotationStubs(
             KotlinAnnotationUseSiteTargetStubImpl(annotationEntryStubImpl, StringRef.fromString(target.name)!!)
         }
         val constructorCallee =
-            KotlinPlaceHolderStubImpl<KtConstructorCalleeExpression>(annotationEntryStubImpl, KtNodeTypes.CONSTRUCTOR_CALLEE)
-        val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(constructorCallee, KtNodeTypes.TYPE_REFERENCE)
+            KotlinPlaceHolderStubImpl<KtConstructorCalleeExpression>(
+                parent = annotationEntryStubImpl,
+                elementType = KtNodeTypes.CONSTRUCTOR_CALLEE,
+            )
+        val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(parent = constructorCallee, elementType = KtNodeTypes.TYPE_REFERENCE)
         createStubForTypeName(annotationWithArgs.classId, typeReference)
 
         if (hasStubBasedArguments) {

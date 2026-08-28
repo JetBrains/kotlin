@@ -284,18 +284,22 @@ private class ClassClsStubBuilder(
         // if single supertype is any then no delegation specifier list is needed
         if (supertypeIds.isEmpty()) return
 
-        val delegationSpecifierListStub = KotlinPlaceHolderStubImpl<KtSuperTypeList>(classOrObjectStub, KtNodeTypes.SUPER_TYPE_LIST)
+        val delegationSpecifierListStub = KotlinPlaceHolderStubImpl<KtSuperTypeList>(
+            parent = classOrObjectStub,
+            elementType = KtNodeTypes.SUPER_TYPE_LIST,
+        )
 
         classProto.supertypes(c.typeTable).forEach { type ->
             val superClassStub = KotlinPlaceHolderStubImpl<KtSuperTypeEntry>(
-                delegationSpecifierListStub, KtNodeTypes.SUPER_TYPE_ENTRY
+                parent = delegationSpecifierListStub,
+                elementType = KtNodeTypes.SUPER_TYPE_ENTRY,
             )
             typeStubBuilder.createTypeReferenceStub(superClassStub, type)
         }
     }
 
     private fun createClassBodyAndMemberStubs() {
-        val classBody = KotlinPlaceHolderStubImpl<KtClassBody>(classOrObjectStub, KtNodeTypes.CLASS_BODY)
+        val classBody = KotlinPlaceHolderStubImpl<KtClassBody>(parent = classOrObjectStub, elementType = KtNodeTypes.CLASS_BODY)
         createEnumEntryStubs(classBody)
         createCompanionObjectStub(classBody)
         createCallableMemberStubs(classBody)
