@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.IrBasedFunctionFactory.Companion.isFunctionInterfaceFile
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
@@ -26,6 +29,7 @@ import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isHeader
+import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl
@@ -105,7 +109,7 @@ internal fun LinkKlibsContext.linkKlibs(
     // so to make the pipeline more deterministic, the files are to be sorted.
     // This concerns in the first place global initializers order for the eager initialization strategy,
     // where the files are being initialized in order one by one.
-    originalModuleDependencies.allDependencies.forEach { module -> module.files.sortBy { it.fileEntry.name } }
+    originalModuleDependencies.sortFilesAndDeclarationsToKeepPipelineDeterministic()
 
     if (stdlibIsBeingCached) {
         val maxArity = 255 // See [BuiltInFictitiousFunctionClassFactory].
@@ -225,6 +229,41 @@ private fun generateImplForCStructsAndEnums(linker: KonanIrLinker, builtIns: IrB
                     if (declaration is IrClass) {
                         implGen.generateImplIfCStructOrEnum(declaration)
                     }
+                }
+            }
+        }
+    }
+}
+
+private fun IrModuleDependencies.sortFilesAndDeclarationsToKeepPipelineDeterministic() {
+    data class SortingKey(val prefix: String, val index: Int?) : Comparable<SortingKey> {
+        override fun compareTo(other: SortingKey): Int {
+            val prefixDiff = prefix.compareTo(other.prefix)
+            return if (prefixDiff != 0) prefixDiff else when (index) {
+                other.index -> 0
+                null -> -1
+                else -> 1
+            }
+        }
+    }
+
+    fun IrDeclaration.toSortingKey(): SortingKey {
+        val name = (this as IrDeclarationWithName).name.asString()
+        val prefix = name.trimEnd { it.isDigit() }
+        val index = name.substringAfter(prefix).toIntOrNull()
+        return SortingKey(prefix, index)
+    }
+
+    allDependencies.forEach { module ->
+        module.files.sortBy { file -> file.fileEntry.name }
+
+        // Sort also synthetic `*Function` classes is special function interface files inside the standard library.
+        // They might be generated and added to files on demand and in the different order (based on the order or
+        // the deserialization queue).
+        if (module.kotlinLibrary?.isNativeStdlib == true) {
+            module.files.forEach { file ->
+                if (file.isFunctionInterfaceFile) {
+                    file.declarations.sortBy { it.toSortingKey() }
                 }
             }
         }
