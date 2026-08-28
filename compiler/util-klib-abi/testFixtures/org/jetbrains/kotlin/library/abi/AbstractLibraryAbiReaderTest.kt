@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigu
 import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.testFederation.AffectedByJs
 import kotlin.test.assertNotNull
+import kotlin.test.fail
 
 /**
  * This test class can potentially be re-used in the future for other backends.
@@ -119,5 +120,25 @@ abstract class AbstractKlibDumpParserTest {
         val parsedDump = KlibDumpParser(rawDump).parse()
         // parse errors will throw and fail the test
         assertNotNull(parsedDump)
+
+        assertNoRecognizedDeclarationOrigins(parsedDump.topLevelDeclarations)
+    }
+
+    /**
+     * Declaration origins are not rendered into textual ABI dumps, so nothing parsed back from a dump can be
+     * recognized as synthesized, even though the KLIBs some of these dumps were made of do contain synthesized
+     * declarations — 14 of the 35 functions in the dump of `versionOverloads.kt` are overload wrappers, say.
+     *
+     * [KlibDumpParser] therefore hardcodes [AbiDeclarationOrigin.OTHER], which is why this assertion cannot
+     * currently fail. It is a forward guard: overload wrappers *are* structurally recognizable in a dump (every
+     * one of them is a shorter prefix overload with all trailing arguments defaulted), and so are `access$...`
+     * accessors by name, so should the parser ever start guessing origins, this is where it gets caught.
+     */
+    @OptIn(ExperimentalLibraryAbiReader::class)
+    private fun assertNoRecognizedDeclarationOrigins(container: AbiDeclarationContainer) {
+        for (function in container.allFunctions()) {
+            if (function.declarationOrigin != AbiDeclarationOrigin.OTHER)
+                fail("${function.qualifiedName} unexpectedly has the ${function.declarationOrigin} origin")
+        }
     }
 }
