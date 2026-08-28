@@ -101,6 +101,20 @@ abstract class GenerateSupportSources : DefaultTask() {
         }
 
         val deprecation = "@Deprecated(\"Ues the overload from the standard library instead.\", level = DeprecationLevel.HIDDEN)"
+        val nonBootstrapExpectSuppressions = when {
+            !bootstrapEnabled.getOrElse(false) -> listOf(
+                "WRONG_ANNOTATION_TARGET", "ACTUAL_WITHOUT_EXPECT",
+                "AMBIGUOUS_EXPECTS", "REDECLARATION", "CONFLICTING_OVERLOADS",
+            )
+            else -> emptyList()
+        }
+        val nonBootstrapAnnotations = when {
+            !bootstrapEnabled.getOrElse(false) -> """
+                            @OptIn(ExperimentalMultiplatform::class)
+                            @kotlin.experimental.ExpectRefinement
+                        """.trimIndent()
+            else -> null
+        }
 
         traverseRawSourcesInSourceSets(supportHierarchy, rawSourceLocation) { file, destination, generatedSourceSet ->
             var contents = file.readText().replace("""^(package .*)\.raw$""".toRegex(RegexOption.MULTILINE), "$1")
@@ -123,27 +137,12 @@ abstract class GenerateSupportSources : DefaultTask() {
                 val ranges = listOf("AnyNumberRange", "SignedNumberRange", "UnsignedNumberRange")
                 val iterators = listOf("AnyNumberIterator")
 
-                val nonBootstrapSuppressions = when {
-                    !bootstrapEnabled.getOrElse(false) -> listOf(
-                        "WRONG_ANNOTATION_TARGET", "ACTUAL_WITHOUT_EXPECT",
-                        "AMBIGUOUS_EXPECTS", "REDECLARATION", "CONFLICTING_OVERLOADS",
-                    )
-                    else -> emptyList()
-                }
-                val nonBootstrapAnnotations = when {
-                    !bootstrapEnabled.getOrElse(false) -> """
-                            @OptIn(ExperimentalMultiplatform::class)
-                            @kotlin.experimental.ExpectRefinement
-                        """.trimIndent()
-                    else -> null
-                }
-
                 val adjustedContent = similarToContent.replace(similarToName, name)
                     .withAppendixIfMentioned(ranges, similarToSearchIndex) { rangeName ->
                         classesThatNeedRange.add(name)
 
                         val untilFunction = listOfNotNull(
-                            nonBootstrapSuppressions.toSuppressCall(),
+                            nonBootstrapExpectSuppressions.toSuppressCall(),
                             nonBootstrapAnnotations,
                             "expect inline infix fun support.$name.until(to: support.$name): support.${name}Range"
                         ).joinToString("\n")
@@ -161,13 +160,13 @@ abstract class GenerateSupportSources : DefaultTask() {
                             expect class ${name}VarOf<T : $name> : kotlinx.cinterop.CVariable
                         """.trimIndent()
                         val valueAccessor = listOfNotNull(
-                            nonBootstrapSuppressions.toSuppressCall(),
+                            nonBootstrapExpectSuppressions.toSuppressCall(),
                             nonBootstrapAnnotations,
                             "@ExperimentalForeignApi",
                             "expect inline var <T : support.$name> support.${name}VarOf<T>.value: T"
                         ).joinToString("\n")
                         val allocFunction = listOfNotNull(
-                            (nonBootstrapSuppressions + "FINAL_UPPER_BOUND").toSuppressCall(),
+                            (nonBootstrapExpectSuppressions + "FINAL_UPPER_BOUND").toSuppressCall(),
                             nonBootstrapAnnotations,
                             "@ExperimentalForeignApi",
                             "expect inline fun <T : support.$name> NativePlacement.alloc(value: T): support.${name}VarOf<T>",
@@ -231,6 +230,13 @@ abstract class GenerateSupportSources : DefaultTask() {
             destination.writeText(contents)
         }
 
+        val nonBootstrapActualSuppressions = when {
+            !bootstrapEnabled.getOrElse(false) -> listOf(
+                "AMBIGUOUS_EXPECTS", "ACTUAL_WITHOUT_EXPECT",
+            )
+            else -> emptyList()
+        }
+
         rawSourceLocation.traverseSourceSetsOf(supportHierarchy) { sourceSetDirectory, generatedSourceSet ->
             val sourceSet = sourceSetDirectory.name
             val isLeafSourceSet = sourceSet in leafSourceSets
@@ -241,29 +247,35 @@ abstract class GenerateSupportSources : DefaultTask() {
 
             for ((name, expansion) in collectAllBuiltinExpansionsInHierarchyOf(sourceSet)) {
                 if (name in classesThatNeedVar) {
-                    kotlinxXCinteropFileContents += """
-                                @Suppress("FINAL_UPPER_BOUND", "AMBIGUOUS_EXPECTS", "ACTUAL_WITHOUT_EXPECT")
-                                @ExperimentalForeignApi
-                                $deprecation
-                                actual inline var <T : $expansion> ${expansion}VarOf<T>.value: T
-                                    get() = error("Should not be called")
-                                    set(_) { error("Should not be called") }
-                            """.trimIndent()
+                    kotlinxXCinteropFileContents += listOfNotNull(
+                        (nonBootstrapActualSuppressions + "FINAL_UPPER_BOUND").toSuppressCall(),
+                        """
+                        @ExperimentalForeignApi
+                        $deprecation
+                        actual inline var <T : $expansion> ${expansion}VarOf<T>.value: T
+                            get() = error("Should not be called")
+                            set(_) { error("Should not be called") }
+                        """.trimIndent()
+                    ).joinToString("\n")
+
+                    kotlinxXCinteropFileContents += listOfNotNull(
+                        (nonBootstrapActualSuppressions + "FINAL_UPPER_BOUND").toSuppressCall(),
+                        """
+                        @ExperimentalForeignApi
+                        $deprecation
+                        actual inline fun <T : $expansion> NativePlacement.alloc(value: T): ${expansion}VarOf<T> = error("Should not be called")
+                        """.trimIndent(),
+                    ).joinToString("\n")
                 }
 
-                kotlinxXCinteropFileContents += """
-                            @Suppress("FINAL_UPPER_BOUND", "AMBIGUOUS_EXPECTS", "ACTUAL_WITHOUT_EXPECT")
-                            @ExperimentalForeignApi
-                            $deprecation
-                            actual inline fun <T : $expansion> NativePlacement.alloc(value: T): ${expansion}VarOf<T> = error("Should not be called")
-                        """.trimIndent()
-
                 if (name in classesThatNeedRange) {
-                    kotlinRangesFileContents += """
-                                @Suppress("AMBIGUOUS_EXPECTS", "ACTUAL_WITHOUT_EXPECT")
-                                $deprecation
-                                actual inline infix fun $expansion.until(to: $expansion): ${expansion}Range = error("Should not be called")
-                            """.trimIndent()
+                    kotlinRangesFileContents += listOfNotNull(
+                        nonBootstrapActualSuppressions.toSuppressCall(),
+                        """
+                        $deprecation
+                        actual inline infix fun $expansion.until(to: $expansion): ${expansion}Range = error("Should not be called")
+                        """.trimIndent(),
+                    ).joinToString("\n")
                 }
             }
         }
@@ -384,10 +396,8 @@ private inline fun File.traverseSourceSetsOf(
 private inline fun File.traverseRawSources(
     generatedSourceSet: File,
     block: (File, File) -> Unit,
-): Unit {
-    traverseTopDown { file ->
-        file.toGeneratedFile(rawSourceSet = this, generatedSourceSet)?.let { block(file, it) }
-    }
+): Unit = traverseTopDown { file ->
+    file.toGeneratedFile(rawSourceSet = this, generatedSourceSet)?.let { block(file, it) }
 }
 
 private inline fun traverseRawSourcesInSourceSets(
