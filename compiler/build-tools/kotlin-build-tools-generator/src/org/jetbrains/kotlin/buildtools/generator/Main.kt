@@ -167,7 +167,6 @@ private fun generateBtaVersion(localArgs: Array<String>, genDir: Path, kotlinVer
             file = genFile.toFile(),
             newText = content,
             logNotChanged = false,
-            forbidGenerationOnTeamcity = false
         )
         generatedFiles.add(genFile)
     }
