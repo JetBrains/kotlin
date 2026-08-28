@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -55,7 +56,7 @@ dependencies {
 }
 
 tasks.named<KotlinCompile>("compileCompilingKotlin") {
-    compilerOptions.freeCompilerArgs.add("-jvm-default=enable")
+    compilerOptions.jvmDefault = JvmDefaultMode.ENABLE
 }
 
 // don't use `test` task
