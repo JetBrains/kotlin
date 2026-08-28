@@ -14,7 +14,6 @@ org.jetbrains.kotlin.psi.KtTypeCodeFragmentType
 org.jetbrains.kotlin.psi.KtTypeCodeFragmentType:constructor()
 org.jetbrains.kotlin.psi.psiUtil.KtStringTemplateExpressionManipulator
 org.jetbrains.kotlin.psi.psiUtil.StringTemplateExpressionManipulator
-org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ANNOTATION
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ANNOTATION_ENTRY
