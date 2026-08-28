@@ -158,11 +158,7 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
         embedReplSidecarMetadata(irSnippet, irSnippetClass)
     }
 
-    /**
-     * Embeds [irSnippet]'s [replSidecarMetadataAttr] bytes, if set, into the snippet wrapper
-     * class's `.kotlin_metadata` via the generic `ProtoBuf.CompilerPluginData` channel keyed by
-     * [REPL_SIDECAR_PLUGIN_ID]. Using that channel avoids a metadata `.proto` change or version bump.
-     */
+    // The generic CompilerPluginData channel is used to avoid a metadata `.proto` change or version bump
     private fun embedReplSidecarMetadata(irSnippet: IrReplSnippet, irSnippetClass: IrClass) {
         val sidecarBytes = irSnippet.replSidecarMetadataAttr ?: return
         context.metadataDeclarationRegistrar.addCustomMetadataExtension(
@@ -264,13 +260,10 @@ private class ReplSnippetToClassTransformer(
             expression.transformChildren(this, data)
             return expression
         }
-        // A same-batch sibling can tag one of this snippet's own declarations as "from another
-        // snippet" purely so a later sibling can reference it (see
-        // ClasspathBackedFirReplHistoryProvider's "Live, same-batch siblings").
-        // CallAndReferenceGenerator then emits a placeholder IrErrorCallExpression for its dispatch
-        // receiver regardless. Since [declaration] here is still a direct member of this class
-        // (never re-parented), patch the placeholder back into an ordinary self-access instead of
-        // a previous-snippet lookup.
+        // A same-batch sibling can tag one of this snippet's own declarations as "from another snippet"
+        // just so a later sibling can reference it, and CallAndReferenceGenerator then emits a placeholder
+        // dispatch receiver for it. The declaration is still a direct member here, so patch the placeholder
+        // back into a self-access rather than a previous-snippet lookup.
         if (declaration != null && declaration.parent === irSnippet.targetClass?.owner && expression.dispatchReceiver is IrErrorCallExpression) {
             expression.dispatchReceiver =
                 accessCallsGenerator.getAccessCallForSelf(data, expression.startOffset, expression.endOffset, null, null)

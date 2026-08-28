@@ -16,41 +16,12 @@ import kotlin.script.experimental.api.ScriptEvaluationConfiguration
 import kotlin.script.experimental.jvmhost.jsr223.base.KotlinJsr223JvmScriptEngineFactoryBase
 
 /**
- * A [KotlinJsr223JvmScriptEngineFactoryBase] that produces [KotlinJsr223DaemonScriptEngineImpl]
- * instances: a JSR-223 engine whose snippet compilation runs out-of-process on the Kotlin compile
- * daemon's regular compile path.
+ * Produces [KotlinJsr223DaemonScriptEngineImpl] instances. Intentionally not registered as a
+ * `javax.script.ScriptEngineFactory` service, so it never competes with the in-process engine for
+ * the `"kotlin"`/`"kts"` `ScriptEngineManager` registration; embedders construct it directly.
  *
- * Meant to be instantiated directly by embedders that want the daemon-backed engine (for example a
- * host that would rather not bundle the full Kotlin compiler in its own process). It is
- * intentionally not registered as a `javax.script.ScriptEngineFactory` service, so it never
- * competes with the in-process engine for the `"kotlin"`/`"kts"` `ScriptEngineManager`
- * registration.
- *
- * Placed under `libraries/examples/scripting` (rather than `libraries/scripting`) as a portable
- * example an embedder without a Gradle/Build-Tools-API dependency on the project can copy.
- * Everything it needs is the daemon-client API plus a compiler classpath.
- *
- * @param compilerClasspath classpath (jars) the compile daemon is spawned/identified with; must
- *   contain the Kotlin compiler plus the (unshaded) `kotlin-scripting-compiler` plugin jar. See
- *   [DaemonReplCompiler]'s KDoc.
- * @param additionalClasspath extra classpath entries every snippet is compiled against. Most
- *   importantly this should include the Kotlin stdlib, which the daemon compile does not add
- *   implicitly.
- * @param daemonJVMOptions the daemon's JVM options. When `null`, uses the compile daemon-client's
- *   global default; see [DaemonReplCompiler]'s KDoc.
- * @param daemonOptions the daemon's own options (run-files directory, idle-shutdown delay, etc).
- *   When `null`, uses the compile daemon-client's global default.
- * @param daemonLogOptions the daemon's log-file options. When `null`, uses the compile
- *   daemon-client's global default.
- * @param baseCompilationConfiguration the script definition's compilation configuration (for
- *   example `createJvmScriptDefinitionFromTemplate<MainKtsScript>().compilationConfiguration`)
- *   to use for every snippet. The default `ScriptCompilationConfiguration()` keeps the plain,
- *   definition-less behavior. See [KotlinJsr223DaemonScriptEngineImpl]'s KDoc for what this does
- *   and does not affect on this out-of-process compile path.
- * @param baseEvaluationConfiguration the script definition's evaluation configuration (for
- *   example `createJvmScriptDefinitionFromTemplate<MainKtsScript>().evaluationConfiguration`)
- *   used to evaluate every compiled snippet. The default `ScriptEvaluationConfiguration()` keeps
- *   the plain, definition-less behavior.
+ * [compilerClasspath] must contain the Kotlin compiler plus the unshaded `kotlin-scripting-compiler`
+ * jar, and [additionalClasspath] the Kotlin stdlib, which the daemon compile does not add itself.
  */
 class KotlinJsr223DaemonScriptEngineFactory(
     private val compilerClasspath: List<File>,

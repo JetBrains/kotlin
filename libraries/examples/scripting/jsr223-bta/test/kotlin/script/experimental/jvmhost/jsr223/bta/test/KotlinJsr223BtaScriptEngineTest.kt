@@ -3,12 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.script.experimental.jvmhost.jsr223.daemon.test
+package kotlin.script.experimental.jvmhost.jsr223.bta.test
 
-import kotlin.script.experimental.jvmhost.jsr223.daemon.KotlinJsr223DaemonScriptEngineFactory
-import kotlin.script.experimental.jvmhost.jsr223.daemon.KotlinJsr223DaemonScriptEngineImpl
-import org.jetbrains.kotlin.daemon.common.DaemonLogOptions
-import org.jetbrains.kotlin.daemon.common.DaemonOptions
+import kotlin.script.experimental.jvmhost.jsr223.bta.KotlinJsr223BtaScriptEngineFactory
+import kotlin.script.experimental.jvmhost.jsr223.bta.KotlinJsr223BtaScriptEngineImpl
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -16,48 +14,39 @@ import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import java.io.File
 import java.nio.file.Path
 import javax.script.ScriptException
 
 /**
- * Exercises [KotlinJsr223DaemonScriptEngineImpl] end-to-end against a real Kotlin compile daemon.
- * The engine is instantiated via [KotlinJsr223DaemonScriptEngineFactory] rather than looked up
- * through `javax.script.ScriptEngineManager`, where it is deliberately not registered.
+ * Exercises [KotlinJsr223BtaScriptEngineImpl] end-to-end against a real Build Tools API compilation.
+ * The engine is instantiated manually, the factory not being registered as a
+ * `javax.script.ScriptEngineFactory` service.
  */
-class KotlinJsr223DaemonScriptEngineTest {
+class KotlinJsr223BtaScriptEngineTest {
 
     @TempDir
     lateinit var daemonRunDir: Path
 
-    private val compilerClasspath: List<File> = classpathFromSystemProperty("kotlinJsr223DaemonCompilerClasspath")
+    private val enginesToClose = mutableListOf<KotlinJsr223BtaScriptEngineImpl>()
 
-    private val stdlib: File by lazy {
-        File(KotlinVersion::class.java.protectionDomain.codeSource.location.toURI())
-    }
-
-    // The daemon connection is cached for the engine's whole lifetime, so tests must shut it down.
-    private val enginesToShutDown = mutableListOf<KotlinJsr223DaemonScriptEngineImpl>()
-
-    private fun newEngine(): KotlinJsr223DaemonScriptEngineImpl {
-        val factory = KotlinJsr223DaemonScriptEngineFactory(
-            compilerClasspath = compilerClasspath,
-            additionalClasspath = listOf(stdlib.toPath()),
-            daemonOptions = DaemonOptions(
-                runFilesPath = daemonRunDir.resolve("run").toString(),
-                shutdownDelayMilliseconds = 0,
-            ),
-            daemonLogOptions = DaemonLogOptions(logsPath = daemonRunDir.resolve("logs").toString()),
+    private fun newEngine(): KotlinJsr223BtaScriptEngineImpl {
+        val factory = KotlinJsr223BtaScriptEngineFactory(
+            compilerClasspath = classpathFromSystemProperty("kotlinJsr223BtaImplClasspath"),
+            scriptingPluginClasspath = classpathFromSystemProperty("kotlinJsr223BtaScriptingPluginClasspath"),
+            additionalClasspath = listOf(stdlibPath),
+            daemonRunFilesPath = daemonRunDir.resolve("run"),
+            daemonLogsPath = daemonRunDir.resolve("logs"),
+            daemonShutdownDelayMillis = 0,
         )
-        return (factory.scriptEngine as KotlinJsr223DaemonScriptEngineImpl).also { enginesToShutDown += it }
+        return (factory.scriptEngine as KotlinJsr223BtaScriptEngineImpl).also { enginesToClose += it }
     }
 
     @AfterEach
     fun tearDown() {
-        for (engine in enginesToShutDown) {
-            engine.forceShutdownDaemonForTests()
+        for (engine in enginesToClose) {
+            engine.close()
         }
-        enginesToShutDown.clear()
+        enginesToClose.clear()
     }
 
     @Test
@@ -86,7 +75,6 @@ class KotlinJsr223DaemonScriptEngineTest {
         assertEquals(null, engine.eval("val onlyADeclaration = 1"))
     }
 
-    // A snippet that throws must fail at evaluation, never as a daemon-side compile failure.
     @Test
     fun testSnippetThatThrowsAtRuntimeFailsAtEvalNotCompile() {
         val engine = newEngine()
@@ -108,8 +96,8 @@ class KotlinJsr223DaemonScriptEngineTest {
         assertTrue(exception.message.orEmpty().contains("Initializer type mismatch: expected 'Int', actual 'String'."))
     }
 
-    // The tests below exercise snippet sources that would be awkward to pass as a single CLI
-    // argument: embedded quotes, backslashes, `$`, newlines, tabs, and non-ASCII characters.
+    // The tests below exercise snippet sources with characters that have to survive the trip to the
+    // compiler process.
 
     @Test
     fun testMultilineSnippetWithQuotesAndEscapes() {
@@ -172,10 +160,3 @@ class KotlinJsr223DaemonScriptEngineTest {
         assertEquals(3, engine.eval(snippet))
     }
 }
-
-private fun classpathFromSystemProperty(propertyName: String): List<File> =
-    System.getProperty(propertyName)
-        ?.split(File.pathSeparator)
-        ?.filter { it.isNotBlank() }
-        ?.map { File(it) }
-        ?: error("system property '$propertyName' is not set -- run this test via its Gradle test task")
