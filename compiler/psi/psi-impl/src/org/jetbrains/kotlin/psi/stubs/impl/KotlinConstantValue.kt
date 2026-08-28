@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.stubs.StubUtils
 
-enum class KotlinConstantValueKind {
+internal enum class KotlinConstantValueKind {
     NULL, BOOLEAN, CHAR, BYTE, SHORT, INT, LONG, DOUBLE, FLOAT, ENUM, KCLASS, STRING, ARRAY, UBYTE, USHORT, UINT, ULONG, ANNO;
 }
 
@@ -31,7 +31,7 @@ private fun StubInputStream.readConstantKind(): KotlinConstantValueKind? {
     return KotlinConstantValueKind.entries[kind - 1]
 }
 
-fun deserializeConstantValue(dataStream: StubInputStream): ConstantValue<*>? = when (dataStream.readConstantKind()) {
+internal fun deserializeConstantValue(dataStream: StubInputStream): ConstantValue<*>? = when (dataStream.readConstantKind()) {
     null -> null
     KotlinConstantValueKind.NULL -> NullValue
     KotlinConstantValueKind.BOOLEAN -> BooleanValue(dataStream.readBoolean())
@@ -68,7 +68,7 @@ fun deserializeConstantValue(dataStream: StubInputStream): ConstantValue<*>? = w
 }
 
 
-fun serializeConstantValue(constantValue: ConstantValue<*>?, dataStream: StubOutputStream) {
+internal fun serializeConstantValue(constantValue: ConstantValue<*>?, dataStream: StubOutputStream) {
     if (constantValue == null) {
         dataStream.writeConstantKind(null)
         return

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinContractSerializationVisitor
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeBean
 
-object StubUtils {
+internal object StubUtils {
     @JvmStatic
     fun deserializeClassId(dataStream: StubInputStream): ClassId? {
         val classId = dataStream.readName() ?: return null
