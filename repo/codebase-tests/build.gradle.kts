@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.testFederation.smokeTestConfig
 plugins {
     id("common-configuration")
     id("test-federation-convention")
+    id("test-batches-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
@@ -118,5 +119,28 @@ tasks.configureEach {
         if (debuggerDispatchPort.isPresent) {
             systemProperty("idea.debugger.dispatch.port", debuggerDispatchPort.get())
         }
+    }
+}
+
+/* Create synthetic test tasks */
+run {
+    val junit5TestCompilation = kotlin.target.compilations.create("junit5Tests")
+
+    tasks.register<Test>("junit5Tests") {
+        description = "Synthetic Tests: Used by functional tests to create test build behavior (on junit5)"
+        useJUnitPlatform()
+        testClassesDirs = junit5TestCompilation.output.classesDirs
+        classpath = junit5TestCompilation.runtimeDependencyFiles
+
+        testLogging {
+            events("passed", "skipped", "failed")
+        }
+    }
+
+    dependencies {
+        junit5TestCompilation.configurations.implementationConfiguration(kotlin("test-junit5"))
+        junit5TestCompilation.configurations.implementationConfiguration(libs.junit.jupiter.api)
+        junit5TestCompilation.configurations.implementationConfiguration(libs.junit.jupiter.engine)
+        junit5TestCompilation.configurations.implementationConfiguration(libs.junit.jupiter.params)
     }
 }

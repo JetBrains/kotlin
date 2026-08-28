@@ -28,4 +28,5 @@ fun defaultGradleJvmArguments(xmx: String = defaultGradleXmx) = buildList {
     //progressively take memory, aggressive yielding memory back to the OS
     add("-XX:MinHeapFreeRatio=10")
     add("-XX:MaxHeapFreeRatio=30")
+    addAll(issueNewDebugSessionJvmArguments("Gradle(in Test)"))
 }

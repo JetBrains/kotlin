@@ -382,6 +382,60 @@ class TestFederationFunctionalTest {
             "##teamcity[setParameter name='$TEST_FEDERATION_CHANGED_DOMAINS_KEY' value='Js']"
         )
     }
+
+    /**
+     * We test running tests in 'test batches'.
+     * The test will run tests in three 'buckets'/batches.
+     * We then make sure that
+     * a) Test batches do not overlap
+     * b) Combining tests from all batches will result in all tests being executed
+     */
+    @Test
+    fun `test - 3 test batches`() {
+        cleanTest()
+        val batch1Result = runTestBuild(
+            mode = TestFederationMode.Full,
+            additionalCliArgs = listOf("-Ptests.currentBatch=1", "-Ptests.totalBatches=3")
+        )
+
+        val batch2Result = runTestBuild(
+            mode = TestFederationMode.Full,
+            additionalCliArgs = listOf("-Ptests.currentBatch=2", "-Ptests.totalBatches=3")
+        )
+
+        val batch3Result = runTestBuild(
+            mode = TestFederationMode.Full,
+            additionalCliArgs = listOf("-Ptests.currentBatch=3", "-Ptests.totalBatches=3")
+        )
+
+        val batch1Tests = batch1Result.executedTests
+        val batch2Tests = batch2Result.executedTests
+        val batch3Tests = batch3Result.executedTests
+
+        batch1Tests.intersect(batch2Tests).takeIf { it.isNotEmpty() }?.also { duplicatedTests ->
+            fail("batch1 and batch2 both executed the same tests: $duplicatedTests")
+        }
+
+        batch1Tests.intersect(batch2Tests).takeIf { it.isNotEmpty() }?.also { duplicatedTests ->
+            fail("batch1 and batch3 both executed the same tests: $duplicatedTests")
+        }
+
+        batch2Tests.intersect(batch3Tests).takeIf { it.isNotEmpty() }?.also { duplicatedTests ->
+            fail("batch2 and batch3 both executed the same tests: $duplicatedTests")
+        }
+
+        assertEquals(
+            setOf(
+                TestResult("PseudoTest", "domain test"),
+                TestResult("PseudoTest", "smoke test"),
+                TestResult("PseudoTest", "js contract test"),
+                TestResult("PseudoTest", "wasm contract test"),
+                TestResult("PseudoTest", "gradle contract test"),
+                TestResult("PseudoTest", "nightly test"),
+            ),
+            batch1Tests + batch2Tests + batch3Tests
+        )
+    }
 }
 
 private val allTests = setOf(
