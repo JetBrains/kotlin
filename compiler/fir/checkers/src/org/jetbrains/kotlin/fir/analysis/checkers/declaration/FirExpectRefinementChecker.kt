@@ -39,13 +39,13 @@ object FirExpectRefinementChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
         val matchingData = declaration.symbol.expectForActual.orEmpty()
         val matchedWithAnotherExpect = matchingData.contains(ExpectActualMatchingCompatibility.MatchedSuccessfully)
         if (matchedWithAnotherExpect && declaration.isExpect && !declaration.isActual && context.isTopLevel) {
-            if (!hasExpectRefinementAnnotation) {
+            if (!hasExpectRefinementAnnotation && LanguageFeature.AllowMultipleExpectsForSingleActual.isDisabled()) {
                 reporter.reportOn(
                     declaration.source,
                     FirErrors.EXPECT_REFINEMENT_ANNOTATION_MISSING
                 )
             }
-            if (LanguageFeature.ExpectRefinement.isDisabled()) {
+            if (LanguageFeature.ExpectRefinement.isDisabled() && LanguageFeature.AllowMultipleExpectsForSingleActual.isDisabled()) {
                 reporter.reportOn(
                     declaration.source,
                     FirErrors.UNSUPPORTED_FEATURE,
