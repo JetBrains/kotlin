@@ -556,6 +556,9 @@ private val KaSymbol.supportsOnlyPsiBasedPointersByDesign: Boolean
         is KaDestructuringDeclarationSymbol
             -> true
 
+        is KaReceiverParameterSymbol
+            -> owningCallableSymbol.supportsOnlyPsiBasedPointersByDesign
+
         is KaNamedFunctionSymbol,
         is KaPropertySymbol,
         is KaTypeAliasSymbol,
