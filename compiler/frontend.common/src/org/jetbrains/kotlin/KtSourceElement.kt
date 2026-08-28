@@ -408,6 +408,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     sealed class DesugaredIncrementOrDecrement(val generatedElementKind: GeneratedElementKind) : KtFakeSourceElementKind() {
         enum class GeneratedElementKind {
             /**
+             * The primary receiver expression.
+             */
+            PrimaryReceiver,
+
+            /**
              * The desugared block, assignment, operator call, or other main expressions.
              */
             DesugaredExpression,
@@ -465,6 +470,12 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
          */
         val isSecondGetReference: Boolean
             get() = generatedElementKind == GeneratedElementKind.SecondGetReference
+
+        /**
+         * @see GeneratedElementKind.PrimaryReceiver
+         */
+        val forPrimaryReceiver: DesugaredIncrementOrDecrement
+            get() = withGeneratedElementKind(GeneratedElementKind.PrimaryReceiver)
 
         /**
          * @see GeneratedElementKind.ReceiverVariable

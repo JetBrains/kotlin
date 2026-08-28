@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredIncrementOrDecrement.GeneratedElementKind.PrimaryReceiver
 import org.jetbrains.kotlin.KtSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -25,6 +26,7 @@ object FirRecursiveProblemChecker : FirBasicExpressionChecker(MppCheckerKind.Com
 
     private val KtSourceElementKind?.shouldBeReported: Boolean
         get() = when (this) {
+            is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> generatedElementKind == PrimaryReceiver
             !is KtFakeSourceElementKind -> true
             else -> false
         }
