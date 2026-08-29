@@ -39,7 +39,6 @@ interop support or [cms GC](src/gc/cms) with Concurrent Mark&Sweep GC implementa
 
 The main module contains:
 * C++ parts of the [Native stdlib](#stdlib)
-  * [dtoa](src/main/cpp/dtoa): vendored part of Apache Harmony for float <-> string
   * scattered around the code
 * Core runtime code
   * [mm](src/main/cpp/mm): mostly memory management, the name comes from legacy MM / new MM split which doesn't make much sense anymore
