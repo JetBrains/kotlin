@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
@@ -107,7 +108,8 @@ class SourceFileProviderImpl(
 
     override fun getOrCreateRealFileForSourceFile(testFile: TestFile): File {
         return realFileMap.getOrPut(testFile) {
-            val module = testServices.moduleStructure.modules.single { testFile in it.files }
+            val module = testServices.moduleStructure.modules.singleOrNull { testFile in it.files }
+                ?: testInfraError("No module found for source file: $testFile")
             val directory = when {
                 testFile.isKtFile -> getKotlinSourceDirectoryForModule(module)
                 testFile.isJavaFile -> getJavaSourceDirectoryForModule(module)
