@@ -4,6 +4,14 @@
 // - Show declarations: true
 
 // Library unique name: <main>
+abstract class /C : /I1, /I2 { // /C|null[0]
+    constructor <init>() // /C.<init>|<init>(){}[0]
+}
+abstract interface /I1 : kotlin.coroutines/SuspendFunction1<kotlin/Int, kotlin/Unit> // /I1|null[0]
+abstract interface /I2 : kotlin.coroutines/SuspendFunction1<kotlin/Int, kotlin/Unit> // /I2|null[0]
 abstract class /S0 : kotlin.coroutines/SuspendFunction0<kotlin/Unit> { // /S0|null[0]
     constructor <init>() // /S0.<init>|<init>(){}[0]
+}
+abstract class /S2 : kotlin.coroutines/SuspendFunction2<kotlin/Int, kotlin/String, kotlin/Long> { // /S2|null[0]
+    constructor <init>() // /S2.<init>|<init>(){}[0]
 }

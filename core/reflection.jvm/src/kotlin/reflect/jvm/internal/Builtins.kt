@@ -61,6 +61,29 @@ internal fun createFunctionKmClass(arity: Int): KmClass = KmClass().apply {
     })
 }
 
+internal fun createSuspendFunctionInvoke(arity: Int, functionKmClass: KmClass): KmFunction = KmFunction("invoke").apply {
+    val typeParameters = functionKmClass.typeParameters
+    check(typeParameters.size == arity + 2) {
+        "Class '${functionKmClass.name}' must have ${arity + 2} type parameters, but has ${typeParameters.size}"
+    }
+    for (i in 1..arity) {
+        valueParameters.add(KmValueParameter("p$i").apply {
+            type = KmType().apply {
+                classifier = KmClassifier.TypeParameter(typeParameters[i].id)
+            }
+        })
+    }
+    returnType = KmType().apply {
+        classifier = KmClassifier.TypeParameter(typeParameters[arity + 1].id)
+    }
+    modality = Modality.ABSTRACT
+    visibility = Visibility.PUBLIC
+    isOperator = true
+    isSuspend = true
+
+    signature = JvmMethodSignature("invoke", "(" + "Ljava/lang/Object;".repeat(arity + 1) + ")Ljava/lang/Object;")
+}
+
 internal fun createCloneableKmClass(): KmClass = KmClass().apply {
     name = "kotlin/Cloneable"
     kind = ClassKind.INTERFACE
