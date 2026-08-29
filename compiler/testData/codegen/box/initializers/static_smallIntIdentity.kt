@@ -1,6 +1,8 @@
 // KT-66088
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // WITH_STDLIB
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: WASM-JS:2.4
+// ^^^ KT-66089 is fixed in 2.5.0-Beta1
 
 import kotlin.test.*
 
