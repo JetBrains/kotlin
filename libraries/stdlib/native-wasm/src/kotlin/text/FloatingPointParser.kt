@@ -15,10 +15,9 @@
  *  limitations under the License.
  */
 
-package kotlin.native.internal
+package kotlin.text
 
 import kotlin.comparisons.*
-import kotlin.native.internal.escapeAnalysis.Escapes
 
 /**
  * Takes a String and an integer exponent. The String should hold a positive
@@ -32,9 +31,8 @@ import kotlin.native.internal.escapeAnalysis.Escapes
  * @return the double closest to the real number
  * @exception NumberFormatException if the String doesn't represent a positive integer value
  */
-@GCUnsafeCall("Kotlin_native_FloatingPointParser_parseDoubleImpl")
-@Escapes.Nothing
-private external fun parseDoubleImpl(s: String, e: Int): Double
+private fun parseDoubleImpl(s: String, e: Int): Double =
+    kotlin.internal.dtoa.parseDoubleImpl(s, e)
 
 /**
  * Takes a String and an integer exponent. The String should hold a positive
@@ -48,9 +46,8 @@ private external fun parseDoubleImpl(s: String, e: Int): Double
  * @return the float closest to the real number
  * @exception NumberFormatException if the String doesn't represent a positive integer value
  */
-@GCUnsafeCall("Kotlin_native_FloatingPointParser_parseFloatImpl")
-@Escapes.Nothing
-private external fun parseFloatImpl(s: String, e: Int): Float
+private fun parseFloatImpl(s: String, e: Int): Float =
+    kotlin.internal.dtoa.parseFloatImpl(s, e)
 
 /**
  * Used to parse a string and return either a single or double precision
@@ -79,8 +76,10 @@ internal object FloatingPointParser {
      * @exception NumberFormatException if the String doesn't represent a number of type Double
      */
     fun parseDouble(string: String): Double =
-            parse(string, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NaN,
-                    0.0, DOUBLE_MAX_EXP, DOUBLE_MIN_EXP, ::parseDoubleImpl, HexStringParser::parseDouble)
+        parse(
+            string, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NaN,
+            0.0, DOUBLE_MAX_EXP, DOUBLE_MIN_EXP, ::parseDoubleImpl, HexStringParser::parseDouble
+        )
 
     /**
      * Adaptor for parsing string and returning the closest Float value to the real number in the string.
@@ -90,8 +89,10 @@ internal object FloatingPointParser {
      * @exception NumberFormatException if the String doesn't represent a number of type Float
      */
     fun parseFloat(string: String): Float =
-            parse(string, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, Float.NaN,
-                    0.0f, FLOAT_MAX_EXP, FLOAT_MIN_EXP, ::parseFloatImpl, HexStringParser::parseFloat)
+        parse(
+            string, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, Float.NaN,
+            0.0f, FLOAT_MAX_EXP, FLOAT_MIN_EXP, ::parseFloatImpl, HexStringParser::parseFloat
+        )
 
     /**
      * Common method for parsing floating point number, unified for Double and Float.
@@ -111,9 +112,11 @@ internal object FloatingPointParser {
      * @return the Float or Double number closest to the real number
      * @exception NumberFormatException if the String doesn't represent a number of type T (Double or Float)
      */
-    private inline fun <reified T : Number> parse(string: String, negativeInf: T, positiveInf: T, nan: T, zero: T,
-                                                  maxExp: Int, minExp: Int, parserImpl: (String, Int) -> T,
-                                                  hexParserImpl: (String) -> T): T {
+    private inline fun <reified T : Number> parse(
+        string: String, negativeInf: T, positiveInf: T, nan: T, zero: T,
+        maxExp: Int, minExp: Int, parserImpl: (String, Int) -> T,
+        hexParserImpl: (String) -> T,
+    ): T {
         // Trim useless whitespaces.
         val s = string.trim { it <= ' ' }
         val length = s.length
@@ -139,7 +142,7 @@ internal object FloatingPointParser {
         // Two kinds of situation will directly return 0.0/0.0f:
         // 1. info.s is 0;
         // 2. actual exponent is less than double or float minimum exponent .
-        if ("0" == info.s || info.e + info.s.length - 1 < minExp) {
+        if ("0" == info.s || info.e < minExp - (info.s.length - 1)) {
             return if (info.negative) unaryMinus(zero) else zero
         }
         // If actual exponent is larger than maximum exponent then will return infinity.
@@ -314,8 +317,10 @@ internal object FloatingPointParser {
      * This method was needed to unify the common logic for Double and Float processing.
      * "Inifinity" and "NaN" string values will be covered by this method.
      */
-    private fun <T> parseNamed(namedFloat: String, length: Int,
-                               negativeInf: T, positiveInf: T, nan: T): T {
+    private fun <T> parseNamed(
+        namedFloat: String, length: Int,
+        negativeInf: T, positiveInf: T, nan: T,
+    ): T {
         // Valid strings are only +Nan, NaN, -Nan, +Infinity, Infinity, -Infinity.
         if (length != 3 && length != 4 && length != 8 && length != 9) {
             throw NumberFormatException()

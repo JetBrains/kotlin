@@ -2244,7 +2244,7 @@ public actual class Float private constructor() : Number(), Comparable<Float> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun toString(): String =
-        NumberConverter.convert(this)
+        kotlin.internal.NumberConverter.convert(this)
 
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun equals(other: Any?): Boolean =
@@ -2657,7 +2657,7 @@ public actual class Double private constructor() : Number(), Comparable<Double> 
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun toString(): String =
-        NumberConverter.convert(this)
+        kotlin.internal.NumberConverter.convert(this)
 
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun equals(other: Any?): Boolean =

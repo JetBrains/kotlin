@@ -7,14 +7,9 @@ package test.text
 
 import test.TestPlatform
 import test.testExceptOn
-import test.testOn
 import kotlin.math.pow
 import kotlin.math.round
 import kotlin.test.*
-
-private fun testOnNativeAndJvm(action: () -> Unit) {
-    testOn({ p -> p == TestPlatform.Jvm || p == TestPlatform.Native }, action)
-}
 
 class StringNumberConversionTest {
 
@@ -179,16 +174,14 @@ class StringNumberConversionTest {
                 assertFailsOrNull("-infinity")
             }
 
-            testExceptOn(TestPlatform.Native) {
-                assertProduces("123e2147483647", Double.POSITIVE_INFINITY)
-                assertProduces("-123e2147483647", Double.NEGATIVE_INFINITY)
+            assertProduces("123e2147483647", Double.POSITIVE_INFINITY)
+            assertProduces("-123e2147483647", Double.NEGATIVE_INFINITY)
 
-                assertProduces("123e20000000000", Double.POSITIVE_INFINITY)
-                assertProduces("-123e20000000000", Double.NEGATIVE_INFINITY)
+            assertProduces("123e20000000000", Double.POSITIVE_INFINITY)
+            assertProduces("-123e20000000000", Double.NEGATIVE_INFINITY)
 
-                assertProduces("123e30000000000", Double.POSITIVE_INFINITY)
-                assertProduces("-123e30000000000", Double.NEGATIVE_INFINITY)
-            }
+            assertProduces("123e30000000000", Double.POSITIVE_INFINITY)
+            assertProduces("-123e30000000000", Double.NEGATIVE_INFINITY)
 
             assertProduces("123e-2147483647", 0.0)
             assertProduces("-123e-2147483647", -0.0)
@@ -262,7 +255,7 @@ class StringNumberConversionTest {
             assertFailsOrNull("0x.11ff33p")
             assertFailsOrNull("0x11ff33.22ee44P")
 
-            testOnNativeAndJvm {
+            testExceptOn(TestPlatform.Js) {
                 // Valid hex numbers
                 // 1. No fractional part
                 assertProduces("0x11ff33p2", 4_717_772.0)
@@ -288,7 +281,7 @@ class StringNumberConversionTest {
             assertFailsOrNull("123e+")
             assertFailsOrNull("123e-")
 
-            testOnNativeAndJvm {
+            testExceptOn(TestPlatform.Js) {
                 // Valid float suffix
                 assertProduces("1f", 1.0)
                 assertProduces("1.5f", 1.5)
@@ -318,6 +311,19 @@ class StringNumberConversionTest {
                 // Invalid hexadecimal exponent
                 assertFailsOrNull("0x23P+")
                 assertFailsOrNull("0x23p-")
+
+                // Long number format
+                assertProduces("-0x23c52a19.a4b105bp82", -2.9020212540576405E33)
+                assertProduces("0xe0934860.a0b6336dp80", 4.554928690844096E33)
+                assertProduces("0xdfba4a5a.442c247fp34", 6.448511827070947E19)
+                assertProduces("0xf60eb772.876d3d22p67", 6.0920882946623366E29)
+                assertProduces("0x12d0f6a8.39d345aap28", 8.474091813897533E16)
+                assertProduces("-0x4f3eb359.d02e4c7bp104", -2.696565036525872E40)
+                assertProduces("0xcd9914b4.4c3965b2p38", 9.481532936843172E20)
+                assertProduces("0xba2ca920.ddbeef3bp110", 4.0545206044085636E42)
+                assertProduces("-0x1cff28ef.a5b64c34p82", -2.3524932778384047E33)
+                assertProduces("-0x76510851.88358a6ap68", -5.8587509493184865E29)
+                assertProduces("0xdefadb4e.2b55606p21", 7.845408080751276E15)
             }
 
             // Invalid float suffix
@@ -335,7 +341,7 @@ class StringNumberConversionTest {
             assertFailsOrNull("1e+z1")
             assertFailsOrNull("1e-z1")
 
-            testOnNativeAndJvm {
+            testExceptOn(TestPlatform.Js) {
                 // Test special whitespace characters as trailing or leading characters
                 for (i in 0..0x20) {
                     assertProduces("${i.toChar()}77", 77.0)
@@ -382,16 +388,14 @@ class StringNumberConversionTest {
                 assertFailsOrNull("-infinity")
             }
 
-            testExceptOn(TestPlatform.Native) {
-                assertProduces("123e2147483647", Float.POSITIVE_INFINITY)
-                assertProduces("-123e2147483647", Float.NEGATIVE_INFINITY)
+            assertProduces("123e2147483647", Float.POSITIVE_INFINITY)
+            assertProduces("-123e2147483647", Float.NEGATIVE_INFINITY)
 
-                assertProduces("123e20000000000", Float.POSITIVE_INFINITY)
-                assertProduces("-123e20000000000", Float.NEGATIVE_INFINITY)
+            assertProduces("123e20000000000", Float.POSITIVE_INFINITY)
+            assertProduces("-123e20000000000", Float.NEGATIVE_INFINITY)
 
-                assertProduces("123e30000000000", Float.POSITIVE_INFINITY)
-                assertProduces("-123e30000000000", Float.NEGATIVE_INFINITY)
-            }
+            assertProduces("123e30000000000", Float.POSITIVE_INFINITY)
+            assertProduces("-123e30000000000", Float.NEGATIVE_INFINITY)
 
             assertProduces("123e-2147483647", 0.0f)
             assertProduces("-123e-2147483647", -0.0f)
@@ -426,7 +430,7 @@ class StringNumberConversionTest {
             assertFailsOrNull("0x.11ff33p")
             assertFailsOrNull("0x11ff33.22ee44P")
 
-            testOnNativeAndJvm {
+            testExceptOn(TestPlatform.Js) {
                 // Valid hex numbers
                 // 1. No fractional part
                 assertProduces("0x11ff33p2", 4_717_772.0f)
@@ -450,7 +454,7 @@ class StringNumberConversionTest {
             assertFailsOrNull("2.123z4")
             assertFailsOrNull("2.123e4t")
 
-            testOnNativeAndJvm {
+            testExceptOn(TestPlatform.Js) {
                 // Valid float suffix
                 assertProduces("1f", 1.0f)
                 assertProduces("1.5f", 1.5f)
@@ -480,6 +484,19 @@ class StringNumberConversionTest {
                 // Invalid hexadecimal exponent
                 assertFailsOrNull("0x23P+")
                 assertFailsOrNull("0x23p-")
+
+                // Long number format
+                assertProduces("-0x23c52a19.a4b105bp5F", -1.9203965E10f)
+                assertProduces("0xe0934860.a0b6336dp5F", 1.20567955E11f)
+                assertProduces("0xdfba4a5a.442c247fp2F", 1.5014111E10f)
+                assertProduces("0xf60eb772.876d3d22p4F", 6.605055E10f)
+                assertProduces("0x12d0f6a8.39d345aap1F", 6.31369E8f)
+                assertProduces("-0x4f3eb359.d02e4c7bp6F", -8.508859E10f)
+                assertProduces("0xcd9914b4.4c3965b2p2F", 1.3797447E10f)
+                assertProduces("0xba2ca920.ddbeef3bp6F", 1.999033E11f)
+                assertProduces("-0x1cff28ef.a5b64c34p5F", -1.5567494E10f)
+                assertProduces("-0x76510851.88358a6ap4F", -3.1760353E10f)
+                assertProduces("0xdefadb4e.2b55606p1F", 7.481964E9f)
             }
 
             // Invalid float suffix
@@ -497,7 +514,7 @@ class StringNumberConversionTest {
             assertFailsOrNull("1e+z1")
             assertFailsOrNull("1e-z1")
 
-            testOnNativeAndJvm {
+            testExceptOn(TestPlatform.Js) {
                 // Test special whitespace characters as trailing or leading characters
                 for (i in 0..0x20) {
                     assertProduces("${i.toChar()}77", 77.0f)
@@ -830,6 +847,12 @@ class FpNumberToStringTest {
         assertEquals(Double.NaN.toString(), "NaN")
         assertEquals(Double.POSITIVE_INFINITY.toString(), "Infinity")
         assertEquals(Double.NEGATIVE_INFINITY.toString(), "-Infinity")
+
+        testExceptOn(TestPlatform.Js) {
+            assertEquals("1.234123412431233E107", identity(1.234123412431233E107).toString())
+            assertEquals("1.2341234124312331E107", identity(1.2341234124312331E107).toString())
+            assertEquals("1.2341234124312331E107", identity(1.2341234124312332E107).toString())
+        }
     }
 
     @Test fun floatTest() {
