@@ -86,8 +86,8 @@ internal fun computeFakeOverrideMembersForName(kClass: KClassImpl<*>, name: Stri
                         "Supertype '$supertype' appears non-denotable in class '$kClass'"
             )
         val substitutor = KTypeSubstitutor.create(supertype)
-        val supertypeMembers = supertypeKClass.getFakeOverrideMembersByName(name) // Recursive call
-        for ((_, notSubstitutedMember) in supertypeMembers) {
+        val supertypeMembers = getSupertypeMembersByName(supertype, supertypeKClass, name) // Recursive call
+        for (notSubstitutedMember in supertypeMembers) {
             val overriddenStorage = notSubstitutedMember.overriddenStorage
                 .withChainedClassTypeParametersSubstitutor(substitutor)
                 .copy(
@@ -151,7 +151,7 @@ internal fun computeOverriddenFunctions(
     for (supertype in container.supertypes) {
         val supertypeKClass = supertype.classifier as? KClassImpl<*> ?: continue
         val substitutor = KTypeSubstitutor.create(supertype)
-        for ((_, notSubstitutedMember) in supertypeKClass.getFakeOverrideMembersByName(signature.name)) {
+        for (notSubstitutedMember in getSupertypeMembersByName(supertype, supertypeKClass, signature.name)) {
             if (notSubstitutedMember !is ReflectKFunction) continue
             val overriddenStorage = notSubstitutedMember.overriddenStorage
                 .withChainedClassTypeParametersSubstitutor(substitutor)
@@ -168,6 +168,17 @@ internal fun computeOverriddenFunctions(
         }
     }
     return result
+}
+
+private fun getSupertypeMembersByName(supertype: KType, supertypeKClass: KClassImpl<*>, name: String): Collection<ReflectKCallable<*>> {
+    // There are no KClass instances for suspend function types before KT-79225, so we create suspend invoke manually.
+    if (name == "invoke" && (supertype as? AbstractKType)?.isSuspendFunctionType == true) {
+        val functionKmClass = supertypeKClass.kmClass
+            ?: throw KotlinReflectionInternalError("No metadata found for function class '$supertypeKClass'")
+        val invokeKmFunction = createSuspendFunctionInvoke(supertype.arguments.size - 1, functionKmClass)
+        return listOf(createUnboundFunction(invokeKmFunction, supertypeKClass))
+    }
+    return supertypeKClass.getFakeOverrideMembersByName(name).values
 }
 
 private val modalityIntersectionOverrideComparator: Comparator<ReflectKCallable<*>> = compareBy(
@@ -199,11 +210,14 @@ internal fun <T : EqualityMode> ReflectKCallable<*>.toEquatableCallableSignature
         this is KFunction<*> -> SignatureKind.FUNCTION
         else -> error("Unknown kind for ${this::class}")
     }
+    val isSuspend = (this as? KFunction<*>)?.isSuspend == true
     val functionJvmSignature = (this as? ReflectKFunction)?.signature
     val jvmNameIfFunction = functionJvmSignature?.substringBeforeLast('(')
     val functionJvmDescriptor = functionJvmSignature?.substring(jvmNameIfFunction!!.length)
+    // JVM signature of suspend functions has a continuation parameter, which is absent in `kotlinParameterTypes`, so we drop it to keep
+    // Java and Kotlin parameter lists aligned.
     val javaParameterTypes = functionJvmDescriptor?.let {
-        container.jClass.safeClassLoader.parseAndLoadDescriptor(it, loadReturnType = false).parameters
+        container.jClass.safeClassLoader.parseAndLoadDescriptor(it, loadReturnType = false).parameters.dropContinuationIfSuspend(isSuspend)
     }.orEmpty()
     return EquatableCallableSignature(
         kind,
@@ -219,8 +233,9 @@ internal fun <T : EqualityMode> ReflectKCallable<*>.toEquatableCallableSignature
                 is ReflectKFunction -> findOriginalJavaMethod(jvmNameIfFunction!!, javaParameterTypes)
                 else -> null
             }
-            method?.genericParameterTypes?.toList() ?: javaParameterTypes
+            method?.genericParameterTypes?.toList()?.dropContinuationIfSuspend(isSuspend) ?: javaParameterTypes
         },
+        isSuspend,
         isStatic,
         equalityMode,
     )
@@ -238,6 +253,8 @@ private fun ReflectKFunction.findOriginalJavaMethod(name: String, parameterTypes
     val jvmName = signature.substringBeforeLast('(')
     return originalContainer.findMethodBySignature(jvmName, signature.substring(jvmName.length)) ?: method
 }
+
+private fun <T> List<T>.dropContinuationIfSuspend(isSuspend: Boolean): List<T> = if (isSuspend) dropLast(1) else this
 
 internal val Class<*>.isKotlinClassOrPackage: Boolean
     get() = getAnnotation(Metadata::class.java) != null
@@ -282,6 +299,7 @@ internal class EquatableCallableSignature<T : EqualityMode>(
     val kotlinParameterTypes: List<KType>,
     val javaErasedParameterTypes: List<Class<*>>,
     private val computeJavaGenericParameterTypes: () -> List<Type>,
+    val isSuspend: Boolean,
     val isStatic: Boolean,
     val equalityMode: T,
 ) {
@@ -317,6 +335,7 @@ internal class EquatableCallableSignature<T : EqualityMode>(
             kotlinParameterTypes,
             javaErasedParameterTypes,
             computeJavaGenericParameterTypes,
+            isSuspend,
             isStatic,
             equalityMode
         )
@@ -333,6 +352,7 @@ internal class EquatableCallableSignature<T : EqualityMode>(
             "Equality modes must be the same for member '$name'. Please recreate signatures on inheritance"
         }
         if (kind != other.kind) return false
+        if (isSuspend != other.isSuspend) return false
         if (isStatic != other.isStatic) return false
         if (kotlinParameterTypes.size != other.kotlinParameterTypes.size) return false
         if (equalityMode == EqualityMode.JavaSignature && kind == SignatureKind.FUNCTION) {
