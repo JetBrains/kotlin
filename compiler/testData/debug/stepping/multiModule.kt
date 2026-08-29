@@ -1,7 +1,7 @@
-// WASM_IGNORE_FOR: mode=single-module
-// ^^^ KT-88234
 // MODULE: lib
 // FILE: a.kt
+
+
 
 fun a() = "a"
 

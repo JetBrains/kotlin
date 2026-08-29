@@ -56,8 +56,11 @@ class WasmAdditionalSourceProvider(testServices: TestServices) : AdditionalSourc
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
         if (WasmEnvironmentConfigurationDirectives.NO_COMMON_FILES in module.directives) return emptyList()
-        // Add the files only to modules with no dependencies to avoid duplicates in case of multiple `// MODULE` test directives.
-        if (module.allDependencies.isNotEmpty()) {
+        if (module.allDependencies.isNotEmpty() &&
+            // This optimization (don't add additional files to modules with dependencies) should not be done
+            // for tests which golden data depends on sourcemaps, for ex, stepping tests.
+            WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP !in module.directives
+        ) {
             return emptyList()
         }
         return getAdditionalGlobalFiles() + getAdditionalLocalFiles(module.files.first().originalFile.parent)
