@@ -1729,9 +1729,21 @@ public class SymbolLightClassesByPsiForLibraryTestGenerated extends AbstractSymb
       }
 
       @Test
+      @TestMetadata("enumClass.kt")
+      public void testEnumClass() {
+        run("enumClass.kt");
+      }
+
+      @Test
       @TestMetadata("extensionVariable.kt")
       public void testExtensionVariable() {
         run("extensionVariable.kt");
+      }
+
+      @Test
+      @TestMetadata("finalClass.kt")
+      public void testFinalClass() {
+        run("finalClass.kt");
       }
 
       @Test

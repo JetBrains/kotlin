@@ -19,5 +19,22 @@ public abstract interface Test /* Test*/ {
 }
 
 public class TestClass1 /* TestClass1*/ implements Test {
+  @org.jetbrains.annotations.Nullable()
+  private @org.jetbrains.annotations.Nullable() IC finalFoo;
+
+  @java.lang.Override()
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() IC finalTest(@org.jetbrains.annotations.NotNull() IC);//  finalTest(@org.jetbrains.annotations.NotNull() IC)
+
+  @java.lang.Override()
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.Nullable() IC getFinalFoo();//  getFinalFoo()
+
+  @java.lang.Override()
+  @kotlin.jvm.JvmExposeBoxed()
+  public final void setFinalFoo(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() IC);//  setFinalFoo(@org.jetbrains.annotations.Nullable() IC)
+
   public  TestClass1();//  .ctor()
 }
