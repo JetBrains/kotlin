@@ -15,6 +15,15 @@ public final class ValueClass /* pack.ValueClass*/ implements pack.Interface {
   private final int int;
 
   @java.lang.Override()
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() pack.ValueClass getPropertyWithValueClass();//  getPropertyWithValueClass()
+
+  @java.lang.Override()
+  @kotlin.jvm.JvmExposeBoxed()
+  public void functionWithValueParam(@org.jetbrains.annotations.NotNull() pack.ValueClass);//  functionWithValueParam(@org.jetbrains.annotations.NotNull() pack.ValueClass)
+
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
 

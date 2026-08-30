@@ -70,8 +70,8 @@ internal class MethodGenerationResult(val isRegularMethodRequired: Boolean, val 
 }
 
 /**
- * Whether [symbol] is effectively private: either it is `private` itself, or it is a member
- * (transitively) of a `private` class.
+ * Whether [symbol] is effectively private: either it is inaccessible outside its own declaration (e.g., it is `private`, or it is an
+ * anonymous object like the body of an enum entry), or it is a member (transitively) of such a class.
  *
  * Mirrors `org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate` used by the JVM backend so that
  * light classes do not autogenerate `@JvmExposeBoxed` boxed variants for declarations that cannot be
@@ -79,7 +79,12 @@ internal class MethodGenerationResult(val isRegularMethodRequired: Boolean, val 
  */
 context(_: KaSession)
 internal fun isEffectivelyPrivate(symbol: KaDeclarationSymbol): Boolean {
-    if (symbol.visibility == KaSymbolVisibility.PRIVATE) return true
+    val isAccessible = when (symbol.visibility) {
+        KaSymbolVisibility.PUBLIC, KaSymbolVisibility.PROTECTED, KaSymbolVisibility.INTERNAL -> true
+        else -> false
+    }
+    if (!isAccessible) return true
+
     val containingClass = symbol.containingDeclaration as? KaClassSymbol ?: return false
     return isEffectivelyPrivate(containingClass)
 }
@@ -147,5 +152,23 @@ internal fun methodGeneration(
     )
 }
 
-internal fun KaDeclarationSymbol.isOverridable(): Boolean =
-    visibility != KaSymbolVisibility.PRIVATE && modality != KaSymbolModality.FINAL
+/**
+ * Whether the declaration can be overridden.
+ *
+ * Mirrors `org.jetbrains.kotlin.ir.util.isOverridable` used by the JVM backend: a member of a class which cannot be
+ * inherited is not overridable even if the member's own modality is [KaSymbolModality.OPEN].
+ */
+context(_: KaSession)
+internal fun KaDeclarationSymbol.isOverridable(): Boolean {
+    val containingClass = when (this) {
+        is KaPropertyAccessorSymbol -> containingDeclaration?.containingDeclaration
+        else -> containingDeclaration
+    } as? KaClassSymbol ?: return false
+
+    return visibility != KaSymbolVisibility.PRIVATE &&
+            modality != KaSymbolModality.FINAL &&
+            !containingClass.isEffectivelyFinal
+}
+
+private val KaClassSymbol.isEffectivelyFinal: Boolean
+    get() = modality == KaSymbolModality.FINAL && classKind != KaClassKind.ENUM_CLASS
