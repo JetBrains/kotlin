@@ -15,6 +15,15 @@ public final class ValueClass /* pack.ValueClass*/ implements pack.Interface {
   private final int value;
 
   @java.lang.Override()
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() pack.ValueClassImpl getPropertyWithValueClass();//  getPropertyWithValueClass()
+
+  @java.lang.Override()
+  @kotlin.jvm.JvmExposeBoxed()
+  public void functionWithValueParam(@org.jetbrains.annotations.NotNull() pack.ValueClassImpl);//  functionWithValueParam(@org.jetbrains.annotations.NotNull() pack.ValueClassImpl)
+
+  @java.lang.Override()
   public int getRegularVariable();//  getRegularVariable()
 
   @java.lang.Override()
@@ -41,6 +50,15 @@ public final class ValueClass /* pack.ValueClass*/ implements pack.Interface {
 @<error>()
 public final class ValueClassImpl /* pack.ValueClassImpl*/ implements pack.Interface {
   private final int int;
+
+  @java.lang.Override()
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() pack.ValueClassImpl getPropertyWithValueClass();//  getPropertyWithValueClass()
+
+  @java.lang.Override()
+  @kotlin.jvm.JvmExposeBoxed()
+  public void functionWithValueParam(@org.jetbrains.annotations.NotNull() pack.ValueClassImpl);//  functionWithValueParam(@org.jetbrains.annotations.NotNull() pack.ValueClassImpl)
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
