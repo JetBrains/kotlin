@@ -28,6 +28,7 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      *
      *  - For top-level declarations, a containing [KaScriptSymbol], or `null` for non-script declarations.
      *  - For class members, the containing class symbol.
+     *  - For property members, the corresponding property.
      *  - For local declarations, the symbol of the containing declaration.
      */
     public val KaSymbol.containingDeclaration: KaDeclarationSymbol?
