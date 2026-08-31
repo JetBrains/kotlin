@@ -41,7 +41,6 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
     val SAM_CONVERSIONS by key<JvmClosureGenerationScheme>()
     val LAMBDAS by key<JvmClosureGenerationScheme>()
     val ABI_STABILITY by key<JvmAbiStability>("ABI stability of class files produced by JVM IR and/or FIR.")
-    val DO_NOT_CLEAR_BINDING_CONTEXT by key<Boolean>("When using K1, do not clear BindingContext between psi2ir and lowerings.")
     val NO_RESET_JAR_TIMESTAMPS by key<Boolean>()
     val NO_UNIFIED_NULL_CHECKS by key<Boolean>("Use pre-1.4 exception types in null checks instead of java.lang.NPE.")
     val NO_SOURCE_DEBUG_EXTENSION by key<Boolean>("Do not generate @kotlin.jvm.internal.SourceDebugExtension annotation on a class with the copy of SMAP.")

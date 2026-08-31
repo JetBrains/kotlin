@@ -30,13 +30,6 @@ fun main(args: Array<String>) {
                     )
                 )
             )
-            testClass<AbstractIncrementalPsiJvmCompilerRunnerTest>(
-                init = incrementalJvmTestData(
-                    folderToExcludePatternMap = mapOf(
-                        PURE_KOTLIN to ExcludePattern.forK2
-                    )
-                )
-            )
 
             testClass<AbstractIncrementalJsKlibMultiModuleCompilerRunnerTest> {
                 modelForDirectoryBasedTest("incremental/multiModule", "common", extension = null, excludeParentDirs = true)

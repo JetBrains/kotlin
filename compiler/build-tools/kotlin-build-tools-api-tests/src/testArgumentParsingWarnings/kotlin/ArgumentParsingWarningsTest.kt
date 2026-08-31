@@ -181,11 +181,11 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-Xsuppress-warning=NOTHING_TO_INLINE"))
+                it.compilerArguments.applyArgumentStrings(listOf("-Xjvm-default=all"))
             }) {
                 assertLogContainsSubstringExactlyTimes(
                     LogLevel.WARN,
-                    "The argument '-Xsuppress-warning' is deprecated since Kotlin",
+                    "The argument '-Xjvm-default' is deprecated since Kotlin",
                     1,
                 )
             }

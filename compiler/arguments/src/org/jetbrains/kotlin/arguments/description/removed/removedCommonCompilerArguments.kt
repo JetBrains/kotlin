@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.arguments.description.removed
 
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
-import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
-import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
-import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
-import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
-import org.jetbrains.kotlin.arguments.dsl.defaultFalse
-import org.jetbrains.kotlin.arguments.dsl.previous
+import org.jetbrains.kotlin.arguments.dsl.*
+import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
+import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
+import org.jetbrains.kotlin.arguments.dsl.types.StringListType
+import org.jetbrains.kotlin.arguments.dsl.types.StringType
 import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.config.LanguageFeature
 
@@ -134,5 +133,94 @@ val removedCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLe
             introducedVersion = KotlinReleaseVersion.v1_5_30,
             removedVersion = KotlinReleaseVersion.v2_5_0,
         )
+    }
+
+    @OptIn(ExperimentalArgumentApi::class)
+    compilerArgument {
+        val introducedVersion = KotlinReleaseVersion.v2_1_0
+        val deprecatedVersion = KotlinReleaseVersion.v2_2_0 // According to https://github.com/JetBrains/kotlin/commit/533d2f5ba6e6d2759d92d59b6004ee433214e262
+        val commonDescriptionPart = "Suppress specified warning module-wide."
+        name = "Xsuppress-warning"
+        compilerName = "suppressedDiagnostics"
+        description = ReleaseDependent(
+            commonDescriptionPart,
+            deprecatedVersion..KotlinReleaseVersion.v2_4_20 to "$commonDescriptionPart This option is deprecated in favor of \"-Xwarning-level\" flag",
+            introducedVersion..deprecatedVersion.previous!! to commonDescriptionPart,
+        )
+        valueDescription = "<WARNING_NAME>".asReleaseDependent()
+        valueType = StringArrayType.defaultNull
+        argumentType = StringListType.defaultEmpty
+        deprecatedMessage = "Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings)."
+
+        lifecycle(
+            introducedVersion = introducedVersion,
+            deprecatedVersion = deprecatedVersion,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xuse-fir-experimental-checkers"
+        description = "Enable experimental frontend IR checkers that are not yet ready for production.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_1_0,
+            deprecatedVersion = KotlinReleaseVersion.v2_2_20,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xuse-fir-lt"
+        compilerName = "useFirLT"
+        description = "Compile using the LightTree parser with the frontend IR.".asReleaseDependent()
+        valueType = BooleanType.defaultTrue
+        deprecatedMessage =
+            "The light tree mode is enabled by default, and it will become the only available mode in one of the future releases."
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_7_0,
+            deprecatedVersion = KotlinReleaseVersion.v2_4_20,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
+    }
+
+    compilerArgument {
+        name = "Xintellij-plugin-root"
+        description =
+            "Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.".asReleaseDependent()
+        valueDescription = "<path>".asReleaseDependent()
+        valueType = StringType.defaultNull
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_3,
+            deprecatedVersion = KotlinReleaseVersion.v2_4_20,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xno-check-actual"
+        description = "Do not check for the presence of the 'actual' modifier in multiplatform projects.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_60,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xignore-const-optimization-errors"
+        description = "Ignore all compilation exceptions while optimizing some constant expressions.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_9_0,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 }

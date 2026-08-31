@@ -4628,7 +4628,7 @@
                             "introducedVersion": "1.9.0",
                             "stabilizedVersion": null,
                             "deprecatedVersion": null,
-                            "removedVersion": null
+                            "removedVersion": "2.5.0"
                         },
                         "argumentType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
@@ -4718,7 +4718,7 @@
                             "introducedVersion": "1.1.3",
                             "stabilizedVersion": null,
                             "deprecatedVersion": "2.4.20",
-                            "removedVersion": null
+                            "removedVersion": "2.5.0"
                         },
                         "argumentType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
@@ -5213,7 +5213,7 @@
                             "introducedVersion": "1.1.60",
                             "stabilizedVersion": null,
                             "deprecatedVersion": null,
-                            "removedVersion": null
+                            "removedVersion": "2.5.0"
                         },
                         "argumentType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
@@ -6316,7 +6316,7 @@
                             "introducedVersion": "2.1.0",
                             "stabilizedVersion": null,
                             "deprecatedVersion": "2.2.0",
-                            "removedVersion": null
+                            "removedVersion": "2.5.0"
                         },
                         "argumentType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringListType",
@@ -6406,7 +6406,7 @@
                             "introducedVersion": "2.1.0",
                             "stabilizedVersion": null,
                             "deprecatedVersion": "2.2.20",
-                            "removedVersion": null
+                            "removedVersion": "2.5.0"
                         },
                         "argumentType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
@@ -6502,7 +6502,7 @@
                             "introducedVersion": "1.7.0",
                             "stabilizedVersion": null,
                             "deprecatedVersion": "2.4.20",
-                            "removedVersion": null
+                            "removedVersion": "2.5.0"
                         },
                         "argumentType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
@@ -8043,7 +8043,7 @@
                                     "introducedVersion": "1.4.30",
                                     "stabilizedVersion": null,
                                     "deprecatedVersion": null,
-                                    "removedVersion": null
+                                    "removedVersion": "2.5.0"
                                 },
                                 "argumentType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",

@@ -39,7 +39,6 @@ open class CommonCompilerArgumentsConfigurator {
         HashMap<AnalysisFlag<*>, Any>().apply {
             putAnalysisFlag(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
             putAnalysisFlag(AnalysisFlags.skipPrereleaseCheck, skipPrereleaseCheck || skipMetadataVersionCheck)
-            putAnalysisFlag(AnalysisFlags.multiPlatformDoNotCheckActual, noCheckActual)
             putAnalysisFlag(AnalysisFlags.optIn, optIn?.toList().orEmpty())
             putAnalysisFlag(AnalysisFlags.escapingFunctionsList, parseEscapingFunctions(arguments, reporter))
             putAnalysisFlag(AnalysisFlags.skipExpectedActualDeclarationChecker, metadataKlib)
@@ -211,9 +210,6 @@ open class CommonCompilerArgumentsConfigurator {
 
     private fun HashMap<AnalysisFlag<*>, Any>.fillWarningLevelMap(arguments: CommonCompilerArguments, reporter: Reporter) {
         val result = buildMap {
-            @Suppress("DEPRECATION")
-            val suppressedDiagnostics = arguments.suppressedDiagnostics
-            suppressedDiagnostics.associateWithTo(this) { WarningLevel.Disabled }
             for (rawArgument in arguments.warningLevels) {
                 val split = rawArgument.split(":", limit = 2)
                 if (split.size < 2) {
@@ -231,12 +227,7 @@ open class CommonCompilerArgumentsConfigurator {
                 }
                 val existing = put(name, level)
                 if (existing != null) {
-                    val message = if (name in suppressedDiagnostics) {
-                        "Severity of $name is configured both with -Xwarning-level and -Xsuppress-warning flags"
-                    } else {
-                        "-Xwarning-level is duplicated for warning $name"
-                    }
-                    reporter.reportError(message)
+                    reporter.reportError("-Xwarning-level is duplicated for warning $name")
                 }
             }
         }

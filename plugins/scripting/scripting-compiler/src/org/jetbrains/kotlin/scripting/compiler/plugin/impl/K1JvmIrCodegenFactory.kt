@@ -190,7 +190,7 @@ class K1JvmIrCodegenFactory(
 
         stubGenerator.unboundSymbolGeneration = true
 
-        if (!configuration.getBoolean(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT) && files.none { it.isScript() }) {
+        if (files.none { it.isScript() }) {
             if (bindingContext !is CleanableBindingContext) {
                 error("BindingContext should be cleanable in JVM IR to avoid leaking memory: $bindingContext")
             }

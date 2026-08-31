@@ -31,6 +31,13 @@ private val temporaryExceptions: Set<String> = setOf(
     "Xunrestricted-builder-inference",
     "Xtype-enhancement-improvements-strict-mode",
     "Xenhance-type-parameter-types-to-def-not-null",
+    "Xsuppress-warning",
+    "Xuse-fir-experimental-checkers",
+    "Xuse-fir-lt",
+    "Xintellij-plugin-root",
+    "Xno-check-actual",
+    "Xignore-const-optimization-errors",
+    "Xir-do-not-clear-binding-context",
 )
 
 internal fun Set<StableKotlinCompilerArgument>.filterNonDeprecated() = filter {

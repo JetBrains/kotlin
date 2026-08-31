@@ -246,17 +246,6 @@ to force diagnostics to be reported.""".asReleaseDependent()
     }
 
     compilerArgument {
-        name = "Xir-do-not-clear-binding-context"
-        compilerName = "doNotClearBindingContext"
-        description = "When using the IR backend, do not clear BindingContext between 'psi2ir' and lowerings.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_4_30,
-        )
-    }
-
-    compilerArgument {
         name = "Xbackend-threads"
         description = """Run codegen phase in N parallel threads.
 0 means use one thread per processor core.

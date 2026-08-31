@@ -193,9 +193,7 @@ class KaBaseCompilationOptionsBuilder(
     }
 
     @KaIdeApi
-    override fun ignoreConstOptimizationErrors(value: Boolean) = withValidityAssertion {
-        configuration.put(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS, value)
-    }
+    override fun ignoreConstOptimizationErrors(value: Boolean) {}
 
     @KaIdeApi
     override fun jvmExecutionStack(value: Sequence<PsiElement?>) = withValidityAssertion {

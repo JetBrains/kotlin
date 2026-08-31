@@ -102,10 +102,6 @@ object JVMConfigurationKeys {
     @JvmField
     val ABI_STABILITY = CompilerConfigurationKey.create<JvmAbiStability>("ABI_STABILITY")
 
-    // When using K1, do not clear BindingContext between psi2ir and lowerings.
-    @JvmField
-    val DO_NOT_CLEAR_BINDING_CONTEXT = CompilerConfigurationKey.create<Boolean>("DO_NOT_CLEAR_BINDING_CONTEXT")
-
     @JvmField
     val NO_RESET_JAR_TIMESTAMPS = CompilerConfigurationKey.create<Boolean>("NO_RESET_JAR_TIMESTAMPS")
 
@@ -279,10 +275,6 @@ var CompilerConfiguration.lambdas: JvmClosureGenerationScheme?
 var CompilerConfiguration.abiStability: JvmAbiStability?
     get() = get(JVMConfigurationKeys.ABI_STABILITY)
     set(value) { put(JVMConfigurationKeys.ABI_STABILITY, requireNotNull(value) { "nullable values are not allowed" }) }
-
-var CompilerConfiguration.doNotClearBindingContext: Boolean
-    get() = getBoolean(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT)
-    set(value) { put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, value) }
 
 var CompilerConfiguration.noResetJarTimestamps: Boolean
     get() = getBoolean(JVMConfigurationKeys.NO_RESET_JAR_TIMESTAMPS)

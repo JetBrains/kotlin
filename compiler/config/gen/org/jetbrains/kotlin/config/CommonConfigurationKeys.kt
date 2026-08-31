@@ -95,9 +95,6 @@ object CommonConfigurationKeys {
     val ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS = CompilerConfigurationKey.create<Boolean>("ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS")
 
     @JvmField
-    val IGNORE_CONST_OPTIMIZATION_ERRORS = CompilerConfigurationKey.create<Boolean>("IGNORE_CONST_OPTIMIZATION_ERRORS")
-
-    @JvmField
     @MessageCollectorAccess
     val MESSAGE_COLLECTOR_KEY = CompilerConfigurationKey.create<MessageCollector>("MESSAGE_COLLECTOR_KEY")
 
@@ -230,10 +227,6 @@ var CompilerConfiguration.incrementalCompilation: Boolean
 var CompilerConfiguration.allowAnyScriptsInSourceRoots: Boolean
     get() = getBoolean(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS)
     set(value) { put(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS, value) }
-
-var CompilerConfiguration.ignoreConstOptimizationErrors: Boolean
-    get() = getBoolean(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS)
-    set(value) { put(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS, value) }
 
 @MessageCollectorAccess
 var CompilerConfiguration.messageCollector: MessageCollector

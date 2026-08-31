@@ -6,12 +6,7 @@
 package org.jetbrains.kotlin.arguments.description.removed
 
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
-import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
-import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
-import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
-import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
-import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
-import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.previous
@@ -200,4 +195,15 @@ See KT-45671 for more details.""".asReleaseDependent()
         )
     }
 
+    compilerArgument {
+        name = "Xir-do-not-clear-binding-context"
+        compilerName = "doNotClearBindingContext"
+        description = "When using the IR backend, do not clear BindingContext between 'psi2ir' and lowerings.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_30,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
 }

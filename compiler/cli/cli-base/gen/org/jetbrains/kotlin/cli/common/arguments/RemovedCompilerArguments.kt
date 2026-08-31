@@ -30,6 +30,20 @@ class RemovedCompilerArguments {
         level = DeprecationLevel.ERROR,
     )
     @Argument(
+        value = "-Xignore-const-optimization-errors",
+        description = "Ignore all compilation exceptions while optimizing some constant expressions.",
+        removedVersion = "2.5.0",
+    )
+    var ignoreConstOptimizationErrors: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
         value = "-Xinline-classes",
         description = "Enable experimental inline classes.",
         removedVersion = "2.5.0",
@@ -38,6 +52,22 @@ class RemovedCompilerArguments {
     var inlineClasses: Boolean = false
         set(value) {
             field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xintellij-plugin-root",
+        valueDescription = "<path>",
+        description = "Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.",
+        deprecatedVersion = "2.4.20",
+        removedVersion = "2.5.0",
+    )
+    var intellijPluginRoot: String? = null
+        set(value) {
+            field = if (value.isNullOrEmpty()) null else value
         }
 
     @all:Deprecated(
@@ -59,6 +89,20 @@ class RemovedCompilerArguments {
         }
 
     @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xno-check-actual",
+        description = "Do not check for the presence of the 'actual' modifier in multiplatform projects.",
+        removedVersion = "2.5.0",
+    )
+    var noCheckActual: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
         message = "This is temporary solution (see KT-63712) intended to be used only for stdlib build.",
         level = DeprecationLevel.ERROR,
     )
@@ -74,6 +118,22 @@ class RemovedCompilerArguments {
         }
 
     @all:Deprecated(
+        message = "Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings).",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xsuppress-warning",
+        valueDescription = "<WARNING_NAME>",
+        description = "Suppress specified warning module-wide.",
+        deprecatedVersion = "2.2.0",
+        removedVersion = "2.5.0",
+    )
+    var suppressedDiagnostics: Array<String> = emptyArray()
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
         message = "",
         level = DeprecationLevel.ERROR,
     )
@@ -84,6 +144,36 @@ class RemovedCompilerArguments {
     )
     @Enables(LanguageFeature.UnrestrictedBuilderInference)
     var unrestrictedBuilderInference: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xuse-fir-experimental-checkers",
+        description = "Enable experimental frontend IR checkers that are not yet ready for production.",
+        deprecatedVersion = "2.2.20",
+        removedVersion = "2.5.0",
+    )
+    var useFirExperimentalCheckers: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "The light tree mode is enabled by default, and it will become the only available mode in one of the future releases.",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xuse-fir-lt",
+        description = "Compile using the LightTree parser with the frontend IR.",
+        deprecatedVersion = "2.4.20",
+        removedVersion = "2.5.0",
+    )
+    var useFirLT: Boolean = true
         set(value) {
             field = value
         }
@@ -170,6 +260,20 @@ class RemovedCompilerArguments {
     )
     @Enables(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated)
     var enhanceTypeParameterTypesToDefNotNull: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xir-do-not-clear-binding-context",
+        description = "When using the IR backend, do not clear BindingContext between 'psi2ir' and lowerings.",
+        removedVersion = "2.5.0",
+    )
+    var doNotClearBindingContext: Boolean = false
         set(value) {
             field = value
         }

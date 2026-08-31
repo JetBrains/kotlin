@@ -204,7 +204,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     if (X_FRIEND_PATHS in this) { arguments.friendPaths = get(X_FRIEND_PATHS).map { it.absolutePathStringOrThrow() }.also { list -> list.checkNoneContains(",") }.toTypedArray()}
     if (X_GENERATE_STRICT_METADATA_VERSION in this) { arguments.strictMetadataVersionSemantics = get(X_GENERATE_STRICT_METADATA_VERSION)}
     try { if (X_INDY_ALLOW_ANNOTATED_LAMBDAS in this) { arguments.indyAllowAnnotatedLambdas = get(X_INDY_ALLOW_ANNOTATED_LAMBDAS)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_INDY_ALLOW_ANNOTATED_LAMBDAS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
-    if (X_IR_DO_NOT_CLEAR_BINDING_CONTEXT in this) { arguments.doNotClearBindingContext = get(X_IR_DO_NOT_CLEAR_BINDING_CONTEXT)}
+    try { if (X_IR_DO_NOT_CLEAR_BINDING_CONTEXT in this) { arguments.setUsingReflection("doNotClearBindingContext", get(X_IR_DO_NOT_CLEAR_BINDING_CONTEXT))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_IR_DO_NOT_CLEAR_BINDING_CONTEXT. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     try { if (X_IR_INLINER in this) { arguments.setUsingReflection("enableIrInliner", get(X_IR_INLINER))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_IR_INLINER. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
     if (X_JAVA_PACKAGE_PREFIX in this) { arguments.javaPackagePrefix = get(X_JAVA_PACKAGE_PREFIX)}
     if (X_JAVA_SOURCE_ROOTS in this) { arguments.javaSourceRoots = get(X_JAVA_SOURCE_ROOTS).map { it.absolutePathStringOrThrow() }.also { list -> list.checkNoneContains(",") }.toTypedArray()}
@@ -289,7 +289,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     try { this[X_FRIEND_PATHS] = arguments.friendPaths.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_GENERATE_STRICT_METADATA_VERSION] = arguments.strictMetadataVersionSemantics } catch (_: NoSuchMethodError) {  }
     try { this[X_INDY_ALLOW_ANNOTATED_LAMBDAS] = arguments.indyAllowAnnotatedLambdas } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_DO_NOT_CLEAR_BINDING_CONTEXT] = arguments.doNotClearBindingContext } catch (_: NoSuchMethodError) {  }
+    try { this[X_IR_DO_NOT_CLEAR_BINDING_CONTEXT] = arguments.getUsingReflection<Boolean>("doNotClearBindingContext") } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_INLINER] = arguments.getUsingReflection<Boolean>("enableIrInliner") } catch (_: NoSuchMethodError) {  }
     try { this[X_JAVA_PACKAGE_PREFIX] = arguments.javaPackagePrefix } catch (_: NoSuchMethodError) {  }
     try { this[X_JAVA_SOURCE_ROOTS] = arguments.javaSourceRoots.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }

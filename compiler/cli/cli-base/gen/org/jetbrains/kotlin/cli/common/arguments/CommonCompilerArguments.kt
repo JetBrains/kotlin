@@ -653,29 +653,6 @@ with bodies.""",
         }
 
     @Argument(
-        value = "-Xignore-const-optimization-errors",
-        description = "Ignore all compilation exceptions while optimizing some constant expressions.",
-    )
-    var ignoreConstOptimizationErrors: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @all:Deprecated("")
-    @Argument(
-        value = "-Xintellij-plugin-root",
-        valueDescription = "<path>",
-        description = "Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.",
-        deprecatedVersion = "2.4.20",
-    )
-    var intellijPluginRoot: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-Xintrinsic-const-evaluation",
         description = "Enables `IntrinsicConstEvaluation` language feature.`",
     )
@@ -779,16 +756,6 @@ with bodies.""",
     )
     @Enables(LanguageFeature.NestedTypeAliases)
     var nestedTypeAliases: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xno-check-actual",
-        description = "Do not check for the presence of the 'actual' modifier in multiplatform projects.",
-    )
-    var noCheckActual: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -1019,31 +986,6 @@ with bodies.""",
             field = value
         }
 
-    @all:Deprecated("Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings).")
-    @Argument(
-        value = "-Xsuppress-warning",
-        valueDescription = "<WARNING_NAME>",
-        description = "Suppress specified warning module-wide.",
-        deprecatedVersion = "2.2.0",
-    )
-    var suppressedDiagnostics: Array<String> = emptyArray()
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @all:Deprecated("")
-    @Argument(
-        value = "-Xuse-fir-experimental-checkers",
-        description = "Enable experimental frontend IR checkers that are not yet ready for production.",
-        deprecatedVersion = "2.2.20",
-    )
-    var useFirExperimentalCheckers: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @all:Deprecated("")
     @Argument(
         value = "-Xuse-fir-ic",
@@ -1051,18 +993,6 @@ with bodies.""",
         deprecatedVersion = "2.5.0",
     )
     var useFirIC: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @all:Deprecated("The light tree mode is enabled by default, and it will become the only available mode in one of the future releases.")
-    @Argument(
-        value = "-Xuse-fir-lt",
-        description = "Compile using the LightTree parser with the frontend IR.",
-        deprecatedVersion = "2.4.20",
-    )
-    var useFirLT: Boolean = true
         set(value) {
             checkFrozen()
             field = value

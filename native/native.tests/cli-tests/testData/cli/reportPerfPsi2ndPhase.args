@@ -1,7 +1,0 @@
--l
-$TESTDATA_DIR$/unpackedExampleKlib
--produce
-program
--o
-$TEMP_DIR$/reportPerfPsi2ndPhase
--Xreport-perf=true
