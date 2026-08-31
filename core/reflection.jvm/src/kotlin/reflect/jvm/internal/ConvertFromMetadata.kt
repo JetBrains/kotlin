@@ -151,9 +151,11 @@ internal fun KmType.toKType(
         result = unwrapSuspendFunctionType(result, computeJavaType)
             ?: throw KotlinReflectionInternalError("Invalid suspend function type: $result")
     }
-    flexibleTypeUpperBound?.let {
-        if (it.typeFlexibilityId == JvmProtoBufUtil.PLATFORM_TYPE_ID) {
-            return FlexibleKType.create(result, it.type.toKType(classLoader, typeParameterTable), isRaw, computeJavaType)
+    flexibleTypeUpperBound?.let { upperBound ->
+        if (upperBound.typeFlexibilityId == JvmProtoBufUtil.PLATFORM_TYPE_ID) {
+            return FlexibleKType.create(
+                result, upperBound.type.toKType(classLoader, typeParameterTable), isRaw, computeJavaType?.let { lazy(PUBLICATION, it) },
+            )
         }
     }
     return result
