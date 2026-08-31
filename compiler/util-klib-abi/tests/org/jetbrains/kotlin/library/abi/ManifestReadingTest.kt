@@ -104,7 +104,7 @@ class ManifestReadingTest {
                     }
                 }
             }
-            includeIr(SerializedIrModule(files = emptyList(), fileWithPreparedInlinableFunctions = null)) // empty IR
+            includeIr(SerializedIrModule(files = emptyList(), filesWithPreparedInlinableFunctions = emptyList())) // empty IR
         }.writeTo(libraryFile.absolutePath)
 
         return libraryFile
