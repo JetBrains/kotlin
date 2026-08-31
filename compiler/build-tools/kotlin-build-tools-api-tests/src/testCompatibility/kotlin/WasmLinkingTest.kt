@@ -10,8 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Co
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.NOPACK
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArgumentsLinkingArguments.Companion.X_PARTIAL_LINKAGE_LOGLEVEL
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerKlibArguments
-import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerKlibArguments.Companion.X_WASM_TARGET
+import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerArguments.Companion.X_WASM_TARGET
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.PartialLinkageLogLevel
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.WasmTarget
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
@@ -74,10 +73,7 @@ class WasmLinkingTest : BaseCompilationTest() {
                 it.compilerArguments[X_WASM_TARGET] = WasmTarget.WASM_WASI
             })
             module.link(compilationConfigAction = {
-                // X_WASM_TARGET is not available on the linking arguments, so the wasm-wasi target cannot be set on the
-                // linking operation through the public typed API; we set it via a cast to the shared underlying builder.
-                // TODO: KT-88684 drop the cast and set the target through the typed linking argument
-                (it.compilerArguments as WasmCompilerKlibArguments.Builder)[X_WASM_TARGET] = WasmTarget.WASM_WASI
+                it.compilerArguments[X_WASM_TARGET] = WasmTarget.WASM_WASI
             }) {
                 assertOutputFileCountWithExtension(".wasm", 1)
                 assertOutputFileCountWithExtension(".mjs", 1)

@@ -39,7 +39,6 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
-        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
     compilerArgument {
