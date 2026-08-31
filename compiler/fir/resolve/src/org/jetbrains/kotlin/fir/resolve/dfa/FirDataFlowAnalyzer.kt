@@ -1688,20 +1688,19 @@ abstract class FirDataFlowAnalyzer(
 
     // ----------------------------------- Annotations -----------------------------------
 
-    // `enterAnnotationCall` / `exitAnnotationCall` should be used only in combination with
-    // `enterCallArguments` / `exitCallArguments`. Otherwise, use `enterAnnotation` / `exitAnnotation`.
-
+    @ArrayLiteralResolution
     fun enterAnnotation() {
         graphBuilder.enterFakeExpression().mergeIncomingFlow()
     }
 
+    @ArrayLiteralResolution
     fun exitAnnotation() {
         graphBuilder.exitFakeExpression()
         resetSmartCastPosition() // rollback to position before annotation
     }
 
     fun enterAnnotationCall() {
-        enterAnnotation()
+        graphBuilder.enterFakeExpression().mergeIncomingFlow()
     }
 
     // See also `exitFunctionCall`
@@ -1714,7 +1713,8 @@ abstract class FirDataFlowAnalyzer(
         lambdaExitNodes.forEach { it.mergeIncomingFlow() }
         node.mergeIncomingFlow()
 
-        exitAnnotation()
+        graphBuilder.exitFakeExpression()
+        resetSmartCastPosition() // rollback to position before annotation
     }
 
     // ----------------------------------- Init block -----------------------------------
