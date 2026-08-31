@@ -76,3 +76,12 @@ internal fun <R, P, T> startCoroutineUninterceptedOrReturnIntrinsic2(
 internal val EmptyContinuation: Continuation<Any?> = Continuation(EmptyCoroutineContext) { result ->
     val _ = result.getOrThrow()
 }
+
+// For State Machine:   (cont as? CoroutineImpl)?.intercepted() ?: cont
+// For Stack Switching: (cont as? CoroutineImplStackSwitching<*, *>)?.intercepted() ?: cont
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+@UsedFromCompilerGeneratedCode
+internal fun <T> interceptedIntrinsic(cont: Continuation<T>): Continuation<T> =
+    implementedAsIntrinsic
+

@@ -655,8 +655,8 @@ private object CallableIds {
 
     val interceptedIntrinsic = "interceptedIntrinsic".wasmCallableId
 
-    val suspendCoroutineUninterceptedOrReturnIntrinsic = "suspendCoroutineUninterceptedOrReturnIntrinsic".wasmCallableId
-    val suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching = "suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching".wasmCallableId
+    val suspendCoroutineUninterceptedOrReturnStackSwitching = "suspendCoroutineUninterceptedOrReturnStackSwitching".wasmCallableId
+    val suspendCoroutineUninterceptedOrReturn = "suspendCoroutineUninterceptedOrReturn".wasmCallableId
 
     val suspendFunction0ToContref = "suspendFunction0ToContref".wasmCallableId
     val suspendFunction1ToContref = "suspendFunction1ToContref".wasmCallableId
