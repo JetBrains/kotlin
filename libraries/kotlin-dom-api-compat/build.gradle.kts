@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.support.serviceOf
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 
@@ -13,18 +14,21 @@ val jsStdlibSources = "${projectDir}/../stdlib/js/src"
 @Suppress("UNUSED_VARIABLE")
 kotlin {
     explicitApi()
-    js()
+    val buildFeatures = serviceOf<BuildFeatures>()
+    if (!buildFeatures.isolatedProjects.active.get()) {
+        js()
 
-    sourceSets {
-        jsMain {
-            if (!kotlinBuildProperties.isInIdeaSync.get()) {
-                kotlin.srcDir("$jsStdlibSources/org.w3c")
-                kotlin.srcDir("$jsStdlibSources/kotlinx")
-                kotlin.srcDir("$jsStdlibSources/kotlin/browser")
-                kotlin.srcDir("$jsStdlibSources/kotlin/dom")
-            }
-            dependencies {
-                api(project(":kotlin-stdlib"))
+        sourceSets {
+            jsMain {
+                if (!kotlinBuildProperties.isInIdeaSync.get()) {
+                    kotlin.srcDir("$jsStdlibSources/org.w3c")
+                    kotlin.srcDir("$jsStdlibSources/kotlinx")
+                    kotlin.srcDir("$jsStdlibSources/kotlin/browser")
+                    kotlin.srcDir("$jsStdlibSources/kotlin/dom")
+                }
+                dependencies {
+                    api(project(":kotlin-stdlib"))
+                }
             }
         }
     }
@@ -49,23 +53,24 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile>().configureEa
 val emptyJavadocJar = tasks.register("emptyJavadocJar", Jar::class) {
     archiveClassifier.set("javadoc")
 }
-
-publishing {
-    publications {
-        val mavenPublication = register<MavenPublication>("maven") {
-            // FIXME: Remove customized publication in KT-83065
-            from(kotlin.js().components.single())
-            configureKotlinPomAttributes(project, "Kotlin DOM API compatibility library", packaging = "klib")
+val buildFeatures = serviceOf<BuildFeatures>()
+if (!buildFeatures.isolatedProjects.active.get()) {
+    publishing {
+        publications {
+            val mavenPublication = register<MavenPublication>("maven") {
+                // FIXME: Remove customized publication in KT-83065
+                from(kotlin.js().components.single())
+                configureKotlinPomAttributes(project, "Kotlin DOM API compatibility library", packaging = "klib")
+            }
+            withType<MavenPublication> {
+                artifact(emptyJavadocJar)
+            }
+            configureSbom(
+                target = "Maven",
+                gradleConfigurations = setOf(),
+                publication = mavenPublication,
+            )
         }
-        withType<MavenPublication> {
-            artifact(emptyJavadocJar)
-        }
-        configureSbom(
-            target = "Maven",
-            gradleConfigurations = setOf(),
-            publication = mavenPublication,
-        )
     }
 }
-
 configureDefaultPublishing()
