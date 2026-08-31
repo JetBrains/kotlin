@@ -313,9 +313,8 @@ testing {
                 projectTests {
                     testTask(
                         taskName = testTask.name,
-                        javaLauncher = JdkMajorVersion.JDK_1_8,
+                        javaLauncher = JdkMajorVersion.JDK_17_0,
                         skipInLocalBuild = false,
-                        garbageCollector = GarbageCollector.Parallel
                     ) {
                         systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
                         systemProperty(
