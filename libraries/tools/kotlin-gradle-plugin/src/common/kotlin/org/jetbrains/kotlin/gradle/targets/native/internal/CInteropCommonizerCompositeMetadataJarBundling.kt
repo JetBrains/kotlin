@@ -25,8 +25,12 @@ internal suspend fun Project.includeCommonizedCInteropMetadata(metadataKlib: Zip
     val outputDirectory = commonizedOutputDirectory(commonizerDependencyToken) ?: return
 
     metadataKlib.from(outputDirectory) { spec ->
-        spec.into(cinteropMetadataDirectoryPath(compilation.defaultSourceSet.name))
+        spec.into(compilation.cinteropMetadataDirectoryPath())
     }
+}
+
+internal fun KotlinSharedNativeCompilation.cinteropMetadataDirectoryPath(): String {
+    return cinteropMetadataDirectoryPath(defaultSourceSet.name)
 }
 
 internal object CInteropCommonizerCompositeMetadataJarBundling {

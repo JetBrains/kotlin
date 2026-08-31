@@ -9,12 +9,15 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
 import org.jetbrains.kotlin.gradle.targets.js.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
@@ -56,7 +59,16 @@ internal constructor(
     KotlinWasmJsTargetDsl,
     KotlinWasmWasiTargetDsl,
     KotlinJsSubTargetContainerDsl,
-    KotlinWasmSubTargetContainerDsl {
+    KotlinWasmSubTargetContainerDsl,
+    KotlinTargetWithKotlinArchiveSupport {
+
+    @InternalKotlinGradlePluginApi
+    override val isStoredInKotlinArchive: Provider<Boolean> =
+        project.multiplatformExtension.publishing.publicationFormat.map { it == KotlinPublicationFormat.KOTLIN_ARCHIVE }
+
+    @InternalKotlinGradlePluginApi
+    override val platformNameInKotlinArchive: String
+        get() = targetPreset?.name ?: error("Name in kotlin archive in unknown for $targetName")
 
     @Deprecated(
         "Creating new KotlinJsIrTarget instances outside of Kotlin Gradle plugin is deprecated. Scheduled for removal in Kotlin 2.7.",

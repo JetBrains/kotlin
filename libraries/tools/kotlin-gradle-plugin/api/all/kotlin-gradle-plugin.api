@@ -1188,7 +1188,7 @@ public class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilationFacto
 	public final fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget : org/jetbrains/kotlin/gradle/plugin/mpp/KotlinTargetWithBinaries, org/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions {
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget : org/jetbrains/kotlin/gradle/plugin/mpp/KotlinTargetWithBinaries, org/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions, org/jetbrains/kotlin/gradle/plugin/mpp/archive/KotlinTargetWithKotlinArchiveSupport {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget$Companion;
 	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/konan/target/KonanTarget;)V
 	public fun compilerOptions (Lkotlin/jvm/functions/Function1;)V
@@ -3221,7 +3221,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/ir/Kotlin
 	public abstract fun processBinary ()V
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTarget : org/jetbrains/kotlin/gradle/plugin/mpp/KotlinTargetWithBinaries, org/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetContainerDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmSubTargetContainerDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl {
+public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTarget : org/jetbrains/kotlin/gradle/plugin/mpp/KotlinTargetWithBinaries, org/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests, org/jetbrains/kotlin/gradle/plugin/mpp/archive/KotlinTargetWithKotlinArchiveSupport, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetContainerDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmSubTargetContainerDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl {
 	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;Z)V
 	public fun applyBinaryen ()V
 	public fun applyBinaryen (Lkotlin/jvm/functions/Function1;)V
