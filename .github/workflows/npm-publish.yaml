@@ -36,7 +36,8 @@ jobs:
           unzip -q archive.zip -d "$DEST_DIR"
       - name: Publish to npm
         run: >
-          ./gradlew -p js/npm -PdryRun=true
+          ./gradlew -p js/npm
+          --no-build-cache
           -Pkotlin.deploy.tag=${{ github.event.client_payload.deploy_tag }}
           -Pkotlin.deploy.version=${{ github.event.client_payload.deploy_version }}
           publishAll
