@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Action
 import org.gradle.api.component.AdhocComponentWithVariants
+import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 /**
@@ -65,4 +66,46 @@ interface KotlinPublishing {
     fun adhocSoftwareComponent(configure: Action<AdhocComponentWithVariants>) {
         configure.execute(adhocSoftwareComponent)
     }
+
+    /**
+     * Configures which Kotlin Multiplatform publication format is used.
+     *
+     * The default value is equal to `kotlin.publicationFormat` Gradle property,
+     * or [KotlinPublicationFormat.LEGACY_MULTIPLE_PUBLICATIONS] when that property was not specified.
+     *
+     * Don't have any effect in jvm-only projects.
+     *
+     * @since 2.5.0
+     */
+    @ExperimentalKotlinGradlePluginApi
+    val publicationFormat: Property<KotlinPublicationFormat>
+}
+
+/**
+ * Controls which Kotlin Multiplatform publication format is used.
+ *
+ * See [KotlinPublishing.publicationFormat] for more details.
+ * @since 2.5.0
+ */
+@ExperimentalKotlinGradlePluginApi
+enum class KotlinPublicationFormat {
+    /**
+     * Publish js, wasm and native platforms as a single artifact alongside with metadata
+     * in the root component of publication. Don't create sub-publications for such platforms.
+     *
+     * Jvm and Android platforms continue to be published as sub-publications.
+     *
+     * This format would produce significantly less artifact files, and smaller total publication size.
+     * Kotlin of version at least 2.5 would be required for multiplatform clients to consume such publication.
+     *
+     * @since 2.5.0
+     */
+    KOTLIN_ARCHIVE,
+
+    /**
+     * Publish all platforms as sub-publications, only metadata is published in the root component.
+     *
+     * @since 2.5.0
+     */
+    LEGACY_MULTIPLE_PUBLICATIONS,
 }
