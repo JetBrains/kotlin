@@ -118,6 +118,13 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
             if (declaration.effectiveVisibility.privateApi) {
                 reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE)
             }
+
+            if (declaration is FirConstructor && declaration.isFromSealedClass) {
+                reporter.reportOn(
+                    jvmExposeBoxedAnnotation.source,
+                    FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SEALED_CONSTRUCTOR
+                )
+            }
         }
     }
 

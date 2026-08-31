@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_LOCALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SEALED_CONSTRUCTOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_REIFIED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC
@@ -393,6 +394,10 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE,
             "'@JvmExposeBoxed' cannot expose private functions."
+        )
+        map.put(
+            JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SEALED_CONSTRUCTOR,
+            "'@JvmExposeBoxed' cannot expose a constructor of a sealed class: Java code cannot inherit from it."
         )
         map.put(
             JVM_EXPOSE_BOXED_CAN_BE_REPLACED_WITH_JVM_NAME,
