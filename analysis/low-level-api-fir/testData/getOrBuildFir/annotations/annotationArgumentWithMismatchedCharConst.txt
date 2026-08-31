@@ -3,7 +3,7 @@ FIR element: FirAnnotationCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-@R|Anno|[Types](c = R|/CHAR| [evaluated = Char(null)])
+@R|Anno|[Types](c = R|/CHAR| [evaluated = Int(65)])
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentWithMismatchedCharConst.kt
@@ -18,4 +18,4 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentWithMismatchedCharConst.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val CHAR: R|kotlin/Char| = Int(65)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Char|
-    @R|Anno|[Types](c = R|/CHAR| [evaluated = Char(null)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+    @R|Anno|[Types](c = R|/CHAR| [evaluated = Int(65)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }

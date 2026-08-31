@@ -1,0 +1,5 @@
+expression: STRING
+constant: null
+constantValueKind: NullValue
+constantValueSource: REFERENCE_EXPRESSION
+constantValueSourceText: STRING
