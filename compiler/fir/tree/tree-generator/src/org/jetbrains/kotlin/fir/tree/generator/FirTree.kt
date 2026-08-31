@@ -267,7 +267,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
         parent(jump.withArgs("E" to function))
 
-        +field("result", expression, withTransform = true)
+        +field("result", expression, withReplace = true, withTransform = true)
     }
 
     val label: Element by element(Other) {
@@ -1467,7 +1467,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(statement)
 
         +field("lValue", expression, withReplace = true, withTransform = true)
-        +field("rValue", expression, withTransform = true)
+        +field("rValue", expression, withReplace = true, withTransform = true)
     }
 
     val whenSubjectExpression: Element by element(Expression) {
