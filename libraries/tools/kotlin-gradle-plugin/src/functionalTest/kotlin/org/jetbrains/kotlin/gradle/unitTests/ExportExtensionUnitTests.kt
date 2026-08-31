@@ -190,6 +190,35 @@ class ExportExtensionXcodeIntegrationTests {
         assertNull(project.tasks.findByName("iosSimulatorArm64DebugSwiftExport"))
     }
 
+    @Test
+    fun `test embed task is registered when the legacy swift export dsl is used`() {
+        val project = appleProject {
+            kotlin {
+                swiftExport {
+                    moduleName.set("Legacy")
+                }
+            }
+        }
+
+        assertNotNull(project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME))
+    }
+
+    @Test
+    fun `test the export dsl takes precedence over the legacy swift export dsl`() {
+        val project = appleProject {
+            kotlin {
+                swiftExport {
+                    moduleName.set("Legacy")
+                }
+            }
+            exportExtension.swift {
+                moduleName.set("Shared")
+            }
+        }
+
+        assertNull(project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME))
+    }
+
     private fun appleProject(
         withXcodeEnvironment: Boolean = false,
         multiplatform: KotlinMultiplatformExtension.() -> Unit = { iosSimulatorArm64() },

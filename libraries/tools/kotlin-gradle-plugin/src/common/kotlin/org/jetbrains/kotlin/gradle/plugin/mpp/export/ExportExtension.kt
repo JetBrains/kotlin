@@ -224,21 +224,3 @@ private class DefaultSwiftExportXcodeIntegration(
 }
 
 internal fun ObjectFactory.ExportExtension(): ExportExtension = newInstance(ExportExtension::class.java)
-
-/**
- * Whether the Swift Export Xcode integration has to be set up in this project.
- *
- * Projects using the `export.swift {}` DSL have to activate the integration explicitly with
- * [SwiftExportConfigurationDsl.xcodeIntegration]. Projects that don't use the DSL keep the integration
- * that is set up for every project with Apple targets today.
- *
- * Reading this value is only meaningful after the DSL has been finalised, so that the order of the
- * `export.swift {}` and `xcodeIntegration()` calls doesn't matter.
- *
- * TODO(KT-87989): Require the explicit activation from every project once the legacy `swiftExport {}` DSL is deprecated.
- */
-internal val ExportExtension.isSwiftExportXcodeIntegrationActivated: Boolean
-    get() = when {
-        isSwiftExportConfigured -> swiftExportConfiguration.activatedXcodeIntegration != null
-        else -> true
-    }
