@@ -308,7 +308,7 @@ abstract class KotlinIrLinker(
         return deserializer.moduleFragment
     }
 
-    private fun createAndRegisterModuleDeserializer(
+    fun createAndRegisterModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
         kotlinLibrary: KotlinLibrary?,
         deserializationStrategy: (String) -> DeserializationStrategy,
