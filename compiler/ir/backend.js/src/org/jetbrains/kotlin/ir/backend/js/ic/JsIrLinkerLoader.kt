@@ -69,7 +69,7 @@ internal class LoadedJsIr(
     private val irFileSourceNames = hashMapOf<IrModuleFragment, Map<IrFile, KotlinSourceFile>>()
 
     private fun collectSignatureProviders(lib: KotlinLibraryFile, irModule: IrModuleFragment): List<FileSignatureProvider> {
-        val moduleDeserializer = linker.moduleDeserializer(irModule.descriptor)
+        val moduleDeserializer = linker.moduleDeserializer(irModule)
         val deserializers = moduleDeserializer.fileDeserializers()
         val providers = ArrayList<FileSignatureProvider>(deserializers.size)
         val sourceFiles = getIrFileNames(irModule)
@@ -212,7 +212,7 @@ internal class JsIrLinkerLoader(
         if (!loadAllIr) {
             for ([loadingLibFile, loadingSrcFiles] in modifiedFiles) {
                 val loadingIrModule = irModules[loadingLibFile] ?: notFoundIcError("loading fragment", loadingLibFile)
-                val moduleDeserializer = linker.moduleDeserializer(loadingIrModule.descriptor)
+                val moduleDeserializer = linker.moduleDeserializer(loadingIrModule)
                 for (loadingSrcFileSignatures in loadingSrcFiles.values) {
                     for (loadingSignature in loadingSrcFileSignatures.getExportedSignatures()) {
                         if (checkIsFunctionInterface(loadingSignature)) {
