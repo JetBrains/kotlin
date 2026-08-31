@@ -402,7 +402,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
 
             buildAndFail(
                 ":lib:compileKotlinJvmWithJava",
-                "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError"
+                buildOptions = buildOptions.suppressingGradlePluginErrors("KotlinTargetAlreadyDeclaredError")
             ) {
                 assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
@@ -432,7 +432,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
 
             build(
                 ":lib:compileKotlinPlainJvm",
-                "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError"
+                buildOptions = buildOptions.suppressingGradlePluginErrors("KotlinTargetAlreadyDeclaredError")
             )
         }
     }

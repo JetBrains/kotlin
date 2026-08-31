@@ -14,12 +14,15 @@ kotlin {
     iosSimulatorArm64()
     watchosArm64()
     watchosDeviceArm64()
+    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
     watchosX64()
     watchosSimulatorArm64()
     tvosArm64()
+    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
     tvosX64()
     tvosSimulatorArm64()
 
+    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
     macosX64 {
         binaries.executable {
             entryPoint = "main"

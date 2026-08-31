@@ -15,6 +15,7 @@ kotlin {
 
     val mingw = mingwX64(mingwTargetName) { }
     val linux = linuxX64(linuxTargetName) { }
+	@Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
     val macos = macosX64(macosTargetName) { }
     val linuxArm = linuxArm64()
 

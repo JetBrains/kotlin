@@ -49,7 +49,7 @@ class FatFrameworkIT : KGPBaseTest() {
         ) {
             buildGradleKts.modify {
                 it.checkedReplace("iosArm64()", "watchosArm64(); watchosDeviceArm64()")
-                    .checkedReplace("iosX64()", "watchosX64()")
+                    .checkedReplace("iosX64()", "@Suppress(\"DEPRECATION_ERROR\") watchosX64()")
             }
             checkSmokeBuild(
                 archs = listOf("x64", "arm64", "deviceArm64"),
@@ -75,7 +75,7 @@ class FatFrameworkIT : KGPBaseTest() {
         ) {
             buildGradleKts.modify {
                 it.checkedReplace("iosArm64()", "macosArm64()")
-                    .checkedReplace("iosX64()", "macosX64()")
+                    .checkedReplace("iosX64()", "@Suppress(\"DEPRECATION_ERROR\") macosX64()")
             }
             checkSmokeBuild(
                 archs = listOf("x64", "arm64"),
@@ -155,7 +155,7 @@ class FatFrameworkIT : KGPBaseTest() {
     fun testIncorrectFamily(gradleVersion: GradleVersion) {
         nativeProject("native-fat-framework/smoke", gradleVersion) {
             buildScriptInjection {
-                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 val macos = kotlinMultiplatform.macosX64()
                 macos.binaries.framework("DEBUG")
                 val fat = project.tasks.getByName("fat") as FatFrameworkTask

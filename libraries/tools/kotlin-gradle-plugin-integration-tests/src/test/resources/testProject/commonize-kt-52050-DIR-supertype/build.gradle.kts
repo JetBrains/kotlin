@@ -8,6 +8,7 @@ repositories {
 }
 
 kotlin {
+    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
     macosX64("macos")
     linuxX64("linux")
     mingwX64("windows")

@@ -149,7 +149,7 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
             build(
                 "clean",
                 "publish",
-                "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError",
+                buildOptions = buildOptions.suppressingGradlePluginErrors("KotlinTargetAlreadyDeclaredError"),
             ) {
                 assertFileContains(
                     localRepoDir.resolve("com/exampleapp/sample-app-nodejs/1.0/sample-app-nodejs-1.0.pom"),
@@ -188,7 +188,7 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
             build(
                 "publish",
                 "-Pkotlin.mpp.keepMppDependenciesIntactInPoms=true",
-                "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError",
+                buildOptions = buildOptions.suppressingGradlePluginErrors("KotlinTargetAlreadyDeclaredError"),
             ) {
                 assertFileContains(
                     localRepoDir.resolve("com/exampleapp/sample-app-nodejs/1.0/sample-app-nodejs-1.0.pom"),

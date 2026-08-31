@@ -82,7 +82,7 @@ kotlin {
         // This is required because of the common source set dependency on a local stdlib.
         // Only these targets are added in the stdlib project during IDEA sync.
         when {
-            HostManager.hostIsMac -> @Suppress("DEPRECATION") macosX64("native")
+            HostManager.hostIsMac -> @Suppress("DEPRECATION", "DEPRECATION_ERROR") macosX64("native")
             HostManager.hostIsMingw -> mingwX64("native")
             HostManager.hostIsLinux -> linuxX64("native")
             else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
@@ -108,10 +108,10 @@ kotlin {
         @Suppress("DEPRECATION") androidNativeX64()
         mingwX64()
         watchosDeviceArm64()
-        @Suppress("DEPRECATION") macosX64()
-        @Suppress("DEPRECATION") iosX64()
-        @Suppress("DEPRECATION") watchosX64()
-        @Suppress("DEPRECATION") tvosX64()
+        @Suppress("DEPRECATION", "DEPRECATION_ERROR") macosX64()
+        @Suppress("DEPRECATION", "DEPRECATION_ERROR") iosX64()
+        @Suppress("DEPRECATION", "DEPRECATION_ERROR") watchosX64()
+        @Suppress("DEPRECATION", "DEPRECATION_ERROR") tvosX64()
         @Suppress("DEPRECATION") linuxArm32Hfp()
     }
 

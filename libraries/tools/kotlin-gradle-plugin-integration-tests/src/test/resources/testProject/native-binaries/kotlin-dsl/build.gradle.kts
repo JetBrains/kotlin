@@ -20,6 +20,7 @@ kotlin {
         }
     }
 
+    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
     val macos = macosX64("macos64")
     val macosArm = macosArm64("macosArm64")
     val linux = linuxX64("linux64")

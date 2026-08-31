@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION_ERROR")
+
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {

@@ -58,7 +58,7 @@ class UklibFromKGPFragmentsTests {
         ) {
             kotlin {
                 iosArm64()
-                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64()
                 jvm()
 
@@ -125,7 +125,7 @@ class UklibFromKGPFragmentsTests {
         ) {
             kotlin {
                 iosArm64()
-                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64()
                 jvm()
 
@@ -149,7 +149,7 @@ class UklibFromKGPFragmentsTests {
             androidLibrary { compileSdk = 31 }
             kotlin {
                 iosArm64()
-                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64()
                 jvm()
                 js()
@@ -240,7 +240,7 @@ class UklibFromKGPFragmentsTests {
         ) {
             kotlin {
                 iosArm64()
-                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64()
                 iosSimulatorArm64()
 
@@ -304,7 +304,7 @@ class UklibFromKGPFragmentsTests {
                 linuxX64()
                 linuxArm64()
                 iosArm64()
-                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64()
             }
         }.evaluate().assertNoDiagnostics(

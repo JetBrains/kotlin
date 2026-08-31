@@ -106,7 +106,7 @@ class MppPublicationTest {
             targets.all { target -> target.attributes { attribute(userAttribute, target.name) } }
             js()
             linuxX64()
-            @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+            @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
             iosX64()
         }
 
@@ -284,7 +284,7 @@ class MppPublicationTest {
 
                 linuxX64()
                 mingwX64()
-                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 macosX64()
 
                 js { browser() }

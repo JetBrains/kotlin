@@ -66,7 +66,7 @@ class UnnamedTaskInputsIT : KGPBaseTest() {
         ) {
             enableLocalBuildCache(localBuildCacheDir)
 
-            build("assemble", "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError") {
+            build("assemble", buildOptions = buildOptions.suppressingGradlePluginErrors("KotlinTargetAlreadyDeclaredError")) {
                 assertNoUnnamedInputsOutputs()
             }
         }
