@@ -45,20 +45,20 @@ class CustomWasmJsCompilerFirstStageSanity :
     }
 
     private fun checkIncorrectBoxResult(exception: AssertionError, testName: String) {
-        // Separate exceptions are raised for DEV and DCE builds.
+        // Separate exceptions are raised for the DEV and DCE builds, each named after its execution.
         assertEquals("""Multiple Failures (2 failures)
-	org.jetbrains.kotlin.wasm.test.handlers.WasmVMException: WasmVM V8 failed
-	org.jetbrains.kotlin.wasm.test.handlers.WasmVMException: WasmVM V8 failed""", exception.message)
+	org.jetbrains.kotlin.wasm.test.handlers.WasmVMException: WasmVM V8 (dev) failed
+	org.jetbrains.kotlin.wasm.test.handlers.WasmVMException: WasmVM V8 (dce) failed""", exception.message)
         assertEquals(2, exception.suppressedExceptions.size)
-        for (exception in exception.suppressedExceptions) {
-            assertIs<WasmVMException>(exception)
-            assertEquals("WasmVM V8 failed", exception.message!!)
-            exception.cause!!.message!!.let {
+        for ([index, mode] in listOf("dev", "dce").withIndex()) {
+            val vmException = assertIs<WasmVMException>(exception.suppressedExceptions[index])
+            assertEquals("V8 ($mode)", vmException.executionName)
+            assertEquals("WasmVM V8 ($mode) failed", vmException.message)
+            vmException.cause!!.message!!.let {
                 assertContains(it, """Wrong box result 'FAIL'; Expected "OK"""", message = it)
+                assertContains(it, "$testName/$mode")
             }
         }
-        assertContains(exception.suppressedExceptions[0].cause!!.message!!, "$testName/dev")
-        assertContains(exception.suppressedExceptions[1].cause!!.message!!, "$testName/dce")
     }
 
     @Test
