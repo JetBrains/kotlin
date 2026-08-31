@@ -16,7 +16,7 @@ class SourceMap3Builder(
     private val generatedFile: File?,
     private val getCurrentOutputColumn: () -> Int,
     private val pathPrefix: String
-) : SourceMapMappingConsumer {
+) {
 
     private val out = StringBuilder(8192)
 
@@ -95,7 +95,7 @@ class SourceMap3Builder(
         )
     }
 
-    override fun newLine() {
+    fun newLine() {
         out.append(';')
         previousGeneratedColumn = -1
     }
@@ -190,7 +190,7 @@ class SourceMap3Builder(
         ignoredSources.add(getSourceIndex(source.unixStylePath, fileIdentity, sourceContent))
     }
 
-    override fun addMapping(
+    fun addMapping(
         source: String,
         fileIdentity: Any?,
         sourceContent: Supplier<Reader?>,
@@ -242,7 +242,7 @@ class SourceMap3Builder(
         currentMappingIsEmpty = false
     }
 
-    override fun addEmptyMapping() {
+    fun addEmptyMapping() {
         if (!currentMappingIsEmpty) {
             startMapping(getCurrentOutputColumn())
             currentMappingIsEmpty = true

@@ -13,7 +13,7 @@ import java.io.IOException
 
 class SourceMapBuilderConsumer(
     private val sourceBaseDir: File,
-    private val mappingConsumer: SourceMapMappingConsumer,
+    private val sourceMapBuilder: SourceMap3Builder,
     private val pathResolver: SourceFilePathResolver,
     private val provideExternalModuleContent: Boolean
 ) : SourceLocationConsumer {
@@ -22,7 +22,7 @@ class SourceMapBuilderConsumer(
     private val declarationLocationStack = mutableListOf<JsLocationWithSource?>()
 
     override fun newLine() {
-        mappingConsumer.newLine()
+        sourceMapBuilder.newLine()
     }
 
     override fun pushSourceInfo(info: JsLocationWithSource?) {
@@ -45,7 +45,7 @@ class SourceMapBuilderConsumer(
 
     private fun addMapping(sourceInfo: JsLocationWithSource?) {
         if (declarationLocationStack.lastOrNull()?.file == JsLocation.IGNORED.file) {
-            mappingConsumer.addMapping(
+            sourceMapBuilder.addMapping(
                 JsLocation.IGNORED.file,
                 JsLocation.IGNORED.fileIdentity,
                 { null },
@@ -57,7 +57,7 @@ class SourceMapBuilderConsumer(
         }
 
         if (sourceInfo == null) {
-            mappingConsumer.addEmptyMapping()
+            sourceMapBuilder.addEmptyMapping()
             return
         }
 
@@ -75,7 +75,7 @@ class SourceMapBuilderConsumer(
         } else {
             sourceInfo.file
         }
-        mappingConsumer.addMapping(
+        sourceMapBuilder.addMapping(
             path,
             sourceInfo.fileIdentity,
             contentSupplier,
