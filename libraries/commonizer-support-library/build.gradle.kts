@@ -113,7 +113,7 @@ kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")
         freeCompilerArgs.add("-XXLanguage:+AllowExpectValueClassesWithNoPrimaryConstructor")
-        freeCompilerArgs.add("-XXLanguage:+AllowMultipleExpectsForSameActual")
+        freeCompilerArgs.add("-XXLanguage:+AllowMultipleExpectsForSingleActual")
 
         // Drop after bootstrap
         if (!kotlinBuildProperties.localBootstrap.getOrElse(false)) {
