@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +MultiPlatformProjects +AllowMultipleExpectsForSingleActual
 // ISSUE: KT-69909, KT-88307
 
@@ -20,7 +20,7 @@ actual typealias A = Long
 
 actual typealias B = Int
 
-actual fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>(it: Long) = "!"
+actual fun foo(it: Long) = "!"
 actual fun foo(it: Int) = "!"
 
 /* GENERATED_FIR_TAGS: actual, additiveExpression, classDeclaration, expect, functionDeclaration, propertyDeclaration,
