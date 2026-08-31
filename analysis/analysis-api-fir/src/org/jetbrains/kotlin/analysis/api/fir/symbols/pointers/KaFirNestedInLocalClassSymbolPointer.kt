@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
@@ -24,10 +23,10 @@ import org.jetbrains.kotlin.name.Name
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-internal class KaFirNestedInLocalClassFromCompilerPluginSymbolPointer(
+internal class KaFirNestedInLocalClassSymbolPointer(
     private val containingClassPointer: KaSymbolPointer<KaNamedClassSymbol>,
     private val name: Name,
-    private val compilerPluginOrigin: GeneratedDeclarationKey,
+    private val firOrigin: FirDeclarationOrigin,
     originalSymbol: KaNamedClassSymbol?,
 ) : KaBaseCachedSymbolPointer<KaNamedClassSymbol>(originalSymbol) {
 
@@ -51,13 +50,12 @@ internal class KaFirNestedInLocalClassFromCompilerPluginSymbolPointer(
             returns(true) implies (symbol is FirRegularClassSymbol)
         }
         if (symbol !is FirRegularClassSymbol) return false
-        val pluginOrigin = symbol.origin as? FirDeclarationOrigin.Plugin ?: return false
-        return pluginOrigin.key == compilerPluginOrigin
+        return symbol.origin == firOrigin
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = other === this ||
-            other is KaFirNestedInLocalClassFromCompilerPluginSymbolPointer &&
+            other is KaFirNestedInLocalClassSymbolPointer &&
             other.name == name &&
-            other.compilerPluginOrigin == compilerPluginOrigin &&
+            other.firOrigin == firOrigin &&
             other.containingClassPointer.pointsToTheSameSymbolAs(containingClassPointer)
 }
