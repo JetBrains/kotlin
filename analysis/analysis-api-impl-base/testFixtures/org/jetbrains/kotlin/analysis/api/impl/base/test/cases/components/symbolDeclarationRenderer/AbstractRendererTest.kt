@@ -5,40 +5,36 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies.KaRendererBodyMemberScopeSorter
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForSource
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaClassifierBodyRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.render
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
+import org.jetbrains.kotlin.analysis.api.rendering.KaRenderer
+import org.jetbrains.kotlin.analysis.api.rendering.KaRendererBuilder
+import org.jetbrains.kotlin.analysis.api.rendering.KaRenderingOption
+import org.jetbrains.kotlin.analysis.api.rendering.KaRenderingOutput
+import org.jetbrains.kotlin.analysis.api.rendering.render
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
+import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
+import org.jetbrains.kotlin.analysis.test.data.manager.withAdditionalVariant
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.moduleStructure
 
 abstract class AbstractRendererTest : AbstractAnalysisApiBasedTest() {
+    override val variantChain: TestVariantChain
+        get() = super.variantChain.withAdditionalVariant("new")
+
+    override val additionalDirectives: List<DirectivesContainer>
+        get() = super.additionalDirectives + RendererDirectives
+
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val renderer = KaDeclarationRendererForSource.WITH_SHORT_NAMES.with {
-            classifierBodyRenderer = KaClassifierBodyRenderer.BODY_WITH_MEMBERS
-            bodyMemberScopeSorter = object : KaRendererBodyMemberScopeSorter {
-                override fun sortMembers(
-                    analysisSession: KaSession,
-                    members: List<KaDeclarationSymbol>,
-                    container: KaDeclarationContainerSymbol,
-                ): List<KaDeclarationSymbol> {
-                    with(analysisSession) {
-                        return KaRendererBodyMemberScopeSorter.ENUM_ENTRIES_AT_BEGINING
-                            .sortMembers(analysisSession, members, container)
-                            .sortedBy { it.render() }
-                    }
-                }
-            }
-        }
+        val directives = testServices.moduleStructure.allDirectives
 
         val actual = executeOnPooledThreadInReadAction {
             buildString {
@@ -47,8 +43,22 @@ abstract class AbstractRendererTest : AbstractAnalysisApiBasedTest() {
                     mainFile,
                     danglingFileResolutionMode = KaDanglingFileResolutionMode.PREFER_SELF,
                 ) { contextFile ->
+                    val renderer = KaRenderer.default.copy {
+                        applyDirectives(directives)
+
+                        // Reproduce the legacy member ordering (see `AbstractLegacyRenderingTest`).
+                        set(KaRenderingOption.ClassMemberOrdering) { first, second ->
+                            fun renderToString(symbol: KaSymbol): String =
+                                KaRenderingOutput.plainString().also { KaRenderer.default.render(symbol, it) }.toString()
+
+                            renderToString(first).compareTo(renderToString(second))
+                        }
+                    }
+
                     contextFile.declarations.forEach { declaration ->
-                        append(declaration.symbol.render(renderer))
+                        val output = KaRenderingOutput.plainString(indentationUnit = "  ")
+                        renderer.render(declaration.symbol, output)
+                        append(output.toString())
                         appendLine()
                         appendLine()
                     }
@@ -57,5 +67,33 @@ abstract class AbstractRendererTest : AbstractAnalysisApiBasedTest() {
         }
 
         testServices.assertions.assertEqualsToTestOutputFile(actual, extension = ".rendered")
+    }
+
+    private fun KaRendererBuilder.applyDirectives(directives: RegisteredDirectives) {
+        set(KaRenderingOption.FlexibleTypeShrinking, RendererDirectives.NO_FLEXIBLE_TYPE_SHRINKING !in directives)
+
+        if (RendererDirectives.NO_PRIMARY_CONSTRUCTOR_IN_CLASS_HEADER in directives) {
+            set(KaRenderingOption.PrimaryConstructorInClassHeader, false)
+        }
+
+        if (RendererDirectives.NO_EXTRA_LINE_BETWEEN_MEMBERS in directives) {
+            set(KaRenderingOption.ExtraLineBetweenMembers, false)
+        }
+
+        directives.singleOrZeroValue(RendererDirectives.CLASS_TYPE_QUALIFICATION)?.let {
+            set(KaRenderingOption.ClassTypeQualification, it)
+        }
+
+        directives.singleOrZeroValue(RendererDirectives.CLASS_TYPE_RENDERING_MODE)?.let {
+            set(KaRenderingOption.ClassTypeRenderingMode, it)
+        }
+
+        directives.singleOrZeroValue(RendererDirectives.TYPE_APPROXIMATION)?.let {
+            set(KaRenderingOption.TypeApproximation, it)
+        }
+
+        if (RendererDirectives.MULTILINE_VALUE_PARAMETER_LISTS in directives) {
+            set(KaRenderingOption.MultilineValueParameterLists, true)
+        }
     }
 }
