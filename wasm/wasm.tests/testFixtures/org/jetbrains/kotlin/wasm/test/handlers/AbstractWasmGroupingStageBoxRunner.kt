@@ -8,14 +8,17 @@ package org.jetbrains.kotlin.wasm.test.handlers
 import org.jetbrains.kotlin.test.NonGroupingStageOutput
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.checkTestInfrastructure
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
+import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.ParsedBatchResult.Analysis.FailureKind
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.GroupingStageHandler
 import org.jetbrains.kotlin.test.model.TestArtifactKind
-import org.jetbrains.kotlin.test.report.TestRunChecks
+import org.jetbrains.kotlin.test.report.TestReportChecks
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceProviders.hasBoxMethod
 import org.jetbrains.kotlin.test.services.testInfo
@@ -68,7 +71,12 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         val useBoxExportMode = !artifact.hasGroupedTestsDriver && shouldUseBoxExportModeWhenDriverless()
 
         if (useBoxExportMode) {
-            // Box export mode: call box() directly and expect "OK"
+            // Box export mode: call box() directly and expect "OK". One `box()` call reports one verdict, so a batch
+            // of several tests would attribute the first one and pass all the others unchecked.
+            checkTestInfrastructure(inputs.size == 1) {
+                "Box-export mode ran a batch of ${inputs.size} tests, but calling `box()` directly reports a single " +
+                        "verdict: only the first test could be attributed, and the rest would pass unchecked."
+            }
             val input = inputs.first()
             val exceptions = runTestCode(
                 artifact,
@@ -76,9 +84,21 @@ abstract class AbstractWasmGroupingStageBoxRunner(
                 outputCollector = null,
             )
             if (exceptions.isNotEmpty()) {
-                input.failWith(exceptions.first())
+                input.failWithAll(exceptions)
             }
         } else {
+            // A unit-test-mode artifact must either carry the grouped driver or be an explicitly supported standalone
+            // single-test execution. Validate this contract before starting any VM: otherwise a missing metadata bit
+            // can turn a singleton grouped batch into a clean run with no structured result at all.
+            checkTestInfrastructure(
+                artifact.hasGroupedTestsDriver || inputs.size == 1 && allowsDriverlessSingleTest()
+            ) {
+                "A unit-test batch of ${inputs.size} tests is not linked with the result-collecting driver. " +
+                        "Only an explicitly standalone single-test execution may run without it; either the stage-2 " +
+                        "facade lost the driver metadata on `BinaryArtifacts.Wasm.hasGroupedTestsDriver`, or tests " +
+                        "meant to be isolated were batched."
+            }
+
             // Unit test mode: run the batch and parse the structured result block from stdout.
             val collectedOutputs = mutableListOf<WasmVMOutput>()
             val exceptions = runTestCode(
@@ -95,17 +115,26 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         collectedOutputs: List<WasmVMOutput>,
         exceptions: List<Throwable>,
     ) {
-        // A VM failure carries the stdout captured before the crash, so a partial block is recovered too.
-        val texts = collectedOutputs.map { it.output } + exceptions.mapNotNull { it.capturedVmOutput() }
+        val run = BatchRun(collectedOutputs, exceptions)
+        if (run.parsed.malformedLines.isNotEmpty()) {
+            failWholeBatch(
+                run,
+                GroupedTestVerdict.UNTRUSTED_BATCH,
+                "Sanity check failed: malformed structured result protocol line(s) were emitted inside a " +
+                        "'${GroupedTestsResultProtocol.BEGIN}'/'${GroupedTestsResultProtocol.END}' block:\n" +
+                        run.parsed.malformedLines.joinToString("\n") { "  <$it>" } +
+                        "\nThe result block cannot be trusted; this indicates a problem in the grouped-test driver " +
+                        "or in the test output.",
+            )
+            return
+        }
 
         if (artifact.hasGroupedTestsDriver) {
-            val vmsWithoutBlock = collectedOutputs.filter { output ->
-                !GroupedTestsResultProtocol.parseMerged(listOf(output.output)).sawStructuredBlock
-            }.map { it.vmName }.distinct()
+            val vmsWithoutBlock = run.collectedExecutionNames { !it.sawStructuredBlock }
             if (vmsWithoutBlock.isNotEmpty()) {
                 failWholeBatch(
+                    run,
                     GroupedTestVerdict.NO_RESULT_BLOCK,
-                    texts,
                     "Sanity check failed: the grouped batch did not print a " +
                             "'${GroupedTestsResultProtocol.BEGIN}' block for every driver-enabled VM. " +
                             "Missing from: ${vmsWithoutBlock.joinToString()}. A VM exited successfully without invoking the " +
@@ -115,13 +144,11 @@ abstract class AbstractWasmGroupingStageBoxRunner(
                 return
             }
 
-            val vmsWithIncompleteBlock = collectedOutputs.filter { output ->
-                !GroupedTestsResultProtocol.hasCompleteStructuredBlock(output.output)
-            }.map { it.vmName }.distinct()
+            val vmsWithIncompleteBlock = run.collectedExecutionNames { !it.hasCompleteStructuredBlock }
             if (vmsWithIncompleteBlock.isNotEmpty()) {
                 failWholeBatch(
+                    run,
                     GroupedTestVerdict.INCOMPLETE_RESULT_BLOCK,
-                    texts,
                     "Sanity check failed: the grouped batch did not print a complete " +
                             "'${GroupedTestsResultProtocol.BEGIN}'/'${GroupedTestsResultProtocol.END}' block for " +
                             "every driver-enabled VM. Incomplete on: ${vmsWithIncompleteBlock.joinToString()}. A VM exited " +
@@ -132,9 +159,8 @@ abstract class AbstractWasmGroupingStageBoxRunner(
             }
         }
 
-        val parsedBatchResult = GroupedTestsResultProtocol.parseMerged(texts)
-        if (parsedBatchResult.sawStructuredBlock) {
-            attributeStructuredResults(parsedBatchResult, exceptions, texts)
+        if (run.parsed.sawStructuredBlock) {
+            attributeStructuredResults(run, isDriverLinked = artifact.hasGroupedTestsDriver)
             return
         }
 
@@ -143,8 +169,8 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         // no `@kotlin.test.Test`) and exits cleanly — the batch would be green with no test having run.
         if (artifact.hasGroupedTestsDriver) {
             failWholeBatch(
+                run,
                 GroupedTestVerdict.NO_RESULT_BLOCK,
-                texts,
                 "Sanity check failed: the grouped batch printed no '${GroupedTestsResultProtocol.BEGIN}' block, " +
                         "so not a single test reported a result. The launcher's result-collecting driver was " +
                         "never invoked — most likely its exported entry point " +
@@ -155,26 +181,27 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         }
 
         if (exceptions.isNotEmpty()) {
-            testServices.groupingStageInputs.forEach { it.failWith(exceptions.firstWithOthersSuppressed()) }
+            testServices.groupingStageInputs.forEach { it.failWithAll(exceptions) }
         }
     }
 
-    /** Fails every test of a batch whose results cannot establish coverage at all. */
-    private fun failWholeBatch(verdict: GroupedTestVerdict, texts: List<String>, reason: String) {
+    /**
+     * Fails every test of a batch whose results cannot establish coverage at all. No VM failure is attributed to a
+     * test here, so every one of them is reported as it is.
+     */
+    private fun failWholeBatch(run: BatchRun, verdict: GroupedTestVerdict, reason: String) {
         testServices.groupingStageInputs.forEach { input ->
-            input.failWithVerdict(verdict, texts, reason)
+            input.failWithVerdict(verdict, emptyList(), reason)
         }
+        failWithUnexplainedExceptions(run, crashAttributedIds = emptySet())
     }
 
-    private fun attributeStructuredResults(
-        parsedBatchResult: GroupedTestsResultProtocol.ParsedBatchResult,
-        exceptions: List<Throwable>,
-        texts: List<String>,
-    ) {
-        val testReport = parsedBatchResult.toTestReport()
-        val expectedIds = testServices.groupingStageInputs.map { input ->
-            computeProxyLauncherClassName(input.testServices.testInfo)
-        }
+    private fun attributeStructuredResults(run: BatchRun, isDriverLinked: Boolean) {
+        val expectedIds = expectedIds()
+        val analysis = run.parsed.analyze(
+            expectedIds,
+            executionOutputs = if (isDriverLinked) run.parsedCollectedExecutionOutputs() else emptyList(),
+        )
 
         testServices.groupingStageInputs.firstOrNull { !it.hasBoxMethod() }?.let { input ->
             testInfraError(
@@ -184,79 +211,177 @@ abstract class AbstractWasmGroupingStageBoxRunner(
             )
         }
 
-        val excessiveIds = TestRunChecks.findExcessiveResults(expectedIds, testReport)
-        checkTestInfrastructure(excessiveIds.isEmpty()) {
-            "Grouped batch reported results for tests that are not part of it: $excessiveIds. Expected: $expectedIds"
+        checkTestInfrastructure(analysis.excessiveIds.isEmpty()) {
+            "Grouped batch reported results for tests that are not part of it: ${analysis.excessiveIds}. Expected: $expectedIds"
         }
 
-        val emptyReportReason = TestRunChecks.emptyReportReason(testReport)
-        val missingIds = TestRunChecks.findMissingResults(expectedIds, testReport).toSet()
-        val crashAttributedIds = mutableSetOf<String>()
-
+        val emptyReportReason = TestReportChecks.emptyReportReason(analysis.testReport)
         for (input in testServices.groupingStageInputs) {
             val id = computeProxyLauncherClassName(input.testServices.testInfo)
-            when {
-                id in missingIds -> {
-                    input.failWithVerdict(
-                        if (parsedBatchResult.crashedInProgress(id)) GroupedTestVerdict.CRASHED else GroupedTestVerdict.MISSING,
-                        texts,
-                        emptyReportReason,
-                        "Sanity check failed: no per-test result was reported for '$id' in the grouped batch.",
-                        if (parsedBatchResult.crashedInProgress(id)) {
-                            crashDiagnosis(id, "the VM")
-                        } else {
-                            "The test was expected to run as part of the batch, but produced no " +
-                                    "'${GroupedTestsResultProtocol.LINE_PREFIX}' line, not even a " +
-                                    "'${GroupedTestsResultProtocol.STARTED}' one. This typically indicates the test " +
-                                    "was silently skipped (e.g. a stripped ProxyLauncher class), or that a VM crashed " +
-                                    "before this test's launcher was reached."
-                        },
-                    )
-                    if (parsedBatchResult.crashedInProgress(id)) crashAttributedIds += id
-                }
-                id in testReport.failedTests -> {
-                    val outcome = parsedBatchResult.outcomes.getValue(id)
-                    val reportedFailure = listOfNotNull(outcome.message, outcome.details).joinToString("\n")
-                    if (parsedBatchResult.crashedInProgress(id)) {
-                        input.failWithVerdict(GroupedTestVerdict.CRASHED, texts, reportedFailure, crashDiagnosis(id, "another VM"))
-                        crashAttributedIds += id
-                    } else {
-                        input.failWith(GroupedTestFailure(GroupedTestVerdict.FAILED, reportedFailure))
-                    }
-                }
-                parsedBatchResult.crashedInProgress(id) -> {
-                    input.failWithVerdict(GroupedTestVerdict.CRASHED, texts, crashDiagnosis(id, "another VM"))
-                    crashAttributedIds += id
-                }
-            }
+            input.reportResult(id, analysis, emptyReportReason, run)
         }
 
-        val unexplainedExceptions = exceptions.filter { exception ->
-            val crashedThere = GroupedTestsResultProtocol.parseMerged(listOfNotNull(exception.capturedVmOutput())).crashedIds
-            crashedThere.none { it in crashAttributedIds }
+        failWithUnexplainedExceptions(run, run.parsed.crashedIds)
+    }
+
+    /**
+     * Fails [id]'s input with the verdict its results support, and with every reason that led to it. A test that passed
+     * on every execution that completed its result block is left alone.
+     */
+    private fun NonGroupingStageOutput.reportResult(
+        id: String,
+        analysis: GroupedTestsResultProtocol.ParsedBatchResult.Analysis,
+        emptyReportReason: String?,
+        run: BatchRun,
+    ) {
+        val failure = analysis.failures[id]
+        val kind = failure?.kind
+        val missingVmNames = analysis.missingExecutionNamesById[id].orEmpty()
+        if (kind == null && missingVmNames.isEmpty()) return
+
+        val verdict = when {
+            kind == FailureKind.MISSING -> GroupedTestVerdict.MISSING
+            missingVmNames.isNotEmpty() -> GroupedTestVerdict.INCOMPLETE_COVERAGE
+            kind == FailureKind.FAILED -> GroupedTestVerdict.FAILED
+            else -> GroupedTestVerdict.CRASHED
+        }
+        val coverageReason = when {
+            missingVmNames.isNotEmpty() ->
+                "Sanity check failed: test '$id' did not report a terminal result in every successful " +
+                        "driver-enabled VM execution. Missing from complete result block(s) produced by: " +
+                        "${missingVmNames.joinToString()}. Results from other executions cannot establish " +
+                        "complete coverage for this test; no per-test result was reported for '$id' in " +
+                        "the missing execution(s)."
+            kind == FailureKind.MISSING || failure?.isCrashOnly == true ->
+                "Sanity check failed: no per-test result was reported for '$id' in the grouped batch."
+            else -> null
+        }
+        val reportedFailure = when (kind) {
+            FailureKind.FAILED -> failure.reportedFailure
+                ?: ("Test '$id' reported a '${GroupedTestsResultProtocol.FAILED}' line carrying neither a " +
+                        "message nor details.")
+            FailureKind.CRASHED -> failure.reportedFailure
+            else -> null
+        }
+        val diagnosis = when (kind) {
+            FailureKind.CRASHED -> crashDiagnosis(
+                id,
+                failure.crashExecutionNames,
+                fallback = if (failure.isCrashOnly) "the VM" else "another VM",
+            )
+            FailureKind.MISSING -> missingTestDiagnosis()
+            else -> null
+        }
+
+        failWithVerdict(
+            verdict,
+            diagnosticTextsForTest(id, failure, run),
+            emptyReportReason.takeIf { missingVmNames.isNotEmpty() || kind == FailureKind.MISSING },
+            coverageReason,
+            reportedFailure,
+            diagnosis,
+        )
+    }
+
+    private fun expectedIds(): List<String> = testServices.groupingStageInputs.map { input ->
+        computeProxyLauncherClassName(input.testServices.testInfo)
+    }
+
+    /** Reports every VM failure that no test's crash accounts for: a failure must never be hidden behind a verdict. */
+    private fun failWithUnexplainedExceptions(run: BatchRun, crashAttributedIds: Set<String>) {
+        val unexplainedExceptions = run.exceptions.filterIndexed { index, _ ->
+            run.parsedExceptionOutputs[index]?.crashedIds.orEmpty().none { it in crashAttributedIds }
         }
         if (unexplainedExceptions.isNotEmpty()) {
-            throw unexplainedExceptions.firstWithOthersSuppressed()
+            testServices.assertions.failAll(unexplainedExceptions)
         }
     }
 
-    private fun crashDiagnosis(id: String, vm: String): String =
-        "Test '$id' printed a '${GroupedTestsResultProtocol.STARTED}' line on $vm with no terminal " +
-                "'${GroupedTestsResultProtocol.PASSED}'/'${GroupedTestsResultProtocol.FAILED}' result — it most " +
-                "likely crashed that VM (a hard trap, OOM, or process exit) while executing."
+    /**
+     * Returns raw VM output only when the structured result cannot already explain a test failure. In particular, a
+     * message-bearing failure has its message and details in
+     * [GroupedTestsResultProtocol.ParsedBatchResult.Analysis.Failure.reportedFailure], while a crash needs the
+     * captured output to explain what happened. Keeping this selection per test avoids copying every VM's full batch
+     * output into every attributed failure.
+     */
+    private fun diagnosticTextsForTest(
+        id: String,
+        failure: GroupedTestsResultProtocol.ParsedBatchResult.Analysis.Failure?,
+        run: BatchRun,
+    ): List<String> {
+        val includeFailedOutput = failure?.kind == FailureKind.FAILED && failure.reportedFailure == null
+        val includeCrashOutput = failure?.kind == FailureKind.CRASHED
+        if (!includeFailedOutput && !includeCrashOutput) return emptyList()
 
-    private fun NonGroupingStageOutput.failWithVerdict(verdict: GroupedTestVerdict, texts: List<String>, vararg lines: String?) {
-        failWith(GroupedTestFailure(verdict, (lines.filterNotNull() + "Collected outputs:" + texts).joinToString("\n")))
+        fun GroupedTestsResultProtocol.ParsedExecution.isRelevant(): Boolean {
+            return (includeFailedOutput && outcomes.any { it.id == id && it.status == GroupedTestsResultProtocol.Outcome.Status.FAILED }) ||
+                    (includeCrashOutput && id in crashedIds)
+        }
+
+        return buildList {
+            run.collectedOutputs.forEachIndexed { index, output ->
+                if (run.parsedCollectedOutputs[index].isRelevant()) add(output.output)
+            }
+            run.exceptionOutputs.forEachIndexed { index, output ->
+                if (output != null && run.parsedExceptionOutputs[index]?.isRelevant() == true) add(output.output)
+            }
+        }.distinct()
+    }
+
+    private fun crashDiagnosis(id: String, executionNames: List<String>, fallback: String): String {
+        val executionDetails = executionNames.takeIf { it.isNotEmpty() }
+            ?.joinToString()
+            ?.let { " Execution: $it." }
+            .orEmpty()
+        return "Test '$id' printed a '${GroupedTestsResultProtocol.STARTED}' line on $fallback with no terminal " +
+                "'${GroupedTestsResultProtocol.PASSED}'/'${GroupedTestsResultProtocol.FAILED}' result — it most " +
+                "likely crashed that VM (a hard trap, OOM, or process exit) while executing.$executionDetails"
+    }
+
+    private fun missingTestDiagnosis(): String =
+        "The test was expected to run as part of the batch, but produced no " +
+                "'${GroupedTestsResultProtocol.LINE_PREFIX}' line, not even a " +
+                "'${GroupedTestsResultProtocol.STARTED}' one. This typically indicates the test was silently " +
+                "skipped (e.g. a stripped ProxyLauncher class), or that a VM crashed before this test's launcher " +
+                "was reached."
+
+    private fun NonGroupingStageOutput.failWithVerdict(
+        verdict: GroupedTestVerdict,
+        texts: List<String>,
+        vararg lines: String?,
+    ) {
+        val diagnosticLines = buildList {
+            lines.forEach { line -> line?.let(::add) }
+            if (texts.isNotEmpty()) {
+                add("Collected outputs:")
+                addAll(texts)
+            }
+        }
+        failWith(GroupedTestFailure(verdict, diagnosticLines.joinToString("\n")))
     }
 
     private fun NonGroupingStageOutput.failWith(error: Throwable) {
-        catchingExecutor.executeWithCatching({ WrappedException.FromGroupingHandler(it, this@AbstractWasmGroupingStageBoxRunner) }) {
+        executeWithFailureCatching {
             throw error
         }
     }
 
-    private fun List<Throwable>.firstWithOthersSuppressed(): Throwable = first().also { first ->
-        drop(1).forEach { other -> if (other !== first) first.addSuppressed(other) }
+    private fun NonGroupingStageOutput.failWithAll(exceptions: List<Throwable>) {
+        executeWithFailureCatching {
+            this@AbstractWasmGroupingStageBoxRunner.testServices.assertions.failAll(exceptions)
+        }
+    }
+
+    private fun NonGroupingStageOutput.executeWithFailureCatching(block: () -> Unit) {
+        catchingExecutor.executeWithCatching(
+            { WrappedException.FromGroupingHandler(it, this@AbstractWasmGroupingStageBoxRunner) },
+            block,
+        )
+    }
+
+    protected open fun allowsDriverlessSingleTest(): Boolean {
+        val input = testServices.groupingStageInputs.singleOrNull() ?: return false
+        return RUN_UNIT_TESTS in input.testServices.moduleStructure.allDirectives || !input.hasBoxMethod()
     }
 }
 
@@ -271,6 +396,12 @@ internal enum class GroupedTestVerdict {
     /** The test reported no result at all. */
     MISSING,
 
+    /** The test reported a result on some executions, but not on every other one that completed its result block. */
+    INCOMPLETE_COVERAGE,
+
+    /** The batch printed malformed result lines, so none of its results can be trusted. */
+    UNTRUSTED_BATCH,
+
     /** A driver-linked VM printed no result block at all. */
     NO_RESULT_BLOCK,
 
@@ -281,6 +412,41 @@ internal enum class GroupedTestVerdict {
 /** A grouped test's failure. Its message explains [verdict] and keeps the evidence behind it. */
 internal class GroupedTestFailure(val verdict: GroupedTestVerdict, message: String) : AssertionError(message)
 
-/** The stdout a failed VM captured before failing, if any: the results printed before a crash are still evidence. */
-private fun Throwable.capturedVmOutput(): String? =
-    generateSequence(this) { it.cause }.filterIsInstance<WasmVMException>().firstOrNull()?.output
+/**
+ * What the VMs of one grouped batch produced: the output of every VM that completed, and every VM failure together
+ * with the output it captured before failing, parsed into one [GroupedTestsResultProtocol.ParsedBatchResult].
+ */
+private class BatchRun(val collectedOutputs: List<WasmVMOutput>, val exceptions: List<Throwable>) {
+    /** The output each failure captured, index for index: the results printed before a crash are still evidence. */
+    val exceptionOutputs: List<WasmVMOutput?> = exceptions.map { it.capturedVmOutput() }
+
+    val parsed: GroupedTestsResultProtocol.ParsedBatchResult = GroupedTestsResultProtocol.parseMergedWithExecutionNames(
+        (collectedOutputs + exceptionOutputs.filterNotNull()).map { (output, executionName) ->
+            GroupedTestsResultProtocol.ExecutionOutput(executionName = executionName, output = output)
+        }
+    )
+
+    val parsedCollectedOutputs: List<GroupedTestsResultProtocol.ParsedExecution> =
+        parsed.executions.take(collectedOutputs.size)
+
+    val parsedExceptionOutputs: List<GroupedTestsResultProtocol.ParsedExecution?> = run {
+        val remaining = parsed.executions.drop(collectedOutputs.size).iterator()
+        exceptionOutputs.map { output -> output?.let { remaining.next() } }
+    }
+
+    fun collectedExecutionNames(predicate: (GroupedTestsResultProtocol.ParsedExecution) -> Boolean): List<String> =
+        collectedOutputs.filterIndexed { index, _ -> predicate(parsedCollectedOutputs[index]) }
+            .map { it.executionName }
+            .distinct()
+
+    fun parsedCollectedExecutionOutputs(): List<GroupedTestsResultProtocol.ExecutionOutput> =
+        collectedOutputs.mapIndexed { index, (output, executionName) ->
+            GroupedTestsResultProtocol.ExecutionOutput(executionName, output, parsedCollectedOutputs[index])
+        }
+}
+
+private fun Throwable.capturedVmOutput(): WasmVMOutput? {
+    val vmException = generateSequence(this) { it.cause }.filterIsInstance<WasmVMException>().firstOrNull() ?: return null
+    val output = vmException.output ?: return null
+    return WasmVMOutput(vmName = vmException.vmName, output = output, executionName = vmException.executionName)
+}

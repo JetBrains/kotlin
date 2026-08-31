@@ -41,18 +41,19 @@ class CustomWasmWasiCompilerFirstStageSanity :
         val exception = assertThrows<MultipleFailuresError> {
             runTest(testDataRoot + "incorrectBoxResult.kt")
         }
-        checkIncorrectBoxResult(exception.failures[0] as WasmVMException, "incorrectBoxResult/dev")
-        checkIncorrectBoxResult(exception.failures[1] as WasmVMException, "incorrectBoxResult/dce")
+        checkIncorrectBoxResult(exception.failures[0] as WasmVMException, "incorrectBoxResult", mode = "dev")
+        checkIncorrectBoxResult(exception.failures[1] as WasmVMException, "incorrectBoxResult", mode = "dce")
         assertEquals(2, exception.failures.size)
     }
 
-    private fun checkIncorrectBoxResult(exception: WasmVMException, testName: String) {
-        // WASI runs only dev mode with a single VM (NodeJs), so a single WasmVMException is thrown directly.
-        assertEquals("WasmVM NodeJs failed", exception.message)
+    private fun checkIncorrectBoxResult(exception: WasmVMException, testName: String, mode: String) {
+        // WASI runs on a single VM (NodeJs) here, once per compilation mode, so each failure names its execution.
+        assertEquals("NodeJs ($mode)", exception.executionName)
+        assertEquals("WasmVM NodeJs ($mode) failed", exception.message)
         exception.cause!!.message!!.let {
             // WASI helper uses single quotes: Expected 'OK'
             assertContains(it, "Wrong box result 'FAIL'; Expected 'OK'", message = it)
-            assertContains(it, testName)
+            assertContains(it, "$testName/$mode")
         }
     }
 
@@ -70,8 +71,8 @@ class CustomWasmWasiCompilerFirstStageSanity :
         val exception = assertThrows<MultipleFailuresError> {
             runTest(testDataRoot + "mutedWithIgnoreRuntimeErrors2ndStage.kt")
         }
-        checkIncorrectBoxResult(exception.failures[0] as WasmVMException, "mutedWithIgnoreRuntimeErrors2ndStage/dev")
-        checkIncorrectBoxResult(exception.failures[1] as WasmVMException, "mutedWithIgnoreRuntimeErrors2ndStage/dce")
+        checkIncorrectBoxResult(exception.failures[0] as WasmVMException, "mutedWithIgnoreRuntimeErrors2ndStage", mode = "dev")
+        checkIncorrectBoxResult(exception.failures[1] as WasmVMException, "mutedWithIgnoreRuntimeErrors2ndStage", mode = "dce")
         assertEquals(2, exception.failures.size)
     }
 

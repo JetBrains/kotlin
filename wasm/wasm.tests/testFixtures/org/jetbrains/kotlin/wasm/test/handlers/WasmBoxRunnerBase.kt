@@ -23,7 +23,11 @@ import java.io.File
 data class WasmVMOutput(
     val vmName: String,
     val output: String,
+    val executionName: String = vmName,
 )
+
+internal fun formatWasmExecutionName(vmName: String, mode: String): String =
+    if (mode.isEmpty()) vmName else "$vmName ($mode)"
 
 abstract class WasmBoxRunnerBase(
     testServices: TestServices,
@@ -192,6 +196,7 @@ abstract class WasmBoxRunnerBase(
                     entryFile = collectedJsArtifacts.entryPath,
                     jsFilePaths = jsFilePaths,
                     workingDirectory = outputDir,
+                    executionName = formatWasmExecutionName(vm.vmName, mark),
                     outputCollector = outputCollector,
                 )
             }
@@ -222,8 +227,9 @@ internal fun generateWasmJsUnitTestRunnerInvocation(callGroupedTestsDriver: Bool
 class WasmVMException(
     nested: Throwable,
     val vmName: String,
+    val executionName: String = vmName,
     val output: String? = null,
-) : Throwable("WasmVM $vmName failed", cause = nested)
+) : Throwable("WasmVM $executionName failed", cause = nested)
 
 internal const val UNIT_TEST_STARTED_MARKER = "##teamcity[testStarted"
 
@@ -248,13 +254,14 @@ internal fun WasmVM.runWithCaughtExceptions(
     entryFile: String?,
     jsFilePaths: List<String>,
     workingDirectory: File,
+    executionName: String,
     outputCollector: MutableList<WasmVMOutput>? = null,
     wasiEntryExport: String = WASI_BOX_ENTRY_EXPORT,
     expectUnitTestReport: Boolean = false,
 ): Throwable? {
     try {
         if (debugMode >= DebugMode.DEBUG) {
-            println(" ------ Run in $vmName")
+            println(" ------ Run in $executionName")
         }
         val str = run(
             "./${entryFile}",
@@ -264,18 +271,18 @@ internal fun WasmVM.runWithCaughtExceptions(
             useStackSwitching = useStackSwitching,
             wasiEntryExport = wasiEntryExport,
         )
-        outputCollector?.add(WasmVMOutput(vmName = vmName, output = str))
+        outputCollector?.add(WasmVMOutput(vmName = vmName, output = str, executionName = executionName))
         if (debugMode >= DebugMode.DEBUG) {
-            println(" ------ Run in $vmName is completed")
+            println(" ------ Run in $executionName is completed")
         }
         if (str.contains("##teamcity[testFailed")) {
-            return WasmVMException(AssertionError("Unit test failed in $vmName. Output:\n$str"), vmName, output = str)
+            return WasmVMException(AssertionError("Unit test failed in $executionName. Output:\n$str"), vmName, executionName, str)
         }
         if (expectUnitTestReport) {
-            checkUnitTestsReported(str, vmName)?.let { return WasmVMException(it, vmName, output = str) }
+            checkUnitTestsReported(str, executionName)?.let { return WasmVMException(it, vmName, executionName, str) }
         }
     } catch (e: Throwable) {
-        return WasmVMException(e, vmName, output = (e as? ExternalToolFailure)?.output)
+        return WasmVMException(e, vmName, executionName, (e as? ExternalToolFailure)?.output)
     }
     return null
 }
