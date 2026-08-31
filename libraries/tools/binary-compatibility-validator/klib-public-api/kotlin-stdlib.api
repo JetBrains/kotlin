@@ -10498,6 +10498,7 @@ final enum class kotlin.native/OsFamily : kotlin/Enum<kotlin.native/OsFamily> { 
     enum entry MACOSX // kotlin.native/OsFamily.MACOSX|null[0]
     enum entry TVOS // kotlin.native/OsFamily.TVOS|null[0]
     enum entry UNKNOWN // kotlin.native/OsFamily.UNKNOWN|null[0]
+    enum entry VISIONOS // kotlin.native/OsFamily.VISIONOS|null[0]
     enum entry WASM // kotlin.native/OsFamily.WASM|null[0]
     enum entry WATCHOS // kotlin.native/OsFamily.WATCHOS|null[0]
     enum entry WINDOWS // kotlin.native/OsFamily.WINDOWS|null[0]

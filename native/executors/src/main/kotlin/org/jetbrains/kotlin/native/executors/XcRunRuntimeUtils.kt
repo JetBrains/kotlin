@@ -34,6 +34,7 @@ internal fun simulatorOsName(family: Family): String {
         Family.IOS -> "iOS"
         Family.WATCHOS -> "watchOS"
         Family.TVOS -> "tvOS"
+        Family.VISIONOS -> "visionOS"
         else -> error("Unexpected simulator OS: $family")
     }
 }

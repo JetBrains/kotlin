@@ -206,6 +206,8 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
             KonanTarget.TVOS_ARM64 -> "CPointerByteVar"
             KonanTarget.TVOS_SIMULATOR_ARM64 -> "CPointerByteVar"
             KonanTarget.TVOS_X64 -> "X64"
+            KonanTarget.VISIONOS_ARM64 -> "CPointerByteVar"
+            KonanTarget.VISIONOS_SIMULATOR_ARM64 -> "CPointerByteVar"
             KonanTarget.WATCHOS_ARM64 -> "CPointerByteVar"
             KonanTarget.WATCHOS_DEVICE_ARM64 -> "CPointerByteVar"
             KonanTarget.WATCHOS_SIMULATOR_ARM64 -> "CPointerByteVar"

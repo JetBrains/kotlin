@@ -230,6 +230,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
             Family.IOS -> if (targetTriple.isMacabi) "osx" else "ios"
             Family.WATCHOS -> "watchos"
             Family.TVOS -> "tvos"
+            Family.VISIONOS -> "xros"
             Family.OSX -> "osx"
             else -> error("Target $target is unsupported")
         }
@@ -274,6 +275,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
             Family.IOS -> if (targetTriple.isMacabi) "mac-catalyst" else "ios"
             Family.TVOS -> "tvos"
             Family.WATCHOS -> "watchos"
+            Family.VISIONOS -> "xros"
             else -> error("Unexpected Apple target family: ${target.family}")
         } + if (targetTriple.isSimulator) "-simulator" else ""
         add(platformName)
@@ -362,7 +364,8 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
                 Family.OSX -> "@executable_path/../Frameworks"
                 Family.IOS,
                 Family.WATCHOS,
-                Family.TVOS -> "@executable_path/Frameworks"
+                Family.TVOS,
+                Family.VISIONOS -> "@executable_path/Frameworks"
                 else -> error(target)
             },
             "@loader_path/Frameworks".takeIf { dynamic },

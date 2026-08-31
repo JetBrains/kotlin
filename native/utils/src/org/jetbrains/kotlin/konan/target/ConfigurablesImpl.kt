@@ -39,7 +39,8 @@ fun loadConfigurables(
 ): Configurables = when (target.family) {
     Family.LINUX -> GccConfigurablesImpl(target, properties, dependenciesRoot, progressCallback)
 
-    Family.TVOS, Family.WATCHOS, Family.IOS, Family.OSX -> AppleConfigurablesImpl(target, properties, dependenciesRoot, progressCallback)
+    Family.TVOS, Family.WATCHOS, Family.IOS, Family.OSX, Family.VISIONOS ->
+        AppleConfigurablesImpl(target, properties, dependenciesRoot, progressCallback)
 
     Family.ANDROID -> AndroidConfigurablesImpl(target, properties, dependenciesRoot, progressCallback)
 

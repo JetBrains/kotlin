@@ -27,9 +27,10 @@ class ProgramNameTest : AbstractNativeSimpleTest() {
 
     @Test
     fun programNameTest() {
-        // The С part of the test relies on execv which is not available on tvOS and watchOS.
+        // The С part of the test relies on execv which is not available on tvOS, watchOS, and visionOS.
         Assumptions.assumeTrue(targets.testTarget.family != Family.TVOS)
         Assumptions.assumeTrue(targets.testTarget.family != Family.WATCHOS)
+        Assumptions.assumeTrue(targets.testTarget.family != Family.VISIONOS)
         // execv seem to mess up the qemu's userspace emulation
         Assumptions.assumeTrue(testRunSettings.testProcessExecutor !is EmulatorExecutor)
         // 1. Compile kotlinPrintEntryPoint.kt to kotlinPrintEntryPoint.kexe

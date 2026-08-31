@@ -116,7 +116,7 @@ internal class Linker(
             val framework = Path(outputFile)
             val dylibName = framework.name.removeSuffix(".framework")
             val dylibRelativePath = when (target.family) {
-                Family.IOS, Family.TVOS, Family.WATCHOS -> dylibName
+                Family.IOS, Family.TVOS, Family.WATCHOS, Family.VISIONOS -> dylibName
                 Family.OSX -> "Versions/A/$dylibName"
                 else -> error("Unsupported target family for Framework: $target")
             }

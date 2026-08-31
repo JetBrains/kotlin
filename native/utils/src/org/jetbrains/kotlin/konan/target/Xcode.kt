@@ -59,6 +59,10 @@ interface Xcode {
     val appletvsimulatorSdk: String
     val watchosSdk: String
     val watchsimulatorSdk: String
+    val xrosSdk: String
+        get() = siblingPlatformSdk(iphoneosSdk, "XROS", "XROS")
+    val xrsimulatorSdk: String
+        get() = siblingPlatformSdk(iphonesimulatorSdk, "XRSimulator", "XRSimulator")
     // Xcode.app/Contents/Developer/usr
     val additionalTools: String
     val simulatorRuntimes: String
@@ -71,6 +75,8 @@ interface Xcode {
         "appletvsimulator" -> appletvsimulatorSdk
         "watchos" -> watchosSdk
         "watchsimulator" -> watchsimulatorSdk
+        "xros" -> xrosSdk
+        "xrsimulator" -> xrsimulatorSdk
         else -> error("Unknown Apple platform: $platformName")
     }
 
@@ -96,6 +102,12 @@ interface Xcode {
         fun forDeveloperDir(developerDir: String): Xcode = InstalledXcode(developerDir)
     }
 }
+
+private fun siblingPlatformSdk(referenceSdk: String, platform: String, sdk: String): String =
+    Path(referenceSdk)
+        .parent.parent.parent.parent
+        .resolve("$platform.platform/Developer/SDKs/$sdk.sdk")
+        .absolutePathString()
 
 /**
  * The Xcode selected for the current process. By default this is the system selection (`xcode-select`); when
@@ -140,6 +152,8 @@ internal class InstalledXcode(private val developerDir: String? = null) : Xcode 
     override val appletvsimulatorSdk by lazy { getSdkPath("appletvsimulator") }
     override val watchosSdk: String by lazy { getSdkPath("watchos") }
     override val watchsimulatorSdk: String by lazy { getSdkPath("watchsimulator") }
+    override val xrosSdk: String by lazy { getSdkPath("xros") }
+    override val xrsimulatorSdk: String by lazy { getSdkPath("xrsimulator") }
 
     internal val xcodebuildVersion: XcodeVersion
         get() = xcrun("xcodebuild", "-version")

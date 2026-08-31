@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.target
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -17,6 +18,15 @@ import java.nio.file.Path
 
 
 class KonanTargetTest {
+    @Test
+    fun visionOsTargets() {
+        assertEquals(Family.VISIONOS, KonanTarget.VISIONOS_ARM64.family)
+        assertEquals(Architecture.ARM64, KonanTarget.VISIONOS_ARM64.architecture)
+        assertEquals(Family.VISIONOS, KonanTarget.VISIONOS_SIMULATOR_ARM64.family)
+        assertEquals(Architecture.ARM64, KonanTarget.VISIONOS_SIMULATOR_ARM64.architecture)
+        assertTrue(Family.VISIONOS.isAppleFamily)
+    }
+
     @Test
     fun allPredefinedTargetsRegistered() {
         assertEquals(

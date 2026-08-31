@@ -238,7 +238,7 @@ NO_EXTERNAL_CALLS_CHECK NO_INLINE int gettid() {
 #endif
 
 NO_EXTERNAL_CALLS_CHECK uintptr_t currentThreadId() {
-#if defined(KONAN_OSX) or defined(KONAN_IOS) or defined(KONAN_TVOS) or defined(KONAN_WATCHOS)
+#if defined(KONAN_OSX) or defined(KONAN_IOS) or defined(KONAN_TVOS) or defined(KONAN_WATCHOS) or defined(KONAN_VISIONOS)
     uint64_t tid;
     pthread_t self = pthread_self();
     RuntimeCheck(!pthread_threadid_np(self, &tid), "Error getting thread id");

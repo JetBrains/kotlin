@@ -133,5 +133,10 @@ fun AppleConfigurables.platformName(): String = when (target.family) {
     } else {
         "WatchOS"
     }
+    Family.VISIONOS -> if (targetTriple.isSimulator) {
+        "XRSimulator"
+    } else {
+        "XROS"
+    }
     else -> error("Not an Apple target: $target")
 }

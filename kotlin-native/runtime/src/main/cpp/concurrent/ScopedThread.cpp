@@ -14,7 +14,7 @@
 using namespace kotlin;
 
 void internal::setCurrentThreadName(std::string_view name) noexcept {
-#if KONAN_MACOSX || KONAN_IOS || KONAN_WATCHOS || KONAN_TVOS
+#if KONAN_MACOSX || KONAN_IOS || KONAN_WATCHOS || KONAN_TVOS || KONAN_VISIONOS
     static_assert(std::is_invocable_r_v<void, decltype(pthread_setname_np), const char*>, "Invalid pthread_setname_np signature");
     pthread_setname_np(name.data());
 #else

@@ -35,7 +35,8 @@ internal class FrameworkBuilder(
         val frameworkContents = when (target.family) {
             Family.IOS,
             Family.WATCHOS,
-            Family.TVOS -> frameworkDirectory
+            Family.TVOS,
+            Family.VISIONOS -> frameworkDirectory
 
             Family.OSX -> frameworkDirectory.resolve("Versions/A")
             else -> error(target)
@@ -56,7 +57,8 @@ internal class FrameworkBuilder(
         val directory = when (target.family) {
             Family.IOS,
             Family.WATCHOS,
-            Family.TVOS -> frameworkContents
+            Family.TVOS,
+            Family.VISIONOS -> frameworkContents
 
             Family.OSX -> frameworkContents.resolve("Resources").also { it.createDirectories() }
             else -> error(target)

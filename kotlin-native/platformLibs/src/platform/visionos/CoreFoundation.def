@@ -1,0 +1,9 @@
+depends = CFCGTypes CoreFoundationBase darwin posix
+language = Objective-C
+package = platform.CoreFoundation
+headers = CoreFoundation/CoreFoundation.h CoreFoundation/CFPlugInCOM.h
+headerFilter = CoreFoundation/**
+excludeFilter = CoreFoundation/CFCGTypes.h CoreFoundation/CFBase.h CoreFoundation/CFAvailability.h
+
+compilerOpts = -framework CoreFoundation
+linkerOpts = -framework CoreFoundation

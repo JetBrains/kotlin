@@ -109,7 +109,19 @@ bitcode {
                 "TARGET_OS_IPHONE" to "1",
                 "TARGET_OS_WATCH" to "1",
             )
-            else -> emptyMap()
+            else -> when (target.name) {
+                "visionos_arm64" -> hashMapOf(
+                    "TARGET_OS_EMBEDDED" to "1",
+                    "TARGET_OS_IPHONE" to "1",
+                    "TARGET_OS_VISION" to "1",
+                )
+                "visionos_simulator_arm64" -> hashMapOf(
+                    "TARGET_OS_SIMULATOR" to "1",
+                    "TARGET_OS_IPHONE" to "1",
+                    "TARGET_OS_VISION" to "1",
+                )
+                else -> emptyMap()
+            }
             }.map { "-D${it.key}=${it.value}" }
 
         val clangArgsSpecificForKonanSources: List<String> = run {

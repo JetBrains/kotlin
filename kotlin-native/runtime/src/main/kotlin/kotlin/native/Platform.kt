@@ -21,7 +21,8 @@ public enum class OsFamily {
     ANDROID,
     WASM,
     TVOS,
-    WATCHOS
+    WATCHOS,
+    VISIONOS,
 }
 
 /**

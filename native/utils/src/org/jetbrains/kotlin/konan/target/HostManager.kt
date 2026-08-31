@@ -72,6 +72,8 @@ open class HostManager() {
         TVOS_ARM64,
         TVOS_X64,
         TVOS_SIMULATOR_ARM64,
+        VISIONOS_ARM64,
+        VISIONOS_SIMULATOR_ARM64,
     )
 
     val enabledByHost: Map<KonanTarget, Set<KonanTarget>> = mapOf(

@@ -1,0 +1,8 @@
+depends = CFCGTypes CoreFoundation CoreFoundationBase darwin posix
+language = Objective-C
+package = platform.Security
+modules = Security
+apiNotesSwiftName = true
+
+compilerOpts = -framework Security
+linkerOpts = -framework Security

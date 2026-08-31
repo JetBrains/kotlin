@@ -27,6 +27,7 @@ internal val Family.compressedName: Char
         Family.IOS -> 'i'
         Family.TVOS -> 't'
         Family.WATCHOS -> 'w'
+        Family.VISIONOS -> 'v'
         Family.LINUX -> 'l'
         Family.MINGW -> 'm'
         Family.ANDROID -> 'a'
