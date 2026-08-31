@@ -26,12 +26,15 @@ import java.util.Properties
  *
  * @property metadata  Serialized metadata of the corresponding source file.
  * @property irData Serialized IR for this file, or `null` if this is a metadata-only KLIB.
+ * @property irInlineData Serialized IR for preprocessed inline functions.
+ * It is `null` if this is a metadata-only KLIB or there were no inline functions in this file.
  * @property path The path to the corresponding source file, or `null` if that source file didn't have a path.
  * @property fqName The fully qualified name of the package containing the serialized file.
  */
 class KotlinFileSerializedData private constructor(
     val metadata: ByteArray,
     val irData: SerializedIrFile?,
+    val irInlineData: SerializedIrFile?,
     val path: String?,
     val fqName: String,
 ) {
@@ -41,8 +44,15 @@ class KotlinFileSerializedData private constructor(
      *
      * @param metadata Serialized metadata of the corresponding source file.
      * @param irData Serialized IR for this file.
+     * @param irInlineData Serialized IR for preprocessed inline functions that were present in this file.
      */
-    constructor(metadata: ByteArray, irData: SerializedIrFile) : this(metadata, irData, irData.path, irData.fqName)
+    constructor(
+        metadata: ByteArray, irData: SerializedIrFile, irInlineData: SerializedIrFile? = null
+    ) : this(metadata, irData, irInlineData, irData.path, irData.fqName) {
+        if (irInlineData != null) {
+            require(irData.path == irInlineData.path && irData.fqName == irInlineData.fqName)
+        }
+    }
 
     /**
      * Used for creating file serialization data in metadata-only KLIBs.
@@ -51,7 +61,7 @@ class KotlinFileSerializedData private constructor(
      * @param path The path of the serialized file.
      * @param fqName The fully qualified name of the package containing the serialized file.
      */
-    constructor(metadata: ByteArray, path: String?, fqName: String) : this(metadata, irData = null, path, fqName)
+    constructor(metadata: ByteArray, path: String?, fqName: String) : this(metadata, irData = null, irInlineData = null, path, fqName)
 }
 
 class SerializerOutput(
@@ -104,6 +114,7 @@ fun <SourceFile> serializeModuleIntoKlib(
     }
 
     val serializedFiles = serializedIr?.files?.toList()
+    val serializedInlineFiles = serializedIr?.filesWithPreparedInlinableFunctions?.toList()
 
     val compiledKotlinFiles = buildList {
         addAll(cleanFiles)
@@ -116,12 +127,15 @@ fun <SourceFile> serializeModuleIntoKlib(
                     """.trimMargin()
                 }
             }
+
+            val inlineBinaryFile = serializedInlineFiles?.firstOrNull { it.path == binaryFile?.path && it.fqName == binaryFile.fqName }
+
             val protoBuf = metadataSerializer.serializeSingleFileMetadata(sourceFile)
             val metadata = protoBuf.toByteArray()
             val compiledKotlinFile = if (binaryFile == null)
                 KotlinFileSerializedData(metadata, ktSourceFile?.path, packageFqName.asString())
             else
-                KotlinFileSerializedData(metadata, binaryFile)
+                KotlinFileSerializedData(metadata, binaryFile, inlineBinaryFile)
 
             if (processCompiledFileData != null) {
                 processCompiledFileData(ioFile, compiledKotlinFile)
@@ -160,7 +174,7 @@ fun <SourceFile> serializeModuleIntoKlib(
         serializedIr = if (serializedIr == null) null
         else SerializedIrModule(
             compiledKotlinFiles.mapNotNull { it.irData },
-            serializedIr.filesWithPreparedInlinableFunctions,
+            compiledKotlinFiles.mapNotNull { it.irInlineData },
         ),
         neededLibraries = dependencies,
     )
