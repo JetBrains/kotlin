@@ -51,7 +51,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithFakeOverrideAsImportedArgument
         }
 
     }
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](foo#) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](foo#) [compilerRequired = (allowedTargets = vararg(ERROR_EXPR(Unresolved argument during compiler required annotations resolution)))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|myPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -71,7 +71,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithFakeOverrideAsImportedArgument
         }
 
     }
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](foo#) public final? [ResolvedTo(COMPANION_GENERATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](foo#) [compilerRequired = (allowedTargets = vararg(ERROR_EXPR(Unresolved argument during compiler required annotations resolution)))] public final? [ResolvedTo(COMPANION_GENERATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|myPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithFakeOverrideAsImportedArgument
         }
 
     }
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](foo#) public final? [ResolvedTo(SUPER_TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](foo#) [compilerRequired = (allowedTargets = vararg(ERROR_EXPR(Unresolved argument during compiler required annotations resolution)))] public final? [ResolvedTo(SUPER_TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|myPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -111,7 +111,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithFakeOverrideAsImportedArgument
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](foo#) public final? [ResolvedTo(TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](foo#) [compilerRequired = (allowedTargets = vararg(ERROR_EXPR(Unresolved argument during compiler required annotations resolution)))] public final? [ResolvedTo(TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|myPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -131,7 +131,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithFakeOverrideAsImportedArgument
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](foo#) public final [ResolvedTo(STATUS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](foo#) [compilerRequired = (allowedTargets = vararg(ERROR_EXPR(Unresolved argument during compiler required annotations resolution)))] public final [ResolvedTo(STATUS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|myPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -151,7 +151,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithFakeOverrideAsImportedArgument
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](foo#) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](foo#) [compilerRequired = (allowedTargets = vararg(ERROR_EXPR(Unresolved argument during compiler required annotations resolution)))] public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|myPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -171,7 +171,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithFakeOverrideAsImportedArgument
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](foo#) public final [ResolvedTo(CONTRACTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](foo#) [compilerRequired = (allowedTargets = vararg(ERROR_EXPR(Unresolved argument during compiler required annotations resolution)))] public final [ResolvedTo(CONTRACTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|myPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -191,7 +191,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithFakeOverrideAsImportedArgument
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](foo#) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](foo#) [compilerRequired = (allowedTargets = vararg(ERROR_EXPR(Unresolved argument during compiler required annotations resolution)))] public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|myPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -211,7 +211,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithFakeOverrideAsImportedArgument
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](foo#) public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](foo#) [compilerRequired = (allowedTargets = vararg(ERROR_EXPR(Unresolved argument during compiler required annotations resolution)))] public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|myPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -231,7 +231,15 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithFakeOverrideAsImportedArgument
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|myPack/MyObject|.R|SubstitutionOverride<myPack/MyObject.foo: R|kotlin/Int?|>|) [evaluated = vararg(Q|myPack/MyObject|.R|SubstitutionOverride<myPack/MyObject.foo: R|kotlin/Int?|>|)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|myPack/MyObject|.R|SubstitutionOverride<myPack/MyObject.foo: R|kotlin/Int?|><
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: null
+              - compiler arguments stage: FirRegularPropertySymbol myPack/MyObject.foo
+        >#|) [evaluated = vararg(Q|myPack/MyObject|.R|SubstitutionOverride<myPack/MyObject.foo: R|kotlin/Int?|><
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: null
+              - compiler arguments stage: FirRegularPropertySymbol myPack/MyObject.foo
+        >#|)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|myPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -251,7 +259,15 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithFakeOverrideAsImportedArgument
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|myPack/MyObject|.R|SubstitutionOverride<myPack/MyObject.foo: R|kotlin/Int?|>|) [evaluated = vararg(Q|myPack/MyObject|.R|SubstitutionOverride<myPack/MyObject.foo: R|kotlin/Int?|>|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|myPack/MyObject|.R|SubstitutionOverride<myPack/MyObject.foo: R|kotlin/Int?|><
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: null
+              - compiler arguments stage: FirRegularPropertySymbol myPack/MyObject.foo
+        >#|) [evaluated = vararg(Q|myPack/MyObject|.R|SubstitutionOverride<myPack/MyObject.foo: R|kotlin/Int?|><
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: null
+              - compiler arguments stage: FirRegularPropertySymbol myPack/MyObject.foo
+        >#|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyAnnotation] constructor(): R|myPack/MyAnnotation| {
             super<R|kotlin/Any|>()
         }
@@ -273,7 +289,15 @@ FILE: [ResolvedTo(BODY_RESOLVE)] requiredAnnotationWithFakeOverrideAsImportedArg
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|myPack/MyObject|.R|SubstitutionOverride<myPack/MyObject.foo: R|kotlin/Int?|>|) [evaluated = vararg(Q|myPack/MyObject|.R|SubstitutionOverride<myPack/MyObject.foo: R|kotlin/Int?|>|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|myPack/MyObject|.R|SubstitutionOverride<myPack/MyObject.foo: R|kotlin/Int?|><
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: null
+              - compiler arguments stage: FirRegularPropertySymbol myPack/MyObject.foo
+        >#|) [evaluated = vararg(Q|myPack/MyObject|.R|SubstitutionOverride<myPack/MyObject.foo: R|kotlin/Int?|><
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: null
+              - compiler arguments stage: FirRegularPropertySymbol myPack/MyObject.foo
+        >#|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyAnnotation] constructor(): R|myPack/MyAnnotation| {
             super<R|kotlin/Any|>()
         }

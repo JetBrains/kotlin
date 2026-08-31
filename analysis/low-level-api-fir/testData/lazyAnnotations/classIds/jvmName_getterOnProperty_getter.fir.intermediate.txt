@@ -1,1 +1,1 @@
-@PROPERTY_GETTER:R|kotlin/jvm/JvmName|[Types](String(getter)) public? [ResolvedTo(TYPES)] get(): R|kotlin/Int|
+@PROPERTY_GETTER:R|kotlin/jvm/JvmName|[Types](String(getter)) [compilerRequired = (name = String(getter))] public? [ResolvedTo(TYPES)] get(): R|kotlin/Int|

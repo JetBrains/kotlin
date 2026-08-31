@@ -18,7 +18,7 @@ FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
-    @R|kotlin/DeprecatedSinceKotlin|[CompilerRequiredAnnotations](hiddenSince = String(1.4)) @R|kotlin/SinceKotlin|[CompilerRequiredAnnotations](String(1.2)) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/DeprecatedSinceKotlin|[CompilerRequiredAnnotations](hiddenSince = String(1.4)) [compilerRequired = (hiddenSince = String(1.4))] @R|kotlin/SinceKotlin|[CompilerRequiredAnnotations](String(1.2)) [compilerRequired = (version = String(1.2))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
-    @R|kotlin/DeprecatedSinceKotlin|[CompilerRequiredAnnotations](hiddenSince = String(1.4)) @R|kotlin/SinceKotlin|[CompilerRequiredAnnotations](String(1.2)) public final? [ResolvedTo(COMPANION_GENERATION)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/DeprecatedSinceKotlin|[CompilerRequiredAnnotations](hiddenSince = String(1.4)) [compilerRequired = (hiddenSince = String(1.4))] @R|kotlin/SinceKotlin|[CompilerRequiredAnnotations](String(1.2)) [compilerRequired = (version = String(1.2))] public final? [ResolvedTo(COMPANION_GENERATION)] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
-    @R|kotlin/DeprecatedSinceKotlin|[CompilerRequiredAnnotations](hiddenSince = String(1.4)) @R|kotlin/SinceKotlin|[CompilerRequiredAnnotations](String(1.2)) public final? [ResolvedTo(SUPER_TYPES)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/DeprecatedSinceKotlin|[CompilerRequiredAnnotations](hiddenSince = String(1.4)) [compilerRequired = (hiddenSince = String(1.4))] @R|kotlin/SinceKotlin|[CompilerRequiredAnnotations](String(1.2)) [compilerRequired = (version = String(1.2))] public final? [ResolvedTo(SUPER_TYPES)] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
-    @R|kotlin/DeprecatedSinceKotlin|[Types](hiddenSince = String(1.4)) @R|kotlin/SinceKotlin|[Types](String(1.2)) public final? [ResolvedTo(TYPES)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/DeprecatedSinceKotlin|[Types](hiddenSince = String(1.4)) [compilerRequired = (hiddenSince = String(1.4))] @R|kotlin/SinceKotlin|[Types](String(1.2)) [compilerRequired = (version = String(1.2))] public final? [ResolvedTo(TYPES)] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -54,7 +54,7 @@ FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
-    @R|kotlin/DeprecatedSinceKotlin|[Types](hiddenSince = String(1.4)) @R|kotlin/SinceKotlin|[Types](String(1.2)) public final [ResolvedTo(STATUS)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/DeprecatedSinceKotlin|[Types](hiddenSince = String(1.4)) [compilerRequired = (hiddenSince = String(1.4))] @R|kotlin/SinceKotlin|[Types](String(1.2)) [compilerRequired = (version = String(1.2))] public final [ResolvedTo(STATUS)] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -63,7 +63,7 @@ FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
-    @R|kotlin/DeprecatedSinceKotlin|[Types](hiddenSince = String(1.4)) @R|kotlin/SinceKotlin|[Types](String(1.2)) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/DeprecatedSinceKotlin|[Types](hiddenSince = String(1.4)) [compilerRequired = (hiddenSince = String(1.4))] @R|kotlin/SinceKotlin|[Types](String(1.2)) [compilerRequired = (version = String(1.2))] public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -72,7 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
-    @R|kotlin/DeprecatedSinceKotlin|[Types](hiddenSince = String(1.4)) @R|kotlin/SinceKotlin|[Types](String(1.2)) public final [ResolvedTo(CONTRACTS)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/DeprecatedSinceKotlin|[Types](hiddenSince = String(1.4)) [compilerRequired = (hiddenSince = String(1.4))] @R|kotlin/SinceKotlin|[Types](String(1.2)) [compilerRequired = (version = String(1.2))] public final [ResolvedTo(CONTRACTS)] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
-    @R|kotlin/DeprecatedSinceKotlin|[Types](hiddenSince = String(1.4)) @R|kotlin/SinceKotlin|[Types](String(1.2)) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/DeprecatedSinceKotlin|[Types](hiddenSince = String(1.4)) [compilerRequired = (hiddenSince = String(1.4))] @R|kotlin/SinceKotlin|[Types](String(1.2)) [compilerRequired = (version = String(1.2))] public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -90,7 +90,7 @@ FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] deprecatedSinceKotlin.kt
-    @R|kotlin/DeprecatedSinceKotlin|[Types](hiddenSince = String(1.4)) @R|kotlin/SinceKotlin|[Types](String(1.2)) public final [ResolvedTo(CONSTANT_EVALUATION)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/DeprecatedSinceKotlin|[Types](hiddenSince = String(1.4)) [compilerRequired = (hiddenSince = String(1.4))] @R|kotlin/SinceKotlin|[Types](String(1.2)) [compilerRequired = (version = String(1.2))] public final [ResolvedTo(CONSTANT_EVALUATION)] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }

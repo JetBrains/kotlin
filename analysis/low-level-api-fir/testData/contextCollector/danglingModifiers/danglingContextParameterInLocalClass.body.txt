@@ -29,7 +29,7 @@ Tower Data Context:
                 Type: <local>.Foo
 
 FILE: [ResolvedTo(IMPORTS)] danglingContextParameterInLocalClass.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] position: R|kotlin/String|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }

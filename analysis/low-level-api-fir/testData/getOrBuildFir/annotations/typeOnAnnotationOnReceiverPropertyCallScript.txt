@@ -14,7 +14,7 @@ FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnReceiverPropertyCallScript.kts
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] val [ResolvedTo(ANNOTATION_ARGUMENTS)] R|@R|Anno|(s = String(a) [evaluated = String(a)])  kotlin/Int|.i: R|kotlin/String|
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| { LAZY_BLOCK }
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeOnAnnotationOnReceiverPropertyCallScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeOnAnnotationOnReceiverPropertyCallScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }

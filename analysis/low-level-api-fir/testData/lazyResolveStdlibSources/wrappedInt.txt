@@ -240,7 +240,7 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
-    @R|kotlin/SinceKotlin|[CompilerRequiredAnnotations](String(1.4)) public final? [ResolvedTo(SUPER_TYPES)] class TypeReference : R|kotlin/reflect/KType| {
+    @R|kotlin/SinceKotlin|[CompilerRequiredAnnotations](String(1.4)) [compilerRequired = (version = String(1.4))] public final? [ResolvedTo(SUPER_TYPES)] class TypeReference : R|kotlin/reflect/KType| {
         @SinceKotlin[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: KClassifier, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] @SinceKotlin[Unresolved](LAZY_EXPRESSION) platformTypeUpperBound: KType?, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] @SinceKotlin[Unresolved](LAZY_EXPRESSION) flags: Int): R|kotlin/jvm/internal/TypeReference| {
             LAZY_super<<implicit>>
         }
@@ -300,7 +300,7 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
-    @R|kotlin/SinceKotlin|[Types](String(1.4)) public final? [ResolvedTo(TYPES)] class TypeReference : R|kotlin/reflect/KType| {
+    @R|kotlin/SinceKotlin|[Types](String(1.4)) [compilerRequired = (version = String(1.4))] public final? [ResolvedTo(TYPES)] class TypeReference : R|kotlin/reflect/KType| {
         @SinceKotlin[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: KClassifier, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: List<KTypeProjection>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] @SinceKotlin[Unresolved](LAZY_EXPRESSION) platformTypeUpperBound: KType?, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] @SinceKotlin[Unresolved](LAZY_EXPRESSION) flags: Int): R|kotlin/jvm/internal/TypeReference| {
             LAZY_super<<implicit>>
         }
@@ -360,8 +360,8 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
-    @R|kotlin/SinceKotlin|[Types](String(1.4)) public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
-        @R|kotlin/SinceKotlin|[Types](String(1.6)) public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
+    @R|kotlin/SinceKotlin|[Types](String(1.4)) [compilerRequired = (version = String(1.4))] public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) [compilerRequired = (version = String(1.6))] public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
             LAZY_super<<implicit>>
         }
 
@@ -371,10 +371,10 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
         public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>| = R|<local>/arguments|
             public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|
 
-        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) [compilerRequired = (version = String(1.6))] internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
             internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KType?|
 
-        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) [compilerRequired = (version = String(1.6))] internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
             internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/Int|
 
         public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] isMarkedNullable: R|kotlin/Boolean|): R|kotlin/jvm/internal/TypeReference| {
@@ -420,8 +420,8 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
-    @R|kotlin/SinceKotlin|[Types](String(1.4)) public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
-        @R|kotlin/SinceKotlin|[Types](String(1.6)) public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
+    @R|kotlin/SinceKotlin|[Types](String(1.4)) [compilerRequired = (version = String(1.4))] public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) [compilerRequired = (version = String(1.6))] public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
             LAZY_super<<implicit>>
         }
 
@@ -431,10 +431,10 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
         public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>| = R|<local>/arguments|
             public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|
 
-        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) [compilerRequired = (version = String(1.6))] internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
             internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KType?|
 
-        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) [compilerRequired = (version = String(1.6))] internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
             internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/Int|
 
         public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] isMarkedNullable: R|kotlin/Boolean|): R|kotlin/jvm/internal/TypeReference| {
@@ -480,8 +480,8 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
-    @R|kotlin/SinceKotlin|[Types](String(1.4)) public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
-        @R|kotlin/SinceKotlin|[Types](String(1.6)) public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
+    @R|kotlin/SinceKotlin|[Types](String(1.4)) [compilerRequired = (version = String(1.4))] public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) [compilerRequired = (version = String(1.6))] public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
             LAZY_super<<implicit>>
         }
 
@@ -491,10 +491,10 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
         public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>| = R|<local>/arguments|
             public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|
 
-        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) [compilerRequired = (version = String(1.6))] internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
             internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KType?|
 
-        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) [compilerRequired = (version = String(1.6))] internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
             internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/Int|
 
         public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] isMarkedNullable: R|kotlin/Boolean|): R|kotlin/jvm/internal/TypeReference| {
@@ -540,8 +540,8 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
-    @R|kotlin/SinceKotlin|[Types](String(1.4)) public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
-        @R|kotlin/SinceKotlin|[Types](String(1.6)) public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
+    @R|kotlin/SinceKotlin|[Types](String(1.4)) [compilerRequired = (version = String(1.4))] public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) [compilerRequired = (version = String(1.6))] public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
             LAZY_super<<implicit>>
         }
 
@@ -551,10 +551,10 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
         public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>| = R|<local>/arguments|
             public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|
 
-        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) [compilerRequired = (version = String(1.6))] internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
             internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KType?|
 
-        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) [compilerRequired = (version = String(1.6))] internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
             internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/Int|
 
         public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] isMarkedNullable: R|kotlin/Boolean|): R|kotlin/jvm/internal/TypeReference| {
@@ -600,8 +600,8 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
-    @R|kotlin/SinceKotlin|[Types](String(1.4)) public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
-        @R|kotlin/SinceKotlin|[Types](String(1.6)) public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
+    @R|kotlin/SinceKotlin|[Types](String(1.4)) [compilerRequired = (version = String(1.4))] public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) [compilerRequired = (version = String(1.6))] public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
             LAZY_super<<implicit>>
         }
 
@@ -611,10 +611,10 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
         public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>| = R|<local>/arguments|
             public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|
 
-        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) [compilerRequired = (version = String(1.6))] internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
             internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KType?|
 
-        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) [compilerRequired = (version = String(1.6))] internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
             internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/Int|
 
         public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] isMarkedNullable: R|kotlin/Boolean|): R|kotlin/jvm/internal/TypeReference| {
@@ -660,8 +660,8 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
-    @R|kotlin/SinceKotlin|[Types](String(1.4)) public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
-        @R|kotlin/SinceKotlin|[Types](String(1.6)) public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
+    @R|kotlin/SinceKotlin|[Types](String(1.4)) [compilerRequired = (version = String(1.4))] public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) [compilerRequired = (version = String(1.6))] public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
             LAZY_super<<implicit>>
         }
 
@@ -671,10 +671,10 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
         public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>| = R|<local>/arguments|
             public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|
 
-        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) [compilerRequired = (version = String(1.6))] internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
             internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KType?|
 
-        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) [compilerRequired = (version = String(1.6))] internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
             internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/Int|
 
         public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] isMarkedNullable: R|kotlin/Boolean|): R|kotlin/jvm/internal/TypeReference| {
@@ -720,8 +720,8 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
-    @R|kotlin/SinceKotlin|[Types](String(1.4)) public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
-        @R|kotlin/SinceKotlin|[Types](String(1.6)) public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
+    @R|kotlin/SinceKotlin|[Types](String(1.4)) [compilerRequired = (version = String(1.4))] public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) [compilerRequired = (version = String(1.6))] public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
             LAZY_super<<implicit>>
         }
 
@@ -731,10 +731,10 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
         public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>| = R|<local>/arguments|
             public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|
 
-        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) [compilerRequired = (version = String(1.6))] internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val platformTypeUpperBound: R|kotlin/reflect/KType?| = R|<local>/platformTypeUpperBound|
             internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/reflect/KType?|
 
-        @R|kotlin/SinceKotlin|[Types](String(1.6)) internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
+        @R|kotlin/SinceKotlin|[Types](String(1.6)) [compilerRequired = (version = String(1.6))] internal final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val flags: R|kotlin/Int| = R|<local>/flags|
             internal [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] get(): R|kotlin/Int|
 
         public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] isMarkedNullable: R|kotlin/Boolean|): R|kotlin/jvm/internal/TypeReference| {

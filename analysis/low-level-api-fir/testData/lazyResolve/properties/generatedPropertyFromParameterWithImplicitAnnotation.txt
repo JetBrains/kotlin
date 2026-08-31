@@ -120,7 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameterWithImplicitAnnotation
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameterWithImplicitAnnotation.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ParameterAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.VALUE_PARAMETER#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ParameterAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ParameterAnnotation.i] i: Int): R|ParameterAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -144,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameterWithImplicitAnnotation
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameterWithImplicitAnnotation.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ParameterAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.VALUE_PARAMETER#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ParameterAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ParameterAnnotation.i] i: Int): R|ParameterAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -168,7 +168,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameterWithImplicitAnnotation
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameterWithImplicitAnnotation.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ParameterAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.VALUE_PARAMETER#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ParameterAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ParameterAnnotation.i] i: Int): R|ParameterAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -192,7 +192,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameterWithImplicitAnnotation
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameterWithImplicitAnnotation.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ParameterAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.VALUE_PARAMETER#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ParameterAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ParameterAnnotation.i] i: Int): R|ParameterAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -216,7 +216,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameterWithImplicitAnnotation
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameterWithImplicitAnnotation.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ParameterAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.VALUE_PARAMETER#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ParameterAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ParameterAnnotation.i] i: Int): R|ParameterAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -240,7 +240,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameterWithImplicitAnnotation
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameterWithImplicitAnnotation.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ParameterAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.VALUE_PARAMETER#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ParameterAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ParameterAnnotation.i] i: Int): R|ParameterAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -264,7 +264,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameterWithImplicitAnnotation
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameterWithImplicitAnnotation.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class ParameterAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](AnnotationTarget#.VALUE_PARAMETER#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|))] public final [ResolvedTo(STATUS)] annotation class ParameterAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ParameterAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/ParameterAnnotation.i] i: R|kotlin/Int|): R|ParameterAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -288,7 +288,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameterWithImplicitAnnotation
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameterWithImplicitAnnotation.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class ParameterAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](AnnotationTarget#.VALUE_PARAMETER#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|))] public final [ResolvedTo(STATUS)] annotation class ParameterAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ParameterAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/ParameterAnnotation.i] i: R|kotlin/Int|): R|ParameterAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }

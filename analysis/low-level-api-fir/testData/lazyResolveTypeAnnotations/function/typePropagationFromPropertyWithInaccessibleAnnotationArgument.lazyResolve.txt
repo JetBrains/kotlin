@@ -294,7 +294,7 @@ FILE: [ResolvedTo(IMPORTS)] declaration.kt
         internal [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val regularConstant: R|kotlin/String| = String(2)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.message] message: R|kotlin/String|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }

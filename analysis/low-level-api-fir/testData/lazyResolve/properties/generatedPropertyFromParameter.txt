@@ -175,7 +175,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.FIELD#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.FIELD|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -210,7 +210,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.FIELD#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.FIELD|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -245,7 +245,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.FIELD#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.FIELD|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -280,7 +280,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.FIELD#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.FIELD|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -315,7 +315,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.FIELD#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.FIELD|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -350,7 +350,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.FIELD#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.FIELD|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -385,7 +385,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(STATUS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](AnnotationTarget#.FIELD#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.FIELD|))] public final [ResolvedTo(STATUS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/FieldAnnotation.i] i: R|kotlin/Int|): R|FieldAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -420,7 +420,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(STATUS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](AnnotationTarget#.FIELD#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.FIELD|))] public final [ResolvedTo(STATUS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/FieldAnnotation.i] i: R|kotlin/Int|): R|FieldAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }

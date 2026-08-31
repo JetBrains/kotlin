@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingField.kt
             public? [ResolvedTo(TYPES)] [ContainingClassKey=A] get(): R|kotlin/Any|
 
     }
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Ann : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Ann : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Ann| {
             LAZY_super<R|kotlin/Any|>
         }

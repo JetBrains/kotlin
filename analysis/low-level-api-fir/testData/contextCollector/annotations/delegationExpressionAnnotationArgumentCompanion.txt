@@ -37,7 +37,7 @@ Tower Data Context:
 FILE: [ResolvedTo(IMPORTS)] delegationExpressionAnnotationArgumentCompanion.kt
     public abstract [ResolvedTo(STATUS)] interface MyInterface : R|kotlin/Any| {
     }
-    @R|kotlin/annotation/Retention|[Types](LAZY_EXPRESSION) @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Retention|[Types](LAZY_EXPRESSION) @R|kotlin/annotation/Target|[Types](AnnotationTarget#.EXPRESSION#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.EXPRESSION|))] public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|pack/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
