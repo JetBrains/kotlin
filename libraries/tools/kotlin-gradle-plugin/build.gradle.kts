@@ -642,6 +642,7 @@ testing {
                 runtimeOnly(libs.android.gradle.plugin.gradle.api.latest)
                 runtimeOnly(gradleApi())
                 runtimeOnly(libs.apache.commons.compress) // is required for `TarArchiveOutputStream` in `NativeVersionValueSourceTest`
+                runtimeOnly(libs.org.tukaani.xz) // is required for `PackKotlinArchiveTaskTest`
             }
 
             targets.configureEach {

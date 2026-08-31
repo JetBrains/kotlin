@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.MultiplatformPublishing
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.RegisterMultiplatformResourcesPublicationExtensionAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.SetUpMultiplatformAndroidAssetsAndResourcesPublicationAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.SetUpMultiplatformJvmResourcesPublicationAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.SetupKotlinArchiveAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.UklibConsumptionSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.UklibPublicationSetupAction
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinMultiplatformSourceSetSetupAction
@@ -118,6 +119,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, UklibPublicationSetupAction)
             register(project, UklibConsumptionSetupAction)
             register(project, KotlinMetadataCompilationTargetPlatformConfiguration)
+            register(project, SetupKotlinArchiveAction)
         }
 
     }
