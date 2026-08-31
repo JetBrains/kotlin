@@ -1,0 +1,1 @@
+fun test(): String = "initial"
