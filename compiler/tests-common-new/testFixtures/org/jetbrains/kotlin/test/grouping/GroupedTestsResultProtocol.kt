@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.test.grouping
 
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.report.TestReport
+import org.jetbrains.kotlin.test.report.TestReportChecks
 
 /**
  * Wire protocol carrying the per-test results of a grouped test batch from the VM to the JVM side: it generates the
@@ -14,11 +16,14 @@ import org.jetbrains.kotlin.test.report.TestReport
  * Line format (`KGTI` = Kotlin Grouping Test Infra):
  * ```
  * ##KGTI_BEGIN##
- * ##KGTI##|<id>|<STARTED|PASSED|FAILED>|<escaped-message>|<escaped-details>
+ * ##KGTI##|<id>|STARTED||
+ * ##KGTI##|<id>|<PASSED|FAILED>|<escaped-message>|<escaped-details>
  * ##KGTI_END##
  * ```
- * `id` is the test's synthetic `ProxyLauncher_<encoded-package>` class name. [STARTED] is printed before a test runs, so a start with no
- * terminal line localizes the test that took the VM down, while neither line means the test never ran.
+ * `id` is the test's synthetic `ProxyLauncher_<encoded-package>` class name. [STARTED] is printed before a test runs with empty message and
+ * details fields (`##KGTI##|<id>|STARTED||`), so a start with no matching PASSED/FAILED line localizes the test that
+ * took the VM down, while neither line means the test never ran. [Outcome.Status.CRASHED] is inferred from that
+ * unfinished execution and is not a wire-level status.
  */
 object GroupedTestsResultProtocol {
     const val BEGIN: String = "##KGTI_BEGIN##"
@@ -38,64 +43,284 @@ object GroupedTestsResultProtocol {
      */
     private const val LEADING_NEWLINE: String = "\\n"
 
-    data class Outcome(val id: String, val passed: Boolean, val message: String?, val details: String?)
-
-    data class ParsedBatchResult(
-        val outcomes: Map<String, Outcome>,
-        val sawStructuredBlock: Boolean,
-        val crashedIds: Set<String>,
+    data class Outcome(
+        val id: String,
+        val status: Status,
+        val message: String?,
+        val details: String?,
+        val executionName: String? = null,
     ) {
-        fun crashedInProgress(id: String): Boolean = id in crashedIds
-
-        fun toTestReport(): TestReport<String> {
-            val passedTests = LinkedHashSet<String>()
-            val failedTests = LinkedHashSet<String>()
-            for ([id, outcome] in outcomes) {
-                if (outcome.passed) passedTests += id else failedTests += id
-            }
-            return TestReport(passedTests = passedTests, failedTests = failedTests, ignoredTests = emptySet())
+        enum class Status {
+            PASSED,
+            FAILED,
+            CRASHED,
         }
     }
 
-    fun parseMerged(outputs: Iterable<String>): ParsedBatchResult {
-        var sawStructuredBlock = false
-        val merged = LinkedHashMap<String, Outcome>()
-        val crashedIds = LinkedHashSet<String>()
-        for (output in outputs) {
-            val parsed = parseSingleOutput(output)
-            sawStructuredBlock = sawStructuredBlock || parsed.sawStructuredBlock
-            crashedIds += parsed.crashedIds
-            for (outcome in parsed.outcomes.values) {
-                putFailureWins(merged, outcome)
-            }
-        }
-        return ParsedBatchResult(outcomes = merged, sawStructuredBlock = sawStructuredBlock, crashedIds = crashedIds)
-    }
+    data class ExecutionOutput(
+        val executionName: String,
+        val output: String,
+        val parsed: ParsedExecution? = null,
+    )
 
-    fun hasCompleteStructuredBlock(output: String): Boolean {
-        val parsed = parseSingleOutput(output)
-        return parsed.sawStructuredBlock && !parsed.blockLeftOpen
-    }
-
-    private class SingleOutputParse(
-        val outcomes: LinkedHashMap<String, Outcome>,
-        val startedIds: LinkedHashSet<String>,
+    class ParsedExecution internal constructor(
+        val executionName: String?,
+        val outcomes: List<Outcome>,
+        private val startedIds: LinkedHashSet<String>,
         val sawStructuredBlock: Boolean,
         val blockLeftOpen: Boolean,
+        val malformedLines: List<String>,
+        val malformedLineIds: Set<String>,
     ) {
         val crashedIds: Set<String>
             get() {
                 if (!blockLeftOpen) return emptySet()
-                return setOfNotNull(startedIds.lastOrNull()?.takeIf { it !in outcomes })
+                return setOfNotNull(startedIds.lastOrNull()?.takeIf { id -> outcomes.none { it.id == id } })
             }
+
+        val hasCompleteStructuredBlock: Boolean
+            get() = sawStructuredBlock && !blockLeftOpen && malformedLines.isEmpty()
     }
 
-    private fun parseSingleOutput(output: String): SingleOutputParse {
-        val outcomes = LinkedHashMap<String, Outcome>()
+    data class ParsedBatchResult(
+        val outcomes: Map<String, List<Outcome>>,
+        val sawStructuredBlock: Boolean,
+        val crashedIds: Set<String>,
+        val crashedIdsInMalformedOutputs: Set<String>,
+        val malformedLineIdsInCrashedOutputs: Set<String>,
+        val malformedLines: List<String>,
+        val executions: List<ParsedExecution> = emptyList(),
+    ) {
+        fun analyze(
+            expectedIds: Collection<String>,
+            executionOutputs: Iterable<ExecutionOutput> = emptyList(),
+        ): Analysis {
+            val testReport = toTestReport()
+            val missingIds = TestReportChecks.findMissingResults(expectedIds, testReport)
+            val excessiveIds = TestReportChecks.findExcessiveResults(expectedIds, testReport)
+            val failures = LinkedHashMap<String, Analysis.Failure>()
+            val missingExecutionNamesById = LinkedHashMap<String, MutableList<String>>()
+
+            for (executionOutput in executionOutputs) {
+                val outcomeIdsInExecution = (executionOutput.parsed
+                    ?: parseExecution(executionOutput.output, executionOutput.executionName))
+                    .outcomes
+                    .mapTo(mutableSetOf()) { it.id }
+                for (expectedId in expectedIds) {
+                    if (expectedId !in outcomeIdsInExecution) {
+                        missingExecutionNamesById
+                            .getOrPut(expectedId) { mutableListOf() }
+                            .add(executionOutput.executionName)
+                    }
+                }
+            }
+
+            for (id in missingIds) {
+                failures[id] = Analysis.Failure(
+                    id = id,
+                    kind = Analysis.FailureKind.MISSING,
+                    outcomes = emptyList(),
+                )
+            }
+            for (id in expectedIds) {
+                val outcomesForId = outcomes[id] ?: continue
+                val kind = when {
+                    outcomesForId.any { it.status == Outcome.Status.CRASHED } -> Analysis.FailureKind.CRASHED
+                    outcomesForId.any { it.status == Outcome.Status.FAILED } -> Analysis.FailureKind.FAILED
+                    else -> continue
+                }
+                failures[id] = Analysis.Failure(id = id, kind = kind, outcomes = outcomesForId)
+            }
+            val testResults = expectedIds.associateWith { id ->
+                Analysis.TestResult(
+                    outcomes = outcomes[id].orEmpty(),
+                    crashEvidence = if (id in crashedIds) {
+                        Analysis.CrashEvidence(
+                            isInMalformedOutput = id in crashedIdsInMalformedOutputs,
+                            executionNames = outcomes[id].orEmpty()
+                                .asSequence()
+                                .filter { it.status == Outcome.Status.CRASHED }
+                                .mapNotNull { it.executionName }
+                                .distinct()
+                                .toList(),
+                        )
+                    } else {
+                        null
+                    },
+                    malformedLineCarriesId = malformedLineCarries(id),
+                    malformedLineCarriesIdInCrashOutput = id in malformedLineIdsInCrashedOutputs,
+                )
+            }
+
+            return Analysis(
+                testReport = testReport,
+                missingIds = missingIds,
+                excessiveIds = excessiveIds,
+                failures = failures,
+                testResults = testResults,
+                malformedLines = malformedLines,
+                missingExecutionNamesById = missingExecutionNamesById.mapValues { entry -> entry.value.distinct() },
+            )
+        }
+
+        private fun malformedLineCarries(id: String): Boolean {
+            val separator = SEP
+            val prefix = "$LINE_PREFIX$separator"
+            return malformedLines.any { line ->
+                if (!line.startsWith(prefix)) return@any false
+                val rest = line.removePrefix(prefix)
+                rest == id || rest.startsWith("$id$separator")
+            }
+        }
+
+        fun toTestReport(): TestReport<String> {
+            val passedTests = LinkedHashSet<String>()
+            val failedTests = LinkedHashSet<String>()
+            for ([id, outcomesForId] in outcomes) {
+                if (outcomesForId.any { it.status == Outcome.Status.FAILED || it.status == Outcome.Status.CRASHED }) {
+                    failedTests += id
+                } else if (outcomesForId.any { it.status == Outcome.Status.PASSED }) {
+                    passedTests += id
+                }
+            }
+            return TestReport(passedTests = passedTests, failedTests = failedTests, ignoredTests = emptySet())
+        }
+
+        data class Analysis(
+            val testReport: TestReport<String>,
+            val missingIds: List<String>,
+            val excessiveIds: List<String>,
+            val failures: Map<String, Failure>,
+            val testResults: Map<String, TestResult>,
+            val malformedLines: List<String>,
+            val missingExecutionNamesById: Map<String, List<String>>,
+        ) {
+            val crashedIds: Set<String>
+                get() = testResults.filter { it.value.crashEvidence != null }.keys
+
+            data class TestResult(
+                val outcomes: List<Outcome>,
+                val crashEvidence: CrashEvidence?,
+                val malformedLineCarriesId: Boolean,
+                val malformedLineCarriesIdInCrashOutput: Boolean,
+            )
+
+            data class CrashEvidence(
+                val isInMalformedOutput: Boolean,
+                val executionNames: List<String> = emptyList(),
+            )
+
+            enum class FailureKind {
+                MISSING,
+                FAILED,
+                CRASHED,
+            }
+
+            data class Failure(
+                val id: String,
+                val kind: FailureKind,
+                val outcomes: List<Outcome>,
+            ) {
+                val crashExecutionNames: List<String>
+                    get() = outcomes.asSequence()
+                        .filter { it.status == Outcome.Status.CRASHED }
+                        .mapNotNull { it.executionName }
+                        .distinct()
+                        .toList()
+
+                val isCrashOnly: Boolean
+                    get() = kind == FailureKind.CRASHED && outcomes.all { it.status == Outcome.Status.CRASHED }
+
+                val reportedFailure: String?
+                    get() = outcomes.asSequence()
+                        .filter { it.status == Outcome.Status.FAILED }
+                        .mapNotNull { outcome ->
+                            val failure = listOfNotNull(outcome.message, outcome.details).joinToString("\n")
+                            failure.takeIf { it.isNotEmpty() }?.let {
+                                outcome.executionName?.let { executionName -> "[$executionName] $it" } ?: it
+                            }
+                        }
+                        .distinct()
+                        .joinToString("\n")
+                        .takeIf { it.isNotEmpty() }
+            }
+        }
+    }
+
+    fun parseMerged(outputs: Iterable<String>): ParsedBatchResult {
+        return parseMergedNamedOutputs(outputs.map { NamedOutput(executionName = null, output = it) })
+    }
+
+    fun parseMergedWithExecutionNames(
+        outputs: Iterable<ExecutionOutput>,
+        additionalOutputs: Iterable<String> = emptyList(),
+    ): ParsedBatchResult = parseMergedNamedOutputs(
+        outputs.map { NamedOutput(it.executionName, it.output) } +
+                additionalOutputs.map { NamedOutput(executionName = null, output = it) },
+    )
+
+    private fun parseMergedNamedOutputs(outputs: Iterable<NamedOutput>): ParsedBatchResult {
+        var sawStructuredBlock = false
+        val merged = LinkedHashMap<String, MutableList<Outcome>>()
+        val crashedIds = LinkedHashSet<String>()
+        val crashedIdsInMalformedOutputs = LinkedHashSet<String>()
+        val malformedLineIdsInCrashedOutputs = LinkedHashSet<String>()
+        val parsedExecutions = outputs.map { (executionName, output) ->
+            parseExecution(output, executionName)
+        }.toList()
+        val malformedLines = mutableListOf<String>()
+        for (parsed in parsedExecutions) {
+            sawStructuredBlock = sawStructuredBlock || parsed.sawStructuredBlock
+            crashedIds += parsed.crashedIds
+            malformedLines += parsed.malformedLines
+            if (parsed.malformedLines.isNotEmpty()) {
+                crashedIdsInMalformedOutputs += parsed.crashedIds
+                malformedLineIdsInCrashedOutputs += parsed.crashedIds.intersect(parsed.malformedLineIds)
+            }
+            for (outcome in parsed.outcomes) {
+                merged.getOrPut(outcome.id) { mutableListOf() } += outcome
+            }
+            for (crashedId in parsed.crashedIds) {
+                merged.getOrPut(crashedId) { mutableListOf() } += Outcome(
+                    id = crashedId,
+                    status = Outcome.Status.CRASHED,
+                    message = null,
+                    details = null,
+                    executionName = parsed.executionName,
+                )
+            }
+        }
+        return ParsedBatchResult(
+            outcomes = merged.mapValues { entry -> entry.value.toList() },
+            sawStructuredBlock = sawStructuredBlock,
+            crashedIds = crashedIds,
+            crashedIdsInMalformedOutputs = crashedIdsInMalformedOutputs,
+            malformedLineIdsInCrashedOutputs = malformedLineIdsInCrashedOutputs,
+            malformedLines = malformedLines,
+            executions = parsedExecutions,
+        )
+    }
+
+    fun hasCompleteStructuredBlock(output: String): Boolean {
+        return parseExecution(output).hasCompleteStructuredBlock
+    }
+
+    private data class NamedOutput(val executionName: String?, val output: String)
+
+    fun parseExecution(output: String, executionName: String? = null): ParsedExecution {
+        val outcomes = mutableListOf<Outcome>()
         val startedIds = LinkedHashSet<String>()
+        val malformedLines = mutableListOf<String>()
+        val malformedLineIds = LinkedHashSet<String>()
         val linePrefix = "$LINE_PREFIX$SEP"
         var insideBlock = false
         var sawStructuredBlock = false
+
+        fun recordMalformedLine(line: String) {
+            malformedLines += line
+            malformedLineId(line)?.let { malformedLineIds += it }
+        }
+
         for (rawLine in output.lines()) {
             when {
                 rawLine.isSentinelLine(BEGIN) -> {
@@ -110,34 +335,63 @@ object GroupedTestsResultProtocol {
                 }
             }
 
-            if (!insideBlock || !rawLine.startsWith(linePrefix)) continue
+            if (!insideBlock || !rawLine.startsWith(LINE_PREFIX)) continue
+            if (!rawLine.startsWith(linePrefix)) {
+                recordMalformedLine(rawLine)
+                continue
+            }
             val parts = rawLine.removePrefix(linePrefix).split(SEP, limit = 4)
-            if (parts.size < 4) continue
+            if (parts.size < 4) {
+                recordMalformedLine(rawLine)
+                continue
+            }
             val id = parts[0]
             when (val status = parts[1]) {
-                STARTED -> startedIds += id
-                PASSED, FAILED -> putFailureWins(
-                    outcomes,
-                    Outcome(
-                        id = id,
-                        passed = status == PASSED,
-                        message = unescape(parts[2]).ifEmpty { null },
-                        details = unescape(parts[3]).ifEmpty { null },
-                    )
-                )
+                STARTED -> {
+                    if (id.isEmpty() || parts[2].isNotEmpty() || parts[3].isNotEmpty()) {
+                        recordMalformedLine(rawLine)
+                    } else {
+                        startedIds += id
+                    }
+                }
+                PASSED, FAILED -> {
+                    if (id.isEmpty()) {
+                        recordMalformedLine(rawLine)
+                    } else {
+                        outcomes += Outcome(
+                            id = id,
+                            status = if (status == PASSED) Outcome.Status.PASSED else Outcome.Status.FAILED,
+                            message = unescape(parts[2]).ifEmpty { null },
+                            details = unescape(parts[3]).ifEmpty { null },
+                            executionName = executionName,
+                        )
+                    }
+                }
+                else -> {
+                    recordMalformedLine(rawLine)
+                }
             }
         }
-        return SingleOutputParse(outcomes, startedIds, sawStructuredBlock, blockLeftOpen = insideBlock)
+        return ParsedExecution(
+            outcomes = outcomes,
+            startedIds = startedIds,
+            executionName = executionName,
+            sawStructuredBlock = sawStructuredBlock,
+            blockLeftOpen = insideBlock,
+            malformedLines = malformedLines,
+            malformedLineIds = malformedLineIds,
+        )
     }
 
-    private fun String.isSentinelLine(sentinel: String): Boolean = trimEnd('\r') == sentinel
-
-    private fun putFailureWins(destination: LinkedHashMap<String, Outcome>, outcome: Outcome) {
-        val existing = destination[outcome.id]
-        if (existing == null || (existing.passed && !outcome.passed)) {
-            destination[outcome.id] = outcome
-        }
+    private fun malformedLineId(line: String): String? {
+        val prefix = "$LINE_PREFIX$SEP"
+        if (!line.startsWith(prefix)) return null
+        val rest = line.removePrefix(prefix)
+        if (SEP !in rest) return null
+        return rest.substringBefore(SEP).takeIf { it.isNotEmpty() }
     }
+
+    private fun String.isSentinelLine(sentinel: String): Boolean = this == sentinel
 
     private val ESCAPE_RULES: List<Pair<String, String>> = listOf(
         "\\" to "\\\\",
@@ -188,7 +442,13 @@ object GroupedTestsResultProtocol {
                 '$' -> append("\\$")
                 '\n' -> append("\\n")
                 '\r' -> append("\\r")
-                else -> append(c)
+                else -> {
+                    checkTestInfrastructure(!Character.isISOControl(c)) {
+                        "Unsupported control character U+${c.code.toString(16).padStart(4, '0')} " +
+                                "in a generated Kotlin string literal"
+                    }
+                    append(c)
+                }
             }
         }
         append('"')
