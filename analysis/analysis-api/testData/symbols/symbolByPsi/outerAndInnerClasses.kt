@@ -1,3 +1,5 @@
+// DO_NOT_REQUIRE_NON_PSI_SYMBOL_RESTORATION
+
 class X<T> {
     inner class Y<T1>
     class Z<T2>
