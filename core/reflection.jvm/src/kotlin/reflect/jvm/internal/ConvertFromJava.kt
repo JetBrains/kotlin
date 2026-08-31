@@ -100,7 +100,7 @@ internal fun Type.toKType(
     val withMutableFlexibility =
         if (howThisTypeIsUsed == TypeUsage.SUPERTYPE || argumentsMakeSenseOnlyForMutableContainer(mutableType)) mutableType ?: base
         else mutableType?.let {
-            FlexibleKType.create(it, base, isRawType = false) { this }
+            FlexibleKType.create(it, base, isRawType = false, lazyOf(this))
         } ?: base
 
     return when (nullability) {
@@ -113,7 +113,8 @@ internal fun Type.toKType(
                 upperBound = (withMutableFlexibility.upperBoundIfFlexible()
                     ?: withMutableFlexibility).makeNullableAsSpecified(nullable = true),
                 isRawType = false,
-            ) { this }
+                computeJavaType = lazyOf(this),
+            )
     }
 }
 
@@ -181,7 +182,7 @@ private fun createRawJavaType(
     val upperBound = createJavaSimpleType(
         jClass, kClass, jClass.allTypeParameters().map { KTypeProjection.STAR }, isMarkedNullable = true,
     )
-    return FlexibleKType.create(lowerBound, upperBound, isRawType = true) { jClass }
+    return FlexibleKType.create(lowerBound, upperBound, isRawType = true, lazyOf(jClass))
 }
 
 internal val KClass<*>.isMappedBuiltin: Boolean
@@ -284,7 +285,7 @@ private fun SimpleKType.toFlexibleArrayType(
             isMarkedNullable = nullability != TypeNullability.NOT_NULL,
         ),
         isRawType = false,
-        computeJavaType = { javaType },
+        computeJavaType = lazyOf(javaType),
     ) as FlexibleKType
 
 private fun Type.argumentsMakeSenseOnlyForMutableContainer(mutableType: SimpleKType?): Boolean =

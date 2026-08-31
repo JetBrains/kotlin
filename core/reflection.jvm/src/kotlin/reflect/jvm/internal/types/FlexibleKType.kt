@@ -67,11 +67,9 @@ internal class FlexibleKType private constructor(
             lowerBound: AbstractKType,
             upperBound: AbstractKType,
             isRawType: Boolean,
-            computeJavaType: (() -> Type)? = null,
+            computeJavaType: Lazy<Type>? = null,
         ): AbstractKType =
             if (lowerBound == upperBound) lowerBound
-            else FlexibleKType(
-                lowerBound, upperBound, isRawType, computeJavaType?.let { lazy(PUBLICATION, it) },
-            )
+            else FlexibleKType(lowerBound, upperBound, isRawType, computeJavaType)
     }
 }
