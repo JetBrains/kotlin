@@ -9,15 +9,14 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.location
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirClassLikeSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirNestedInLocalClassSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.fir.visibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaUnsupportedSymbolLocation
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
-import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.psiUtil.isActualDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
 internal class KaFirTypeAliasSymbol private constructor(
     override val backingPsi: KtTypeAlias?,
@@ -82,12 +82,30 @@ internal class KaFirTypeAliasSymbol private constructor(
         when (val symbolKind = location) {
             KaSymbolLocation.LOCAL ->
                 throw KaCannotCreateSymbolPointerForLocalLibraryDeclarationException(classId?.asString() ?: name.asString())
+            KaSymbolLocation.CLASS -> {
+                val classId = classId
+                if (classId == null) {
+                    val container = with(analysisSession) { containingSymbol }
+                    checkWithAttachment(
+                        container is KaNamedClassSymbol,
+                        { "Container should be `${KaNamedClassSymbol::class.simpleName}` but was `${container?.let { it::class }}`" }
+                    ) {
+                        withSymbolAttachment("symbol", analysisSession, this@KaFirTypeAliasSymbol)
+                    }
 
-            KaSymbolLocation.CLASS, KaSymbolLocation.TOP_LEVEL -> KaFirClassLikeSymbolPointer(
-                classId!!,
-                KaTypeAliasSymbol::class,
-                this
-            )
+                    KaFirNestedInLocalClassSymbolPointer(
+                        container.createPointer(),
+                        name,
+                        firSymbol.fir.origin,
+                        KaTypeAliasSymbol::class,
+                        this
+                    )
+                } else {
+                    KaFirClassLikeSymbolPointer(classId, KaTypeAliasSymbol::class, this)
+                }
+            }
+            KaSymbolLocation.TOP_LEVEL ->
+                KaFirClassLikeSymbolPointer(classId!!, KaTypeAliasSymbol::class, this)
             else -> throw KaUnsupportedSymbolLocation(this::class, symbolKind)
         }
     }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -17,45 +18,42 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.scopes.getClassifiers
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.Name
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
+import kotlin.reflect.KClass
+import kotlin.reflect.safeCast
 
-internal class KaFirNestedInLocalClassSymbolPointer(
+internal class KaFirNestedInLocalClassSymbolPointer<T : KaClassLikeSymbol>(
     private val containingClassPointer: KaSymbolPointer<KaNamedClassSymbol>,
     private val name: Name,
     private val firOrigin: FirDeclarationOrigin,
-    originalSymbol: KaNamedClassSymbol?,
-) : KaBaseCachedSymbolPointer<KaNamedClassSymbol>(originalSymbol) {
+    private val expectedClass: KClass<T>,
+    originalSymbol: T?,
+) : KaBaseCachedSymbolPointer<T>(originalSymbol) {
 
     @KaImplementationDetail
-    override fun restoreIfNotCached(analysisSession: KaSession): KaNamedClassSymbol? {
+    override fun restoreIfNotCached(analysisSession: KaSession): T? {
         require(analysisSession is KaFirSession)
         val containingKaSymbol = containingClassPointer.restoreSymbol(analysisSession) ?: return null
         val containingFir = containingKaSymbol.firSymbol.fir as? FirRegularClass ?: return null
 
-        val firForCreatedSymbol = analysisSession.firSession.nestedClassifierScope(containingFir)
+        return analysisSession.firSession.nestedClassifierScope(containingFir)
             ?.getClassifiers(name)
-            ?.firstNotNullOfOrNull { if (isApplicableCandidate(it)) it else null }
-            ?: return null
-
-        return analysisSession.firSymbolBuilder.classifierBuilder.buildNamedClassSymbol(firForCreatedSymbol)
+            ?.firstNotNullOfOrNull { kaSymbolIfApplicable(it, analysisSession) }
     }
 
-    @OptIn(ExperimentalContracts::class)
-    private fun isApplicableCandidate(symbol: FirClassifierSymbol<*>): Boolean {
-        contract {
-            returns(true) implies (symbol is FirRegularClassSymbol)
-        }
-        if (symbol !is FirRegularClassSymbol) return false
-        return symbol.origin == firOrigin
+    private fun kaSymbolIfApplicable(symbol: FirClassifierSymbol<*>, analysisSession: KaFirSession): T? {
+        if (symbol !is FirClassLikeSymbol || symbol.origin != firOrigin) return null
+
+        val classLikeSymbol = analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(symbol)
+        return expectedClass.safeCast(classLikeSymbol)
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = other === this ||
             other is KaFirNestedInLocalClassSymbolPointer &&
             other.name == name &&
             other.firOrigin == firOrigin &&
+            other.expectedClass == expectedClass &&
             other.containingClassPointer.pointsToTheSameSymbolAs(containingClassPointer)
 }

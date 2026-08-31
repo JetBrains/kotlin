@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirClassLikeSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirLocalClassFromCompilerPluginSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirNestedInLocalClassSymbolPointer
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createNestedClassLikeSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaUnsupportedSymbolLocation
@@ -76,6 +75,7 @@ internal sealed class KaFirNamedClassSymbolBase<P : PsiElement> : KaNamedClassSy
                         container.createPointer(),
                         name,
                         firSymbol.fir.origin,
+                        KaNamedClassSymbol::class,
                         this
                     )
                 } else {
