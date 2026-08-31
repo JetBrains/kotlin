@@ -20,7 +20,7 @@ internal interface ReflectKFunction : ReflectKCallable<Any?>, KFunction<Any?>, K
 
     val isPrimaryConstructor: Boolean
 
-    override fun findJavaDeclaration(): GenericDeclaration? = container.findMethodBySignature(signature)
+    override fun findJavaDeclaration(): GenericDeclaration? = originalContainer.findMethodBySignature(signature)
 }
 
 internal fun ReflectKFunction.extractContinuationArgument(): Type? {
