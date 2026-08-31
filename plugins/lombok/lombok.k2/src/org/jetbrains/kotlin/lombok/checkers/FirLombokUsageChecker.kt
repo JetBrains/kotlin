@@ -36,13 +36,7 @@ object FirLombokUsageChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
                     is ConeLombokAnnotations.Log4j2Log -> lombokService.config.log4j2LogFlagUsage
                     is ConeLombokAnnotations.XSlf4jLog -> lombokService.config.xslf4jLogFlagUsage
                 }
-                val maxOrdinal = maxOf(
-                    specificFlagUsage?.ordinal ?: -1,
-                    lombokService.config.logFlagUsage?.ordinal ?: -1
-                )
-                if (maxOrdinal >= 0) {
-                    add(log to FlagUsageValue.entries.single { it.ordinal == maxOrdinal })
-                }
+                louderFlagUsage(specificFlagUsage, lombokService.config.logFlagUsage)?.let { add(log to it) }
             }
             lombokService.config.toStringFlagUsage?.let { toStringFlagUsage ->
                 lombokService.getToString(declaration.symbol)?.let { toString ->
@@ -65,6 +59,25 @@ object FirLombokUsageChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
                     add(superBuilder to superBuilderFlagUsage)
                 }
             }
+            // `lombok.anyConstructor.flagUsage` covers all three at once, exactly as `lombok.log.flagUsage` covers
+            // every log annotation above. Whether the plugin acts on the annotation is a separate question -
+            // `@AllArgsConstructor` and `@RequiredArgsConstructor` are `ANNOTATION_IS_NOT_SUPPORTED` on a Kotlin
+            // class - because `flagUsage` is about writing the annotation at all, as it is for `@SuperBuilder`.
+            //
+            // Read off the declaration rather than through `LombokService`, as the `@SuperBuilder` branch above
+            // also does: its getters answer `null` here for the annotations the plugin generates nothing from, so
+            // going through them would flag `@NoArgsConstructor` alone and leave the other two silent.
+            val anyConstructorFlagUsage = lombokService.config.anyConstructorFlagUsage
+            for ([companion, specificFlagUsage] in listOf(
+                ConeLombokAnnotations.NoArgsConstructor to lombokService.config.noArgsConstructorFlagUsage,
+                ConeLombokAnnotations.AllArgsConstructor to lombokService.config.allArgsConstructorFlagUsage,
+                ConeLombokAnnotations.RequiredArgsConstructor to lombokService.config.requiredArgsConstructorFlagUsage,
+            )) {
+                val flagUsage = louderFlagUsage(specificFlagUsage, anyConstructorFlagUsage) ?: continue
+                declaration.annotations.getAnnotationByClassId(companion.name, context.session)?.let { rawAnnotation ->
+                    add(companion.extract(rawAnnotation, context.session) to flagUsage)
+                }
+            }
         }
 
         for ([actualLombokAnnotation, flagUsage] in lombokAnnotationsWithFlagUsages) {
@@ -81,4 +94,15 @@ object FirLombokUsageChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
             )
         }
     }
+
+    /**
+     * The louder of an annotation's own `flagUsage` and the umbrella one covering its whole family, either of which
+     * may be unset.
+     *
+     * Mirrors Lombok's `HandlerUtil.handleFlagUsage`, which reads both keys and takes `error` from either before
+     * `warning` from either. It prefers the specific key only between equals, and only to pick the name it prints;
+     * that choice is invisible here, the diagnostic naming the annotation rather than the key that flagged it.
+     */
+    private fun louderFlagUsage(specific: FlagUsageValue?, umbrella: FlagUsageValue?): FlagUsageValue? =
+        listOfNotNull(specific, umbrella).maxOrNull()
 }

@@ -58,15 +58,15 @@ class BuilderExampleWarning(val x: Int)
 <!ANNOTATION_IS_NOT_SUPPORTED, FLAG_USAGE_WARNING!>@SuperBuilder<!>
 class SuperBuilderExampleWarning
 
-@NoArgsConstructor
+<!FLAG_USAGE_WARNING!>@NoArgsConstructor<!>
 class NoArgsConstructorExampleWarning
 
 // `@AllArgsConstructor` and `@RequiredArgsConstructor` aren't supported on Kotlin-origin classes
 // (ANNOTATION_IS_NOT_SUPPORTED), but their `flagUsage` config is a separate matter, as with `@SuperBuilder`.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@AllArgsConstructor<!>
+<!ANNOTATION_IS_NOT_SUPPORTED, FLAG_USAGE_WARNING!>@AllArgsConstructor<!>
 class AllArgsConstructorExampleWarning(val x: Int)
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@RequiredArgsConstructor<!>
+<!ANNOTATION_IS_NOT_SUPPORTED, FLAG_USAGE_WARNING!>@RequiredArgsConstructor<!>
 class RequiredArgsConstructorExampleWarning(val x: Int)
 
 class NotAnnotated
