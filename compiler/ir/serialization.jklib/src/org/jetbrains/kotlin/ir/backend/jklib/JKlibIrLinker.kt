@@ -255,8 +255,8 @@ class JKlibIrLinker(
             }
         }
 
-        deserializersForModules.values.forEach { deserializer ->
-            deserializer.moduleFragment.acceptVoid(visitor)
+        allModuleFragments.forEach {
+            it.acceptVoid(visitor)
         }
     }
 }
