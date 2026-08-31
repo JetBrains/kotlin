@@ -969,6 +969,3 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
         return super.visitRawFunctionReference(expression)
     }
 }
-
-private fun IrType.isBoxedInlineClassType(): Boolean =
-    isInlineClassType() && isNullable() && unboxInlineClass().let { it.isPrimitiveType() || it.isNullable() }
