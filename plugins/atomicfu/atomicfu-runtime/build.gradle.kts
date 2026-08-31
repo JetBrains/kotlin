@@ -14,9 +14,9 @@ plugins {
 group = "org.jetbrains.kotlin"
 
 kotlin {
-    js {
+    /*js {
         browser()
-        nodejs()
+        //nodejs()
     }
 
     sourceSets {
@@ -26,12 +26,13 @@ kotlin {
             }
         }
     }
+    */
 }
 
 val emptyJavadocJar = tasks.register("emptyJavadocJar", Jar::class) {
     archiveClassifier.set("javadoc")
 }
-
+/*
 publishing {
     publications {
         create<MavenPublication>("maven") {
@@ -44,5 +45,5 @@ publishing {
         }
     }
 }
-
+*/
 configureDefaultPublishing()

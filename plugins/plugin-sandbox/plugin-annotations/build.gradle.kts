@@ -8,12 +8,12 @@ plugins {
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
 kotlin {
     jvm()
-    js {
+    /*js {
         binaries.executable()
     }
     wasmJs {
         binaries.executable()
-    }
+    }*/
     if (kotlinBuildProperties.isInIdeaSync.get()) {
         // this magic is needed because of explicit dependency of common
         // source set on the stdlib
@@ -48,5 +48,5 @@ sourceSets {
 }
 
 tasks.register("distAnnotations") {
-    dependsOn("jvmJar", "jsJar", "wasmJsJar")
+    dependsOn("jvmJar"/*, "jsJar", "wasmJsJar"*/)
 }
