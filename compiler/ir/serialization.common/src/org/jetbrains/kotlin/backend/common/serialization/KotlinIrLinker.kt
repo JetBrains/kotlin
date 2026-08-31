@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.utils.putToMultiMap
 abstract class KotlinIrLinker(
     private val currentModule: ModuleDescriptor?,
     val symbolTable: SymbolTable,
-    private val exportedDependencies: List<ModuleDescriptor>,
     val errorCallback: (String) -> Unit,
     val deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
 ) : IrDeserializer, FileLocalAwareLinker {
@@ -46,12 +45,10 @@ abstract class KotlinIrLinker(
         currentModule: ModuleDescriptor?,
         configuration: CompilerConfiguration,
         symbolTable: SymbolTable,
-        exportedDependencies: List<ModuleDescriptor>,
         deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
     ) : this(
         currentModule,
         symbolTable,
-        exportedDependencies,
         errorCallback = { configuration.report(PartialLinkageDiagnostics.IR_LINKER_ERROR, it) },
         deserializedSymbolPostProcessor
     )
@@ -347,18 +344,6 @@ abstract class KotlinIrLinker(
                 moduleDeserializer
             )
         } else moduleDeserializer
-
-    fun deserializeIrModuleHeader(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary): IrModuleFragment {
-        // TODO: consider skip deserializing explicitly exported declarations for libraries.
-        // Now it's not valid because of all dependencies that must be computed.
-        val deserializationStrategy: (String) -> DeserializationStrategy =
-            if (exportedDependencies.contains(moduleDescriptor)) {
-                { DeserializationStrategy.ALL }
-            } else {
-                { DeserializationStrategy.EXPLICITLY_EXPORTED }
-            }
-        return deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, deserializationStrategy)
-    }
 
     fun deserializeFullModule(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary): IrModuleFragment =
         deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, { DeserializationStrategy.ALL })
