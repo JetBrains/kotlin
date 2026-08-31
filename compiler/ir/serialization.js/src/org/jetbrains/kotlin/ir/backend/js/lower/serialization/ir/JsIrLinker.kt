@@ -95,7 +95,7 @@ class JsIrLinker(
     }
 
     fun moduleDeserializer(moduleDescriptor: ModuleDescriptor): IrModuleDeserializer {
-        return deserializersForModules[moduleDescriptor.name.asString()] ?: error("Deserializer for $moduleDescriptor not found")
+        return klibDeserializers[moduleDescriptor.name.asString()] ?: error("Deserializer for $moduleDescriptor not found")
     }
 
     fun getDeserializedFilesInKlibOrder(fragment: IrModuleFragment): List<IrFile> {

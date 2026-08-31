@@ -159,7 +159,7 @@ class NativeDeserializerFacade(
             if (klib != mainModuleLib)
                 irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
             else
-                irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.ALL }, descriptor.name.asString())
+                irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.ALL })
         }
     )
 
