@@ -14,4 +14,7 @@ class IncrementalDataProviderFromCache(private val cache: IncrementalJsCache) : 
 
     override val serializedIrFiles: Map<File, IrTranslationResultValue>
         get() = cache.nonDirtyIrParts()
+
+    override val serializedIrInlineFiles: Map<File, IrTranslationResultValue>
+        get() = cache.nonDirtyIrInlineParts()
 }

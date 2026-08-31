@@ -252,7 +252,6 @@ fun serializeModuleIntoKlib(
     wasmTarget: WasmTarget? = null,
     performanceManager: PerformanceManager? = null
 ) {
-    val moduleJsExportNames = moduleFragment.collectJsExportNames()
     val incrementalResultsConsumer = configuration.get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
     val serializerOutput = performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
         serializeModuleIntoKlib(
@@ -275,6 +274,20 @@ fun serializeModuleIntoKlib(
                     icConsumer.processPackagePart(ioFile, compiledFile.metadata)
                     with(compiledFile.irData!!) {
                         icConsumer.processIrFile(
+                            ioFile,
+                            fileData,
+                            types,
+                            signatures,
+                            strings,
+                            declarations,
+                            bodies,
+                            fqName.toByteArray(),
+                            debugInfo,
+                            fileEntries,
+                        )
+                    }
+                    compiledFile.irInlineData?.apply {
+                        icConsumer.processIrInlineFile(
                             ioFile,
                             fileData,
                             types,
@@ -360,6 +373,7 @@ private fun List<IrModuleFragment>.getUniqueNameForEachFragment(): Map<IrModuleF
 
 fun IncrementalDataProvider.getSerializedData(nonCompiledSources: Set<File>): List<KotlinFileSerializedData> {
     val compiledIrFiles = serializedIrFiles
+    val compiledIrInlineFiles = serializedIrInlineFiles
     val compiledMetaFiles = compiledPackageParts
 
     assert(compiledIrFiles.size == compiledMetaFiles.size)
@@ -385,7 +399,21 @@ fun IncrementalDataProvider.getSerializedData(nonCompiledSources: Set<File>): Li
                 fileEntries,
             )
         }
-        storage.add(KotlinFileSerializedData(metaFile.metadata, irFile))
+        val irInlineFile = compiledIrInlineFiles[f]?.run {
+            SerializedIrFile(
+                fileData,
+                String(fqn),
+                f.path.replace('\\', '/'),
+                types,
+                signatures,
+                strings,
+                bodies,
+                declarations,
+                debugInfo,
+                fileEntries,
+            )
+        }
+        storage.add(KotlinFileSerializedData(metaFile.metadata, irFile, irInlineFile))
     }
     return storage
 }
