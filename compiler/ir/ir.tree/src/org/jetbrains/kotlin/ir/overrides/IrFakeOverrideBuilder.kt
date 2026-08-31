@@ -67,16 +67,18 @@ class IrFakeOverrideBuilder(
             val supertypes = clazz.superTypes.filterNot { it is IrErrorType }
             buildFakeOverridesForClassImpl(clazz, instanceMembers, oldSignatures, supertypes, isStaticMembers = false)
 
-            // Static Java members from the superclass need fake overrides in the subclass, to support the case when the static member is
-            // declared in an inaccessible grandparent class but is exposed as public in the parent. For example:
+            // In the JVM, static members from the superclass, but not superinterfaces, are inherited (see JLS 8.4.8 and 9.4.1),
+            // so create fake overrides for them. We do the same for static/companion members in other backends to closer align with the JVM,
+            // e.g. so that moving a companion member to a superclass is ABI compatible.
+            // For Java in particular, calling the fake override instead of the base static member is needed in the case when the static
+            // member is declared in an inaccessible grandparent class but is exposed as public in the parent. For example:
             //
             //     class A { public static void f() {} }
             //     public class B extends A {}
             //
             // `A.f` is inaccessible from another package, but `B.f` is accessible from everywhere because Java doesn't have the
             // "exposed visibility" error. Accessing the method via the class A would result in an IllegalAccessError at runtime, thus
-            // we need to generate a fake override in class B. This is only possible in case of superclasses, as static _interface_ members
-            // are not inherited (see JLS 8.4.8 and 9.4.1).
+            // we need to generate and call a fake override in class B.
             val superClass = supertypes.filter { it.classOrFail.owner.isClass }
             buildFakeOverridesForClassImpl(clazz, staticMembers, oldSignatures, superClass, isStaticMembers = true)
         }
