@@ -828,6 +828,68 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @DisplayName("KT-88583: build process classpath is hidden from annotation processors when isolation is enabled")
+    @GradleTest
+    open fun testIsolateProcessorsFromBuildClasspath(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            settingsGradle.appendText("\ninclude ':annotation-processor', ':example'\n")
+            addKgpToBuildScriptCompilationClasspath()
+
+            subProject("annotation-processor").apply {
+                projectPath.source("build.gradle") { "" }
+                javaSourcesDir().source("org/kotlin/probe/ClasspathProbeProcessor.java") { classpathProbeProcessorSource }
+                projectPath.source("src/main/resources/META-INF/services/javax.annotation.processing.Processor") {
+                    "org.kotlin.probe.ClasspathProbeProcessor"
+                }
+                // A pure Java annotation processor without any dependencies:
+                // nothing (not even kotlin-stdlib) is on the annotation processing classpath except the processor itself,
+                // so classes it observes besides JDK ones can only leak from the build process classpath.
+                buildScriptInjection {
+                    project.plugins.apply("java")
+                }
+            }
+
+            subProject("example").apply {
+                projectPath.source("build.gradle") { "" }
+                kotlinSourcesDir().source("Example.kt") {
+                    """
+                    class Example {
+                        fun greet(): String = "Hello"
+                    }
+                    """.trimIndent()
+                }
+                buildScriptInjection {
+                    project.plugins.apply("org.jetbrains.kotlin.jvm")
+                    project.plugins.apply("org.jetbrains.kotlin.kapt")
+                    project.dependencies.add("kapt", project.dependencies.project(mapOf("path" to ":annotation-processor")))
+                }
+            }
+
+            gradleProperties.append(
+                """
+
+                kapt.isolate.processors.from.build.classpath = true
+                """.trimIndent()
+            )
+
+            build("build") {
+                assertTasksExecuted(":example:kaptKotlin")
+                // With the isolation enabled the only classes visible to the processor besides its own
+                // are JDK platform classes and javac.
+                val probes = Regex("""kapt-probe (\S+) visible: (true|false)""")
+                    .findAll(output)
+                    .associate { it.groupValues[1] to it.groupValues[2].toBoolean() }
+                assertEquals(
+                    mapOf(
+                        "kotlin.Unit" to false,
+                        "com.sun.source.util.Trees" to true,
+                    ),
+                    probes,
+                )
+            }
+        }
+    }
+
     @DisplayName("should not resolve 'kapt' configuration during build configuration phase")
     @GradleTest
     fun testKaptConfigurationLazyResolution(gradleVersion: GradleVersion) {
@@ -1423,5 +1485,50 @@ open class KaptIT : KaptBaseIT() {
                 assertFileExists(projectPath.resolve("build/tmp/kapt3/stubs/main/ClassWithDupProps.java"))
             }
         }
+    }
+
+    private companion object {
+        //language=Java
+        private val classpathProbeProcessorSource = """
+            package org.kotlin.probe;
+
+            import java.util.Set;
+            import javax.annotation.processing.AbstractProcessor;
+            import javax.annotation.processing.RoundEnvironment;
+            import javax.annotation.processing.SupportedAnnotationTypes;
+            import javax.lang.model.SourceVersion;
+            import javax.lang.model.element.TypeElement;
+            import javax.tools.Diagnostic;
+
+            @SupportedAnnotationTypes("*")
+            public class ClasspathProbeProcessor extends AbstractProcessor {
+                private boolean reported = false;
+
+                @Override
+                public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+                    if (reported) return false;
+                    reported = true;
+                    probe("kotlin.Unit");
+                    probe("com.sun.source.util.Trees");
+                    return false;
+                }
+
+                private void probe(String className) {
+                    boolean visible;
+                    try {
+                        Class.forName(className, false, getClass().getClassLoader());
+                        visible = true;
+                    } catch (ClassNotFoundException e) {
+                        visible = false;
+                    }
+                    processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, "kapt-probe " + className + " visible: " + visible);
+                }
+
+                @Override
+                public SourceVersion getSupportedSourceVersion() {
+                    return SourceVersion.latestSupported();
+                }
+            }
+        """.trimIndent()
     }
 }

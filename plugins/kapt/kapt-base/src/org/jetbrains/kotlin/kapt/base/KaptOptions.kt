@@ -125,6 +125,7 @@ enum class KaptFlag(val description: String, val defaultValue: Boolean = false) 
     INCLUDE_COMPILE_CLASSPATH("Detect annotation processors in compile classpath", defaultValue = true),
     INCREMENTAL_APT("Incremental annotation processing (apt mode)"),
     STRIP_METADATA("Strip @Metadata annotations from stubs"),
+    ISOLATE_PROCESSORS_FROM_BUILD_CLASSPATH("Hide the build process classpath from annotation processors, exposing only JDK classes"),
     ;
 }
 

@@ -453,6 +453,10 @@ internal fun buildKaptSubpluginOptions(
         pluginOptions += SubpluginOption("verbose", "true")
     }
 
+    if (KaptProperties.isIsolateProcessorsFromBuildClasspath(project).get()) {
+        pluginOptions += SubpluginOption("isolateProcessorsFromBuildClasspath", "true")
+    }
+
     return pluginOptions
 }
 
