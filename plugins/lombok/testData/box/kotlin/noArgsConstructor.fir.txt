@@ -20,9 +20,7 @@ FILE: ConstructorExample.kt
             public get(): R|kotlin/String|
             public set(value: R|kotlin/String|): R|kotlin/Unit|
 
-        public constructor(): R|ConstructorExample| {
-            super<R|kotlin/Any|>()
-        }
+        public constructor(): R|ConstructorExample|
 
     }
     @R|lombok/NoArgsConstructor|() public final class ConstructorExampleWithGenerics<T> : R|kotlin/Any| {
@@ -34,9 +32,7 @@ FILE: ConstructorExample.kt
             public get(): R|T|
             public set(value: R|T|): R|kotlin/Unit|
 
-        public constructor<T>(): R|ConstructorExampleWithGenerics<T>| {
-            super<R|kotlin/Any|>()
-        }
+        public constructor<T>(): R|ConstructorExampleWithGenerics<T>|
 
     }
     @R|lombok/NoArgsConstructor|(force = Boolean(true) [evaluated = Boolean(true)]) public final class ConstructorExampleWithForce : R|kotlin/Any| {
@@ -63,9 +59,7 @@ FILE: ConstructorExample.kt
                 ^ this@R|/ConstructorExampleWithForce|.D|/ConstructorExampleWithForce.z|.R|kotlin/getValue|<R|kotlin/String|>(this@R|/ConstructorExampleWithForce|, ::R|/ConstructorExampleWithForce.z|)
             }
 
-        public constructor(): R|ConstructorExampleWithForce| {
-            super<R|kotlin/Any|>()
-        }
+        public constructor(): R|ConstructorExampleWithForce|
 
     }
     @R|lombok/NoArgsConstructor|(force = Boolean(true) [evaluated = Boolean(true)]) @R|kotlin/jvm/JvmInline|() public final value class ConstructorExampleOnValueClass : R|kotlin/Any| {
