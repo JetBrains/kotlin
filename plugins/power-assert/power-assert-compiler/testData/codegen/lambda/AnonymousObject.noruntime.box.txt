@@ -1,0 +1,21 @@
+test1: ---
+assert(object { override fun toString() = "ANONYMOUS" }.toString() == "toString()")
+                                                        |          |
+                                                        |          false
+                                                        ANONYMOUS
+---
+test2: ---
+assert(object : A() {
+    fun foo(): Boolean {
+        return a > b
+    }
+}.foo())
+  |
+  false
+---
+test3: ---
+assert(valueObject.booleanFunction())
+       |           |
+       |           false
+       ANONYMOUS
+---

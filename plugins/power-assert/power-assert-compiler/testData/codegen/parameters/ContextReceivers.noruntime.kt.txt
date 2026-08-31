@@ -1,0 +1,129 @@
+data object Asserter {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Asserter -> return false
+    }
+    val tmp_0: Asserter = other /*as Asserter */
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return -308598125
+  }
+
+  override fun toString(): String {
+    return "Asserter"
+  }
+
+}
+
+fun box(): String {
+  return runAll(tests = [to<String, Function0<Unit>>(/* <this> = "test1", */ that = local fun <anonymous>() {
+    test1()
+  }
+), to<String, Function0<Unit>>(/* <this> = "test2", */ that = local fun <anonymous>() {
+    test2()
+  }
+), to<String, Function0<Unit>>(/* <this> = "test3", */ that = local fun <anonymous>() {
+    test3()
+  }
+), to<String, Function0<Unit>>(/* <this> = "test4", */ that = local fun <anonymous>() {
+    test4()
+  }
+)])
+}
+
+context($context-Asserter: Asserter)
+fun context1Assert(condition: Boolean, msg: Any? = null) {
+  when {
+    condition.not() -> throw AssertionError(p0 = toString(/* <this> = msg */))
+  }
+}
+
+context($context-Asserter$1: Asserter, $context-Asserter$2: Asserter)
+fun context2Assert(condition: Boolean, msg: Any? = null) {
+  when {
+    condition.not() -> throw AssertionError(p0 = toString(/* <this> = msg */))
+  }
+}
+
+fun test1() {
+  with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: Asserter = $this$with
+      { // BLOCK
+        val tmp1_Explain: String = "test"
+        val tmp2_Explain: Int = tmp1_Explain.<get-length>()
+        val tmp3_Explain: Int = 5
+        val tmp4_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = tmp3_Explain)
+        context1Assert(/* $context-Asserter = tmp0_Explain, */ condition = tmp4_Explain, msg = "\ncontext1Assert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp4_Explain + "\n                      " + tmp2_Explain + "\n")
+      }
+    }
+  }
+)
+}
+
+fun test2() {
+  context<Asserter, Unit>(with = Asserter, block = context($context-Asserter: Asserter)
+  local fun <anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: Asserter = $context-Asserter
+      { // BLOCK
+        val tmp1_Explain: String = "test"
+        val tmp2_Explain: Int = tmp1_Explain.<get-length>()
+        val tmp3_Explain: Int = 5
+        val tmp4_Explain: Boolean = EQEQ(arg0 = tmp2_Explain, arg1 = tmp3_Explain)
+        context1Assert(/* $context-Asserter = tmp0_Explain, */ condition = tmp4_Explain, msg = "\ncontext1Assert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp4_Explain + "\n                      " + tmp2_Explain + "\n")
+      }
+    }
+  }
+)
+}
+
+fun test3() {
+  with<Asserter, Unit>(receiver = Asserter, block = local fun Asserter.<anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: Asserter = $this$with
+      { // BLOCK
+        val tmp1_Explain: Asserter = $this$with
+        { // BLOCK
+          val tmp2_Explain: String = "test"
+          val tmp3_Explain: Int = tmp2_Explain.<get-length>()
+          val tmp4_Explain: Int = 5
+          val tmp5_Explain: Boolean = EQEQ(arg0 = tmp3_Explain, arg1 = tmp4_Explain)
+          context2Assert(/* $context-Asserter$1 = tmp0_Explain, $context-Asserter$2 = tmp1_Explain, */ condition = tmp5_Explain, msg = "\ncontext2Assert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp5_Explain + "\n                      " + tmp3_Explain + "\n")
+        }
+      }
+    }
+  }
+)
+}
+
+fun test4() {
+  context<Asserter, Unit>(with = Asserter, block = context($context-Asserter: Asserter)
+  local fun <anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: Asserter = $context-Asserter
+      { // BLOCK
+        val tmp1_Explain: Asserter = $context-Asserter
+        { // BLOCK
+          val tmp2_Explain: String = "test"
+          val tmp3_Explain: Int = tmp2_Explain.<get-length>()
+          val tmp4_Explain: Int = 5
+          val tmp5_Explain: Boolean = EQEQ(arg0 = tmp3_Explain, arg1 = tmp4_Explain)
+          context2Assert(/* $context-Asserter$1 = tmp0_Explain, $context-Asserter$2 = tmp1_Explain, */ condition = tmp5_Explain, msg = "\ncontext2Assert(\"test\".length == 5)" + "\n                      |      |" + "\n                      |      " + tmp5_Explain + "\n                      " + tmp3_Explain + "\n")
+        }
+      }
+    }
+  }
+)
+}
