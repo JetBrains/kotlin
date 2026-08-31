@@ -115,6 +115,10 @@ class ParcelizeIrTransformer(
             }
         }
 
+        if (declaration.isPolymorphicSealed()) {
+            generatePolymorphicSealedCreator(declaration)
+        }
+
         // At this point we generated constructor for the sealed class and there is nothing more to do.
         if (declaration.modality == Modality.SEALED)
             return
@@ -178,6 +182,8 @@ class ParcelizeIrTransformer(
         require(experimentalCodeGeneration)
         body = androidSymbols.createBuilder(symbol).run {
             irBlockBody {
+                polymorphicSealedTagIfNeeded(irClass, parcelParameter)?.let { +it }
+
                 val constructorArguments = irClass.inheritanceConstructorArguments()
                 if (constructorArguments.isEmpty()) {
                     // In this case the parcel will be empty, which is illegal so we need to hack it here
@@ -227,6 +233,8 @@ class ParcelizeIrTransformer(
     ) {
         body = androidSymbols.createBuilder(symbol).run {
             irBlockBody {
+                polymorphicSealedTagIfNeeded(irClass, parcelParameter)?.let { +it }
+
                 when {
                     parcelerObject != null ->
                         +parcelerWrite(parcelerObject, parcelParameter, flagsParameter, irGet(receiverParameter))
@@ -253,7 +261,20 @@ class ParcelizeIrTransformer(
         }
     }
 
-    private fun generateCreator(declaration: IrClass, parcelerObject: IrClass?, parcelableProperties: List<ParcelableProperty>) {
+    private fun AndroidIrBuilder.polymorphicSealedTagIfNeeded(
+        irClass: IrClass,
+        parcelParameter: IrValueParameter,
+    ): IrExpression? {
+        val polymorphicSealedRoot = irClass.findPolymorphicSealedRoot() ?: return null
+        val tag = irClass.getPolymorphicSealedTag(polymorphicSealedRoot)
+        return parcelWriteInt(irGet(parcelParameter), irInt(tag))
+    }
+
+    private fun generateCreatorField(
+        declaration: IrClass,
+        parcelerObject: IrClass? = null,
+        buildCreatorBody: AndroidIrBuilder.(parcelParameter: IrValueParameter, declarationType: IrType) -> IrExpression,
+    ) {
         // Since the `CREATOR` object cannot refer to the type parameters of the parcelable class we use a star projected type
         val declarationType = declaration.symbol.starProjectedType
         val creatorType = androidSymbols.androidOsParcelableCreator.typeWith(declarationType)
@@ -303,35 +324,8 @@ class ParcelizeIrTransformer(
                     // We need to defer the construction of the create method, since it may refer to the [Parcelable.Creator]
                     // instances in other @Parcelize classes in the current module, which may not exist yet.
                     defer {
-                        val inheritanceConstructor = declaration.inheritanceConstructor()
                         body = androidSymbols.createBuilder(symbol).run {
-                            irExprBody(
-                                when {
-                                    parcelerObject != null ->
-                                        parcelerCreate(parcelerObject, parcelParameter)
-
-                                    // just to handle empty parcel case, we need some arguments other than marker to use the constructor
-                                    experimentalCodeGeneration && inheritanceConstructor != null && inheritanceConstructor.parameters.size > 1 -> {
-                                        val constructorArguments = declaration.inheritanceConstructorArguments()
-                                        irCall(inheritanceConstructor).apply {
-                                            constructorArguments.forEachIndexed { index, property ->
-                                                arguments[index] = readParcelWith(property.parceler, parcelParameter)
-                                            }
-                                            arguments[constructorArguments.size] = irGetObject(androidSymbols.directInitializerMarker)
-                                        }
-                                    }
-
-                                    parcelableProperties.isNotEmpty() ->
-                                        irCall(declaration.primaryConstructor!!).apply {
-                                            for (property in parcelableProperties) {
-                                                arguments[property.index] = readParcelWith(property.parceler, parcelParameter)
-                                            }
-                                        }
-
-                                    else ->
-                                        readParcelWith(declaration.classParceler, parcelParameter)
-                                }
-                            )
+                            irExprBody(buildCreatorBody(parcelParameter, declarationType))
                         }
                     }
                 }
@@ -345,6 +339,83 @@ class ParcelizeIrTransformer(
             }
         }
     }
+
+    private fun generatePolymorphicSealedCreator(declaration: IrClass) =
+        generateCreatorField(declaration) { parcelParameter, declarationType ->
+            irBlock {
+                val tagVariable = irTemporary(parcelReadInt(irGet(parcelParameter)), nameHint = "tag")
+                val subclasses = declaration.getPolymorphicSealedSubclasses()
+                val seenTags = mutableSetOf<Int>()
+                val branches = subclasses.map { subclass ->
+                    val tag = subclass.getPolymorphicSealedTag(declaration)
+                    if (!seenTags.add(tag)) {
+                        error("Duplicate @ParcelTag value $tag found in polymorphic sealed class ${declaration.name.asString()} on subclass ${subclass.name.asString()}")
+                    }
+                    val subclassParceler = subclass.companionObject()?.takeIf {
+                        it.isSubclassOfFqName(PARCELER_FQN.asString())
+                    }
+                    irBranch(
+                        irEquals(irGet(tagVariable), irInt(tag)),
+                        createInstanceFromParcel(subclass, subclassParceler, subclass.parcelableProperties, parcelParameter)
+                    )
+                }
+                val elseBranch = irElseBranch(
+                    irCall(context.irBuiltIns.illegalArgumentExceptionSymbol).apply {
+                        arguments[0] = irString("Unknown tag for sealed class ${declaration.name.asString()}")
+                    }
+                )
+                +irWhen(declarationType, branches + elseBranch)
+            }
+        }
+
+    private fun AndroidIrBuilder.createInstanceFromParcel(
+        declaration: IrClass,
+        parcelerObject: IrClass?,
+        parcelableProperties: List<ParcelableProperty>,
+        parcelParameter: IrValueParameter,
+    ): IrExpression {
+        val inheritanceConstructor = declaration.inheritanceConstructor()
+        return when {
+            parcelerObject != null ->
+                parcelerCreate(parcelerObject, parcelParameter)
+
+            // just to handle empty parcel case, we need some arguments other than marker to use the constructor
+            experimentalCodeGeneration && inheritanceConstructor != null && inheritanceConstructor.parameters.size > 1 -> {
+                val constructorArguments = declaration.inheritanceConstructorArguments()
+                irCall(inheritanceConstructor).apply {
+                    constructorArguments.forEachIndexed { index, property ->
+                        arguments[index] = readParcelWith(property.parceler, parcelParameter)
+                    }
+                    arguments[constructorArguments.size] = irGetObject(androidSymbols.directInitializerMarker)
+                }
+            }
+
+            parcelableProperties.isNotEmpty() ->
+                irCall(declaration.primaryConstructor!!).apply {
+                    for (property in parcelableProperties) {
+                        arguments[property.index] = readParcelWith(property.parceler, parcelParameter)
+                    }
+                }
+
+            else ->
+                readParcelWith(declaration.classParceler, parcelParameter)
+        }
+    }
+
+    private fun generateCreator(declaration: IrClass, parcelerObject: IrClass?, parcelableProperties: List<ParcelableProperty>) =
+        generateCreatorField(declaration, parcelerObject) { parcelParameter, _ ->
+            if (declaration.findPolymorphicSealedRoot() != null) {
+                irBlock {
+                    // Subclasses in a @PolymorphicSealed hierarchy prepend a discriminator tag when written to a parcel.
+                    // When deserializing directly via the specific subclass CREATOR (rather than the sealed root CREATOR),
+                    // we must consume and discard this leading tag before reading the subclass properties.
+                    +parcelReadInt(irGet(parcelParameter))
+                    +createInstanceFromParcel(declaration, parcelerObject, parcelableProperties, parcelParameter)
+                }
+            } else {
+                createInstanceFromParcel(declaration, parcelerObject, parcelableProperties, parcelParameter)
+            }
+        }
 
     private val IrClass.classParceler: IrParcelSerializer
         get() = if (kind == ClassKind.CLASS) {
