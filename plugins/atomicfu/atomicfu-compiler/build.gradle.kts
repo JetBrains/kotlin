@@ -124,7 +124,7 @@ dependencies {
     testRuntimeOnly(commonDependency("org.fusesource.jansi", "jansi"))
 
     atomicfuJsClasspath("org.jetbrains.kotlinx:atomicfu-js:0.25.0") { isTransitive = false }
-    atomicfuJsIrRuntimeForTests(project(":kotlinx-atomicfu-runtime"))  { isTransitive = false }
+    //atomicfuJsIrRuntimeForTests(project(":kotlinx-atomicfu-runtime"))  { isTransitive = false }
     atomicfuJvmClasspath("org.jetbrains.kotlinx:atomicfu:0.25.0") { isTransitive = false }
     atomicfuNativeKlib("org.jetbrains.kotlinx:atomicfu:0.25.0") { isTransitive = false }
     atomicfuCompilerPluginForTests(project(":kotlin-atomicfu-compiler-plugin"))
@@ -154,7 +154,7 @@ dependencies {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
         }
     }
-
+/*
     embedded(project(":kotlinx-atomicfu-runtime")) {
         attributes {
             attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
@@ -163,7 +163,7 @@ dependencies {
         }
         isTransitive = false
     }
-
+*/
     testImplementation("org.jetbrains.kotlinx:atomicfu:0.25.0")
 }
 

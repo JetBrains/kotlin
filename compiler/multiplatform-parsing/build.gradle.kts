@@ -15,11 +15,11 @@ kotlin {
     jvm()
 
     @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
+    /*wasmJs {
         browser()
-        nodejs()
+        //nodejs()
         d8()
-    }
+    }*/
 
     sourceSets {
         val commonMain = getByName("commonMain") {

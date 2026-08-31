@@ -49,17 +49,29 @@ val runtimeJar = runtimeJar(embeddableCompiler()) {
 }
 
 val sourcesJar = sourcesJar {
-    val compilerTask = project(":kotlin-compiler").tasks.named<Jar>("sourcesJar")
+    val compilerTask = configurations.detachedConfiguration(dependencies.project(":kotlin-compiler")).apply {
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.VERIFICATION))
+            attribute(VerificationType.VERIFICATION_TYPE_ATTRIBUTE, project.objects.named(VerificationType.MAIN_SOURCES))
+        }
+        isTransitive = false
+    }
     dependsOn(compilerTask)
     val archiveOperations = serviceOf<ArchiveOperations>()
-    from(compilerTask.map { it.archiveFile }.map { archiveOperations.zipTree(it) })
+    from(compilerTask.files.map { archiveOperations.zipTree(it) })
 }
 
 val javadocJar = javadocJar {
-    val compilerTask = project(":kotlin-compiler").tasks.named<Jar>("javadocJar")
+    val compilerTask = configurations.detachedConfiguration(dependencies.project(":kotlin-compiler")).apply {
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
+            attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.JAVADOC))
+        }
+        isTransitive = false
+    }
     dependsOn(compilerTask)
     val archiveOperations = serviceOf<ArchiveOperations>()
-    from(compilerTask.map { it.archiveFile }.map { archiveOperations.zipTree(it) })
+    from(compilerTask.files.map { archiveOperations.zipTree(it) })
 }
 
 publish {
