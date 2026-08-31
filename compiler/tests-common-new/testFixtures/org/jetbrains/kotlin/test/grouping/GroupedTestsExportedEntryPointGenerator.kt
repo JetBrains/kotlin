@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.test.grouping
 /** The only target-dependent piece of the grouped-batch result protocol: the entry point the executor invokes. */
 abstract class GroupedTestsExportedEntryPointGenerator {
     /**
-     * Emits the entry point with the target's export annotation (`@JsExport` on wasm-js, `@kotlin.wasm.WasmExport` on
-     * wasm-wasi). It must call [runAllFunctionName].
+     * Emits the entry point with the target's export annotation (`@JsExport` on wasm-js, `@WasmExport` on wasm-wasi).
+     * It must call [runAllFunctionName].
      */
     abstract fun generateExportedEntryPointSource(runAllFunctionName: String): String
 }

@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.BEGIN
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.END
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.FAILED
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.LINE_PREFIX
+import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.Outcome.Status
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.PASSED
+import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.ParsedBatchResult.Analysis.FailureKind
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.SEP
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.STARTED
-import org.jetbrains.kotlin.test.report.TestRunChecks
+import org.jetbrains.kotlin.test.report.TestReportChecks
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -37,39 +39,46 @@ class GroupedTestsResultProtocolTest {
     fun `given details containing separators when parse then they stay in one field`() {
         val output = block(resultLine("id", FAILED, "message", "details|with|extra|separators"))
 
-        val outcome = parse(output).getValue("id")
+        val outcome = parse(output).getValue("id").single()
 
-        assertFalse(outcome.passed)
+        assertEquals(Status.FAILED, outcome.status)
         assertEquals("message", outcome.message)
         assertEquals("details|with|extra|separators", outcome.details)
     }
 
     @Test
-    fun `given malformed and unknown-status lines when parse then only well-formed ones are kept`() {
+    fun `given malformed and unknown-status lines when parse then they are reported and valid ones are kept`() {
+        val tooFewFields = "$LINE_PREFIX${SEP}tooFewFields${SEP}two"
+        val unknownStatus = resultLine("unknownStatus", "BROKEN", "msg", "details")
         val output = block(
-            "$LINE_PREFIX${SEP}tooFewFields${SEP}two",
-            resultLine("unknownStatus", "BROKEN", "msg", "details"),
+            tooFewFields,
+            unknownStatus,
             resultLine("wellFormed", PASSED),
         )
 
-        val result = parse(output)
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
 
-        assertEquals(setOf("wellFormed"), result.keys)
-        val outcome = result.getValue("wellFormed")
-        assertTrue(outcome.passed)
+        assertEquals(listOf(tooFewFields, unknownStatus), result.malformedLines)
+        assertEquals(setOf("wellFormed"), result.outcomes.keys)
+        val outcome = result.outcomes.getValue("wellFormed").single()
+        assertEquals(Status.PASSED, outcome.status)
         assertNull(outcome.message)
         assertNull(outcome.details)
     }
 
     @Test
-    fun `given CRLF-terminated sentinels when parse then the block is still recognized`() {
-        val output = listOf("$BEGIN\r", resultLine("id", PASSED), "$END\r").joinToString("\n")
+    fun `given CRLF-separated output when parse then sentinels and result lines are both recognized`() {
+        // A CR ends a line for `String.lines()`, so neither a sentinel nor a payload field may end up carrying one.
+        val output = listOf(BEGIN, resultLine("id", STARTED), resultLine("id", PASSED), END).joinToString("\r\n")
 
-        assertTrue(parse(output).getValue("id").passed)
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
+
+        assertTrue(result.malformedLines.isEmpty(), result.malformedLines.toString())
+        assertEquals(Status.PASSED, result.outcomes.getValue("id").single().status)
     }
 
     @Test
-    fun `given an id reported by several VMs when parseMerged then a failure wins over a pass`() {
+    fun `given an id reported by several VMs when parseMerged then a failure is retained alongside a pass`() {
         val passedOnOneVm = block(resultLine("id", PASSED), resultLine("other", PASSED))
         val failedOnAnotherVm = buildString {
             appendLine("noise before the block")
@@ -81,9 +90,67 @@ class GroupedTestsResultProtocolTest {
         val result = GroupedTestsResultProtocol.parseMerged(listOf(passedOnOneVm, failedOnAnotherVm))
 
         assertTrue(result.sawStructuredBlock)
-        assertFalse(result.outcomes.getValue("id").passed)
-        assertEquals("msg", result.outcomes.getValue("id").message)
-        assertTrue(result.outcomes.getValue("other").passed)
+        assertEquals(listOf(Status.PASSED, Status.FAILED), result.outcomes.getValue("id").map { it.status })
+        assertEquals(listOf(null, "msg"), result.outcomes.getValue("id").map { it.message })
+        assertEquals(listOf(null, "details"), result.outcomes.getValue("id").map { it.details })
+        assertEquals(listOf(Status.PASSED), result.outcomes.getValue("other").map { it.status })
+        assertEquals(setOf("id"), result.toTestReport().failedTests)
+    }
+
+    @Test
+    fun `given outcome data reported by several VMs when parseMerged then every outcome is retained`() {
+        val first = block(resultLine("id", PASSED, "pass message", "pass details"))
+        val second = block(resultLine("id", FAILED, "failure message", "failure details"))
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(first, second))
+        val outcomes = result.outcomes.getValue("id")
+
+        assertEquals(listOf(Status.PASSED, Status.FAILED), outcomes.map { it.status })
+        assertEquals(listOf("pass message", "failure message"), outcomes.map { it.message })
+        assertEquals(listOf("pass details", "failure details"), outcomes.map { it.details })
+        assertEquals(setOf("id"), result.toTestReport().failedTests)
+    }
+
+    @Test
+    fun `given named executions when parseMerged then failures and crashes retain their execution names`() {
+        val failingOutput = block(resultLine("id", FAILED, "failure message", "failure details"))
+        val crashingOutput = "$BEGIN\n${resultLine("id", STARTED)}\n"
+
+        val result = GroupedTestsResultProtocol.parseMergedWithExecutionNames(
+            listOf(
+                GroupedTestsResultProtocol.ExecutionOutput("V8 (dev)", failingOutput),
+                GroupedTestsResultProtocol.ExecutionOutput("V8 (dce)", crashingOutput),
+            )
+        )
+        val analysis = result.analyze(listOf("id"))
+
+        assertEquals(listOf("V8 (dev)", "V8 (dce)"), result.outcomes.getValue("id").map { it.executionName })
+        assertTrue("[V8 (dev)] failure message" in analysis.failures.getValue("id").reportedFailure.orEmpty())
+        assertEquals(
+            listOf("V8 (dce)"),
+            analysis.testResults.getValue("id").crashEvidence?.executionNames,
+        )
+    }
+
+    @Test
+    fun `given complete execution blocks that split expected results when analyze then missing executions are reported`() {
+        val firstOutput = block(resultLine("first", STARTED), resultLine("first", PASSED))
+        val secondOutput = block(resultLine("second", STARTED), resultLine("second", PASSED))
+
+        val analysis = GroupedTestsResultProtocol
+            .parseMerged(listOf(firstOutput, secondOutput))
+            .analyze(
+                expectedIds = listOf("first", "second"),
+                executionOutputs = listOf(
+                    GroupedTestsResultProtocol.ExecutionOutput("VM-1", firstOutput),
+                    GroupedTestsResultProtocol.ExecutionOutput("VM-2", secondOutput),
+                ),
+            )
+
+        // The aggregate report contains both ids, but neither execution covered the whole batch.
+        assertEquals(emptyList<String>(), analysis.missingIds)
+        assertEquals(listOf("VM-2"), analysis.missingExecutionNamesById.getValue("first"))
+        assertEquals(listOf("VM-1"), analysis.missingExecutionNamesById.getValue("second"))
     }
 
     @Test
@@ -95,9 +162,9 @@ class GroupedTestsResultProtocolTest {
         assertEquals(setOf("passed"), testReport.passedTests)
         assertEquals(setOf("failed"), testReport.failedTests)
         assertTrue(testReport.ignoredTests.isEmpty())
-        assertEquals(emptyList<String>(), TestRunChecks.findMissingResults(listOf("passed", "failed"), testReport))
-        assertEquals(listOf("failed"), TestRunChecks.findExcessiveResults(listOf("passed"), testReport))
-        assertEquals(listOf("missing"), TestRunChecks.findMissingResults(listOf("passed", "missing"), testReport))
+        assertEquals(emptyList<String>(), TestReportChecks.findMissingResults(listOf("passed", "failed"), testReport))
+        assertEquals(listOf("failed"), TestReportChecks.findExcessiveResults(listOf("passed"), testReport))
+        assertEquals(listOf("missing"), TestReportChecks.findMissingResults(listOf("passed", "missing"), testReport))
     }
 
     @Test
@@ -106,13 +173,14 @@ class GroupedTestsResultProtocolTest {
 
         assertTrue(result.sawStructuredBlock)
         assertTrue(result.outcomes.isEmpty())
-        assertTrue(TestRunChecks.checkNonEmpty(result.toTestReport()) is TestRunChecks.Result.Failed)
+        assertTrue(TestReportChecks.checkNonEmpty(result.toTestReport()) is TestReportChecks.Result.Failed)
     }
 
     @Test
     fun `given a structured block when checking completeness then an unterminated block is rejected`() {
         assertTrue(GroupedTestsResultProtocol.hasCompleteStructuredBlock(block()))
         assertFalse(GroupedTestsResultProtocol.hasCompleteStructuredBlock("$BEGIN\n${resultLine("id", PASSED)}\n"))
+        assertFalse(GroupedTestsResultProtocol.hasCompleteStructuredBlock(block(resultLine("id", "BROKEN"))))
         assertFalse(GroupedTestsResultProtocol.hasCompleteStructuredBlock("output without a structured block"))
     }
 
@@ -130,8 +198,8 @@ class GroupedTestsResultProtocolTest {
 
             // A fake result line inside a message must not spoof another test's status.
             assertEquals(setOf("id"), parsed.keys, "Escaped fields leaked out of their line: <$value>")
-            assertEquals(value, parsed.getValue("id").message, "Message did not survive the round trip: <$value>")
-            assertEquals(details, parsed.getValue("id").details, "Details did not survive the round trip: <$value>")
+            assertEquals(value, parsed.getValue("id").single().message, "Message did not survive the round trip: <$value>")
+            assertEquals(details, parsed.getValue("id").single().details, "Details did not survive the round trip: <$value>")
         }
     }
 
@@ -167,35 +235,109 @@ class GroupedTestsResultProtocolTest {
         }
         val glued = block("glued${resultLine("id", PASSED)}")
 
-        assertTrue(parse(prefixedByNewline).getValue("id").passed)
+        assertEquals(Status.PASSED, parse(prefixedByNewline).getValue("id").single().status)
         assertTrue(parse(glued).isEmpty())
     }
 
     @Test
-    fun `given an id started on a VM that never reported its result when parseMerged then it is crashed in progress`() {
+    fun `given an id started on a VM that never reported its result when analyze then it is crashed in progress`() {
         // Deriving "crashed" from the merged outcomes would miss it: the first VM's PASSED is already there.
         val passingVm = block(resultLine("crasher", STARTED), resultLine("crasher", PASSED))
         val crashingVm = "$BEGIN\n${resultLine("crasher", STARTED)}\n"
 
         val result = GroupedTestsResultProtocol.parseMerged(listOf(passingVm, crashingVm))
 
-        assertTrue(result.crashedInProgress("crasher"))
-        assertTrue(result.outcomes.getValue("crasher").passed)
-        // The surviving VM's outcome is kept, so the crash cannot be reported through the missing-id path.
-        assertTrue(TestRunChecks.findMissingResults(listOf("crasher"), result.toTestReport()).isEmpty())
+        val analysis = result.analyze(listOf("crasher"))
+        assertTrue(analysis.testResults.getValue("crasher").crashEvidence != null)
+        assertEquals(
+            listOf(Status.PASSED, Status.CRASHED),
+            result.outcomes.getValue("crasher").map { it.status },
+        )
+        // Both the surviving VM's result and the inferred crash are retained, so the crash cannot be reported through
+        // the missing-id path.
+        assertTrue(TestReportChecks.findMissingResults(listOf("crasher"), result.toTestReport()).isEmpty())
 
-        assertFalse(GroupedTestsResultProtocol.parseMerged(listOf(passingVm, passingVm)).crashedInProgress("crasher"))
+        val noCrash = GroupedTestsResultProtocol.parseMerged(listOf(passingVm, passingVm)).analyze(listOf("crasher"))
+        assertNull(noCrash.testResults.getValue("crasher").crashEvidence)
     }
 
     @Test
-    fun `given a failure on one VM and a crash on another when parseMerged then both signals are kept`() {
+    fun `given a crash hidden by another scenario when analyze then it remains a crashed failure`() {
+        val passingScenario = block(resultLine("id", STARTED), resultLine("id", PASSED))
+        val crashedScenario = "$BEGIN\n${resultLine("id", STARTED)}\n"
+
+        val analysis = GroupedTestsResultProtocol
+            .parseMerged(listOf(passingScenario, crashedScenario))
+            .analyze(expectedIds = listOf("id"))
+
+        assertTrue(analysis.missingIds.isEmpty())
+        assertEquals(FailureKind.CRASHED, analysis.failures.getValue("id").kind)
+        assertFalse(analysis.failures.getValue("id").isCrashOnly)
+    }
+
+    @Test
+    fun `given a failure on one VM and a crash on another when analyze then both signals are kept`() {
         val failingVm = block(resultLine("id", STARTED), resultLine("id", FAILED, "msg", "details"))
         val crashingVm = "$BEGIN\n${resultLine("id", STARTED)}\n"
 
         val result = GroupedTestsResultProtocol.parseMerged(listOf(failingVm, crashingVm))
 
-        assertFalse(result.outcomes.getValue("id").passed)
-        assertTrue(result.crashedInProgress("id"))
+        assertEquals(
+            listOf(Status.FAILED, Status.CRASHED),
+            result.outcomes.getValue("id").map { it.status },
+        )
+        assertTrue(result.analyze(listOf("id")).testResults.getValue("id").crashEvidence != null)
+    }
+
+    @Test
+    fun `given a crash and malformed output when analyze then their correlation is retained`() {
+        val malformed = "$LINE_PREFIX${SEP}id${SEP}PAS"
+        val crashingOutput = "$BEGIN\n${resultLine("id", STARTED)}\n"
+        val malformedOutput = block(malformed)
+
+        val uncorrelated = GroupedTestsResultProtocol
+            .parseMerged(listOf(crashingOutput, malformedOutput))
+            .analyze(listOf("id"))
+            .testResults
+            .getValue("id")
+        assertTrue(uncorrelated.crashEvidence != null)
+        assertFalse(uncorrelated.crashEvidence?.isInMalformedOutput == true)
+        assertTrue(uncorrelated.malformedLineCarriesId)
+        assertFalse(uncorrelated.malformedLineCarriesIdInCrashOutput)
+
+        val correlated = GroupedTestsResultProtocol
+            .parseMerged(listOf("$BEGIN\n${resultLine("id", STARTED)}\n$malformed\n"))
+            .analyze(listOf("id"))
+            .testResults
+            .getValue("id")
+        assertTrue(correlated.crashEvidence?.isInMalformedOutput == true)
+        assertTrue(correlated.malformedLineCarriesIdInCrashOutput)
+    }
+
+    @Test
+    fun `given a malformed line truncated inside another test's id then it is not mistaken for a real one`() {
+        // "id_long"'s own STARTED line is cut off after only 4 characters of its id were written -- coincidentally
+        // the same 4 characters as "id_l"'s complete, distinct id. The fragment must not be read as carrying "id_l".
+        val truncatedInsideId = "$LINE_PREFIX${SEP}id_l"
+        val output = "$BEGIN\n${resultLine("id_l", STARTED)}\n$truncatedInsideId\n"
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
+        assertEquals(listOf(truncatedInsideId), result.malformedLines)
+        assertEquals(setOf("id_l"), result.crashedIds)
+
+        val testResult = result.analyze(listOf("id_l")).testResults.getValue("id_l")
+        assertTrue(testResult.crashEvidence != null)
+        assertFalse(testResult.malformedLineCarriesIdInCrashOutput)
+    }
+
+    @Test
+    fun `given only an unfinished started test when parseMerged then its outcome is crashed`() {
+        val output = "$BEGIN\n${resultLine("id", STARTED)}\n"
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
+
+        assertEquals(Status.CRASHED, result.outcomes.getValue("id").single().status)
+        assertEquals(setOf("id"), result.toTestReport().failedTests)
     }
 
     @Test
@@ -209,8 +351,12 @@ class GroupedTestsResultProtocolTest {
 
         val result = GroupedTestsResultProtocol.parseMerged(listOf(completeVm, truncatedVm))
 
-        assertTrue(result.crashedInProgress("crasher"))
-        assertFalse(result.crashedInProgress("earlier"), "A test whose result was merely lost was blamed for the crash")
+        val analysis = result.analyze(listOf("earlier", "crasher"))
+        assertTrue(analysis.testResults.getValue("crasher").crashEvidence != null)
+        assertNull(
+            analysis.testResults.getValue("earlier").crashEvidence,
+            "A test whose result was merely lost was blamed for the crash",
+        )
     }
 
     @Test
@@ -225,11 +371,16 @@ class GroupedTestsResultProtocolTest {
 
         val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
 
-        assertFalse(result.crashedInProgress("garbled"), "A test a later test ran after was blamed for the crash")
-        assertFalse(result.crashedInProgress("later"))
+        val analysis = result.analyze(listOf("garbled", "later"))
+        assertNull(
+            analysis.testResults.getValue("garbled").crashEvidence,
+            "A test a later test ran after was blamed for the crash",
+        )
+        assertNull(analysis.testResults.getValue("later").crashEvidence)
+        assertEquals(listOf("$LINE_PREFIX${SEP}garbled${SEP}tooFewFields"), result.malformedLines)
         assertEquals(
             listOf("garbled"),
-            TestRunChecks.findMissingResults(listOf("garbled", "later"), result.toTestReport()),
+            TestReportChecks.findMissingResults(listOf("garbled", "later"), result.toTestReport()),
         )
     }
 
@@ -244,11 +395,23 @@ class GroupedTestsResultProtocolTest {
         // Without the END sentinel the same output is the actual crash.
         val unterminatedBlock = closedBlock.substringBefore(END)
 
-        assertFalse(
-            GroupedTestsResultProtocol.parseMerged(listOf(closedBlock)).crashedInProgress("last"),
+        assertNull(
+            GroupedTestsResultProtocol
+                .parseMerged(listOf(closedBlock))
+                .analyze(listOf("last"))
+                .testResults
+                .getValue("last")
+                .crashEvidence,
             "A batch the driver ran to its END was reported as crashed",
         )
-        assertTrue(GroupedTestsResultProtocol.parseMerged(listOf(unterminatedBlock)).crashedInProgress("last"))
+        assertTrue(
+            GroupedTestsResultProtocol
+                .parseMerged(listOf(unterminatedBlock))
+                .analyze(listOf("last"))
+                .testResults
+                .getValue("last")
+                .crashEvidence != null
+        )
     }
 
     @Test
@@ -259,10 +422,52 @@ class GroupedTestsResultProtocolTest {
         val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
 
         assertTrue(result.sawStructuredBlock)
-        assertFalse(result.crashedInProgress("only"), "A test that reported its result was blamed for the crash")
+        assertNull(
+            result.analyze(listOf("only")).testResults.getValue("only").crashEvidence,
+            "A test that reported its result was blamed for the crash",
+        )
+    }
+
+    @Test
+    fun `given a result for a test outside the batch when analyze then it is excessive and not a failure`() {
+        val output = block(resultLine("expected", PASSED), resultLine("foreign", FAILED, "msg", "details"))
+
+        val analysis = GroupedTestsResultProtocol.parseMerged(listOf(output)).analyze(listOf("expected"))
+
+        // The caller rejects the batch over `excessiveIds`; `failures` must not also carry someone else's test.
+        assertEquals(listOf("foreign"), analysis.excessiveIds)
+        assertEquals(emptySet<String>(), analysis.failures.keys)
+    }
+
+    @Test
+    fun `given the generated driver then it reports every launcher and calls its batch runner`() {
+        // Dropping a launcher from the loop, or the exported entry point, leaves the batch silently reporting nothing.
+        for (name in listOf("ProxyLauncher_a", "ProxyLauncher_b")) {
+            assertTrue("""__kgtiReport("$name") { $name().runTest() }""" in driverSource, driverSource)
+        }
+
+        val runAllName = RUN_ALL_DECLARATION.find(driverSource)?.groupValues?.get(1)
+        assertTrue(runAllName != null, driverSource)
+        assertTrue("fun entryPoint() { $runAllName() }" in driverSource, driverSource)
+    }
+
+    @Test
+    fun `given protocol-looking lines that break the format when parse then each one is rejected`() {
+        val withoutSeparator = "${LINE_PREFIX}NoSeparatorHere"
+        val emptyId = resultLine("", PASSED)
+        val startedCarryingPayload = resultLine("id", STARTED, "message", "")
+        val output = block(withoutSeparator, emptyId, startedCarryingPayload, resultLine("wellFormed", PASSED))
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
+
+        assertEquals(listOf(withoutSeparator, emptyId, startedCarryingPayload), result.malformedLines)
+        assertEquals(setOf("wellFormed"), result.outcomes.keys)
     }
 
     private companion object {
+        /** The driver's own batch runner: the entry point is generated around whatever name it is declared with. */
+        val RUN_ALL_DECLARATION = Regex("""private fun (__\w+)\(\) \{""")
+
         val driverSource: String = GroupedTestsResultProtocol.generateResultCollectingRunnerSource(
             proxyClassNames = listOf("ProxyLauncher_a", "ProxyLauncher_b"),
             exportedEntryPointGenerator = object : GroupedTestsExportedEntryPointGenerator() {
@@ -286,7 +491,7 @@ class GroupedTestsResultProtocolTest {
             "\$dollar and {braces}",
         )
 
-        fun parse(output: String): Map<String, GroupedTestsResultProtocol.Outcome> =
+        fun parse(output: String): Map<String, List<GroupedTestsResultProtocol.Outcome>> =
             GroupedTestsResultProtocol.parseMerged(listOf(output)).outcomes
 
         fun resultLine(id: String, status: String, message: String = "", details: String = ""): String =
