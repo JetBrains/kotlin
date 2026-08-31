@@ -334,7 +334,10 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                 val restored = pointer?.let { restoreSymbol(it, disablePsiBasedLogic) }
                 if (restored != null) {
                     if (psiOnly && disablePsiBasedLogic) {
-                        fail("The symbol is unexpectedly restored from '${pointer::class.simpleName}', so 'supportsOnlyPsiBasedPointersByDesign' must be updated.")
+                        fail(
+                            "The symbol '${restored.name}' of type '${restored::class.simpleName}' is unexpectedly restored " +
+                                    "from '${pointer::class.simpleName}', so 'supportsOnlyPsiBasedPointersByDesign' must be updated."
+                        )
                     }
 
                     restoredPointers += pointer
@@ -574,7 +577,7 @@ private val KaSymbol.supportsOnlyPsiBasedPointersByDesign: Boolean
         is KaNamedClassSymbol -> {
             when (location) {
                 KaSymbolLocation.LOCAL -> true
-                KaSymbolLocation.CLASS -> classId == null && origin != KaSymbolOrigin.PLUGIN
+                KaSymbolLocation.CLASS -> classId == null && containingDeclaration !is KaNamedClassSymbol
                 else -> false
             }
         }
