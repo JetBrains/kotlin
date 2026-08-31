@@ -66,8 +66,8 @@ class NativeDeserializerFacade(
         }
 
         val loadedKlibs = loadNativeKlibs(configuration, testServices.nativeEnvironmentConfigurator.getNativeTarget(module))
-        val [moduleDescriptors, forwardDeclarationsModuleDescriptor] = createModuleDescriptors(configuration, loadedKlibs)
-        val moduleInfo = createIrModuleFragments(configuration, loadedKlibs, moduleDescriptors, forwardDeclarationsModuleDescriptor)
+        val moduleDescriptors = createModuleDescriptors(configuration, loadedKlibs)
+        val moduleInfo = createIrModuleFragments(configuration, loadedKlibs, moduleDescriptors)
 
         return DeserializedFromKlibBackendInput(NativeLoadedIrArtifact(moduleInfo, configuration), klib = inputArtifact.outputFile)
     }
@@ -75,7 +75,7 @@ class NativeDeserializerFacade(
     private fun createModuleDescriptors(
         configuration: CompilerConfiguration,
         loadedKlibs: LoadedNativeKlibs,
-    ): Pair<List<ModuleDescriptorImpl>, ModuleDescriptorImpl> {
+    ): List<ModuleDescriptorImpl> {
         val result = nativeFactories.DefaultResolvedDescriptorsFactory.createResolved2(
             // Note: stdlib goes the first in `LoadedNativeKlibs.all`!
             libraries = loadedKlibs.all,
@@ -88,14 +88,13 @@ class NativeDeserializerFacade(
             additionalDependencyModules = emptyList(),
             isForMetadataCompilation = false,
         )
-        return result.resolvedDescriptors to result.forwardDeclarationsModule
+        return result.resolvedDescriptors
     }
 
     private fun createIrModuleFragments(
         configuration: CompilerConfiguration,
         loadedKlibs: LoadedNativeKlibs,
         moduleDescriptors: List<ModuleDescriptorImpl>,
-        forwardDeclarationsModuleDescriptor: ModuleDescriptorImpl,
     ): IrModuleInfo {
         val libraryToModuleDescriptor: Map<KotlinLibrary, ModuleDescriptorImpl> = moduleDescriptors.associateBy { it.kotlinLibrary }
 
@@ -116,7 +115,6 @@ class NativeDeserializerFacade(
             configuration = configuration,
             symbolTable = symbolTable,
             friendModules = friendsMap,
-            forwardModuleDescriptor = forwardDeclarationsModuleDescriptor,
             cInteropModuleDeserializerFactory = CInteropModuleDeserializerFactoryMock,
             exportedDependencies = emptyList(),
             partialLinkageConfig = PartialLinkageConfig(partialLinkageLogLevel),

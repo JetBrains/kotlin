@@ -158,8 +158,6 @@ private fun LinkKlibsContext.createIrLinker(moduleDescriptor: ModuleDescriptor, 
             cachedLibraries = config.cachedLibraries,
     )
 
-    val forwardDeclarationsModuleDescriptor = moduleDescriptor.allDependencyModules.firstOrNull { it.isForwardDeclarationModule }
-
     val friendModuleUniqueNames = config.loadedKlibs.friends.map { it.uniqueName }
     val includedModuleUniqueNames = config.loadedKlibs.included.map { it.uniqueName }
 
@@ -176,7 +174,6 @@ private fun LinkKlibsContext.createIrLinker(moduleDescriptor: ModuleDescriptor, 
             configuration = config.configuration,
             symbolTable = symbolTable,
             friendModules = friendModulesMap,
-            forwardModuleDescriptor = forwardDeclarationsModuleDescriptor,
             cInteropModuleDeserializerFactory = cInteropModuleDeserializerFactory,
             exportedDependencies = exportedDependencies,
             partialLinkageConfig = config.configuration.partialLinkageConfig,
