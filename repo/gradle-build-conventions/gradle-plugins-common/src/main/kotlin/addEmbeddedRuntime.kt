@@ -47,8 +47,8 @@ fun Jar.addEmbeddedSources(configurationName: String = "embedded") {
         val sourcesJarsView = embedded.incoming.artifactView {
             isLenient = true
             attributes {
-                attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.DOCUMENTATION))
-                attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.objects.named(DocsType.SOURCES))
+                attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category::class.java, Category.DOCUMENTATION))
+                attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.objects.named(DocsType::class.java, DocsType.SOURCES))
             }
             withVariantReselection()
             componentFilter { it is ProjectComponentIdentifier }
@@ -57,7 +57,7 @@ fun Jar.addEmbeddedSources(configurationName: String = "embedded") {
         val sourceDirectoriesView = embedded.incoming.artifactView {
             isLenient = true
             attributes {
-                attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named("verification"))
+                attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category::class.java, "verification"))
                 attribute(Attribute.of("org.gradle.verificationtype", String::class.java), "main-sources")
             }
             withVariantReselection()
@@ -68,15 +68,20 @@ fun Jar.addEmbeddedSources(configurationName: String = "embedded") {
         val sourceDirectories = sourceDirectoriesView.files
 
         dependsOn(sourcesJars, sourceDirectories)
-        from({
-            val projectsWithJars = sourcesJarsView.artifacts.map { it.id.componentIdentifier }.toSet()
-            val directories = sourceDirectoriesView.artifacts
-                .filter { it.id.componentIdentifier !in projectsWithJars }
-                .map { it.file }
+        from(project.provider {
+            val jarArtifacts = sourcesJarsView.artifacts
+            val projectsWithJars = jarArtifacts.map { it.id.componentIdentifier }.toSet()
 
-            (sourcesJars + directories).map {
-                if (it.isFile && it.name.endsWith(".jar", ignoreCase = true)) archiveOperations.zipTree(it) else it
-            }
+            val directoryArtifacts = sourceDirectoriesView.artifacts
+                .filter { it.id.componentIdentifier !in projectsWithJars }
+
+            // Ensure deterministic order by sorting by component identifier (which is stable and relocatable)
+            (jarArtifacts + directoryArtifacts)
+                .sortedWith(compareBy({ it.id.componentIdentifier.toString() }, { it.file.name }))
+                .map { artifact ->
+                    val file = artifact.file
+                    if (file.isFile && file.name.endsWith(".jar", ignoreCase = true)) archiveOperations.zipTree(file) else file
+                }
         })
     }
 }
