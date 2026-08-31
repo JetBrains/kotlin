@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.toIdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -81,7 +80,7 @@ abstract class KotlinIrLinker(
      */
     val modulesWithReachableTopLevels = linkedSetOf<IrModuleDeserializer>()
 
-    protected val klibDeserializers = linkedMapOf<String, IrModuleDeserializer>()
+    protected val klibDeserializers = linkedMapOf<KotlinLibrary, IrModuleDeserializer>()
     private val nonKlibDeserializers = mutableListOf<IrModuleDeserializer>()
     private val moduleDeserializersByPackageName = mutableMapOf<FqName, MutableList<IrModuleDeserializer>>()
     private val moduleDeserializersWithUnknownPackageNames = mutableListOf<IrModuleDeserializer>()
@@ -286,15 +285,8 @@ abstract class KotlinIrLinker(
         moduleDescriptor: ModuleDescriptor,
         kotlinLibrary: KotlinLibrary,
         deserializationStrategy: (String) -> DeserializationStrategy,
-    ): IrModuleDeserializer {
-        val moduleName = kotlinLibrary.uniqueName.let { "<$it>" }
-        assert(moduleDescriptor.name.asString() == moduleName) {
-            "${moduleDescriptor.name.asString()} != $moduleName"
-        }
-
-        return klibDeserializers[moduleName] ?:
-            createAndRegisterModuleDeserializer(moduleDescriptor, kotlinLibrary, deserializationStrategy, moduleName)
-    }
+    ): IrModuleDeserializer = klibDeserializers[kotlinLibrary]
+        ?: createAndRegisterModuleDeserializer(moduleDescriptor, kotlinLibrary, deserializationStrategy)
 
     fun deserializeIrModuleHeader(
         moduleDescriptor: ModuleDescriptor,
@@ -310,7 +302,6 @@ abstract class KotlinIrLinker(
         moduleDescriptor: ModuleDescriptor,
         kotlinLibrary: KotlinLibrary?,
         deserializationStrategy: (String) -> DeserializationStrategy,
-        moduleName: String,
     ): IrModuleDeserializer {
         val moduleFragment = IrModuleFragmentImpl(moduleDescriptor)
         moduleFragment.kotlinLibrary = kotlinLibrary
@@ -324,7 +315,7 @@ abstract class KotlinIrLinker(
         )
 
         if (kotlinLibrary != null) {
-            klibDeserializers[moduleName] = deserializer
+            klibDeserializers[kotlinLibrary] = deserializer
         } else {
             nonKlibDeserializers += deserializer
         }
