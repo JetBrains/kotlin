@@ -264,7 +264,7 @@ class GradleProjectBuildScriptInjectionContext(
     val kotlinMultiplatform get() = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
     val kotlinJvm get() = project.extensions.getByName("kotlin") as KotlinJvmProjectExtension
     val cocoapods get() = kotlinMultiplatform.extensions.getByName("cocoapods") as CocoapodsExtension
-    val swiftExport get() = kotlinMultiplatform.extensions.getByName("swiftExport") as SwiftExportExtension
+    val swiftExport get() = kotlinMultiplatform.swiftExport
     val export get() = kotlinMultiplatform.extensions.getByName("export") as ExportExtension
     val swiftImport get() = kotlinMultiplatform.extensions.getByName(SwiftPMImportExtension.EXTENSION_NAME) as SwiftPMImportExtension
     val androidLibrary get() = project.extensions.getByName("android") as LibraryExtension
