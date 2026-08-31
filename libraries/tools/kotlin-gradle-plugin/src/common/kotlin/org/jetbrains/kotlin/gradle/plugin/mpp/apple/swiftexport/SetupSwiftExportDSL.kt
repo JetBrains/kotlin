@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedSwiftExportTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.initSwiftExportClasspathConfigurations
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.EXPORT_EXTENSION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.ExportExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.isSwiftExportXcodeIntegrationActivated
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 
 internal object SwiftExportDSLConstants {
@@ -45,6 +46,9 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
         .matching { it.konanTarget.family.isAppleFamily }
 
     if (appleTargets.isEmpty()) return@KotlinProjectSetupCoroutine
+
+    // The targets are awaited above, so the DSL is finalised by now and the activation is order-independent.
+    if (!exportExtension.isSwiftExportXcodeIntegrationActivated) return@KotlinProjectSetupCoroutine
 
     initSwiftExportClasspathConfigurations()
     registerSwiftExportPipeline(swiftExportExtension)

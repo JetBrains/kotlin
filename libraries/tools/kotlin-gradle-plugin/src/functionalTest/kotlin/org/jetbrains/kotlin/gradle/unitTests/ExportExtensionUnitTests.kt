@@ -8,15 +8,25 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
+import org.gradle.api.internal.project.ProjectInternal
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl
 import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.EXPORT_EXTENSION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.ExportExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.EmbedSwiftExportForXcodeTask
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
+import org.jetbrains.kotlin.gradle.unitTests.utils.applyEmbedAndSignEnvironment
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.junit.jupiter.api.Assumptions
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertSame
@@ -103,4 +113,104 @@ class ExportExtensionUnitTests {
             multiplatformExtension.getExtension(EXPORT_EXTENSION_NAME),
             "Expected the `$EXPORT_EXTENSION_NAME` extension to be registered on the multiplatform extension"
         )
+}
+
+class ExportExtensionXcodeIntegrationTests {
+
+    @BeforeTest
+    fun runOnMacOSOnly() {
+        Assumptions.assumeTrue(HostManager.hostIsMac, "macOS host required for this test")
+    }
+
+    @Test
+    fun `test embed task is registered when the xcode integration is activated`() {
+        val project = appleProject {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                xcodeIntegration()
+            }
+        }
+
+        assertNotNull(project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME))
+    }
+
+    @Test
+    fun `test embed task is not registered when the export dsl is used without the xcode integration`() {
+        val project = appleProject {
+            exportExtension.swift {
+                moduleName.set("Shared")
+            }
+        }
+
+        assertNull(project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME))
+    }
+
+    @Test
+    fun `test embed task is registered when the export dsl is not used at all`() {
+        val project = appleProject()
+
+        assertNotNull(project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME))
+    }
+
+    @Test
+    fun `test the xcode integration can be activated after the module is configured`() {
+        val project = appleProject {
+            exportExtension.swift {
+                moduleName.set("Shared")
+            }
+            exportExtension.swift {
+                xcodeIntegration()
+            }
+        }
+
+        assertNotNull(project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME))
+    }
+
+    @Test
+    fun `test the pipeline is registered for an activated project in the xcode environment`() {
+        val project = appleProject(withXcodeEnvironment = true) {
+            exportExtension.swift {
+                xcodeIntegration()
+            }
+        }
+
+        assertIs<EmbedSwiftExportForXcodeTask>(project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME))
+        assertNotNull(project.tasks.findByName("iosSimulatorArm64DebugSwiftExport"))
+    }
+
+    @Test
+    fun `test the pipeline is not registered for a project that opted out of the xcode integration`() {
+        val project = appleProject(withXcodeEnvironment = true) {
+            exportExtension.swift {
+                moduleName.set("Shared")
+            }
+        }
+
+        assertNull(project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME))
+        assertNull(project.tasks.findByName("iosSimulatorArm64DebugSwiftExport"))
+    }
+
+    private fun appleProject(
+        withXcodeEnvironment: Boolean = false,
+        multiplatform: KotlinMultiplatformExtension.() -> Unit = { iosSimulatorArm64() },
+        configureExport: Project.() -> Unit = {},
+    ): ProjectInternal = buildProjectWithMPP(
+        preApplyCode = {
+            if (withXcodeEnvironment) {
+                applyEmbedAndSignEnvironment(configuration = "DEBUG", sdk = "iphonesimulator", archs = "arm64")
+            }
+            configureRepositoriesForTests()
+        },
+        code = {
+            kotlin { multiplatform() }
+            configureExport()
+        }
+    ).also { it.evaluate() }
+
+    private val Project.exportExtension: ExportExtension
+        get() = assertNotNull(multiplatformExtension.getExtension(EXPORT_EXTENSION_NAME))
+
+    private companion object {
+        const val EMBED_SWIFT_EXPORT_TASK_NAME = "embedSwiftExportForXcode"
+    }
 }
