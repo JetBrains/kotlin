@@ -160,7 +160,7 @@ fun <SourceFile> serializeModuleIntoKlib(
         serializedIr = if (serializedIr == null) null
         else SerializedIrModule(
             compiledKotlinFiles.mapNotNull { it.irData },
-            serializedIr.fileWithPreparedInlinableFunctions,
+            serializedIr.filesWithPreparedInlinableFunctions,
         ),
         neededLibraries = dependencies,
     )

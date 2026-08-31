@@ -1606,8 +1606,18 @@ open class IrFileSerializer(
         )
     }
 
-    fun serializeIrFileWithPreparedInlineFunctions(preparedFunctions: List<IrSimpleFunction>): SerializedIrFile {
+    fun serializeIrFileWithPreparedInlineFunctions(file: IrFile, preparedFunctions: List<IrSimpleFunction>): SerializedIrFile {
         val topLevelDeclarations = preparedFunctions.map { function ->
+            if (function.file != file) {
+                error(
+                    """
+                        |Given function is located in the incorrect file
+                        |FILE: ${file.render()}
+                        |FUNCTION:${function.render()}
+                    """.trimMargin()
+                )
+            }
+
             inFile(function.file) {
                 val byteArray = serializeDeclaration(function, function.file).toByteArray()
                 val idSig = declarationTable.signatureByDeclaration(
@@ -1624,13 +1634,13 @@ open class IrFileSerializer(
         // Memoize all preprocessed functions in `ProtoFile.declarationIdList`.
         // This way it could be possible to quickly look up for a specific preprocessed function in a KLIB.
         val fileProto = ProtoFile.newBuilder()
-            .addAllFqName(serializeFqName(FqName.ROOT.asString()))
+            .addAllFqName(serializeFqName(file.packageFqName.asString()))
             .addAllDeclarationId(topLevelDeclarations.map { /* signature index */ it.id })
 
         return SerializedIrFile(
             fileData = fileProto.build().toByteArray(),
-            fqName = FqName.ROOT.asString(),
-            path = "",
+            fqName = file.packageFqName.asString(),
+            path = file.path,
             types = IrArrayWriter(protoTypeArray.byteArrays, useVarIntInDataArrays).writeIntoMemory(),
             signatures = IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
             strings = IrStringWriter(protoStringArray, useVarIntInDataArrays).writeIntoMemory(),

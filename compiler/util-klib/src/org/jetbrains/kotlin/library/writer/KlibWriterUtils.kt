@@ -22,5 +22,5 @@ fun KlibWriterSpec.includeMetadata(metadata: SerializedMetadata) {
  */
 fun KlibWriterSpec.includeIr(irModule: SerializedIrModule?) {
     irModule?.files?.let { include(KlibIrComponentWriterImpl.ForMainIr(it)) }
-    irModule?.fileWithPreparedInlinableFunctions?.let { include(KlibIrComponentWriterImpl.ForInlinableFunctionsIr(it)) }
+    irModule?.filesWithPreparedInlinableFunctions?.let { include(KlibIrComponentWriterImpl.ForInlinableFunctionsIr(it)) }
 }
