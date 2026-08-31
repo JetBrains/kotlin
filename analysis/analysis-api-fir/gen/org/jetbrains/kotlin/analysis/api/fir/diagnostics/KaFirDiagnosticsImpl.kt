@@ -5977,6 +5977,11 @@ internal class JvmExposeBoxedCannotExposePrivateImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmExposeBoxedCannotExposePrivate
 
+internal class JvmExposeBoxedCannotExposeSealedConstructorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmExposeBoxedCannotExposeSealedConstructor
+
 internal class JvmExposeBoxedCanBeReplacedWithJvmNameImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
