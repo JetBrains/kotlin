@@ -1085,6 +1085,10 @@ run {
 
     // the name the compiler exports the unit test runner under on WASI (`wasmWasiUnitTestsExportName`)
     val entryPoint = "start-unit-tests"
+    // TODO (KT-87723): the name the *bootstrap* compiler still exports the unit test runner under; unlike `entryPoint`,
+    //  it cannot be expressed in WIT, so an alias export is added below. Remove both once the bootstrap compiler
+    //  exports `start-unit-tests`.
+    val bootstrapEntryPoint = "startUnitTests"
     val importsWorld = "kotlin-stdlib:wasip2/wasip2-imports"
     val entryPointsPackage = "kotlin-test:wasi-entry-points"
 
@@ -1110,7 +1114,7 @@ run {
         args=()
         for arg in "${'$'}@"; do
           case "${'$'}arg" in
-            $entryPoint) args+=("$entryPoint()") ;;
+            $entryPoint | $bootstrapEntryPoint) args+=("$entryPoint()") ;;
             *.wasm) args+=("${component.absolutePath}") ;;
             *) args+=("${'$'}arg") ;;
           esac
@@ -1170,10 +1174,49 @@ run {
                 """.trimIndent()
             )
 
+            // TODO (KT-87723): remove together with `bootstrapEntryPoint`
+            fun aliasEntryPointExport(module: File): File {
+                taskLogger.warn(
+                    "$module does not export '$entryPoint', which is required to embed the WIT world; adding it as an " +
+                            "alias of '$bootstrapEntryPoint'. Update the bootstrap compiler to get rid of this."
+                )
+
+                val text = outputDir.resolve("test-module.wat")
+                runWasmTools("print", module.absolutePath, "-o", text.absolutePath)
+
+                val aliasedText = outputDir.resolve("test-module-aliased.wat")
+                val exportPrefix = """(export "$bootstrapEntryPoint" (func """
+                var aliased = false
+                aliasedText.bufferedWriter().use { output ->
+                    text.forEachLine { line ->
+                        output.appendLine(line)
+                        val exportIndex = if (aliased) -1 else line.indexOf(exportPrefix)
+                        if (exportIndex >= 0) {
+                            val function = line.substring(exportIndex + exportPrefix.length, line.indexOf(')', exportIndex))
+                            output.appendLine("""  (export "$entryPoint" (func $function))""")
+                            aliased = true
+                        }
+                    }
+                }
+                check(aliased) { "$module exports neither '$entryPoint' nor '$bootstrapEntryPoint'" }
+
+                val aliasedModule = outputDir.resolve("test-module-aliased.wasm")
+                runWasmTools("parse", aliasedText.absolutePath, "-o", aliasedModule.absolutePath)
+                return aliasedModule
+            }
+
+            val linkedModule = testModule.get().asFile
+            // ISO-8859-1 maps bytes to chars one to one, so this is an exact search for the export name
+            val module = if (linkedModule.readBytes().toString(Charsets.ISO_8859_1).contains(entryPoint)) {
+                linkedModule
+            } else {
+                aliasEntryPointExport(linkedModule)
+            }
+
             val withImports = outputDir.resolve("test-module-imports-embedded.wasm")
             val withEntryPoint = outputDir.resolve("test-module-entry-point-embedded.wasm")
             runWasmTools(
-                "component", "embed", stdlibWitDir.absolutePath, testModule.get().asFile.absolutePath,
+                "component", "embed", stdlibWitDir.absolutePath, module.absolutePath,
                 "--world", importsWorld, "-o", withImports.absolutePath,
             )
             runWasmTools(
