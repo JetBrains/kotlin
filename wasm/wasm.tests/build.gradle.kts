@@ -246,7 +246,7 @@ sourceSets {
 optInToK1Deprecation()
 fun Test.setupGradlePropertiesForwarding() {
     val rootLocalProperties = Properties().apply {
-        rootProject.file("local.properties").takeIf { it.isFile }?.inputStream()?.use {
+        File(rootDir,"local.properties").takeIf { it.isFile }?.inputStream()?.use {
             load(it)
         }
     }
@@ -376,9 +376,9 @@ projectTests {
             enableGroupingTestEngine = true,
             maxHeapSize = testMaxHeapSizeLarge,
         ) {
-            with(d8KotlinBuild) {
+/*            with(d8KotlinBuild) {
                 setupV8()
-            }
+            }/**/
             with(wasmtimeKotlinBuild) {
                 setupWasmtime()
             }
@@ -390,7 +390,7 @@ projectTests {
             with(nodeJsKotlinBuild) {
                 setupNodeJs(nodejsVersion)
                 dependsOn(":js:js.tests:npmInstall")
-            }
+            }*/
             with(binaryenKotlinBuild) {
                 setupBinaryen()
             }

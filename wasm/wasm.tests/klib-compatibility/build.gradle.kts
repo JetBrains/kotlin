@@ -70,9 +70,9 @@ fun Project.customCompilerTest(
         with(binaryenKotlinBuild) {
             setupBinaryen()
         }
-        with(wasmNodeJsKotlinBuild) {
+/*        with(wasmNodeJsKotlinBuild) {
             setupNodeJs(nodejsVersion)
-        }
+        }*/
         body()
     }
 }

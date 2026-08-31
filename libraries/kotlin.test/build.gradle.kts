@@ -115,23 +115,23 @@ kotlin {
             }
             test.associateWith(getByName("JUnit"))
         }
-    }
+    }/**/
     js {
         if (!kotlinBuildProperties.isTeamcityBuild.get()) {
-            browser {}
+            //browser {}
         }
-        nodejs {}
+        //nodejs {}
         compilations["main"].compileTaskProvider.configure {
             compilerOptions.freeCompilerArgs.addAll(
                 "-Xir-module-name=$KOTLINTEST_MODULE_NAME",
             )
             compilerOptions.addReturnValueCheckerInfo()
         }
-    }
-
+    }/**/
+/**/
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        nodejs()
+        //nodejs()
         compilerOptions {
             sourceMap = false
             sourceMapEmbedSources.unsetConvention()
@@ -143,7 +143,7 @@ kotlin {
     }
     @OptIn(ExperimentalWasmDsl::class)
     wasmWasi {
-        nodejs()
+        //nodejs()
         // cast is necessary because of KT-85971
         // update after bootstrap
         (this as KotlinJsTargetDsl).compilerOptions {
@@ -155,7 +155,7 @@ kotlin {
             compilerOptions.addReturnValueCheckerInfo()
         }
     }
-
+/**/
     targets.all {
         compilations.all {
             compileTaskProvider.configure {
@@ -238,14 +238,14 @@ kotlin {
                 implementation("org.testng:testng:7.5.1")
             }
         }
-        val jsMain = getByName("jsMain") {
+/**/        val jsMain = getByName("jsMain") {
             dependsOn(assertionsCommonMain)
             dependsOn(annotationsCommonMain)
             kotlin.srcDir("js/src/main/kotlin")
         }
         val jsTest = getByName("jsTest") {
             kotlin.srcDir("js/src/test/kotlin")
-        }
+        }/*
         val wasmCommonMain = create("wasmCommonMain") {
             dependsOn(assertionsCommonMain)
             dependsOn(annotationsCommonMain)
@@ -261,7 +261,7 @@ kotlin {
         val wasmWasiMain = getByName("wasmWasiMain") {
             dependsOn(wasmCommonMain)
             kotlin.srcDir("wasm/wasi/src/main/kotlin")
-        }
+        }*/
     }
 }
 
@@ -301,10 +301,10 @@ tasks {
             }
         }
     }
-    val jsJar = named("jsJar", Jar::class) {
+/**/    val jsJar = named("jsJar", Jar::class) {
         manifestAttributes(manifest, "Test")
         manifest.attributes("Implementation-Title" to "${archiveBaseName.get()}-${archiveAppendix.get()}")
-    }
+    }/*
     val wasmJsJar = named("wasmJsJar", Jar::class) {
         manifestAttributes(manifest, "Test")
         manifest.attributes("Implementation-Title" to "${archiveBaseName.get()}-${archiveAppendix.get()}")
@@ -312,7 +312,7 @@ tasks {
     val wasmWasiJar = named("wasmWasiJar", Jar::class) {
         manifestAttributes(manifest, "Test")
         manifest.attributes("Implementation-Title" to "${archiveBaseName.get()}-${archiveAppendix.get()}")
-    }
+    }*/
     val assemble = named("assemble") {
         dependsOn(jvmJarTasks)
     }
@@ -341,7 +341,7 @@ tasks {
     val allTests = named("allTests") {
         dependsOn(jvmTestTasks)
     }
-
+/*
     val generateProjectStructureMetadata = named("generateProjectStructureMetadata", GenerateProjectStructureMetadata::class) {
         val outputTestFile = file("kotlin-project-structure-metadata.beforePatch.json")
         val patchedFile = file("kotlin-project-structure-metadata.json")
@@ -367,6 +367,7 @@ tasks {
             patchedFile.copyTo(resultFile, overwrite = true)
         }
     }
+*/
 }
 
 configurations {

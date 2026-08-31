@@ -110,9 +110,10 @@ sourceSets {
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
 
 fun Test.setUpJsBoxTests() {
+    /**/
     with(nodeJsKotlinBuild) {
         setupNodeJs(nodejsVersion)
-    }
+    }/**/
 
     dependsOn(npmInstall)
 
