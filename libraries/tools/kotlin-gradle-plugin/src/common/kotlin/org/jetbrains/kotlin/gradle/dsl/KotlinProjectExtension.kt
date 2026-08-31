@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.CoroutineStart.Undispatched
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationExtensionImpl
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.isCalledOutsideKotlinOrAndroidPlugins
@@ -234,6 +235,9 @@ abstract class KotlinJvmProjectExtension @Inject constructor(
 private class KotlinJvmPublishingDsl(private val project: Project) : KotlinPublishing {
     override val adhocSoftwareComponent: AdhocComponentWithVariants
         get() = project.components.getByName("java") as AdhocComponentWithVariants
+
+    override val publicationFormat: Property<KotlinPublicationFormat> = project.objects.property(KotlinPublicationFormat::class.java)
+        .convention(project.kotlinPropertiesProvider.publicationFormat)
 }
 
 @Suppress("unused")
