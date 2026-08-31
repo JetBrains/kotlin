@@ -1,0 +1,6 @@
+---
+assert(text != null && text.length == 1)
+       |    |
+       |    false
+       null
+---

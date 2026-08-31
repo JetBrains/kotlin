@@ -1,0 +1,19 @@
+test1: ---
+assert(IntPredicate { it < 0 }.accept(a))
+                               |      |
+                               |      1
+                               false
+---
+test2: ---
+assert(IntPredicate { it < 0 }.accept(a) == true)
+                               |      |  |
+                               |      |  false
+                               |      1
+                               false
+---
+test3: ---
+assert(IntPredicate { it > 0 } plus a)
+                               |    |
+                               |    -1
+                               false
+---

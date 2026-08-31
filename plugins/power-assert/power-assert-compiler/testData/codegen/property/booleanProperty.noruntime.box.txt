@@ -1,0 +1,46 @@
+test1: ---
+assert(booleanValue)
+       |
+       false
+---
+test2: ---
+assert(memberProperty)
+       |
+       false
+---
+test3: ---
+assert(delegatedProperty)
+       |
+       false
+---
+test4: ---
+assert(1.extensionTopLevelProperty)
+         |
+         false
+---
+test5: ---
+assert(true.extensionTopLevelPropertyWithTypeParam)
+            |
+            false
+---
+test6: ---
+assert(with(false) { contextProperty })
+       |
+       false
+---
+test7: ---
+assert(true.contextPropertyWithTypeParam)
+            |
+            false
+---
+test8: ---
+assert(lateInitProperty == "b")
+       |                |
+       |                false
+       a
+---
+test9: ---
+assert(destructuring)
+       |
+       false
+---

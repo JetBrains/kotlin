@@ -1,0 +1,35 @@
+test1: ---
+assert(0b110011 shl 2 == 0b11011100)
+                |     |
+                |     false
+                204
+---
+test2: ---
+assert(a shr b == 0b10110)
+       | |   | |
+       | |   | false
+       | |   30
+       | 0
+       19
+---
+test3: ---
+assert(-0b1100110011 ushr 22 == 0b1111110111)
+                     |       |
+                     |       false
+                     1023
+---
+test4: ---
+assert(5 shl 3 + 4 shr 1 == 9)
+         |     |   |     |
+         |     |   |     false
+         |     |   320
+         |     7
+         640
+---
+test5: ---
+assert(x ?: 2 shl 1 == 1)
+       |      |     |
+       |      |     false
+       |      4
+       null
+---

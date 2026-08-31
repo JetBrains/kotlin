@@ -262,6 +262,16 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
     val DISABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS by enumDirective<TargetBackend>(
         description = "Don't check for out-of-scope type parameter usages when validating IR on the target backend"
     )
+
+    val RESULT_OUTPUT_EXTENSION by stringDirective(
+        description = """
+            Specify the expected result file extension.
+            
+            Setting this directive forces box test output to a dedicated file.
+            Useful when output is large and file diffs are more useful than
+            assertions in the test file.
+        """.trimIndent(),
+    )
 }
 
 fun ValueDirective<TargetBackend>.isApplicableTo(module: TestModule, testServices: TestServices): Boolean {

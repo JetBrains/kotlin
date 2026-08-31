@@ -1,0 +1,14 @@
+fun box(): String {
+  return expectThrowableMessage(block = local fun <anonymous>() {
+    { // BLOCK
+      val tmp0_Explain: Int = 1
+      val tmp1_Explain: Int = 1
+      val tmp2_Explain: Boolean = EQEQ(arg0 = tmp0_Explain, arg1 = tmp1_Explain).not()
+      assertTrue(condition = tmp2_Explain, messageSupplier = local fun <anonymous>(): String {
+        return "\nassertTrue(1 != 1)" + "\n             |" + "\n             " + tmp2_Explain + "\n"
+      }
+ /*-> @FlexibleNullability Supplier<@FlexibleNullability String?>? */)
+    }
+  }
+)
+}
