@@ -7,8 +7,16 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.ir.expressions.*
 
 internal class JvmUpgradeCallableReferences(context: JvmBackendContext) : UpgradeCallableReferences(
     context = context,
     upgradeSamConversions = true,
-)
+) {
+    override fun getSamConversionArgument(argument: IrExpression): IrExpression =
+        if (argument is IrTypeOperatorCall && argument.operator == IrTypeOperator.IMPLICIT_CAST) {
+            argument.argument
+        } else {
+            argument
+        }
+}
