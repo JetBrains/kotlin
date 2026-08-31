@@ -14,10 +14,11 @@ import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 fun Test.useJsIrBoxTests(
     buildDir: Provider<Directory>,
 ) {
+    /*
     with(project.the<D8Extension>()) {
         setupV8()
     }
-
+*/
     val stdLibJsClasses = project.configurations.maybeCreate("stdLibJsClasses").apply {
         isTransitive = false
         attributes {

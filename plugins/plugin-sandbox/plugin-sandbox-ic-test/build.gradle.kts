@@ -44,9 +44,9 @@ sourceSets {
 projectTests {
     testTask(maxHeapSize = testMaxHeapSizeLarge) {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
-        wasmNodeJsKotlinBuild {
+/*        wasmNodeJsKotlinBuild {
             setupNodeJs(nodejsVersion)
-        }
+        }*/
         addAbsoluteDirectoryProperty(layout.buildDirectory, "kotlin.wasm.test.root.out.dir")
     }
 

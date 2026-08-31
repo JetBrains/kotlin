@@ -1,3 +1,4 @@
+/**/
 import org.jetbrains.kotlin.build.nodejs.NodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
@@ -32,3 +33,4 @@ with(nodeJsKotlinBuild) {
 with(wasmNodeJsKotlinBuild) {
     wasmNodeJs.version.set(nodeJsVersion)
 }
+/**/

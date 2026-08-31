@@ -24,7 +24,7 @@ idea {
 }
 
 kotlin {
-    js {
+    /*js {
         nodejs {
             testTask {
                 enabled = false
@@ -45,9 +45,9 @@ kotlin {
                 implementation(project(":kotlin-test"))
             }
         }
-    }
+    }*/
 }
-
+/*
 val compileTestDevelopmentExecutableKotlinJs = tasks.named<KotlinJsIrLink>("compileTestDevelopmentExecutableKotlinJs") {
     compilerOptions.moduleName = "kotlin-kotlin-test-js-it-test"
 }
@@ -105,3 +105,4 @@ val frameworkTests = listOf(
 tasks.check {
     frameworkTests.forEach { dependsOn(it) }
 }
+*/

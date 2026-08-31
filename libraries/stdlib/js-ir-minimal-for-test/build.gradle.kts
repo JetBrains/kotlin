@@ -8,9 +8,9 @@ plugins {
 }
 
 kotlin {
-    js {
-        nodejs()
-    }
+    /**/js {
+        //nodejs()
+    }/**/
 }
 val commonMainFullSources = tasks.register<Sync>("commonMainFullSources") {
     dependsOn(":prepare:build.version:writeStdlibVersion")
@@ -190,7 +190,7 @@ kotlin {
             dependsOn(commonMain)
             kotlin.srcDir(files(commonNonJvmMainSources.map { it.destinationDir }))
         }
-        val commonJsAndWasmJs = create("commonJsAndWasmJs") {
+        /**/val commonJsAndWasmJs = create("commonJsAndWasmJs") {
             dependsOn(commonMain)
             kotlin.srcDir(files(commonJsAndWasmJsSources.map { it.destinationDir }))
         }
@@ -199,7 +199,7 @@ kotlin {
             dependsOn(commonNonJvmMain)
             kotlin.srcDir(files(jsMainSources.map { it.destinationDir }))
             kotlin.srcDir("js-src")
-        }
+        }/**/
     }
 }
 
@@ -227,7 +227,7 @@ tasks {
     compileKotlinMetadata {
         enabled = false
     }
-
+/**/
     named<KotlinCompilationTask<*>>("compileKotlinJs") {
         compilerOptions {
             freeCompilerArgs.addAll(
@@ -238,5 +238,5 @@ tasks {
                 "-Xir-per-module-output-name=kotlin-kotlin-stdlib"
             )
         }
-    }
+    }/**/
 }

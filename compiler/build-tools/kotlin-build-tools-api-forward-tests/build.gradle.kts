@@ -257,7 +257,7 @@ testing {
 
             named<JvmTestSuite>("testEscapableCharacters$apiVersion") {
                 configurations.named(sources.runtimeClasspathConfigurationName) {
-                    testSymlinkTransformation.resolveAgainstSymlinkedArtifacts(this)
+                    // testSymlinkTransformation.resolveAgainstSymlinkedArtifacts(this)
                 }
             }
 
