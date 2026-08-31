@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.buildtools.tests
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.NOPACK
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerKlibArguments.Companion.X_WASM_TARGET
+import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerArguments.Companion.X_WASM_TARGET
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.WasmTarget
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.*

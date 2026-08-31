@@ -8,8 +8,8 @@
 package org.jetbrains.kotlin.buildtools.tests.arguments.model.wasm
 
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerArguments.Companion.X_WASM_TARGET
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerKlibArguments
-import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerKlibArguments.Companion.X_WASM_TARGET
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerLinkingArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerLinkingArguments.Companion.X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerLinkingArguments.Companion.X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE

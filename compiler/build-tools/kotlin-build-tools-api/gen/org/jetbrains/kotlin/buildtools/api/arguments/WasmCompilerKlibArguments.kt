@@ -7,7 +7,6 @@ import kotlin.Boolean
 import kotlin.String
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.WasmTarget
 
 /**
  * @since 2.4.20
@@ -67,15 +66,5 @@ public interface WasmCompilerKlibArguments : WasmCompilerArguments,
     @ExperimentalCompilerArgument
     public val X_WASM_KCLASS_FQN: WasmCompilerKlibArgument<Boolean> =
         WasmCompilerKlibArgument("X_WASM_KCLASS_FQN", KotlinReleaseVersion(2, 1, 20))
-
-    /**
-     * Set up the Wasm target (wasm-js or wasm-wasi).
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_WASM_TARGET: WasmCompilerKlibArgument<WasmTarget?> =
-        WasmCompilerKlibArgument("X_WASM_TARGET", KotlinReleaseVersion(2, 1, 20))
   }
 }

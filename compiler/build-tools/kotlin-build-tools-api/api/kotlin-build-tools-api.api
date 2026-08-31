@@ -1072,6 +1072,7 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/WarningLevel$Se
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerArguments$Companion;
 	public static final field X_WASM Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerArguments$WasmCompilerArgument;
+	public static final field X_WASM_TARGET Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerArguments$WasmCompilerArgument;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerArguments$WasmCompilerArgument;)Ljava/lang/Object;
 }
 
@@ -1093,7 +1094,6 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerArg
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerKlibArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerKlibArguments, org/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerArguments {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerKlibArguments$Companion;
 	public static final field X_WASM_KCLASS_FQN Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerKlibArguments$WasmCompilerKlibArgument;
-	public static final field X_WASM_TARGET Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerKlibArguments$WasmCompilerKlibArgument;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerKlibArguments$WasmCompilerKlibArgument;)Ljava/lang/Object;
 }
 
