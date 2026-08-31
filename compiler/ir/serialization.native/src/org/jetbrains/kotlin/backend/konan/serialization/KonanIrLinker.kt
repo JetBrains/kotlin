@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.impl.isForwardDeclarationModule
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.klibModuleOriginOrNull
 
@@ -33,7 +34,6 @@ class KonanIrLinker(
     configuration: CompilerConfiguration,
     symbolTable: SymbolTable,
     friendModules: Map<String, Collection<String>>,
-    private val forwardModuleDescriptor: ModuleDescriptor?,
     private val cInteropModuleDeserializerFactory: CInteropModuleDeserializerFactory<*>,
     exportedDependencies: List<ModuleDescriptor>,
     partialLinkageConfig: PartialLinkageConfig,
@@ -88,7 +88,7 @@ class KonanIrLinker(
         klib: KotlinLibrary?,
         strategyResolver: (String) -> DeserializationStrategy,
     ) = when {
-        moduleFragment.descriptor === forwardModuleDescriptor -> {
+        moduleFragment.descriptor.isForwardDeclarationModule -> {
             KonanForwardDeclarationModuleDeserializer(moduleFragment, this)
         }
         klib == null -> {
