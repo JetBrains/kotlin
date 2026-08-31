@@ -14,4 +14,11 @@ internal class JvmUpgradeCallableReferences(context: JvmBackendContext) : Upgrad
     upgradeSamConversions = true,
     castDispatchReceiver = false,
     generateFakeAccessorsForReflectionProperty = true,
-)
+) {
+    override fun getSamConversionArgument(argument: IrExpression): IrExpression =
+        if (argument is IrTypeOperatorCall && argument.operator == IrTypeOperator.IMPLICIT_CAST) {
+            argument.argument
+        } else {
+            argument
+        }
+}
