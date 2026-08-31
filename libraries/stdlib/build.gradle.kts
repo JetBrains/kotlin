@@ -44,6 +44,7 @@ plugins {
 }
 
 description = "Kotlin Standard Library"
+val buildFeatures = serviceOf<BuildFeatures>()
 
 fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     // Use this to override language and API versions for stdlib compared to the version used to build the whole Kotlin
@@ -311,22 +312,24 @@ kotlin {
         }
 
 
-        if (!kotlinBuildProperties.isTeamcityBuild.get()) {
-            browser {
+        if(!buildFeatures.isolatedProjects.active.get()) {
+            if (!kotlinBuildProperties.isTeamcityBuild.get()) {
+                browser {
+                    val latestJsRun = latestTargetRunRegistering()
+
+                    testTask {
+                        dependsOn(latestJsRun.executionTask)
+                    }
+                }
+            }
+            nodejs {
                 val latestJsRun = latestTargetRunRegistering()
 
                 testTask {
                     dependsOn(latestJsRun.executionTask)
-                }
-            }
-        }
-        nodejs {
-            val latestJsRun = latestTargetRunRegistering()
-
-            testTask {
-                dependsOn(latestJsRun.executionTask)
-                useMocha {
-                    timeout = "10s"
+                    useMocha {
+                        timeout = "10s"
+                    }
                 }
             }
         }
@@ -350,7 +353,9 @@ kotlin {
         // KT-85971
         this as KotlinJsTargetDsl
         if (this.wasmTargetType == KotlinWasmTargetType.JS) {
-            nodejs()
+            if(!buildFeatures.isolatedProjects.active.get()) {
+                nodejs()
+            }
         } else {
             this as KotlinWasmWasiTargetDsl
             @OptIn(ExperimentalWasmDsl::class)
@@ -868,6 +873,7 @@ tasks {
         val distWasmWasiKlib = configurations.create("distWasmWasiKlib")
         val commonMainMetadataElements = configurations.create("commonMainMetadataElements")
         val webMainMetadataElements = configurations.create("webMainMetadataElements")
+        val jsIrMainSources = configurations.create("jsIrMainSources")
 
         add(distJsSourcesJar.name, jsSourcesJar)
         add(distJsKlib.name, jsJar)
@@ -875,6 +881,7 @@ tasks {
         add(distWasmWasiKlib.name, wasmWasiJar)
         add(webMainMetadataElements.name, webMetadataJar)
         add(commonMainMetadataElements.name, commonMetadataJar)
+        add(jsIrMainSources.name, project.tasks.named("prepareJsIrMainSources"))
     }
 
 
@@ -912,12 +919,14 @@ tasks {
             exclude("generated/minmax/*")
             exclude("collections/MapTest.kt")
         }
-        named("compileTestDevelopmentExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
-            compilerOptions.freeCompilerArgs.add("-Xwasm-enable-array-range-checks")
-            compilerOptions.freeCompilerArgs.add("-Xwasm-enable-asserts")
-        }
-        named("compileTestProductionExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
-            enabled = false  // Causes out-of-memory in CI: KTI-2150
+        if (!buildFeatures.isolatedProjects.active.get()) {
+            named("compileTestDevelopmentExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
+                compilerOptions.freeCompilerArgs.add("-Xwasm-enable-array-range-checks")
+                compilerOptions.freeCompilerArgs.add("-Xwasm-enable-asserts")
+            }
+            named("compileTestProductionExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
+                enabled = false  // Causes out-of-memory in CI: KTI-2150
+            }
         }
     }
 
