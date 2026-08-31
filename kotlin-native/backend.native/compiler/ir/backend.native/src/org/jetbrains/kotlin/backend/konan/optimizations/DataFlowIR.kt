@@ -128,12 +128,15 @@ internal object DataFlowIR {
         val irFunction: IrSimpleFunction? get() = irDeclaration as? IrSimpleFunction
         val irFile: IrFile? get() = irDeclaration?.fileOrNull
 
-        var escapes: Escapes? = null
-        var pointsTo: PointsTo? = null
-
-        class External(val hash: Long, attributes: Int, irDeclaration: IrDeclaration?, name: String? = null, val isExported: Boolean)
-            : FunctionSymbol(attributes, irDeclaration, name) {
-
+        class External(
+                val hash: Long,
+                attributes: Int,
+                irDeclaration: IrDeclaration?,
+                name: String?,
+                val isExported: Boolean,
+                val escapes: Escapes?,
+                val pointsTo: PointsTo?,
+        ) : FunctionSymbol(attributes, irDeclaration, name) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is External) return false
@@ -170,7 +173,7 @@ internal object DataFlowIR {
             }
 
             override fun toString(): String {
-                return "PublicFunction(hash='$hash', name='$name', symbolTableIndex='$symbolTableIndex', escapes='$escapes', pointsTo='$pointsTo')"
+                return "PublicFunction(hash='$hash', name='$name', symbolTableIndex='$symbolTableIndex')"
             }
         }
 
@@ -190,7 +193,7 @@ internal object DataFlowIR {
             }
 
             override fun toString(): String {
-                return "PrivateFunction(index=$index, symbolTableIndex='$symbolTableIndex', name='$name', escapes='$escapes', pointsTo='$pointsTo')"
+                return "PrivateFunction(index=$index, symbolTableIndex='$symbolTableIndex', name='$name')"
             }
         }
     }
@@ -651,12 +654,15 @@ internal object DataFlowIR {
                 attributes = attributes or FunctionAttributes.IS_EAGER_STATIC_INITIALIZER
             }
             val symbol = when {
-                it.isExternal || it.isBuiltInOperator -> {
-                    FunctionSymbol.External(localHash(name.toByteArray()), attributes, it, takeName { name }, it.isExported).apply {
-                        escapes  = it.escapes
-                        pointsTo = it.pointsTo
-                    }
-                }
+                it.isExternal || it.isBuiltInOperator -> FunctionSymbol.External(
+                        localHash(name.toByteArray()),
+                        attributes,
+                        it,
+                        takeName { name },
+                        it.isExported,
+                        it.escapes,
+                        it.pointsTo
+                )
 
                 else -> {
                     val isAbstract = it.modality == Modality.ABSTRACT

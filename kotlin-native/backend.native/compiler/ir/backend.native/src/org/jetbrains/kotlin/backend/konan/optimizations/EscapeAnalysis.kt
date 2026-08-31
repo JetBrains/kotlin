@@ -740,7 +740,8 @@ internal object EscapeAnalysis {
                         && !callee.name.startsWith("kfun:kotlin.concurrent")) {
                     context.log { "A function from K/N runtime - can use annotations" }
                     if (callee.irFunction?.isBuiltInOperator == false) { // If callee is a function, but not a builtin operator
-                        if (callee.escapes == null && callee.pointsTo == null) { // and it had no EA annotations
+                        if ((callee as? DataFlowIR.FunctionSymbol.External)?.escapes == null
+                                && (callee as? DataFlowIR.FunctionSymbol.External)?.pointsTo == null) { // and it had no EA annotations
                             require(callee.parameters.all { it.type.irClass == null }) { // all of its parameters must be primitive types
                                 "Function ${callee.name} has reference parameters and is missing EA annotations. Must have been handled by SpecialBackendChecksTraversal"
                             }
@@ -749,7 +750,11 @@ internal object EscapeAnalysis {
                             }
                         }
                     }
-                    FunctionEscapeAnalysisResult.fromAnnotations(callee.escapes, callee.pointsTo, callee.parameters.size)
+                    FunctionEscapeAnalysisResult.fromAnnotations(
+                            (callee as? DataFlowIR.FunctionSymbol.External)?.escapes,
+                            (callee as? DataFlowIR.FunctionSymbol.External)?.pointsTo,
+                            callee.parameters.size
+                    )
                 } else {
                     context.log { "An unknown function - assume pessimistic result" }
                     FunctionEscapeAnalysisResult.pessimistic(callee.parameters.size)
@@ -1010,7 +1015,7 @@ internal object EscapeAnalysis {
                         returnsNode.getFieldNode(returnsValueField, this).addAssignmentEdge(nodes[it.node]!!)
                 }
 
-                val escapes = functionSymbol.escapes
+                val escapes = (functionSymbol as? DataFlowIR.FunctionSymbol.External)?.escapes
                 if (escapes != null) {
                     for (parameter in parameters)
                         if (escapes.escapesAt(parameter.index))
