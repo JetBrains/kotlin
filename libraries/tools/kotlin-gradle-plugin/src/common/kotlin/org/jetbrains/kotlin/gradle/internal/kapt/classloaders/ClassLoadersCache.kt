@@ -50,7 +50,7 @@ class ClassLoadersCache(
 
     private fun getForClassPath(files: List<File>, parent: ClassLoader): ClassLoader {
         val key = makeKey(files)
-        val classLoader = cache.getOrPut(key) {
+        val classLoader = cache.computeIfAbsent(key) {
             makeClassLoader(key, parent)
         }
         // Guava delivers removal notifications during subsequent cache operations. This cache is
