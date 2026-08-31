@@ -21,15 +21,11 @@ object WasmJsGroupedTestsExportedEntryPointGenerator : GroupedTestsExportedEntry
 }
 
 /**
- * wasm-wasi: the standalone VMs invoke this export directly, being able to invoke nothing but a bare name; under
- * Node.js the `test.mjs` written by [WasmWasiFolderGroupingStageBoxRunner] calls it.
+ * Generates the `startTest` export used by [WasmWasiFolderGroupingStageBoxRunner] to launch a grouped WASI batch.
+ * The export invokes the generated driver, which runs every proxy launcher and emits the structured test results.
  *
- * `wasiBoxTestRun.kt` gives every test with a `box()` a `startTest()` of its own, and sharing the name is safe — not
- * because exports are filtered, but because the helper never enters a grouped link: it travels in the per-test KLIBs,
- * which the batch links as ordinary `-libraries`, whose declarations are deserialized only when referenced, and
- * nothing references the helper (the launcher calls each `box()` by its FQN). Verified on a linked binary and enforced
- * per run by `assertDriverOwnsStartTestExport`. On the JVM side the name is not a usable signal, though — see
- * [org.jetbrains.kotlin.wasm.test.handlers.startUnitTestsWasiScript].
+ * The standalone `wasiBoxTestRun.kt` helper also declares `startTest`, but grouped launchers call each test's `box()`
+ * directly by its fully qualified name, so that helper is not linked into the grouped binary.
  */
 object WasmWasiGroupedTestsExportedEntryPointGenerator : GroupedTestsExportedEntryPointGenerator() {
     override fun generateExportedEntryPointSource(runAllFunctionName: String): String =

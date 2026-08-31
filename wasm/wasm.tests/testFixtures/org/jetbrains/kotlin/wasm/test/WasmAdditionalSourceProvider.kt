@@ -14,13 +14,12 @@ import org.jetbrains.kotlin.test.services.*
 import java.io.File
 
 /**
- * Attaches `wasiBoxTestRun.kt` — the `runBoxTest`/`startTest` glue an isolated WASI box run is driven through — to
- * every module with a `box()`.
+ * Adds the `wasiBoxTestRun.kt` helper to every module that defines `box()`. The helper provides the `runBoxTest` and
+ * `startTest` entry points used to run a standalone WASI box test.
  *
- * Unconditionally, batched tests included, and that must stay so: this provider runs at file-generation time, while
- * whether a test's KLIB ends up as the `-Xinclude` main module (needing the glue) is only decided at the grouping
- * stage, and a non-isolated test that merely ends up alone in its batch does need it. The `startTest` export the glue
- * carries does not collide with the grouped driver's own, see `WasmWasiGroupedTestsExportedEntryPointGenerator`.
+ * The helper is added unconditionally because this provider runs before the grouping stage decides whether a test is
+ * linked on its own or as part of a batch. Grouped batches use their generated driver instead, so the helper is not
+ * included in those binaries and its `startTest` export does not conflict with the driver's export.
  */
 class WasmWasiBoxTestHelperSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     override fun produceAdditionalFiles(

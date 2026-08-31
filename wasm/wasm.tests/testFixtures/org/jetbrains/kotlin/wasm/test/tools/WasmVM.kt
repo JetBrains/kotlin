@@ -13,12 +13,17 @@ import kotlin.test.fail
 
 private val toolLogsEnabled: Boolean = getBoolean("kotlin.js.test.verbose")
 
+internal interface WasmVmDescriptor {
+    val vmName: String
+    val entryPointIsJsFile: Boolean
+}
+
 internal sealed class WasmVM(
     val property: String,
-    val entryPointIsJsFile: Boolean
-) {
+    override val entryPointIsJsFile: Boolean
+) : WasmVmDescriptor {
     protected val tool = ExternalTool(System.getProperty(property))
-    val vmName: String
+    override val vmName: String
         get() = javaClass.simpleName
 
     abstract fun run(
