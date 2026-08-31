@@ -1,3 +1,8 @@
+import TestCompilePaths.KOTLIN_COMPILER_EMBEDDABLE_CLASSPATH
+import TestCompilePaths.KOTLIN_NATIVE_IMAGE_DIST_PATH
+import TestCompilePaths.KOTLIN_NATIVE_IMAGE_PLUGINS_CLASSPATH
+import TestCompilePaths.KOTLIN_NATIVE_IMAGE_PLUGINS_RUNTIME
+import TestCompilePaths.KOTLIN_NATIVE_IMAGE_RESOURCES_PATH
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.internal.os.OperatingSystem
@@ -304,7 +309,7 @@ fun ProjectTestsExtension.nativeImageTestTask(name: String, body: Test.() -> Uni
 fun Test.useNativeImageDist() {
     addClasspathProperty(
         kotlincNativeImageDist.map { layout.files(it.destinationDir) },
-        "kotlin.native-image.dist.path",
+        KOTLIN_NATIVE_IMAGE_DIST_PATH,
     )
 }
 
@@ -313,21 +318,21 @@ fun Test.usePlugins() {
     withDist()
     addClasspathProperty(
         pluginsRuntime,
-        "kotlin.native-image.plugins-runtime.classpath",
+        KOTLIN_NATIVE_IMAGE_PLUGINS_RUNTIME,
     )
     addClasspathProperty(
         pluginsBuildClasspath,
-        "kotlin.native-image.plugins-build.classpath",
+        KOTLIN_NATIVE_IMAGE_PLUGINS_CLASSPATH,
     )
 }
 
 fun Test.useReachabilityMetadataResources() {
     addClasspathProperty(
         nativeImageClasspath,
-        "kotlin.compiler-embeddable.classpath",
+        KOTLIN_COMPILER_EMBEDDABLE_CLASSPATH,
     )
     addDirectoryProperty(
         layout.projectDirectory.dir("resources").asFile,
-        "kotlin.native-image.resources.path",
+        KOTLIN_NATIVE_IMAGE_RESOURCES_PATH,
     )
 }
