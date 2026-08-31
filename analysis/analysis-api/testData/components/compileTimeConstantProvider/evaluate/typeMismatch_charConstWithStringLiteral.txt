@@ -1,0 +1,5 @@
+expression: CHAR
+constant: "A"
+constantValueKind: StringValue
+constantValueSource: REFERENCE_EXPRESSION
+constantValueSourceText: CHAR

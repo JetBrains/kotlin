@@ -1,0 +1,5 @@
+expression: BOOLEAN
+constant: 1
+constantValueKind: IntValue
+constantValueSource: REFERENCE_EXPRESSION
+constantValueSourceText: BOOLEAN

@@ -949,6 +949,21 @@ private fun ConstantValueKind.convertToGivenKind(value: Any?): Any? {
     }
 }
 
+/**
+ * Whether a literal of this kind may hold [value].
+ *
+ * [convertToGivenKind] cannot be used directly for this check, as its `null` result is ambiguous:
+ * it stands both for a value which is impossible to convert and for the `null` value itself.
+ * `null` belongs to [ConstantValueKind.Null] alone.
+ */
+private fun ConstantValueKind.canHold(value: Any?): Boolean {
+    if (value == null) {
+        return this == ConstantValueKind.Null
+    }
+
+    return convertToGivenKind(value) != null
+}
+
 private fun CompileTimeType.isFloatingPoint(): Boolean = this == CompileTimeType.FLOAT || this == CompileTimeType.DOUBLE
 
 private fun Any?.toConstExpression(
@@ -965,7 +980,16 @@ private fun Any?.toConstExpression(
 }
 
 private fun FirLiteralExpression.copy(originalExpression: FirExpression): FirLiteralExpression {
-    return this.value.toConstExpression(originalExpression.resolvedType.toConstantValueKind() ?: this.kind, originalExpression)
+    // In erroneous code the type of the original expression may contradict the value, as in
+    // `const val c: Char = 65`, where every access to `c` is of type `Char`, while the value of
+    // the initializer is an `Int`, or in `const val s: String? = null`, where the value is `null`.
+    // The kind of the literal itself is used for such values to keep the resulting `kind` and
+    // `value` consistent.
+    val kind = originalExpression.resolvedType.toConstantValueKind()
+        ?.takeIf { it.canHold(value) }
+        ?: this.kind
+
+    return this.value.toConstExpression(kind, originalExpression)
 }
 
 private fun FirEvaluatorResult.copy(originalExpression: FirExpression): FirEvaluatorResult {
