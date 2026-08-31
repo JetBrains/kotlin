@@ -89,7 +89,7 @@ abstract class KotlinIrLinker(
         get() = deserializersForModules.values.toList()
 
     val allModuleFragments: List<IrModuleFragment>
-        get() = deserializersForModules.values.map { it.moduleFragment }
+        get() = allModuleDeserializers.map { it.moduleFragment }
 
     abstract val irMangler: KotlinMangler.IrMangler
 
@@ -173,7 +173,7 @@ abstract class KotlinIrLinker(
     protected abstract fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean
 
     fun getBuiltInsModule(): IrModuleFragment =
-        deserializersForModules.values.firstOrNull { it is IrModuleDeserializerWithBuiltIns }?.moduleFragment
+        allModuleDeserializers.firstOrNull { it is IrModuleDeserializerWithBuiltIns }?.moduleFragment
             ?: error("The module with the built-ins has not been deserialized yet")
 
     /**
@@ -266,7 +266,7 @@ abstract class KotlinIrLinker(
         if (inOrAfterLinkageStep) {
             // Finally, generate stubs for the remaining unbound symbols and patch every usage of any unbound symbol inside the IR tree.
             partialLinkageSupport.generateStubsAndPatchUsages(irBuiltIns, symbolTable)
-            deserializersForModules.values.forEach { if (it is IrModuleDeserializerWithBuiltIns) it.finish(irBuiltIns) }
+            allModuleDeserializers.forEach { if (it is IrModuleDeserializerWithBuiltIns) it.finish(irBuiltIns) }
         }
         // TODO: fix IrPluginContext to make it not produce additional external reference
         // symbolTable.noUnboundLeft("unbound after fake overrides:")
@@ -381,7 +381,7 @@ abstract class KotlinIrLinker(
     }
 
     fun getAllMatchingSignatures(callableId: CallableId, signatureKind: IrDeserializer.TopLevelSymbolKind): List<IdSignature> {
-        return deserializersForModules.flatMap { [_, moduleDeserializer] ->
+        return allModuleDeserializers.flatMap { moduleDeserializer ->
             moduleDeserializer.getAllMatchingSignatures(callableId, signatureKind)
         }
     }
