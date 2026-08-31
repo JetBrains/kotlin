@@ -67,3 +67,8 @@ fun privateClassCall() = PrivateClass.privateClassFun()
 fun aliasCall() = A.aliasFun()
 fun aliasToClassFunCall() = A.aliasToClassFun()
 fun classToAliasFunCall() = B.classToAliasFun()
+
+fun funMovedToParentClass() = Derived.funMovedToParentClass()
+fun propMovedToParentClass() = Derived.propMovedToParentClass
+fun funMovedToParentInterface() = Derived.funMovedToParentInterface()
+fun propMovedToParentInterface() = Derived.propMovedToParentInterface

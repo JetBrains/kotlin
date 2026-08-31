@@ -65,4 +65,10 @@ fun box() = abiTest {
     expectFailure(linkage("Function 'aliasFun' can not be called: No function found for symbol '/aliasFun#companion@A'")) { aliasCall() }
     expectSuccess("aliasToClassFun") { aliasToClassFunCall() }
     expectSuccess("classToAliasFun") { classToAliasFunCall() }
+
+    // To follow the JVM rules, moving companion members to a superclass is ABI compatible, but moving to a superinterface is not.
+    expectSuccess("moved") { funMovedToParentClass() }
+    expectSuccess(42) { propMovedToParentClass() }
+    expectFailure(linkage("Function 'funMovedToParentInterface' can not be called: No function found for symbol '/Derived.funMovedToParentInterface'")) { funMovedToParentInterface() }
+    expectFailure(linkage("Property accessor 'propMovedToParentInterface.<get-propMovedToParentInterface>' can not be called: No property accessor found for symbol '/Derived.propMovedToParentInterface.<get-propMovedToParentInterface>'")) { propMovedToParentInterface() }
 }
