@@ -99,7 +99,11 @@ projectTests {
     testData(project(":compiler:tests-spec").isolated, "testData/codegen")
 
     val environment = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0)
-    testTask(defineJDKEnvVariables = environment) {
+    testTask(
+        defineJDKEnvVariables = environment,
+        maxHeapSize = testMaxHeapSizeLarge,
+        garbageCollector = GarbageCollector.Parallel
+    ) {
         configure()
     }
 
