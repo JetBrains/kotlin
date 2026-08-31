@@ -94,8 +94,8 @@ class JsIrLinker(
         }
     }
 
-    fun moduleDeserializer(moduleDescriptor: ModuleDescriptor): IrModuleDeserializer {
-        return klibDeserializers[moduleDescriptor.name.asString()] ?: error("Deserializer for $moduleDescriptor not found")
+    fun moduleDeserializer(module: IrModuleFragment): IrModuleDeserializer {
+        return klibDeserializers[module.kotlinLibrary!!] ?: error("Deserializer for ${module.name} not found")
     }
 
     fun getDeserializedFilesInKlibOrder(fragment: IrModuleFragment): List<IrFile> {

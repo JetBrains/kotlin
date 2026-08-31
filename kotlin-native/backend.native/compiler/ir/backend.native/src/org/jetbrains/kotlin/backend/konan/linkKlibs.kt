@@ -199,7 +199,7 @@ private fun LinkKlibsContext.deserializeDependencies(moduleDescriptor: ModuleDes
 
         when {
             dependency.isForwardDeclarationModule ->
-                linker.createAndRegisterModuleDeserializer(dependency, null, { DeserializationStrategy.ALL }, dependency.name.asString())
+                linker.createAndRegisterModuleDeserializer(dependency, null, { DeserializationStrategy.ALL })
             isFullyCachedLibrary && kotlinLibrary.isHeader -> linker.deserializeHeadersWithInlineBodies(dependency, kotlinLibrary)
             isFullyCachedLibrary -> linker.deserializeOnlyHeaderModule(dependency, kotlinLibrary)
             kotlinLibrary != null -> linker.deserializeIrModuleHeader(dependency, kotlinLibrary)

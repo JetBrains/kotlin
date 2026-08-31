@@ -150,7 +150,6 @@ object JKlibIrCompilationPhase :
             jarDepsModuleDescriptor,
             null,
             { DeserializationStrategy.ALL },
-            jarDepsModuleDescriptor.name.asString(),
         )
 
         @OptIn(InternalSymbolFinderAPI::class) 
