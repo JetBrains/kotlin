@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.support.serviceOf
+
 description = "Kotlin Compiler (embeddable)"
 
 plugins {
@@ -16,15 +18,7 @@ val testCompilerClasspath = configurations.create("testCompilerClasspath") {
     }
 }
 
-val compilerDocumentation = configurations.create("compilerDocumentation") {
-    isCanBeConsumed = false
-    isCanBeResolved = true
-}
-
 dependencies {
-    add(compilerDocumentation.name, project(":kotlin-compiler")) {
-        isTransitive = false
-    }
     api(project(":compiler:build-tools:kotlin-build-tools-api"))
     runtimeOnly(kotlinStdlib())
     runtimeOnly(project(":kotlin-script-runtime"))
@@ -55,11 +49,29 @@ val runtimeJar = runtimeJar(embeddableCompiler()) {
 }
 
 val sourcesJar = sourcesJar {
-    addEmbeddedSources("compilerDocumentation")
+    val compilerTask = configurations.detachedConfiguration(dependencies.project(":kotlin-compiler")).apply {
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.VERIFICATION))
+            attribute(VerificationType.VERIFICATION_TYPE_ATTRIBUTE, project.objects.named(VerificationType.MAIN_SOURCES))
+        }
+        isTransitive = false
+    }
+    dependsOn(compilerTask)
+    val archiveOperations = serviceOf<ArchiveOperations>()
+    from(compilerTask.files.map { archiveOperations.zipTree(it) })
 }
 
 val javadocJar = javadocJar {
-    addEmbeddedJavadoc("compilerDocumentation")
+    val compilerTask = configurations.detachedConfiguration(dependencies.project(":kotlin-compiler")).apply {
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
+            attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.JAVADOC))
+        }
+        isTransitive = false
+    }
+    dependsOn(compilerTask)
+    val archiveOperations = serviceOf<ArchiveOperations>()
+    from(compilerTask.files.map { archiveOperations.zipTree(it) })
 }
 
 publish {
