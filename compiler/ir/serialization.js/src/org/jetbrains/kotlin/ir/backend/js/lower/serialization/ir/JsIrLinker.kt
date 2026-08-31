@@ -37,7 +37,6 @@ class JsIrLinker(
     currentModule = null,
     configuration = configuration,
     symbolTable = symbolTable,
-    exportedDependencies = emptyList(),
     deserializedSymbolPostProcessor = { symbol, signature, fileSymbol ->
         runIf(signature.isLocal) {
             symbol.privateSignature = IdSignature.CompositeSignature(IdSignature.FileSignature(fileSymbol), signature)

@@ -35,12 +35,12 @@ class KonanIrLinker(
     symbolTable: SymbolTable,
     friendModules: Map<String, Collection<String>>,
     private val cInteropModuleDeserializerFactory: CInteropModuleDeserializerFactory<*>,
-    exportedDependencies: List<ModuleDescriptor>,
+    private val exportedDependencies: List<ModuleDescriptor>,
     partialLinkageConfig: PartialLinkageConfig,
     irDiagnosticReporter: IrDiagnosticReporter,
     private val libraryBeingCached: PartialCacheInfo?,
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
-) : KotlinIrLinker(currentModule, configuration, symbolTable, exportedDependencies) {
+) : KotlinIrLinker(currentModule, configuration, symbolTable) {
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean {
         val origin: DeserializedKlibModuleOrigin? = moduleDescriptor.klibModuleOriginOrNull as? DeserializedKlibModuleOrigin
         val klib: KotlinLibrary = origin?.library ?: return false
@@ -113,5 +113,17 @@ class KonanIrLinker(
                 klibToModuleDeserializerMap[klib] = it
             }
         }
+    }
+
+    fun deserializeIrModuleHeader(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary): IrModuleFragment {
+        // TODO: consider skip deserializing explicitly exported declarations for libraries.
+        // Now it's not valid because of all dependencies that must be computed.
+        val deserializationStrategy: (String) -> DeserializationStrategy =
+            if (exportedDependencies.contains(moduleDescriptor)) {
+                { DeserializationStrategy.ALL }
+            } else {
+                { DeserializationStrategy.EXPLICITLY_EXPORTED }
+            }
+        return deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, deserializationStrategy)
     }
 }
