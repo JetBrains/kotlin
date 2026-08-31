@@ -1,0 +1,10 @@
+can't parse argument number: x
+java.lang.IllegalArgumentException: can't parse argument number: x
+	at java.text.MessageFormat.makeFormat(MessageFormat.java:1435)
+	at java.text.MessageFormat.applyPattern(MessageFormat.java:480)
+	at java.text.MessageFormat.<init>(MessageFormat.java:363)
+	at java.text.MessageFormat.format(MessageFormat.java:841)
+	at org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForReadability.renderSimpleType(ConeTypeRendererForReadability.kt:83)
+	at org.jetbrains.kotlin.fir.renderer.ConeTypeRenderer.render(ConeTypeRenderer.kt:126)
+	at org.jetbrains.kotlin.fir.renderer.ConeTypeRenderer.render$default(ConeTypeRenderer.kt:93)
+	at org.jetbrains.kotlin.fir.types.ConeTypeUtilsKt.renderReadableWithFqNames(ConeTypeUtils.kt:202)
