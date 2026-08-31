@@ -5,20 +5,55 @@ import kotlin.test.*
 
 @OptIn(UnsafeWasmMemoryApi::class, ComponentModelInternalApi::class)
 class ReallocTest {
+    var freelist: String = ""
+
+    @BeforeTest
+    fun saveFreelist() {
+        freelist = dumpFreeList()
+    }
+
+    @AfterTest
+    fun compareFreelist() {
+        assertEquals(freelist, dumpFreeList())
+    }
+
+    @Test
+    fun reallocFreeAllTest(){
+        componentModelRealloc(0, 0, 100)
+        @Suppress("DEPRECATION")
+        freeAllComponentModelReallocAllocatedMemory()
+    }
+
     @Test
     fun freshReallocTest() {
         val address1 = componentModelRealloc(0, 0, 10)
         val address2 = componentModelRealloc(0, 0, 10)
-        freeAllComponentModelReallocAllocatedMemory()
         assertNotEquals(address1, address2)
+
+        // free it, FIFO order
+        componentModelRealloc(address1, 10, 0)
+        componentModelRealloc(address2, 10, 0)
 
         val address3 = componentModelRealloc(0, 0, 10)
         val address4 = componentModelRealloc(0, 0, 10)
-        freeAllComponentModelReallocAllocatedMemory()
 
         // After freeing memory, new reallocs should reuse the old memory
         assertEquals(address1, address3)
-        assertEquals(address4, address4)
+        assertEquals(address2, address4)
+
+        // now free it in LIFO order
+        componentModelRealloc(address4, 10, 0)
+        componentModelRealloc(address3, 10, 0)
+
+        // And again check that new allocations reuse the freed memory
+        val address5 = componentModelRealloc(0, 0, 10)
+        val address6 = componentModelRealloc(0, 0, 10)
+
+        assertEquals(address1, address5)
+        assertEquals(address2, address6)
+
+        componentModelRealloc(address5, 10, 0)
+        componentModelRealloc(address6, 10, 0)
     }
 
     @Test
@@ -32,13 +67,14 @@ class ReallocTest {
                 originalSize = (i + 1) * allocationStepSize,
                 newSize = (i + 2) * allocationStepSize
             )
-            assertEquals(newAddress1, address1)
+            assertEquals(address1, newAddress1)
         }
 
         val address2 = componentModelRealloc(0, 0, 10)
         assertTrue(address2 - address1 >= allocationStepSize * numReallocs)
 
-        freeAllComponentModelReallocAllocatedMemory()
+        componentModelRealloc(address1, numReallocs * allocationStepSize, 0)
+        componentModelRealloc(address2, 10, 0)
     }
 
     private fun writeNBytes(address: Int, n: Int, value: Byte) {
@@ -62,7 +98,8 @@ class ReallocTest {
         val addrToClean = componentModelRealloc(0, 0, sizeToClean)
         writeNBytes(addrToClean, sizeToClean, 0.toByte())
         assertBytesEquals(addrToClean, sizeToClean, 0.toByte())
-        freeAllComponentModelReallocAllocatedMemory()
+        // free
+        componentModelRealloc(addrToClean, sizeToClean, 0)
 
         val address1 = componentModelRealloc(0, 0, bufferSize)
         writeNBytes(address1, bufferSize, 1.toByte())
@@ -82,7 +119,9 @@ class ReallocTest {
         assertTrue(address2new > address1new)
         assertBytesEquals(address2new, bufferSize, 2.toByte())
 
-        freeAllComponentModelReallocAllocatedMemory()
+        // free
+        componentModelRealloc(address1new, bufferSize * 2, 0)
+        componentModelRealloc(address2new, bufferSize * 2, 0)
     }
 
     @Test
@@ -93,22 +132,83 @@ class ReallocTest {
             assertTrue(reallocAddr.toUInt() > scopedAddr.address)
             assertTrue((reallocAddr.toUInt() - scopedAddr.address) >= 10u)
 
-            freeAllComponentModelReallocAllocatedMemory()
+            componentModelRealloc(reallocAddr, 10, 0)
 
             val scopedAddr2 = allocator.allocate(10)
             assertEquals(scopedAddr2.address.toInt(), reallocAddr)
         }
     }
 
+
     @Test
-    fun creatingAllocatorsBeforeReallocIsFreedTest() {
-        componentModelRealloc(0, 0, 10)
-        assertFailsWith<IllegalStateException> {
-            withScopedMemoryAllocator { allocator ->
-                allocator.allocate(10)
-            }
-        }
-        freeAllComponentModelReallocAllocatedMemory()
+    fun reallocShrinkingDoesPartialFreeCorrectlyTest() {
+        // allocated a big chunk, then shrunk the allocation: should free the excess memory, and thus place the next allocation in there
+
+        // so to get a benchmark, first allocate some memory normally, and do another allocation, this one will have to be reproduced exactly by the realloc shrink after
+        val v = componentModelRealloc(0, 0, 50)
+        val correct = componentModelRealloc(0, 0, 20)
+
+        // now free these again, so we're back to the start state
+        componentModelRealloc(correct, 20, 0)
+        componentModelRealloc(v, 50, 0)
+
+        // allocate and shrink
+        val overallocatedAddress = componentModelRealloc(0, 0, 100)
+        val shrunkenAddress = componentModelRealloc(overallocatedAddress, 100, 50)
+        assertEquals(overallocatedAddress, shrunkenAddress)
+
+        // allocate again: when we allocate now, we should get the same address as in "correct" before
+        val actual = componentModelRealloc(0, 0, 20)
+        assertEquals(correct, actual)
+
+        // free stuff
+        componentModelRealloc(actual, 20, 0)
+        componentModelRealloc(shrunkenAddress, 50, 0)
     }
 
+    @Test
+    fun reallocGrowingInPlaceFreesRestTest() {
+        // get a benchmark: allocate 1000 bytes normally, then allocate 20. Those 20 should start at the same address as if we allocate 50, then grow in place by 50, then allocate 20 again
+        // NOTE: the allocation is this huge, to attempt to guarantee we get a consecutive one (probably at the end of everything)
+        val v = componentModelRealloc(0, 0, 1000)
+        val correct = componentModelRealloc(0, 0, 20)
+        // free these again to get back to the starting state
+        componentModelRealloc(correct, 20, 0)
+        componentModelRealloc(v, 1000, 0)
+
+        val underallocatedAddress = componentModelRealloc(0, 0, 500)
+        val extendedAllocationAddress = componentModelRealloc(underallocatedAddress, 500, 1000)
+        assertEquals(underallocatedAddress, extendedAllocationAddress)
+
+        // allocate again, we should be at the same state as if we had allocated 1000 immediately
+        val actual = componentModelRealloc(0, 0, 20)
+        assertEquals(correct, actual)
+
+        // free
+        componentModelRealloc(extendedAllocationAddress, 1000, 0)
+        componentModelRealloc(actual, 20, 0)
+    }
+
+    @Test
+    fun reallocGrowingWithCopyFreesOldTest() {
+        val ungrowableMemoryAddress = componentModelRealloc(0, 0, 10)
+        // now we'll do a "filler" allocation in the middle, just to make it impossible to grow the first one
+        val filler = componentModelRealloc(0, 0, 10)
+
+        writeNBytes(ungrowableMemoryAddress, 10, 42.toByte())
+        // now try to grow the ungrowable memory (which must result in a copy)
+        val newAddress = componentModelRealloc(ungrowableMemoryAddress, 10, 20)
+        // check the copy itself
+        assertNotEquals(ungrowableMemoryAddress, newAddress)
+        assertBytesEquals(newAddress, 10, 42.toByte())
+
+        // NOTE: implementation detail: for a fresh allocation we should go through the free list from the start, and thus get the same address again as the original ungrowableMemoryAddress, as that must be freed by the growing allocation above
+        val actual = componentModelRealloc(0, 0, 10)
+        assertEquals(ungrowableMemoryAddress, actual)
+
+        // free
+        componentModelRealloc(newAddress, 20, 0)
+        componentModelRealloc(actual, 10, 0)
+        componentModelRealloc(filler, 10, 0)
+    }
 }
