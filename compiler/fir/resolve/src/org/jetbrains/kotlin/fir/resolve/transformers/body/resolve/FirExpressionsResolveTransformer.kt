@@ -932,8 +932,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             isMarkedNullable = false
         )
 
-        val approximationIsNeeded =
-            resolutionMode !is ResolutionMode.ReceiverResolution && resolutionMode !is ResolutionMode.ContextDependent
+        val approximationIsNeeded = when (resolutionMode) {
+            is ResolutionMode.ReceiverResolution -> resolutionMode.forCallableReference
+            is ResolutionMode.ContextDependent -> false
+            else -> true
+        }
 
         val integerOperatorCall = buildIntegerLiteralOperatorCall {
             source = originalCall.source
