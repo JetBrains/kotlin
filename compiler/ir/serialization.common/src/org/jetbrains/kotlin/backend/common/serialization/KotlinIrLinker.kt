@@ -293,18 +293,8 @@ abstract class KotlinIrLinker(
             "${moduleDescriptor.name.asString()} != $moduleName"
         }
 
-        val deserializer = deserializersForModules[moduleName] ?: registerModuleDeserializer(
-            moduleName = moduleName,
-            moduleDeserializer = createModuleDeserializer(
-                moduleFragment = IrModuleFragmentImpl(moduleDescriptor),
-                klib = kotlinLibrary,
-                strategyResolver = deserializationStrategy
-            )
-        )
-
-        val moduleFragment = deserializer.moduleFragment
-        moduleFragment.kotlinLibrary = kotlinLibrary
-        return deserializer
+        return deserializersForModules[moduleName] ?:
+            createAndRegisterModuleDeserializer(moduleDescriptor, kotlinLibrary, deserializationStrategy, moduleName)
     }
 
     fun deserializeIrModuleHeader(
@@ -318,12 +308,22 @@ abstract class KotlinIrLinker(
         return deserializer.moduleFragment
     }
 
-    private fun registerModuleDeserializer(
+    private fun createAndRegisterModuleDeserializer(
+        moduleDescriptor: ModuleDescriptor,
+        kotlinLibrary: KotlinLibrary?,
+        deserializationStrategy: (String) -> DeserializationStrategy,
         moduleName: String,
-        moduleDeserializer: IrModuleDeserializer
     ): IrModuleDeserializer {
-        val deserializer = maybeWrapWithBuiltIn(moduleDeserializer)
-        deserializersForModules[moduleName] = deserializer
+        val moduleFragment = IrModuleFragmentImpl(moduleDescriptor)
+        moduleFragment.kotlinLibrary = kotlinLibrary
+
+        val deserializer = maybeWrapWithBuiltIn(
+            createModuleDeserializer(
+                moduleFragment = moduleFragment,
+                klib = kotlinLibrary,
+                strategyResolver = deserializationStrategy
+            )
+        )
 
         val definedPackageNames = deserializer.getDefinedPackageNames()
         if (definedPackageNames == null) {
