@@ -5,6 +5,8 @@
 // WASM_STANDALONE
 // ^^^ in non-standalone run, test classes will be placed in a sub-package, so `Throwable.toString()` would give different result
 
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Wasm-JS:2.4
+
 package a
 
 class MyException(message: String) : RuntimeException(message)
