@@ -202,7 +202,8 @@ private fun LinkKlibsContext.deserializeDependencies(moduleDescriptor: ModuleDes
                 linker.createAndRegisterModuleDeserializer(dependency, null, { DeserializationStrategy.ALL }, dependency.name.asString())
             isFullyCachedLibrary && kotlinLibrary.isHeader -> linker.deserializeHeadersWithInlineBodies(dependency, kotlinLibrary)
             isFullyCachedLibrary -> linker.deserializeOnlyHeaderModule(dependency, kotlinLibrary)
-            else -> linker.deserializeIrModuleHeader(dependency, kotlinLibrary, dependency.name.asString())
+            kotlinLibrary != null -> linker.deserializeIrModuleHeader(dependency, kotlinLibrary)
+            else -> error("Unexpected kind of module dependency $dependency")
         }
     }
 }
@@ -215,7 +216,7 @@ private fun ensureCStructsAndEnumsAreLoadedForCaching(linker: KonanIrLinker, lib
     // resulting assembly code for the C structs and enums already available, without a need for any special processing.
     if (libraryToCacheModule?.kotlinLibrary?.isCInteropLibrary() == true) {
         val interopModuleDeserializer = linker.getOrCreateDeserializerForModule(libraryToCacheModule, libraryToCacheModule.kotlinLibrary,
-                { DeserializationStrategy.ONLY_REFERENCED }, libraryToCacheModule.name.asString())
+                { DeserializationStrategy.ONLY_REFERENCED })
         (interopModuleDeserializer as? KonanInteropModuleDeserializer)?.deserializeAllCStructsAndEnums()
     }
 }
