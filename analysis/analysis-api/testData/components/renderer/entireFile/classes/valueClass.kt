@@ -1,0 +1,8 @@
+// WITH_STDLIB
+@JvmInline
+value class Meters(val value: Double)
+
+@JvmInline
+value class Wrapper(val text: String) {
+    fun describe(): String = text
+}

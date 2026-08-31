@@ -1,0 +1,25 @@
+@Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS])
+annotation class Anno
+
+class ConstructorProperties(@Anno @property:Anno @field:Anno @get:Anno @set:Anno @setparam:Anno var full: Int, @Anno private val simple: String, @Anno plain: Long)
+
+@Anno
+@field:Anno
+@setparam:Anno
+var withDefaultAccessors: Int
+  @Anno
+  get
+  @Anno
+  set
+
+var withCustomSetter: Int
+  set(@Anno value: Int)
+
+@delegate:Anno
+val delegated: Int
+  get()
+
+fun @receiver:Anno String.extension()
+
+@Anno
+typealias Alias = String

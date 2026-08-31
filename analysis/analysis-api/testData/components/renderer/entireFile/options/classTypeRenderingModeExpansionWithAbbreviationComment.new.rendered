@@ -1,0 +1,7 @@
+class Base<T>
+
+typealias Alias<T> = Base<T>
+
+typealias StringAlias = Base<String> /* from: Alias<String> */
+
+fun accept(direct: Base<Int> /* from: Alias<Int> */, chained: Base<String> /* from: StringAlias */, plain: Base<Boolean>)

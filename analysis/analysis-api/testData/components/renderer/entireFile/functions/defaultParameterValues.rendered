@@ -1,0 +1,9 @@
+fun primitives(int: Int, negative: Int, long: Long, boolean: Boolean, char: Char, string: String, double: Double, float: Float)
+
+fun nullDefault(value: String?)
+
+fun computedConstant(value: Int)
+
+fun make(): String
+
+fun nonConstant(value: String)

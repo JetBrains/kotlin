@@ -1,0 +1,10 @@
+class Logger
+
+context(logger@Logger)
+val contextValue: Int
+  get()
+
+context(logger@Logger, `<unused var>`@String)
+var contextVariable: Int
+  get()
+  set(value: Int)
