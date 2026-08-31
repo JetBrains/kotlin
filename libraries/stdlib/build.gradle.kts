@@ -1,6 +1,6 @@
+@file:Suppress("UNUSED_VARIABLE", "NAME_SHADOWING", "DEPRECATION")
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmWasiTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
 import org.jetbrains.kotlin.library.KOTLIN_JS_STDLIB_NAME
 import org.jetbrains.kotlin.library.KOTLIN_WASM_STDLIB_NAME
@@ -27,6 +26,7 @@ import kotlin.io.path.copyTo
 
 plugins {
     id("common-configuration")
+    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("multiplatform")
     `maven-publish`
@@ -40,6 +40,20 @@ plugins {
 description = "Kotlin Standard Library"
 
 configureJvmToolchain(JdkMajorVersion.JDK_1_8)
+
+fun resolvingConfiguration(name: String, configure: Action<Configuration> = Action {}) =
+    configurations.create(name) {
+        isCanBeResolved = true
+        isCanBeConsumed = false
+        configure(this)
+    }
+
+fun outgoingConfiguration(name: String, configure: Action<Configuration> = Action {}) =
+    configurations.create(name) {
+        isCanBeResolved = false
+        isCanBeConsumed = true
+        configure(this)
+    }
 
 fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     // Use this to override language and API versions for stdlib compared to the version used to build the whole Kotlin
@@ -101,13 +115,11 @@ kotlin {
         compilations {
             all {
                 compileTaskProvider.configure {
-                    this as KotlinCompileCommon
-                    @Suppress("DEPRECATION")
-                    moduleName = "kotlin-stdlib-common"
                     compilerOptions {
                         freeCompilerArgs.set(
                             listOfNotNull(
                                 "-Xallow-kotlin-package",
+                                "-module-name", "kotlin-stdlib-common",
                                 "-Xexpect-actual-classes",
                                 "-Xexplicit-api=strict",
                                 diagnosticNamesArg,
@@ -150,11 +162,11 @@ kotlin {
                     compilerOptions {
                         moduleName = "kotlin-stdlib"
                         jvmTarget = JvmTarget.JVM_1_8
-                        jvmDefault = JvmDefaultMode.DISABLE
                         // providing exhaustive list of args here
                         freeCompilerArgs.set(
                             listOfNotNull(
                                 "-Xjdk-release=6",
+                                "-jvm-default=disable",
                                 "-Xallow-kotlin-package",
                                 "-Xexpect-actual-classes",
                                 "-Xmultifile-parts-inherit",
@@ -182,10 +194,10 @@ kotlin {
                     compilerOptions {
                         moduleName = "kotlin-stdlib-jdk7"
                         jvmTarget = JvmTarget.JVM_1_8
-                        jvmDefault = JvmDefaultMode.DISABLE
                         freeCompilerArgs.set(
                             listOfNotNull(
                                 "-Xjdk-release=7",
+                                "-jvm-default=disable",
                                 "-Xallow-kotlin-package",
                                 "-Xexpect-actual-classes",
                                 "-Xmultifile-parts-inherit",
@@ -205,10 +217,10 @@ kotlin {
                 compileTaskProvider.configure {
                     compilerOptions {
                         moduleName = "kotlin-stdlib-jdk8"
-                        jvmDefault = JvmDefaultMode.DISABLE
                         freeCompilerArgs.set(
                             listOfNotNull(
                                 "-Xallow-kotlin-package",
+                                "-jvm-default=disable",
                                 "-Xmultifile-parts-inherit",
                                 "-Xno-new-java-annotation-targets",
                                 "-Xexplicit-api=strict",
@@ -223,13 +235,11 @@ kotlin {
             project.sourceSets.create("java9") {
                 java.srcDir("jvm/java9")
             }
-            configureJava9Compilation(
-                "kotlin.stdlib", listOf(
-                    main.output.allOutputs,
-                    mainJdk7.output.allOutputs,
-                    mainJdk8.output.allOutputs,
-                ), main.configurations.compileDependencyConfiguration
-            )
+            configureJava9Compilation("kotlin.stdlib", listOf(
+                main.output.allOutputs,
+                mainJdk7.output.allOutputs,
+                mainJdk8.output.allOutputs,
+            ), main.configurations.compileDependencyConfiguration)
             val test = getByName("test") {
                 associateWith(mainJdk7)
                 associateWith(mainJdk8)
@@ -244,19 +254,19 @@ kotlin {
                     }
                 }
             }
-            create("longRunningTest") {
+            val longRunningTest = create("longRunningTest") {
                 associateWith(main)
                 associateWith(mainJdk7)
                 associateWith(mainJdk8)
             }
-            create("recursiveDeletionTest") {
+            val recursiveDeletionTest = create("recursiveDeletionTest") {
                 associateWith(main)
                 associateWith(mainJdk7)
                 associateWith(mainJdk8)
             }
         }
     }
-    js {
+    /*js {
         if (!kotlinBuildProperties.isTeamcityBuild.get()) {
             browser {}
         }
@@ -291,7 +301,7 @@ kotlin {
                 }
             }
         }
-    }
+    }*/
 
     fun <T> T.commonWasmTargetConfiguration()
             where T : KotlinTargetWithNodeJsDsl,
@@ -301,7 +311,7 @@ kotlin {
         // KT-85971
         this as KotlinJsTargetDsl
         if (this.wasmTargetType == KotlinWasmTargetType.JS) {
-            nodejs()
+            //nodejs()
         } else {
             this as KotlinWasmWasiTargetDsl
             @OptIn(ExperimentalWasmDsl::class)
@@ -328,7 +338,7 @@ kotlin {
             }
         }
     }
-
+/*
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         commonWasmTargetConfiguration()
@@ -337,13 +347,13 @@ kotlin {
     wasmWasi {
         commonWasmTargetConfiguration()
     }
-
+*/
     // FIXME: KT-85818 Avoid using isInIdeaSync in stdlib/build.gradle.kts in kotlin.git
     if (kotlinBuildProperties.isInIdeaSync.get()) {
         val hostOs = System.getProperty("os.name")
         val isMingwX64 = hostOs.startsWith("Windows")
         val nativeTarget = when {
-            hostOs == "Mac OS X" -> @Suppress("DEPRECATION") macosX64("native")
+            hostOs == "Mac OS X" -> macosX64("native")
             hostOs == "Linux" -> linuxX64("native")
             isMingwX64 -> mingwX64("native")
             else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
@@ -407,14 +417,14 @@ kotlin {
             kotlin.exclude("kotlin/internal/InternalAnnotations.kt")
         }
 
-        named("jvmMainJdk7") {
+        val jvmMainJdk7 = getByName("jvmMainJdk7") {
             kotlin.srcDir("jdk7/src")
         }
-        named("jvmMainJdk8") {
+        val jvmMainJdk8 = getByName("jvmMainJdk8") {
             kotlin.srcDir("jdk8/src")
         }
 
-        named("jvmTest") {
+        val jvmTest = getByName("jvmTest") {
             languageSettings {
                 optIn("kotlin.io.path.ExperimentalPathApi")
             }
@@ -426,14 +436,14 @@ kotlin {
             kotlin.srcDir("jdk8/test")
         }
 
-        named("jvmLongRunningTest") {
+        val jvmLongRunningTest = getByName("jvmLongRunningTest") {
             dependencies {
                 implementation(kotlinTest("junit5"))
             }
             kotlin.srcDir("jvm/testLongRunning")
         }
 
-        named("jvmRecursiveDeletionTest") {
+        val jvmRecursiveDeletionTest = getByName("jvmRecursiveDeletionTest") {
             dependencies {
                 implementation(kotlinTest("junit5"))
             }
@@ -451,7 +461,7 @@ kotlin {
                 srcDir("common-js-wasmjs/src")
             }
         }
-
+/*
         val jsMain = getByName("jsMain") {
             dependsOn(webMain)
             dependsOn(commonNonJvmMain)
@@ -489,7 +499,7 @@ kotlin {
         val jsTest = getByName("jsTest") {
             kotlin.srcDir("${jsDir}/test")
         }
-
+*/
         val nativeWasmMain = create("nativeWasmMain") {
             dependsOn(commonNonJvmMain)
             kotlin.srcDir("native-wasm/src")
@@ -546,7 +556,7 @@ kotlin {
                 srcDir("wasm/test")
             }
         }
-
+/*
         val wasmJsMain = getByName("wasmJsMain") {
             dependsOn(webMain)
             dependsOn(wasmCommonMain)
@@ -572,7 +582,6 @@ kotlin {
             }
             languageSettings {
                 optIn("kotlin.wasm.unsafe.UnsafeWasmMemoryApi")
-                optIn("kotlin.wasm.ExperimentalWasmInterop")
             }
         }
         val wasmWasiTest = getByName("wasmWasiTest") {
@@ -581,7 +590,7 @@ kotlin {
                 srcDir("wasm/wasi/test")
             }
         }
-
+*/
         if (kotlinBuildProperties.isInIdeaSync.get()) {
             val nativeKotlinTestCommon = create("nativeKotlinTestCommon") {
                 dependsOn(commonMain.get())
@@ -624,7 +633,7 @@ kotlin {
             }
         }
 
-        all sourceSet@{
+        all sourceSet@ {
             languageSettings {
                 // TODO: progressiveMode = use build property 'test.progressive.mode'
                 if (this@sourceSet == jvmCompileOnlyDeclarations) {
@@ -664,10 +673,10 @@ dependencies {
 }
 
 tasks {
-    val allMetadataJar = named<Jar>("allMetadataJar") {
+    val allMetadataJar by existing(Jar::class) {
         archiveClassifier = "all"
     }
-    val commonMetadataJar = register("commonMetadataJar", Jar::class) {
+    val commonMetadataJar by registering(Jar::class) {
         archiveAppendix.set("metadata")
         archiveExtension.set("klib")
     }
@@ -675,7 +684,7 @@ tasks {
         commonMetadataJar.configure { from(output.allOutputs) }
     }
 
-    val webMetadataJar = register("webMetadataJar", Jar::class) {
+    val webMetadataJar by registering(Jar::class) {
         archiveAppendix.set("metadata-web")
         archiveExtension.set("klib")
     }
@@ -683,10 +692,10 @@ tasks {
         webMetadataJar.configure { from(output.allOutputs) }
     }
 
-    val sourcesJar = named("sourcesJar", Jar::class) {
+    val sourcesJar by existing(Jar::class) {
         archiveAppendix.set("metadata")
     }
-    val jvmJar = named("jvmJar", Jar::class) {
+    val jvmJar by existing(Jar::class) {
         duplicatesStrategy = DuplicatesStrategy.FAIL
         archiveAppendix.set(null as String?)
         manifestAttributes(manifest, "Main", multiRelease = true)
@@ -696,7 +705,7 @@ tasks {
         from(project.sourceSets["java9"].output)
     }
 
-    val jvmRearrangedSourcesJar = register("jvmRearrangedSourcesJar", Jar::class) {
+    val jvmRearrangedSourcesJar by registering(Jar::class) {
         archiveClassifier.set("jvm-sources")
         archiveVersion.set("")
         destinationDirectory.set(layout.buildDirectory.dir("lib"))
@@ -726,7 +735,7 @@ tasks {
         }
     }
 
-    val jvmSourcesJar = named("jvmSourcesJar", Jar::class) {
+    val jvmSourcesJar by existing(Jar::class) {
         duplicatesStrategy = DuplicatesStrategy.FAIL
         archiveAppendix.set(null as String?)
 
@@ -742,19 +751,19 @@ tasks {
         ownPackages.set(listOf("kotlin"))
     }
 
-    val jsJar = named("jsJar", Jar::class) {
+/*    val jsJar by existing(Jar::class) {
         manifestAttributes(manifest, "Main")
         manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-js"))
     }
 
-    val jsJarForTests = register("jsJarForTests", Copy::class) {
+    val jsJarForTests by registering(Copy::class) {
         from(jsJar)
         rename { _ -> "full-runtime.klib" }
         // some tests expect stdlib-js klib in this location
         into(rootProject.isolated.projectDirectory.dir("build/js-ir-runtime"))
     }
 
-    val jsRearrangedSourcesJar = register("jsRearrangedSourcesJar", Jar::class) {
+    val jsRearrangedSourcesJar by registering(Jar::class) {
         archiveClassifier.set("js-sources")
         archiveVersion.set("")
         destinationDirectory.set(layout.buildDirectory.dir("lib"))
@@ -787,12 +796,12 @@ tasks {
                 into("runtime")
             }
             from("$jsDir/src") {
-                include("**/*.kt")
+                include("** / *.kt")
             }
         }
     }
 
-    val jsSourcesJar = named("jsSourcesJar", Jar::class) {
+    val jsSourcesJar by existing(Jar::class) {
         val jsSourcesJarFile = jsRearrangedSourcesJar.get().archiveFile
         inputs.file(jsSourcesJarFile)
         doLast {
@@ -800,15 +809,15 @@ tasks {
         }
     }
 
-    val wasmJsJar = named("wasmJsJar", Jar::class) {
+    val wasmJsJar by existing(Jar::class) {
         manifestAttributes(manifest, "Main")
         manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-wasm-js"))
     }
-    val wasmWasiJar = named("wasmWasiJar", Jar::class) {
+    val wasmWasiJar by existing(Jar::class) {
         manifestAttributes(manifest, "Main")
         manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-wasm-wasi"))
     }
-
+*/
     artifacts {
         val distJsJar = configurations.create("distJsJar")
         val distJsSourcesJar = configurations.create("distJsSourcesJar")
@@ -818,16 +827,16 @@ tasks {
         val commonMainMetadataElements = configurations.create("commonMainMetadataElements")
         val webMainMetadataElements = configurations.create("webMainMetadataElements")
 
-        add(distJsSourcesJar.name, jsSourcesJar)
+        /*add(distJsSourcesJar.name, jsSourcesJar)
         add(distJsKlib.name, jsJar)
         add(distWasmJsKlib.name, wasmJsJar)
-        add(distWasmWasiKlib.name, wasmWasiJar)
+        add(distWasmWasiKlib.name, wasmWasiJar)*/
         add(webMainMetadataElements.name, webMetadataJar)
         add(commonMainMetadataElements.name, commonMetadataJar)
     }
 
 
-    val jvmTest = named("jvmTest", Test::class)
+    val jvmTest by existing(Test::class)
 
     listOf(JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_25_0).forEach { jvmVersion ->
         val jvmVersionTest = register("jvm${jvmVersion.majorVersion}Test", Test::class) {
@@ -842,7 +851,7 @@ tasks {
         check.configure { dependsOn(jvmVersionTest) }
     }
 
-    val jvmLongRunningTest = register("jvmLongRunningTest", Test::class) {
+    val jvmLongRunningTest by registering(Test::class) {
         group = "verification"
         val compilation = kotlin.jvm().compilations["longRunningTest"]
         classpath = compilation.compileDependencyFiles + compilation.runtimeDependencyFiles + compilation.output.allOutputs
@@ -852,13 +861,13 @@ tasks {
     if (project.hasProperty("kotlin.stdlib.test.long.running")) {
         check.configure { dependsOn(jvmLongRunningTest) }
     }
-
+/*
     listOf("Js", "Wasi").forEach { wasmTarget ->
         named("compileTestKotlinWasm$wasmTarget", AbstractKotlinCompile::class) {
             // TODO: fix all warnings, enable -Werror
             compilerOptions.suppressWarnings = true
             // exclusions due to KT-51647
-            exclude("generated/minmax/*")
+            exclude("generated/minmax/ *")
             exclude("collections/MapTest.kt")
         }
         named("compileTestDevelopmentExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
@@ -868,11 +877,12 @@ tasks {
             enabled = false  // Causes out-of-memory in CI: KTI-2150
         }
     }
+*/
 
     /*
     We are using a custom 'kotlin-project-structure-metadata' to ensure 'nativeApiElements' lists 'commonMain' as source set
     */
-    named("generateProjectStructureMetadata", GenerateProjectStructureMetadata::class) {
+    val generateProjectStructureMetadata by existing(GenerateProjectStructureMetadata::class) {
         val outputTestFile = file("kotlin-project-structure-metadata.beforePatch.json")
         val patchedFile = file("kotlin-project-structure-metadata.json")
 
@@ -908,14 +918,14 @@ tasks {
         it.toPath().resolve("recursiveDeletionTestsWorkDir")
     }
 
-    val jvmRecursiveDeletionTestCleanup = register("jvmRecursiveDeletionTestCleanup", Delete::class) {
+    val jvmRecursiveDeletionTestCleanup by registering(Delete::class) {
         setDelete(jvmRecursiveDeletionTestTmpDir)
     }
 
     // A dedicated task for tests on files and directories deletion from the current working directory.
     // To prevent (to some extent) accidental removal of surrounding files and directories when tested functions
     // are malfunctioning, this task gets its own working directory where removal will take place.
-    val jvmRecursiveDeletionTest = register("jvmRecursiveDeletionTest", Test::class) {
+    val jvmRecursiveDeletionTest by registering(Test::class) {
         group = "verification"
         val compilation = kotlin.jvm().compilations["recursiveDeletionTest"]
 
@@ -942,7 +952,7 @@ tasks.withType<Test>().configureEach {
 configureDefaultPublishing()
 
 
-val emptyJavadocJar = tasks.register("emptyJavadocJar", org.gradle.api.tasks.bundling.Jar::class) {
+val emptyJavadocJar = tasks.create("emptyJavadocJar", org.gradle.api.tasks.bundling.Jar::class) {
     archiveClassifier.set("javadoc")
 }
 
@@ -998,11 +1008,7 @@ publishing {
         val wasmJs = module("wasmJsModule") {
             mavenPublication {
                 artifactId = "$artifactBaseName-wasm-js"
-                configureKotlinPomAttributes(
-                    project,
-                    "Kotlin Standard Library for experimental WebAssembly JS platform",
-                    packaging = "klib"
-                )
+                configureKotlinPomAttributes(project, "Kotlin Standard Library for experimental WebAssembly JS platform", packaging = "klib")
             }
             variant("wasmJsApiElements")
             variant("wasmJsRuntimeElements")
@@ -1011,11 +1017,7 @@ publishing {
         val wasmWasi = module("wasmWasiModule") {
             mavenPublication {
                 artifactId = "$artifactBaseName-wasm-wasi"
-                configureKotlinPomAttributes(
-                    project,
-                    "Kotlin Standard Library for experimental WebAssembly WASI platform",
-                    packaging = "klib"
-                )
+                configureKotlinPomAttributes(project, "Kotlin Standard Library for experimental WebAssembly WASI platform", packaging = "klib")
             }
             variant("wasmWasiApiElements")
             variant("wasmWasiRuntimeElements")
@@ -1027,13 +1029,13 @@ publishing {
     }
 
     publications {
-        val rootModule = named("rootModule", MavenPublication::class)
-        val jsModule = named("jsModule", MavenPublication::class)
+        val rootModule by existing(MavenPublication::class)
+        val jsModule by existing(MavenPublication::class)
         configureSbom("Main", "kotlin-stdlib", setOf("jvmRuntimeClasspath"), rootModule)
-        configureSbom("Js", "kotlin-stdlib-js", setOf("jsRuntimeClasspath"), jsModule)
+        //configureSbom("Js", "kotlin-stdlib-js", setOf("jsRuntimeClasspath"), jsModule)
 
-        val wasmJsModule = named("wasmJsModule", MavenPublication::class)
-        val wasmWasiModule = named("wasmWasiModule", MavenPublication::class)
+        val wasmJsModule by existing(MavenPublication::class)
+        val wasmWasiModule by existing(MavenPublication::class)
         configureSbom("Wasm-Js", "kotlin-stdlib-wasm-js", setOf("wasmJsRuntimeClasspath"), wasmJsModule)
         configureSbom("Wasm-Wasi", "kotlin-stdlib-wasm-wasi", setOf("wasmWasiRuntimeClasspath"), wasmWasiModule)
     }

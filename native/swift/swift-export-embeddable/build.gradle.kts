@@ -82,8 +82,8 @@ fun registerSwiftExportEmbeddableValidationTasks(swiftExportEmbeddableJarTask: T
              * These are needed for .kts files analysis; we don't actually want them in Swift Export, but currently ProGuard sees these in
              * shared Analysis API code and complaints
              */
-            dependencies.create(project(":kotlin-scripting-compiler-embeddable")),
-            dependencies.create(project(":kotlin-assignment-compiler-plugin.embeddable")),
+            dependencies.create(dependencies.project(":kotlin-scripting-compiler-embeddable")),
+            dependencies.create(dependencies.project(":kotlin-assignment-compiler-plugin.embeddable")),
         )
     )
 

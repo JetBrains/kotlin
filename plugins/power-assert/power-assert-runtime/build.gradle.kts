@@ -63,21 +63,21 @@ kotlin {
 
     jvm()
 
-    js {
+    /*js {
         browser()
-        nodejs()
-    }
-
+        //nodejs()
+    }*/
+/*
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        nodejs()
+        //nodejs()
     }
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmWasi {
-        nodejs()
+        //nodejs()
     }
-
+*/
     if (kotlinBuildProperties.isInIdeaSync.get()) {
         // This is required because of the common source set dependency on a local stdlib.
         // Only these targets are added in the stdlib project during IDEA sync.

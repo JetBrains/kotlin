@@ -13,7 +13,7 @@ val jsStdlibSources = "${projectDir}/../stdlib/js/src"
 @Suppress("UNUSED_VARIABLE")
 kotlin {
     explicitApi()
-    js()
+    /**/js()
 
     sourceSets {
         jsMain {
@@ -27,7 +27,7 @@ kotlin {
                 api(project(":kotlin-stdlib"))
             }
         }
-    }
+    }/**/
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile>().configureEach {
@@ -49,7 +49,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile>().configureEa
 val emptyJavadocJar = tasks.register("emptyJavadocJar", Jar::class) {
     archiveClassifier.set("javadoc")
 }
-
+/**/
 publishing {
     publications {
         val mavenPublication = register<MavenPublication>("maven") {
@@ -67,5 +67,5 @@ publishing {
         )
     }
 }
-
+/**/
 configureDefaultPublishing()

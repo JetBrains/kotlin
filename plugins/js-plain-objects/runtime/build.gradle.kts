@@ -14,9 +14,9 @@ plugins {
 group = "org.jetbrains.kotlin"
 
 kotlin {
-    js {
+    /*js {
         browser()
-        nodejs()
+        //nodejs()
     }
 
     sourceSets {
@@ -25,7 +25,7 @@ kotlin {
                 compileOnly(project(":kotlin-stdlib"))
             }
         }
-    }
+    }*/
 }
 
 val emptyJavadocJar = tasks.register("emptyJavadocJar", Jar::class) {
