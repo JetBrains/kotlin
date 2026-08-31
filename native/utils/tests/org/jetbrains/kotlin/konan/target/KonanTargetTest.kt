@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.target
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -25,6 +26,8 @@ class KonanTargetTest {
         assertEquals(Family.VISIONOS, KonanTarget.VISIONOS_SIMULATOR_ARM64.family)
         assertEquals(Architecture.ARM64, KonanTarget.VISIONOS_SIMULATOR_ARM64.architecture)
         assertTrue(Family.VISIONOS.isAppleFamily)
+        assertFalse(KonanTarget.VISIONOS_ARM64.supportsCoreSymbolication())
+        assertTrue(KonanTarget.VISIONOS_SIMULATOR_ARM64.supportsCoreSymbolication())
     }
 
     @Test

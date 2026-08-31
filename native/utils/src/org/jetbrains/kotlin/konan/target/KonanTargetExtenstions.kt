@@ -39,7 +39,8 @@ fun KonanTarget.supportsCoreSymbolication(): Boolean =
         this in listOf(
                 KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64, KonanTarget.IOS_X64,
                 KonanTarget.IOS_SIMULATOR_ARM64, KonanTarget.TVOS_X64, KonanTarget.TVOS_SIMULATOR_ARM64,
-                KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_SIMULATOR_ARM64
+                KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_SIMULATOR_ARM64,
+                KonanTarget.VISIONOS_SIMULATOR_ARM64
         )
 
 fun KonanTarget.supportsGccUnwind(): Boolean = family == Family.ANDROID || family == Family.LINUX

@@ -11,7 +11,7 @@
 # jq is required to run the script. It can be installed via `brew install jq`.
 #
 # Args:
-# 1. Platform name: ios, tvos, osx or watchos
+# 1. Platform name: ios, tvos, osx, watchos or visionos
 # 2. Path to Kotlin/Native sources.
 set -e
 
@@ -39,13 +39,20 @@ watchos*)
   DEVICES=("watchos_arm64" "watchos_device_arm64")
   SIMULATORS=("watchos_x64" "watchos_simulator_arm64")
   ;;
+visionos*)
+  DEV_SDK=$(xcrun --show-sdk-path --sdk xros)
+  SIM_SDK=$(xcrun --show-sdk-path --sdk xrsimulator)
+  OS_NAME="visionOS"
+  DEVICES=("visionos_arm64")
+  SIMULATORS=("visionos_simulator_arm64")
+  ;;
 osx*)
   DEV_SDK=$(xcrun --show-sdk-path)
   SIM_SDK=$DEV_SDK
   OS_NAME="macOS"
   ;;
 *)
-  echo "Expected one of: osx ios watchos tvos. Got: $1"
+  echo "Expected one of: osx ios watchos tvos visionos. Got: $1"
   exit 1
 esac
 
