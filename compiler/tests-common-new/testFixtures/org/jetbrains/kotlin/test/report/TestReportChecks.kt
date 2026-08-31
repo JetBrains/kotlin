@@ -11,7 +11,7 @@ package org.jetbrains.kotlin.test.report
  *
  * Each check returns its verdict instead of throwing, so every runner keeps reporting failures through its own sink.
  */
-object TestRunChecks {
+object TestReportChecks {
     sealed interface Result {
         data object Passed : Result
 

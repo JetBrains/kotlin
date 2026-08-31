@@ -169,6 +169,7 @@ class WasiBoxRunner(
                     entryFile = if (!vm.entryPointIsJsFile) "$WASM_BASE_FILE_NAME.wasm" else collectedJsArtifacts.entryPath ?: "test.mjs",
                     jsFilePaths = jsFilePaths,
                     workingDirectory = dir,
+                    executionName = formatWasmExecutionName(vm.vmName, mode),
                     outputCollector = outputCollector,
                 )
             }
@@ -254,6 +255,7 @@ open class WasmWasiFolderGroupingStageBoxRunner(
                 entryFile = if (!vm.entryPointIsJsFile) "$WASM_BASE_FILE_NAME.wasm" else "test.mjs",
                 jsFilePaths = emptyList(),
                 workingDirectory = folder,
+                executionName = formatWasmExecutionName(vm.vmName, "dev"),
                 outputCollector = collectedOutputs,
             )
         }
