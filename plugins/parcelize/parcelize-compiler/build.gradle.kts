@@ -1,3 +1,4 @@
+import TestCompilePaths.PARCELIZE_COMPILER_PLUGIN_CLASSPATH
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import java.util.zip.ZipFile
 
@@ -130,7 +131,7 @@ projectTests {
             provideToThisTaskAsSystemProperty(ProvisioningType.PLATFORM_JAR)
         }
 
-        addClasspathProperty(parcelizeRuntimeForTests, "parcelizeRuntime.classpath")
+        addClasspathProperty(parcelizeRuntimeForTests, PARCELIZE_COMPILER_PLUGIN_CLASSPATH)
         addClasspathProperty(robolectricClasspath, "robolectric.classpath")
         addClasspathProperty(layoutLib, "layoutLib.path")
         addClasspathProperty(layoutLibApi, "layoutLibApi.path")

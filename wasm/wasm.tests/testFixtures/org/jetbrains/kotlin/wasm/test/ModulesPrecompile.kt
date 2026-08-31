@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmIrLoadingPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmSingleModuleBackendPipelinePhase
+import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_WASM_JS_KOTLIN_TEST_KLIB_PATH
+import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_WASM_JS_STDLIB_KLIB_PATH
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -29,9 +31,9 @@ import java.io.File
 private val outputDir: File
     get() = File(System.getProperty("kotlin.wasm.test.root.out.dir") ?: testInfraError("Please set output dir path"))
 private val stdlibPath =
-    File(System.getProperty("kotlin.wasm-js.stdlib.path") ?: testInfraError("Please set stdlib path")).canonicalPath
+    File(System.getProperty(KOTLIN_WASM_JS_STDLIB_KLIB_PATH) ?: testInfraError("Please set stdlib path")).canonicalPath
 private val kotlinTestPath =
-    File(System.getProperty("kotlin.wasm-js.kotlin.test.path") ?: testInfraError("Please set kotlin-test path")).canonicalPath
+    File(System.getProperty(KOTLIN_WASM_JS_KOTLIN_TEST_KLIB_PATH) ?: testInfraError("Please set kotlin-test path")).canonicalPath
 
 const val precompiledStdlibOutputName: String = "kotlin-kotlin-stdlib"
 const val precompiledKotlinTestOutputName: String = "kotlin-kotlin-test"
