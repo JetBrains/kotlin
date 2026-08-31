@@ -214,7 +214,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_DEFAULT_SCRIPT_EXTENSION in this) { arguments.defaultScriptExtension = get(X_DEFAULT_SCRIPT_EXTENSION)}
     if (X_DISABLE_STANDARD_SCRIPT in this) { arguments.disableStandardScript = get(X_DISABLE_STANDARD_SCRIPT)}
     if (X_EMIT_JVM_TYPE_ANNOTATIONS in this) { arguments.emitJvmTypeAnnotations = get(X_EMIT_JVM_TYPE_ANNOTATIONS)}
-    if (X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL in this) { arguments.enhanceTypeParameterTypesToDefNotNull = get(X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL)}
+    try { if (X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL in this) { arguments.setUsingReflection("enhanceTypeParameterTypesToDefNotNull", get(X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_ENHANCED_COROUTINES_DEBUGGING in this) { arguments.enhancedCoroutinesDebugging = get(X_ENHANCED_COROUTINES_DEBUGGING)}
     if (X_FRIEND_PATHS in this) { arguments.friendPaths = get(X_FRIEND_PATHS).map { it.absolutePathStringOrThrow() }.also { list -> list.checkNoneContains(",") }.toTypedArray()}
     if (X_GENERATE_STRICT_METADATA_VERSION in this) { arguments.strictMetadataVersionSemantics = get(X_GENERATE_STRICT_METADATA_VERSION)}
@@ -253,7 +253,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS in this) { arguments.supportCompatqualCheckerFrameworkAnnotations = get(X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS)?.stringValue}
     try { if (X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING in this) { arguments.setUsingReflection("suppressDeprecatedJvmTargetWarning", get(X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_SUPPRESS_MISSING_BUILTINS_ERROR in this) { arguments.suppressMissingBuiltinsError = get(X_SUPPRESS_MISSING_BUILTINS_ERROR)}
-    if (X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE in this) { arguments.typeEnhancementImprovementsInStrictMode = get(X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE)}
+    try { if (X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE in this) { arguments.setUsingReflection("typeEnhancementImprovementsInStrictMode", get(X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_USE_14_INLINE_CLASSES_MANGLING_SCHEME in this) { arguments.useOldInlineClassesManglingScheme = get(X_USE_14_INLINE_CLASSES_MANGLING_SCHEME)}
     if (X_USE_FAST_JAR_FILE_SYSTEM in this) { arguments.useFastJarFileSystem = get(X_USE_FAST_JAR_FILE_SYSTEM)}
     if (X_USE_INLINE_SCOPES_NUMBERS in this) { arguments.useInlineScopesNumbers = get(X_USE_INLINE_SCOPES_NUMBERS)}
@@ -304,7 +304,7 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_DEFAULT_SCRIPT_EXTENSION] = arguments.defaultScriptExtension } catch (_: NoSuchMethodError) {  }
     try { this[X_DISABLE_STANDARD_SCRIPT] = arguments.disableStandardScript } catch (_: NoSuchMethodError) {  }
     try { this[X_EMIT_JVM_TYPE_ANNOTATIONS] = arguments.emitJvmTypeAnnotations } catch (_: NoSuchMethodError) {  }
-    try { this[X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL] = arguments.enhanceTypeParameterTypesToDefNotNull } catch (_: NoSuchMethodError) {  }
+    try { this[X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL] = arguments.getUsingReflection<Boolean>("enhanceTypeParameterTypesToDefNotNull") } catch (_: NoSuchMethodError) {  }
     try { this[X_ENHANCED_COROUTINES_DEBUGGING] = arguments.enhancedCoroutinesDebugging } catch (_: NoSuchMethodError) {  }
     try { this[X_FRIEND_PATHS] = arguments.friendPaths.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_GENERATE_STRICT_METADATA_VERSION] = arguments.strictMetadataVersionSemantics } catch (_: NoSuchMethodError) {  }
@@ -343,7 +343,7 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS] = arguments.supportCompatqualCheckerFrameworkAnnotations?.let { CompatqualAnnotationsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::supportCompatqualCheckerFrameworkAnnotations, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xsupport-compatqual-checker-framework-annotations value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING] = arguments.getUsingReflection<Boolean>("suppressDeprecatedJvmTargetWarning") } catch (_: NoSuchMethodError) {  }
     try { this[X_SUPPRESS_MISSING_BUILTINS_ERROR] = arguments.suppressMissingBuiltinsError } catch (_: NoSuchMethodError) {  }
-    try { this[X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE] = arguments.typeEnhancementImprovementsInStrictMode } catch (_: NoSuchMethodError) {  }
+    try { this[X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE] = arguments.getUsingReflection<Boolean>("typeEnhancementImprovementsInStrictMode") } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_14_INLINE_CLASSES_MANGLING_SCHEME] = arguments.useOldInlineClassesManglingScheme } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_FAST_JAR_FILE_SYSTEM] = arguments.useFastJarFileSystem } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_INLINE_SCOPES_NUMBERS] = arguments.useInlineScopesNumbers } catch (_: NoSuchMethodError) {  }
@@ -391,7 +391,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_DEFAULT_SCRIPT_EXTENSION in this) { arguments.defaultScriptExtension = get(X_DEFAULT_SCRIPT_EXTENSION)}
     if (X_DISABLE_STANDARD_SCRIPT in this) { arguments.disableStandardScript = get(X_DISABLE_STANDARD_SCRIPT)}
     if (X_EMIT_JVM_TYPE_ANNOTATIONS in this) { arguments.emitJvmTypeAnnotations = get(X_EMIT_JVM_TYPE_ANNOTATIONS)}
-    if (X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL in this) { arguments.enhanceTypeParameterTypesToDefNotNull = get(X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL)}
+    try { if (X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL in this) { arguments.setUsingReflection("enhanceTypeParameterTypesToDefNotNull", get(X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_ENHANCED_COROUTINES_DEBUGGING in this) { arguments.enhancedCoroutinesDebugging = get(X_ENHANCED_COROUTINES_DEBUGGING)}
     if (X_FRIEND_PATHS in this) { arguments.friendPaths = get(X_FRIEND_PATHS).map { it.absolutePathStringOrThrow() }.also { list -> list.checkNoneContains(",") }.toTypedArray()}
     if (X_GENERATE_STRICT_METADATA_VERSION in this) { arguments.strictMetadataVersionSemantics = get(X_GENERATE_STRICT_METADATA_VERSION)}
@@ -430,7 +430,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS in this) { arguments.supportCompatqualCheckerFrameworkAnnotations = get(X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS)?.stringValue}
     try { if (X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING in this) { arguments.setUsingReflection("suppressDeprecatedJvmTargetWarning", get(X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_SUPPRESS_MISSING_BUILTINS_ERROR in this) { arguments.suppressMissingBuiltinsError = get(X_SUPPRESS_MISSING_BUILTINS_ERROR)}
-    if (X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE in this) { arguments.typeEnhancementImprovementsInStrictMode = get(X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE)}
+    try { if (X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE in this) { arguments.setUsingReflection("typeEnhancementImprovementsInStrictMode", get(X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_USE_14_INLINE_CLASSES_MANGLING_SCHEME in this) { arguments.useOldInlineClassesManglingScheme = get(X_USE_14_INLINE_CLASSES_MANGLING_SCHEME)}
     if (X_USE_FAST_JAR_FILE_SYSTEM in this) { arguments.useFastJarFileSystem = get(X_USE_FAST_JAR_FILE_SYSTEM)}
     if (X_USE_INLINE_SCOPES_NUMBERS in this) { arguments.useInlineScopesNumbers = get(X_USE_INLINE_SCOPES_NUMBERS)}

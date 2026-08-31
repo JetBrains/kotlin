@@ -27,8 +27,6 @@ where advanced options include:
                              Compile expressions and unrecognized scripts passed with the -script argument as scripts with the given filename extension.
   -Xdisable-standard-script  Disable standard Kotlin scripting support.
   -Xemit-jvm-type-annotations Emit JVM type annotations in bytecode.
-  -Xenhance-type-parameter-types-to-def-not-null
-                             Enhance not-null-annotated type parameter types to definitely-non-nullable types ('@NotNull T' => 'T & Any').
   -Xenhanced-coroutines-debugging
                              Generate additional linenumber instruction for compiler-generated code
                              inside suspend functions and lambdas to distinguish them from user code by debugger.
@@ -117,10 +115,6 @@ where advanced options include:
                              The default value is 'enable'.
   -Xsuppress-missing-builtins-error
                              Suppress the "cannot access built-in declaration" error (useful with '-no-stdlib').
-  -Xtype-enhancement-improvements-strict-mode
-                             Enable strict mode for improvements to type enhancement for loaded Java types based on nullability annotations,
-                             including the ability to read type-use annotations from class files.
-                             See KT-45671 for more details.
   -Xuse-14-inline-classes-mangling-scheme
                              Use the scheme for inline class mangling from version 1.4 instead of the one from 1.4.30.
   -Xuse-fast-jar-file-system Use the fast implementation of Jar FS. This may speed up compilation time, but it is experimental.
@@ -241,7 +235,6 @@ where advanced options include:
                              -Xheader-mode-type=any: Can be used for any downstream dependency which doesn't require linking.
   -Xignore-const-optimization-errors
                              Ignore all compilation exceptions while optimizing some constant expressions.
-  -Xinline-classes           Enable experimental inline classes.
   -Xintellij-plugin-root=<path> Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.
                              The option is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases.
   -Xintrinsic-const-evaluation Enables `IntrinsicConstEvaluation` language feature.`
@@ -257,7 +250,6 @@ where advanced options include:
                              -Xname-based-destructuring=name-mismatch: Reports warnings when short form positional destructuring of data classes uses names that don't match the property names;
                              -Xname-based-destructuring=complete:      Enables short-form name-based destructuring with parentheses;
   -Xnested-type-aliases      Enable experimental language support for nested type aliases.
-  -Xnew-inference            Enable the new experimental generic type inference algorithm.
   -Xno-check-actual          Do not check for the presence of the 'actual' modifier in multiplatform projects.
   -Xno-inline                Disable method inlining.
   -Xnon-local-break-continue Enable experimental non-local break and continue.
@@ -287,8 +279,6 @@ where advanced options include:
   -Xsuppress-warning=<WARNING_NAME>
                              Suppress specified warning module-wide.
                              The option is deprecated since Kotlin 2.2.0. It will be removed in one of the future releases. Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings).
-  -Xunrestricted-builder-inference
-                             Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
   -Xuse-fir-experimental-checkers
                              Enable experimental frontend IR checkers that are not yet ready for production.
                              The option is deprecated since Kotlin 2.2.20. It will be removed in one of the future releases.

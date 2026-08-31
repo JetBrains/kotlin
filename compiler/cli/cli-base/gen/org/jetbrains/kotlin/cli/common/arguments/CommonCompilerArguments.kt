@@ -662,17 +662,6 @@ with bodies.""",
             field = value
         }
 
-    @Argument(
-        value = "-Xinline-classes",
-        description = "Enable experimental inline classes.",
-    )
-    @Enables(LanguageFeature.InlineClasses)
-    var inlineClasses: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @all:Deprecated("")
     @Argument(
         value = "-Xintellij-plugin-root",
@@ -790,20 +779,6 @@ with bodies.""",
     )
     @Enables(LanguageFeature.NestedTypeAliases)
     var nestedTypeAliases: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xnew-inference",
-        description = "Enable the new experimental generic type inference algorithm.",
-    )
-    @Enables(LanguageFeature.NewInference)
-    @Enables(LanguageFeature.SamConversionPerArgument)
-    @Enables(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType)
-    @Enables(LanguageFeature.DisableCompatibilityModeForNewInference)
-    var newInference: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -1052,17 +1027,6 @@ with bodies.""",
         deprecatedVersion = "2.2.0",
     )
     var suppressedDiagnostics: Array<String> = emptyArray()
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xunrestricted-builder-inference",
-        description = "Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.",
-    )
-    @Enables(LanguageFeature.UnrestrictedBuilderInference)
-    var unrestrictedBuilderInference: Boolean = false
         set(value) {
             checkFrozen()
             field = value

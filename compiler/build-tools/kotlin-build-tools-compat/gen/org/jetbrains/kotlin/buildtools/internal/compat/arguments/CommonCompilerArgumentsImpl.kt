@@ -204,7 +204,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     if (X_FRAGMENT_SOURCES in this) { arguments.fragmentSources = get(X_FRAGMENT_SOURCES) ?: emptyArray()}
     if (X_FRAGMENTS in this) { arguments.fragments = get(X_FRAGMENTS) ?: emptyArray()}
     if (X_IGNORE_CONST_OPTIMIZATION_ERRORS in this) { arguments.ignoreConstOptimizationErrors = get(X_IGNORE_CONST_OPTIMIZATION_ERRORS)}
-    if (X_INLINE_CLASSES in this) { arguments.inlineClasses = get(X_INLINE_CLASSES)}
+    try { if (X_INLINE_CLASSES in this) { arguments.setUsingReflection("inlineClasses", get(X_INLINE_CLASSES))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_INLINE_CLASSES. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_INTELLIJ_PLUGIN_ROOT in this) { arguments.intellijPluginRoot = get(X_INTELLIJ_PLUGIN_ROOT)}
     if (X_LIST_PHASES in this) { arguments.listPhases = get(X_LIST_PHASES)}
     try { if (X_METADATA_KLIB in this) { arguments.metadataKlib = get(X_METADATA_KLIB)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_METADATA_KLIB. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.0""").initCause(e) }
@@ -212,7 +212,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     try { if (X_MULTI_DOLLAR_INTERPOLATION in this) { arguments.multiDollarInterpolation = get(X_MULTI_DOLLAR_INTERPOLATION)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_MULTI_DOLLAR_INTERPOLATION. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.20""").initCause(e) }
     if (X_MULTI_PLATFORM in this) { arguments.multiPlatform = get(X_MULTI_PLATFORM)}
     try { if (X_NESTED_TYPE_ALIASES in this) { arguments.nestedTypeAliases = get(X_NESTED_TYPE_ALIASES)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_NESTED_TYPE_ALIASES. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.20""").initCause(e) }
-    if (X_NEW_INFERENCE in this) { arguments.newInference = get(X_NEW_INFERENCE)}
+    try { if (X_NEW_INFERENCE in this) { arguments.setUsingReflection("newInference", get(X_NEW_INFERENCE))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_NEW_INFERENCE. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_NO_CHECK_ACTUAL in this) { arguments.noCheckActual = get(X_NO_CHECK_ACTUAL)}
     if (X_NO_INLINE in this) { arguments.noInline = get(X_NO_INLINE)}
     try { if (X_NON_LOCAL_BREAK_CONTINUE in this) { arguments.nonLocalBreakContinue = get(X_NON_LOCAL_BREAK_CONTINUE)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_NON_LOCAL_BREAK_CONTINUE. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.0""").initCause(e) }
@@ -237,7 +237,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     try { if (X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR in this) { arguments.setUsingReflection("suppressApiVersionGreaterThanLanguageVersionError", get(X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.0 and removed in 2.5.0""").initCause(e) }
     if (X_SUPPRESS_VERSION_WARNINGS in this) { arguments.suppressVersionWarnings = get(X_SUPPRESS_VERSION_WARNINGS)}
     try { if (X_SUPPRESS_WARNING in this) { arguments.suppressedDiagnostics = get(X_SUPPRESS_WARNING).toTypedArray()} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SUPPRESS_WARNING. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.0""").initCause(e) }
-    if (X_UNRESTRICTED_BUILDER_INFERENCE in this) { arguments.unrestrictedBuilderInference = get(X_UNRESTRICTED_BUILDER_INFERENCE)}
+    try { if (X_UNRESTRICTED_BUILDER_INFERENCE in this) { arguments.setUsingReflection("unrestrictedBuilderInference", get(X_UNRESTRICTED_BUILDER_INFERENCE))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_UNRESTRICTED_BUILDER_INFERENCE. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     try { if (X_USE_FIR_EXPERIMENTAL_CHECKERS in this) { arguments.useFirExperimentalCheckers = get(X_USE_FIR_EXPERIMENTAL_CHECKERS)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_FIR_EXPERIMENTAL_CHECKERS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.0""").initCause(e) }
     if (X_USE_FIR_IC in this) { arguments.useFirIC = get(X_USE_FIR_IC)}
     if (X_USE_FIR_LT in this) { arguments.useFirLT = get(X_USE_FIR_LT)}
@@ -294,7 +294,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     try { this[X_FRAGMENT_SOURCES] = arguments.fragmentSources } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENTS] = arguments.fragments } catch (_: NoSuchMethodError) {  }
     try { this[X_IGNORE_CONST_OPTIMIZATION_ERRORS] = arguments.ignoreConstOptimizationErrors } catch (_: NoSuchMethodError) {  }
-    try { this[X_INLINE_CLASSES] = arguments.inlineClasses } catch (_: NoSuchMethodError) {  }
+    try { this[X_INLINE_CLASSES] = arguments.getUsingReflection<Boolean>("inlineClasses") } catch (_: NoSuchMethodError) {  }
     try { this[X_INTELLIJ_PLUGIN_ROOT] = arguments.intellijPluginRoot } catch (_: NoSuchMethodError) {  }
     try { this[X_LIST_PHASES] = arguments.listPhases } catch (_: NoSuchMethodError) {  }
     try { this[X_METADATA_KLIB] = arguments.metadataKlib } catch (_: NoSuchMethodError) {  }
@@ -302,7 +302,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     try { this[X_MULTI_DOLLAR_INTERPOLATION] = arguments.multiDollarInterpolation } catch (_: NoSuchMethodError) {  }
     try { this[X_MULTI_PLATFORM] = arguments.multiPlatform } catch (_: NoSuchMethodError) {  }
     try { this[X_NESTED_TYPE_ALIASES] = arguments.nestedTypeAliases } catch (_: NoSuchMethodError) {  }
-    try { this[X_NEW_INFERENCE] = arguments.newInference } catch (_: NoSuchMethodError) {  }
+    try { this[X_NEW_INFERENCE] = arguments.getUsingReflection<Boolean>("newInference") } catch (_: NoSuchMethodError) {  }
     try { this[X_NO_CHECK_ACTUAL] = arguments.noCheckActual } catch (_: NoSuchMethodError) {  }
     try { this[X_NO_INLINE] = arguments.noInline } catch (_: NoSuchMethodError) {  }
     try { this[X_NON_LOCAL_BREAK_CONTINUE] = arguments.nonLocalBreakContinue } catch (_: NoSuchMethodError) {  }
@@ -327,7 +327,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     try { this[X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR] = arguments.getUsingReflection<Boolean>("suppressApiVersionGreaterThanLanguageVersionError") } catch (_: NoSuchMethodError) {  }
     try { this[X_SUPPRESS_VERSION_WARNINGS] = arguments.suppressVersionWarnings } catch (_: NoSuchMethodError) {  }
     try { this[X_SUPPRESS_WARNING] = arguments.suppressedDiagnostics.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_UNRESTRICTED_BUILDER_INFERENCE] = arguments.unrestrictedBuilderInference } catch (_: NoSuchMethodError) {  }
+    try { this[X_UNRESTRICTED_BUILDER_INFERENCE] = arguments.getUsingReflection<Boolean>("unrestrictedBuilderInference") } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_FIR_EXPERIMENTAL_CHECKERS] = arguments.useFirExperimentalCheckers } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_FIR_IC] = arguments.useFirIC } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_FIR_LT] = arguments.useFirLT } catch (_: NoSuchMethodError) {  }

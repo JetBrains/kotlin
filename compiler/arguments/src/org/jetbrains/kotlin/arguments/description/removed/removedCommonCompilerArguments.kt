@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.previous
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
+import org.jetbrains.kotlin.cli.common.arguments.Enables
+import org.jetbrains.kotlin.config.LanguageFeature
 
 val removedCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.commonCompilerArguments) {
     compilerArgument {
@@ -84,6 +86,53 @@ val removedCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLe
             introducedVersion = introducedVersion,
             deprecatedVersion = introducedVersion, // It was deprecated upon introduction as it served only as a temporary workaround.
             removedVersion = removedVersion,
+        )
+    }
+
+    compilerArgument {
+        name = "Xinline-classes"
+        description = "Enable experimental inline classes.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            Enables(LanguageFeature.InlineClasses)
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_3_50,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xnew-inference"
+        description = "Enable the new experimental generic type inference algorithm.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            Enables(LanguageFeature.NewInference),
+            Enables(LanguageFeature.SamConversionPerArgument),
+            Enables(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType),
+            Enables(LanguageFeature.DisableCompatibilityModeForNewInference),
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_2_20,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xunrestricted-builder-inference"
+        description =
+            "Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.UnrestrictedBuilderInference))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_30,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
 }

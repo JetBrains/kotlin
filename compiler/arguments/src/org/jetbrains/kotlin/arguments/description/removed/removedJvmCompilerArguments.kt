@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.SearchPathType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
+import org.jetbrains.kotlin.cli.common.arguments.Enables
+import org.jetbrains.kotlin.config.LanguageFeature
 
 val removedJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jvmCompilerArguments) {
     compilerArgument {
@@ -167,4 +169,35 @@ This option has no effect and will be deleted in a future version.""",
             removedVersion = removedVersion,
         )
     }
+
+    compilerArgument {
+        name = "Xtype-enhancement-improvements-strict-mode"
+        compilerName = "typeEnhancementImprovementsInStrictMode"
+        description = """Enable strict mode for improvements to type enhancement for loaded Java types based on nullability annotations,
+including the ability to read type-use annotations from class files.
+See KT-45671 for more details.""".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.TypeEnhancementImprovementsInStrictMode))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_0,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xenhance-type-parameter-types-to-def-not-null"
+        description =
+            "Enhance not-null-annotated type parameter types to definitely-non-nullable types ('@NotNull T' => 'T & Any').".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_6_0,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
 }

@@ -821,20 +821,6 @@ This works like '--enable-preview' in Java. All class files are marked as compil
         )
     }
 
-    compilerArgument {
-        name = "Xtype-enhancement-improvements-strict-mode"
-        compilerName = "typeEnhancementImprovementsInStrictMode"
-        description = """Enable strict mode for improvements to type enhancement for loaded Java types based on nullability annotations,
-including the ability to read type-use annotations from class files.
-See KT-45671 for more details.""".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(Enables(LanguageFeature.TypeEnhancementImprovementsInStrictMode))
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_0,
-        )
-    }
 
     compilerArgument {
         name = "Xvalidate-bytecode"
@@ -846,18 +832,6 @@ See KT-45671 for more details.""".asReleaseDependent()
         )
     }
 
-    compilerArgument {
-        name = "Xenhance-type-parameter-types-to-def-not-null"
-        description =
-            "Enhance not-null-annotated type parameter types to definitely-non-nullable types ('@NotNull T' => 'T & Any').".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(Enables(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated))
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_6_0,
-        )
-    }
 
     compilerArgument {
         name = "Xdebug"
