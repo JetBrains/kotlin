@@ -20,10 +20,12 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
+import java.io.InputStream
 
 /**
- * The `test.mjs` launcher script for running WASI tests under Node.js, exiting with code 1 on any uncaught
- * exception (e.g. a hard VM trap).
+ * The `test.mjs` launcher for WASI unit-test and grouped runs under Node.js, exiting with code 1 on any uncaught
+ * exception (e.g. a hard VM trap). WasmEdge and Wasmtime bypass this script and invoke the artifact's `startTest`
+ * export directly (see [WasmVM.WasmEdge] and [WasmVM.Wasmtime]).
  *
  * [callGroupedTestsDriver] must come from the artifact the stage-2 facade produced, not from probing the exports:
  * `wasiBoxTestRun.kt` exports a `startTest()` of its own that merely runs `box()`, so a probe would run `box()` in
@@ -40,22 +42,211 @@ fun startUnitTestsWasiScript(callGroupedTestsDriver: Boolean): String = """
     }
     """.trimIndent()
 
+private const val WASM_EXPORT_SECTION_ID = 7
+private const val WASM_FUNCTION_EXPORT_KIND = 0
+private const val WASM_SKIP_BUFFER_SIZE = 8 * 1024L
+private const val WASM_BINARY_MAGIC = 0x6D736100L
+private const val WASM_BINARY_VERSION = 1L
+private val REQUIRED_WASM_EXPORT_NAMES = listOf("runBoxTest", "startTest")
+private val REQUIRED_WASM_EXPORT_NAME_BYTES = REQUIRED_WASM_EXPORT_NAMES.associateWith { it.toByteArray(Charsets.UTF_8) }
+
+internal const val MAX_WASM_EXPORT_SECTION_SIZE = 64 * 1024 * 1024L
+internal const val MAX_WASM_EXPORT_NAME_SIZE = 1024 * 1024L
+
+internal fun readWasmExportNames(wasmFile: File): Set<String> = try {
+    wasmFile.inputStream().buffered().use { input ->
+        val reader = WasmBinaryReader(input, remaining = wasmFile.length())
+        require(reader.readUInt32() == WASM_BINARY_MAGIC) { "Invalid Wasm binary magic" }
+        require(reader.readUInt32() == WASM_BINARY_VERSION) { "Unsupported Wasm binary version" }
+
+        var exportedNames: Set<String>? = null
+        var reachedEnd = false
+        while (exportedNames == null && !reachedEnd) {
+            val sectionId = reader.readByteOrNull()
+            if (sectionId == null) {
+                reachedEnd = true
+            } else {
+                val sectionSize = reader.readVarUInt32()
+                if (sectionId == WASM_EXPORT_SECTION_ID) {
+                    exportedNames = reader.readExportNames(sectionSize)
+                } else {
+                    reader.skip(sectionSize)
+                }
+            }
+        }
+        exportedNames ?: emptySet()
+    }
+} catch (e: Exception) {
+    testInfraError("Failed to read Wasm exports from ${wasmFile.absolutePath}: ${e.message}")
+}
+
+private class WasmBinaryReader(
+    private val input: InputStream,
+    private var remaining: Long,
+) {
+    fun readByteOrNull(): Int? {
+        if (remaining == 0L) return null
+
+        val value = input.read()
+        if (value < 0) {
+            error("Unexpected end of Wasm section")
+        }
+
+        remaining--
+        return value
+    }
+
+    private fun readByte(): Int = readByteOrNull() ?: error("Unexpected end of Wasm binary")
+
+    fun readUInt32(): Long {
+        var result = 0L
+        repeat(4) { byteIndex ->
+            result = result or (readByte().toLong() shl (byteIndex * 8))
+        }
+        return result
+    }
+
+    /**
+     * Deliberately not [org.jetbrains.kotlin.utils.readUnsignedLeb128]: that shared decoder does not reject a fifth
+     * byte whose value exceeds the 4 bits a 32-bit LEB128 has room for in it. Such a byte just gets OR'd in and
+     * shifted by 28, and `UInt.shl` does not throw on overflow — it silently drops any bit that lands at position 32
+     * or beyond, so e.g. the 5-byte sequence `80 80 80 80 10` decodes there to `0u` instead of failing. Reusing it
+     * here would let a corrupted section-size byte silently misread as zero rather than surfacing the corruption,
+     * which is the one thing this reader exists to catch — hence the extra `shift == 28` check below.
+     */
+    fun readVarUInt32(): Long {
+        var result = 0L
+        for (shift in 0..28 step 7) {
+            val byte = readByte()
+            val value = byte and 0x7F
+            if (shift == 28 && value > 0x0F) {
+                error("Invalid unsigned 32-bit LEB128 number")
+            }
+            result = result or (value.toLong() shl shift)
+            if (byte and 0x80 == 0) return result
+        }
+        error("Invalid unsigned 32-bit LEB128 number")
+    }
+
+    fun readExportNames(sectionSize: Long): Set<String> {
+        require(sectionSize <= MAX_WASM_EXPORT_SECTION_SIZE) {
+            "Wasm export section is too large ($sectionSize bytes; maximum is $MAX_WASM_EXPORT_SECTION_SIZE)"
+        }
+        requireAvailable(sectionSize)
+
+        val section = WasmBinaryReader(input, sectionSize)
+        val exportCount = section.readVarUInt32()
+        val names = mutableSetOf<String>()
+
+        var exportIndex = 0L
+        while (exportIndex < exportCount && names.size < REQUIRED_WASM_EXPORT_NAMES.size) {
+            val name = section.readRequiredExportNameOrNull()
+            val exportKind = section.readByte()
+            section.readVarUInt32() // export index
+            if (exportKind == WASM_FUNCTION_EXPORT_KIND && name != null) {
+                names += name
+            }
+            exportIndex++
+        }
+
+        if (names.size == REQUIRED_WASM_EXPORT_NAMES.size) {
+            section.skip(section.remaining)
+        }
+        section.requireFullyConsumed()
+        consume(sectionSize)
+        return names
+    }
+
+    private fun readRequiredExportNameOrNull(): String? {
+        val size = readVarUInt32()
+        val requiredName = REQUIRED_WASM_EXPORT_NAME_BYTES.entries.firstOrNull { it.value.size.toLong() == size }
+        if (requiredName == null) {
+            skip(size)
+            return null
+        }
+
+        val bytes = readBytes(size)
+        return requiredName.key.takeIf { bytes.contentEquals(requiredName.value) }
+    }
+
+    private fun readBytes(size: Long): ByteArray {
+        require(size <= MAX_WASM_EXPORT_NAME_SIZE) {
+            "Wasm export name is too large ($size bytes; maximum is $MAX_WASM_EXPORT_NAME_SIZE)"
+        }
+        requireAvailable(size)
+
+        val bytes = ByteArray(size.toInt())
+        var offset = 0
+        while (offset < bytes.size) {
+            val read = input.read(bytes, offset, bytes.size - offset)
+            when {
+                read < 0 -> error("Unexpected end of Wasm binary")
+                read == 0 -> bytes[offset++] = readByte().toByte()
+                else -> {
+                    consume(read.toLong())
+                    offset += read
+                }
+            }
+        }
+        return bytes
+    }
+
+    fun skip(size: Long) {
+        require(size >= 0) { "Cannot skip a negative number of bytes" }
+        requireAvailable(size)
+
+        val buffer = ByteArray(minOf(size, WASM_SKIP_BUFFER_SIZE).toInt())
+        var left = size
+        while (left > 0) {
+            val read = input.read(buffer, 0, minOf(left, buffer.size.toLong()).toInt())
+            if (read <= 0) error("Unexpected end of Wasm binary: a section declares more bytes than the file holds")
+            consume(read.toLong())
+            left -= read
+        }
+    }
+
+    private fun requireAvailable(size: Long) {
+        require(size >= 0) { "Negative Wasm byte vector size" }
+        if (size > remaining) {
+            error("A Wasm section declares more bytes ($size) than remain in its enclosing section ($remaining)")
+        }
+    }
+
+    private fun consume(size: Long) {
+        require(size <= remaining) { "Read past the end of a Wasm section" }
+        remaining -= size
+    }
+
+    private fun requireFullyConsumed() {
+        require(remaining == 0L) { "Wasm export section contains trailing bytes" }
+    }
+}
+
 internal fun assertDriverOwnsStartTestExport(dir: File) {
-    val glue = dir.resolve("$WASM_BASE_FILE_NAME.mjs").takeIf(File::exists) ?: return
-    val exportedNames = glue.readText()
-    if (Regex("\\brunBoxTest\\b") in exportedNames) {
+    if (!dir.isDirectory) return
+
+    val wasmFile = dir.resolve("$WASM_BASE_FILE_NAME.wasm")
+    if (!wasmFile.exists()) {
+        testInfraError(
+            "A driver-linked grouped batch left no `$WASM_BASE_FILE_NAME.wasm` in ${dir.absolutePath}, so the " +
+                    "invariant that the bare `startTest` export belongs to the result-collecting driver cannot be " +
+                    "checked. Either the linker names its output differently now, or the batch produced no binary."
+        )
+    }
+    val exportedNames = readWasmExportNames(wasmFile)
+    if ("runBoxTest" in exportedNames) {
         testInfraError(
             "The linked binary of a driver-linked grouped batch exports `runBoxTest` from a per-test " +
-                    "`wasiBoxTestRun.kt` helper (${glue.absolutePath}). Helper exports are expected to never reach a " +
+                    "`wasiBoxTestRun.kt` helper (${wasmFile.absolutePath}). Helper exports are expected to never reach a " +
                     "grouped link, and the standalone WASI VMs invoke the bare `startTest` export — which is now " +
                     "ambiguous between the driver and the helper, so the batch may run a single `box()` instead of " +
                     "the result-collecting driver."
         )
     }
-    if (Regex("\\bstartTest\\b") !in exportedNames) {
+    if ("startTest" !in exportedNames) {
         testInfraError(
             "The linked binary of a driver-linked grouped batch does not export `startTest` " +
-                    "(${glue.absolutePath}), so no WASI VM can invoke the result-collecting driver."
+                    "(${wasmFile.absolutePath}), so no WASI VM can invoke the result-collecting driver."
         )
     }
 }

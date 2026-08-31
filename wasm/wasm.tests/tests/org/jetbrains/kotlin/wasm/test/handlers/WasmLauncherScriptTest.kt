@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.wasm.test.handlers
 
+import org.jetbrains.kotlin.wasm.test.blackbox.WasmJsGroupedTestsExportedEntryPointGenerator
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -19,11 +21,30 @@ class WasmLauncherScriptTest {
     }
 
     @Test
+    fun `given the generated wasm-js entry point then the launcher calls exactly the name it exports`() {
+        val entryPoint = WasmJsGroupedTestsExportedEntryPointGenerator.generateExportedEntryPointSource("__runAll")
+
+        assertTrue("@JsExport" in entryPoint, entryPoint)
+        assertTrue("__runAll()" in entryPoint, entryPoint)
+
+        val exportedName = EXPORTED_FUNCTION_NAME.find(entryPoint)?.groupValues?.get(1)
+        assertEquals("runGroupedTests", exportedName, entryPoint)
+        assertTrue(
+            "jsModule.$exportedName();" in generateWasmJsUnitTestRunnerInvocation(callGroupedTestsDriver = true),
+            entryPoint,
+        )
+    }
+
+    @Test
     fun `given a batch without the generated driver then the launcher calls unit tests even if the export exists`() {
         val invocation = generateWasmJsUnitTestRunnerInvocation(callGroupedTestsDriver = false)
 
         assertTrue("jsModule.startUnitTests();" in invocation, invocation)
         assertFalse("runGroupedTests" in invocation, invocation)
         assertTrue("hasTestFailures" in invocation, invocation)
+    }
+
+    private companion object {
+        val EXPORTED_FUNCTION_NAME = Regex("""fun\s+(\w+)\(""")
     }
 }
