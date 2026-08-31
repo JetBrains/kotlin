@@ -339,9 +339,12 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
         val diagnosticsReporter = configuration.diagnosticsCollector
         val destination = Path(configuration.jklibOutputDestination ?: "result.klib").absolute()
 
+        val skipIr = configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode) &&
+            configuration.languageVersionSettings.getFlag(AnalysisFlags.headerModeType) == HeaderMode.COMPILATION
+
         val serializerOutput = serializeModuleIntoKlib(
             moduleName = fir2IrResult.irModuleFragment.name.asString(),
-            irModuleFragment = fir2IrResult.irModuleFragment,
+            irModuleFragment = if (skipIr) null else fir2IrResult.irModuleFragment,
             configuration = configuration,
             diagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
                 diagnosticsReporter.deduplicating(),
