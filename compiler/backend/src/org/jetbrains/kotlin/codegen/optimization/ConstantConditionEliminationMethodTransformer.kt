@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.optimization
 
+import org.jetbrains.kotlin.codegen.inline.getLabelToIndexMap
 import org.jetbrains.kotlin.codegen.inline.getLineNumberOrNull
 import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -51,6 +53,8 @@ class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
         opcode in Opcodes.IFEQ..Opcodes.IFLE || opcode in Opcodes.IF_ICMPEQ..Opcodes.IF_ICMPLE
 
     private class ConstantConditionsOptimization(val internalClassName: String, val methodNode: MethodNode) {
+        val inlineScopes by lazy(LazyThreadSafetyMode.NONE) { methodNode.computeInlineScopes() }
+
         fun runOnce(): Boolean {
             var changed = false
 
@@ -145,6 +149,9 @@ class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
             val targetInsn = insn.targetExecutableInsn() ?: return false
             if (targetInsn.opcode !in Opcodes.IFEQ..Opcodes.IFLE) return false
 
+            // Do not optimize jumps across inline scopes, as it messes debug information.
+            if (inlineScopes[insn] !== inlineScopes[targetInsn]) return false
+
             methodNode.instructions.insertBefore(insn, InsnNode(Opcodes.POP))
 
             getLineNumberOrNull(targetInsn)?.takeUnless { it == getLineNumberOrNull(insn) }?.let { lineNumber ->
@@ -232,3 +239,32 @@ private val BasicValue.intConstant: Int?
         is IConstValue -> value
         else -> null
     }
+
+/**
+ * Maps every instruction inside an inline scope to the innermost inline marker variable.
+ */
+private fun MethodNode.computeInlineScopes(): Map<AbstractInsnNode, LocalVariableNode> {
+    val markers = localVariables?.filter { JvmAbi.isFakeLocalVariableForInline(it.name) }
+    if (markers.isNullOrEmpty()) return emptyMap()
+
+    val labelToIndex = getLabelToIndexMap()
+    val opening = HashMap<LabelNode, MutableList<LocalVariableNode>>()
+    val closing = HashMap<LabelNode, MutableList<LocalVariableNode>>()
+
+    // Widest first, so that the narrowest ends up on top of `active`
+    markers.sortedByDescending { labelToIndex[it.end.label]!! - labelToIndex[it.start.label]!! }.forEach { marker ->
+        opening.getOrPut(marker.start) { mutableListOf() }.add(marker)
+        closing.getOrPut(marker.end) { mutableListOf() }.add(marker)
+    }
+
+    val result = HashMap<AbstractInsnNode, LocalVariableNode>()
+    val active = mutableListOf<LocalVariableNode>()
+    for (insn in instructions) {
+        if (insn is LabelNode) {
+            closing[insn]?.let(active::removeAll)
+            opening[insn]?.let(active::addAll)
+        }
+        active.lastOrNull()?.let { result[insn] = it }
+    }
+    return result
+}
