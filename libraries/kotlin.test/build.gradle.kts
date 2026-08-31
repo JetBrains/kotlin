@@ -1,6 +1,7 @@
 @file:Suppress("UNUSED_VARIABLE")
 
 import com.google.gson.GsonBuilder
+import org.gradle.kotlin.dsl.support.serviceOf
 import com.google.gson.JsonObject
 import org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework
 import org.gradle.api.publish.internal.PublicationInternal
@@ -31,6 +32,7 @@ plugins {
 
 description = "Kotlin Test Library"
 base.archivesName = "kotlin-test"
+val buildFeatures = serviceOf<BuildFeatures>()
 
 jvmToolchains {
     targetBytecodeVersion = JdkMajorVersion.JDK_1_8
@@ -118,11 +120,14 @@ kotlin {
             test.associateWith(getByName("JUnit"))
         }
     }
+
     js {
-        if (!kotlinBuildProperties.isTeamcityBuild.get()) {
-            browser {}
+        if (!buildFeatures.isolatedProjects.active.get()) {
+            if (!kotlinBuildProperties.isTeamcityBuild.get()) {
+                browser {}
+            }
+            nodejs {}
         }
-        nodejs {}
         compilations["main"].compileTaskProvider.configure {
             compilerOptions.freeCompilerArgs.addAll(
                 "-Xir-module-name=$KOTLINTEST_MODULE_NAME",
@@ -133,7 +138,9 @@ kotlin {
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        nodejs()
+        if (!buildFeatures.isolatedProjects.active.get()) {
+            nodejs()
+        }
         compilerOptions {
             sourceMap = false
             sourceMapEmbedSources.unsetConvention()
@@ -145,7 +152,9 @@ kotlin {
     }
     @OptIn(ExperimentalWasmDsl::class)
     wasmWasi {
-        nodejs()
+        if (!buildFeatures.isolatedProjects.active.get()) {
+            nodejs()
+        }
         // cast is necessary because of KT-85971
         // update after bootstrap
         (this as KotlinJsTargetDsl).compilerOptions {
@@ -157,7 +166,6 @@ kotlin {
             compilerOptions.addReturnValueCheckerInfo()
         }
     }
-
     targets.all {
         compilations.all {
             compileTaskProvider.configure {
@@ -343,7 +351,6 @@ tasks {
     val allTests = named("allTests") {
         dependsOn(jvmTestTasks)
     }
-
     val generateProjectStructureMetadata = named("generateProjectStructureMetadata", GenerateProjectStructureMetadata::class) {
         val outputTestFile = file("kotlin-project-structure-metadata.beforePatch.json")
         val patchedFile = file("kotlin-project-structure-metadata.json")
