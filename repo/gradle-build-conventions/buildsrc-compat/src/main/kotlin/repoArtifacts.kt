@@ -238,46 +238,7 @@ fun Project.sourcesJarWithSourcesFromEmbedded(
     return sourcesJarTask
 }
 
-@JvmOverloads
-fun Jar.addEmbeddedSources(configurationName: String = "embedded") {
-    project.configurations.findByName(configurationName)?.let { embedded ->
-        val allSources = embedded.incoming.artifactView {
-            attributes {
-                attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.DOCUMENTATION))
-                attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.objects.named(DocsType.SOURCES))
-            }
-            withVariantReselection()
-            componentFilter {
-                it is ProjectComponentIdentifier
-            }
-        }
-        from({ allSources.files })
-    }
-}
 
-/**
- * Adds the published sources of all projects resolved through the [configuration] to this (sources) [Jar].
- * Unlike [addEmbeddedSources], this uses the published `sourcesElements` JAR – this approach is generally more correct as it
- * transparently supports source processing and fat-JARs.
- */
-fun Jar.addEmbeddedProjectSourcesJars(configuration: Configuration) {
-    val archiveOperations = project.serviceOf<ArchiveOperations>()
-    val objectFactory = project.objects
-    val sourcesJars = configuration.incoming.artifactView {
-        withVariantReselection()
-        isLenient = true
-        attributes {
-            attribute(Category.CATEGORY_ATTRIBUTE, objectFactory.named(Category::class.java, Category.DOCUMENTATION))
-            attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objectFactory.named(DocsType::class.java, DocsType.SOURCES))
-        }
-    }.files
-
-    // Build the producing `sourcesElements` tasks (e.g. the modules' fat sources jars) before packing them:
-    // `zipTree` below only carries a file path, not its producer task, so without this the reselected jars
-    // may not exist yet (fails with "Cannot expand ZIP ... as it does not exist").
-    dependsOn(sourcesJars)
-    from({ sourcesJars.map { archiveOperations.zipTree(it) } })
-}
 
 /**
  * Adds the resolved `-sources.jar` artifacts of every component resolved through [configuration] to this

@@ -2,6 +2,7 @@
 @file:JvmName("AddEmbeddedRuntime")
 
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.DocsType
 import org.gradle.api.file.ArchiveOperations
@@ -41,18 +42,41 @@ fun Jar.addEmbeddedRuntime(embeddedConfigurationName: String = "embedded") {
 @JvmOverloads
 fun Jar.addEmbeddedSources(configurationName: String = "embedded") {
     project.configurations.findByName(configurationName)?.let { embedded ->
-        val allSources = embedded.incoming.artifactView {
+        val archiveOperations = project.serviceOf<ArchiveOperations>()
+
+        val sourcesJarsView = embedded.incoming.artifactView {
+            isLenient = true
             attributes {
                 attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.DOCUMENTATION))
                 attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.objects.named(DocsType.SOURCES))
             }
             withVariantReselection()
-            componentFilter {
-                it is ProjectComponentIdentifier
+            componentFilter { it is ProjectComponentIdentifier }
+        }
+
+        val sourceDirectoriesView = embedded.incoming.artifactView {
+            isLenient = true
+            attributes {
+                attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named("verification"))
+                attribute(Attribute.of("org.gradle.verificationtype", String::class.java), "main-sources")
             }
-        }.files
-        dependsOn(allSources)
-        val archiveOperations = project.serviceOf<ArchiveOperations>()
-        from({ allSources.map { archiveOperations.zipTree(it) } })
+            withVariantReselection()
+            componentFilter { it is ProjectComponentIdentifier }
+        }
+
+        val sourcesJars = sourcesJarsView.files
+        val sourceDirectories = sourceDirectoriesView.files
+
+        dependsOn(sourcesJars, sourceDirectories)
+        from({
+            val projectsWithJars = sourcesJarsView.artifacts.map { it.id.componentIdentifier }.toSet()
+            val directories = sourceDirectoriesView.artifacts
+                .filter { it.id.componentIdentifier !in projectsWithJars }
+                .map { it.file }
+
+            (sourcesJars + directories).map {
+                if (it.isFile && it.name.endsWith(".jar", ignoreCase = true)) archiveOperations.zipTree(it) else it
+            }
+        })
     }
 }
