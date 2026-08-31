@@ -21,7 +21,12 @@ import java.io.File
 data class WasmVMOutput(
     val vmName: String,
     val output: String,
+    /** Identifies this invocation when the same VM runs more than one compilation mode. */
+    val executionName: String = vmName,
 )
+
+internal fun formatWasmExecutionName(vmName: String, mode: String): String =
+    if (mode.isEmpty()) vmName else "$vmName ($mode)"
 
 abstract class WasmBoxRunnerBase(
     testServices: TestServices,
@@ -190,6 +195,7 @@ abstract class WasmBoxRunnerBase(
                     entryFile = collectedJsArtifacts.entryPath,
                     jsFilePaths = jsFilePaths,
                     workingDirectory = outputDir,
+                    executionName = formatWasmExecutionName(vm.vmName, mark),
                     outputCollector = outputCollector,
                 )
             }
@@ -214,7 +220,11 @@ internal fun generateWasmJsUnitTestRunnerInvocation(callGroupedTestsDriver: Bool
         """.trimIndent()
     }
 
-class WasmVMException(nested: Throwable, val vmName: String) : Throwable("WasmVM $vmName failed", cause = nested)
+class WasmVMException(
+    nested: Throwable,
+    val vmName: String,
+    val executionName: String = vmName,
+) : Throwable("WasmVM $executionName failed", cause = nested)
 
 internal fun WasmVM.runWithCaughtExceptions(
     debugMode: DebugMode,
@@ -223,11 +233,12 @@ internal fun WasmVM.runWithCaughtExceptions(
     entryFile: String?,
     jsFilePaths: List<String>,
     workingDirectory: File,
+    executionName: String,
     outputCollector: MutableList<WasmVMOutput>? = null,
 ): Throwable? {
     try {
         if (debugMode >= DebugMode.DEBUG) {
-            println(" ------ Run in $vmName")
+            println(" ------ Run in $executionName")
         }
         val str = run(
             "./${entryFile}",
@@ -236,17 +247,17 @@ internal fun WasmVM.runWithCaughtExceptions(
             useNewExceptionHandling = useNewExceptionHandling,
             useStackSwitching = useStackSwitching,
         )
-        outputCollector?.add(WasmVMOutput(vmName = vmName, output = str))
+        outputCollector?.add(WasmVMOutput(vmName = vmName, output = str, executionName = executionName))
         if (debugMode >= DebugMode.DEBUG) {
-            println(" ------ Run in $vmName is completed")
+            println(" ------ Run in $executionName is completed")
         }
         // Only single-test batches still go through `startUnitTests()`, and hence through `kotlin.test`'s TeamCity
         // reporter; a grouped batch's launchers carry no `@Test`, so this marker cannot come from them.
         if (str.contains("##teamcity[testFailed")) {
-            return AssertionError("Unit test failed in $vmName. Output:\n$str")
+            return AssertionError("Unit test failed in $executionName. Output:\n$str")
         }
     } catch (e: Throwable) {
-        return WasmVMException(e, vmName)
+        return WasmVMException(e, vmName, executionName)
     }
     return null
 }
