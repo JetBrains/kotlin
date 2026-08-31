@@ -1916,13 +1916,19 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/export/ExportExtens
 	public final fun swift (Lorg/gradle/api/Action;)V
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/mpp/export/ExportExtensionKt {
-	public static final field EXPORT_EXTENSION_NAME Ljava/lang/String;
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportConfigurationDsl {
 	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 	public abstract fun getRootPackage ()Lorg/gradle/api/provider/Property;
+	public abstract fun xcodeIntegration ()V
+	public abstract fun xcodeIntegration (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun xcodeIntegration (Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportIntegration {
+	public abstract fun getSettings ()Lorg/gradle/api/provider/MapProperty;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportXcodeIntegration : org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportIntegration {
 }
 
 public class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation$Delegate {
