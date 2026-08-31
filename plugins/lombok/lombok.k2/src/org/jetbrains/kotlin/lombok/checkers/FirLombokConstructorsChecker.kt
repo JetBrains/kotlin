@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.fir.declarations.constructors
 import org.jetbrains.kotlin.fir.declarations.declaredFunctions
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.plugin.createConeType
+import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -40,6 +42,7 @@ object FirLombokConstructorsChecker : FirRegularClassChecker(MppCheckerKind.Plat
         val source = noArgsConstructor.annotation.source ?: declaration.source ?: return
 
         val staticName = noArgsConstructor.staticName?.let { Name.identifier(it) }
+        var staticNameIsTaken = false
 
         // Nothing at all is generated for an inner or a local class (see `supportsGeneratedConstructor`), and every
         // check below concerns a declaration that would have been generated. `ANNOTATION_HAS_NO_EFFECT` says the
@@ -75,12 +78,43 @@ object FirLombokConstructorsChecker : FirRegularClassChecker(MppCheckerKind.Plat
 
             if (declaresStaticConstructor(context.session, declaration, staticName)) {
                 reporter.reportOn(source, LombokFirDiagnostics.STATIC_CONSTRUCTOR_ALREADY_EXISTS, staticName, declaration.name)
+                staticNameIsTaken = true
             }
         }
 
-        if (declaresNoArgsConstructor(context.session, declaration)) {
+        val declaresNoArgsConstructor = declaresNoArgsConstructor(context.session, declaration)
+        if (declaresNoArgsConstructor) {
             reporter.reportOn(source, LombokFirDiagnostics.NO_ARGS_CONSTRUCTOR_ALREADY_EXISTS)
         }
+
+        // A superclass without a constructor taking no arguments leaves the generated one nothing to delegate to,
+        // so nothing is generated - and only where that is the reason. The generator reaches the superclass last,
+        // after the clashes reported above already stopped it, and a second diagnostic naming a different cause
+        // would just be wrong about which one applies.
+        if (!declaresNoArgsConstructor && !staticNameIsTaken &&
+            !superclassDeclaresNoArgsConstructor(context.session, declaration)
+        ) {
+            reporter.reportOn(source, LombokFirDiagnostics.NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS)
+        }
+    }
+
+    /**
+     * Whether the superclass of [declaration] provides the no-args constructor a generated one would delegate to.
+     *
+     * The first class in the supertype list, which is the one `tryGeneratingNoArgDelegatingConstructorCall` targets,
+     * and the same lookup it performs: a declared constructor taking no value parameters, rather than one whose
+     * parameters merely all have defaults.
+     *
+     * That function is deliberately not called here. It answers more than this diagnostic asks - it also gives up
+     * when there is no superclass symbol to be had at all, `kotlin.Any` included - and blaming a missing
+     * constructor for that would name a cause that isn't the one. Hence `true`, reporting nothing, when the
+     * superclass cannot be resolved.
+     */
+    private fun superclassDeclaresNoArgsConstructor(session: FirSession, declaration: FirRegularClass): Boolean {
+        val superClassSymbol = declaration.symbol.getSuperClassSymbolOrAny(session) ?: return true
+        return superClassSymbol.declaredMemberScope(session, memberRequiredPhase = null)
+            .getDeclaredConstructors()
+            .any { it.valueParameterSymbols.isEmpty() }
     }
 
     /**

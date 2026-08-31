@@ -68,11 +68,14 @@ value class OnValueClassWithStaticName(val value: Int)
 
 abstract class A(val x: String)
 
-@NoArgsConstructor
-class B(x: String) : A(x) // TODO: KT-86651 (NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS)
+<!NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS!>@NoArgsConstructor<!>
+class B(x: String) : A(x)
+
+<!NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS!>@NoArgsConstructor<!>
+class D(x: String) : A(x), <!MANY_CLASSES_IN_SUPERTYPE_LIST!>C<!>()
 
 @NoArgsConstructor
-class D(x: String) : A(x), <!MANY_CLASSES_IN_SUPERTYPE_LIST!>C<!>()
+class D1(x: String) : C(), <!MANY_CLASSES_IN_SUPERTYPE_LIST!>A<!>(x)
 
 interface I2
 
@@ -126,7 +129,8 @@ class UnsupportedArguments(var arg: String)
 
 fun test() {
     <!NO_VALUE_FOR_PARAMETER!>B<!>() // Don't generate no-args constructor because delegated no-args constructor is missing.
-    <!NO_VALUE_FOR_PARAMETER!>D<!>() // Don't generate no-args constructor because there are multiple super classes (`MANY_CLASSES_IN_SUPERTYPE_LIST`)
+    <!NO_VALUE_FOR_PARAMETER!>D<!>() // Don't generate no-args constructor: `A` has none to delegate to here either
+    D1() // Generate no-args constructor, although the code isn't compilable because of `MANY_CLASSES_IN_SUPERTYPE_LIST`
     H() // Valid case: H has implicit `Any` call
     J()
     F()
