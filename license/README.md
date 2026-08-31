@@ -283,7 +283,7 @@ any distributions of the compiler, libraries or plugin:
       - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
       - Origin: Copyright (C) 2008 The Android Open Source Project
 
- - Path: js/js.parser/test/org/jetbrains/kotlin/sourcemaps/JsSourcemapScopesDecoderErrorsTest.kt
+ - Path: js/js.sourcemap/test/org/jetbrains/kotlin/js/sourceMap/JsSourcemapScopesDecoderErrorsTest.kt
       - License: BSD-3-Clause ([license/third_party/testdata/chromedevtools_license.txt][chromedevtools])
       - Origin: Copyright 2025 The Chromium Authors
 
