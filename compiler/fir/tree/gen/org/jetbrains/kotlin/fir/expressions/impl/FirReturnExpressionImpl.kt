@@ -68,4 +68,8 @@ internal class FirReturnExpressionImpl(
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
     }
+
+    override fun replaceResult(newResult: FirExpression) {
+        result = newResult
+    }
 }
