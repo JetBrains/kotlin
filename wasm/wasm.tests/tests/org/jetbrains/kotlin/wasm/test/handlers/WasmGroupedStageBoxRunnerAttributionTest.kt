@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.wasm.test.handlers
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.test.GroupingStageInputsHolder
 import org.jetbrains.kotlin.test.NonGroupingStageOutput
+import org.jetbrains.kotlin.test.TestInfrastructureException
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.AssertionsService
 import org.jetbrains.kotlin.test.services.BatchingPackageInserter.Companion.computePackage
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.KotlinTestInfo
 import org.jetbrains.kotlin.test.services.SourceFilePreprocessor
 import org.jetbrains.kotlin.test.services.SourceFileProvider
@@ -21,11 +24,13 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.wasm.test.blackbox.computeProxyLauncherClassName
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.opentest4j.MultipleFailuresError
 import java.io.File
 
 class WasmGroupedStageBoxRunnerAttributionTest {
@@ -56,7 +61,8 @@ class WasmGroupedStageBoxRunnerAttributionTest {
         assertNull(passing.reportedFailure, "A passing test was failed: ${passing.reportedFailure?.message}")
 
         assertVerdict(GroupedTestVerdict.FAILED, failing)
-        assertEquals("$FAILURE_MESSAGE\n$FAILURE_DETAILS", failing.reportedFailure?.message)
+        val failingMessage = failing.reportedFailure?.message.orEmpty()
+        assertTrue("$FAILURE_MESSAGE\n$FAILURE_DETAILS" in failingMessage, failingMessage)
 
         assertVerdict(GroupedTestVerdict.MISSING, neverRan)
     }
@@ -86,7 +92,8 @@ class WasmGroupedStageBoxRunnerAttributionTest {
         assertEquals(vmFailure, thrown)
 
         assertNull(passing.reportedFailure, "A passing test was failed: ${passing.reportedFailure?.message}")
-        assertEquals("$FAILURE_MESSAGE\n$FAILURE_DETAILS", failing.reportedFailure?.message)
+        val failingMessage = failing.reportedFailure?.message.orEmpty()
+        assertTrue("$FAILURE_MESSAGE\n$FAILURE_DETAILS" in failingMessage, failingMessage)
     }
 
     @Test
@@ -137,7 +144,34 @@ class WasmGroupedStageBoxRunnerAttributionTest {
         }
         assertEquals(vmCrash, thrown)
 
-        assertEquals("$FAILURE_MESSAGE\n$FAILURE_DETAILS", failing.reportedFailure?.message)
+        val failingMessage = failing.reportedFailure?.message.orEmpty()
+        assertTrue("$FAILURE_MESSAGE\n$FAILURE_DETAILS" in failingMessage, failingMessage)
+    }
+
+    @Test
+    fun `given several unexplained VM failures then all of them are reported`() {
+        val passing = GroupedTest("testPassing")
+        val firstVmFailure = vmCrash("first VM output without a structured block", vmName = "VM-1")
+        val secondVmFailure = vmCrash("second VM output without a structured block", vmName = "VM-2")
+        val finishedVmOutput = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(passing.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(passing.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+
+        val thrown = assertThrows(MultipleFailuresError::class.java) {
+            runner(
+                listOf(passing),
+                vmStdout = listOf(finishedVmOutput),
+                vmFailures = listOf(firstVmFailure, secondVmFailure),
+            ).processArtifact(DriverLinkedBatchArtifact)
+        }
+
+        assertTrue(firstVmFailure in thrown.failures, thrown.failures.toString())
+        assertTrue(secondVmFailure in thrown.failures, thrown.failures.toString())
+
+        assertNull(passing.reportedFailure, "A passing test was failed: ${passing.reportedFailure?.message}")
     }
 
     @Test
@@ -180,7 +214,213 @@ class WasmGroupedStageBoxRunnerAttributionTest {
             assertVerdict(GroupedTestVerdict.NO_RESULT_BLOCK, test)
             val message = test.reportedFailure?.message.orEmpty()
             assertTrue("VM-2" in message, message)
+            assertFalse("VM-1" in message, message)
         }
+    }
+
+    @Test
+    fun `given complete VM blocks that split the expected results then each missing execution is failed`() {
+        val first = GroupedTest("testFirst")
+        val second = GroupedTest("testSecond")
+
+        val firstVmOutput = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(first.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(first.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+        val secondVmOutput = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(second.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(second.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+
+        runner(
+            listOf(first, second),
+            vmStdout = listOf(firstVmOutput, secondVmOutput),
+            vmFailures = emptyList(),
+        ).processArtifact(DriverLinkedBatchArtifact)
+
+        assertVerdict(GroupedTestVerdict.INCOMPLETE_COVERAGE, first)
+        val firstMessage = first.reportedFailure?.message.orEmpty()
+        assertTrue("VM-2" in firstMessage, firstMessage)
+        assertFalse("VM-1" in firstMessage, firstMessage)
+
+        assertVerdict(GroupedTestVerdict.INCOMPLETE_COVERAGE, second)
+        val secondMessage = second.reportedFailure?.message.orEmpty()
+        assertTrue("VM-1" in secondMessage, secondMessage)
+        assertFalse("VM-2" in secondMessage, secondMessage)
+    }
+
+    @Test
+    fun `given a test failing with no message on one VM and missing from another then the empty message is explained`() {
+        val failing = GroupedTest("testFailing")
+        val other = GroupedTest("testOther")
+
+        val firstVmOutput = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(failing.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(failing.id, GroupedTestsResultProtocol.FAILED)
+            appendProtocolLine(other.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(other.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+        val secondVmOutput = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(other.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(other.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+
+        runner(listOf(failing, other), vmStdout = listOf(firstVmOutput, secondVmOutput), vmFailures = emptyList())
+            .processArtifact(DriverLinkedBatchArtifact)
+
+        assertVerdict(GroupedTestVerdict.INCOMPLETE_COVERAGE, failing)
+        val message = failing.reportedFailure?.message.orEmpty()
+        assertTrue("carrying neither a message nor details" in message, message)
+    }
+
+    @Test
+    fun `given a test globally missing from a multi-VM batch then the silently-skipped hint is still shown`() {
+        val neverReported = GroupedTest("testNeverReported")
+        val other = GroupedTest("testOther")
+
+        val vmOutput = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(other.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(other.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+
+        runner(listOf(neverReported, other), vmStdout = listOf(vmOutput, vmOutput), vmFailures = emptyList())
+            .processArtifact(DriverLinkedBatchArtifact)
+
+        assertVerdict(GroupedTestVerdict.MISSING, neverReported)
+        val message = neverReported.reportedFailure?.message.orEmpty()
+        assertTrue("silently skipped" in message, message)
+    }
+
+    @Test
+    fun `given the same VM missing results in several modes then every mode is named`() {
+        val missing = GroupedTest("testMissing")
+        val reported = GroupedTest("testReported")
+        val output = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(reported.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(reported.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+
+        runner(
+            listOf(missing, reported),
+            vmStdout = listOf(output, output),
+            vmExecutionNames = listOf(
+                formatWasmExecutionName("V8", "dev"),
+                formatWasmExecutionName("V8", "dce"),
+            ),
+            vmFailures = emptyList(),
+        ).processArtifact(DriverLinkedBatchArtifact)
+
+        assertEquals("V8 (dev)", formatWasmExecutionName("V8", "dev"))
+        assertEquals("V8 (dce)", formatWasmExecutionName("V8", "dce"))
+        val message = missing.reportedFailure?.message.orEmpty()
+        assertTrue("V8 (dev)" in message, message)
+        assertTrue("V8 (dce)" in message, message)
+    }
+
+    @Test
+    fun `given a malformed protocol line then every test is failed instead of dropping the line`() {
+        val first = GroupedTest("testFirst")
+        val second = GroupedTest("testSecond")
+        val malformed = "${GroupedTestsResultProtocol.LINE_PREFIX}${GroupedTestsResultProtocol.SEP}" +
+                "${first.id}${GroupedTestsResultProtocol.SEP}BROKEN${GroupedTestsResultProtocol.SEP}message${GroupedTestsResultProtocol.SEP}details"
+
+        val vmOutput = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(first.id, GroupedTestsResultProtocol.PASSED)
+            appendLine(malformed)
+            appendProtocolLine(second.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+
+        runner(listOf(first, second), vmStdout = listOf(vmOutput), vmFailures = emptyList())
+            .processArtifact(DriverLinkedBatchArtifact)
+
+        for (test in listOf(first, second)) {
+            assertVerdict(GroupedTestVerdict.UNTRUSTED_BATCH, test)
+            val message = test.reportedFailure?.message.orEmpty()
+            assertTrue(malformed in message, message)
+        }
+    }
+
+    @Test
+    fun `given a test failing on several VMs then all failure diagnostics are retained`() {
+        val test = GroupedTest("testFailing")
+        val firstMessage = "failure from VM-1"
+        val firstDetails = "details from VM-1"
+        val secondMessage = "failure from VM-2"
+        val secondDetails = "details from VM-2"
+        val firstVmOutput = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(
+                test.id,
+                GroupedTestsResultProtocol.FAILED,
+                GroupedTestsResultProtocol.escape(firstMessage),
+                GroupedTestsResultProtocol.escape(firstDetails),
+            )
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+        val secondVmOutput = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(
+                test.id,
+                GroupedTestsResultProtocol.FAILED,
+                GroupedTestsResultProtocol.escape(secondMessage),
+                GroupedTestsResultProtocol.escape(secondDetails),
+            )
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+
+        runner(
+            listOf(test),
+            vmStdout = listOf(firstVmOutput, secondVmOutput),
+            vmExecutionNames = listOf("V8 (dev)", "V8 (dce)"),
+            vmFailures = emptyList(),
+        )
+            .processArtifact(DriverLinkedBatchArtifact)
+
+        assertVerdict(GroupedTestVerdict.FAILED, test)
+        val message = test.reportedFailure?.message.orEmpty()
+        assertTrue("$firstMessage\n$firstDetails" in message, message)
+        assertTrue("$secondMessage\n$secondDetails" in message, message)
+        assertTrue("[V8 (dev)] $firstMessage" in message, message)
+        assertTrue("[V8 (dce)] $secondMessage" in message, message)
+    }
+
+    @Test
+    fun `given a failure with a protocol message then unrelated batch output is not attached`() {
+        val failing = GroupedTest("testFailing")
+        val unrelatedBatchOutput = "output from another test in the same batch"
+        val vmOutput = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(failing.id, GroupedTestsResultProtocol.STARTED)
+            append(unrelatedBatchOutput).append("\n")
+            appendProtocolLine(
+                failing.id,
+                GroupedTestsResultProtocol.FAILED,
+                GroupedTestsResultProtocol.escape(FAILURE_MESSAGE),
+                GroupedTestsResultProtocol.escape(FAILURE_DETAILS),
+            )
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+
+        runner(listOf(failing), vmStdout = listOf(vmOutput), vmFailures = emptyList())
+            .processArtifact(DriverLinkedBatchArtifact)
+
+        val message = failing.reportedFailure?.message.orEmpty()
+        assertTrue("$FAILURE_MESSAGE\n$FAILURE_DETAILS" in message, message)
+        assertFalse(unrelatedBatchOutput in message, message)
     }
 
     @Test
@@ -212,6 +452,7 @@ class WasmGroupedStageBoxRunnerAttributionTest {
             assertVerdict(GroupedTestVerdict.INCOMPLETE_RESULT_BLOCK, test)
             val message = test.reportedFailure?.message.orEmpty()
             assertTrue("VM-2" in message, message)
+            assertFalse("VM-1" in message, message)
         }
     }
 
@@ -222,14 +463,36 @@ class WasmGroupedStageBoxRunnerAttributionTest {
             listOf(passing),
             vmStdout = listOf("output of the single-test runner\n"),
             vmFailures = emptyList(),
+            boxExportMode = true,
         ).processArtifact(DriverlessBatchArtifact)
         assertNull(passing.reportedFailure, "An isolated passing test was failed: ${passing.reportedFailure?.message}")
 
         val failing = GroupedTest("testOnlyOne")
         val vmFailure = WasmVMException(AssertionError("Wrong box result 'FAIL'; Expected \"OK\""), vmName = "V8")
-        runner(listOf(failing), vmStdout = emptyList(), vmFailures = listOf(vmFailure))
+        runner(listOf(failing), vmStdout = emptyList(), vmFailures = listOf(vmFailure), boxExportMode = true)
             .processArtifact(DriverlessBatchArtifact)
         assertEquals(vmFailure, failing.reportedFailure)
+    }
+
+    @Test
+    fun `given a single isolated test crashing on several VMs then every diagnostic is retained`() {
+        val failing = GroupedTest("testOnlyOne")
+        val v8Failure = WasmVMException(AssertionError("Wrong box result 'FAIL'"), vmName = "V8")
+        val spiderMonkeyFailure = WasmVMException(AssertionError("Wrong box result 'CRASH'"), vmName = "SpiderMonkey")
+
+        runner(
+            listOf(failing),
+            vmStdout = emptyList(),
+            vmFailures = listOf(v8Failure, spiderMonkeyFailure),
+            boxExportMode = true,
+        )
+            .processArtifact(DriverlessBatchArtifact)
+
+        val reported = failing.reportedFailure
+        assertTrue(reported is MultipleFailuresError, reported.toString())
+        val failures = (reported as MultipleFailuresError).failures
+        assertTrue(v8Failure in failures, failures.toString())
+        assertTrue(spiderMonkeyFailure in failures, failures.toString())
     }
 
     @Test
@@ -240,6 +503,24 @@ class WasmGroupedStageBoxRunnerAttributionTest {
             .processArtifact(DriverLinkedBatchArtifact)
 
         assertVerdict(GroupedTestVerdict.NO_RESULT_BLOCK, alone)
+    }
+
+    @Test
+    fun `given a singleton unit-test batch without driver metadata then it is rejected before execution`() {
+        val onlyTest = GroupedTest("testOnly")
+        var executionCount = 0
+
+        val error = assertThrows(TestInfrastructureException::class.java) {
+            runner(
+                listOf(onlyTest),
+                vmStdout = listOf("no structured result block\n"),
+                vmFailures = emptyList(),
+                onRunTestCode = { executionCount++ },
+            ).processArtifact(DriverlessBatchArtifact)
+        }
+
+        assertEquals(0, executionCount, "The runner must validate the artifact before starting any VM")
+        assertTrue("is not linked with the result-collecting driver" in error.message.orEmpty(), error.message.orEmpty())
     }
 
     @Test
@@ -318,13 +599,114 @@ class WasmGroupedStageBoxRunnerAttributionTest {
         runner(
             listOf(failingCrasher),
             vmStdout = listOf(finishedVmStdout),
-            vmFailures = listOf(vmCrash(crashedVmStdout, vmName = "WasmEdge")),
+            vmFailures = listOf(
+                vmCrash(
+                    crashedVmStdout,
+                    vmName = "WasmEdge",
+                    executionName = "WasmEdge (dce)",
+                )
+            ),
         ).processArtifact(DriverLinkedBatchArtifact)
 
         assertVerdict(GroupedTestVerdict.CRASHED, failingCrasher)
         val message = failingCrasher.reportedFailure?.message.orEmpty()
+        assertTrue("WasmEdge (dce)" in message, message)
         assertTrue(FAILURE_MESSAGE in message, message)
         assertTrue(FAILURE_DETAILS in message, message)
+    }
+
+    @Test
+    fun `given several tests in a batch that claims no driver then the infrastructure is rejected`() {
+        val first = GroupedTest("testFirst")
+        val second = GroupedTest("testSecond")
+
+        val error = assertThrows(TestInfrastructureException::class.java) {
+            runner(listOf(first, second), vmStdout = listOf("no structured block here\n"), vmFailures = emptyList())
+                .processArtifact(DriverlessBatchArtifact)
+        }
+
+        val message = error.message.orEmpty()
+        assertTrue("is not linked with the result-collecting driver" in message, message)
+        assertNull(first.reportedFailure, "A rejected batch must not also attribute failures to its tests")
+        assertNull(second.reportedFailure, "A rejected batch must not also attribute failures to its tests")
+    }
+
+    @Test
+    fun `given box-export mode with several tests in the batch then the infrastructure is rejected`() {
+        val first = GroupedTest("testFirst")
+        val second = GroupedTest("testSecond")
+
+        val error = assertThrows(TestInfrastructureException::class.java) {
+            runner(listOf(first, second), vmStdout = emptyList(), vmFailures = emptyList(), boxExportMode = true)
+                .processArtifact(DriverlessBatchArtifact)
+        }
+
+        val message = error.message.orEmpty()
+        assertTrue("reports a single " in message, message)
+        assertNull(second.reportedFailure, "The rejected batch must not attribute a failure to a test it skipped")
+    }
+
+    @Test
+    fun `given box-export mode failing on several VMs then every diagnostic is retained`() {
+        val test = GroupedTest("testOnlyOne")
+        val v8Failure = WasmVMException(AssertionError("Wrong box result 'FAIL'"), vmName = "V8")
+        val spiderMonkeyFailure = WasmVMException(AssertionError("Wrong box result 'CRASH'"), vmName = "SpiderMonkey")
+
+        runner(
+            listOf(test),
+            vmStdout = emptyList(),
+            vmFailures = listOf(v8Failure, spiderMonkeyFailure),
+            boxExportMode = true,
+        ).processArtifact(DriverlessBatchArtifact)
+
+        val reported = test.reportedFailure
+        assertTrue(reported is MultipleFailuresError, reported.toString())
+        val failures = (reported as MultipleFailuresError).failures
+        assertTrue(v8Failure in failures, failures.toString())
+        assertTrue(spiderMonkeyFailure in failures, failures.toString())
+    }
+
+    @Test
+    fun `given a failure reported with no message then the batch output is still attached`() {
+        val failing = GroupedTest("testFailing")
+        val printedByTheTest = "what the test printed before failing"
+
+        val vmStdout = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(failing.id, GroupedTestsResultProtocol.STARTED)
+            append(printedByTheTest).append("\n")
+            appendProtocolLine(failing.id, GroupedTestsResultProtocol.FAILED)
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+
+        runner(listOf(failing), vmStdout = listOf(vmStdout), vmFailures = emptyList())
+            .processArtifact(DriverLinkedBatchArtifact)
+
+        assertVerdict(GroupedTestVerdict.FAILED, failing)
+        val message = failing.reportedFailure?.message.orEmpty()
+        assertTrue(printedByTheTest in message, message)
+    }
+
+    @Test
+    fun `given a result for a test outside the batch then the infrastructure is rejected`() {
+        val inBatch = GroupedTest("testInBatch")
+        val foreign = GroupedTest("testForeign")
+
+        val vmStdout = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(inBatch.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolLine(foreign.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+
+        val error = assertThrows(TestInfrastructureException::class.java) {
+            runner(listOf(inBatch), vmStdout = listOf(vmStdout), vmFailures = emptyList())
+                .processArtifact(DriverLinkedBatchArtifact)
+        }
+
+        val message = error.message.orEmpty()
+        assertTrue("reported results for tests that are not part of it" in message, message)
+        assertTrue(foreign.id in message, message)
     }
 
     @Test
@@ -338,6 +720,138 @@ class WasmGroupedStageBoxRunnerAttributionTest {
             computeProxyLauncherClassName(second),
             "Distinct tests must not generate the same synthetic launcher class",
         )
+    }
+
+    @Test
+    fun `given a grouped test without a box method then the infrastructure is rejected`() {
+        val withBox = GroupedTest("testWithBox")
+        val withoutBox = GroupedTest("testWithoutBox", moduleStructure = NoBoxFileModuleStructure)
+
+        val vmStdout = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(withBox.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+
+        val error = assertThrows(TestInfrastructureException::class.java) {
+            runner(listOf(withBox, withoutBox), vmStdout = listOf(vmStdout), vmFailures = emptyList())
+                .processArtifact(DriverLinkedBatchArtifact)
+        }
+
+        val message = error.message.orEmpty()
+        assertTrue("does not have a box() method" in message, message)
+        assertTrue("WasmGroupingTestIsolator" in message, message)
+    }
+
+    @Test
+    fun `given a complete but empty result block then the empty report is reported too`() {
+        val neverReported = GroupedTest("testNeverReported")
+
+        val vmStdout = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+
+        runner(listOf(neverReported), vmStdout = listOf(vmStdout), vmFailures = emptyList())
+            .processArtifact(DriverLinkedBatchArtifact)
+
+        assertVerdict(GroupedTestVerdict.MISSING, neverReported)
+        val message = neverReported.reportedFailure?.message.orEmpty()
+        assertTrue("No tests have been found" in message, message)
+    }
+
+    @Test
+    fun `given a batch where every VM failed to start then those failures are reported, not just the missing block`() {
+        val first = GroupedTest("testFirst")
+        val second = GroupedTest("testSecond")
+
+        val firstVmFailure = vmCrash("failed to instantiate the module", vmName = "VM-1")
+        val secondVmFailure = vmCrash("failed to instantiate the module", vmName = "VM-2")
+
+        val thrown = assertThrows(MultipleFailuresError::class.java) {
+            runner(
+                listOf(first, second),
+                vmStdout = emptyList(),
+                vmFailures = listOf(firstVmFailure, secondVmFailure),
+            ).processArtifact(DriverLinkedBatchArtifact)
+        }
+
+        assertTrue(firstVmFailure in thrown.failures, thrown.failures.toString())
+        assertTrue(secondVmFailure in thrown.failures, thrown.failures.toString())
+
+        for (test in listOf(first, second)) {
+            assertVerdict(GroupedTestVerdict.NO_RESULT_BLOCK, test)
+        }
+    }
+
+    @Test
+    fun `given a VM that printed no block and another that failed then that failure is reported too`() {
+        val onlyTest = GroupedTest("testOnly")
+        val vmFailure = vmCrash("engine died with no parsable output", vmName = "VM-2")
+
+        val thrown = assertThrows(WasmVMException::class.java) {
+            runner(
+                listOf(onlyTest),
+                vmStdout = listOf("fallback to startUnitTests()\n"),
+                vmFailures = listOf(vmFailure),
+            ).processArtifact(DriverLinkedBatchArtifact)
+        }
+
+        assertEquals(vmFailure, thrown)
+
+        assertVerdict(GroupedTestVerdict.NO_RESULT_BLOCK, onlyTest)
+    }
+
+    @Test
+    fun `given a VM whose block was left open and another that failed then that failure is reported too`() {
+        val onlyTest = GroupedTest("testOnly")
+        val vmFailure = vmCrash("engine died with no parsable output", vmName = "VM-2")
+
+        val incompleteOutput = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(onlyTest.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(onlyTest.id, GroupedTestsResultProtocol.PASSED)
+        }
+
+        val thrown = assertThrows(WasmVMException::class.java) {
+            runner(
+                listOf(onlyTest),
+                vmStdout = listOf(incompleteOutput),
+                vmFailures = listOf(vmFailure),
+            ).processArtifact(DriverLinkedBatchArtifact)
+        }
+
+        assertEquals(vmFailure, thrown)
+
+        assertVerdict(GroupedTestVerdict.INCOMPLETE_RESULT_BLOCK, onlyTest)
+    }
+
+    @Test
+    fun `given a rejected block and a VM failure it cannot explain then that failure is reported too`() {
+        val onlyTest = GroupedTest("testOnly")
+
+        val vmFailure = vmCrash("engine died with no parsable output", vmName = "VM-2")
+        val malformed = "${GroupedTestsResultProtocol.LINE_PREFIX}${GroupedTestsResultProtocol.SEP}" +
+                "${onlyTest.id}${GroupedTestsResultProtocol.SEP}BROKEN${GroupedTestsResultProtocol.SEP}" +
+                "message${GroupedTestsResultProtocol.SEP}details"
+
+        val vmOutput = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendLine(malformed)
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+
+        val thrown = assertThrows(WasmVMException::class.java) {
+            runner(
+                listOf(onlyTest),
+                vmStdout = listOf(vmOutput),
+                vmFailures = listOf(vmFailure),
+            ).processArtifact(DriverLinkedBatchArtifact)
+        }
+
+        assertEquals(vmFailure, thrown)
+
+        assertVerdict(GroupedTestVerdict.UNTRUSTED_BATCH, onlyTest)
     }
 
     private fun assertVerdict(expected: GroupedTestVerdict, test: GroupedTest) {
@@ -362,7 +876,10 @@ class WasmGroupedStageBoxRunnerAttributionTest {
         override fun getOrCreateRealFileForSourceFile(testFile: TestFile): File = error("Not used in this test")
     }
 
-    private class GroupedTest(methodName: String) {
+    private class GroupedTest(
+        methodName: String,
+        moduleStructure: TestModuleStructure = SingleBoxFileModuleStructure,
+    ) {
         private val failures = mutableListOf<Throwable>()
 
         val testInfo: KotlinTestInfo = KotlinTestInfo(
@@ -376,7 +893,7 @@ class WasmGroupedStageBoxRunnerAttributionTest {
         val input: NonGroupingStageOutput = NonGroupingStageOutput(
             testServices = TestServices().apply {
                 register(KotlinTestInfo::class, testInfo)
-                register(TestModuleStructure::class, SingleBoxFileModuleStructure)
+                register(TestModuleStructure::class, moduleStructure)
                 register(SourceFileProvider::class, IdentitySourceFileProvider())
             },
             catchingExecutor = { _, block ->
@@ -398,10 +915,14 @@ class WasmGroupedStageBoxRunnerAttributionTest {
     private fun runner(
         batch: List<GroupedTest>,
         vmStdout: List<String>,
+        vmExecutionNames: List<String> = vmStdout.indices.map { "VM-${it + 1}" },
         vmFailures: List<Throwable>,
         boxExportMode: Boolean = false,
+        onRunTestCode: () -> Unit = {},
     ): AbstractWasmGroupingStageBoxRunner {
+        assertEquals(vmStdout.size, vmExecutionNames.size)
         val testServices = TestServices().apply {
+            register(AssertionsService::class, JUnit5Assertions)
             register(GroupingStageInputsHolder::class, GroupingStageInputsHolder(batch.map { it.input }))
         }
         return object : AbstractWasmGroupingStageBoxRunner(testServices) {
@@ -412,8 +933,13 @@ class WasmGroupedStageBoxRunnerAttributionTest {
                 useUnitTestRunnerOnly: Boolean,
                 outputCollector: MutableList<WasmVMOutput>?,
             ): List<Throwable> {
+                onRunTestCode()
                 outputCollector?.addAll(vmStdout.mapIndexed { index, output ->
-                    WasmVMOutput(vmName = "VM-${index + 1}", output = output)
+                    WasmVMOutput(
+                        vmName = "VM-${index + 1}",
+                        output = output,
+                        executionName = vmExecutionNames[index],
+                    )
                 })
                 return vmFailures
             }
@@ -439,23 +965,30 @@ class WasmGroupedStageBoxRunnerAttributionTest {
             append("\n")
         }
 
-        fun vmCrash(capturedStdout: String, vmName: String): Throwable = WasmVMException(
+        fun vmCrash(capturedStdout: String, vmName: String, executionName: String = vmName): Throwable = WasmVMException(
             AssertionError(
                 "Command \"$vmName ./test.mjs\" terminated with exit code 133 in working dir \"/tmp/batch\"\n" +
                         "OUTPUT:\n$capturedStdout\n---"
             ),
             vmName = vmName,
+            executionName = executionName,
             output = capturedStdout,
         )
 
-        val SingleBoxFileModuleStructure = object : TestModuleStructure() {
+        val SingleBoxFileModuleStructure: TestModuleStructure =
+            singleFileModuleStructure("fun box(): String = \"OK\"")
+
+        val NoBoxFileModuleStructure: TestModuleStructure =
+            singleFileModuleStructure("fun helper(): String = \"OK\"")
+
+        fun singleFileModuleStructure(fileContent: String): TestModuleStructure = object : TestModuleStructure() {
             override val modules: List<TestModule> = listOf(
                 TestModule(
                     name = "main",
                     files = listOf(
                         TestFile(
                             relativePath = "main.kt",
-                            originalContent = "fun box(): String = \"OK\"",
+                            originalContent = fileContent,
                             originalFile = File("main.kt"),
                             startLineNumberInOriginalFile = 0,
                             isAdditional = false,
