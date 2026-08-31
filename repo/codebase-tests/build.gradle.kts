@@ -54,9 +54,23 @@ open class TestSystemPropertiesProvider @Inject constructor(
     @get:Internal
     val gradleUserHome: DirectoryProperty = objectFactory.directoryProperty()
 
-    override fun asArguments(): Iterable<String> = listOf(
+    @get:Input
+    @get:Optional
+    val qualityGateMasterTasks = objectFactory.property<String>()
+
+    @get:Input
+    @get:Optional
+    val qualityGateNightlyTasks = objectFactory.property<String>()
+
+    @get:Input
+    val teamcity = objectFactory.property<Boolean>()
+
+    override fun asArguments(): Iterable<String> = listOfNotNull(
         "-DcodeOwnersTest.spaceCodeOwnersFile=${spaceCodeOwnersFile.singleFile.absolutePath}",
         "-Dgradle.user.home=${gradleUserHome.asFile.get().absolutePath}",
+        "-Dteamcity=${teamcity.get()}",
+        qualityGateMasterTasks.orNull?.let { "-Dquality.gate.master.tasks=$it" },
+        qualityGateNightlyTasks.orNull?.let { "-Dquality.gate.nightly.tasks=$it" },
     )
 }
 
@@ -70,6 +84,9 @@ projectTests {
         jvmArgumentProviders.add(objects.newInstance<TestSystemPropertiesProvider>().apply {
             spaceCodeOwnersFile.from(rootDir.resolve(".space/CODEOWNERS"))
             gradleUserHome.set(gradle.gradleUserHomeDir)
+            teamcity = kotlinBuildProperties.isTeamcityBuild
+            qualityGateMasterTasks.set(providers.gradleProperty("quality.gate.master.tasks"))
+            qualityGateNightlyTasks.set(providers.gradleProperty("quality.gate.nightly.tasks"))
         })
 
         smokeTestConfig = SmokeTestConfig.RunAllTests
