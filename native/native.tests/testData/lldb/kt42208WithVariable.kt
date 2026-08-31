@@ -1,9 +1,9 @@
 // KIND: STANDALONE_LLDB
 // FREE_COMPILER_ARGS: -Xklib-ir-inliner=disabled
-// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
+// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE&&mode=TWO_STAGE_MULTI_MODULE
+// ^^^ See KT-77365 regarding the `mode=` filter.
 // INPUT_DATA_FILE: kt42208WithVariable.in
 // OUTPUT_DATA_FILE: kt42208WithVariable.out
-
 // FILE: kt42208-1.kt
 fun main() {
     val a = foo()
