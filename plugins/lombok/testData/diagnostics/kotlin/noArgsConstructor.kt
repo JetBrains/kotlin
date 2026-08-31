@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// MUTE_LL_FIR: KT-88941
 
 import lombok.AccessLevel
 import lombok.NoArgsConstructor
