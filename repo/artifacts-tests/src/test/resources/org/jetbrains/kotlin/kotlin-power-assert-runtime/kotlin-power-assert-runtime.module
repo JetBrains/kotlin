@@ -401,6 +401,40 @@
             }
         },
         {
+            "name": "linuxArm32HfpApiElements-published",
+            "attributes": {
+                "org.gradle.category": "library",
+                "org.gradle.usage": "kotlin-api",
+                "org.gradle.jvm.environment": "non-jvm",
+                "org.jetbrains.kotlin.platform.type": "native",
+                "org.jetbrains.kotlin.native.target": "linux_arm32_hfp"
+            },
+            "available-at": {
+                "url": "../../kotlin-power-assert-runtime-linuxarm32hfp/ArtifactsTest.version/kotlin-power-assert-runtime-linuxarm32hfp-ArtifactsTest.version.module",
+                "group": "org.jetbrains.kotlin",
+                "module": "kotlin-power-assert-runtime-linuxarm32hfp",
+                "version": "ArtifactsTest.version"
+            }
+        },
+        {
+            "name": "linuxArm32HfpSourcesElements-published",
+            "attributes": {
+                "org.gradle.category": "documentation",
+                "org.gradle.dependency.bundling": "external",
+                "org.gradle.docstype": "sources",
+                "org.gradle.usage": "kotlin-runtime",
+                "org.gradle.jvm.environment": "non-jvm",
+                "org.jetbrains.kotlin.platform.type": "native",
+                "org.jetbrains.kotlin.native.target": "linux_arm32_hfp"
+            },
+            "available-at": {
+                "url": "../../kotlin-power-assert-runtime-linuxarm32hfp/ArtifactsTest.version/kotlin-power-assert-runtime-linuxarm32hfp-ArtifactsTest.version.module",
+                "group": "org.jetbrains.kotlin",
+                "module": "kotlin-power-assert-runtime-linuxarm32hfp",
+                "version": "ArtifactsTest.version"
+            }
+        },
+        {
             "name": "linuxArm64ApiElements-published",
             "attributes": {
                 "org.gradle.category": "library",
