@@ -301,6 +301,19 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_DETAILED_PERF", KotlinReleaseVersion(2, 3, 0))
 
     /**
+     * Enable experimental direct Java actualization support.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.5.0.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
+    public val X_DIRECT_JAVA_ACTUALIZATION: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_DIRECT_JAVA_ACTUALIZATION", KotlinReleaseVersion(2, 1, 0))
+
+    /**
      * Don't enable the scripting plugin by default.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

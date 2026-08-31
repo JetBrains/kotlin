@@ -207,4 +207,17 @@ val removedCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLe
         )
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
+
+    compilerArgument {
+        name = "Xdirect-java-actualization"
+        description = "Enable experimental direct Java actualization support.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.DirectJavaActualization))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_1_0,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
 }

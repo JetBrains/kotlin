@@ -25,6 +25,7 @@ where advanced options include:
                              If API Level >= 2.2 -- no-op.
   -Xdefault-script-extension=<script filename extension>
                              Compile expressions and unrecognized scripts passed with the -script argument as scripts with the given filename extension.
+  -Xdirect-java-actualization Enable experimental direct Java actualization support.
   -Xdisable-standard-script  Disable standard Kotlin scripting support.
   -Xemit-jvm-type-annotations Emit JVM type annotations in bytecode.
   -Xenhanced-coroutines-debugging
@@ -176,7 +177,6 @@ where advanced options include:
                              For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.
                              Additionally enables measurements for User and CPU time for all targets. Note that this could cause performance degradation on Linux
                                machines, so use this mode with caution.
-  -Xdirect-java-actualization Enable experimental direct Java actualization support.
   -Xdisable-default-scripting-plugin
                              Don't enable the scripting plugin by default.
   -Xdisable-ir-checkers=<checker1>,<checker2>

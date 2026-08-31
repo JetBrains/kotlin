@@ -30,6 +30,21 @@ class RemovedCompilerArguments {
         level = DeprecationLevel.ERROR,
     )
     @Argument(
+        value = "-Xdirect-java-actualization",
+        description = "Enable experimental direct Java actualization support.",
+        removedVersion = "2.5.0",
+    )
+    @Enables(LanguageFeature.DirectJavaActualization)
+    var directJavaActualization: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
         value = "-Xignore-const-optimization-errors",
         description = "Ignore all compilation exceptions while optimizing some constant expressions.",
         removedVersion = "2.5.0",

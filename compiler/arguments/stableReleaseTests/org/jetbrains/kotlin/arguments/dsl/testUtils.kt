@@ -38,6 +38,7 @@ private val temporaryExceptions: Set<String> = setOf(
     "Xno-check-actual",
     "Xignore-const-optimization-errors",
     "Xir-do-not-clear-binding-context",
+    "Xdirect-java-actualization",
 )
 
 internal fun Set<StableKotlinCompilerArgument>.filterNonDeprecated() = filter {

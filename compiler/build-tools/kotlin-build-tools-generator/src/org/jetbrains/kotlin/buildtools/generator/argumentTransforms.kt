@@ -64,7 +64,6 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             drop("Xfragment-refines")
             drop("Xfragment-dependency")
             drop("Xseparate-kmp-compilation")
-            drop("Xdirect-java-actualization")
             drop("Xfragment-friend-dependency")
 
             // "wrong" metadata in argument description - argument existed before, but was added to argument description in 2.3.0
@@ -122,6 +121,7 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
 
             // KMP related
             drop("Xuse-metadata-on-incremental-classpath")
+            drop("Xdirect-java-actualization")
         }
         with(removedJvmCompilerArguments) {
             drop("Xuse-javac")

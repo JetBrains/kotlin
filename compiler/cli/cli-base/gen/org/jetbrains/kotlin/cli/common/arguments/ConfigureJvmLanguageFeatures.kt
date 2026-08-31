@@ -11,6 +11,10 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureJvmLang
         put(LanguageFeature.AnnotationsInMetadata, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.directJavaActualization) {
+        put(LanguageFeature.DirectJavaActualization, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.useInlineScopesNumbers) {
         put(LanguageFeature.JvmInlineScopesNumbers, LanguageFeature.State.ENABLED)
     }

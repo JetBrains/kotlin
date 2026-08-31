@@ -849,20 +849,6 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         )
     }
 
-
-    compilerArgument {
-        name = "Xdirect-java-actualization"
-        description = "Enable experimental direct Java actualization support.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(Enables(LanguageFeature.DirectJavaActualization))
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_1_0,
-        )
-    }
-
-
     compilerArgument {
         name = "Xmulti-dollar-interpolation"
         description = "Enable experimental multi-dollar interpolation.".asReleaseDependent()

@@ -356,17 +356,6 @@ Additionally enables measurements for User and CPU time for all targets. Note th
         }
 
     @Argument(
-        value = "-Xdirect-java-actualization",
-        description = "Enable experimental direct Java actualization support.",
-    )
-    @Enables(LanguageFeature.DirectJavaActualization)
-    var directJavaActualization: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xdisable-default-scripting-plugin",
         description = "Don't enable the scripting plugin by default.",
     )

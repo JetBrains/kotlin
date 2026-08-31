@@ -78,10 +78,6 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.DataFlowBasedExhaustiveness, LanguageFeature.State.ENABLED)
     }
 
-    if (arguments.directJavaActualization) {
-        put(LanguageFeature.DirectJavaActualization, LanguageFeature.State.ENABLED)
-    }
-
     if (arguments.eagerLambdaAnalysis) {
         put(LanguageFeature.EagerLambdaAnalysis, LanguageFeature.State.ENABLED)
         put(LanguageFeature.InferThrowableTypeParameterToUpperBound, LanguageFeature.State.ENABLED)

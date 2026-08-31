@@ -21,6 +21,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.classpath = from.classpath
     to.defaultScriptExtension = from.defaultScriptExtension
     to.destination = from.destination
+    to.directJavaActualization = from.directJavaActualization
     to.disableStandardScript = from.disableStandardScript
     to.emitJvmTypeAnnotations = from.emitJvmTypeAnnotations
     to.enableDebugMode = from.enableDebugMode
