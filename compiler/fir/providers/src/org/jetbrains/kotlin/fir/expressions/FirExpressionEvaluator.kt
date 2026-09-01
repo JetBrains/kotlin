@@ -859,8 +859,8 @@ private fun evaluateBinary(
 context(sessionHolder: SessionHolder)
 private fun Any?.normalize(): Any? {
     if (!sessionHolder.session.nanNormalizationFeatureEnabled) return this
-    if (this is Float && this.isNaN()) return Float.fromBits(0x7fc00000)
-    if (this is Double && this.isNaN()) return Double.fromBits(0x7ff8000000000000L)
+    if (this is Float && this.isNaN()) return java.lang.Float.NaN
+    if (this is Double && this.isNaN()) return java.lang.Double.NaN
     return this
 }
 
