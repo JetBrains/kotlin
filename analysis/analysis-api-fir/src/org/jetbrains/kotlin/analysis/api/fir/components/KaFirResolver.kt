@@ -2194,10 +2194,10 @@ internal class KaFirResolver(
             )
         }
 
-        is KaMultiCallResolutionAttempt -> fold(
-            onSuccess = { listOf(KaBaseApplicableCallCandidate(backingCandidate = it, backingIsInBestCandidates = true)) },
-            onFailure = { attempts -> attempts.flatMap { it.toKaCallCandidates() } },
-        )
+        // Unlike `fold`, the candidates of the successful sub-calls are collected as well
+        is KaMultiCallResolutionAttempt -> successful?.let {
+            listOf(KaBaseApplicableCallCandidate(backingCandidate = it, backingIsInBestCandidates = true))
+        } ?: simpleAttempts.flatMap { it.toKaCallCandidates() }
 
         null -> emptyList()
     }

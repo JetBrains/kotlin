@@ -335,10 +335,9 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
 
     private fun KaMultiCallResolutionAttempt.toCallInfo(): KaCallInfo = fold(
         onSuccess = { KaBaseSuccessCallInfo(it.asKaCall()) },
-        onFailure = { attempts ->
-            val errorAttempts = attempts.filterIsInstance<KaSimpleCallResolutionError>()
-            val firstDiagnostic = errorAttempts.first().diagnostic
-            val candidateCalls = errorAttempts.flatMap { it.candidateCalls.map { call -> call.asKaCall() } }
+        onFailure = { errors ->
+            val firstDiagnostic = errors.first().diagnostic
+            val candidateCalls = errors.flatMap { it.candidateCalls.map { call -> call.asKaCall() } }
             KaBaseErrorCallInfo(candidateCalls, firstDiagnostic)
         },
     )
