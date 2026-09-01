@@ -63,7 +63,7 @@ public interface KotlinDeclarationProvider : KotlinComposableProvider {
     public fun findFilesForFacade(facadeFqName: FqName): Collection<KtFile>
 
     /**
-     * Currently we want only classes from libraries ([org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile])
+     * Currently we want only classes from libraries.
      */
     public fun findInternalFilesForFacade(facadeFqName: FqName): Collection<KtFile>
 
