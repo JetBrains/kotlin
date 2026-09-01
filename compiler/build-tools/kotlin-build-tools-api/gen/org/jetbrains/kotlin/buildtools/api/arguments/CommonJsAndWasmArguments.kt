@@ -90,13 +90,6 @@ public interface CommonJsAndWasmArguments : CommonKlibBasedArguments {
         CommonJsAndWasmArgument("X_IR_MODULE_NAME", KotlinReleaseVersion(1, 4, 0))
 
     /**
-     * Destination for generated files.
-     */
-    @JvmField
-    public val IR_OUTPUT_DIR: CommonJsAndWasmArgument<Path?> =
-        CommonJsAndWasmArgument("IR_OUTPUT_DIR", KotlinReleaseVersion(1, 8, 20))
-
-    /**
      * Base name of generated files.
      */
     @JvmField

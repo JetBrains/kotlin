@@ -564,7 +564,6 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerA
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments$Companion;
-	public static final field IR_OUTPUT_DIR Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments$CommonJsAndWasmArgument;
 	public static final field IR_OUTPUT_NAME Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments$CommonJsAndWasmArgument;
 	public static final field LIBRARIES Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments$CommonJsAndWasmArgument;
 	public static final field NOPACK Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments$CommonJsAndWasmArgument;
@@ -592,8 +591,6 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasm
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerKlibArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments, org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArgumentsKlibArguments {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerKlibArguments$Companion;
 	public static final field X_IR_PER_MODULE_OUTPUT_NAME Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerKlibArguments$CommonJsAndWasmCompilerKlibArgument;
-	public static final field X_IR_PRODUCE_KLIB_DIR Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerKlibArguments$CommonJsAndWasmCompilerKlibArgument;
-	public static final field X_IR_PRODUCE_KLIB_FILE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerKlibArguments$CommonJsAndWasmCompilerKlibArgument;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerKlibArguments$CommonJsAndWasmCompilerKlibArgument;)Ljava/lang/Object;
 }
 
@@ -622,11 +619,9 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Co
 	public static final field SOURCE_MAP_PREFIX Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
 	public static final field X_CACHE_DIRECTORY Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
 	public static final field X_GENERATE_DTS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
-	public static final field X_INCLUDE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
 	public static final field X_IR_DCE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
 	public static final field X_IR_DCE_PRINT_REACHABILITY_INFO Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
 	public static final field X_IR_DCE_RUNTIME_DIAGNOSTIC Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
-	public static final field X_IR_PRODUCE_JS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
 	public static final field X_IR_PROPERTY_LAZY_INITIALIZATION Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
 	public static final field X_STRICT_IMPLICIT_EXPORT_TYPES Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;)Ljava/lang/Object;

@@ -61,6 +61,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerKlib
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerLinkingArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.cli.common.arguments.CommonJsAndWasmCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
@@ -233,6 +234,18 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     if (SOURCE_MAP_NAMES_POLICY in this) { arguments.sourceMapNamesPolicy = get(SOURCE_MAP_NAMES_POLICY)?.stringValue}
     if (SOURCE_MAP_PREFIX in this) { arguments.sourceMapPrefix = get(SOURCE_MAP_PREFIX)}
     return arguments
+  }
+
+  @Suppress("DEPRECATION")
+  internal override fun collectRestrictedArgViolations(compilerArgs: CommonToolArguments, defaultArgs: CommonToolArguments) {
+    super.collectRestrictedArgViolations(compilerArgs, defaultArgs)
+    val args = compilerArgs as CommonJsAndWasmCompilerArguments
+    val castedDefaults = defaultArgs as CommonJsAndWasmCompilerArguments
+    if (args.irProduceJs != castedDefaults.irProduceJs) _restrictedArgViolations.add(RestrictedArgViolation.Warning("Argument '-Xir-produce-js' is not supported in the Build Tools API. It is added automatically based on type of operation (klib vs linking). This warning will become an error starting from Kotlin 2.6.0."))
+    if (args.outputDir != castedDefaults.outputDir) _restrictedArgViolations.add(RestrictedArgViolation.Warning("Argument '-ir-output-dir' is not supported in the Build Tools API. It is overwritten with the destination property of the build operation.  This warning will become an error starting from Kotlin 2.6.0."))
+    if (args.includes != castedDefaults.includes) _restrictedArgViolations.add(RestrictedArgViolation.Warning("Argument '-Xinclude' is not supported in the Build Tools API. It is overwritten with the klib property of the linking operation. This warning will become an error starting from Kotlin 2.6.0."))
+    if (args.irProduceKlibDir != castedDefaults.irProduceKlibDir) _restrictedArgViolations.add(RestrictedArgViolation.Warning("Argument '-Xir-produce-klib-dir' is not supported in the Build Tools API. Producing packed/unpacked klib is controlled using the `nopack` argument. This warning will become an error starting from Kotlin 2.6.0."))
+    if (args.irProduceKlibFile != castedDefaults.irProduceKlibFile) _restrictedArgViolations.add(RestrictedArgViolation.Warning("Argument '-Xir-produce-klib-file' is not supported in the Build Tools API. Producing packed/unpacked klib is controlled using the `nopack` argument. This warning will become an error starting from Kotlin 2.6.0."))
   }
 
   public class CommonJsAndWasmArgument<V>(
