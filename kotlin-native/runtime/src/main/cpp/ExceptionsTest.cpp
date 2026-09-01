@@ -503,6 +503,53 @@ TEST(TerminationThreadStateDeathTest, UnhandledForeignExceptionInForeignThread) 
      EXPECT_DEATH(testBlock(), AllOf(ASSERTS_PASSED, NATIVE_HANDLER_RAN, Not(KOTLIN_HANDLER_RAN)));
 }
 
+namespace {
+
+std::terminate_handler prevHandlerA = nullptr;
+std::terminate_handler prevHandlerB = nullptr;
+
+} // namespace
+
+TEST(SetKonanTerminateHandlerDeathTest, ChainedMockHandlers_CalledInLIFOOrder) {
+    auto testBlock = []() {
+        setupMocks();
+
+        // First native handler
+        prevHandlerA = std::set_terminate(+[]() noexcept {
+            log("Extra native handler A");
+            if (prevHandlerA) prevHandlerA();
+            std::abort();
+        });
+
+        // Reinstall Kotlin on top; handler A is now captured in the registry stack.
+        SetKonanTerminateHandler();
+
+        // Second native handler
+        prevHandlerB = std::set_terminate(+[]() noexcept {
+            log("Extra native handler B");
+            if (prevHandlerB) prevHandlerB();
+            std::abort();
+        });
+
+        // Reinstall Kotlin on top; handler B is now captured in the registry stack.
+        SetKonanTerminateHandler();
+
+        RunInNewThread([](MemoryState* thread) {
+            SwitchThreadState(thread, ThreadState::kNative);
+            throw std::runtime_error("Foreign exception");
+        });
+    };
+
+    EXPECT_DEATH(testBlock(), AllOf(
+        ASSERTS_PASSED,
+        NATIVE_HANDLER_RAN,
+        HasSubstr("Extra native handler B"),
+        HasSubstr("Extra native handler A"),
+        // B must appear before A in the output (LIFO from the registry stack)
+        ResultOf([](const std::string& s) { return s.find("handler B") < s.find("handler A"); }, IsTrue())
+    ));
+}
+
 // Model a filtering exception handler which terminates the program if an interop call throws a foreign exception.
 TEST(TerminationThreadStateDeathTest, TerminationInForeignExceptionCatch) {
     auto testBlock = []() {
