@@ -741,7 +741,9 @@ class Collections {
 
             val alice = User("Alice")
             val users = mutableSetOf(alice)
-            assertPrints(users.add(User("Alice")), "false")
+            val anotherAlice = User("Alice")
+            assertPrints(users.add(anotherAlice), "false")
+            // the original instance of User("Alice") remains in the set after trying to add a duplicate
             assertPrints(users.single() === alice, "true")
         }
 
