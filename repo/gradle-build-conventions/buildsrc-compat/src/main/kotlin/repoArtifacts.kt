@@ -8,9 +8,7 @@ import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.PublishArtifact
-import org.gradle.api.artifacts.component.ProjectComponentIdentifier
-import org.gradle.api.attributes.Category
-import org.gradle.api.attributes.DocsType
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.file.ArchiveOperations
@@ -26,12 +24,11 @@ import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.internal.component.external.model.TestFixturesSupport
-import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.jvm.JvmLibrary
 import org.gradle.jvm.tasks.Jar
-import org.gradle.language.base.artifact.SourcesArtifact
 import org.gradle.kotlin.dsl.*
 import org.gradle.kotlin.dsl.support.serviceOf
+import org.gradle.language.base.artifact.SourcesArtifact
 import plugins.KotlinBuildPublishingPlugin
 import plugins.mainPublicationName
 
@@ -258,6 +255,7 @@ fun Project.javadocJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
             dependsOn(it)
             from(it.destinationDir)
         }
+        addEmbeddedJavadoc()
         body()
     }
 
@@ -275,13 +273,7 @@ fun Project.javadocJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
  */
 fun Project.javadocJarWithJavadocFromEmbedded(
     body: Jar.() -> Unit = {},
-): TaskProvider<Jar> {
-    val javadocJarTask = javadocJar(body)
-    javadocJarTask.configure {
-        addEmbeddedJavadoc()
-    }
-    return javadocJarTask
-}
+): TaskProvider<Jar> = javadocJar(body)
 
 fun Project.standardPublicJars() {
     runtimeJar()
