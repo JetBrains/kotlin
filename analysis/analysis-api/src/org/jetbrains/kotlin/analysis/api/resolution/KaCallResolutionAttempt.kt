@@ -387,6 +387,29 @@ public val KaCallResolutionAttempt.simpleAttempts: List<KaSimpleCallResolutionAt
     }
 
 /**
+ * The list of errors that occurred during the resolution.
+ *
+ * - [KaSimpleCallResolutionSuccess]: an empty list.
+ * - [KaSimpleCallResolutionError]: [this] error as a single-element list.
+ * - [KaMultiCallResolutionAttempt]: the errors among the individual [sub-attempts][KaMultiCallResolutionAttempt.simpleAttempts].
+ *   A multi-call attempt fails as soon as any of its sub-calls fails, so the list is empty if and only if
+ *   the assembled [call][KaMultiCallResolutionAttempt.call] is not `null`.
+ *
+ * The list is empty if and only if the resolution succeeded. So, unlike a `this is KaSimpleCallResolutionError`
+ * check, which only covers simple attempts, this property detects failures of every attempt kind.
+ *
+ * @see simpleAttempts
+ * @see successful
+ */
+@KaExperimentalApi
+public val KaCallResolutionAttempt.errors: List<KaSimpleCallResolutionError>
+    get() = when (this) {
+        is KaSimpleCallResolutionSuccess -> emptyList()
+        is KaSimpleCallResolutionError -> listOf(this)
+        is KaMultiCallResolutionAttempt -> simpleAttempts.filterIsInstance<KaSimpleCallResolutionError>()
+    }
+
+/**
  * The resolved call if the resolution succeeded, or `null` if it failed.
  *
  * - [KaSimpleCallResolutionSuccess]: the resolved [call][KaSimpleCallResolutionSuccess.call].
