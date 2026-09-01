@@ -79,6 +79,15 @@ val platforms = listOf(
         "kotlin.build-tools-api.test.wasmStdlibClasspath",
     ),
     PlatformDefinition(
+        "wasmWasi",
+        {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, "kotlin-runtime"))
+            attribute(Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java), "wasm")
+            attribute(Attribute.of("org.jetbrains.kotlin.wasm.target", String::class.java), "wasi")
+        },
+        "kotlin.build-tools-api.test.wasmWasiStdlibClasspath",
+    ),
+    PlatformDefinition(
         "metadata",
         {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, "kotlin-runtime"))

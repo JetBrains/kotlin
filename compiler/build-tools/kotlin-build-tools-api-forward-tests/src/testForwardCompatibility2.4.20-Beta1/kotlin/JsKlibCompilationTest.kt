@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Co
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.X_IR_MODULE_NAME
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerKlibArguments.Companion.X_IR_PER_MODULE_OUTPUT_NAME
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerKlibArguments.Companion.X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.assertions.*
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
@@ -23,18 +24,18 @@ import org.junit.jupiter.api.DisplayName
 @DisplayName("Functional tests for the JS klib compilation operation of the BTA")
 class JsKlibCompilationTest : BaseCompilationTest() {
 
-    @DisplayName("Compiling JS sources produces an unpacked klib with IR and metadata fragments")
+    @DisplayName("Compiling Kotlin sources produces an unpacked klib with IR and metadata fragments")
     @BtaV2StrategyAgnosticCompilationTest
     fun compilesToUnpackedKlib(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jsProject(strategyConfig) {
             module("js-ic-basic-lib").compile {
-                assertIsUnpackedJsKlib()
+                assertIsUnpackedKlibWithIr()
                 assertKnmFileCount(expectedCount = 3)
             }
         }
     }
 
-    @DisplayName("Disabled NOPACK produces a packed klib file instead of a directory")
+    @DisplayName("Disabled NOPACK produces a packed klib file")
     @BtaV2StrategyAgnosticCompilationTest
     fun packedKlibIsProducedWhenNopackIsDisabled(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jsProject(strategyConfig) {
@@ -58,12 +59,12 @@ class JsKlibCompilationTest : BaseCompilationTest() {
         }
     }
 
-    @DisplayName("JS sources in named packages produce fragments in the matching package directories")
+    @DisplayName("Kotlin sources in named packages produce fragments in the matching package directories")
     @BtaV2StrategyAgnosticCompilationTest
     fun namedPackageSourcesProduceFragmentsInPackageDirectory(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jsProject(strategyConfig) {
             module("basic-multimodule-project/module-3").compile {
-                assertIsUnpackedJsKlib()
+                assertIsUnpackedKlibWithIr()
                 assertKnmFileCount(packageFqName = "p", expectedCount = 1)
                 assertKnmFileCount(packageFqName = "p2", expectedCount = 1)
                 assertKnmFileCount(packageFqName = "p3", expectedCount = 1)
@@ -77,7 +78,7 @@ class JsKlibCompilationTest : BaseCompilationTest() {
     fun multiLevelPackageSourcesProduceFragmentsInOnePackageDirectory(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jsProject(strategyConfig) {
             module("ic-scenarios/KT-85074").compile {
-                assertIsUnpackedJsKlib()
+                assertIsUnpackedKlibWithIr()
                 assertKnmFileCount(packageFqName = "org.example.foo", expectedCount = 2)
                 assertKnmFileCount(packageFqName = "root_package", expectedCount = 0)
             }
@@ -135,7 +136,7 @@ class JsKlibCompilationTest : BaseCompilationTest() {
             module("js-ic-basic-lib").compile(compilationConfigAction = {
                 it.compilerArguments[X_IR_MODULE_NAME] = moduleName
             }) {
-                assertIsUnpackedJsKlib()
+                assertIsUnpackedKlibWithIr()
                 assertKlibManifestProperties("unique_name" to moduleName)
             }
         }
@@ -174,6 +175,32 @@ class JsKlibCompilationTest : BaseCompilationTest() {
         }
     }
 
+    @DisplayName("X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS enabled allows a function type with receiver in an external declaration and compiles to an unpacked klib")
+    @BtaV2StrategyAgnosticCompilationTest
+    fun extensionFunctionsInExternalsEnabledAllowsReceiverType(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jsProject(strategyConfig) {
+            module("js-extension-function-in-external").compile(compilationConfigAction = {
+                it.compilerArguments[X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS] = true
+            }) {
+                assertIsUnpackedKlibWithIr()
+            }
+        }
+    }
+
+    @DisplayName("A function type with receiver in an external declaration is rejected without X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS")
+    @BtaV2StrategyAgnosticCompilationTest
+    fun extensionFunctionsInExternalsDisabledRejectsReceiverType(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jsProject(strategyConfig) {
+            module("js-extension-function-in-external").compile {
+                expectFail()
+                assertLogContainsPatterns(
+                    LogLevel.ERROR,
+                    Regex(".*Function types with receivers are prohibited in external declarations.*"),
+                )
+            }
+        }
+    }
+
     @DisplayName("X_FRIEND_MODULES makes internal declarations of a dependency visible")
     @BtaV2StrategyAgnosticCompilationTest
     fun internalDeclarationsOfAFriendModuleAreVisible(strategyConfig: CompilerExecutionStrategyConfiguration) {
@@ -184,7 +211,7 @@ class JsKlibCompilationTest : BaseCompilationTest() {
             appModule.compile(compilationConfigAction = {
                 it.compilerArguments[X_FRIEND_MODULES] = listOf(libModule.outputDirectory)
             }) {
-                assertIsUnpackedJsKlib()
+                assertIsUnpackedKlibWithIr()
             }
         }
     }
@@ -211,11 +238,11 @@ class JsKlibCompilationTest : BaseCompilationTest() {
             val app = module("js-ic-basic-app", dependencies = listOf(library))
 
             library.compile {
-                assertIsUnpackedJsKlib()
+                assertIsUnpackedKlibWithIr()
             }
 
             app.compile {
-                assertIsUnpackedJsKlib()
+                assertIsUnpackedKlibWithIr()
             }
         }
     }
