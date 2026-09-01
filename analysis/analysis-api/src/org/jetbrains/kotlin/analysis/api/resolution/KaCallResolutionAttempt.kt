@@ -372,6 +372,21 @@ public val KaCallResolutionAttempt.single: KaSimpleOrMultiCall?
     get() = calls.singleOrNull()
 
 /**
+ * The flattened list of simple resolution attempts.
+ *
+ * - [KaSimpleCallResolutionAttempt]: [this] attempt as a single-element list.
+ * - [KaMultiCallResolutionAttempt]: the individual [sub-attempts][KaMultiCallResolutionAttempt.simpleAttempts].
+ *
+ * The list is never empty.
+ */
+@KaExperimentalApi
+public val KaCallResolutionAttempt.simpleAttempts: List<KaSimpleCallResolutionAttempt>
+    get() = when (this) {
+        is KaSimpleCallResolutionAttempt -> listOf(this)
+        is KaMultiCallResolutionAttempt -> simpleAttempts
+    }
+
+/**
  * The resolved call if the resolution succeeded, or `null` if it failed.
  *
  * - [KaSimpleCallResolutionSuccess]: the resolved [call][KaSimpleCallResolutionSuccess.call].
