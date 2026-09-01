@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 @file:kotlin.Suppress("DEPRECATION_ERROR")
 
 import kotlinx.cinterop.*
@@ -254,4 +259,17 @@ internal external fun KotlinRuntimeSupport_linkAnchor()
 @ExportedBridge("KotlinRuntimeSupport_ensureLinked")
 public fun KotlinRuntimeSupport_ensureLinked() {
     KotlinRuntimeSupport_linkAnchor()
+}
+
+@ExportedBridge("_kotlin_swift_List_size_get")
+public fun List_size_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.List<kotlin.Any?>
+    return __self.size
+}
+
+@ExportedBridge("_kotlin_swift_List_get")
+public fun List_get(self: kotlin.native.internal.NativePtr, index: Int): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.List<kotlin.Any?>
+    val _result = __self.get(index)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }

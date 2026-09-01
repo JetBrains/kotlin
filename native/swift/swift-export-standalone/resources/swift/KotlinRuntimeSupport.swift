@@ -272,3 +272,37 @@ extension NSObject {
 /// Anchor that keeps this compilation unit in the linked image. Without it this module gets stripped
 @_cdecl("KotlinRuntimeSupport_linkAnchor")
 func _kotlinRuntimeSupportLinkAnchor() {}
+
+// MARK: - Collections
+
+public protocol List<Element> : RandomAccessCollection where Index == Int32 {
+    var size: Int32 { get }
+    func _get(index: Int32) -> Element
+}
+
+public extension List {
+    var startIndex: Int32 { 0 }
+    var endIndex: Int32 { size }
+
+    subscript(position: Int32) -> Element {
+       self._get(index: position)
+    }
+}
+
+public protocol TypedList<Element> : List {
+    var __rawList: KotlinRuntime.KotlinBase { get }
+    var __conformsTo: ((AnyClass?) -> Bool) { get }
+}
+
+public extension TypedList {
+    var size: Int32 {
+        _kotlin_swift_List_size_get(__rawList.__externalRCRef())
+    }
+
+    func _get(index: Int32) -> Element {
+        let element = _kotlin_swift_List_get(__rawList.__externalRCRef(), index)
+        return element.flatMap {
+            KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: $0, conformsTo: __conformsTo)
+        } as! Element
+    }
+}
