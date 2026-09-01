@@ -142,7 +142,7 @@ class IrModuleDeserializerWithBuiltIns(
     private val symbolTable: SymbolTable,
     mangler: KotlinMangler.IrMangler,
     onDeserializedClass: (IrClass, IdSignature) -> Unit,
-    private val delegate: IrModuleDeserializer
+    val delegate: IrModuleDeserializer
 ) : IrModuleDeserializer(moduleFragment, delegate.libraryAbiVersion) {
     private val signatureComputer = PublicIdSignatureComputer(mangler)
     private val syntheticProvider = IrSyntheticProvider(

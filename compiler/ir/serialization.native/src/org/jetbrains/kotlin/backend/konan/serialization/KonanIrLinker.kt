@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvide
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDependencyTracker
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDependencyTrackerImpl
+import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializerWithBuiltIns
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.PartialLinkageConfig
@@ -80,9 +81,6 @@ class KonanIrLinker(
         },
     )
 
-    val moduleDeserializers = mutableMapOf<IrModuleFragment, KonanPartialModuleDeserializer>()
-    val klibToModuleDeserializerMap = mutableMapOf<KotlinLibrary, KonanPartialModuleDeserializer>()
-
     override fun createModuleDeserializer(
         moduleFragment: IrModuleFragment,
         klib: KotlinLibrary?,
@@ -108,10 +106,7 @@ class KonanIrLinker(
             }
             KonanPartialModuleDeserializer(
                 this, moduleFragment, klib, strategyResolver, deserializationStrategy
-            ).also {
-                moduleDeserializers[moduleFragment] = it
-                klibToModuleDeserializerMap[klib] = it
-            }
+            )
         }
     }
 
@@ -125,5 +120,13 @@ class KonanIrLinker(
                 { DeserializationStrategy.EXPLICITLY_EXPORTED }
             }
         return deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, deserializationStrategy)
+    }
+
+    fun findKonanModuleDeserializer(library: KotlinLibrary): KonanPartialModuleDeserializer? {
+        return when (val deserializer = klibDeserializers[library]) {
+            is KonanPartialModuleDeserializer -> deserializer
+            is IrModuleDeserializerWithBuiltIns -> deserializer.delegate as? KonanPartialModuleDeserializer
+            else -> null
+        }
     }
 }
