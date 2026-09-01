@@ -6,7 +6,9 @@ plugins {
     java
 }
 
-project.updateJvmTarget("1.8")
+jvmToolchains {
+    targetBytecodeVersion = JdkMajorVersion.JDK_1_8
+}
 
 sourceSets {
     "main" { projectDefault() }

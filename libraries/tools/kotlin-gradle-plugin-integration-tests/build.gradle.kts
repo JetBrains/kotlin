@@ -1,7 +1,6 @@
 import gradle.GradlePluginVariant
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import java.nio.file.Paths
 
@@ -17,8 +16,19 @@ plugins {
 
 testsJar()
 
+jvmToolchains {
+    jdkVersion = JdkMajorVersion.JDK_17_0
+    targetBytecodeVersion = JdkMajorVersion.JDK_17_0
+    // The JVM toolchain is configured to version 17. However, that breaks buildscript
+    // injection for tests that are run on JDK 8. This setup pins test bytecode to JDK 8
+    // while still allowing the test infrastructure to use newer Java API (via jdkApiVersion).
+    configureForSourceSet("test") {
+        targetBytecodeVersion = JdkMajorVersion.JDK_1_8
+        jdkApiVersion = jdkVersion
+    }
+}
+
 kotlin {
-    jvmToolchain(17)
     compilerOptions {
         optIn.addAll(
             "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi",
@@ -359,26 +369,6 @@ if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.ge
         dependsOn(perTagJunitTasks)
     }
 }
-
-/**
- * The JVM toolchain is configured to version 17.
- * However, that breaks buildscript injection for tests that are ran on JDK 8.
- * Such setup allows to use new Java API in the test infrastructure.
- */
-fun configureJvmTarget8() {
-    tasks.compileTestJava {
-        sourceCompatibility = "8"
-        targetCompatibility = "8"
-    }
-
-    tasks.compileTestKotlin {
-        compilerOptions {
-            jvmTarget = JvmTarget.JVM_1_8
-        }
-    }
-}
-
-configureJvmTarget8()
 
 val kgpTestingUtilities = configurations.detachedConfiguration(
     dependencies.create(dependencies.testFixtures(dependencies.project(":kotlin-gradle-plugin")))

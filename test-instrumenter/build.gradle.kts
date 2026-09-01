@@ -81,10 +81,19 @@ configurations {
     }
 }
 
-kotlin {
-    // JDK 25 is only for executing tests and benchmarks
-    // The instrumentation code itself is compiled with JDK 8
-    jvmToolchain(25)
+// JDK 25 is only for executing tests and benchmarks
+// The instrumentation code itself is compiled with JDK 8
+jvmToolchains {
+    jdkVersion = JdkMajorVersion.JDK_25_0
+    targetBytecodeVersion = JdkMajorVersion.JDK_25_0
+    configureForSourceSet("main") {
+        jdkVersion = JDK_1_8
+        targetBytecodeVersion = JDK_1_8
+    }
+    configureForSourceSet("bootClasspath") {
+        jdkVersion = JDK_1_8
+        targetBytecodeVersion = JDK_1_8
+    }
 }
 
 testing {
@@ -101,18 +110,6 @@ jmh {
 }
 
 tasks {
-    compileKotlin {
-        configureTaskToolchain(JDK_1_8)
-    }
-
-    compileJava {
-        configureTaskToolchain(JDK_1_8)
-    }
-
-    named<JavaCompile>("compileBootClasspathJava") {
-        configureTaskToolchain(JDK_1_8)
-    }
-
     named<JMHTask>("jmh") {
         jmhClasspath.from(sourceSets["bootClasspath"].output)
     }

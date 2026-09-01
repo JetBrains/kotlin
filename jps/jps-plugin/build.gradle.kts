@@ -1,5 +1,4 @@
 
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.ideaExt.idea
 
 plugins {
@@ -101,19 +100,12 @@ idea {
     this.module.generatedSourceDirs.add(projectDir.resolve("jps-tests").resolve("tests-gen"))
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+jvmToolchains {
+    jdkVersion = JdkMajorVersion.JDK_21_0
+    targetBytecodeVersion = JdkMajorVersion.JDK_21_0
+    configureForSourceSet("main") {
+        targetBytecodeVersion = JdkMajorVersion.JDK_11_0
     }
-}
-
-tasks.compileJava {
-    sourceCompatibility = "11"
-    targetCompatibility = "11"
-}
-
-tasks.compileKotlin {
-    compilerOptions.jvmTarget = JvmTarget.JVM_11
 }
 
 projectTests {

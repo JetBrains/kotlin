@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 plugins {
     id("implicit-dependencies")
     id("java-instrumentation")
+    id("jvm-toolchains-convention")
 }
 
 // Common Group and version
@@ -22,7 +23,7 @@ val kotlinVersion: String = project.kotlinBuildProperties.kotlinVersion.get()
 group = "org.jetbrains.kotlin"
 version = kotlinVersion
 
-project.configureJvmDefaultToolchain()
+project.configureKotlinJavaCompileHygiene()
 project.addEmbeddedConfigurations()
 project.configureJavaCompile()
 project.configureKotlinCompilationOptions()
@@ -89,6 +90,24 @@ fun Project.addEmbeddedConfigurations() {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
             attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
         }
+    }
+}
+
+/**
+ * Kotlin JVM projects don't need annotation processing on their `JavaCompile` tasks (Kotlin's own
+ * annotation processing goes through kapt/KSP instead), and consistent UTF-8 encoding avoids
+ * platform-default-charset-dependent compilation. `compileJava9Java` is excluded because it's
+ * configured separately for multi-release-jar compilation (see `configureJava9Compilation`).
+ */
+fun Project.configureKotlinJavaCompileHygiene() {
+    plugins.withId("org.jetbrains.kotlin.jvm") {
+        tasks.withType<JavaCompile>()
+            .configureEach {
+                if (name != "compileJava9Java") {
+                    options.compilerArgs.add("-proc:none")
+                    options.encoding = "UTF-8"
+                }
+            }
     }
 }
 

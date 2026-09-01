@@ -770,17 +770,14 @@ testFixturesCompilation.compileTaskProvider.configure {
 }
 testFixturesCompilation.enableKotlinSerializationPlugin()
 
-val functionalTestCompilation = kotlin.target.compilations.getByName("functionalTest")
-functionalTestCompilation.compileJavaTaskProvider.configure {
-    sourceCompatibility = JavaLanguageVersion.of(17).toString()
-    targetCompatibility = JavaLanguageVersion.of(17).toString()
-}
-functionalTestCompilation.compileTaskProvider.configure {
-    with(this as KotlinCompile) {
-        kotlinJavaToolchain.toolchain.use(project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))
+jvmToolchains {
+    configureForSourceSet("functionalTest") {
+        jdkVersion = JdkMajorVersion.JDK_17_0
+        targetBytecodeVersion = JdkMajorVersion.JDK_17_0
     }
 }
 
+val functionalTestCompilation = kotlin.target.compilations.getByName("functionalTest")
 functionalTestCompilation.enableKotlinSerializationPlugin()
 functionalTestCompilation.associateWith(kotlin.target.compilations.getByName(gradlePluginVariantForFunctionalTests.sourceSetName))
 functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))

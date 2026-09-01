@@ -7,7 +7,9 @@ description = 'Kotlin Script Runtime'
 
 apply plugin: 'kotlin'
 
-JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_8)
+jvmToolchains {
+    targetBytecodeVersion.set(JdkMajorVersion.JDK_1_8)
+}
 
 RepoArtifacts.publish(project)
 

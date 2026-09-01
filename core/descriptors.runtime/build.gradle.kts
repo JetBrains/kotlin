@@ -6,8 +6,6 @@ plugins {
     id("test-inputs-check")
 }
 
-project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
-
 dependencies {
     implementation(project(":compiler:frontend.java"))
     implementation(project(":core:deserialization"))

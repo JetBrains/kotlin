@@ -7,7 +7,9 @@ description = 'Kotlin Standard Library JDK 7 extension'
 
 apply plugin: 'kotlin'
 
-JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_8)
+jvmToolchains {
+    targetBytecodeVersion.set(JdkMajorVersion.JDK_1_8)
+}
 
 RepoArtifacts.publish(project)
 RepoArtifacts.sourcesJar(project)

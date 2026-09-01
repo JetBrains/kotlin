@@ -1,5 +1,3 @@
-import org.gradle.api.tasks.compile.JavaCompile
-
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -62,11 +60,12 @@ sourceSets {
 
 configurations["jdk9CompileClasspath"].extendsFrom(configurations.compileClasspath)
 
-tasks.named<JavaCompile>("compileJdk9Java") {
-    // Use a JDK that can emit release 9 (JDK 9 is not used on CI).
-    configureTaskToolchain(JdkMajorVersion.JDK_17_0)
-    sourceCompatibility = JavaVersion.VERSION_1_9.toString()
-    targetCompatibility = JavaVersion.VERSION_1_9.toString()
+// Use a JDK that can emit release 9 (JDK 9 is not used on CI).
+jvmToolchains {
+    configureForSourceSet("jdk9") {
+        jdkVersion = JdkMajorVersion.JDK_17_0
+        targetBytecodeVersion = JdkMajorVersion.JDK_9_0
+    }
 }
 
 kotlin {

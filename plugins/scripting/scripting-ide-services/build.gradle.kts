@@ -8,8 +8,6 @@ plugins {
     kotlin("jvm")
 }
 
-project.updateJvmTarget("1.8")
-
 publish()
 
 dependencies {
