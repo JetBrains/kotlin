@@ -382,7 +382,7 @@ class ParcelizeIrTransformer(
             // just to handle empty parcel case, we need some arguments other than marker to use the constructor
             experimentalCodeGeneration && inheritanceConstructor != null && inheritanceConstructor.parameters.size > 1 -> {
                 val constructorArguments = declaration.inheritanceConstructorArguments()
-                irCall(inheritanceConstructor).apply {
+                irCall(inheritanceConstructor.symbol, declaration.symbol.starProjectedType).apply {
                     constructorArguments.forEachIndexed { index, property ->
                         arguments[index] = readParcelWith(property.parceler, parcelParameter)
                     }
@@ -391,7 +391,7 @@ class ParcelizeIrTransformer(
             }
 
             parcelableProperties.isNotEmpty() ->
-                irCall(declaration.primaryConstructor!!).apply {
+                irCall(declaration.primaryConstructor!!.symbol, declaration.symbol.starProjectedType).apply {
                     for (property in parcelableProperties) {
                         arguments[property.index] = readParcelWith(property.parceler, parcelParameter)
                     }
