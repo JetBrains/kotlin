@@ -31,9 +31,9 @@ public sealed interface KaCallResolutionAttempt : KaLifetimeOwner
 
 /**
  * Represents an attempt to resolve a simple call (as opposed to a [multi-call][KaMultiCallResolutionAttempt]),
- * which is either a [success][KaCallResolutionSuccess] or an [error][KaCallResolutionError].
+ * which is either a [success][KaCallResolutionSuccess] or an [error][KaSimpleCallResolutionError].
  *
- * Both [KaCallResolutionSuccess.call] and [KaCallResolutionError.candidateCalls] always contain [KaSimpleCall]s.
+ * Both [KaCallResolutionSuccess.call] and [KaSimpleCallResolutionError.candidateCalls] always contain [KaSimpleCall]s.
  */
 @KaExperimentalApi
 public sealed interface KaSimpleCallResolutionAttempt : KaCallResolutionAttempt
@@ -69,13 +69,13 @@ public typealias KaSingleCallResolutionAttempt = KaSimpleCallResolutionAttempt
  * }
  * ```
  *
- * `bar()` will be resolved to [KaCallResolutionError] with `INVISIBLE_REFERENCE` diagnostic and the `bar` call
+ * `bar()` will be resolved to [KaSimpleCallResolutionError] with `INVISIBLE_REFERENCE` diagnostic and the `bar` call
  *
  * @see KaResolver.tryResolveCall
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaCallResolutionError : KaSimpleCallResolutionAttempt {
+public interface KaSimpleCallResolutionError : KaSimpleCallResolutionAttempt {
     /**
      * The diagnostic associated with the error
      */
@@ -86,6 +86,21 @@ public interface KaCallResolutionError : KaSimpleCallResolutionAttempt {
      */
     public val candidateCalls: List<KaSimpleCall<*, *>>
 }
+
+/**
+ * The former name of [KaSimpleCallResolutionError].
+ *
+ * @see KaSimpleCallResolutionError
+ */
+@Deprecated(
+    message = "Use 'KaSimpleCallResolutionError' instead",
+    replaceWith = ReplaceWith(
+        expression = "KaSimpleCallResolutionError",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCallResolutionError"],
+    ),
+)
+@KaExperimentalApi
+public typealias KaCallResolutionError = KaSimpleCallResolutionError
 
 /**
  * Represents a successful resolution of a simple [KtResolvableCall].
@@ -288,13 +303,13 @@ private interface KaMultiUnknownCallResolutionAttempt : KaMultiCallResolutionAtt
  * The flattened list of resolved calls.
  *
  * - [KaCallResolutionSuccess]: the resolved [call][KaCallResolutionSuccess.call] as a single-element list.
- * - [KaCallResolutionError]: the [candidate calls][KaCallResolutionError.candidateCalls].
+ * - [KaSimpleCallResolutionError]: the [candidate calls][KaSimpleCallResolutionError.candidateCalls].
  * - [KaMultiCallResolutionAttempt]: the assembled [call][KaMultiCallResolutionAttempt.call] if all sub-calls
  *   succeeded, or the combined calls from individual [attempts][KaMultiCallResolutionAttempt.attempts] otherwise.
  */
 @KaExperimentalApi
 public val KaCallResolutionAttempt.calls: List<KaSimpleOrMultiCall>
-    get() = if (this is KaCallResolutionError) {
+    get() = if (this is KaSimpleCallResolutionError) {
         candidateCalls
     } else {
         fold(
@@ -321,7 +336,7 @@ public val KaCallResolutionAttempt.calls: List<KaSimpleOrMultiCall>
  * }
  * ```
  *
- * `bar()` is resolved to a [KaCallResolutionError], so [successful] is `null`, while [single] is the `bar` candidate call.
+ * `bar()` is resolved to a [KaSimpleCallResolutionError], so [successful] is `null`, while [single] is the `bar` candidate call.
  *
  * @see calls
  * @see successful
@@ -334,7 +349,7 @@ public val KaCallResolutionAttempt.single: KaSimpleOrMultiCall?
  * The resolved call if the resolution succeeded, or `null` if it failed.
  *
  * - [KaCallResolutionSuccess]: the resolved [call][KaCallResolutionSuccess.call].
- * - [KaCallResolutionError]: `null`.
+ * - [KaSimpleCallResolutionError]: `null`.
  * - [KaMultiCallResolutionAttempt]: the assembled [call][KaMultiCallResolutionAttempt.call]
  *   if all sub-calls succeeded, or `null` otherwise.
  */
@@ -362,7 +377,7 @@ public val KaCallResolutionAttempt.successfulCall: KaSimpleOrMultiCall?
  * Folds over a [KaCallResolutionAttempt] depending on whether the resolution succeeded.
  *
  * - [KaCallResolutionSuccess]: invokes [onSuccess] with the resolved [call][KaCallResolutionSuccess.call].
- * - [KaCallResolutionError]: invokes [onFailure] with the error wrapped in a single-element list.
+ * - [KaSimpleCallResolutionError]: invokes [onFailure] with the error wrapped in a single-element list.
  * - [KaMultiCallResolutionAttempt]: if all sub-calls succeeded, invokes [onSuccess] with the assembled
  *   [call][KaMultiCallResolutionAttempt.call]; otherwise invokes [onFailure] with the individual
  *   [attempts][KaMultiCallResolutionAttempt.attempts].
@@ -387,7 +402,7 @@ public inline fun <T> KaCallResolutionAttempt.fold(
     if (call != null) return onSuccess(call)
 
     val attempts = when (this) {
-        is KaCallResolutionError -> listOf(this)
+        is KaSimpleCallResolutionError -> listOf(this)
         is KaMultiCallResolutionAttempt -> attempts
         else -> error("Unexpected ${KaCallResolutionAttempt::class.simpleName}: $this")
     }

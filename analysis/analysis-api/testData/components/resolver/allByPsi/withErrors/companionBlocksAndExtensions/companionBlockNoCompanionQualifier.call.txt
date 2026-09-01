@@ -44,12 +44,12 @@ KtBlockExpression(133,274): '{'
   null
 
 KtDotQualifiedExpression(255,272): 'C.Companion.foo()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'foo'.>
 
 KtDotQualifiedExpression(255,266): 'C.Companion'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Companion'.>
 
@@ -57,17 +57,17 @@ KtNameReferenceExpression(255,256): 'C'
   null
 
 KtNameReferenceExpression(257,266): 'Companion'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Companion'.>
 
 KtCallExpression(267,272): 'foo()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'foo'.>
 
 KtNameReferenceExpression(267,270): 'foo'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'foo'.>
 

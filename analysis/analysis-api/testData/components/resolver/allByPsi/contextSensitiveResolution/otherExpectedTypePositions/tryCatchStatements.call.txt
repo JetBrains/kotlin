@@ -781,7 +781,7 @@ KtBlockExpression(558,687): '{'
   null
 
 KtNameReferenceExpression(568,583): 'NestedInheritor'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
 
@@ -810,7 +810,7 @@ KtBlockExpression(702,819): '{'
   null
 
 KtNameReferenceExpression(712,723): 'myClassProp'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'myClassProp'.>
 
@@ -856,7 +856,7 @@ KtBlockExpression(834,1061): '{'
   null
 
 KtNameReferenceExpression(844,854): 'stringProp'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'stringProp'.>
 
@@ -904,7 +904,7 @@ KtNameReferenceExpression(1080,1096): 'ClassMemberAlias'
       typeArgumentsMapping = {}
 
 KtCallExpression(1108,1497): 'receive<MyClass>('
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -956,7 +956,7 @@ KtCallExpression(1108,1497): 'receive<MyClass>('
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1108,1115): 'receive'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1035,7 +1035,7 @@ KtBlockExpression(1138,1205): '{'
   null
 
 KtNameReferenceExpression(1152,1167): 'NestedInheritor'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
 
@@ -1064,7 +1064,7 @@ KtBlockExpression(1219,1278): '{'
   null
 
 KtNameReferenceExpression(1233,1244): 'myClassProp'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'myClassProp'.>
 
@@ -1110,7 +1110,7 @@ KtBlockExpression(1293,1350): '{'
   null
 
 KtNameReferenceExpression(1307,1317): 'stringProp'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'stringProp'.>
 
@@ -1156,12 +1156,12 @@ KtBlockExpression(1365,1442): '{'
   null
 
 KtCallExpression(1379,1399): 'getNestedInheritor()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 
 KtNameReferenceExpression(1379,1397): 'getNestedInheritor'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 
@@ -1169,12 +1169,12 @@ KtValueArgumentList(1397,1399): '()'
   null
 
 KtCallExpression(1412,1432): 'getNestedInheritor()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 
 KtNameReferenceExpression(1412,1430): 'getNestedInheritor'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 
@@ -1205,7 +1205,7 @@ KtNameReferenceExpression(1465,1481): 'ClassMemberAlias'
       typeArgumentsMapping = {}
 
 KtCallExpression(1503,1887): 'run<MyClass> {'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1259,7 +1259,7 @@ KtCallExpression(1503,1887): 'run<MyClass> {'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1503,1506): 'run'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1346,7 +1346,7 @@ KtBlockExpression(1530,1597): '{'
   null
 
 KtNameReferenceExpression(1544,1559): 'NestedInheritor'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
 
@@ -1375,7 +1375,7 @@ KtBlockExpression(1611,1670): '{'
   null
 
 KtNameReferenceExpression(1625,1636): 'myClassProp'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'myClassProp'.>
 
@@ -1421,7 +1421,7 @@ KtBlockExpression(1684,1741): '{'
   null
 
 KtNameReferenceExpression(1698,1708): 'stringProp'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'stringProp'.>
 
@@ -1467,12 +1467,12 @@ KtBlockExpression(1755,1832): '{'
   null
 
 KtCallExpression(1769,1789): 'getNestedInheritor()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 
 KtNameReferenceExpression(1769,1787): 'getNestedInheritor'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 
@@ -1480,12 +1480,12 @@ KtValueArgumentList(1787,1789): '()'
   null
 
 KtCallExpression(1802,1822): 'getNestedInheritor()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 
 KtNameReferenceExpression(1802,1820): 'getNestedInheritor'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 

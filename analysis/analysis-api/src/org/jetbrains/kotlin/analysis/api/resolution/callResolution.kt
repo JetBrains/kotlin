@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.resolution.*
  * context(session: KaSession)
  * fun findResolutionDiagnostic(expression: KtCallExpression): KaDiagnostic? {
  *   val attempt = expression.tryResolveCall() ?: return null
- *   val error = attempt as? KaCallResolutionError ?: return null
+ *   val error = attempt as? KaSimpleCallResolutionError ?: return null
  *   return error.diagnostic
  * }
  * ```

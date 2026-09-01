@@ -37,7 +37,7 @@ KtDotQualifiedExpression(43,69): 'JavaClass<Int>.staticField'
       typeArgumentsMapping = {}
 
 KtCallExpression(43,57): 'JavaClass<Int>'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -59,7 +59,7 @@ KtCallExpression(43,57): 'JavaClass<Int>'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
 
 KtNameReferenceExpression(43,52): 'JavaClass'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -116,12 +116,12 @@ KtNameReferenceExpression(58,69): 'staticField'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(73,99): 'JavaClass<Long>.unresolved'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unresolved'.>
 
 KtCallExpression(73,88): 'JavaClass<Long>'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -143,7 +143,7 @@ KtCallExpression(73,88): 'JavaClass<Long>'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
 
 KtNameReferenceExpression(73,82): 'JavaClass'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -180,7 +180,7 @@ KtNameReferenceExpression(83,87): 'Long'
   null
 
 KtNameReferenceExpression(89,99): 'unresolved'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unresolved'.>
 

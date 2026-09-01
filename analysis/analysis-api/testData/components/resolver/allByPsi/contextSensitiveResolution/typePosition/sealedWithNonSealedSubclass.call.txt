@@ -273,6 +273,6 @@ KtNameReferenceExpression(316,333): 'NonSealedSubclass'
   null
 
 KtNameReferenceExpression(337,338): 'z'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'z'.>

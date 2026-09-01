@@ -212,7 +212,7 @@ KtValueArgumentList(319,321): '()'
   null
 
 KtDotQualifiedExpression(326,344): 'O.objectReceiver()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'objectReceiver'.>
 
@@ -220,12 +220,12 @@ KtNameReferenceExpression(326,327): 'O'
   null
 
 KtCallExpression(328,344): 'objectReceiver()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'objectReceiver'.>
 
 KtNameReferenceExpression(328,342): 'objectReceiver'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'objectReceiver'.>
 

@@ -1253,7 +1253,7 @@ KtNameReferenceExpression(429,430): 'X'
       typeArgumentsMapping = {}
 
 KtCallExpression(443,476): 'generate {'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1293,7 +1293,7 @@ KtCallExpression(443,476): 'generate {'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /generate>
 
 KtNameReferenceExpression(443,451): 'generate'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1481,6 +1481,6 @@ KtValueArgument(468,469): 'X'
   null
 
 KtNameReferenceExpression(468,469): 'X'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>

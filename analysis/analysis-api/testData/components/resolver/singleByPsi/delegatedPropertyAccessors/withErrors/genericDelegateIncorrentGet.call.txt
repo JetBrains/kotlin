@@ -1,7 +1,7 @@
 KtPropertyDelegate(74,109): 'by GenericDelegate<String>("hello")'
   KaDelegatedPropertyCallResolutionAttempt:
     provideDelegateCallAttempt = null
-    valueGetterCallAttempt = KaCallResolutionError:
+    valueGetterCallAttempt = KaSimpleCallResolutionError:
       candidateCalls = [
         KaSimpleFunctionCall:
           contextArgumentMapping = {}

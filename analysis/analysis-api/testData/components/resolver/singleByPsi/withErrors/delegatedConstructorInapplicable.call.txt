@@ -1,5 +1,5 @@
 KtConstructorCalleeExpression(40,41): 'A'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaDelegatedConstructorCall:
         contextArgumentMapping = {}

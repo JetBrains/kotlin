@@ -1128,7 +1128,7 @@ KtOperationReferenceExpression(775,777): '=='
       }
 
 KtNameReferenceExpression(778,798): 'OpenSpecificSettings'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'OpenSpecificSettings'.>
 

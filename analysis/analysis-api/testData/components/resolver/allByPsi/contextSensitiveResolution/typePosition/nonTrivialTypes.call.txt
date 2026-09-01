@@ -821,7 +821,7 @@ KtNameReferenceExpression(861,865): 'Left'
   null
 
 KtDotQualifiedExpression(869,873): 'cs.x'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x' on receiver of type 'MyGenericSealed<String> & CharSequence'.>
 
@@ -843,7 +843,7 @@ KtNameReferenceExpression(869,871): 'cs'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(872,873): 'x'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x' on receiver of type 'MyGenericSealed<String> & CharSequence'.>
 
@@ -863,7 +863,7 @@ KtNameReferenceExpression(885,890): 'Right'
   null
 
 KtDotQualifiedExpression(894,898): 'cs.y'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y' on receiver of type 'MyGenericSealed<String> & CharSequence'.>
 
@@ -885,6 +885,6 @@ KtNameReferenceExpression(894,896): 'cs'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(897,898): 'y'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y' on receiver of type 'MyGenericSealed<String> & CharSequence'.>

@@ -47,7 +47,7 @@ KtBlockExpression(94,109): '{'
   null
 
 KtDotQualifiedExpression(100,107): 'C.foo()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -92,7 +92,7 @@ KtNameReferenceExpression(100,101): 'C'
   null
 
 KtCallExpression(102,107): 'foo()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -134,7 +134,7 @@ KtCallExpression(102,107): 'foo()'
     companion fun C.foo(): Unit>
 
 KtNameReferenceExpression(102,105): 'foo'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}

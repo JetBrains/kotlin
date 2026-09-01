@@ -1419,7 +1419,7 @@ KtNameReferenceExpression(1026,1042): 'topLevelVariable'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(1047,1074): '::lateinitVar.isInitialized'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'isInitialized' on receiver of type 'KMutableProperty0<MyClass>'.>
 
@@ -1454,7 +1454,7 @@ KtNameReferenceExpression(1049,1060): 'lateinitVar'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1061,1074): 'isInitialized'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'isInitialized' on receiver of type 'KMutableProperty0<MyClass>'.>
 

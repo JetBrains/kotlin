@@ -1,5 +1,5 @@
 KtCallableReferenceExpression(87,92): '::foo'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []

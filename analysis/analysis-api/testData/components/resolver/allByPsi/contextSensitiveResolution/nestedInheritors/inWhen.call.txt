@@ -636,7 +636,7 @@ KtWhenEntry(697,719): 'else -> OtherInheritor'
   null
 
 KtNameReferenceExpression(705,719): 'OtherInheritor'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'OtherInheritor'.>
 
@@ -1610,6 +1610,6 @@ KtWhenEntry(1583,1617): 'else -> NestedInheritorOfOpenClass'
   null
 
 KtNameReferenceExpression(1591,1617): 'NestedInheritorOfOpenClass'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritorOfOpenClass'.>

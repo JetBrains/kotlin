@@ -4475,7 +4475,7 @@ KtValueArgumentList(1299,1301): '()'
   null
 
 KtPrefixExpression(1307,1309): '+a'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -4506,7 +4506,7 @@ KtPrefixExpression(1307,1309): '+a'
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
 
 KtOperationReferenceExpression(1307,1308): '+'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -4554,7 +4554,7 @@ KtNameReferenceExpression(1308,1309): 'a'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(1314,1319): 'a + 1'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -4618,7 +4618,7 @@ KtNameReferenceExpression(1314,1315): 'a'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1316,1317): '+'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -4668,7 +4668,7 @@ KtConstantExpression(1318,1319): '1'
   null
 
 KtArrayAccessExpression(1324,1328): 'a[1]'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -4738,7 +4738,7 @@ KtConstantExpression(1326,1327): '1'
   null
 
 KtBinaryExpression(1333,1343): 'a[1] = A()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -4799,7 +4799,7 @@ KtBinaryExpression(1333,1343): 'a[1] = A()'
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
 
 KtArrayAccessExpression(1333,1337): 'a[1]'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -4883,7 +4883,7 @@ KtConstantExpression(1335,1336): '1'
   null
 
 KtOperationReferenceExpression(1338,1339): '='
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -4981,7 +4981,7 @@ KtValueArgumentList(1341,1343): '()'
   null
 
 KtCallExpression(1348,1351): 'a()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
         contextArgumentMapping = {}
@@ -5032,7 +5032,7 @@ KtValueArgumentList(1349,1351): '()'
   null
 
 KtBinaryExpression(1356,1362): 'a += 1'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -5096,7 +5096,7 @@ KtNameReferenceExpression(1356,1357): 'a'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1358,1360): '+='
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -5147,7 +5147,7 @@ KtConstantExpression(1361,1362): '1'
 
 KtPostfixExpression(1367,1370): 'a++'
   KaCompoundVariableAccessCallResolutionAttempt:
-    operationCallAttempt = KaCallResolutionError:
+    operationCallAttempt = KaSimpleCallResolutionError:
       candidateCalls = [
         KaSimpleFunctionCall:
           contextArgumentMapping = {}
@@ -5211,7 +5211,7 @@ KtNameReferenceExpression(1367,1368): 'a'
 
 KtOperationReferenceExpression(1368,1370): '++'
   KaCompoundVariableAccessCallResolutionAttempt:
-    operationCallAttempt = KaCallResolutionError:
+    operationCallAttempt = KaSimpleCallResolutionError:
       candidateCalls = [
         KaSimpleFunctionCall:
           contextArgumentMapping = {}
@@ -5257,7 +5257,7 @@ KtOperationReferenceExpression(1368,1370): '++'
         typeArgumentsMapping = {}
 
 KtBinaryExpression(1376,1381): 'b + 1'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -5321,7 +5321,7 @@ KtNameReferenceExpression(1376,1377): 'b'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1378,1379): '+'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -5371,7 +5371,7 @@ KtConstantExpression(1380,1381): '1'
   null
 
 KtPrefixExpression(1386,1388): '+b'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -5402,7 +5402,7 @@ KtPrefixExpression(1386,1388): '+b'
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
 
 KtOperationReferenceExpression(1386,1387): '+'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -5450,7 +5450,7 @@ KtNameReferenceExpression(1387,1388): 'b'
       typeArgumentsMapping = {}
 
 KtArrayAccessExpression(1393,1397): 'b[1]'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -5520,7 +5520,7 @@ KtConstantExpression(1395,1396): '1'
   null
 
 KtBinaryExpression(1402,1412): 'b[1] = A()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -5581,7 +5581,7 @@ KtBinaryExpression(1402,1412): 'b[1] = A()'
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
 
 KtArrayAccessExpression(1402,1406): 'b[1]'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -5665,7 +5665,7 @@ KtConstantExpression(1404,1405): '1'
   null
 
 KtOperationReferenceExpression(1407,1408): '='
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -5763,7 +5763,7 @@ KtValueArgumentList(1410,1412): '()'
   null
 
 KtCallExpression(1417,1420): 'b()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
         contextArgumentMapping = {}
@@ -5814,7 +5814,7 @@ KtValueArgumentList(1418,1420): '()'
   null
 
 KtBinaryExpression(1425,1431): 'b += 1'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -5878,7 +5878,7 @@ KtNameReferenceExpression(1425,1426): 'b'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1427,1429): '+='
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -5929,7 +5929,7 @@ KtConstantExpression(1430,1431): '1'
 
 KtPostfixExpression(1436,1439): 'b++'
   KaCompoundVariableAccessCallResolutionAttempt:
-    operationCallAttempt = KaCallResolutionError:
+    operationCallAttempt = KaSimpleCallResolutionError:
       candidateCalls = [
         KaSimpleFunctionCall:
           contextArgumentMapping = {}
@@ -5993,7 +5993,7 @@ KtNameReferenceExpression(1436,1437): 'b'
 
 KtOperationReferenceExpression(1437,1439): '++'
   KaCompoundVariableAccessCallResolutionAttempt:
-    operationCallAttempt = KaCallResolutionError:
+    operationCallAttempt = KaSimpleCallResolutionError:
       candidateCalls = [
         KaSimpleFunctionCall:
           contextArgumentMapping = {}

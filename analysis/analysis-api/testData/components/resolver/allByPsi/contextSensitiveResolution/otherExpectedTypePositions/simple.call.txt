@@ -172,6 +172,6 @@ KtNameReferenceExpression(227,233): 'MyEnum'
   null
 
 KtNameReferenceExpression(236,246): 'UNRESOLVED'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'UNRESOLVED'.>

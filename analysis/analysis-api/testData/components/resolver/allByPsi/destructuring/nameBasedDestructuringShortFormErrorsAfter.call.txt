@@ -100,7 +100,7 @@ KtDestructuringDeclarationEntry(188,189): 'a'
       typeArgumentsMapping = {}
 
 KtDestructuringDeclarationEntry(191,197): 'second'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'second' on receiver of type 'Tuple'.>
 
@@ -140,7 +140,7 @@ KtDestructuringDeclaration(222,237): 'var (first) = x'
   null
 
 KtDestructuringDeclarationEntry(227,232): 'first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -180,7 +180,7 @@ KtDestructuringDeclaration(256,279): 'val (first: String) = x'
   null
 
 KtDestructuringDeclarationEntry(261,274): 'first: String'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -229,7 +229,7 @@ KtDestructuringDeclaration(298,309): 'val (first)'
   null
 
 KtDestructuringDeclarationEntry(303,308): 'first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
@@ -444,7 +444,7 @@ KtDestructuringDeclaration(437,448): 'val (_) = x'
   null
 
 KtDestructuringDeclarationEntry(442,443): '_'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING: Underscore in name-based destructuring without renaming is forbidden.>
 
@@ -484,7 +484,7 @@ KtDestructuringDeclaration(467,486): 'val (_: String) = x'
   null
 
 KtDestructuringDeclarationEntry(472,481): '_: String'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING: Underscore in name-based destructuring without renaming is forbidden.>
 
@@ -533,7 +533,7 @@ KtDestructuringDeclaration(521,541): 'val (aa = first) = x'
   null
 
 KtDestructuringDeclarationEntry(526,536): 'aa = first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -576,7 +576,7 @@ KtDestructuringDeclaration(560,588): 'val (aa: String = first) = x'
   null
 
 KtDestructuringDeclarationEntry(565,583): 'aa: String = first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -628,7 +628,7 @@ KtDestructuringDeclaration(607,622): 'val (a = first)'
   null
 
 KtDestructuringDeclarationEntry(612,621): 'a = first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
@@ -832,12 +832,12 @@ KtDestructuringDeclaration(727,743): '(first, second,)'
   null
 
 KtDestructuringDeclarationEntry(728,733): 'first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
 KtDestructuringDeclarationEntry(735,741): 'second'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'second' on receiver of type 'Tuple'.>
 
@@ -929,7 +929,7 @@ KtDestructuringDeclaration(762,769): '(first)'
   null
 
 KtDestructuringDeclarationEntry(763,768): 'first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -1021,7 +1021,7 @@ KtDestructuringDeclaration(788,803): '(first: String)'
   null
 
 KtDestructuringDeclarationEntry(789,802): 'first: String'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -1267,7 +1267,7 @@ KtDestructuringDeclaration(860,863): '(_)'
   null
 
 KtDestructuringDeclarationEntry(861,862): '_'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING: Underscore in name-based destructuring without renaming is forbidden.>
 
@@ -1359,7 +1359,7 @@ KtDestructuringDeclaration(882,893): '(_: String)'
   null
 
 KtDestructuringDeclarationEntry(883,892): '_: String'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING: Underscore in name-based destructuring without renaming is forbidden.>
 
@@ -1460,7 +1460,7 @@ KtDestructuringDeclaration(929,941): '(aa = first)'
   null
 
 KtDestructuringDeclarationEntry(930,940): 'aa = first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -1555,7 +1555,7 @@ KtDestructuringDeclaration(960,980): '(aa: String = first)'
   null
 
 KtDestructuringDeclarationEntry(961,979): 'aa: String = first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -1884,12 +1884,12 @@ KtDestructuringDeclaration(1109,1125): '(first, second,)'
   null
 
 KtDestructuringDeclarationEntry(1110,1115): 'first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
 KtDestructuringDeclarationEntry(1117,1123): 'second'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'second' on receiver of type 'Tuple'.>
 
@@ -1981,7 +1981,7 @@ KtDestructuringDeclaration(1141,1148): '(first)'
   null
 
 KtDestructuringDeclarationEntry(1142,1147): 'first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -2073,7 +2073,7 @@ KtDestructuringDeclaration(1164,1179): '(first: String)'
   null
 
 KtDestructuringDeclarationEntry(1165,1178): 'first: String'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -2319,7 +2319,7 @@ KtDestructuringDeclaration(1230,1233): '(_)'
   null
 
 KtDestructuringDeclarationEntry(1231,1232): '_'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING: Underscore in name-based destructuring without renaming is forbidden.>
 
@@ -2411,7 +2411,7 @@ KtDestructuringDeclaration(1249,1260): '(_: String)'
   null
 
 KtDestructuringDeclarationEntry(1250,1259): '_: String'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING: Underscore in name-based destructuring without renaming is forbidden.>
 
@@ -2512,7 +2512,7 @@ KtDestructuringDeclaration(1293,1305): '(aa = first)'
   null
 
 KtDestructuringDeclarationEntry(1294,1304): 'aa = first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -2607,7 +2607,7 @@ KtDestructuringDeclaration(1321,1341): '(aa: String = first)'
   null
 
 KtDestructuringDeclarationEntry(1322,1340): 'aa: String = first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 

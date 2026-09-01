@@ -1,5 +1,5 @@
 KtDotQualifiedExpression(118,123): 'f.foo'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleVariableAccessCall:
         contextArguments = []

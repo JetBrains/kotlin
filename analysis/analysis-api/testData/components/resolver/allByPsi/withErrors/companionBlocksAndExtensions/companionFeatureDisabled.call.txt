@@ -44,7 +44,7 @@ KtBlockExpression(133,148): '{'
   null
 
 KtDotQualifiedExpression(139,146): 'C.foo()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -70,7 +70,7 @@ KtNameReferenceExpression(139,140): 'C'
   null
 
 KtCallExpression(141,146): 'foo()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -93,7 +93,7 @@ KtCallExpression(141,146): 'foo()'
     diagnostic = ERROR<UNSUPPORTED_FEATURE: The feature "companion blocks" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcompanion-blocks', but note that no stability guarantees are provided.>
 
 KtNameReferenceExpression(141,144): 'foo'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
