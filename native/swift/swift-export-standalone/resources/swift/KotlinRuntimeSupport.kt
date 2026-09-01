@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 @file:kotlin.Suppress("DEPRECATION_ERROR")
 
 import kotlinx.cinterop.*
@@ -253,4 +258,44 @@ internal external fun KotlinRuntimeSupport_linkAnchor()
 @ExportedBridge("KotlinRuntimeSupport_ensureLinked")
 public fun KotlinRuntimeSupport_ensureLinked() {
     KotlinRuntimeSupport_linkAnchor()
+}
+
+@ExportedBridge("_kotlin_swift_Iterator_hasNext")
+public fun Iterator_hasNext(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.Iterator<kotlin.Any?>
+    return __self.hasNext()
+}
+
+@ExportedBridge("_kotlin_swift_Iterator_next")
+public fun Iterator_next(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.Iterator<kotlin.Any?>
+    val _result = __self.next()
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("_kotlin_swift_Collection_iterator")
+public fun Collection_iterator(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.Collection<kotlin.Any?>
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(__self.iterator())
+}
+
+@ExportedBridge("_kotlin_swift_List_size_get")
+public fun List_size_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.List<kotlin.Any?>
+    return __self.size
+}
+
+@ExportedBridge("_kotlin_swift_List_get")
+public fun List_get(self: kotlin.native.internal.NativePtr, index: Int): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.List<kotlin.Any?>
+    val _result = __self.get(index)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("_kotlin_swift_MutableList_set")
+public fun MutableList_set(self: kotlin.native.internal.NativePtr, index: Int, element: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.MutableList<kotlin.Any?>
+    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any
+    val _result = __self.set(index, __element)
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
