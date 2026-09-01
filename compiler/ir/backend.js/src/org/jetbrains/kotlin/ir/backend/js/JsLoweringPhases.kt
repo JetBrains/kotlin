@@ -225,6 +225,16 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::IrValidationAfterLoweringsSecondStagePhase,
 )
 
+/**
+ * Canonicalizes callable-reference factories: moves them to their declaration files and
+ * deduplicates them by reflection target. Runs at the start of `optimizeProgramByIr`, before
+ * the DFG-based optimizations, so each canonical factory is analyzed independently.
+ */
+val callableReferenceFactoryPhases: List<NamedCompilerPhase<JsIrOptimizationContext, IrModuleFragment, IrModuleFragment>> = createModulePhases(
+    ::MoveCallableFactoriesToDeclarationsLowering,
+    ::DeduplicateCallableReferenceFactoriesLowering,
+)
+
 val optimizationLoweringList: List<NamedCompilerPhase<JsIrOptimizationContext, IrModuleFragment, IrModuleFragment>> = createModulePhases(
     ::ES6CollectConstructorsWhichNeedBoxParameters,
     ::ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering,
@@ -234,7 +244,5 @@ val optimizationLoweringList: List<NamedCompilerPhase<JsIrOptimizationContext, I
     ::PurifyObjectInstanceGettersLowering,
     ::InlineObjectsWithPureInitializationLowering,
     ::JsCleanupPurifiedLeftoverUsagesLowering,
-    ::MoveCallableFactoriesToDeclarationsLowering,
-    ::DeduplicateCallableReferenceFactoriesLowering,
     ::WhileConditionFoldingLowering,
 )
