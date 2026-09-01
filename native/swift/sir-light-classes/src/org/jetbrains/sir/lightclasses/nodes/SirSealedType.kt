@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.sir.providers.toSir
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.sir.util.swiftIdentifier
+import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
@@ -102,7 +103,7 @@ internal class SirSealedTypeEnum(
 
     val isEmpty: Boolean get() = sealedInheritors.isEmpty()
 
-    val cases: List<Pair<ClassId, SirEnumCase?>> by lazyWithSessions {
+    val cases: List<Pair<ClassId, SirSealedTypeEnumCase?>> by lazyWithSessions {
         val names = createUniqueCaseNames(sealedInheritors)
         sealedInheritors.map { ktSymbol ->
             val classId = ktSymbol.classId ?: error("Sealed type ($ktSymbol) must have a classId")
@@ -114,12 +115,9 @@ internal class SirSealedTypeEnum(
                 ?: error("Failed to get declaration for sealed type ($ktSymbol)")
             if (declaration.isUnavailable) return@map classId to null
 
+            val name = names.getValue(ktSymbol).enumCaseName
             val sealedType = declaration.sealedType ?: error("Leaf declaration ($declaration) must have a SealedType")
-            val case = buildEnumCase {
-                name = names.getValue(ktSymbol).enumCaseName
-                associatedValueTypes.add(SirNominalType(sealedType))
-                attributes.addAll(declaration.propagatedAttributes)
-            }.apply { parent = this@SirSealedTypeEnum }
+            val case = SirSealedTypeEnumCase(ktSymbol, sirSession, declaration, sealedType, name).apply { parent = this@SirSealedTypeEnum }
             classId to case
         }
     }
@@ -164,6 +162,22 @@ internal class SirSealedTypeEnum(
             add(valueVariable)
         }
     }
+}
+
+internal class SirSealedTypeEnumCase(
+    override val ktSymbol: KaNamedClassSymbol,
+    override val sirSession: SirSession,
+    internal val declaration: SirScopeDefiningDeclaration,
+    private val sealedType: SirScopeDefiningDeclaration,
+    override val name: String,
+) : SirEnumCase(), SirFromKtSymbol<KaNamedClassSymbol> {
+    override val origin: SirOrigin get() = SirOrigin.SealedType(KotlinSource(ktSymbol))
+    override val visibility: SirVisibility = SirVisibility.PUBLIC
+    override val documentation: String? = null
+    override lateinit var parent: SirDeclarationParent
+    override val attributes: List<SirAttribute> get() = declaration.propagatedAttributes
+    override val bridges: List<SirBridge> get() = emptyList()
+    override val associatedValueTypes: List<SirType> get() = listOf(SirNominalType(sealedType))
 }
 
 internal class SirSealedTypeStruct(
@@ -235,9 +249,17 @@ internal sealed class SirSealedTypeFunction : SirFunction(), SirFromKtSymbol<KaN
         override var body: SirFunctionBody?
             set(_) = Unit
             get() {
-                val statement = when (val unknownCase = sealedType.unknownCase) {
-                    null -> """fatalError("must implement sealedType in subclass")"""
+                val defaultCase = "default: " + when (val unknownCase = sealedType.unknownCase) {
+                    null -> """fatalError("missing sealedType for \(self)")"""
                     else -> ".${unknownCase.name.swiftIdentifier}(.init(self))"
+                }
+                val statement = sealedType.cases.mapNotNull {
+                    it.second
+                }.joinToString(prefix = "switch self {\n", separator = "", postfix = "$defaultCase\n}") { case ->
+                    val valueType = SirNominalType(case.declaration).swiftName
+                    val isSealedType = case.declaration.sealedType is SirSealedTypeEnum
+                    val type = if (isSealedType) "value.${name.swiftIdentifier}()" else ".init(value)"
+                    "case let value as $valueType: .${case.name.swiftIdentifier}($type)\n"
                 }
                 return SirFunctionBody(listOf(statement))
             }

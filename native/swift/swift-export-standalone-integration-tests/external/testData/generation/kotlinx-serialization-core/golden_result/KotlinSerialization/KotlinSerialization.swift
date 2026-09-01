@@ -537,7 +537,9 @@ extension ExportedKotlinPackages.kotlinx.serialization.modules {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         open func sealedType() -> ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule_SealedType {
-            .unknown(.init(self))
+            switch self {
+            default: .unknown(.init(self))
+            }
         }
     }
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
@@ -692,7 +694,10 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
         }
         @_spi(kotlinx$serialization$InternalSerializationApi)
         open func sealedType() -> ExportedKotlinPackages.kotlinx.serialization.`internal`.AbstractCollectionSerializer_SealedType {
-            .unknown(.init(self))
+            switch self {
+            case let value as ExportedKotlinPackages.kotlinx.serialization.`internal`.MapLikeSerializer: .mapLikeSerializer(value.sealedType())
+            default: .unknown(.init(self))
+            }
         }
     }
     @_spi(kotlinx$serialization$InternalSerializationApi)
@@ -792,7 +797,9 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
         }
         @_spi(kotlinx$serialization$InternalSerializationApi)
         open func sealedType() -> ExportedKotlinPackages.kotlinx.serialization.`internal`.MapLikeSerializer_SealedType {
-            .unknown(.init(self))
+            switch self {
+            default: .unknown(.init(self))
+            }
         }
         @_spi(kotlinx$serialization$InternalSerializationApi) @_disfavoredOverload
         public final override func sealedType() -> ExportedKotlinPackages.kotlinx.serialization.`internal`.AbstractCollectionSerializer_SealedType {
@@ -1536,7 +1543,11 @@ extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
         }
         @_spi(kotlinx$serialization$ExperimentalSerializationApi)
         open func sealedType() -> ExportedKotlinPackages.kotlinx.serialization.descriptors.PolymorphicKind_SealedType {
-            fatalError("must implement sealedType in subclass")
+            switch self {
+            case let value as ExportedKotlinPackages.kotlinx.serialization.descriptors.PolymorphicKind.OPEN: .`open`(.init(value))
+            case let value as ExportedKotlinPackages.kotlinx.serialization.descriptors.PolymorphicKind.SEALED: .sealed(.init(value))
+            default: fatalError("missing sealedType for \(self)")
+            }
         }
         @_spi(kotlinx$serialization$ExperimentalSerializationApi) @_disfavoredOverload
         public final override func sealedType() -> ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialKind_SealedType {
@@ -1841,7 +1852,18 @@ extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
         }
         @_spi(kotlinx$serialization$ExperimentalSerializationApi)
         open func sealedType() -> ExportedKotlinPackages.kotlinx.serialization.descriptors.PrimitiveKind_SealedType {
-            fatalError("must implement sealedType in subclass")
+            switch self {
+            case let value as ExportedKotlinPackages.kotlinx.serialization.descriptors.PrimitiveKind.BOOLEAN: .boolean(.init(value))
+            case let value as ExportedKotlinPackages.kotlinx.serialization.descriptors.PrimitiveKind.BYTE: .byte(.init(value))
+            case let value as ExportedKotlinPackages.kotlinx.serialization.descriptors.PrimitiveKind.CHAR: .char(.init(value))
+            case let value as ExportedKotlinPackages.kotlinx.serialization.descriptors.PrimitiveKind.DOUBLE: .double(.init(value))
+            case let value as ExportedKotlinPackages.kotlinx.serialization.descriptors.PrimitiveKind.FLOAT: .float(.init(value))
+            case let value as ExportedKotlinPackages.kotlinx.serialization.descriptors.PrimitiveKind.INT: .int(.init(value))
+            case let value as ExportedKotlinPackages.kotlinx.serialization.descriptors.PrimitiveKind.LONG: .long(.init(value))
+            case let value as ExportedKotlinPackages.kotlinx.serialization.descriptors.PrimitiveKind.SHORT: .short(.init(value))
+            case let value as ExportedKotlinPackages.kotlinx.serialization.descriptors.PrimitiveKind.STRING: .string(.init(value))
+            default: fatalError("missing sealedType for \(self)")
+            }
         }
         @_spi(kotlinx$serialization$ExperimentalSerializationApi) @_disfavoredOverload
         public final override func sealedType() -> ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialKind_SealedType {
@@ -1938,7 +1960,14 @@ extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
         }
         @_spi(kotlinx$serialization$ExperimentalSerializationApi)
         open func sealedType() -> ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialKind_SealedType {
-            fatalError("must implement sealedType in subclass")
+            switch self {
+            case let value as ExportedKotlinPackages.kotlinx.serialization.descriptors.PolymorphicKind: .polymorphicKind(value.sealedType())
+            case let value as ExportedKotlinPackages.kotlinx.serialization.descriptors.PrimitiveKind: .primitiveKind(value.sealedType())
+            case let value as ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialKind.CONTEXTUAL: .contextual(.init(value))
+            case let value as ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialKind.ENUM: .`enum`(.init(value))
+            case let value as ExportedKotlinPackages.kotlinx.serialization.descriptors.StructureKind: .structureKind(value.sealedType())
+            default: fatalError("missing sealedType for \(self)")
+            }
         }
     }
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
@@ -2079,7 +2108,13 @@ extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
         }
         @_spi(kotlinx$serialization$ExperimentalSerializationApi)
         open func sealedType() -> ExportedKotlinPackages.kotlinx.serialization.descriptors.StructureKind_SealedType {
-            fatalError("must implement sealedType in subclass")
+            switch self {
+            case let value as ExportedKotlinPackages.kotlinx.serialization.descriptors.StructureKind.CLASS: .`class`(.init(value))
+            case let value as ExportedKotlinPackages.kotlinx.serialization.descriptors.StructureKind.LIST: .list(.init(value))
+            case let value as ExportedKotlinPackages.kotlinx.serialization.descriptors.StructureKind.MAP: .map(.init(value))
+            case let value as ExportedKotlinPackages.kotlinx.serialization.descriptors.StructureKind.OBJECT: .object(.init(value))
+            default: fatalError("missing sealedType for \(self)")
+            }
         }
         @_spi(kotlinx$serialization$ExperimentalSerializationApi) @_disfavoredOverload
         public final override func sealedType() -> ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialKind_SealedType {

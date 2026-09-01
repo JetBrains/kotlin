@@ -37,6 +37,13 @@ class ClassH : SealedClassA() {
     override fun toString(): String = "ClassH"
 }
 
+private class PrivateInterfaceCImpl : InterfaceC {
+    override fun toString(): String = "PrivateInterfaceCImpl"
+}
+
+fun interface FunctionalInterfaceC : InterfaceC {
+    override fun toString(): String
+}
 
 fun createClassC_SealedInterfaceA(): SealedInterfaceA = ClassC()
 
@@ -52,3 +59,11 @@ fun createClassG_SealedClassA(): SealedClassA = ClassG()
 
 @Suppress("DEPRECATION_ERROR")
 fun createClassH_SealedClassA(): SealedClassA = ClassH()
+
+fun createPrivateInterfaceCImpl_SealedInterfaceA(): SealedInterfaceA = PrivateInterfaceCImpl()
+
+fun createFunctionalInterfaceC_SealedInterfaceA(): SealedInterfaceA = FunctionalInterfaceC { "FunctionalInterfaceC" }
+
+fun createAnonymousInterfaceC_SealedInterfaceA(): SealedInterfaceA = object : InterfaceC {
+    override fun toString(): String = "AnonymousInterfaceC"
+}

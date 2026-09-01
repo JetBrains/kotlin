@@ -482,7 +482,10 @@ open class SEALED: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     open func sealedType() -> main.SEALED_SealedType {
-        fatalError("must implement sealedType in subclass")
+        switch self {
+        case let value as main.SEALED.O: .o(.init(value))
+        default: fatalError("missing sealedType for \(self)")
+        }
     }
 }
 public var block: main.closure {

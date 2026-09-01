@@ -85,3 +85,33 @@ func testClassH_SealedClassA() throws {
     }
     try #require(result == "unknown: ClassH")
 }
+
+@Test
+func testPrivateInterfaceCImpl_SealedInterfaceA() throws {
+    let value = createPrivateInterfaceCImpl_SealedInterfaceA()
+    let result = switch value.sealedType() {
+        case let .interfaceC(type): "interfaceC: \(type.value)"
+        default: "default: \(value)"
+    }
+    try #require(result == "interfaceC: PrivateInterfaceCImpl")
+}
+
+@Test
+func testFunctionalInterfaceC_SealedInterfaceA() throws {
+    let value = createFunctionalInterfaceC_SealedInterfaceA()
+    let result = switch value.sealedType() {
+        case let .interfaceC(type): "interfaceC: \(type.value)"
+        default: "default: \(value)"
+    }
+    try #require(result == "interfaceC: FunctionalInterfaceC")
+}
+
+@Test
+func testAnonymousInterfaceC_SealedInterfaceA() throws {
+    let value = createAnonymousInterfaceC_SealedInterfaceA()
+    let result = switch value.sealedType() {
+        case let .interfaceC(type): "interfaceC: \(type.value)"
+        default: "default: \(value)"
+    }
+    try #require(result == "interfaceC: AnonymousInterfaceC")
+}

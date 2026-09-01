@@ -59,7 +59,10 @@ extension ExportedKotlinPackages.test.factory.suffix {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         open func sealedType() -> ExportedKotlinPackages.test.factory.suffix.Foo_SealedType {
-            fatalError("must implement sealedType in subclass")
+            switch self {
+            case let value as ExportedKotlinPackages.test.factory.suffix.BasicFoo: .basicFoo(.init(value))
+            default: fatalError("missing sealedType for \(self)")
+            }
         }
     }
     public struct BasicFoo_SealedType: KotlinRuntimeSupport.SealedType {
