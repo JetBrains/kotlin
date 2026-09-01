@@ -203,11 +203,19 @@ constructor(
         }
 
         val output = outputBundleDir.get().asFile.resolve(TEST_HTML_FILE_NAME)
-        output.writeText(html)
+        output.writeText(
+            html
+                .replace(MOCHA_CSS_URL, PINNED_MOCHA_CSS_URL)
+                .replace(MOCHA_SCRIPT_URL, PINNED_MOCHA_SCRIPT_URL)
+        )
     }
 
     companion object {
         private const val TEST_HTML_FILE_NAME = "test.html"
+        private const val MOCHA_CSS_URL = "https://unpkg.com/mocha/mocha.css"
+        private const val MOCHA_SCRIPT_URL = "https://unpkg.com/mocha/mocha.js"
+        private const val PINNED_MOCHA_CSS_URL = "https://unpkg.com/mocha@11.8.0/mocha.css"
+        private const val PINNED_MOCHA_SCRIPT_URL = "https://unpkg.com/mocha@11.8.0/mocha.js"
     }
 }
 
