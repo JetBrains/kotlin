@@ -1,4 +1,7 @@
-b main.kt:14
+b main.kt:15
 r
 fr var
+fr var -A -P 5 a
+fr var -A -P 5 b
+fr var -A -P 5 empty
 q

@@ -1,0 +1,27 @@
+b main.kt:16
+r
+fr var set
+fr var -A -P 5 set
+fr var intSet
+fr var -A -P 5 intSet
+fr var simpleSet
+fr var -A -P 5 simpleSet
+fr var simpleMutableSet
+fr var -A -P 5 simpleMutableSet
+fr var simpleLinkedSet
+fr var -A -P 5 simpleLinkedSet
+fr var simpleHashSet
+fr var -A -P 5 simpleHashSet
+fr var emptySet
+fr var -A -P 5 emptySet
+fr var nestedSet
+fr var -A -P 10 nestedSet
+field_type nestedSet
+field_type nestedSet.0
+field_type nestedSet.0.0
+field_type nestedSet.0.0.x
+field_type nestedSet.0.0.y
+field_type nestedSet.0.1
+field_type nestedSet.0.1.x
+field_type nestedSet.0.1.y
+q

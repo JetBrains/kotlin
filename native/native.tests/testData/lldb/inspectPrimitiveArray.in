@@ -1,0 +1,21 @@
+b main.kt:17
+r
+fr var intArray
+fr var -A -P 5 intArray
+fr var emptyIntArray
+fr var -A -P 5 emptyIntArray
+fr var longArray
+fr var -A -P 5 longArray
+fr var shortArray
+fr var -A -P 5 shortArray
+fr var byteArray
+fr var -A -P 5 byteArray
+fr var charArray
+fr var -A -P 5 charArray
+fr var booleanArray
+fr var -A -P 5 booleanArray
+fr var floatArray
+fr var -A -P 5 floatArray
+fr var doubleArray
+fr var -A -P 5 doubleArray
+q
