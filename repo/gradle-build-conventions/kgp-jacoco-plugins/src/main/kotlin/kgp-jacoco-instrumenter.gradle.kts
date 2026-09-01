@@ -11,14 +11,7 @@ import org.gradle.kotlin.dsl.withType
 val versionCatalog = extensions.getByType(VersionCatalogsExtension::class.java).named("libs")
 val jacocoCliDependency = versionCatalog.findLibrary("jacoco-cli").get()
 
-val jacocoCliClasspath = configurations.dependencyScope("jacocoCliClasspath")
-
-dependencies {
-    jacocoCliClasspath(jacocoCliDependency.get())
-}
-
-val jacocoCliClasspathResolver = configurations.resolvable(jacocoCliClasspath.name + "Resolver") {
-    extendsFrom(jacocoCliClasspath)
+val jacocoCliClasspath = configurations.detachedConfiguration(jacocoCliDependency.get()).apply {
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
     }
@@ -34,7 +27,7 @@ if (kotlinBuildProperties.kgpTestCoverageEnabled.get()) {
     tasks.withType<Jar>()
         .matching { it.name.matches(instrumentedJarName) }
         .configureEach {
-            val jacocoCli = jacocoCliClasspathResolver.map { it.incoming.files }
+            val jacocoCli = jacocoCliClasspath.incoming.files
             inputs.files(jacocoCli)
                 .withNormalizer(ClasspathNormalizer::class)
 

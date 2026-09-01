@@ -7,7 +7,6 @@ import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 
 plugins {
     jacoco
-    id("kgp-jacoco-instrumenter")
 }
 
 val versionCatalog = extensions.getByType(VersionCatalogsExtension::class.java).named("libs")
