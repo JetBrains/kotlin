@@ -200,6 +200,7 @@ private fun LinkKlibsContext.deserializeDependencies(moduleDescriptor: ModuleDes
             isFullyCachedLibrary && kotlinLibrary.isHeader -> linker.deserializeHeadersWithInlineBodies(dependency, kotlinLibrary)
             isFullyCachedLibrary -> linker.deserializeOnlyHeaderModule(dependency, kotlinLibrary)
             kotlinLibrary != null -> linker.deserializeIrModuleHeader(dependency, kotlinLibrary)
+            else -> error("Unexpected kind of module dependency $dependency")
         }
     }
 }
