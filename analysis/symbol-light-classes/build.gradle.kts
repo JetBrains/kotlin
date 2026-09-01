@@ -25,7 +25,7 @@ dependencies {
     implementation(libs.caffeine)
 
     testFixturesImplementation(project(":analysis:decompiled:light-classes-for-decompiled"))
-    testFixturesApi(project(":analysis:decompiled:decompiler-to-file-stubs"))
+    testFixturesApi(project(":analysis:decompiled:decompiler"))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))

@@ -16,7 +16,7 @@ val jvmAbiGenPlugin = configurations.create("jvmAbiGenPlugin") {
 
 dependencies {
     implementation(project(":compiler:psi:psi-api"))
-    implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
+    implementation(project(":analysis:decompiled:decompiler"))
     implementation(intellijCore())
 
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
@@ -24,8 +24,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
-    testFixturesApi(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
-    testFixturesApi(testFixtures(project(":analysis:decompiled:decompiler-to-psi")))
+    testFixturesApi(testFixtures(project(":analysis:decompiled:decompiler")))
     testFixturesImplementation(project(":analysis:analysis-internal-utils"))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)

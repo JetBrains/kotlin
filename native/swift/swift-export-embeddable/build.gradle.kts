@@ -38,11 +38,8 @@ dependencies {
     embedded(project(":analysis:light-classes-base")) { isTransitive = false }
     embedded(project(":analysis:symbol-light-classes")) { isTransitive = false }
     embedded(project(":analysis:analysis-internal-utils")) { isTransitive = false }
-    embedded(project(":analysis:decompiled:decompiler-native")) { isTransitive = false }
-    embedded(project(":analysis:decompiled:decompiler-to-psi")) { isTransitive = false }
+    embedded(project(":analysis:decompiled:decompiler")) { isTransitive = false }
     embedded(project(":analysis:decompiled:light-classes-for-decompiled")) { isTransitive = false }
-    embedded(project(":analysis:decompiled:decompiler-to-stubs")) { isTransitive = false }
-    embedded(project(":analysis:decompiled:decompiler-to-file-stubs")) { isTransitive = false }
 
     val projectsToInheritDependenciesFrom = configurations.runtimeClasspath.get().copy()
     projectsToInheritDependenciesFrom.dependencies.clear()
