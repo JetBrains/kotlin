@@ -384,7 +384,7 @@ internal fun assertStableResult(
 
         is KaMultiCallResolutionAttempt -> if (symbolResolutionAttempt is KaCompoundSymbolResolutionError) {
             val callErrors = callResolutionAttempt.errors
-            val symbolErrors = symbolResolutionAttempt.simpleAttempts.filterIsInstance<KaSimpleSymbolResolutionError>()
+            val symbolErrors = symbolResolutionAttempt.errors
             assertions.assertEquals(callErrors.size, symbolErrors.size) {
                 "Number of error attempts differs between call and symbol resolution"
             }
