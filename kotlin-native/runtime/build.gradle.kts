@@ -113,6 +113,10 @@ bitcode {
             else -> emptyMap()
             }.map { "-D${it.key}=${it.value}" }
 
+        // todo: remove me when KT-87902 is done
+        val ignoreUnknownSdkAttributesInXcode27: List<String> =
+                if (target.family.isAppleFamily) listOf("-Wno-unknown-attributes") else emptyList()
+
         val clangArgsSpecificForKonanSources: List<String> = run {
             val konanOptions = listOfNotNull(
                     target.architecture.name.takeIf { target != KonanTarget.WATCHOS_ARM64 },
@@ -143,7 +147,7 @@ bitcode {
                     "USE_WINAPI_UNWIND=1".takeIf { target.supportsWinAPIUnwind() },
                     "USE_GCC_UNWIND=1".takeIf { target.supportsGccUnwind() }
             )
-            (konanOptions + otherOptions).map { "-D$it" } + fixBrokenMacroExpansionInXcode15_3
+            (konanOptions + otherOptions).map { "-D$it" } + fixBrokenMacroExpansionInXcode15_3 + ignoreUnknownSdkAttributesInXcode27
         }
 
         defaultCompilerArgs.addAll(listOfNotNull(
