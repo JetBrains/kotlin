@@ -20,6 +20,8 @@ package org.jetbrains.kotlin.benchmarks.jmh.jvm.reflection.data;
  *   JavaFinalLayer              - leaf: overrides, own instance members and statics
  */
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 interface JavaBaseContract {
     int abstractBase0(int value);
 
@@ -58,6 +60,8 @@ interface JavaBaseContract {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 interface JavaMidContractA extends JavaBaseContract {
     int abstractMidA0(int value);
 
@@ -83,6 +87,8 @@ interface JavaMidContractA extends JavaBaseContract {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 interface JavaMidContractB extends JavaBaseContract {
     int abstractMidB0(int value);
 
@@ -108,6 +114,8 @@ interface JavaMidContractB extends JavaBaseContract {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 interface JavaMidContractC extends JavaBaseContract {
     int abstractMidC0(int value);
 
@@ -133,6 +141,8 @@ interface JavaMidContractC extends JavaBaseContract {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 interface JavaMidContractD extends JavaBaseContract {
     int abstractMidD0(int value);
 
@@ -158,6 +168,8 @@ interface JavaMidContractD extends JavaBaseContract {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 interface JavaMidContractE extends JavaBaseContract {
     int abstractMidE0(int value);
 
@@ -183,6 +195,8 @@ interface JavaMidContractE extends JavaBaseContract {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 interface JavaMidContractF extends JavaBaseContract {
     int abstractMidF0(int value);
 
@@ -208,6 +222,8 @@ interface JavaMidContractF extends JavaBaseContract {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 abstract class JavaAbstractLayer0 implements JavaMidContractA {
     abstract int abstractLayer000(int value);
 
@@ -258,6 +274,8 @@ abstract class JavaAbstractLayer0 implements JavaMidContractA {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 abstract class JavaAbstractLayer1 extends JavaAbstractLayer0 implements JavaMidContractB {
     abstract int abstractLayer010(int value);
 
@@ -308,6 +326,8 @@ abstract class JavaAbstractLayer1 extends JavaAbstractLayer0 implements JavaMidC
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 abstract class JavaAbstractLayer2 extends JavaAbstractLayer1 implements JavaMidContractC {
     abstract int abstractLayer020(int value);
 
@@ -358,6 +378,8 @@ abstract class JavaAbstractLayer2 extends JavaAbstractLayer1 implements JavaMidC
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 abstract class JavaAbstractLayer3 extends JavaAbstractLayer2 implements JavaMidContractD {
     abstract int abstractLayer030(int value);
 
@@ -408,6 +430,8 @@ abstract class JavaAbstractLayer3 extends JavaAbstractLayer2 implements JavaMidC
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 abstract class JavaAbstractLayer4 extends JavaAbstractLayer3 implements JavaMidContractE {
     abstract int abstractLayer040(int value);
 
@@ -458,6 +482,8 @@ abstract class JavaAbstractLayer4 extends JavaAbstractLayer3 implements JavaMidC
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 abstract class JavaAbstractLayer5 extends JavaAbstractLayer4 implements JavaMidContractF {
     abstract int abstractLayer050(int value);
 
@@ -508,6 +534,8 @@ abstract class JavaAbstractLayer5 extends JavaAbstractLayer4 implements JavaMidC
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 abstract class JavaAbstractLayer6 extends JavaAbstractLayer5 {
     abstract int abstractLayer060(int value);
 
@@ -558,6 +586,8 @@ abstract class JavaAbstractLayer6 extends JavaAbstractLayer5 {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 abstract class JavaAbstractLayer7 extends JavaAbstractLayer6 {
     abstract int abstractLayer070(int value);
 
@@ -593,6 +623,8 @@ abstract class JavaAbstractLayer7 extends JavaAbstractLayer6 {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 abstract class JavaAbstractLayer8 extends JavaAbstractLayer7 {
     abstract int abstractLayer080(int value);
 
@@ -628,6 +660,8 @@ abstract class JavaAbstractLayer8 extends JavaAbstractLayer7 {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 abstract class JavaAbstractLayer9 extends JavaAbstractLayer8 {
     abstract int abstractLayer090(int value);
 
@@ -663,6 +697,8 @@ abstract class JavaAbstractLayer9 extends JavaAbstractLayer8 {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 abstract class JavaAbstractLayer10 extends JavaAbstractLayer9 {
     abstract int abstractLayer100(int value);
 
@@ -698,6 +734,8 @@ abstract class JavaAbstractLayer10 extends JavaAbstractLayer9 {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 abstract class JavaAbstractLayer11 extends JavaAbstractLayer10 {
     abstract int abstractLayer110(int value);
 
@@ -733,6 +771,8 @@ abstract class JavaAbstractLayer11 extends JavaAbstractLayer10 {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 class JavaConcreteLayer0 extends JavaAbstractLayer11 implements JavaSideLayerA {
     @Override
     int abstractLayer110(int value) {
@@ -774,6 +814,8 @@ class JavaConcreteLayer0 extends JavaAbstractLayer11 implements JavaSideLayerA {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 class JavaConcreteLayer1 extends JavaConcreteLayer0 implements JavaSideLayerB {
     int concreteLayer010(int value) {
         return value + 1;
@@ -800,6 +842,8 @@ class JavaConcreteLayer1 extends JavaConcreteLayer0 implements JavaSideLayerB {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 class JavaConcreteLayer2 extends JavaConcreteLayer1 implements JavaSideLayerC {
     int concreteLayer020(int value) {
         return value + 1;
@@ -826,6 +870,8 @@ class JavaConcreteLayer2 extends JavaConcreteLayer1 implements JavaSideLayerC {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 class JavaConcreteLayer3 extends JavaConcreteLayer2 implements JavaSideLayerD {
     int concreteLayer030(int value) {
         return value + 1;
@@ -852,6 +898,8 @@ class JavaConcreteLayer3 extends JavaConcreteLayer2 implements JavaSideLayerD {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 class JavaConcreteLayer4 extends JavaConcreteLayer3 implements JavaSideLayerE {
     int concreteLayer040(int value) {
         return value + 1;
@@ -878,6 +926,8 @@ class JavaConcreteLayer4 extends JavaConcreteLayer3 implements JavaSideLayerE {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 class JavaConcreteLayer5 extends JavaConcreteLayer4 implements JavaSideLayerF {
     int concreteLayer050(int value) {
         return value + 1;
@@ -904,6 +954,8 @@ class JavaConcreteLayer5 extends JavaConcreteLayer4 implements JavaSideLayerF {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 class JavaConcreteLayer6 extends JavaConcreteLayer5 {
     int concreteLayer060(int value) {
         return value + 1;
@@ -930,6 +982,8 @@ class JavaConcreteLayer6 extends JavaConcreteLayer5 {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 class JavaConcreteLayer7 extends JavaConcreteLayer6 {
     int concreteLayer070(int value) {
         return value + 1;
@@ -956,6 +1010,8 @@ class JavaConcreteLayer7 extends JavaConcreteLayer6 {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 class JavaConcreteLayer8 extends JavaConcreteLayer7 {
     int concreteLayer080(int value) {
         return value + 1;
@@ -982,6 +1038,8 @@ class JavaConcreteLayer8 extends JavaConcreteLayer7 {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 class JavaConcreteLayer9 extends JavaConcreteLayer8 {
     int concreteLayer090(int value) {
         return value + 1;
@@ -1008,6 +1066,8 @@ class JavaConcreteLayer9 extends JavaConcreteLayer8 {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 class JavaConcreteLayer10 extends JavaConcreteLayer9 {
     int concreteLayer100(int value) {
         return value + 1;
@@ -1034,6 +1094,8 @@ class JavaConcreteLayer10 extends JavaConcreteLayer9 {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 class JavaConcreteLayer11 extends JavaConcreteLayer10 {
     int concreteLayer110(int value) {
         return value + 1;
@@ -1060,6 +1122,8 @@ class JavaConcreteLayer11 extends JavaConcreteLayer10 {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 interface JavaSideLayerA {
     default int sideLayerA0(int value) {
         return value + 1;
@@ -1082,18 +1146,20 @@ interface JavaSideLayerA {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 interface JavaSideLayerB {
-    public int concreteLayer000(int value);
+    int concreteLayer000(int value);
 
-    public String concreteLayer001(String text);
+    String concreteLayer001(String text);
 
-    public long concreteLayer002(long value);
+    long concreteLayer002(long value);
 
-    public double concreteLayer003(double value);
+    double concreteLayer003(double value);
 
-    public boolean concreteLayer004(int value);
+    boolean concreteLayer004(int value);
 
-    public CharSequence concreteLayer005(CharSequence text);
+    CharSequence concreteLayer005(CharSequence text);
 
     default double sideLayerB0(double value) {
         return value / 2.0;
@@ -1116,6 +1182,8 @@ interface JavaSideLayerB {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 interface JavaSideLayerC {
     default int sideLayerC0(int value) {
         return value + 1;
@@ -1138,6 +1206,8 @@ interface JavaSideLayerC {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 interface JavaSideLayerD {
     default double sideLayerD0(double value) {
         return value / 2.0;
@@ -1160,6 +1230,8 @@ interface JavaSideLayerD {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 interface JavaSideLayerE {
     default int sideLayerE0(int value) {
         return value + 1;
@@ -1182,6 +1254,8 @@ interface JavaSideLayerE {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 interface JavaSideLayerF {
     default double sideLayerF0(double value) {
         return value / 2.0;
@@ -1203,4 +1277,3 @@ interface JavaSideLayerF {
         return text;
     }
 }
-

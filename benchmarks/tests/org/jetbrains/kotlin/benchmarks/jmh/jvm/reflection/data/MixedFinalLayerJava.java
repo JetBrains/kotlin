@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.benchmarks.jmh.jvm.reflection.data;
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 public class MixedFinalLayerJava extends MixedConcreteLayerKotlin11 implements MixedSideLayerJavaB {
     @Override
     public int concreteLayer110(int value) {

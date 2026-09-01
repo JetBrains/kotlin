@@ -12,7 +12,6 @@ import kotlinx.benchmark.Param
 import kotlinx.benchmark.Scope
 import kotlinx.benchmark.Setup
 import kotlinx.benchmark.State
-import kotlinx.benchmark.TearDown
 import org.jetbrains.kotlin.benchmarks.jmh.jvm.reflection.data.*
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.openjdk.jmh.annotations.Level

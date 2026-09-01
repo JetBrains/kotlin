@@ -27,6 +27,8 @@ package org.jetbrains.kotlin.benchmarks.jmh.jvm.reflection.data;
  * `internal`.
  */
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 interface MixedMidContractJavaA extends MixedBaseContractKotlin {
     int abstractMidA0(int value);
 
@@ -52,6 +54,8 @@ interface MixedMidContractJavaA extends MixedBaseContractKotlin {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 interface MixedMidContractJavaC extends MixedBaseContractKotlin {
     int abstractMidC0(int value);
 
@@ -77,6 +81,8 @@ interface MixedMidContractJavaC extends MixedBaseContractKotlin {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 interface MixedMidContractJavaE extends MixedBaseContractKotlin {
     int abstractMidE0(int value);
 
@@ -102,6 +108,8 @@ interface MixedMidContractJavaE extends MixedBaseContractKotlin {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 abstract class MixedAbstractLayerJava0 implements MixedMidContractJavaA {
     public abstract int abstractLayer000(int value);
 
@@ -152,6 +160,8 @@ abstract class MixedAbstractLayerJava0 implements MixedMidContractJavaA {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 abstract class MixedAbstractLayerJava2 extends MixedAbstractLayerKotlin1 implements MixedMidContractJavaC {
     public abstract int abstractLayer020(int value);
 
@@ -202,6 +212,8 @@ abstract class MixedAbstractLayerJava2 extends MixedAbstractLayerKotlin1 impleme
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 abstract class MixedAbstractLayerJava4 extends MixedAbstractLayerKotlin3 implements MixedMidContractJavaE {
     public abstract int abstractLayer040(int value);
 
@@ -252,6 +264,8 @@ abstract class MixedAbstractLayerJava4 extends MixedAbstractLayerKotlin3 impleme
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 abstract class MixedAbstractLayerJava6 extends MixedAbstractLayerKotlin5 {
     public abstract int abstractLayer060(int value);
 
@@ -302,6 +316,8 @@ abstract class MixedAbstractLayerJava6 extends MixedAbstractLayerKotlin5 {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 abstract class MixedAbstractLayerJava8 extends MixedAbstractLayerKotlin7 {
     public abstract int abstractLayer080(int value);
 
@@ -337,6 +353,8 @@ abstract class MixedAbstractLayerJava8 extends MixedAbstractLayerKotlin7 {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 abstract class MixedAbstractLayerJava10 extends MixedAbstractLayerKotlin9 {
     public abstract int abstractLayer100(int value);
 
@@ -372,6 +390,8 @@ abstract class MixedAbstractLayerJava10 extends MixedAbstractLayerKotlin9 {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 class MixedConcreteLayerJava0 extends MixedAbstractLayerKotlin11 implements MixedSideLayerKotlinA {
     @Override
     public int abstractLayer110(int value) {
@@ -413,6 +433,8 @@ class MixedConcreteLayerJava0 extends MixedAbstractLayerKotlin11 implements Mixe
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 class MixedConcreteLayerJava2 extends MixedConcreteLayerKotlin1 implements MixedSideLayerKotlinC {
     public int concreteLayer020(int value) {
         return value + 1;
@@ -439,6 +461,8 @@ class MixedConcreteLayerJava2 extends MixedConcreteLayerKotlin1 implements Mixed
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 class MixedConcreteLayerJava4 extends MixedConcreteLayerKotlin3 implements MixedSideLayerKotlinE {
     public int concreteLayer040(int value) {
         return value + 1;
@@ -465,6 +489,8 @@ class MixedConcreteLayerJava4 extends MixedConcreteLayerKotlin3 implements Mixed
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 class MixedConcreteLayerJava6 extends MixedConcreteLayerKotlin5 {
     public int concreteLayer060(int value) {
         return value + 1;
@@ -491,6 +517,8 @@ class MixedConcreteLayerJava6 extends MixedConcreteLayerKotlin5 {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 class MixedConcreteLayerJava8 extends MixedConcreteLayerKotlin7 {
     public int concreteLayer080(int value) {
         return value + 1;
@@ -517,6 +545,8 @@ class MixedConcreteLayerJava8 extends MixedConcreteLayerKotlin7 {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 class MixedConcreteLayerJava10 extends MixedConcreteLayerKotlin9 {
     public int concreteLayer100(int value) {
         return value + 1;
@@ -543,6 +573,8 @@ class MixedConcreteLayerJava10 extends MixedConcreteLayerKotlin9 {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 interface MixedSideLayerJavaB {
     int concreteLayer000(int value);
 
@@ -577,6 +609,8 @@ interface MixedSideLayerJavaB {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 interface MixedSideLayerJavaD {
     default double sideLayerD0(double value) {
         return value / 2.0;
@@ -599,6 +633,8 @@ interface MixedSideLayerJavaD {
     }
 }
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 interface MixedSideLayerJavaF {
     default double sideLayerF0(double value) {
         return value / 2.0;

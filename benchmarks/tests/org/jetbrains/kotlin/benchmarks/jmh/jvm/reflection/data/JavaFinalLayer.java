@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.benchmarks.jmh.jvm.reflection.data;
 
+@SuppressWarnings({"unused", "MethodMayBeStatic", "NullableProblems",
+        "RedundantMethodOverride", "RedundantModifier", "RedundantSuppression"})
 public class JavaFinalLayer extends JavaConcreteLayer11 implements JavaSideLayerB {
     @Override
     int concreteLayer110(int value) {
