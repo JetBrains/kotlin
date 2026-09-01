@@ -35,6 +35,18 @@ enum class JdkMajorVersion(
 val DEFAULT_JVM_TOOLCHAIN = JdkMajorVersion.JDK_1_8
 
 /**
+ * Default Java version the produced bytecode is compatible with.
+ *
+ * You can override it via the `jvmToolchains { }` convention plugin DSL:
+ * ```
+ * jvmToolchains {
+ *     targetBytecodeVersion = JdkMajorVersion.JDK_17_0
+ * }
+ * ```
+ */
+val DEFAULT_JVM_TARGET = JdkMajorVersion.JDK_1_8
+
+/**
  * Default Java version used to run tests (for test tasks registered via `project-tests-convention`)
  *
  * You can override like this:
@@ -82,9 +94,7 @@ fun JavaToolchainSpec.setupToolchain(jdkVersion: JdkMajorVersion) {
     languageVersion.set(JavaLanguageVersion.of(jdkVersion.majorVersion))
 }
 
-fun Project.configureJavaOnlyToolchain(
-    jdkVersion: JdkMajorVersion,
-) {
+fun Project.configureJavaOnlyToolchain(jdkVersion: JdkMajorVersion) {
     plugins.withId("java-base") {
         val javaExtension = extensions.getByType<JavaPluginExtension>()
         javaExtension.toolchain {
@@ -107,9 +117,7 @@ fun JavaCompile.configureTaskToolchain(
     javaCompiler.set(project.getToolchainCompilerFor(jdkVersion))
 }
 
-fun Project.updateJvmTarget(
-    jvmTarget: String,
-) {
+fun Project.updateJvmTarget(jvmTarget: String) {
     // Java 9 tasks are exceptions that are configured in configureJava9Compilation
     tasks
         .withType<KotlinJvmCompile>()
@@ -127,7 +135,7 @@ fun Project.updateJvmTarget(
         }
 }
 
-private fun Project.getToolchainCompilerFor(
+fun Project.getToolchainCompilerFor(
     jdkVersion: JdkMajorVersion,
 ): Provider<JavaCompiler> {
     val service = project.extensions.getByType<JavaToolchainService>()
