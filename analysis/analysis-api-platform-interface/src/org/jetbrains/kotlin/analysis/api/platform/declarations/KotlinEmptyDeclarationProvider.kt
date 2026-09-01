@@ -25,7 +25,7 @@ public object KotlinEmptyDeclarationProvider : KotlinDeclarationProvider {
     override fun getTopLevelCallableFiles(callableId: CallableId): List<KtFile> = emptyList()
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
     override val hasMayHaveTopLevelCallableImplementation: Boolean get() = true
-    override fun mayHaveTopLevelCallable(classId: ClassId): Boolean = false
+    override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean = false
     override fun findFilesForFacadeByPackage(packageFqName: FqName): List<KtFile> = emptyList()
     override fun findFilesForFacade(facadeFqName: FqName): List<KtFile> = emptyList()
     override fun findInternalFilesForFacade(facadeFqName: FqName): List<KtFile> = emptyList()

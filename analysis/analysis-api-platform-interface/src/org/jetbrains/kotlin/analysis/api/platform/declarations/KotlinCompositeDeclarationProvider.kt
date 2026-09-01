@@ -65,8 +65,8 @@ public class KotlinCompositeDeclarationProvider private constructor(
     override val hasMayHaveTopLevelCallableImplementation: Boolean
         get() = providers.all { it.hasMayHaveTopLevelCallableImplementation }
 
-    override fun mayHaveTopLevelCallable(classId: ClassId): Boolean {
-        return providers.any { it.mayHaveTopLevelCallable(classId) }
+    override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean {
+        return providers.any { it.mayHaveTopLevelCallable(packageFqName, name) }
     }
 
     override fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile> {

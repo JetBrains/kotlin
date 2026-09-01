@@ -64,7 +64,7 @@ internal open class LLFirKotlinSymbolNamesProvider(
         get() = declarationProvider.hasMayHaveTopLevelCallableImplementation
 
     override fun specificMayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean =
-        !isExcludedKotlinPackage(packageFqName) && declarationProvider.mayHaveTopLevelCallable(ClassId(packageFqName, name))
+        !isExcludedKotlinPackage(packageFqName) && declarationProvider.mayHaveTopLevelCallable(packageFqName, name)
 
     private fun isExcludedKotlinPackage(packageFqName: FqName): Boolean =
         allowKotlinPackage == false && packageFqName.isKotlinPackage()
