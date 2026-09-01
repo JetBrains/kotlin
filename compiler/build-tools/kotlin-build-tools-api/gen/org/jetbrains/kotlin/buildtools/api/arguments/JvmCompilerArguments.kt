@@ -327,7 +327,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_IR_INLINER", KotlinReleaseVersion(1, 9, 0))
 
     /**
-     * Experimental direct java support.
+     * Build the Java model of Java sources directly from their syntax tree.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */

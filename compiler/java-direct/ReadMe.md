@@ -6,7 +6,8 @@ with a lightweight "direct" implementation.
 
 ## Status
 
-The module is functional and integrated into the compiler via the compiler option (`-Xjava-direct`).
+The module is functional and used by the compiler for Java sources by default; `-Xjava-direct=false` switches back to the
+PSI-based facade.
 The old PSI-based java class finder is still used for binary classes (via `CombinedJavaClassFinder`) due to some
 quirks of the FIR providers architecture. On the next iteration it should be replaced with FIR-based symbol providers.
 
