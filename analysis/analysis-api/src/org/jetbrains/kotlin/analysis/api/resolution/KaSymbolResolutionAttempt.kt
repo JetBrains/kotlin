@@ -198,14 +198,11 @@ public interface KaCompoundSymbolResolutionError : KaSymbolResolutionAttempt {
  */
 @KaExperimentalApi
 public val KaSymbolResolutionAttempt.symbols: List<KaSymbol>
-    get() = fold(
-        onSuccess = { it },
-        onFailure = { attempts ->
-            attempts.flatMap {
-                if (it is KaSimpleSymbolResolutionError) it.candidateSymbols else it.symbols
-            }
-        },
-    )
+    get() = when (this) {
+        is KaSimpleSymbolResolutionSuccess -> symbols
+        is KaSimpleSymbolResolutionError -> candidateSymbols
+        is KaCompoundSymbolResolutionError -> simpleAttempts.flatMap(KaSimpleSymbolResolutionAttempt::symbols)
+    }
 
 /**
  * The resolved symbols if the resolution succeeded, or an empty list if it failed.
@@ -270,24 +267,23 @@ public val KaSymbolResolutionAttempt.isSuccessful: Boolean
  *
  * - [KaSimpleSymbolResolutionSuccess]: invokes [onSuccess] with the resolved [symbols][KaSimpleSymbolResolutionSuccess.symbols].
  * - [KaSimpleSymbolResolutionError]: invokes [onFailure] with the error wrapped in a single-element list.
- * - [KaCompoundSymbolResolutionError]: invokes [onFailure] with the individual [simpleAttempts][KaCompoundSymbolResolutionError.simpleAttempts].
+ * - [KaCompoundSymbolResolutionError]: invokes [onFailure] with the [errors] of the failed sub-calls. The successful
+ *   sub-call, if any, is not passed to [onFailure]; use [simpleAttempts] to reach it.
  */
 @KaExperimentalApi
 @OptIn(ExperimentalContracts::class)
 public inline fun <T> KaSymbolResolutionAttempt.fold(
     onSuccess: (List<KaSymbol>) -> T,
-    onFailure: (List<KaSimpleSymbolResolutionAttempt>) -> T,
+    onFailure: (List<KaSimpleSymbolResolutionError>) -> T,
 ): T {
     contract {
         callsInPlace(onSuccess, InvocationKind.AT_MOST_ONCE)
         callsInPlace(onFailure, InvocationKind.AT_MOST_ONCE)
     }
 
-    val attempts = when (this) {
-        is KaSimpleSymbolResolutionSuccess -> return onSuccess(symbols)
-        is KaSimpleSymbolResolutionError -> listOf(this)
-        is KaCompoundSymbolResolutionError -> simpleAttempts
+    return if (this is KaSimpleSymbolResolutionSuccess) {
+        onSuccess(symbols)
+    } else {
+        onFailure(errors)
     }
-
-    return onFailure(attempts)
 }
