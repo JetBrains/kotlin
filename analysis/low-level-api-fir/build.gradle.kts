@@ -79,7 +79,7 @@ dependencies {
     testFixturesApi(project(":analysis:symbol-light-classes"))
     testFixturesApi(testFixtures(project(":plugins:scripting:scripting-tests")))
     testFixturesApi(project(":kotlin-scripting-common"))
-    testFixturesImplementation(testFixtures(project(":analysis:decompiled:decompiler")))
+    testFixturesImplementation(project(":analysis:decompiled:decompiler"))
 
     // We use 'api' instead of 'implementation' because other modules might be using these jars indirectly
     testFixturesApi(project(":plugins:plugin-sandbox"))
