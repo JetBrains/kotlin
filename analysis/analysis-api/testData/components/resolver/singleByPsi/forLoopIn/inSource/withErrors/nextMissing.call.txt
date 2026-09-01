@@ -36,6 +36,6 @@ KtForExpression(23,37): 'for(i in f) {}'
           callableId = /Foo.iterator
         typeArgumentsMapping = {}
         valueArgumentMapping = {}
-    nextCallAttempt = KaCallResolutionError:
+    nextCallAttempt = KaSimpleCallResolutionError:
       candidateCalls = []
       diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next' on receiver of type 'Iterator'.>

@@ -1,5 +1,5 @@
 KtNameReferenceExpression(51,53): 'DD'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}

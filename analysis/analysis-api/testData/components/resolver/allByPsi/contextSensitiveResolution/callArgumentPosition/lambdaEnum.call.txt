@@ -548,7 +548,7 @@ KtNameReferenceExpression(452,462): 'EnumValue3'
       typeArgumentsMapping = {}
 
 KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -586,7 +586,7 @@ KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum' was expected.>
 
 KtNameReferenceExpression(469,482): 'receiveLambda'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}

@@ -78,7 +78,7 @@ KtNameReferenceExpression(58,69): 'staticField'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(73,99): 'JavaClass<Long>.unresolved'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unresolved'.>
 
@@ -104,7 +104,7 @@ KtNameReferenceExpression(83,87): 'Long'
   null
 
 KtNameReferenceExpression(89,99): 'unresolved'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unresolved'.>
 

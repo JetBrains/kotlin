@@ -34,6 +34,6 @@ KtPropertyDelegate(74,109): 'by GenericDelegate<String>("hello")'
           callableId = myPack/GenericDelegate.getValue
         typeArgumentsMapping = {}
         valueArgumentMapping = {}
-    valueSetterCallAttempt = KaCallResolutionError:
+    valueSetterCallAttempt = KaSimpleCallResolutionError:
       candidateCalls = []
       diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'setValue' on receiver of type 'GenericDelegate<String>'.>

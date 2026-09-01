@@ -102,7 +102,7 @@ KtProperty(213,234): 'val arg2 = EnumValue2'
   null
 
 KtNameReferenceExpression(224,234): 'EnumValue2'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'EnumValue2'.>
 
@@ -449,6 +449,6 @@ KtValueArgument(324,328): 'arg3'
   null
 
 KtNameReferenceExpression(324,328): 'arg3'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'arg3'.>

@@ -3086,12 +3086,12 @@ KtOperationReferenceExpression(1670,1672): '=='
       }
 
 KtCallExpression(1673,1679): 'func()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtNameReferenceExpression(1673,1677): 'func'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
@@ -3300,12 +3300,12 @@ KtOperationReferenceExpression(1739,1741): '=='
       }
 
 KtCallExpression(1742,1753): 'superFunc()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
 KtNameReferenceExpression(1742,1751): 'superFunc'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
@@ -3514,12 +3514,12 @@ KtOperationReferenceExpression(1813,1815): '=='
       }
 
 KtCallExpression(1816,1832): 'InheritorClass()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorClass'.>
 
 KtNameReferenceExpression(1816,1830): 'InheritorClass'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorClass'.>
 

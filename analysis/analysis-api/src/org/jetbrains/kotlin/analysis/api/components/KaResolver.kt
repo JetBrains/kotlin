@@ -693,7 +693,7 @@ public interface KaResolver : KaSessionComponent {
      * ```kotlin
      * fun KaSession.findResolutionDiagnostic(expression: KtCallExpression): KaDiagnostic? {
      *   val attempt = expression.tryResolveCall() ?: return null
-     *   val error = attempt as? KaCallResolutionError ?: return null
+     *   val error = attempt as? KaSimpleCallResolutionError ?: return null
      *   return error.diagnostic
      * }
      * ```
@@ -2367,7 +2367,7 @@ public fun KtDelegatedSuperTypeEntry.resolveSymbol(): KaClassifierSymbol? {
  * ```kotlin
  * fun KaSession.findResolutionDiagnostic(expression: KtCallExpression): KaDiagnostic? {
  *   val attempt = expression.tryResolveCall() ?: return null
- *   val error = attempt as? KaCallResolutionError ?: return null
+ *   val error = attempt as? KaSimpleCallResolutionError ?: return null
  *   return error.diagnostic
  * }
  * ```

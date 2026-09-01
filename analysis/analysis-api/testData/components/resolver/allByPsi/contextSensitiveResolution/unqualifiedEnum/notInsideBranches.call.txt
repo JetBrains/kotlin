@@ -87,7 +87,7 @@ KtNameReferenceExpression(136,141): 'FIRST'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(145,151): 'SECOND'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SECOND'.>
 
@@ -118,6 +118,6 @@ KtNameReferenceExpression(156,162): 'SECOND'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(166,171): 'FIRST'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'FIRST'.>

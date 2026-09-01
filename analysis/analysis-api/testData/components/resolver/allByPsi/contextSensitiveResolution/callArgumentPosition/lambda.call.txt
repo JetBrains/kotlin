@@ -993,7 +993,7 @@ KtNameReferenceExpression(928,947): 'propInheritorObject'
       typeArgumentsMapping = {}
 
 KtCallExpression(954,976): 'lMyClass(NestedObject)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
         contextArgumentMapping = {}
@@ -1058,7 +1058,7 @@ KtNameReferenceExpression(963,975): 'NestedObject'
   null
 
 KtCallExpression(981,995): 'lMyClass(prop)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
         contextArgumentMapping = {}
@@ -1140,7 +1140,7 @@ KtNameReferenceExpression(990,994): 'prop'
       typeArgumentsMapping = {}
 
 KtCallExpression(1000,1019): 'lMyClass(superProp)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
         contextArgumentMapping = {}
@@ -1222,7 +1222,7 @@ KtNameReferenceExpression(1009,1018): 'superProp'
       typeArgumentsMapping = {}
 
 KtCallExpression(1024,1043): 'lMyClass(constProp)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
         contextArgumentMapping = {}
@@ -1304,7 +1304,7 @@ KtNameReferenceExpression(1033,1042): 'constProp'
       typeArgumentsMapping = {}
 
 KtCallExpression(1048,1066): 'lMyClass(lazyProp)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
         contextArgumentMapping = {}
@@ -1386,7 +1386,7 @@ KtNameReferenceExpression(1057,1065): 'lazyProp'
       typeArgumentsMapping = {}
 
 KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
         contextArgumentMapping = {}
@@ -1527,12 +1527,12 @@ KtValueArgument(1106,1122): 'InheritorClass()'
   null
 
 KtCallExpression(1106,1122): 'InheritorClass()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorClass'.>
 
 KtNameReferenceExpression(1106,1120): 'InheritorClass'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorClass'.>
 
@@ -1599,12 +1599,12 @@ KtValueArgument(1137,1143): 'func()'
   null
 
 KtCallExpression(1137,1143): 'func()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtNameReferenceExpression(1137,1141): 'func'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
@@ -1671,12 +1671,12 @@ KtValueArgument(1158,1169): 'superFunc()'
   null
 
 KtCallExpression(1158,1169): 'superFunc()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
 KtNameReferenceExpression(1158,1167): 'superFunc'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 

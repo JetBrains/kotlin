@@ -352,7 +352,7 @@ KtOperationReferenceExpression(356,373): 'infixEnumConsumer'
       }
 
 KtNameReferenceExpression(374,389): 'InheritorObject'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
 

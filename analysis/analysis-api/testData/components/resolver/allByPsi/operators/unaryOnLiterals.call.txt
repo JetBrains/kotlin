@@ -198,12 +198,12 @@ KtBlockExpression(66,87): '{'
   null
 
 KtPrefixExpression(72,76): '+"5"'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryPlus' for operator '+' on receiver of type 'String'.>
 
 KtOperationReferenceExpression(72,73): '+'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryPlus' for operator '+' on receiver of type 'String'.>
 
@@ -214,12 +214,12 @@ KtLiteralStringTemplateEntry(74,75): '5'
   null
 
 KtPrefixExpression(81,85): '-"6"'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryMinus' for operator '-' on receiver of type 'String'.>
 
 KtOperationReferenceExpression(81,82): '-'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryMinus' for operator '-' on receiver of type 'String'.>
 

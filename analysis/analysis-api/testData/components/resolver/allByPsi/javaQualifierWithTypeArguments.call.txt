@@ -40,7 +40,7 @@ KtDotQualifiedExpression(47,67): 'JavaClass<Int>.field'
       typeArgumentsMapping = {}
 
 KtCallExpression(47,61): 'JavaClass<Int>'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -62,7 +62,7 @@ KtCallExpression(47,61): 'JavaClass<Int>'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
 
 KtNameReferenceExpression(47,56): 'JavaClass'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -142,7 +142,7 @@ KtDotQualifiedExpression(79,103): 'JavaClass<Long>.method()'
       valueArgumentMapping = {}
 
 KtCallExpression(79,94): 'JavaClass<Long>'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -164,7 +164,7 @@ KtCallExpression(79,94): 'JavaClass<Long>'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
 
 KtNameReferenceExpression(79,88): 'JavaClass'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}

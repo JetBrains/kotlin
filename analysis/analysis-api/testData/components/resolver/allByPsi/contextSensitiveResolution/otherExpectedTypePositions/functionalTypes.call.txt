@@ -367,7 +367,7 @@ KtContainerNodeForControlStructureBody(489,497): 'enumProp'
   null
 
 KtNameReferenceExpression(489,497): 'enumProp'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'enumProp'.>
 
@@ -375,7 +375,7 @@ KtContainerNodeForControlStructureBody(503,510): 'Option1'
   null
 
 KtNameReferenceExpression(503,510): 'Option1'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Option1'.>
 
@@ -437,7 +437,7 @@ KtBlockExpression(577,620): 'enumProp'
   null
 
 KtNameReferenceExpression(577,585): 'enumProp'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'enumProp'.>
 
@@ -565,7 +565,7 @@ KtBlockExpression(685,748): '{'
   null
 
 KtNameReferenceExpression(695,703): 'enumProp'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'enumProp'.>
 

@@ -143,7 +143,7 @@ KtProperty(171,229): 'val prop = take {'
   null
 
 KtCallExpression(182,229): 'take {'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -183,7 +183,7 @@ KtCallExpression(182,229): 'take {'
     diagnostic = ERROR<EXPECTED_PARAMETER_TYPE_MISMATCH: Parameter type mismatch: actual type is '??? (Unresolved qualified name: Foo.Bar.Baz.Bazzzz)', but 'uninferred T (of fun <T> take)' was expected.>
 
 KtNameReferenceExpression(182,186): 'take'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}

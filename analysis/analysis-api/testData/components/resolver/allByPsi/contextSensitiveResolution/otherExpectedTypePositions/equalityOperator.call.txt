@@ -672,7 +672,7 @@ KtBinaryExpression(459,465): 'X == a'
       }
 
 KtNameReferenceExpression(459,460): 'X'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
 
@@ -1025,7 +1025,7 @@ KtValueArgument(695,696): 'X'
   null
 
 KtNameReferenceExpression(695,696): 'X'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
 
@@ -1989,7 +1989,7 @@ KtValueArgument(999,1000): 'X'
   null
 
 KtNameReferenceExpression(999,1000): 'X'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
 
@@ -2079,7 +2079,7 @@ KtValueArgument(1019,1020): 'Y'
   null
 
 KtNameReferenceExpression(1019,1020): 'Y'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Y'.>
 
@@ -2294,7 +2294,7 @@ KtValueArgument(1095,1096): 'X'
   null
 
 KtNameReferenceExpression(1095,1096): 'X'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
 
@@ -2384,7 +2384,7 @@ KtValueArgument(1115,1116): 'Y'
   null
 
 KtNameReferenceExpression(1115,1116): 'Y'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Y'.>
 

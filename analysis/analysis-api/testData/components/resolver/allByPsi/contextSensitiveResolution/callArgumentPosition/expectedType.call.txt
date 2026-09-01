@@ -1630,7 +1630,7 @@ KtNameReferenceExpression(1250,1265): 'InheritorObject'
   null
 
 KtCallExpression(1272,1302): 'testTypeParam(InheritorObject)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1668,7 +1668,7 @@ KtCallExpression(1272,1302): 'testTypeParam(InheritorObject)'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testTypeParam>
 
 KtNameReferenceExpression(1272,1285): 'testTypeParam'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1712,12 +1712,12 @@ KtValueArgument(1286,1301): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1286,1301): 'InheritorObject'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
 
 KtCallExpression(1307,1354): 'testTypeParamWithMultipleBound(InheritorObject)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1755,7 +1755,7 @@ KtCallExpression(1307,1354): 'testTypeParamWithMultipleBound(InheritorObject)'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testTypeParamWithMultipleBound>
 
 KtNameReferenceExpression(1307,1337): 'testTypeParamWithMultipleBound'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1799,12 +1799,12 @@ KtValueArgument(1338,1353): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1338,1353): 'InheritorObject'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
 
 KtCallExpression(1359,1409): 'testDefinitelyNotNullIntersection(InheritorObject)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1842,7 +1842,7 @@ KtCallExpression(1359,1409): 'testDefinitelyNotNullIntersection(InheritorObject)
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testDefinitelyNotNullIntersection>
 
 KtNameReferenceExpression(1359,1392): 'testDefinitelyNotNullIntersection'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1886,12 +1886,12 @@ KtValueArgument(1393,1408): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1393,1408): 'InheritorObject'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
 
 KtCallExpression(1414,1451): 'testFakeIntersection(InheritorObject)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1929,7 +1929,7 @@ KtCallExpression(1414,1451): 'testFakeIntersection(InheritorObject)'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testFakeIntersection>
 
 KtNameReferenceExpression(1414,1434): 'testFakeIntersection'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1973,12 +1973,12 @@ KtValueArgument(1435,1450): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1435,1450): 'InheritorObject'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
 
 KtCallExpression(1456,1500): 'testReverseFakeIntersection(InheritorObject)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -2016,7 +2016,7 @@ KtCallExpression(1456,1500): 'testReverseFakeIntersection(InheritorObject)'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testReverseFakeIntersection>
 
 KtNameReferenceExpression(1456,1483): 'testReverseFakeIntersection'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -2060,12 +2060,12 @@ KtValueArgument(1484,1499): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1484,1499): 'InheritorObject'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
 
 KtCallExpression(1505,1545): 'testRegularIntersection(InheritorObject)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -2103,7 +2103,7 @@ KtCallExpression(1505,1545): 'testRegularIntersection(InheritorObject)'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testRegularIntersection>
 
 KtNameReferenceExpression(1505,1528): 'testRegularIntersection'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -2147,6 +2147,6 @@ KtValueArgument(1529,1544): 'InheritorObject'
   null
 
 KtNameReferenceExpression(1529,1544): 'InheritorObject'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>

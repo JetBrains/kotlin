@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
  * [KaCallCandidate] represents one of the candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html)
  * of a call.
  *
- * In contrast to [KaCallResolutionError.candidateCalls], retrieving a call candidate represented by [KaCallCandidate] doesn't imply that the
+ * In contrast to [KaSimpleCallResolutionError.candidateCalls], retrieving a call candidate represented by [KaCallCandidate] doesn't imply that the
  * call is erroneous or ambiguous. Rather, resolving all call candidates is helpful when analyzing all possible options at the call site.
  *
  * @see org.jetbrains.kotlin.analysis.api.components.KaResolver.collectCallCandidates

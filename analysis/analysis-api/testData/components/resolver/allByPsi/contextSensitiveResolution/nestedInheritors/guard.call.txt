@@ -680,7 +680,7 @@ KtNameReferenceExpression(764,798): 'IndirectSealedInheritorOfOpenClass'
   null
 
 KtDotQualifiedExpression(802,815): 'instance.prop'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'OpenClass'.>
 
@@ -702,7 +702,7 @@ KtNameReferenceExpression(802,810): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(811,815): 'prop'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'OpenClass'.>
 

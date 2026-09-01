@@ -665,7 +665,7 @@ internal class KaFirResolver(
         fun <T> transformErrorReference(
             call: FirElement,
             calleeReference: T,
-        ): KaCallResolutionError where T : FirNamedReference, T : FirDiagnosticHolder = transformErrorReference(
+        ): KaSimpleCallResolutionError where T : FirNamedReference, T : FirDiagnosticHolder = transformErrorReference(
             psi = psi,
             call = call,
             diagnosticHolder = calleeReference,
@@ -720,7 +720,7 @@ internal class KaFirResolver(
                     val errorTypeRef = delegatedConstructorCall.constructedTypeRef as? FirErrorTypeRef ?: return null
                     val sourceElement = errorTypeRef.source ?: source ?: psi.toKtPsiSourceElement()
                     val kaDiagnostic = errorTypeRef.diagnostic.asKaDiagnostic(sourceElement) ?: return null
-                    KaBaseCallResolutionError(
+                    KaBaseSimpleCallResolutionError(
                         backedDiagnostic = kaDiagnostic,
                         backingCandidateCalls = emptyList(),
                     )
@@ -777,7 +777,7 @@ internal class KaFirResolver(
      *     - `MyJavaClass<Int>.staticMethod()`
      *     - It could be dropped after the 2.5 version
      */
-    private fun handleMissedConstructorCall(fir: FirElement, psi: KtElement): KaCallResolutionError? {
+    private fun handleMissedConstructorCall(fir: FirElement, psi: KtElement): KaSimpleCallResolutionError? {
         if (fir !is FirResolvedQualifier) {
             return null
         }
@@ -802,7 +802,7 @@ internal class KaFirResolver(
 
         val constructors = fir.findQualifierConstructors()
         val calls = fir.toKaCalls(constructors)
-        return KaBaseCallResolutionError(
+        return KaBaseSimpleCallResolutionError(
             backedDiagnostic = inapplicableCandidateDiagnostic(),
             backingCandidateCalls = calls,
         )
@@ -1445,12 +1445,12 @@ internal class KaFirResolver(
         diagnosticHolder: FirDiagnosticHolder,
         calleeReference: FirNamedReference?,
         resolveFragmentOfCall: Boolean,
-    ): KaCallResolutionError {
+    ): KaSimpleCallResolutionError {
         val diagnostic = diagnosticHolder.diagnostic
         val kaDiagnostic = diagnosticHolder.createKaDiagnostic()
 
         if (diagnostic is ConeHiddenCandidateError) {
-            return KaBaseCallResolutionError(
+            return KaBaseSimpleCallResolutionError(
                 backedDiagnostic = kaDiagnostic,
                 backingCandidateCalls = emptyList(),
             )
@@ -1484,7 +1484,7 @@ internal class KaFirResolver(
             listOfNotNull(attempt?.call)
         }
 
-        return KaBaseCallResolutionError(
+        return KaBaseSimpleCallResolutionError(
             backedDiagnostic = kaDiagnostic,
             backingCandidateCalls = candidateCalls,
         )
@@ -1557,7 +1557,7 @@ internal class KaFirResolver(
     private fun findErrorCall(
         call: FirFunctionCall,
         psi: KtElement,
-    ): KaCallResolutionError? = when (val ref = call.calleeReference) {
+    ): KaSimpleCallResolutionError? = when (val ref = call.calleeReference) {
         is FirDiagnosticHolder -> transformErrorReference(
             psi = psi,
             call = call,
@@ -1571,13 +1571,13 @@ internal class KaFirResolver(
 
     /**
      * Resolves a [FirFunctionCall] into a [KaSimpleCallResolutionAttempt].
-     * If the call has an error, returns [KaCallResolutionError]; otherwise builds a [KaCallResolutionSuccess].
+     * If the call has an error, returns [KaSimpleCallResolutionError]; otherwise builds a [KaCallResolutionSuccess].
      */
     private fun resolveSingleSubCall(call: FirFunctionCall, psi: KtElement): KaSimpleCallResolutionAttempt {
         findErrorCall(call, psi)?.let { return it }
 
         return when (val kaCall = buildNamedFunctionCall(call)) {
-            null -> KaBaseCallResolutionError(
+            null -> KaBaseSimpleCallResolutionError(
                 backedDiagnostic = KaNonBoundToPsiErrorDiagnostic(
                     factoryName = FirErrors.OTHER_ERROR.name,
                     defaultMessage = "Failed to build call",
@@ -2195,7 +2195,7 @@ internal class KaFirResolver(
 
     private fun KaCallResolutionAttempt?.toKaCallCandidates(): List<KaCallCandidate> = when (this) {
         is KaCallResolutionSuccess -> listOf(KaBaseApplicableCallCandidate(backingCandidate = call, backingIsInBestCandidates = true))
-        is KaCallResolutionError -> candidateCalls.map {
+        is KaSimpleCallResolutionError -> candidateCalls.map {
             KaBaseInapplicableCallCandidate(
                 backingCandidate = it,
                 backingIsInBestCandidates = true,
@@ -2293,7 +2293,7 @@ internal class KaFirResolver(
                     contextArguments = emptyList(),
                 )
 
-                KaBaseCallResolutionError(
+                KaBaseSimpleCallResolutionError(
                     backedDiagnostic = unresolvedArrayOfDiagnostic,
                     backingCandidateCalls = listOf(
                         KaBaseSimpleFunctionCall(

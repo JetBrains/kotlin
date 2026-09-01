@@ -89,7 +89,7 @@ KtReturnExpression(59,79): 'return n bar (n + 1)'
   null
 
 KtBinaryExpression(66,79): 'n bar (n + 1)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
         contextArgumentMapping = {}
@@ -155,7 +155,7 @@ KtNameReferenceExpression(66,67): 'n'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(68,71): 'bar'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
         contextArgumentMapping = {}

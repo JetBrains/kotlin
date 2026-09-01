@@ -941,7 +941,7 @@ KtNameReferenceExpression(1029,1040): 'propMyClass'
       typeArgumentsMapping = {}
 
 KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
         contextArgumentMapping = {}
@@ -1023,7 +1023,7 @@ KtNameReferenceExpression(1065,1069): 'prop'
       typeArgumentsMapping = {}
 
 KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
         contextArgumentMapping = {}
@@ -1105,7 +1105,7 @@ KtNameReferenceExpression(1093,1102): 'constProp'
       typeArgumentsMapping = {}
 
 KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
         contextArgumentMapping = {}
@@ -1187,7 +1187,7 @@ KtNameReferenceExpression(1126,1134): 'lazyProp'
       typeArgumentsMapping = {}
 
 KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
         contextArgumentMapping = {}
@@ -1269,7 +1269,7 @@ KtNameReferenceExpression(1158,1168): 'lambdaProp'
       typeArgumentsMapping = {}
 
 KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
         contextArgumentMapping = {}
@@ -1410,12 +1410,12 @@ KtValueArgument(1226,1232): 'func()'
   null
 
 KtCallExpression(1226,1232): 'func()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtNameReferenceExpression(1226,1230): 'func'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
@@ -1482,12 +1482,12 @@ KtValueArgument(1256,1267): 'superFunc()'
   null
 
 KtCallExpression(1256,1267): 'superFunc()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
 KtNameReferenceExpression(1256,1265): 'superFunc'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
@@ -1495,7 +1495,7 @@ KtValueArgumentList(1265,1267): '()'
   null
 
 KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
         contextArgumentMapping = {}

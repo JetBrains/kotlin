@@ -73,7 +73,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
      */
     private fun KtOperationReferenceExpression.tryResolveSymbolsForOperationReference(): KaSymbolResolutionAttempt? {
         return when (val callAttempt = tryResolveCall(this)) {
-            is KaCallResolutionError -> callAttempt.toSimpleSymbolResolutionAttempt()
+            is KaSimpleCallResolutionError -> callAttempt.toSimpleSymbolResolutionAttempt()
 
             // Single variable access is not expected to be a result of the symbol resolve (the assignment use case)
             is KaCallResolutionSuccess if callAttempt.call !is KaVariableAccessCall -> callAttempt.toSimpleSymbolResolutionAttempt()
@@ -262,7 +262,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
 
     final override fun resolveToCall(element: KtElement): KaCallInfo? = element.withPsiValidityAssertion {
         when (val attempt = element.tryResolveCallImpl()) {
-            is KaCallResolutionError -> KaBaseErrorCallInfo(attempt.candidateCalls.map { it.asKaCall() }, attempt.diagnostic)
+            is KaSimpleCallResolutionError -> KaBaseErrorCallInfo(attempt.candidateCalls.map { it.asKaCall() }, attempt.diagnostic)
             is KaCallResolutionSuccess -> KaBaseSuccessCallInfo(attempt.call.asKaCall())
             is KaMultiCallResolutionAttempt -> attempt.toCallInfo()
             null -> null
@@ -336,7 +336,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
     private fun KaMultiCallResolutionAttempt.toCallInfo(): KaCallInfo = fold(
         onSuccess = { KaBaseSuccessCallInfo(it.asKaCall()) },
         onFailure = { attempts ->
-            val errorAttempts = attempts.filterIsInstance<KaCallResolutionError>()
+            val errorAttempts = attempts.filterIsInstance<KaSimpleCallResolutionError>()
             val firstDiagnostic = errorAttempts.first().diagnostic
             val candidateCalls = errorAttempts.flatMap { it.candidateCalls.map { call -> call.asKaCall() } }
             KaBaseErrorCallInfo(candidateCalls, firstDiagnostic)
@@ -348,7 +348,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
 
     private fun KaSimpleCallResolutionAttempt.toSimpleSymbolResolutionAttempt(): KaSimpleSymbolResolutionAttempt = when (this) {
         is KaCallResolutionSuccess -> KaBaseSymbolResolutionSuccess(backingSymbol = call.symbol)
-        is KaCallResolutionError -> KaBaseSymbolResolutionError(
+        is KaSimpleCallResolutionError -> KaBaseSymbolResolutionError(
             backingDiagnostic = diagnostic,
             backingCandidateSymbols = candidateCalls.map { it.symbol },
         )

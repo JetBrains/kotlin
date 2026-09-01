@@ -47,7 +47,7 @@ KtBlockExpression(121,271): '{'
   null
 
 KtCallableReferenceExpression(127,177): 'ClassWithType<Boolean>::InnerClassWithType<String>'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -86,7 +86,7 @@ KtNameReferenceExpression(141,148): 'Boolean'
   null
 
 KtNameReferenceExpression(151,169): 'InnerClassWithType'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []

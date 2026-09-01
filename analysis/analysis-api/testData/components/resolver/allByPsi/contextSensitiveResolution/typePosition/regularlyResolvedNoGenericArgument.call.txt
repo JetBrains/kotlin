@@ -152,7 +152,7 @@ KtNameReferenceExpression(279,283): 'Left'
   null
 
 KtNameReferenceExpression(287,288): 'z'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'z'.>
 

@@ -195,7 +195,7 @@ KtBlockExpression(289,387): '{'
   null
 
 KtCallExpression(295,301): 'foo(X)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -261,7 +261,7 @@ KtCallExpression(295,301): 'foo(X)'
     diagnostic = ERROR<OTHER_ERROR: Ambiguity: foo, [/foo, /foo]>
 
 KtNameReferenceExpression(295,298): 'foo'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -333,12 +333,12 @@ KtValueArgument(299,300): 'X'
   null
 
 KtNameReferenceExpression(299,300): 'X'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
 
 KtCallExpression(306,316): 'foo(id(X))'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -404,7 +404,7 @@ KtCallExpression(306,316): 'foo(id(X))'
     diagnostic = ERROR<OTHER_ERROR: Ambiguity: foo, [/foo, /foo]>
 
 KtNameReferenceExpression(306,309): 'foo'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -552,7 +552,7 @@ KtValueArgument(313,314): 'X'
   null
 
 KtNameReferenceExpression(313,314): 'X'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
 
@@ -1174,7 +1174,7 @@ KtBlockExpression(454,456): '{}'
   null
 
 KtCallExpression(462,468): 'bar(X)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1240,7 +1240,7 @@ KtCallExpression(462,468): 'bar(X)'
     diagnostic = ERROR<OTHER_ERROR: Ambiguity: bar, [<local>/bar, <local>/bar]>
 
 KtNameReferenceExpression(462,465): 'bar'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1312,12 +1312,12 @@ KtValueArgument(466,467): 'X'
   null
 
 KtNameReferenceExpression(466,467): 'X'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
 
 KtCallExpression(473,483): 'bar(id(X))'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1383,7 +1383,7 @@ KtCallExpression(473,483): 'bar(id(X))'
     diagnostic = ERROR<OTHER_ERROR: Ambiguity: bar, [<local>/bar, <local>/bar]>
 
 KtNameReferenceExpression(473,476): 'bar'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1531,7 +1531,7 @@ KtValueArgument(480,481): 'X'
   null
 
 KtNameReferenceExpression(480,481): 'X'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
 

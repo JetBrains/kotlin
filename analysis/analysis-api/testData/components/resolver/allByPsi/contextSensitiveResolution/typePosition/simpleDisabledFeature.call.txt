@@ -128,7 +128,7 @@ KtNameReferenceExpression(238,242): 'Left'
   null
 
 KtNameReferenceExpression(246,247): 'x'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'.>
 
@@ -148,6 +148,6 @@ KtNameReferenceExpression(255,260): 'Right'
   null
 
 KtNameReferenceExpression(264,265): 'y'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y'.>

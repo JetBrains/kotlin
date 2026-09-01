@@ -276,7 +276,7 @@ KtDestructuringDeclaration(319,334): 'val [first] = y'
   null
 
 KtDestructuringDeclarationEntry(324,329): 'first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1' on receiver of type 'NonDataTuple'.>
 
@@ -316,7 +316,7 @@ KtDestructuringDeclaration(353,364): 'val [first]'
   null
 
 KtDestructuringDeclarationEntry(358,363): 'first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
 
@@ -622,13 +622,13 @@ KtBlockExpression(485,487): '{}'
 
 KtForExpression(492,521): 'for ([first: String] in y) {}'
   KaForLoopCallResolutionAttempt:
-    hasNextCallAttempt = KaCallResolutionError:
+    hasNextCallAttempt = KaSimpleCallResolutionError:
       candidateCalls = []
       diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hasNext'.>
-    iteratorCallAttempt = KaCallResolutionError:
+    iteratorCallAttempt = KaSimpleCallResolutionError:
       candidateCalls = []
       diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator' on receiver of type 'NonDataTuple'.>
-    nextCallAttempt = KaCallResolutionError:
+    nextCallAttempt = KaSimpleCallResolutionError:
       candidateCalls = []
       diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next'.>
 
@@ -639,7 +639,7 @@ KtDestructuringDeclaration(497,512): '[first: String]'
   null
 
 KtDestructuringDeclarationEntry(498,511): 'first: String'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
 
@@ -1108,7 +1108,7 @@ KtDestructuringDeclaration(696,703): '[first]'
   null
 
 KtDestructuringDeclarationEntry(697,702): 'first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1' on receiver of type 'NonDataTuple'.>
 

@@ -1000,7 +1000,7 @@ KtNameReferenceExpression(1072,1081): 'propClass'
       typeArgumentsMapping = {}
 
 KtCallExpression(1092,1123): 'namedArgumentHolder(arg = prop)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1036,7 +1036,7 @@ KtCallExpression(1092,1123): 'namedArgumentHolder(arg = prop)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1092,1111): 'namedArgumentHolder'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1104,7 +1104,7 @@ KtNameReferenceExpression(1118,1122): 'prop'
       typeArgumentsMapping = {}
 
 KtCallExpression(1128,1164): 'namedArgumentHolder(arg = superProp)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1140,7 +1140,7 @@ KtCallExpression(1128,1164): 'namedArgumentHolder(arg = superProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1128,1147): 'namedArgumentHolder'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1286,12 +1286,12 @@ KtNameReferenceExpression(1189,1192): 'arg'
   null
 
 KtCallExpression(1195,1201): 'func()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtNameReferenceExpression(1195,1199): 'func'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
@@ -1377,12 +1377,12 @@ KtNameReferenceExpression(1227,1230): 'arg'
   null
 
 KtCallExpression(1233,1244): 'superFunc()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
 KtNameReferenceExpression(1233,1242): 'superFunc'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
@@ -1390,7 +1390,7 @@ KtValueArgumentList(1242,1244): '()'
   null
 
 KtCallExpression(1250,1285): 'namedArgumentHolder(arg = lazyProp)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1426,7 +1426,7 @@ KtCallExpression(1250,1285): 'namedArgumentHolder(arg = lazyProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1250,1269): 'namedArgumentHolder'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
