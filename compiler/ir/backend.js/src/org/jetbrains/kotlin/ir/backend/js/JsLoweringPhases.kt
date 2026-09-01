@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
+import org.jetbrains.kotlin.ir.at
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering

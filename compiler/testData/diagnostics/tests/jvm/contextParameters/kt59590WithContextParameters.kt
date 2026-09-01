@@ -6,10 +6,10 @@
 // IGNORE_ERRORS
 // LANGUAGE: +ContextParameters
 
-<!CONFLICTING_JVM_DECLARATIONS!>object O {
-    <!CONTEXT_PARAMETERS_WITH_BACKING_FIELD!>context<!>(_: O)
+<!CONFLICTING_JVM_DECLARATIONS!>object O<!> {
+    <!CONFLICTING_JVM_DECLARATIONS!><!CONTEXT_PARAMETERS_WITH_BACKING_FIELD!>context<!>(_: O)
     @JvmField
-    <!CONFLICTING_JVM_DECLARATIONS!>val INSTANCE: O? = null<!>
-}<!>
+    val INSTANCE: O?<!> = null
+}
 
 /* GENERATED_FIR_TAGS: nullableType, objectDeclaration, propertyDeclaration, propertyDeclarationWithContext */

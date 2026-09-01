@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.Position
+import org.jetbrains.kotlin.ir.at
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression

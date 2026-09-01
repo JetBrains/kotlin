@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.at
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
