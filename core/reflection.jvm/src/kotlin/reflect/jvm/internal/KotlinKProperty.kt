@@ -120,6 +120,7 @@ internal abstract class KotlinKProperty<out V>(
                 return kmProperty.annotations.map { it.toAnnotation(container.jClass.safeClassLoader) }
             }
 
+            val container = originalContainer
             val annotationContainer = if ((container as? KClassImpl<*>)?.classKind == ClassKind.INTERFACE) {
                 container.jClass.classes.firstOrNull { it.simpleName == JvmAbi.DEFAULT_IMPLS_CLASS_NAME }
                     ?.kotlin as KDeclarationContainerImpl? ?: container

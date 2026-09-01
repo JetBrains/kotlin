@@ -31,6 +31,10 @@ interface B {
     }
 }
 
+interface C : A
+
+abstract class D : A
+
 private fun check(c: KCallable<*>) {
     assertEquals(c.name, (c.annotations.single { it is Anno } as Anno).value)
 }
@@ -38,6 +42,10 @@ private fun check(c: KCallable<*>) {
 fun box(): String {
     check(A::member)
     check(A::class.members.single { it.name == "memberExtension" })
+    check(C::class.members.single { it.name == "member" })
+    check(C::class.members.single { it.name == "memberExtension" })
+    check(D::class.members.single { it.name == "member" })
+    check(D::class.members.single { it.name == "memberExtension" })
     check(A.Companion::companionMember)
     check(A.Companion::constVal)
     check(B.Companion::jvmField)
