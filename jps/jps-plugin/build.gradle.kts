@@ -108,6 +108,14 @@ jvmToolchains {
     }
 }
 
+kotlin {
+    compilerOptions {
+        // OSIP-499 (spike): the `btapi` package talks to the Build Tools API, which is entirely experimental.
+        optIn.add("org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi")
+        optIn.add("org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument")
+    }
+}
+
 projectTests {
     testTask(
         javaLauncher = JdkMajorVersion.JDK_21_0,
@@ -118,6 +126,11 @@ projectTests {
         dependsOn(":kotlin-compiler:dist")
         dependsOn(":kotlin-stdlib:jsJarForTests")
         workingDir = rootDir
+        // OSIP-499 (spike): `./gradlew ... -Pkotlin.jps.useBuildToolsApi=true` runs the JPS tests against the
+        // Build Tools API path instead of the module.xml + daemon one.
+        for (property in listOf("kotlin.jps.useBuildToolsApi", "kotlin.jps.btaDebugArguments", "kotlin.jps.btaUseWholeLibDirectory")) {
+            providers.gradleProperty(property).orNull?.let { systemProperty(property, it) }
+        }
         jvmArgs(
             // https://github.com/JetBrains/intellij-community/blob/b49faf433f8d73ccd46016a5717f997d167de65f/jps/jps-builders/src/org/jetbrains/jps/cmdline/ClasspathBootstrap.java#L67
             "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
