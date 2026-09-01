@@ -216,27 +216,7 @@ fun Project.emptyJavadocJar() {
  */
 fun Project.sourcesJarWithSourcesFromEmbedded(
     body: Jar.() -> Unit = {},
-): TaskProvider<Jar> {
-    val view = configurations.named("embedded").get().incoming.artifactView {
-        attributes {
-            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
-            attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.SOURCES))
-        }
-        withVariantReselection()
-        componentFilter {
-            it is ProjectComponentIdentifier
-        }
-    }.files
-    val sourcesJarTask = sourcesJar(body)
-
-    sourcesJarTask.configure {
-        dependsOn(view)
-        val archiveOperations = serviceOf<ArchiveOperations>()
-        from(view.map { archiveOperations.zipTree(it) })
-    }
-
-    return sourcesJarTask
-}
+): TaskProvider<Jar> = sourcesJar(body)
 
 
 
@@ -296,25 +276,10 @@ fun Project.javadocJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
 fun Project.javadocJarWithJavadocFromEmbedded(
     body: Jar.() -> Unit = {},
 ): TaskProvider<Jar> {
-    val view = configurations.named("embedded").get().incoming.artifactView {
-        attributes {
-            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
-            attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.JAVADOC))
-        }
-        withVariantReselection()
-        componentFilter {
-            it is ProjectComponentIdentifier
-        }
-    }.files
-
     val javadocJarTask = javadocJar(body)
-
     javadocJarTask.configure {
-        dependsOn(view)
-        val archiveOperations = serviceOf<ArchiveOperations>()
-        from(view.map { archiveOperations.zipTree(it) })
+        addEmbeddedJavadoc()
     }
-
     return javadocJarTask
 }
 
