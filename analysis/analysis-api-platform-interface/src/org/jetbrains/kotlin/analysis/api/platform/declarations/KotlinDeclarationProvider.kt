@@ -72,7 +72,7 @@ public interface KotlinDeclarationProvider : KotlinComposableProvider {
     public val hasMayHaveTopLevelCallableImplementation: Boolean
         get() = false
 
-    public fun mayHaveTopLevelCallable(classId: ClassId): Boolean {
+    public fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean {
         if (hasMayHaveTopLevelCallableImplementation) {
             TODO("Since ${::hasMayHaveTopLevelCallableImplementation.name} is true, this function has to be implemented, but wasn't")
         } else {
