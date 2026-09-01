@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.sir.providers.utils.deprecatedAnnotation
 import org.jetbrains.kotlin.sir.providers.utils.hasNonPublicOptIns
 import org.jetbrains.kotlin.sir.providers.utils.isAbstract
 import org.jetbrains.kotlin.sir.providers.utils.isFromTemporarilyIgnoredPackage
+import org.jetbrains.kotlin.sir.providers.utils.resolveUpperBound
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirPlatformModule
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -293,19 +294,12 @@ private fun hasUnboundInputTypeParameters(
     } else if (isReturnType) {
         return@let false
     }
-    fun getUpperBound(typeParam: KaTypeParameterSymbol): KaType? {
-        val upperBounds = typeParam.upperBounds
-        if (upperBounds.isEmpty()) return ka.builtinTypes.nullableAny // no upperbound indicates Any?
-        return upperBounds.singleOrNull() // null indicates multiple bounds
+    val typeParamUpperBounds = classType.symbol.typeParameters.map {
+        it.resolveUpperBound() ?: ka.builtinTypes.nullableAny
     }
-
-    val typeParamUpperBounds = classType.symbol.typeParameters.map(::getUpperBound)
     if (typeParamUpperBounds.isEmpty()) return@let false
     classType.typeArguments.zipIfSizesAreEqual(typeParamUpperBounds)?.any { [argument, bound] ->
-        var type = argument.type
-        if (type is KaTypeParameterType) {
-            type = getUpperBound(type.symbol)
-        }
+        val type = argument.type?.let { it.resolveUpperBound() ?: ka.builtinTypes.nullableAny }
         type?.let { it != bound } ?: false // .type == null indicates star projection
     } ?: false
 } ?: false

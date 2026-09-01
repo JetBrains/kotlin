@@ -67,6 +67,8 @@ void * __root___ArrayBox_init_allocate();
 
 _Bool __root___ArrayBox_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
+_Bool __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 _Bool __root___Box_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * __kt, void * _Nullable t);
 
 void * __root___CPImpl_init_allocate();

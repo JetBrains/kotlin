@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.sir.providers.impl
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
@@ -25,8 +24,10 @@ import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.utils.KotlinCoroutineSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
+import org.jetbrains.kotlin.sir.providers.utils.resolveUpperBound
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.swiftName
+import org.jetbrains.kotlin.types.Variance
 
 internal object StandaloneSirTypeNamer : SirTypeNamer {
     override fun swiftFqName(type: SirType): String = type.swiftName
@@ -85,7 +86,6 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
         is SirErrorType, is SirFunctionalType, is SirUnsupportedType, is SirTupleType, is SirType.Metatype -> null
     } ?: kotlinFqName(type)
 
-    @OptIn(KaExperimentalApi::class)
     private fun kotlinFqName(type: SirExistentialType): String = type.protocols.single().let { [protocol, _] ->
         if (protocol == KotlinRuntimeSupportModule.kotlinBridgeable) return@let "kotlin.Any"
         val symbol = protocol.kaSymbolOrNull<KaClassLikeSymbol>()!!
@@ -95,7 +95,6 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
         "$fqName$typeArgs"
     }
 
-    @OptIn(KaExperimentalApi::class)
     private fun kotlinFqName(type: SirNominalType): String {
         val declaration = type.typeDeclaration
         declaration.primitiveFqNameIfAny()?.let { return it }
@@ -137,7 +136,6 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
         }
     }
 
-    @OptIn(KaExperimentalApi::class)
     private fun KaClassLikeSymbol.parametrisedTypeName(typeArguments: List<KaType?>? = null): String? {
         require(typeArguments == null || typeParameters.size == typeArguments.size) {
             "type argument count must match type parameter count"
@@ -149,8 +147,13 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
 
         val typeArguments = typeArguments ?: typeParameters.map { null }
         val typesRendered = typeParameters.zip(typeArguments) { param, arg ->
-            arg ?: param.upperBounds.firstOrNull()
-        }.map { type ->
+            var type = arg?.resolveUpperBound()
+            // Two cases when we use the upper bound from the parameter:
+            // 1. we don't have an argument
+            // 2. for in variance parameters that have an (upper bound) argument equal to this type
+            if (arg == null || (param.variance == Variance.IN_VARIANCE && type?.symbol?.classId?.asFqNameString() == fqname)) {
+                type = param.resolveUpperBound()
+            }
             when {
                 type !is KaClassType -> null
                 type.symbol.classId?.asFqNameString() == fqname -> "*"
