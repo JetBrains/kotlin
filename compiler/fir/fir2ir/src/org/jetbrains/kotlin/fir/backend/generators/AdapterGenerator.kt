@@ -707,7 +707,13 @@ class AdapterGenerator(
         val functionTypeBeforeConversion = kind.originalArgumentAsFunctionType
         check(functionTypeBeforeConversion.functionTypeKind(session) != null)
 
-        val invokeSymbol = findInvokeSymbol(functionTypeBeforeConversion, originalArgumentType) ?: return this
+        val invokeSymbol = findInvokeSymbol(functionTypeBeforeConversion, originalArgumentType)
+        checkNotNull(invokeSymbol) {
+            "Invoke symbol not found for " +
+                    "functionTypeBeforeConversion = '${functionTypeBeforeConversion.renderForDebugging()}', " +
+                    "originalArgumentType = '${originalArgumentType.renderForDebugging()}'"
+        }
+
         val expectedIrType = expectedType.toIrType() as IrSimpleType
         return argument.convertWithOffsets { startOffset, endOffset ->
             val irAdapterFunction = createAdapterFunctionForArgument(
