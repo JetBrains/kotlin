@@ -1,7 +1,7 @@
 null()
   psi: KtAnnotationEntry
 
-<error>()
+null()
   psi: KtAnnotationEntry
 
 kotlin/Int()

@@ -1,3 +1,1 @@
-/<error>
-
 kotlin/Int
