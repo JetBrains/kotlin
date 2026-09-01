@@ -10,6 +10,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.NativeVersionValueSource
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -47,6 +48,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
 
     private val platformName: String = HostManager.platformName()
     private val currentCompilerVersion = NativeCompilerDownloader.DEFAULT_KONAN_VERSION
+    private val prebuiltDistributionDirName = "kotlin-native-prebuilt-$platformName-$currentCompilerVersion"
 
     private val generateRegexTemplate = "Generate (?:and precompile )?platform libraries for "
     private val generateRegex = generateRegexTemplate.toRegex()
@@ -111,7 +113,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
 
                 // checking that konan was downloaded and native dependencies were not downloaded into ~/.konan dir
                 assertDirectoryExists(workingDir.resolve(".konan/dependencies"))
-                assertDirectoryExists(workingDir.resolve(".konan/kotlin-native-prebuilt-$platformName-$currentCompilerVersion"))
+                assertDirectoryExists(workingDir.resolve(".konan/$prebuiltDistributionDirName"))
             }
         }
     }
@@ -123,6 +125,30 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
             build("assemble") {
                 assertOutputContains("Kotlin/Native distribution: .*kotlin-native-prebuilt-$platformName".toRegex())
                 assertOutputDoesNotContain(generateRegex)
+            }
+        }
+    }
+
+    @DisplayName("Toolchain leaves a distribution installed by the legacy downloader alone (KT-86251)")
+    @GradleTest
+    fun testToolchainDoesNotReinstallOverLegacyInstallation(gradleVersion: GradleVersion) {
+        platformLibrariesProject("linuxX64", gradleVersion = gradleVersion) {
+            // the legacy downloader has to leave behind the marker the toolchain looks for
+            build("tasks") {
+                assertOutputContains("Unpack Kotlin/Native compiler to ")
+
+                val distributionDir = buildOptions.konanDataDir!!.resolve(prebuiltDistributionDirName)
+                assertFileExists(distributionDir.resolve(NativeVersionValueSource.MARKER_FILE))
+            }
+
+            // the toolchain has to leave that installation alone. Unpacking on top of it happens in place, so
+            // anything reading the distribution at the same time sees half-written files.
+            build(
+                "downloadKotlinNativeDistribution",
+                buildOptions = buildOptions.copy(freeArgs = listOf("-Pkotlin.native.toolchain.enabled=true")),
+            ) {
+                assertTasksExecuted(":downloadKotlinNativeDistribution")
+                assertOutputDoesNotContain("Moving Kotlin/Native bundle from")
             }
         }
     }
