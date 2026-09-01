@@ -200,7 +200,8 @@ private fun AndroidIrBuilder.kClassToJavaClass(kClassReference: IrExpression): I
     }
 
 // Produce a static reference to the java class of the given type.
-fun AndroidIrBuilder.javaClassReference(classType: IrType): IrCall = kClassToJavaClass(kClassReference(classType))
+fun AndroidIrBuilder.javaClassReference(classType: IrType): IrCall =
+    kClassToJavaClass(kClassReference(classType.erasedUpperBound.symbol.starProjectedType))
 
 fun IrClass.isSubclassOfFqName(fqName: String): Boolean =
     fqNameWhenAvailable?.asString() == fqName || superTypes.any { it.erasedUpperBound.isSubclassOfFqName(fqName) }
