@@ -13,11 +13,13 @@ import org.jetbrains.kotlin.ir.IrDiagnosticReporter.IrDiagnosticContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.fqNameWithoutFileClassesWhenAvailable
 
 interface IrDiagnosticReporter {
     fun at(irElement: IrElement, containingIrFile: IrFile): IrDiagnosticContext
+    fun atPotentiallyNonSource(irElement: IrElement, containingIrFile: IrFile?): IrDiagnosticContext
 
     fun report(factory: KtSourcelessDiagnosticFactory, message: String, location: CompilerMessageSourceLocation? = null)
     val hasErrors: Boolean
@@ -86,6 +88,10 @@ object IrDiagnosticRenderers {
 
 fun IrDiagnosticReporter.at(irDeclaration: IrDeclaration): IrDiagnosticContext {
     return at(irDeclaration, irDeclaration.file)
+}
+
+fun IrDiagnosticReporter.atPotentiallyNonSource(irDeclaration: IrDeclaration): IrDiagnosticContext {
+    return atPotentiallyNonSource(irDeclaration, irDeclaration.fileOrNull)
 }
 
 fun IrDiagnosticReporter.at(irElement: IrElement, containingIrDeclaration: IrDeclaration): IrDiagnosticContext {
