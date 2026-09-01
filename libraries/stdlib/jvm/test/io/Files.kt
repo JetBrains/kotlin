@@ -691,4 +691,20 @@ class FilesTest {
         assertEquals(str1, reader.readLine())
         assertEquals(str2, reader.readLine())
     }
+
+    @Test fun filesInDirectory() {
+        val directory = kotlin.io.path.createTempDirectory("test")
+        val extension = "txt"
+        val firstFile = kotlin.io.path.createTempFile(directory = directory, suffix = ".$extension").toFile()
+        val secondFile = kotlin.io.path.createTempFile(directory = directory, suffix = ".$extension").toFile()
+        val thirdFile = kotlin.io.path.createTempFile(directory = directory, suffix = ".svg").toFile()
+        val listFiles = directory.toFile().filesInDirectory { file -> file.extension == extension }
+        val listFilesWithoutFilter = directory.toFile().filesInDirectory()
+        val emptyList = directory.toFile().filesInDirectory { file -> file.extension == "png" }
+
+        assertFalse(listFiles.contains(thirdFile))
+        assertTrue(listFiles.containsAll(listOf(firstFile, secondFile)))
+        assertTrue(listFilesWithoutFilter.containsAll(listOf(firstFile, secondFile, thirdFile)))
+        assertTrue(emptyList.isEmpty())
+    }
 }
