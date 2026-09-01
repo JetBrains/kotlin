@@ -2,7 +2,7 @@ KtNameReferenceExpression(108,115): 'makeFoo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       testing/makeFoo(): testing.Foo
     ]

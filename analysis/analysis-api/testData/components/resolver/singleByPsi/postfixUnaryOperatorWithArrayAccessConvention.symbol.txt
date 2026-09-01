@@ -1,5 +1,5 @@
 KtPostfixExpression(128,136): 'm["a"]++'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyMap.get(<dispatch receiver>: MyMap<K, V>, k: K): V,
       kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int,

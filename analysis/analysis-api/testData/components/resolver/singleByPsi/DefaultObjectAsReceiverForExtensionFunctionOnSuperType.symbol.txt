@@ -2,7 +2,7 @@ KtNameReferenceExpression(131,132): 'A'
   isImplicitReferenceToCompanion: true
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       t/A.Companion
     ]

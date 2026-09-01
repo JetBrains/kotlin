@@ -41,13 +41,13 @@ KtParameter(133,147): 'val prop1: Int'
   null
 
 KtTypeReference(144,147): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(144,147): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -56,7 +56,7 @@ KtNameReferenceExpression(144,147): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -65,25 +65,25 @@ KtSuperTypeList(150,168): 'SealedGeneric<T>()'
   null
 
 KtSuperTypeCallEntry(150,168): 'SealedGeneric<T>()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): SealedGeneric<T>
     ]
 
 KtConstructorCalleeExpression(150,166): 'SealedGeneric<T>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): SealedGeneric<T>
     ]
 
 KtTypeReference(150,166): 'SealedGeneric<T>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
 
 KtUserType(150,166): 'SealedGeneric<T>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
@@ -92,7 +92,7 @@ KtNameReferenceExpression(150,163): 'SealedGeneric'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
@@ -104,13 +104,13 @@ KtTypeProjection(164,165): 'T'
   null
 
 KtTypeReference(164,165): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
 
 KtUserType(164,165): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -119,7 +119,7 @@ KtNameReferenceExpression(164,165): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -146,13 +146,13 @@ KtParameter(192,206): 'val prop2: Int'
   null
 
 KtTypeReference(203,206): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(203,206): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -161,7 +161,7 @@ KtNameReferenceExpression(203,206): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -170,25 +170,25 @@ KtSuperTypeList(209,227): 'SealedGeneric<T>()'
   null
 
 KtSuperTypeCallEntry(209,227): 'SealedGeneric<T>()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): SealedGeneric<T>
     ]
 
 KtConstructorCalleeExpression(209,225): 'SealedGeneric<T>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): SealedGeneric<T>
     ]
 
 KtTypeReference(209,225): 'SealedGeneric<T>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
 
 KtUserType(209,225): 'SealedGeneric<T>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
@@ -197,7 +197,7 @@ KtNameReferenceExpression(209,222): 'SealedGeneric'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
@@ -209,13 +209,13 @@ KtTypeProjection(223,224): 'T'
   null
 
 KtTypeReference(223,224): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
 
 KtUserType(223,224): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -224,7 +224,7 @@ KtNameReferenceExpression(223,224): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -242,13 +242,13 @@ KtParameter(249,276): 'instance1: SealedGeneric<*>'
   null
 
 KtTypeReference(260,276): 'SealedGeneric<*>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
 
 KtUserType(260,276): 'SealedGeneric<*>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
@@ -257,7 +257,7 @@ KtNameReferenceExpression(260,273): 'SealedGeneric'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
@@ -272,13 +272,13 @@ KtParameter(278,320): 'instance2: SealedGeneric<out CharSequence>'
   null
 
 KtTypeReference(289,320): 'SealedGeneric<out CharSequence>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
 
 KtUserType(289,320): 'SealedGeneric<out CharSequence>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
@@ -287,7 +287,7 @@ KtNameReferenceExpression(289,302): 'SealedGeneric'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
@@ -302,13 +302,13 @@ KtDeclarationModifierList(303,306): 'out'
   null
 
 KtTypeReference(307,319): 'CharSequence'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/CharSequence
     ]
 
 KtUserType(307,319): 'CharSequence'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/CharSequence
     ]
@@ -317,19 +317,19 @@ KtNameReferenceExpression(307,319): 'CharSequence'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/CharSequence
     ]
 
 KtTypeReference(323,326): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(323,326): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -338,7 +338,7 @@ KtNameReferenceExpression(323,326): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -359,7 +359,7 @@ KtNameReferenceExpression(337,346): 'instance1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance1: SealedGeneric<*>
     ]
@@ -371,13 +371,13 @@ KtOperationReferenceExpression(347,349): 'is'
   null
 
 KtTypeReference(350,367): 'SGOption1<String>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
 
 KtUserType(350,367): 'SGOption1<String>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
@@ -386,7 +386,7 @@ KtNameReferenceExpression(350,359): 'SGOption1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
@@ -398,13 +398,13 @@ KtTypeProjection(360,366): 'String'
   null
 
 KtTypeReference(360,366): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(360,366): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -413,7 +413,7 @@ KtNameReferenceExpression(360,366): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -425,13 +425,13 @@ KtBlockExpression(369,407): '{'
   null
 
 KtReturnExpression(379,401): 'return instance1.prop1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /testTypeParams(instance1: SealedGeneric<*>, instance2: SealedGeneric<out kotlin.CharSequence>): kotlin.Int
     ]
 
 KtDotQualifiedExpression(386,401): 'instance1.prop1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val prop1: kotlin.Int
     ]
@@ -440,7 +440,7 @@ KtNameReferenceExpression(386,395): 'instance1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance1: SealedGeneric<*>
     ]
@@ -449,7 +449,7 @@ KtNameReferenceExpression(396,401): 'prop1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val prop1: kotlin.Int
     ]
@@ -467,7 +467,7 @@ KtNameReferenceExpression(416,425): 'instance1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance1: SealedGeneric<*>
     ]
@@ -479,13 +479,13 @@ KtOperationReferenceExpression(426,428): 'is'
   null
 
 KtTypeReference(429,441): 'SGOption1<*>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
 
 KtUserType(429,441): 'SGOption1<*>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
@@ -494,7 +494,7 @@ KtNameReferenceExpression(429,438): 'SGOption1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
@@ -512,13 +512,13 @@ KtBlockExpression(443,481): '{'
   null
 
 KtReturnExpression(453,475): 'return instance1.prop1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /testTypeParams(instance1: SealedGeneric<*>, instance2: SealedGeneric<out kotlin.CharSequence>): kotlin.Int
     ]
 
 KtDotQualifiedExpression(460,475): 'instance1.prop1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val prop1: kotlin.Int
     ]
@@ -527,7 +527,7 @@ KtNameReferenceExpression(460,469): 'instance1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance1: SealedGeneric<*>
     ]
@@ -536,7 +536,7 @@ KtNameReferenceExpression(470,475): 'prop1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val prop1: kotlin.Int
     ]
@@ -554,7 +554,7 @@ KtNameReferenceExpression(490,499): 'instance2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance2: SealedGeneric<out kotlin.CharSequence>
     ]
@@ -566,13 +566,13 @@ KtOperationReferenceExpression(500,502): 'is'
   null
 
 KtTypeReference(503,526): 'SGOption2<CharSequence>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption2
     ]
 
 KtUserType(503,526): 'SGOption2<CharSequence>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption2
     ]
@@ -581,7 +581,7 @@ KtNameReferenceExpression(503,512): 'SGOption2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption2
     ]
@@ -593,13 +593,13 @@ KtTypeProjection(513,525): 'CharSequence'
   null
 
 KtTypeReference(513,525): 'CharSequence'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/CharSequence
     ]
 
 KtUserType(513,525): 'CharSequence'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/CharSequence
     ]
@@ -608,7 +608,7 @@ KtNameReferenceExpression(513,525): 'CharSequence'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/CharSequence
     ]
@@ -620,13 +620,13 @@ KtBlockExpression(528,566): '{'
   null
 
 KtReturnExpression(538,560): 'return instance2.prop2'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /testTypeParams(instance1: SealedGeneric<*>, instance2: SealedGeneric<out kotlin.CharSequence>): kotlin.Int
     ]
 
 KtDotQualifiedExpression(545,560): 'instance2.prop2'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val prop2: kotlin.Int
     ]
@@ -635,7 +635,7 @@ KtNameReferenceExpression(545,554): 'instance2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance2: SealedGeneric<out kotlin.CharSequence>
     ]
@@ -644,7 +644,7 @@ KtNameReferenceExpression(555,560): 'prop2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val prop2: kotlin.Int
     ]
@@ -662,7 +662,7 @@ KtNameReferenceExpression(575,584): 'instance2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance2: SealedGeneric<out kotlin.CharSequence>
     ]
@@ -674,13 +674,13 @@ KtOperationReferenceExpression(585,587): 'is'
   null
 
 KtTypeReference(588,614): 'SGOption2<in CharSequence>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption2
     ]
 
 KtUserType(588,614): 'SGOption2<in CharSequence>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption2
     ]
@@ -689,7 +689,7 @@ KtNameReferenceExpression(588,597): 'SGOption2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption2
     ]
@@ -704,13 +704,13 @@ KtDeclarationModifierList(598,600): 'in'
   null
 
 KtTypeReference(601,613): 'CharSequence'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/CharSequence
     ]
 
 KtUserType(601,613): 'CharSequence'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/CharSequence
     ]
@@ -719,7 +719,7 @@ KtNameReferenceExpression(601,613): 'CharSequence'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/CharSequence
     ]
@@ -731,13 +731,13 @@ KtBlockExpression(616,654): '{'
   null
 
 KtReturnExpression(626,648): 'return instance2.prop2'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /testTypeParams(instance1: SealedGeneric<*>, instance2: SealedGeneric<out kotlin.CharSequence>): kotlin.Int
     ]
 
 KtDotQualifiedExpression(633,648): 'instance2.prop2'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val prop2: kotlin.Int
     ]
@@ -746,7 +746,7 @@ KtNameReferenceExpression(633,642): 'instance2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance2: SealedGeneric<out kotlin.CharSequence>
     ]
@@ -755,7 +755,7 @@ KtNameReferenceExpression(643,648): 'prop2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val prop2: kotlin.Int
     ]
@@ -773,7 +773,7 @@ KtNameReferenceExpression(663,672): 'instance2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance2: SealedGeneric<out kotlin.CharSequence>
     ]
@@ -785,13 +785,13 @@ KtOperationReferenceExpression(673,675): 'is'
   null
 
 KtTypeReference(676,703): 'SGOption2<out CharSequence>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption2
     ]
 
 KtUserType(676,703): 'SGOption2<out CharSequence>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption2
     ]
@@ -800,7 +800,7 @@ KtNameReferenceExpression(676,685): 'SGOption2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption2
     ]
@@ -815,13 +815,13 @@ KtDeclarationModifierList(686,689): 'out'
   null
 
 KtTypeReference(690,702): 'CharSequence'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/CharSequence
     ]
 
 KtUserType(690,702): 'CharSequence'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/CharSequence
     ]
@@ -830,7 +830,7 @@ KtNameReferenceExpression(690,702): 'CharSequence'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/CharSequence
     ]
@@ -842,13 +842,13 @@ KtBlockExpression(705,743): '{'
   null
 
 KtReturnExpression(715,737): 'return instance2.prop2'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /testTypeParams(instance1: SealedGeneric<*>, instance2: SealedGeneric<out kotlin.CharSequence>): kotlin.Int
     ]
 
 KtDotQualifiedExpression(722,737): 'instance2.prop2'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val prop2: kotlin.Int
     ]
@@ -857,7 +857,7 @@ KtNameReferenceExpression(722,731): 'instance2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance2: SealedGeneric<out kotlin.CharSequence>
     ]
@@ -866,13 +866,13 @@ KtNameReferenceExpression(732,737): 'prop2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val prop2: kotlin.Int
     ]
 
 KtReturnExpression(748,756): 'return 0'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /testTypeParams(instance1: SealedGeneric<*>, instance2: SealedGeneric<out kotlin.CharSequence>): kotlin.Int
     ]
@@ -896,13 +896,13 @@ KtParameter(783,802): 'a: SealedGeneric<T>'
   null
 
 KtTypeReference(786,802): 'SealedGeneric<T>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
 
 KtUserType(786,802): 'SealedGeneric<T>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
@@ -911,7 +911,7 @@ KtNameReferenceExpression(786,799): 'SealedGeneric'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
@@ -923,13 +923,13 @@ KtTypeProjection(800,801): 'T'
   null
 
 KtTypeReference(800,801): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
 
 KtUserType(800,801): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -938,7 +938,7 @@ KtNameReferenceExpression(800,801): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -953,7 +953,7 @@ KtNameReferenceExpression(815,816): 'a'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       a: SealedGeneric<T>
     ]
@@ -965,13 +965,13 @@ KtWhenConditionIsPattern(828,843): 'is SGOption1<*>'
   null
 
 KtTypeReference(831,843): 'SGOption1<*>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
 
 KtUserType(831,843): 'SGOption1<*>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
@@ -980,7 +980,7 @@ KtNameReferenceExpression(831,840): 'SGOption1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
@@ -1001,13 +1001,13 @@ KtWhenConditionIsPattern(858,873): 'is SGOption2<*>'
   null
 
 KtTypeReference(861,873): 'SGOption2<*>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption2
     ]
 
 KtUserType(861,873): 'SGOption2<*>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption2
     ]
@@ -1016,7 +1016,7 @@ KtNameReferenceExpression(861,870): 'SGOption2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption2
     ]
@@ -1037,7 +1037,7 @@ KtNameReferenceExpression(896,897): 'a'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       a: SealedGeneric<T>
     ]
@@ -1049,13 +1049,13 @@ KtWhenConditionIsPattern(909,924): 'is SGOption1<T>'
   null
 
 KtTypeReference(912,924): 'SGOption1<T>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
 
 KtUserType(912,924): 'SGOption1<T>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
@@ -1064,7 +1064,7 @@ KtNameReferenceExpression(912,921): 'SGOption1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
@@ -1076,13 +1076,13 @@ KtTypeProjection(922,923): 'T'
   null
 
 KtTypeReference(922,923): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
 
 KtUserType(922,923): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -1091,7 +1091,7 @@ KtNameReferenceExpression(922,923): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -1106,13 +1106,13 @@ KtWhenConditionIsPattern(939,954): 'is SGOption2<T>'
   null
 
 KtTypeReference(942,954): 'SGOption2<T>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption2
     ]
 
 KtUserType(942,954): 'SGOption2<T>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption2
     ]
@@ -1121,7 +1121,7 @@ KtNameReferenceExpression(942,951): 'SGOption2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption2
     ]
@@ -1133,13 +1133,13 @@ KtTypeProjection(952,953): 'T'
   null
 
 KtTypeReference(952,953): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
 
 KtUserType(952,953): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -1148,7 +1148,7 @@ KtNameReferenceExpression(952,953): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -1166,13 +1166,13 @@ KtParameter(990,1014): 'a: SealedGeneric<String>'
   null
 
 KtTypeReference(993,1014): 'SealedGeneric<String>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
 
 KtUserType(993,1014): 'SealedGeneric<String>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
@@ -1181,7 +1181,7 @@ KtNameReferenceExpression(993,1006): 'SealedGeneric'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
@@ -1193,13 +1193,13 @@ KtTypeProjection(1007,1013): 'String'
   null
 
 KtTypeReference(1007,1013): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(1007,1013): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -1208,7 +1208,7 @@ KtNameReferenceExpression(1007,1013): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -1217,13 +1217,13 @@ KtParameter(1016,1040): 'b: SealedGeneric<String>'
   null
 
 KtTypeReference(1019,1040): 'SealedGeneric<String>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
 
 KtUserType(1019,1040): 'SealedGeneric<String>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
@@ -1232,7 +1232,7 @@ KtNameReferenceExpression(1019,1032): 'SealedGeneric'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
@@ -1244,13 +1244,13 @@ KtTypeProjection(1033,1039): 'String'
   null
 
 KtTypeReference(1033,1039): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(1033,1039): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -1259,7 +1259,7 @@ KtNameReferenceExpression(1033,1039): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -1274,7 +1274,7 @@ KtNameReferenceExpression(1054,1055): 'a'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       a: SealedGeneric<kotlin.String>
     ]
@@ -1286,13 +1286,13 @@ KtWhenConditionIsPattern(1067,1079): 'is SGOption1'
   null
 
 KtTypeReference(1070,1079): 'SGOption1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
 
 KtUserType(1070,1079): 'SGOption1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
@@ -1301,7 +1301,7 @@ KtNameReferenceExpression(1070,1079): 'SGOption1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
@@ -1316,13 +1316,13 @@ KtWhenConditionIsPattern(1094,1106): 'is SGOption2'
   null
 
 KtTypeReference(1097,1106): 'SGOption2'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption2
     ]
 
 KtUserType(1097,1106): 'SGOption2'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption2
     ]
@@ -1331,7 +1331,7 @@ KtNameReferenceExpression(1097,1106): 'SGOption2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption2
     ]
@@ -1346,7 +1346,7 @@ KtNameReferenceExpression(1124,1125): 'b'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b: SealedGeneric<kotlin.String>
     ]
@@ -1358,13 +1358,13 @@ KtOperationReferenceExpression(1126,1128): 'as'
   null
 
 KtTypeReference(1129,1138): 'SGOption1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
 
 KtUserType(1129,1138): 'SGOption1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
@@ -1373,7 +1373,7 @@ KtNameReferenceExpression(1129,1138): 'SGOption1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
@@ -1388,13 +1388,13 @@ KtParameter(1162,1181): 'a: SealedGeneric<*>'
   null
 
 KtTypeReference(1165,1181): 'SealedGeneric<*>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
 
 KtUserType(1165,1181): 'SealedGeneric<*>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
@@ -1403,7 +1403,7 @@ KtNameReferenceExpression(1165,1178): 'SealedGeneric'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
@@ -1418,13 +1418,13 @@ KtParameter(1183,1202): 'b: SealedGeneric<*>'
   null
 
 KtTypeReference(1186,1202): 'SealedGeneric<*>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
 
 KtUserType(1186,1202): 'SealedGeneric<*>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
@@ -1433,7 +1433,7 @@ KtNameReferenceExpression(1186,1199): 'SealedGeneric'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric
     ]
@@ -1454,7 +1454,7 @@ KtNameReferenceExpression(1210,1211): 'a'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       a: SealedGeneric<*>
     ]
@@ -1466,13 +1466,13 @@ KtOperationReferenceExpression(1212,1214): 'as'
   null
 
 KtTypeReference(1215,1232): 'SGOption1<String>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
 
 KtUserType(1215,1232): 'SGOption1<String>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
@@ -1481,7 +1481,7 @@ KtNameReferenceExpression(1215,1224): 'SGOption1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
@@ -1493,13 +1493,13 @@ KtTypeProjection(1225,1231): 'String'
   null
 
 KtTypeReference(1225,1231): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(1225,1231): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -1508,7 +1508,7 @@ KtNameReferenceExpression(1225,1231): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -1526,7 +1526,7 @@ KtNameReferenceExpression(1241,1242): 'b'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b: SealedGeneric<*>
     ]
@@ -1538,13 +1538,13 @@ KtOperationReferenceExpression(1243,1245): 'is'
   null
 
 KtTypeReference(1246,1263): 'SGOption1<String>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
 
 KtUserType(1246,1263): 'SGOption1<String>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
@@ -1553,7 +1553,7 @@ KtNameReferenceExpression(1246,1255): 'SGOption1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedGeneric.SGOption1
     ]
@@ -1565,13 +1565,13 @@ KtTypeProjection(1256,1262): 'String'
   null
 
 KtTypeReference(1256,1262): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(1256,1262): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -1580,7 +1580,7 @@ KtNameReferenceExpression(1256,1262): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]

@@ -1,13 +1,13 @@
 <caret_1>:
   KDocName(150,159): 'Child.foo'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /foo(<extension receiver>: Base, x: T, y: R, z: I): T
       ]
 
 <caret_2>:
   KDocName(165,173): 'Base.foo'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /foo(<extension receiver>: Base, x: T, y: R, z: I): T
       ]

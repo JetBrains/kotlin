@@ -8,7 +8,7 @@ KtNameReferenceExpression(38,39): 'b'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b
     ]
@@ -23,7 +23,7 @@ KtNameReferenceExpression(47,49): 'a1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       a1
     ]
@@ -35,7 +35,7 @@ KtNameReferenceExpression(59,61): 'a2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       a2
     ]
@@ -68,13 +68,13 @@ KtParameter(108,117): 'a: MyEnum'
   null
 
 KtTypeReference(111,117): 'MyEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b/MyEnum
     ]
 
 KtUserType(111,117): 'MyEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b/MyEnum
     ]
@@ -83,7 +83,7 @@ KtNameReferenceExpression(111,117): 'MyEnum'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b/MyEnum
     ]
@@ -101,7 +101,7 @@ KtBlockExpression(134,170): '{'
   null
 
 KtCallExpression(140,146): 'foo(X)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b/foo(a: b.MyEnum): kotlin.Unit
     ]
@@ -110,7 +110,7 @@ KtNameReferenceExpression(140,143): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b/foo(a: b.MyEnum): kotlin.Unit
     ]
@@ -125,13 +125,13 @@ KtNameReferenceExpression(144,145): 'X'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b/MyEnum.X
     ]
 
 KtCallExpression(151,157): 'foo(Y)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b/foo(a: b.MyEnum): kotlin.Unit
     ]
@@ -140,7 +140,7 @@ KtNameReferenceExpression(151,154): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b/foo(a: b.MyEnum): kotlin.Unit
     ]
@@ -155,13 +155,13 @@ KtNameReferenceExpression(155,156): 'Y'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b/MyEnum.Y
     ]
 
 KtCallExpression(162,168): 'foo(Z)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b/foo(a: b.MyEnum): kotlin.Unit
     ]
@@ -170,7 +170,7 @@ KtNameReferenceExpression(162,165): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b/foo(a: b.MyEnum): kotlin.Unit
     ]
@@ -185,7 +185,7 @@ KtNameReferenceExpression(166,167): 'Z'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b/MyEnum.Z
     ]

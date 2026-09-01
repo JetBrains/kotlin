@@ -8,7 +8,7 @@ KtNameReferenceExpression(8,11): 'bar'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       bar
     ]
@@ -26,13 +26,13 @@ KtTypeParameter(27,37): 'T : Number'
   null
 
 KtTypeReference(31,37): 'Number'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Number
     ]
 
 KtUserType(31,37): 'Number'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Number
     ]
@@ -41,7 +41,7 @@ KtNameReferenceExpression(31,37): 'Number'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Number
     ]
@@ -59,24 +59,24 @@ KtSuperTypeList(64,67): 'T()'
   null
 
 KtSuperTypeCallEntry(64,67): 'T()'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<OTHER_ERROR: Erroneous delegated constructor call>
 
 KtConstructorCalleeExpression(64,65): 'T'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<OTHER_ERROR: Erroneous delegated constructor call>
 
 KtTypeReference(64,65): 'T'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       T
     ]
     diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
 
 KtUserType(64,65): 'T'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       T
     ]
@@ -86,7 +86,7 @@ KtNameReferenceExpression(64,65): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       T
     ]

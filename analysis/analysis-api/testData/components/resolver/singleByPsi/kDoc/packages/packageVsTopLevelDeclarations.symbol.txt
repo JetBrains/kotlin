@@ -1,20 +1,20 @@
 <caret_1>:
   KDocName(50,53): 'foo'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         foo/foo
       ]
 
 <caret_2>:
   KDocName(62,65): 'foo'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         foo
       ]
 
 <caret_3>:
   KDocName(75,82): 'foo.foo'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         foo/foo
       ]

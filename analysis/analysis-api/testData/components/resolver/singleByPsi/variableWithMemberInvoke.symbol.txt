@@ -1,5 +1,5 @@
 KtCallExpression(76,81): 'f("")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Foo.invoke(<dispatch receiver>: Foo, t: T): kotlin.Unit
     ]

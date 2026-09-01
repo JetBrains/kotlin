@@ -1,5 +1,5 @@
 KDocName(164,168): 'X.YY'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       YY
     ]

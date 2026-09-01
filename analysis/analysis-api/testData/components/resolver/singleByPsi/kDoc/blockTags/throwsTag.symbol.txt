@@ -8,42 +8,42 @@
 
 <caret_3>:
   KDocName(54,75): 'IllegalStateException'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         kotlin/IllegalStateException
       ]
 
 <caret_4>:
   KDocName(90,111): 'IllegalStateException'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         kotlin/IllegalStateException
       ]
 
 <caret_5>:
   KDocName(123,134): 'MyException'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /MyException
       ]
 
 <caret_6>:
   KDocName(149,160): 'MyException'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /MyException
       ]
 
 <caret_7>:
   KDocName(172,183): 'MyThrowable'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /MyThrowable
       ]
 
 <caret_8>:
   KDocName(198,209): 'MyThrowable'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /MyThrowable
       ]

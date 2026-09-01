@@ -1,5 +1,5 @@
 KtPostfixExpression(138,148): 'variable++'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var variable: MyClass,
       /MyClass.inc(<dispatch receiver>: MyClass): MyClass

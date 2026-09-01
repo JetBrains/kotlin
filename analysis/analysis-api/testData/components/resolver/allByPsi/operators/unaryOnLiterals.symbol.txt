@@ -17,7 +17,7 @@ KtBlockExpression(18,51): '{'
   null
 
 KtPrefixExpression(24,26): '+1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
     ]
@@ -26,7 +26,7 @@ KtOperationReferenceExpression(24,25): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
     ]
@@ -35,7 +35,7 @@ KtConstantExpression(25,26): '1'
   null
 
 KtPrefixExpression(31,33): '-2'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
     ]
@@ -44,7 +44,7 @@ KtOperationReferenceExpression(31,32): '-'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
     ]
@@ -53,7 +53,7 @@ KtConstantExpression(32,33): '2'
   null
 
 KtPrefixExpression(38,41): '+3L'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Long.unaryPlus(<dispatch receiver>: kotlin.Long): kotlin.Long
     ]
@@ -62,7 +62,7 @@ KtOperationReferenceExpression(38,39): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Long.unaryPlus(<dispatch receiver>: kotlin.Long): kotlin.Long
     ]
@@ -71,7 +71,7 @@ KtConstantExpression(39,41): '3L'
   null
 
 KtPrefixExpression(46,49): '-4L'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
     ]
@@ -80,7 +80,7 @@ KtOperationReferenceExpression(46,47): '-'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
     ]
@@ -98,7 +98,7 @@ KtBlockExpression(66,87): '{'
   null
 
 KtPrefixExpression(72,76): '+"5"'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryPlus' for operator '+' on receiver of type 'String'.>
 
@@ -106,7 +106,7 @@ KtOperationReferenceExpression(72,73): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryPlus' for operator '+' on receiver of type 'String'.>
 
@@ -117,7 +117,7 @@ KtLiteralStringTemplateEntry(74,75): '5'
   null
 
 KtPrefixExpression(81,85): '-"6"'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryMinus' for operator '-' on receiver of type 'String'.>
 
@@ -125,7 +125,7 @@ KtOperationReferenceExpression(81,82): '-'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryMinus' for operator '-' on receiver of type 'String'.>
 

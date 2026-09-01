@@ -1,11 +1,11 @@
 KtPropertyDelegate(74,109): 'by GenericDelegate<String>("hello")'
   KaCompoundSymbolResolutionError:
     attempts = [
-      KaSymbolResolutionSuccess:
+      KaSimpleSymbolResolutionSuccess:
         symbols = [
           myPack/GenericDelegate.setValue(<dispatch receiver>: myPack.GenericDelegate<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, newValue: T): kotlin.Unit
         ],
-      KaSymbolResolutionError:
+      KaSimpleSymbolResolutionError:
         candidateSymbols = [
           myPack/getValue(<extension receiver>: kotlin.Int, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): ERROR CLASS: Symbol not found for T
         ]

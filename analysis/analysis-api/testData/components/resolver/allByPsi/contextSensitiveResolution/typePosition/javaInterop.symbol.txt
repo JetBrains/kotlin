@@ -17,13 +17,13 @@ KtParameter(68,84): 'instance: JClass'
   null
 
 KtTypeReference(78,84): 'JClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JClass
     ]
 
 KtUserType(78,84): 'JClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JClass
     ]
@@ -32,19 +32,19 @@ KtNameReferenceExpression(78,84): 'JClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JClass
     ]
 
 KtTypeReference(87,90): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(87,90): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -53,7 +53,7 @@ KtNameReferenceExpression(87,90): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -65,7 +65,7 @@ KtNameReferenceExpression(99,107): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance: JClass
     ]
@@ -77,12 +77,12 @@ KtWhenConditionIsPattern(115,127): 'is JCOption1'
   null
 
 KtTypeReference(118,127): 'JCOption1'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'JCOption1'.>
 
 KtUserType(118,127): 'JCOption1'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'JCOption1'.>
 
@@ -90,12 +90,12 @@ KtNameReferenceExpression(118,127): 'JCOption1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'JCOption1'.>
 
 KtDotQualifiedExpression(131,145): 'instance.prop1'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'JClass'.>
 
@@ -103,7 +103,7 @@ KtNameReferenceExpression(131,139): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance: JClass
     ]
@@ -112,7 +112,7 @@ KtNameReferenceExpression(140,145): 'prop1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'JClass'.>
 
@@ -123,12 +123,12 @@ KtWhenConditionIsPattern(151,163): 'is JCOption2'
   null
 
 KtTypeReference(154,163): 'JCOption2'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'JCOption2'.>
 
 KtUserType(154,163): 'JCOption2'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'JCOption2'.>
 
@@ -136,12 +136,12 @@ KtNameReferenceExpression(154,163): 'JCOption2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'JCOption2'.>
 
 KtDotQualifiedExpression(167,181): 'instance.prop2'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2' on receiver of type 'JClass'.>
 
@@ -149,7 +149,7 @@ KtNameReferenceExpression(167,175): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance: JClass
     ]
@@ -158,7 +158,7 @@ KtNameReferenceExpression(176,181): 'prop2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2' on receiver of type 'JClass'.>
 
@@ -169,12 +169,12 @@ KtWhenConditionIsPattern(187,196): 'is Nested'
   null
 
 KtTypeReference(190,196): 'Nested'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Nested'.>
 
 KtUserType(190,196): 'Nested'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Nested'.>
 
@@ -182,12 +182,12 @@ KtNameReferenceExpression(190,196): 'Nested'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Nested'.>
 
 KtDotQualifiedExpression(200,213): 'instance.prop'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'JClass'.>
 
@@ -195,7 +195,7 @@ KtNameReferenceExpression(200,208): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance: JClass
     ]
@@ -204,7 +204,7 @@ KtNameReferenceExpression(209,213): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'JClass'.>
 
@@ -218,13 +218,13 @@ KtParameter(243,265): 'instance: SealedJClass'
   null
 
 KtTypeReference(253,265): 'SealedJClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass
     ]
 
 KtUserType(253,265): 'SealedJClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass
     ]
@@ -233,19 +233,19 @@ KtNameReferenceExpression(253,265): 'SealedJClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass
     ]
 
 KtTypeReference(268,271): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(268,271): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -254,7 +254,7 @@ KtNameReferenceExpression(268,271): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -275,7 +275,7 @@ KtNameReferenceExpression(282,290): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance: SealedJClass
     ]
@@ -287,13 +287,13 @@ KtOperationReferenceExpression(291,293): 'is'
   null
 
 KtTypeReference(294,303): 'SCOption1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass.SCOption1
     ]
 
 KtUserType(294,303): 'SCOption1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass.SCOption1
     ]
@@ -302,7 +302,7 @@ KtNameReferenceExpression(294,303): 'SCOption1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass.SCOption1
     ]
@@ -314,13 +314,13 @@ KtBlockExpression(305,342): '{'
   null
 
 KtReturnExpression(315,336): 'return instance.prop1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /testSealedJClassInIf(instance: SealedJClass): kotlin.Int
     ]
 
 KtDotQualifiedExpression(322,336): 'instance.prop1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var prop1: kotlin.Int
     ]
@@ -329,7 +329,7 @@ KtNameReferenceExpression(322,330): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance: SealedJClass
     ]
@@ -338,7 +338,7 @@ KtNameReferenceExpression(331,336): 'prop1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var prop1: kotlin.Int
     ]
@@ -356,7 +356,7 @@ KtNameReferenceExpression(351,359): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance: SealedJClass
     ]
@@ -368,13 +368,13 @@ KtOperationReferenceExpression(360,362): 'is'
   null
 
 KtTypeReference(363,372): 'SCOption2'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass.SCOption2
     ]
 
 KtUserType(363,372): 'SCOption2'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass.SCOption2
     ]
@@ -383,7 +383,7 @@ KtNameReferenceExpression(363,372): 'SCOption2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass.SCOption2
     ]
@@ -395,13 +395,13 @@ KtBlockExpression(374,411): '{'
   null
 
 KtReturnExpression(384,405): 'return instance.prop2'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /testSealedJClassInIf(instance: SealedJClass): kotlin.Int
     ]
 
 KtDotQualifiedExpression(391,405): 'instance.prop2'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var prop2: kotlin.Int
     ]
@@ -410,7 +410,7 @@ KtNameReferenceExpression(391,399): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance: SealedJClass
     ]
@@ -419,13 +419,13 @@ KtNameReferenceExpression(400,405): 'prop2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var prop2: kotlin.Int
     ]
 
 KtReturnExpression(416,424): 'return 0'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /testSealedJClassInIf(instance: SealedJClass): kotlin.Int
     ]
@@ -443,13 +443,13 @@ KtParameter(466,488): 'instance: SealedJClass'
   null
 
 KtTypeReference(476,488): 'SealedJClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass
     ]
 
 KtUserType(476,488): 'SealedJClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass
     ]
@@ -458,19 +458,19 @@ KtNameReferenceExpression(476,488): 'SealedJClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass
     ]
 
 KtTypeReference(491,494): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(491,494): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -479,7 +479,7 @@ KtNameReferenceExpression(491,494): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -491,7 +491,7 @@ KtNameReferenceExpression(503,511): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance: SealedJClass
     ]
@@ -503,13 +503,13 @@ KtWhenConditionIsPattern(519,531): 'is SCOption1'
   null
 
 KtTypeReference(522,531): 'SCOption1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass.SCOption1
     ]
 
 KtUserType(522,531): 'SCOption1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass.SCOption1
     ]
@@ -518,13 +518,13 @@ KtNameReferenceExpression(522,531): 'SCOption1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass.SCOption1
     ]
 
 KtDotQualifiedExpression(535,549): 'instance.prop1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var prop1: kotlin.Int
     ]
@@ -533,7 +533,7 @@ KtNameReferenceExpression(535,543): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance: SealedJClass
     ]
@@ -542,7 +542,7 @@ KtNameReferenceExpression(544,549): 'prop1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var prop1: kotlin.Int
     ]
@@ -554,13 +554,13 @@ KtWhenConditionIsPattern(554,566): 'is SCOption2'
   null
 
 KtTypeReference(557,566): 'SCOption2'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass.SCOption2
     ]
 
 KtUserType(557,566): 'SCOption2'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass.SCOption2
     ]
@@ -569,13 +569,13 @@ KtNameReferenceExpression(557,566): 'SCOption2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass.SCOption2
     ]
 
 KtDotQualifiedExpression(570,584): 'instance.prop2'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var prop2: kotlin.Int
     ]
@@ -584,7 +584,7 @@ KtNameReferenceExpression(570,578): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance: SealedJClass
     ]
@@ -593,7 +593,7 @@ KtNameReferenceExpression(579,584): 'prop2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var prop2: kotlin.Int
     ]
@@ -608,13 +608,13 @@ KtParameter(615,637): 'instance: SealedJClass'
   null
 
 KtTypeReference(625,637): 'SealedJClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass
     ]
 
 KtUserType(625,637): 'SealedJClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass
     ]
@@ -623,19 +623,19 @@ KtNameReferenceExpression(625,637): 'SealedJClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass
     ]
 
 KtTypeReference(640,643): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(640,643): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -644,7 +644,7 @@ KtNameReferenceExpression(640,643): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -665,7 +665,7 @@ KtNameReferenceExpression(657,665): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance: SealedJClass
     ]
@@ -677,13 +677,13 @@ KtOperationReferenceExpression(666,668): 'is'
   null
 
 KtTypeReference(669,678): 'SCOption1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass.SCOption1
     ]
 
 KtUserType(669,678): 'SCOption1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass.SCOption1
     ]
@@ -692,13 +692,13 @@ KtNameReferenceExpression(669,678): 'SCOption1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass.SCOption1
     ]
 
 KtDotQualifiedExpression(682,696): 'instance.prop1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var prop1: kotlin.Int
     ]
@@ -707,7 +707,7 @@ KtNameReferenceExpression(682,690): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance: SealedJClass
     ]
@@ -716,7 +716,7 @@ KtNameReferenceExpression(691,696): 'prop1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var prop1: kotlin.Int
     ]
@@ -734,7 +734,7 @@ KtNameReferenceExpression(701,709): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance: SealedJClass
     ]
@@ -746,13 +746,13 @@ KtOperationReferenceExpression(710,712): 'is'
   null
 
 KtTypeReference(713,722): 'SCOption2'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass.SCOption2
     ]
 
 KtUserType(713,722): 'SCOption2'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass.SCOption2
     ]
@@ -761,13 +761,13 @@ KtNameReferenceExpression(713,722): 'SCOption2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedJClass.SCOption2
     ]
 
 KtDotQualifiedExpression(726,740): 'instance.prop2'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var prop2: kotlin.Int
     ]
@@ -776,7 +776,7 @@ KtNameReferenceExpression(726,734): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance: SealedJClass
     ]
@@ -785,7 +785,7 @@ KtNameReferenceExpression(735,740): 'prop2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var prop2: kotlin.Int
     ]

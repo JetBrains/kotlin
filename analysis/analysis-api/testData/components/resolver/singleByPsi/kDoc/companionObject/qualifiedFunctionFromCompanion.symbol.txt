@@ -1,5 +1,5 @@
 KDocName(89,111): 'ClassWithCompanion.foo'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /ClassWithCompanion.Companion.foo(<dispatch receiver>: ClassWithCompanion.Companion): kotlin.Unit
     ]

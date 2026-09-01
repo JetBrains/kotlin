@@ -1,5 +1,5 @@
 KtCallExpression(61,99): 'generic<String, String>("a", "b", "c")'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /generic(a: A, b: B, c: C): kotlin.Unit
     ]

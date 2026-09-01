@@ -1,20 +1,20 @@
 <caret_1>:
   KDocName(96,103): 'Foo.ext'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         test/ext(<extension receiver>: test.Foo): kotlin.Unit
       ]
 
 <caret_2>:
   KDocName(113,116): 'Foo'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         test/Foo
       ]
 
 <caret_3>:
   KDocName(137,140): 'Foo'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         test/WithMember.Foo(<dispatch receiver>: test.WithMember): kotlin.Unit
       ]

@@ -1,5 +1,5 @@
 KtCallExpression(98,109): 'function(1)'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /function(a: kotlin.Char): kotlin.Unit,
       /function(b: kotlin.Boolean): kotlin.Unit,

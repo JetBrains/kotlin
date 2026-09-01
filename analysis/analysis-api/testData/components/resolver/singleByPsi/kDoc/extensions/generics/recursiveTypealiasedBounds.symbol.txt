@@ -1,69 +1,69 @@
 <caret_1>:
   KDocName(341,355): 'BaseAlias.ext1'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /ext1(<extension receiver>: {BaseAlias<T>=} Base<T>): kotlin.Unit
       ]
 
 <caret_2>:
   KDocName(361,371): 'Child.ext1'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /ext1(<extension receiver>: {BaseAlias<T>=} Base<T>): kotlin.Unit
       ]
 
 <caret_3>:
   KDocName(377,392): 'ChildAlias.ext1'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /ext1(<extension receiver>: {BaseAlias<T>=} Base<T>): kotlin.Unit
       ]
 
 <caret_4>:
   KDocName(398,420): 'ChildGenericAlias.ext1'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /ext1(<extension receiver>: {BaseAlias<T>=} Base<T>): kotlin.Unit
       ]
 
 <caret_5>:
   KDocName(459,484): 'ChildGenericAliasInt.ext1'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /ext1(<extension receiver>: {BaseAlias<T>=} Base<T>): kotlin.Unit
       ]
 
 <caret_6>:
   KDocName(523,537): 'BaseAlias.ext2'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /ext2(<extension receiver>: Base<T>): kotlin.Unit
       ]
 
 <caret_7>:
   KDocName(543,553): 'Child.ext2'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /ext2(<extension receiver>: Base<T>): kotlin.Unit
       ]
 
 <caret_8>:
   KDocName(559,574): 'ChildAlias.ext2'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /ext2(<extension receiver>: Base<T>): kotlin.Unit
       ]
 
 <caret_9>:
   KDocName(580,602): 'ChildGenericAlias.ext2'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /ext2(<extension receiver>: Base<T>): kotlin.Unit
       ]
 
 <caret_10>:
   KDocName(641,666): 'ChildGenericAliasInt.ext2'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /ext2(<extension receiver>: Base<T>): kotlin.Unit
       ]

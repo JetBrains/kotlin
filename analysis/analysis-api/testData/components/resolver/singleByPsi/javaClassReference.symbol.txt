@@ -1,5 +1,5 @@
 KtCallExpression(31,44): 'Array<String>'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(size: kotlin.Int, init: (kotlin.Int) -> T): kotlin.Array<T>
     ]

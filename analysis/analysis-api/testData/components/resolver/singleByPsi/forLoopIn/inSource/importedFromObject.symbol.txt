@@ -1,5 +1,5 @@
 KtForExpression(141,160): 'for (x in Foo()) {}'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       dependency/MyInterface.iterator(<extension receiver>: dependency.Foo<dispatch receiver>: dependency.MyInterface): kotlin.collections.Iterator<kotlin.Int>,
       kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean,

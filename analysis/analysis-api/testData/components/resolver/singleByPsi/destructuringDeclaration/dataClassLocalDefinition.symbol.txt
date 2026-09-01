@@ -1,5 +1,5 @@
 KtDestructuringDeclarationEntry(147,152): 'prop2'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       foo/MyDataClass.component2(<dispatch receiver>: foo.MyDataClass): kotlin.String
     ]

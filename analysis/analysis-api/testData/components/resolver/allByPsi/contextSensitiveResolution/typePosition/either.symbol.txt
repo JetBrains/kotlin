@@ -56,13 +56,13 @@ KtParameter(146,158): 'val error: E'
   null
 
 KtTypeReference(157,158): 'E'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       E
     ]
 
 KtUserType(157,158): 'E'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       E
     ]
@@ -71,7 +71,7 @@ KtNameReferenceExpression(157,158): 'E'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       E
     ]
@@ -80,19 +80,19 @@ KtSuperTypeList(161,179): 'Either<E, Nothing>'
   null
 
 KtSuperTypeEntry(161,179): 'Either<E, Nothing>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Either
     ]
 
 KtTypeReference(161,179): 'Either<E, Nothing>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Either
     ]
 
 KtUserType(161,179): 'Either<E, Nothing>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Either
     ]
@@ -101,7 +101,7 @@ KtNameReferenceExpression(161,167): 'Either'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Either
     ]
@@ -113,13 +113,13 @@ KtTypeProjection(168,169): 'E'
   null
 
 KtTypeReference(168,169): 'E'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       E
     ]
 
 KtUserType(168,169): 'E'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       E
     ]
@@ -128,7 +128,7 @@ KtNameReferenceExpression(168,169): 'E'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       E
     ]
@@ -137,13 +137,13 @@ KtTypeProjection(171,178): 'Nothing'
   null
 
 KtTypeReference(171,178): 'Nothing'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Nothing
     ]
 
 KtUserType(171,178): 'Nothing'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Nothing
     ]
@@ -152,7 +152,7 @@ KtNameReferenceExpression(171,178): 'Nothing'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Nothing
     ]
@@ -182,13 +182,13 @@ KtParameter(208,220): 'val value: A'
   null
 
 KtTypeReference(219,220): 'A'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       A
     ]
 
 KtUserType(219,220): 'A'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       A
     ]
@@ -197,7 +197,7 @@ KtNameReferenceExpression(219,220): 'A'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       A
     ]
@@ -206,19 +206,19 @@ KtSuperTypeList(223,241): 'Either<Nothing, A>'
   null
 
 KtSuperTypeEntry(223,241): 'Either<Nothing, A>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Either
     ]
 
 KtTypeReference(223,241): 'Either<Nothing, A>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Either
     ]
 
 KtUserType(223,241): 'Either<Nothing, A>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Either
     ]
@@ -227,7 +227,7 @@ KtNameReferenceExpression(223,229): 'Either'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Either
     ]
@@ -239,13 +239,13 @@ KtTypeProjection(230,237): 'Nothing'
   null
 
 KtTypeReference(230,237): 'Nothing'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Nothing
     ]
 
 KtUserType(230,237): 'Nothing'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Nothing
     ]
@@ -254,7 +254,7 @@ KtNameReferenceExpression(230,237): 'Nothing'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Nothing
     ]
@@ -263,13 +263,13 @@ KtTypeProjection(239,240): 'A'
   null
 
 KtTypeReference(239,240): 'A'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       A
     ]
 
 KtUserType(239,240): 'A'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       A
     ]
@@ -278,7 +278,7 @@ KtNameReferenceExpression(239,240): 'A'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       A
     ]
@@ -296,13 +296,13 @@ KtTypeParameter(253,254): 'A'
   null
 
 KtTypeReference(256,268): 'Either<E, A>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Either
     ]
 
 KtUserType(256,268): 'Either<E, A>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Either
     ]
@@ -311,7 +311,7 @@ KtNameReferenceExpression(256,262): 'Either'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Either
     ]
@@ -323,13 +323,13 @@ KtTypeProjection(263,264): 'E'
   null
 
 KtTypeReference(263,264): 'E'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       E
     ]
 
 KtUserType(263,264): 'E'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       E
     ]
@@ -338,7 +338,7 @@ KtNameReferenceExpression(263,264): 'E'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       E
     ]
@@ -347,13 +347,13 @@ KtTypeProjection(266,267): 'A'
   null
 
 KtTypeReference(266,267): 'A'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       A
     ]
 
 KtUserType(266,267): 'A'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       A
     ]
@@ -362,7 +362,7 @@ KtNameReferenceExpression(266,267): 'A'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       A
     ]
@@ -374,13 +374,13 @@ KtParameter(279,289): 'default: A'
   null
 
 KtTypeReference(288,289): 'A'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       A
     ]
 
 KtUserType(288,289): 'A'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       A
     ]
@@ -389,7 +389,7 @@ KtNameReferenceExpression(288,289): 'A'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       A
     ]
@@ -398,7 +398,7 @@ KtWhenExpression(293,353): 'when (this) {'
   null
 
 KtThisExpression(299,303): 'this'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference
@@ -440,7 +440,7 @@ KtNameReferenceExpression(299,303): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference
@@ -485,13 +485,13 @@ KtWhenConditionIsPattern(311,318): 'is Left'
   null
 
 KtTypeReference(314,318): 'Left'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Either.Left
     ]
 
 KtUserType(314,318): 'Left'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Either.Left
     ]
@@ -500,7 +500,7 @@ KtNameReferenceExpression(314,318): 'Left'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Either.Left
     ]
@@ -509,7 +509,7 @@ KtNameReferenceExpression(322,329): 'default'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       default: A
     ]
@@ -521,13 +521,13 @@ KtWhenConditionIsPattern(334,342): 'is Right'
   null
 
 KtTypeReference(337,342): 'Right'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Either.Right
     ]
 
 KtUserType(337,342): 'Right'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Either.Right
     ]
@@ -536,7 +536,7 @@ KtNameReferenceExpression(337,342): 'Right'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Either.Right
     ]
@@ -545,7 +545,7 @@ KtNameReferenceExpression(346,351): 'value'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val value: A
     ]

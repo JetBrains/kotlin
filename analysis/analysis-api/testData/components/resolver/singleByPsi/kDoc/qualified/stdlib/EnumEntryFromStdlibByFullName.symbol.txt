@@ -1,5 +1,5 @@
 KDocName(8,47): 'kotlin.LazyThreadSafetyMode.PUBLICATION'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/LazyThreadSafetyMode.PUBLICATION
     ]

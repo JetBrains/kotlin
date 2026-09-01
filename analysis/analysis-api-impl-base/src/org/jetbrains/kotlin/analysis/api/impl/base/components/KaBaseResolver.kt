@@ -347,8 +347,8 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
         mergeSymbolAttempts(attempts.map { it.toSimpleSymbolResolutionAttempt() })
 
     private fun KaSimpleCallResolutionAttempt.toSimpleSymbolResolutionAttempt(): KaSimpleSymbolResolutionAttempt = when (this) {
-        is KaSimpleCallResolutionSuccess -> KaBaseSymbolResolutionSuccess(backingSymbol = call.symbol)
-        is KaSimpleCallResolutionError -> KaBaseSymbolResolutionError(
+        is KaSimpleCallResolutionSuccess -> KaBaseSimpleSymbolResolutionSuccess(backingSymbol = call.symbol)
+        is KaSimpleCallResolutionError -> KaBaseSimpleSymbolResolutionError(
             backingDiagnostic = diagnostic,
             backingCandidateSymbols = candidateCalls.map { it.symbol },
         )
@@ -356,20 +356,20 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
 
     /**
      * Merges individual symbol resolution attempts into a single result, satisfying the
-     * [KaCompoundSymbolResolutionError] contract: at most one [KaSymbolResolutionSuccess]
-     * (combining all successful symbols) and at least one [KaSymbolResolutionError].
+     * [KaCompoundSymbolResolutionError] contract: at most one [KaSimpleSymbolResolutionSuccess]
+     * (combining all successful symbols) and at least one [KaSimpleSymbolResolutionError].
      */
     private fun mergeSymbolAttempts(symbolAttempts: List<KaSimpleSymbolResolutionAttempt>): KaSymbolResolutionAttempt {
         val successSymbols = mutableListOf<KaSymbol>()
-        val errors = mutableListOf<KaSymbolResolutionError>()
+        val errors = mutableListOf<KaSimpleSymbolResolutionError>()
 
         for (attempt in symbolAttempts) when (attempt) {
-            is KaSymbolResolutionSuccess -> successSymbols.addAll(attempt.symbols)
-            is KaSymbolResolutionError -> errors.add(attempt)
+            is KaSimpleSymbolResolutionSuccess -> successSymbols.addAll(attempt.symbols)
+            is KaSimpleSymbolResolutionError -> errors.add(attempt)
         }
 
         if (errors.isEmpty()) {
-            return KaBaseSymbolResolutionSuccess(successSymbols)
+            return KaBaseSimpleSymbolResolutionSuccess(successSymbols)
         }
 
         if (symbolAttempts.size == 1) {
@@ -378,7 +378,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
 
         val merged = buildList {
             if (successSymbols.isNotEmpty()) {
-                add(KaBaseSymbolResolutionSuccess(successSymbols))
+                add(KaBaseSimpleSymbolResolutionSuccess(successSymbols))
             }
 
             addAll(errors)

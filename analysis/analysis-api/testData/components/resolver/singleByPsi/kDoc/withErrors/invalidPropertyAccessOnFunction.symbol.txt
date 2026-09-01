@@ -1,5 +1,5 @@
 KDocName(51,59): 'A.toName'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A.toName(<dispatch receiver>: A): kotlin.String
     ]

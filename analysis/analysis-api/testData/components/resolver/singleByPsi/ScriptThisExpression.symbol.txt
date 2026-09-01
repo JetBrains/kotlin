@@ -1,5 +1,5 @@
 KtThisExpression(65,69): 'this'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaScriptSymbol:
         anchorPsi: KtScript

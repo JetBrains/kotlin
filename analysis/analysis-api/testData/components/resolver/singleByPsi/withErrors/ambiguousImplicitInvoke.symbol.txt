@@ -1,5 +1,5 @@
 KtCallExpression(134,137): 'x()'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /x(c: kotlin.Char): kotlin.Unit,
       invoke(<extension receiver>: kotlin.Int, a: kotlin.String): kotlin.Unit,

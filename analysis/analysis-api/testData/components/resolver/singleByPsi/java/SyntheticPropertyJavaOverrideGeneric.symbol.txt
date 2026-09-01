@@ -3,7 +3,7 @@
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
     lookupLocally: false
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         var foo: @EnhancedNullability Foo<kotlin.String!>
       ]
@@ -13,7 +13,7 @@
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
     lookupLocally: false
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         var foo: @EnhancedNullability Foo<kotlin.String!>
       ]
@@ -23,7 +23,7 @@
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
     lookupLocally: false
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         var foo: @EnhancedNullability Foo<kotlin.String!>
       ]

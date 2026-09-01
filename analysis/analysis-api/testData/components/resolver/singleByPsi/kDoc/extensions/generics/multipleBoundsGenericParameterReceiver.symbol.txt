@@ -1,5 +1,5 @@
 KDocName(177,207): 'BoundedContainer.someExtension'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /someExtension(<extension receiver>: Container<T>): kotlin.Unit
     ]

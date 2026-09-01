@@ -1,5 +1,5 @@
 KDocName(102,110): 'AInt.foo'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /foo(<extension receiver>: {ANumber=} A<kotlin.Number>): kotlin.Unit
     ]

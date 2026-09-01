@@ -1,5 +1,5 @@
 KtCallExpression(102,124): 'block(regularReceiver)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Function2.invoke(<dispatch receiver>: (P1, P2) -> R, p1: P1, p2: P2): R
     ]

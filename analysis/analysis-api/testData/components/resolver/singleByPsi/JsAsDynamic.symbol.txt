@@ -2,7 +2,7 @@ KtNameReferenceExpression(85,94): 'asDynamic'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/js/asDynamic(<extension receiver>: kotlin.Any?): dynamic
     ]
