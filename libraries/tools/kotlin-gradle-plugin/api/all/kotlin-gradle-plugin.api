@@ -322,6 +322,9 @@ public final class org/jetbrains/kotlin/gradle/execution/KotlinAggregatingExecut
 	public static fun configureAllExecutions (Lorg/jetbrains/kotlin/gradle/execution/KotlinAggregatingExecution;Lorg/gradle/api/Action;)V
 }
 
+public abstract interface annotation class org/jetbrains/kotlin/gradle/export/ExperimentalExportDsl : java/lang/annotation/Annotation {
+}
+
 public abstract class org/jetbrains/kotlin/gradle/incremental/IncrementalModuleInfoBuildService : org/gradle/api/services/BuildService, org/jetbrains/kotlin/gradle/incremental/IncrementalModuleInfoProvider {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/incremental/IncrementalModuleInfoBuildService$Companion;
 	public fun <init> ()V
@@ -1904,6 +1907,21 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/compilati
 	public abstract fun getPluginConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public abstract fun getRuntimeDependencyConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public abstract fun getRuntimeOnlyConfiguration ()Lorg/gradle/api/artifacts/Configuration;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/export/ExportExtension {
+	public fun <init> (Lorg/gradle/api/model/ObjectFactory;)V
+	public final fun swift (Lkotlin/jvm/functions/Function1;)V
+	public final fun swift (Lorg/gradle/api/Action;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/export/ExportExtensionKt {
+	public static final field EXPORT_EXTENSION_NAME Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportConfigurationDsl {
+	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
+	public abstract fun getRootPackage ()Lorg/gradle/api/provider/Property;
 }
 
 public class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation$Delegate {

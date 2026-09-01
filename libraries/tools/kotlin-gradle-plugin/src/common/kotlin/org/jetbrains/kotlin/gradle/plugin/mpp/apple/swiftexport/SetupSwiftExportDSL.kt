@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeEnvironment
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedSwiftExportTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.initSwiftExportClasspathConfigurations
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.EXPORT_EXTENSION_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.ExportExtension
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 
 internal object SwiftExportDSLConstants {
@@ -31,6 +33,10 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
         SwiftExportDSLConstants.SWIFT_EXPORT_EXTENSION_NAME,
         swiftExportExtension
     )
+
+    // TODO: Move to a more generic SetUpExportAction.
+    val exportExtension = objects.ExportExtension()
+    multiplatformExtension.addExtension(EXPORT_EXTENSION_NAME, exportExtension)
 
     val appleTargets = project
         .multiplatformExtension
