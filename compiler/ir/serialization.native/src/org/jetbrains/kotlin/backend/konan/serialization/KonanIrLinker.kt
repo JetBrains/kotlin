@@ -35,7 +35,7 @@ class KonanIrLinker(
     symbolTable: SymbolTable,
     friendModules: Map<String, Collection<String>>,
     private val cInteropModuleDeserializerFactory: CInteropModuleDeserializerFactory<*>,
-    private val exportedDependencies: List<ModuleDescriptor>,
+    private val exportedDependencies: Set<KotlinLibrary>,
     partialLinkageConfig: PartialLinkageConfig,
     irDiagnosticReporter: IrDiagnosticReporter,
     private val libraryBeingCached: PartialCacheInfo?,
@@ -119,7 +119,7 @@ class KonanIrLinker(
         // TODO: consider skip deserializing explicitly exported declarations for libraries.
         // Now it's not valid because of all dependencies that must be computed.
         val deserializationStrategy: (String) -> DeserializationStrategy =
-            if (exportedDependencies.contains(moduleDescriptor)) {
+            if (exportedDependencies.contains(kotlinLibrary)) {
                 { DeserializationStrategy.ALL }
             } else {
                 { DeserializationStrategy.EXPLICITLY_EXPORTED }
