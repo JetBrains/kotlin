@@ -8172,7 +8172,7 @@
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": false,
+                                        "current": true,
                                         "valueInVersions": []
                                     }
                                 },
@@ -8193,7 +8193,7 @@
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": false,
+                                        "current": true,
                                         "valueInVersions": []
                                     }
                                 },
