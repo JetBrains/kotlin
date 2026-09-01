@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.psi.KtProperty
  * This class provides fallback symbols for top-level callables from synthetic multifile class part
  * ([MULTIFILE_CLASS_PART][org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.MULTIFILE_CLASS_PART]).
  *
- * @see org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder.isKotlinInternalCompiledFile
  * @see addCallableIfNeeded
  **/
 internal class LLKotlinStubBasedLibraryMultifileClassPartCallableSymbolProvider(val session: FirSession) {
