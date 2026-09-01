@@ -1394,22 +1394,17 @@ internal class KaFirResolver(
 
 
         val operationError = findErrorCall(firOperationCall, psi)
-        val operationAttempt: KaSimpleCallResolutionAttempt
-        val compoundOperation: KaCompoundOperation?
-
-        if (operationError != null) {
-            operationAttempt = operationError
-            compoundOperation = null
+        val operationAttempt: KaSimpleCallResolutionAttempt = if (operationError != null) {
+            operationError
         } else {
             val operationCall = buildOperationCallForCompoundVariableAccess(firOperationCall, accessExpression, rhsExpression)
                 ?: return null
-            operationAttempt = KaBaseSimpleCallResolutionSuccess(backingCall = operationCall)
-            compoundOperation = compoundOperationProvider(operationCall)
+            KaBaseSimpleCallResolutionSuccess(backingCall = operationCall)
         }
 
         val variableAttempt = KaBaseSimpleCallResolutionSuccess(backingCall = variableAccessCall)
         return KaBaseCompoundVariableAccessCallResolutionAttempt(
-            backingCompoundOperation = compoundOperation,
+            backingCompoundOperationProvider = compoundOperationProvider,
             backingVariableCallAttempt = variableAttempt,
             backingOperationCallAttempt = operationAttempt,
         )
@@ -1732,11 +1727,8 @@ internal class KaFirResolver(
 
         // Build operation call or error
         val operationError = findErrorCall(firOperationCall, psi)
-        val operationAttempt: KaSimpleCallResolutionAttempt
-        val compoundOperation: KaCompoundOperation?
-        if (operationError != null) {
-            operationAttempt = operationError
-            compoundOperation = null
+        val operationAttempt: KaSimpleCallResolutionAttempt = if (operationError != null) {
+            operationError
         } else {
             // The explicit receiver in this case is a synthetic FirFunctionCall to `get`, which does not have a corresponding PSI. So
             // we use the `lhsArrayAccessExpression` as the supplement.
@@ -1755,8 +1747,7 @@ internal class KaFirResolver(
                 it as KaFunctionCall<KaNamedFunctionSymbol>
             }
 
-            operationAttempt = KaBaseSimpleCallResolutionSuccess(backingCall = operationCall)
-            compoundOperation = compoundOperationProvider(operationCall)
+            KaBaseSimpleCallResolutionSuccess(backingCall = operationCall)
         }
 
         // Build setter call or error
@@ -1782,7 +1773,7 @@ internal class KaFirResolver(
         }
 
         return KaBaseCompoundArrayAccessCallResolutionAttempt(
-            backingCompoundOperation = compoundOperation,
+            backingCompoundOperationProvider = compoundOperationProvider,
             backingIndexArguments = indexExpressions,
             backingGetterCallAttempt = getterAttempt,
             backingOperationCallAttempt = operationAttempt,

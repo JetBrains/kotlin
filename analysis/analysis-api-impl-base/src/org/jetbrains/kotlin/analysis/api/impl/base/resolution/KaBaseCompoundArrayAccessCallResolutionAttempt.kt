@@ -14,28 +14,33 @@ import org.jetbrains.kotlin.psi.KtExpression
 
 @KaImplementationDetail
 class KaBaseCompoundArrayAccessCallResolutionAttempt(
-    private val backingCompoundOperation: KaCompoundOperation?,
+    backingCompoundOperationProvider: (KaFunctionCall<KaNamedFunctionSymbol>) -> KaCompoundOperation,
     private val backingIndexArguments: List<KtExpression>,
     private val backingGetterCallAttempt: KaSimpleCallResolutionAttempt,
     private val backingOperationCallAttempt: KaSimpleCallResolutionAttempt,
     private val backingSetterCallAttempt: KaSimpleCallResolutionAttempt,
 ) : KaCompoundArrayAccessCallResolutionAttempt {
+    private val backingCompoundOperation: KaCompoundOperation? =
+        backingOperationCallAttempt.toCompoundOperation(backingCompoundOperationProvider)
+
     override val token: KaLifetimeToken get() = backingGetterCallAttempt.token
 
     @Suppress("UNCHECKED_CAST")
     override val call: KaCompoundArrayAccessCall?
         get() = withValidityAssertion {
-            if (backingCompoundOperation != null) {
-                assembleMultiCall(backingGetterCallAttempt, backingOperationCallAttempt, backingSetterCallAttempt) { getter, _, setter ->
+            backingCompoundOperation?.let { compoundOperation ->
+                assembleMultiCall(
+                    backingGetterCallAttempt,
+                    backingOperationCallAttempt,
+                    backingSetterCallAttempt,
+                ) { getter, _, setter ->
                     KaBaseCompoundArrayAccessCall(
-                        backingCompoundOperation,
+                        compoundOperation,
                         backingIndexArguments,
                         getter.call as KaFunctionCall<KaNamedFunctionSymbol>,
                         setter.call as KaFunctionCall<KaNamedFunctionSymbol>,
                     )
                 }
-            } else {
-                null
             }
         }
 
