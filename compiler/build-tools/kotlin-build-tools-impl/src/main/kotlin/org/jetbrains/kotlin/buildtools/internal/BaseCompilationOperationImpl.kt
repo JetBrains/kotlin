@@ -75,7 +75,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ): CompilationResult {
         val compilerMessageRenderer = this[COMPILER_MESSAGE_RENDERER]
         val kotlinLogger = logger ?: DefaultKotlinLogger
@@ -189,7 +189,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         }
 
         (
-            val daemon = compileService, val sessionId
+            val daemon = compileService, val sessionId,
         ) =
             KotlinCompilerRunnerUtils.newDaemonConnection(
                 compilerId,
@@ -262,7 +262,10 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     abstract fun shouldCompileIncrementally(): Boolean
 
-    protected open fun compileInProcess(loggerAdapter: KotlinLoggerMessageCollectorAdapter, executionContext: ExecutionContext): CompilationResult {
+    protected open fun compileInProcess(
+        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        executionContext: ExecutionContext,
+    ): CompilationResult {
         loggerAdapter.kotlinLogger.debug("Compiling using the in-process strategy")
         val arguments = createAndPrepareCompilerArguments()
 
@@ -299,6 +302,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
                 register(ImportTracker::class.java, ImportTrackerAdapter(tracker))
             }
             executionContext.classloadersCache?.let { register(PluginsLoader::class.java, it.asPluginsLoader()) }
+            registerPlatformServices(loggerAdapter.kotlinLogger)
         }.build()
         logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
         val metricsReporter = getMetricsReporter()
@@ -312,6 +316,8 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
         return compilationResult
     }
+
+    protected open fun Services.Builder.registerPlatformServices(logger: KotlinLogger) {}
 
     protected fun getLookupTrackerAdapter(): LookupTracker = this[LOOKUP_TRACKER]?.let { tracker ->
         LookupTrackerAdapter(tracker)

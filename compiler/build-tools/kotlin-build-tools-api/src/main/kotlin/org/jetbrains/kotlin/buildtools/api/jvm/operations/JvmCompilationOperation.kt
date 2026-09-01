@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.buildtools.api.jvm.operations
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.*
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import java.nio.file.Path
 import kotlin.contracts.ExperimentalContracts
@@ -145,6 +143,17 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
             dependenciesSnapshotFiles: List<Path>,
             shrunkClasspathSnapshot: Path,
         ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder
+
+        /**
+         * Creates the configuration object for an incremental build whose state is owned by the API consumer.
+         *
+         * @param incrementalCompilationComponents what earlier compilations recorded for each module taking part in
+         *   this compilation
+         * @since 2.5.20
+         */
+        public fun clientManagedIcConfigurationBuilder(
+            incrementalCompilationComponents: CompilerIncrementalCompilationComponents,
+        ): JvmClientManagedIncrementalCompilationConfiguration.Builder
     }
 
     /**

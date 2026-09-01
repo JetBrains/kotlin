@@ -19,9 +19,6 @@ import java.nio.file.Path
  *
  * This interface is not intended to be implemented by the API consumers.
  *
- * Currently, the only supported implementation of this interface is [JvmSnapshotBasedIncrementalCompilationConfiguration],
- * but more may be added in the future.
- *
  * @see JvmSnapshotBasedIncrementalCompilationConfiguration
  */
 @ExperimentalBuildToolsApi
