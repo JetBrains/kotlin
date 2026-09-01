@@ -34,6 +34,10 @@ dependencies {
     implementation(libs.gson)
 
     implementation("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}")
+
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(kotlin("test"))
 }
 
 kotlin {
@@ -57,6 +61,10 @@ kotlin {
                 )
         )
     }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 gradlePlugin {
