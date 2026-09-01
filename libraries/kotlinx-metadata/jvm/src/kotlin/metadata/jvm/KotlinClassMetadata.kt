@@ -386,7 +386,7 @@ public sealed class KotlinClassMetadata {
          * or equivalent [KotlinClassHeader] can be used.
          *
          * This method can read only supported metadata versions (see [JvmMetadataVersion.LATEST_STABLE_SUPPORTED] for definition).
-         * It will throw an exception if the metadata version is greater than what kotlinx-metadata-jvm understands.
+         * It will throw an exception if the metadata version is greater than what kotlin-metadata-jvm understands.
          * It is suitable when your tooling cannot tolerate reading potentially incomplete or incorrect information due to version differences.
          * It is also the only method that allows metadata transformation and `KotlinClassMetadata.write` subsequent calls.
          *
@@ -422,13 +422,13 @@ public sealed class KotlinClassMetadata {
             throw IllegalArgumentException("This $name cannot be written because it represents metadata read in lenient mode")
         }
 
-        private fun checkMetadataVersionForWrite(version: JvmMetadataVersion) {
+        internal fun checkMetadataVersionForWrite(version: JvmMetadataVersion) {
             require(version.major >= 1 && (version.major > 1 || version.minor >= 4)) {
-                "This version of kotlinx-metadata-jvm doesn't support writing Kotlin metadata of version earlier than 1.4. " +
+                "This version of kotlin-metadata-jvm doesn't support writing Kotlin metadata of version earlier than 1.4. " +
                         "Please change the version from $version to at least [1, 4]."
             }
             require(version <= JvmMetadataVersion.HIGHEST_ALLOWED_TO_WRITE) {
-                "kotlinx-metadata-jvm cannot write metadata for future compiler versions. Requested to write version $version, but highest known version is ${JvmMetadataVersion.HIGHEST_ALLOWED_TO_WRITE}"
+                "kotlin-metadata-jvm cannot write metadata for future compiler versions. Requested to write version $version, but highest known version is ${JvmMetadataVersion.HIGHEST_ALLOWED_TO_WRITE}"
             }
         }
 

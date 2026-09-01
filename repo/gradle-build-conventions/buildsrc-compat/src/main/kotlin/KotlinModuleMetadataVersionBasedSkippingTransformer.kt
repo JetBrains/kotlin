@@ -47,6 +47,7 @@ class KotlinModuleMetadataVersionBasedSkippingTransformer : ResourceTransformer 
     @OptIn(UnstableMetadataApi::class)
     override fun transform(context: TransformerContext) {
         val metadataBytes = context.inputStream.readBytes()
+        @Suppress("DEPRECATION") // KT-88445
         val version = KotlinModuleMetadata.read(metadataBytes).version
         if (version >= pivotVersionAsMetadataVersion) {
             logger.info("Skipping ${context.path}, because its version $version is >= than $pivotVersionAsMetadataVersion")
