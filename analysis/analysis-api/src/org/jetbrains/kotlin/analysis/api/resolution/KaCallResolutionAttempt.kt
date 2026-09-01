@@ -422,6 +422,21 @@ public val KaCallResolutionAttempt.successful: KaSimpleOrMultiCall?
     get() = fold(onSuccess = { it }, onFailure = { null })
 
 /**
+ * Whether the resolution succeeded.
+ *
+ * `true` if and only if [successful] is not `null`, and equivalently if and only if [errors] is empty.
+ *
+ * Unlike a `this is KaSimpleCallResolutionSuccess` check, which only covers simple attempts, this property also
+ * accounts for [KaMultiCallResolutionAttempt], which fails as soon as any of its sub-calls fails.
+ *
+ * @see successful
+ * @see errors
+ */
+@KaExperimentalApi
+public val KaCallResolutionAttempt.isSuccessful: Boolean
+    get() = successful != null
+
+/**
  * The former name of [successful].
  *
  * @see successful
