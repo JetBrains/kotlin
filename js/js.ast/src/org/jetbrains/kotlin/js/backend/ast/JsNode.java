@@ -6,10 +6,11 @@ package org.jetbrains.kotlin.js.backend.ast;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.js.backend.ast.metadata.HasMetadata;
 
 import java.util.List;
 
-public interface JsNode {
+public interface JsNode extends HasMetadata {
     /**
      * Causes this object to have the visitor visit itself and its children.
      *

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.HasMetadata
 import org.jetbrains.kotlin.js.backend.ast.metadata.HasMetadataImpl
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 
-abstract class AbstractNode : JsNode, HasMetadata {
+abstract class AbstractNode : JsNode {
     private data class Internals(
         var commentsBefore: MutableList<JsComment>? = null,
         var commentsAfter: MutableList<JsComment>? = null,
