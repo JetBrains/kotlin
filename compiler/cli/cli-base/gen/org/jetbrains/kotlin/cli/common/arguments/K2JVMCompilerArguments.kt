@@ -218,9 +218,9 @@ inside suspend functions and lambdas to distinguish them from user code by debug
 
     @Argument(
         value = "-Xjava-direct",
-        description = "Experimental direct java support.",
+        description = "Build the Java model of Java sources directly from their syntax tree.",
     )
-    var javaDirect: Boolean = false
+    var javaDirect: Boolean = true
         set(value) {
             checkFrozen()
             field = value
