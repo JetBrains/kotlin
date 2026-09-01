@@ -16,8 +16,30 @@ import org.jetbrains.kotlin.resolution.KtResolvable
 /**
  * Attempts to resolve a symbol for the given [KtResolvable].
  *
- * Returns a [KaSymbolResolutionAttempt] that describes either success ([KaSimpleSymbolResolutionSuccess])
- * or failure ([KaSimpleSymbolResolutionError]), or `null` if no result is available.
+ * ### Usage Example:
+ * ```kotlin
+ * context(session: KaSession)
+ * fun findSymbol(reference: KtNameReferenceExpression): KaSymbol? {
+ *   val attempt = reference.tryResolveSymbols() ?: return null
+ *   return attempt.fold(
+ *     onSuccess = { symbols -> symbols.singleOrNull() },
+ *     onFailure = { errors ->
+ *       val name = reference.getReferencedName()
+ *       errors.forEach { println("Cannot resolve '$name': ${it.diagnostic.defaultMessage}") }
+ *       null
+ *     },
+ *   )
+ * }
+ * ```
+ *
+ * Returns a [KaSymbolResolutionAttempt] that describes either success ([KaSimpleSymbolResolutionSuccess]) or failure
+ * ([KaSimpleSymbolResolutionError], or [KaCompoundSymbolResolutionError] for a compound call), or `null` when there is
+ * nothing to resolve: the element carries no resolvable reference, such as a type reference to a dynamic or
+ * intersection type, or the engine has no result for it, which broken code can cause.
+ *
+ * A non-null result describes the outcome of an actual resolution. Check it with [errors] or [isSuccessful] rather than
+ * with a type check, which only covers simple attempts. A reported error may carry an empty
+ * [candidateSymbols][KaSimpleSymbolResolutionError.candidateSymbols] list.
  *
  * In contract to [tryResolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
  *
