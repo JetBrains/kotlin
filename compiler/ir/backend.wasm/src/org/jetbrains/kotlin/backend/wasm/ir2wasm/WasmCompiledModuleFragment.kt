@@ -894,7 +894,7 @@ class WasmCompiledModuleFragment(
             putAllChecked(fragmentDeclarations.definedRttiGlobal, resolver.globalRTTI, "globalRTTI")
             putAllChecked(fragmentTypes.definedGcTypes, resolver.gcTypes, "gcTypes")
             putAllChecked(fragmentTypes.definedVTableGcTypes, resolver.vTableGcTypes, "vTableGcTypes")
-            // functionTypes are deduplicated by WASM signature structure, duplicates are expected and equivalent
+            // functionTypes are deduplicated by Wasm signature structure, duplicates are expected and equivalent
             resolver.functionTypes.putAll(fragmentTypes.definedFunctionTypes)
             // contTypes and contFunctionTypes are keyed by arity; duplicates across fragments are identical
             resolver.contTypes.putAll(fragmentTypes.contTypes)
