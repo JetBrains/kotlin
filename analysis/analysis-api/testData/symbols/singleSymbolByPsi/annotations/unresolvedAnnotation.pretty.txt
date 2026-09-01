@@ -1,1 +1,1 @@
-aa: @`<error>` kotlin.Int
+aa: @ERROR_ANNOTATION kotlin.Int

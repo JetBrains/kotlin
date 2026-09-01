@@ -12,17 +12,15 @@ public final class A /* A*/ {
       @org.jetbrains.annotations.NotNull()
       public static final @org.jetbrains.annotations.NotNull() A.I.C INSTANCE;
 
-      @<error>()
-      public final void i();//  i()
-
       private  C();//  .ctor()
+
+      public final void i();//  i()
     }
 
     public static final class Companion /* A.I.Companion*/ {
-      @<error>()
-      public final void h();//  h()
-
       private  Companion();//  .ctor()
+
+      public final void h();//  h()
     }
   }
 
@@ -30,16 +28,14 @@ public final class A /* A*/ {
     @org.jetbrains.annotations.NotNull()
     public static final @org.jetbrains.annotations.NotNull() A.B INSTANCE;
 
-    @<error>()
-    public final void g();//  g()
-
     private  B();//  .ctor()
+
+    public final void g();//  g()
   }
 
   public static final class Companion /* A.Companion*/ {
-    @<error>()
-    public final void f();//  f()
-
     private  Companion();//  .ctor()
+
+    public final void f();//  f()
   }
 }

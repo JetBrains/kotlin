@@ -1,6 +1,4 @@
 public final class Baz /* Baz*/ {
-  @<error>()
-  @<error>()
   @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() IntWrapper memberLevel(int, int);//  memberLevel(int, int)
@@ -8,7 +6,6 @@ public final class Baz /* Baz*/ {
   public  Baz();//  .ctor()
 }
 
-@<error>()
 public final class IntWrapper /* IntWrapper*/ {
   private final int s;
 
@@ -26,7 +23,5 @@ public final class IntWrapper /* IntWrapper*/ {
 }
 
 public final class JvmOverloadsReturnTypeJvmNameDirectiveKt /* JvmOverloadsReturnTypeJvmNameDirectiveKt*/ {
-  @<error>()
-  @<error>()
   public static final int topLevel(int, int);//  topLevel(int, int)
 }

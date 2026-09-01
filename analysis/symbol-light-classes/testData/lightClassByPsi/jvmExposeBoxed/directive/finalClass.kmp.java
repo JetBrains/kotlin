@@ -25,7 +25,6 @@ public final class Clazz /* Clazz*/ implements Iface {
 public abstract interface Iface /* Iface*/ {
 }
 
-@<error>()
 public final class ValueInt /* ValueInt*/ {
   private final int i;
 

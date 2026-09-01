@@ -23,7 +23,6 @@ static final class FIRST /* Enum.FIRST*/ extends Enum {
    FIRST();//  .ctor()
 }
 
-@<error>()
 public final class ValueInt /* ValueInt*/ {
   private final int i;
 

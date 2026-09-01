@@ -1,6 +1,4 @@
 public final class FieldModifiersKt /* FieldModifiersKt*/ {
-  @<error>()
-  @<error>()
   @org.jetbrains.annotations.NotNull()
   private static @org.jetbrains.annotations.NotNull() java.lang.String explicit = "1" /* initializer type: java.lang.String */;
 

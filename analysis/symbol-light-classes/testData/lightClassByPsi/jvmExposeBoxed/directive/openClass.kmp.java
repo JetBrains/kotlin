@@ -1,4 +1,3 @@
-@<error>()
 public final class IC /* IC*/ {
   private final int i;
 

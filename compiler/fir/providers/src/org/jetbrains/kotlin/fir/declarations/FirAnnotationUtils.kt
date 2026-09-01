@@ -41,6 +41,13 @@ private fun FirAnnotation.toAnnotationLookupTagSafe(session: FirSession): ConeCl
 fun FirAnnotation.toAnnotationClassId(session: FirSession): ClassId? =
     toAnnotationLookupTag(session)?.classId
 
+/**
+ * Returns [ClassId] of [this] if its lookup tag is not [ConeClassLikeErrorLookupTag].
+ * Otherwise, returns `null`.
+ */
+fun FirAnnotation.toAnnotationNonErrorClassId(session: FirSession): ClassId? =
+    toAnnotationLookupTagSafe(session).takeIf { it !is ConeClassLikeErrorLookupTag }?.classId
+
 fun FirAnnotation.toAnnotationClassIdSafe(session: FirSession): ClassId? =
     toAnnotationLookupTagSafe(session)?.classId
 

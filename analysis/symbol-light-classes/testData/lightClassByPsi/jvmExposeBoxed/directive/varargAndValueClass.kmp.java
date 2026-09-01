@@ -1,4 +1,3 @@
-@<error>()
 public final class IntValue /* one.IntValue*/ {
   private final int value;
 
