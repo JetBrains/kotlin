@@ -9,23 +9,25 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 
 @KaImplementationDetail
 class KaBaseCompoundVariableAccessCallResolutionAttempt(
-    private val backingCompoundOperation: KaCompoundOperation?,
+    backingCompoundOperationProvider: (KaFunctionCall<KaNamedFunctionSymbol>) -> KaCompoundOperation,
     private val backingVariableCallAttempt: KaSimpleCallResolutionAttempt,
     private val backingOperationCallAttempt: KaSimpleCallResolutionAttempt,
 ) : KaCompoundVariableAccessCallResolutionAttempt {
+    private val backingCompoundOperation: KaCompoundOperation? =
+        backingOperationCallAttempt.toCompoundOperation(backingCompoundOperationProvider)
+
     override val token: KaLifetimeToken get() = backingVariableCallAttempt.token
 
     override val call: KaCompoundVariableAccessCall?
         get() = withValidityAssertion {
-            if (backingCompoundOperation != null) {
+            backingCompoundOperation?.let { compoundOperation ->
                 assembleMultiCall(backingVariableCallAttempt, backingOperationCallAttempt) { variable, _ ->
-                    KaBaseCompoundVariableAccessCall(variable.call as KaVariableAccessCall, backingCompoundOperation)
+                    KaBaseCompoundVariableAccessCall(variable.call as KaVariableAccessCall, compoundOperation)
                 }
-            } else {
-                null
             }
         }
 

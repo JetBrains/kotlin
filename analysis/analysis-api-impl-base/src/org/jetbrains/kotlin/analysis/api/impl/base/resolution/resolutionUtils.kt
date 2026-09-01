@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.resolution
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundOperation
+import org.jetbrains.kotlin.analysis.api.resolution.KaFunctionCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCallResolutionSuccess
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCallResolutionAttempt
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.psi.KtExpression
@@ -59,4 +62,18 @@ internal inline fun <R> assembleMultiCall(
     val s1 = attempt1 as? KaSimpleCallResolutionSuccess ?: return null
     val s2 = attempt2 as? KaSimpleCallResolutionSuccess ?: return null
     return assemble(s1, s2)
+}
+
+/**
+ * The compound operation for the resolved operation call, or `null` if the operation call itself failed to resolve.
+ *
+ * This is the only place where the nullability of a compound `call` originates: the operation is available exactly when
+ * [this] is a [KaSimpleCallResolutionSuccess].
+ */
+@Suppress("UNCHECKED_CAST")
+internal inline fun KaSimpleCallResolutionAttempt.toCompoundOperation(
+    provider: (KaFunctionCall<KaNamedFunctionSymbol>) -> KaCompoundOperation,
+): KaCompoundOperation? {
+    val success = this as? KaSimpleCallResolutionSuccess ?: return null
+    return provider(success.call as KaFunctionCall<KaNamedFunctionSymbol>)
 }
