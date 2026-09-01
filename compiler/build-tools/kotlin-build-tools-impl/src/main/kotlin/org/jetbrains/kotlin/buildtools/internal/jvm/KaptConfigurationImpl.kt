@@ -88,13 +88,12 @@ internal class KaptConfigurationImpl(
 
     override fun toCompilerPlugin(): CompilerPlugin {
         val copy = deepCopy()
-        copy.set(TOOLS_JAR, null)
         copy.set(STUBS_OUTPUT_DIR, stubsOutputDir)
         copy.set(SOURCE_OUTPUT_DIR, sourcesOutputDir)
         copy.set(ANNOTATION_PROCESSOR_CLASSPATH, annotationProcessorsClasspath)
         return CompilerPlugin(
             PLUGIN_ID,
-            classpath = kaptClasspath + (listOfNotNull(get(TOOLS_JAR))),
+            classpath = kaptClasspath,
             rawArguments = copy.toCompilerPluginOptions(),
             orderingRequirements = emptySet(),
         )
@@ -170,10 +169,9 @@ internal class KaptConfigurationImpl(
     class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
 
     companion object {
-        private const val PLUGIN_ID: String = "org.jetbrains.kotlin.kapt3"
+        const val PLUGIN_ID: String = "org.jetbrains.kotlin.kapt3"
 
         val INCREMENTAL_DATA_OUTPUT_DIR: Option<Path?> = Option("incrementalData", null)
-        val TOOLS_JAR: Option<Path?> = Option("toolsJarLocation", null)
         val DUMP_DEFAULT_PARAMETER_VALUES: Option<Boolean> = Option("dumpDefaultParameterValues", false)
         val VERBOSE: Option<Boolean> = Option("verbose", false)
         val INFO_AS_WARNINGS: Option<Boolean> = Option("infoAsWarnings", false)

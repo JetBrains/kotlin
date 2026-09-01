@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
+import org.jetbrains.kotlin.buildtools.api.jvm.KaptConfiguration.Option
 import java.nio.file.Path
 
 /**
@@ -38,6 +39,13 @@ import java.nio.file.Path
  */
 @ExperimentalBuildToolsApi
 public interface KaptConfiguration {
+    /**
+     * The classpath of the KAPT annotation processing tool and its dependencies.
+     *
+     * This should also include the path to the "tools.jar" file from the JDK when using Java versions that require it.
+     *
+     * @since 2.5.0
+     */
     public val kaptClasspath: List<Path>
 
     /**
@@ -72,15 +80,36 @@ public interface KaptConfiguration {
      * @since 2.5.0
      */
     public interface Builder {
+
         /**
-         * Represents the classpath required for the KAPT (Kotlin Annotation Processing Tool) configuration.
+         * The classpath of the KAPT annotation processing tool and its dependencies.
          *
-         * This classpath typically contains the KAPT artifact and its dependencies. Annotation processors typically don't need to be part
-         * of this classpath, as they are specified in the [AptPhase.Builder] options.
+         * This should also include the path to the "tools.jar" file from the JDK when using Java versions that require it.
          *
          * @since 2.5.0
          */
         public val kaptClasspath: List<Path>
+
+        /**
+         * Output directory for Java stubs.
+         *
+         * @since 2.5.0
+         */
+        public val stubsOutputDir: Path
+
+        /**
+         * Annotation processors classpath.
+         *
+         * @since 2.5.0
+         */
+        public val annotationProcessorsClasspath: List<Path>
+
+        /**
+         * Output directory for generated sources.
+         *
+         * @since 2.5.0
+         */
+        public val sourcesOutputDir: Path
 
         /**
          * Retrieves the value associated with the given key of type Option<V>.
@@ -148,22 +177,6 @@ public interface KaptConfiguration {
     ) : BaseOption<V>(id)
 
     public companion object {
-        /**
-         * Output path for incremental data.
-         *
-         * @since 2.5.0
-         */
-        @JvmField
-        public val INCREMENTAL_DATA_OUTPUT_DIR: Option<Path?> = Option("incrementalData", KotlinReleaseVersion(2, 5, 0))
-
-        /**
-         * tools.jar file location (for JDK versions up to 1.8).
-         *
-         * @since 2.5.0
-         */
-        @JvmField
-        public val TOOLS_JAR: Option<Path?> = Option("toolsJarLocation", KotlinReleaseVersion(2, 5, 0))
-
         /**
          * Put initializers on fields when corresponding primary constructor parameters have a default value specified.
          *
@@ -284,14 +297,6 @@ public interface KaptConfiguration {
             public val CLASS_OUTPUT_DIR: Option<Path?> = Option("classes", KotlinReleaseVersion(2, 5, 0))
 
             /**
-             * Use only in apt mode. Changed java source file that should be processed when using incremental annotation processing.
-             *
-             * @since 2.5.0
-             */
-            @JvmField
-            public val CHANGED_FILES: Option<List<Path>?> = Option("changedFile", KotlinReleaseVersion(2, 5, 0))
-
-            /**
              * Use only in apt mode. Compiled sources (.class files) from previous compilation. This is typically a kotlinc or javac output.
              *
              * @since 2.5.0
@@ -300,29 +305,12 @@ public interface KaptConfiguration {
             public val COMPILED_SOURCES_DIR: Option<List<Path>?> = Option("compiledSourcesDir", KotlinReleaseVersion(2, 5, 0))
 
             /**
-             * Use only in apt mode. Output directory for cache necessary to support incremental annotation processing.
-             *
-             * @since 2.5.0
-             */
-            @JvmField
-            public val INCREMENTAL_CACHE: Option<Path?> = Option("incrementalCache", KotlinReleaseVersion(2, 5, 0))
-
-            /**
              * Use only in apt mode. Classpath jvm internal names that changed.
              *
              * @since 2.5.0
              */
             @JvmField
             public val CLASSPATH_CHANGES: Option<List<String>?> = Option("classpathChange", KotlinReleaseVersion(2, 5, 0))
-
-            /**
-             * Use only in apt mode. Enables incremental apt processing.
-             *
-             * @since 2.5.0
-             */
-            @JvmField
-            public val PROCESS_INCREMENTALLY: Option<Boolean> = Option("processIncrementally", KotlinReleaseVersion(2, 5, 0))
-
 
             /**
              * Annotation processor qualified names.
@@ -454,6 +442,14 @@ public interface KaptConfiguration {
         ) : BaseOption<V>(id)
 
         public companion object {
+            /**
+             * Output path for incremental data.
+             *
+             * @since 2.5.0
+             */
+            @JvmField
+            public val INCREMENTAL_DATA_OUTPUT_DIR: Option<Path?> = Option("incrementalData", KotlinReleaseVersion(2, 5, 0))
+
             /**
              * Strip @Metadata annotations from stubs.
              *

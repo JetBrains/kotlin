@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Com
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.KaptConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.KaptDetectMemoryLeaksMode
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputsContains
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.nio.file.Paths
+import kotlin.apply
 
 @OptIn(ExperimentalBuildToolsApi::class)
 class KaptSmokeTest : BaseCompilationTest() {
@@ -43,17 +45,16 @@ class KaptSmokeTest : BaseCompilationTest() {
                 it.compilerArguments[CommonToolArguments.VERBOSE] = true
                 val kaptConfig =
                     kotlinToolchain.jvm.kaptCompilerPluginBuilder(
-                        kaptClasspath = kaptClasspath,
+                        kaptClasspath = kaptClasspath.plusElement(toolsJar.toPath()),
                         stubsOutputDir = module.outputDirectory.resolve("generated/stubs"),
                         sourcesOutputDir = module.outputDirectory.resolve("generated/source"),
                         annotationProcessorsClasspath = exampleApClasspath
                     ).apply {
                         this[KaptConfiguration.VERBOSE] = true
-                        this[KaptConfiguration.TOOLS_JAR] = toolsJar.toPath()
                     }
                         .withStubsPhase()
                         .withAptPhase().apply {
-                            this[KaptConfiguration.AptPhase.PROCESS_INCREMENTALLY] = false
+                            this[KaptConfiguration.AptPhase.DETECT_MEMORY_LEAKS] = KaptDetectMemoryLeaksMode.NONE
                         }.build()
                 it.compilerArguments[COMPILER_PLUGINS] = listOf(kaptConfig.toCompilerPlugin())
             }) {

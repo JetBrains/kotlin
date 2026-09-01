@@ -23,16 +23,14 @@ import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfig
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.ROOT_PROJECT_DIR
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.TRACK_CONFIGURATION_INPUTS
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
+import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.LANGUAGE_VERSION
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_FIR_IC
 import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
-import org.jetbrains.kotlin.buildtools.internal.jvm.HasSnapshotBasedIcOptionsAccessor
-import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
-import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl
+import org.jetbrains.kotlin.buildtools.internal.jvm.*
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.PRECISE_JAVA_TRACKING
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.USE_FIR_RUNNER
-import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -207,7 +205,7 @@ internal class JvmCompilationOperationImpl private constructor(
 
     override fun compileInProcess(
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ): CompilationResult {
         setupIdeaStandaloneExecution()
         return super.compileInProcess(loggerAdapter, executionContext)
@@ -224,7 +222,7 @@ internal class JvmCompilationOperationImpl private constructor(
     override fun compileIncrementallyInProcess(
         arguments: K2JVMCompilerArguments,
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ): CompilationResult {
         val snapshotBasedIcOptionsAccessor = getIcOptionsAccessorOrNull() ?: error("Missing INCREMENTAL_COMPILATION option.")
         arguments.freeArgs += sources.filter { it.toFile().isJavaFile() }.map { it.absolutePathStringOrThrow() }
@@ -274,6 +272,8 @@ internal class JvmCompilationOperationImpl private constructor(
         arguments.incrementalCompilation = true
         logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
 
+        adjustKaptCompilerPluginOptions(snapshotBasedIcOptionsAccessor.workingDirectory, arguments)
+
         val fileLocations = if (projectDir != null && buildDir != null) {
             FileLocations(projectDir, buildDir)
         } else null
@@ -292,6 +292,19 @@ internal class JvmCompilationOperationImpl private constructor(
         populateMetricsCollector(metricsReporter)
 
         return compilationResult
+    }
+
+    private fun adjustKaptCompilerPluginOptions(workingDirectory: Path, arguments: K2JVMCompilerArguments) {
+        compilerArguments[CommonCompilerArgumentsImpl.COMPILER_PLUGINS].firstOrNull { it.pluginId == KaptConfigurationImpl.PLUGIN_ID }
+            ?.let { compilerPlugin ->
+                if (compilerPlugin.rawArguments.none { it.key == KaptConfigurationImpl.INCREMENTAL_DATA_OUTPUT_DIR.id }) {
+                    arguments.pluginOptions += "plugin:${KaptConfigurationImpl.PLUGIN_ID}:${KaptConfigurationImpl.INCREMENTAL_DATA_OUTPUT_DIR.id}=${
+                        workingDirectory.resolve(
+                            "kapt3stubs"
+                        ).absolutePathStringOrThrow()
+                    }"
+                }
+            }
     }
 
     private fun getIcOptionsAccessorOrNull(): HasSnapshotBasedIcOptionsAccessor? = get(INCREMENTAL_COMPILATION)?.let { icConfiguration ->
