@@ -1,4 +1,3 @@
-@<error>()
 public final class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String s;
@@ -23,17 +22,13 @@ public final class StringWrapper /* StringWrapper*/ {
 }
 
 public static final class Companion /* StringWrapper.Companion*/ {
-  @<error>()
-  @kotlin.jvm.JvmExposeBoxed()
-  @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String unwrap(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  unwrap(@org.jetbrains.annotations.NotNull() StringWrapper)
-
-  @<error>()
-  public final void regularStaticFunction();//  regularStaticFunction()
-
   @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() StringWrapper getStaticVariable();//  getStaticVariable()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String unwrap(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  unwrap(@org.jetbrains.annotations.NotNull() StringWrapper)
 
   @kotlin.jvm.JvmExposeBoxed()
   public final void setStaticVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  setStaticVariable(@org.jetbrains.annotations.NotNull() StringWrapper)
@@ -41,6 +36,8 @@ public static final class Companion /* StringWrapper.Companion*/ {
   private  Companion();//  .ctor()
 
   public final int getRegularStaticVariable();//  getRegularStaticVariable()
+
+  public final void regularStaticFunction();//  regularStaticFunction()
 
   public final void setRegularStaticVariable(int);//  setRegularStaticVariable(int)
 }

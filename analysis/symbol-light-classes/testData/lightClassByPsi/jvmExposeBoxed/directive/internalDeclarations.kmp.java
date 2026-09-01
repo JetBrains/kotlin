@@ -9,7 +9,6 @@ public final class InternalDeclarationsKt /* InternalDeclarationsKt*/ {
   public static final int getInternalTopLevelProperty();//  getInternalTopLevelProperty()
 }
 
-@<error>()
 public final class ValueInt /* ValueInt*/ {
   private final int i;
 

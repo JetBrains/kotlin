@@ -4,6 +4,6 @@
 org/example/other(): kotlin.Unit: [
   kotlin/String()
     psi: KtAnnotationEntry
-  <error>()
+  null()
     psi: KtAnnotationEntry
 ]

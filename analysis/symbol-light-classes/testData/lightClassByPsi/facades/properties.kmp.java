@@ -1,7 +1,4 @@
 public final class PropertiesKt /* PropertiesKt*/ {
-  @<error>()
-  private static final int plainField = 1 /* initializer type: int */;
-
   @org.jetbrains.annotations.NotNull()
   private static @org.jetbrains.annotations.NotNull() java.lang.String name = "x" /* initializer type: java.lang.String */;
 
@@ -49,6 +46,8 @@ public final class PropertiesKt /* PropertiesKt*/ {
   private static final error.NonExistentClass intConst = 30 /* initializer type: int */;
 
   private static final int f1 = 2 /* initializer type: int */;
+
+  private static final int plainField = 1 /* initializer type: int */;
 
   private static final int privateVal = 42 /* initializer type: int */;
 

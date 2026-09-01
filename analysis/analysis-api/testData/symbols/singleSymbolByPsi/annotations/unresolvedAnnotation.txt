@@ -27,7 +27,7 @@ KaValueParameterSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: [
-      <error>()
+      null()
         psi: KtAnnotationEntry
     ]
     typeArguments: []

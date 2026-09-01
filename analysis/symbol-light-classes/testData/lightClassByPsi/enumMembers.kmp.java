@@ -22,7 +22,6 @@ public enum Event /* Event*/ {
 }
 
 public static final class Companion /* Event.Companion*/ {
-  @<error>()
   @org.jetbrains.annotations.Nullable()
   public final @org.jetbrains.annotations.Nullable() Event upTo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() State);//  upTo(@org.jetbrains.annotations.NotNull() State)
 

@@ -1,4 +1,3 @@
-@<error>()
 @java.lang.annotation.Repeatable(value = Two.Container.class)
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.annotation.Repeatable()

@@ -1,4 +1,3 @@
-@<error>()
 public final class A /* A*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String value;
@@ -26,7 +25,6 @@ public final class GlobalVariableContextAndReceiverKt /* GlobalVariableContextAn
   public static final void setF(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Z, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setF(@org.jetbrains.annotations.NotNull() Z, @org.jetbrains.annotations.NotNull() A, @org.jetbrains.annotations.NotNull() java.lang.String)
 }
 
-@<error>()
 public final class Z /* Z*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String value;

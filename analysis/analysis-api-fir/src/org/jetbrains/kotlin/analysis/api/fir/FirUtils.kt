@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.getAnnotationsByClassId
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
-import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
+import org.jetbrains.kotlin.fir.declarations.toAnnotationNonErrorClassId
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnreportedDuplicateDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
@@ -83,7 +83,7 @@ internal fun FirAnnotation.toKaAnnotation(builder: KaSymbolByFirBuilder): KaAnno
     val constructorSymbol = findAnnotationConstructor(this, builder.rootSession)
         ?.let(builder.functionBuilder::buildConstructorSymbol)
 
-    val classId = toAnnotationClassId(builder.rootSession)
+    val classId = toAnnotationNonErrorClassId(builder.rootSession)
 
     return KaAnnotationImpl(
         classId = classId,

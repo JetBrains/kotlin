@@ -13,7 +13,7 @@ scopes:
       KaNamedClassSymbol:
         anchorPsi: KtClass
         annotations: [
-          <error>()
+          null()
             psi: KtAnnotationEntry
         ]
         classId: pkg/ValueInt
