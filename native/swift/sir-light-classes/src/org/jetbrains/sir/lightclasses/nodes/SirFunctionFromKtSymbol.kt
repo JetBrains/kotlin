@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProx
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
+import org.jetbrains.kotlin.sir.providers.utils.resolveUpperBound
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
@@ -147,7 +148,7 @@ internal open class SirFunctionFromKtSymbol(
 
     context(_: KaSession, _: SirSession)
     private fun buildForwardKotlinCall(): BridgeFunctionBuilder.() -> String = {
-        val typeArgs = ktSymbol.typeParameters.map { it.upperBounds.singleOrNull() ?: builtinTypes.nullableAny }
+        val typeArgs = ktSymbol.typeParameters.map { it.resolveUpperBound() ?: builtinTypes.nullableAny }
         val renderer = KaTypeRendererForSource.UPPER_BOUNDS_WITH_QUALIFIED_NAMES
         val typesAsString = typeArgs.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") {
             it.render(renderer, position = Variance.INVARIANT)

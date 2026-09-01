@@ -1,6 +1,7 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(AnyConsumer::class, "4main11AnyConsumerC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ArrayBox::class, "4main8ArrayBoxC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Bar::class, "4main3BarC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Box::class, "4main3BoxC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(CPImpl::class, "4main6CPImplC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(DefaultBox::class, "4main10DefaultBoxC")
@@ -18,6 +19,7 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(B::class, "_main_B")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Consumer::class, "_main_Consumer")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ConsumerProducer::class, "_main_ConsumerProducer")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Foo::class, "_main_Foo")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Processor::class, "_main_Processor")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Producer::class, "_main_Producer")
 
@@ -273,6 +275,13 @@ public fun __root___ArrayBox_init_allocate(): kotlin.native.internal.NativePtr {
 public fun __root___ArrayBox_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val _result = run { kotlin.native.internal.initInstance(____kt, ArrayBox()) }
+    return run { _result; true }
+}
+
+@ExportedBridge("__root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
+public fun __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, Bar<Foo, Foo>()) }
     return run { _result; true }
 }
 

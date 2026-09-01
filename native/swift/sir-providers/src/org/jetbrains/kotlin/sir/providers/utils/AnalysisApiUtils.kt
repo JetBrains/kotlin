@@ -20,11 +20,13 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.contextParameters
 import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
@@ -204,7 +206,6 @@ private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(
     }
 }
 
-@OptIn(KaExperimentalApi::class)
 context(session: KaSession)
 private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(symbol: KaCallableSymbol): Unit = with(session) {
     // Add opt-in markers from lexical scope
@@ -224,4 +225,21 @@ private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(sy
 
     // Add opt-in markers from overridden declarations
     symbol.allOverriddenSymbols.forEach { allRequiredOptInClassIds(it) }
+}
+
+/**
+ * Recursively resolves the upper bound, returning `null` for no (a.k.a `Any?`) or multiple upper bounds.
+ */
+public tailrec fun KaTypeParameterSymbol.resolveUpperBound(): KaType? {
+    val type = upperBounds.singleOrNull()
+    if (type !is KaTypeParameterType) return type
+    return type.symbol.resolveUpperBound()
+}
+
+/**
+ * Returns the upper bound in case `this` is a `KaTypeParameterType`.
+ */
+public fun KaType.resolveUpperBound(): KaType? {
+    if (this !is KaTypeParameterType) return this
+    return this.symbol.resolveUpperBound()
 }
