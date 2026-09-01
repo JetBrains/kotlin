@@ -109,7 +109,6 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
         }
     }
 
-    @OptIn(ExperimentalCompilerArgument::class)
     @BtaV2StrategyAgnosticCompilationTest
     fun basicJsCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jsProject(strategyConfig) {
@@ -119,6 +118,24 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
             appModule.compile()
             appModule.link {
                 assertOutputs("js-ic-basic-app.js")
+            }
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    fun basicWasmCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        wasmProject(strategyConfig) {
+            val libModule = module("js-ic-basic-lib")
+            val appModule = module("js-ic-basic-app", listOf(libModule))
+            libModule.compile()
+            appModule.compile()
+            appModule.link {
+                assertOutputs(
+                    "js-ic-basic-app.wasm",
+                    "js-ic-basic-app.mjs",
+                    "js-ic-basic-app.import-object.mjs",
+                    "js-ic-basic-app.js-builtins.mjs",
+                )
             }
         }
     }

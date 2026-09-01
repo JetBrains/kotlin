@@ -58,6 +58,16 @@ val wasmStdlibImplResolvable = configurations.resolvable("wasmStdlibImplResolvab
     }
 }
 
+val wasmWasiStdlibImpl = configurations.dependencyScope("wasmWasiStdlibImpl")
+val wasmWasiStdlibImplResolvable = configurations.resolvable("wasmWasiStdlibImplResolvable") {
+    extendsFrom(wasmWasiStdlibImpl.get())
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, "kotlin-runtime"))
+        attribute(Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java), "wasm")
+        attribute(Attribute.of("org.jetbrains.kotlin.wasm.target", String::class.java), "wasi")
+    }
+}
+
 val metadataStdlibImpl = configurations.dependencyScope("metadataStdlibImpl")
 val metadataStdlibImplResolvable = configurations.resolvable("metadataStdlibImplResolvable") {
     extendsFrom(metadataStdlibImpl.get())
@@ -98,6 +108,7 @@ dependencies {
     }
     jsStdlibImpl(project(":kotlin-stdlib"))
     wasmStdlibImpl(project(":kotlin-stdlib"))
+    wasmWasiStdlibImpl(project(":kotlin-stdlib"))
     metadataStdlibImpl(project(":kotlin-stdlib"))
     noArgCompilerPlugin(project(":kotlin-noarg-compiler-plugin.embeddable"))
     assignmentCompilerPlugin(project(":kotlin-assignment-compiler-plugin.embeddable"))
@@ -126,6 +137,7 @@ val KotlinToolingVersion.sourceSetName get() = "shared" + this.toString().replac
 val COMPILER_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.compilerClasspath"
 val JS_STDLIB_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.jsStdlibClasspath"
 val WASM_STDLIB_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.wasmStdlibClasspath"
+val WASM_WASI_STDLIB_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.wasmWasiStdlibClasspath"
 val METADATA_STDLIB_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.metadataStdlibClasspath"
 
 fun JvmTestSuite.ensureExecutedAgainstExpectedBuildToolsApiVersion(version: KotlinToolingVersion) {
@@ -189,6 +201,7 @@ fun JvmTestSuite.addSnapshotBuildToolsImpl() {
             addClasspathProperty(buildToolsApiImplResolvable.get(), COMPILER_CLASSPATH_PROPERTY)
             addClasspathProperty(jsStdlibImplResolvable.get(), JS_STDLIB_CLASSPATH_PROPERTY)
             addClasspathProperty(wasmStdlibImplResolvable.get(), WASM_STDLIB_CLASSPATH_PROPERTY)
+            addClasspathProperty(wasmWasiStdlibImplResolvable.get(), WASM_WASI_STDLIB_CLASSPATH_PROPERTY)
             addClasspathProperty(metadataStdlibImplResolvable.get(), METADATA_STDLIB_CLASSPATH_PROPERTY)
             addClasspathProperty(unpackedResourcesResolvable, "kotlin.test.templates.classpath")
         }

@@ -17,6 +17,7 @@ import kotlin.io.path.exists
 import kotlin.io.path.inputStream
 import kotlin.io.path.isRegularFile
 import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.readBytes
 import kotlin.io.path.readText
 import kotlin.io.path.relativeTo
 import kotlin.io.path.walk
@@ -165,6 +166,52 @@ fun assertOutputFileDoesNotContain(fileName: String, unexpectedContent: String) 
     }
 }
 
+/**
+ * Asserts that a binary output file contains the byte sequence of [expectedContent].
+ */
+context(module: ModuleContext)
+fun assertOutputFileBytesContain(fileName: String, expectedContent: String) {
+    val file = module.outputDirectory.resolve(fileName)
+    assert(file.exists()) {
+        "File $file does not exist.\nOther files in the directory:\n${
+            module.outputDirectory.listDirectoryEntries().joinToString("\n")
+        }"
+    }
+    val fileBytes = file.readBytes()
+    assert(fileBytes.containsSubsequence(expectedContent.encodeToByteArray())) {
+        "Binary file $file does not contain the expected byte sequence \"$expectedContent\"."
+    }
+}
+
+/**
+ * Asserts that a binary output file does not contain the byte sequence of [unexpectedContent].
+ */
+context(module: ModuleContext)
+fun assertOutputFileBytesDoNotContain(fileName: String, unexpectedContent: String) {
+    val file = module.outputDirectory.resolve(fileName)
+    assert(file.exists()) {
+        "File $file does not exist.\nOther files in the directory:\n${
+            module.outputDirectory.listDirectoryEntries().joinToString("\n")
+        }"
+    }
+    val fileBytes = file.readBytes()
+    assert(!fileBytes.containsSubsequence(unexpectedContent.encodeToByteArray())) {
+        "Binary file $file unexpectedly contains the byte sequence \"$unexpectedContent\"."
+    }
+}
+
+private fun ByteArray.containsSubsequence(subsequence: ByteArray): Boolean {
+    if (subsequence.isEmpty()) return true
+    if (subsequence.size > size) return false
+    outer@ for (start in 0..(size - subsequence.size)) {
+        for (i in subsequence.indices) {
+            if (this[start + i] != subsequence[i]) continue@outer
+        }
+        return true
+    }
+    return false
+}
+
 context(module: ModuleContext)
 private fun outputFilesWithExtension(extension: String): List<String> =
     module.outputDirectory.walk()
@@ -222,7 +269,7 @@ fun CompilationOutcome.assertIsUnpackedMetadataKlib() {
  * implementation detail of the klib IR serializer.
  */
 context(module: ModuleContext)
-fun CompilationOutcome.assertIsUnpackedJsKlib() {
+fun CompilationOutcome.assertIsUnpackedKlibWithIr() {
     assertOutputsContains(
         "$KLIB_DEFAULT_COMPONENT_DIR/$KLIB_MANIFEST_FILE_NAME",
         "$KLIB_DEFAULT_COMPONENT_DIR/$KLIB_METADATA_FOLDER_NAME/$KLIB_MODULE_METADATA_FILE_NAME",
