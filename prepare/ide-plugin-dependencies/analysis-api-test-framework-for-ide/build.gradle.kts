@@ -12,6 +12,6 @@ publishTestJarsForIde(
         ":analysis:analysis-test-framework",
         ":analysis:analysis-api-impl-base",
         ":analysis:analysis-api-standalone",
-        ":analysis:decompiled:decompiler-to-file-stubs",
+        ":analysis:decompiled:decompiler",
     )
 )

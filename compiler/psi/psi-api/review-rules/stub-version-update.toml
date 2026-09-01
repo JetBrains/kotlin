@@ -1,9 +1,6 @@
 # Changes to the stub format
 watch = [
-    "analysis/decompiled/decompiler-native/src/",
-    "analysis/decompiled/decompiler-to-file-stubs/src/",
-    "analysis/decompiled/decompiler-to-psi/src/",
-    "analysis/decompiled/decompiler-to-stubs/src/",
+    "analysis/decompiled/decompiler/src/",
     "compiler/psi/parser/src/",
     "compiler/psi/psi-api/src/org/jetbrains/kotlin/KotlinElementTypeProvider.kt",
     "compiler/psi/psi-api/src/org/jetbrains/kotlin/KtStubBasedElementTypes.kt",

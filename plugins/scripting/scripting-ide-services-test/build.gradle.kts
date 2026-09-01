@@ -28,10 +28,9 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.core)
     testImplementation(libs.kotlinx.coroutines.core.jvm)
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testImplementation(project(":analysis:decompiled:decompiler-to-psi"))
-    testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
+    testImplementation(project(":analysis:decompiled:decompiler"))
     testImplementation(intellijCore())
-    testImplementation(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
+    testImplementation(testFixtures(project(":analysis:decompiled:decompiler")))
     testRuntimeOnly(project(":kotlin-compiler"))
     testRuntimeOnly(project(":kotlin-scripting-ide-common")) { isTransitive = false }
 

@@ -7,15 +7,22 @@ plugins {
 
 dependencies {
     api(project(":compiler:psi:psi-api"))
+    api(project(":compiler:psi:psi-impl"))
     api(project(":core:deserialization.common"))
     api(project(":core:deserialization.common.jvm"))
-    implementation(project(":core:deserialization"))
-    implementation(project(":analysis:decompiled:decompiler-to-stubs"))
+    implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":compiler:frontend.common.jvm"))
+    implementation(project(":compiler:frontend.java"))
+    implementation(project(":core:compiler.common"))
     implementation(project(":core:compiler.common.jvm"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:deserialization"))
+    implementation(project(":kotlin-util-klib"))
+    implementation(project(":kotlin-util-klib-metadata"))
 
     api(intellijCore())
 
+    testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
@@ -24,4 +31,6 @@ dependencies {
 
 sourceSets {
     "main" { projectDefault() }
+    "test" { none() }
+    "testFixtures" { projectDefault() }
 }
