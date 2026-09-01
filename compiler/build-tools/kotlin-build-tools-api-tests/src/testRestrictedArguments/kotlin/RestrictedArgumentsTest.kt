@@ -51,9 +51,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             val moduleFile = workingDirectory.resolve("some/path.xml")
-            module.checkRestrictedArgument(
-                "-Xbuild-file", "-module",
-                errorSince = KotlinReleaseVersion.v2_5_0,
+            module.checkRestrictedArguments(
+                restrictedArg("-Xbuild-file", "-module", errorSince = KotlinReleaseVersion.v2_5_0),
                 configuredArgs = listOfNotNull(additionalArg, "$argument=$moduleFile"),
                 expectedCompilationError = true,
             ) {
@@ -70,9 +69,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     fun testDestinationWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
-            module.checkRestrictedArgument(
-                "-d",
-                errorSince = KotlinReleaseVersion.v2_5_0,
+            module.checkRestrictedArguments(
+                restrictedArg("-d", errorSince = KotlinReleaseVersion.v2_5_0),
                 configuredArgs = listOf("-d", "output/dir")
             ) {
                 assertLogContainsLines(
@@ -91,9 +89,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     fun testDestinationReportsDuringExecutionOnMetadata(strategyConfig: CompilerExecutionStrategyConfiguration) {
         metadataProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
-            module.checkRestrictedArgument(
-                "-d",
-                errorSince = KotlinReleaseVersion.v2_5_0,
+            module.checkRestrictedArguments(
+                restrictedArg("-d", errorSince = KotlinReleaseVersion.v2_5_0),
                 configuredArgs = listOf("-d", "output/dir")
             ) {
                 assertLogContainsLines(
@@ -112,9 +109,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     fun testLegacyMetadataJar(strategyConfig: CompilerExecutionStrategyConfiguration) {
         metadataProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
-            module.checkRestrictedArgument(
-                "-Xlegacy-metadata-jar-k2",
-                errorSince = KotlinReleaseVersion.v2_6_0,
+            module.checkRestrictedArguments(
+                restrictedArg("-Xlegacy-metadata-jar-k2", errorSince = KotlinReleaseVersion.v2_6_0),
                 configuredArgs = listOf("-Xlegacy-metadata-jar-k2")
             )
         }
@@ -125,9 +121,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     fun testIncludeRuntimeWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
-            module.checkRestrictedArgument(
-                "-include-runtime",
-                errorSince = KotlinReleaseVersion.v2_5_0,
+            module.checkRestrictedArguments(
+                restrictedArg("-include-runtime", errorSince = KotlinReleaseVersion.v2_5_0),
                 configuredArgs = listOf("-include-runtime")
             )
         }
@@ -148,9 +143,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     private fun testExpression(strategyConfig: CompilerExecutionStrategyConfiguration, actualArgs: List<String>) {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
-            module.checkRestrictedArgument(
-                "-expression", "-e",
-                errorSince = KotlinReleaseVersion.v2_5_0,
+            module.checkRestrictedArguments(
+                restrictedArg("-expression", "-e", errorSince = KotlinReleaseVersion.v2_5_0),
                 configuredArgs = actualArgs,
                 expectedCompilationError = true,
             ) {
@@ -164,9 +158,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     fun testXReplWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
-            module.checkRestrictedArgument(
-                "-Xrepl",
-                errorSince = KotlinReleaseVersion.v2_5_0,
+            module.checkRestrictedArguments(
+                restrictedArg("-Xrepl", errorSince = KotlinReleaseVersion.v2_5_0),
                 configuredArgs = listOf("-Xrepl"),
                 expectedCompilationError = true,
             ) {
@@ -180,9 +173,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     fun testEnableIncrementalCompilationWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
-            module.checkRestrictedArgument(
-                "-Xenable-incremental-compilation",
-                errorSince = KotlinReleaseVersion.v2_5_0,
+            module.checkRestrictedArguments(
+                restrictedArg("-Xenable-incremental-compilation", errorSince = KotlinReleaseVersion.v2_5_0),
                 configuredArgs = listOf("-Xenable-incremental-compilation")
             ) {
                 assertLogContainsLines(
@@ -201,8 +193,8 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.checkRestrictedArguments(
-                listOf("-include-runtime") to KotlinReleaseVersion.v2_5_0,
-                listOf("-Xenable-incremental-compilation") to KotlinReleaseVersion.v2_5_0,
+                restrictedArg("-include-runtime", errorSince = KotlinReleaseVersion.v2_5_0),
+                restrictedArg("-Xenable-incremental-compilation", errorSince = KotlinReleaseVersion.v2_5_0),
                 configuredArgs = listOf("-include-runtime", "-Xenable-incremental-compilation"),
             )
         }
@@ -245,7 +237,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
             module.compile(compilationConfigAction = {
                 it.compilerArguments.applyArgumentStrings(listOf("-Xassertions=jVm"))
                 @OptIn(ExperimentalCompilerArgument::class)
-                assertEquals(it.compilerArguments[X_ASSERTIONS], AssertionsMode.JVM)
+                assertEquals(AssertionsMode.JVM, it.compilerArguments[X_ASSERTIONS])
             }) {
                 assertLogContainsLines(
                     LogLevel.WARN,
@@ -254,6 +246,109 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
             }
         }
     }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("JS klib compilation: -ir-output-dir emits a warning")
+    fun testJsIrOutputDirWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jsProject(strategyConfig) {
+            val module = module("js-ic-basic-lib")
+            module.checkRestrictedArguments(
+                restrictedArg("-ir-output-dir", errorSince = KotlinReleaseVersion.v2_6_0),
+                configuredArgs = listOf("-ir-output-dir", "output/dir"),
+            )
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("JS linking: -Xir-produce-js and -Xinclude emit warnings")
+    fun testJsLinkingRestrictedArgumentsWarnings(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jsProject(strategyConfig) {
+            val module = module("js-ic-basic-lib")
+            module.checkRestrictedLinkingArguments(
+                restrictedArg("-Xir-produce-js", errorSince = KotlinReleaseVersion.v2_6_0),
+                restrictedArg("-Xinclude", errorSince = KotlinReleaseVersion.v2_6_0),
+                configuredArgs = listOf("-Xir-produce-js", "-Xinclude=${module.outputDirectory}"),
+            )
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Wasm klib compilation: -ir-output-dir emits a warning")
+    fun testWasmIrOutputDirWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        wasmProject(strategyConfig) {
+            val module = module("js-ic-basic-lib")
+            module.checkRestrictedArguments(
+                restrictedArg("-ir-output-dir", errorSince = KotlinReleaseVersion.v2_6_0),
+                configuredArgs = listOf("-ir-output-dir", "output/dir"),
+            )
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Wasm linking: -Xir-produce-js and -Xinclude emit warnings")
+    fun testWasmLinkingRestrictedArgumentsWarnings(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        wasmProject(strategyConfig) {
+            val module = module("js-ic-basic-lib")
+            module.checkRestrictedLinkingArguments(
+                restrictedArg("-Xir-produce-js", errorSince = KotlinReleaseVersion.v2_6_0),
+                restrictedArg("-Xinclude", errorSince = KotlinReleaseVersion.v2_6_0),
+                configuredArgs = listOf("-Xir-produce-js", "-Xinclude=${module.outputDirectory}"),
+            )
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("JS klib compilation: -Xir-produce-klib-dir emits a warning")
+    fun testJsIrProduceKlibDirWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jsProject(strategyConfig) {
+            val module = module("js-ic-basic-lib")
+            module.checkRestrictedArguments(
+                restrictedArg("-Xir-produce-klib-dir", errorSince = KotlinReleaseVersion.v2_6_0),
+                configuredArgs = listOf("-Xir-produce-klib-dir"),
+            )
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("JS klib compilation: -Xir-produce-klib-file emits a warning")
+    fun testJsIrProduceKlibFileWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jsProject(strategyConfig) {
+            val module = module("js-ic-basic-lib")
+            module.checkRestrictedArguments(
+                restrictedArg("-Xir-produce-klib-file", errorSince = KotlinReleaseVersion.v2_6_0),
+                configuredArgs = listOf("-Xir-produce-klib-file"),
+            )
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Wasm klib compilation: -Xir-produce-klib-dir emits a warning")
+    fun testWasmIrProduceKlibDirWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        wasmProject(strategyConfig) {
+            val module = module("js-ic-basic-lib")
+            module.checkRestrictedArguments(
+                restrictedArg("-Xir-produce-klib-dir", errorSince = KotlinReleaseVersion.v2_6_0),
+                configuredArgs = listOf("-Xir-produce-klib-dir"),
+            )
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("Wasm klib compilation: -Xir-produce-klib-file emits a warning")
+    fun testWasmIrProduceKlibFileWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        wasmProject(strategyConfig) {
+            val module = module("js-ic-basic-lib")
+            module.checkRestrictedArguments(
+                restrictedArg("-Xir-produce-klib-file", errorSince = KotlinReleaseVersion.v2_6_0),
+                configuredArgs = listOf("-Xir-produce-klib-file"),
+            )
+        }
+    }
+
+    private fun restrictedArg(
+        vararg argumentAliases: String,
+        errorSince: KotlinReleaseVersion,
+    ): Pair<List<String>, KotlinReleaseVersion> = argumentAliases.toList() to errorSince
 
     private fun CompilationOutcome.assertRestrictedArgWarning(
         argumentAliases: List<String>,
@@ -266,19 +361,6 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
         )
     }
 
-    private fun Module<out BaseCompilationOperation, *, *>.checkRestrictedArgument(
-        vararg argumentAliases: String,
-        errorSince: KotlinReleaseVersion,
-        configuredArgs: List<String>,
-        expectedCompilationError: Boolean = false,
-        additionalCompilationAssertions: CompilationOutcome.() -> Unit = {},
-    ) = checkRestrictedArguments(
-        argumentAliases.toList() to errorSince,
-        configuredArgs = configuredArgs,
-        expectedCompilationError = expectedCompilationError,
-        additionalCompilationAssertions = additionalCompilationAssertions,
-    )
-
     private fun Module<out BaseCompilationOperation, *, *>.checkRestrictedArguments(
         vararg restrictedArgs: Pair<List<String>, KotlinReleaseVersion>,
         configuredArgs: List<String>,
@@ -286,13 +368,57 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
         additionalCompilationAssertions: CompilationOutcome.() -> Unit = {},
     ) {
         val currentVersion = KotlinToolingVersion(project.kotlinToolchain.getCompilerVersion())
-        val firstErrorSince = restrictedArgs.minOf { it.second }
-        val isWarning = currentVersion < KotlinToolingVersion(firstErrorSince.major, firstErrorSince.minor, firstErrorSince.patch, "dev-1")
+        runRestrictedArgumentsCheck(
+            currentVersion = currentVersion,
+            restrictedArgs = restrictedArgs.toList(),
+            configuredArgs = configuredArgs,
+            expectedCompilationError = expectedCompilationError,
+            additionalCompilationAssertions = additionalCompilationAssertions,
+        ) { compilationConfigAction, assertions ->
+            compile(compilationConfigAction = compilationConfigAction) { assertions() }
+        }
+    }
 
-        if (isWarning) {
-            compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(configuredArgs)
-            }) {
+    private fun <O : BaseCompilationOperation, B : BaseCompilationOperation.Builder, M> M.checkRestrictedLinkingArguments(
+        vararg restrictedArgs: Pair<List<String>, KotlinReleaseVersion>,
+        configuredArgs: List<String>,
+        expectedCompilationError: Boolean = false,
+        additionalCompilationAssertions: CompilationOutcome.() -> Unit = {},
+    ) where M : Module<*, *, *>, M : LinkableModule<O, B> {
+        compile()
+        val currentVersion = KotlinToolingVersion(project.kotlinToolchain.getCompilerVersion())
+        runRestrictedArgumentsCheck(
+            currentVersion = currentVersion,
+            restrictedArgs = restrictedArgs.toList(),
+            configuredArgs = configuredArgs,
+            expectedCompilationError = expectedCompilationError,
+            additionalCompilationAssertions = additionalCompilationAssertions,
+        ) { compilationConfigAction, assertions ->
+            link(compilationConfigAction = compilationConfigAction) { assertions() }
+        }
+    }
+
+    private fun isWarningPhase(
+        currentVersion: KotlinToolingVersion,
+        restrictedArgs: List<Pair<List<String>, KotlinReleaseVersion>>,
+    ): Boolean {
+        val firstErrorSince = restrictedArgs.minOf { it.second }
+        return currentVersion < KotlinToolingVersion(firstErrorSince.major, firstErrorSince.minor, firstErrorSince.patch, "dev-1")
+    }
+
+    private fun runRestrictedArgumentsCheck(
+        currentVersion: KotlinToolingVersion,
+        restrictedArgs: List<Pair<List<String>, KotlinReleaseVersion>>,
+        configuredArgs: List<String>,
+        expectedCompilationError: Boolean,
+        additionalCompilationAssertions: CompilationOutcome.() -> Unit,
+        runOperation: (
+            compilationConfigAction: (BaseCompilationOperation.Builder) -> Unit,
+            assertions: CompilationOutcome.() -> Unit,
+        ) -> Unit,
+    ) {
+        if (isWarningPhase(currentVersion, restrictedArgs)) {
+            runOperation({ it.compilerArguments.applyArgumentStrings(configuredArgs) }) {
                 if (expectedCompilationError) {
                     expectFail()
                 }
@@ -303,24 +429,20 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
             }
         } else {
             // Error args require separate compilations because the first error throws an exception
-
-            val compilationBody = {
-                compile(compilationConfigAction = {
-                    it.compilerArguments.applyArgumentStrings(configuredArgs)
-                }) {
+            val exception = assertThrows<CompilerArgumentsParseException> {
+                runOperation({ it.compilerArguments.applyArgumentStrings(configuredArgs) }) {
                     if (expectedCompilationError) {
                         expectFail()
                     }
                     additionalCompilationAssertions()
                 }
             }
-            val exception = assertThrows<CompilerArgumentsParseException> { compilationBody() }
             assertTrue(
                 restrictedArgs.flatMap { it.first }.any { alias ->
                     exception.message?.contains("'$alias' is not supported in the Build Tools API.") == true
                 }
             ) {
-                "Exception was: \"${exception.message}\" and did not contain any of ${restrictedArgs.flatMap { it.first }.joinToString() }"
+                "Exception was: \"${exception.message}\" and did not contain any of ${restrictedArgs.flatMap { it.first }.joinToString()}"
             }
         }
     }

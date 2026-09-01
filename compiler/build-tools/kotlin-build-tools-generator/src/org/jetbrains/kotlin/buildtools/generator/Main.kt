@@ -136,7 +136,6 @@ private fun generateBtaOptions(arguments: List<Array<String>>, genDir: Path, kot
             levelsToProcess += currentLevel.level.nestedLevels.flatMap { level ->
                 // "Skip" the deprecated and soon to be removed Wasm arguments level from the JS arguments hierarchy.
                 // There is a separate Wasm-only level in another arguments branch to avoid mixing JS and Wasm hierarchies.
-                println("AAA " + level.name)
                 if (level.name == CompilerArgumentsLevelNames.legacyWasmArguments) {
                     level.nestedLevels
                 } else {

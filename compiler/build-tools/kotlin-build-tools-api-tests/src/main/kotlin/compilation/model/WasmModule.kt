@@ -80,6 +80,14 @@ class WasmModule(
             compilerArguments[IR_OUTPUT_NAME] = moduleName
             compilerArguments[LIBRARIES] = dependencyFiles
             compilationConfigAction(this)
+
+            // TODO: workaround to be removed after KT-86169
+            if (compilerArguments[IR_OUTPUT_NAME] == null) {
+                compilerArguments[IR_OUTPUT_NAME] = moduleName
+            }
+            if (compilerArguments[LIBRARIES] == null) {
+                compilerArguments[LIBRARIES] = dependencyFiles
+            }
         }
         val result = compilationOperation.let {
             compilationAction(it)
