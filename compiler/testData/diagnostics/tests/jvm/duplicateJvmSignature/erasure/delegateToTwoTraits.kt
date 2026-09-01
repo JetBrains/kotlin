@@ -9,10 +9,10 @@ interface Bar<T> {
     fun foo(l: List<T>)
 }
 
-<!CONFLICTING_JVM_DECLARATIONS!>class Baz(f: Foo<String>, b: Bar<Int>) :
+class <!CONFLICTING_JVM_DECLARATIONS!>Baz(f: Foo<String>, b: Bar<Int>)<!> :
     Foo<String> by f,
     Bar<Int> by b {
-}<!>
+}
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration, nullableType,
 primaryConstructor, typeParameter */

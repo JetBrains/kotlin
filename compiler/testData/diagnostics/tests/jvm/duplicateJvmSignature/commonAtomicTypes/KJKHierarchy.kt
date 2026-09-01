@@ -33,11 +33,11 @@ import JavaClassWithExplicitOverride
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.atomics.AtomicInt
 
-<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>class KotlinChildWithFakeOverride: JavaClassWithExplicitOverride()<!>
+class <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>KotlinChildWithFakeOverride<!>: JavaClassWithExplicitOverride()
 
 class KotlinChildWithExplicitOverride: JavaClassWithExplicitOverride() {
-    override <!ACCIDENTAL_OVERRIDE!>fun foo(a: AtomicInt) {}<!>
-    override <!ACCIDENTAL_OVERRIDE!>val a: AtomicInt<!> = AtomicInt(0)
+    <!ACCIDENTAL_OVERRIDE!>override fun foo(a: AtomicInt)<!> {}
+    <!ACCIDENTAL_OVERRIDE!>override val a: AtomicInt<!> = AtomicInt(0)
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, functionDeclaration,

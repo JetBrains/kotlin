@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptDiagnosticsMessageCollector
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -114,18 +115,30 @@ class ReplCompilerDiagnosticsHandler(
 ) : AnalysisHandler<ReplCompilationArtifact>(testServices, failureDisablesNextSteps, doNotRunIfThereWerePreviousFailures) {
     override val artifactKind: TestArtifactKind<ReplCompilationArtifact> = ReplCompilationArtifact.Kind
 
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = listOf(service(::DiagnosticsService))
+
+    override val directiveContainers: List<DirectivesContainer>
+        get() = listOf(DiagnosticsDirectives)
+
     private val globalMetadataInfoHandler = testServices.globalMetadataInfoHandler
 
     override fun processModule(module: TestModule, info: ReplCompilationArtifact) {
         val file = module.files.single()
+
         val diagnostics = info.compilationResult.reports.filter {
             (it.severity == ScriptDiagnostic.Severity.ERROR || it.severity == ScriptDiagnostic.Severity.WARNING) &&
                     it.sourcePath?.let(::File)?.name == file.name
         }
         if (diagnostics.isEmpty()) return
+
+        val diagnosticConditions = testServices.diagnosticsService.getDiagnosticConditionForModule(module)
+        var codeMetaInfos = diagnostics
+            .map { ScriptDiagnosticCodeMetaInfo(it, info.snippetSource.text) }
+        codeMetaInfos = codeMetaInfos.filterNot { it.message in diagnosticConditions.disabledDiagnostics }
         globalMetadataInfoHandler.addMetadataInfosForFile(
             file,
-            diagnostics.map { ScriptDiagnosticCodeMetaInfo(it, info.snippetSource.text) }
+            codeMetaInfos
         )
     }
 

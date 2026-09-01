@@ -221,8 +221,8 @@ class ReplTest {
                 makeFailureResult(
                     "Object 'Companion' captures the script class instance. Try to use class or anonymous object instead.",
                     location = SourceCode.Location(
-                        SourceCode.Position(3, 15),
-                        SourceCode.Position(3, 21)
+                        SourceCode.Position(3, 5),
+                        SourceCode.Position(5, 6)
                     )
                 ),
             )

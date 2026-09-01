@@ -15,9 +15,9 @@ interface D {
     fun foo(x: A<String>): String
 }
 
-<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>class B1 : A<A<String>>(), D<!>
+class <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>B1<!> : A<A<String>>(), D
 
-<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>interface B2 : C<A<String>>, D<!>
+interface <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>B2<!> : C<A<String>>, D
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, stringLiteral,
 typeParameter */

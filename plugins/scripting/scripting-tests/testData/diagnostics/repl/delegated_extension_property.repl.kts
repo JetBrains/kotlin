@@ -1,3 +1,4 @@
+// DIAGNOSTICS: -CONFLICTING_JVM_DECLARATIONS
 
 // SNIPPET
 
@@ -27,8 +28,9 @@ var A.<!REDECLARATION!>x<!> by CustomDelegate()
 
 // SNIPPET
 
-// The CONFLICTING_JVM_DECLARATIONS should be reported here, but it is not happening due to KT-77362
-// NOTE: after fixing it, some changes in AbstractReplWithTestExtensionsDiagnosticsTest needed to report it too
+// The CONFLICTING_JVM_DECLARATIONS is reported there by the backend, but it is invoked only in `AbstractReplViaApiDiagnosticsTest`.
+// `AbstractReplWithTestExtensionsDiagnosticsTest` invokes only frontend, so the error is not reported.
+// To avoid the discrepancy between tests, this specific diagnostic is disabled on the test level.
 val B<Int>.x by CustomDelegate()
 
 var B<String>.x by CustomDelegate()
