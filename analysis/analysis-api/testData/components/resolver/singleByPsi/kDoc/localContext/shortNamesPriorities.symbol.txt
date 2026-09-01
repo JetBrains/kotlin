@@ -1,41 +1,41 @@
 <caret_1>:
   KDocName(17,19): 'AA'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         AA/AA
       ]
 
 <caret_2>:
   KDocName(38,40): 'AA'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         AA/AA(a: kotlin.Int): kotlin.Unit
       ]
 
 <caret_3>:
   KDocName(70,72): 'bb'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         val bb: kotlin.Int
       ]
 
 <caret_4>:
   KDocName(93,95): 'bb'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         AA/bb(): kotlin.Int
       ]
 
 <caret_5>:
   KDocName(122,124): 'bb'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         AA/bb(): kotlin.Int
       ]
 
 <caret_6>:
   KDocName(133,135): 'AA'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         AA/AA
       ]

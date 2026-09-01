@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.analysis.api.impl.base.resolution
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionSuccess
+import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleSymbolResolutionSuccess
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 
 @KaImplementationDetail
-class KaBaseSymbolResolutionSuccess(
+class KaBaseSimpleSymbolResolutionSuccess(
     private val backingSymbols: List<KaSymbol>,
-) : KaSymbolResolutionSuccess {
+) : KaSimpleSymbolResolutionSuccess {
     constructor(backingSymbol: KaSymbol) : this(
         backingSymbols = listOf(backingSymbol),
     )

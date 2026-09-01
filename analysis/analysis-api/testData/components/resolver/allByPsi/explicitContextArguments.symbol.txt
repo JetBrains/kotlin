@@ -26,13 +26,13 @@ KtParameter(39,50): '_: Implicit'
   null
 
 KtTypeReference(42,50): 'Implicit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Implicit
     ]
 
 KtUserType(42,50): 'Implicit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Implicit
     ]
@@ -41,7 +41,7 @@ KtNameReferenceExpression(42,50): 'Implicit'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Implicit
     ]
@@ -50,13 +50,13 @@ KtParameter(52,70): 'explicit: Explicit'
   null
 
 KtTypeReference(62,70): 'Explicit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Explicit
     ]
 
 KtUserType(62,70): 'Explicit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Explicit
     ]
@@ -65,7 +65,7 @@ KtNameReferenceExpression(62,70): 'Explicit'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Explicit
     ]
@@ -77,13 +77,13 @@ KtParameter(84,99): 'regular: String'
   null
 
 KtTypeReference(93,99): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(93,99): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -92,7 +92,7 @@ KtNameReferenceExpression(93,99): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -113,13 +113,13 @@ KtParameter(113,122): 's: String'
   null
 
 KtTypeReference(116,122): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(116,122): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -128,7 +128,7 @@ KtNameReferenceExpression(116,122): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -137,13 +137,13 @@ KtParameter(124,142): 'explicit: Explicit'
   null
 
 KtTypeReference(134,142): 'Explicit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Explicit
     ]
 
 KtUserType(134,142): 'Explicit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Explicit
     ]
@@ -152,7 +152,7 @@ KtNameReferenceExpression(134,142): 'Explicit'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Explicit
     ]
@@ -164,13 +164,13 @@ KtParameter(156,171): 'regular: String'
   null
 
 KtTypeReference(165,171): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(165,171): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -179,7 +179,7 @@ KtNameReferenceExpression(165,171): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -200,13 +200,13 @@ KtParameter(185,203): 'implicit: Implicit'
   null
 
 KtTypeReference(195,203): 'Implicit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Implicit
     ]
 
 KtUserType(195,203): 'Implicit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Implicit
     ]
@@ -215,7 +215,7 @@ KtNameReferenceExpression(195,203): 'Implicit'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Implicit
     ]
@@ -224,13 +224,13 @@ KtParameter(205,223): 'explicit: Explicit'
   null
 
 KtTypeReference(215,223): 'Explicit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Explicit
     ]
 
 KtUserType(215,223): 'Explicit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Explicit
     ]
@@ -239,7 +239,7 @@ KtNameReferenceExpression(215,223): 'Explicit'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Explicit
     ]
@@ -251,13 +251,13 @@ KtParameter(235,250): 'regular: String'
   null
 
 KtTypeReference(244,250): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(244,250): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -266,7 +266,7 @@ KtNameReferenceExpression(244,250): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -287,13 +287,13 @@ KtParameter(264,273): 's: String'
   null
 
 KtTypeReference(267,273): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(267,273): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -302,7 +302,7 @@ KtNameReferenceExpression(267,273): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -311,13 +311,13 @@ KtParameter(275,293): 'explicit: Explicit'
   null
 
 KtTypeReference(285,293): 'Explicit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Explicit
     ]
 
 KtUserType(285,293): 'Explicit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Explicit
     ]
@@ -326,7 +326,7 @@ KtNameReferenceExpression(285,293): 'Explicit'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Explicit
     ]
@@ -338,13 +338,13 @@ KtParameter(305,320): 'regular: String'
   null
 
 KtTypeReference(314,320): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(314,320): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -353,7 +353,7 @@ KtNameReferenceExpression(314,320): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -374,13 +374,13 @@ KtParameter(334,345): '_: Implicit'
   null
 
 KtTypeReference(337,345): 'Implicit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Implicit
     ]
 
 KtUserType(337,345): 'Implicit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Implicit
     ]
@@ -389,7 +389,7 @@ KtNameReferenceExpression(337,345): 'Implicit'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Implicit
     ]
@@ -398,13 +398,13 @@ KtParameter(347,365): 'explicit: Explicit'
   null
 
 KtTypeReference(357,365): 'Explicit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Explicit
     ]
 
 KtUserType(357,365): 'Explicit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Explicit
     ]
@@ -413,7 +413,7 @@ KtNameReferenceExpression(357,365): 'Explicit'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Explicit
     ]
@@ -425,7 +425,7 @@ KtBlockExpression(389,627): '{'
   null
 
 KtCallExpression(395,440): 'unnamed/*explicit regular*/(regular = "str2")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /unnamed(regular: kotlin.String): kotlin.Unit
     ]
@@ -434,7 +434,7 @@ KtNameReferenceExpression(395,402): 'unnamed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /unnamed(regular: kotlin.String): kotlin.Unit
     ]
@@ -452,7 +452,7 @@ KtNameReferenceExpression(423,430): 'regular'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       regular: kotlin.String
     ]
@@ -464,7 +464,7 @@ KtLiteralStringTemplateEntry(434,438): 'str2'
   null
 
 KtCallExpression(445,488): 'named/*explicit regular*/(regular = "str2")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /named(regular: kotlin.String): kotlin.Unit
     ]
@@ -473,7 +473,7 @@ KtNameReferenceExpression(445,450): 'named'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /named(regular: kotlin.String): kotlin.Unit
     ]
@@ -491,7 +491,7 @@ KtNameReferenceExpression(471,478): 'regular'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       regular: kotlin.String
     ]
@@ -503,7 +503,7 @@ KtLiteralStringTemplateEntry(482,486): 'str2'
   null
 
 KtCallExpression(494,558): 'unnamed/*all explicit*/(explicit = Explicit(), regular = "str3")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /unnamed(regular: kotlin.String): kotlin.Unit
     ]
@@ -512,7 +512,7 @@ KtNameReferenceExpression(494,501): 'unnamed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /unnamed(regular: kotlin.String): kotlin.Unit
     ]
@@ -530,13 +530,13 @@ KtNameReferenceExpression(518,526): 'explicit'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       explicit: Explicit
     ]
 
 KtCallExpression(529,539): 'Explicit()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): Explicit
     ]
@@ -545,7 +545,7 @@ KtNameReferenceExpression(529,537): 'Explicit'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Explicit
     ]
@@ -563,7 +563,7 @@ KtNameReferenceExpression(541,548): 'regular'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       regular: kotlin.String
     ]
@@ -575,7 +575,7 @@ KtLiteralStringTemplateEntry(552,556): 'str3'
   null
 
 KtCallExpression(563,625): 'named/*all explicit*/(explicit = Explicit(), regular = "str3")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /named(regular: kotlin.String): kotlin.Unit
     ]
@@ -584,7 +584,7 @@ KtNameReferenceExpression(563,568): 'named'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /named(regular: kotlin.String): kotlin.Unit
     ]
@@ -602,13 +602,13 @@ KtNameReferenceExpression(585,593): 'explicit'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       explicit: Explicit
     ]
 
 KtCallExpression(596,606): 'Explicit()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): Explicit
     ]
@@ -617,7 +617,7 @@ KtNameReferenceExpression(596,604): 'Explicit'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Explicit
     ]
@@ -635,7 +635,7 @@ KtNameReferenceExpression(608,615): 'regular'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       regular: kotlin.String
     ]
@@ -650,13 +650,13 @@ KtNamedFunction(629,933): 'fun Implicit.receiverUsage() {'
   null
 
 KtTypeReference(633,641): 'Implicit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Implicit
     ]
 
 KtUserType(633,641): 'Implicit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Implicit
     ]
@@ -665,7 +665,7 @@ KtNameReferenceExpression(633,641): 'Implicit'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Implicit
     ]
@@ -677,7 +677,7 @@ KtBlockExpression(658,933): '{'
   null
 
 KtCallExpression(664,794): 'with(Explicit()) {'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/with(receiver: T, block: T.() -> R): R
     ]
@@ -686,7 +686,7 @@ KtNameReferenceExpression(664,668): 'with'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/with(receiver: T, block: T.() -> R): R
     ]
@@ -698,7 +698,7 @@ KtValueArgument(669,679): 'Explicit()'
   null
 
 KtCallExpression(669,679): 'Explicit()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): Explicit
     ]
@@ -707,7 +707,7 @@ KtNameReferenceExpression(669,677): 'Explicit'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Explicit
     ]
@@ -728,7 +728,7 @@ KtBlockExpression(691,788): 'unnamed/*explicit regular*/(regular = "str2")'
   null
 
 KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /unnamed(regular: kotlin.String): kotlin.Unit
     ]
@@ -737,7 +737,7 @@ KtNameReferenceExpression(691,698): 'unnamed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /unnamed(regular: kotlin.String): kotlin.Unit
     ]
@@ -755,7 +755,7 @@ KtNameReferenceExpression(719,726): 'regular'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       regular: kotlin.String
     ]
@@ -767,7 +767,7 @@ KtLiteralStringTemplateEntry(730,734): 'str2'
   null
 
 KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /named(regular: kotlin.String): kotlin.Unit
     ]
@@ -776,7 +776,7 @@ KtNameReferenceExpression(745,750): 'named'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /named(regular: kotlin.String): kotlin.Unit
     ]
@@ -794,7 +794,7 @@ KtNameReferenceExpression(771,778): 'regular'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       regular: kotlin.String
     ]
@@ -806,7 +806,7 @@ KtLiteralStringTemplateEntry(782,786): 'str2'
   null
 
 KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regular = "str3")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /unnamed(regular: kotlin.String): kotlin.Unit
     ]
@@ -815,7 +815,7 @@ KtNameReferenceExpression(800,807): 'unnamed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /unnamed(regular: kotlin.String): kotlin.Unit
     ]
@@ -833,13 +833,13 @@ KtNameReferenceExpression(824,832): 'explicit'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       explicit: Explicit
     ]
 
 KtCallExpression(835,845): 'Explicit()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): Explicit
     ]
@@ -848,7 +848,7 @@ KtNameReferenceExpression(835,843): 'Explicit'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Explicit
     ]
@@ -866,7 +866,7 @@ KtNameReferenceExpression(847,854): 'regular'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       regular: kotlin.String
     ]
@@ -878,7 +878,7 @@ KtLiteralStringTemplateEntry(858,862): 'str3'
   null
 
 KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular = "str3")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /named(regular: kotlin.String): kotlin.Unit
     ]
@@ -887,7 +887,7 @@ KtNameReferenceExpression(869,874): 'named'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /named(regular: kotlin.String): kotlin.Unit
     ]
@@ -905,13 +905,13 @@ KtNameReferenceExpression(891,899): 'explicit'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       explicit: Explicit
     ]
 
 KtCallExpression(902,912): 'Explicit()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): Explicit
     ]
@@ -920,7 +920,7 @@ KtNameReferenceExpression(902,910): 'Explicit'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Explicit
     ]
@@ -938,7 +938,7 @@ KtNameReferenceExpression(914,921): 'regular'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       regular: kotlin.String
     ]

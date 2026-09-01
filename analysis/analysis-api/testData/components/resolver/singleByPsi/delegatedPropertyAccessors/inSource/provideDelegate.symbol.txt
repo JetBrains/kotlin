@@ -1,5 +1,5 @@
 KtPropertyDelegate(160,168): 'by Bar()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /getValue(<extension receiver>: Foo, _this: kotlin.Any?, p: kotlin.Any?): kotlin.Int,
       /provideDelegate(<extension receiver>: Bar, _this: kotlin.Any?, p: kotlin.Any?): Foo

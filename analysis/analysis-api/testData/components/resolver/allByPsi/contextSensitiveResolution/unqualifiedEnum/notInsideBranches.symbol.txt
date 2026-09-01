@@ -32,13 +32,13 @@ KtParameter(110,117): 's: Some'
   null
 
 KtTypeReference(113,117): 'Some'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Some
     ]
 
 KtUserType(113,117): 'Some'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Some
     ]
@@ -47,7 +47,7 @@ KtNameReferenceExpression(113,117): 'Some'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Some
     ]
@@ -59,7 +59,7 @@ KtNameReferenceExpression(127,128): 's'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       s: Some
     ]
@@ -74,7 +74,7 @@ KtNameReferenceExpression(136,141): 'FIRST'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Some.FIRST
     ]
@@ -83,7 +83,7 @@ KtNameReferenceExpression(145,151): 'SECOND'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SECOND'.>
 
@@ -97,7 +97,7 @@ KtNameReferenceExpression(156,162): 'SECOND'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Some.SECOND
     ]
@@ -106,6 +106,6 @@ KtNameReferenceExpression(166,171): 'FIRST'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'FIRST'.>

@@ -32,13 +32,13 @@ KtParameter(136,158): 'val prop: String = "1"'
   null
 
 KtTypeReference(146,152): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(146,152): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -47,7 +47,7 @@ KtNameReferenceExpression(146,152): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -62,25 +62,25 @@ KtSuperTypeList(161,174): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(161,174): 'SealedClass()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): SealedClass
     ]
 
 KtConstructorCalleeExpression(161,172): 'SealedClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): SealedClass
     ]
 
 KtTypeReference(161,172): 'SealedClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedClass
     ]
 
 KtUserType(161,172): 'SealedClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedClass
     ]
@@ -89,7 +89,7 @@ KtNameReferenceExpression(161,172): 'SealedClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedClass
     ]
@@ -104,25 +104,25 @@ KtSuperTypeList(210,227): 'SealedInheritor()'
   null
 
 KtSuperTypeCallEntry(210,227): 'SealedInheritor()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(prop: kotlin.String): SealedClass.SealedInheritor
     ]
 
 KtConstructorCalleeExpression(210,225): 'SealedInheritor'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(prop: kotlin.String): SealedClass.SealedInheritor
     ]
 
 KtTypeReference(210,225): 'SealedInheritor'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedClass.SealedInheritor
     ]
 
 KtUserType(210,225): 'SealedInheritor'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedClass.SealedInheritor
     ]
@@ -131,7 +131,7 @@ KtNameReferenceExpression(210,225): 'SealedInheritor'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedClass.SealedInheritor
     ]
@@ -149,13 +149,13 @@ KtParameter(264,285): 'instance: SealedClass'
   null
 
 KtTypeReference(274,285): 'SealedClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedClass
     ]
 
 KtUserType(274,285): 'SealedClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedClass
     ]
@@ -164,19 +164,19 @@ KtNameReferenceExpression(274,285): 'SealedClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedClass
     ]
 
 KtTypeReference(288,294): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(288,294): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -185,7 +185,7 @@ KtNameReferenceExpression(288,294): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -194,7 +194,7 @@ KtBlockExpression(295,438): '{'
   null
 
 KtReturnExpression(301,436): 'return when (instance) {'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /testIsInWhenGuardSealedClass(instance: SealedClass): kotlin.String
     ]
@@ -206,7 +206,7 @@ KtNameReferenceExpression(314,322): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
     ]
@@ -218,13 +218,13 @@ KtWhenConditionIsPattern(334,352): 'is SealedInheritor'
   null
 
 KtTypeReference(337,352): 'SealedInheritor'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedClass.SealedInheritor
     ]
 
 KtUserType(337,352): 'SealedInheritor'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedClass.SealedInheritor
     ]
@@ -233,7 +233,7 @@ KtNameReferenceExpression(337,352): 'SealedInheritor'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedClass.SealedInheritor
     ]
@@ -248,7 +248,7 @@ KtNameReferenceExpression(356,364): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
     ]
@@ -260,13 +260,13 @@ KtOperationReferenceExpression(365,367): 'is'
   null
 
 KtTypeReference(368,391): 'IndirectSealedInheritor'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedClass.IndirectSealedInheritor
     ]
 
 KtUserType(368,391): 'IndirectSealedInheritor'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedClass.IndirectSealedInheritor
     ]
@@ -275,13 +275,13 @@ KtNameReferenceExpression(368,391): 'IndirectSealedInheritor'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedClass.IndirectSealedInheritor
     ]
 
 KtDotQualifiedExpression(395,408): 'instance.prop'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
     ]
@@ -290,7 +290,7 @@ KtNameReferenceExpression(395,403): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance: SealedClass
     ]
@@ -299,7 +299,7 @@ KtNameReferenceExpression(404,408): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
     ]
@@ -338,13 +338,13 @@ KtParameter(505,527): 'val prop: String = "1"'
   null
 
 KtTypeReference(515,521): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(515,521): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -353,7 +353,7 @@ KtNameReferenceExpression(515,521): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -368,25 +368,25 @@ KtSuperTypeList(530,541): 'OpenClass()'
   null
 
 KtSuperTypeCallEntry(530,541): 'OpenClass()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): OpenClass
     ]
 
 KtConstructorCalleeExpression(530,539): 'OpenClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): OpenClass
     ]
 
 KtTypeReference(530,539): 'OpenClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass
     ]
 
 KtUserType(530,539): 'OpenClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass
     ]
@@ -395,7 +395,7 @@ KtNameReferenceExpression(530,539): 'OpenClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass
     ]
@@ -410,25 +410,25 @@ KtSuperTypeList(588,616): 'SealedInheritorOfOpenClass()'
   null
 
 KtSuperTypeCallEntry(588,616): 'SealedInheritorOfOpenClass()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(prop: kotlin.String): OpenClass.SealedInheritorOfOpenClass
     ]
 
 KtConstructorCalleeExpression(588,614): 'SealedInheritorOfOpenClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(prop: kotlin.String): OpenClass.SealedInheritorOfOpenClass
     ]
 
 KtTypeReference(588,614): 'SealedInheritorOfOpenClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass.SealedInheritorOfOpenClass
     ]
 
 KtUserType(588,614): 'SealedInheritorOfOpenClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass.SealedInheritorOfOpenClass
     ]
@@ -437,7 +437,7 @@ KtNameReferenceExpression(588,614): 'SealedInheritorOfOpenClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass.SealedInheritorOfOpenClass
     ]
@@ -455,13 +455,13 @@ KtParameter(651,670): 'instance: OpenClass'
   null
 
 KtTypeReference(661,670): 'OpenClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass
     ]
 
 KtUserType(661,670): 'OpenClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass
     ]
@@ -470,19 +470,19 @@ KtNameReferenceExpression(661,670): 'OpenClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass
     ]
 
 KtTypeReference(673,679): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(673,679): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -491,7 +491,7 @@ KtNameReferenceExpression(673,679): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -500,7 +500,7 @@ KtBlockExpression(680,845): '{'
   null
 
 KtReturnExpression(686,843): 'return when (instance) {'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /testIsInWhenGuardOpenClass(instance: OpenClass): kotlin.String
     ]
@@ -512,7 +512,7 @@ KtNameReferenceExpression(699,707): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance: OpenClass
     ]
@@ -524,12 +524,12 @@ KtWhenConditionIsPattern(719,748): 'is SealedInheritorOfOpenClass'
   null
 
 KtTypeReference(722,748): 'SealedInheritorOfOpenClass'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritorOfOpenClass'.>
 
 KtUserType(722,748): 'SealedInheritorOfOpenClass'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritorOfOpenClass'.>
 
@@ -537,7 +537,7 @@ KtNameReferenceExpression(722,748): 'SealedInheritorOfOpenClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritorOfOpenClass'.>
 
@@ -551,7 +551,7 @@ KtNameReferenceExpression(752,760): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance: OpenClass
     ]
@@ -563,12 +563,12 @@ KtOperationReferenceExpression(761,763): 'is'
   null
 
 KtTypeReference(764,798): 'IndirectSealedInheritorOfOpenClass'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'IndirectSealedInheritorOfOpenClass'.>
 
 KtUserType(764,798): 'IndirectSealedInheritorOfOpenClass'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'IndirectSealedInheritorOfOpenClass'.>
 
@@ -576,12 +576,12 @@ KtNameReferenceExpression(764,798): 'IndirectSealedInheritorOfOpenClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'IndirectSealedInheritorOfOpenClass'.>
 
 KtDotQualifiedExpression(802,815): 'instance.prop'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'OpenClass'.>
 
@@ -589,7 +589,7 @@ KtNameReferenceExpression(802,810): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       instance: OpenClass
     ]
@@ -598,7 +598,7 @@ KtNameReferenceExpression(811,815): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'OpenClass'.>
 

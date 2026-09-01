@@ -2,7 +2,7 @@ KtNameReferenceExpression(53,61): 'instance'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val instance: KtSubClass
     ]

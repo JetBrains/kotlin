@@ -1,41 +1,41 @@
 <caret_1>:
   KDocName(54,57): 'one'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         one
       ]
 
 <caret_2>:
   KDocName(71,78): 'one.two'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         one.two
       ]
 
 <caret_3>:
   KDocName(91,94): 'Foo'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         one/two/Foo
       ]
 
 <caret_4>:
   KDocName(104,115): 'one.two.Foo'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         one/two/Foo
       ]
 
 <caret_5>:
   KDocName(128,131): 'one'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         one
       ]
 
 <caret_6>:
   KDocName(149,156): 'one.two'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         one.two
       ]

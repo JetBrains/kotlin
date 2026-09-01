@@ -17,19 +17,19 @@ KtParameter(9,19): 'a: String?'
   null
 
 KtTypeReference(12,19): 'String?'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtNullableType(12,19): 'String?'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(12,18): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -38,7 +38,7 @@ KtNameReferenceExpression(12,18): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -53,7 +53,7 @@ KtNameReferenceExpression(27,28): 'a'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       a: kotlin.String?
     ]

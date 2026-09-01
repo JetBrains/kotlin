@@ -35,13 +35,13 @@ KtParameter(128,132): 'x: X'
   null
 
 KtTypeReference(131,132): 'X'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       X
     ]
 
 KtUserType(131,132): 'X'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       X
     ]
@@ -50,19 +50,19 @@ KtNameReferenceExpression(131,132): 'X'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       X
     ]
 
 KtTypeReference(135,136): 'X'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       X
     ]
 
 KtUserType(135,136): 'X'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       X
     ]
@@ -71,7 +71,7 @@ KtNameReferenceExpression(135,136): 'X'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       X
     ]
@@ -80,7 +80,7 @@ KtNameReferenceExpression(139,140): 'x'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       x: X
     ]
@@ -101,13 +101,13 @@ KtParameter(157,163): 'arg: T'
   null
 
 KtTypeReference(162,163): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
 
 KtUserType(162,163): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -116,7 +116,7 @@ KtNameReferenceExpression(162,163): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -137,13 +137,13 @@ KtProperty(198,229): 'val r1: MyEnum = id(EnumValue1)'
   null
 
 KtTypeReference(206,212): 'MyEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
 
 KtUserType(206,212): 'MyEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
@@ -152,13 +152,13 @@ KtNameReferenceExpression(206,212): 'MyEnum'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
 
 KtCallExpression(215,229): 'id(EnumValue1)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
     ]
@@ -167,7 +167,7 @@ KtNameReferenceExpression(215,217): 'id'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
     ]
@@ -182,13 +182,13 @@ KtNameReferenceExpression(218,228): 'EnumValue1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum.EnumValue1
     ]
 
 KtCallExpression(235,266): 'receive<MyEnum>(id(EnumValue1))'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receive(arg: T): kotlin.Unit
     ]
@@ -197,7 +197,7 @@ KtNameReferenceExpression(235,242): 'receive'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receive(arg: T): kotlin.Unit
     ]
@@ -209,13 +209,13 @@ KtTypeProjection(243,249): 'MyEnum'
   null
 
 KtTypeReference(243,249): 'MyEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
 
 KtUserType(243,249): 'MyEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
@@ -224,7 +224,7 @@ KtNameReferenceExpression(243,249): 'MyEnum'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
@@ -236,7 +236,7 @@ KtValueArgument(251,265): 'id(EnumValue1)'
   null
 
 KtCallExpression(251,265): 'id(EnumValue1)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
     ]
@@ -245,7 +245,7 @@ KtNameReferenceExpression(251,253): 'id'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
     ]
@@ -260,7 +260,7 @@ KtNameReferenceExpression(254,264): 'EnumValue1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum.EnumValue1
     ]

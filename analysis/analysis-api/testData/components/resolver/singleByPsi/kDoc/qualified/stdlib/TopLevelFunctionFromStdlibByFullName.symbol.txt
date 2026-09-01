@@ -1,5 +1,5 @@
 KDocName(8,33): 'kotlin.collections.listOf'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/listOf(element: T): kotlin.collections.List<T>,
       kotlin/collections/listOf(vararg elements: T): kotlin.collections.List<T>,

@@ -1,5 +1,5 @@
 KtCallExpression(86,92): 'foo(x)'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /foo(x: kotlin.Int): T
     ]

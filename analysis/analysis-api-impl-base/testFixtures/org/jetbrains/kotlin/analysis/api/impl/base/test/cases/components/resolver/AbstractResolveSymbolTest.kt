@@ -136,8 +136,8 @@ internal fun assertSpecificResolutionApi(
         val specificCall = kFunction.call(session, element)
 
         when (attempt) {
-            null, is KaSymbolResolutionError -> assertions.assertEquals(expected = null, actual = specificCall)
-            is KaSymbolResolutionSuccess -> {
+            null, is KaSimpleSymbolResolutionError -> assertions.assertEquals(expected = null, actual = specificCall)
+            is KaSimpleSymbolResolutionSuccess -> {
                 // Only non-compound cases can be checked
                 assertions.assertEquals(expected = attempt.symbols.singleOrNull(), actual = specificCall)
             }

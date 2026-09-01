@@ -1,5 +1,5 @@
 KtArrayAccessExpression(44,48): '1[2]'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /get(<extension receiver>: kotlin.Int, index: kotlin.Int): kotlin.Int
     ]

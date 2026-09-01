@@ -17,13 +17,13 @@ KtParameter(30,36): 'x: Int'
   null
 
 KtTypeReference(33,36): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(33,36): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -32,7 +32,7 @@ KtNameReferenceExpression(33,36): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -50,13 +50,13 @@ KtParameter(50,56): 'x: Int'
   null
 
 KtTypeReference(53,56): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(53,56): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -65,7 +65,7 @@ KtNameReferenceExpression(53,56): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -74,7 +74,7 @@ KtBlockExpression(58,82): '{'
   null
 
 KtReturnExpression(68,76): 'return x'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       g(x: kotlin.Int): kotlin.Unit
     ]
@@ -83,7 +83,7 @@ KtNameReferenceExpression(75,76): 'x'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       x: kotlin.Int
     ]
@@ -101,13 +101,13 @@ KtParameter(88,94): 'x: Int'
   null
 
 KtTypeReference(91,94): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(91,94): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -116,7 +116,7 @@ KtNameReferenceExpression(91,94): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -128,13 +128,13 @@ KtNameReferenceExpression(98,99): 'x'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       x: kotlin.Int
     ]
 
 KtBinaryExpression(105,110): 'x + 1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
     ]
@@ -143,7 +143,7 @@ KtNameReferenceExpression(105,106): 'x'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       x: kotlin.Int
     ]
@@ -152,7 +152,7 @@ KtOperationReferenceExpression(107,108): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
     ]
@@ -161,7 +161,7 @@ KtConstantExpression(109,110): '1'
   null
 
 KtReturnExpression(115,121): 'return'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /shadowing(x: kotlin.Int): kotlin.Unit
     ]
@@ -176,13 +176,13 @@ KtParameter(145,151): 'x: Int'
   null
 
 KtTypeReference(148,151): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(148,151): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -191,7 +191,7 @@ KtNameReferenceExpression(148,151): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -206,7 +206,7 @@ KtNameReferenceExpression(167,168): 'x'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       x: kotlin.Int
     ]
@@ -215,19 +215,19 @@ KtDestructuringDeclaration(173,192): 'val (x, y) = x to 1'
   null
 
 KtDestructuringDeclarationEntry(178,179): 'x'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Pair.component1(<dispatch receiver>: kotlin.Pair<A, B>): A
     ]
 
 KtDestructuringDeclarationEntry(181,182): 'y'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Pair.component2(<dispatch receiver>: kotlin.Pair<A, B>): B
     ]
 
 KtBinaryExpression(186,192): 'x to 1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/to(<extension receiver>: A, that: B): kotlin.Pair<A, B>
     ]
@@ -236,7 +236,7 @@ KtNameReferenceExpression(186,187): 'x'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val x: kotlin.Int
     ]
@@ -245,7 +245,7 @@ KtOperationReferenceExpression(188,190): 'to'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/to(<extension receiver>: A, that: B): kotlin.Pair<A, B>
     ]
@@ -254,7 +254,7 @@ KtConstantExpression(191,192): '1'
   null
 
 KtForExpression(197,220): 'for (x in x..y) {'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/ranges/IntProgression.iterator(<dispatch receiver>: kotlin.ranges.IntProgression): kotlin.collections.IntIterator,
       kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean,
@@ -268,7 +268,7 @@ KtContainerNode(207,211): 'x..y'
   null
 
 KtBinaryExpression(207,211): 'x..y'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
     ]
@@ -277,7 +277,7 @@ KtNameReferenceExpression(207,208): 'x'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val x: kotlin.Int
     ]
@@ -286,7 +286,7 @@ KtOperationReferenceExpression(208,210): '..'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
     ]
@@ -295,7 +295,7 @@ KtNameReferenceExpression(210,211): 'y'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val y: kotlin.Int
     ]

@@ -14,7 +14,7 @@ KtNameReferenceExpression(31,32): 'a'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       a
     ]
@@ -41,13 +41,13 @@ KtParameter(79,92): 'val x: String'
   null
 
 KtTypeReference(86,92): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(86,92): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -56,7 +56,7 @@ KtNameReferenceExpression(86,92): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -65,19 +65,19 @@ KtSuperTypeList(95,103): 'MySealed'
   null
 
 KtSuperTypeEntry(95,103): 'MySealed'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MySealed
     ]
 
 KtTypeReference(95,103): 'MySealed'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MySealed
     ]
 
 KtUserType(95,103): 'MySealed'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MySealed
     ]
@@ -86,7 +86,7 @@ KtNameReferenceExpression(95,103): 'MySealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MySealed
     ]
@@ -104,13 +104,13 @@ KtParameter(120,133): 'val y: String'
   null
 
 KtTypeReference(127,133): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(127,133): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -119,7 +119,7 @@ KtNameReferenceExpression(127,133): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -128,19 +128,19 @@ KtSuperTypeList(136,144): 'MySealed'
   null
 
 KtSuperTypeEntry(136,144): 'MySealed'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MySealed
     ]
 
 KtTypeReference(136,144): 'MySealed'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MySealed
     ]
 
 KtUserType(136,144): 'MySealed'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MySealed
     ]
@@ -149,7 +149,7 @@ KtNameReferenceExpression(136,144): 'MySealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MySealed
     ]
@@ -158,13 +158,13 @@ KtNamedFunction(148,226): 'fun MySealed.getOrElse1() = when (this) {'
   null
 
 KtTypeReference(152,160): 'MySealed'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MySealed
     ]
 
 KtUserType(152,160): 'MySealed'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MySealed
     ]
@@ -173,7 +173,7 @@ KtNameReferenceExpression(152,160): 'MySealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MySealed
     ]
@@ -185,7 +185,7 @@ KtWhenExpression(176,226): 'when (this) {'
   null
 
 KtThisExpression(182,186): 'this'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference
@@ -220,7 +220,7 @@ KtNameReferenceExpression(182,186): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference
@@ -258,13 +258,13 @@ KtWhenConditionIsPattern(194,201): 'is Left'
   null
 
 KtTypeReference(197,201): 'Left'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MySealed.Left
     ]
 
 KtUserType(197,201): 'Left'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MySealed.Left
     ]
@@ -273,7 +273,7 @@ KtNameReferenceExpression(197,201): 'Left'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MySealed.Left
     ]
@@ -282,7 +282,7 @@ KtNameReferenceExpression(205,206): 'x'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val x: kotlin.String
     ]
@@ -294,13 +294,13 @@ KtWhenConditionIsPattern(211,219): 'is Right'
   null
 
 KtTypeReference(214,219): 'Right'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MySealed.Right
     ]
 
 KtUserType(214,219): 'Right'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MySealed.Right
     ]
@@ -309,7 +309,7 @@ KtNameReferenceExpression(214,219): 'Right'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MySealed.Right
     ]
@@ -318,7 +318,7 @@ KtNameReferenceExpression(223,224): 'y'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val y: kotlin.String
     ]
@@ -327,13 +327,13 @@ KtNamedFunction(228,301): 'fun Any.getOrElse2() = when (this) {'
   null
 
 KtTypeReference(232,235): 'Any'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
     ]
 
 KtUserType(232,235): 'Any'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
     ]
@@ -342,7 +342,7 @@ KtNameReferenceExpression(232,235): 'Any'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
     ]
@@ -354,7 +354,7 @@ KtWhenExpression(251,301): 'when (this) {'
   null
 
 KtThisExpression(257,261): 'this'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference
@@ -389,7 +389,7 @@ KtNameReferenceExpression(257,261): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference
@@ -427,14 +427,14 @@ KtWhenConditionIsPattern(269,276): 'is Left'
   null
 
 KtTypeReference(272,276): 'Left'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       a/Left
     ]
     diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'class Left : Any': it is private in file.>
 
 KtUserType(272,276): 'Left'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       a/Left
     ]
@@ -444,7 +444,7 @@ KtNameReferenceExpression(272,276): 'Left'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       a/Left
     ]
@@ -454,7 +454,7 @@ KtNameReferenceExpression(280,281): 'x'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'.>
 
@@ -465,12 +465,12 @@ KtWhenConditionIsPattern(286,294): 'is Right'
   null
 
 KtTypeReference(289,294): 'Right'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
 
 KtUserType(289,294): 'Right'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
 
@@ -478,7 +478,7 @@ KtNameReferenceExpression(289,294): 'Right'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Right'.>
 
@@ -486,6 +486,6 @@ KtNameReferenceExpression(298,299): 'y'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y'.>

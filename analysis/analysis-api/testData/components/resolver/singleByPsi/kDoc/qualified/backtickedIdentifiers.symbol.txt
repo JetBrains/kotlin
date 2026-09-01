@@ -1,13 +1,13 @@
 <caret_1>:
   KDocName(8,33): '`With Space`.`with space`'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /With Space.with space(<dispatch receiver>: With Space): kotlin.Unit
       ]
 
 <caret_2>:
   KDocName(43,68): '`With Space`.`with space`'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /With Space.with space(<dispatch receiver>: With Space): kotlin.Unit
       ]
@@ -22,14 +22,14 @@
 
 <caret_5>:
   KDocName(128,142): 'O.`with space`'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /O.with space(<dispatch receiver>: O): kotlin.Unit
       ]
 
 <caret_6>:
   KDocName(152,166): 'O.`with space`'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /O.with space(<dispatch receiver>: O): kotlin.Unit
       ]

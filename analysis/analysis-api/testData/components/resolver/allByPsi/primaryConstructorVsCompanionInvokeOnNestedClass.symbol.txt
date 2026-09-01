@@ -11,7 +11,7 @@ KtNameReferenceExpression(8,11): 'com'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com
     ]
@@ -20,7 +20,7 @@ KtNameReferenceExpression(12,19): 'example'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com.example
     ]
@@ -44,7 +44,7 @@ KtNameReferenceExpression(28,31): 'com'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com
     ]
@@ -53,7 +53,7 @@ KtNameReferenceExpression(32,39): 'example'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com.example
     ]
@@ -62,7 +62,7 @@ KtNameReferenceExpression(40,43): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo
     ]
@@ -71,7 +71,7 @@ KtNameReferenceExpression(44,50): 'Nested'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested
     ]
@@ -95,13 +95,13 @@ KtParameter(80,89): 's: String'
   null
 
 KtTypeReference(83,89): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(83,89): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -110,7 +110,7 @@ KtNameReferenceExpression(83,89): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -140,13 +140,13 @@ KtParameter(147,157): 'param: Int'
   null
 
 KtTypeReference(154,157): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(154,157): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -155,13 +155,13 @@ KtNameReferenceExpression(154,157): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtCallExpression(161,174): 'Nested("str")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(s: kotlin.String): com.example.Foo.Nested
     ]
@@ -170,7 +170,7 @@ KtNameReferenceExpression(161,167): 'Nested'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested
     ]
@@ -197,7 +197,7 @@ KtBlockExpression(217,369): '{'
   null
 
 KtCallExpression(222,231): 'Nested(1)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
     ]
@@ -206,7 +206,7 @@ KtNameReferenceExpression(222,228): 'Nested'
   isImplicitReferenceToCompanion: true
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested.Companion
     ]
@@ -221,7 +221,7 @@ KtConstantExpression(229,230): '1'
   null
 
 KtDotQualifiedExpression(235,248): 'Foo.Nested(2)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
     ]
@@ -230,13 +230,13 @@ KtNameReferenceExpression(235,238): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo
     ]
 
 KtCallExpression(239,248): 'Nested(2)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
     ]
@@ -245,7 +245,7 @@ KtNameReferenceExpression(239,245): 'Nested'
   isImplicitReferenceToCompanion: true
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested.Companion
     ]
@@ -260,7 +260,7 @@ KtConstantExpression(246,247): '2'
   null
 
 KtDotQualifiedExpression(252,277): 'com.example.Foo.Nested(3)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
     ]
@@ -275,7 +275,7 @@ KtNameReferenceExpression(252,255): 'com'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com
     ]
@@ -284,7 +284,7 @@ KtNameReferenceExpression(256,263): 'example'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com.example
     ]
@@ -293,13 +293,13 @@ KtNameReferenceExpression(264,267): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo
     ]
 
 KtCallExpression(268,277): 'Nested(3)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
     ]
@@ -308,7 +308,7 @@ KtNameReferenceExpression(268,274): 'Nested'
   isImplicitReferenceToCompanion: true
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested.Companion
     ]
@@ -323,7 +323,7 @@ KtConstantExpression(275,276): '3'
   null
 
 KtDotQualifiedExpression(282,301): 'Nested.Companion(4)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
     ]
@@ -332,13 +332,13 @@ KtNameReferenceExpression(282,288): 'Nested'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested
     ]
 
 KtCallExpression(289,301): 'Companion(4)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
     ]
@@ -347,7 +347,7 @@ KtNameReferenceExpression(289,298): 'Companion'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested.Companion
     ]
@@ -362,7 +362,7 @@ KtConstantExpression(299,300): '4'
   null
 
 KtDotQualifiedExpression(305,328): 'Foo.Nested.Companion(5)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
     ]
@@ -374,7 +374,7 @@ KtNameReferenceExpression(305,308): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo
     ]
@@ -383,13 +383,13 @@ KtNameReferenceExpression(309,315): 'Nested'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested
     ]
 
 KtCallExpression(316,328): 'Companion(5)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
     ]
@@ -398,7 +398,7 @@ KtNameReferenceExpression(316,325): 'Companion'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested.Companion
     ]
@@ -413,7 +413,7 @@ KtConstantExpression(326,327): '5'
   null
 
 KtDotQualifiedExpression(332,367): 'com.example.Foo.Nested.Companion(6)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
     ]
@@ -431,7 +431,7 @@ KtNameReferenceExpression(332,335): 'com'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com
     ]
@@ -440,7 +440,7 @@ KtNameReferenceExpression(336,343): 'example'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com.example
     ]
@@ -449,7 +449,7 @@ KtNameReferenceExpression(344,347): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo
     ]
@@ -458,13 +458,13 @@ KtNameReferenceExpression(348,354): 'Nested'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested
     ]
 
 KtCallExpression(355,367): 'Companion(6)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
     ]
@@ -473,7 +473,7 @@ KtNameReferenceExpression(355,364): 'Companion'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Nested.Companion
     ]

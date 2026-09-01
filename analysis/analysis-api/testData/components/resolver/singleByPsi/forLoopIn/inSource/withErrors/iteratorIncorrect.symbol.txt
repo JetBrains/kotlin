@@ -1,15 +1,15 @@
 KtForExpression(23,37): 'for(i in f) {}'
   KaCompoundSymbolResolutionError:
     attempts = [
-      KaSymbolResolutionError:
+      KaSimpleSymbolResolutionError:
         candidateSymbols = [
           /iterator(<extension receiver>: kotlin.Int): kotlin.Any
         ]
         diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun Int.iterator(): Any' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Foo'.>,
-      KaSymbolResolutionError:
+      KaSimpleSymbolResolutionError:
         candidateSymbols = []
         diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hasNext' on receiver of type 'Any'.>,
-      KaSymbolResolutionError:
+      KaSimpleSymbolResolutionError:
         candidateSymbols = []
         diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next' on receiver of type 'Any'.>
     ]

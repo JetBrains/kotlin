@@ -8,7 +8,7 @@ KtNameReferenceExpression(40,44): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test
     ]
@@ -26,7 +26,7 @@ KtNameReferenceExpression(53,54): 'a'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       a
     ]
@@ -35,7 +35,7 @@ KtNameReferenceExpression(55,58): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       a/foo(<extension receiver>: test.C): kotlin.Unit
     ]
@@ -50,7 +50,7 @@ KtNameReferenceExpression(66,67): 'b'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b
     ]
@@ -59,7 +59,7 @@ KtNameReferenceExpression(68,71): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b/foo(<extension receiver>: test.C): kotlin.Unit
     ]
@@ -77,7 +77,7 @@ KtBlockExpression(94,109): '{'
   null
 
 KtDotQualifiedExpression(100,107): 'C.foo()'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       a/foo(<extension receiver>: test.C): kotlin.Unit,
       b/foo(<extension receiver>: test.C): kotlin.Unit
@@ -90,13 +90,13 @@ KtNameReferenceExpression(100,101): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
 KtCallExpression(102,107): 'foo()'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       a/foo(<extension receiver>: test.C): kotlin.Unit,
       b/foo(<extension receiver>: test.C): kotlin.Unit
@@ -109,7 +109,7 @@ KtNameReferenceExpression(102,105): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       a/foo(<extension receiver>: test.C): kotlin.Unit,
       b/foo(<extension receiver>: test.C): kotlin.Unit

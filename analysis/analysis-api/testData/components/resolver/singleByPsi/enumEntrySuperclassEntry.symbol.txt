@@ -1,5 +1,5 @@
 KtSuperTypeCallEntry(107,110): '(1)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(i: kotlin.Int): EnumWithConstructor
     ]

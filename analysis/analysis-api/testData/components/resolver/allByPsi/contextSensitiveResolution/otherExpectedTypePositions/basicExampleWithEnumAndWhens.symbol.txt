@@ -38,13 +38,13 @@ KtParameter(164,180): 'problem: Problem'
   null
 
 KtTypeReference(173,180): 'Problem'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Problem
     ]
 
 KtUserType(173,180): 'Problem'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Problem
     ]
@@ -53,19 +53,19 @@ KtNameReferenceExpression(173,180): 'Problem'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Problem
     ]
 
 KtTypeReference(183,189): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(183,189): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -74,7 +74,7 @@ KtNameReferenceExpression(183,189): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -86,7 +86,7 @@ KtNameReferenceExpression(198,205): 'problem'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       problem: Problem
     ]
@@ -101,7 +101,7 @@ KtNameReferenceExpression(213,223): 'CONNECTION'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Problem.CONNECTION
     ]
@@ -122,7 +122,7 @@ KtNameReferenceExpression(244,258): 'AUTHENTICATION'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Problem.AUTHENTICATION
     ]
@@ -143,7 +143,7 @@ KtNameReferenceExpression(283,291): 'DATABASE'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Problem.DATABASE
     ]
@@ -164,7 +164,7 @@ KtNameReferenceExpression(310,317): 'UNKNOWN'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Problem.UNKNOWN
     ]
@@ -185,13 +185,13 @@ KtParameter(350,359): 'x: String'
   null
 
 KtTypeReference(353,359): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(353,359): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -200,19 +200,19 @@ KtNameReferenceExpression(353,359): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtTypeReference(362,369): 'Problem'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Problem
     ]
 
 KtUserType(362,369): 'Problem'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Problem
     ]
@@ -221,7 +221,7 @@ KtNameReferenceExpression(362,369): 'Problem'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Problem
     ]
@@ -233,7 +233,7 @@ KtNameReferenceExpression(378,379): 'x'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       x: kotlin.String
     ]
@@ -254,7 +254,7 @@ KtNameReferenceExpression(403,413): 'CONNECTION'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Problem.CONNECTION
     ]
@@ -275,7 +275,7 @@ KtNameReferenceExpression(438,452): 'AUTHENTICATION'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Problem.AUTHENTICATION
     ]
@@ -296,7 +296,7 @@ KtNameReferenceExpression(471,479): 'DATABASE'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Problem.DATABASE
     ]
@@ -308,7 +308,7 @@ KtNameReferenceExpression(492,499): 'UNKNOWN'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Problem.UNKNOWN
     ]

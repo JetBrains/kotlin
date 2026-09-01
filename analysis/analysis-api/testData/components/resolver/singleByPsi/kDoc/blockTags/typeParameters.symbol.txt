@@ -1,6 +1,6 @@
 <caret_1>:
   KDocName(8,10): 'TT'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         TT: kotlin.String,
         TT
@@ -8,7 +8,7 @@
 
 <caret_2>:
   KDocName(23,25): 'TT'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         TT: kotlin.String,
         TT
@@ -16,7 +16,7 @@
 
 <caret_3>:
   KDocName(68,70): 'TT'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         TT,
         TT: kotlin.String
@@ -24,7 +24,7 @@
 
 <caret_4>:
   KDocName(73,75): 'RR'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         RR,
         val RR: kotlin.Int
@@ -32,7 +32,7 @@
 
 <caret_5>:
   KDocName(88,90): 'TT'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         TT,
         TT: kotlin.String
@@ -40,7 +40,7 @@
 
 <caret_6>:
   KDocName(93,95): 'RR'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         RR,
         val RR: kotlin.Int
@@ -52,7 +52,7 @@
 
 <caret_8>:
   KDocName(116,118): 'RR'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         RR,
         val RR: kotlin.Int

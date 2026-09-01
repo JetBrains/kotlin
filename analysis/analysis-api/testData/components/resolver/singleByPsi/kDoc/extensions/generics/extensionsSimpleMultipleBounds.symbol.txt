@@ -1,5 +1,5 @@
 KDocName(230,243): 'SomeClass.ext'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /ext(<extension receiver>: GenericFooOut<T>): kotlin.Unit
     ]

@@ -1,5 +1,5 @@
 KDocName(73,87): 'Foo.Nested.foo'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val foo: kotlin.Int
     ]

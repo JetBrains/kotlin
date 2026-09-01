@@ -20,13 +20,13 @@ KtProperty(39,67): 'val p = JavaClass<Int>.field'
   null
 
 KtDotQualifiedExpression(47,67): 'JavaClass<Int>.field'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var field: kotlin.Int!
     ]
 
 KtCallExpression(47,61): 'JavaClass<Int>'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(): JavaClass<T>
     ]
@@ -36,7 +36,7 @@ KtNameReferenceExpression(47,56): 'JavaClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JavaClass
     ]
@@ -48,13 +48,13 @@ KtTypeProjection(57,60): 'Int'
   null
 
 KtTypeReference(57,60): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(57,60): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -63,7 +63,7 @@ KtNameReferenceExpression(57,60): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -72,7 +72,7 @@ KtNameReferenceExpression(62,67): 'field'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var field: kotlin.Int!
     ]
@@ -81,13 +81,13 @@ KtProperty(71,103): 'val m = JavaClass<Long>.method()'
   null
 
 KtDotQualifiedExpression(79,103): 'JavaClass<Long>.method()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JavaClass.method(): kotlin.String!
     ]
 
 KtCallExpression(79,94): 'JavaClass<Long>'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(): JavaClass<T>
     ]
@@ -97,7 +97,7 @@ KtNameReferenceExpression(79,88): 'JavaClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JavaClass
     ]
@@ -109,13 +109,13 @@ KtTypeProjection(89,93): 'Long'
   null
 
 KtTypeReference(89,93): 'Long'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Long
     ]
 
 KtUserType(89,93): 'Long'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Long
     ]
@@ -124,13 +124,13 @@ KtNameReferenceExpression(89,93): 'Long'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Long
     ]
 
 KtCallExpression(95,103): 'method()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JavaClass.method(): kotlin.String!
     ]
@@ -139,7 +139,7 @@ KtNameReferenceExpression(95,101): 'method'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JavaClass.method(): kotlin.String!
     ]

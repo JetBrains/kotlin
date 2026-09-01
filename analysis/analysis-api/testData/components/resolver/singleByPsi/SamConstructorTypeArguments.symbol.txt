@@ -2,7 +2,7 @@ KtNameReferenceExpression(18,28): 'Comparator'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       java/util/Comparator(function: (T!, T!) -> kotlin.Int): java.util.Comparator<T>
     ]

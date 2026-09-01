@@ -8,7 +8,7 @@ KtNameReferenceExpression(8,9): 'r'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       r
     ]
@@ -38,13 +38,13 @@ KtParameter(39,49): 'val x: Int'
   null
 
 KtTypeReference(46,49): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(46,49): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -53,7 +53,7 @@ KtNameReferenceExpression(46,49): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -68,13 +68,13 @@ KtParameterList(72,74): '()'
   null
 
 KtConstructorDelegationCall(76,84): 'this(10)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.B
     ]
 
 KtConstructorDelegationReferenceExpression(76,80): 'this'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.B
     ]

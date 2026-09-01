@@ -20,7 +20,7 @@ KtNameReferenceExpression(85,91): 'kotlin'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin
     ]
@@ -29,7 +29,7 @@ KtNameReferenceExpression(92,99): 'reflect'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin.reflect
     ]
@@ -38,7 +38,7 @@ KtNameReferenceExpression(100,109): 'KProperty'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/reflect/KProperty
     ]
@@ -74,13 +74,13 @@ KtProperty(193,223): 'val enumProp: MyEnum = Option1'
   null
 
 KtTypeReference(207,213): 'MyEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
 
 KtUserType(207,213): 'MyEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
@@ -89,7 +89,7 @@ KtNameReferenceExpression(207,213): 'MyEnum'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
@@ -98,7 +98,7 @@ KtNameReferenceExpression(216,223): 'Option1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum.Option1
     ]
@@ -107,13 +107,13 @@ KtProperty(232,259): 'val stringProp: String = ""'
   null
 
 KtTypeReference(248,254): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(248,254): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -122,7 +122,7 @@ KtNameReferenceExpression(248,254): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -140,7 +140,7 @@ KtNameReferenceExpression(286,293): 'Option1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum.Option1
     ]
@@ -161,13 +161,13 @@ KtParameter(318,322): 'e: T'
   null
 
 KtTypeReference(321,322): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
 
 KtUserType(321,322): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -176,7 +176,7 @@ KtNameReferenceExpression(321,322): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -188,7 +188,7 @@ KtProperty(327,363): 'val EnumOptionAlias = MyEnum.Option1'
   null
 
 KtDotQualifiedExpression(349,363): 'MyEnum.Option1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum.Option1
     ]
@@ -197,7 +197,7 @@ KtNameReferenceExpression(349,355): 'MyEnum'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
@@ -206,7 +206,7 @@ KtNameReferenceExpression(356,363): 'Option1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum.Option1
     ]
@@ -224,13 +224,13 @@ KtProperty(398,425): 'var i10: MyEnum = Option1!!'
   null
 
 KtTypeReference(407,413): 'MyEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
 
 KtUserType(407,413): 'MyEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
@@ -239,7 +239,7 @@ KtNameReferenceExpression(407,413): 'MyEnum'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
@@ -251,7 +251,7 @@ KtNameReferenceExpression(416,423): 'Option1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum.Option1
     ]
@@ -266,13 +266,13 @@ KtProperty(430,458): 'var i20: MyEnum = enumProp!!'
   null
 
 KtTypeReference(439,445): 'MyEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
 
 KtUserType(439,445): 'MyEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
@@ -281,7 +281,7 @@ KtNameReferenceExpression(439,445): 'MyEnum'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
@@ -293,7 +293,7 @@ KtNameReferenceExpression(448,456): 'enumProp'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val enumProp: MyEnum
     ]
@@ -308,13 +308,13 @@ KtProperty(463,493): 'var i30: MyEnum = stringProp!!'
   null
 
 KtTypeReference(472,478): 'MyEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
 
 KtUserType(472,478): 'MyEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
@@ -323,7 +323,7 @@ KtNameReferenceExpression(472,478): 'MyEnum'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
@@ -335,7 +335,7 @@ KtNameReferenceExpression(481,491): 'stringProp'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val stringProp: kotlin.String
     ]
@@ -347,7 +347,7 @@ KtOperationReferenceExpression(491,493): '!!'
   null
 
 KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receive(e: T): kotlin.Unit
     ]
@@ -356,7 +356,7 @@ KtNameReferenceExpression(499,506): 'receive'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receive(e: T): kotlin.Unit
     ]
@@ -368,13 +368,13 @@ KtTypeProjection(507,513): 'MyEnum'
   null
 
 KtTypeReference(507,513): 'MyEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
 
 KtUserType(507,513): 'MyEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
@@ -383,7 +383,7 @@ KtNameReferenceExpression(507,513): 'MyEnum'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
@@ -401,7 +401,7 @@ KtNameReferenceExpression(515,522): 'Option1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum.Option1
     ]
@@ -413,7 +413,7 @@ KtOperationReferenceExpression(522,524): '!!'
   null
 
 KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receive(e: T): kotlin.Unit
     ]
@@ -422,7 +422,7 @@ KtNameReferenceExpression(530,537): 'receive'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receive(e: T): kotlin.Unit
     ]
@@ -434,13 +434,13 @@ KtTypeProjection(538,544): 'MyEnum'
   null
 
 KtTypeReference(538,544): 'MyEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
 
 KtUserType(538,544): 'MyEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
@@ -449,7 +449,7 @@ KtNameReferenceExpression(538,544): 'MyEnum'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
@@ -467,7 +467,7 @@ KtNameReferenceExpression(546,554): 'enumProp'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val enumProp: MyEnum
     ]
@@ -479,7 +479,7 @@ KtOperationReferenceExpression(554,556): '!!'
   null
 
 KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /receive(e: T): kotlin.Unit
     ]
@@ -489,7 +489,7 @@ KtNameReferenceExpression(562,569): 'receive'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /receive(e: T): kotlin.Unit
     ]
@@ -502,13 +502,13 @@ KtTypeProjection(570,576): 'MyEnum'
   null
 
 KtTypeReference(570,576): 'MyEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
 
 KtUserType(570,576): 'MyEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
@@ -517,7 +517,7 @@ KtNameReferenceExpression(570,576): 'MyEnum'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
@@ -535,7 +535,7 @@ KtNameReferenceExpression(578,588): 'stringProp'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val stringProp: kotlin.String
     ]

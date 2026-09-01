@@ -8,7 +8,7 @@ KtNameReferenceExpression(59,63): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test
     ]
@@ -50,7 +50,7 @@ KtBlockExpression(133,148): '{'
   null
 
 KtDotQualifiedExpression(139,146): 'C.foo()'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       test/C.foo(): kotlin.Unit
     ]
@@ -60,13 +60,13 @@ KtNameReferenceExpression(139,140): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
 KtCallExpression(141,146): 'foo()'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       test/C.foo(): kotlin.Unit
     ]
@@ -76,7 +76,7 @@ KtNameReferenceExpression(141,144): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       test/C.foo(): kotlin.Unit
     ]

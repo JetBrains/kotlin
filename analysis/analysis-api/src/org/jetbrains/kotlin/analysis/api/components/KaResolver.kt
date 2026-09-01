@@ -22,8 +22,8 @@ public interface KaResolver : KaSessionComponent {
     /**
      * Attempts to resolve a symbol for the given [KtResolvable].
      *
-     * Returns a [KaSymbolResolutionAttempt] that describes either success ([KaSymbolResolutionSuccess])
-     * or failure ([KaSymbolResolutionError]), or `null` if no result is available.
+     * Returns a [KaSymbolResolutionAttempt] that describes either success ([KaSimpleSymbolResolutionSuccess])
+     * or failure ([KaSimpleSymbolResolutionError]), or `null` if no result is available.
      *
      * In contract to [tryResolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
      *
@@ -39,8 +39,8 @@ public interface KaResolver : KaSessionComponent {
      *
      * See [References and Calls](https://kotlin.github.io/analysis-api/references-and-calls.html) for a top-level overview.
      *
-     * @see KaSymbolResolutionSuccess
-     * @see KaSymbolResolutionError
+     * @see KaSimpleSymbolResolutionSuccess
+     * @see KaSimpleSymbolResolutionError
      */
     @KaExperimentalApi
     public fun KtResolvable.tryResolveSymbols(): KaSymbolResolutionAttempt?
@@ -65,7 +65,7 @@ public interface KaResolver : KaSessionComponent {
      *
      * @see tryResolveSymbols
      * @see resolveSymbol
-     * @see KaSymbolResolutionSuccess
+     * @see KaSimpleSymbolResolutionSuccess
      */
     @KaExperimentalApi
     public fun KtResolvable.resolveSymbols(): Collection<KaSymbol>
@@ -89,7 +89,7 @@ public interface KaResolver : KaSessionComponent {
      *
      * @see tryResolveSymbols
      * @see resolveSymbols
-     * @see KaSymbolResolutionSuccess
+     * @see KaSimpleSymbolResolutionSuccess
      */
     @KaExperimentalApi
     public fun KtResolvable.resolveSymbol(): KaSymbol?
@@ -1349,8 +1349,8 @@ public interface KaResolver : KaSessionComponent {
 /**
  * Attempts to resolve a symbol for the given [KtResolvable].
  *
- * Returns a [KaSymbolResolutionAttempt] that describes either success ([KaSymbolResolutionSuccess])
- * or failure ([KaSymbolResolutionError]), or `null` if no result is available.
+ * Returns a [KaSymbolResolutionAttempt] that describes either success ([KaSimpleSymbolResolutionSuccess])
+ * or failure ([KaSimpleSymbolResolutionError]), or `null` if no result is available.
  *
  * In contract to [tryResolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
  *
@@ -1366,8 +1366,8 @@ public interface KaResolver : KaSessionComponent {
  *
  * See [References and Calls](https://kotlin.github.io/analysis-api/references-and-calls.html) for a top-level overview.
  *
- * @see KaSymbolResolutionSuccess
- * @see KaSymbolResolutionError
+ * @see KaSimpleSymbolResolutionSuccess
+ * @see KaSimpleSymbolResolutionError
  */
 @KaExperimentalApi
 @Deprecated(
@@ -1403,7 +1403,7 @@ public fun KtResolvable.tryResolveSymbols(): KaSymbolResolutionAttempt? {
  *
  * @see tryResolveSymbols
  * @see resolveSymbol
- * @see KaSymbolResolutionSuccess
+ * @see KaSimpleSymbolResolutionSuccess
  */
 @KaExperimentalApi
 @Deprecated(
@@ -1441,7 +1441,7 @@ public fun KtResolvable.resolveSymbols(): Collection<KaSymbol> {
  *
  * @see tryResolveSymbols
  * @see resolveSymbols
- * @see KaSymbolResolutionSuccess
+ * @see KaSimpleSymbolResolutionSuccess
  */
 @KaExperimentalApi
 @Deprecated(

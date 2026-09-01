@@ -1,20 +1,20 @@
 <caret_1>:
   KDocName(53,55): 'xx'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         xx: kotlin.String
       ]
 
 <caret_2>:
   KDocName(109,111): 'xx'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         xx: kotlin.String
       ]
 
 <caret_3>:
   KDocName(154,156): 'xx'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         xx: kotlin.String,
         xx
@@ -22,7 +22,7 @@
 
 <caret_4>:
   KDocName(206,208): 'xx'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         xx: kotlin.String,
         xx
@@ -30,7 +30,7 @@
 
 <caret_5>:
   KDocName(263,265): 'xx'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         xx: kotlin.String
       ]

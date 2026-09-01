@@ -2,7 +2,7 @@ KtNameReferenceExpression(183,194): 'suspendHere'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /Controller.suspendHere(<dispatch receiver>: Controller, x: ERROR CLASS: Symbol not found for Continuation<kotlin.Unit>): kotlin.Unit
     ]

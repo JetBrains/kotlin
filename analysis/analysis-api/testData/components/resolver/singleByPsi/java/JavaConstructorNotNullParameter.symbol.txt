@@ -2,7 +2,7 @@ KtNameReferenceExpression(51,60): 'JavaClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JavaClass
     ]

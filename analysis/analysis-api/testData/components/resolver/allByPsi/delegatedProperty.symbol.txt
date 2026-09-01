@@ -8,7 +8,7 @@ KtNameReferenceExpression(24,30): 'myPack'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       myPack
     ]
@@ -29,7 +29,7 @@ KtNameReferenceExpression(39,45): 'kotlin'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin
     ]
@@ -38,7 +38,7 @@ KtNameReferenceExpression(46,53): 'reflect'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin.reflect
     ]
@@ -47,7 +47,7 @@ KtNameReferenceExpression(54,63): 'KProperty'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/reflect/KProperty
     ]
@@ -56,14 +56,14 @@ KtProperty(65,87): 'var prop by Delegate()'
   null
 
 KtPropertyDelegate(74,87): 'by Delegate()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       myPack/Delegate.getValue(<dispatch receiver>: myPack.Delegate, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.String,
       myPack/Delegate.setValue(<dispatch receiver>: myPack.Delegate, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.String): kotlin.Unit
     ]
 
 KtCallExpression(77,87): 'Delegate()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): myPack.Delegate
     ]
@@ -72,7 +72,7 @@ KtNameReferenceExpression(77,85): 'Delegate'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       myPack/Delegate
     ]
@@ -99,19 +99,19 @@ KtParameter(132,145): 'thisRef: Any?'
   null
 
 KtTypeReference(141,145): 'Any?'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
     ]
 
 KtNullableType(141,145): 'Any?'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
     ]
 
 KtUserType(141,144): 'Any'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
     ]
@@ -120,7 +120,7 @@ KtNameReferenceExpression(141,144): 'Any'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
     ]
@@ -129,13 +129,13 @@ KtParameter(147,169): 'property: KProperty<*>'
   null
 
 KtTypeReference(157,169): 'KProperty<*>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/reflect/KProperty
     ]
 
 KtUserType(157,169): 'KProperty<*>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/reflect/KProperty
     ]
@@ -144,7 +144,7 @@ KtNameReferenceExpression(157,166): 'KProperty'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/reflect/KProperty
     ]
@@ -156,13 +156,13 @@ KtTypeProjection(167,168): '*'
   null
 
 KtTypeReference(172,178): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(172,178): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -171,7 +171,7 @@ KtNameReferenceExpression(172,178): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -180,7 +180,7 @@ KtBlockExpression(179,204): '{'
   null
 
 KtReturnExpression(189,198): 'return ""'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       myPack/Delegate.getValue(<dispatch receiver>: myPack.Delegate, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.String
     ]
@@ -201,19 +201,19 @@ KtParameter(232,245): 'thisRef: Any?'
   null
 
 KtTypeReference(241,245): 'Any?'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
     ]
 
 KtNullableType(241,245): 'Any?'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
     ]
 
 KtUserType(241,244): 'Any'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
     ]
@@ -222,7 +222,7 @@ KtNameReferenceExpression(241,244): 'Any'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
     ]
@@ -231,13 +231,13 @@ KtParameter(247,269): 'property: KProperty<*>'
   null
 
 KtTypeReference(257,269): 'KProperty<*>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/reflect/KProperty
     ]
 
 KtUserType(257,269): 'KProperty<*>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/reflect/KProperty
     ]
@@ -246,7 +246,7 @@ KtNameReferenceExpression(257,266): 'KProperty'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/reflect/KProperty
     ]
@@ -261,13 +261,13 @@ KtParameter(271,284): 'value: String'
   null
 
 KtTypeReference(278,284): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(278,284): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -276,7 +276,7 @@ KtNameReferenceExpression(278,284): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]

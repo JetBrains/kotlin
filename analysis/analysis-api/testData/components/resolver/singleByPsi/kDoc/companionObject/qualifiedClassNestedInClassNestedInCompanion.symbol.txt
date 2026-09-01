@@ -1,5 +1,5 @@
 KDocName(150,157): 'X.YY.ZZ'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /C.X.Companion.YY.ZZ
     ]

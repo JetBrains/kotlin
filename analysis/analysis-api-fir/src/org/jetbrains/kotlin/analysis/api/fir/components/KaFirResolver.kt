@@ -275,7 +275,7 @@ internal class KaFirResolver(
     private fun resolveSymbol(psi: KtElement): KaSymbolResolutionAttempt? = when (psi) {
         is KDocName -> resolveKDocName(psi)
         is KtNameReferenceExpression if psi.parent is KtValueArgumentName -> {
-            getSymbolsByNameArgumentExpression(psi, analysisSession, firSymbolBuilder).ifNotEmpty(::KaBaseSymbolResolutionSuccess)
+            getSymbolsByNameArgumentExpression(psi, analysisSession, firSymbolBuilder).ifNotEmpty(::KaBaseSimpleSymbolResolutionSuccess)
         }
 
         else -> psi.getOrBuildFirWithAdjustments()?.toKaSymbolResolutionAttempt(psi)
@@ -295,7 +295,7 @@ internal class KaFirResolver(
         )
 
         if (symbols.isEmpty()) return null
-        return KaBaseSymbolResolutionSuccess(backingSymbols = symbols.toList())
+        return KaBaseSimpleSymbolResolutionSuccess(backingSymbols = symbols.toList())
     }
 
     private fun FirElement.toKaSymbolResolutionAttempt(psi: KtElement): KaSymbolResolutionAttempt? = when (this) {
@@ -429,7 +429,7 @@ internal class KaFirResolver(
             else -> symbol
         } ?: return null
 
-        return KaBaseSymbolResolutionSuccess(backingSymbol = symbol)
+        return KaBaseSimpleSymbolResolutionSuccess(backingSymbol = symbol)
     }
 
     /**
@@ -452,21 +452,21 @@ internal class KaFirResolver(
             expression = psi,
             session = analysisSession.firSession,
             symbolBuilder = firSymbolBuilder,
-        ).ifNotEmpty(::KaBaseSymbolResolutionSuccess)
+        ).ifNotEmpty(::KaBaseSimpleSymbolResolutionSuccess)
     }
 
     @Suppress("UnusedReceiverParameter")
     private fun FirPackageDirective.toKaSymbolResolutionAttempt(psi: KtSimpleNameExpression): KaSymbolResolutionAttempt? {
         val packageFqName = getQualifierSelected(psi, forQualifiedType = false)
-        return firSymbolBuilder.createPackageSymbolIfOneExists(packageFqName)?.let(::KaBaseSymbolResolutionSuccess)
+        return firSymbolBuilder.createPackageSymbolIfOneExists(packageFqName)?.let(::KaBaseSimpleSymbolResolutionSuccess)
     }
 
     private fun FirTypeParameter.toKaSymbolResolutionAttempt(): KaSymbolResolutionAttempt {
-        return KaBaseSymbolResolutionSuccess(firSymbolBuilder.buildSymbol(symbol))
+        return KaBaseSimpleSymbolResolutionSuccess(firSymbolBuilder.buildSymbol(symbol))
     }
 
     private fun FirResolvedReifiedParameterReference.toKaSymbolResolutionAttempt(): KaSymbolResolutionAttempt {
-        return KaBaseSymbolResolutionSuccess(firSymbolBuilder.buildSymbol(symbol))
+        return KaBaseSimpleSymbolResolutionSuccess(firSymbolBuilder.buildSymbol(symbol))
     }
 
     private fun FirResolvedImport.toKaSymbolResolutionAttempt(psi: KtSimpleNameExpression): KaSymbolResolutionAttempt? {
@@ -475,12 +475,12 @@ internal class KaFirResolver(
             builder = firSymbolBuilder,
             fir = this,
             session = analysisSession.firSession,
-        ).ifNotEmpty(::KaBaseSymbolResolutionSuccess)
+        ).ifNotEmpty(::KaBaseSimpleSymbolResolutionSuccess)
     }
 
     private fun FirResolvedTypeRef.toKaSymbolResolutionAttemptForFunctionType(): KaSymbolResolutionAttempt? {
         val symbol = toTargetSymbol(analysisSession.firSession, firSymbolBuilder) ?: return null
-        return KaBaseSymbolResolutionSuccess(backingSymbol = symbol)
+        return KaBaseSimpleSymbolResolutionSuccess(backingSymbol = symbol)
     }
 
     private fun FirResolvedTypeRef.toKaSymbolResolutionAttempt(psi: KtSimpleNameExpression): KaSymbolResolutionAttempt? {
@@ -493,7 +493,7 @@ internal class KaFirResolver(
 
         val resolutionError = (this as? FirDiagnosticHolder)?.toKaSymbolResolutionError()?.let { resolutionError ->
             val name = psi.getReferencedNameAsName()
-            KaBaseSymbolResolutionError(
+            KaBaseSimpleSymbolResolutionError(
                 backingDiagnostic = resolutionError.diagnostic,
                 // TODO(KT-85949): replace filtering with a proper error/symbols once the issue is fixed.
                 // For now it is used to get rid of unrelated classifiers from the result.
@@ -512,17 +512,17 @@ internal class KaFirResolver(
             return resolutionError
         }
 
-        return resolvedTypeSymbols.ifNotEmpty(::KaBaseSymbolResolutionSuccess) ?: resolutionError
+        return resolvedTypeSymbols.ifNotEmpty(::KaBaseSimpleSymbolResolutionSuccess) ?: resolutionError
     }
 
-    private fun FirDiagnosticHolder.toKaSymbolResolutionError(): KaSymbolResolutionError {
+    private fun FirDiagnosticHolder.toKaSymbolResolutionError(): KaSimpleSymbolResolutionError {
         val candidates = if (this is FirNamedReference) {
             getCandidateSymbols()
         } else {
             diagnostic.getCandidateSymbols()
         }
 
-        return KaBaseSymbolResolutionError(
+        return KaBaseSimpleSymbolResolutionError(
             backingDiagnostic = createKaDiagnostic(),
             backingCandidateSymbols = candidates.map(firSymbolBuilder::buildSymbol),
         )
@@ -532,12 +532,12 @@ internal class KaFirResolver(
         return when (val firFunctionSymbol = target.labeledElement.symbol) {
             is FirErrorFunctionSymbol -> {
                 val diagnostic = firFunctionSymbol.fir.createKaDiagnostic()
-                KaBaseSymbolResolutionError(backingCandidateSymbols = emptyList(), backingDiagnostic = diagnostic)
+                KaBaseSimpleSymbolResolutionError(backingCandidateSymbols = emptyList(), backingDiagnostic = diagnostic)
             }
 
             else -> {
                 val kaSymbol = firFunctionSymbol.buildSymbol(firSymbolBuilder)
-                KaBaseSymbolResolutionSuccess(kaSymbol)
+                KaBaseSimpleSymbolResolutionSuccess(kaSymbol)
             }
         }
     }

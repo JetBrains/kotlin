@@ -2,7 +2,7 @@ KtNameReferenceExpression(140,145): 'check'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       library2/MyInterface.check(<dispatch receiver>: library2.MyInterface, string: {library1.MyString=} kotlin.String): kotlin.Unit
     ]

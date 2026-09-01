@@ -1,5 +1,5 @@
 KtWhenConditionInRange(177,190): '!in MyClass()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
     ]

@@ -1,6 +1,6 @@
 <caret_1>:
   KDocName(652,662): 'funWarning'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /funWarning(): kotlin.Unit
       ]
@@ -11,14 +11,14 @@
 
 <caret_3>:
   KDocName(683,691): 'funError'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /funError(): kotlin.Unit
       ]
 
 <caret_4>:
   KDocName(697,709): 'ClassWarning'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /ClassWarning
       ]
@@ -29,14 +29,14 @@
 
 <caret_6>:
   KDocName(732,742): 'ClassError'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /ClassError
       ]
 
 <caret_7>:
   KDocName(748,759): 'propWarning'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         val propWarning: kotlin.Int
       ]
@@ -47,7 +47,7 @@
 
 <caret_9>:
   KDocName(781,790): 'propError'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         val propError: kotlin.Int
       ]

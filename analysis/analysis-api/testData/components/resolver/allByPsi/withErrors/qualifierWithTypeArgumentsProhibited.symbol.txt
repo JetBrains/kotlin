@@ -17,13 +17,13 @@ KtBlockExpression(38,199): '{'
   null
 
 KtDotQualifiedExpression(43,69): 'JavaClass<Int>.staticField'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var staticField: kotlin.Int!
     ]
 
 KtCallExpression(43,57): 'JavaClass<Int>'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(): JavaClass<T>
     ]
@@ -33,7 +33,7 @@ KtNameReferenceExpression(43,52): 'JavaClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JavaClass
     ]
@@ -45,13 +45,13 @@ KtTypeProjection(53,56): 'Int'
   null
 
 KtTypeReference(53,56): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(53,56): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -60,7 +60,7 @@ KtNameReferenceExpression(53,56): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -69,18 +69,18 @@ KtNameReferenceExpression(58,69): 'staticField'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var staticField: kotlin.Int!
     ]
 
 KtDotQualifiedExpression(73,99): 'JavaClass<Long>.unresolved'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unresolved'.>
 
 KtCallExpression(73,88): 'JavaClass<Long>'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(): JavaClass<T>
     ]
@@ -90,7 +90,7 @@ KtNameReferenceExpression(73,82): 'JavaClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JavaClass
     ]
@@ -102,13 +102,13 @@ KtTypeProjection(83,87): 'Long'
   null
 
 KtTypeReference(83,87): 'Long'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Long
     ]
 
 KtUserType(83,87): 'Long'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Long
     ]
@@ -117,7 +117,7 @@ KtNameReferenceExpression(83,87): 'Long'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Long
     ]
@@ -126,12 +126,12 @@ KtNameReferenceExpression(89,99): 'unresolved'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unresolved'.>
 
 KtCallableReferenceExpression(103,133): 'JavaClass<String>::staticField'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var staticField: kotlin.Int!
     ]
@@ -143,7 +143,7 @@ KtNameReferenceExpression(103,112): 'JavaClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JavaClass
     ]
@@ -155,13 +155,13 @@ KtTypeProjection(113,119): 'String'
   null
 
 KtTypeReference(113,119): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(113,119): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -170,7 +170,7 @@ KtNameReferenceExpression(113,119): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -179,13 +179,13 @@ KtNameReferenceExpression(122,133): 'staticField'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var staticField: kotlin.Int!
     ]
 
 KtCallableReferenceExpression(137,163): 'JavaClass<Boolean>::method'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JavaClass.method(<dispatch receiver>: JavaClass<T>): kotlin.Unit
     ]
@@ -197,7 +197,7 @@ KtNameReferenceExpression(137,146): 'JavaClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JavaClass
     ]
@@ -209,13 +209,13 @@ KtTypeProjection(147,154): 'Boolean'
   null
 
 KtTypeReference(147,154): 'Boolean'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
 
 KtUserType(147,154): 'Boolean'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
@@ -224,7 +224,7 @@ KtNameReferenceExpression(147,154): 'Boolean'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
@@ -233,13 +233,13 @@ KtNameReferenceExpression(157,163): 'method'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JavaClass.method(<dispatch receiver>: JavaClass<T>): kotlin.Unit
     ]
 
 KtCallableReferenceExpression(167,197): 'JavaClass<Short>::staticMethod'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JavaClass.staticMethod(): kotlin.String!
     ]
@@ -251,7 +251,7 @@ KtNameReferenceExpression(167,176): 'JavaClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JavaClass
     ]
@@ -263,13 +263,13 @@ KtTypeProjection(177,182): 'Short'
   null
 
 KtTypeReference(177,182): 'Short'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Short
     ]
 
 KtUserType(177,182): 'Short'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Short
     ]
@@ -278,7 +278,7 @@ KtNameReferenceExpression(177,182): 'Short'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Short
     ]
@@ -287,7 +287,7 @@ KtNameReferenceExpression(185,197): 'staticMethod'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JavaClass.staticMethod(): kotlin.String!
     ]

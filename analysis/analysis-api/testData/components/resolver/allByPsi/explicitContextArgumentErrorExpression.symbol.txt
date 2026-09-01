@@ -20,13 +20,13 @@ KtParameter(8,17): 's: String'
   null
 
 KtTypeReference(11,17): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(11,17): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -35,7 +35,7 @@ KtNameReferenceExpression(11,17): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -56,7 +56,7 @@ KtBlockExpression(43,60): '{'
   null
 
 KtCallExpression(49,58): 'foo(s = )'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /foo(): kotlin.Unit
     ]
@@ -65,7 +65,7 @@ KtNameReferenceExpression(49,52): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /foo(): kotlin.Unit
     ]
@@ -83,7 +83,7 @@ KtNameReferenceExpression(53,54): 's'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       s: kotlin.String
     ]

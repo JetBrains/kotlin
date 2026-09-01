@@ -2,7 +2,7 @@ KtNameReferenceExpression(102,107): 'param'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       param: Context
     ]

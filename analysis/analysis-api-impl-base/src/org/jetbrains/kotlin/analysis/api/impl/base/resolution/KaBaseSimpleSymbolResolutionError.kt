@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionError
+import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleSymbolResolutionError
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 
 @KaImplementationDetail
-class KaBaseSymbolResolutionError(
+class KaBaseSimpleSymbolResolutionError(
     private val backingDiagnostic: KaDiagnostic,
     private val backingCandidateSymbols: List<KaSymbol>,
-) : KaSymbolResolutionError {
+) : KaSimpleSymbolResolutionError {
     override val token: KaLifetimeToken get() = backingDiagnostic.token
     override val diagnostic: KaDiagnostic get() = withValidityAssertion { backingDiagnostic }
     override val candidateSymbols: List<KaSymbol> get() = withValidityAssertion { backingCandidateSymbols }

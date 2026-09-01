@@ -2,7 +2,7 @@ KtNameReferenceExpression(17,24): 'HashSet'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       java/util/HashSet
     ]

@@ -1,6 +1,6 @@
 <caret_1>:
   KDocName(88,91): 'Foo'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         test/Outer.Foo,
         test/Foo
@@ -8,28 +8,28 @@
 
 <caret_2>:
   KDocName(112,121): 'Outer.Foo'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         test/Outer.Foo
       ]
 
 <caret_3>:
   KDocName(135,149): 'test.Outer.Foo'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         test/Outer.Foo
       ]
 
 <caret_4>:
   KDocName(170,178): 'test.Foo'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         test/Foo
       ]
 
 <caret_nested_1>:
   KDocName(275,278): 'Foo'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         test/Outer.Nested.Foo,
         test/Outer.Foo,
@@ -38,28 +38,28 @@
 
 <caret_nested_2>:
   KDocName(307,317): 'Nested.Foo'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         test/Outer.Nested.Foo
       ]
 
 <caret_nested_3>:
   KDocName(335,351): 'Outer.Nested.Foo'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         test/Outer.Nested.Foo
       ]
 
 <caret_nested_4>:
   KDocName(369,390): 'test.Outer.Nested.Foo'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         test/Outer.Nested.Foo
       ]
 
 <caret_nested_5>:
   KDocName(419,427): 'test.Foo'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         test/Foo
       ]

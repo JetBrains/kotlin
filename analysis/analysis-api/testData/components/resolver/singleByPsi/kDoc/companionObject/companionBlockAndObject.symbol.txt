@@ -1,20 +1,20 @@
 <caret_1>:
   KDocName(498,525): 'Container.Vector.ZeroObject'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         val ZeroObject: kotlin.Int
       ]
 
 <caret_2>:
   KDocName(531,568): 'Container.Vector.Companion.ZeroObject'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         val ZeroObject: kotlin.Int
       ]
 
 <caret_3>:
   KDocName(574,600): 'Container.Vector.ZeroBlock'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         val ZeroBlock: kotlin.Int
       ]
@@ -25,21 +25,21 @@
 
 <caret_5>:
   KDocName(648,685): 'Container.Vector.UnitXObjectExtension'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         val UnitXObjectExtension: kotlin.Int
       ]
 
 <caret_6>:
   KDocName(691,722): 'Container.Vector.UnitXExtension'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         val UnitXExtension: kotlin.Int
       ]
 
 <caret_7>:
   KDocName(728,775): 'Container.Vector.Companion.UnitXObjectExtension'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         val UnitXObjectExtension: kotlin.Int
       ]
@@ -86,7 +86,7 @@
 
 <caret_18>:
   KDocName(1162,1193): 'VectorImpl.Companion.ZeroObject'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         val ZeroObject: kotlin.Int
       ]
@@ -109,7 +109,7 @@
 
 <caret_23>:
   KDocName(1329,1370): 'VectorImpl.Companion.UnitXObjectExtension'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         val UnitXObjectExtension: kotlin.Int
       ]

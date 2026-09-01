@@ -1,5 +1,5 @@
 KtSuperTypeCallEntry(93,106): 'Foo<String>()'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(x: T): Foo<T>
     ]
