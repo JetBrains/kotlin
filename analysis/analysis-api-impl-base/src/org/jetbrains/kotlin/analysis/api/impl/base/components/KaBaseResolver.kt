@@ -344,7 +344,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
     )
 
     private fun KaMultiCallResolutionAttempt.toSymbolResolutionAttempt(): KaSymbolResolutionAttempt =
-        mergeSymbolAttempts(attempts.map { it.toSimpleSymbolResolutionAttempt() })
+        mergeSymbolAttempts(simpleAttempts.map { it.toSimpleSymbolResolutionAttempt() })
 
     private fun KaSimpleCallResolutionAttempt.toSimpleSymbolResolutionAttempt(): KaSimpleSymbolResolutionAttempt = when (this) {
         is KaSimpleCallResolutionSuccess -> KaBaseSimpleSymbolResolutionSuccess(backingSymbol = call.symbol)

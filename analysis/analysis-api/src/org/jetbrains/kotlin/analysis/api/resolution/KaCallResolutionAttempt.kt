@@ -153,6 +153,17 @@ public sealed interface KaMultiCallResolutionAttempt : KaCallResolutionAttempt {
     /**
      * The list of individual resolution attempts for each sub-call.
      */
+    public val simpleAttempts: List<KaSimpleCallResolutionAttempt>
+
+    /**
+     * The former name of [simpleAttempts].
+     *
+     * @see simpleAttempts
+     */
+    @Deprecated(
+        message = "Use 'simpleAttempts' instead",
+        replaceWith = ReplaceWith(expression = "simpleAttempts"),
+    )
     public val attempts: List<KaSimpleCallResolutionAttempt>
 }
 
@@ -320,7 +331,7 @@ private interface KaMultiUnknownCallResolutionAttempt : KaMultiCallResolutionAtt
  * - [KaSimpleCallResolutionSuccess]: the resolved [call][KaSimpleCallResolutionSuccess.call] as a single-element list.
  * - [KaSimpleCallResolutionError]: the [candidate calls][KaSimpleCallResolutionError.candidateCalls].
  * - [KaMultiCallResolutionAttempt]: the assembled [call][KaMultiCallResolutionAttempt.call] if all sub-calls
- *   succeeded, or the combined calls from individual [attempts][KaMultiCallResolutionAttempt.attempts] otherwise.
+ *   succeeded, or the combined calls from individual [simpleAttempts][KaMultiCallResolutionAttempt.simpleAttempts] otherwise.
  */
 @KaExperimentalApi
 public val KaCallResolutionAttempt.calls: List<KaSimpleOrMultiCall>
@@ -395,7 +406,7 @@ public val KaCallResolutionAttempt.successfulCall: KaSimpleOrMultiCall?
  * - [KaSimpleCallResolutionError]: invokes [onFailure] with the error wrapped in a single-element list.
  * - [KaMultiCallResolutionAttempt]: if all sub-calls succeeded, invokes [onSuccess] with the assembled
  *   [call][KaMultiCallResolutionAttempt.call]; otherwise invokes [onFailure] with the individual
- *   [attempts][KaMultiCallResolutionAttempt.attempts].
+ *   [simpleAttempts][KaMultiCallResolutionAttempt.simpleAttempts].
  */
 @KaExperimentalApi
 @OptIn(ExperimentalContracts::class)
@@ -418,7 +429,7 @@ public inline fun <T> KaCallResolutionAttempt.fold(
 
     val attempts = when (this) {
         is KaSimpleCallResolutionError -> listOf(this)
-        is KaMultiCallResolutionAttempt -> attempts
+        is KaMultiCallResolutionAttempt -> simpleAttempts
         else -> error("Unexpected ${KaCallResolutionAttempt::class.simpleName}: $this")
     }
 

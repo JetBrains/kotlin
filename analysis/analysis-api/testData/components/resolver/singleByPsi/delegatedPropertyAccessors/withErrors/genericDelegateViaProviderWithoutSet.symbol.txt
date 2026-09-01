@@ -1,6 +1,6 @@
 KtPropertyDelegate(429,465): 'by ProvideDelegateHolder("provided")'
   KaCompoundSymbolResolutionError:
-    attempts = [
+    simpleAttempts = [
       KaSimpleSymbolResolutionSuccess:
         symbols = [
           myPack/GenericDelegate.getValue(<dispatch receiver>: myPack.GenericDelegate<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T,

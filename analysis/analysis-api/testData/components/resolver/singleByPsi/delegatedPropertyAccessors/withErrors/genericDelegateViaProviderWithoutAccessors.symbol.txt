@@ -1,6 +1,6 @@
 KtPropertyDelegate(328,364): 'by ProvideDelegateHolder("provided")'
   KaCompoundSymbolResolutionError:
-    attempts = [
+    simpleAttempts = [
       KaSimpleSymbolResolutionError:
         candidateSymbols = []
         diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue' on receiver of type 'GenericDelegate<TypeVariable(T)>'.>,

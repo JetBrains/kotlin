@@ -42,6 +42,9 @@ class KaBaseCompoundArrayAccessCallResolutionAttempt(
     override val getterCallAttempt: KaSimpleCallResolutionAttempt get() = withValidityAssertion { backingGetterCallAttempt }
     override val operationCallAttempt: KaSimpleCallResolutionAttempt get() = withValidityAssertion { backingOperationCallAttempt }
     override val setterCallAttempt: KaSimpleCallResolutionAttempt get() = withValidityAssertion { backingSetterCallAttempt }
-    override val attempts: List<KaSimpleCallResolutionAttempt>
+    override val simpleAttempts: List<KaSimpleCallResolutionAttempt>
         get() = withValidityAssertion { listOf(backingGetterCallAttempt, backingOperationCallAttempt, backingSetterCallAttempt) }
+
+    @Deprecated("Use 'simpleAttempts' instead", ReplaceWith("simpleAttempts"))
+    override val attempts: List<KaSimpleCallResolutionAttempt> get() = simpleAttempts
 }

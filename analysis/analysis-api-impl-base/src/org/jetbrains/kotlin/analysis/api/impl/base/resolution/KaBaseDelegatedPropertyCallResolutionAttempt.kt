@@ -41,7 +41,7 @@ class KaBaseDelegatedPropertyCallResolutionAttempt(
     override val valueGetterCallAttempt: KaSimpleCallResolutionAttempt get() = withValidityAssertion { backingValueGetterCallAttempt }
     override val valueSetterCallAttempt: KaSimpleCallResolutionAttempt? get() = withValidityAssertion { backingValueSetterCallAttempt }
     override val provideDelegateCallAttempt: KaSimpleCallResolutionAttempt? get() = withValidityAssertion { backingProvideDelegateCallAttempt }
-    override val attempts: List<KaSimpleCallResolutionAttempt>
+    override val simpleAttempts: List<KaSimpleCallResolutionAttempt>
         get() = withValidityAssertion {
             listOfNotNull(
                 backingValueGetterCallAttempt,
@@ -49,4 +49,7 @@ class KaBaseDelegatedPropertyCallResolutionAttempt(
                 backingProvideDelegateCallAttempt,
             )
         }
+
+    @Deprecated("Use 'simpleAttempts' instead", ReplaceWith("simpleAttempts"))
+    override val attempts: List<KaSimpleCallResolutionAttempt> get() = simpleAttempts
 }

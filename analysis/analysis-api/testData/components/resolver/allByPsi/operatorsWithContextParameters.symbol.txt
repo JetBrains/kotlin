@@ -2113,7 +2113,7 @@ KtConstantExpression(1361,1362): '1'
 
 KtPostfixExpression(1367,1370): 'a++'
   KaCompoundSymbolResolutionError:
-    attempts = [
+    simpleAttempts = [
       KaSimpleSymbolResolutionSuccess:
         symbols = [
           var a: A
@@ -2328,7 +2328,7 @@ KtConstantExpression(1430,1431): '1'
 
 KtPostfixExpression(1436,1439): 'b++'
   KaCompoundSymbolResolutionError:
-    attempts = [
+    simpleAttempts = [
       KaSimpleSymbolResolutionSuccess:
         symbols = [
           var b: SimpleOperators
