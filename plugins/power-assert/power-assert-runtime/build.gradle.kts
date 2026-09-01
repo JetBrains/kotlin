@@ -127,19 +127,3 @@ tasks.withType<Test>().configureEach {
 }
 
 configureDefaultPublishing()
-
-// TODO(KT-85034): mavenPublication doesn't work for metadata
-publishing {
-    publications.configureEach {
-        if (this is MavenPublication && name == "kotlinMultiplatform") {
-            // Maven Central requires a Javadoc classified artifact for every non-'pom` publication.
-            artifact(emptyJavadocJar)
-            project.configureSbomForTarget(kotlin.targets["metadata"], this)
-            configureKotlinPomAttributes(
-                project = project,
-                explicitDescription = provider { project.description },
-                explicitName = provider { project.description },
-            )
-        }
-    }
-}
