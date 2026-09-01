@@ -78,6 +78,8 @@ interface SourceLocationConsumer {
      */
     fun pushDeclarationInfo(info: JsLocationWithSource?)
 
+    fun pushScopeInfo(info: JsLocationWithSource?)
+
     /**
      * Pops current source location info from the source stack.
      *
@@ -91,4 +93,6 @@ interface SourceLocationConsumer {
      * See the counterpart [pushDeclarationInfo] KDoc for details.
      */
     fun popDeclarationInfo()
+
+    fun popScopeInfo()
 }

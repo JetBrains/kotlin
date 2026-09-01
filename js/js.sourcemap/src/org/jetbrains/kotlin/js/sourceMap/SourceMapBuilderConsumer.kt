@@ -34,6 +34,10 @@ class SourceMapBuilderConsumer(
         declarationLocationStack.add(info)
     }
 
+    override fun pushScopeInfo(info: JsLocationWithSource?) {
+        TODO("Not yet implemented")
+    }
+
     override fun popSourceInfo() {
         sourceStack.popLast()
         addMapping(sourceStack.lastOrNull())
@@ -41,6 +45,10 @@ class SourceMapBuilderConsumer(
 
     override fun popDeclarationInfo() {
         declarationLocationStack.popLast()
+    }
+
+    override fun popScopeInfo() {
+        TODO("Not yet implemented")
     }
 
     private fun addMapping(sourceInfo: JsLocationWithSource?) {

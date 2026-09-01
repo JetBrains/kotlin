@@ -56,6 +56,8 @@ var JsExpression.isSuspend: Boolean by MetadataProperty(default = false)
 
 var JsName.imported by MetadataProperty(default = false)
 
+var JsNode.originalScope: JsOriginalScopeNode? by MetadataProperty(default = null)
+
 enum class SideEffectKind {
     AFFECTS_STATE,
     DEPENDS_ON_STATE,

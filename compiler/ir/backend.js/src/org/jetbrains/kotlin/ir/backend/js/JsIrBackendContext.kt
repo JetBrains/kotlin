@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmen
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.js.backend.ast.metadata.JsOriginalScopeNode
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JsStandardClassIds
@@ -165,4 +166,6 @@ class JsIrBackendContext(
     )
 
     internal var nextAssociatedObjectKey = 0
+
+    val originalFileScopes = mutableMapOf<String, JsOriginalScopeNode>()
 }

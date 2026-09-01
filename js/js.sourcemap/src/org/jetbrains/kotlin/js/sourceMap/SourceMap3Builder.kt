@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.js.sourceMap
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap
 import org.jetbrains.kotlin.js.backend.ast.JsLocation
+import org.jetbrains.kotlin.js.backend.ast.metadata.JsOriginalScopeNode
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import java.io.File
 import java.io.IOException
@@ -40,6 +41,10 @@ class SourceMap3Builder(
     private var previousPreviousSourceColumn = 0
     private var currentMappingIsEmpty = true
 
+    private val fileOriginalScopes = mutableMapOf<Int, String>()
+
+    private val scopesEncoder by lazy { SourceMapScopesEncoder(this) }
+
     fun build(): String {
         val json = JsonObject()
         json.properties["version"] = JsonNumber(3.0)
@@ -48,6 +53,7 @@ class SourceMap3Builder(
         appendSources(json)
         appendSourcesContent(json)
         appendIgnoredSources(json)
+        appendOriginalScopes(json)
         json.properties["names"] = JsonArray(
             orderedNames.mapTo(mutableListOf()) { JsonString(it) }
         )
@@ -66,6 +72,28 @@ class SourceMap3Builder(
         json.properties["sources"] = JsonArray(
             paths.mapTo(mutableListOf()) { JsonString(it) }
         )
+    }
+
+    private fun appendOriginalScopes(json: JsonObject) {
+        val scopes = MutableList(orderedSources.size) { sourceIndex ->
+            fileOriginalScopes.getOrDefault(sourceIndex, null)
+        }
+
+        json.properties["scopes"] = JsonArray(scopes.mapTo(mutableListOf()) {
+            when (it) {
+                is String -> JsonString(it)
+                null -> JsonNull
+            }
+        })
+    }
+
+    fun addOriginalScopes(source: String, fileIdentity: Any?, root: JsOriginalScopeNode) {
+        val key = SourceKey(source, fileIdentity)
+        val sourceIndex = sources.getInt(key)
+        if (sourceIndex == -1)
+            error("Can't add original scopes information for an unknown source")
+
+        fileOriginalScopes[sourceIndex] = scopesEncoder.encodeOriginalScope(root)
     }
 
     private fun appendIgnoredSources(json: JsonObject) {
@@ -112,7 +140,7 @@ class SourceMap3Builder(
         return sourceIndex
     }
 
-    private fun getNameIndex(name: String): Int {
+    internal fun getNameIndex(name: String): Int {
         var nameIndex = names.getInt(name)
         if (nameIndex == -1) {
             nameIndex = orderedNames.size
@@ -277,37 +305,6 @@ class SourceMap3Builder(
         }
     }
 
-    private object Base64VLQ {
-        // A Base64 VLQ digit can represent 5 bits, so it is base-32.
-        private const val VLQ_BASE_SHIFT = 5
-        private const val VLQ_BASE = 1 shl VLQ_BASE_SHIFT
-
-        // A mask of bits for a VLQ digit (11111), 31 decimal.
-        private const val VLQ_BASE_MASK = VLQ_BASE - 1
-
-        // The continuation bit is the 6th bit.
-        private const val VLQ_CONTINUATION_BIT = VLQ_BASE
-
-        @Suppress("SpellCheckingInspection")
-        private val BASE64_MAP = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray()
-
-        private fun toVLQSigned(value: Int) =
-            if (value < 0) (-value shl 1) + 1 else value shl 1
-
-        fun encode(out: StringBuilder, value: Int) {
-            @Suppress("NAME_SHADOWING")
-            var value = toVLQSigned(value)
-            do {
-                var digit = value and VLQ_BASE_MASK
-                value = value ushr VLQ_BASE_SHIFT
-                if (value > 0) {
-                    digit = digit or VLQ_CONTINUATION_BIT
-                }
-                out.append(BASE64_MAP[digit])
-            } while (value > 0)
-        }
-    }
-
     private data class SourceKey(
         private val sourcePath: String,
         /**
@@ -320,3 +317,4 @@ class SourceMap3Builder(
         defaultReturnValue(-1)
     }
 }
+

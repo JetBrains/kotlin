@@ -25,7 +25,11 @@ object NoOpSourceLocationConsumer : SourceLocationConsumer {
 
     override fun pushDeclarationInfo(info: JsLocationWithSource?) {}
 
+    override fun pushScopeInfo(info: JsLocationWithSource?) {}
+
     override fun popSourceInfo() {}
 
     override fun popDeclarationInfo() {}
+
+    override fun popScopeInfo() {}
 }

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
 import org.jetbrains.kotlin.js.backend.ast.metadata.isGeneratorFunction
+import org.jetbrains.kotlin.js.backend.ast.metadata.originalScope
 import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
@@ -614,6 +615,7 @@ internal fun <T : JsNode> T.withSource(
     container: IrDeclaration? = null,
 ): T {
     addSourceInfoIfNeed(node, context, useNameOf, container)
+    this.originalScope = node.originalScope
     return this
 }
 

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportModelToJsStatements
 import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportedDeclaration
 import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportedModule
 import org.jetbrains.kotlin.ir.backend.js.lower.JsCodeOutliningLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.JsOriginalScopesTreeBuilderLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
 import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
@@ -199,16 +200,19 @@ class IrModuleToJsTransformer(
 
         val result = EnumMap<TranslationMode, CompilationOutputs>(TranslationMode::class.java)
 
-        artifactConfigurations.filter { !it.production }.forEach {
-            result[it.translationMode] = generateJsCode(exportData, it, outJsProgram)
+        if (artifactConfigurations.any { !it.production }) {
+            rebuildOriginalScopesTree(modules)
+            artifactConfigurations.filter { !it.production }.forEach {
+                result[it.translationMode] = generateJsCode(exportData, it, outJsProgram)
+            }
         }
 
         if (artifactConfigurations.any { it.production }) {
             optimizeProgramByIr(modules, backendContext, moduleKind, removeUnusedAssociatedObjects)
-        }
-
-        artifactConfigurations.filter { it.production }.forEach {
-            result[it.translationMode] = generateJsCode(exportData, it, outJsProgram)
+            rebuildOriginalScopesTree(modules)
+            artifactConfigurations.filter { it.production }.forEach {
+                result[it.translationMode] = generateJsCode(exportData, it, outJsProgram)
+            }
         }
 
         return CompilerResult(result)
@@ -231,8 +235,15 @@ class IrModuleToJsTransformer(
         val mode = TranslationMode.fromFlags(production = false, granularity, minimizedMemberNames = false)
 
         doStaticMembersLowering(allModules)
+        rebuildOriginalScopesTree(allModules)
 
         return exportData.map { { generateProgramFragment(it, mode) } }
+    }
+
+    private fun rebuildOriginalScopesTree(modules: Iterable<IrModuleFragment>) {
+        modules.flatMap { it.files }.forEach {
+            JsOriginalScopesTreeBuilderLowering(backendContext).lower(it)
+        }
     }
 
     private fun <E> generateExportWithExternals(rootFile: IrFile, generate: (IrPackageFragment) -> List<E>): List<E> {
