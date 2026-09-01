@@ -1,6 +1,6 @@
 KtPropertyDelegate(127,135): 'by Bar()'
   KaDelegatedPropertyCallResolutionAttempt:
-    provideDelegateCallAttempt = KaCallResolutionSuccess:
+    provideDelegateCallAttempt = KaSimpleCallResolutionSuccess:
       call = KaSimpleFunctionCall:
         contextArgumentMapping = {}
         contextArguments = []

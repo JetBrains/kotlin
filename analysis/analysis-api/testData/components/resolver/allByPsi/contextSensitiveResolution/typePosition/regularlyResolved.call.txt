@@ -146,7 +146,7 @@ KtNameReferenceExpression(276,280): 'Left'
   null
 
 KtNameReferenceExpression(284,285): 'z'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -208,7 +208,7 @@ KtNameReferenceExpression(293,298): 'Right'
   null
 
 KtNameReferenceExpression(302,303): 'y'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:

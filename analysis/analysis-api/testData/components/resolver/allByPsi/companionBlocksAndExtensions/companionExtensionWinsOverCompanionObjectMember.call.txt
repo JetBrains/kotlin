@@ -65,7 +65,7 @@ KtBlockExpression(171,187): '{'
   null
 
 KtDotQualifiedExpression(177,185): 'C.same()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -88,7 +88,7 @@ KtNameReferenceExpression(177,178): 'C'
   null
 
 KtCallExpression(179,185): 'same()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -108,7 +108,7 @@ KtCallExpression(179,185): 'same()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(179,183): 'same'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

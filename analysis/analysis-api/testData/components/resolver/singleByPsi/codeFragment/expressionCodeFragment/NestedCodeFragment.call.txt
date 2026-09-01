@@ -1,5 +1,5 @@
 KtNameReferenceExpression(154,157): 'bar'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

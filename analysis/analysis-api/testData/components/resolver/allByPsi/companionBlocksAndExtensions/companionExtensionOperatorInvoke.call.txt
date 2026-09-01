@@ -44,7 +44,7 @@ KtBlockExpression(124,150): '{'
   null
 
 KtCallExpression(130,133): 'C()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -61,7 +61,7 @@ KtCallExpression(130,133): 'C()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(130,131): 'C'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -81,7 +81,7 @@ KtValueArgumentList(131,133): '()'
   null
 
 KtDotQualifiedExpression(138,148): 'C.invoke()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -104,7 +104,7 @@ KtNameReferenceExpression(138,139): 'C'
   null
 
 KtCallExpression(140,148): 'invoke()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -124,7 +124,7 @@ KtCallExpression(140,148): 'invoke()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(140,146): 'invoke'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

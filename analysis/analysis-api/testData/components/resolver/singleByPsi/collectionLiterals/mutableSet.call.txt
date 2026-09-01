@@ -1,5 +1,5 @@
 KtCollectionLiteralExpression(45,47): '[]'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

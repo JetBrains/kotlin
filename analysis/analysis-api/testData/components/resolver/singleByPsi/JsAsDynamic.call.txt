@@ -1,5 +1,5 @@
 KtNameReferenceExpression(85,94): 'asDynamic'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

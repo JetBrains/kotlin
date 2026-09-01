@@ -1,5 +1,5 @@
 KtConstructorDelegationReferenceExpression(38,42): 'this'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

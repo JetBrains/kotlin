@@ -59,7 +59,7 @@ KtProperty(94,113): 'val c = Container()'
   null
 
 KtCallExpression(102,113): 'Container()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -76,7 +76,7 @@ KtCallExpression(102,113): 'Container()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(102,111): 'Container'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -96,7 +96,7 @@ KtValueArgumentList(111,113): '()'
   null
 
 KtBinaryExpression(118,124): '1 in c'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -135,7 +135,7 @@ KtConstantExpression(118,119): '1'
   null
 
 KtOperationReferenceExpression(120,122): 'in'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -171,7 +171,7 @@ KtOperationReferenceExpression(120,122): 'in'
       }
 
 KtNameReferenceExpression(123,124): 'c'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -188,7 +188,7 @@ KtNameReferenceExpression(123,124): 'c'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(129,136): '2 !in c'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -227,7 +227,7 @@ KtConstantExpression(129,130): '2'
   null
 
 KtOperationReferenceExpression(131,134): '!in'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -263,7 +263,7 @@ KtOperationReferenceExpression(131,134): '!in'
       }
 
 KtNameReferenceExpression(135,136): 'c'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

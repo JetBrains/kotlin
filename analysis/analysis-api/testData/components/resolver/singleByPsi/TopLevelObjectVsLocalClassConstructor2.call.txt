@@ -1,5 +1,5 @@
 KtNameReferenceExpression(104,112): 'Conflict'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

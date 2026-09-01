@@ -20,7 +20,7 @@ KtProperty(39,67): 'val p = JavaClass<Int>.field'
   null
 
 KtDotQualifiedExpression(47,67): 'JavaClass<Int>.field'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -99,7 +99,7 @@ KtNameReferenceExpression(57,60): 'Int'
   null
 
 KtNameReferenceExpression(62,67): 'field'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -122,7 +122,7 @@ KtProperty(71,103): 'val m = JavaClass<Long>.method()'
   null
 
 KtDotQualifiedExpression(79,103): 'JavaClass<Long>.method()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -201,7 +201,7 @@ KtNameReferenceExpression(89,93): 'Long'
   null
 
 KtCallExpression(95,103): 'method()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -221,7 +221,7 @@ KtCallExpression(95,103): 'method()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(95,101): 'method'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

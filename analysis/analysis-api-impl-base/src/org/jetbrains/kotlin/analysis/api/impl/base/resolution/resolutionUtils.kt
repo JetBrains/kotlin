@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.resolution
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.resolution.KaCallResolutionSuccess
+import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCallResolutionSuccess
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCallResolutionAttempt
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
@@ -36,27 +36,27 @@ internal fun Map<KtExpression, KaVariableSignature<KaParameterSymbol>>.toContext
 }
 
 /**
- * If all attempts are [KaCallResolutionSuccess], invokes [assemble] with them and returns the result.
+ * If all attempts are [KaSimpleCallResolutionSuccess], invokes [assemble] with them and returns the result.
  * Otherwise, returns `null`.
  */
 internal inline fun <R> assembleMultiCall(
     attempt1: KaSimpleCallResolutionAttempt,
     attempt2: KaSimpleCallResolutionAttempt,
     attempt3: KaSimpleCallResolutionAttempt,
-    assemble: (KaCallResolutionSuccess, KaCallResolutionSuccess, KaCallResolutionSuccess) -> R,
+    assemble: (KaSimpleCallResolutionSuccess, KaSimpleCallResolutionSuccess, KaSimpleCallResolutionSuccess) -> R,
 ): R? {
-    val s1 = attempt1 as? KaCallResolutionSuccess ?: return null
-    val s2 = attempt2 as? KaCallResolutionSuccess ?: return null
-    val s3 = attempt3 as? KaCallResolutionSuccess ?: return null
+    val s1 = attempt1 as? KaSimpleCallResolutionSuccess ?: return null
+    val s2 = attempt2 as? KaSimpleCallResolutionSuccess ?: return null
+    val s3 = attempt3 as? KaSimpleCallResolutionSuccess ?: return null
     return assemble(s1, s2, s3)
 }
 
 internal inline fun <R> assembleMultiCall(
     attempt1: KaSimpleCallResolutionAttempt,
     attempt2: KaSimpleCallResolutionAttempt,
-    assemble: (KaCallResolutionSuccess, KaCallResolutionSuccess) -> R,
+    assemble: (KaSimpleCallResolutionSuccess, KaSimpleCallResolutionSuccess) -> R,
 ): R? {
-    val s1 = attempt1 as? KaCallResolutionSuccess ?: return null
-    val s2 = attempt2 as? KaCallResolutionSuccess ?: return null
+    val s1 = attempt1 as? KaSimpleCallResolutionSuccess ?: return null
+    val s2 = attempt2 as? KaSimpleCallResolutionSuccess ?: return null
     return assemble(s1, s2)
 }

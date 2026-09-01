@@ -1,5 +1,5 @@
 KtCallExpression(131,143): 'Annotation()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

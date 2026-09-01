@@ -39,7 +39,7 @@ fun KtCallExpression.assertIsSuccessfulCallOf(
 ) {
     analyze(this) {
         val attempt = tryResolveCall()
-        Assertions.assertInstanceOf(KaCallResolutionSuccess::class.java, attempt)
+        Assertions.assertInstanceOf(KaSimpleCallResolutionSuccess::class.java, attempt)
         val symbol = attempt?.successful?.function?.symbol
         Assertions.assertInstanceOf(KaNamedFunctionSymbol::class.java, symbol); symbol as KaNamedFunctionSymbol
         Assertions.assertEquals(callableId, symbol.callableId)

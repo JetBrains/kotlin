@@ -1,5 +1,5 @@
 KtCallExpression(44,64): 'foo(localProperty--)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -1,5 +1,5 @@
 KtDestructuringDeclarationEntry(139,144): 'prop2'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

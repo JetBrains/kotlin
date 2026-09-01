@@ -62,7 +62,7 @@ KtBlockExpression(193,210): '{'
   null
 
 KtDotQualifiedExpression(199,208): 'C.outer()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -85,7 +85,7 @@ KtNameReferenceExpression(199,200): 'C'
   null
 
 KtCallExpression(201,208): 'outer()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -105,7 +105,7 @@ KtCallExpression(201,208): 'outer()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(201,206): 'outer'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

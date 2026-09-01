@@ -1,5 +1,5 @@
 KtCallExpression(102,124): 'block(regularReceiver)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = [

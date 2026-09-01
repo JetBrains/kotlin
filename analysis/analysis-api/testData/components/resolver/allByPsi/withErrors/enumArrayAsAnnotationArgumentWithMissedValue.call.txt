@@ -161,7 +161,7 @@ KtNameReferenceExpression(46,50): 'test'
   null
 
 KtCollectionLiteralExpression(53,55): '[]'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -1,5 +1,5 @@
 KtNameReferenceExpression(126,129): 'foo'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = [
         KaImplicitReceiverValue:

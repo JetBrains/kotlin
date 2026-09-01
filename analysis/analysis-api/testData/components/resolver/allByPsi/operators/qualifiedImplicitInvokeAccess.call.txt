@@ -113,7 +113,7 @@ KtNameReferenceExpression(167,174): 'MyClass'
   null
 
 KtCallExpression(178,187): 'MyClass()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -130,7 +130,7 @@ KtCallExpression(178,187): 'MyClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(178,185): 'MyClass'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -150,7 +150,7 @@ KtValueArgumentList(185,187): '()'
   null
 
 KtSafeQualifiedExpression(191,205): 's?.itself("1")'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -186,7 +186,7 @@ KtSafeQualifiedExpression(191,205): 's?.itself("1")'
       }
 
 KtNameReferenceExpression(191,192): 's'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -203,7 +203,7 @@ KtNameReferenceExpression(191,192): 's'
       typeArgumentsMapping = {}
 
 KtCallExpression(194,205): 'itself("1")'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -239,7 +239,7 @@ KtCallExpression(194,205): 'itself("1")'
       }
 
 KtNameReferenceExpression(194,200): 'itself'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -271,7 +271,7 @@ KtLiteralStringTemplateEntry(202,203): '1'
   null
 
 KtDotQualifiedExpression(209,224): 's!!.itself("2")'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -310,7 +310,7 @@ KtPostfixExpression(209,212): 's!!'
   null
 
 KtNameReferenceExpression(209,210): 's'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -330,7 +330,7 @@ KtOperationReferenceExpression(210,212): '!!'
   null
 
 KtCallExpression(213,224): 'itself("2")'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -366,7 +366,7 @@ KtCallExpression(213,224): 'itself("2")'
       }
 
 KtNameReferenceExpression(213,219): 'itself'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -398,7 +398,7 @@ KtLiteralStringTemplateEntry(221,222): '2'
   null
 
 KtCallExpression(228,234): 's("3")'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -434,7 +434,7 @@ KtCallExpression(228,234): 's("3")'
       }
 
 KtNameReferenceExpression(228,229): 's'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -463,7 +463,7 @@ KtLiteralStringTemplateEntry(231,232): '3'
   null
 
 KtSafeQualifiedExpression(239,268): 's.nullableItself?.invoke("4")'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -499,7 +499,7 @@ KtSafeQualifiedExpression(239,268): 's.nullableItself?.invoke("4")'
       }
 
 KtDotQualifiedExpression(239,255): 's.nullableItself'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -521,7 +521,7 @@ KtDotQualifiedExpression(239,255): 's.nullableItself'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(239,240): 's'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -538,7 +538,7 @@ KtNameReferenceExpression(239,240): 's'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(241,255): 'nullableItself'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -560,7 +560,7 @@ KtNameReferenceExpression(241,255): 'nullableItself'
       typeArgumentsMapping = {}
 
 KtCallExpression(257,268): 'invoke("4")'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -596,7 +596,7 @@ KtCallExpression(257,268): 'invoke("4")'
       }
 
 KtNameReferenceExpression(257,263): 'invoke'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -644,7 +644,7 @@ KtLiteralStringTemplateEntry(265,266): '4'
   null
 
 KtCallExpression(272,295): 's.nullableItself!!("5")'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -683,7 +683,7 @@ KtPostfixExpression(272,290): 's.nullableItself!!'
   null
 
 KtDotQualifiedExpression(272,288): 's.nullableItself'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -705,7 +705,7 @@ KtDotQualifiedExpression(272,288): 's.nullableItself'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(272,273): 's'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -722,7 +722,7 @@ KtNameReferenceExpression(272,273): 's'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(274,288): 'nullableItself'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:

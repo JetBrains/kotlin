@@ -257,7 +257,7 @@ KtBlockExpression(389,627): '{'
   null
 
 KtCallExpression(395,440): 'unnamed/*explicit regular*/(regular = "str2")'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
@@ -312,7 +312,7 @@ KtCallExpression(395,440): 'unnamed/*explicit regular*/(regular = "str2")'
       }
 
 KtNameReferenceExpression(395,402): 'unnamed'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
@@ -385,7 +385,7 @@ KtLiteralStringTemplateEntry(434,438): 'str2'
   null
 
 KtCallExpression(445,488): 'named/*explicit regular*/(regular = "str2")'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
@@ -440,7 +440,7 @@ KtCallExpression(445,488): 'named/*explicit regular*/(regular = "str2")'
       }
 
 KtNameReferenceExpression(445,450): 'named'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
@@ -513,7 +513,7 @@ KtLiteralStringTemplateEntry(482,486): 'str2'
   null
 
 KtCallExpression(494,558): 'unnamed/*all explicit*/(explicit = Explicit(), regular = "str3")'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {
         Explicit() -> (KaVariableSignature:
@@ -577,7 +577,7 @@ KtCallExpression(494,558): 'unnamed/*all explicit*/(explicit = Explicit(), regul
       }
 
 KtNameReferenceExpression(494,501): 'unnamed'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {
         Explicit() -> (KaVariableSignature:
@@ -653,7 +653,7 @@ KtNameReferenceExpression(518,526): 'explicit'
   null
 
 KtCallExpression(529,539): 'Explicit()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -670,7 +670,7 @@ KtCallExpression(529,539): 'Explicit()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(529,537): 'Explicit'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -705,7 +705,7 @@ KtLiteralStringTemplateEntry(552,556): 'str3'
   null
 
 KtCallExpression(563,625): 'named/*all explicit*/(explicit = Explicit(), regular = "str3")'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {
         Explicit() -> (KaVariableSignature:
@@ -769,7 +769,7 @@ KtCallExpression(563,625): 'named/*all explicit*/(explicit = Explicit(), regular
       }
 
 KtNameReferenceExpression(563,568): 'named'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {
         Explicit() -> (KaVariableSignature:
@@ -845,7 +845,7 @@ KtNameReferenceExpression(585,593): 'explicit'
   null
 
 KtCallExpression(596,606): 'Explicit()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -862,7 +862,7 @@ KtCallExpression(596,606): 'Explicit()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(596,604): 'Explicit'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -915,7 +915,7 @@ KtBlockExpression(658,933): '{'
   null
 
 KtCallExpression(664,794): 'with(Explicit()) {'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -968,7 +968,7 @@ KtCallExpression(664,794): 'with(Explicit()) {'
       }
 
 KtNameReferenceExpression(664,668): 'with'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1027,7 +1027,7 @@ KtValueArgument(669,679): 'Explicit()'
   null
 
 KtCallExpression(669,679): 'Explicit()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1044,7 +1044,7 @@ KtCallExpression(669,679): 'Explicit()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(669,677): 'Explicit'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1076,7 +1076,7 @@ KtBlockExpression(691,788): 'unnamed/*explicit regular*/(regular = "str2")'
   null
 
 KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
@@ -1183,7 +1183,7 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
       }
 
 KtNameReferenceExpression(691,698): 'unnamed'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
@@ -1308,7 +1308,7 @@ KtLiteralStringTemplateEntry(730,734): 'str2'
   null
 
 KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
@@ -1415,7 +1415,7 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
       }
 
 KtNameReferenceExpression(745,750): 'named'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [
@@ -1540,7 +1540,7 @@ KtLiteralStringTemplateEntry(782,786): 'str2'
   null
 
 KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regular = "str3")'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {
         Explicit() -> (KaVariableSignature:
@@ -1630,7 +1630,7 @@ KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regul
       }
 
 KtNameReferenceExpression(800,807): 'unnamed'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {
         Explicit() -> (KaVariableSignature:
@@ -1732,7 +1732,7 @@ KtNameReferenceExpression(824,832): 'explicit'
   null
 
 KtCallExpression(835,845): 'Explicit()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1749,7 +1749,7 @@ KtCallExpression(835,845): 'Explicit()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(835,843): 'Explicit'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1784,7 +1784,7 @@ KtLiteralStringTemplateEntry(858,862): 'str3'
   null
 
 KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular = "str3")'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {
         Explicit() -> (KaVariableSignature:
@@ -1874,7 +1874,7 @@ KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular
       }
 
 KtNameReferenceExpression(869,874): 'named'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {
         Explicit() -> (KaVariableSignature:
@@ -1976,7 +1976,7 @@ KtNameReferenceExpression(891,899): 'explicit'
   null
 
 KtCallExpression(902,912): 'Explicit()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1993,7 +1993,7 @@ KtCallExpression(902,912): 'Explicit()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(902,910): 'Explicit'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

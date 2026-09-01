@@ -1,5 +1,5 @@
 KtWhenConditionInRange(169,181): 'in MyClass()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

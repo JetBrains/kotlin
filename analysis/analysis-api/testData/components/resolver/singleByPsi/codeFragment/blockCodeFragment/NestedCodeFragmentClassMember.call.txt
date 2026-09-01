@@ -1,5 +1,5 @@
 KtNameReferenceExpression(153,158): 'Local'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

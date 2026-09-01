@@ -17,7 +17,7 @@ KtBlockExpression(11,86): '{'
   null
 
 KtPrefixExpression(17,48): '-(l1@ +(@Anno(33) (-(-(+1L)))))'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -37,7 +37,7 @@ KtPrefixExpression(17,48): '-(l1@ +(@Anno(33) (-(-(+1L)))))'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(17,18): '-'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -69,7 +69,7 @@ KtLabelReferenceExpression(19,22): 'l1@'
   null
 
 KtPrefixExpression(23,47): '+(@Anno(33) (-(-(+1L))))'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -89,7 +89,7 @@ KtPrefixExpression(23,47): '+(@Anno(33) (-(-(+1L))))'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(23,24): '+'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -115,7 +115,7 @@ KtAnnotatedExpression(25,46): '@Anno(33) (-(-(+1L)))'
   null
 
 KtAnnotationEntry(25,34): '@Anno(33)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -148,7 +148,7 @@ KtAnnotationEntry(25,34): '@Anno(33)'
       }
 
 KtConstructorCalleeExpression(26,30): 'Anno'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -187,7 +187,7 @@ KtUserType(26,30): 'Anno'
   null
 
 KtNameReferenceExpression(26,30): 'Anno'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -232,7 +232,7 @@ KtParenthesizedExpression(35,46): '(-(-(+1L)))'
   null
 
 KtPrefixExpression(36,45): '-(-(+1L))'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -252,7 +252,7 @@ KtPrefixExpression(36,45): '-(-(+1L))'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(36,37): '-'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -275,7 +275,7 @@ KtParenthesizedExpression(37,45): '(-(+1L))'
   null
 
 KtPrefixExpression(38,44): '-(+1L)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -295,7 +295,7 @@ KtPrefixExpression(38,44): '-(+1L)'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(38,39): '-'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -318,7 +318,7 @@ KtParenthesizedExpression(39,44): '(+1L)'
   null
 
 KtPrefixExpression(40,43): '+1L'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -338,7 +338,7 @@ KtPrefixExpression(40,43): '+1L'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(40,41): '+'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -361,7 +361,7 @@ KtConstantExpression(41,43): '1L'
   null
 
 KtPrefixExpression(54,84): '-(l2@ +(@Anno(44) (-(-(+2)))))'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -381,7 +381,7 @@ KtPrefixExpression(54,84): '-(l2@ +(@Anno(44) (-(-(+2)))))'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(54,55): '-'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -413,7 +413,7 @@ KtLabelReferenceExpression(56,59): 'l2@'
   null
 
 KtPrefixExpression(60,83): '+(@Anno(44) (-(-(+2))))'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -433,7 +433,7 @@ KtPrefixExpression(60,83): '+(@Anno(44) (-(-(+2))))'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(60,61): '+'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -486,7 +486,7 @@ KtParenthesizedExpression(72,82): '(-(-(+2)))'
   null
 
 KtPrefixExpression(73,81): '-(-(+2))'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -506,7 +506,7 @@ KtPrefixExpression(73,81): '-(-(+2))'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(73,74): '-'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -529,7 +529,7 @@ KtParenthesizedExpression(74,81): '(-(+2))'
   null
 
 KtPrefixExpression(75,80): '-(+2)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -549,7 +549,7 @@ KtPrefixExpression(75,80): '-(+2)'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(75,76): '-'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -572,7 +572,7 @@ KtParenthesizedExpression(76,80): '(+2)'
   null
 
 KtPrefixExpression(77,79): '+2'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -592,7 +592,7 @@ KtPrefixExpression(77,79): '+2'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(77,78): '+'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -621,7 +621,7 @@ KtDeclarationModifierList(88,174): '@Retention(AnnotationRetention.SOURCE)'
   null
 
 KtAnnotationEntry(88,126): '@Retention(AnnotationRetention.SOURCE)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -654,7 +654,7 @@ KtAnnotationEntry(88,126): '@Retention(AnnotationRetention.SOURCE)'
       }
 
 KtConstructorCalleeExpression(89,98): 'Retention'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -693,7 +693,7 @@ KtUserType(89,98): 'Retention'
   null
 
 KtNameReferenceExpression(89,98): 'Retention'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -732,7 +732,7 @@ KtValueArgument(99,125): 'AnnotationRetention.SOURCE'
   null
 
 KtDotQualifiedExpression(99,125): 'AnnotationRetention.SOURCE'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -755,7 +755,7 @@ KtNameReferenceExpression(99,118): 'AnnotationRetention'
   null
 
 KtNameReferenceExpression(119,125): 'SOURCE'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -775,7 +775,7 @@ KtNameReferenceExpression(119,125): 'SOURCE'
       typeArgumentsMapping = {}
 
 KtAnnotationEntry(127,163): '@Target(AnnotationTarget.EXPRESSION)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -808,7 +808,7 @@ KtAnnotationEntry(127,163): '@Target(AnnotationTarget.EXPRESSION)'
       }
 
 KtConstructorCalleeExpression(128,134): 'Target'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -847,7 +847,7 @@ KtUserType(128,134): 'Target'
   null
 
 KtNameReferenceExpression(128,134): 'Target'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -886,7 +886,7 @@ KtValueArgument(135,162): 'AnnotationTarget.EXPRESSION'
   null
 
 KtDotQualifiedExpression(135,162): 'AnnotationTarget.EXPRESSION'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -909,7 +909,7 @@ KtNameReferenceExpression(135,151): 'AnnotationTarget'
   null
 
 KtNameReferenceExpression(152,162): 'EXPRESSION'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

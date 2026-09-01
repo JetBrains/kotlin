@@ -1,5 +1,5 @@
 KtCallExpression(38,41): 'f()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []

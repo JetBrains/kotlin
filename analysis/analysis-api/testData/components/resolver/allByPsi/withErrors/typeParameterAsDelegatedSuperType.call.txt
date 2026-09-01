@@ -74,7 +74,7 @@ KtNameReferenceExpression(102,103): 'T'
   null
 
 KtNameReferenceExpression(107,108): 'i'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:

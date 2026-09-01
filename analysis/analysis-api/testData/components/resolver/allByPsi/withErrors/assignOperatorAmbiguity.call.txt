@@ -458,7 +458,7 @@ KtProperty(484,500): 'var foo = Test()'
   null
 
 KtCallExpression(494,500): 'Test()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -475,7 +475,7 @@ KtCallExpression(494,500): 'Test()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(494,498): 'Test'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

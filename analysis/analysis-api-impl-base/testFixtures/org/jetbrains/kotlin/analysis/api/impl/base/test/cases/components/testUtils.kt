@@ -453,7 +453,7 @@ internal fun assertStableResult(
             )
         }
 
-        is KaCallResolutionSuccess -> {
+        is KaSimpleCallResolutionSuccess -> {
             assertConsistency(testServices, firstAttempt.call)
         }
 
@@ -493,7 +493,7 @@ private fun assertMultiCallConsistency(testServices: TestServices, attempt: KaMu
     if (call != null) {
         // All attempts must be successful
         for (subAttempt in attempt.attempts) {
-            assertions.assertTrue(subAttempt is KaCallResolutionSuccess) {
+            assertions.assertTrue(subAttempt is KaSimpleCallResolutionSuccess) {
                 "Multi-call has non-null call, but attempt ${subAttempt::class.simpleName} is not success"
             }
         }

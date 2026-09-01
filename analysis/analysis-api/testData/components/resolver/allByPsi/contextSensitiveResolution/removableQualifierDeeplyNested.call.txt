@@ -44,7 +44,7 @@ KtReturnExpression(282,305): 'return test.Top.Foo.BAR'
   null
 
 KtDotQualifiedExpression(289,305): 'test.Top.Foo.BAR'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -79,7 +79,7 @@ KtNameReferenceExpression(298,301): 'Foo'
   null
 
 KtNameReferenceExpression(302,305): 'BAR'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

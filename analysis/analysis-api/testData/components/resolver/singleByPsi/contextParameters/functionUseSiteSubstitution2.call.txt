@@ -1,5 +1,5 @@
 KtDotQualifiedExpression(257,274): 's.foo(this@usage)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = [

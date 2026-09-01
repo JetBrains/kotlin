@@ -613,7 +613,7 @@ internal class KaFirResolver(
             val leftArg = psi.left ?: return null
             val rightArg = psi.right ?: return null
             val signature = stringPlusSymbol?.toKaSignature() ?: return null
-            return KaBaseCallResolutionSuccess(
+            return KaBaseSimpleCallResolutionSuccess(
                 backingCall = KaBaseSimpleFunctionCall(
                     backingPartiallyAppliedSymbol = KaBasePartiallyAppliedSymbol(
                         backingSignature = signature,
@@ -638,7 +638,7 @@ internal class KaFirResolver(
             // If we have a PSI expression like `Foo.Bar.Baz()` and try to resolve `Bar` part,
             // and the only FIR that we have for that PSI is an implicit invoke call, that means that
             // `Foo.Bar` is definitely not a property access - otherwise it would have had its own FIR.
-            // So, it does not make sense to try to resolve such parts of qualifiers as KaCallResolutionSuccess
+            // So, it does not make sense to try to resolve such parts of qualifiers as KaSimpleCallResolutionSuccess
             // Binary expressions are accepted as they could be resolved into implicit invoke calls (in error cases)
             if ((psi as? KtExpression)?.getPossiblyQualifiedCallExpression() == null && psi !is KtBinaryExpression) {
                 return null
@@ -1034,7 +1034,7 @@ internal class KaFirResolver(
             calleeReference = calleeReference,
             candidate = candidate,
             mappingResult = mappingResult,
-        )?.let(::KaBaseCallResolutionSuccess)
+        )?.let(::KaBaseSimpleCallResolutionSuccess)
     }
 
     /**
@@ -1385,7 +1385,7 @@ internal class KaFirResolver(
         )
 
         if (resolveFragmentOfCall) {
-            return KaBaseCallResolutionSuccess(backingCall = variableAccessCall)
+            return KaBaseSimpleCallResolutionSuccess(backingCall = variableAccessCall)
         }
 
         // Extract operation call
@@ -1403,11 +1403,11 @@ internal class KaFirResolver(
         } else {
             val operationCall = buildOperationCallForCompoundVariableAccess(firOperationCall, accessExpression, rhsExpression)
                 ?: return null
-            operationAttempt = KaBaseCallResolutionSuccess(backingCall = operationCall)
+            operationAttempt = KaBaseSimpleCallResolutionSuccess(backingCall = operationCall)
             compoundOperation = compoundOperationProvider(operationCall)
         }
 
-        val variableAttempt = KaBaseCallResolutionSuccess(backingCall = variableAccessCall)
+        val variableAttempt = KaBaseSimpleCallResolutionSuccess(backingCall = variableAccessCall)
         return KaBaseCompoundVariableAccessCallResolutionAttempt(
             backingCompoundOperation = compoundOperation,
             backingVariableCallAttempt = variableAttempt,
@@ -1465,7 +1465,7 @@ internal class KaFirResolver(
                         calleeReference = calleeReference,
                         candidate = it,
                         resolveFragmentOfCall = resolveFragmentOfCall,
-                    ) as? KaCallResolutionSuccess
+                    ) as? KaSimpleCallResolutionSuccess
 
                     attempt?.call
                 } else {
@@ -1479,7 +1479,7 @@ internal class KaFirResolver(
                 calleeReference = calleeReference,
                 candidate = null,
                 resolveFragmentOfCall = resolveFragmentOfCall
-            ) as? KaCallResolutionSuccess
+            ) as? KaSimpleCallResolutionSuccess
 
             listOfNotNull(attempt?.call)
         }
@@ -1571,7 +1571,7 @@ internal class KaFirResolver(
 
     /**
      * Resolves a [FirFunctionCall] into a [KaSimpleCallResolutionAttempt].
-     * If the call has an error, returns [KaSimpleCallResolutionError]; otherwise builds a [KaCallResolutionSuccess].
+     * If the call has an error, returns [KaSimpleCallResolutionError]; otherwise builds a [KaSimpleCallResolutionSuccess].
      */
     private fun resolveSingleSubCall(call: FirFunctionCall, psi: KtElement): KaSimpleCallResolutionAttempt {
         findErrorCall(call, psi)?.let { return it }
@@ -1586,7 +1586,7 @@ internal class KaFirResolver(
                 backingCandidateCalls = emptyList(),
             )
 
-            else -> KaBaseCallResolutionSuccess(backingCall = kaCall)
+            else -> KaBaseSimpleCallResolutionSuccess(backingCall = kaCall)
         }
     }
 
@@ -1723,7 +1723,7 @@ internal class KaFirResolver(
                 it as KaFunctionCall<KaNamedFunctionSymbol>
             }
 
-            getterAttempt = KaBaseCallResolutionSuccess(backingCall = getCall)
+            getterAttempt = KaBaseSimpleCallResolutionSuccess(backingCall = getCall)
         }
 
         if (resolveFragmentOfCall) {
@@ -1755,7 +1755,7 @@ internal class KaFirResolver(
                 it as KaFunctionCall<KaNamedFunctionSymbol>
             }
 
-            operationAttempt = KaBaseCallResolutionSuccess(backingCall = operationCall)
+            operationAttempt = KaBaseSimpleCallResolutionSuccess(backingCall = operationCall)
             compoundOperation = compoundOperationProvider(operationCall)
         }
 
@@ -1778,7 +1778,7 @@ internal class KaFirResolver(
                 it as KaFunctionCall<KaNamedFunctionSymbol>
             }
 
-            setterAttempt = KaBaseCallResolutionSuccess(backingCall = setCall)
+            setterAttempt = KaBaseSimpleCallResolutionSuccess(backingCall = setCall)
         }
 
         return KaBaseCompoundArrayAccessCallResolutionAttempt(
@@ -1975,7 +1975,7 @@ internal class KaFirResolver(
      * Maps [typeArguments] to the type parameters of [symbol].
      *
      * If too many type arguments are provided, a mapping is still created. Extra type arguments are simply ignored. If this wasn't the
-     * case, the resulting [KaCallResolutionSuccess] would contain no type arguments at all, which can cause problems later. If too few type arguments are
+     * case, the resulting [KaSimpleCallResolutionSuccess] would contain no type arguments at all, which can cause problems later. If too few type arguments are
      * provided, an empty map is returned defensively so that [toFirTypeArgumentsMapping] doesn't conjure any error types. If you want to map
      * too few type arguments meaningfully, please provide filler types explicitly.
      */
@@ -2194,7 +2194,7 @@ internal class KaFirResolver(
     }
 
     private fun KaCallResolutionAttempt?.toKaCallCandidates(): List<KaCallCandidate> = when (this) {
-        is KaCallResolutionSuccess -> listOf(KaBaseApplicableCallCandidate(backingCandidate = call, backingIsInBestCandidates = true))
+        is KaSimpleCallResolutionSuccess -> listOf(KaBaseApplicableCallCandidate(backingCandidate = call, backingIsInBestCandidates = true))
         is KaSimpleCallResolutionError -> candidateCalls.map {
             KaBaseInapplicableCallCandidate(
                 backingCandidate = it,
@@ -2322,7 +2322,7 @@ internal class KaFirResolver(
             contextArguments = emptyList(),
         )
 
-        return KaBaseCallResolutionSuccess(
+        return KaBaseSimpleCallResolutionSuccess(
             backingCall = KaBaseSimpleFunctionCall(
                 backingPartiallyAppliedSymbol = partiallyAppliedSymbol,
                 backingArgumentMapping = createArgumentMapping(arrayOfSymbol, substitutor),
@@ -2351,7 +2351,7 @@ internal class KaFirResolver(
 
                 val equalsSymbol = getEqualsSymbol() ?: return null
                 val kaSignature = equalsSymbol.toKaSignature()
-                KaBaseCallResolutionSuccess(
+                KaBaseSimpleCallResolutionSuccess(
                     backingCall = KaBaseSimpleFunctionCall(
                         backingPartiallyAppliedSymbol = KaBasePartiallyAppliedSymbol(
                             backingSignature = kaSignature,
