@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,9 +10,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProviderBaseImpl
+import org.jetbrains.kotlin.psi.KtPlatformInterface
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import java.net.URL
 
+@OptIn(KtPlatformInterface::class)
 class BuiltinsVirtualFileProviderCliImpl : BuiltinsVirtualFileProviderBaseImpl() {
     override fun findVirtualFile(url: URL): VirtualFile? {
         val split = URLUtil.splitJarUrl(url.path)

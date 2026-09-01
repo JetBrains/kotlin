@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.psi.KtPlatformInterface
 import org.jetbrains.kotlin.test.services.*
 
 abstract class AnalysisApiEnvironmentManager : TestService {
@@ -53,6 +54,7 @@ class AnalysisApiEnvironmentManagerImpl(
         )
     }
 
+    @OptIn(KtPlatformInterface::class)
     override fun initializeEnvironment() {
         testServices.disposableProvider.registerDisposables(
             projectDisposable = _projectEnvironment.parentDisposable,

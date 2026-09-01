@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
+import org.jetbrains.kotlin.psi.KtPlatformInterface
 import org.jetbrains.kotlin.utils.topologicalSort
 import org.picocontainer.PicoContainer
 import java.nio.file.Path
@@ -104,6 +105,7 @@ object StandaloneProjectFactory {
         }
     }
 
+    @OptIn(KtPlatformInterface::class)
     private fun registerApplicationServices(applicationEnvironment: KotlinCoreApplicationEnvironment) {
         val application = applicationEnvironment.application
         if (application.getServiceIfCreated(KotlinStandaloneIndexCache::class.java) != null) {
