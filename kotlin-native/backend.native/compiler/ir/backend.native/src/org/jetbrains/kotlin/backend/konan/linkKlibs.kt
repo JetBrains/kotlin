@@ -150,7 +150,7 @@ internal fun LinkKlibsContext.linkKlibs(
 
 private fun LinkKlibsContext.createIrLinker(moduleDescriptor: ModuleDescriptor, libraryToCacheModule: ModuleDescriptor?): KonanIrLinker {
     val symbolTable = symbolTable!!
-    val exportedDependencies = (moduleDescriptor.getExportedDependencies(config) + libraryToCacheModule?.let { listOf(it) }.orEmpty()).distinct()
+    val exportedDependencies = (config.loadedKlibs.exported + config.loadedKlibs.included + listOfNotNull(libraryToCacheModule?.kotlinLibrary)).toSet()
 
     val deserializationConfiguration = CommonCompilerDeserializationConfiguration(config.configuration.languageVersionSettings)
     val cInteropModuleDeserializerFactory = KonanCInteropModuleDeserializerFactory(
