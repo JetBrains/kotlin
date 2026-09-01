@@ -29,11 +29,14 @@ import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.toIdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.shortName
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.putToMultiMap
+import kotlin.io.path.name
 
 abstract class KotlinIrLinker(
     private val currentModule: ModuleDescriptor?,
@@ -290,6 +293,10 @@ abstract class KotlinIrLinker(
         kotlinLibrary: KotlinLibrary,
         deserializationStrategy: (String) -> DeserializationStrategy = { DeserializationStrategy.ONLY_REFERENCED },
     ): IrModuleFragment {
+        require(klibDeserializers[kotlinLibrary] == null) {
+            "!!! Module deserialization called twice for ${kotlinLibrary.shortName ?: kotlinLibrary.uniqueName} / ${kotlinLibrary.path.name}"
+        }
+
         val deserializer = getOrCreateDeserializerForModule(moduleDescriptor, kotlinLibrary, deserializationStrategy)
         // The IrModule and its IrFiles have been created during module initialization.
         return deserializer.moduleFragment
