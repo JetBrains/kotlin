@@ -1,0 +1,16 @@
+$TESTDATA_DIR$/unknownFriendLibraries_main.kt
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+main
+-libraries
+$STDLIB_WASM_JS$
+---
+$TESTDATA_DIR$/unknownFriendLibraries_test.kt
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+test
+-libraries
+$STDLIB_WASM_JS$:$TEMP_DIR$/main.klib
+-Xfriend-modules=$TEMP_DIR$/main.klib:$TEMP_DIR$/main_unknown.klib
