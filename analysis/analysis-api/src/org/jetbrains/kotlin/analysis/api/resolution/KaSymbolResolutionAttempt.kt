@@ -88,6 +88,9 @@ public typealias KaSymbolResolutionSuccess = KaSimpleSymbolResolutionSuccess
 /**
  * Represents an error that occurred during the resolution of a [KtResolvable]
  *
+ * A [KaCompoundSymbolResolutionError] is *not* an instance of this type, so a type check against this type is not
+ * a complete failure check — use [errors] or [isSuccessful] instead.
+ *
  * ### Example
  *
  * ```kotlin
@@ -207,6 +210,9 @@ public val KaSymbolResolutionAttempt.symbols: List<KaSymbol>
 /**
  * The resolved symbols if the resolution succeeded, or an empty list if it failed.
  *
+ * A successful resolution always has at least one symbol, so an empty list always means a failure.
+ *
+ * @see isSuccessful
  * @see KaCallResolutionAttempt.successful
  */
 @KaExperimentalApi

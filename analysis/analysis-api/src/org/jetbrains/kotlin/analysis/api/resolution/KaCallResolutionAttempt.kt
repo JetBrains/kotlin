@@ -56,6 +56,9 @@ public typealias KaSingleCallResolutionAttempt = KaSimpleCallResolutionAttempt
 /**
  * Represents an error that occurred during the resolution of a [KtResolvableCall]
  *
+ * A failed [KaMultiCallResolutionAttempt] is *not* an instance of this type, so a type check against this type is
+ * not a complete failure check — use [errors] or [isSuccessful] instead.
+ *
  * ### Example
  *
  * ```kotlin
@@ -71,6 +74,7 @@ public typealias KaSingleCallResolutionAttempt = KaSimpleCallResolutionAttempt
  *
  * `bar()` will be resolved to [KaSimpleCallResolutionError] with `INVISIBLE_REFERENCE` diagnostic and the `bar` call
  *
+ * @see errors
  * @see KaResolver.tryResolveCall
  */
 @KaExperimentalApi
@@ -106,6 +110,10 @@ public typealias KaCallResolutionError = KaSimpleCallResolutionError
  * Represents a successful resolution of a simple [KtResolvableCall].
  *
  * For compound calls (e.g., `i += 1`, `for (x in list)`), see [KaMultiCallResolutionAttempt] instead.
+ *
+ * Success means that the resolution produced a call: the callee was resolved and carries no diagnostic of its own.
+ * It does not mean that the element is free of diagnostics, as they may be attached elsewhere in the call, e.g. to an
+ * argument. Use [diagnostics][org.jetbrains.kotlin.analysis.api.components.diagnostics] to check the element itself.
  *
  * @see KaResolver.tryResolveCall
  * @see KaResolver.resolveCall
@@ -145,6 +153,9 @@ public typealias KaCallResolutionSuccess = KaSimpleCallResolutionSuccess
 public sealed interface KaMultiCallResolutionAttempt : KaCallResolutionAttempt {
     /**
      * The assembled multi-call, or `null` if any sub-call failed.
+     *
+     * `null` if and only if at least one of the [simpleAttempts] is a [KaSimpleCallResolutionError]. The
+     * successfully resolved sub-calls remain available through [simpleAttempts] even then.
      *
      * Overridden in concrete subtypes with a more precise return type.
      */
@@ -344,7 +355,12 @@ public val KaCallResolutionAttempt.calls: List<KaSimpleOrMultiCall>
 /**
  * The only call of [calls], or `null` if the attempt has no calls or more than one.
  *
- * Unlike [successful], a call is also returned for a failed resolution which considered exactly one candidate.
+ * Unlike [successful], a call is also returned for a failed resolution, as long as [calls] holds exactly one. For a
+ * failed [KaMultiCallResolutionAttempt] that entry may come from any sub-attempt — a resolved sub-call, or a candidate
+ * of a failed one — so it is not necessarily a candidate for the element itself.
+ *
+ * For a *successful* [KaMultiCallResolutionAttempt], [calls] holds the assembled [KaMultiCall], so [single] is that
+ * multi-call and its [simple]/[function]/[variable] narrowings are all `null`.
  *
  * #### Example
  *

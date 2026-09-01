@@ -21,12 +21,17 @@ import org.jetbrains.kotlin.resolution.*
  * context(session: KaSession)
  * fun findResolutionDiagnostic(expression: KtCallExpression): KaDiagnostic? {
  *   val attempt = expression.tryResolveCall() ?: return null
- *   val error = attempt as? KaSimpleCallResolutionError ?: return null
- *   return error.diagnostic
+ *   return attempt.errors.firstOrNull()?.diagnostic
  * }
  * ```
  *
- * Returns a [KaCallResolutionAttempt], or `null` if no result is available.
+ * Returns a [KaCallResolutionAttempt], or `null` when there is no call to resolve: the element is not call-shaped, or
+ * its reference resolves to something non-callable, such as a qualifier, an import, or a type. Broken code can end up
+ * here as well.
+ *
+ * A non-null result describes the outcome of an actual resolution. Check it with [errors] or [isSuccessful] rather than
+ * with a type check, which only covers simple attempts. A reported error may carry an empty
+ * [candidateCalls][KaSimpleCallResolutionError.candidateCalls] list.
  *
  * See [References and Calls](https://kotlin.github.io/analysis-api/references-and-calls.html) for a top-level overview.
  *
