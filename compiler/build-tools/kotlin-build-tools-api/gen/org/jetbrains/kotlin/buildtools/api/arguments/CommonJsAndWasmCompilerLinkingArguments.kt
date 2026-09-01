@@ -86,16 +86,6 @@ public interface CommonJsAndWasmCompilerLinkingArguments : CommonJsAndWasmArgume
         CommonJsAndWasmCompilerLinkingArgument("X_GENERATE_DTS", KotlinReleaseVersion(1, 3, 70))
 
     /**
-     * Path to an intermediate library that should be processed in the same manner as source files.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_INCLUDE: CommonJsAndWasmCompilerLinkingArgument<Path?> =
-        CommonJsAndWasmCompilerLinkingArgument("X_INCLUDE", KotlinReleaseVersion(1, 4, 0))
-
-    /**
      * Perform experimental dead code elimination.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
@@ -125,16 +115,6 @@ public interface CommonJsAndWasmCompilerLinkingArguments : CommonJsAndWasmArgume
     public val X_IR_DCE_RUNTIME_DIAGNOSTIC:
         CommonJsAndWasmCompilerLinkingArgument<JsIrDiagnosticMode?> =
         CommonJsAndWasmCompilerLinkingArgument("X_IR_DCE_RUNTIME_DIAGNOSTIC", KotlinReleaseVersion(1, 5, 0))
-
-    /**
-     * Generate a JS file using the IR backend.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_IR_PRODUCE_JS: CommonJsAndWasmCompilerLinkingArgument<Boolean> =
-        CommonJsAndWasmCompilerLinkingArgument("X_IR_PRODUCE_JS", KotlinReleaseVersion(1, 3, 70))
 
     /**
      * Perform lazy initialization for properties.

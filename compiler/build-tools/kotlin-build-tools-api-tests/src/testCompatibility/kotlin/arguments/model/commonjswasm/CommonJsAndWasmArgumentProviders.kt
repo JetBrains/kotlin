@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.buildtools.tests.arguments.model.commonjswasm
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments
-import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.IR_OUTPUT_DIR
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.LIBRARIES
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.X_FRIEND_MODULES
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerLinkingArguments
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerLink
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerLinkingArguments.Companion.SOURCE_MAP_EMBED_SOURCES
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerLinkingArguments.Companion.SOURCE_MAP_NAMES_POLICY
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerLinkingArguments.Companion.X_CACHE_DIRECTORY
-import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerLinkingArguments.Companion.X_INCLUDE
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerLinkingArguments.Companion.X_IR_DCE_RUNTIME_DIAGNOSTIC
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsIrDiagnosticMode
@@ -105,19 +103,6 @@ private val testBaseDir: Path = Paths.get("").toAbsolutePath()
 @OptIn(ExperimentalCompilerArgument::class)
 private val commonJsAndWasmCompilerArguments: List<CommonJsAndWasmArgumentTestDescriptor<*>> = listOf(
     CommonJsAndWasmArgumentTestDescriptor(
-        argumentName = "ir-output-dir",
-        argument = IR_OUTPUT_DIR,
-        availableSinceVersion = IR_OUTPUT_DIR.availableSinceVersion,
-        operationKinds = listOf(JS_KLIB, WASM_KLIB),
-        argumentValues = listOf(testBaseDir.resolve("path/to/output")),
-        argumentRawValues = listOf(testBaseDir.resolve("path/to/output").toFile().absolutePath),
-        runsNullableTest = true,
-        valueString = { value -> value?.toFile()?.absolutePath },
-        expectedArgumentStringsFor = { value -> listOf("-ir-output-dir", value) },
-        setArgumentValue = { value -> (this as CommonJsAndWasmArguments.Builder)[IR_OUTPUT_DIR] = value },
-        getArgumentValue = { (this as CommonJsAndWasmArguments)[IR_OUTPUT_DIR] },
-    ),
-    CommonJsAndWasmArgumentTestDescriptor(
         argumentName = "libraries",
         argument = LIBRARIES,
         availableSinceVersion = LIBRARIES.availableSinceVersion,
@@ -168,19 +153,6 @@ private val commonJsAndWasmCompilerArguments: List<CommonJsAndWasmArgumentTestDe
         expectedArgumentStringsFor = { value -> listOf("-Xfriend-modules=$value") },
         setArgumentValue = { value -> (this as CommonJsAndWasmArguments.Builder)[X_FRIEND_MODULES] = value },
         getArgumentValue = { (this as CommonJsAndWasmArguments)[X_FRIEND_MODULES] },
-    ),
-    CommonJsAndWasmArgumentTestDescriptor(
-        argumentName = "Xinclude",
-        argument = X_INCLUDE,
-        availableSinceVersion = X_INCLUDE.availableSinceVersion,
-        operationKinds = listOf(JS_LINKING, WASM_LINKING),
-        argumentValues = listOf(testBaseDir.resolve("path/to/included.klib")),
-        argumentRawValues = listOf(testBaseDir.resolve("path/to/included.klib").toFile().absolutePath),
-        runsNullableTest = true,
-        valueString = { value -> value?.toFile()?.absolutePath },
-        expectedArgumentStringsFor = { value -> listOf("-Xinclude=$value") },
-        setArgumentValue = { value -> (this as CommonJsAndWasmCompilerLinkingArguments.Builder)[X_INCLUDE] = value },
-        getArgumentValue = { (this as CommonJsAndWasmCompilerLinkingArguments)[X_INCLUDE] },
     ),
     CommonJsAndWasmArgumentTestDescriptor(
         argumentName = "Xcache-directory",
