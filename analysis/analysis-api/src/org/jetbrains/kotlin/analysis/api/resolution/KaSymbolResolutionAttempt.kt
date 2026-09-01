@@ -232,6 +232,40 @@ public val KaSymbolResolutionAttempt.simpleAttempts: List<KaSimpleSymbolResoluti
     }
 
 /**
+ * The list of errors that occurred during the resolution.
+ *
+ * - [KaSimpleSymbolResolutionSuccess]: an empty list.
+ * - [KaSimpleSymbolResolutionError]: [this] error as a single-element list.
+ * - [KaCompoundSymbolResolutionError]: the errors among the individual
+ *   [sub-attempts][KaCompoundSymbolResolutionError.simpleAttempts], which always contain at least one.
+ *
+ * The list is empty if and only if the resolution succeeded. So, unlike a `this is KaSimpleSymbolResolutionError`
+ * check, which only covers simple attempts, this property detects failures of every attempt kind.
+ *
+ * @see isSuccessful
+ */
+@KaExperimentalApi
+public val KaSymbolResolutionAttempt.errors: List<KaSimpleSymbolResolutionError>
+    get() = when (this) {
+        is KaSimpleSymbolResolutionSuccess -> emptyList()
+        is KaSimpleSymbolResolutionError -> listOf(this)
+        is KaCompoundSymbolResolutionError -> simpleAttempts.filterIsInstance<KaSimpleSymbolResolutionError>()
+    }
+
+/**
+ * Whether the resolution succeeded.
+ *
+ * `true` if and only if [errors] is empty. A [KaCompoundSymbolResolutionError] is always a failure, even when some
+ * of its [sub-attempts][KaCompoundSymbolResolutionError.simpleAttempts] succeeded.
+ *
+ * @see errors
+ * @see successfulSymbols
+ */
+@KaExperimentalApi
+public val KaSymbolResolutionAttempt.isSuccessful: Boolean
+    get() = this is KaSimpleSymbolResolutionSuccess
+
+/**
  * Folds over a [KaSymbolResolutionAttempt] depending on whether the resolution succeeded.
  *
  * - [KaSimpleSymbolResolutionSuccess]: invokes [onSuccess] with the resolved [symbols][KaSimpleSymbolResolutionSuccess.symbols].
