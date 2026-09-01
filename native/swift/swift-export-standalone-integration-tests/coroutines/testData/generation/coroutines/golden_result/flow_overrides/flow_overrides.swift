@@ -24,7 +24,10 @@ public struct _ExportedKotlinPackages_namespace_I1_I2_SealedType: KotlinRuntimeS
 @_documentation(visibility: internal)
 extension ExportedKotlinPackages.namespace.I1 where Self : ExportedKotlinPackages.namespace.__I1 {
     public func sealedType() -> ExportedKotlinPackages.namespace.I1_SealedType {
-        fatalError("must implement sealedType in subclass")
+        switch self {
+        case let value as flow_overrides._ExportedKotlinPackages_namespace_I1_I2: .i2(.init(value))
+        default: fatalError("missing sealedType for \(self)")
+        }
     }
 }
 extension ExportedKotlinPackages.namespace.I1 {

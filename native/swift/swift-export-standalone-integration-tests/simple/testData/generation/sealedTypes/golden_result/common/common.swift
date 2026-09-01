@@ -132,7 +132,13 @@ extension ExportedKotlinPackages.org.kotlin.foo.QueryResult {
 @_documentation(visibility: internal)
 extension ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA where Self : ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA {
     public func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA_SealedType {
-        .unknown(.init(self))
+        switch self {
+        case let value as ExportedKotlinPackages.org.kotlin.foo.ClassE: .classE(.init(value))
+        case let value as ExportedKotlinPackages.org.kotlin.foo.InterfaceC: .interfaceC(.init(value))
+        case let value as ExportedKotlinPackages.org.kotlin.foo.SealedClassA: .sealedClassA(value.sealedType())
+        case let value as ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceB: .sealedInterfaceB(.init(value))
+        default: .unknown(.init(self))
+        }
     }
 }
 extension ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA {
@@ -625,7 +631,11 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         open func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.MySealedClass_SealedType {
-            fatalError("must implement sealedType in subclass")
+            switch self {
+            case let value as ExportedKotlinPackages.org.kotlin.foo.MyClassA.Inner: .myClassAInner(.init(value))
+            case let value as ExportedKotlinPackages.org.kotlin.foo.MyClassB.Inner: .myClassBInner(.init(value))
+            default: fatalError("missing sealedType for \(self)")
+            }
         }
     }
     @available(*, unavailable, message: "Unavailable type(s): ExportedKotlinPackages.org.kotlin.foo.SealedClassDeprecatedError")
@@ -725,7 +735,11 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         open func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedClassA_SealedType {
-            .unknown(.init(self))
+            switch self {
+            case let value as ExportedKotlinPackages.org.kotlin.foo.ClassC: .classC(.init(value))
+            case let value as ExportedKotlinPackages.org.kotlin.foo.SealedClassB: .sealedClassB(value.sealedType())
+            default: .unknown(.init(self))
+            }
         }
         @_disfavoredOverload
         public final func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA_SealedType {
@@ -740,7 +754,10 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         open func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedClassB_SealedType {
-            fatalError("must implement sealedType in subclass")
+            switch self {
+            case let value as ExportedKotlinPackages.org.kotlin.foo.ClassD: .classD(.init(value))
+            default: fatalError("missing sealedType for \(self)")
+            }
         }
         @_disfavoredOverload
         public final override func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedClassA_SealedType {
@@ -757,7 +774,9 @@ extension ExportedKotlinPackages.org.kotlin.foo {
         }
         @available(*, unavailable, message: "unavailable")
         open func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedClassDeprecatedError_SealedType {
-            .unknown(.init(self))
+            switch self {
+            default: .unknown(.init(self))
+            }
         }
     }
     @available(*, deprecated, message: "deprecated")
@@ -770,7 +789,10 @@ extension ExportedKotlinPackages.org.kotlin.foo {
         }
         @available(*, deprecated, message: "deprecated")
         open func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedClassDeprecatedWarning_SealedType {
-            fatalError("must implement sealedType in subclass")
+            switch self {
+            case let value as ExportedKotlinPackages.org.kotlin.foo.NonDeprecatedSubClassB: .nonDeprecatedSubClassB(.init(value))
+            default: fatalError("missing sealedType for \(self)")
+            }
         }
     }
     open class SealedClassNonDeprecated: KotlinRuntime.KotlinBase {
@@ -781,7 +803,10 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         open func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedClassNonDeprecated_SealedType {
-            .unknown(.init(self))
+            switch self {
+            case let value as ExportedKotlinPackages.org.kotlin.foo.DeprecatedWarningSubClass: .deprecatedWarningSubClass(.init(value))
+            default: .unknown(.init(self))
+            }
         }
     }
     open class SealedNonOptInClass: KotlinRuntime.KotlinBase {
@@ -792,7 +817,11 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         open func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedNonOptInClass_SealedType {
-            fatalError("must implement sealedType in subclass")
+            switch self {
+            case let value as ExportedKotlinPackages.org.kotlin.foo.NonSealedNonOptInClassA: .nonSealedNonOptInClassA(.init(value))
+            case let value as ExportedKotlinPackages.org.kotlin.foo.SealedOptInClass: .sealedOptInClass(value.sealedType())
+            default: fatalError("missing sealedType for \(self)")
+            }
         }
     }
     @_spi(org$kotlin$foo$OptInA)
@@ -805,7 +834,11 @@ extension ExportedKotlinPackages.org.kotlin.foo {
         }
         @_spi(org$kotlin$foo$OptInA)
         open func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedOptInClass_SealedType {
-            fatalError("must implement sealedType in subclass")
+            switch self {
+            case let value as ExportedKotlinPackages.org.kotlin.foo.NonSealedNonOptInClassB: .nonSealedNonOptInClassB(.init(value))
+            case let value as ExportedKotlinPackages.org.kotlin.foo.NonSealedOptInClass: .nonSealedOptInClass(.init(value))
+            default: fatalError("missing sealedType for \(self)")
+            }
         }
         @_disfavoredOverload
         public final override func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedNonOptInClass_SealedType {

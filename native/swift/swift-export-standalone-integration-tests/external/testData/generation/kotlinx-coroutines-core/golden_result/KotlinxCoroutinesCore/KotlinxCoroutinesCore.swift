@@ -7848,7 +7848,12 @@ extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause where S
     }
     @_spi(kotlinx$coroutines$InternalCoroutinesApi)
     public func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause_SealedType {
-        fatalError("must implement sealedType in subclass")
+        switch self {
+        case let value as ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0: .selectClause0(value.sealedType())
+        case let value as ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause1: .selectClause1(.init(value))
+        case let value as ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause2: .selectClause2(.init(value))
+        default: fatalError("missing sealedType for \(self)")
+        }
     }
 }
 @_documentation(visibility: internal)
@@ -7863,7 +7868,9 @@ extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause {
 extension ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0 where Self : ExportedKotlinPackages.kotlinx.coroutines.selects.__SelectClause0 {
     @_spi(kotlinx$coroutines$InternalCoroutinesApi)
     public func sealedType() -> ExportedKotlinPackages.kotlinx.coroutines.selects.SelectClause0_SealedType {
-        .unknown(.init(self))
+        switch self {
+        default: .unknown(.init(self))
+        }
     }
 }
 @_documentation(visibility: internal)
