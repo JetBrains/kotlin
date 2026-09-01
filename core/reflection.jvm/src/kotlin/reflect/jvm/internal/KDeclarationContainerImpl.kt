@@ -197,7 +197,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         }
 
     private fun Class<*>.lookupMethod(
-        name: String, parameterTypes: Array<Class<*>>, returnType: Class<*>, isStaticDefault: Boolean,
+        name: String, parameterTypes: Array<Class<*>>, returnType: Class<*>?, isStaticDefault: Boolean,
     ): Method? {
         // Static "$default" method in any class takes an instance of that class as the first parameter.
         if (isStaticDefault) {
@@ -225,11 +225,11 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         return null
     }
 
-    private fun Class<*>.tryGetMethod(name: String, parameterTypes: Array<Class<*>>, returnType: Class<*>): Method? =
+    private fun Class<*>.tryGetMethod(name: String, parameterTypes: Array<Class<*>>, returnType: Class<*>?): Method? =
         try {
             val result = getDeclaredMethod(name, *parameterTypes)
 
-            if (result.returnType == returnType) result
+            if (returnType == null || result.returnType == returnType) result
             else {
                 // If we've found a method with an unexpected return type, it's likely that there are several methods in this class
                 // with the given parameter types and Java reflection API has returned not the one we're looking for.
@@ -239,7 +239,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
                     method.name == name && method.returnType == returnType && method.parameterTypes.contentEquals(parameterTypes)
                 }
             }
-        } catch (e: NoSuchMethodException) {
+        } catch (_: NoSuchMethodException) {
             null
         }
 
@@ -254,8 +254,13 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         if (name == "<init>") return null
 
         val functionJvmDescriptor = classLoader.parseAndLoadDescriptor(desc, loadReturnType = true)
-        val parameterTypes = functionJvmDescriptor.parameters.toTypedArray()
+        val parameterTypes = functionJvmDescriptor.parameters
         val returnType = functionJvmDescriptor.returnType!!
+        return findMethodBySignature(name, parameterTypes, returnType)
+    }
+
+    fun findMethodBySignature(name: String, parameterTypesList: List<Class<*>>, returnType: Class<*>?): Method? {
+        val parameterTypes = parameterTypesList.toTypedArray()
         methodOwner.lookupMethod(name, parameterTypes, returnType, false)?.let { return it }
 
         // Methods from java.lang.Object (equals, hashCode, toString) cannot be found in the interface via
