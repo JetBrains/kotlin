@@ -2779,6 +2779,276 @@ public fun CharArray.minWith(comparator: Comparator<in Char>): Char? {
 }
 
 /**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigDecimal")
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<out T>.productOf(selector: (T) -> java.math.BigDecimal): java.math.BigDecimal {
+    var product: java.math.BigDecimal = 1.toBigDecimal()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigDecimal")
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.productOf(selector: (Byte) -> java.math.BigDecimal): java.math.BigDecimal {
+    var product: java.math.BigDecimal = 1.toBigDecimal()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigDecimal")
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.productOf(selector: (Short) -> java.math.BigDecimal): java.math.BigDecimal {
+    var product: java.math.BigDecimal = 1.toBigDecimal()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigDecimal")
+@kotlin.internal.InlineOnly
+public inline fun IntArray.productOf(selector: (Int) -> java.math.BigDecimal): java.math.BigDecimal {
+    var product: java.math.BigDecimal = 1.toBigDecimal()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigDecimal")
+@kotlin.internal.InlineOnly
+public inline fun LongArray.productOf(selector: (Long) -> java.math.BigDecimal): java.math.BigDecimal {
+    var product: java.math.BigDecimal = 1.toBigDecimal()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigDecimal")
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.productOf(selector: (Float) -> java.math.BigDecimal): java.math.BigDecimal {
+    var product: java.math.BigDecimal = 1.toBigDecimal()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigDecimal")
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.productOf(selector: (Double) -> java.math.BigDecimal): java.math.BigDecimal {
+    var product: java.math.BigDecimal = 1.toBigDecimal()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigDecimal")
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.productOf(selector: (Boolean) -> java.math.BigDecimal): java.math.BigDecimal {
+    var product: java.math.BigDecimal = 1.toBigDecimal()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigDecimal")
+@kotlin.internal.InlineOnly
+public inline fun CharArray.productOf(selector: (Char) -> java.math.BigDecimal): java.math.BigDecimal {
+    var product: java.math.BigDecimal = 1.toBigDecimal()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigInteger")
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<out T>.productOf(selector: (T) -> java.math.BigInteger): java.math.BigInteger {
+    var product: java.math.BigInteger = 1.toBigInteger()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigInteger")
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.productOf(selector: (Byte) -> java.math.BigInteger): java.math.BigInteger {
+    var product: java.math.BigInteger = 1.toBigInteger()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigInteger")
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.productOf(selector: (Short) -> java.math.BigInteger): java.math.BigInteger {
+    var product: java.math.BigInteger = 1.toBigInteger()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigInteger")
+@kotlin.internal.InlineOnly
+public inline fun IntArray.productOf(selector: (Int) -> java.math.BigInteger): java.math.BigInteger {
+    var product: java.math.BigInteger = 1.toBigInteger()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigInteger")
+@kotlin.internal.InlineOnly
+public inline fun LongArray.productOf(selector: (Long) -> java.math.BigInteger): java.math.BigInteger {
+    var product: java.math.BigInteger = 1.toBigInteger()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigInteger")
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.productOf(selector: (Float) -> java.math.BigInteger): java.math.BigInteger {
+    var product: java.math.BigInteger = 1.toBigInteger()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigInteger")
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.productOf(selector: (Double) -> java.math.BigInteger): java.math.BigInteger {
+    var product: java.math.BigInteger = 1.toBigInteger()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigInteger")
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.productOf(selector: (Boolean) -> java.math.BigInteger): java.math.BigInteger {
+    var product: java.math.BigInteger = 1.toBigInteger()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigInteger")
+@kotlin.internal.InlineOnly
+public inline fun CharArray.productOf(selector: (Char) -> java.math.BigInteger): java.math.BigInteger {
+    var product: java.math.BigInteger = 1.toBigInteger()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
 @SinceKotlin("1.4")
