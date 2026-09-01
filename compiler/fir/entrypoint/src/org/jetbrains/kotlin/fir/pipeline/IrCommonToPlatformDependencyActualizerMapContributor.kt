@@ -125,6 +125,13 @@ class IrCommonToPlatformDependencyActualizerMapContributor private constructor(
             }
         }
 
+        for (platformMappingProvider in platformMappingProviders) {
+            for ((commonClass, platformClass) in platformMappingProvider.classMapping.values.toList()) {
+                if (commonClass == null || platformClass == null) continue
+                processPairOfClasses(commonClass, platformClass)
+            }
+        }
+
         handleCloneable()
 
         ActualClassInfo(classMapping, actualTypeAliases)
