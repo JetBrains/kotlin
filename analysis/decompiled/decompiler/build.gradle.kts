@@ -2,7 +2,6 @@ plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
-    id("java-test-fixtures")
 }
 
 dependencies {
@@ -21,16 +20,9 @@ dependencies {
     implementation(project(":kotlin-util-klib-metadata"))
 
     api(intellijCore())
-
-    testFixturesApi(platform(libs.junit.bom))
-    testFixturesApi(testFixtures(project(":compiler:tests-common")))
-    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
-    testFixturesApi(libs.junit.jupiter.api)
 }
 
 sourceSets {
     "main" { projectDefault() }
     "test" { none() }
-    "testFixtures" { projectDefault() }
 }
