@@ -217,6 +217,21 @@ public val KaSymbolResolutionAttempt.successfulSymbols: List<KaSymbol>
     get() = fold(onSuccess = { it }, onFailure = { emptyList() })
 
 /**
+ * The flattened list of simple resolution attempts.
+ *
+ * - [KaSimpleSymbolResolutionAttempt]: [this] attempt as a single-element list.
+ * - [KaCompoundSymbolResolutionError]: the individual [sub-attempts][KaCompoundSymbolResolutionError.simpleAttempts].
+ *
+ * The list is never empty.
+ */
+@KaExperimentalApi
+public val KaSymbolResolutionAttempt.simpleAttempts: List<KaSimpleSymbolResolutionAttempt>
+    get() = when (this) {
+        is KaSimpleSymbolResolutionAttempt -> listOf(this)
+        is KaCompoundSymbolResolutionError -> simpleAttempts
+    }
+
+/**
  * Folds over a [KaSymbolResolutionAttempt] depending on whether the resolution succeeded.
  *
  * - [KaSimpleSymbolResolutionSuccess]: invokes [onSuccess] with the resolved [symbols][KaSimpleSymbolResolutionSuccess.symbols].
