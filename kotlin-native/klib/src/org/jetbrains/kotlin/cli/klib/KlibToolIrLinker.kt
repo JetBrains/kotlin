@@ -46,7 +46,7 @@ internal class KlibToolIrLinker(
         strategyResolver = strategyResolver
     )
 
-    override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor) = false
+    override fun isBuiltInModule(module: IrModuleFragment) = false
 
     private inner class KlibToolModuleDeserializer(
         moduleFragment: IrModuleFragment,

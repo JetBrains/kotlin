@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.IrModuleDependencyTrack
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDependencyTrackerImpl
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializerWithBuiltIns
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -42,9 +43,8 @@ class KonanIrLinker(
     private val libraryBeingCached: PartialCacheInfo?,
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
 ) : KotlinIrLinker(currentModule, configuration, symbolTable) {
-    override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean {
-        val origin: DeserializedKlibModuleOrigin? = moduleDescriptor.klibModuleOriginOrNull as? DeserializedKlibModuleOrigin
-        val klib: KotlinLibrary = origin?.library ?: return false
+    override fun isBuiltInModule(module: IrModuleFragment): Boolean {
+        val klib = module.kotlinLibrary ?: return false
         return klib.isNativeStdlib
     }
 
