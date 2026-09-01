@@ -560,7 +560,7 @@ KtBlockExpression(485,487): '{}'
 
 KtForExpression(492,521): 'for ([first: String] in y) {}'
   KaCompoundSymbolResolutionError:
-    attempts = [
+    simpleAttempts = [
       KaSimpleSymbolResolutionError:
         candidateSymbols = []
         diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator' on receiver of type 'NonDataTuple'.>,

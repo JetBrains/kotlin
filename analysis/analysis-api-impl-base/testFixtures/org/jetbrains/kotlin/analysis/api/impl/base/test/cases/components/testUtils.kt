@@ -150,7 +150,7 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
                             /** This is already covered by [KaFunctionCall.valueArgumentMapping] and [KaFunctionCall.contextArguments] */
                             !(klass.isSubclassOf(KaFunctionCall::class) && property.name == KaFunctionCall<*>::combinedArgumentMapping.name) &&
                             // The multi-call resolution attempt already renders all attempts via individual named properties
-                            !(klass.isSubclassOf(KaMultiCallResolutionAttempt::class) && property.name == KaMultiCallResolutionAttempt::attempts.name) &&
+                            !(klass.isSubclassOf(KaMultiCallResolutionAttempt::class) && property.name == KaMultiCallResolutionAttempt::simpleAttempts.name) &&
                             // If call is present, skip individual attempt properties (they're redundant with the call)
                             !(klass.isSubclassOf(KaMultiCallResolutionAttempt::class) && multiCallResolutionAttemptCallValue != null &&
                                     property.name.endsWith("Attempt")) &&
@@ -383,8 +383,8 @@ internal fun assertStableResult(
         }
 
         is KaMultiCallResolutionAttempt -> if (symbolResolutionAttempt is KaCompoundSymbolResolutionError) {
-            val callErrors = callResolutionAttempt.attempts.filterIsInstance<KaSimpleCallResolutionError>()
-            val symbolErrors = symbolResolutionAttempt.attempts.filterIsInstance<KaSimpleSymbolResolutionError>()
+            val callErrors = callResolutionAttempt.simpleAttempts.filterIsInstance<KaSimpleCallResolutionError>()
+            val symbolErrors = symbolResolutionAttempt.simpleAttempts.filterIsInstance<KaSimpleSymbolResolutionError>()
             assertions.assertEquals(callErrors.size, symbolErrors.size) {
                 "Number of error attempts differs between call and symbol resolution"
             }
@@ -461,8 +461,8 @@ internal fun assertStableResult(
             assertMultiCallConsistency(testServices, firstAttempt)
 
             val secondMulti = secondAttempt as KaMultiCallResolutionAttempt
-            assertions.assertEquals(firstAttempt.attempts.size, secondMulti.attempts.size)
-            for ((first, second) in firstAttempt.attempts.zip(secondMulti.attempts)) {
+            assertions.assertEquals(firstAttempt.simpleAttempts.size, secondMulti.simpleAttempts.size)
+            for ((first, second) in firstAttempt.simpleAttempts.zip(secondMulti.simpleAttempts)) {
                 assertions.assertEquals(first::class, second::class)
                 if (first is KaSimpleCallResolutionError) {
                     assertStableResult(
@@ -492,14 +492,14 @@ private fun assertMultiCallConsistency(testServices: TestServices, attempt: KaMu
     val call = attempt.call
     if (call != null) {
         // All attempts must be successful
-        for (subAttempt in attempt.attempts) {
+        for (subAttempt in attempt.simpleAttempts) {
             assertions.assertTrue(subAttempt is KaSimpleCallResolutionSuccess) {
                 "Multi-call has non-null call, but attempt ${subAttempt::class.simpleName} is not success"
             }
         }
     } else {
         // At least one attempt must be an error
-        assertions.assertTrue(attempt.attempts.any { it is KaSimpleCallResolutionError }) {
+        assertions.assertTrue(attempt.simpleAttempts.any { it is KaSimpleCallResolutionError }) {
             "Multi-call has null call, but no error attempts found"
         }
     }
@@ -511,7 +511,7 @@ private fun assertMultiCallConsistency(testServices: TestServices, attempt: KaMu
 context(_: KaSession)
 private fun assertMultiSymbolConsistency(testServices: TestServices, attempt: KaCompoundSymbolResolutionError) {
     val assertions = testServices.assertions
-    val attempts = attempt.attempts
+    val attempts = attempt.simpleAttempts
     // At least one attempt must be an error
     assertions.assertTrue(attempts.any { it is KaSimpleSymbolResolutionError }) {
         "Multi-call has no error attempts found"

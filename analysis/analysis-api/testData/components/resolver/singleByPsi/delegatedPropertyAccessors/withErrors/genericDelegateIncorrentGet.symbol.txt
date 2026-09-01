@@ -1,6 +1,6 @@
 KtPropertyDelegate(74,109): 'by GenericDelegate<String>("hello")'
   KaCompoundSymbolResolutionError:
-    attempts = [
+    simpleAttempts = [
       KaSimpleSymbolResolutionSuccess:
         symbols = [
           myPack/GenericDelegate.setValue(<dispatch receiver>: myPack.GenericDelegate<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, newValue: T): kotlin.Unit

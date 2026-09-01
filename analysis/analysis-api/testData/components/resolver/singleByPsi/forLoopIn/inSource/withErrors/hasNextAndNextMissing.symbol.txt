@@ -1,6 +1,6 @@
 KtForExpression(23,37): 'for(i in f) {}'
   KaCompoundSymbolResolutionError:
-    attempts = [
+    simpleAttempts = [
       KaSimpleSymbolResolutionSuccess:
         symbols = [
           /Foo.iterator(<dispatch receiver>: Foo): Iterator
