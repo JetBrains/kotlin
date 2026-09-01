@@ -1476,6 +1476,12 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
     }
 
     @Test
+    @TestMetadata("constructorBoxedMixed.kt")
+    public void testConstructorBoxedMixed() {
+      run("constructorBoxedMixed.kt");
+    }
+
+    @Test
     @TestMetadata("contextAndReceiverVariable.kt")
     public void testContextAndReceiverVariable() {
       run("contextAndReceiverVariable.kt");
@@ -1647,6 +1653,18 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
     @TestMetadata("resultNullable.kt")
     public void testResultNullable() {
       run("resultNullable.kt");
+    }
+
+    @Test
+    @TestMetadata("resultNullableMangled.kt")
+    public void testResultNullableMangled() {
+      run("resultNullableMangled.kt");
+    }
+
+    @Test
+    @TestMetadata("resultNullableVariable.kt")
+    public void testResultNullableVariable() {
+      run("resultNullableVariable.kt");
     }
 
     @Test
@@ -2076,6 +2094,12 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
       @TestMetadata("jvmNameDirective.kt")
       public void testJvmNameDirective() {
         run("jvmNameDirective.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmNameResultNullable.kt")
+      public void testJvmNameResultNullable() {
+        run("jvmNameResultNullable.kt");
       }
 
       @Test
