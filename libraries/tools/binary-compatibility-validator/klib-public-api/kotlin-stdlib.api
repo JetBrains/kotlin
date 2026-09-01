@@ -14466,11 +14466,6 @@ final value class kotlin.wasm.unsafe/Pointer { // kotlin.wasm.unsafe/Pointer|nul
 }
 
 // Targets: [wasmJs, wasmWasi]
-final var kotlin.wasm.unsafe/currentAllocator // kotlin.wasm.unsafe/currentAllocator|{}currentAllocator[0]
-    final fun <get-currentAllocator>(): kotlin.wasm.unsafe/ScopedMemoryAllocator? // kotlin.wasm.unsafe/currentAllocator.<get-currentAllocator>|<get-currentAllocator>(){}[0]
-    final fun <set-currentAllocator>(kotlin.wasm.unsafe/ScopedMemoryAllocator?) // kotlin.wasm.unsafe/currentAllocator.<set-currentAllocator>|<set-currentAllocator>(kotlin.wasm.unsafe.ScopedMemoryAllocator?){}[0]
-
-// Targets: [wasmJs, wasmWasi]
 final fun (kotlin/Byte).kotlin.text/toString(kotlin/Int): kotlin/String // kotlin.text/toString|toString@kotlin.Byte(kotlin.Int){}[0]
 
 // Targets: [wasmJs, wasmWasi]
