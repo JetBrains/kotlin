@@ -49,7 +49,7 @@ public abstract class AbstractCoroutineContextElement(public override val key: K
 @ExperimentalStdlibApi
 @Deprecated(
     "Polymorphic coroutine context keys are error-prone, difficult to implement correctly, and can encourage " +
-            "depending on implementation details. Prefer retrieving the element by its base key and casting " +
+            "users to depend on implementation details. Prefer retrieving the element by its base key and casting " +
             "it explicitly when needed or introducing a dedicated extension property."
 )
 @DeprecatedSinceKotlin(warningSince = "2.4")
@@ -74,7 +74,7 @@ public abstract class AbstractCoroutineContextKey<B : Element, E : B>(
 @ExperimentalStdlibApi
 @Deprecated(
     "Polymorphic coroutine context keys are error-prone, difficult to implement correctly, and can encourage " +
-            "depending on implementation details. Prefer retrieving the element by its base key and casting " +
+            "users to depend on implementation details. Prefer retrieving the element by its base key and casting " +
             "it explicitly when needed or introducing a dedicated extension property."
 )
 @DeprecatedSinceKotlin(warningSince = "2.4")
@@ -99,7 +99,7 @@ public fun <E : Element> Element.getPolymorphicElement(key: Key<E>): E? {
 @ExperimentalStdlibApi
 @Deprecated(
     "Polymorphic coroutine context keys are error-prone, difficult to implement correctly, and can encourage " +
-            "depending on implementation details. Prefer retrieving the element by its base key and casting " +
+            "users to depend on implementation details. Prefer retrieving the element by its base key and casting " +
             "it explicitly when needed or introducing a dedicated extension property."
 )
 @DeprecatedSinceKotlin(warningSince = "2.4")
