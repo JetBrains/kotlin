@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.atPotentiallyNonSource
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.getNameWithAssert
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.moduleFragment
 import org.jetbrains.kotlin.ir.util.render
@@ -88,7 +87,7 @@ internal fun IrDiagnosticReporter.reportMissingActual(expectSymbol: IrSymbol) {
 internal fun IrDiagnosticReporter.reportMissingActual(irDeclaration: IrDeclaration) {
     atPotentiallyNonSource(irDeclaration).report(
         IrActualizationErrors.NO_ACTUAL_FOR_EXPECT,
-        (irDeclaration as? IrDeclarationWithName)?.name?.asString().orEmpty(),
+        irDeclaration.symbol,
         irDeclaration.moduleFragment.toModuleInfoForDiagnostic()
     )
 }
@@ -96,7 +95,7 @@ internal fun IrDiagnosticReporter.reportMissingActual(irDeclaration: IrDeclarati
 internal fun IrDiagnosticReporter.reportAmbiguousActuals(expectSymbol: IrDeclaration) {
     atPotentiallyNonSource(expectSymbol).report(
         IrActualizationErrors.AMBIGUOUS_ACTUALS,
-        (expectSymbol as? IrDeclarationWithName)?.name?.asString().orEmpty(),
+        expectSymbol.symbol,
         expectSymbol.moduleFragment.toModuleInfoForDiagnostic()
     )
 }
@@ -114,11 +113,10 @@ internal fun IrDiagnosticReporter.reportExpectActualIrIncompatibility(
     incompatibility: ExpectActualIncompatibility<*>,
 ) {
     val expectDeclaration = expectSymbol.owner as IrDeclaration
-    val actualDeclaration = actualSymbol.owner as IrDeclaration
     atPotentiallyNonSource(expectDeclaration).report(
         IrActualizationErrors.EXPECT_ACTUAL_IR_INCOMPATIBILITY,
-        expectDeclaration.getNameWithAssert().asString(),
-        actualDeclaration.getNameWithAssert().asString(),
+        expectSymbol,
+        actualSymbol,
         incompatibility
     )
 }
@@ -129,11 +127,10 @@ internal fun IrDiagnosticReporter.reportExpectActualIrMismatch(
     incompatibility: ExpectActualMatchingCompatibility.Mismatch,
 ) {
     val expectDeclaration = expectSymbol.owner as IrDeclaration
-    val actualDeclaration = actualSymbol.owner as IrDeclaration
     atPotentiallyNonSource(expectDeclaration).report(
         IrActualizationErrors.EXPECT_ACTUAL_IR_MISMATCH,
-        expectDeclaration.getNameWithAssert().asString(),
-        actualDeclaration.getNameWithAssert().asString(),
+        expectSymbol,
+        actualSymbol,
         incompatibility
     )
 }
