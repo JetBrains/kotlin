@@ -167,7 +167,7 @@ abstract class KotlinIrLinker(
         strategyResolver: (String) -> DeserializationStrategy,
     ): IrModuleDeserializer
 
-    protected abstract fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean
+    protected abstract fun isBuiltInModule(module: IrModuleFragment): Boolean
 
     fun getBuiltInsModule(): IrModuleFragment =
         allModuleDeserializers.firstOrNull { it is IrModuleDeserializerWithBuiltIns }?.moduleFragment
@@ -335,7 +335,7 @@ abstract class KotlinIrLinker(
     private fun maybeWrapWithBuiltIn(
         moduleDeserializer: IrModuleDeserializer,
     ): IrModuleDeserializer =
-        if (isBuiltInModule(moduleDeserializer.moduleFragment.descriptor)) {
+        if (isBuiltInModule(moduleDeserializer.moduleFragment)) {
             IrModuleDeserializerWithBuiltIns(
                 moduleDeserializer.moduleFragment,
                 symbolTable,

@@ -64,9 +64,8 @@ class JsIrLinker(
 
     override val moduleDependencyTracker: IrModuleDependencyTracker = IrModuleDependencyTrackerImpl()
 
-    override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean {
-        val origin: DeserializedKlibModuleOrigin? = moduleDescriptor.klibModuleOriginOrNull as? DeserializedKlibModuleOrigin
-        val klib: KotlinLibrary = origin?.library ?: return false
+    override fun isBuiltInModule(module: IrModuleFragment): Boolean {
+        val klib = module.kotlinLibrary ?: return false
         return klib.isJsStdlib || klib.isWasmStdlib
     }
 
