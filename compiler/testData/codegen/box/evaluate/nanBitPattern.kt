@@ -1,3 +1,5 @@
+// LANGUAGE: +NormalizeNaNValuesInConstContext
+
 const val floatNaNBits = 0x7fc00000
 const val doubleNaNBits = 0x7ff8000000000000L
 

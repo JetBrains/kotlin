@@ -681,6 +681,9 @@ context(sessionHolder: SessionHolder)
 private val intrinsicConstEvaluationEnabled: Boolean
     get() = sessionHolder.session.languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
 
+private val FirSession.nanNormalizationFeatureEnabled: Boolean
+    get() = languageVersionSettings.supportsFeature(LanguageFeature.NormalizeNaNValuesInConstContext)
+
 private fun ConeKotlinType.toCompileTimeType(): CompileTimeType? {
     if (this.classId == StandardClassIds.Any) return CompileTimeType.ANY
     return this.classId?.toConstantValueKind()?.toCompileTimeType()
@@ -853,7 +856,9 @@ private fun evaluateBinary(
     )
 }
 
+context(sessionHolder: SessionHolder)
 private fun Any?.normalize(): Any? {
+    if (!sessionHolder.session.nanNormalizationFeatureEnabled) return this
     if (this is Float && this.isNaN()) return Float.fromBits(0x7fc00000)
     if (this is Double && this.isNaN()) return Double.fromBits(0x7ff8000000000000L)
     return this
@@ -967,6 +972,7 @@ private fun ConstantValueKind.convertToGivenKind(value: Any?): Any? {
 
 private fun CompileTimeType.isFloatingPoint(): Boolean = this == CompileTimeType.FLOAT || this == CompileTimeType.DOUBLE
 
+context(sessionHolder: SessionHolder)
 private fun Any?.toConstExpression(
     kind: ConstantValueKind,
     originalExpression: FirExpression,
@@ -980,10 +986,12 @@ private fun Any?.toConstExpression(
     ).apply { replaceConeTypeOrNull(originalExpression.resolvedType) }
 }
 
+context(sessionHolder: SessionHolder)
 private fun FirLiteralExpression.copy(originalExpression: FirExpression): FirLiteralExpression {
     return this.value.toConstExpression(originalExpression.resolvedType.toConstantValueKind() ?: this.kind, originalExpression)
 }
 
+context(sessionHolder: SessionHolder)
 private fun FirEvaluatorResult.copy(originalExpression: FirExpression): FirEvaluatorResult {
     if (this !is Evaluated) {
         return this
