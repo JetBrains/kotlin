@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
-import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaBuildSession
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaJvmCompilationRequest
 import org.jetbrains.kotlin.config.IncrementalCompilation
@@ -119,9 +119,13 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
 
         // OSIP-499 (spike): the Build Tools API rejects `-Xbuild-file`, so a chunk has to be described through plain
         // compiler arguments. That is only expressible for a single-target chunk; circular chunks keep the legacy path.
-        val btaBuildSession = environment.btaBuildSession
-        if (KotlinBuilder.useBuildToolsApi && btaBuildSession != null && chunk.targets.size == 1) {
-            return compileModuleChunkWithBuildToolsApi(commonArguments, dirtyFilesHolder, environment, btaBuildSession)
+        // The implementation comes from the IDE and can be absent: a Kotlin version older than the Build Tools
+        // API, or one the IDE could not resolve. Such a chunk keeps the legacy path as well.
+        val btaSession = environment.btaBuildSession
+            ?.takeIf { KotlinBuilder.useBuildToolsApi && chunk.targets.size == 1 }
+            ?.getOrCreate()
+        if (btaSession != null) {
+            return compileModuleChunkWithBuildToolsApi(commonArguments, dirtyFilesHolder, environment, btaSession)
         }
 
         val filesSet = dirtyFilesHolder.allDirtyFiles
@@ -181,7 +185,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         commonArguments: CommonCompilerArguments,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         environment: JpsCompilerEnvironment,
-        btaBuildSession: JpsBtaBuildSession,
+        btaSession: KotlinToolchains.BuildSession,
     ): Boolean {
         // `KotlinModuleXmlBuilder.processClasspath` drops the chunk's own output directories from the class path
         // only when incremental compilation is *off* - a non-incremental compilation must not see the previous
@@ -227,7 +231,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
             module.k2JvmCompilerArguments,
             module.kotlinCompilerSettings,
             environment,
-            btaBuildSession,
+            btaSession,
             dirtyFilesHolder.context,
         )
 

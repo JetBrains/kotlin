@@ -68,11 +68,10 @@ internal class JpsBtaCompilerRunner {
         k2JvmArguments: K2JVMCompilerArguments,
         compilerSettings: CompilerSettings,
         environment: JpsCompilerEnvironment,
-        buildSession: JpsBtaBuildSession,
+        session: KotlinToolchains.BuildSession,
         context: CompileContext,
     ) {
         try {
-            val session = buildSession.getOrCreate(environment.kotlinPaths)
             val operation = buildOperation(session, request, commonArguments, k2JvmArguments, compilerSettings, environment)
 
             val result = withCancellationWatchdog(context, operation) {

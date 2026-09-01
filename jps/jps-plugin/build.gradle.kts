@@ -128,7 +128,7 @@ projectTests {
         workingDir = rootDir
         // OSIP-499 (spike): `./gradlew ... -Pkotlin.jps.useBuildToolsApi=true` runs the JPS tests against the
         // Build Tools API path instead of the module.xml + daemon one.
-        for (property in listOf("kotlin.jps.useBuildToolsApi", "kotlin.jps.btaDebugArguments", "kotlin.jps.btaUseWholeLibDirectory")) {
+        for (property in listOf("kotlin.jps.useBuildToolsApi", "kotlin.jps.btaImplHome", "kotlin.jps.btaDebugArguments")) {
             providers.gradleProperty(property).orNull?.let { systemProperty(property, it) }
         }
         jvmArgs(

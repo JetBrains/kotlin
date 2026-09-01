@@ -1,5 +1,11 @@
 # OSIP-499 — JPS on the Build Tools API: spike findings
 
+> **Superseded in part.** The spike loaded the implementation from the `kotlinc` dist, and the notes below
+> describe that. The dist no longer carries it: the IDE resolves `kotlin-build-tools-impl` for the Kotlin
+> version of the project and passes the directory in `kotlin.jps.btaImplHome` (KT-88958). So the hand-listed
+> closure in item 4, the dist rows of the verification table, and the open item about the size of
+> `kotlin-dist-for-ide` no longer apply. Items 1, 2, 3, 5 and 6, and the cancellation section, still do.
+
 Companion to [`../jps-integration-required-api.md`](../jps-integration-required-api.md).
 Records what the spike actually learned. The code it describes lives in the WIP commit this file was committed
 alongside; the entry point is `KotlinJvmModuleBuildTarget.compileModuleChunkWithBuildToolsApi`.

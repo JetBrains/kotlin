@@ -7,31 +7,29 @@ package org.jetbrains.kotlin.compilerRunner.btapi
 
 import org.jetbrains.jps.incremental.GlobalContextKey
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
-import org.jetbrains.kotlin.utils.KotlinPaths
 
 /**
- * The [KotlinToolchains.BuildSession] of one JPS build.
- *
- * Opened in `KotlinBuilder.buildStarted` and closed in `KotlinBuilder.buildFinished`, mirroring what the Kotlin
- * Gradle plugin does per Gradle build. The session is created lazily on first use, because the `kotlinc` home is
- * only resolved once a chunk is about to be compiled.
+ * The [KotlinToolchains.BuildSession] of one JPS build, mirroring what the Kotlin Gradle plugin does per Gradle
+ * build. Created lazily on first use, so that a build compiling no Kotlin never loads the implementation, and
+ * closed in `KotlinBuilder.buildFinished`.
  */
 class JpsBtaBuildSession internal constructor() {
     private var session: KotlinToolchains.BuildSession? = null
 
+    /**
+     * @return the session, or `null` when the implementation is unavailable - the caller stays on the legacy path.
+     */
     @Synchronized
-    fun getOrCreate(kotlinPaths: KotlinPaths): KotlinToolchains.BuildSession {
+    fun getOrCreate(): KotlinToolchains.BuildSession? {
         session?.let { return it }
-
-        val toolchains = JpsBtaToolchainLoader.load(kotlinPaths.libPath)
+        val toolchains = JpsBtaToolchainLoader.load() ?: return null
         return toolchains.createBuildSession().also { session = it }
     }
 
     @Synchronized
     fun close() {
-        val current = session ?: return
+        session?.close()
         session = null
-        current.close()
     }
 }
 

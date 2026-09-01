@@ -30,7 +30,11 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.jps.incremental.messages.BuildMessage
+import org.jetbrains.jps.incremental.messages.CompilerMessage
 import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaBuildSession
+import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaToolchainLoader
+import org.jetbrains.kotlin.config.CompilerRunnerConstants
 import org.jetbrains.kotlin.compilerRunner.btapi.jpsBtaBuildSessionKey
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.KotlinModuleKind
@@ -122,7 +126,34 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         reportService.buildStarted(context)
         if (useBuildToolsApi) {
             context.putUserData(jpsBtaBuildSessionKey, JpsBtaBuildSession())
+            reportBuildToolsApiPath(context)
         }
+    }
+
+    /**
+     * Says which compiler path this build takes, as a build message and not only in the log, so that the Build
+     * tool window of the IDE shows it without anyone opening `build.log`. The class path is only listed here, not
+     * loaded, so an implementation that no chunk ends up needing still costs nothing.
+     *
+     * `JPS_INFO` and not `INFO`: `CompileDriver` maps both to `CompilerMessageCategory.INFORMATION`, but only
+     * `JPS_INFO` also reaches the problems view (`CompileDriver.java:395`).
+     */
+    private fun reportBuildToolsApiPath(context: CompileContext) {
+        val classpath = JpsBtaToolchainLoader.resolveClasspath()
+        val implementationHome = System.getProperty(JpsBtaToolchainLoader.IMPL_HOME_PROPERTY)
+        val text = when {
+            classpath != null ->
+                "Compiling through the Build Tools API, ${classpath.size} implementation jars from $implementationHome"
+            implementationHome != null ->
+                "'kotlin.jps.useBuildToolsApi' is on, but $implementationHome holds no jars." +
+                        " Using the legacy compiler path."
+            else ->
+                "'kotlin.jps.useBuildToolsApi' is on, but the IDE handed over no implementation." +
+                        " Using the legacy compiler path."
+        }
+        context.processMessage(
+            CompilerMessage(CompilerRunnerConstants.KOTLIN_COMPILER_NAME, BuildMessage.Kind.JPS_INFO, text)
+        )
     }
 
     private fun logSettings(context: CompileContext) {

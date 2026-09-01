@@ -103,17 +103,6 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-jklib-compiler"
 )
 
-// OSIP-499 (spike): the Build Tools API implementation closure, required by the JPS plugin at runtime.
-// Each entry is added with `isTransitive = false`, like `distLibraryProjects`, because `distTask` uses
-// `DuplicatesStrategy.FAIL` and the transitive closures collide with jars already in `lib`.
-val distBuildToolsApiImplProjects = listOf(
-    ":compiler:build-tools:kotlin-build-tools-impl",
-    ":compiler:build-tools:kotlin-build-tools-cri-impl",
-    ":kotlin-compiler-embeddable",
-    ":kotlin-compiler-runner",
-    ":kotlin-tooling-core",
-)
-
 val distCompilerPluginProjects = listOf(
     ":kotlin-allopen-compiler-plugin",
     ":plugins:parcelize:parcelize-compiler",
@@ -170,11 +159,6 @@ dependencies {
     librariesStripVersion(libs.kotlinx.coroutines.core) { isTransitive = false }
 
     distLibraryProjects.forEach {
-        libraries(project(it)) { isTransitive = false }
-    }
-    // OSIP-499 (spike): ship the Build Tools API implementation closure into `dist/kotlinc/lib`
-    // so that the JPS plugin can load it in an isolated class loader.
-    distBuildToolsApiImplProjects.forEach {
         libraries(project(it)) { isTransitive = false }
     }
     distCompilerPluginProjects.forEach {
