@@ -335,13 +335,10 @@ private interface KaMultiUnknownCallResolutionAttempt : KaMultiCallResolutionAtt
  */
 @KaExperimentalApi
 public val KaCallResolutionAttempt.calls: List<KaSimpleOrMultiCall>
-    get() = if (this is KaSimpleCallResolutionError) {
-        candidateCalls
-    } else {
-        fold(
-            onSuccess = ::listOf,
-            onFailure = { it.flatMap(KaSimpleCallResolutionAttempt::calls) },
-        )
+    get() = when (this) {
+        is KaSimpleCallResolutionError -> candidateCalls
+        is KaSimpleCallResolutionSuccess -> listOf(call)
+        is KaMultiCallResolutionAttempt -> call?.let(::listOf) ?: simpleAttempts.flatMap(KaSimpleCallResolutionAttempt::calls)
     }
 
 /**
@@ -419,7 +416,11 @@ public val KaCallResolutionAttempt.errors: List<KaSimpleCallResolutionError>
  */
 @KaExperimentalApi
 public val KaCallResolutionAttempt.successful: KaSimpleOrMultiCall?
-    get() = fold(onSuccess = { it }, onFailure = { null })
+    get() = when (this) {
+        is KaSimpleCallResolutionSuccess -> call
+        is KaSimpleCallResolutionError -> null
+        is KaMultiCallResolutionAttempt -> call
+    }
 
 /**
  * Whether the resolution succeeded.
@@ -458,33 +459,24 @@ public val KaCallResolutionAttempt.successfulCall: KaSimpleOrMultiCall?
  * - [KaSimpleCallResolutionSuccess]: invokes [onSuccess] with the resolved [call][KaSimpleCallResolutionSuccess.call].
  * - [KaSimpleCallResolutionError]: invokes [onFailure] with the error wrapped in a single-element list.
  * - [KaMultiCallResolutionAttempt]: if all sub-calls succeeded, invokes [onSuccess] with the assembled
- *   [call][KaMultiCallResolutionAttempt.call]; otherwise invokes [onFailure] with the individual
- *   [simpleAttempts][KaMultiCallResolutionAttempt.simpleAttempts].
+ *   [call][KaMultiCallResolutionAttempt.call]; otherwise invokes [onFailure] with the [errors] of the failed
+ *   sub-calls. The successful sub-calls are not passed to [onFailure]; use [simpleAttempts] to reach them.
  */
 @KaExperimentalApi
 @OptIn(ExperimentalContracts::class)
 public inline fun <T> KaCallResolutionAttempt.fold(
     onSuccess: (KaSimpleOrMultiCall) -> T,
-    onFailure: (List<KaSimpleCallResolutionAttempt>) -> T,
+    onFailure: (List<KaSimpleCallResolutionError>) -> T,
 ): T {
     contract {
         callsInPlace(onSuccess, InvocationKind.AT_MOST_ONCE)
         callsInPlace(onFailure, InvocationKind.AT_MOST_ONCE)
     }
 
-    val call = when (this) {
-        is KaSimpleCallResolutionSuccess -> call
-        is KaMultiCallResolutionAttempt -> call
-        else -> null
+    val call = successful
+    return if (call != null) {
+        onSuccess(call)
+    } else {
+        onFailure(errors)
     }
-
-    if (call != null) return onSuccess(call)
-
-    val attempts = when (this) {
-        is KaSimpleCallResolutionError -> listOf(this)
-        is KaMultiCallResolutionAttempt -> simpleAttempts
-        else -> error("Unexpected ${KaCallResolutionAttempt::class.simpleName}: $this")
-    }
-
-    return onFailure(attempts)
 }
