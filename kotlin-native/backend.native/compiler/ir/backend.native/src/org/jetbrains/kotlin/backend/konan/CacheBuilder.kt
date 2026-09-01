@@ -383,11 +383,12 @@ class CacheBuilder(
         configuration.reportLog("CACHING ${library.path}")
         filesToCache.forEach { configuration.reportLog("    $it") }
 
-        // Produce monolithic caches for external libraries for now, with the exception of the stdlib:
+        // Produce monolithic caches for external libraries for now, except debug stdlib:
         // its cache is per-file by default (see [NativeSecondStageCompilationConfig.perFileCacheForStdlib]),
         // so when it has to be rebuilt here it must match the per-file layout the distribution ships.
         val makePerFileCache = !library.isCInteropLibrary() &&
-                (!isExternal || (library.isNativeStdlib && config.perFileCacheForStdlib))
+                (!isExternal || (library.isNativeStdlib && config.perFileCacheForStdlib)) &&
+                !(library.isNativeStdlib && config.optimizationsEnabled)
 
         val libraryCacheDirectory = when {
             library.isImplicitlyLoadedFromKotlinNativeDistribution || library.isNativeStdlib -> config.systemCacheDirectory
