@@ -64,4 +64,8 @@ void KotlinBridgeable_disposeRef(void * ref);
 
 void * Kotlin_SwiftExport_allocInstanceForSwiftSubclass(Class swiftSubclass);
 
+int32_t _kotlin_swift_List_size_get(void * self);
+
+void * _Nullable _kotlin_swift_List_get(void * self, int32_t index);
+
 NS_ASSUME_NONNULL_END
