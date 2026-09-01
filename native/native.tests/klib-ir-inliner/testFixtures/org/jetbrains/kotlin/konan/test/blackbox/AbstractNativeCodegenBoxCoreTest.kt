@@ -31,9 +31,12 @@ import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigu
 import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.bind
+import org.junit.jupiter.api.Assumptions
 
 abstract class AbstractNativeCodegenBoxCoreTest : AbstractTwoStageNativeCoreTest() {
     override fun configure(builder: TwoStageTestConfigurationBuilder): Unit = with(builder) {
+        Assumptions.abort<Nothing>("temporarily muted because of OOM") // @Disabled annotation does not work on such tests somewhy!!!
+
         super.configure(builder)
         commonConfiguration {
             defaultDirectives {
