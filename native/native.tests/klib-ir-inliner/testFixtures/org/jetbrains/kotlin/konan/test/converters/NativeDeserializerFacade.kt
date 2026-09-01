@@ -116,7 +116,7 @@ class NativeDeserializerFacade(
             symbolTable = symbolTable,
             friendModules = friendsMap,
             cInteropModuleDeserializerFactory = CInteropModuleDeserializerFactoryMock,
-            exportedDependencies = emptyList(),
+            exportedDependencies = emptySet(),
             partialLinkageConfig = PartialLinkageConfig(partialLinkageLogLevel),
             irDiagnosticReporter = irDiagnosticReporter,
             libraryBeingCached = null,
