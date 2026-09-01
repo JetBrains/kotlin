@@ -39,7 +39,9 @@ dependencies {
 }
 
 if (HostManager.host == KonanTarget.MACOS_ARM64) {
-    project.configureJvmToolchain(JdkMajorVersion.JDK_17_0)
+    project.jvmToolchains {
+        jdkVersion = JdkMajorVersion.JDK_17_0
+    }
 }
 
 val breakpadLocationNoDependency = layout.buildDirectory.dir("breakpad")

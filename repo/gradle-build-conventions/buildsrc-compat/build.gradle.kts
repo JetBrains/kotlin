@@ -99,6 +99,9 @@ dependencies {
     implementation(project(":test-federation-convention")) {
         isTransitive = false
     }
+    implementation(project(":jvm-toolchains-convention")) {
+        isTransitive = false
+    }
 
     testImplementation(kotlin("test"))
     testImplementation(libs.junit.jupiter.api)

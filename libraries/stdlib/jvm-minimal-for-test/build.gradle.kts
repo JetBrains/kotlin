@@ -7,7 +7,9 @@ plugins {
     `maven-publish`
 }
 
-project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
+jvmToolchains {
+    targetBytecodeVersion = JdkMajorVersion.JDK_1_8
+}
 
 val stdlibProjectDir = file("$rootDir/libraries/stdlib")
 

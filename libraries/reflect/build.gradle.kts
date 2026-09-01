@@ -17,7 +17,9 @@ plugins {
     kotlin("jvm")
 }
 
-configureJvmToolchain(JdkMajorVersion.JDK_1_8)
+jvmToolchains {
+    targetBytecodeVersion = JdkMajorVersion.JDK_1_8
+}
 
 sourceSets {
     "main" {

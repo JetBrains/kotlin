@@ -6,7 +6,9 @@ plugins {
     kotlin("jvm")
 }
 
-project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
+jvmToolchains {
+    targetBytecodeVersion = JdkMajorVersion.JDK_1_8
+}
 
 dependencies {
     api(project(":kotlin-script-runtime"))

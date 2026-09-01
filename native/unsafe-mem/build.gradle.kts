@@ -1,6 +1,3 @@
-import org.gradle.api.tasks.compile.JavaCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -39,12 +36,11 @@ dependencies {
     "jdk25CompileOnly"(kotlinStdlib())
 }
 
-tasks.named<KotlinJvmCompile>("compileJdk25Kotlin") {
-    configureTaskToolchain(JdkMajorVersion.JDK_25_0)
-}
-
-tasks.named<JavaCompile>("compileJdk25Java") {
-    configureTaskToolchain(JdkMajorVersion.JDK_25_0)
+jvmToolchains {
+    configureForSourceSet("jdk25") {
+        jdkVersion = JdkMajorVersion.JDK_25_0
+        targetBytecodeVersion = JdkMajorVersion.JDK_25_0
+    }
 }
 
 /*

@@ -4,8 +4,6 @@ plugins {
     kotlin("jvm")
 }
 
-project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
-
 dependencies {
     api(project(":kotlin-annotations-jvm"))
     implementation(project(":core:descriptors"))

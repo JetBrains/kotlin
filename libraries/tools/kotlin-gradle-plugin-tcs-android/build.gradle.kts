@@ -17,7 +17,10 @@ dependencies {
 }
 
 configureKotlinCompileTasksGradleCompatibility()
-configureJvmToolchain(JdkMajorVersion.JDK_11_0)
+jvmToolchains {
+    jdkVersion = JdkMajorVersion.JDK_11_0
+    targetBytecodeVersion = JdkMajorVersion.JDK_11_0
+}
 
 kotlin {
     coreLibrariesVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()

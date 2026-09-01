@@ -31,7 +31,10 @@ dependencies {
     testImplementation(libs.intellij.asm)
 }
 
-configureJvmToolchain(JdkMajorVersion.JDK_21_0)
+jvmToolchains {
+    jdkVersion = JdkMajorVersion.JDK_21_0
+    targetBytecodeVersion = JdkMajorVersion.JDK_21_0
+}
 
 sourceSets {
     "main" {}

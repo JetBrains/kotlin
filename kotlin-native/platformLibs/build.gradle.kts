@@ -54,7 +54,9 @@ private val cachePlatformLibsSemaphore = gradle.sharedServices.registerIfAbsent(
 // endregion
 
 if (HostManager.host == KonanTarget.MACOS_ARM64) {
-    project.configureJvmToolchain(JdkMajorVersion.JDK_17_0)
+    project.jvmToolchains {
+        jdkVersion = JdkMajorVersion.JDK_17_0
+    }
 }
 
 val cacheableTargetNames = platformManager.hostPlatform.cacheableTargets

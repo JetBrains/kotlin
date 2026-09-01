@@ -8,8 +8,11 @@ plugins {
     kotlin("plugin.serialization")
 }
 
-val jdkVersion = JdkMajorVersion.JDK_17_0
-configureJvmToolchain(jdkVersion)
+val jdkVersionToUse = JdkMajorVersion.JDK_17_0
+jvmToolchains {
+    jdkVersion = jdkVersionToUse
+    targetBytecodeVersion = jdkVersionToUse
+}
 
 dependencies {
     // The `reviewCode` task is used on TeamCity and might also be used locally in cold build scenarios
@@ -83,7 +86,7 @@ tasks.register<CodeReviewTask>("reviewCode") {
 }
 
 projectTests {
-    testTask(javaLauncher = jdkVersion) {
+    testTask(javaLauncher = jdkVersionToUse) {
         systemProperty("kotlin.repo.auto-code-review.rootDir", rootDir.absolutePath)
 
         // One of the tests traverses all files in the repo. And the tests are fairly quick.

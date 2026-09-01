@@ -39,8 +39,6 @@ plugins {
 
 description = "Kotlin Standard Library"
 
-configureJvmToolchain(JdkMajorVersion.JDK_1_8)
-
 fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     // Use this to override language and API versions for stdlib compared to the version used to build the whole Kotlin
     // languageVersion = KotlinVersion.KOTLIN_...
