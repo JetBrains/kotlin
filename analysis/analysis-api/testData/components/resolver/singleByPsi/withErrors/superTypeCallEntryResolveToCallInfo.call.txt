@@ -1,5 +1,5 @@
 KtSuperTypeCallEntry(26,44): 'java.lang.Object()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

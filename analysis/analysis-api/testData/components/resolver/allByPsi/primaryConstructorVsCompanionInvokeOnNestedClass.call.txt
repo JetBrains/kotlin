@@ -101,7 +101,7 @@ KtNameReferenceExpression(154,157): 'Int'
   null
 
 KtCallExpression(161,174): 'Nested("str")'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -134,7 +134,7 @@ KtCallExpression(161,174): 'Nested("str")'
       }
 
 KtNameReferenceExpression(161,167): 'Nested'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -188,7 +188,7 @@ KtBlockExpression(217,369): '{'
   null
 
 KtCallExpression(222,231): 'Nested(1)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -236,7 +236,7 @@ KtConstantExpression(229,230): '1'
   null
 
 KtDotQualifiedExpression(235,248): 'Foo.Nested(2)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -275,7 +275,7 @@ KtNameReferenceExpression(235,238): 'Foo'
   null
 
 KtCallExpression(239,248): 'Nested(2)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -323,7 +323,7 @@ KtConstantExpression(246,247): '2'
   null
 
 KtDotQualifiedExpression(252,277): 'com.example.Foo.Nested(3)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -374,7 +374,7 @@ KtNameReferenceExpression(264,267): 'Foo'
   null
 
 KtCallExpression(268,277): 'Nested(3)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -422,7 +422,7 @@ KtConstantExpression(275,276): '3'
   null
 
 KtDotQualifiedExpression(282,301): 'Nested.Companion(4)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -461,7 +461,7 @@ KtNameReferenceExpression(282,288): 'Nested'
   null
 
 KtCallExpression(289,301): 'Companion(4)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -509,7 +509,7 @@ KtConstantExpression(299,300): '4'
   null
 
 KtDotQualifiedExpression(305,328): 'Foo.Nested.Companion(5)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -554,7 +554,7 @@ KtNameReferenceExpression(309,315): 'Nested'
   null
 
 KtCallExpression(316,328): 'Companion(5)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -602,7 +602,7 @@ KtConstantExpression(326,327): '5'
   null
 
 KtDotQualifiedExpression(332,367): 'com.example.Foo.Nested.Companion(6)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -659,7 +659,7 @@ KtNameReferenceExpression(348,354): 'Nested'
   null
 
 KtCallExpression(355,367): 'Companion(6)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []

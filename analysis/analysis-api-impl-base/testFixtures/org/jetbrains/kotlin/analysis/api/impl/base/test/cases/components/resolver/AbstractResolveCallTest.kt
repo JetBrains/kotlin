@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.components.resolveToCall
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleCallResolutionError
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCallResolutionSuccess
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleCallResolutionSuccess
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertStableResult
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.findSpecializedResolveFunctions
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
@@ -61,7 +61,7 @@ abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
         is KaCallResolutionAttempt -> this
         is KaSuccessCallInfo -> {
             val simpleCall = (call as KaSimpleOrMultiCall).calls.first()
-            KaBaseCallResolutionSuccess(simpleCall)
+            KaBaseSimpleCallResolutionSuccess(simpleCall)
         }
 
         is KaErrorCallInfo -> KaBaseSimpleCallResolutionError(

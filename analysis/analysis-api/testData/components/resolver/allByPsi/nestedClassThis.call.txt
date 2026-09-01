@@ -47,7 +47,7 @@ KtParameterList(66,68): '()'
   null
 
 KtConstructorDelegationCall(70,78): 'this(10)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -81,7 +81,7 @@ KtConstructorDelegationCall(70,78): 'this(10)'
       }
 
 KtConstructorDelegationReferenceExpression(70,74): 'this'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

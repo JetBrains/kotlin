@@ -1,5 +1,5 @@
 KtCallExpression(76,88): 'javaMethod()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

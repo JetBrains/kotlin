@@ -1,5 +1,5 @@
 KtCallExpression(96,130): 'install(CoroutineModule.builder())'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

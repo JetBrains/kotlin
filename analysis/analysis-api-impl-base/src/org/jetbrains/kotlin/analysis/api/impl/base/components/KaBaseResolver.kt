@@ -76,7 +76,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
             is KaSimpleCallResolutionError -> callAttempt.toSimpleSymbolResolutionAttempt()
 
             // Single variable access is not expected to be a result of the symbol resolve (the assignment use case)
-            is KaCallResolutionSuccess if callAttempt.call !is KaVariableAccessCall -> callAttempt.toSimpleSymbolResolutionAttempt()
+            is KaSimpleCallResolutionSuccess if callAttempt.call !is KaVariableAccessCall -> callAttempt.toSimpleSymbolResolutionAttempt()
             is KaMultiCallResolutionAttempt -> when (callAttempt) {
                 is KaCompoundArrayAccessCallResolutionAttempt -> mergeSymbolAttempts(
                     listOf(
@@ -263,7 +263,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
     final override fun resolveToCall(element: KtElement): KaCallInfo? = element.withPsiValidityAssertion {
         when (val attempt = element.tryResolveCallImpl()) {
             is KaSimpleCallResolutionError -> KaBaseErrorCallInfo(attempt.candidateCalls.map { it.asKaCall() }, attempt.diagnostic)
-            is KaCallResolutionSuccess -> KaBaseSuccessCallInfo(attempt.call.asKaCall())
+            is KaSimpleCallResolutionSuccess -> KaBaseSuccessCallInfo(attempt.call.asKaCall())
             is KaMultiCallResolutionAttempt -> attempt.toCallInfo()
             null -> null
         }
@@ -347,7 +347,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
         mergeSymbolAttempts(attempts.map { it.toSimpleSymbolResolutionAttempt() })
 
     private fun KaSimpleCallResolutionAttempt.toSimpleSymbolResolutionAttempt(): KaSimpleSymbolResolutionAttempt = when (this) {
-        is KaCallResolutionSuccess -> KaBaseSymbolResolutionSuccess(backingSymbol = call.symbol)
+        is KaSimpleCallResolutionSuccess -> KaBaseSymbolResolutionSuccess(backingSymbol = call.symbol)
         is KaSimpleCallResolutionError -> KaBaseSymbolResolutionError(
             backingDiagnostic = diagnostic,
             backingCandidateSymbols = candidateCalls.map { it.symbol },

@@ -1,5 +1,5 @@
 KtBinaryExpression(357,375): 'oldItem == newItem'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

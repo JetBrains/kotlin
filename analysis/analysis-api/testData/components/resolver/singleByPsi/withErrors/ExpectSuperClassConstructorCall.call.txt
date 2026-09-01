@@ -1,5 +1,5 @@
 KtNameReferenceExpression(149,152): 'Foo'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

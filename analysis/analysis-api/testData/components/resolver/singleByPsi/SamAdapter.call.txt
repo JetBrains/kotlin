@@ -1,5 +1,5 @@
 KtNameReferenceExpression(35,46): 'invokeLater'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

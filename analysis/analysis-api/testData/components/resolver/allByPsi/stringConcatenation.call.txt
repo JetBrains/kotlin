@@ -20,7 +20,7 @@ KtProperty(18,45): 'val value = "1" + "2" + "3"'
   null
 
 KtBinaryExpression(30,45): '"1" + "2" + "3"'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -56,7 +56,7 @@ KtBinaryExpression(30,45): '"1" + "2" + "3"'
       }
 
 KtBinaryExpression(30,39): '"1" + "2"'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -98,7 +98,7 @@ KtLiteralStringTemplateEntry(31,32): '1'
   null
 
 KtOperationReferenceExpression(34,35): '+'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -140,7 +140,7 @@ KtLiteralStringTemplateEntry(37,38): '2'
   null
 
 KtOperationReferenceExpression(40,41): '+'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

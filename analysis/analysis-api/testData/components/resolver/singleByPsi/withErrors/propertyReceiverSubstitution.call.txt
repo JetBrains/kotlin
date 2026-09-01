@@ -1,5 +1,5 @@
 KtDotQualifiedExpression(77,82): 'f.foo'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

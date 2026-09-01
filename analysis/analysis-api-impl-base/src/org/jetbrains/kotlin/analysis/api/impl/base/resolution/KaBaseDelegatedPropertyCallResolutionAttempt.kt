@@ -22,13 +22,13 @@ class KaBaseDelegatedPropertyCallResolutionAttempt(
     @Suppress("UNCHECKED_CAST")
     override val call: KaDelegatedPropertyCall?
         get() = withValidityAssertion(fun(): KaBaseDelegatedPropertyCall? {
-            val getter = backingValueGetterCallAttempt as? KaCallResolutionSuccess ?: return null
+            val getter = backingValueGetterCallAttempt as? KaSimpleCallResolutionSuccess ?: return null
             val setter = backingValueSetterCallAttempt?.let {
-                it as? KaCallResolutionSuccess ?: return null
+                it as? KaSimpleCallResolutionSuccess ?: return null
             }
 
             val provideDelegate = backingProvideDelegateCallAttempt?.let {
-                it as? KaCallResolutionSuccess ?: return null
+                it as? KaSimpleCallResolutionSuccess ?: return null
             }
 
             return KaBaseDelegatedPropertyCall(

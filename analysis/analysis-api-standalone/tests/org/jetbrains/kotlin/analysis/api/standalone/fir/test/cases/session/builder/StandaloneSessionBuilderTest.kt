@@ -97,7 +97,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         analyze(ktFile) {
             val ktCallExpression = ktFile.findDescendantOfType<KtCallExpression>()!!
             val attempt = ktCallExpression.tryResolveCall()
-            Assertions.assertInstanceOf(KaCallResolutionSuccess::class.java, attempt)
+            Assertions.assertInstanceOf(KaSimpleCallResolutionSuccess::class.java, attempt)
             val symbol = attempt?.successful?.function?.symbol
             Assertions.assertInstanceOf(KaConstructorSymbol::class.java, symbol); symbol as KaConstructorSymbol
             Assertions.assertEquals(ClassId.topLevel(FqName("java.lang.Thread")), symbol.containingClassId)

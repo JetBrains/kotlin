@@ -53,7 +53,7 @@ KtNameReferenceExpression(113,114): 'C'
   null
 
 KtCallExpression(117,120): 'C()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -70,7 +70,7 @@ KtCallExpression(117,120): 'C()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(117,118): 'C'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -99,7 +99,7 @@ KtBlockExpression(134,151): '{'
   null
 
 KtDotQualifiedExpression(140,149): 'C.plus(1)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -138,7 +138,7 @@ KtNameReferenceExpression(140,141): 'C'
   null
 
 KtCallExpression(142,149): 'plus(1)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -174,7 +174,7 @@ KtCallExpression(142,149): 'plus(1)'
       }
 
 KtNameReferenceExpression(142,146): 'plus'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
