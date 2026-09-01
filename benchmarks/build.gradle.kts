@@ -33,43 +33,51 @@ sourceSets {
 
 optInToK1Deprecation()
 
-val warmupsParam = providers.gradleProperty("warmups").orNull
-val iterationsParam = providers.gradleProperty("iterations").orNull
-val includePattern = providers.gradleProperty("include").orNull
-val sizeParam = providers.gradleProperty("size").orNull
+val compilationWarmupsParam = providers.gradleProperty("compilationWarmups").orNull
+val compilationIterationsParam = providers.gradleProperty("compilationIterations").orNull
+val compilationIncludeParam = providers.gradleProperty("compilationInclude").orNull
+val compilationSizeParam = providers.gradleProperty("compilationSize").orNull
 
-val reflectionInclude = "org.jetbrains.kotlin.benchmarks.jmh.jvm.reflection.*"
+val compilationBenchmarks = "org.jetbrains.kotlin.benchmarks.jmh.compilation.*"
+val reflectionBenchmarks = "org.jetbrains.kotlin.benchmarks.jmh.jvm.reflection.*"
 
 benchmark {
     configurations {
+        // The plugin pre-registers `main`, which would give a `testBenchmark` task that runs every
+        // benchmark in the module under JMH settings that do not suit them.
+        // Drop it and register each suite explicitly, so every benchmark belongs to exactly one
+        // task and neither suite needs to exclude the other.
+        remove(getByName("main"))
+
+        // The compiler frontend benchmarks: `org.jetbrains.kotlin.benchmarks.jmh.compilation.*`.
+        register("compilation") {
+            include(compilationIncludeParam ?: compilationBenchmarks)
+
+            iterationTime = 1 // Required param
+            iterationTimeUnit = "sec" // Required param
+
+            warmups = compilationWarmupsParam?.toInt() ?: 5 // `5` is currently default in JMH
+            iterations = compilationIterationsParam?.toInt() ?: 5 // `5` is currently default in JMH
+
+            if (compilationSizeParam != null) {
+                // Use size from annotation arguments if the param isn't specified.
+                // `size` is the name of the benchmarks' own `@Param` property, so it stays as it is.
+                // CAUTION: large size might cause long execution time
+                param("size", compilationSizeParam.toInt())
+            }
+        }
+
         // The reflection benchmarks carry their own JMH settings: they are single-shot and select the
         // reflection implementation through a `reflectImplementation` param
         register("reflection") {
-            include(reflectionInclude)
+            include(reflectionBenchmarks)
 
             iterationTime = 1 // Required param
             iterationTimeUnit = "sec" // Required param
 
-            warmups = warmupsParam?.toInt() ?: 0
-            iterations = iterationsParam?.toInt() ?: 1
+            warmups = 0
+            iterations = 1
             advanced("jvmForks", 30)
-        }
-
-        named("main") {
-            iterationTime = 1 // Required param
-            iterationTimeUnit = "sec" // Required param
-
-            warmups = warmupsParam?.toInt() ?: 5 // `5` is currently default in JMH
-            iterations = iterationsParam?.toInt() ?: 5 // `5` is currently default in JMH
-
-            include(includePattern ?: "*") // Benchmark everything if the pattern isn't specified
-            exclude(reflectionInclude) // Exclude runtime reflection benchmarks
-
-            if (sizeParam != null) {
-                // Use size from annotation arguments if the param isn't specified
-                // CAUTION: large size might cause long execution time
-                param("size", sizeParam.toInt())
-            }
         }
     }
     targets {
@@ -92,10 +100,10 @@ fun JavaExec.addJarPathProperty(systemProperty: String, projectPath: String) {
 }
 
 // kotlinx-benchmark registers the benchmark exec tasks from its own `afterEvaluate`, so they can only be
-// looked up from a later one. Each task declares just the jars it uses, so running the compiler
+// looked up from a later one. Each task declares just the jars it uses, so running the compilation
 // benchmarks does not build kotlin-reflect, and vice versa.
 afterEvaluate {
-    tasks.named<JavaExec>("testBenchmark") {
+    tasks.named<JavaExec>("testCompilationBenchmark") {
         val ideaHomeForTests = project.configurations
             .detachedConfiguration(project.dependencies.project(":", configuration = "ideaHomeForTests"))
         jvmArgumentProviders.add(project.objects.newInstance(SystemPropertyClasspathDirectoryProvider::class.java).apply {
