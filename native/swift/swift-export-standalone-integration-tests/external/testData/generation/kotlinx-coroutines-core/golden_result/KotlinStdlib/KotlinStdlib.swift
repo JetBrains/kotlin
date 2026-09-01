@@ -941,7 +941,7 @@ extension ExportedKotlinPackages.kotlin.coroutines {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
-    @available(*, deprecated, message: "Polymorphic coroutine context keys are error-prone, difficult to implement correctly, and can encourage depending on implementation details. Prefer retrieving the element by its base key and casting it explicitly when needed or introducing a dedicated extension property.") @_spi(kotlin$ExperimentalStdlibApi)
+    @available(*, deprecated, message: "Polymorphic coroutine context keys are error-prone, difficult to implement correctly, and can encourage users to depend on implementation details. Prefer retrieving the element by its base key and casting it explicitly when needed or introducing a dedicated extension property.") @_spi(kotlin$ExperimentalStdlibApi)
     open class AbstractCoroutineContextKey: KotlinRuntime.KotlinBase {
         @_spi(kotlin$ExperimentalStdlibApi)
         public init(
