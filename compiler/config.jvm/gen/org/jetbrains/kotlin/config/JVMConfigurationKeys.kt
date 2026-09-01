@@ -349,6 +349,6 @@ var CompilerConfiguration.useMetadataOnIncrementalClasspath: Boolean
     set(value) { put(JVMConfigurationKeys.USE_METADATA_ON_INCREMENTAL_CLASSPATH, value) }
 
 var CompilerConfiguration.useJavaDirect: Boolean
-    get() = getBoolean(JVMConfigurationKeys.USE_JAVA_DIRECT)
+    get() = get(JVMConfigurationKeys.USE_JAVA_DIRECT, true)
     set(value) { put(JVMConfigurationKeys.USE_JAVA_DIRECT, value) }
 
