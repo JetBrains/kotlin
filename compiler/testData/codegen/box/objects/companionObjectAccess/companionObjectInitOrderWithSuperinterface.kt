@@ -108,6 +108,33 @@ class D5 : C5, A5 {
     companion object { init { log("D5.Companion") } }
 }
 
+interface I6 {
+    val value: String get() = "I6"
+    companion object { init { log("I6.Companion") } }
+}
+interface J6 : I6 {
+    companion object { init { log("J6.Companion") } }
+}
+class A6 : J6 {
+    companion object { init { log("A6.Companion") } }
+}
+
+// an interface with only abstract members is not an initialization dependency
+interface I7 {
+    fun foo() {}
+    companion object { init { log("I7.Companion") } }
+}
+interface J7 : I7 {
+    fun bar()
+    val value: Int
+    companion object { init { log("J7.Companion") } }
+}
+class A7 : J7 {
+    override fun bar() {}
+    override val value: Int = 0
+    companion object { init { log("A7.Companion") } }
+}
+
 fun box(): String {
     l = ""
     A1
@@ -138,6 +165,19 @@ fun box(): String {
     D5
     val r5 = l
     if (r5 != "A5.Companion\nB5.Companion\nC5.Companion\nD5.Companion\n") return "fail test5: '$r5'"
+
+    // I6 declares a non-abstract property and should be initialized.
+    // J6 only inherits it and should not be initialized.
+    l = ""
+    A6
+    val r6 = l
+    if (r6 != "I6.Companion\nA6.Companion\n") return "fail test6: '$r6'"
+
+    // J7 declares members, but they are abstract and must not trigger its initialization.
+    l = ""
+    A7
+    val r7 = l
+    if (r7 != "I7.Companion\nA7.Companion\n") return "fail test7: '$r7'"
 
     return "OK"
 }
