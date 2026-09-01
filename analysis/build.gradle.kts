@@ -12,6 +12,7 @@ tasks.register("analysisApiArtifactTests") {
         .map { "$it:check" }
 
     dependsOn(*analysisApiProjectChecks.toTypedArray())
+    dependsOn(":prepare:ide-plugin-dependencies:ide-plugin-dependencies-classpath-check:check")
 }
 
 tasks.register("analysisAllTests") {
