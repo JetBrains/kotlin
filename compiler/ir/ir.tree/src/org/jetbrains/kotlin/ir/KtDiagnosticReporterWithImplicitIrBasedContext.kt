@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.*
@@ -43,7 +44,19 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
     }
 
     override fun at(irElement: IrElement, containingIrFile: IrFile): IrDiagnosticReporter.IrDiagnosticContext {
-        return DiagnosticContextWithSuppressionImpl(irElement.toSourceElement(), irElement, containingIrFile)
+        return DiagnosticContextWithSuppressionImpl(
+            irElement.toSourceElement(),
+            irElement,
+            containingIrFile
+        )
+    }
+
+    override fun atPotentiallyNonSource(irElement: IrElement, containingIrFile: IrFile?): IrDiagnosticReporter.IrDiagnosticContext {
+        return DiagnosticContextWithSuppressionImpl(
+            irElement.toSourceElement() ?: KtMissingSourceElement,
+            irElement,
+            containingIrFile
+        )
     }
 
     override fun report(factory: KtSourcelessDiagnosticFactory, message: String, location: CompilerMessageSourceLocation?) {
@@ -62,19 +75,22 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
     internal inner class DiagnosticContextWithSuppressionImpl(
         override val sourceElement: AbstractKtSourceElement?,
         private val irElement: IrElement,
-        private val containingIrFile: IrFile
+        private val containingIrFile: IrFile?
     ) : IrDiagnosticReporter.IrDiagnosticContext {
-        override val containingFile: KtSourceFile =
-            KtIoFileSourceFile(File(containingIrFile.path)) // TODO: (KT-85141) consider implementing IrFile-based "source" file, if needed
+        override val containingFile: KtSourceFile? = containingIrFile?.let {
+            KtIoFileSourceFile(File(it.path)) // TODO: (KT-85141) consider implementing IrFile-based "source" file, if needed
+        }
 
         override val languageVersionSettings: LanguageVersionSettings
             get() = this@KtDiagnosticReporterWithImplicitIrBasedContext.languageVersionSettings
 
 
-        override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean =
-            suppressCache.isSuppressed(
+        override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean {
+            if (containingIrFile == null) return false
+            return suppressCache.isSuppressed(
                 irElement, containingIrFile, diagnostic.factory.name.lowercase(), diagnostic.severity
             )
+        }
 
         override fun report(factory: KtDiagnosticFactory0) {
             sourceElement?.let {
@@ -118,7 +134,7 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
         }
 
         override fun hashCode(): Int {
-            var result = sourceElement?.hashCode() ?: 0
+            var result = sourceElement.hashCode()
             result = 31 * result + containingFile.hashCode()
             result = 31 * result + languageVersionSettings.hashCode()
             return result

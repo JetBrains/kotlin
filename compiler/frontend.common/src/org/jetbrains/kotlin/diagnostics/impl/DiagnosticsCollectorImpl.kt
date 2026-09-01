@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.diagnostics.impl
 
+import org.jetbrains.kotlin.KtMissingSourceElement
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithoutSource
 
 /**
  * Standard implementation of [BaseDiagnosticsCollector]
@@ -26,7 +29,16 @@ class DiagnosticsCollectorImpl : BaseDiagnosticsCollector() {
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic != null && !context.isDiagnosticSuppressed(diagnostic)) {
-            diagnosticsByFile.getOrPut(context.containingFile) { mutableListOf() }.run {
+
+            val containingFile = when (diagnostic) {
+                is KtDiagnosticWithoutSource -> null
+                is KtDiagnosticWithSource -> when (diagnostic.element) {
+                    is KtMissingSourceElement -> null
+                    else -> context.containingFile
+                }
+            }
+
+            diagnosticsByFile.getOrPut(containingFile) { mutableListOf() }.run {
                 add(diagnostic)
                 hasErrors = hasErrors || diagnostic.severity.isError
                 hasWarningsForWError = hasWarningsForWError || diagnostic.severity.isErrorWhenWError
