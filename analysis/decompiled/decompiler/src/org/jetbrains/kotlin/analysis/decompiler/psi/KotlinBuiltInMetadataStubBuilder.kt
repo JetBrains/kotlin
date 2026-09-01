@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.psi.KtPlatformInterface
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
@@ -25,6 +26,7 @@ object KotlinBuiltInMetadataStubBuilder : KotlinMetadataStubBuilder() {
     override val supportedFileType: FileType get() = KotlinBuiltInFileType
     override val expectedBinaryVersion: BinaryVersion get() = BuiltInsBinaryVersion.INSTANCE
 
+    @OptIn(KtPlatformInterface::class)
     override fun readFile(virtualFile: VirtualFile, content: ByteArray?): FileWithMetadata? {
         val content = content ?: virtualFile.contentsToByteArray(false)
 
