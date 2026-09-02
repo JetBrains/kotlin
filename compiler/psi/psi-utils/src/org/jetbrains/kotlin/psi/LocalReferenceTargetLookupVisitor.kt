@@ -75,6 +75,9 @@ val KtNameReferenceExpression.localLookupContextKind: LocalLookupContextKind?
             is KtNamedFunction -> {
                 LocalLookupContextKind.VALUE.takeIf { p.bodyExpression == this@localLookupContextKind }
             }
+            is KtPropertyAccessor -> {
+                LocalLookupContextKind.VALUE.takeIf { p.bodyExpression == this@localLookupContextKind }
+            }
             is KtParameter -> {
                 LocalLookupContextKind.VALUE.takeIf { p.defaultValue == this@localLookupContextKind }
             }
@@ -257,10 +260,12 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
                     } else if (previousElement is KtPropertyAccessor) {
                         // fun f(x: Int) {
                         //     class A(x: Int) {
+                        //         val x: Int get() = x
                         //         val y: Int get() = x
                         //                            ^ this x refers to the parameter of f, not the constructor parameter
                         //     }
                         // }
+                        ignore(current)
                         constructorParametersAllowed = false
                     }
                 }
@@ -327,6 +332,13 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
                     //             ^ this x should resolve to the function parameter, not the constructor parameter
                     // }
                     current.primaryConstructorParameters.forEach(::ignoreParameter)
+
+                    // fun <T> f(x: Int) {
+                    //     class A<T>(val a: T)
+                    //     val x = T::class
+                    //             ^ this T should resolve to the function type parameter, not the class type parameter
+                    // }
+                    current.typeParameters.forEach(::ignore)
                 }
             }
 
@@ -385,6 +397,7 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
                 ?.let(::found)
         }
         foundIfNameMatches(klass)
+        klass.typeParameters.processMany(::processTypeParameter)
         if (constructorParametersAllowed) {
             klass.primaryConstructorParameters.processMany {
                 if (it.isPropertyParameter()) {
