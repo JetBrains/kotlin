@@ -85,11 +85,13 @@ class JavaClassOverAst(
     override val supertypes: Collection<JavaClassifierType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val result = mutableListOf<JavaClassifierType>()
 
-        if (isEnum) {
-            result.add(EnumSupertypeForJavaDirect(this, memberResolutionContext))
-        } else if (isAnnotationType) {
-            result.add(SimpleClassifierType("java.lang.annotation.Annotation", memberResolutionContext))
-        }
+            if (isEnum) {
+                result.add(EnumSupertypeForJavaDirect(this, memberResolutionContext))
+            } else if (isAnnotationType) {
+                result.add(SimpleClassifierType("java.lang.annotation.Annotation", memberResolutionContext))
+            } else if (isRecord) {
+                result.add(SimpleClassifierType("java.lang.Record", memberResolutionContext))
+            }
 
         tree.findChildByType(node, JavaSyntaxElementType.EXTENDS_LIST)?.let { extList ->
             tree.getChildrenByType(extList, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach {
