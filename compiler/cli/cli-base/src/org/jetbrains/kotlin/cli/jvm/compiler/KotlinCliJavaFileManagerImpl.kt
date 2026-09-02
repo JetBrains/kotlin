@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSignatureParser
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.readBinaryJavaClass
@@ -152,6 +153,9 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
         return virtualFile.findPsiClassInVirtualFile(classId.relativeClassName.asString())
             ?.let { createJavaClassByPsiClass(it) }
+            // The file is matched by location, so its `package` statement may name another class id: `foo.A` in
+            // `<root>/A.java`. See the `javaSrcWrongPackage` CLI test, KT-11474.
+            ?.takeIf { it.classId == classId }
     }
 
     private fun createJavaClassByPsiClass(psiClass: PsiClass): JavaClassImpl {
