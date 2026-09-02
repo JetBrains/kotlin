@@ -126,4 +126,23 @@ class MemoryAllocationTest {
         val min1_1: UInt = allocations1_1.minOf { it.address }
         assertTrue(max1 < min1_1)
     }
+
+    @Test
+    fun allocateZero() {
+        withScopedMemoryAllocator {
+            // assert that a 0 allocation:
+            // a) doesn't throw
+            // b) is aligned
+            assertEquals(0, it.allocate(0).address.toInt() % 8)
+        }
+    }
+
+    @Test
+    fun allocateMinusOne() {
+        assertFailsWith<IllegalStateException> {
+            withScopedMemoryAllocator {
+                it.allocate(-1)
+            }
+        }
+    }
 }
