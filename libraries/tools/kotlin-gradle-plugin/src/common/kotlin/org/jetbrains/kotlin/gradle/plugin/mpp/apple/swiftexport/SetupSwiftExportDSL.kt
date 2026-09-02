@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.initSwi
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.EXPORT_EXTENSION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.ExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationCompat
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.tasks.locateOrRegisterSwiftExportMetadataTaskAndConsumableConfiguration
 
 internal object SwiftExportDSLConstants {
     const val SWIFT_EXPORT_EXTENSION_NAME = "swiftExport"
@@ -44,6 +45,14 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
         .matching { it.konanTarget.family.isAppleFamily }
 
     if (appleTargets.isEmpty()) return@KotlinProjectSetupCoroutine
+
+    // Runs before isSwiftExportXcodeIntegrationActivated()'s early return: publishing metadata is independent
+    // of the Xcode integration. AfterFinaliseDsl still precedes any afterEvaluate {} a build script registers,
+    // so configuring the DSL from there publishes nothing.
+    val swiftExportConfiguration = exportExtension.swiftExportConfiguration
+    if (swiftExportConfiguration.moduleName.isPresent || swiftExportConfiguration.rootPackage.isPresent) {
+        locateOrRegisterSwiftExportMetadataTaskAndConsumableConfiguration(swiftExportConfiguration)
+    }
 
     // The targets are awaited above, so the DSL is finalised by now and the activation is order-independent.
     if (!multiplatformExtension.isSwiftExportXcodeIntegrationActivated()) return@KotlinProjectSetupCoroutine
