@@ -16,6 +16,10 @@ import java.io.File
 
 @Tag("codegen")
 abstract class AbstractNativeCodegenBoxTest : AbstractNativeBlackBoxTest() {
+    /*
+     * When applying changes to these transformers, update `EagerExtTestCaseGroupProvider.NativeCodegenSourceTransformers`
+     * as well - eager test grouping cannot reach this instance and keeps its own copy of the list.
+     */
     override fun getSourceTransformers(testDataFile: File): ExternalSourceTransformers? {
         val needTransform = "// $WORKS_WHEN_VALUE_CLASS" in testDataFile.readText()
         val jvmInlineTransformer = object : ExternalSourceTransformer {
