@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.buildtools.internal.js.operations
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
@@ -20,7 +18,6 @@ import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import java.nio.file.Path
 
 
-@OptIn(ExperimentalCompilerArgument::class)
 internal class JsLinkingOperationImpl private constructor(
     override val options: Options = Options(JsLinkingOperation::class),
     override val klib: Path,
@@ -34,7 +31,7 @@ internal class JsLinkingOperationImpl private constructor(
         destination: Path,
         compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
     ) : this(
-        options = Options(JsKlibCompilationOperation::class),
+        options = Options(JsLinkingOperation::class),
         klib = klib,
         destination = destination,
         compilerArguments = compilerArguments,
