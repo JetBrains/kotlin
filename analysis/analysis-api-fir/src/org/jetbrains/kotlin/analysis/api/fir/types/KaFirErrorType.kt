@@ -6,15 +6,11 @@
 package org.jetbrains.kotlin.analysis.api.fir.types
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
-import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
-import org.jetbrains.kotlin.analysis.api.fir.utils.createPointer
-import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
+import org.jetbrains.kotlin.analysis.api.fir.utils.createTypePointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
@@ -76,21 +72,6 @@ internal class KaFirErrorType(
 
     @KaExperimentalApi
     override fun createPointer(): KaTypePointer<KaErrorType> = withValidityAssertion {
-        return KaFirErrorTypePointer(coneType, builder)
-    }
-}
-
-private class KaFirErrorTypePointer(
-    coneType: ConeErrorType,
-    builder: KaSymbolByFirBuilder,
-) : KaTypePointer<KaErrorType> {
-    private val coneTypePointer = coneType.createPointer(builder)
-
-    @KaImplementationDetail
-    override fun restore(session: KaSession): KaErrorType? = session.withValidityAssertion {
-        requireIsInstance<KaFirSession>(session)
-
-        val coneType = coneTypePointer.restore(session) ?: return null
-        return KaFirErrorType(coneType, session.firSymbolBuilder)
+        return createTypePointer(coneType, builder, ::KaFirErrorType)
     }
 }
