@@ -106,28 +106,28 @@ fun main() {
     acceptULong(getSizeT())
     acceptLong(<!ARGUMENT_TYPE_MISMATCH!>getSizeT()<!>)
 
-    var a: NSInteger <!INITIALIZER_TYPE_MISMATCH!>=<!> 10
+    var a: NSInteger = 10
     acceptNSInteger(a)
     acceptLong(a)
     acceptInt(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
-    a <!ASSIGNMENT_TYPE_MISMATCH!>=<!> 20
+    a = 20
     acceptNSInteger(a)
-    acceptLong(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
-    acceptInt(a)
+    acceptLong(a)
+    acceptInt(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
 
-    var b: Long = <!INITIALIZER_TYPE_MISMATCH!>getNSInteger<!>()
+    var b: Long = getNSInteger()
     acceptLong(b)
     acceptNSInteger(b)
-    b = <!ASSIGNMENT_TYPE_MISMATCH!>getNSInteger<!>()
+    b = getNSInteger()
     acceptLong(b)
     acceptNSInteger(b)
 
-    var c: ULong = <!INITIALIZER_TYPE_MISMATCH!>getSizeT<!>()
+    var c: ULong = getSizeT()
     acceptULong(c)
     acceptSizeT(<!ARGUMENT_TYPE_MISMATCH!>c<!>)
-    c = <!ASSIGNMENT_TYPE_MISMATCH!>getSizeT<!>()
+    c = getSizeT()
     acceptULong(c)
-    acceptSizeT(c)
+    acceptSizeT(<!ARGUMENT_TYPE_MISMATCH!>c<!>)
 
     acceptNSInteger(produceNSInteger())
 
