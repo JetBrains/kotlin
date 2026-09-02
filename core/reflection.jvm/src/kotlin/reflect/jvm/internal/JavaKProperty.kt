@@ -41,9 +41,9 @@ internal abstract class JavaKProperty<out V>(
 
     override val callerWithDefaults: Caller<*>? get() = getter.callerWithDefaults
 
-    interface Accessor<out PropertyType, out ReturnType> :
+    interface AccessorBase<out PropertyType, out ReturnType> :
         ReflectKCallable<ReturnType>, KProperty.Accessor<PropertyType>, KFunction<ReturnType> {
-        abstract override val property: JavaKProperty<PropertyType>
+        abstract override val property: ReflectKProperty<PropertyType>
 
         override val container: KDeclarationContainerImpl get() = property.container
 
@@ -77,6 +77,10 @@ internal abstract class JavaKProperty<out V>(
         @ExperimentalCompanionExtensions
         override val companionExtensionClass: KClass<*>?
             get() = null
+    }
+
+    interface Accessor<out PropertyType, out ReturnType> : AccessorBase<PropertyType, ReturnType> {
+        abstract override val property: JavaKProperty<PropertyType>
     }
 
     abstract class Getter<out V> : ReflectKCallableImpl<V>(KCallableOverriddenStorage.EMPTY), Accessor<V, V>, KProperty.Getter<V> {
