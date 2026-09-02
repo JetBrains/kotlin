@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.TestStepBuilder
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JVM_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.directives.*
@@ -192,6 +193,7 @@ fun TestStepBuilder.HandlersStepBuilder.NonGroupingStage<FirOutputArtifact, Fron
 fun TestStepBuilder.HandlersStepBuilder.NonGroupingStage<IrBackendInput, BackendKinds.IrBackend>.commonIrHandlersForCodegenTest() {
     useHandlers(
         ::NoIrCompilationErrorsHandler,
+        ::IrDiagnosticsHandler,
     )
 }
 
