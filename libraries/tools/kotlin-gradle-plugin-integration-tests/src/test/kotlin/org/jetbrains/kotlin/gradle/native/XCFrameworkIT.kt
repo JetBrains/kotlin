@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.deleteRecursively
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for K/N with apple XCFramework")
@@ -148,6 +151,82 @@ class XCFrameworkIT : KGPBaseTest() {
                     ":shared:assembleSha-redReleaseXCFramework",
                 )
                 assertOutputDoesNotContain("differs from inner frameworks name")
+            }
+        }
+    }
+
+    /**
+     * KT-88565: a release binary has no DWARF, but `nm` still shows mangled Kotlin names by default.
+     *
+     * Release Apple binaries are stripped with `strip -S` (`stripFlags` in `konan.properties`), which only drops
+     * the debug map. Removing non-global symbols needs `strip -x`, as Xcode does for its own frameworks by
+     * default; a user can already opt into that today by overriding `stripFlags` via `-Xoverride-konan-properties`.
+     */
+    @DisplayName("Release XCFramework binary keeps mangled Kotlin names in its symbol table, unless stripFlags is overridden")
+    @GradleTest
+    fun shouldKeepKotlinSymbolsInReleaseXCFrameworkBinaryUnlessStripFlagsOverridden(gradleVersion: GradleVersion) {
+        project("appleXCFramework", gradleVersion) {
+            val binary = projectPath
+                .resolve("shared/build/XCFrameworks/release/other.xcframework/ios-arm64/shared.framework/shared")
+
+            build(":shared:assembleOtherReleaseXCFramework") {
+                val symbols = machOSymbols(binary)
+
+                // No DWARF is left in the binary: `dsymutil` moved it into the .dSYM bundle next to the framework
+                assertEquals(
+                    emptyList(),
+                    machOSectionNames(binary).filter { it.startsWith("__debug") },
+                    "release binary is expected to have no DWARF sections"
+                )
+                assertEquals(
+                    emptyList(),
+                    symbols.filter { it.isDebugMapEntry }.map { it.name },
+                    "release binary is expected to have no debug map entries"
+                )
+
+                // ...but the mangled Kotlin names are still there as non-global symbols
+                val kotlinSymbols = symbols.filter { it.isLocal && it.name.startsWith("_kfun:") }
+                assertNotEquals(
+                    emptyList(),
+                    kotlinSymbols,
+                    "release binary is expected to keep non-global Kotlin symbols, but the symbol table has none"
+                )
+
+                // The declarations of the framework itself are named by their ObjC bridges and their type info.
+                // Global symbols are not checked: the ObjC metadata of an exported class has to stay in any case.
+                assertEquals(
+                    listOf(
+                        "_kclass:com.github.jetbrains.myapplication.Greeting",
+                        "_kifacetable:com.github.jetbrains.myapplication.Greeting",
+                        "_ktypew:com.github.jetbrains.myapplication.Greeting",
+                        "_objc2kotlin_kfun:com.github.jetbrains.myapplication.Greeting#<init>(){}",
+                        "_objc2kotlin_kfun:com.github.jetbrains.myapplication.Greeting#greeting(){}kotlin.String",
+                    ),
+                    symbols.filter { it.isLocal && "myapplication" in it.name }.map { it.name }.sorted(),
+                )
+            }
+
+            subProject("shared")
+                .buildGradleKts
+                .replaceFirst(
+                    "baseName = \"shared\"",
+                    "baseName = \"shared\"\n" +
+                            "            freeCompilerArgs += listOf(\"-Xoverride-konan-properties=stripFlags.ios_arm64=-S -x;stripFlags.iosSimulatorArm64=-S -x\")",
+                )
+
+            build(":shared:assembleOtherReleaseXCFramework") {
+                val symbols = machOSymbols(binary)
+
+                assertEquals(
+                    emptyList(),
+                    symbols.filter { it.isLocal && it.name.startsWith("_kfun:") }.map { it.name },
+                    "release binary is expected to have no non-global Kotlin symbols with an overridden stripFlags"
+                )
+                assertEquals(
+                    emptyList(),
+                    symbols.filter { it.isLocal && "myapplication" in it.name }.map { it.name },
+                    "release binary is expected to have no non-global myapplication symbols with an overridden stripFlags"
+                )
             }
         }
     }
