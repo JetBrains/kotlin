@@ -211,6 +211,18 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
             modCount = list.modCount
         }
 
+        override fun addAll(index: Int, elements: Collection<E>): Boolean {
+            AbstractList.checkPositionIndex(index, _size)
+            val n = elements.size
+            if (n == 0) return false
+            checkForComodification()
+
+            list.addAll(fromIndex + index, elements)
+            _size += n
+            modCount = list.modCount
+            return true
+        }
+
         override fun get(index: Int): E {
             checkForComodification()
             AbstractList.checkElementIndex(index, _size)

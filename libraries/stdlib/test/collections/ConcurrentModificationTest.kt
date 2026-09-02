@@ -288,6 +288,7 @@ class ConcurrentModificationTest {
             CollectionOperation("addAll()") { addAll(listOf("e", "f")) },
             CollectionOperation("addAll(emptyList())", throwsCME = false) { addAll(emptyList()) },
             CollectionOperation("addAll(index)") { addAll(2, listOf("e", "f")) },
+            CollectionOperation("addAll(index, emptyList())", throwsCME = false) { addAll(2, emptyList()) },
 
             CollectionOperation("removeAll()") { removeAll(listOf("d", "e")) },
 
@@ -343,13 +344,21 @@ class ConcurrentModificationTest {
         val subList = arrayList.subList(0, arrayList.size)
         arrayList.add("e")
         assertFalse(subList.addAll(1, emptyList()))
+        assertFailsWith<IndexOutOfBoundsException> { subList.addAll(5, emptyList()) }
 
         buildList {
             addAll(listOf("a", "b", "c", "d"))
             val subList = subList(0, size)
             add("e")
             assertFalse(subList.addAll(1, emptyList()))
+            assertFailsWith<IndexOutOfBoundsException> { subList.addAll(5, emptyList()) }
         }
+
+        val arrayDeque = ArrayDeque(listOf("a", "b", "c", "d"))
+        val dequeSubList = arrayDeque.subList(0, arrayDeque.size)
+        arrayDeque.add("e")
+        assertFalse(dequeSubList.addAll(1, emptyList()))
+        assertFailsWith<IndexOutOfBoundsException> { dequeSubList.addAll(5, emptyList()) }
     }
 
     @Test

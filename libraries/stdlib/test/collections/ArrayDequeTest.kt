@@ -667,6 +667,17 @@ class ArrayDequeTest {
     }
 
     @Test
+    fun subListInsertAll() {
+        val deque = ArrayDeque(listOf(0, 1, 2, 3, 4, 5))
+        val outer = deque.subList(1, 5)
+        val inner = outer.subList(1, 3)
+        assertTrue(inner.addAll(1, listOf(100, 101)))
+        assertEquals(listOf(2, 100, 101, 3), inner)
+        assertEquals(listOf(1, 2, 100, 101, 3, 4), outer)
+        assertEquals(listOf(0, 1, 2, 100, 101, 3, 4, 5), deque)
+    }
+
+    @Test
     fun removeRange() = testArrayDeque { bufferSize: Int, dequeSize: Int, head: Int, tail: Int ->
         for (fromIndex in 0..dequeSize) {
             for (toIndex in fromIndex..dequeSize) {
