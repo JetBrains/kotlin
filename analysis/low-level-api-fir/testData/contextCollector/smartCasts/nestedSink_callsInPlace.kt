@@ -8,3 +8,5 @@ fun test() {
             <expr>x.inc()</expr>
     }
 }
+
+fun getNullableInt(): Int? = 0
