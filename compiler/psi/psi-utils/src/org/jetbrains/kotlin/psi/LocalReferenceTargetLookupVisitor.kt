@@ -74,6 +74,9 @@ private val KtNameReferenceExpression.contextKind: LocalReferenceTargetLookupVis
             is KtNamedFunction -> {
                 LocalReferenceTargetLookupVisitor.ContextKind.VALUE.takeIf { p.bodyExpression == this@contextKind }
             }
+            is KtPropertyAccessor -> {
+                LocalReferenceTargetLookupVisitor.ContextKind.VALUE.takeIf { p.bodyExpression == this@contextKind }
+            }
             is KtParameter -> {
                 LocalReferenceTargetLookupVisitor.ContextKind.VALUE.takeIf { p.defaultValue == this@contextKind }
             }
@@ -270,10 +273,12 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
                     } else if (previousElement is KtPropertyAccessor) {
                         // fun f(x: Int) {
                         //     class A(x: Int) {
+                        //         val x: Int get() = x
                         //         val y: Int get() = x
                         //                            ^ this x refers to the parameter of f, not the constructor parameter
                         //     }
                         // }
+                        ignore(current)
                         constructorParametersAllowed = false
                     }
                 }
