@@ -5,9 +5,7 @@ Before:
 KaUsualClassType:
   abbreviation: null
   annotations: [
-    Anno()
-      psi: KtAnnotationEntry
-    AnnoWithArgs(x = "")
+    Complex(arrayOfArrays = [[1, 2], [3, 4]], classA = error("non-annotation value"), classAArray = [], functionType = error("non-annotation value"), intArray = [true, false])
       psi: KtAnnotationEntry
   ]
   classId: kotlin/collections/List
@@ -18,12 +16,7 @@ KaUsualClassType:
       typeArguments: [
         KaUsualClassType:
           abbreviation: null
-          annotations: [
-            Anno()
-              psi: KtAnnotationEntry
-            AnnoWithArgs(x = "")
-              psi: KtAnnotationEntry
-          ]
+          annotations: []
           classId: kotlin/String
           qualifiers: [
             KaResolvedClassTypeQualifier:
@@ -42,12 +35,7 @@ KaUsualClassType:
   typeArguments: [
     KaUsualClassType:
       abbreviation: null
-      annotations: [
-        Anno()
-          psi: KtAnnotationEntry
-        AnnoWithArgs(x = "")
-          psi: KtAnnotationEntry
-      ]
+      annotations: []
       classId: kotlin/String
       qualifiers: [
         KaResolvedClassTypeQualifier:

@@ -1,0 +1,9 @@
+Type has changed on restoration
+
+Before:
+
+@Anno @AnnoWithArgs(x = "") kotlin.Int
+
+After:
+
+kotlin.Int

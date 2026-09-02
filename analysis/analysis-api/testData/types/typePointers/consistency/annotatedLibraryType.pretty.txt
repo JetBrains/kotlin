@@ -1,0 +1,9 @@
+Type has changed on restoration
+
+Before:
+
+@library.Anno @library.AnnoWithArgs(x = "") kotlin.collections.List<@library.Anno @library.AnnoWithArgs(x = "") kotlin.String>
+
+After:
+
+kotlin.collections.List<kotlin.String>

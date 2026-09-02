@@ -1,0 +1,9 @@
+Type has changed on restoration
+
+Before:
+
+Three<kotlin.collections.List<@Anno(number = 1) kotlin.String>, kotlin.collections.List<kotlin.String>, kotlin.collections.List<@Anno(number = 2) kotlin.String>>
+
+After:
+
+Three<kotlin.collections.List<kotlin.String>, kotlin.collections.List<kotlin.String>, kotlin.collections.List<kotlin.String>>

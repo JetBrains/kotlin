@@ -1,0 +1,9 @@
+Type has changed on restoration
+
+Before:
+
+@Complex(template = "astrb3", concatenation = "str-3", negative = -3, shift = 8, maxValue = 2147483647, length = 3, logic = true, unsigned = 7u, unsignedArray = [1u, 2u], importedEntry = constants.E.A, qualifiedEntry = constants.E.B, targets = [kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.CLASS], nestedArray = [/Nested(classes = [kotlin.String::class], ), /Nested(i = 3, , classes = [kotlin.Int::class, constants.E::class], )], x = [3, 4]) kotlin.String
+
+After:
+
+kotlin.String

@@ -8,13 +8,16 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types
 import org.jetbrains.kotlin.analysis.api.expressions.expressionType
 import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.session.useSiteSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.restore
 import org.jetbrains.kotlin.analysis.api.types.type
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
@@ -42,10 +45,13 @@ abstract class AbstractTypePointerConsistencyTest : AbstractAnalysisApiBasedTest
         analyzeForTest(mainFile) {
             val type = when (targetExpression) {
                 is KtTypeReference -> targetExpression.type
+                is KtCallableDeclaration -> (targetExpression.symbol as KaCallableSymbol).returnType
                 is KtExpression -> targetExpression.expressionType ?: error("$targetExpression does not have a type")
                 else -> error("Unsupported expression type: $targetExpression")
             }
 
+            // Rendering resolves annotation arguments, so the pointer is created first to check that it does not rely on that
+            typePointer = type.createPointer()
             beforeString = renderer.renderType(useSiteSession, type)
             beforeStringPretty = type.render(position = Variance.INVARIANT)
         }

@@ -1,0 +1,9 @@
+Type has changed on restoration
+
+Before:
+
+@JavaAnno(number = 6, strings = ["a", "b"], target = java.lang.annotation.ElementType.FIELD, klass = kotlin.String::class) kotlin.String!
+
+After:
+
+kotlin.String!

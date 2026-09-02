@@ -1,0 +1,9 @@
+Type has changed on restoration
+
+Before:
+
+@a.Anno(number = 1) kotlin.String
+
+After:
+
+kotlin.String

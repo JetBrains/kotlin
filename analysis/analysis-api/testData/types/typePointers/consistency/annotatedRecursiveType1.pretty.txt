@@ -1,0 +1,9 @@
+Type has changed on restoration
+
+Before:
+
+@Anno A<A<*>>
+
+After:
+
+A<A<*>>

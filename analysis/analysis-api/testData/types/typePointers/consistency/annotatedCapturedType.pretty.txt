@@ -1,0 +1,9 @@
+Type has changed on restoration
+
+Before:
+
+out @Anno1 @AnnoWithArgs1(x = "") kotlin.CharSequence
+
+After:
+
+out kotlin.CharSequence

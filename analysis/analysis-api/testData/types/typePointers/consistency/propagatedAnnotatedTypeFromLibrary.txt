@@ -1,0 +1,42 @@
+Type has changed on restoration
+
+Before:
+
+KaUsualClassType:
+  abbreviation: null
+  annotations: [
+    library/Anno()
+      psi: null
+    library/AnnoWithArgs(x = "")
+      psi: null
+  ]
+  classId: kotlin/Int
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Int
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(kotlin/Int)
+  typeArguments: []
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+After:
+
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: kotlin/Int
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Int
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(kotlin/Int)
+  typeArguments: []
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
