@@ -24,12 +24,12 @@ idea {
 }
 
 kotlin {
-    /*js {
-        nodejs {
+    js {
+        /*nodejs {
             testTask {
                 enabled = false
             }
-        }
+        }*/
     }
 
     sourceSets {
@@ -45,7 +45,7 @@ kotlin {
                 implementation(project(":kotlin-test"))
             }
         }
-    }*/
+    }
 }
 /*
 val compileTestDevelopmentExecutableKotlinJs = tasks.named<KotlinJsIrLink>("compileTestDevelopmentExecutableKotlinJs") {
