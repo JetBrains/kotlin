@@ -217,6 +217,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                 FirConstructorBuilder().apply {
                     isLocal = false
                     origin = FirDeclarationOrigin.Plugin(ConstructorGeneratorKey)
+                    resolvePhase = FirResolvePhase.BODY_RESOLVE
 
                     // Only an existence check: a superclass without a no-args constructor leaves the generated one
                     // nothing to delegate to, so generation is skipped entirely, and that early return is what
@@ -311,6 +312,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                     symbol = methodSymbol
                     isLocal = false
                     origin = FirDeclarationOrigin.Plugin(ConstructorGeneratorKey)
+                    resolvePhase = FirResolvePhase.BODY_RESOLVE
                     substitutor = JavaTypeSubstitutor.Empty
 
                     val classTypeParameterSymbols = targetClassSymbol.fir.typeParameters.map { it.symbol }
