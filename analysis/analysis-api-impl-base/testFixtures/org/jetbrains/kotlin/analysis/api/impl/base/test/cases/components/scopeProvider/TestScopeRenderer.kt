@@ -67,7 +67,42 @@ internal object TestScopeRenderer {
                 withIndent {
                     renderScopeContext(scopeContext, printer, printPretty, fullyPrintScope)
                 }
+
+                if (scopeContext.possibleSmartCasts.isNotEmpty()) {
+                    appendLine("possible smart casts:")
+                    withIndent {
+                        printCollection(scopeContext.possibleSmartCasts, separator = "\n\n") { smartCast ->
+                            appendSmartCastSource(KaSmartCastPossibility::source.name, smartCast.source, printer)
+                            append(KaSmartCastPossibility::isStable.name).append(" = ").append(smartCast.isStable.toString()).appendLine()
+                            append(KaSmartCastPossibility::smartCastTypes.name).appendLine(":")
+                            printCollection(smartCast.smartCastTypes, separator = "\n") { type ->
+                                withIndent {
+                                    append(renderType(type, printPretty))
+                                }
+                            }
+                        }
+                    }
+                }
             }
+        }
+    }
+
+    context(_: KaSession)
+    private fun appendSmartCastSource(propertyName: String, source: KaSmartCastSource, printer: PrettyPrinter): Unit = with(printer) {
+        append(propertyName).appendLine(":")
+        withIndent {
+            appendSymbol(KaSmartCastSource::symbol.name, printer, source.symbol)
+            appendLine()
+            source.dispatchReceiver?.let { dispatchReceiver ->
+                withIndent { appendSmartCastSource(KaSmartCastSource::dispatchReceiver.name, dispatchReceiver, printer) }
+            }
+            source.extensionReceiver?.let { extensionReceiver ->
+                withIndent { appendSmartCastSource(KaSmartCastSource::extensionReceiver.name, extensionReceiver, printer) }
+            }
+            append(KaSmartCastSource::originalType.name)
+                .append(" = ")
+                .append(renderType(source.originalType, printPretty = true))
+                .appendLine()
         }
     }
 

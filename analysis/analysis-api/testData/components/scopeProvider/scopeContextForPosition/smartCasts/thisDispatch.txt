@@ -423,3 +423,15 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 10
+
+possible smart casts:
+  source:
+    symbol = KaNamedClassSymbol:
+      /Foo
+    originalType = Foo
+  isStable = true
+  smartCastTypes:
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Impl

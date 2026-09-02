@@ -140,3 +140,15 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 7
+
+possible smart casts:
+  source:
+    symbol = KaLocalVariableSymbol:
+      var p: kotlin.Any
+    originalType = kotlin.Any
+  isStable = true
+  smartCastTypes:
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
