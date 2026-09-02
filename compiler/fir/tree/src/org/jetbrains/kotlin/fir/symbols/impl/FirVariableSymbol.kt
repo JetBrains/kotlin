@@ -150,8 +150,8 @@ class FirValueParameterSymbol() : FirVariableSymbol<FirValueParameter>(), ValueP
     val hasDefaultValue: Boolean
         get() = fir.defaultValue != null
 
-    val defaultValueSource: KtSourceElement?
-        get() = fir.defaultValue?.source
+    val resolvedDefaultValueSource: KtSourceElement?
+        get() = resolvedDefaultValue?.source
 
     val resolvedDefaultValue: FirExpression?
         get() {

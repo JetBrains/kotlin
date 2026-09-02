@@ -1,6 +1,4 @@
 // ISSUE: KT-89057
-// IGNORE_STANDALONE
-// IGNORE_FIR
 package pack
 
 class <caret>B : A() {
