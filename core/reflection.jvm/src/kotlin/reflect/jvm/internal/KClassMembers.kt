@@ -133,7 +133,7 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
         if (jClass.isAnnotation) {
             for (method in jClass.declaredMethods) {
                 if (method.name == name && !method.isSynthetic) {
-                    add(JavaAnnotationMethodKProperty1<Any?, Any?>(kClass, method, NO_RECEIVER))
+                    add(JavaAnnotationMethodKProperty1<Any?, Any?>(kClass, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
                 }
             }
         }
