@@ -8,17 +8,14 @@ package test
 import kotlin.reflect.*
 import kotlin.test.*
 
-fun check(x: KClass<*>, expectedSupertypes: String = "[kotlin.Any]") {
-    // Mainly check that `members` doesn't crash for synthetic classes. The exact contents of `members` is not that important, except that
-    // it should probably contain equals, hashCode and toString.
-    val memberNames = x.members.mapTo(hashSetOf()) { it.name }
-    assertTrue(memberNames.containsAll(setOf("equals", "hashCode", "toString")), "Fail: $memberNames")
+fun check(x: KClass<*>) {
+    assertEquals(setOf("equals", "hashCode", "toString"), x.members.mapTo(hashSetOf()) { it.name })
 
     assertEquals(emptyList(), x.annotations)
     assertEquals(emptyList(), x.constructors)
     assertEquals(emptyList(), x.nestedClasses)
     assertEquals(null, x.objectInstance)
-    assertEquals(expectedSupertypes, x.supertypes.toString())
+    assertEquals("[kotlin.Any]", x.supertypes.toString())
     assertEquals(emptyList(), x.sealedSubclasses)
 
     assertEquals(KVisibility.PUBLIC, x.visibility)
@@ -70,16 +67,7 @@ fun checkKotlinLambda() {
 
     assertEquals(null, klass.qualifiedName)
 
-    check(
-        klass,
-        expectedSupertypes =
-            if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true)
-                // Legacy implementation uses a predefined class with the single supertype `Any`, see `KClassImpl.createSyntheticClass`.
-                "[kotlin.Any]"
-            else
-                // JVM backend generates a raw Lambda type as a superclass for non-indy lambdas.
-                "[kotlin.jvm.internal.Lambda<(raw) kotlin.Any!>, () -> kotlin.Unit!]"
-    )
+    check(klass)
 
     assertTrue(klass.isInstance(lambda))
     assertNotEquals(klass, (@JvmSerializableLambda {})::class)
@@ -90,15 +78,7 @@ fun checkKotlinLambda() {
 fun checkJavaLambda() {
     val lambda = JavaClass.lambda()
     val klass = lambda::class
-    check(
-        klass,
-        expectedSupertypes =
-            if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true)
-                // Legacy implementation uses a predefined class with the single supertype `Any`, see `KClassImpl.createSyntheticClass`.
-                "[kotlin.Any]"
-            else
-                "[java.lang.Runnable, kotlin.Any]"
-    )
+    check(klass)
 
     assertTrue(klass.isInstance(lambda))
     assertNotEquals(klass, Runnable {}::class)

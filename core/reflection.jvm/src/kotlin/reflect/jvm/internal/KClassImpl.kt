@@ -74,10 +74,14 @@ internal class KClassImpl<T : Any>(
         val kmClass: KmClass? by lazy(PUBLICATION) {
             if (loadMetadataDirectly) {
                 val metadata = jClass.getAnnotation(Metadata::class.java)
-                if (metadata != null && classId.outerClassId !in CompanionObjectMapping.classIds)
-                    (KotlinClassMetadata.readLenient(metadata) as? KotlinClassMetadata.Class)?.kmClass
-                else
+                if (metadata != null && classId.outerClassId !in CompanionObjectMapping.classIds) {
+                    val metadata = KotlinClassMetadata.readLenient(metadata)
+                    (metadata as? KotlinClassMetadata.Class)?.kmClass ?: createEmptyKmClass()
+                } else if (jClass.isSynthetic) {
+                    createEmptyKmClass()
+                } else {
                     readBuiltinClassMetadata(classId)
+                }
             } else {
                 val descriptor = descriptor
                 if (descriptor is FunctionClassDescriptor) {
@@ -89,6 +93,9 @@ internal class KClassImpl<T : Any>(
                 }
                 if (jClass == Cloneable::class.java) {
                     return@lazy createCloneableKmClass()
+                }
+                if (descriptor is ClassDescriptorImpl) {
+                    return@lazy createEmptyKmClass()
                 }
                 (descriptor as? DeserializedClassDescriptor)?.let { descriptor ->
                     descriptor.classProto.toKmClass(descriptor.c.nameResolver)
@@ -681,6 +688,11 @@ internal class KClassImpl<T : Any>(
                 // Don't declare any functions in this class descriptor, only inherit equals/hashCode/toString from Any.
                 override fun computeDeclaredFunctions(): List<FunctionDescriptor> = emptyList()
             }, emptySet(), null)
+        }
+
+    private fun createEmptyKmClass(): KmClass =
+        KmClass().apply {
+            name = classId.asString()
         }
 
     companion object {
