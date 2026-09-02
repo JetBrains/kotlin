@@ -61,7 +61,6 @@ abstract class MetadataLibraryBasedSymbolProvider<L>(
 
     private val cachedFragments: MutableMap<L, MutableMap<Pair<String, String>, ProtoBuf.PackageFragment>> = mutableMapOf()
 
-    private val fragmentToNameResolver = IdentityHashMap<ProtoBuf.PackageFragment, NameResolver>()
     private val fragmentToKlibMetadataClassDataFinder = IdentityHashMap<ProtoBuf.PackageFragment, KlibMetadataClassDataFinder>()
     private val fragmentToFileAnnotations = IdentityHashMap<ProtoBuf.PackageFragment, List<FirAnnotation>>()
 
@@ -78,15 +77,6 @@ abstract class MetadataLibraryBasedSymbolProvider<L>(
             mutableMapOf()
         }.getOrPut(packageStringName to packageMetadataPart) {
             parsePackageFragment(metadataProvider(resolvedLibrary).getPackageFragment(packageStringName, packageMetadataPart))
-        }
-    }
-
-    private fun getNameResolver(fragment: ProtoBuf.PackageFragment): NameResolver {
-        return fragmentToNameResolver.getOrPut(fragment) {
-            NameResolverImpl(
-                fragment.strings,
-                fragment.qualifiedNames,
-            )
         }
     }
 
@@ -111,7 +101,10 @@ abstract class MetadataLibraryBasedSymbolProvider<L>(
 
                 val packageProto = fragment.`package`
 
-                val nameResolver = getNameResolver(fragment)
+                val nameResolver = NameResolverImpl(
+                    fragment.strings,
+                    fragment.qualifiedNames,
+                )
 
                 PackagePartsCacheData(
                     packageProto,
@@ -205,7 +198,10 @@ abstract class MetadataLibraryBasedSymbolProvider<L>(
 
                 val fragment = getPackageFragment(resolvedLibrary, packageStringName, packageMetadataPart)
 
-                val nameResolver = getNameResolver(fragment)
+                val nameResolver = NameResolverImpl(
+                    fragment.strings,
+                    fragment.qualifiedNames,
+                )
 
                 f(resolvedLibrary, fragment, nameResolver)
             }
