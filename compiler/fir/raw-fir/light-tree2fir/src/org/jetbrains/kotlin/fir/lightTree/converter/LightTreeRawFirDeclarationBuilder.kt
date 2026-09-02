@@ -19,8 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirScriptBuilder
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 
-// (renamed for better commit transparency)
-class MyBuilder(
+class LightTreeRawFirDeclarationBuilder(
     session: FirSession,
     baseScopeProvider: FirScopeProvider,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
