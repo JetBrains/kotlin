@@ -9,6 +9,8 @@ fun test() {
     }
 }
 
+fun getNullableInt(): Int? = 0
+
 fun <R> run(block: () -> R) {
     block()
 }
