@@ -76,6 +76,7 @@ internal fun Project.registerSwiftExportTask(
             buildType,
             mainCompilation.internal.configurations.compileDependencyConfiguration
         ),
+        apiConfiguration = swiftExportConfiguration.apiConfiguration.orNull,
         mainCompilation = mainCompilation,
         swiftApiFlattenPackage = swiftExportConfiguration.rootPackage,
         exportedModules = swiftExportConfiguration.exportedModules,
@@ -166,6 +167,7 @@ private fun Project.registerSwiftExportRun(
     configuration: String,
     swiftApiModuleName: Provider<String>,
     exportConfiguration: Configuration,
+    apiConfiguration: Configuration?,
     mainCompilation: KotlinNativeCompilation,
     swiftApiFlattenPackage: Provider<String>,
     exportedModules: Provider<Set<SwiftExportedDependency>>,
@@ -179,13 +181,17 @@ private fun Project.registerSwiftExportRun(
     val outputs = layout.buildDirectory.dir("SwiftExport/${target.name}/$configuration")
     val files = outputs.map { it.dir("files") }
     val serializedModules = outputs.map { it.dir("modules").file("${swiftApiModuleName.get()}.json") }
-    val configurationProvider = provider { LazyResolvedConfigurationWithArtifacts(exportConfiguration) }
+    val exportedConfigurationProvider = provider { LazyResolvedConfigurationWithArtifacts(exportConfiguration) }
+    val apiConfigurationProvider = provider { apiConfiguration?.let(::LazyResolvedConfigurationWithArtifacts) }
 
     return locateOrRegisterTask<SwiftExportTask>(swiftExportTaskName) { task ->
         task.description = "Run $taskNamePrefix Swift Export process"
         task.group = taskGroup
 
         task.inputs.files(exportConfiguration)
+        if (apiConfiguration != null) {
+            task.inputs.files(apiConfiguration)
+        }
         task.inputs.files(mainCompilation.compileTaskProvider.map { it.outputs.files })
 
         // Input
@@ -195,7 +201,8 @@ private fun Project.registerSwiftExportRun(
         task.parameters.swiftExportSettings.set(customSetting)
         task.parameters.swiftModules.set(
             collectModules(
-                configurationProvider,
+                exportedConfigurationProvider,
+                apiConfigurationProvider,
                 exportedModules
             )
         )
