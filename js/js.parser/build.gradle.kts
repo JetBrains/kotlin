@@ -3,6 +3,8 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     java
     kotlin("jvm")
+    id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 val antlrTool = configurations.create("antlrTool")
@@ -14,6 +16,12 @@ dependencies {
     api(kotlinStdlib())
     api(project(":js:js.ast"))
     compileOnly(intellijCore())
+
+    testImplementation(kotlinTest())
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 val generateJsParser = tasks.register("generateJsParser", JavaExec::class) {
@@ -74,7 +82,13 @@ sourceSets {
         projectDefault()
         java.srcDirs(generateJsParser)
     }
-    "test" {}
+    "test" {
+        projectDefault()
+    }
 }
 
 registerInAggregateGenerateSources("generateJsParser")
+
+projectTests {
+    testTask()
+}
