@@ -26,17 +26,11 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 private object DesugaredForLoopParameter : FirDeclarationDataKey()
 
-private var FirValueParameter.desugaredForLoopParameterData: FirPropertySymbol? by FirDeclarationDataRegistry.data(DesugaredForLoopParameter)
-
-val FirValueParameter.desugaredForLoopParameter: FirPropertySymbol? get() = desugaredForLoopParameterData
+var FirValueParameter.desugaredForLoopParameter: FirPropertySymbol? by FirDeclarationDataRegistry.data(DesugaredForLoopParameter)
 
 val FirValueParameterSymbol.desugaredForLoopParameter: FirPropertySymbol? by FirDeclarationDataRegistry.symbolAccessor(
     key = DesugaredForLoopParameter
 )
-
-infix fun FirValueParameter.assignForLoopParameter(loopParameter: FirPropertySymbol) {
-    desugaredForLoopParameterData = loopParameter
-}
 
 fun FirQualifiedAccessExpression.transformIteratorForLoopParameter(): FirQualifiedAccessExpression =
     transformCalleeReference(object : FirTransformer<Nothing?>() {

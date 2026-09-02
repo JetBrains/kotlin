@@ -2535,7 +2535,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                         isForLoopParameter = true
                     }
                     // Remember the generated loop parameter for later desugaring of destructuring declarations with resolved references
-                    forLoop.valueParameter assignForLoopParameter loopParameter.symbol
+                    forLoop.valueParameter.desugaredForLoopParameter = loopParameter.symbol
                     statements += loopParameter
                     // The block statements may contain destructuring declarations referencing the value parameter from the FirForLoop
                     // These cases are handled when transforming qualified access expressions
