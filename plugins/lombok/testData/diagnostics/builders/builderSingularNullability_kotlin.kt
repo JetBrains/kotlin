@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // FULL_JDK
-// MUTE_LL_FIR: KT-88941
 
 import lombok.Builder
 import lombok.Singular
