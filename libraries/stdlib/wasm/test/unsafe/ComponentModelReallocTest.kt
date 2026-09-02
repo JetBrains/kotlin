@@ -211,4 +211,26 @@ class ReallocTest {
         componentModelRealloc(actual, 10, 0)
         componentModelRealloc(filler, 10, 0)
     }
+
+    @Test
+    fun reallocZero(){
+        // should just be a noop
+        componentModelRealloc(0, 0, 0)
+
+        // should also work if we have valid allocations live
+        val alloc = componentModelRealloc(0, 0, 8)
+        componentModelRealloc(0, 0, 0)
+
+
+        // free
+        // NOTE: this also implicitly checks that the zero-size allocations don't need to be freed, otherwise the "everything freed" check run after every test would complain
+        componentModelRealloc(alloc, 8, 0)
+    }
+
+    @Test
+    fun reallocMinusOne(){
+        assertFailsWith<IllegalStateException> {
+            componentModelRealloc(0, 0, -1)
+        }
+    }
 }

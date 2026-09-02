@@ -20,7 +20,9 @@ public abstract class MemoryAllocator {
     /**
      * Allocates a block of uninitialized linear memory of the given [size] in bytes.
      *
-     * @return an address of allocated memory. It is guaranteed to be a multiple of 8.
+     * [size] must be >= 0. Zero-size allocations are allowed, but the resulting pointer may not be dereferenced.
+     *
+     * @return an address pointing to [size] allocated bytes. It is guaranteed to be a multiple of 8. It is not meaningful to compare these addresses or perform pointer arithmetic.
      */
     public abstract fun allocate(size: Int): Pointer
 }
@@ -166,6 +168,10 @@ private object FreeList {
         check(!isAlreadyOperating) { "Cannot call free from within the allocator" }
         isAlreadyOperating = true
         try {
+            // zero-size slots are handed out, so freeing them is a no-op, as they were never taken from the free list
+            if (allocatedSlot.size == 0u)
+                return
+
             check(allocatedSlot.size == realAllocationSize(allocatedSlot.size)) { "Slot to free clearly does not originate from allocated slot: alignment is wrong" }
 
             // need to find the slots that this lies in between, in terms of start address
@@ -232,6 +238,9 @@ private object FreeList {
         check(!isAlreadyOperating) { "Cannot call free from within the allocator" }
         isAlreadyOperating = true
         try {
+            if (size == 0u)
+                return MemorySlot(Pointer(0u), 0u)
+
             val alignedSize = realAllocationSize(size)
 
             val slotIndex = list.indexOfFirst { it.size >= alignedSize }
@@ -276,14 +285,19 @@ internal class ArenaLikeAllocator(
     @PublishedApi
     internal var parent: ArenaLikeAllocator?,
 ) : MemoryAllocator() {
-    private val allocations = mutableListOf<MemorySlot>()
+    private val allocationsToFree = mutableListOf<MemorySlot>()
 
     override fun allocate(size: Int): Pointer {
         // TODO go back to UInt for this too
-        check(size >= 0) { "size must be >= 0" }
+        check(size >= 0) { "Cannot allocate negative size" }
 
         val result = FreeList.allocate(size.toUInt())
-        check(result.ptr.address % 8u == 0u) { "result must be 8-byte aligned" }
+        // early return in case of 0 allocation: memory can't be grown, and no sense in tracking a zero-size allocation to free
+        if (size == 0)
+            return result.ptr
+
+        check(result.ptr.address % 8u == 0u) { "Allocation result must be 8-byte aligned" }
+
 
         val firstInvalidAddress = wasm_memory_size().toUInt() * WASM_PAGE_SIZE_IN_BYTES.toUInt()
         val endAddressExclusive = result.ptr.address.toULong() + result.size
@@ -300,7 +314,7 @@ internal class ArenaLikeAllocator(
         check(endAddressExclusive < wasm_memory_size().toUInt() * WASM_PAGE_SIZE_IN_BYTES.toUInt())
 
         // track this allocation so they can all be freed on destroy()
-        allocations.add(result)
+        allocationsToFree.add(result)
 
         // TODO returning the exact object is not a problem because of immutability, right?
         return result.ptr
@@ -317,10 +331,10 @@ internal class ArenaLikeAllocator(
     internal fun destroy() {
         // TODO once we figure out the cabi realloc frees, also actually free this
         //      Wait, we can just already free this no? What speaks against that?
-        for (allocation in allocations) {
+        for (allocation in allocationsToFree) {
             FreeList.free(allocation)
         }
-        allocations.clear()
+        allocationsToFree.clear()
     }
 }
 
@@ -343,8 +357,9 @@ public fun componentModelRealloc(
     originalSize: Int,
     newSize: Int,
 ): Int {
+    check(newSize >= 0) { "Cannot allocate negative size" }
+
     // The first call to realloc creates a new allocator.
-    // Later calls always reuse the realloc allocator, it does not die anymore
     if (reallocAllocator == null) {
         reallocAllocator = createAllocatorInTheNewScope()
     }
@@ -354,7 +369,6 @@ public fun componentModelRealloc(
     val originalAllocationSize = realAllocationSize(originalSize.toUInt())
 
     if (newSize == 0) {
-
         // TODO this is an easy way to get the program to trap, if it's misused. Any possible guardrails against this?
         FreeList.free(MemorySlot(Pointer(originalPtr.toUInt()), originalAllocationSize))
         // TODO figure out a fitting return value here.
