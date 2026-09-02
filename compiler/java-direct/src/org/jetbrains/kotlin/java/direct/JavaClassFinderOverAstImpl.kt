@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PhaseSideType
+import org.jetbrains.kotlin.util.tryMeasureSideTime
 
 /**
  * [JavaClassFinder] implementation backed by the direct Java AST parser in this module.
@@ -32,6 +35,7 @@ class JavaClassFinderOverAstImpl internal constructor(
     private val session: FirSession,
     sourceRootEntries: List<JavaSourceRootEntry>,
     private val moduleImportedPackages: JavaModuleImportedPackages = JavaModuleImportedPackages.EMPTY,
+    private val perfManager: PerformanceManager? = null,
 ) : JavaClassFinder, LeanJavaClassFinder {
 
     init {
@@ -71,7 +75,9 @@ class JavaClassFinderOverAstImpl internal constructor(
     }
 
     override fun findClass(request: JavaClassFinder.Request): JavaClass? =
-        classCache.getOrPutIfNotNull(request.classId) { findClasses(request).firstOrNull() }
+        perfManager.tryMeasureSideTime(PhaseSideType.FindJavaClass) {
+            classCache.getOrPutIfNotNull(request.classId) { findClasses(request).firstOrNull() }
+        }
 
     override fun findClasses(request: JavaClassFinder.Request): List<JavaClass> {
         val classId = request.classId
