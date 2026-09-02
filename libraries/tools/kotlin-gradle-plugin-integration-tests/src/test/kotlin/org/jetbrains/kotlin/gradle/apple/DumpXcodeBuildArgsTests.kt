@@ -512,7 +512,6 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
         }
     }
 
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
     fun `KT-88104 - dump task does not fail after root build directory is removed`(version: GradleVersion) {
         val libraryProjectName = "lib1"
