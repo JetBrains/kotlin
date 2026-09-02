@@ -56,17 +56,20 @@ import org.jetbrains.kotlin.name.Name
  * ```kotlin
  * class Foo {
  *   companion {
- *     var static_init_called = 0
+ *     var static_init_state = 1
  *     static_init() {
- *       if (checkInitializationState(static_init_called, Foo::class)) return
- *       static_init_called = 1
+ *       if (!static_init_state) return
+ *       if (static_init_state == 2) {
+ *         staticInitializationFailureWithClassName(Foo::class)
+ *       }
+ *       static_init_state = 0
  *       try {
  *         first = initFirst()
  *         second = initSecond()
  *         third = initThird()
  *       } catch (reason: Throwable) {
- *         static_init_called = 2
- *         kotlint.internal.staticInitializationFailure(reason, null)
+ *         static_init_state = 2
+ *         kotlin.internal.staticInitializationFailure(reason, null)
  *       }
  *     }
  *   }
@@ -88,7 +91,7 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
         val STATIC_CLASS_INITIALIZER by IrDeclarationOriginImpl.Synthetic
 
         const val STATIC_INIT_FUNCTION_NAME = "static_init"
-        const val STATIC_INIT_CALLED_PROPERTY_NAME = "static_init_called"
+        const val STATIC_INIT_STATE_PROPERTY_NAME = "static_init_state"
     }
 
     protected abstract val context: JsCommonBackendContext
@@ -180,10 +183,10 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
         // Both declarations must be created within the *same* restrictTo block: the stage controller resets its signature index
         // on every restrictTo call, so creating them in two separate blocks gives both the very same
         // `IdSignature.LoweredDeclarationSignature`. Cross-file references are resolved by the rendered signature, so the
-        // collision makes a reference to `static_init` resolve to `static_init_called` instead.
-        val [staticInitCalledField, staticInitFunction] = context.irFactory.stageController.restrictTo(container) {
+        // collision makes a reference to `static_init` resolve to `static_init_state` instead.
+        val [staticInitStateField, staticInitFunction] = context.irFactory.stageController.restrictTo(container) {
             val stateField = initializationGenerator.createStateField(
-                name = Name.identifier(STATIC_INIT_CALLED_PROPERTY_NAME),
+                name = Name.identifier(STATIC_INIT_STATE_PROPERTY_NAME),
                 origin = STATIC_CLASS_INITIALIZER,
             ).apply {
                 parent = container
@@ -212,7 +215,7 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
         // Adding static_init declaration after adding its usages to make sure we don't insert usages inside static_init itself
         container.staticInitFunction = staticInitFunction
         container.companionObject()?.staticInitFunction = staticInitFunction
-        container.declarations.addAll(0, listOf(staticInitCalledField, staticInitFunction))
+        container.declarations.addAll(0, listOf(staticInitStateField, staticInitFunction))
     }
 
     private fun IrClass.createInitializer(declaration: IrDeclaration, field: IrField, initializer: IrExpression): IrSetField =

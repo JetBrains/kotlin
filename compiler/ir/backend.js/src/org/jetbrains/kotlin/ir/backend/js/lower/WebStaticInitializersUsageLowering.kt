@@ -34,13 +34,21 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
  * ```kotlin
  * class Foo {
  *   companion {
- *     var static_init_called = false
+ *     var static_init_state = 1
  *     static_init() {
- *       if (static_init_called) return
- *       static_init_called = true
- *       first = initFirst()
- *       second = initSecond()
- *       third = initThird()
+ *       if (!static_init_state) return
+ *       if (static_init_state == 2) {
+ *         staticInitializationFailureWithClassName(Foo::class)
+ *       }
+ *       static_init_state = 0
+ *       try {
+ *         first = initFirst()
+ *         second = initSecond()
+ *         third = initThird()
+ *       } catch (reason: Throwable) {
+ *         static_init_state = 2
+ *         kotlin.internal.staticInitializationFailure(reason, null)
+ *       }
  *     }
  *   }
  *   companion {
@@ -62,10 +70,10 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
  *     static_init()
  *   }
  *   companion {
- *     var static_init_called = false
+ *     var static_init_state = 1
  *     static_init() {
- *       static_init_called = true
- *       // ...
+ *       if (!static_init_state) return
+ *       ...
  *     }
  *   }
  *   companion {

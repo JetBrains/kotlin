@@ -25,6 +25,6 @@ internal class WasmInitializersCleanupLowering(context: CommonBackendContext) : 
     context,
     shouldEraseFieldInitializer = {
         it.correspondingPropertySymbol?.owner?.isConst != true &&
-                it.origin != WebStaticInitializersDeclarationLowering.STATIC_CLASS_INITIALIZER // We need to preserve initializers for `static_init_called` fields (KT-89144).
+                it.origin != WebStaticInitializersDeclarationLowering.STATIC_CLASS_INITIALIZER // We need to preserve initializers for `static_init_state` fields (KT-89144).
     }
 )
