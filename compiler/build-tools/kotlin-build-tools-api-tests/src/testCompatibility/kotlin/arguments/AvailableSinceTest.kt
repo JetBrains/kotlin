@@ -28,6 +28,10 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperatio
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.Companion.KOTLINSCRIPT_EXTENSIONS
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
+import org.jetbrains.kotlin.buildtools.api.wasm.WasmHistoryBasedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain.Companion.wasm
+import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.wasm.wasmKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -307,6 +311,44 @@ class AvailableSinceTest : BaseCompilationTest() {
     }
 
     @Test
+    fun testWasmKlibCompilationOperation() {
+        val toolchains = KotlinToolchains.loadImplementation(btaClassloader)
+        assumeTrue(toolchains.hasWasmOptionVersionChecking())
+
+        versions.forEach { version ->
+            overrideVersionMethod.invoke(null, version)
+            with(KotlinToolingVersion(version)) {
+                toolchains.wasm.wasmKlibCompilationOperation(emptyList(), Path("")) {
+                    trySet(WasmKlibCompilationOperation.INCREMENTAL_COMPILATION.availableSinceVersion) {
+                        this[WasmKlibCompilationOperation.INCREMENTAL_COMPILATION] = null
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun testWasmHistoryBasedIncrementalCompilationConfiguration() {
+        val toolchains = KotlinToolchains.loadImplementation(btaClassloader)
+        assumeTrue(toolchains.hasWasmOptionVersionChecking())
+
+        versions.forEach { version ->
+            overrideVersionMethod.invoke(null, version)
+            with(KotlinToolingVersion(version)) {
+                toolchains.wasm.wasmKlibCompilationOperationBuilder(emptyList(), Path(""))
+                    .historyBasedIcConfigurationBuilder(Path(""), Path(""), SourcesChanges.Unknown, emptyList()).apply {
+                        trySet(WasmHistoryBasedIncrementalCompilationConfiguration.ROOT_PROJECT_BUILD_DIR.availableSinceVersion) {
+                            this[WasmHistoryBasedIncrementalCompilationConfiguration.ROOT_PROJECT_BUILD_DIR] = null
+                        }
+                        trySet(WasmHistoryBasedIncrementalCompilationConfiguration.HISTORY_FILE_DIR.availableSinceVersion) {
+                            this[WasmHistoryBasedIncrementalCompilationConfiguration.HISTORY_FILE_DIR] = null
+                        }
+                    }
+            }
+        }
+    }
+
+    @Test
     fun testWithDaemon() {
         val toolchains = KotlinToolchains.loadImplementation(btaClassloader)
         assumeTrue(toolchains.hasOptionVersionChecking())
@@ -530,6 +572,9 @@ class AvailableSinceTest : BaseCompilationTest() {
 
     private fun KotlinToolchains.hasOptionVersionChecking(): Boolean =
         KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 4, 20, "snapshot")
+
+    private fun KotlinToolchains.hasWasmOptionVersionChecking(): Boolean =
+        KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 5, 0, "snapshot")
 
     context(currentVersion: KotlinToolingVersion)
     fun trySet(availableSince: KotlinReleaseVersion, action: () -> Unit) {
