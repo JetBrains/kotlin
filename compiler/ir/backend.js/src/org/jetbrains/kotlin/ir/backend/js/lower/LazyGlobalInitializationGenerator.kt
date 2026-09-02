@@ -41,27 +41,28 @@ abstract class LazyGlobalInitializationGenerator {
     protected abstract fun IrBuilderWithScope.runtimeClassReference(klass: IrClass): IrExpression
 
     private fun IrBuilderWithScope.generateStaticInitializationStateChecks(
-        getStateField: IrGetField,
+        stateFieldSuccess: IrField,
+        stateFieldError: IrField,
         klass: IrClass?
     ): List<IrStatement> {
         val errorInitializationBranch = irCall(backendContext.symbols.staticInitializationFailureWithClassName).apply {
             arguments[0] = klass?.let { runtimeClassReference(it) } ?: undefinedOrNull()
         }
 
-        val state = scope.createTemporaryVariable(
-            getStateField,
-            nameHint = "state",
-            inventUniqueName = false,
-        )
+//        val state = scope.createTemporaryVariable(
+//            getStateField,
+//            nameHint = "state",
+//            inventUniqueName = false,
+//        )
 
         return listOf(
-            state,
+//            state,
             irIfThen(
-                irEqeqeq(irGet(state), irInt(InitializationState.INITIALIZED)),
+                irEqeqeq(irGetField(null, stateFieldSuccess), irInt(1)),
                 irReturnUnit()
             ),
             irIfThen(
-                irEqeqeq(irGet(state), irInt(InitializationState.ERROR)),
+                irEqeqeq(irGetField(null, stateFieldError), irInt(1)),
                 errorInitializationBranch
             )
         )
@@ -91,7 +92,8 @@ abstract class LazyGlobalInitializationGenerator {
         name: Name,
         klass: IrClass?,
         origin: IrDeclarationOrigin,
-        stateField: IrField,
+        stateFieldSuccess: IrField,
+        stateFieldError: IrField,
         initializers: List<IrStatement>,
         visibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE,
         beforeAll: IrBlockBuilder.() -> Unit = {},
@@ -108,8 +110,8 @@ abstract class LazyGlobalInitializationGenerator {
             val builder = backendContext.createIrBuilder(symbol)
             body = backendContext.irFactory.createBlockBody(startOffset, endOffset) {
                 with(builder) {
-                    statements += generateStaticInitializationStateChecks(irGetField(null, stateField), klass)
-                    statements += irSetField(null, stateField, irInt(InitializationState.INITIALIZED))
+                    statements += generateStaticInitializationStateChecks(stateFieldSuccess, stateFieldError, klass)
+                    statements += irSetField(null, stateFieldSuccess, irInt(1))
                     val allInitializers = irComposite {
                         beforeAll()
                         for (initializer in initializers) {
@@ -126,7 +128,8 @@ abstract class LazyGlobalInitializationGenerator {
                         inventUniqueName = false,
                     )
                     val catchResult = irComposite {
-                        +irSetField(null, stateField, irInt(InitializationState.ERROR))
+                        +irSetField(null, stateFieldError, irInt(1))
+                        +irSetField(null, stateFieldSuccess, irInt(0))
                         +irCall(this@LazyGlobalInitializationGenerator.backendContext.symbols.staticInitializationFailure).apply {
                             arguments[0] = irCastIfNeeded(irGet(catchParameter), context.irBuiltIns.throwableType)
                             arguments[1] = undefinedOrNull()

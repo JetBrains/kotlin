@@ -88,7 +88,8 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
         val STATIC_CLASS_INITIALIZER by IrDeclarationOriginImpl.Synthetic
 
         const val STATIC_INIT_FUNCTION_NAME = "static_init"
-        const val STATIC_INIT_CALLED_PROPERTY_NAME = "static_init_called"
+        const val STATIC_INIT_CALLED_SUCCESS_PROPERTY_NAME = "static_init_called_success"
+        const val STATIC_INIT_CALLED_ERROR_PROPERTY_NAME = "static_init_called_error"
     }
 
     protected abstract val context: JsCommonBackendContext
@@ -181,9 +182,15 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
         // on every restrictTo call, so creating them in two separate blocks gives both the very same
         // `IdSignature.LoweredDeclarationSignature`. Cross-file references are resolved by the rendered signature, so the
         // collision makes a reference to `static_init` resolve to `static_init_called` instead.
-        val [staticInitCalledField, staticInitFunction] = context.irFactory.stageController.restrictTo(container) {
-            val stateField = initializationGenerator.createStateField(
-                name = Name.identifier(STATIC_INIT_CALLED_PROPERTY_NAME),
+        val [fields, staticInitFunction] = context.irFactory.stageController.restrictTo(container) {
+            val stateFieldSuccess = initializationGenerator.createStateField(
+                name = Name.identifier(STATIC_INIT_CALLED_SUCCESS_PROPERTY_NAME),
+                origin = STATIC_CLASS_INITIALIZER,
+            ).apply {
+                parent = container
+            }
+            val stateFieldError = initializationGenerator.createStateField(
+                name = Name.identifier(STATIC_INIT_CALLED_ERROR_PROPERTY_NAME),
                 origin = STATIC_CLASS_INITIALIZER,
             ).apply {
                 parent = container
@@ -192,7 +199,8 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
                 name = Name.identifier(STATIC_INIT_FUNCTION_NAME),
                 klass = container,
                 origin = STATIC_CLASS_INITIALIZER,
-                stateField = stateField,
+                stateFieldSuccess = stateFieldSuccess,
+                stateFieldError = stateFieldError,
                 initializers = initializers,
                 visibility = DescriptorVisibilities.PUBLIC,
             ) {
@@ -206,13 +214,14 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
             }.apply {
                 parent = container
             }
-            stateField to initFunction
+            (stateFieldSuccess to stateFieldError) to initFunction
         }
 
+        val [stateFieldSuccess, stateFieldError] = fields
         // Adding static_init declaration after adding its usages to make sure we don't insert usages inside static_init itself
         container.staticInitFunction = staticInitFunction
         container.companionObject()?.staticInitFunction = staticInitFunction
-        container.declarations.addAll(0, listOf(staticInitCalledField, staticInitFunction))
+        container.declarations.addAll(0, listOf(stateFieldSuccess, stateFieldError, staticInitFunction))
     }
 
     private fun IrClass.createInitializer(declaration: IrDeclaration, field: IrField, initializer: IrExpression): IrSetField =

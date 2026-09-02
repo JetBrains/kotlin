@@ -95,6 +95,14 @@ abstract class PropertyLazyInitLowering(
             parent = file
         }
 
+        val failureField = initializationGenerator.createStateField(
+            name = Name.identifier("failure occurred $fileName"),
+            origin = JsIrBuilder.SYNTHESIZED_DECLARATION,
+        ).apply {
+            file.declarations.add(this)
+            parent = file
+        }
+
         val statements = buildList<IrStatement> {
             fieldToInitializer.forEach { [field, expression] ->
                 add(createIrSetField(field, expression))
@@ -106,7 +114,8 @@ abstract class PropertyLazyInitLowering(
             name = Name.special("<init properties $fileName>"),
             klass = null,
             origin = JsIrBuilder.SYNTHESIZED_DECLARATION,
-            stateField = initializedField,
+            stateFieldSuccess = initializedField,
+            stateFieldError = failureField,
             initializers = statements,
         ).apply {
             file.declarations.add(this)
