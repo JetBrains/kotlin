@@ -12,30 +12,48 @@ import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoesNotContainPatterns
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAndPlatformAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAndPlatformAgnosticScenarioTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.ProjectCreator
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.ScenarioCreator
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.name
+import kotlin.io.path.readText
+import kotlin.io.path.walk
 
 class ClassLoadersCachingTest : BaseCompilationTest() {
     @DefaultStrategyAndPlatformAgnosticCompilationTest
     @DisplayName("Test that plugins loader is used to cache compiler plugins")
     fun testPluginsLoaderCache(project: ProjectCreator) {
         project {
-            assumeTrue(this.defaultStrategyConfig is ExecutionPolicy.InProcess)
-
             val module = module("sandbox-plugin", moduleCompilationConfigAction = { operation: BaseCompilationOperation.Builder ->
                 operation.compilerArguments[CommonCompilerArguments.COMPILER_PLUGINS] = listOf(PLUGIN_SANDBOX_PLUGIN)
             })
+            runSingleShotDaemonTest(
+                kotlinToolchain, {
+                    val logsPath = module.buildDirectory.resolve("daemon-logs")
+                    set(ExecutionPolicy.WithDaemon.LOGS_PATH, logsPath)
+                }) { daemonPolicy, _ ->
 
-            module.compile(forceOutput = LogLevel.INFO) {
-                assertLogContainsPatterns(LogLevel.INFO, "Creating new classloader for classpath.*".toRegex())
-            }
-            module.compile {
-                assertLogDoesNotContainPatterns(LogLevel.INFO, "Creating new classloader for classpath.*".toRegex())
+                val finalPolicy = module.defaultStrategyConfig as? ExecutionPolicy.InProcess ?: daemonPolicy
+                val classLoaderCacheRegex = "Creating new classloader for classpath.*".toRegex()
+
+                module.compile(strategyConfig = finalPolicy) {
+                    if (finalPolicy is ExecutionPolicy.WithDaemon) {
+                        assertEquals(1, getDaemonLogs(daemonPolicy).lines().count { it.contains(classLoaderCacheRegex) })
+                    } else {
+                        assertLogContainsPatterns(LogLevel.INFO, classLoaderCacheRegex)
+                    }
+                }
+                module.compile(strategyConfig = finalPolicy) {
+                    if (finalPolicy is ExecutionPolicy.WithDaemon) {
+                        // it's the same log, so take into account the previously existing line
+                        assertEquals(1, getDaemonLogs(daemonPolicy).lines().count { it.contains(classLoaderCacheRegex) })
+                    } else {
+                        assertLogDoesNotContainPatterns(LogLevel.INFO, classLoaderCacheRegex)
+                    }
+                }
             }
         }
     }
@@ -66,8 +84,7 @@ class ClassLoadersCachingTest : BaseCompilationTest() {
     }
 
     private fun KotlinToolchains.clearClassloadersCache() {
-        val cache = javaClass.declaredFields.single { it.name == "classloadersCache" }.apply { isAccessible = true }
-            .get(this)
+        val cache = javaClass.declaredFields.single { it.name == "classloadersCache" }.apply { isAccessible = true }.get(this)
         cache?.javaClass?.methods?.find { it.name == "close" }?.invoke(cache)
     }
 
@@ -88,3 +105,6 @@ class ClassLoadersCachingTest : BaseCompilationTest() {
         }
     }
 }
+
+private fun getDaemonLogs(daemonPolicy: ExecutionPolicy.WithDaemon): String =
+    daemonPolicy[ExecutionPolicy.WithDaemon.LOGS_PATH].walk().toList().first { it.name.endsWith("log") }.readText()

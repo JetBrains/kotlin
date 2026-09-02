@@ -38,6 +38,7 @@ const val COMPILE_DAEMON_DEFAULT_UNUSED_TIMEOUT_S: Int = 60
 const val COMPILE_DAEMON_DEFAULT_SHUTDOWN_DELAY_MS: Long = 1000L // 1 sec
 const val COMPILE_DAEMON_FORCE_SHUTDOWN_DEFAULT_TIMEOUT_MS: Long = 10000L // 10 secs
 const val COMPILE_DAEMON_TIMEOUT_INFINITE_MS: Long = 0L
+const val COMPILE_DAEMON_DEFAULT_CLASSLOADERS_CACHE_SIZE: Int = 10
 const val COMPILE_DAEMON_IS_READY_MESSAGE = "Kotlin compile daemon is ready"
 val DEFAULT_LOG_FILE_DIRECTORY = CompilerSystemProperties.TMP_DIR.safeValue
 const val DEFAULT_LOG_FILE_SIZE_LIMIT = 1 * MEGABYTE
@@ -247,6 +248,7 @@ data class DaemonOptions(
     var forceShutdownTimeoutMilliseconds: Long = COMPILE_DAEMON_FORCE_SHUTDOWN_DEFAULT_TIMEOUT_MS,
     var verbose: Boolean = false,
     var reportPerf: Boolean = false,
+    var classloadersCacheSize: Int = COMPILE_DAEMON_DEFAULT_CLASSLOADERS_CACHE_SIZE,
 ) : OptionsGroup {
 
     override val mappers: List<PropMapper<*, *, *>>

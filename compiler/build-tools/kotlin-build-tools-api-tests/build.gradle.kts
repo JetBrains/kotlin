@@ -26,10 +26,10 @@ val pluginSandbox = configurations.detachedConfiguration(
 val scriptingCompilerPlugin = configurations.detachedConfiguration(
     dependencies.project(":kotlin-scripting-compiler-embeddable")
 )
-val kaptCompilerPluginResolvable = configurations.detachedConfiguration(
+val kaptCompilerPlugin = configurations.detachedConfiguration(
     dependencies.project(":kotlin-annotation-processing-embeddable")
 )
-val exampleAnnotationProcessorResolvable = configurations.detachedConfiguration(
+val exampleAnnotationProcessor = configurations.detachedConfiguration(
     dependencies.project(":examples:annotation-processor-example")
 )
 val unpackedResources = configurations.detachedConfiguration(

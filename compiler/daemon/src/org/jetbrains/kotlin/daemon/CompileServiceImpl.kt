@@ -31,7 +31,9 @@ import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
+import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
+import org.jetbrains.kotlin.components.ClassLoadersCache
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
@@ -40,8 +42,6 @@ import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
 import org.jetbrains.kotlin.daemon.report.getBuildReporter
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.*
-import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
@@ -107,9 +107,16 @@ abstract class CompileServiceImplBase(
     val onShutdown: () -> Unit,
 ) : CompileService {
     protected val log by lazy { Logger.getLogger("compiler") }
+    protected val classloadersCache: ClassLoadersCache?
+        field: LruClassLoadersCache? = if (daemonOptions.classloadersCacheSize > 0) {
+            LruClassLoadersCache(daemonOptions.classloadersCacheSize, this::class.java.classLoader, logger = log)
+        } else null
+
+    protected val pluginsLoader = classloadersCache?.asPluginsLoader()
 
     init {
         CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
+        log.info { "Classloaders cache size: ${daemonOptions.classloadersCacheSize}" }
     }
 
     // wrapped in a class to encapsulate alive check logic
@@ -412,6 +419,7 @@ abstract class CompileServiceImplBase(
                             Services.Builder().apply {
                                 compilationCanceled?.let { register(CompilationCanceledStatus::class.java, it) }
                                 lookupTracker?.let { register(LookupTracker::class.java, lookupTracker) }
+                                pluginsLoader?.let { register(PluginsLoader::class.java, it) }
                             }.build(),
                             k2PlatformArgs
                         )
@@ -712,6 +720,7 @@ abstract class CompileServiceImplBase(
             scopeExpansion = CompileScopeExpansionMode.ALWAYS,
             modulesApiHistory = modulesApiHistory,
             icFeatures = incrementalCompilationOptions.icFeatures,
+            pluginsLoader = pluginsLoader
         )
         return try {
             compiler.compile(
@@ -786,6 +795,7 @@ abstract class CompileServiceImplBase(
                 compilationCanceledStatus = compilationCanceledStatus,
                 generateCompilerRefIndex = incrementalCompilationOptions.generateCompilerRefIndex,
                 lookupTrackerDelegate = lookupTracker ?: LookupTracker.DO_NOTHING,
+                pluginsLoader = pluginsLoader
             )
         }
         return try {
@@ -1202,6 +1212,7 @@ class CompileServiceImpl(
         state.alive.set(Aliveness.Dying.ordinal)
 
         UnicastRemoteObject.unexportObject(this, true)
+        (classloadersCache as? LruClassLoadersCache)?.close()
         log.info("Shutdown complete")
         onShutdown()
         log.handlers.forEach { it.flush() }
