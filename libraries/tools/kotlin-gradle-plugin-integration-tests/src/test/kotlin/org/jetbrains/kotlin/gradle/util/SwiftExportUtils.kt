@@ -5,7 +5,15 @@
 
 package org.jetbrains.kotlin.gradle.util
 
+import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.readText
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonArray
@@ -22,16 +30,14 @@ import org.jetbrains.kotlin.gradle.testbase.compileStubSourceWithSourceSetName
 import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.settingsBuildScriptInjection
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
+import org.jetbrains.kotlin.gradle.uklibs.GradleMetadata
 import org.jetbrains.kotlin.gradle.uklibs.PublishedProject
 import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
+import org.jetbrains.kotlin.gradle.uklibs.Variant
+import org.jetbrains.kotlin.gradle.uklibs.VariantFile
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.publish
-import java.io.File
-import java.nio.file.Path
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.readText
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 @OptIn(EnvironmentalVariablesOverride::class)
 internal fun GradleProject.swiftExportEmbedAndSignEnvVariables(
@@ -331,4 +337,47 @@ internal fun assertAllSwiftModuleSymbols(
     }
 
     assertEquals(expectedSymbolsByModule, actualSymbolsByModule)
+}
+
+private val gradleMetadataJson = Json { ignoreUnknownKeys = true }
+
+private const val SWIFT_EXPORT_METADATA_ELEMENTS = "swiftExportMetadataElements"
+
+private fun PublishedProject.rootComponentVariants(): Set<Variant> = gradleMetadataJson
+    .decodeFromString<GradleMetadata>(rootComponent.gradleMetadata.readText())
+    .variants
+
+/**
+ * Asserts that the published root component declares the Swift Export metadata variant with the attributes
+ * consumers match on, and that it carries the metadata artifact.
+ */
+internal fun PublishedProject.assertSwiftExportMetadataVariantExistsInRootComponent() {
+    assertEquals(
+        Variant(
+            name = SWIFT_EXPORT_METADATA_ELEMENTS,
+            attributes = mapOf(
+                "org.gradle.category" to "library",
+                "org.gradle.usage" to "swiftExportMetadata",
+            ),
+            availableAt = null,
+            files = listOf(
+                VariantFile(
+                    name = "swiftExportMetadata",
+                    url = "$name-$version-swift-export-metadata.json",
+                )
+            ),
+        ).prettyPrinted,
+        rootComponentVariants().single { it.name == SWIFT_EXPORT_METADATA_ELEMENTS }.prettyPrinted
+    )
+}
+
+/**
+ * Stronger than checking that the artifact is missing, which also passes when the variant is published with a
+ * different file.
+ */
+internal fun PublishedProject.assertSwiftExportMetadataVariantMissingInRootComponent() {
+    assertNull(
+        rootComponentVariants().find { it.name == SWIFT_EXPORT_METADATA_ELEMENTS },
+        "The root component should not declare a $SWIFT_EXPORT_METADATA_ELEMENTS variant"
+    )
 }
