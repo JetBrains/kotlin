@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.asPsiSearchScope
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
@@ -52,13 +53,14 @@ fun createJavaDirectJavaFacadeBuilder(
         VirtualFileFinderFactory.getInstance(projectEnvironment.project) as? CliVirtualFileFinderFactory
 
     val moduleImportedPackages = moduleImportedPackages(projectEnvironment)
+    val perfManager = configuration.perfManager
 
     // Indexed by search scope identity.
     val binaryFinders: MutableMap<AbstractProjectFileSearchScope, JavaClassFinder> = IdentityHashMap()
 
     return { _, session, moduleData, scope ->
         val finder: JavaClassFinder = when {
-            scope === javaSourcesScope -> JavaClassFinderOverAstImpl(session, sourceRootEntries, moduleImportedPackages)
+            scope === javaSourcesScope -> JavaClassFinderOverAstImpl(session, sourceRootEntries, moduleImportedPackages, perfManager)
             else -> binaryFinders.getOrPut(scope) { binaryClassFinder(virtualFileFinderFactory, scope) }
         }
         FirJavaFacadeForSource(session, moduleData, finder)
