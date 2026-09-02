@@ -1,5 +1,4 @@
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
-// IGNORE_BACKEND: JVM_IR
 
 // This test is essentially the same one as initializersInheritanceMultipleSupertypes,
 // but with different super type kinds order (interface, class, interface)

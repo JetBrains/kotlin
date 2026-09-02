@@ -19,12 +19,25 @@ class C {
     }
 }
 
+interface I {
+    companion {
+        var a by Delegate
+        var b by DelegateProvider
+    }
+}
+
 fun box(): String {
     C.a = "a"
     if (C.a != "a") return "FAIL 1"
 
     C.b = "b"
     if (C.b != "b") return "FAIL 2"
+
+    I.a = "a"
+    if (I.a != "a") return "FAIL 3"
+
+    I.b = "b"
+    if (I.b != "b") return "FAIL 4"
 
     return "OK"
 }

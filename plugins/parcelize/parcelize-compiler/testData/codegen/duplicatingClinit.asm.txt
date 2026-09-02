@@ -28,16 +28,16 @@ public final class User : java/lang/Object, android/os/Parcelable {
     private final static java.lang.StringBuilder test
 
     static void <clinit>() {
-          NEW (User$Companion)
-          DUP
-          ACONST_NULL
-          INVOKESPECIAL (User$Companion, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
-          PUTSTATIC (User, Companion, LUser$Companion;)
           NEW (User$Creator)
           DUP
           INVOKESPECIAL (User$Creator, <init>, ()V)
           CHECKCAST (android/os/Parcelable$Creator)
           PUTSTATIC (User, CREATOR, Landroid/os/Parcelable$Creator;)
+          NEW (User$Companion)
+          DUP
+          ACONST_NULL
+          INVOKESPECIAL (User$Companion, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
+          PUTSTATIC (User, Companion, LUser$Companion;)
         LABEL (L0)
         LINENUMBER (12)
           NEW (java/lang/StringBuilder)
