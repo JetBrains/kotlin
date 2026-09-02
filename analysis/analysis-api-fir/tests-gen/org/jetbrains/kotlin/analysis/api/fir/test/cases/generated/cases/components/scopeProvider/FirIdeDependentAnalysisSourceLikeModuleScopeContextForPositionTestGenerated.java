@@ -533,6 +533,158 @@ public class FirIdeDependentAnalysisSourceLikeModuleScopeContextForPositionTestG
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/smartCasts")
+  @TestDataPath("$PROJECT_ROOT")
+  public class SmartCasts {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/smartCasts/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInSmartCasts() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/smartCasts"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("bound.kt")
+    public void testBound() {
+      run("bound.kt");
+    }
+
+    @Test
+    @TestMetadata("breakFromInfiniteLoop.kt")
+    public void testBreakFromInfiniteLoop() {
+      run("breakFromInfiniteLoop.kt");
+    }
+
+    @Test
+    @TestMetadata("directSink.kt")
+    public void testDirectSink() {
+      run("directSink.kt");
+    }
+
+    @Test
+    @TestMetadata("directSinkBad.kt")
+    public void testDirectSinkBad() {
+      run("directSinkBad.kt");
+    }
+
+    @Test
+    @TestMetadata("directSinkBad_callsInPlace.kt")
+    public void testDirectSinkBad_callsInPlace() {
+      run("directSinkBad_callsInPlace.kt");
+    }
+
+    @Test
+    @TestMetadata("directSink_callsInPlace.kt")
+    public void testDirectSink_callsInPlace() {
+      run("directSink_callsInPlace.kt");
+    }
+
+    @Test
+    @TestMetadata("doWhile.kt")
+    public void testDoWhile() {
+      run("doWhile.kt");
+    }
+
+    @Test
+    @TestMetadata("doWhile2.kt")
+    public void testDoWhile2() {
+      run("doWhile2.kt");
+    }
+
+    @Test
+    @TestMetadata("localVariable.kt")
+    public void testLocalVariable() {
+      run("localVariable.kt");
+    }
+
+    @Test
+    @TestMetadata("localVariableMutable.kt")
+    public void testLocalVariableMutable() {
+      run("localVariableMutable.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedSink.kt")
+    public void testNestedSink() {
+      run("nestedSink.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedSinkBad.kt")
+    public void testNestedSinkBad() {
+      run("nestedSinkBad.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedSinkBad2.kt")
+    public void testNestedSinkBad2() {
+      run("nestedSinkBad2.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedSinkBad2_callsInPlace.kt")
+    public void testNestedSinkBad2_callsInPlace() {
+      run("nestedSinkBad2_callsInPlace.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedSinkBad_callsInPlace.kt")
+    public void testNestedSinkBad_callsInPlace() {
+      run("nestedSinkBad_callsInPlace.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedSink_callsInPlace.kt")
+    public void testNestedSink_callsInPlace() {
+      run("nestedSink_callsInPlace.kt");
+    }
+
+    @Test
+    @TestMetadata("noSmartCastInInference.kt")
+    public void testNoSmartCastInInference() {
+      run("noSmartCastInInference.kt");
+    }
+
+    @Test
+    @TestMetadata("parameterSimple.kt")
+    public void testParameterSimple() {
+      run("parameterSimple.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifiedReference.kt")
+    public void testQualifiedReference() {
+      run("qualifiedReference.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifiedReferenceNested.kt")
+    public void testQualifiedReferenceNested() {
+      run("qualifiedReferenceNested.kt");
+    }
+
+    @Test
+    @TestMetadata("smartCastInInference.kt")
+    public void testSmartCastInInference() {
+      run("smartCastInInference.kt");
+    }
+
+    @Test
+    @TestMetadata("thisDispatch.kt")
+    public void testThisDispatch() {
+      run("thisDispatch.kt");
+    }
+
+    @Test
+    @TestMetadata("thisExtension.kt")
+    public void testThisExtension() {
+      run("thisExtension.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/withTestCompilerPluginEnabled")
   @TestDataPath("$PROJECT_ROOT")
   public class WithTestCompilerPluginEnabled {
