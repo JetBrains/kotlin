@@ -58,7 +58,9 @@ abstract class MetadataLibraryBasedSymbolProvider<L>(
     private val constDeserializer = FirConstDeserializer(KlibMetadataSerializerProtocol)
     protected val deserializationConfiguration: CommonCompilerDeserializationConfiguration =
         CommonCompilerDeserializationConfiguration(session.languageVersionSettings)
+
     private val cachedFragments: MutableMap<L, MutableMap<Pair<String, String>, ProtoBuf.PackageFragment>> = mutableMapOf()
+
     private val fragmentToNameResolver = IdentityHashMap<ProtoBuf.PackageFragment, NameResolver>()
     private val fragmentToKlibMetadataClassDataFinder = IdentityHashMap<ProtoBuf.PackageFragment, KlibMetadataClassDataFinder>()
     private val fragmentToFileAnnotations = IdentityHashMap<ProtoBuf.PackageFragment, List<FirAnnotation>>()
