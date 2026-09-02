@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
+import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrStatement
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.types.IrType
@@ -34,12 +34,36 @@ abstract class LazyGlobalInitializationGenerator {
     protected abstract val backendContext: JsCommonBackendContext
 
     private object InitializationState {
-        const val UNINITIALIZED: Int = 0
-        const val INITIALIZED: Int = 1
+        const val UNINITIALIZED: Int = 1
+        const val INITIALIZED: Int = 0
         const val ERROR: Int = 2
     }
 
-    protected abstract fun IrBuilderWithScope.generateStaticInitializationStateCheck(getStateField: IrGetField, klass: IrClass?): IrCall
+    protected abstract fun IrBuilderWithScope.staticInitializationFailureBranch(klass: IrClass?): IrExpression
+
+    private fun IrBuilderWithScope.generateStaticInitializationStateChecks(
+        getStateField: IrGetField,
+        klass: IrClass?
+    ): List<IrStatement> {
+
+        val state = scope.createTemporaryVariable(
+            getStateField,
+            nameHint = "state",
+            inventUniqueName = false,
+        )
+
+        return listOf(
+            state,
+            irIfThen(
+                irNot(irGet(state)), // state == InitializationState.INITIALIZED
+                irReturnUnit()
+            ),
+            irIfThen(
+                irEqeqeq(irGet(state), irInt(InitializationState.ERROR)),
+                staticInitializationFailureBranch(klass)
+            )
+        )
+    }
 
     protected open fun IrBuilderWithScope.undefinedOrNull(): IrExpression = irNull()
 
@@ -82,8 +106,7 @@ abstract class LazyGlobalInitializationGenerator {
             val builder = backendContext.createIrBuilder(symbol)
             body = backendContext.irFactory.createBlockBody(startOffset, endOffset) {
                 with(builder) {
-                    val stateCheck = generateStaticInitializationStateCheck(irGetField(null, stateField), klass)
-                    statements += irIfThen(stateCheck, irReturnUnit())
+                    statements += generateStaticInitializationStateChecks(irGetField(null, stateField), klass)
                     statements += irSetField(null, stateField, irInt(InitializationState.INITIALIZED))
                     val allInitializers = irComposite {
                         beforeAll()
@@ -115,10 +138,9 @@ abstract class LazyGlobalInitializationGenerator {
 }
 
 class JsLazyGlobalInitializationGenerator(override val backendContext: JsIrBackendContext) : LazyGlobalInitializationGenerator() {
-    override fun IrBuilderWithScope.generateStaticInitializationStateCheck(getStateField: IrGetField, klass: IrClass?): IrCall =
-        irCall(backendContext.symbols.checkStaticInitializationState).apply {
-            arguments[0] = getStateField
-            arguments[1] = klass?.jsConstructorReference(backendContext) ?: backendContext.getVoid()
+    override fun IrBuilderWithScope.staticInitializationFailureBranch(klass: IrClass?): IrExpression =
+        irCall(backendContext.symbols.staticInitializationFailureWithClassName).apply {
+            arguments[0] = klass?.jsConstructorReference(backendContext) ?: backendContext.getVoid()
         }
 
     override fun IrBuilderWithScope.undefinedOrNull(): IrExpression = backendContext.getVoid()

@@ -11,10 +11,16 @@ import kotlin.internal.staticInitializationFailure
 private const val INITIALIZATION_STATE_INITIALIZED: Int = 1
 private const val INITIALIZATION_STATE_ERROR: Int = 2
 
+// TODO: remove after bootstrap KT-89126
 @UsedFromCompilerGeneratedCode
 internal fun checkStaticInitializationState(state: Int, ctor: Ctor?): Boolean {
     if (state == INITIALIZATION_STATE_ERROR) {
         staticInitializationFailure(null, ctor?.`$metadata$`?.simpleName)
     }
     return state == INITIALIZATION_STATE_INITIALIZED
+}
+
+@UsedFromCompilerGeneratedCode
+internal fun staticInitializationFailureWithClassName(ctor: Ctor?): Nothing {
+    staticInitializationFailure(null, ctor?.`$metadata$`?.simpleName)
 }
