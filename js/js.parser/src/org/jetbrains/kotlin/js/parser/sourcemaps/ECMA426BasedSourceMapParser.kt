@@ -4,29 +4,112 @@
  */
 
 @file:OptIn(kotlin.contracts.ExperimentalContracts::class)
+
 package org.jetbrains.kotlin.js.parser.sourcemaps
 
 import kotlin.contracts.contract
 import org.jetbrains.kotlin.js.parser.sourcemaps.ECMA426BasedSourceMapParser.ParsingResult.Failure
+import org.jetbrains.kotlin.js.parser.sourcemaps.ECMA426BasedSourceMapParser.ParsingResult.NoMatch
 import org.jetbrains.kotlin.js.parser.sourcemaps.ECMA426BasedSourceMapParser.ParsingResult.Success
 
 /**
- * Parse and validates source map files against the ECMA-426 specification.
+ * Parses and validates source map files against the ECMA-426 specification.
  *
  * The used version is a draft on March 2, 2026
  *
  * **Note:** The compiler doesn't generate a source map containing "sections", so the validation doesn't include a case with the ["Section 10: Index source map"](https://tc39.es/ecma426/#sec-index-source-map)
- * 
+ *
  * @see <a href="https://tc39.es/ecma426/">ECMA-426: Source Map Format Specification</a>
  */
 object ECMA426BasedSourceMapParser {
+    //
+    // 6. Base64 VLQ decoding and parsing
+
+    /**
+     * ```text
+     * Vlq :
+     *     VlqDigitList
+     * ```
+     */
+    private data class Vlq(val digitList: VlqDigitList, val endPosition: Int)
+
+    /**
+     * ```text
+     * VlqDigitList :
+     *     TerminalDigit
+     *     ContinuationDigit VlqDigitList
+     * ```
+     */
+    @JvmInline
+    private value class VlqDigitList(val digits: List<VlqDigit>)
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/#sec-base64-vlq">Section 6: Base64 VLQ</a>
+     */
+    @JvmInline
+    private value class TerminalDigit(override val value: UInt) : VlqDigit
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/#sec-base64-vlq">Section 6: Base64 VLQ</a>
+     */
+    @JvmInline
+    private value class ContinuationDigit(override val value: UInt) : VlqDigit
+
+    /**
+     * ```text
+     * Vlq :
+     *     VlqDigitList
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseVlq(): ParsingResult<Vlq> {
+        val digitList = parseVlqDigitList().ifFailure { return it }
+        return Success(Vlq(digitList, stream.position))
+    }
+
+    /**
+     * ```text
+     * VlqDigitList :
+     *     TerminalDigit
+     *     ContinuationDigit VlqDigitList
+     * ```
+     */
+    context(stream: ParserStream)
+    private fun parseVlqDigitList(): ParsingResult<VlqDigitList> {
+        val digits = mutableListOf<VlqDigit>()
+
+        while (true) {
+            val char = stream.current ?: return when {
+                digits.isEmpty() -> NoMatch()
+                else -> Failure("Unterminated VLQ at position ${stream.position}")
+            }
+            val value = base64ToValue(char)
+            if (value < 0) {
+                return when {
+                    digits.isEmpty() -> NoMatch()
+                    else -> Failure("Invalid base64 character '$char' at position ${stream.position}")
+                }
+            }
+
+            stream.advance()
+            val digit = when {
+                value < 32 -> TerminalDigit(value.toUInt())
+                else -> ContinuationDigit(value.toUInt())
+            }
+            digits.add(digit)
+
+            if (digit is TerminalDigit) {
+                return Success(VlqDigitList(digits))
+            }
+        }
+    }
+
     /**
      * @see <a href="https://tc39.es/ecma426/#sec-VLQSignedValue">Section 6.1: VLQSignedValue</a>
      */
-    context(parser: MappingsParser)
-    private fun vlqSignedValue(): ParsingResult<Int> {
+    private fun vlqSignedValue(vlq: Vlq): ParsingResult<Int> {
         // 1. Let unsigned be the VLQUnsignedValue of VlqDigitList.
-        val unsigned = vlqUnsignedValue().ifFailure { return it }
+        val unsigned = vlqUnsignedValue(vlq).ifFailure { return it }
         // 2. If unsigned modulo 2 = 1, let sign be -1.
         val sign = when {
             unsigned.mod(2u) == 1u -> -1
@@ -38,7 +121,7 @@ object ECMA426BasedSourceMapParser {
         // 5. If value is 0 and sign is -1, return -2**31.
         if (value == 0u && sign == -1) return Success(-2147483648)
         // 6. If value is ≥ 2**31, throw an error.
-        if (value >= 2147483648u) return Failure("VLQ value exceeds maximum signed integer limit at position ${parser.currentPosition}")
+        if (value >= 2147483648u) return Failure("VLQ value exceeds maximum signed integer limit at position ${vlq.endPosition}")
         // 7. Return sign × value.
         return Success(sign * value.toInt())
     }
@@ -46,47 +129,64 @@ object ECMA426BasedSourceMapParser {
     /**
      * @see <a href="https://tc39.es/ecma426/#sec-VLQUnsignedValue">Section 6.2: VLQUnsignedValue</a>
      */
-    context(parser: MappingsParser)
-    private fun vlqUnsignedValue(): ParsingResult<UInt> {
+    private fun vlqUnsignedValue(vlq: Vlq): ParsingResult<UInt> {
         // 1. Let value be the VLQUnsignedValue of VlqDigitList.
-        val value = vlqUnsignedValueForDigitList().ifFailure { return it }
+        val value = vlqUnsignedValue(vlq.digitList, vlq.endPosition).ifFailure { return it }
         // 2. If value is ≥ 2**32, throw an error.
-        if (value >= 4294967296u) return Failure("VLQ value exceeds maximum unsigned integer limit at position ${parser.currentPosition}")
-        // 3. Return value.
-        return Success(value)
-    }
-
-    context(parser: MappingsParser)
-    private fun vlqUnsignedValueForDigitList(): ParsingResult<UInt> {
-        val (value, isTerminal) = parser.popVlqDigit().ifFailure { return it }
-        return when (isTerminal) {
-            false -> {
-                // 1. Let left be the VLQUnsignedValue of ContinuationDigit.
-                val left = vlqUnsignedValueForContinuationDigit(value).ifFailure { return it }
-                // 2. Let right be the VLQUnsignedValue of VlqDigitList.
-                val right = vlqUnsignedValue().ifFailure { return it }
-                // 3. Return left + right × 2**5.
-                Success(left + right * 32u)
-            }
-            true -> vlqUnsignedValueForTerminalDigit(value)
+        if (value > UInt.MAX_VALUE.toULong()) {
+            return Failure("VLQ value exceeds maximum unsigned integer limit at position ${vlq.endPosition}")
         }
+        // 3. Return value.
+        return Success(value.toUInt())
     }
 
-    private fun vlqUnsignedValueForContinuationDigit(value: UInt): ParsingResult<UInt> {
+    /**
+     * @see <a href="https://tc39.es/ecma426/#sec-VLQUnsignedValue">Section 6.2: VLQUnsignedValue</a>
+     */
+    private fun vlqUnsignedValue(digitList: VlqDigitList, endPosition: Int): ParsingResult<ULong> {
+        val terminal = digitList.digits.last() as TerminalDigit
+        var right = vlqUnsignedValue(terminal)
+
+        for (digit in digitList.digits.asReversed().drop(1)) {
+            // 1. Let left be the VLQUnsignedValue of ContinuationDigit.
+            val left = vlqUnsignedValue(digit as ContinuationDigit)
+            // 2. Let right be the VLQUnsignedValue of VlqDigitList.
+            // 3. Return left + right × 2**5.
+            if (right > (UInt.MAX_VALUE.toULong() - left) / 32uL) {
+                return Failure("VLQ value exceeds maximum unsigned integer limit at position $endPosition")
+            }
+            right = left + right * 32uL
+        }
+
+        return Success(right)
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/#sec-VLQUnsignedValue">Section 6.2: VLQUnsignedValue</a>
+     */
+    private fun vlqUnsignedValue(digit: TerminalDigit): ULong {
+        // 1. Let digit be the character matched by this production.
+        // 2. Let value be the integer corresponding to digit, according to the base64 encoding as defined by IETF RFC 4648.
+        // 3. Assert: value < 32.
+        require(digit.value < 32u)
+        // 4. Return value.
+        return digit.value.toULong()
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/#sec-VLQUnsignedValue">Section 6.2: VLQUnsignedValue</a>
+     */
+    private fun vlqUnsignedValue(digit: ContinuationDigit): ULong {
         // 1. Let digit be the character matched by this production.
         // 2. Let value be the integer corresponding to digit, according to the base64 encoding as defined by IETF RFC 4648.
         // 3. Assert: 32 ≤ value < 64.
-        expect(value in 32u..<64u) { return Failure("Invalid continuation digit value: $value") }
+        require(digit.value in 32u..<64u)
         // 4. Return value - 32.
-        return Success(value - 32u)
+        return (digit.value - 32u).toULong()
     }
 
-    private fun vlqUnsignedValueForTerminalDigit(value: UInt): ParsingResult<UInt> {
-        // 1. Let digit be the character matched by this production.
-        // 2. Let value be the integer corresponding to digit, according to the base64 encoding as defined by IETF RFC 4648.
-        expect(value < 32u) { return Failure("Invalid terminal digit value: $value") }
-        return Success(value)
-    }
+    //
+    // 7. JSON utilities
 
     /**
      * @see <a href="https://tc39.es/ecma426/#sec-JSONObjectGet">Section 7.2: JSONObjectGet(object, key)</a>
@@ -115,19 +215,22 @@ object ECMA426BasedSourceMapParser {
         return array.elements
     }
 
+    //
+    // 8. Positions
+
     /**
-     * @see <a href="https://tc39.es/ecma426/#sec-position-record-type">Table 8.1: Position Record Fields</a>
+     * @see <a href="https://tc39.es/ecma426/#sec-position-record-type">Table 1: Position Record Fields</a>
      */
     data class PositionRecord(override val line: UInt, override val column: UInt) : PositionWithLineAndColumn
 
     /**
-     * @see <a href="https://tc39.es/ecma426/#sec-original-position-record-type">Table 8.2: Original Position Record Fields</a>
+     * @see <a href="https://tc39.es/ecma426/#sec-original-position-record-type">Table 2: Original Position Record Fields</a>
      */
     data class OriginalPositionRecord(val source: DecodedSourceRecord, override val line: UInt, override val column: UInt) :
         PositionWithLineAndColumn
 
     /**
-     * @see <a href="https://tc39.es/ecma426/#sec-ComparePositions">Section 8.3: ComparePositions (first, second)</a>
+     * @see <a href="https://tc39.es/ecma426/#sec-ComparePositions">Section 8.3: ComparePositions(first, second)</a>
      */
     private fun <T : PositionWithLineAndColumn> comparePositions(first: T, second: T): ComparisonResult {
         // 1. If first.[[Line]] < second.[[Line]], return lesser.
@@ -144,12 +247,29 @@ object ECMA426BasedSourceMapParser {
         return ComparisonResult.EQUAL
     }
 
-    private enum class ComparisonResult(val value: Int) { LESSER(-1), EQUAL(0), GREATER(1) }
+    //
+    // 9.1 Source map decoding
 
     /**
-     * Section 9.1.1 ParseSourceMap(string, baseUrl)
-     *
-     * @see <a href="https://tc39.es/ecma426/#sec-ParseSourceMap">Section 9.1.1: ParseSourceMap(string, baseUrl)</a>
+     * @see <a href="https://tc39.es/ecma426/#decoded-source-map-record">Table 3: Fields of Decoded Source Map Records</a>
+     */
+    data class DecodedSourceMapRecord(
+        val file: String?,
+        val sources: List<DecodedSourceRecord>,
+        val mappings: List<DecodedMappingRecord>,
+    )
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/#decoded-source-record">Table 4: Fields of Decoded Source Records</a>
+     */
+    class DecodedSourceRecord(
+        var url: String?,
+        var content: String?,
+        var ignored: Boolean,
+    )
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/#sec-ParseSourceMap">Section 9.1.1: ParseSourceMap(string, baseURL)</a>
      */
     fun parseSourceMap(string: String, baseUrl: String): ParsingResult<DecodedSourceMapRecord> {
         // 1. Let json be ParseJSON(string).
@@ -303,7 +423,7 @@ object ECMA426BasedSourceMapParser {
     }
 
     /**
-     * @see <a href="https://tc39.es/ecma426/#sec-JSONArrayIterate">Section 9.1.2.4: GetOptionalListOfArrayIndexes(object, key)</a>
+     * @see <a href="https://tc39.es/ecma426/#sec-GetOptionalListOfArrayIndexes">Section 9.1.2.4: GetOptionalListOfArrayIndexes(object, key)</a>
      */
     private fun getOptionalListOfArrayIndexes(obj: JsonObject, key: String): ParsingResult<List<UInt>> {
         // 1. Let list be a new empty List.
@@ -333,117 +453,243 @@ object ECMA426BasedSourceMapParser {
         return Success(list)
     }
 
+    //
+    // 9.2 Mappings grammar and decoding
 
     /**
-     *
-     * Parsing based on the specified grammar
-     *
-     * @see <a href="https://tc39.es/ecma426/#sec-mappings-grammar">Section: 9.2.1 Mappings grammar</a>
+     * @see <a href="https://tc39.es/ecma426/#decoded-mapping-record">Table 5: Fields of Decoded Mapping Records</a>
      */
-    private class MappingsParser(private val input: String) {
-        private var pos = 0
-        private var isFirstLine = true
-        private var isFirstMapping = true
-        private var hasAtLeastOneVlqDigit = false
+    data class DecodedMappingRecord(
+        val generatedPosition: PositionRecord,
+        val originalPosition: OriginalPositionRecord?,
+        val name: String?,
+    )
 
-        val currentPosition: Int get() = pos
+    /**
+     * ```text
+     * Line :
+     *     MappingList?
+     * ```
+     *
+     * @see <a href="https://tc39.es/ecma426/#sec-mappings-grammar">Section 9.2.1: Mappings grammar</a>
+     */
+    private sealed interface Line {
+        data object Empty : Line
+        data object MappingList : Line
+    }
 
-        fun popLine(): ParsingResult<Boolean?> {
-            if (isFirstLine) {
-                isFirstLine = false
-                return Success(parseLine())
+    /**
+     * ```text
+     * Mapping :
+     *     GeneratedColumn
+     *     GeneratedColumn OriginalSource OriginalLine OriginalColumn Name?
+     * ```
+     *
+     * @see <a href="https://tc39.es/ecma426/#sec-mappings-grammar">Section 9.2.1: Mappings grammar</a>
+     */
+    private sealed interface Mapping {
+        val generatedColumn: Vlq
+
+        data class GeneratedOnly(
+            override val generatedColumn: Vlq,
+        ) : Mapping
+
+        data class Original(
+            override val generatedColumn: Vlq,
+            val originalSource: Vlq,
+            val originalLine: Vlq,
+            val originalColumn: Vlq,
+            val name: Vlq?,
+        ) : Mapping
+    }
+
+    /**
+     * ```text
+     * Line :
+     *     MappingList?
+     * ```
+     *
+     * @see <a href="https://tc39.es/ecma426/#sec-mappings-grammar">Section 9.2.1: Mappings grammar</a>
+     */
+    context(stream: ParserStream)
+    private fun parseMappingsLine(): Line = when (stream.current) {
+        null, ';' -> Line.Empty
+        else -> Line.MappingList
+    }
+
+    /**
+     * ```text
+     * Mapping :
+     *     GeneratedColumn
+     *     GeneratedColumn OriginalSource OriginalLine OriginalColumn Name?
+     * ```
+     *
+     * @see <a href="https://tc39.es/ecma426/#sec-mappings-grammar">Section 9.2.1: Mappings grammar</a>
+     */
+    context(stream: ParserStream)
+    private fun parseMapping(): ParsingResult<Mapping> {
+        val generatedColumn = parseVlq().ifFailure { return it }
+        if (stream.isMappingDelimiter()) {
+            return Success(Mapping.GeneratedOnly(generatedColumn))
+        }
+
+        val originalSource = parseRequiredVlq("original source").ifFailure { return it }
+        val originalLine = parseRequiredVlq("original line").ifFailure { return it }
+        val originalColumn = parseRequiredVlq("original column").ifFailure { return it }
+        val name = if (stream.isMappingDelimiter()) null else parseRequiredVlq("name").ifFailure { return it }
+
+        expect(stream.isMappingDelimiter()) {
+            return Failure("Unexpected remaining mapping content at position ${stream.position}")
+        }
+
+        return Success(Mapping.Original(generatedColumn, originalSource, originalLine, originalColumn, name))
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/#decode-mapping-state-record">Table 6: Fields of Decode Mapping State Records</a>
+     */
+    private class DecodeMappingStateRecord(
+        var generatedLine: UInt = 0u,
+        var generatedColumn: Int = 0,
+        var sourceIndex: Int = 0,
+        var originalLine: Int = 0,
+        var originalColumn: Int = 0,
+        var nameIndex: Int = 0,
+    )
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/#sec-DecodeMappingsField">Section 9.2.1.1: DecodeMappingsField</a>
+     */
+    context(stream: ParserStream, state: DecodeMappingStateRecord, mappings: MutableList<DecodedMappingRecord>, names: List<String>, sources: List<DecodedSourceRecord>)
+    private tailrec fun decodeMappingsFieldForLineList(): ParsingResult<Unit> {
+        val line = parseMappingsLine()
+        // 1. Perform DecodeMappingsField of Line with arguments state, mappings, names and sources.
+        decodeMappingsFieldForLine(line).ifFailure { return it }
+        // 2. Set state.[[GeneratedLine]] to state.[[GeneratedLine]] + 1.
+        state.generatedLine++
+        // 3. Set state.[[GeneratedColumn]] to 0.
+        state.generatedColumn = 0
+        // 4. Perform DecodeMappingsField of LineList with arguments state, mappings, names and sources.
+        return when (stream.current) {
+            ';' -> {
+                stream.advance()
+                decodeMappingsFieldForLineList()
+            }
+            null -> Success(Unit)
+            else -> Failure("Unexpected remaining file content at position ${stream.position}")
+        }
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/#sec-DecodeMappingsField">Section 9.2.1.1: DecodeMappingsField</a>
+     */
+    context(stream: ParserStream, state: DecodeMappingStateRecord, mappings: MutableList<DecodedMappingRecord>, names: List<String>, sources: List<DecodedSourceRecord>)
+    private fun decodeMappingsFieldForLine(line: Line): ParsingResult<Unit> {
+        return when (line) {
+            // Line : [empty]
+            Line.Empty -> Success(Unit)
+            // Line : MappingList
+            Line.MappingList -> decodeMappingsFieldMappingList()
+        }
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/#sec-DecodeMappingsField">Section 9.2.1.1: DecodeMappingsField</a>
+     */
+    context(stream: ParserStream, state: DecodeMappingStateRecord, mappings: MutableList<DecodedMappingRecord>, names: List<String>, sources: List<DecodedSourceRecord>)
+    private tailrec fun decodeMappingsFieldMappingList(): ParsingResult<Unit> {
+        val mapping = parseMapping()
+            .required("mapping", stream)
+            .ifFailure { return it }
+        // 1. Perform DecodeMappingsField of Mapping with arguments state, mappings, names and sources.
+        decodeMappingsFieldForMapping(mapping).ifFailure { return it }
+        // 2. Perform DecodeMappingsField of MappingList with arguments state, mappings, names and sources.
+        return if (stream.current == ',') {
+            stream.advance()
+            decodeMappingsFieldMappingList()
+        } else {
+            Success(Unit)
+        }
+    }
+
+    /**
+     * @see <a href="https://tc39.es/ecma426/#sec-DecodeMappingsField">Section 9.2.1.1: DecodeMappingsField</a>
+     */
+    context(state: DecodeMappingStateRecord, mappings: MutableList<DecodedMappingRecord>, names: List<String>, sources: List<DecodedSourceRecord>)
+    private fun decodeMappingsFieldForMapping(mapping: Mapping): ParsingResult<Unit> {
+        return when (mapping) {
+            // Mapping : GeneratedColumn
+            is Mapping.GeneratedOnly -> {
+                // 1. Perform DecodeMappingsField of GeneratedColumn with arguments state, mappings, names and sources.
+                decodeMappingsFieldForGeneratedColumn(mapping.generatedColumn).ifFailure { return it }
+                // 2. If state.[[GeneratedColumn]] < 0, then
+                if (state.generatedColumn < 0) {
+                    // a. Optionally report an error.
+                    // b. Return.
+                    return Failure("Negative generated column at position ${mapping.generatedColumn.endPosition}")
+                }
+                // 3. Let position be a new Position Record { [[Line]]: state.[[GeneratedLine]], [[Column]]: state.[[GeneratedColumn]] }.
+                val position = PositionRecord(state.generatedLine, state.generatedColumn.toUInt())
+                // 4. Let decodedMapping be a new DecodedMappingRecord { [[GeneratedPosition]]: position, [[OriginalPosition]]: null, [[Name]]: null }.
+                val decodedMapping = DecodedMappingRecord(position, null, null)
+                // 5. Append decodedMapping to mappings.
+                mappings.add(decodedMapping)
+                Success(Unit)
             }
 
-            if (pos < input.length && input[pos] == ';') {
-                pos++
-                return Success(parseLine())
-            }
-
-            expect(pos == input.length) { return Failure("Unexpected remaining file content at position $currentPosition") }
-
-            return Success(null)
-        }
-
-        fun parseLine(): Boolean {
-            isFirstMapping = true
-            // Check if line is empty (next char is ';' or end of input)
-            return pos >= input.length || input[pos] == ';'
-        }
-
-        fun popMapping(): Boolean {
-            // Parse first mapping
-            if (isFirstMapping) {
-                isFirstMapping = false
-                return true
-            }
-
-            if (pos < input.length && input[pos] == ',') {
-                pos++
-                return true
-            }
-
-            return false
-        }
-
-        fun parseGeneratedColumn() {
-            hasAtLeastOneVlqDigit = false
-        }
-
-        fun parseOriginalSource() {
-            hasAtLeastOneVlqDigit = false
-        }
-
-        fun parseOriginalLine() {
-            hasAtLeastOneVlqDigit = false
-        }
-
-        fun parseOriginalColumn() {
-            hasAtLeastOneVlqDigit = false
-        }
-
-        fun parseName() {
-            hasAtLeastOneVlqDigit = false
-        }
-
-        fun popVlqDigit(): ParsingResult<VlqDigit> {
-            if (pos < input.length) {
-                hasAtLeastOneVlqDigit = true
-                return parseVlgDigit()
-            }
-
-            expect(hasAtLeastOneVlqDigit) { return Failure("Empty VLQ value at position $currentPosition") }
-            error("Attempt to pop digit after a TerminalDigitNode")
-        }
-
-        fun hasOnlyGeneratedColumn(): Boolean =
-            pos >= input.length || input[pos] == ',' || input[pos] == ';'
-
-        fun hasName(): Boolean =
-            pos < input.length && input[pos] != ',' && input[pos] != ';'
-
-        fun parseVlgDigit(): ParsingResult<VlqDigit> {
-            val char = input[pos]
-            val digitValue = base64ToValue(char)
-
-            expect(digitValue >= 0) { return Failure("Invalid base64 character '$char' at position $currentPosition") }
-
-            pos++
-
-            // Check if this is a continuation digit (bit 5 is set)
-            return Success(VlqDigit(digitValue.toUInt(), isTerminal = (digitValue and 0x20) == 0))
-        }
-
-        /**
-         * Maps base64 character to its numeric value according to the spec
-         */
-        private fun base64ToValue(char: Char): Int {
-            return when (char) {
-                in 'A'..'Z' -> char - 'A'
-                in 'a'..'z' -> char - 'a' + 26
-                in '0'..'9' -> char - '0' + 52
-                '+' -> 62
-                '/' -> 63
-                else -> -1
+            // Mapping : GeneratedColumn OriginalSource OriginalLine OriginalColumn Name?
+            is Mapping.Original -> {
+                // 1. Perform DecodeMappingsField of GeneratedColumn with arguments state, mappings, names and sources.
+                decodeMappingsFieldForGeneratedColumn(mapping.generatedColumn).ifFailure { return it }
+                // 2. If state.[[GeneratedColumn]] < 0, then
+                if (state.generatedColumn < 0) {
+                    // a. Optionally report an error.
+                    // b. Return.
+                    return Failure("Negative generated column at position ${mapping.generatedColumn.endPosition}")
+                }
+                // 3. Let generatedPosition be a new Position Record { [[Line]]: state.[[GeneratedLine]], [[Column]]: state.[[GeneratedColumn]] }.
+                val generatedPosition = PositionRecord(state.generatedLine, state.generatedColumn.toUInt())
+                // 4. Perform DecodeMappingsField of OriginalSource with arguments state, mappings, names and sources.
+                decodeMappingsFieldForOriginalSource(mapping.originalSource).ifFailure { return it }
+                // 5. Perform DecodeMappingsField of OriginalLine with arguments state, mappings, names and sources.
+                decodeMappingsFieldForOriginalLine(mapping.originalLine).ifFailure { return it }
+                // 6. Perform DecodeMappingsField of OriginalColumn with arguments state, mappings, names and sources.
+                decodeMappingsFieldForOriginalColumn(mapping.originalColumn).ifFailure { return it }
+                // 7. If state.[[SourceIndex]] < 0 or state.[[SourceIndex]] ≥ the number of elements of sources or state.[[OriginalLine]] < 0 or state.[[OriginalColumn]] < 0, then
+                //       a. Optionally report an error.
+                //       b. Let originalPosition be null.
+                when {
+                    state.sourceIndex < 0 -> return Failure("Negative source index at position ${mapping.originalColumn.endPosition}")
+                    state.sourceIndex >= sources.size -> return Failure("Source index out of bounds at position ${mapping.originalColumn.endPosition}")
+                    state.originalLine < 0 -> return Failure("Negative original line at position ${mapping.originalColumn.endPosition}")
+                    state.originalColumn < 0 -> return Failure("Negative original column at position ${mapping.originalColumn.endPosition}")
+                }
+                // 8. Else,
+                // a. Let originalPosition be a new Original Position Record { [[Source]]: sources[state.[[SourceIndex]]], [[Line]]: state.[[OriginalLine]], [[Column]]: state.[[OriginalColumn]] }.
+                val originalPosition = OriginalPositionRecord(
+                    sources[state.sourceIndex],
+                    state.originalLine.toUInt(),
+                    state.originalColumn.toUInt()
+                )
+                // 9. Let name be null.
+                var name: String? = null
+                // 10. If Name is present, then
+                if (mapping.name != null) {
+                    // a. Perform DecodeMappingsField of Name with arguments state, mappings, names and sources.
+                    decodeMappingsFieldForName(mapping.name).ifFailure { return it }
+                    // b. If state.[[NameIndex]] < 0 or state.[[NameIndex]] ≥ the number of elements of names, optionally report an error.
+                    when {
+                        state.nameIndex < 0 -> return Failure("Negative name index at position ${mapping.name.endPosition}")
+                        state.nameIndex >= names.size -> return Failure("Name index out of bounds at position ${mapping.name.endPosition}")
+                    }
+                    // c. Else, set name to names[state.[[NameIndex]]].
+                    name = names[state.nameIndex]
+                }
+                // 11. Let decodedMapping be a new DecodedMappingRecord { [[GeneratedPosition]]: generatedPosition, [[OriginalPosition]]: originalPosition, [[Name]]: name }.
+                val decodedMapping = DecodedMappingRecord(generatedPosition, originalPosition, name)
+                // 12. Append decodedMapping to mappings.
+                mappings.add(decodedMapping)
+                Success(Unit)
             }
         }
     }
@@ -451,166 +697,75 @@ object ECMA426BasedSourceMapParser {
     /**
      * @see <a href="https://tc39.es/ecma426/#sec-DecodeMappingsField">Section 9.2.1.1: DecodeMappingsField</a>
      */
-    context(parser: MappingsParser, state: DecodeMappingStateRecord, mappings: MutableList<DecodedMappingRecord>, names: List<String>, sources: List<DecodedSourceRecord>)
-    private tailrec fun decodeMappingsFieldForLineList(): ParsingResult<Unit> {
-        val isMappingListEmpty = parser.popLine().ifFailure { return it } ?: return Success(Unit)
-        // 1. Perform DecodeMappingsField of Line with arguments state, mappings, names and sources.
-        decodeMappingsFieldForLine(isMappingListEmpty).ifFailure { return it }
-        // 2. Set state.[[GeneratedLine]] to state.[[GeneratedLine]] + 1.
-        state.generatedLine++
-        // 3. Set state.[[GeneratedColumn]] to 0.
-        state.generatedColumn = 0
-        // 4. Perform DecodeMappingsField of LineList with arguments state, mappings, names and sources.
-        return decodeMappingsFieldForLineList()
-    }
-
-    context(parser: MappingsParser, state: DecodeMappingStateRecord, mappings: MutableList<DecodedMappingRecord>, names: List<String>, sources: List<DecodedSourceRecord>)
-    private fun decodeMappingsFieldForLine(isMappingListEmpty: Boolean): ParsingResult<Unit> {
-        /** [empty] */
-        if (isMappingListEmpty) return Success(Unit)
-        /** MappingList */
-        return decodeMappingsFieldMappingList()
-    }
-
-    context(parser: MappingsParser, state: DecodeMappingStateRecord, mappings: MutableList<DecodedMappingRecord>, names: List<String>, sources: List<DecodedSourceRecord>)
-    private tailrec fun decodeMappingsFieldMappingList(): ParsingResult<Unit> {
-        if (!parser.popMapping()) return Success(Unit)
-        // 1. Perform DecodeMappingsField of Mapping with arguments state, mappings, names and sources.
-        decodeMappingsFieldForMapping().ifFailure { return it }
-        // 2. Perform DecodeMappingsField of MappingList with arguments state, mappings, names and sources.
-        return decodeMappingsFieldMappingList()
-    }
-
-    context(parser: MappingsParser, state: DecodeMappingStateRecord, mappings: MutableList<DecodedMappingRecord>, names: List<String>, sources: List<DecodedSourceRecord>)
-    private fun decodeMappingsFieldForMapping(): ParsingResult<Unit> {
-        // 1. Perform DecodeMappingsField of GeneratedColumn with arguments state, mappings, names and sources.
-        decodeMappingsFieldForGeneratedColumn().ifFailure { return it }
-        // 2. If state.[[GeneratedColumn]] < 0, then
-        if (state.generatedColumn < 0) {
-            // a. Optionally report an error.
-            // b. Return.
-            return Failure("Negative generated column at position ${parser.currentPosition}")
-        }
-        /**  Mapping :: GeneratedColumn */
-        if (parser.hasOnlyGeneratedColumn()) {
-            // 3. Let position be a new Position Record { [[Line]]: state.[[GeneratedLine]], [[Column]]: state.[[GeneratedColumn]] }.
-            val position = PositionRecord(state.generatedLine, state.generatedColumn.toUInt())
-            // 4. Let decodedMapping be a new DecodedMappingRecord { [[GeneratedPosition]]: position, [[OriginalPosition]]: null, [[Name]]: null }.
-            val decodedMapping = DecodedMappingRecord(position, null, null)
-            // 5. Append decodedMapping to mappings.
-            mappings.add(decodedMapping)
-        }
-        /**  Mapping :: GeneratedColumn OriginalSource OriginalLine OriginalColumn Name?  */
-        else {
-            // 3. Let generatedPosition be a new Position Record { [[Line]]: state.[[GeneratedLine]], [[Column]]: state.[[GeneratedColumn]] }.
-            val generatedPosition = PositionRecord(state.generatedLine, state.generatedColumn.toUInt())
-            // 4. Perform DecodeMappingsField of OriginalSource with arguments state, mappings, names and sources.
-            decodeMappingsFieldForOriginalSource().ifFailure { return it }
-            // 5. Perform DecodeMappingsField of OriginalLine with arguments state, mappings, names and sources.
-            decodeMappingsFieldForOriginalLine().ifFailure { return it }
-            // 6. Perform DecodeMappingsField of OriginalColumn with arguments state, mappings, names and sources.
-            decodeMappingsFieldForOriginalColumn().ifFailure { return it }
-            // 7. If state.[[SourceIndex]] < 0 or state.[[SourceIndex]] ≥ the number of elements of sources or state.[[OriginalLine]] < 0 or state.[[OriginalColumn]] < 0, then
-            //       a. Optionally report an error.
-            //       b. Let originalPosition be null.
-            when {
-                state.sourceIndex < 0 -> return Failure("Negative source index at position ${parser.currentPosition}")
-                state.sourceIndex >= sources.size -> return Failure("Source index out of bounds at position ${parser.currentPosition}")
-                state.originalLine < 0 -> return Failure("Negative original line at position ${parser.currentPosition}")
-                state.originalColumn < 0 -> return Failure("Negative original column at position ${parser.currentPosition}")
-            }
-            // 8. Else,
-            // a. Let originalPosition be a new Original Position Record { [[Source]]: sources[state.[[SourceIndex]]], [[Line]]: state.[[OriginalLine]], [[Column]]: state.[[OriginalColumn]] }.
-            val originalPosition = OriginalPositionRecord(
-                sources[state.sourceIndex],
-                state.originalLine.toUInt(),
-                state.originalColumn.toUInt()
-            )
-            // 9. Let name be null.
-            var name: String? = null
-            // 10. If Name is present, then
-            if (parser.hasName()) {
-                // a. Perform DecodeMappingsField of Name with arguments state, mappings, names and sources.
-                decodeMappingsFieldForName().ifFailure { return it }
-                // b. If state.[[NameIndex]] < 0 or state.[[NameIndex]] ≥ the number of elements of names, optionally report an error.
-                when {
-                    state.nameIndex < 0 -> return Failure("Negative name index at position ${parser.currentPosition}")
-                    state.nameIndex >= names.size -> return Failure("Name index out of bounds at position ${parser.currentPosition}")
-                }
-                // c. Else, set name to names[state.[[NameIndex]]].
-                name = names[state.nameIndex]
-            }
-            // 11. Let decodedMapping be a new DecodedMappingRecord { [[GeneratedPosition]]: generatedPosition, [[OriginalPosition]]: originalPosition, [[Name]]: name }.
-            val decodedMapping = DecodedMappingRecord(generatedPosition, originalPosition, name)
-            // 12. Append decodedMapping to mappings.
-            mappings.add(decodedMapping)
-        }
-
-        return Success(Unit)
-    }
-
-    context(parser: MappingsParser, state: DecodeMappingStateRecord)
-    private fun decodeMappingsFieldForGeneratedColumn(): ParsingResult<Unit> {
-        parser.parseGeneratedColumn()
+    context(state: DecodeMappingStateRecord)
+    private fun decodeMappingsFieldForGeneratedColumn(generatedColumn: Vlq): ParsingResult<Unit> {
         // 1. Let relativeColumn be the VLQSignedValue of Vlq.
-        val relativeColumn = vlqSignedValue().ifFailure { return it }
+        val relativeColumn = vlqSignedValue(generatedColumn).ifFailure { return it }
         // 2. Set state.[[GeneratedColumn]] to state.[[GeneratedColumn]] + relativeColumn.
         state.generatedColumn += relativeColumn
         return Success(Unit)
     }
 
-    context(parser: MappingsParser, state: DecodeMappingStateRecord)
-    private fun decodeMappingsFieldForOriginalSource(): ParsingResult<Unit> {
-        parser.parseOriginalSource()
+    /**
+     * @see <a href="https://tc39.es/ecma426/#sec-DecodeMappingsField">Section 9.2.1.1: DecodeMappingsField</a>
+     */
+    context(state: DecodeMappingStateRecord)
+    private fun decodeMappingsFieldForOriginalSource(originalSource: Vlq): ParsingResult<Unit> {
         // 1. Let relativeSourceIndex be the VLQSignedValue of Vlq.
-        val relativeSourceIndex = vlqSignedValue().ifFailure { return it }
+        val relativeSourceIndex = vlqSignedValue(originalSource).ifFailure { return it }
         // 2. Set state.[[SourceIndex]] to state.[[SourceIndex]] + relativeSourceIndex.
         state.sourceIndex += relativeSourceIndex
         return Success(Unit)
     }
 
-    context(parser: MappingsParser, state: DecodeMappingStateRecord)
-    private fun decodeMappingsFieldForOriginalLine(): ParsingResult<Unit> {
-        parser.parseOriginalLine()
+    /**
+     * @see <a href="https://tc39.es/ecma426/#sec-DecodeMappingsField">Section 9.2.1.1: DecodeMappingsField</a>
+     */
+    context(state: DecodeMappingStateRecord)
+    private fun decodeMappingsFieldForOriginalLine(originalLine: Vlq): ParsingResult<Unit> {
         // 1. Let relativeLine be the VLQSignedValue of Vlq.
-        val relativeLine = vlqSignedValue().ifFailure { return it }
+        val relativeLine = vlqSignedValue(originalLine).ifFailure { return it }
         // 2. Set state.[[OriginalLine]] to state.[[OriginalLine]] + relativeLine.
         state.originalLine += relativeLine
         return Success(Unit)
     }
 
-    context(parser: MappingsParser, state: DecodeMappingStateRecord)
-    private fun decodeMappingsFieldForOriginalColumn(): ParsingResult<Unit> {
-        parser.parseOriginalColumn()
+    /**
+     * @see <a href="https://tc39.es/ecma426/#sec-DecodeMappingsField">Section 9.2.1.1: DecodeMappingsField</a>
+     */
+    context(state: DecodeMappingStateRecord)
+    private fun decodeMappingsFieldForOriginalColumn(originalColumn: Vlq): ParsingResult<Unit> {
         // 1. Let relativeColumn be the VLQSignedValue of Vlq.
-        val relativeColumn = vlqSignedValue().ifFailure { return it }
+        val relativeColumn = vlqSignedValue(originalColumn).ifFailure { return it }
         // 2. Set state.[[OriginalColumn]] to state.[[OriginalColumn]] + relativeColumn.
         state.originalColumn += relativeColumn
         return Success(Unit)
     }
 
-    context(parser: MappingsParser, state: DecodeMappingStateRecord)
-    private fun decodeMappingsFieldForName(): ParsingResult<Unit> {
-        parser.parseName()
+    /**
+     * @see <a href="https://tc39.es/ecma426/#sec-DecodeMappingsField">Section 9.2.1.1: DecodeMappingsField</a>
+     */
+    context(state: DecodeMappingStateRecord)
+    private fun decodeMappingsFieldForName(name: Vlq): ParsingResult<Unit> {
         // 1. Let relativeName be the VLQSignedValue of Vlq.
-        val relativeName = vlqSignedValue().ifFailure { return it }
+        val relativeName = vlqSignedValue(name).ifFailure { return it }
         // 2. Set state.[[NameIndex]] to state.[[NameIndex]] + relativeName.
         state.nameIndex += relativeName
         return Success(Unit)
     }
 
     /**
-     * @see <a href="https://tc39.es/ecma426/#sec-DecodeMappings">Section 9.2.2: DecodeMappings</a>
+     * @see <a href="https://tc39.es/ecma426/#sec-DecodeMappings">Section 9.2.2: DecodeMappings(rawMappings, names, sources)</a>
      */
     private fun decodeMappings(
         rawMappings: String,
         names: List<String>,
-        sources: List<DecodedSourceRecord>
+        sources: List<DecodedSourceRecord>,
     ): ParsingResult<List<DecodedMappingRecord>> {
         // 1. Let mappings be a new empty List.
         val mappings = mutableListOf<DecodedMappingRecord>()
         // 2. Let mappingsNode be the root Parse Node when parsing rawMappings using MappingsField as the goal symbol.
-        val mappingsParser = MappingsParser(rawMappings)
+        val stream = ParserStream(rawMappings)
         // 3. If parsing failed, then
         //       a. Optionally report an error.
         //       b. Return mappings.
@@ -620,7 +775,7 @@ object ECMA426BasedSourceMapParser {
         val state = DecodeMappingStateRecord()
 
         // 5. Perform DecodeMappingsField of mappingsNode with arguments state, mappings, names and sources.
-        context(mappingsParser, state, mappings, names, sources) {
+        context(stream, state, mappings, names, sources) {
             decodeMappingsFieldForLineList().ifFailure { return it }
         }
 
@@ -628,16 +783,18 @@ object ECMA426BasedSourceMapParser {
         return Success(mappings)
     }
 
+    //
+    // 9.3 Resolving sources
 
     /**
-     * @see <a href="https://tc39.es/ecma426/#sec-DecodeSourceMapSources">Section 9.3.1: DecodeSourceMapSources</a>
+     * @see <a href="https://tc39.es/ecma426/#sec-DecodeSourceMapSources">Section 9.3.1: DecodeSourceMapSources(baseURL, sourceRoot, sources, sourcesContent, ignoreList)</a>
      */
     private fun decodeSourceMapSources(
         baseUrl: String, // URL,
         sourceRoot: String?,
         sources: List<String?>,
         sourcesContent: List<String?>,
-        ignoreList: List<UInt>
+        ignoreList: List<UInt>,
     ): ParsingResult<List<DecodedSourceRecord>> {
         // 1. Let decodedSources be a new empty List.
         val decodedSources = mutableListOf<DecodedSourceRecord>()
@@ -689,41 +846,8 @@ object ECMA426BasedSourceMapParser {
         return Success(decodedSources)
     }
 
-
-    /**
-     * @see <a href="https://tc39.es/ecma426/#decoded-source-map-record">Table 9.3: Fields of Decoded Source Map Records</a>
-     */
-    data class DecodedSourceMapRecord(
-        val file: String?,
-        val sources: List<DecodedSourceRecord>,
-        val mappings: List<DecodedMappingRecord>,
-    )
-
-    /**
-     * @see <a href="https://tc39.es/ecma426/#decoded-source-record">Table 9.4: Fields of Decoded Source Records</a>
-     */
-    class DecodedSourceRecord(var url: String?, var content: String?, var ignored: Boolean)
-
-    /**
-     * @see <a href="https://tc39.es/ecma426/#decoded-mapping-record">Table 9.5: Fields of Decoded Mapping Records</a>
-     */
-    data class DecodedMappingRecord(
-        val generatedPosition: PositionRecord,
-        val originalPosition: OriginalPositionRecord?,
-        val name: String?,
-    )
-
-    /**
-     * @see <a href="https://tc39.es/ecma426/#decode-mapping-state-record">Table 9.6: Fields of Decode Mapping State Records</a>
-     */
-    private class DecodeMappingStateRecord(
-        var generatedLine: UInt = 0u,
-        var generatedColumn: Int = 0,
-        var sourceIndex: Int = 0,
-        var originalLine: Int = 0,
-        var originalColumn: Int = 0,
-        var nameIndex: Int = 0
-    )
+    //
+    // 10. Index source maps
 
     /**
      * @see <a href="https://tc39.es/ecma426/#sec-DecodeIndexSourceMap">Section 10.1: DecodeIndexSourceMap(json, baseURL)</a>
@@ -732,15 +856,48 @@ object ECMA426BasedSourceMapParser {
         TODO("The compiler is not supposed to generate sections, if it started, please implement it based on the Section 10.1")
     }
 
+    //
+    // Utility functions and implementation types
 
-    // Pack of helper functions and classes not specified in the specification, but just to simplify Kotlin specific implementation
-    private data class VlqDigit(val value: UInt, val isTerminal: Boolean)
+    /** Common representation of [TerminalDigit] and [ContinuationDigit] parse nodes. */
+    private sealed interface VlqDigit {
+        val value: UInt
+    }
 
+    /** Returns whether the current character terminates a mapping segment. */
+    private fun ParserStream.isMappingDelimiter(): Boolean =
+        isEnded || current == ',' || current == ';'
+
+    /** Converts a Base64 character to its numeric value, or returns -1 when the character is invalid. */
+    private fun base64ToValue(char: Char): Int {
+        return when (char) {
+            in 'A'..'Z' -> char - 'A'
+            in 'a'..'z' -> char - 'a' + 26
+            in '0'..'9' -> char - '0' + 52
+            '+' -> 62
+            '/' -> 63
+            else -> -1
+        }
+    }
+
+    /**
+     * Parses a required VLQ value and reports a field-specific failure when it is absent.
+     */
+    context(stream: ParserStream)
+    private fun parseRequiredVlq(fieldName: String): ParsingResult<Vlq> {
+        return parseVlq().required(fieldName, stream)
+    }
+
+    /** The three possible results of comparing two source-map positions. */
+    private enum class ComparisonResult(val value: Int) { LESSER(-1), EQUAL(0), GREATER(1) }
+
+    /** Common contract for implementation types that carry a line and column. */
     private sealed interface PositionWithLineAndColumn {
         val line: UInt
         val column: UInt
     }
 
+    /** Returns whether an optional JSON property is missing. */
     private val JsonNode?.isMissing: Boolean
         inline get() {
             contract {
@@ -750,11 +907,14 @@ object ECMA426BasedSourceMapParser {
             return this == null
         }
 
-    sealed interface ParsingResult<T> {
+    /** Represents success, absence of a grammar match, or a parsing failure. */
+    sealed interface ParsingResult<out T> {
         data class Success<T>(val value: T) : ParsingResult<T>
+        class NoMatch<T> : ParsingResult<T>
         data class Failure<T>(val message: String, val cause: Throwable? = null) : ParsingResult<T>
     }
 
+    /** Performs a contract-aware parser precondition check. */
     private inline fun expect(value: Boolean, localReturn: () -> Nothing) {
         contract {
             returns() implies value
@@ -762,6 +922,7 @@ object ECMA426BasedSourceMapParser {
         if (!value) localReturn()
     }
 
+    /** Checks a JSON node type while preserving smart-cast information. */
     private inline fun <reified T : JsonNode> expectType(value: JsonNode, localReturn: (String, String) -> Nothing) {
         contract {
             returns() implies (value is T)
@@ -769,17 +930,44 @@ object ECMA426BasedSourceMapParser {
         if (value !is T) localReturn(T::class.simpleName.toString(), value::class.simpleName.toString())
     }
 
-    private inline fun expectToBe(actual: Any, expect: Any, localReturn: (Any, Any) -> Unit) {
-        if (actual != expect) localReturn(expect, actual)
+    /** Reports a parser expectation when two values differ. */
+    private inline fun expectToBe(actual: Any, expected: Any, localReturn: (Any, Any) -> Unit) {
+        if (actual != expected) localReturn(expected, actual)
     }
 
+    /**
+     * Unwraps a successful parsing result or returns the non-success result from the caller.
+     */
     private inline fun <A, B> ParsingResult<A>.ifFailure(localReturn: (ParsingResult<B>) -> Nothing): A {
         when (this) {
             is Success -> return value
-            is Failure -> {
+            is Failure, is NoMatch -> {
                 @Suppress("UNCHECKED_CAST")
                 localReturn(this as ParsingResult<B>)
             }
         }
+    }
+
+    /** Converts a missing grammar match into a parsing failure. */
+    private fun <T> ParsingResult<T>.required(expected: String, stream: ParserStream): ParsingResult<T> {
+        return when (this) {
+            is Failure, is Success -> this
+            is NoMatch -> Failure("$expected expected, got '${stream.current ?: "<EOF>"}' at position ${stream.position}")
+        }
+    }
+
+    /** A cursor over the source-map field currently being parsed. */
+    private class ParserStream(
+        private val input: String,
+        var position: Int = 0,
+    ) {
+        val current: Char? get() = input.getOrNull(position)
+        val length: Int get() = input.length
+        val isEnded: Boolean get() = position >= length
+
+        fun advance(): Char? =
+            current?.also {
+                position++
+            }
     }
 }
