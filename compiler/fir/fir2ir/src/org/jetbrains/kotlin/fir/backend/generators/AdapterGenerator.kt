@@ -591,7 +591,7 @@ class AdapterGenerator(
     ): IrExpression {
         // The rule for SAM conversions is: the argument must be a subtype of the required function type.
         // We handle intersection types, captured types, etc. by approximating both expected and actual types.
-        val approximatedConeKotlinFunctionType = getFunctionTypeForPossibleSamType(samType)?.approximateForIrOrSelf() ?: return argument
+        val approximatedConeKotlinFunctionType = getFunctionTypeForPossibleSamType(samType).approximateForIrOrSelf()
 
         // This line is not present in the K1 counterpart because there is InsertImplicitCasts::cast that effectively removes
         // such unnecessary casts. At the same time, many IR lowerings assume that there are no such redundant casts and many
@@ -666,8 +666,10 @@ class AdapterGenerator(
         return substitutor.substituteOrSelf(resolvedBounds.first().coneType)
     }
 
-    internal fun getFunctionTypeForPossibleSamType(parameterType: ConeKotlinType): ConeKotlinType? {
-        return samResolver.getSamInfoForPossibleSamType(parameterType)?.functionalType
+    internal fun getFunctionTypeForPossibleSamType(parameterType: ConeKotlinType): ConeKotlinType {
+        val conversionInfo = samResolver.getSamInfoForPossibleSamType(parameterType)
+        checkNotNull(conversionInfo) { "No SAM info found for ${parameterType.renderForDebugging()}" }
+        return conversionInfo.functionalType
     }
 
     /**
