@@ -61,7 +61,10 @@ class JavaClassOverAst(
                 (outerClass?.isInterface == true)
 
     override val isFinal: Boolean
-        get() = (isEnum && !methods.any { it.isAbstract }) || hasModifier(JavaSyntaxTokenType.FINAL_KEYWORD)
+        get() = (isEnum && !methods.any { it.isAbstract }) ||
+                isRecord ||
+                isValue ||
+                hasModifier(JavaSyntaxTokenType.FINAL_KEYWORD)
 
     override val visibility: Visibility
         get() = when {
@@ -204,7 +207,7 @@ class JavaClassOverAst(
     }
 
     override val isValue: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        tree.findChildByType(node, JavaSyntaxTokenType.VALUE_KEYWORD) != null
+        hasModifier(JavaSyntaxTokenType.VALUE_KEYWORD)
     }
 
     override val isSealed: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
