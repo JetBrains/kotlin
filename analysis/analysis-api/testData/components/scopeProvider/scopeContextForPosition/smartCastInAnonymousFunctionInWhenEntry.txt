@@ -373,3 +373,41 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 11
+
+possible smart casts:
+  source:
+    symbol = KaReceiverParameterSymbol:
+      KaReceiverParameterSymbol:
+        anchorPsi: KtTypeReference
+        annotations: []
+        callableId: null
+        contextParameters: []
+        contextReceivers: []
+        isActual: false
+        isCompanion: false
+        isDelegated: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(/test)
+        psi: KtTypeReference
+        realPsi: KtTypeReference
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Any
+        typeParameters: []
+        visibility: PUBLIC
+    originalType = kotlin.Any
+  isStable = true
+  smartCastTypes:
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: A

@@ -716,3 +716,19 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 10
+
+possible smart casts:
+  source:
+    symbol = KaContextParameterSymbol:
+      a: T
+    originalType = T
+  isStable = true
+  smartCastTypes:
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: BaseA
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any

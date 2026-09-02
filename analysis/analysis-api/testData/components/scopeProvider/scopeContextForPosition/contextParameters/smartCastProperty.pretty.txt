@@ -62,3 +62,11 @@ scopes:
 
   DefaultStarImportingScope, index = 9
 
+possible smart casts:
+  source:
+    symbol = KaContextParameterSymbol:
+      c: kotlin.Any
+    originalType = kotlin.Any
+  isStable = true
+  smartCastTypes:
+    kotlin.Int
