@@ -136,6 +136,48 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
     }
 
     @Test
+    fun testValueRecordInnerClass(@TempDir tempDir: Path) {
+        val pkgDir = tempDir.resolve("test")
+        pkgDir.toFile().mkdirs()
+        pkgDir.resolve("Outer.java").writeText(
+            """
+            package test;
+            public class Outer {
+                public static value record V(int x) {}
+                public static record NV(int x) {}
+            }
+        """.trimIndent()
+        )
+
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
+        val outerClassId = ClassId(FqName("test"), Name.identifier("Outer"))
+        val outerClass = finder.findClass(JavaClassFinder.Request(outerClassId))
+        assertNotNull(outerClass, "Expected to find test.Outer class")
+
+        val innerNames = outerClass.innerClassNames.map { it.asString() }
+        assertTrue("NV" in innerNames, "Expected NV in inner class names, found: $innerNames")
+        assertTrue("V" in innerNames, "Expected V in inner class names, found: $innerNames")
+
+        assertNotNull(outerClass.findInnerClass(Name.identifier("NV")), "Expected to find inner class NV")
+        assertNotNull(outerClass.findInnerClass(Name.identifier("V")), "Expected to find inner class V")
+
+        val vClass = outerClass.findInnerClass(Name.identifier("V")) as? JavaClassOverAst
+        val nvClass = outerClass.findInnerClass(Name.identifier("NV")) as? JavaClassOverAst
+        assertNotNull(vClass, "Expected V to be a JavaClassOverAst")
+        assertNotNull(nvClass, "Expected NV to be a JavaClassOverAst")
+
+        // V is a value record: isValue=true, isRecord=true, isFinal=true (value classes are implicitly final)
+        assertTrue(vClass.isValue, "V should be a value class")
+        assertTrue(vClass.isRecord, "V should be a record")
+        assertTrue(vClass.isFinal, "V should be implicitly final (value class)")
+
+        // NV is a regular record: isValue=false, isRecord=true, isFinal=true (records are implicitly final)
+        assertFalse(nvClass.isValue, "NV should not be a value class")
+        assertTrue(nvClass.isRecord, "NV should be a record")
+        assertTrue(nvClass.isFinal, "NV should be implicitly final (record)")
+    }
+
+    @Test
     fun testMultiFileClassFinder(@TempDir tempDir: Path) {
         // Simulate the test scenario: J.java uses star import for org.jetbrains.annotations.*
         // NotNull.java defines the annotation in that package
