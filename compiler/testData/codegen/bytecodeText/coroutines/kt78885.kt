@@ -15,8 +15,8 @@ fun main() = runBlocking {
 private inline fun myInlineBlock(block: () -> Unit) = block()
 
 // Make sure, that $i$f variable comes _before_ $i$a variable in the code range for label=1
-// 1 LOCALVARIABLE \$i\$f\$myInlineBlock[\d\\]* I L10
-// 1 LOCALVARIABLE \$i\$a\$-myInlineBlock-Kt78885Kt\$main\$1\$1[\d\\]* I L11
+// 1 LOCALVARIABLE \$i\$f\$myInlineBlock[\d\\]* I L9
+// 1 LOCALVARIABLE \$i\$a\$-myInlineBlock-Kt78885Kt\$main\$1\$1[\d\\]* I L10
 
 // We have no variable to spill/unspill
 // 1 PUTFIELD .*label
