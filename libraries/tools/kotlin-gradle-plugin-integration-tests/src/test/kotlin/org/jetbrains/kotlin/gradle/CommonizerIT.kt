@@ -1239,7 +1239,7 @@ private object CommonizableTargets {
     private val os = OperatingSystem.current()
 
     val targetA = when {
-        os.isMacOsX -> TargetSubstitution("macosX64")
+        os.isMacOsX -> TargetSubstitution("macosArm64")
         os.isLinux -> TargetSubstitution("linuxX64")
         os.isWindows -> TargetSubstitution("mingwX64")
         else -> fail("Unsupported os: ${os.name}")
