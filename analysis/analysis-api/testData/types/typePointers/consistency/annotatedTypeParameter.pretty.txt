@@ -1,0 +1,9 @@
+Type has changed on restoration
+
+Before:
+
+kotlin.collections.List<@Anno2 @AnnoWithArgs2(x = "") T>
+
+After:
+
+kotlin.collections.List<T>

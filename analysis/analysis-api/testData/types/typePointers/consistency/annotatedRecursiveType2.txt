@@ -4,59 +4,58 @@ Before:
 
 KaUsualClassType:
   abbreviation: null
-  annotations: [
-    Anno()
-      psi: KtAnnotationEntry
-    AnnoWithArgs(x = "")
-      psi: KtAnnotationEntry
-  ]
-  classId: kotlin/collections/List
+  annotations: []
+  classId: A
   qualifiers: [
     KaResolvedClassTypeQualifier:
-      name: List
-      symbol: KaNamedClassSymbol(kotlin/collections/List)
+      name: A
+      symbol: KaNamedClassSymbol(A)
       typeArguments: [
         KaUsualClassType:
           abbreviation: null
           annotations: [
             Anno()
               psi: KtAnnotationEntry
-            AnnoWithArgs(x = "")
-              psi: KtAnnotationEntry
           ]
-          classId: kotlin/String
+          classId: A
           qualifiers: [
             KaResolvedClassTypeQualifier:
-              name: String
-              symbol: KaNamedClassSymbol(kotlin/String)
-              typeArguments: []
+              name: A
+              symbol: KaNamedClassSymbol(A)
+              typeArguments: [
+                *
+              ]
           ]
-          symbol: KaNamedClassSymbol(kotlin/String)
-          typeArguments: []
+          symbol: KaNamedClassSymbol(A)
+          typeArguments: [
+            *
+          ]
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
       ]
   ]
-  symbol: KaNamedClassSymbol(kotlin/collections/List)
+  symbol: KaNamedClassSymbol(A)
   typeArguments: [
     KaUsualClassType:
       abbreviation: null
       annotations: [
         Anno()
           psi: KtAnnotationEntry
-        AnnoWithArgs(x = "")
-          psi: KtAnnotationEntry
       ]
-      classId: kotlin/String
+      classId: A
       qualifiers: [
         KaResolvedClassTypeQualifier:
-          name: String
-          symbol: KaNamedClassSymbol(kotlin/String)
-          typeArguments: []
+          name: A
+          symbol: KaNamedClassSymbol(A)
+          typeArguments: [
+            *
+          ]
       ]
-      symbol: KaNamedClassSymbol(kotlin/String)
-      typeArguments: []
+      symbol: KaNamedClassSymbol(A)
+      typeArguments: [
+        *
+      ]
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
@@ -70,43 +69,51 @@ After:
 KaUsualClassType:
   abbreviation: null
   annotations: []
-  classId: kotlin/collections/List
+  classId: A
   qualifiers: [
     KaResolvedClassTypeQualifier:
-      name: List
-      symbol: KaNamedClassSymbol(kotlin/collections/List)
+      name: A
+      symbol: KaNamedClassSymbol(A)
       typeArguments: [
         KaUsualClassType:
           abbreviation: null
           annotations: []
-          classId: kotlin/String
+          classId: A
           qualifiers: [
             KaResolvedClassTypeQualifier:
-              name: String
-              symbol: KaNamedClassSymbol(kotlin/String)
-              typeArguments: []
+              name: A
+              symbol: KaNamedClassSymbol(A)
+              typeArguments: [
+                *
+              ]
           ]
-          symbol: KaNamedClassSymbol(kotlin/String)
-          typeArguments: []
+          symbol: KaNamedClassSymbol(A)
+          typeArguments: [
+            *
+          ]
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
       ]
   ]
-  symbol: KaNamedClassSymbol(kotlin/collections/List)
+  symbol: KaNamedClassSymbol(A)
   typeArguments: [
     KaUsualClassType:
       abbreviation: null
       annotations: []
-      classId: kotlin/String
+      classId: A
       qualifiers: [
         KaResolvedClassTypeQualifier:
-          name: String
-          symbol: KaNamedClassSymbol(kotlin/String)
-          typeArguments: []
+          name: A
+          symbol: KaNamedClassSymbol(A)
+          typeArguments: [
+            *
+          ]
       ]
-      symbol: KaNamedClassSymbol(kotlin/String)
-      typeArguments: []
+      symbol: KaNamedClassSymbol(A)
+      typeArguments: [
+        *
+      ]
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false

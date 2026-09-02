@@ -1,0 +1,348 @@
+Type has changed on restoration
+
+Before:
+
+KaFunctionType:
+  abbreviation: null
+  annotations: []
+  classId: kotlin/Function2
+  contextParameterTypes: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: [
+        Anno()
+          psi: KtAnnotationEntry
+        AnnoWithArgs(x = "")
+          psi: KtAnnotationEntry
+      ]
+      classId: kotlin/String
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  hasReceiver: false
+  isReflectType: false
+  isSuspend: false
+  parameterTypes: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/String
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  parameters: [
+    KaBaseFunctionValueParameter [name: null, type: kotlin/String]
+  ]
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Function2
+      symbol: KaNamedClassSymbol(kotlin/Function2)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: [
+            Anno()
+              psi: KtAnnotationEntry
+            AnnoWithArgs(x = "")
+              psi: KtAnnotationEntry
+          ]
+          classId: kotlin/String
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Int
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Int
+              symbol: KaNamedClassSymbol(kotlin/Int)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+          isMarkedNullable: true
+          isNullable: true
+          hasFlexibleNullability: false
+      ]
+  ]
+  receiverType: null
+  returnType: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: kotlin/Int
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: Int
+        symbol: KaNamedClassSymbol(kotlin/Int)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(kotlin/Int)
+    typeArguments: []
+    isMarkedNullable: true
+    isNullable: true
+    hasFlexibleNullability: false
+  symbol: KaNamedClassSymbol(kotlin/Function2)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: [
+        Anno()
+          psi: KtAnnotationEntry
+        AnnoWithArgs(x = "")
+          psi: KtAnnotationEntry
+      ]
+      classId: kotlin/String
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/String
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Int
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Int
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+      isMarkedNullable: true
+      isNullable: true
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+After:
+
+KaFunctionType:
+  abbreviation: null
+  annotations: []
+  classId: kotlin/Function2
+  contextParameterTypes: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/String
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  hasReceiver: false
+  isReflectType: false
+  isSuspend: false
+  parameterTypes: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/String
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  parameters: [
+    KaBaseFunctionValueParameter [name: null, type: kotlin/String]
+  ]
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: Function2
+      symbol: KaNamedClassSymbol(kotlin/Function2)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Int
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Int
+              symbol: KaNamedClassSymbol(kotlin/Int)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+          isMarkedNullable: true
+          isNullable: true
+          hasFlexibleNullability: false
+      ]
+  ]
+  receiverType: null
+  returnType: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: kotlin/Int
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: Int
+        symbol: KaNamedClassSymbol(kotlin/Int)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(kotlin/Int)
+    typeArguments: []
+    isMarkedNullable: true
+    isNullable: true
+    hasFlexibleNullability: false
+  symbol: KaNamedClassSymbol(kotlin/Function2)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/String
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/String
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Int
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Int
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+      isMarkedNullable: true
+      isNullable: true
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false

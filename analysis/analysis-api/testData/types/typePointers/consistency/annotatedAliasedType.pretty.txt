@@ -1,0 +1,9 @@
+Type has changed on restoration
+
+Before:
+
+@Anno1 @AnnoWithArgs1(x = "") MyList<@Anno2 @AnnoWithArgs2(x = "") MyString>
+
+After:
+
+MyList<MyString>

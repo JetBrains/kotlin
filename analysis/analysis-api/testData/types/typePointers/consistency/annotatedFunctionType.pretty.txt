@@ -1,0 +1,9 @@
+Type has changed on restoration
+
+Before:
+
+@Anno1 @AnnoWithArgs1(x = "") ((@Anno2 @AnnoWithArgs2(x = "") kotlin.String) -> @Anno3 @AnnoWithArgs3(x = "") kotlin.Int?)
+
+After:
+
+(kotlin.String) -> kotlin.Int?

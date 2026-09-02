@@ -4,19 +4,14 @@ Before:
 
 KaUsualClassType:
   abbreviation: null
-  annotations: [
-    Anno()
-      psi: KtAnnotationEntry
-    AnnoWithArgs(x = "")
-      psi: KtAnnotationEntry
-  ]
+  annotations: []
   classId: kotlin/collections/List
   qualifiers: [
     KaResolvedClassTypeQualifier:
       name: List
       symbol: KaNamedClassSymbol(kotlin/collections/List)
       typeArguments: [
-        KaUsualClassType:
+        KaClassErrorType:
           abbreviation: null
           annotations: [
             Anno()
@@ -24,15 +19,14 @@ KaUsualClassType:
             AnnoWithArgs(x = "")
               psi: KtAnnotationEntry
           ]
-          classId: kotlin/String
+          candidateSymbols: []
+          errorMessage: Symbol not found for Foo
+          presentableText: Foo
           qualifiers: [
-            KaResolvedClassTypeQualifier:
-              name: String
-              symbol: KaNamedClassSymbol(kotlin/String)
+            KaUnresolvedClassTypeQualifier:
+              name: Foo
               typeArguments: []
           ]
-          symbol: KaNamedClassSymbol(kotlin/String)
-          typeArguments: []
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
@@ -40,7 +34,7 @@ KaUsualClassType:
   ]
   symbol: KaNamedClassSymbol(kotlin/collections/List)
   typeArguments: [
-    KaUsualClassType:
+    KaClassErrorType:
       abbreviation: null
       annotations: [
         Anno()
@@ -48,15 +42,14 @@ KaUsualClassType:
         AnnoWithArgs(x = "")
           psi: KtAnnotationEntry
       ]
-      classId: kotlin/String
+      candidateSymbols: []
+      errorMessage: Symbol not found for Foo
+      presentableText: Foo
       qualifiers: [
-        KaResolvedClassTypeQualifier:
-          name: String
-          symbol: KaNamedClassSymbol(kotlin/String)
+        KaUnresolvedClassTypeQualifier:
+          name: Foo
           typeArguments: []
       ]
-      symbol: KaNamedClassSymbol(kotlin/String)
-      typeArguments: []
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
@@ -76,18 +69,17 @@ KaUsualClassType:
       name: List
       symbol: KaNamedClassSymbol(kotlin/collections/List)
       typeArguments: [
-        KaUsualClassType:
+        KaClassErrorType:
           abbreviation: null
           annotations: []
-          classId: kotlin/String
+          candidateSymbols: []
+          errorMessage: Symbol not found for Foo
+          presentableText: Foo
           qualifiers: [
-            KaResolvedClassTypeQualifier:
-              name: String
-              symbol: KaNamedClassSymbol(kotlin/String)
+            KaUnresolvedClassTypeQualifier:
+              name: Foo
               typeArguments: []
           ]
-          symbol: KaNamedClassSymbol(kotlin/String)
-          typeArguments: []
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
@@ -95,18 +87,17 @@ KaUsualClassType:
   ]
   symbol: KaNamedClassSymbol(kotlin/collections/List)
   typeArguments: [
-    KaUsualClassType:
+    KaClassErrorType:
       abbreviation: null
       annotations: []
-      classId: kotlin/String
+      candidateSymbols: []
+      errorMessage: Symbol not found for Foo
+      presentableText: Foo
       qualifiers: [
-        KaResolvedClassTypeQualifier:
-          name: String
-          symbol: KaNamedClassSymbol(kotlin/String)
+        KaUnresolvedClassTypeQualifier:
+          name: Foo
           typeArguments: []
       ]
-      symbol: KaNamedClassSymbol(kotlin/String)
-      typeArguments: []
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false

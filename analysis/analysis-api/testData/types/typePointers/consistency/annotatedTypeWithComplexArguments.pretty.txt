@@ -1,0 +1,9 @@
+Type has changed on restoration
+
+Before:
+
+@Complex(s = "s", i = 3, l = 42, b = true, c = `c`, d = 1.5, e = E.B, k = kotlin.collections.List<*>::class, uByte = 4u, strings = ["a", "b"], enums = [E.A, E.B], classes = [kotlin.Int::class, kotlin.Array<kotlin.String>::class], nested = /Nested(i = 7, ), x = [1, 2, 3]) kotlin.collections.List<kotlin.String>
+
+After:
+
+kotlin.collections.List<kotlin.String>

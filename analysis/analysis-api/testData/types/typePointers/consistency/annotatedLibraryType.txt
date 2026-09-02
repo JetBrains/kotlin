@@ -5,10 +5,10 @@ Before:
 KaUsualClassType:
   abbreviation: null
   annotations: [
-    Anno()
-      psi: KtAnnotationEntry
-    AnnoWithArgs(x = "")
-      psi: KtAnnotationEntry
+    library/Anno()
+      psi: null
+    library/AnnoWithArgs(x = "")
+      psi: null
   ]
   classId: kotlin/collections/List
   qualifiers: [
@@ -19,10 +19,10 @@ KaUsualClassType:
         KaUsualClassType:
           abbreviation: null
           annotations: [
-            Anno()
-              psi: KtAnnotationEntry
-            AnnoWithArgs(x = "")
-              psi: KtAnnotationEntry
+            library/Anno()
+              psi: null
+            library/AnnoWithArgs(x = "")
+              psi: null
           ]
           classId: kotlin/String
           qualifiers: [
@@ -43,10 +43,10 @@ KaUsualClassType:
     KaUsualClassType:
       abbreviation: null
       annotations: [
-        Anno()
-          psi: KtAnnotationEntry
-        AnnoWithArgs(x = "")
-          psi: KtAnnotationEntry
+        library/Anno()
+          psi: null
+        library/AnnoWithArgs(x = "")
+          psi: null
       ]
       classId: kotlin/String
       qualifiers: [

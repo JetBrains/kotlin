@@ -1,0 +1,9 @@
+Type has changed on restoration
+
+Before:
+
+context(@Anno @AnnoWithArgs(x = "") kotlin.String) (kotlin.String) -> kotlin.Int?
+
+After:
+
+context(kotlin.String) (kotlin.String) -> kotlin.Int?

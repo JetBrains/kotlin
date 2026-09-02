@@ -1,0 +1,24 @@
+Type has changed on restoration
+
+Before:
+
+KaDynamicType:
+  abbreviation: null
+  annotations: [
+    Anno()
+      psi: KtAnnotationEntry
+    AnnoWithArgs(x = "")
+      psi: KtAnnotationEntry
+  ]
+  isMarkedNullable: false
+  isNullable: true
+  hasFlexibleNullability: true
+
+After:
+
+KaDynamicType:
+  abbreviation: null
+  annotations: []
+  isMarkedNullable: false
+  isNullable: true
+  hasFlexibleNullability: true

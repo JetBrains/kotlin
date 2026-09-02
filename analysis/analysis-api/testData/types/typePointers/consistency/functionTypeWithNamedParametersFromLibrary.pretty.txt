@@ -1,0 +1,9 @@
+Type has changed on restoration
+
+Before:
+
+(par1: kotlin.String, OneName: kotlin.Int) -> kotlin.Unit
+
+After:
+
+(kotlin.String, kotlin.Int) -> kotlin.Unit

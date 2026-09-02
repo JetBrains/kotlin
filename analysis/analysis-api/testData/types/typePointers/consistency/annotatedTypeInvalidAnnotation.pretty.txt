@@ -1,0 +1,9 @@
+Type has changed on restoration
+
+Before:
+
+@ERROR_ANNOTATION @`<error>` @`<error>` kotlin.collections.List<@ERROR_ANNOTATION @`<error>` @`<error>` kotlin.String>
+
+After:
+
+kotlin.collections.List<kotlin.String>

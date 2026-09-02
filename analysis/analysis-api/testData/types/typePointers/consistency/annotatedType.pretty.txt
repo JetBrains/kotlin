@@ -2,7 +2,7 @@ Type has changed on restoration
 
 Before:
 
-kotlin.collections.List<@Anno kotlin.String>
+@Anno @AnnoWithArgs(x = "") kotlin.collections.List<@Anno @AnnoWithArgs(x = "") kotlin.String>
 
 After:
 
