@@ -483,7 +483,8 @@ abstract class CompileServiceImplBase(
                                     gradleIncrementalServicesFacade,
                                     compilationResults!!,
                                     gradleIncrementalArgs
-                                )
+                                ),
+                                gradleIncrementalArgs.configurationInputs
                             )
                         }
                     }
