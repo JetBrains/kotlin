@@ -12,7 +12,6 @@ import kotlinx.collections.immutable.mutate
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
-import org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName
 import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -40,6 +39,8 @@ internal open class SymbolLightSimpleMethod protected constructor(
     valueParameterPickMask: BitSet?,
     private val suppressStatic: Boolean,
     isJvmExposedBoxed: Boolean,
+    isJvmExposeBoxedAnnotationVisible: Boolean = isJvmExposedBoxed,
+    usesJvmExposeBoxedName: Boolean = isJvmExposedBoxed,
 ) : SymbolLightMethod<KaNamedFunctionSymbol>(
     functionSymbol = functionSymbol,
     lightMemberOrigin = lightMemberOrigin,
@@ -47,15 +48,13 @@ internal open class SymbolLightSimpleMethod protected constructor(
     methodIndex = methodIndex,
     valueParameterPickMask = valueParameterPickMask,
     isJvmExposedBoxed = isJvmExposedBoxed,
+    isJvmExposeBoxedAnnotationVisible = isJvmExposeBoxedAnnotationVisible,
+    usesJvmExposeBoxedName = usesJvmExposeBoxedName,
 ) {
     private val _name: String by lazyPub {
         withFunctionSymbol { functionSymbol ->
             val defaultName = functionSymbol.name.asString()
-            if (isJvmExposedBoxed) {
-                computeJvmExposeBoxedMethodName(functionSymbol, defaultName)
-            } else {
-                functionSymbol.javaMethodName ?: defaultName
-            }
+            computeJvmMethodName(functionSymbol, defaultName)
         }
     }
 
@@ -310,6 +309,10 @@ internal open class SymbolLightSimpleMethod protected constructor(
                         valueParameterPickMask = valueParameterPickMask,
                         suppressStatic = suppressStatic,
                         isJvmExposedBoxed = false,
+                        isJvmExposeBoxedAnnotationVisible =
+                            generationResult.isJvmExposeBoxedAnnotationVisibleOnRegularMethod,
+                        usesJvmExposeBoxedName = generationResult.isJvmExposeBoxedAnnotationVisibleOnRegularMethod &&
+                                !hasJvmNameAnnotation,
                     )
                 }
             }

@@ -13,6 +13,7 @@ import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName
 import org.jetbrains.kotlin.analysis.api.javaInterop.isPrimitiveBacked
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.SymbolLightMemberBase
+import org.jetbrains.kotlin.light.classes.symbol.annotations.AlwaysAllowedAnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ExcludeAnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.getJvmExposeBoxedNameFromAnnotation
@@ -36,6 +38,8 @@ internal abstract class SymbolLightMethodBase(
     containingClass: SymbolLightClassBase,
     protected val methodIndex: Int,
     val isJvmExposedBoxed: Boolean,
+    val isJvmExposeBoxedAnnotationVisible: Boolean = isJvmExposedBoxed,
+    private val usesJvmExposeBoxedName: Boolean = isJvmExposedBoxed,
 ) : SymbolLightMemberBase<PsiMethod>(lightMemberOrigin, containingClass), KtLightMethod {
     override fun getBody(): PsiCodeBlock? = null
 
@@ -114,7 +118,9 @@ internal abstract class SymbolLightMethodBase(
     override fun getDefaultValue(): PsiAnnotationMemberValue? = null
 
     context(_: KaSession)
-    protected fun computeJvmExposeBoxedMethodName(symbol: KaCallableSymbol, defaultName: String): String {
+    protected fun computeJvmMethodName(symbol: KaFunctionSymbol, defaultName: String): String {
+        if (!usesJvmExposeBoxedName) return symbol.javaMethodName ?: defaultName
+
         return symbol.getJvmExposeBoxedNameFromAnnotation()
             ?: computeJavaMethodName(symbol, defaultName, ignoreValueClassMangling = true)
             ?: defaultName
@@ -125,7 +131,11 @@ internal abstract class SymbolLightMethodBase(
     internal open fun suppressWildcards(): Boolean? = null
 
     protected val jvmExposeBoxedAwareAnnotationFilter: AnnotationFilter
-        get() = if (isJvmExposedBoxed) ExcludeAnnotationFilter.JvmName else ExcludeAnnotationFilter.JvmExposeBoxed
+        get() = when {
+            isJvmExposedBoxed -> ExcludeAnnotationFilter.JvmName
+            isJvmExposeBoxedAnnotationVisible -> AlwaysAllowedAnnotationFilter
+            else -> ExcludeAnnotationFilter.JvmExposeBoxed
+        }
 
     // Inspired by KotlinTypeMapper#forceBoxedReturnType
     context(session: KaSession)

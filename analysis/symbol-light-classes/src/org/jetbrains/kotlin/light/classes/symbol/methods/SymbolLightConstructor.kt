@@ -36,6 +36,7 @@ internal class SymbolLightConstructor private constructor(
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
     isJvmExposedBoxed: Boolean,
+    isJvmExposeBoxedAnnotationVisible: Boolean = isJvmExposedBoxed,
     valueParameterPickMask: BitSet? = null,
 ) : SymbolLightMethod<KaConstructorSymbol>(
     functionSymbol = constructorSymbol,
@@ -43,6 +44,7 @@ internal class SymbolLightConstructor private constructor(
     containingClass = containingClass,
     methodIndex = methodIndex,
     isJvmExposedBoxed = isJvmExposedBoxed,
+    isJvmExposeBoxedAnnotationVisible = isJvmExposeBoxedAnnotationVisible,
     valueParameterPickMask = valueParameterPickMask,
 ) {
     private val _name: String? = containingClass.name
@@ -146,6 +148,8 @@ internal class SymbolLightConstructor private constructor(
                             methodIndex = methodIndex,
                             valueParameterPickMask = valueParameterPickMask,
                             isJvmExposedBoxed = false,
+                            isJvmExposeBoxedAnnotationVisible = exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT &&
+                                    !hasValueClassInParameterType,
                         )
                     }
                 }

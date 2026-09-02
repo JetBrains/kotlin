@@ -12,7 +12,6 @@ import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.psi.impl.light.LightReferenceListBuilder
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
-import org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName
 import org.jetbrains.kotlin.analysis.api.session.useSiteModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -51,11 +50,15 @@ internal class SymbolLightAccessorMethod private constructor(
     private val isTopLevel: Boolean,
     private val suppressStatic: Boolean,
     isJvmExposedBoxed: Boolean,
+    isJvmExposeBoxedAnnotationVisible: Boolean = isJvmExposedBoxed,
+    usesJvmExposeBoxedName: Boolean = isJvmExposedBoxed,
 ) : SymbolLightMethodBase(
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     methodIndex = methodIndex,
     isJvmExposedBoxed = isJvmExposedBoxed,
+    isJvmExposeBoxedAnnotationVisible = isJvmExposeBoxedAnnotationVisible,
+    usesJvmExposeBoxedName = usesJvmExposeBoxedName,
 ) {
     private constructor(
         propertyAccessorSymbol: KaPropertyAccessorSymbol,
@@ -65,6 +68,8 @@ internal class SymbolLightAccessorMethod private constructor(
         isTopLevel: Boolean,
         suppressStatic: Boolean,
         isJvmExposedBoxed: Boolean,
+        isJvmExposeBoxedAnnotationVisible: Boolean = isJvmExposedBoxed,
+        usesJvmExposeBoxedName: Boolean = isJvmExposedBoxed,
     ) : this(
         lightMemberOrigin,
         containingClass,
@@ -77,6 +82,8 @@ internal class SymbolLightAccessorMethod private constructor(
         isTopLevel = isTopLevel,
         suppressStatic = suppressStatic,
         isJvmExposedBoxed = isJvmExposedBoxed,
+        isJvmExposeBoxedAnnotationVisible = isJvmExposeBoxedAnnotationVisible,
+        usesJvmExposeBoxedName = usesJvmExposeBoxedName,
     )
 
     private val KaPropertySymbol.accessorSymbol: KaPropertyAccessorSymbol
@@ -101,11 +108,7 @@ internal class SymbolLightAccessorMethod private constructor(
                     it.abiName()
             }
 
-            if (isJvmExposedBoxed) {
-                computeJvmExposeBoxedMethodName(accessorSymbol, defaultName)
-            } else {
-                accessorSymbol.javaMethodName ?: defaultName
-            }
+            computeJvmMethodName(accessorSymbol, defaultName)
         }
     }
 
@@ -560,6 +563,10 @@ internal class SymbolLightAccessorMethod private constructor(
                     isTopLevel = context.isTopLevel,
                     suppressStatic = context.suppressStatic,
                     isJvmExposedBoxed = false,
+                    isJvmExposeBoxedAnnotationVisible =
+                        generationResult.isJvmExposeBoxedAnnotationVisibleOnRegularMethod,
+                    usesJvmExposeBoxedName = generationResult.isJvmExposeBoxedAnnotationVisibleOnRegularMethod &&
+                            !hasJvmNameAnnotation,
                 )
             }
         }

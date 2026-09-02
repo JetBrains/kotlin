@@ -22,7 +22,7 @@ internal object JvmExposeBoxedAdditionalAnnotationsProvider : AdditionalAnnotati
         foundQualifiers: MutableSet<String>,
         owner: PsiElement,
     ) {
-        if (owner.parent.isJvmExposeBoxed()) {
+        if (owner.parent.isJvmExposeBoxedAnnotationVisible()) {
             addSimpleAnnotationIfMissing(
                 qualifier = JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME.asString(),
                 currentRawAnnotations = currentRawAnnotations,
@@ -36,7 +36,7 @@ internal object JvmExposeBoxedAdditionalAnnotationsProvider : AdditionalAnnotati
         annotationsBox: GranularAnnotationsBox,
         qualifiedName: String,
         owner: PsiElement,
-    ): PsiAnnotation? = if (owner.parent.isJvmExposeBoxed())
+    ): PsiAnnotation? = if (owner.parent.isJvmExposeBoxedAnnotationVisible())
         createSimpleAnnotationIfMatches(
             qualifier = qualifiedName,
             expectedQualifier = JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME.asString(),
@@ -48,4 +48,5 @@ internal object JvmExposeBoxedAdditionalAnnotationsProvider : AdditionalAnnotati
     override fun isSpecialQualifier(qualifiedName: String): Boolean = false
 }
 
-private fun PsiElement.isJvmExposeBoxed(): Boolean = this is SymbolLightMethodBase && isJvmExposedBoxed
+private fun PsiElement.isJvmExposeBoxedAnnotationVisible(): Boolean =
+    this is SymbolLightMethodBase && isJvmExposeBoxedAnnotationVisible

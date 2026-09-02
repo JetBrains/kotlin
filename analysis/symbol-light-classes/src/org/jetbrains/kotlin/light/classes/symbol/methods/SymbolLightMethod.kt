@@ -42,11 +42,15 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
     protected val functionDeclaration: KtCallableDeclaration?,
     override val kotlinOrigin: KtDeclaration?,
     isJvmExposedBoxed: Boolean,
+    isJvmExposeBoxedAnnotationVisible: Boolean,
+    usesJvmExposeBoxedName: Boolean,
 ) : SymbolLightMethodBase(
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     methodIndex = methodIndex,
     isJvmExposedBoxed = isJvmExposedBoxed,
+    isJvmExposeBoxedAnnotationVisible = isJvmExposeBoxedAnnotationVisible,
+    usesJvmExposeBoxedName = usesJvmExposeBoxedName,
 ) {
     internal constructor(
         functionSymbol: FType,
@@ -54,6 +58,8 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
         containingClass: SymbolLightClassBase,
         methodIndex: Int,
         isJvmExposedBoxed: Boolean,
+        isJvmExposeBoxedAnnotationVisible: Boolean = isJvmExposedBoxed,
+        usesJvmExposeBoxedName: Boolean = isJvmExposedBoxed,
         valueParameterPickMask: BitSet? = null,
     ) : this(
         functionSymbolPointer = kotlin.run {
@@ -67,6 +73,8 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
         functionDeclaration = functionSymbol.sourcePsiSafe(),
         kotlinOrigin = functionSymbol.sourcePsiSafe() ?: lightMemberOrigin?.originalElement ?: functionSymbol.psiSafe<KtDeclaration>(),
         isJvmExposedBoxed = isJvmExposedBoxed,
+        isJvmExposeBoxedAnnotationVisible = isJvmExposeBoxedAnnotationVisible,
+        usesJvmExposeBoxedName = usesJvmExposeBoxedName,
     )
 
     protected inline fun <T> withFunctionSymbol(crossinline action: context(KaSession) (FType) -> T): T =
@@ -140,6 +148,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
             other::class != this::class ||
             (other as SymbolLightMethod<*>).methodIndex != methodIndex ||
             other.isJvmExposedBoxed != isJvmExposedBoxed ||
+            other.isJvmExposeBoxedAnnotationVisible != isJvmExposeBoxedAnnotationVisible ||
             other.ktModule != ktModule ||
             other.valueParameterPickMask != valueParameterPickMask
         ) return false

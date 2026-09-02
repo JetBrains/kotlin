@@ -65,7 +65,11 @@ internal fun jvmExposeBoxedMode(callableSymbol: KaCallableSymbol): JvmExposeBoxe
     return if (isFeatureEnabled) JvmExposeBoxedMode.IMPLICIT else JvmExposeBoxedMode.NONE
 }
 
-internal class MethodGenerationResult(val isRegularMethodRequired: Boolean, val isBoxedMethodRequired: Boolean) {
+internal class MethodGenerationResult(
+    val isRegularMethodRequired: Boolean,
+    val isBoxedMethodRequired: Boolean,
+    val isJvmExposeBoxedAnnotationVisibleOnRegularMethod: Boolean,
+) {
     val isAnyMethodRequired: Boolean get() = isRegularMethodRequired || isBoxedMethodRequired
 }
 
@@ -149,6 +153,10 @@ internal fun methodGeneration(
     return MethodGenerationResult(
         isRegularMethodRequired = isRegularAccessorRequired,
         isBoxedMethodRequired = isBoxedAccessorRequired,
+        isJvmExposeBoxedAnnotationVisibleOnRegularMethod = exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT &&
+                !hasValueClassInParameterType &&
+                !hasValueClassInReturnType &&
+                !isAffectedByValueClass,
     )
 }
 
