@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // ISSUE: KT-87683
-// MUTE_LL_FIR
 
 import lombok.Builder
 import lombok.Singular
