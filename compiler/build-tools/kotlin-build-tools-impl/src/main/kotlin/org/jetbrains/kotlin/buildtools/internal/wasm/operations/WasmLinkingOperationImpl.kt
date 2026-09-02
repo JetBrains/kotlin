@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.buildtools.internal.wasm.operations
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmLinkingOperation
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.WasmArgumentsImpl
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import java.nio.file.Path
 
-@OptIn(ExperimentalCompilerArgument::class)
 internal class WasmLinkingOperationImpl private constructor(
     override val options: Options = Options(WasmLinkingOperation::class),
     override val klib: Path,
@@ -56,6 +54,7 @@ internal class WasmLinkingOperationImpl private constructor(
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: WasmLinkingOperation.Option<V>, value: V) {
+        checkOptionIsAvailableForVersion(key)
         options[key] = value
     }
 
