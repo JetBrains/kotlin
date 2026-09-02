@@ -237,7 +237,7 @@ KtParameterList(175,177): '()'
 KtNameReferenceExpression(180,181): 'x'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       x: kotlin.Int
@@ -324,7 +324,7 @@ KtParameterList(260,262): '()'
 KtNameReferenceExpression(265,266): 'x'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       x: kotlin.Int
@@ -372,7 +372,7 @@ KtParameterList(313,315): '()'
 KtNameReferenceExpression(318,319): 'x'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       x: kotlin.Int
