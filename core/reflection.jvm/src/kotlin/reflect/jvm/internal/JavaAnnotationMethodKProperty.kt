@@ -16,8 +16,8 @@ import kotlin.reflect.jvm.internal.calls.Caller
 import kotlin.reflect.jvm.internal.calls.CallerImpl
 
 internal abstract class JavaAnnotationMethodKProperty<out V>(
-    container: KDeclarationContainerImpl, method: Method, rawBoundReceiver: Any?,
-) : JavaKProperty<V>(container, method, rawBoundReceiver, KCallableOverriddenStorage.EMPTY) {
+    container: KDeclarationContainerImpl, method: Method, rawBoundReceiver: Any?, overriddenStorage: KCallableOverriddenStorage,
+) : JavaKProperty<V>(container, method, rawBoundReceiver, overriddenStorage) {
     val jMethod: Method get() = member as Method
 
     override val signature: String
@@ -41,8 +41,8 @@ internal abstract class JavaAnnotationMethodKProperty<out V>(
 }
 
 internal class JavaAnnotationMethodKProperty0<out V>(
-    container: KDeclarationContainerImpl, method: Method, rawBoundReceiver: Any?,
-) : JavaAnnotationMethodKProperty<V>(container, method, rawBoundReceiver), KProperty0<V> {
+    container: KDeclarationContainerImpl, method: Method, rawBoundReceiver: Any?, overriddenStorage: KCallableOverriddenStorage,
+) : JavaAnnotationMethodKProperty<V>(container, method, rawBoundReceiver, overriddenStorage), KProperty0<V> {
     override val getter: Getter<V> by lazy(PUBLICATION) { Getter(this) }
 
     override fun get(): V = getter.call()
@@ -51,16 +51,14 @@ internal class JavaAnnotationMethodKProperty0<out V>(
 
     override fun invoke(): V = get()
 
-    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> {
-        require(overriddenStorage == KCallableOverriddenStorage.EMPTY) { "Annotation properties cannot have fake overrides: $this" }
-        return JavaAnnotationMethodKProperty0(container, jMethod, rawBoundReceiver)
-    }
+    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
+        JavaAnnotationMethodKProperty0(container, jMethod, rawBoundReceiver, overriddenStorage)
 
     override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        JavaAnnotationMethodKProperty0(container, jMethod, boundReceiver)
+        JavaAnnotationMethodKProperty0(container, jMethod, boundReceiver, overriddenStorage)
 
     override fun unbindToHigherArity(): ReflectKProperty<V> =
-        JavaAnnotationMethodKProperty1<Any?, V>(container, jMethod, CallableReference.NO_RECEIVER)
+        JavaAnnotationMethodKProperty1<Any?, V>(container, jMethod, CallableReference.NO_RECEIVER, overriddenStorage)
 
     override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
         throw KotlinReflectionInternalError("Cannot bind KProperty0: $this")
@@ -73,8 +71,8 @@ internal class JavaAnnotationMethodKProperty0<out V>(
 }
 
 internal class JavaAnnotationMethodKProperty1<T, out V>(
-    container: KDeclarationContainerImpl, method: Method, rawBoundReceiver: Any?,
-) : JavaAnnotationMethodKProperty<V>(container, method, rawBoundReceiver), KProperty1<T, V> {
+    container: KDeclarationContainerImpl, method: Method, rawBoundReceiver: Any?, overriddenStorage: KCallableOverriddenStorage,
+) : JavaAnnotationMethodKProperty<V>(container, method, rawBoundReceiver, overriddenStorage), KProperty1<T, V> {
     override val getter: Getter<T, V> by lazy(PUBLICATION) { Getter(this) }
 
     override fun get(receiver: T): V = getter.call(receiver)
@@ -83,19 +81,17 @@ internal class JavaAnnotationMethodKProperty1<T, out V>(
 
     override fun invoke(receiver: T): V = get(receiver)
 
-    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> {
-        require(overriddenStorage == KCallableOverriddenStorage.EMPTY) { "Annotation properties cannot have fake overrides: $this" }
-        return JavaAnnotationMethodKProperty1<T, V>(container, jMethod, rawBoundReceiver)
-    }
+    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
+        JavaAnnotationMethodKProperty1<T, V>(container, jMethod, rawBoundReceiver, overriddenStorage)
 
     override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        JavaAnnotationMethodKProperty1<T, V>(container, jMethod, boundReceiver)
+        JavaAnnotationMethodKProperty1<T, V>(container, jMethod, boundReceiver, overriddenStorage)
 
     override fun unbindToHigherArity(): ReflectKProperty<V> =
         throw KotlinReflectionInternalError("Cannot unbind KProperty1: $this")
 
     override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
-        JavaAnnotationMethodKProperty0(container, jMethod, boundReceiver)
+        JavaAnnotationMethodKProperty0(container, jMethod, boundReceiver, overriddenStorage)
 
     class Getter<T, out V>(
         override val property: JavaAnnotationMethodKProperty1<T, V>,
