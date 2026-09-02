@@ -5,53 +5,61 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoWarnings
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputFileContains
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAndPlatformAgnosticScenarioTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ScenarioCreator
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.JsScenarioDsl
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.JvmScenarioDsl
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.WasmScenarioDsl
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
-import org.jetbrains.kotlin.buildtools.tests.compilation.util.compile
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
 class LocalClassesTest : BaseCompilationTest() {
     @DisplayName("Changing super type of local class should trigger rebuild of the local class")
-    @BtaV2StrategyAgnosticCompilationTest
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
     @TestMetadata("ic-scenarios/KT-85074")
-    fun localClassSuperTypeChange(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun localClassSuperTypeChange(scenario: ScenarioCreator) {
+        scenario {
             val module = module("ic-scenarios/KT-85074")
 
             module.replaceFileWithVersion("Foo.kt", "addVal")
 
             module.compile {
-                expectFail()
-                assertLogContainsPatterns(
-                    LogLevel.ERROR,
-                    ".*Class '<anonymous>' is not abstract and does not implement abstract member:\nval bar: String".toRegex()
-                )
+                when (this@scenario) {
+                    is JvmScenarioDsl -> {
+                        // Correct: `FooImpl.kt` is recompiled and the build fails, like a clean build.
+                        expectFail()
+                        assertLogContainsPatterns(
+                            LogLevel.ERROR,
+                            ".*Class '<anonymous>' is not abstract and does not implement abstract member:\nval bar: String".toRegex()
+                        )
+                    }
+                    is JsScenarioDsl, is WasmScenarioDsl -> {
+                        // TODO(KT-88963): `FooImpl.kt` is not rebuilt, so the build wrongly succeeds
+                        assertCompiledSources("Foo.kt")
+                    }
+                    else -> error("Unsupported scenario type: ${this@scenario}")
+                }
             }
         }
     }
 
     @DisplayName("Changing local class should not trigger rebuild of usages")
-    @BtaV2StrategyAgnosticCompilationTest
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
     @TestMetadata("ic-scenarios/local-class-change")
-    fun localClassChange(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun localClassChange(scenario: ScenarioCreator) {
+        scenario {
             val module = module("ic-scenarios/local-class-change")
 
             module.replaceFileWithVersion("Foo.kt", "changeLocalClass")
 
-            module.compile(expectedDirtySet = setOf("Foo.kt"))
+            module.compile {
+                assertCompiledSources("Foo.kt")
+            }
         }
     }
 

@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.buildtools.tests
 
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.VERBOSE
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
@@ -63,7 +63,6 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
         runMixedModuleTest(strategyConfig, useTrackedModules = false)
     }
 
-    @OptIn(ExperimentalCompilerArgument::class)
     @DisplayName("Basic IC setup works for JS project")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("js-ic-basic")
@@ -92,6 +91,64 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
             appModule.compileIncrementally(SourcesChanges.Known(libModule.outputDirectory.walk().map(Path::toFile).toList(), emptyList())) {
                 val expectedCompiledSources = setOf("useAInAppMain.kt")
                 assertCompiledSources(expectedCompiledSources)
+            }
+        }
+    }
+
+    @DisplayName("Basic IC setup works for Wasm project")
+    @BtaV2StrategyAgnosticCompilationTest
+    @TestMetadata("js-ic-basic")
+    fun wasmBasicIcWorks(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        wasmProject(strategyConfig) {
+            val libModule = module("js-ic-basic-lib")
+            val appModule = module("js-ic-basic-app", dependencies = listOf(libModule))
+
+            val libSources = libModule.sourcesDirectory.walk().filter { it.name.endsWith(".kt") }.toList()
+
+            libModule.compileIncrementally(SourcesChanges.ToBeCalculated)
+            appModule.compileIncrementally(SourcesChanges.ToBeCalculated)
+
+            val modifiedFile = libSources.find { file -> file.name == "A.kt" } ?: error("No A.kt file in test project")
+            modifiedFile.writeText(
+                """
+                    class A {
+                        val x = "a"
+                    }
+                """.trimIndent()
+            )
+            libModule.compileIncrementally(SourcesChanges.ToBeCalculated) {
+                val expectedCompiledSources = setOf("A.kt", "useAInLibMain.kt")
+                assertCompiledSources(expectedCompiledSources)
+            }
+            appModule.compileIncrementally(SourcesChanges.Known(libModule.outputDirectory.walk().map(Path::toFile).toList(), emptyList())) {
+                val expectedCompiledSources = setOf("useAInAppMain.kt")
+                assertCompiledSources(expectedCompiledSources)
+            }
+        }
+    }
+
+    @DisplayName("Removing a public declaration from a dependency recompiles and fails its dependent usages")
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
+    @TestMetadata("ic-scenarios/removed-declaration/lib")
+    fun removedDeclarationRecompilesDependents(scenario: ScenarioCreator) {
+        scenario {
+            val lib = module("ic-scenarios/removed-declaration/lib")
+            val app = module(
+                "ic-scenarios/removed-declaration/app",
+                dependencies = listOf(lib),
+            )
+
+            lib.replaceFileWithVersion("api.kt", "remove-fun")
+
+            lib.compile {
+                assertCompiledSources("api.kt")
+            }
+            app.compile {
+                expectFail()
+                assertLogContainsPatterns(
+                    LogLevel.ERROR,
+                    ".*[Uu]nresolved reference.*removedApi.*".toRegex(RegexOption.DOT_MATCHES_ALL),
+                )
             }
         }
     }

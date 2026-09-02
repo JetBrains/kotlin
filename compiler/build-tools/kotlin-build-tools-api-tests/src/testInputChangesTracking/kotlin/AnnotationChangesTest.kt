@@ -19,11 +19,11 @@ import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Annotation changes in incremental compilation")
 class AnnotationChangesTest : BaseCompilationTest() {
-    @DefaultStrategyAgnosticCompilationTest
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
     @DisplayName("KT-14440: Annotation list changes should be detected and used in incremental compilation (same module)")
     @TestMetadata("ic-scenarios/annotations")
-    fun testAnnotationListChangeRecompilesUsagesSameModule(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testAnnotationListChangeRecompilesUsagesSameModule(scenario: ScenarioCreator) {
+        scenario {
             val mod = module("ic-scenarios/annotations/lib")
 
             mod.replaceFileWithVersion("A.kt", "add-my-annotation")
@@ -39,11 +39,11 @@ class AnnotationChangesTest : BaseCompilationTest() {
         }
     }
 
-    @DefaultStrategyAgnosticCompilationTest
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
     @DisplayName("KT-14440: Annotation list changes should be detected and used in incremental compilation (cross module)")
     @TestMetadata("ic-scenarios/annotations")
-    fun testAnnotationListChangeRecompilesUsagesDifferentModules(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testAnnotationListChangeRecompilesUsagesDifferentModules(scenario: ScenarioCreator) {
+        scenario {
             val lib = module("ic-scenarios/annotations/lib")
             val app = module("ic-scenarios/annotations/app", listOf(lib))
 
@@ -62,11 +62,11 @@ class AnnotationChangesTest : BaseCompilationTest() {
         }
     }
 
-    @DefaultStrategyAgnosticCompilationTest
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
     @DisplayName("Changes to annotation parameters should be detected and used in incremental compilation (same module)")
     @TestMetadata("ic-scenarios/annotations")
-    fun testAnnotationParameterChangeRecompilesUsagesSameModule(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testAnnotationParameterChangeRecompilesUsagesSameModule(scenario: ScenarioCreator) {
+        scenario {
             val mod = module("ic-scenarios/annotations/lib")
 
             mod.replaceFileWithVersion("A.kt", "add-deprecation")
@@ -84,11 +84,11 @@ class AnnotationChangesTest : BaseCompilationTest() {
         }
     }
 
-    @DefaultStrategyAgnosticCompilationTest
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
     @DisplayName("Changes to annotation parameters should be detected and used in incremental compilation (cross module)")
     @TestMetadata("ic-scenarios/annotations")
-    fun testAnnotationParameterChangeRecompilesUsagesDifferentModules(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testAnnotationParameterChangeRecompilesUsagesDifferentModules(scenario: ScenarioCreator) {
+        scenario {
             val lib = module("ic-scenarios/annotations/lib")
             val app = module("ic-scenarios/annotations/app", listOf(lib))
 
