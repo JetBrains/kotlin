@@ -191,6 +191,7 @@ fun Project.configureKotlinCompilationOptions() {
                         "-Xexplicit-backing-fields".takeUnless { skipNewLanguageFeatures }, // KT-14663
                         "-Xname-based-destructuring=complete".takeUnless { skipNewLanguageFeatures },
                         "-Xcollection-literals".takeUnless { skipNewLanguageFeatures },
+                        "-Xexplicit-context-arguments".takeUnless { skipNewLanguageFeatures },
                         // Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
                         // But this produces a warning
                         // "The argument ... is redundant for the current language version ..."
