@@ -52,6 +52,9 @@ internal class JavaPackageIndexer(
         val packageFqName: FqName,
         val topLevelClassNames: Set<String>,
         val fileBaseName: String = file.name.removeSuffix(".java"),
+        // A `.java` file passed as a source root: exempt from the KT-4455 basename gate, like PSI's
+        // `SingleJavaFileRootsIndex`.
+        val isSingleFileRoot: Boolean = false,
     )
 
     // Directory source roots (with their packagePrefix) for lazy per-package indexing.
@@ -81,7 +84,7 @@ internal class JavaPackageIndexer(
                 packageInfoIndexer.indexPackageInfo(fileRoot, expectedPackage = null)
                 continue
             }
-            val entry = tryBuildFileEntry(fileRoot) ?: continue
+            val entry = tryBuildFileEntry(fileRoot, isSingleFileRoot = true) ?: continue
             val classesByName = fileRootIndexBuilder.getOrPut(entry.packageFqName) { HashMap() }
             for (className in entry.topLevelClassNames) {
                 classesByName.getOrPut(className) { mutableListOf() }.add(entry)
@@ -194,14 +197,15 @@ internal class JavaPackageIndexer(
 
     /**
      * Canonical class names (matching the file's basename) — PSI behavior per KT-4455; secondary
-     * classes are still reachable when referenced by their [ClassId].
+     * classes are still reachable when referenced by their [ClassId]. Single-file roots advertise
+     * all their top-level classes.
      */
     internal fun knownClassNamesInPackage(packageFqName: FqName): Set<String> {
         val classesByName = ensurePackageIndexed(packageFqName)
         if (classesByName.isEmpty()) return emptySet()
         return buildSet {
             for ([name, fileEntries] in classesByName) {
-                if (fileEntries.any { it.fileBaseName == name }) add(name)
+                if (fileEntries.any { it.fileBaseName == name || it.isSingleFileRoot }) add(name)
             }
         }
     }
@@ -335,7 +339,7 @@ internal class JavaPackageIndexer(
      * [JavaClassCache]. When [expectedPackage] is non-null, files whose declared package does not
      * match are skipped (matching javac's directory-mirrors-package rule).
      */
-    private fun tryBuildFileEntry(file: File, expectedPackage: FqName? = null): FileEntry? {
+    private fun tryBuildFileEntry(file: File, expectedPackage: FqName? = null, isSingleFileRoot: Boolean = false): FileEntry? {
         val info = extractFileInfoLightweight(file) ?: return null
         val packageFqName = if (info.packageName != null) FqName(info.packageName) else FqName.ROOT
 
@@ -346,8 +350,8 @@ internal class JavaPackageIndexer(
         // "E") is not indexed — the classes it contains are not accessible to the compiler unless
         // they appear as return/parameter types within the same .java file.
         val fileBaseName = file.name.removeSuffix(".java")
-        if (!info.topLevelClassNames.contains(fileBaseName)) return null
+        if (!isSingleFileRoot && !info.topLevelClassNames.contains(fileBaseName)) return null
 
-        return FileEntry(file, packageFqName, info.topLevelClassNames)
+        return FileEntry(file, packageFqName, info.topLevelClassNames, fileBaseName, isSingleFileRoot)
     }
 }
