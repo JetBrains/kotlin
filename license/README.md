@@ -283,6 +283,10 @@ any distributions of the compiler, libraries or plugin:
       - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
       - Origin: Copyright (C) 2008 The Android Open Source Project
 
+ - Path: js/js.parser/test/org/jetbrains/kotlin/sourcemaps/JsSourcemapScopesDecoderErrorsTest.kt
+      - License: BSD-3-Clause ([license/third_party/testdata/chromedevtools_license.txt][chromedevtools])
+      - Origin: Copyright 2025 The Chromium Authors
+
 ## Kotlin Tools and Libraries Tests
 
 The following source code is used for testing the Kotlin tools and/or libraries and is not incorporated into
@@ -345,6 +349,7 @@ any distributions of the compiler, libraries or plugin:
 [asmble]: third_party/asmble_license.txt
 [antlr_js_grammar]: third_party/antlr_js_grammar_license.txt
 [boost]: third_party/boost_LICENSE.txt
+[chromedevtools]: third_party/testdata/chromedevtools_license.txt
 [chromium]: third_party/testdata/chromium_license.txt
 [closure-compiler]: third_party/closure-compiler_LICENSE.txt
 [compose]: third_party/compose_license.txt

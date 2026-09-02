@@ -1839,7 +1839,7 @@ object ECMA426BasedSourceMapParser {
     /**
      * @see <a href="https://tc39.es/ecma426/branch/proposal-scopes/#sec-DecodeSourceScopes">Section 9.3.4.2: DecodeSourceScopes(scopes, names)</a>
      */
-    private fun decodeSourceScopes(
+    internal fun decodeSourceScopes(
         scopes: String?,
         names: List<String>,
     ): ParsingResult<List<OriginalScopeRecord>> {
