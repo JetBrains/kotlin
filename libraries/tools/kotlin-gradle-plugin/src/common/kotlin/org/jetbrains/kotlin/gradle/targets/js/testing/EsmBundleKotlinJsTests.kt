@@ -18,6 +18,7 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
@@ -34,6 +35,7 @@ import javax.inject.Inject
 import kotlin.io.path.Path
 import kotlin.io.path.readText
 
+@DisableCachingByDefault(because = "Performs lightweight FS and text substitution operations, not worth caching")
 internal abstract class EsmBundleKotlinJsTests @Inject constructor(
     @Transient
     override val compilation: KotlinJsIrCompilation,
