@@ -19,9 +19,7 @@ var result = "FAIL: not run"
 
 fun box(): String {
     context("O") {
-        // reference to a contextual *suspend* function
         val s: suspend (String) -> String = ::suspendFun
-        // suspend-conversion adapter over a contextual non-suspend function
         val converted: suspend (String) -> String = ::plainFun
 
         builder {

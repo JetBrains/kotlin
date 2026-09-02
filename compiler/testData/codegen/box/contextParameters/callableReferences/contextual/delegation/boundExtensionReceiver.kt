@@ -18,8 +18,6 @@ fun makeReceiver(): String {
 
 fun box(): String = context(1, "K") {
     class B {
-        // Both the context arguments and the *extension* receiver are bound
-        // (the other delegation tests only bind dispatch receivers).
         var y by makeReceiver()::extProp
     }
     val b = B()
@@ -27,7 +25,6 @@ fun box(): String = context(1, "K") {
     b.y = "O"
     if (storage != "Or") return@context "FAIL 1: $storage"
     if (b.y != "OrrK1") return@context "FAIL 2: ${b.y}"
-    // The bound extension receiver must be computed once and stored, not reevaluated per accessor call.
     if (receiverEvaluations != 1) return@context "FAIL 3: $receiverEvaluations"
     "OK"
 }

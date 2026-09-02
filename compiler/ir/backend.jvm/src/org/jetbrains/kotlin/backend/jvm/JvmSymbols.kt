@@ -421,8 +421,6 @@ class JvmSymbols(
         }
     }
 
-    /** Adds the `[arity,] [contextArguments,] [receiver,] owner, name, signature, flags` constructor of a runtime
-     * callable reference superclass. */
     private fun IrClass.addCallableReferenceConstructor(
         withArity: Boolean,
         withContextArguments: Boolean,
@@ -538,9 +536,6 @@ class JvmSymbols(
             ) { klass ->
                 if (impl) {
                     klass.addBoundContextArgumentsField()
-                    // One call per constructor of the runtime class. A property has at most two receivers, of which
-                    // at most one may be bound, and a contextualized property has at most one receiver in total;
-                    // `parameterCount` is the number of unbound receivers.
                     klass.addCallableReferenceConstructor(withArity = false, withContextArguments = false, withReceiver = false)
                     if (parameterCount <= 1) {
                         klass.addCallableReferenceConstructor(withArity = false, withContextArguments = false, withReceiver = true)

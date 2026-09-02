@@ -12,7 +12,6 @@ class A(val tag: String) {
 }
 
 fun box(): String {
-    // --- Top-level property, two bound context arguments, no receiver ---
     val p1 = context("A", 1) { ::topProp }
     val p2 = context("B", 2) { ::topProp }
     val p3 = context("A", 1) { ::topProp }
@@ -24,7 +23,6 @@ fun box(): String {
     if (p1 != p3) return "FAIL: property references capturing equal context arguments compare unequal"
     if (p1.hashCode() != p3.hashCode()) return "FAIL: equal property references have different hashCodes"
 
-    // --- Class member property: same bound dispatch receiver, different bound context arguments ---
     val a = A("t")
     val m1 = context("X") { a::member }
     val m2 = context("Y") { a::member }

@@ -64,8 +64,8 @@ internal class PropertyReferenceDelegationLowering(val context: JvmBackendContex
  * it assumes that the only bound value, if any, is the receiver. Such references are not optimized here: the delegate is constructed
  * as usual.
  */
-private val IrRichPropertyReference.hasNoBoundContextValues: Boolean
-    get() = boundContextArgumentCount == 0
+private val IrRichPropertyReference.isContextual: Boolean
+    get() = boundContextArgumentCount > 0
 
 private class PropertyReferenceDelegationTransformer(val context: JvmBackendContext) : IrElementTransformerVoid() {
 
@@ -191,7 +191,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
     }
 
     private fun IrProperty.transform(): List<IrDeclaration>? {
-        val delegate = getRichPropertyReferenceForOptimizableDelegatedProperty()?.takeIf { it.hasNoBoundContextValues } ?: return null
+        val delegate = getRichPropertyReferenceForOptimizableDelegatedProperty()?.takeUnless { it.isContextual } ?: return null
         val oldField = backingField ?: return null
         val boundValueOrNull = delegate.boundValues.singleOrNull()?.transform(this@PropertyReferenceDelegationTransformer, null)
         backingField = boundValueOrNull?.takeIf { !it.canInline(parents.toSet()) }?.let {
@@ -274,7 +274,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
         val delegate = declaration.delegate
         val delegateInitializer = delegate?.initializer
         if (delegateInitializer !is IrRichPropertyReference ||
-            !delegateInitializer.hasNoBoundContextValues ||
+            delegateInitializer.isContextual ||
             !declaration.getter.returnsResultOfStdlibCall ||
             declaration.setter?.returnsResultOfStdlibCall == false
         ) return super.visitLocalDelegatedProperty(declaration)

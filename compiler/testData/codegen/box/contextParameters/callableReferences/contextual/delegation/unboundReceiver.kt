@@ -7,8 +7,6 @@ fun box(): String = context(1, "K") {
         val prop: String
             get() = tag + c2 + c1
 
-        // The context arguments are bound, while the receiver of `prop` stays unbound and is provided
-        // by the delegated property's own receiver through `KProperty1.getValue`.
         val y by A::prop
     }
     val result = A("a").y

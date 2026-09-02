@@ -22,8 +22,6 @@ fun makeO(): O {
 }
 
 fun box(): String = context(1) {
-    // The reference binds both a context argument and a receiver with side effects;
-    // the @JvmStatic-in-object rewrite must keep the former and normalize the latter.
     val ref = makeO()::prop
     if (sideEffects != "makeO;") return@context "FAIL 0: $sideEffects"
     ref.set("O")

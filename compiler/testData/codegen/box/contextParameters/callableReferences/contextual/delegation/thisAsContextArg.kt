@@ -11,8 +11,6 @@ var prop: String
     }
 
 class Ctx(val tag: String) {
-    // The enclosing class instance is the bound context argument of the reference, so the accessors of `y`
-    // must remap `this` captured in the delegate initializer to their own dispatch receiver.
     var y by ::prop
 }
 

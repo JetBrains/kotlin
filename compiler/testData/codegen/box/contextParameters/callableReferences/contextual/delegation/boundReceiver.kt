@@ -27,7 +27,6 @@ fun box(): String = context(1, "K") {
     b.y = "O"
     if (sink != "aO1") return@context "FAIL 1: $sink"
     if (b.y != "aK1") return@context "FAIL 2: ${b.y}"
-    // The non-trivial bound receiver must be computed once and stored, not reevaluated per accessor call.
     if (receiverEvaluations != 1) return@context "FAIL 3: $receiverEvaluations"
     "OK"
 }

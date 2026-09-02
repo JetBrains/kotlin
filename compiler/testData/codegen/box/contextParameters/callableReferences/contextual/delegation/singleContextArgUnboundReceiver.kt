@@ -7,8 +7,6 @@ fun box(): String = context("K") {
         val prop: String
             get() = tag + c
 
-        // The single bound value of the reference is the context argument, not the receiver: the receiver of `prop`
-        // stays unbound and is provided by the delegated property's own receiver.
         val y by A::prop
     }
     val result = A("a").y

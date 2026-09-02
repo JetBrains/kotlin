@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
 import org.jetbrains.kotlin.ir.util.isSuspendFunctionOrKFunction
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.util.shallowCopyOrNull
 import org.jetbrains.kotlin.ir.util.statements
@@ -62,11 +63,11 @@ internal fun IrProperty.getRichPropertyReferenceForOptimizableDelegatedProperty(
 internal val IrRichPropertyReference.boundContextArgumentCount: Int
     get() {
         val getter = when (val target = reflectionTargetSymbol?.owner) {
-            is IrProperty -> target.getter?.let { it.resolveFakeOverride() ?: it }
+            is IrProperty -> target.getter?.let { it.resolveFakeOverride() ?: it } ?: return 0
             is IrLocalDelegatedProperty -> target.getter
-            else -> null
+            else -> error("Unexpected reflection target of a property reference: ${target?.render()}")
         }
-        return getter?.parameters?.count { it.kind == IrParameterKind.Context } ?: 0
+        return getter.parameters.count { it.kind == IrParameterKind.Context }
     }
 
 internal val IrRichPropertyReference.hasBoundReceiver: Boolean
@@ -75,8 +76,6 @@ internal val IrRichPropertyReference.hasBoundReceiver: Boolean
 internal val IrRichPropertyReference.boundReceiverOrNull: IrExpression?
     get() = if (hasBoundReceiver) boundValues.last() else null
 
-// Packs per-value bound expressions into the `[contextArguments], [receiver]` shape of the callable reference
-// superclass constructors: the first [contextArgumentCount] values into an array, then the receiver, if any.
 internal fun JvmIrBuilder.packBoundValues(
     values: List<IrExpression>,
     contextArgumentCount: Int,

@@ -408,7 +408,6 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
 
         addConstructor(expression, referenceClass, superClass)
 
-        // The `boundContextArguments` field inherited from `kotlin.jvm.internal.CallableReference`, initialized by the super constructor.
         val boundContextArgumentsField = superClass.fields.single { it.name == JvmSymbols.BOUND_CONTEXT_ARGUMENTS_FIELD_NAME }
 
         val get = superClass.functions.find { it.name.asString() == "get" }
@@ -497,7 +496,6 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             if (expression.hasBoundReceiver) {
                 addValueParameter("receiver", context.irBuiltIns.anyNType)
             }
-            // The constructor parameters mirror the bound arguments of the super constructor, so they are passed through as is.
             val boundParameters = parameters
             body = context.createJvmIrBuilder(symbol).run {
                 irBlockBody(startOffset, endOffset) {

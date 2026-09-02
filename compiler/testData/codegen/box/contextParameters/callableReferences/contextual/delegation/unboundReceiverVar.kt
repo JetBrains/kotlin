@@ -12,9 +12,6 @@ fun box(): String = context(1, "K") {
                 storage = value + tag
             }
 
-        // The context arguments are bound, while the receiver of `prop` stays unbound and is provided
-        // by the delegated property's own receiver — through `KMutableProperty1.setValue` for writes,
-        // unlike the read-only delegationToContextualRefUnboundReceiver.kt.
         var y by A::prop
     }
     val a = A("a")
