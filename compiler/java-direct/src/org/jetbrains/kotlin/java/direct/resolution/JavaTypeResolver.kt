@@ -51,6 +51,14 @@ internal fun resolve(name: String): ClassId? {
 }
 
 /**
+ * Resolves a canonical top-level name supplied by the compiler itself (implicit supertypes,
+ * JLS 8.1.4 / 8.9 / 8.10): an existence probe only, without the lookup in the file's scope.
+ */
+context(c: JavaResolutionContext)
+internal fun resolveCanonicalName(qualifiedName: String): ClassId? =
+    ClassId.topLevel(FqName(qualifiedName)).takeIf { tryResolve(it) }
+
+/**
  * Qualified type name resolution (JLS 6.5.5): a single left-to-right pass that classifies a
  * PackageOrTypeName qualifier according to JLS 6.5.4, then descends into member types:
  *
