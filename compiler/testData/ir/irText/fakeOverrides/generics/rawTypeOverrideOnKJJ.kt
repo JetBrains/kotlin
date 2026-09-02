@@ -2,6 +2,9 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 
+// KT-85730 Reflection: incorrect nullability of raw type argument in new implementation
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 // FILE: Java1.java
 import java.util.*;
 

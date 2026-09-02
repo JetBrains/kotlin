@@ -26,10 +26,10 @@ KClass: class PropertyDescriptorImpl : PropertyDescriptor, Any
     public open fun PropertyDescriptorImpl.hashCode(): kotlin.Int
     public open fun PropertyDescriptorImpl.setOverriddenDescriptors(kotlin.collections.(Mutable)Collection<out CallableMemberDescriptor!>!): kotlin.Unit
     public open fun PropertyDescriptorImpl.toString(): kotlin.String
-    private final var PropertyDescriptorImpl.overriddenProperties: (kotlin.collections.MutableCollection<out PropertyDescriptor!>..kotlin.collections.Collection<PropertyDescriptor!>?)
+    private final var PropertyDescriptorImpl.overriddenProperties: kotlin.collections.(Mutable)Collection<out PropertyDescriptor!>!
   declaredMembers:
     public open fun PropertyDescriptorImpl.getOverriddenDescriptors(): kotlin.collections.(Mutable)Collection<out PropertyDescriptor!>!
     public open fun PropertyDescriptorImpl.setOverriddenDescriptors(kotlin.collections.(Mutable)Collection<out CallableMemberDescriptor!>!): kotlin.Unit
-    private final var PropertyDescriptorImpl.overriddenProperties: (kotlin.collections.MutableCollection<out PropertyDescriptor!>..kotlin.collections.Collection<PropertyDescriptor!>?)
+    private final var PropertyDescriptorImpl.overriddenProperties: kotlin.collections.(Mutable)Collection<out PropertyDescriptor!>!
 KPackage: SyntheticSetterTypeKt
   public final fun foo(PropertyDescriptorImpl): kotlin.Unit

@@ -91,7 +91,6 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
         data.value.additionalFunctions.filterTo(this) { it.name == name }
     } else {
         getDeclaredNonStaticMethodsFromJavaClass(name).filterTo(this) { isVisibleAsFunctionInCurrentClass(it) }
-        addAll(getDescriptorBasedProperties(memberScope, DECLARED, name))
         for (method in jClass.declaredMethods) {
             if (method.name == name && Modifier.isStatic(method.modifiers) && !method.isSynthetic) {
                 add(JavaKNamedFunction(kClass, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
@@ -99,12 +98,19 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
         }
 
         for (field in jClass.declaredFields) {
-            if (field.isEnumConstant) continue
-            if (field.name == name && Modifier.isStatic(field.modifiers) && !field.isSynthetic) {
-                if (Modifier.isFinal(field.modifiers)) {
-                    add(JavaKProperty0<Any>(kClass, field, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
-                } else {
-                    add(JavaKMutableProperty0<Any>(kClass, field, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
+            if (field.isEnumConstant || field.isSynthetic || field.name != name) continue
+            when {
+                Modifier.isStatic(field.modifiers) -> when {
+                    Modifier.isFinal(field.modifiers) ->
+                        add(JavaFieldKProperty0<Any?>(kClass, field, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
+                    else ->
+                        add(JavaFieldKMutableProperty0<Any?>(kClass, field, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
+                }
+                else -> when {
+                    Modifier.isFinal(field.modifiers) ->
+                        add(JavaFieldKProperty1<Any?, Any?>(kClass, field, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
+                    else ->
+                        add(JavaFieldKMutableProperty1<Any?, Any?>(kClass, field, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
                 }
             }
         }
@@ -112,6 +118,14 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
         if (jClass.isEnum && name == ENUM_ENTRIES_PROPERTY_NAME) {
             @Suppress("UNCHECKED_CAST")
             add(JavaEnumEntriesKProperty(kClass as KClassImpl<out Enum<*>>))
+        }
+
+        if (jClass.isAnnotation) {
+            for (method in jClass.declaredMethods) {
+                if (method.name == name && !method.isSynthetic) {
+                    add(JavaAnnotationMethodKProperty1<Any?, Any?>(kClass, method, NO_RECEIVER))
+                }
+            }
         }
     }
 }
@@ -153,15 +167,12 @@ internal fun KClassImpl<*>.computeDeclaredMemberNames(): Set<String> =
         }
         data.value.additionalFunctions.mapTo(this, ReflectKCallable<*>::name)
     } else buildSet {
-        if (!jClass.isAnnotation) {
-            for (method in jClass.declaredMethods) {
-                if (!method.isSynthetic) add(method.name)
-            }
+        for (method in jClass.declaredMethods) {
+            if (!method.isSynthetic) add(method.name)
         }
         for (field in jClass.declaredFields) {
-            if (!field.isEnumConstant && Modifier.isStatic(field.modifiers) && !field.isSynthetic) add(field.name)
+            if (!field.isEnumConstant && !field.isSynthetic) add(field.name)
         }
-        memberScope.getVariableNames().mapTo(this, Name::asString)
         if (jClass.isEnum) {
             add(ENUM_ENTRIES_PROPERTY_NAME)
         }
@@ -234,7 +245,7 @@ private fun doesClassOverrideProperty(
     functions: (String) -> Collection<ReflectKFunction>,
 ): Boolean {
     // Java fields cannot be overridden.
-    if (property is JavaKProperty<*>) return false
+    if (property is JavaFieldKProperty<*>) return false
 
     val getter = property.findGetterOverride(functions)
     val setter = property.findSetterOverride(functions)
