@@ -1,13 +1,36 @@
 FILE: Stdlib.kt
     package kotlin
 
+    public final enum class NumericVariant : R|kotlin/Enum<kotlin/NumericVariant>| {
+        private constructor(): R|kotlin/NumericVariant| {
+            super<R|kotlin/Enum<kotlin/NumericVariant>|>()
+        }
+
+        public final static enum entry Byte: R|kotlin/NumericVariant|
+        public final static enum entry Short: R|kotlin/NumericVariant|
+        public final static enum entry Int: R|kotlin/NumericVariant|
+        public final static enum entry Long: R|kotlin/NumericVariant|
+        public final static enum entry UByte: R|kotlin/NumericVariant|
+        public final static enum entry UShort: R|kotlin/NumericVariant|
+        public final static enum entry UInt: R|kotlin/NumericVariant|
+        public final static enum entry ULong: R|kotlin/NumericVariant|
+        public final static fun values(): R|kotlin/Array<kotlin/NumericVariant>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|kotlin/NumericVariant| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<kotlin/NumericVariant>|
+            public static get(): R|kotlin/enums/EnumEntries<kotlin/NumericVariant>|
+
+    }
     @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|)]) @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|]) public final annotation class NumericClass : R|kotlin/Annotation| {
-        public constructor(vararg actualizations: R|kotlin/Array<out kotlin/reflect/KClass<*>>|): R|kotlin/NumericClass| {
+        public constructor(vararg actualizations: R|kotlin/Array<out kotlin/NumericVariant>|): R|kotlin/NumericClass| {
             super<R|kotlin/Any|>()
         }
 
-        public final val actualizations: R|kotlin/Array<out kotlin/reflect/KClass<*>>| = R|<local>/actualizations|
-            public get(): R|kotlin/Array<out kotlin/reflect/KClass<*>>|
+        public final val actualizations: R|kotlin/Array<out kotlin/NumericVariant>| = R|<local>/actualizations|
+            public get(): R|kotlin/Array<out kotlin/NumericVariant>|
 
     }
 FILE: Cinterop.kt
@@ -17,7 +40,7 @@ FILE: Cinterop.kt
         ^convert R|kotlin/TODO|()
     }
 FILE: Main.kt
-    @R|kotlin/NumericClass|(actualizations = vararg(<getClass>(Q|kotlin/Long|)) [evaluated = vararg(<getClass>(Q|kotlin/Long|))]) public final expect class NSInteger : R|kotlin/Any| {
+    @R|kotlin/NumericClass|(actualizations = vararg(Q|kotlin/NumericVariant|.R|kotlin/NumericVariant.Long|) [evaluated = vararg(Q|kotlin/NumericVariant|.R|kotlin/NumericVariant.Long|)]) public final expect class NSInteger : R|kotlin/Any| {
         public final expect fun toByte(): R|kotlin/Byte|
 
         public final expect fun toShort(): R|kotlin/Short|
@@ -85,7 +108,7 @@ FILE: Main.kt
     }
     public final fun acceptInt(num: R|kotlin/Int|): R|kotlin/Unit| {
     }
-    @R|kotlin/NumericClass|(actualizations = vararg(<getClass>(Q|kotlin/UInt|)) [evaluated = vararg(<getClass>(Q|kotlin/UInt|))]) public final expect value class SizeT : R|kotlin/Any| {
+    @R|kotlin/NumericClass|(actualizations = vararg(*<collectionLiteralCall>(Q|kotlin/NumericVariant|.R|kotlin/NumericVariant.UInt|)) [evaluated = vararg(Q|kotlin/NumericVariant|.R|kotlin/NumericVariant.UInt|)]) public final expect value class SizeT : R|kotlin/Any| {
         public final expect fun toByte(): R|kotlin/Byte|
 
         public final expect fun toShort(): R|kotlin/Short|
@@ -114,10 +137,10 @@ FILE: Main.kt
         ^produceNSInteger Int(30)
     }
     public final fun requestConversionDuringImplicitTypes1(): R|kotlin/Unit| {
-        ^requestConversionDuringImplicitTypes1 R|/acceptNSInteger<Inapplicable(INAPPLICABLE): /acceptNSInteger>#|(Int(30))
+        ^requestConversionDuringImplicitTypes1 R|/acceptNSInteger|(NumericConversion<NSInteger>(Int(30)))
     }
     public final fun requestConversionDuringImplicitTypes2(): R|kotlin/Unit| {
-        ^requestConversionDuringImplicitTypes2 R|/acceptSizeT<Inapplicable(INAPPLICABLE): /acceptSizeT>#|(UInt(30))
+        ^requestConversionDuringImplicitTypes2 R|/acceptSizeT|(NumericConversion<SizeT>(UInt(30)))
     }
     public final fun main(): R|kotlin/Unit| {
         R|/acceptNSInteger|(NumericConversion<NSInteger>(Int(10)))

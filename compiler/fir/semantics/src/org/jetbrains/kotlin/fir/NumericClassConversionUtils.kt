@@ -10,12 +10,14 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.getTargetType
-import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
-import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.builder.buildNumericClassConversion
+import org.jetbrains.kotlin.fir.expressions.unwrapAndFlattenArgument
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -54,19 +56,17 @@ private fun FirBasedSymbol<*>.supportsNumericClassConversionTo(type: ConeKotlinT
     getSupportedNumericClassConversions(session)?.all { it.fitsInto(type) } ?: false
 
 private fun FirBasedSymbol<*>.getSupportedNumericClassConversions(session: FirSession): List<ConeKotlinType>? {
-    lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
+    lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
 
-    val actualizationsArgument = getAnnotationByClassId(StandardClassIds.Annotations.NumericClass, session)
-        ?.findArgumentByName(Name.identifier("actualizations"), returnFirstWhenNotFound = false)
+    val arguments = (getAnnotationByClassId(StandardClassIds.Annotations.NumericClass, session) as? FirAnnotationCall)
+        ?.arguments?.flatMap { it.unwrapAndFlattenArgument(flattenArrays = true) }
         ?: return null
 
-    val arguments = when (actualizationsArgument) {
-        is FirVarargArgumentsExpression -> actualizationsArgument.arguments
-        is FirCollectionLiteral -> actualizationsArgument.arguments
-        else -> return null
-    }
-
-    return arguments.eachIsInstanceOrNull<FirGetClassCall>()?.mapNotNull { it.getTargetType() }
+    return arguments.eachIsInstanceOrNull<FirPropertyAccessExpression>()
+        ?.mapNotNull { enumExpression ->
+            StandardClassIds.allIntegerTypes.firstOrNull { it.shortClassName == enumExpression.calleeReference.name }
+                ?.defaultType(emptyList())
+        }
 }
 
 private fun ConeKotlinType.fitsInto(other: ConeKotlinType): Boolean {

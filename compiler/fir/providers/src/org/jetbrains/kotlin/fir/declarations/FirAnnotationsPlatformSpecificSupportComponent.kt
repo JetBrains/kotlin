@@ -102,11 +102,13 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent :
             StandardClassIds.Annotations.Target,
             StandardClassIds.Annotations.DeprecatedSinceKotlin,
             StandardClassIds.Annotations.SinceKotlin,
+            StandardClassIds.Annotations.NumericClass,
         )
 
         override val requiredArguments: Set<ClassId> = setOf(
             StandardClassIds.DeprecationLevel,
             StandardClassIds.AnnotationTarget,
+            StandardClassIds.NumericVariant,
         )
 
         override val requiredAnnotations: Set<ClassId> = requiredAnnotationsWithArguments + setOf(

@@ -11,10 +11,15 @@ package kotlin
 
 import kotlin.reflect.KClass
 
+enum class NumericVariant {
+    Byte, Short, Int, Long,
+    UByte, UShort, UInt, ULong,
+}
+
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
 annotation class NumericClass(
-	vararg val actualizations: KClass<*>,
+	vararg val actualizations: NumericVariant,
 )
 
 // FILE: Cinterop.kt
@@ -26,7 +31,7 @@ public inline fun <reified R : Any> Int.convert(): R = TODO()
 
 import kotlinx.cinterop.convert
 
-@kotlin.NumericClass(Long::class)
+@kotlin.NumericClass(kotlin.NumericVariant.Long)
 expect class NSInteger {
     fun toByte(): Byte
     fun toShort(): Short
@@ -58,7 +63,7 @@ fun acceptULong(num: ULong) {}
 fun acceptLong(num: Long) {}
 fun acceptInt(num: Int) {}
 
-@kotlin.NumericClass(UInt::class)
+@kotlin.NumericClass(actualizations = [kotlin.NumericVariant.UInt])
 expect value class SizeT {
     fun toByte(): Byte
     fun toShort(): Short
@@ -78,8 +83,8 @@ expect fun getSizeT(): SizeT
 
 fun produceNSInteger(): NSInteger = <!RETURN_TYPE_MISMATCH!>30<!>
 
-fun requestConversionDuringImplicitTypes1() = acceptNSInteger(<!ARGUMENT_TYPE_MISMATCH!>30<!>)
-fun requestConversionDuringImplicitTypes2() = acceptSizeT(<!ARGUMENT_TYPE_MISMATCH!>30u<!>)
+fun requestConversionDuringImplicitTypes1() = acceptNSInteger(30)
+fun requestConversionDuringImplicitTypes2() = acceptSizeT(30u)
 
 fun main() {
     acceptNSInteger(10)
