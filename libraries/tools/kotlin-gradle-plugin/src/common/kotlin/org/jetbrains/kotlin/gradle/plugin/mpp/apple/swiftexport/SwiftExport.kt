@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exporte
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.normalizedSwiftExportModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.whenSwiftPMImportAvailable
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationCompat
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
@@ -48,7 +49,7 @@ internal object SwiftExportConstants {
 }
 
 internal fun Project.registerSwiftExportTask(
-    swiftExportExtension: SwiftExportExtension,
+    swiftExportConfiguration: SwiftExportConfigurationCompat,
     taskGroup: String,
     buildType: NativeBuildType,
     target: KotlinNativeTarget,
@@ -56,7 +57,7 @@ internal fun Project.registerSwiftExportTask(
     val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
     val buildConfiguration = buildType.configuration
 
-    val swiftApiModuleName = swiftExportExtension
+    val swiftApiModuleName = swiftExportConfiguration
         .moduleName
         .orElse(provider { project.name.normalizedSwiftExportModuleName.also { validateSwiftExportModuleName(it) } })
 
@@ -76,20 +77,20 @@ internal fun Project.registerSwiftExportTask(
             mainCompilation.internal.configurations.compileDependencyConfiguration
         ),
         mainCompilation = mainCompilation,
-        swiftApiFlattenPackage = swiftExportExtension.flattenPackage,
-        exportedModules = swiftExportExtension.exportedModules,
-        customSetting = swiftExportExtension.advancedConfiguration.settings
+        swiftApiFlattenPackage = swiftExportConfiguration.rootPackage,
+        exportedModules = swiftExportConfiguration.exportedModules,
+        customSetting = swiftExportConfiguration.settings
     )
 
     val staticLibrary = registerSwiftExportCompilationAndGetBinary(
         buildType = buildType,
         target = target,
         mainCompilation = mainCompilation,
-        freeCompilerArgs = swiftExportExtension.advancedConfiguration.freeCompilerArgs,
+        freeCompilerArgs = swiftExportConfiguration.freeCompilerArgs,
         swiftExportTask = swiftExportTask
     )
 
-    swiftExportExtension.addBinary(staticLibrary)
+    swiftExportConfiguration.addBinary(staticLibrary)
 
     val swiftApiLibraryName = swiftApiModuleName.map { it + "Library" }
 
