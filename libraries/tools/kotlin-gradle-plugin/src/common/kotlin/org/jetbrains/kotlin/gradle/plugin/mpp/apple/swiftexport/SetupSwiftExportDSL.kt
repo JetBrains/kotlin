@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedSwiftExportTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.initSwiftExportClasspathConfigurations
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.EXPORT_EXTENSION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.ExportExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationCompat
 
 internal object SwiftExportDSLConstants {
     const val SWIFT_EXPORT_EXTENSION_NAME = "swiftExport"
@@ -48,7 +49,13 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
     if (!multiplatformExtension.isSwiftExportXcodeIntegrationActivated()) return@KotlinProjectSetupCoroutine
 
     initSwiftExportClasspathConfigurations()
-    registerSwiftExportPipeline(swiftExportExtension)
+    registerSwiftExportPipeline(
+        if (exportExtension.isSwiftExportConfigured) {
+            SwiftExportConfigurationCompat.from(exportExtension.swiftExportConfiguration, providers, objects)
+        } else {
+            SwiftExportConfigurationCompat.from(swiftExportExtension)
+        }
+    )
 }
 
 /**
@@ -76,21 +83,21 @@ internal fun KotlinMultiplatformExtension.isSwiftExportXcodeIntegrationActivated
 }
 
 private fun Project.registerSwiftExportPipeline(
-    swiftExportExtension: SwiftExportExtension,
+    swiftExportConfiguration: SwiftExportConfigurationCompat,
 ) {
     val environment = XcodeEnvironment(project)
 
     multiplatformExtension
         .supportedAppleTargets()
         .configureEach { target ->
-            setupSwiftExport(target, environment, swiftExportExtension)
+            setupSwiftExport(target, environment, swiftExportConfiguration)
         }
 }
 
 private fun Project.setupSwiftExport(
     target: KotlinNativeTarget,
     environment: XcodeEnvironment,
-    swiftExportExtension: SwiftExportExtension,
+    swiftExportConfiguration: SwiftExportConfigurationCompat,
 ) {
-    registerEmbedSwiftExportTask(target, environment, swiftExportExtension)
+    registerEmbedSwiftExportTask(target, environment, swiftExportConfiguration)
 }
