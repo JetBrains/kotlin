@@ -12,7 +12,7 @@ import kotlin.contracts.contract
 /** DSL marker for [IndentedTextBuilder] scope, preventing implicit receiver leaking into nested lambdas. */
 @DslMarker
 @Target(AnnotationTarget.CLASS)
-public annotation class IndentingPrinterDsl
+annotation class IndentingPrinterDsl
 
 /**
  * An indentation-aware text builder with a DSL interface.
@@ -27,7 +27,7 @@ public annotation class IndentingPrinterDsl
  */
 @IndentingPrinterDsl
 @OptIn(ExperimentalContracts::class)
-public class IndentedTextBuilder(
+class IndentedTextBuilder(
     private val indentation: String = FOUR_SPACES,
     private val lineSeparator: String = "\n",
 ) {
@@ -43,7 +43,7 @@ public class IndentedTextBuilder(
      *
      * Returns `this` for chaining.
      */
-    public fun append(value: Any?): IndentedTextBuilder {
+    fun append(value: Any?): IndentedTextBuilder {
         val text = value.toString()
         if (text.isEmpty()) {
             return this
@@ -69,7 +69,7 @@ public class IndentedTextBuilder(
      * Appends [value] followed by [lineSeparator].
      * Equivalent to `append(value).append(lineSeparator)`.
      */
-    public fun appendLine(value: Any? = ""): IndentedTextBuilder {
+    fun appendLine(value: Any? = ""): IndentedTextBuilder {
         append(value)
         append(lineSeparator)
         return this
@@ -86,7 +86,7 @@ public class IndentedTextBuilder(
     /**
      * Increases the indentation level by one for the duration of [block], then restores it.
      */
-    public fun withIndent(block: IndentedTextBuilder.() -> Unit) {
+    fun withIndent(block: IndentedTextBuilder.() -> Unit) {
         indentationLevel += 1
         block(this)
         indentationLevel -= 1
@@ -97,7 +97,7 @@ public class IndentedTextBuilder(
      * If [skipIfEmpty] is `true` and the collection is empty, nothing is appended.
      * Each item is rendered by [renderItem] (defaults to [append]).
      */
-    public fun <T> appendCollection(
+    fun <T> appendCollection(
         collection: Collection<T>,
         separator: String = ", ",
         prefix: String = "",
@@ -124,7 +124,7 @@ public class IndentedTextBuilder(
      * Renders each block in [blocks], inserting [separator] between consecutive blocks that produce output.
      * Blocks that produce no output are skipped without emitting a separator.
      */
-    public fun appendBlocks(separator: String, vararg blocks: IndentedTextBuilder.() -> Unit) {
+    fun appendBlocks(separator: String, vararg blocks: IndentedTextBuilder.() -> Unit) {
         if (blocks.isEmpty()) {
             return
         }
@@ -145,7 +145,7 @@ public class IndentedTextBuilder(
     /**
      * Runs [block] and returns `true` if it produced any output.
      */
-    public fun hasPrinted(block: IndentedTextBuilder.() -> Unit): Boolean {
+    fun hasPrinted(block: IndentedTextBuilder.() -> Unit): Boolean {
         contract {
             callsInPlace(block, InvocationKind.EXACTLY_ONCE)
         }
@@ -159,7 +159,7 @@ public class IndentedTextBuilder(
      * Prepends [prefix] to the first text appended inside [block].
      * If [block] produces no output, [prefix] is discarded.
      */
-    public fun withPrefix(prefix: String, block: IndentedTextBuilder.() -> Unit) {
+    fun withPrefix(prefix: String, block: IndentedTextBuilder.() -> Unit) {
         contract {
             callsInPlace(block, InvocationKind.EXACTLY_ONCE)
         }
@@ -181,7 +181,7 @@ public class IndentedTextBuilder(
     /**
      * Appends [suffix] after [block], but only if [block] produced any output.
      */
-    public fun withSuffix(suffix: String, block: IndentedTextBuilder.() -> Unit) {
+    fun withSuffix(suffix: String, block: IndentedTextBuilder.() -> Unit) {
         if (hasPrinted { block() }) {
             append(suffix)
         }
@@ -200,16 +200,16 @@ public class IndentedTextBuilder(
         return result.toString()
     }
 
-    public companion object {
-        public const val TWO_SPACES: String = "  "
-        public const val FOUR_SPACES: String = "    "
+    companion object {
+        const val TWO_SPACES: String = "  "
+        const val FOUR_SPACES: String = "    "
     }
 }
 
 /**
  * Creates a [IndentedTextBuilder], runs [body] on it, and returns the resulting string.
  */
-public inline fun buildIndentedText(
+inline fun buildIndentedText(
     indentation: String = IndentedTextBuilder.FOUR_SPACES,
     lineSeparator: String = "\n",
     body: IndentedTextBuilder.() -> Unit
