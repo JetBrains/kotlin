@@ -671,10 +671,11 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
     }
 
     @Test
-    fun testWrongPackageFileAtDirectoryRoot(@TempDir tempDir: Path) {
-        // A.java declares `package foo;` but lives directly under the directory root (not in
-        // a `foo/` subdirectory). The class should be findable by its declared package ClassId
-        // but NOT by the root package.
+    fun testWrongPackageFileAtDirectoryRootIsNotFound(@TempDir tempDir: Path) {
+        // A.java declares `package foo;` but lives directly under the directory root (not in a
+        // `foo/` subdirectory). Under a directory root the package is derived from the path, so
+        // neither ClassId resolves — javac and PSI (the CLI `javaSrcWrongPackage` fixture, KT-11474)
+        // report the same.
         val aFile = tempDir.resolve("A.java")
         aFile.writeText(
             """
@@ -687,19 +688,44 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
 
         val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
 
-        // Findable by declared package (foo.A)
+        val fooAId = ClassId(FqName("foo"), Name.identifier("A"))
+        assertFalse(finder.isClassInIndex(fooAId), "foo.A must NOT be in index for a directory root")
+        assertNull(finder.findClass(JavaClassFinder.Request(fooAId)), "foo.A must NOT be findable for a directory root")
+
+        val rootAId = ClassId(FqName.ROOT, Name.identifier("A"))
+        assertFalse(finder.isClassInIndex(rootAId), "Root-package A must NOT be in index")
+        assertNull(finder.findClass(JavaClassFinder.Request(rootAId)), "Root-package A must NOT be findable")
+
+        val nestedId = ClassId(FqName("foo"), FqName("A.Nested"), isLocal = false)
+        assertNull(finder.findClass(JavaClassFinder.Request(nestedId)), "foo.A.Nested must NOT be findable")
+    }
+
+    @Test
+    fun testWrongPackageFileAsSingleFileRootIsFoundByDeclaredPackage(@TempDir tempDir: Path) {
+        // Same file as above, passed as a single-file source root: there is no path to derive the
+        // package from, so the declared package wins, as in PSI's `SingleJavaFileRootsIndex`.
+        val aFile = tempDir.resolve("A.java")
+        aFile.writeText(
+            """
+            package foo;
+            public class A {
+                public static class Nested {}
+            }
+        """.trimIndent()
+        )
+
+        val finder = JavaClassFinderOverAstImpl(listOf(aFile.toFile()))
+
         val fooAId = ClassId(FqName("foo"), Name.identifier("A"))
         assertTrue(finder.isClassInIndex(fooAId), "Expected foo.A to be in index")
         val fooA = finder.findClass(JavaClassFinder.Request(fooAId))
         assertNotNull(fooA, "Expected to find foo.A by declared package")
         assertEquals("A", fooA.name.asString())
 
-        // NOT findable by root package (A without package)
         val rootAId = ClassId(FqName.ROOT, Name.identifier("A"))
         assertFalse(finder.isClassInIndex(rootAId), "Root-package A must NOT be in index")
         assertNull(finder.findClass(JavaClassFinder.Request(rootAId)), "Root-package A must NOT be findable")
 
-        // Inner class of foo.A should be findable
         val nestedId = ClassId(FqName("foo"), FqName("A.Nested"), isLocal = false)
         val nested = finder.findClass(JavaClassFinder.Request(nestedId))
         assertNotNull(nested, "Expected to find foo.A.Nested")
