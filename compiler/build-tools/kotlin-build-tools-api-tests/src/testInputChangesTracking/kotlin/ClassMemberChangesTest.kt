@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfigurat
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAndPlatformAgnosticScenarioTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.ScenarioCreator
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -17,11 +19,11 @@ import org.junit.jupiter.api.DisplayName
 @DisplayName("Class member changes in incremental compilation")
 class ClassMemberChangesTest : BaseCompilationTest() {
 
-    @DefaultStrategyAgnosticCompilationTest
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
     @DisplayName("KT-40656: Making companion object private should recompile usages (same module)")
     @TestMetadata("ic-scenarios/kt-40656-same-module")
-    fun testCompanionMadePrivateRecompilesUsagesSameModule(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testCompanionMadePrivateRecompilesUsagesSameModule(scenario: ScenarioCreator) {
+        scenario {
             val mod = module("ic-scenarios/kt-40656-same-module")
 
             mod.replaceFileWithVersion("class1.kt", "make-private")
@@ -36,11 +38,11 @@ class ClassMemberChangesTest : BaseCompilationTest() {
         }
     }
 
-    @DefaultStrategyAgnosticCompilationTest
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
     @DisplayName("KT-40656: Making companion object private should recompile usages (different modules)")
     @TestMetadata("ic-scenarios/kt-40656-different-modules")
-    fun testCompanionMadePrivateRecompilesUsagesDifferentModules(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testCompanionMadePrivateRecompilesUsagesDifferentModules(scenario: ScenarioCreator) {
+        scenario {
             val lib = module("ic-scenarios/kt-40656-different-modules/lib")
             val app = module("ic-scenarios/kt-40656-different-modules/app", listOf(lib))
 
@@ -57,11 +59,11 @@ class ClassMemberChangesTest : BaseCompilationTest() {
         }
     }
 
-    @DefaultStrategyAgnosticCompilationTest
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
     @DisplayName("KT-59509: Renaming a method should recompile call sites that reach it through a chain")
     @TestMetadata("ic-scenarios/kt-59509")
-    fun testRenamingMethodAccessedThoughCallChainIsTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testRenamingMethodAccessedThoughCallChainIsTracked(scenario: ScenarioCreator) {
+        scenario {
             val lib = module("ic-scenarios/kt-59509/lib")
             val app = module("ic-scenarios/kt-59509/app", dependencies = listOf(lib))
 
