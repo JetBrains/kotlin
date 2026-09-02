@@ -9,6 +9,7 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
 import kotlin.metadata.*
 import kotlin.metadata.jvm.JvmMethodSignature
+import kotlin.metadata.jvm.hasAnnotationsInBytecode
 import kotlin.metadata.jvm.signature
 import kotlin.reflect.ExperimentalCompanionExtensions
 import kotlin.reflect.KClass
@@ -29,6 +30,7 @@ internal class KotlinKConstructor(
     override val jvmSignature: JvmMethodSignature
         get() = kmConstructor.signature ?: throw KotlinReflectionInternalError("No signature for constructor: $this")
     override val metadataAnnotations: List<KmAnnotation> get() = kmConstructor.annotations
+    override val hasAnnotationsInBytecode: Boolean get() = kmConstructor.hasAnnotationsInBytecode
 
     override val name: String
         get() = "<init>"
