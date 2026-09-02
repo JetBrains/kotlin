@@ -21,6 +21,7 @@ dependencies {
     implementation(project(":kotlin-util-klib"))
     implementation(project(":kotlin-util-klib-metadata"))
     implementation(libs.caffeine)
+    implementation(libs.guava)
     api(project(":compiler:cli-base"))
     api(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-api-fir"))
