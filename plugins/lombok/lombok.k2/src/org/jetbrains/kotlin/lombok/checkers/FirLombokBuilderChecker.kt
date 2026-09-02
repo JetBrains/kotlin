@@ -125,7 +125,7 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
                 checkSingular(parameterSymbol, singularAnnotation, lombokService)
             }
 
-            parameterSymbol.defaultValueSource?.let { defaultValueSource ->
+            parameterSymbol.resolvedDefaultValueSource?.let { defaultValueSource ->
                 reporter.reportOn(defaultValueSource, LombokFirDiagnostics.BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION, context)
             }
         }
@@ -163,6 +163,6 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
      */
     private fun FirPropertySymbol.explicitInitializerSource(): KtSourceElement? {
         val parameter = correspondingValueParameterFromPrimaryConstructor
-        return if (parameter != null) parameter.defaultValueSource else initializerSource
+        return if (parameter != null) parameter.resolvedDefaultValueSource else initializerSource
     }
 }
