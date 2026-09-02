@@ -7,14 +7,7 @@ package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
-import org.jetbrains.kotlin.fir.resolve.providers.FirNullSymbolNamesProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.java.direct.resolution.cycleGuardedSupertypeWalk
 import org.jetbrains.kotlin.java.direct.resolution.cycleSafeClassLikeSymbol
 import org.jetbrains.kotlin.java.direct.resolution.registerJavaModelInFlightResolutionsIfAbsent
@@ -143,7 +136,7 @@ class JavaCycleBreakerTest {
         session.registerJavaModelInFlightResolutionsIfAbsent()
 
         var providerInvocations = 0
-        val provider = ReentrantStubSymbolProvider(session) { classId ->
+        val provider = StubSymbolProvider(session) { classId ->
             providerInvocations++
             // Simulate the KT-74097 PUBLICATION-lazy re-entrance: materialising this class's
             // declarations probes the very same ClassId again through the model chokepoint.
@@ -168,49 +161,11 @@ class JavaCycleBreakerTest {
         val session = createDummyFirSessionForTests()
         // Intentionally do NOT register JavaModelInFlightResolutions, so the guard is disabled and
         // cycleSafeClassLikeSymbol cannot mark the ClassId as in-flight.
-        val provider = ReentrantStubSymbolProvider(session) { classId ->
+        val provider = StubSymbolProvider(session) { classId ->
             session.cycleSafeClassLikeSymbol(classId)
         }
         session.register(FirSymbolProvider::class, provider)
 
         assertThrows<StackOverflowError> { session.cycleSafeClassLikeSymbol(a) }
     }
-}
-
-/**
- * Minimal [FirSymbolProvider] whose [getClassLikeSymbolByClassId] delegates to [onLookup], used to
- * reproduce the re-entrant symbol-provider lookup that [FirSession.cycleSafeClassLikeSymbol] guards
- * against. All other provider responsibilities are stubbed empty.
- */
-@OptIn(FirSymbolProviderInternals::class)
-private class ReentrantStubSymbolProvider(
-    session: FirSession,
-    private val onLookup: (ClassId) -> FirClassLikeSymbol<*>?,
-) : FirSymbolProvider(session) {
-    override val symbolNamesProvider: FirSymbolNamesProvider get() = FirNullSymbolNamesProvider
-
-    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? = onLookup(classId)
-
-    override fun getTopLevelCallableSymbolsTo(
-        destination: MutableList<FirCallableSymbol<*>>,
-        packageFqName: FqName,
-        name: Name,
-    ) {
-    }
-
-    override fun getTopLevelFunctionSymbolsTo(
-        destination: MutableList<FirNamedFunctionSymbol>,
-        packageFqName: FqName,
-        name: Name,
-    ) {
-    }
-
-    override fun getTopLevelPropertySymbolsTo(
-        destination: MutableList<FirPropertySymbol>,
-        packageFqName: FqName,
-        name: Name,
-    ) {
-    }
-
-    override fun hasPackage(fqName: FqName): Boolean = false
 }
