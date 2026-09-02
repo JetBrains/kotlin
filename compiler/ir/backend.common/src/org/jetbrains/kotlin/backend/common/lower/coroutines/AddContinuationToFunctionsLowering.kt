@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.backend.common.lower.coroutines
 
-import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -18,6 +20,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrReturn
+import org.jetbrains.kotlin.ir.functionWithContinuations
+import org.jetbrains.kotlin.ir.suspendFunction
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
@@ -25,7 +29,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
-import kotlin.collections.plusAssign
 
 /**
  * Replaces suspend functions with regular non-suspend functions with additional
