@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.components.nativeIncludedBinaries
 import org.jetbrains.kotlin.konan.library.linkerOpts
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
 
@@ -24,6 +25,7 @@ internal fun determineLinkerOutput(context: NativeBackendPhaseContext): LinkerOu
             CompilerOutputKind.TEST_BUNDLE,
             CompilerOutputKind.DYNAMIC_CACHE,
             CompilerOutputKind.DYNAMIC -> LinkerOutputKind.DYNAMIC_LIBRARY
+            CompilerOutputKind.OBJC_CACHE,
             CompilerOutputKind.STATIC_CACHE,
             CompilerOutputKind.STATIC -> LinkerOutputKind.STATIC_LIBRARY
             CompilerOutputKind.PROGRAM -> run {
@@ -95,6 +97,7 @@ internal class Linker(
     ): List<Command> {
         val additionalLinkerArgs: List<String>
         val executable: String
+        var objcCacheStaticLibraries: List<String> = emptyList()
 
         when (config.produce) {
             CompilerOutputKind.TEST_BUNDLE -> {
@@ -117,7 +120,20 @@ internal class Linker(
                     Family.OSX -> "Versions/A/$dylibName"
                     else -> error(target)
                 }
-                additionalLinkerArgs = listOf("-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath")
+                val moduleName = config.fullExportedNamePrefix
+                val librariesToLoad = config.exportedLibraries.ifEmpty { config.resolvedLibraries.getFullList() }
+                val objcCacheArchives = librariesToLoad.mapNotNull { library: KotlinLibrary ->
+                    config.cachedLibraries.getObjCCache(library, moduleName)?.binariesPaths
+                }.flatten().distinct()
+
+                val isStatic = linkerOutput == LinkerOutputKind.STATIC_LIBRARY
+                if (isStatic) {
+                    objcCacheStaticLibraries = objcCacheArchives
+                    additionalLinkerArgs = emptyList()
+                } else {
+                    additionalLinkerArgs = listOf("-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath") +
+                            objcCacheArchives.flatMap { listOf("-force_load", it) }
+                }
                 val dylibPath = framework.child(dylibRelativePath)
                 dylibPath.parentFile.mkdirs()
                 executable = dylibPath.absolutePath
@@ -145,7 +161,7 @@ internal class Linker(
                     tempFiles = tempFiles,
                     objectFiles = objectFiles,
                     executable = executable,
-                    staticLibraries = linker.linkStaticLibraries(includedBinaries) + caches.static,
+                    staticLibraries = linker.linkStaticLibraries(includedBinaries) + caches.static + objcCacheStaticLibraries,
                     dynamicLibraries = caches.dynamic,
                     linkerArgs = linkerArgs,
                     optimize = optimize,

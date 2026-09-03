@@ -47,6 +47,7 @@ internal fun resolveCacheBinaries(
         val list = when (cache.kind) {
             CachedLibraries.Kind.DYNAMIC -> dynamicCaches
             CachedLibraries.Kind.STATIC -> staticCaches
+            CachedLibraries.Kind.OBJC -> error("Objective-C cache ${cache.path} cannot be used as a bitcode cache")
             CachedLibraries.Kind.HEADER -> error("Header cache ${cache.path} cannot be used for linking")
         }
 

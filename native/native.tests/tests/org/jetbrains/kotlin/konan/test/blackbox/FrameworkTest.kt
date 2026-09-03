@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.createTestProvider
 import org.jetbrains.kotlin.test.TestDataAssertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.KtAssert.fail
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
@@ -444,6 +445,1102 @@ class FrameworkTest : AbstractNativeSimpleTest() {
     fun objCExportTestStatic() {
         objCExportTestImpl("Static", listOf("-Xbinary=objcExportSuspendFunctionLaunchThreadRestriction=main"),
                            listOf("-D", "DISALLOW_SUSPEND_ANY_THREAD"), true)
+    }
+
+    private fun produceStaticCache(klibFile: File, cacheDir: File, extraArgs: List<String> = emptyList()) {
+        val konanHome = testRunSettings.get<KotlinNativeHome>().dir
+        val distCacheDir = konanHome.resolve("klib/cache").listFiles { f -> f.name.startsWith(targets.testTarget.name) }?.firstOrNull { it.resolve("stdlib-cache").exists() }
+            ?: konanHome.resolve("klib/cache").listFiles { f -> f.name.startsWith(targets.testTarget.name) }?.firstOrNull { it.resolve("stdlib-per-file-cache").exists() }
+        val kotlinc = konanHome.resolve("bin").resolve("kotlinc-native")
+        val staticCacheArgs = buildList {
+            add("-produce")
+            add("static_cache")
+            add("-Xadd-cache=${klibFile.absolutePath}")
+            add("-Xcache-directory=${cacheDir.absolutePath}")
+            if (distCacheDir != null) {
+                add("-Xcache-directory=${distCacheDir.absolutePath}")
+            }
+            add("-target")
+            add(targets.testTarget.name)
+            addAll(extraArgs)
+        }
+        org.jetbrains.kotlin.native.executors.runProcess(
+            kotlinc.absolutePath,
+            *staticCacheArgs.toTypedArray()
+        ) {
+            environment["JAVA_HOME"] = System.getProperty("java.home")
+        }
+    }
+
+    private fun produceObjCCache(
+        klibFile: File,
+        frameworkName: String,
+        cacheDir: File,
+        extraArgs: List<String> = emptyList(),
+    ) {
+        val konanHome = testRunSettings.get<KotlinNativeHome>().dir
+        val distCacheDir = konanHome.resolve("klib/cache").listFiles { f -> f.name.startsWith(targets.testTarget.name) }?.firstOrNull { it.resolve("stdlib-cache").exists() }
+            ?: konanHome.resolve("klib/cache").listFiles { f -> f.name.startsWith(targets.testTarget.name) }?.firstOrNull { it.resolve("stdlib-per-file-cache").exists() }
+        val kotlinc = konanHome.resolve("bin").resolve("kotlinc-native")
+        val objcCacheArgs = buildList {
+            add("-produce")
+            add("objc_cache")
+            add("-Xadd-cache=${klibFile.absolutePath}")
+            add("-module-name")
+            add(frameworkName)
+            add("-Xcache-directory=${cacheDir.absolutePath}")
+            if (distCacheDir != null) {
+                add("-Xcache-directory=${distCacheDir.absolutePath}")
+            }
+            add("-target")
+            add(targets.testTarget.name)
+            addAll(extraArgs)
+        }
+        org.jetbrains.kotlin.native.executors.runProcess(
+            kotlinc.absolutePath,
+            *objcCacheArgs.toTypedArray()
+        ) {
+            environment["JAVA_HOME"] = System.getProperty("java.home")
+        }
+    }
+
+    @Test
+    fun testObjCCacheCompilationAndFrameworkLink() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val library = compileToLibrary(
+            testSuiteDir.resolve("objcexport/library"),
+            buildDir,
+            TestCompilerArgs("-Xshort-module-name=MyLibrary", "-module-name", "org.jetbrains.kotlin.native.test-library"),
+            emptyList(),
+        )
+        val cacheDir = buildDir.resolve("cache").apply { mkdirs() }
+        val frameworkName = "Kt"
+        produceStaticCache(library.klibFile, cacheDir)
+        produceObjCCache(library.klibFile, frameworkName, cacheDir)
+
+        val ktFiles = testSuiteDir.resolve("objcexport").listFiles { file: File -> file.name.endsWith(".kt") }!!.toList()
+        val testCase = generateObjCFrameworkTestCase(
+            TestKind.STANDALONE_NO_TR, extras, frameworkName,
+            ktFiles,
+            freeCompilerArgs = TestCompilerArgs(
+                listOf(
+                    "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+                    "-Xbinary=bundleId=foo.bar",
+                    "-module-name", frameworkName,
+                    "-Xexport-library=${library.klibFile.absolutePath}",
+                    "-Xcache-directory=${cacheDir.absolutePath}",
+                    "-Xdisable-ir-checkers=IrVisibilityChecker",
+                )
+            ),
+            givenDependencies = setOf(TestModule.Given(library.klibFile)),
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout * 5),
+        )
+        testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings).result.assertSuccess()
+
+        val testSwiftFile = buildDir.resolve("objcCacheTest.swift").apply {
+            writeText(
+                """
+                import Kt
+
+                func testAccessClassFromObjCCache() throws {
+                    let object = A(data: "Data from Class")
+                    let enumObject = E.b
+
+                    try assertEquals(actual: object.data, expected: "Data from Class")
+                    try assertEquals(actual: enumObject.data, expected: "Enum entry B")
+                }
+
+                class ObjcCacheTestTests : SimpleTestProvider {
+                    override init() {
+                        super.init()
+                        test("testAccessClassFromObjCCache", testAccessClassFromObjCCache)
+                    }
+                }
+                """.trimIndent()
+            )
+        }
+        val swiftFiles = testSuiteDir.resolve("objcexport").listFiles { file: File -> file.name.endsWith(".swift") && file.name != "library.swift" }!!.toList() + listOf(testSwiftFile)
+        val swiftExtraOpts = buildList {
+            if (testRunSettings.get<GCScheduler>().scheduler == GCSchedulerType.AGGRESSIVE) {
+                add("-D")
+                add("AGGRESSIVE_GC")
+            }
+            if (testRunSettings.get<GCType>().gc == GC.NOOP) {
+                add("-D")
+                add("NOOP_GC")
+            }
+        }
+        val successExecutable = compileSwift(swiftFiles, swiftExtraOpts)
+        val testExecutable = TestExecutable(
+            successExecutable.resultingArtifact,
+            successExecutable.loggedData,
+            listOf(TestName("testObjCCacheCompilationAndFrameworkLink"))
+        )
+        runExecutableAndVerify(testCase, testExecutable)
+    }
+
+    @Test
+    fun testObjCCacheStaticFrameworkLink() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val library = compileToLibrary(
+            testSuiteDir.resolve("objcexport/library"),
+            buildDir,
+            TestCompilerArgs("-Xshort-module-name=MyLibrary", "-module-name", "org.jetbrains.kotlin.native.test-library"),
+            emptyList(),
+        )
+        val cacheDir = buildDir.resolve("cache_static").apply { mkdirs() }
+        val frameworkName = "Kt"
+        produceStaticCache(library.klibFile, cacheDir)
+        produceObjCCache(library.klibFile, frameworkName, cacheDir)
+
+        val testCase = generateObjCFrameworkTestCase(
+            TestKind.STANDALONE_NO_TR, extras, frameworkName,
+            listOf(testSuiteDir.resolve("objcexport/library.kt")),
+            freeCompilerArgs = TestCompilerArgs(
+                listOf(
+                    "-Xstatic-framework",
+                    "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+                    "-Xbinary=bundleId=foo.bar",
+                    "-module-name", frameworkName,
+                    "-Xexport-library=${library.klibFile.absolutePath}",
+                    "-Xcache-directory=${cacheDir.absolutePath}",
+                    "-Xdisable-ir-checkers=IrVisibilityChecker",
+                )
+            ),
+            givenDependencies = setOf(TestModule.Given(library.klibFile)),
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout * 5),
+        )
+        val success = testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings).result.assertSuccess()
+        val frameworkBinary = success.resultingArtifact.frameworkDir.let {
+            it.resolve("Versions/A/$frameworkName").takeIf { f -> f.exists() } ?: it.resolve(frameworkName)
+        }
+        assertTrue(frameworkBinary.exists()) { "Framework binary $frameworkBinary does not exist" }
+
+        val testSwiftFile = buildDir.resolve("staticObjcCacheTest.swift").apply {
+            writeText(
+                """
+                import Kt
+
+                func testAccessClassFromObjCCache() throws {
+                    let object = A(data: "Data from Static Cache")
+                    let enumObject = E.b
+
+                    try assertEquals(actual: object.data, expected: "Data from Static Cache")
+                    try assertEquals(actual: enumObject.data, expected: "Enum entry B")
+                }
+
+                class StaticObjcCacheTestTests : SimpleTestProvider {
+                    override init() {
+                        super.init()
+                        test("testAccessClassFromObjCCache", testAccessClassFromObjCCache)
+                    }
+                }
+                """.trimIndent()
+            )
+        }
+        val successExecutable = compileSwift(listOf(testSwiftFile), emptyList())
+        val testExecutable = TestExecutable(
+            successExecutable.resultingArtifact,
+            successExecutable.loggedData,
+            listOf(TestName("testObjCCacheStaticFrameworkLink"))
+        )
+        runExecutableAndVerify(testCase, testExecutable)
+    }
+
+    @Test
+    fun testObjCCacheStaticFrameworkMultipleLibraries() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val libASrc = buildDir.resolve("libA_src").apply {
+            mkdirs()
+            resolve("libA.kt").writeText(
+                """
+                package liba
+                class Alpha(val name: String)
+                """.trimIndent()
+            )
+        }
+        val libBSrc = buildDir.resolve("libB_src").apply {
+            mkdirs()
+            resolve("libB.kt").writeText(
+                """
+                package libb
+                import liba.Alpha
+                class Beta(val alpha: Alpha, val count: Int)
+                """.trimIndent()
+            )
+        }
+        val libA = compileToLibrary(
+            libASrc,
+            buildDir.resolve("libA_out"),
+            TestCompilerArgs("-module-name", "libA"),
+            emptyList(),
+        )
+        val libB = compileToLibrary(
+            libBSrc,
+            buildDir.resolve("libB_out"),
+            TestCompilerArgs("-module-name", "libB"),
+            listOf(libA.asLibraryDependency()),
+        )
+        val cacheDir = buildDir.resolve("cache_multiple_static").apply { mkdirs() }
+        val frameworkName = "Kt"
+        val libBDeps = listOf("-l", libA.klibFile.absolutePath)
+        produceStaticCache(libA.klibFile, cacheDir)
+        produceStaticCache(libB.klibFile, cacheDir, libBDeps)
+        produceObjCCache(libA.klibFile, frameworkName, cacheDir)
+        produceObjCCache(libB.klibFile, frameworkName, cacheDir, libBDeps)
+
+        val frameworkSrc = buildDir.resolve("framework_src").apply {
+            mkdirs()
+            resolve("framework.kt").writeText("package test\nfun frameworkMarker() = 1")
+        }
+        val testCase = generateObjCFrameworkTestCase(
+            TestKind.STANDALONE_NO_TR, extras, frameworkName,
+            listOf(frameworkSrc.resolve("framework.kt")),
+            freeCompilerArgs = TestCompilerArgs(
+                listOf(
+                    "-Xstatic-framework",
+                    "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+                    "-Xbinary=bundleId=foo.bar",
+                    "-module-name", frameworkName,
+                    "-Xexport-library=${libA.klibFile.absolutePath}",
+                    "-Xexport-library=${libB.klibFile.absolutePath}",
+                    "-Xcache-directory=${cacheDir.absolutePath}",
+                    "-Xdisable-ir-checkers=IrVisibilityChecker",
+                )
+            ),
+            givenDependencies = setOf(TestModule.Given(libA.klibFile), TestModule.Given(libB.klibFile)),
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout * 5),
+        )
+        testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings).result.assertSuccess()
+
+        val testSwiftFile = buildDir.resolve("multipleObjcCacheTest.swift").apply {
+            writeText(
+                """
+                import Kt
+
+                func testMultipleObjCCaches() throws {
+                    let alpha = Alpha(name: "AlphaCached")
+                    let beta = Beta(alpha: alpha, count: 42)
+
+                    try assertEquals(actual: beta.alpha.name, expected: "AlphaCached")
+                    try assertEquals(actual: beta.count, expected: 42)
+                }
+
+                class MultipleObjcCacheTestTests : SimpleTestProvider {
+                    override init() {
+                        super.init()
+                        test("testMultipleObjCCaches", testMultipleObjCCaches)
+                    }
+                }
+                """.trimIndent()
+            )
+        }
+        val successExecutable = compileSwift(listOf(testSwiftFile), emptyList())
+        val testExecutable = TestExecutable(
+            successExecutable.resultingArtifact,
+            successExecutable.loggedData,
+            listOf(TestName("testObjCCacheStaticFrameworkMultipleLibraries"))
+        )
+        runExecutableAndVerify(testCase, testExecutable)
+    }
+
+    @Test
+    fun testObjCCacheStaticFrameworkTransitiveDependencyNotExported() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val libASrc = buildDir.resolve("libA_transitive_src").apply {
+            mkdirs()
+            resolve("libA.kt").writeText(
+                """
+                package liba
+                class Alpha(val name: String)
+                """.trimIndent()
+            )
+        }
+        val libBSrc = buildDir.resolve("libB_transitive_src").apply {
+            mkdirs()
+            resolve("libB.kt").writeText(
+                """
+                package libb
+                import liba.Alpha
+                class Beta(val alpha: Alpha, val count: Int)
+                """.trimIndent()
+            )
+        }
+        val libA = compileToLibrary(
+            libASrc,
+            buildDir.resolve("libA_transitive_out"),
+            TestCompilerArgs("-module-name", "libA"),
+            emptyList(),
+        )
+        val libB = compileToLibrary(
+            libBSrc,
+            buildDir.resolve("libB_transitive_out"),
+            TestCompilerArgs("-module-name", "libB"),
+            listOf(libA.asLibraryDependency()),
+        )
+        val cacheDir = buildDir.resolve("cache_transitive_static").apply { mkdirs() }
+        val frameworkName = "Kt"
+        val libBDeps = listOf("-l", libA.klibFile.absolutePath)
+        produceStaticCache(libA.klibFile, cacheDir)
+        produceStaticCache(libB.klibFile, cacheDir, libBDeps)
+        produceObjCCache(libA.klibFile, frameworkName, cacheDir)
+        produceObjCCache(libB.klibFile, frameworkName, cacheDir, libBDeps)
+
+        val frameworkSrc = buildDir.resolve("framework_transitive_src").apply {
+            mkdirs()
+            resolve("framework.kt").writeText("package test\nfun frameworkMarker() = 1")
+        }
+        val testCase = generateObjCFrameworkTestCase(
+            TestKind.STANDALONE_NO_TR, extras, frameworkName,
+            listOf(frameworkSrc.resolve("framework.kt")),
+            freeCompilerArgs = TestCompilerArgs(
+                listOf(
+                    "-Xstatic-framework",
+                    "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+                    "-Xbinary=bundleId=foo.bar",
+                    "-module-name", frameworkName,
+                    // Note: only libB is exported, libA is a transitive dependency!
+                    "-Xexport-library=${libB.klibFile.absolutePath}",
+                    "-Xcache-directory=${cacheDir.absolutePath}",
+                    "-Xdisable-ir-checkers=IrVisibilityChecker",
+                )
+            ),
+            givenDependencies = setOf(TestModule.Given(libA.klibFile), TestModule.Given(libB.klibFile)),
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout * 5),
+        )
+        testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings).result.assertSuccess()
+
+        val testSwiftFile = buildDir.resolve("transitiveObjcCacheTest.swift").apply {
+            writeText(
+                """
+                import Kt
+
+                func testTransitiveObjCCache() throws {
+                    let alpha = LibAAlpha(name: "AlphaCached")
+                    let beta = Beta(alpha: alpha, count: 42)
+
+                    try assertEquals(actual: beta.alpha.name, expected: "AlphaCached")
+                    try assertEquals(actual: beta.count, expected: 42)
+                }
+
+                class TransitiveObjcCacheTestTests : SimpleTestProvider {
+                    override init() {
+                        super.init()
+                        test("testTransitiveObjCCache", testTransitiveObjCCache)
+                    }
+                }
+                """.trimIndent()
+            )
+        }
+        val successExecutable = compileSwift(listOf(testSwiftFile), emptyList())
+        val testExecutable = TestExecutable(
+            successExecutable.resultingArtifact,
+            successExecutable.loggedData,
+            listOf(TestName("testObjCCacheStaticFrameworkTransitiveDependencyNotExported"))
+        )
+        runExecutableAndVerify(testCase, testExecutable)
+    }
+
+    @Test
+    fun testObjCCacheStaticFrameworkMixedCaching() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val libASrc = buildDir.resolve("libA_mixed_src").apply {
+            mkdirs()
+            resolve("libA.kt").writeText(
+                """
+                package liba
+                class Alpha(val name: String)
+                """.trimIndent()
+            )
+        }
+        val libBSrc = buildDir.resolve("libB_mixed_src").apply {
+            mkdirs()
+            resolve("libB.kt").writeText(
+                """
+                package libb
+                import liba.Alpha
+                class Beta(val alpha: Alpha, val count: Int)
+                """.trimIndent()
+            )
+        }
+        val libA = compileToLibrary(
+            libASrc,
+            buildDir.resolve("libA_mixed_out"),
+            TestCompilerArgs("-module-name", "libA"),
+            emptyList(),
+        )
+        val libB = compileToLibrary(
+            libBSrc,
+            buildDir.resolve("libB_mixed_out"),
+            TestCompilerArgs("-module-name", "libB"),
+            listOf(libA.asLibraryDependency()),
+        )
+        val cacheDir = buildDir.resolve("cache_mixed_static").apply { mkdirs() }
+        val frameworkName = "Kt"
+        // Precompile cache ONLY for libA; libB is uncached
+        produceStaticCache(libA.klibFile, cacheDir)
+        produceObjCCache(libA.klibFile, frameworkName, cacheDir)
+
+        val frameworkSrc = buildDir.resolve("framework_mixed_src").apply {
+            mkdirs()
+            resolve("framework.kt").writeText("package test\nfun frameworkMarker() = 1")
+        }
+        val testCase = generateObjCFrameworkTestCase(
+            TestKind.STANDALONE_NO_TR, extras, frameworkName,
+            listOf(frameworkSrc.resolve("framework.kt")),
+            freeCompilerArgs = TestCompilerArgs(
+                listOf(
+                    "-Xstatic-framework",
+                    "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+                    "-Xbinary=bundleId=foo.bar",
+                    "-module-name", frameworkName,
+                    "-Xexport-library=${libA.klibFile.absolutePath}",
+                    "-Xexport-library=${libB.klibFile.absolutePath}",
+                    "-Xcache-directory=${cacheDir.absolutePath}",
+                    "-Xdisable-ir-checkers=IrVisibilityChecker",
+                )
+            ),
+            givenDependencies = setOf(TestModule.Given(libA.klibFile), TestModule.Given(libB.klibFile)),
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout * 5),
+        )
+        testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings).result.assertSuccess()
+
+        val testSwiftFile = buildDir.resolve("mixedObjcCacheTest.swift").apply {
+            writeText(
+                """
+                import Kt
+
+                func testMixedObjCCache() throws {
+                    let alpha = Alpha(name: "AlphaCached")
+                    let beta = Beta(alpha: alpha, count: 99)
+
+                    try assertEquals(actual: beta.alpha.name, expected: "AlphaCached")
+                    try assertEquals(actual: beta.count, expected: 99)
+                }
+
+                class MixedObjcCacheTestTests : SimpleTestProvider {
+                    override init() {
+                        super.init()
+                        test("testMixedObjCCache", testMixedObjCCache)
+                    }
+                }
+                """.trimIndent()
+            )
+        }
+        val successExecutable = compileSwift(listOf(testSwiftFile), emptyList())
+        val testExecutable = TestExecutable(
+            successExecutable.resultingArtifact,
+            successExecutable.loggedData,
+            listOf(TestName("testObjCCacheStaticFrameworkMixedCaching"))
+        )
+        runExecutableAndVerify(testCase, testExecutable)
+    }
+
+    @Test
+    fun testObjCCacheWithObjCExportEntryPoints() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val library = compileToLibrary(
+            testSuiteDir.resolve("objcexport/library"),
+            buildDir,
+            TestCompilerArgs("-Xshort-module-name=MyLibrary", "-module-name", "org.jetbrains.kotlin.native.test-library"),
+            emptyList(),
+        )
+        val cacheDir = buildDir.resolve("cache_entry_points").apply { mkdirs() }
+        val frameworkName = "Kt"
+        val entryPointsFile = buildDir.resolve("entrypoints.txt").apply {
+            writeText(
+                """
+                callable library.A.data
+                callable library.A.<init>
+                """.trimIndent()
+            )
+        }
+        produceStaticCache(library.klibFile, cacheDir)
+        produceObjCCache(library.klibFile, frameworkName, cacheDir, listOf("-Xbinary=objcExportEntryPointsPath=${entryPointsFile.absolutePath}"))
+
+        val ktFiles = testSuiteDir.resolve("objcexport").listFiles { file: File -> file.name.endsWith(".kt") }!!.toList()
+        val testCase = generateObjCFrameworkTestCase(
+            TestKind.STANDALONE_NO_TR, extras, frameworkName,
+            ktFiles,
+            freeCompilerArgs = TestCompilerArgs(
+                listOf(
+                    "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+                    "-Xbinary=bundleId=foo.bar",
+                    "-module-name", frameworkName,
+                    "-Xexport-library=${library.klibFile.absolutePath}",
+                    "-Xcache-directory=${cacheDir.absolutePath}",
+                    "-Xbinary=objcExportEntryPointsPath=${entryPointsFile.absolutePath}",
+                    "-Xdisable-ir-checkers=IrVisibilityChecker",
+                )
+            ),
+            givenDependencies = setOf(TestModule.Given(library.klibFile)),
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout * 5),
+        )
+        val success = testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings).result.assertSuccess()
+        val headerFile = success.resultingArtifact.frameworkDir.resolve("Headers/$frameworkName.h")
+        assertTrue(headerFile.exists()) { "Header file $headerFile does not exist" }
+        val headerContent = headerFile.readText()
+        assertTrue(headerContent.contains("initWithData:")) { "Expected initWithData: in header:\n$headerContent" }
+        assertTrue(headerContent.contains("@property (readonly) NSString *data")) { "Expected data property in header:\n$headerContent" }
+        assertFalse(headerContent.contains("readDataFromLibraryEnum")) { "Expected readDataFromLibraryEnum to be excluded from header:\n$headerContent" }
+    }
+
+    @Test
+    fun testObjCCacheStaticFrameworkCrossLibraryCategory() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val libASrc = buildDir.resolve("libA_cross_src").apply {
+            mkdirs()
+            resolve("libA.kt").writeText(
+                """
+                package liba
+                class Alpha(val name: String)
+                """.trimIndent()
+            )
+        }
+        val libBSrc = buildDir.resolve("libB_cross_src").apply {
+            mkdirs()
+            resolve("libB.kt").writeText(
+                """
+                package libb
+                import liba.Alpha
+                fun Alpha.greet(): String = "Hello " + this.name
+                """.trimIndent()
+            )
+        }
+        val libA = compileToLibrary(
+            libASrc,
+            buildDir.resolve("libA_cross_out"),
+            TestCompilerArgs("-module-name", "libA"),
+            emptyList(),
+        )
+        val libB = compileToLibrary(
+            libBSrc,
+            buildDir.resolve("libB_cross_out"),
+            TestCompilerArgs("-module-name", "libB"),
+            listOf(libA.asLibraryDependency()),
+        )
+        val cacheDir = buildDir.resolve("cache_cross_static").apply { mkdirs() }
+        val frameworkName = "Kt"
+        val libBDeps = listOf("-l", libA.klibFile.absolutePath)
+        produceStaticCache(libA.klibFile, cacheDir)
+        produceStaticCache(libB.klibFile, cacheDir, libBDeps)
+        produceObjCCache(libA.klibFile, frameworkName, cacheDir)
+        produceObjCCache(libB.klibFile, frameworkName, cacheDir, libBDeps)
+
+        val frameworkSrc = buildDir.resolve("framework_cross_src").apply {
+            mkdirs()
+            resolve("framework.kt").writeText("package test\nfun frameworkMarker() = 1")
+        }
+        val testCase = generateObjCFrameworkTestCase(
+            TestKind.STANDALONE_NO_TR, extras, frameworkName,
+            listOf(frameworkSrc.resolve("framework.kt")),
+            freeCompilerArgs = TestCompilerArgs(
+                listOf(
+                    "-Xstatic-framework",
+                    "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+                    "-Xbinary=bundleId=foo.bar",
+                    "-module-name", frameworkName,
+                    "-Xexport-library=${libA.klibFile.absolutePath}",
+                    "-Xexport-library=${libB.klibFile.absolutePath}",
+                    "-Xcache-directory=${cacheDir.absolutePath}",
+                    "-Xdisable-ir-checkers=IrVisibilityChecker",
+                )
+            ),
+            givenDependencies = setOf(TestModule.Given(libA.klibFile), TestModule.Given(libB.klibFile)),
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout * 5),
+        )
+        testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings).result.assertSuccess()
+
+        val testSwiftFile = buildDir.resolve("crossCategoryObjcCacheTest.swift").apply {
+            writeText(
+                """
+                import Kt
+
+                func testCrossLibraryCategory() throws {
+                    let alpha = Alpha(name: "AlphaCached")
+                    try assertEquals(actual: alpha.greet(), expected: "Hello AlphaCached")
+                }
+
+                class CrossCategoryObjcCacheTestTests : SimpleTestProvider {
+                    override init() {
+                        super.init()
+                        test("testCrossLibraryCategory", testCrossLibraryCategory)
+                    }
+                }
+                """.trimIndent()
+            )
+        }
+        val successExecutable = compileSwift(listOf(testSwiftFile), emptyList())
+        val testExecutable = TestExecutable(
+            successExecutable.resultingArtifact,
+            successExecutable.loggedData,
+            listOf(TestName("testObjCCacheStaticFrameworkCrossLibraryCategory"))
+        )
+        runExecutableAndVerify(testCase, testExecutable)
+    }
+
+    @Test
+    fun testObjCCacheArtifactAndMetadataLayout() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val libSrc = buildDir.resolve("layout_lib_src").apply {
+            mkdirs()
+            resolve("lib.kt").writeText(
+                """
+                package test.layout
+                interface LayoutProtocol {
+                    fun doWork(): String
+                }
+                class LayoutWorker : LayoutProtocol {
+                    override fun doWork(): String = "done"
+                }
+                """.trimIndent()
+            )
+        }
+        val library = compileToLibrary(
+            libSrc,
+            buildDir.resolve("layout_lib_out"),
+            TestCompilerArgs("-module-name", "layoutLib"),
+            emptyList(),
+        )
+        val cacheDir = buildDir.resolve("cache_layout").apply { mkdirs() }
+        val frameworkName = "Kt"
+        produceStaticCache(library.klibFile, cacheDir)
+        produceObjCCache(library.klibFile, frameworkName, cacheDir)
+
+        val objcCacheDir = cacheDir.resolve("layoutLib-$frameworkName.objc_cache")
+        assertTrue(objcCacheDir.exists()) { "Expected objc_cache directory $objcCacheDir to exist" }
+
+        val binDir = objcCacheDir.resolve("bin")
+        assertTrue(binDir.exists()) { "Expected bin directory $binDir to exist" }
+
+        val archiveFiles = binDir.listFiles { file: File -> file.name.endsWith(".a") }
+        assertTrue(!archiveFiles.isNullOrEmpty()) { "Expected static archive .a file in $binDir" }
+
+        val metadataFile = binDir.resolve("objc_cache_metadata.properties")
+        assertTrue(metadataFile.exists()) { "Expected metadata file $metadataFile to exist" }
+
+        val properties = java.util.Properties().apply {
+            metadataFile.bufferedReader().use { load(it) }
+        }
+
+        val targetName = properties.getProperty("targetName")
+        assertTrue(!targetName.isNullOrEmpty()) { "Metadata targetName should not be empty" }
+        assertTrue(targetName == targets.testTarget.name) {
+            "Expected targetName ${targets.testTarget.name}, but was $targetName"
+        }
+
+        val klibHash = properties.getProperty("klibHash")
+        assertTrue(!klibHash.isNullOrEmpty()) { "Metadata klibHash should not be empty" }
+
+        val compilerFingerprint = properties.getProperty("compilerFingerprint")
+        assertTrue(compilerFingerprint != null) { "Metadata should contain compilerFingerprint property" }
+
+        val classAdapters = properties.getProperty("classAdapters")
+        assertTrue(classAdapters != null) { "Metadata must contain classAdapters property" }
+        assertTrue(classAdapters.contains("LayoutWorker")) {
+            "Expected classAdapters to contain LayoutWorker, but was $classAdapters"
+        }
+
+        val protocolAdapters = properties.getProperty("protocolAdapters")
+        assertTrue(protocolAdapters != null) { "Metadata must contain protocolAdapters property" }
+        assertTrue(protocolAdapters.contains("LayoutProtocol")) {
+            "Expected protocolAdapters to contain LayoutProtocol, but was $protocolAdapters"
+        }
+    }
+
+    @Test
+    fun testObjCCacheDynamicFrameworkCrossLibraryCategory() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val libASrc = buildDir.resolve("libA_cross_dyn_src").apply {
+            mkdirs()
+            resolve("libA.kt").writeText(
+                """
+                package liba
+                class Alpha(val name: String)
+                """.trimIndent()
+            )
+        }
+        val libBSrc = buildDir.resolve("libB_cross_dyn_src").apply {
+            mkdirs()
+            resolve("libB.kt").writeText(
+                """
+                package libb
+                import liba.Alpha
+                fun Alpha.greet(): String = "Hello " + this.name
+                """.trimIndent()
+            )
+        }
+        val libA = compileToLibrary(
+            libASrc,
+            buildDir.resolve("libA_cross_dyn_out"),
+            TestCompilerArgs("-module-name", "libA"),
+            emptyList(),
+        )
+        val libB = compileToLibrary(
+            libBSrc,
+            buildDir.resolve("libB_cross_dyn_out"),
+            TestCompilerArgs("-module-name", "libB"),
+            listOf(libA.asLibraryDependency()),
+        )
+        val cacheDir = buildDir.resolve("cache_cross_dynamic").apply { mkdirs() }
+        val frameworkName = "Kt"
+        val libBDeps = listOf("-l", libA.klibFile.absolutePath)
+        produceStaticCache(libA.klibFile, cacheDir)
+        produceStaticCache(libB.klibFile, cacheDir, libBDeps)
+        produceObjCCache(libA.klibFile, frameworkName, cacheDir)
+        produceObjCCache(libB.klibFile, frameworkName, cacheDir, libBDeps)
+
+        val frameworkSrc = buildDir.resolve("framework_cross_dyn_src").apply {
+            mkdirs()
+            resolve("framework.kt").writeText("package test\nfun frameworkMarker() = 1")
+        }
+        val testCase = generateObjCFrameworkTestCase(
+            TestKind.STANDALONE_NO_TR, extras, frameworkName,
+            listOf(frameworkSrc.resolve("framework.kt")),
+            freeCompilerArgs = TestCompilerArgs(
+                listOf(
+                    "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+                    "-Xbinary=bundleId=foo.bar",
+                    "-module-name", frameworkName,
+                    "-Xexport-library=${libA.klibFile.absolutePath}",
+                    "-Xexport-library=${libB.klibFile.absolutePath}",
+                    "-Xcache-directory=${cacheDir.absolutePath}",
+                    "-Xdisable-ir-checkers=IrVisibilityChecker",
+                )
+            ),
+            givenDependencies = setOf(TestModule.Given(libA.klibFile), TestModule.Given(libB.klibFile)),
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout * 5),
+        )
+        testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings).result.assertSuccess()
+
+        val testSwiftFile = buildDir.resolve("crossCategoryDynamicObjcCacheTest.swift").apply {
+            writeText(
+                """
+                import Kt
+
+                func testCrossLibraryCategoryDynamic() throws {
+                    let alpha = Alpha(name: "AlphaDynamic")
+                    try assertEquals(actual: alpha.greet(), expected: "Hello AlphaDynamic")
+                }
+
+                class CrossCategoryDynamicObjcCacheTestTests : SimpleTestProvider {
+                    override init() {
+                        super.init()
+                        test("testCrossLibraryCategoryDynamic", testCrossLibraryCategoryDynamic)
+                    }
+                }
+                """.trimIndent()
+            )
+        }
+        val successExecutable = compileSwift(listOf(testSwiftFile), emptyList())
+        val testExecutable = TestExecutable(
+            successExecutable.resultingArtifact,
+            successExecutable.loggedData,
+            listOf(TestName("testObjCCacheDynamicFrameworkCrossLibraryCategory"))
+        )
+        runExecutableAndVerify(testCase, testExecutable)
+    }
+
+    @Test
+    fun testObjCCacheDynamicFrameworkTransitiveDependencyNotExported() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val libASrc = buildDir.resolve("libA_transitive_dyn_src").apply {
+            mkdirs()
+            resolve("libA.kt").writeText(
+                """
+                package liba
+                class Alpha(val name: String)
+                """.trimIndent()
+            )
+        }
+        val libBSrc = buildDir.resolve("libB_transitive_dyn_src").apply {
+            mkdirs()
+            resolve("libB.kt").writeText(
+                """
+                package libb
+                import liba.Alpha
+                class Beta(val alpha: Alpha, val count: Int)
+                """.trimIndent()
+            )
+        }
+        val libA = compileToLibrary(
+            libASrc,
+            buildDir.resolve("libA_transitive_dyn_out"),
+            TestCompilerArgs("-module-name", "libA"),
+            emptyList(),
+        )
+        val libB = compileToLibrary(
+            libBSrc,
+            buildDir.resolve("libB_transitive_dyn_out"),
+            TestCompilerArgs("-module-name", "libB"),
+            listOf(libA.asLibraryDependency()),
+        )
+        val cacheDir = buildDir.resolve("cache_transitive_dynamic").apply { mkdirs() }
+        val frameworkName = "Kt"
+        val libBDeps = listOf("-l", libA.klibFile.absolutePath)
+        produceStaticCache(libA.klibFile, cacheDir)
+        produceStaticCache(libB.klibFile, cacheDir, libBDeps)
+        produceObjCCache(libA.klibFile, frameworkName, cacheDir)
+        produceObjCCache(libB.klibFile, frameworkName, cacheDir, libBDeps)
+
+        val frameworkSrc = buildDir.resolve("framework_transitive_dyn_src").apply {
+            mkdirs()
+            resolve("framework.kt").writeText("package test\nfun frameworkMarker() = 1")
+        }
+        val testCase = generateObjCFrameworkTestCase(
+            TestKind.STANDALONE_NO_TR, extras, frameworkName,
+            listOf(frameworkSrc.resolve("framework.kt")),
+            freeCompilerArgs = TestCompilerArgs(
+                listOf(
+                    "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+                    "-Xbinary=bundleId=foo.bar",
+                    "-module-name", frameworkName,
+                    // Note: only libB is exported, libA is a transitive dependency in dynamic framework!
+                    "-Xexport-library=${libB.klibFile.absolutePath}",
+                    "-Xcache-directory=${cacheDir.absolutePath}",
+                    "-Xdisable-ir-checkers=IrVisibilityChecker",
+                )
+            ),
+            givenDependencies = setOf(TestModule.Given(libA.klibFile), TestModule.Given(libB.klibFile)),
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout * 5),
+        )
+        testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings).result.assertSuccess()
+
+        val testSwiftFile = buildDir.resolve("transitiveDynamicObjcCacheTest.swift").apply {
+            writeText(
+                """
+                import Kt
+
+                func testTransitiveObjCCacheDynamic() throws {
+                    let alpha = LibAAlpha(name: "AlphaDynamicCached")
+                    let beta = Beta(alpha: alpha, count: 42)
+
+                    try assertEquals(actual: beta.alpha.name, expected: "AlphaDynamicCached")
+                    try assertEquals(actual: beta.count, expected: 42)
+                }
+
+                class TransitiveDynamicObjcCacheTestTests : SimpleTestProvider {
+                    override init() {
+                        super.init()
+                        test("testTransitiveObjCCacheDynamic", testTransitiveObjCCacheDynamic)
+                    }
+                }
+                """.trimIndent()
+            )
+        }
+        val successExecutable = compileSwift(listOf(testSwiftFile), emptyList())
+        val testExecutable = TestExecutable(
+            successExecutable.resultingArtifact,
+            successExecutable.loggedData,
+            listOf(TestName("testObjCCacheDynamicFrameworkTransitiveDependencyNotExported"))
+        )
+        runExecutableAndVerify(testCase, testExecutable)
+    }
+
+    @Test
+    fun testObjCCacheRuntimeParityWithCleanFramework() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val paritySrc = buildDir.resolve("parity_src").apply {
+            mkdirs()
+            resolve("parity.kt").writeText(
+                """
+                package parity
+
+                open class ParityPerson(val name: String, var age: Int) {
+                    open fun describe(): String = "Person(name=" + name + ", age=" + age + ")"
+                }
+
+                class ParityStudent(name: String, age: Int, val university: String) : ParityPerson(name, age) {
+                    override fun describe(): String = "Student(name=" + name + ", age=" + age + ", university=" + university + ")"
+                }
+
+                enum class ParityDirection(val degrees: Int) {
+                    NORTH(0),
+                    EAST(90),
+                    SOUTH(180),
+                    WEST(270);
+
+                    fun opposite(): ParityDirection = when (this) {
+                        NORTH -> SOUTH
+                        EAST -> WEST
+                        SOUTH -> NORTH
+                        WEST -> EAST
+                    }
+                }
+
+                class ParityMathOps {
+                    companion object {
+                        fun add(a: Int, b: Int): Int = a + b
+                    }
+                }
+
+                class ParityCalculator {
+                    @Throws(Throwable::class)
+                    fun divide(a: Int, b: Int): Int {
+                        if (b == 0) throw IllegalArgumentException("Division by zero")
+                        return a / b
+                    }
+                }
+
+                fun ParityPerson.celebrateBirthday(): String {
+                    age += 1
+                    return "Happy birthday " + name + ", now " + age
+                }
+
+                fun parityMultiply(a: Int, b: Int): Int = a * b
+                """.trimIndent()
+            )
+        }
+        val parityLib = compileToLibrary(
+            paritySrc,
+            buildDir.resolve("parity_lib_out"),
+            TestCompilerArgs("-module-name", "parityLib"),
+            emptyList(),
+        )
+
+        fun createSwiftTestCode(moduleName: String, className: String): String =
+            """
+            import $moduleName
+
+            func runParityAssertions() throws {
+                let person = ParityPerson(name: "Ada", age: 25)
+                try assertEquals(actual: person.name, expected: "Ada")
+                try assertEquals(actual: person.age, expected: 25)
+                try assertEquals(actual: person.describe(), expected: "Person(name=Ada, age=25)")
+
+                let student = ParityStudent(name: "Grace", age: 19, university: "ComputingCollege")
+                try assertEquals(actual: student.name, expected: "Grace")
+                try assertEquals(actual: student.age, expected: 19)
+                try assertEquals(actual: student.university, expected: "ComputingCollege")
+                try assertEquals(actual: student.describe(), expected: "Student(name=Grace, age=19, university=ComputingCollege)")
+
+                person.age = 26
+                try assertEquals(actual: person.age, expected: 26)
+
+                let birthdayMsg = person.celebrateBirthday()
+                try assertEquals(actual: birthdayMsg, expected: "Happy birthday Ada, now 27")
+                try assertEquals(actual: person.age, expected: 27)
+
+                let product = ParityKt.parityMultiply(a: 6, b: 7)
+                try assertEquals(actual: product, expected: 42)
+
+                let dir = ParityDirection.north
+                try assertEquals(actual: dir.degrees, expected: 0)
+                try assertEquals(actual: dir.opposite(), expected: ParityDirection.south)
+
+                let sum = ParityMathOps.companion.add(a: 20, b: 22)
+                try assertEquals(actual: sum, expected: 42)
+
+                let calc = ParityCalculator()
+                var exceptionThrown = false
+                do {
+                    _ = try calc.divide(a: 10, b: 0)
+                } catch {
+                    exceptionThrown = true
+                }
+                try assertTrue(exceptionThrown)
+            }
+
+            class $className : SimpleTestProvider {
+                override init() {
+                    super.init()
+                    test("runParityAssertions", runParityAssertions)
+                }
+            }
+            """.trimIndent()
+
+        // 1. Clean Framework
+        val cleanFrameworkName = "KtClean"
+        val cleanMarkerFile = buildDir.resolve("clean_marker.kt").apply {
+            writeText("package test\nfun cleanMarker() = 1")
+        }
+        val cleanTestCase = generateObjCFrameworkTestCase(
+            TestKind.STANDALONE_NO_TR, extras, cleanFrameworkName,
+            listOf(cleanMarkerFile),
+            freeCompilerArgs = TestCompilerArgs(
+                listOf(
+                    "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+                    "-Xbinary=bundleId=parity.clean",
+                    "-module-name", cleanFrameworkName,
+                    "-Xexport-library=${parityLib.klibFile.absolutePath}",
+                    "-Xdisable-ir-checkers=IrVisibilityChecker",
+                )
+            ),
+            givenDependencies = setOf(TestModule.Given(parityLib.klibFile)),
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout * 5),
+        )
+        val cleanResult = testCompilationFactory.testCaseToObjCFrameworkCompilation(cleanTestCase, testRunSettings).result.assertSuccess()
+
+        val cleanSwiftFile = buildDir.resolve("cleanParity.swift").apply {
+            writeText(createSwiftTestCode(cleanFrameworkName, "CleanParityTests"))
+        }
+        val cleanExecutable = compileSwift(listOf(cleanSwiftFile), emptyList())
+        val cleanTestExec = TestExecutable(
+            cleanExecutable.resultingArtifact,
+            cleanExecutable.loggedData,
+            listOf(TestName("testObjCCacheRuntimeParityClean"))
+        )
+        runExecutableAndVerify(cleanTestCase, cleanTestExec)
+
+        // 2. Cached Framework
+        val cachedFrameworkName = "KtCached"
+        val cacheDir = buildDir.resolve("cache_parity").apply { mkdirs() }
+        produceStaticCache(parityLib.klibFile, cacheDir)
+        produceObjCCache(parityLib.klibFile, cachedFrameworkName, cacheDir)
+
+        val cachedMarkerFile = buildDir.resolve("cached_marker.kt").apply {
+            writeText("package test\nfun cachedMarker() = 1")
+        }
+        val cachedTestCase = generateObjCFrameworkTestCase(
+            TestKind.STANDALONE_NO_TR, extras, cachedFrameworkName,
+            listOf(cachedMarkerFile),
+            freeCompilerArgs = TestCompilerArgs(
+                listOf(
+                    "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+                    "-Xbinary=bundleId=parity.cached",
+                    "-module-name", cachedFrameworkName,
+                    "-Xexport-library=${parityLib.klibFile.absolutePath}",
+                    "-Xcache-directory=${cacheDir.absolutePath}",
+                    "-Xdisable-ir-checkers=IrVisibilityChecker",
+                )
+            ),
+            givenDependencies = setOf(TestModule.Given(parityLib.klibFile)),
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout * 5),
+        )
+        val cachedResult = testCompilationFactory.testCaseToObjCFrameworkCompilation(cachedTestCase, testRunSettings).result.assertSuccess()
+
+        val cachedSwiftFile = buildDir.resolve("cachedParity.swift").apply {
+            writeText(createSwiftTestCode(cachedFrameworkName, "CachedParityTests"))
+        }
+        val cachedExecutable = compileSwift(listOf(cachedSwiftFile), emptyList())
+        val cachedTestExec = TestExecutable(
+            cachedExecutable.resultingArtifact,
+            cachedExecutable.loggedData,
+            listOf(TestName("testObjCCacheRuntimeParityCached"))
+        )
+        runExecutableAndVerify(cachedTestCase, cachedTestExec)
+
+        // 3. Header Parity Comparison
+        val cleanHeader = cleanResult.resultingArtifact.mainHeader.readText()
+        val cachedHeader = cachedResult.resultingArtifact.mainHeader.readText()
+
+        assertTrue(cleanHeader.contains("@interface ${cleanFrameworkName}ParityPerson")) { "Clean header missing ParityPerson" }
+        assertTrue(cachedHeader.contains("@interface ${cachedFrameworkName}ParityPerson")) { "Cached header missing ParityPerson" }
+
+        assertTrue(cleanHeader.contains("@interface ${cleanFrameworkName}ParityStudent : ${cleanFrameworkName}ParityPerson")) { "Clean header missing ParityStudent" }
+        assertTrue(cachedHeader.contains("@interface ${cachedFrameworkName}ParityStudent : ${cachedFrameworkName}ParityPerson")) { "Cached header missing ParityStudent" }
+
+        assertTrue(cleanHeader.contains("@interface ${cleanFrameworkName}ParityDirection")) { "Clean header missing ParityDirection" }
+        assertTrue(cachedHeader.contains("@interface ${cachedFrameworkName}ParityDirection")) { "Cached header missing ParityDirection" }
+
+        assertTrue(cleanHeader.contains("@interface ${cleanFrameworkName}ParityMathOps")) { "Clean header missing ParityMathOps" }
+        assertTrue(cachedHeader.contains("@interface ${cachedFrameworkName}ParityMathOps")) { "Cached header missing ParityMathOps" }
+
+        assertTrue(cleanHeader.contains("celebrateBirthday")) { "Clean header missing celebrateBirthday" }
+        assertTrue(cachedHeader.contains("celebrateBirthday")) { "Cached header missing celebrateBirthday" }
+
+        assertTrue(cleanHeader.contains("parityMultiply")) { "Clean header missing parityMultiply" }
+        assertTrue(cachedHeader.contains("parityMultiply")) { "Cached header missing parityMultiply" }
     }
 
     @Test

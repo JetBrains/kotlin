@@ -38,27 +38,71 @@ enum class UniqueKind(val llvmName: String) {
     EMPTY_ARRAY("theEmptyArray")
 }
 
-internal class LlvmDeclarations(private val unique: Map<UniqueKind, UniqueLlvmDeclarations>) {
-    fun forFunction(function: IrSimpleFunction): LlvmCallable =
+internal open class LlvmDeclarations(private val unique: Map<UniqueKind, UniqueLlvmDeclarations>) {
+    open fun forFunction(function: IrSimpleFunction): LlvmCallable =
             forFunctionOrNull(function) ?: with(function) {
                 error("$name in $file/${parent.fqNameForIrSerialization}")
             }
 
-    fun forFunctionOrNull(function: IrSimpleFunction): LlvmCallable? =
+    open fun forFunctionOrNull(function: IrSimpleFunction): LlvmCallable? =
             (function.metadata as? KonanMetadata.Function)?.llvm
 
-    fun forClass(irClass: IrClass) =
-            (irClass.metadata as? KonanMetadata.Class)?.llvm ?: error(irClass.render())
+    open fun forClass(irClass: IrClass): ClassLlvmDeclarations =
+            forClassOrNull(irClass) ?: error(irClass.render())
 
-    fun forField(field: IrField) =
+    open fun forClassOrNull(irClass: IrClass): ClassLlvmDeclarations? =
+            (irClass.metadata as? KonanMetadata.Class)?.llvm
+
+    open fun forField(field: IrField): FieldLlvmDeclarations =
             (field.metadata as? KonanMetadata.InstanceField)?.llvm ?: error(field.render())
 
-    fun forStaticField(field: IrField) =
+    open fun forStaticField(field: IrField): StaticFieldLlvmDeclarations =
             (field.metadata as? KonanMetadata.StaticField)?.llvm ?: error(field.render())
 
-    fun forUnique(kind: UniqueKind) = unique[kind] ?: error("No unique $kind")
+    open fun forUnique(kind: UniqueKind): UniqueLlvmDeclarations = unique[kind] ?: error("No unique $kind")
 
 }
+
+/**
+ * Guarded stub for [LlvmDeclarations] when producing Objective-C export cache (`-produce objc_cache`).
+ *
+ * In `objc_cache` mode, backend lowerings and [CreateLLVMDeclarationsPhase] are bypassed since the archive
+ * only provides Objective-C class stubs and type adapters for framework linking.
+ * Kotlin declarations are compiled into the static binary cache and must always be treated as external.
+ * Any unexpected query through [LlvmDeclarations] indicates an internal compiler inconsistency.
+ */
+internal class ObjCCacheLlvmDeclarations : LlvmDeclarations(emptyMap()) {
+    private fun unexpected(query: String): Nothing {
+        error(
+            "Unexpected query for $query in llvmDeclarations while producing objc_cache. " +
+            "In objc_cache mode, backend lowerings and CreateLLVMDeclarationsPhase are bypassed; " +
+            "all Kotlin declarations must be resolved as external."
+        )
+    }
+
+    override fun forFunction(function: IrSimpleFunction): LlvmCallable =
+        unexpected("function '${function.name}' (${function.render()})")
+
+    override fun forFunctionOrNull(function: IrSimpleFunction): LlvmCallable? =
+        unexpected("function '${function.name}' (${function.render()})")
+
+    override fun forClass(irClass: IrClass): ClassLlvmDeclarations =
+        unexpected("class '${irClass.name}' (${irClass.render()})")
+
+    override fun forClassOrNull(irClass: IrClass): ClassLlvmDeclarations? =
+        unexpected("class '${irClass.name}' (${irClass.render()})")
+
+    override fun forField(field: IrField): FieldLlvmDeclarations =
+        unexpected("field '${field.name}' (${field.render()})")
+
+    override fun forStaticField(field: IrField): StaticFieldLlvmDeclarations =
+        unexpected("static field '${field.name}' (${field.render()})")
+
+    override fun forUnique(kind: UniqueKind): UniqueLlvmDeclarations =
+        unexpected("unique declaration '$kind'")
+}
+
+internal fun createObjCCacheLlvmDeclarations(): LlvmDeclarations = ObjCCacheLlvmDeclarations()
 
 internal class ObjectBodyType(val llvmBodyType: LLVMTypeRef, objectFieldIndices: List<Int>) {
     val sortedIndicesOfObjectFields = objectFieldIndices.sorted()

@@ -347,8 +347,12 @@ internal class CodeGeneratorVisitor(
     override fun visitModuleFragment(declaration: IrModuleFragment) {
         context.log{"visitModule                    : ${ir2string(declaration)}"}
 
-        initializeCachedBoxes(generationState)
-        declaration.acceptChildrenVoid(this)
+        // For OBJC_CACHE, Kotlin declaration bodies and boxed value caches are compiled into
+        // the library's static binary cache. Here we only emit Objective-C runtime classes and type adapters.
+        if (!context.config.produce.isObjCCache) {
+            initializeCachedBoxes(generationState)
+            declaration.acceptChildrenVoid(this)
+        }
 
         runAndProcessInitializers(null) {
             // Note: it is here because it also generates some bitcode.
@@ -364,7 +368,11 @@ internal class CodeGeneratorVisitor(
             }
         }
 
-        appendStaticInitializers()
+        // Static initializers are executed by the binary cache or main framework binary,
+        // not from within the isolated Objective-C export cache archive.
+        if (!context.config.produce.isObjCCache) {
+            appendStaticInitializers()
+        }
     }
 
     //-------------------------------------------------------------------------//

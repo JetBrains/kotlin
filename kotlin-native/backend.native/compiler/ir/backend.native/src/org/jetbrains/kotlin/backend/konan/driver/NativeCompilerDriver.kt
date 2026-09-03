@@ -45,6 +45,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
                         CompilerOutputKind.DYNAMIC_CACHE -> produceBinary(engine, config, environment)
                         CompilerOutputKind.STATIC_CACHE -> produceBinary(engine, config, environment)
                         CompilerOutputKind.HEADER_CACHE -> produceBinary(engine, config, environment)
+                        CompilerOutputKind.OBJC_CACHE -> produceObjCCache(engine, config, environment)
                         CompilerOutputKind.TEST_BUNDLE -> produceBundle(engine, config, environment)
                     }
                 }
@@ -77,6 +78,37 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         }
         if (config.omitFrameworkBinary) {
             return
+        }
+
+        val backendContext = createBackendContext(config, frontendOutput, linkKlibsOutput) {
+            it.objCExportedInterface = objCExportedInterface
+            it.objCExportCodeSpec = objCCodeSpec
+        }
+        engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
+    }
+
+    /**
+     * Produce an Objective-C export cache (.objc_cache) containing:
+     * - Static archive of Objective-C class stubs and type adapters (.objc_cache/bin/<artifact>.a)
+     * - Metadata property mapping (bin/objc_cache_metadata.properties).
+     *
+     * Bypasses framework directory creation, header generation, and backend IR lowerings.
+     */
+    private fun produceObjCCache(engine: PhaseEngine<NativeBackendPhaseContext>, config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment) {
+        require(config.target.family.isAppleFamily)
+        require(config.produce.isObjCCache)
+
+        val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) }
+                ?: return
+
+        val objCExportedInterface = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
+            engine.runPhase(ProduceObjCExportInterfacePhase, frontendOutput)
+        }
+
+        val [linkKlibsOutput, objCCodeSpec] = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
+            engine.linkKlibs(frontendOutput) {
+                it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
+            }
         }
 
         val backendContext = createBackendContext(config, frontendOutput, linkKlibsOutput) {

@@ -118,7 +118,9 @@ private fun CodeGenerator.setWritableTypeInfo(
                 irClass
         )
     } else {
-        val writeableTypeInfoGlobal = generationState.llvmDeclarations.forClass(irClass).writableTypeInfoGlobal
+        val classDeclarations = generationState.llvmDeclarations.forClassOrNull(irClass)
+            ?: throw WritableTypeInfoOverrideError(irClass, WritableTypeInfoOverrideError.Reason.NON_OVERRIDABLE)
+        val writeableTypeInfoGlobal = classDeclarations.writableTypeInfoGlobal
         if (writeableTypeInfoGlobal !is OverridableWritableTypeInfo) {
             throw WritableTypeInfoOverrideError(irClass, WritableTypeInfoOverrideError.Reason.NON_OVERRIDABLE)
         }
