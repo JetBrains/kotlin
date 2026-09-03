@@ -127,7 +127,6 @@ internal actual fun ulongToDouble(value: Long): Double =
     @OptIn(BoxedLongApi::class)
     kotlin.js.internal.boxedLong.ulongToDouble(value)
 
-@PublishedApi
 // The function call will be replaced by the compiler depends on the Long representation (bigint vs boxed)
 internal actual fun ulongToString(value: Long, base: Int): String =
 // TODO(KT-88679): Throw an exception after the bootstrap update

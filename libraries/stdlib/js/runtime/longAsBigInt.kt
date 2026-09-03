@@ -225,7 +225,7 @@ internal fun ulongToString(value: Long, base: Int): String =
 @LongAsBigIntApi
 @UsedFromCompilerGeneratedCode
 internal fun ulongFromUnsignedSafeDouble(value: Double): ULong =
-    BigInt(floor(value)).unsafeCast<ULong>()
+    ULong(BigInt(floor(value)).unsafeCast<Long>())
 
 @LongAsBigIntApi
 @UsedFromCompilerGeneratedCode

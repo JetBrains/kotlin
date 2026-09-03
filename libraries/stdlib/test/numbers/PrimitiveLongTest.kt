@@ -388,7 +388,7 @@ class PrimitiveLongTest {
     @Test
     fun toLong() {
         fun test(expected: Long, x: Long) {
-            assertEquals(expected, x.toLong())
+            assertEquals(expected, x)
         }
 
         test(0L, 0L)
