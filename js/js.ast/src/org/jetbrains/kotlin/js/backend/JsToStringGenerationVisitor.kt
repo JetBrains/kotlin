@@ -685,6 +685,7 @@ open class JsToStringGenerationVisitor(
                                 accept(item.valueExpr)
                                 if (wasEnclosed) rightParen()
                             }
+                            null -> {}
                         }
                     }
                 }
