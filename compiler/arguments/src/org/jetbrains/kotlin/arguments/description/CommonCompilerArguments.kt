@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.defaultEmpty
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
+import org.jetbrains.kotlin.arguments.dsl.defaultTrue
 import org.jetbrains.kotlin.arguments.dsl.previous
 import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.common.arguments.Disables
@@ -579,6 +580,21 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
             introducedVersion = introducedVersion,
             deprecatedVersion = deprecatedVersion,
         )
+    }
+
+    compilerArgument {
+        name = "Xuse-fir-lt"
+        compilerName = "useFirLT"
+        description = "Compile using the LightTree parser with the frontend IR.".asReleaseDependent()
+        valueType = BooleanType.defaultTrue
+        deprecatedMessage =
+            "The light tree mode is enabled by default, and it will become the only available mode in one of the future releases."
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_7_0,
+            deprecatedVersion = KotlinReleaseVersion.v2_4_20,
+        )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
     compilerArgument {

@@ -164,21 +164,6 @@ class RemovedCompilerArguments {
         }
 
     @all:Deprecated(
-        message = "The light tree mode is enabled by default, and it will become the only available mode in one of the future releases.",
-        level = DeprecationLevel.ERROR,
-    )
-    @Argument(
-        value = "-Xuse-fir-lt",
-        description = "Compile using the LightTree parser with the frontend IR.",
-        deprecatedVersion = "2.4.20",
-        removedVersion = "2.5.0",
-    )
-    var useFirLT: Boolean = true
-        set(value) {
-            field = value
-        }
-
-    @all:Deprecated(
         message = "Compiler flag -Xuse-k2 is no more supported. Compiler versions 2.0+ use K2 by default, unless the language version is set to 1.9 or earlier.",
         level = DeprecationLevel.ERROR,
     )

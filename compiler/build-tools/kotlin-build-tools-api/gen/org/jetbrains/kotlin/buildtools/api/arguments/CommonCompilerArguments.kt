@@ -911,12 +911,10 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      *
      * Deprecated in Kotlin version 2.4.20.
-     *
-     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
-    @RemovedCompilerArgument
+    @DeprecatedCompilerArgument
     public val X_USE_FIR_LT: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_USE_FIR_LT", KotlinReleaseVersion(1, 7, 0))
 
