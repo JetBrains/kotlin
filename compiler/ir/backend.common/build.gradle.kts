@@ -18,8 +18,10 @@ dependencies {
     implementation(project(":core:descriptors"))
     implementation(project(":compiler:frontend.common-psi")) // required for error reporting
     compileOnly(intellijCore())
+    compileOnly(libs.intellij.fastutil)
 
     testImplementation(kotlinTest("junit5"))
+    testRuntimeOnly(libs.intellij.fastutil)
 
     testFixturesImplementation(kotlinTest("junit5"))
 }

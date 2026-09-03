@@ -21,3 +21,16 @@ interface LoggingContext {
         }
     }
 }
+
+class ContextLogger(val context: LoggingContext) {
+    operator fun String.unaryPlus() = context.log { this }
+}
+
+/**
+ * Logs several lines at once, each one being emitted with the unary plus operator.
+ * Nothing is computed unless [LoggingContext.inVerbosePhase] is `true`.
+ */
+fun LoggingContext.logMultiple(messageBuilder: ContextLogger.() -> Unit) {
+    if (!inVerbosePhase) return
+    with(ContextLogger(this)) { messageBuilder() }
+}

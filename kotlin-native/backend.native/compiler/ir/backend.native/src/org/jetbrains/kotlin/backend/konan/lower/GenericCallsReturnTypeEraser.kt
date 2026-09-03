@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irImplicitCoercionToUnit
 import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
-import org.jetbrains.kotlin.backend.konan.optimizations.STATEMENT_ORIGIN_NO_CAST_NEEDED
+import org.jetbrains.kotlin.backend.common.lower.optimizations.STATEMENT_ORIGIN_NO_CAST_NEEDED
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration

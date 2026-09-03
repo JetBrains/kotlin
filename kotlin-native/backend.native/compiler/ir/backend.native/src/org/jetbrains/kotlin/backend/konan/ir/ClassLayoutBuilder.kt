@@ -11,6 +11,7 @@ import llvm.LLVMStoreSizeOfType
 import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.config.logMultiple
 import org.jetbrains.kotlin.backend.konan.llvm.CodegenLlvmHelpers
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.backend.konan.lower.getDefaultValueForOverriddenBuiltinFunction
 import org.jetbrains.kotlin.backend.konan.lower.isEagerStaticInitializer
-import org.jetbrains.kotlin.backend.konan.util.CustomBitSet
+import org.jetbrains.kotlin.backend.common.util.CustomBitSet
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*

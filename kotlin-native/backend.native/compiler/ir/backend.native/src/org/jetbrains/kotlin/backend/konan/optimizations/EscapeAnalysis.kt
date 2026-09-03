@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.backend.konan.ir.annotations.PointsToKind
 import org.jetbrains.kotlin.backend.konan.ir.hasFinalizer
 import org.jetbrains.kotlin.backend.konan.ir.isBuiltInOperator
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
-import org.jetbrains.kotlin.backend.konan.logMultiple
+import org.jetbrains.kotlin.config.logMultiple
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement

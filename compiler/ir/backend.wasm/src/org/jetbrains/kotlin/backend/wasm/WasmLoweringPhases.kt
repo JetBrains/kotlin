@@ -240,6 +240,14 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::GenericReturnTypeLowering,
     ::UnitToVoidLowering,
 
+    // The inliner (and the lowerings above) erase generics aggressively, which leaves behind implicit casts on the
+    // generic type boundaries. Since every cast is checked at runtime, restore some of the type information and
+    // drop the casts and type checks which become provably redundant.
+    // Note: both passes must run before autoboxing, whose boxing decisions depend on the computed types, and
+    // before `BuiltInsLowering`, which replaces the equality intrinsics `WasmCastsOptimization` reasons about.
+    ::WasmComputeTypesPass,
+    ::WasmCastsOptimization,
+
     // Replace builtins before autoboxing
     ::BuiltInsLowering,
 

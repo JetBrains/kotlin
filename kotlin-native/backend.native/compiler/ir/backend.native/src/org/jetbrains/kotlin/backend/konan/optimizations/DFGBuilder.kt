@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.config.logMultiple
 import org.jetbrains.kotlin.backend.konan.ir.actualCallee
 import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
 import org.jetbrains.kotlin.backend.konan.lower.liveVariablesAtSuspensionPoint

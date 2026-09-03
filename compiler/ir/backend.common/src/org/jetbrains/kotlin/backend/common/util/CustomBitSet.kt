@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.konan.util
+package org.jetbrains.kotlin.backend.common.util
 
 import it.unimi.dsi.fastutil.ints.IntArraySet
 import it.unimi.dsi.fastutil.ints.IntSet
@@ -11,7 +11,8 @@ import it.unimi.dsi.fastutil.ints.IntSet
 const val LAZY_CONVERSION_THRESHOLD = 8
 
 /**
- * Provides some bulk operations needed for devirtualization.
+ * A bit set providing the bulk operations needed by the IR data flow analyses, with a sparse (lazy)
+ * representation for the common case of very few set bits.
  *
  * Mutating operations ([or], [orHasChanged], [orWithFilterHasChanged], [and], [andNot])
  * must not be called with `this` as any of their bitset arguments. Self-application
@@ -19,11 +20,16 @@ const val LAZY_CONVERSION_THRESHOLD = 8
  * may be reallocated mid-operation. Callers must [copy] before applying such an
  * operation to itself.
  */
-internal class CustomBitSet private constructor(size: Int, data: LongArray) {
+class CustomBitSet private constructor(size: Int, data: LongArray) {
     var size = size
         private set
-    private var data = data
-    private var lazy: IntSet? = null
+
+    // `data`, `lazy` and `buildFromLazy` are `@PublishedApi internal` rather than private only because
+    // the public inline `forEachBit`/`forEachWord` need to access them.
+    @PublishedApi
+    internal var data = data
+    @PublishedApi
+    internal var lazy: IntSet? = null
 
     internal val isLazy: Boolean get() = lazy != null
 
@@ -36,7 +42,8 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
 
     constructor(nodesCount: Int) : this(0, LongArray((nodesCount shr 6) + 1))
 
-    private fun buildFromLazy() {
+    @PublishedApi
+    internal fun buildFromLazy() {
         val lazy = lazy ?: return
         this.lazy = null
         if (lazy.isNotEmpty()) ensureCapacity(lazy.max() ushr 6)

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.backend.konan.optimizations.STATEMENT_ORIGIN_NO_CAST_NEEDED
+import org.jetbrains.kotlin.backend.common.lower.optimizations.STATEMENT_ORIGIN_NO_CAST_NEEDED
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement

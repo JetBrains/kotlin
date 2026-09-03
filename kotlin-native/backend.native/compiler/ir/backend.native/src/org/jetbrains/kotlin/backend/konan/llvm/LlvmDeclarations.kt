@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.toCValues
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.config.logMultiple
 import org.jetbrains.kotlin.backend.konan.cgen.isCFunctionOrGlobalAccessor
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoPointer

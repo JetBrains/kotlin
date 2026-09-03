@@ -151,12 +151,3 @@ internal class NativeBackendContext(
             )
     )
 }
-
-internal class ContextLogger(val context: LoggingContext) {
-    operator fun String.unaryPlus() = context.log { this }
-}
-
-internal fun LoggingContext.logMultiple(messageBuilder: ContextLogger.() -> Unit) {
-    if (!inVerbosePhase) return
-    with(ContextLogger(this)) { messageBuilder() }
-}

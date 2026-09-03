@@ -10,11 +10,12 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.config.logMultiple
 import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnboxCall
 import org.jetbrains.kotlin.backend.konan.lower.loweredConstructorFunction
 import org.jetbrains.kotlin.backend.konan.util.IntArrayList
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
-import org.jetbrains.kotlin.backend.konan.util.CustomBitSet
+import org.jetbrains.kotlin.backend.common.util.CustomBitSet
 import org.jetbrains.kotlin.backend.konan.util.LongArrayList
 import org.jetbrains.kotlin.backend.konan.util.LongHashSet
 import org.jetbrains.kotlin.descriptors.ClassKind

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.castIsProvenToSucceed
 import org.jetbrains.kotlin.backend.wasm.instanceCheckForExternalClass
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.getRuntimeClass
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
@@ -52,7 +53,16 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).at(expression)
 
         return when (expression.operator) {
-            IrTypeOperator.IMPLICIT_CAST -> lowerCast(expression, isSafe = false)
+            IrTypeOperator.IMPLICIT_CAST -> when {
+                // A cast the compiler has proven to always succeed needs only the narrowing, not a runtime check.
+                expression.castIsProvenToSucceed -> narrowType(expression.argument.type, expression.type, expression.argument)
+                // An implicit cast to `Unit` is a coercion rather than a check: the value is discarded and the `Unit`
+                // instance produced instead (which is what `narrowType` does). This is what makes `foo<Unit>() === Unit`
+                // hold for a `fun <T> foo(): T = any as T`, and what lets a `() -> Any?` callable reference be used as
+                // a `() -> Unit`. See unchecked_cast10.kt and KT-82732. An explicit `x as Unit` is still checked.
+                expression.type.isUnit() -> narrowType(expression.argument.type, expression.type, expression.argument)
+                else -> lowerCast(expression, isSafe = false)
+            }
             IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> error("Dynamic casts are not supported in Wasm backend")
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> expression
             IrTypeOperator.IMPLICIT_INTEGER_COERCION -> lowerIntegerCoercion(expression)
@@ -331,50 +341,6 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
                     elsePart = if (!isSafe) generateCCE(argument, fromType, toType) else builder.irNull()
                 )
             }
-        }
-    }
-
-    private fun shouldGenerateKotlinCast(expression: IrExpression, toType: IrType): Boolean {
-        if (toType.isNullableAny()) return false
-        if (toType.isTypeParameter()) return false
-        // For the cases of casts of callable references to return Unit type, such as
-        //
-        // fun suspect(): Dummy { ... }
-        // ::suspect as () -> Unit
-        //
-        // just need to return a Unit instance +builder.irCall(unitGetInstance)
-        // instead of trying to cast to Unit
-        //
-        // also fixes testData/codegen/box/basics/unchecked_cast10.kt
-        if (toType.isUnit()) return false
-
-        val argumentType = when (expression) {
-            is IrCall -> {
-                val function = expression.symbol.owner
-
-                val packageFragment = function.getPackageFragment()
-                if (context.getExcludedPackageFragment(packageFragment.packageFqName) == packageFragment) return false
-
-                function.returnType
-            }
-            is IrGetField -> expression.symbol.owner.type
-            else -> expression.type
-        }
-        return argumentType.isTypeParameter()
-    }
-
-    private fun lowerImplicitCast(expression: IrTypeOperatorCall): IrExpression {
-        return if (true) {
-            lowerCast(
-                expression = expression,
-                isSafe = false
-            )
-        } else {
-            narrowType(
-                fromType = expression.argument.type,
-                toType = expression.typeOperand,
-                value = expression.argument
-            )
         }
     }
 

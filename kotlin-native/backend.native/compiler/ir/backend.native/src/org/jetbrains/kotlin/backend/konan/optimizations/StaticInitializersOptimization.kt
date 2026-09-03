@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.DirectedGraphCondensationBuilder
 import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.ir.actualCallee
-import org.jetbrains.kotlin.backend.konan.logMultiple
+import org.jetbrains.kotlin.config.logMultiple
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement

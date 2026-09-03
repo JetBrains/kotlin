@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCatch
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.irFlag
 
@@ -23,3 +24,12 @@ var IrClass.instanceCheckForExternalClass: IrSimpleFunction? by irAttribute(copy
 var IrClass.getJsClassForExternalClass: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 var IrCatch.toCatchThrowableOrJsException: Boolean by irFlag(copyByDefault = true)
+
+/**
+ * Set on an `IMPLICIT_CAST` which the compiler has proven to always succeed, so that
+ * [org.jetbrains.kotlin.backend.wasm.lower.WasmTypeOperatorLowering] lowers it into a plain narrowing
+ * (which may still box or unbox) instead of a runtime type check.
+ *
+ * See [org.jetbrains.kotlin.backend.common.lower.optimizations.ProvenImplicitCastBuilder].
+ */
+var IrTypeOperatorCall.castIsProvenToSucceed: Boolean by irFlag(copyByDefault = true)
