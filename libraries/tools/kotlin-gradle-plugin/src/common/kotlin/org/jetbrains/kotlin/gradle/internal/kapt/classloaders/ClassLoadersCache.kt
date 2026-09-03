@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.internal.kapt.classloaders
 
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
+import org.jetbrains.kotlin.gradle.internal.KaptExecutionToken
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.net.URLClassLoader
@@ -36,12 +37,7 @@ class ClassLoadersCache(
             }
             .build()
 
-    /**
-     * Class loaders created for classpath entries that must not be retained (see [getForSplitPaths]),
-     * keyed by the thread that asked for them so that concurrent kapt executions in one daemon do not
-     * close each other's loaders.
-     */
-    private val transientLoaders = ConcurrentHashMap<Thread, MutableList<URLClassLoader>>()
+    private val executionLocalLoaders = ConcurrentHashMap<KaptExecutionToken, MutableList<URLClassLoader>>()
 
     fun getForClassPath(files: List<File>): ClassLoader = getForClassPath(files, parentClassLoader)
 
@@ -58,39 +54,54 @@ class ClassLoadersCache(
     }
 
     /**
-     * Gets a [ClassLoader] for [bottom] + [top] files.
+     * Gets a [ClassLoader] for annotation processor classpath split by its retention lifecycle.
      *
-     * Only the [top] loader is cached. [bottom] holds project-local artifacts, so a loader over it is
-     * created fresh for this execution and must be released with [releaseTransientLoader] once
-     * annotation processing has finished - otherwise the cache keeps the project's own jars open for
-     * the lifetime of the daemon, which on Windows prevents the project directory from being deleted.
+     * [cacheableProcessorClasspath] gets a reusable loader. [executionLocalProcessorClasspath] gets
+     * a per-execution loader that must be released with [releaseExecutionLocalLoaders] once annotation
+     * processing has finished.
      *
-     * Useful when you have internal and external artifacts and internal ones can be references from other internal artefacts only.
-     * So you can safely cache [ClassLoader] from external artifacts and use it for internal ones.
+     * This is useful when project-local annotation processors may depend on reusable processor
+     * artifacts, but reusable processors must not depend on project-local artifacts.
      */
-    fun getForSplitPaths(bottom: List<File>, top: List<File>): ClassLoader {
-        // Only external artifacts are cached. Note `top` is empty whenever every annotation processor
-        // is a project dependency - caching `bottom + top` in that case was the file-descriptor leak.
-        val parent = if (top.isEmpty()) parentClassLoader else getForClassPath(top)
-        if (bottom.isEmpty()) return parent
+    internal fun getForProcessorClasspath(
+        executionToken: KaptExecutionToken,
+        executionLocalProcessorClasspath: List<File>,
+        cacheableProcessorClasspath: List<File>,
+    ): ClassLoader {
+        val executionLoaders = synchronized(executionToken) {
+            check(!executionToken.closed) { "ClassLoadersCache execution is already closed" }
+            executionLocalLoaders.computeIfAbsent(executionToken) { mutableListOf() }
+        }
 
-        val local = makeClassLoader(bottom, parent)
-        // Not closed here: loaders handed out earlier in the same execution may still be in use.
-        transientLoaders.computeIfAbsent(Thread.currentThread()) { mutableListOf() }.add(local)
+        val parent = if (cacheableProcessorClasspath.isEmpty()) parentClassLoader else getForClassPath(cacheableProcessorClasspath)
+        if (executionLocalProcessorClasspath.isEmpty()) return parent
+
+        val local = makeClassLoader(executionLocalProcessorClasspath, parent)
+        synchronized(executionToken) {
+            if (executionToken.closed) {
+                local.close()
+                error("ClassLoadersCache execution is already closed")
+            }
+            executionLoaders.add(local)
+        }
         return local
     }
 
-    /**
-     * Closes the loaders [getForSplitPaths] created for project-local artifacts on this thread, if any.
-     * Safe to call when there are none.
-     */
-    fun releaseTransientLoader() {
-        transientLoaders.remove(Thread.currentThread())?.forEach { it.close() }
+    internal fun releaseExecutionLocalLoaders(executionToken: KaptExecutionToken) {
+        val executionLoaders = synchronized(executionToken) {
+            if (executionToken.closed) return
+            executionToken.closed = true
+            executionLocalLoaders.remove(executionToken)
+        }
+        executionLoaders?.forEach { it.close() }
+        executionLoaders?.clear()
     }
 
     override fun close() {
-        transientLoaders.values.forEach { loaders -> loaders.forEach { it.close() } }
-        transientLoaders.clear()
+        for (token in executionLocalLoaders.keys) {
+            releaseExecutionLocalLoaders(token)
+        }
+        executionLocalLoaders.clear()
         cache.cleanUp()
     }
 
