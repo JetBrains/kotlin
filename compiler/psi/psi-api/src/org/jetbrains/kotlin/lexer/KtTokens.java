@@ -165,6 +165,7 @@ public interface KtTokens {
     int ACTUAL_KEYWORD_Id = EXPECT_KEYWORD_Id + 1;
     int INTERPOLATION_PREFIX_Id = ACTUAL_KEYWORD_Id + 1;
     int ALL_KEYWORD_Id = INTERPOLATION_PREFIX_Id + 1;
+    int ERROR_KEYWORD_Id = ALL_KEYWORD_Id + 1;
 
     @NotNull KtToken EOF   = new KtToken("EOF", EOF_Id);
 
@@ -315,6 +316,7 @@ public interface KtTokens {
     @NotNull KtModifierKeywordToken REIFIED_KEYWORD   = KtModifierKeywordToken.softKeywordModifier("reified", REIFIED_KEYWORD_Id);
     @NotNull KtModifierKeywordToken COMPANION_KEYWORD = KtModifierKeywordToken.softKeywordModifier("companion", COMPANION_KEYWORD_Id);
     @NotNull KtModifierKeywordToken SEALED_KEYWORD    = KtModifierKeywordToken.softKeywordModifier("sealed", SEALED_KEYWORD_Id);
+    @NotNull KtModifierKeywordToken ERROR_KEYWORD    = KtModifierKeywordToken.softKeywordModifier("error", ERROR_KEYWORD_Id);
 
     @Deprecated @NotNull KtModifierKeywordToken DEFAULT_VISIBILITY_KEYWORD = PUBLIC_KEYWORD;
 
@@ -364,7 +366,7 @@ public interface KtTokens {
                                              DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD,
                                              ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD, CONST_KEYWORD, OPERATOR_KEYWORD, INFIX_KEYWORD,
                                              SUSPEND_KEYWORD, EXPECT_KEYWORD, ACTUAL_KEYWORD,
-                                             VALUE_KEYWORD, CONTEXT_KEYWORD
+                                             VALUE_KEYWORD, CONTEXT_KEYWORD, ERROR_KEYWORD
     );
 
     /**
@@ -398,6 +400,7 @@ public interface KtTokens {
                     INFIX_KEYWORD,
                     OPERATOR_KEYWORD,
                     DATA_KEYWORD,
+                    ERROR_KEYWORD,
 
                     OUT_KEYWORD, IN_KEYWORD,
                     REIFIED_KEYWORD,

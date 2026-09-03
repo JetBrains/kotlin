@@ -500,6 +500,8 @@ public abstract interface class org/jetbrains/kotlin/lexer/KtTokens {
 	public static final field EQEQEQ_Id I
 	public static final field EQEQ_Id I
 	public static final field EQ_Id I
+	public static final field ERROR_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
+	public static final field ERROR_KEYWORD_Id I
 	public static final field ESCAPE_SEQUENCE Lorg/jetbrains/kotlin/lexer/KtToken;
 	public static final field ESCAPE_SEQUENCE_Id I
 	public static final field EXCL Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;

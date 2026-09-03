@@ -4951,6 +4951,26 @@ public class CompiledJvmStubsTestGenerated extends AbstractCompiledJvmStubsTest 
   }
 
   @Nested
+  @TestMetadata("compiler/psi/psi-impl/testData/psi/richErrors")
+  @TestDataPath("$PROJECT_ROOT")
+  public class RichErrors {
+    private void run(String fileName) {
+      runTest("compiler/psi/psi-impl/testData/psi/richErrors/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInRichErrors() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/richErrors"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("errorModifierSmoke.kt")
+    public void testErrorModifierSmoke() {
+      run("errorModifierSmoke.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/psi/psi-impl/testData/psi/script")
   @TestDataPath("$PROJECT_ROOT")
   public class Script {
