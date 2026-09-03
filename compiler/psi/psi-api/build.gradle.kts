@@ -16,7 +16,6 @@ dependencies {
     api(project(":compiler:frontend.common"))
 
     compileOnly(intellijCore())
-    compileOnly(libs.guava)
 
     testFixturesApi(platform(libs.junit.bom))
     testFixturesImplementation(libs.junit.jupiter.api)

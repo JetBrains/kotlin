@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.psi;
 
-import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
@@ -31,6 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.StatementFilterKt;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -846,7 +846,7 @@ public class KtPsiUtil {
     ) {
         if (!(root instanceof KtElement)) return null;
 
-        List<KtElement> results = Lists.newArrayList();
+        List<KtElement> results = new ArrayList<>();
 
         root.accept(
                 new KtVisitorVoid() {

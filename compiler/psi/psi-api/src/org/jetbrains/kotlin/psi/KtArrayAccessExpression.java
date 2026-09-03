@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.psi;
 
-import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -72,7 +72,7 @@ public class KtArrayAccessExpression extends KtExpressionImpl implements KtRefer
         if (lBracket == null || rBracket == null) {
             return Collections.emptyList();
         }
-        return Lists.newArrayList(lBracket.getTextRange(), rBracket.getTextRange());
+        return Arrays.asList(lBracket.getTextRange(), rBracket.getTextRange());
     }
 
     /** Returns the opening bracket {@code [}, or {@code null} if it is absent in incomplete code. */
