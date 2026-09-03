@@ -343,9 +343,9 @@ public fun <@kotlin.internal.OnlyInputTypes T> List<T>.indexOf(element: T): Int 
 }
 
 /**
- * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
+ * Returns index of the first element matching the given [predicate], or null if the collection does not contain such element.
  */
-public inline fun <T> Iterable<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
+public inline fun <T> Iterable<T>.indexOfFirstOrNull(predicate: (T) -> Boolean): Int {
     var index = 0
     for (item in this) {
         checkIndexOverflow(index)
@@ -353,27 +353,41 @@ public inline fun <T> Iterable<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
             return index
         index++
     }
-    return -1
+    return null
 }
 
 /**
- * Returns index of the first element matching the given [predicate], or -1 if the list does not contain such element.
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
  */
-public inline fun <T> List<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
+public inline fun <T> Iterable<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
+    return indexOfFirstOrNull(predicate) ?: -1
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or null if the list does not contain such element.
+ */
+public inline fun <T> List<T>.indexOfFirstOrNull(predicate: (T) -> Boolean): Int? {
     var index = 0
     for (item in this) {
         if (predicate(item))
             return index
         index++
     }
-    return -1
+    return null
 }
 
 /**
- * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
+ * Returns index of the first element matching the given [predicate], or -1 if the list does not contain such element.
  */
-public inline fun <T> Iterable<T>.indexOfLast(predicate: (T) -> Boolean): Int {
-    var lastIndex = -1
+public inline fun <T> List<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
+    return indexOfFirstOrNull(predicate) ?: -1
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or null if the collection does not contain such element.
+ */
+public inline fun <T> Iterable<T>.indexOfLastOrNull(predicate: (T) -> Boolean): Int? {
+    var lastIndex = null
     var index = 0
     for (item in this) {
         checkIndexOverflow(index)
@@ -385,16 +399,30 @@ public inline fun <T> Iterable<T>.indexOfLast(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Returns index of the last element matching the given [predicate], or -1 if the list does not contain such element.
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
  */
-public inline fun <T> List<T>.indexOfLast(predicate: (T) -> Boolean): Int {
+public inline fun <T> Iterable<T>.indexOfLast(predicate: (T) -> Boolean): Int {
+    return indexOfLastOrNull(predicate) ?: -1
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or null if the list does not contain such element.
+ */
+public inline fun <T> List<T>.indexOfLastOrNull(predicate: (T) -> Boolean): Int? {
     val iterator = this.listIterator(size)
     while (iterator.hasPrevious()) {
         if (predicate(iterator.previous())) {
             return iterator.nextIndex()
         }
     }
-    return -1
+    return null
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the list does not contain such element.
+ */
+public inline fun <T> List<T>.indexOfLast(predicate: (T) -> Boolean): Int {
+    return indexOfLastOrNull(predicate) ?: -1
 }
 
 /**
