@@ -19,7 +19,6 @@ dependencies {
     compileOnly(project(":kotlin-util-klib"))
     compileOnly(intellijCore())
     compileOnly(libs.guava)
-    compileOnly(libs.intellij.fastutil)
 
     testFixturesApi(platform(libs.junit.bom))
     testFixturesImplementation(libs.junit.jupiter.api)
