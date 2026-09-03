@@ -202,6 +202,7 @@ dependencies {
     fatJarContents(commonDependency("com.google.code.findbugs", "jsr305"))
     fatJarContents(libs.vavr)
     fatJarContents(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm")) { isTransitive = false }
+    fatJarContents(project(":kotlin-tooling-core")) { isTransitive = false }
 
     fatJarContents(intellijCore())
     fatJarContents(commonDependency("org.jetbrains.intellij.deps.jna:jna")) { isTransitive = false }

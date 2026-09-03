@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":core:deserialization"))
     implementation(project(":core:deserialization.common"))
     implementation(project(":kotlin-util-klib-metadata"))
+    implementation(project(":kotlin-tooling-core"))
     api(project(":compiler:util"))
     implementation(project(":compiler:fir:diagnostic-renderers"))
     implementation(project(":compiler:psi:psi-api"))

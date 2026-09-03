@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibili
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import org.jetbrains.kotlin.tooling.core.isDev
+import org.jetbrains.kotlin.tooling.core.isSnapshot
 import java.io.ByteArrayInputStream
 import java.nio.file.Path
 import java.util.jar.Manifest
@@ -20,14 +23,15 @@ abstract class LibrarySpecialCompatibilityChecker {
     class Version(
         private val comparableVersion: MavenComparableVersion,
         private val languageVersion: LanguageVersion,
+        private val toolingVersion: KotlinToolingVersion,
         private val rawVersion: String
     ) : Comparable<Version> {
         override fun compareTo(other: Version) = comparableVersion.compareTo(other.comparableVersion)
         override fun equals(other: Any?) = (other as? Version)?.comparableVersion == comparableVersion
         override fun hashCode() = comparableVersion.hashCode()
 
-        // TODO (KT-83853): Find a reliable way to detect dev compiler versions.
-        val isDevVersion: Boolean = "-dev-" in rawVersion || rawVersion.endsWith("-dev") || rawVersion.endsWith("-SNAPSHOT")
+        // A version is considered a "dev" version unless its classifier denotes one of the known release maturities.
+        val isDevVersion: Boolean = toolingVersion.isDev || toolingVersion.isSnapshot
 
         override fun toString() = rawVersion
         fun toComparableVersionString() = comparableVersion.toString()
@@ -48,7 +52,13 @@ abstract class LibrarySpecialCompatibilityChecker {
                 val languageVersion = LanguageVersion.fromFullVersionString(rawVersion)
                     ?: return null
 
-                return Version(comparableVersion, languageVersion, rawVersion)
+                val toolingVersion = try {
+                    KotlinToolingVersion(rawVersion)
+                } catch (_: IllegalArgumentException) {
+                    return null
+                }
+
+                return Version(comparableVersion, languageVersion, toolingVersion, rawVersion)
             }
         }
     }
