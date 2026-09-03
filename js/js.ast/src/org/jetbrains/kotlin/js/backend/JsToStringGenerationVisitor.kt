@@ -1,204 +1,172 @@
-// Copyright (c) 2011, the Dart project authors.  Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
-
-package org.jetbrains.kotlin.js.backend;
-
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import kotlin.text.StringsKt;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.js.backend.ast.*;
-import org.jetbrains.kotlin.js.backend.ast.JsVars.JsVar;
-import org.jetbrains.kotlin.js.common.IdentifierPolicyKt;
-import org.jetbrains.kotlin.js.util.TextOutput;
-
-import java.math.BigInteger;
-import java.util.*;
-
-/**
- * Produces text output from a JavaScript AST.
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-public class JsToStringGenerationVisitor extends JsVisitor {
-    private static final char[] CHARS_BREAK = "break".toCharArray();
-    private static final char[] CHARS_CASE = "case".toCharArray();
-    private static final char[] CHARS_CATCH = "catch".toCharArray();
-    private static final char[] CHARS_CLASS = "class".toCharArray();
-    private static final char[] CHARS_CONSTRUCTOR = "constructor".toCharArray();
-    private static final char[] CHARS_CONTINUE = "continue".toCharArray();
-    private static final char[] CHARS_YIELD = "yield".toCharArray();
-    private static final char[] CHARS_YIELD_STAR = "yield*".toCharArray();
-    private static final char[] CHARS_DEBUGGER = "debugger".toCharArray();
-    private static final char[] CHARS_DEFAULT = "default".toCharArray();
-    private static final char[] CHARS_DO = "do".toCharArray();
-    private static final char[] CHARS_ELSE = "else".toCharArray();
-    private static final char[] CHARS_EXTENDS = "extends".toCharArray();
-    private static final char[] CHARS_FALSE = "false".toCharArray();
-    private static final char[] CHARS_FINALLY = "finally".toCharArray();
-    private static final char[] CHARS_FOR = "for".toCharArray();
-    private static final char[] CHARS_FUNCTION = "function".toCharArray();
-    private static final char[] CHARS_STATIC = "static".toCharArray();
-    private static final char[] CHARS_GET = "get".toCharArray();
-    private static final char[] CHARS_SET = "set".toCharArray();
-    private static final char[] CHARS_IF = "if".toCharArray();
-    private static final char[] CHARS_IN = "in".toCharArray();
-    private static final char[] CHARS_OF = "of".toCharArray();
-    private static final char[] CHARS_NEW = "new".toCharArray();
-    private static final char[] CHARS_NULL = "null".toCharArray();
-    private static final char[] CHARS_RETURN = "return".toCharArray();
-    private static final char[] CHARS_SWITCH = "switch".toCharArray();
-    private static final char[] CHARS_THIS = "this".toCharArray();
-    private static final char CHARS_GENERATOR = '*';
 
-    private static final char[] CHARS_SUPER = "super".toCharArray();
-    private static final char[] CHARS_THROW = "throw".toCharArray();
-    private static final char[] CHARS_TRUE = "true".toCharArray();
-    private static final char[] CHARS_TRY = "try".toCharArray();
-    private static final char[] CHARS_VAR = "var".toCharArray();
-    private static final char[] CHARS_LET = "let".toCharArray();
-    private static final char[] CHARS_CONST = "const".toCharArray();
-    private static final char[] CHARS_WHILE = "while".toCharArray();
-    private static final char[] CHARS_ELLIPSIS = "...".toCharArray();
-    private static final char[] HEX_DIGITS = {
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-    private static final Map<Character, Integer> COMMON_ESCAPE_MAPPING = createCommonEscapeMapping();
-    private static final Map<Character, Integer> STRING_ESCAPE_MAPPING = createStringEscapeMapping();
-    private static final Map<Character, Integer> TEMPLATE_ESCAPE_MAPPING = createTemplateEscapeMapping();
-    private static Map<Character, Integer> createCommonEscapeMapping() {
-        Map<Character, Integer> mapping = new HashMap<>();
-        mapping.put('\b', (int) 'b');
-        mapping.put('\f', (int) 'f');
-        mapping.put('\n', (int) 'n');
-        mapping.put('\r', (int) 'r');
-        mapping.put('\t', (int) 't');
-        mapping.put('\\', (int) '\\');
-        return mapping;
-    }
-    private static Map<Character, Integer> createStringEscapeMapping() {
-        Map<Character, Integer> mapping = new HashMap<>(COMMON_ESCAPE_MAPPING);
-        return mapping;
-    }
-    private static Map<Character, Integer> createTemplateEscapeMapping() {
-        Map<Character, Integer> mapping = new HashMap<>(COMMON_ESCAPE_MAPPING);
-        mapping.put('$', (int) '$');
-        return mapping;
-    }
-    @NotNull
-    private final SourceLocationConsumer sourceLocationConsumer;
+package org.jetbrains.kotlin.js.backend
 
-    @NotNull
-    private final List<Object> sourceInfoStack = new ArrayList<>();
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.common.RESERVED_KEYWORDS
+import org.jetbrains.kotlin.js.common.isValidES5Identifier
+import org.jetbrains.kotlin.js.util.TextOutput
+import java.math.BigInteger
 
-    public static CharSequence javaScriptString(String value) {
-        return javaScriptString(value, false);
-    }
+open class JsToStringGenerationVisitor(
+    protected val p: TextOutput,
+    private val sourceLocationConsumer: SourceLocationConsumer = NoOpSourceLocationConsumer,
+) : JsVisitor() {
+    companion object {
+        private val CHARS_BREAK = "break".toCharArray()
+        private val CHARS_CASE = "case".toCharArray()
+        private val CHARS_CATCH = "catch".toCharArray()
+        private val CHARS_CLASS = "class".toCharArray()
+        private val CHARS_CONSTRUCTOR = "constructor".toCharArray()
+        private val CHARS_CONTINUE = "continue".toCharArray()
+        private val CHARS_YIELD = "yield".toCharArray()
+        private val CHARS_YIELD_STAR = "yield*".toCharArray()
+        private val CHARS_DEBUGGER = "debugger".toCharArray()
+        private val CHARS_DEFAULT = "default".toCharArray()
+        private val CHARS_DO = "do".toCharArray()
+        private val CHARS_ELSE = "else".toCharArray()
+        private val CHARS_EXTENDS = "extends".toCharArray()
+        private val CHARS_FALSE = "false".toCharArray()
+        private val CHARS_FINALLY = "finally".toCharArray()
+        private val CHARS_FOR = "for".toCharArray()
+        private val CHARS_FUNCTION = "function".toCharArray()
+        private val CHARS_STATIC = "static".toCharArray()
+        private val CHARS_GET = "get".toCharArray()
+        private val CHARS_SET = "set".toCharArray()
+        private val CHARS_IF = "if".toCharArray()
+        private val CHARS_IN = "in".toCharArray()
+        private val CHARS_OF = "of".toCharArray()
+        private val CHARS_NEW = "new".toCharArray()
+        private val CHARS_NULL = "null".toCharArray()
+        private val CHARS_RETURN = "return".toCharArray()
+        private val CHARS_SWITCH = "switch".toCharArray()
+        private val CHARS_THIS = "this".toCharArray()
+        private const val CHARS_GENERATOR = '*'
 
-    /**
-     * Generate JavaScript code that evaluates to the supplied string. Adapted
-     * from {@link org.mozilla.javascript.ScriptRuntime#escapeString(String)}
-     * . The difference is that we quote with either &quot; or &apos; depending on
-     * which one is used less inside the string.
-     */
-    @SuppressWarnings({"ConstantConditions", "JavadocReference"})
-    public static CharSequence javaScriptString(CharSequence chars, boolean forceDoubleQuote) {
-        int n = chars.length();
-        int quoteCount = 0;
-        int aposCount = 0;
+        private val CHARS_SUPER = "super".toCharArray()
+        private val CHARS_THROW = "throw".toCharArray()
+        private val CHARS_TRUE = "true".toCharArray()
+        private val CHARS_TRY = "try".toCharArray()
+        private val CHARS_VAR = "var".toCharArray()
+        private val CHARS_LET = "let".toCharArray()
+        private val CHARS_CONST = "const".toCharArray()
+        private val CHARS_WHILE = "while".toCharArray()
+        private val CHARS_ELLIPSIS = "...".toCharArray()
+        private val HEX_DIGITS = charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
 
-        for (int i = 0; i < n; i++) {
-            switch (chars.charAt(i)) {
-                case '"':
-                    ++quoteCount;
-                    break;
-                case '\'':
-                    ++aposCount;
-                    break;
+        private val COMMON_ESCAPE_MAPPING = mapOf(
+            '\b' to 'b'.code,
+            '\u000c' to 'f'.code,
+            '\n' to 'n'.code,
+            '\r' to 'r'.code,
+            '\t' to 't'.code,
+            '\\' to '\\'.code
+        )
+
+        private val STRING_ESCAPE_MAPPING = COMMON_ESCAPE_MAPPING
+
+        private val TEMPLATE_ESCAPE_MAPPING = STRING_ESCAPE_MAPPING + mapOf(
+            '$' to '$'.code
+        )
+
+        /**
+         * Generate JavaScript code that evaluates to the supplied string. Adapted
+         * from `org.mozilla.javascript.ScriptRuntime#escapeString(String)`.
+         *
+         * The difference is that we quote with either `&quot;` or `&apos;` depending on
+         * which one is used less inside the string.
+         */
+        fun javaScriptString(str: String, forceDoubleQuote: Boolean = false): String {
+            var quoteCount = 0
+            var aposCount = 0
+
+            for (char in str) {
+                when (char) {
+                    '"' -> quoteCount++
+                    '\'' -> aposCount++
+                }
+            }
+
+            val quoteChar = if (quoteCount < aposCount || forceDoubleQuote) '"' else '\''
+
+            return buildString(str.length + 16) {
+                append(quoteChar)
+                appendEscapedString(str, quoteChar, STRING_ESCAPE_MAPPING)
+                append(quoteChar)
+                appendEscapeClosingTags()
             }
         }
 
-        StringBuilder result = new StringBuilder(n + 16);
+        private fun StringBuilder.appendEscapedString(str: String, quoteChar: Char, escapeMapping: Map<Char, Int>) {
+            for (char in str) {
+                if (char == quoteChar) {
+                    append('\\')
+                    append(quoteChar)
+                    continue
+                }
 
-        char quoteChar = (quoteCount < aposCount || forceDoubleQuote) ? '"' : '\'';
-        result.append(quoteChar);
-        escapeString(chars, quoteChar, result, STRING_ESCAPE_MAPPING);
-        result.append(quoteChar);
-        escapeClosingTags(result);
-        return result;
-    }
+                if (char in ' '..'~' && char != '\\' && !escapeMapping.containsKey(char)) {
+                    // an ordinary print character (like C isprint())
+                    append(char)
+                    continue
+                }
 
-    private static void escapeString(CharSequence chars, char quoteChar, StringBuilder result, Map<Character, Integer> escapeMapping) {
-        for (int i = 0; i < chars.length(); i++) {
-            char c = chars.charAt(i);
+                val escape: Int? = escapeMapping.get(char)
 
-            if (c == quoteChar) {
-                result.append('\\');
-                result.append(quoteChar);
-                continue;
+                if (escape != null && escape >= 0) {
+                    // an \escaped sort of character
+                    append('\\')
+                    append(escape.toChar())
+                    continue
+                }
+
+                val hexSize: Int
+                if (char.code < 256) {
+                    append("\\x")
+                    hexSize = 2
+                } else {
+                    append("\\u")
+                    hexSize = 4
+                }
+
+                // append hexadecimal form of ch left-padded with 0
+                var shift = (hexSize - 1) * 4
+                while (shift >= 0) {
+                    val digit = 0xf and (char.code shr shift)
+                    append(HEX_DIGITS[digit])
+                    shift -= 4
+                }
             }
+        }
 
-            if (' ' <= c && c <= '~' && c != '\\' && !escapeMapping.containsKey(c)) {
-                // an ordinary print character (like C isprint())
-                result.append(c);
-                continue;
+        private fun escapeTemplateStringSegment(str: String): String {
+            return buildString {
+                appendEscapedString(str, '`', TEMPLATE_ESCAPE_MAPPING)
+                appendEscapeClosingTags()
             }
+        }
 
-            Integer escape = escapeMapping.get(c);
-
-            if (escape != null && escape >= 0) {
-                // an \escaped sort of character
-                result.append('\\');
-                result.append((char) escape.intValue());
-                continue;
-            }
-
-            int hexSize;
-            if (c < 256) {
-                // 2-digit hex
-                result.append("\\x");
-                hexSize = 2;
-            }
-            else {
-                // Unicode.
-                result.append("\\u");
-                hexSize = 4;
-            }
-            // append hexadecimal form of ch left-padded with 0
-            for (int shift = (hexSize - 1) * 4; shift >= 0; shift -= 4) {
-                int digit = 0xf & (c >> shift);
-                result.append(HEX_DIGITS[digit]);
+        /**
+         * Escapes any closing XML tags embedded in `str`, which could
+         * potentially cause a parse failure in a browser, for example, embedding a
+         * closing `<script>` tag.
+         */
+        private fun StringBuilder.appendEscapeClosingTags() {
+            var index = 0
+            while ((indexOf("</", index).also { index = it }) != -1) {
+                insert(index + 1, '\\')
             }
         }
     }
 
-    private static CharSequence escapeTemplateStringSegment(CharSequence chars) {
-        StringBuilder result = new StringBuilder();
-        escapeString(chars, '`', result, TEMPLATE_ESCAPE_MAPPING);
-        escapeClosingTags(result);
-        return result;
-    }
+    private val sourceInfoStack = mutableListOf<JsLocationWithSource?>()
 
-    /**
-     * Escapes any closing XML tags embedded in <code>str</code>, which could
-     * potentially cause a parse failure in a browser, for example, embedding a
-     * closing <code>&lt;script&gt;</code> tag.
-     *
-     * @param str an unescaped literal; May be null
-     */
-    private static void escapeClosingTags(StringBuilder str) {
-        if (str == null) {
-            return;
-        }
-
-        int index = 0;
-        while ((index = str.indexOf("</", index)) != -1) {
-            str.insert(index + 1, '\\');
-        }
-    }
-
-    protected boolean insideComments = false;
-    protected boolean needSemi = true;
-    private boolean lineBreakAfterBlock = true;
-
+    protected var insideComments: Boolean = false
+    protected var needSemi: Boolean = true
+    private var lineBreakAfterBlock = true
 
     /**
      * "Global" blocks are either the global block of a fragment, or a block
@@ -206,1665 +174,1571 @@ public class JsToStringGenerationVisitor extends JsVisitor {
      * because the statements designated by statementEnds and statementStarts are
      * those that appear directly within these global blocks.
      */
-    private Set<JsBlock> globalBlocks = new ObjectOpenHashSet<>();
+    private val globalBlocks = mutableSetOf<JsBlock>()
 
-    @NotNull
-    protected final TextOutput p;
+    override fun visitArrayAccess(x: JsArrayAccess) {
+        printCommentsBeforeNode(x)
+        pushSourceInfo(x.source)
 
-    public JsToStringGenerationVisitor(@NotNull TextOutput out, @NotNull SourceLocationConsumer sourceLocationConsumer) {
-        p = out;
-        this.sourceLocationConsumer = sourceLocationConsumer;
+        printPair(x, x.arrayExpression)
+        leftSquare()
+        accept(x.indexExpression)
+        rightSquare()
+
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    public JsToStringGenerationVisitor(@NotNull TextOutput out) {
-        this(out, NoOpSourceLocationConsumer.INSTANCE);
+    override fun visitArray(x: JsArrayLiteral) {
+        printCommentsBeforeNode(x)
+        pushSourceInfo(x.source)
+
+        leftSquare()
+        printExpressions(x.expressions)
+        rightSquare()
+
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitArrayAccess(@NotNull JsArrayAccess x) {
-        printCommentsBeforeNode(x);
-        pushSourceInfo(x.getSource());
-
-        printPair(x, x.getArrayExpression());
-        leftSquare();
-        accept(x.getIndexExpression());
-        rightSquare();
-
-        printCommentsAfterNode(x);
-        popSourceInfo();
-    }
-
-    @Override
-    public void visitArray(@NotNull JsArrayLiteral x) {
-        printCommentsBeforeNode(x);
-        pushSourceInfo(x.getSource());
-
-        leftSquare();
-        printExpressions(x.getExpressions());
-        rightSquare();
-
-        printCommentsAfterNode(x);
-        popSourceInfo();
-    }
-
-    private void printExpressions(List<JsExpression> expressions) {
-        boolean notFirst = false;
-        for (JsExpression expression : expressions) {
-            notFirst = sepCommaSpace(notFirst) && !(expression instanceof JsDocComment);
-            boolean isEnclosed = parenPushIfCommaExpression(expression);
-            accept(expression);
+    private fun printExpressions(expressions: List<JsExpression>) {
+        var notFirst = false
+        for (expression in expressions) {
+            notFirst = sepCommaSpace(notFirst) && expression !is JsDocComment
+            val isEnclosed = parenPushIfCommaExpression(expression)
+            accept(expression)
             if (isEnclosed) {
-                rightParen();
+                rightParen()
             }
         }
     }
 
-    @Override
-    public void visitBinaryExpression(@NotNull JsBinaryOperation binaryOperation) {
-        printCommentsBeforeNode(binaryOperation);
-        pushSourceInfo(binaryOperation.getSource());
+    override fun visitBinaryExpression(x: JsBinaryOperation) {
+        printCommentsBeforeNode(x)
+        pushSourceInfo(x.source)
 
-        JsBinaryOperator operator = binaryOperation.getOperator();
-        JsExpression arg1 = binaryOperation.getArg1();
-        boolean isExpressionEnclosed = parenPush(binaryOperation, arg1, !operator.isLeftAssociative());
+        val isExpressionEnclosed = parenPush(x, x.arg1, !x.operator.isLeftAssociative)
 
-        accept(arg1);
-        if (operator.isKeyword()) {
-            _parenPopOrSpace(binaryOperation, arg1, !operator.isLeftAssociative());
-        }
-        else if (operator != JsBinaryOperator.COMMA) {
+        accept(x.arg1)
+
+        if (x.operator.isKeyword) {
+            parenPopOrSpace(x, x.arg1, !x.operator.isLeftAssociative)
+        } else if (x.operator != JsBinaryOperator.COMMA) {
             if (isExpressionEnclosed) {
-                rightParen();
+                rightParen()
             }
-            space();
+            space()
         }
 
-        p.print(operator.getSymbol());
+        p.print(x.operator.symbol)
 
-        JsExpression arg2 = binaryOperation.getArg2();
-        boolean isParenOpened;
-        if (operator == JsBinaryOperator.COMMA) {
-            isParenOpened = false;
-            space();
-        }
-        else if (arg2 instanceof JsBinaryOperation && ((JsBinaryOperation) arg2).getOperator() == JsBinaryOperator.AND) {
-            space();
-            leftParen();
-            isParenOpened = true;
-        }
-        else {
-            if (spaceCalc(operator, arg2)) {
-                isParenOpened = _parenPushOrSpace(binaryOperation, arg2, operator.isLeftAssociative());
+        val arg2 = x.arg2
+        val isParenOpened =
+            if (x.operator == JsBinaryOperator.COMMA) {
+                space()
+                false
+            } else if (arg2 is JsBinaryOperation && arg2.operator == JsBinaryOperator.AND) {
+                space()
+                leftParen()
+                true
+            } else if (arg2 == null) {
+                space()
+                false
+            } else {
+                if (spaceCalc(x.operator, arg2)) {
+                    parenPushOrSpace(x, arg2, x.operator.isLeftAssociative)
+                } else {
+                    space()
+                    parenPush(x, arg2, x.operator.isLeftAssociative)
+                }
             }
-            else {
-                space();
-                isParenOpened = parenPush(binaryOperation, arg2, operator.isLeftAssociative());
-            }
-        }
-        accept(arg2);
+
+        accept(arg2)
+
         if (isParenOpened) {
-            rightParen();
+            rightParen()
         }
 
-        printCommentsAfterNode(binaryOperation);
-        popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitSimpleAssignment(@NotNull JsAssignmentOperation.Simple x) {
-        printCommentsBeforeNode(x);
-        pushSourceInfo(x.getSource());
+    override fun visitSimpleAssignment(x: JsAssignmentOperation.Simple) {
+        printCommentsBeforeNode(x)
+        pushSourceInfo(x.source)
 
         // Assignment is right-associative, so the left-hand side is parenthesized only when it has
         // strictly lower precedence (wrongAssoc), matching the former JsBinaryOperator.ASG rendering.
-        JsExpression target = x.getTarget();
-        boolean isTargetEnclosed = parenPush(x, target, true);
-        accept(target);
+        val isTargetEnclosed = parenPush(x, x.target, true)
+
+        accept(x.target)
+
         if (isTargetEnclosed) {
-            rightParen();
+            rightParen()
         }
-        space();
-        assignment();
+        space()
+        assignment()
 
-        JsExpression value = x.getValue();
-        boolean isValueEnclosed;
-        if (value instanceof JsBinaryOperation && ((JsBinaryOperation) value).getOperator() == JsBinaryOperator.AND) {
-            space();
-            leftParen();
-            isValueEnclosed = true;
-        }
-        else {
-            space();
-            isValueEnclosed = parenPush(x, value, false);
-        }
-        accept(value);
-        if (isValueEnclosed) {
-            rightParen();
-        }
-
-        printCommentsAfterNode(x);
-        popSourceInfo();
-    }
-
-    @Override
-    public void visitDestructuringAssignment(@NotNull JsAssignmentOperation.Destructuring x) {
-        printCommentsBeforeNode(x);
-        pushSourceInfo(x.getSource());
-
-        x.getPattern().accept(this);
-        space();
-        assignment();
-        space();
-        accept(x.getValue());
-
-        printCommentsAfterNode(x);
-        popSourceInfo();
-    }
-
-    @Override
-    public void visitBlock(@NotNull JsBlock x) {
-        printJsBlock(x, true, null);
-    }
-
-    @Override
-    public void visitBoolean(@NotNull JsBooleanLiteral x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
-
-        if (x.getValue()) {
-            p.print(CHARS_TRUE);
-        }
-        else {
-            p.print(CHARS_FALSE);
-        }
-
-        printCommentsAfterNode(x);
-        popSourceInfo();
-    }
-
-    @Override
-    public void visitBreak(@NotNull JsBreak x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
-
-        p.print(CHARS_BREAK);
-        continueOrBreakLabel(x);
-
-        printCommentsAfterNode(x);
-        popSourceInfo();
-    }
-
-    @Override
-    public void visitContinue(@NotNull JsContinue x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
-
-        p.print(CHARS_CONTINUE);
-        continueOrBreakLabel(x);
-
-        printCommentsAfterNode(x);
-        popSourceInfo();
-    }
-
-    @Override
-    public void visitYield(@NotNull JsYield x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
-
-        p.print(CHARS_YIELD);
-
-        JsExpression expression = x.getExpression();
-
-        if (expression != null) {
-            space();
-            accept(x.getExpression());
-        }
-
-        printCommentsAfterNode(x);
-        popSourceInfo();
-    }
-
-    @Override
-    public void visitYieldStar(@NotNull JsYieldStar x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
-
-        p.print(CHARS_YIELD_STAR);
-
-        JsExpression expression = x.getExpression();
-
-        if (expression != null) {
-            space();
-            accept(x.getExpression());
-        }
-
-        printCommentsAfterNode(x);
-        popSourceInfo();
-    }
-
-    @Override
-    public void visitSpread(@NotNull JsSpread x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
-
-        ellipsis();
-        printPair(x, x.getExpression());
-
-        printCommentsAfterNode(x);
-        popSourceInfo();
-    }
-
-    private void continueOrBreakLabel(JsContinue x) {
-        JsNameRef label = x.getLabel();
-        if (label != null) {
-            space();
-            p.print(label.getIdent());
-        }
-    }
-
-    @Override
-    public void visitCase(@NotNull JsCase x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
-
-        p.print(CHARS_CASE);
-        space();
-        accept(x.getCaseExpression());
-        _colon();
-
-        printCommentsAfterNode(x);
-        popSourceInfo();
-
-        newline();
-
-        sourceLocationConsumer.pushSourceInfo(null);
-        printSwitchMemberStatements(x);
-        sourceLocationConsumer.popSourceInfo();
-    }
-
-    private void printSwitchMemberStatements(JsSwitchMember x) {
-        p.indentIn();
-        for (JsStatement stmt : x.getStatements()) {
-            needSemi = true;
-            accept(stmt);
-            if (needSemi) {
-                semi();
+        val value = x.value
+        val isValueEnclosed =
+            if (value is JsBinaryOperation && value.operator == JsBinaryOperator.AND) {
+                space()
+                leftParen()
+                true
+            } else {
+                space()
+                parenPush(x, value, false)
             }
-            newline();
+
+        accept(value)
+
+        if (isValueEnclosed) {
+            rightParen()
         }
-        p.indentOut();
-        needSemi = false;
+
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitCatch(@NotNull JsCatch x) {
-        printCommentsBeforeNode(x);
-        pushSourceInfo(x.getSource());
+    override fun visitDestructuringAssignment(x: JsAssignmentOperation.Destructuring) {
+        printCommentsBeforeNode(x)
+        pushSourceInfo(x.source)
 
-        space();
-        p.print(CHARS_CATCH);
-        space();
-        leftParen();
-        accept(x.getParameter().getDeclarable());
+        x.pattern.accept(this)
+        space()
+        assignment()
+        space()
+        accept(x.value)
 
-        rightParen();
-        space();
-
-        popSourceInfo();
-        printCommentsAfterNode(x);
-
-        sourceLocationConsumer.pushSourceInfo(null);
-        accept(x.getBody());
-        sourceLocationConsumer.popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitConditional(@NotNull JsConditional x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    override fun visitBlock(x: JsBlock) {
+        printJsBlock(x, true, null)
+    }
+
+    override fun visitBoolean(x: JsBooleanLiteral) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
+
+        if (x.value) {
+            p.print(CHARS_TRUE)
+        } else {
+            p.print(CHARS_FALSE)
+        }
+
+        printCommentsAfterNode(x)
+        popSourceInfo()
+    }
+
+    override fun visitBreak(x: JsBreak) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
+
+        p.print(CHARS_BREAK)
+        continueOrBreakLabel(x)
+
+        printCommentsAfterNode(x)
+        popSourceInfo()
+    }
+
+    override fun visitContinue(x: JsContinue) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
+
+        p.print(CHARS_CONTINUE)
+        continueOrBreakLabel(x)
+
+        printCommentsAfterNode(x)
+        popSourceInfo()
+    }
+
+    override fun visitYield(x: JsYield) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
+
+        p.print(CHARS_YIELD)
+
+        if (x.expression != null) {
+            space()
+            accept(x.expression)
+        }
+
+        printCommentsAfterNode(x)
+        popSourceInfo()
+    }
+
+    override fun visitYieldStar(x: JsYieldStar) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
+
+        p.print(CHARS_YIELD_STAR)
+
+        if (x.expression != null) {
+            space()
+            accept(x.expression)
+        }
+
+        printCommentsAfterNode(x)
+        popSourceInfo()
+    }
+
+    override fun visitSpread(spread: JsSpread) {
+        pushSourceInfo(spread.source)
+        printCommentsBeforeNode(spread)
+
+        ellipsis()
+        printPair(spread, spread.expression)
+
+        printCommentsAfterNode(spread)
+        popSourceInfo()
+    }
+
+    private fun continueOrBreakLabel(x: JsContinue) {
+        x.label?.let {
+            space()
+            p.print(it.ident)
+        }
+    }
+
+    override fun visitCase(x: JsCase) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
+
+        p.print(CHARS_CASE)
+        space()
+        accept(x.caseExpression)
+        colon()
+
+        printCommentsAfterNode(x)
+        popSourceInfo()
+
+        newline()
+
+        sourceLocationConsumer.pushSourceInfo(null)
+        printSwitchMemberStatements(x)
+        sourceLocationConsumer.popSourceInfo()
+    }
+
+    private fun printSwitchMemberStatements(x: JsSwitchMember) {
+        p.indentIn()
+        for (stmt in x.statements) {
+            needSemi = true
+            accept(stmt)
+            if (needSemi) {
+                semi()
+            }
+            newline()
+        }
+        p.indentOut()
+        needSemi = false
+    }
+
+    override fun visitCatch(x: JsCatch) {
+        printCommentsBeforeNode(x)
+        pushSourceInfo(x.source)
+
+        space()
+        p.print(CHARS_CATCH)
+        space()
+
+        leftParen()
+        accept(x.parameter.declarable)
+        rightParen()
+
+        space()
+
+        popSourceInfo()
+        printCommentsAfterNode(x)
+
+        sourceLocationConsumer.pushSourceInfo(null)
+        accept(x.body)
+        sourceLocationConsumer.popSourceInfo()
+    }
+
+    override fun visitConditional(x: JsConditional) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
         // Associativity: for the then and else branches, it is safe to insert
         // another
         // ternary expression, but if the test expression is a ternary, it should
         // get parentheses around it.
-        printPair(x, x.getTestExpression(), true);
-        space();
-        p.print('?');
-        space();
-        printPair(x, x.getThenExpression());
-        space();
-        _colon();
-        space();
-        printPair(x, x.getElseExpression());
+        printPair(x, x.testExpression, true)
+        space()
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        p.print('?')
+        space()
+
+        printPair(x, x.thenExpression)
+        space()
+
+        colon()
+        space()
+
+        printPair(x, x.elseExpression)
+
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    private void printPair(JsExpression parent, JsExpression expression, boolean wrongAssoc) {
-        boolean isNeedParen = parenCalc(parent, expression, wrongAssoc);
+    private fun printPair(parent: JsExpression, expression: JsExpression, wrongAssoc: Boolean) {
+        val isNeedParen = parenCalc(parent, expression, wrongAssoc)
         if (isNeedParen) {
-            leftParen();
+            leftParen()
         }
-        accept(expression);
+        accept(expression)
         if (isNeedParen) {
-            rightParen();
+            rightParen()
         }
     }
 
-    private void printPair(JsExpression parent, JsExpression expression) {
-        printPair(parent, expression, false);
+    private fun printPair(parent: JsExpression, expression: JsExpression) {
+        printPair(parent, expression, false)
     }
 
-    @Override
-    public void visitDebugger(@NotNull JsDebugger x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    override fun visitDebugger(x: JsDebugger) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        p.print(CHARS_DEBUGGER);
+        p.print(CHARS_DEBUGGER)
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitDefault(@NotNull JsDefault x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    override fun visitDefault(x: JsDefault) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        p.print(CHARS_DEFAULT);
-        _colon();
+        p.print(CHARS_DEFAULT)
+        colon()
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
-        newline();
+        printCommentsAfterNode(x)
+        popSourceInfo()
 
-        sourceLocationConsumer.pushSourceInfo(null);
-        printSwitchMemberStatements(x);
-        sourceLocationConsumer.popSourceInfo();
+        newline()
+
+        sourceLocationConsumer.pushSourceInfo(null)
+        printSwitchMemberStatements(x)
+        sourceLocationConsumer.popSourceInfo()
     }
 
-    @Override
-    public void visitWhile(@NotNull JsWhile x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    override fun visitWhile(x: JsWhile) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        _while();
-        space();
-        leftParen();
-        accept(x.getCondition());
-        rightParen();
+        _while()
+        space()
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        leftParen()
+        accept(x.condition)
+        rightParen()
 
-        JsStatement body = materialize(x.getBody());
+        printCommentsAfterNode(x)
+        popSourceInfo()
 
-        nestedPush(body);
-        sourceLocationConsumer.pushSourceInfo(null);
-        accept(body);
-        sourceLocationConsumer.popSourceInfo();
-        nestedPop(body);
+        val body = materialize(x.body)
+
+        nestedPush(body)
+        sourceLocationConsumer.pushSourceInfo(null)
+        accept(body)
+        sourceLocationConsumer.popSourceInfo()
+        nestedPop(body)
     }
 
-    @Override
-    public void visitDoWhile(@NotNull JsDoWhile x) {
-        sourceLocationConsumer.pushSourceInfo(null);
-        printCommentsBeforeNode(x);
+    override fun visitDoWhile(x: JsDoWhile) {
+        sourceLocationConsumer.pushSourceInfo(null)
+        printCommentsBeforeNode(x)
 
-        p.print(CHARS_DO);
+        p.print(CHARS_DO)
 
-        JsStatement body = materialize(x.getBody());
+        val body = materialize(x.body)
 
-        nestedPush(body);
-        accept(body);
-        sourceLocationConsumer.popSourceInfo();
-        nestedPop(body);
+        nestedPush(body)
+        accept(body)
+        sourceLocationConsumer.popSourceInfo()
+        nestedPop(body)
 
-        pushSourceInfo(x.getCondition().getSource());
+        pushSourceInfo(x.condition.source)
         if (needSemi) {
-            semi();
-            newline();
-        }
-        else {
-            space();
-            needSemi = true;
+            semi()
+            newline()
+        } else {
+            space()
+            needSemi = true
         }
 
-        _while();
-        space();
-        leftParen();
-        accept(x.getCondition());
-        rightParen();
+        _while()
+        space()
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        leftParen()
+        accept(x.condition)
+        rightParen()
+
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitEmpty(@NotNull JsEmpty x) {
-    }
+    override fun visitEmpty(x: JsEmpty) {}
 
-    @Override
-    public void visitExpressionStatement(@NotNull JsExpressionStatement x) {
-        JsLocationWithSource source = x.getSource();
-        if (source == null && !(x.getExpression() instanceof JsFunction)) {
-            source = x.getExpression().getSource();
+    override fun visitExpressionStatement(x: JsExpressionStatement) {
+        val source = when (x.expression) {
+            !is JsFunction if x.source == null -> x.expression.source
+            else -> x.source
         }
-        pushSourceInfo(source);
-        printCommentsBeforeNode(x);
 
-        boolean surroundWithParentheses = JsFirstExpressionVisitor.exec(x);
+        pushSourceInfo(source)
+        printCommentsBeforeNode(x)
+
+        val surroundWithParentheses = JsFirstExpressionVisitor.exec(x)
         if (surroundWithParentheses) {
-            leftParen();
+            leftParen()
         }
-        accept(x.getExpression());
+        accept(x.expression)
         if (surroundWithParentheses) {
-            rightParen();
+            rightParen()
         }
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitFor(@NotNull JsFor x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    override fun visitFor(x: JsFor) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        _for();
-        space();
-        leftParen();
+        _for()
+        space()
+        leftParen()
 
-        // The init expressions or var decl.
-        //
-        if (x.getInitExpression() != null) {
-            accept(x.getInitExpression());
-        }
-        else if (x.getInitVars() != null) {
-            accept(x.getInitVars());
+        // The init expressions or var decl. Only one of them may be present at a time.
+        when {
+            x.initExpression != null -> accept(x.initExpression)
+            x.initVars != null -> accept(x.initVars)
         }
 
-        semi();
+        semi()
 
         // The loop test.
-        //
-        if (x.getCondition() != null) {
-            space();
-            accept(x.getCondition());
+        x.condition?.let {
+            space()
+            accept(it)
         }
 
-        semi();
+        semi()
 
         // The incr expression.
-        //
-        if (x.getIncrementExpression() != null) {
-            space();
-            accept(x.getIncrementExpression());
+        x.incrementExpression?.let {
+            space()
+            accept(it)
         }
 
-        rightParen();
+        rightParen()
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
 
-        JsStatement body = materialize(x.getBody());
+        val body = materialize(x.body)
 
-        nestedPush(body);
+        nestedPush(body)
+        // Unlike the other loops, a `for` may have no body at all, e.g. `for (;;);`.
         if (body != null) {
-            sourceLocationConsumer.pushSourceInfo(null);
-            accept(body);
-            sourceLocationConsumer.popSourceInfo();
+            sourceLocationConsumer.pushSourceInfo(null)
+            accept(body)
+            sourceLocationConsumer.popSourceInfo()
         }
-        nestedPop(body);
+        nestedPop(body)
     }
 
-    @Override
-    public void visitForIn(@NotNull JsForIn x) {
-        visitIterableLoop(x, CHARS_IN);
+    override fun visitForIn(x: JsForIn) {
+        printIterableLoop(x, CHARS_IN)
     }
 
-    @Override
-    public void visitForOf(@NotNull JsForOf x) {
-        visitIterableLoop(x, CHARS_OF);
+    override fun visitForOf(x: JsForOf) {
+        printIterableLoop(x, CHARS_OF)
     }
 
-    private void visitIterableLoop(@NotNull JsIterableLoop x, char[] separatorChars) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    private fun printIterableLoop(x: JsIterableLoop, separatorChars: CharArray) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        _for();
-        space();
-        leftParen();
+        _for()
+        space()
+        leftParen()
 
-        JsDeclarable assignable = x.getBindingDeclarable();
-        JsVars.Variant variant = x.getBindingVarVariant();
-        JsExpression bindingExpression = x.getBindingExpression();
-        JsExpression iterableExpression = x.getIterableExpression();
+        if (x.bindingDeclarable != null && x.bindingVarVariant != null) {
+            varModifier(x.bindingVarVariant)
+            space()
+            accept(x.bindingDeclarable)
 
-        if (assignable != null && variant != null) {
-            varModifier(variant);
-            space();
-            accept(assignable);
-
-            if (bindingExpression != null) {
-                space();
-                assignment();
-                space();
-                accept(bindingExpression);
+            if (x.bindingExpression != null) {
+                space()
+                assignment()
+                space()
+                accept(x.bindingExpression)
             }
-        }
-        else {
+        } else {
             // Just a name ref.
             //
-            accept(bindingExpression);
+            accept(x.bindingExpression)
         }
 
-        space();
-        p.print(separatorChars);
-        space();
-        accept(iterableExpression);
+        space()
+        p.print(separatorChars)
+        space()
+        accept(x.iterableExpression)
 
-        rightParen();
+        rightParen()
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
 
-        JsStatement body = materialize(x.getBody());
-        nestedPush(body);
-        sourceLocationConsumer.pushSourceInfo(null);
-        accept(body);
-        sourceLocationConsumer.popSourceInfo();
-        nestedPop(body);
+        val body = materialize(x.body)
+
+        nestedPush(body)
+        sourceLocationConsumer.pushSourceInfo(null)
+        accept(body)
+        sourceLocationConsumer.popSourceInfo()
+        nestedPop(body)
     }
 
-    @Override
-    public void visitFunction(@NotNull JsFunction x) {
-        printCommentsBeforeNode(x);
+    override fun visitFunction(x: JsFunction) {
+        printCommentsBeforeNode(x)
 
-        if (x.isEs6Arrow()) {
-            printEs6Arrow(x);
-        } else {
-            printRegularFunction(x);
+        when {
+            x.isEs6Arrow -> printEs6Arrow(x)
+            else -> printRegularFunction(x)
         }
 
-        printCommentsAfterNode(x);
+        printCommentsAfterNode(x)
     }
 
-    private void printFunctionParameterList(@NotNull List<JsParameter> parameters) {
-        leftParen();
-        boolean notFirst = false;
-        sourceLocationConsumer.pushSourceInfo(null);
-        for (JsParameter param : parameters) {
-            notFirst = sepCommaSpace(notFirst);
-            printCommentsBeforeNode(param);
-            accept(param);
-            printCommentsAfterNode(param);
+    private fun printFunctionParameterList(parameters: List<JsParameter>) {
+        leftParen()
+
+        sourceLocationConsumer.pushSourceInfo(null)
+        var notFirst = false
+        for (param in parameters) {
+            notFirst = sepCommaSpace(notFirst)
+            printCommentsBeforeNode(param)
+            accept(param)
+            printCommentsAfterNode(param)
         }
-        sourceLocationConsumer.popSourceInfo();
-        rightParen();
+        sourceLocationConsumer.popSourceInfo()
+
+        rightParen()
     }
 
     // function <declaration>
-    private void printRegularFunction(@NotNull JsFunction x) {
-        pushDeclaration(x);
-        pushSourceInfo(x.getSource());
+    private fun printRegularFunction(x: JsFunction) {
+        pushDeclaration(x)
+        pushSourceInfo(x.source)
 
-        p.print(CHARS_FUNCTION);
-        space();
-        printFunction(x);
+        p.print(CHARS_FUNCTION)
+        space()
+        printFunction(x)
 
-        popSourceInfo();
-        popDeclaration();
+        popSourceInfo()
+        popDeclaration()
     }
 
     // constructor <declaration>
-    private void printConstructor(@NotNull JsFunction x) {
-        pushDeclaration(x);
-        pushSourceInfo(x.getSource());
+    private fun printConstructor(x: JsFunction) {
+        pushDeclaration(x)
+        pushSourceInfo(x.source)
 
-        p.print(CHARS_CONSTRUCTOR);
-        printFunction(x);
+        p.print(CHARS_CONSTRUCTOR)
+        printFunction(x)
 
-        popSourceInfo();
-        popDeclaration();
+        popSourceInfo()
+        popDeclaration()
     }
 
     // [static?] [get|set?] <declaration>
-    private void printClassMember(@NotNull JsFunction x) {
-        pushDeclaration(x);
-        pushSourceInfo(x.getSource());
+    private fun printClassMember(x: JsFunction) {
+        pushDeclaration(x)
+        pushSourceInfo(x.source)
 
-        if (x.isStatic()) {
-            p.print(CHARS_STATIC);
-            space();
+        if (x.isStatic) {
+            p.print(CHARS_STATIC)
+            space()
         }
 
-        if (x.isGetter()) {
-            p.print(CHARS_GET);
-            space();
-        } else if (x.isSetter()) {
-            p.print(CHARS_SET);
-            space();
+        when {
+            x.isGetter -> {
+                p.print(CHARS_GET)
+                space()
+            }
+            x.isSetter -> {
+                p.print(CHARS_SET)
+                space()
+            }
         }
 
-        printFunction(x);
+        printFunction(x)
 
-        popSourceInfo();
-        popDeclaration();
+        popSourceInfo()
+        popDeclaration()
     }
 
     // [name|computedName](<params>) { <body> }
-    private void printFunction(@NotNull JsFunction x) {
-        if (x.isGenerator()) {
-            p.print(CHARS_GENERATOR);
+    private fun printFunction(x: JsFunction) {
+        if (x.isGenerator)
+            p.print(CHARS_GENERATOR)
+
+        when {
+            x.computedName != null -> {
+                leftSquare()
+                accept(x.computedName)
+                rightSquare()
+            }
+            x.name != null -> nameOf(x)
         }
 
-        JsExpression computedName = x.getComputedName();
+        printFunctionParameterList(x.parameters)
+        space()
 
-        if (computedName != null) {
-            leftSquare();
-            accept(computedName);
-            rightSquare();
-        } else if (x.getName() != null) {
-            nameOf(x);
-        }
+        lineBreakAfterBlock = false
 
-        printFunctionParameterList(x.getParameters());
-        space();
+        sourceLocationConsumer.pushSourceInfo(null)
+        printJsBlock(x.body, true, x.body.source)
+        sourceLocationConsumer.popSourceInfo()
 
-        lineBreakAfterBlock = false;
-
-        sourceLocationConsumer.pushSourceInfo(null);
-        printJsBlock(x.getBody(), true, x.getBody().getSource());
-        sourceLocationConsumer.popSourceInfo();
-        needSemi = true;
+        needSemi = true
     }
 
     // (<params>) => { <body> }
-    private void printEs6Arrow(@NotNull JsFunction x) {
-        pushSourceInfo(x.getSource());
-        printFunctionParameterList(x.getParameters());
-        space();
-        arrow();
-        space();
-        JsBlock body = x.getBody();
-        if (body.getStatements().size() == 1) {
-            JsStatement singleStatement = body.getStatements().get(0);
-            if (singleStatement instanceof JsReturn) {
-                JsReturn jsReturn = (JsReturn) singleStatement;
-                jsReturn.getExpression().accept(this);
-                popSourceInfo();
-                needSemi = true;
-                return;
+    private fun printEs6Arrow(x: JsFunction) {
+        pushSourceInfo(x.source)
+
+        printFunctionParameterList(x.parameters)
+        space()
+        arrow()
+        space()
+        val body = x.body
+        when (val firstStatement = body.statements.getOrNull(0)) {
+            is JsReturn if body.statements.size == 1 ->
+                firstStatement.expression.accept(this)
+            else -> {
+                lineBreakAfterBlock = false
+                sourceLocationConsumer.pushSourceInfo(null)
+                printJsBlock(body, true, x.body.source)
+                sourceLocationConsumer.popSourceInfo()
             }
         }
-        lineBreakAfterBlock = false;
 
-        sourceLocationConsumer.pushSourceInfo(null);
-        printJsBlock(body, true, x.getBody().getSource());
-        sourceLocationConsumer.popSourceInfo();
+        popSourceInfo()
 
-        popSourceInfo();
-        needSemi = true;
+        needSemi = true
     }
 
-    @Override
-    public void visitClass(@NotNull JsClass x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    override fun visitClass(x: JsClass) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        p.print(CHARS_CLASS);
-        if (x.getName() != null) {
-            space();
-            nameOf(x);
+        p.print(CHARS_CLASS)
+        if (x.name != null) {
+            space()
+            nameOf(x)
         }
 
-        if (x.getBaseClass() != null) {
-            space();
-            p.print(CHARS_EXTENDS);
-            space();
-            accept(x.getBaseClass());
+        if (x.baseClass != null) {
+            space()
+            p.print(CHARS_EXTENDS)
+            space()
+            accept(x.baseClass)
         }
 
-        space();
+        space()
 
-        if (x.getConstructor() == null && x.getMembers().isEmpty()) {
-            p.print("{}");
-            newline();
+        if (x.constructor == null && x.members.isEmpty()) {
+            p.print("{}")
+            newline()
         } else {
-            blockOpen();
+            blockOpen()
 
-            if (x.getConstructor() != null) {
-                x.getConstructor().setName(null);
-                printConstructor(x.getConstructor());
-                newline();
+            x.constructor?.let {
+                it.name = null
+                printConstructor(it)
+                newline()
             }
 
-            for (JsFunction m : x.getMembers()) {
-                printClassMember(m);
-                newline();
+            for (m in x.members) {
+                printClassMember(m)
+                newline()
             }
 
-            blockClose();
+            blockClose()
         }
+        needSemi = false
 
-        needSemi = false;
-
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitIf(@NotNull JsIf x) {
-        printCommentsBeforeNode(x);
-        pushSourceInfo(x.getSource());
+    override fun visitIf(x: JsIf) {
+        printCommentsBeforeNode(x)
+        pushSourceInfo(x.source)
 
-        _if();
-        space();
-        leftParen();
-        accept(x.getIfExpression());
-        rightParen();
+        _if()
+        space()
 
-        popSourceInfo();
-        printCommentsAfterNode(x);
+        leftParen()
+        accept(x.ifExpression)
+        rightParen()
 
-        JsStatement thenStmt = x.getThenStatement();
-        JsStatement elseStatement = x.getElseStatement();
+        popSourceInfo()
+        printCommentsAfterNode(x)
+
+        var thenStmt = x.thenStatement
+        val elseStatement = x.elseStatement
+
+        // Wrap statements inside <then> branch with `{}` if this `if` has its own else,
+        // but has at least 1 `if` without else inside chain of `if` statements.
+        // This is done to prevent this if's else to accidentally attach to some inner `if` down the tree.
         if (elseStatement != null && isIfWithoutElse(thenStmt)) {
-            thenStmt = new JsBlock(thenStmt);
-        }
-        nestedPush(thenStmt);
-
-        if (thenStmt instanceof JsBlock && elseStatement != null) {
-            lineBreakAfterBlock = false;
+            thenStmt = JsBlock(thenStmt)
         }
 
-        sourceLocationConsumer.pushSourceInfo(null);
-        accept(materialize(thenStmt));
-        sourceLocationConsumer.popSourceInfo();
+        nestedPush(thenStmt)
 
-        nestedPop(thenStmt);
+        if (thenStmt is JsBlock && elseStatement != null) {
+            lineBreakAfterBlock = false
+        }
+
+        sourceLocationConsumer.pushSourceInfo(null)
+        accept(materialize(thenStmt))
+        sourceLocationConsumer.popSourceInfo()
+
+        nestedPop(thenStmt)
+
         if (elseStatement != null) {
             if (needSemi) {
-                semi();
-                newline();
+                semi()
+                newline()
+            } else {
+                space()
+                needSemi = true
             }
-            else {
-                space();
-                needSemi = true;
+            p.print(CHARS_ELSE)
+
+            if (elseStatement !is JsIf) {
+                nestedPush(elseStatement)
+            } else {
+                space()
             }
-            p.print(CHARS_ELSE);
-            boolean elseIf = elseStatement instanceof JsIf;
-            if (!elseIf) {
-                nestedPush(elseStatement);
-            }
-            else {
-                space();
-            }
-            sourceLocationConsumer.pushSourceInfo(null);
-            accept(materialize(elseStatement));
-            sourceLocationConsumer.popSourceInfo();
-            if (!elseIf) {
-                nestedPop(elseStatement);
+
+            sourceLocationConsumer.pushSourceInfo(null)
+            accept(materialize(elseStatement))
+            sourceLocationConsumer.popSourceInfo()
+
+            if (elseStatement !is JsIf) {
+                nestedPop(elseStatement)
             }
         }
     }
 
-    private static boolean isIfWithoutElse(@NotNull JsStatement statement) {
-        while (statement instanceof JsIf) {
-            JsIf ifStatement = (JsIf) statement;
-            if (ifStatement.getElseStatement() == null) {
-                return true;
+    private fun isIfWithoutElse(statement: JsStatement): Boolean {
+        var statement: JsStatement? = statement
+        while (statement is JsIf) {
+            if (statement.elseStatement == null) {
+                return true
             }
-            statement = ifStatement.getElseStatement();
+            statement = statement.elseStatement
         }
 
-        return false;
+        return false
     }
 
-    private static JsStatement materialize(JsStatement statement) {
-       return statement instanceof JsCompositeBlock
-              ? new JsBlock(statement)
-              : statement;
+    private fun materialize(statement: JsStatement?): JsStatement? {
+        return when (statement) {
+            is JsCompositeBlock -> JsBlock(statement)
+            else -> statement
+        }
     }
 
-    @Override
-    public void visitInvocation(@NotNull JsInvocation invocation) {
-        pushSourceInfo(invocation.getSource());
-        printCommentsBeforeNode(invocation);
+    override fun visitInvocation(invocation: JsInvocation) {
+        pushSourceInfo(invocation.source)
+        printCommentsBeforeNode(invocation)
 
-        printPair(invocation, invocation.getQualifier());
+        printPair(invocation, invocation.qualifier)
 
-        leftParen();
-        printExpressions(invocation.getArguments());
-        rightParen();
+        leftParen()
+        printExpressions(invocation.arguments)
+        rightParen()
 
-        printCommentsAfterNode(invocation);
-        popSourceInfo();
+        printCommentsAfterNode(invocation)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitLabel(@NotNull JsLabel x) {
-        nameOf(x);
-        _colon();
-        space();
+    override fun visitLabel(x: JsLabel) {
+        nameOf(x)
+        colon()
+        space()
 
-        sourceLocationConsumer.pushSourceInfo(null);
-        accept(x.getStatement());
-        sourceLocationConsumer.popSourceInfo();
+        sourceLocationConsumer.pushSourceInfo(null)
+        accept(x.statement)
+        sourceLocationConsumer.popSourceInfo()
     }
 
-    @Override
-    public void visitNameRef(@NotNull JsNameRef nameRef) {
-        visitNameRef(nameRef, true);
-    }
+    override fun visitNameRef(nameRef: JsNameRef) {
+        printCommentsBeforeNode(nameRef)
+        p.maybeIndent()
 
-    public void visitNameRef(@NotNull JsNameRef nameRef, boolean withQualifier) {
-
-        printCommentsBeforeNode(nameRef);
-        p.maybeIndent();
-
-        JsExpression qualifier = nameRef.getQualifier();
-        if (qualifier != null && withQualifier) {
-            boolean enclose;
-            if (qualifier instanceof JsLiteral.JsValueLiteral) {
+        val qualifier = nameRef.qualifier
+        if (qualifier != null) {
+            val enclose = if (qualifier is JsLiteral.JsValueLiteral) {
                 // "42.foo" is not allowed, but "(42).foo" is.
-                enclose = qualifier instanceof JsNumberLiteral;
-            }
-            else {
-                enclose = parenCalc(nameRef, qualifier, false);
+                qualifier is JsNumberLiteral
+            } else {
+                parenCalc(nameRef, qualifier, false)
             }
 
-            if (enclose) {
-                leftParen();
-            }
-            accept(qualifier);
-            if (enclose) {
-                rightParen();
-            }
-            p.print('.');
+            if (enclose) leftParen()
+            accept(qualifier)
+            if (enclose) rightParen()
+
+            p.print('.')
         }
 
-        pushSourceInfo(nameRef.getSource());
-        p.print(nameRef.getIdent());
-        popSourceInfo();
+        pushSourceInfo(nameRef.source)
+        p.print(nameRef.ident)
+        popSourceInfo()
 
-        printCommentsAfterNode(nameRef);
+        printCommentsAfterNode(nameRef)
     }
 
-    @Override
-    public void visitNew(@NotNull JsNew x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    override fun visitNew(x: JsNew) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        p.print(CHARS_NEW);
-        space();
+        p.print(CHARS_NEW)
+        space()
 
-        JsExpression constructorExpression = x.getConstructorExpression();
-        boolean needsParens = JsConstructExpressionVisitor.exec(constructorExpression);
-        if (needsParens) {
-            leftParen();
-        }
-        accept(constructorExpression);
-        if (needsParens) {
-            rightParen();
-        }
+        val needsParens = JsConstructExpressionVisitor.exec(x.constructorExpression)
+        if (needsParens) leftParen()
+        accept(x.constructorExpression)
+        if (needsParens) rightParen()
 
-        leftParen();
-        printExpressions(x.getArguments());
-        rightParen();
+        leftParen()
+        printExpressions(x.arguments)
+        rightParen()
 
         // When using class expressions as construction expressions, they reset this from default 'true' to 'false',
         // which produces invalid code due to the next statements ambiguity.
-        needSemi = true;
+        needSemi = true
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitNull(@NotNull JsNullLiteral x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    override fun visitNull(x: JsNullLiteral) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        p.print(CHARS_NULL);
+        p.print(CHARS_NULL)
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitInt(@NotNull JsIntLiteral x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    override fun visitInt(x: JsIntLiteral) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        p.print(x.value);
+        p.print(x.value)
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitDouble(@NotNull JsDoubleLiteral x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    override fun visitDouble(x: JsDoubleLiteral) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        p.print(x.value);
+        p.print(x.value)
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitBigInt(@NotNull JsBigIntLiteral x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    override fun visitBigInt(x: JsBigIntLiteral) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        p.print(x.getValue().toString());
-        p.print('n');
+        p.print(x.value.toString())
+        p.print('n')
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitObjectLiteral(@NotNull JsObjectLiteral objectLiteral) {
-        pushSourceInfo(objectLiteral.getSource());
-        printCommentsBeforeNode(objectLiteral);
+    override fun visitObjectLiteral(x: JsObjectLiteral) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        p.print('{');
+        p.print('{')
 
-        if (objectLiteral.isMultiline()) {
-            p.indentIn();
+        if (x.isMultiline) {
+            p.indentIn()
         }
 
-        boolean notFirst = false;
-        for (JsPropertyInitializer item : objectLiteral.getPropertyInitializers()) {
+        var notFirst = false
+        for (item in x.propertyInitializers) {
             if (notFirst) {
-                p.print(',');
+                p.print(',')
             }
 
-            if (objectLiteral.isMultiline()) {
-                newline();
-            }
-            else if (notFirst) {
-                space();
+            when {
+                x.isMultiline -> newline()
+                notFirst -> space()
             }
 
-            notFirst = true;
+            notFirst = true
 
-            pushSourceInfo(item.getSource());
+            pushSourceInfo(item.source)
 
-            if (item instanceof JsPropertyInitializer.Spread) {
-                JsExpression expression = ((JsPropertyInitializer.Spread)item).getExpression();
-                ellipsis();
-                accept(expression);
-            } else if (item instanceof JsPropertyInitializer.KeyValue) {
-                JsPropertyInitializer.KeyValue keyValue = (JsPropertyInitializer.KeyValue)item;
-                JsExpression labelExpr = keyValue.getLabelExpr();
-
-                if (labelExpr instanceof JsStringLiteral) {
-                    JsStringLiteral stringLiteral = (JsStringLiteral) labelExpr;
-                    String value = stringLiteral.getValue();
-                    if (IdentifierPolicyKt.isValidES5Identifier(value)) {
-                        String escaped = IdentifierPolicyKt.getRESERVED_KEYWORDS().contains(value) ? "'" + value + "'" : value;
-                        labelExpr = AbstractNodeKt.withMetadataFrom(new JsNameRef(escaped), stringLiteral);
+            when (item) {
+                is JsPropertyInitializer.Spread -> {
+                    ellipsis()
+                    accept(item.expression)
+                }
+                is JsPropertyInitializer.KeyValue -> {
+                    when (val labelExpr = item.labelExpr) {
+                        is JsStringLiteral -> {
+                            val value = labelExpr.value
+                            if (value.isValidES5Identifier()) {
+                                val escaped = if (RESERVED_KEYWORDS.contains(value)) "'$value'" else value
+                                accept(JsNameRef(escaped).withMetadataFrom(labelExpr))
+                            } else
+                                accept(labelExpr)
+                        }
+                        is JsNumberLiteral, is JsBigIntLiteral -> accept(labelExpr)
+                        else -> {
+                            leftSquare()
+                            accept(labelExpr)
+                            rightSquare()
+                        }
                     }
-                    accept(labelExpr);
-                } else if (labelExpr instanceof JsNumberLiteral || labelExpr instanceof JsBigIntLiteral) {
-                    accept(labelExpr);
-                } else {
-                    leftSquare();
-                    accept(labelExpr);
-                    rightSquare();
-                }
-                _colon();
-                space();
-                JsExpression valueExpr = keyValue.getValueExpr();
-                boolean wasEnclosed = parenPushIfCommaExpression(valueExpr);
-                accept(valueExpr);
-                if (wasEnclosed) {
-                    rightParen();
+
+                    colon()
+                    space()
+
+                    val wasEnclosed = parenPushIfCommaExpression(item.valueExpr)
+                    accept(item.valueExpr)
+                    if (wasEnclosed) rightParen()
                 }
             }
 
-            popSourceInfo();
+            popSourceInfo()
         }
 
-        if (objectLiteral.isMultiline()) {
-            p.indentOut();
-            newline();
+        if (x.isMultiline) {
+            p.indentOut()
+            newline()
         }
 
-        p.print('}');
+        p.print('}')
 
-        printCommentsAfterNode(objectLiteral);
-        popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitParameter(@NotNull JsParameter x) {
-        pushSourceInfo(x.getSource());
+    override fun visitParameter(x: JsParameter) {
+        pushSourceInfo(x.source)
 
-        if (x.isRest()) {
-            ellipsis();
-        }
+        if (x.isRest) ellipsis()
 
-        accept(x.getDeclarable());
+        accept(x.declarable)
 
-        JsExpression defaultValue = x.getDefaultValue();
-        if (defaultValue != null) {
-            space();
-            assignment();
-            space();
-            boolean wasEnclosed = parenPushIfCommaExpression(defaultValue);
-            accept(defaultValue);
+        x.defaultValue?.let {
+            space()
+            assignment()
+            space()
+
+            val wasEnclosed = parenPushIfCommaExpression(it)
+            accept(it)
             if (wasEnclosed) {
-                rightParen();
+                rightParen()
             }
         }
 
-        popSourceInfo();
+        popSourceInfo()
     }
 
-    @Override
-    public void visitPostfixOperation(@NotNull JsPostfixOperation x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    override fun visitPostfixOperation(x: JsPostfixOperation) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        JsUnaryOperator op = x.getOperator();
-        JsExpression arg = x.getArg();
         // unary operators always associate correctly (I think)
-        printPair(x, arg);
-        p.print(op.getSymbol());
+        printPair(x, x.arg)
+        p.print(x.operator.symbol)
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitPrefixOperation(@NotNull JsPrefixOperation x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    override fun visitPrefixOperation(x: JsPrefixOperation) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        JsUnaryOperator op = x.getOperator();
-        p.print(op.getSymbol());
-        JsExpression arg = x.getArg();
-        if (spaceCalc(op, arg)) {
-            space();
+        p.print(x.operator.symbol)
+
+        if (spaceCalc(x.operator, x.arg)) {
+            space()
         }
+
         // unary operators always associate correctly (I think)
-        printPair(x, arg);
+        printPair(x, x.arg)
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitProgram(@NotNull JsProgram x) {
-        x.acceptChildren(this);
+    override fun visitProgram(x: JsProgram) {
+        x.acceptChildren(this)
     }
 
-    @Override
-    public void visitRegExp(@NotNull JsRegExp x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    override fun visitRegExp(x: JsRegExp) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        slash();
-        p.print(x.getPattern());
-        slash();
-        String flags = x.getFlags();
-        if (flags != null) {
-            p.print(flags);
+        slash()
+        p.print(x.pattern)
+        slash()
+
+        x.flags?.let {
+            p.print(it)
         }
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitReturn(@NotNull JsReturn x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    override fun visitReturn(x: JsReturn) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        p.print(CHARS_RETURN);
-        JsExpression expr = x.getExpression();
-        if (expr != null) {
-            space();
-            accept(expr);
+        p.print(CHARS_RETURN)
+        x.expression?.let {
+            space()
+            accept(it)
         }
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitString(@NotNull JsStringLiteral x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    override fun visitString(x: JsStringLiteral) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        p.print(javaScriptString(x.getValue()));
+        p.print(javaScriptString(x.value))
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitTemplateString(@NotNull JsTemplateStringLiteral x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    override fun visitTemplateString(x: JsTemplateStringLiteral) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        accept(x.getTag());
+        accept(x.tag)
 
-        p.print('`');
-        for (JsExpression segment : x.getSegments()) {
-            accept(segment);
+        p.print('`')
+        for (segment in x.segments) {
+            accept(segment)
         }
-        p.print('`');
+        p.print('`')
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitTemplateSegmentString(@NotNull JsTemplateStringLiteral.Segment.StringLiteral x) {
-        pushSourceInfo(x.getSource());
+    override fun visitTemplateSegmentString(x: JsTemplateStringLiteral.Segment.StringLiteral) {
+        pushSourceInfo(x.source)
 
-        p.print(escapeTemplateStringSegment(x.getValue()));
+        p.print(escapeTemplateStringSegment(x.value))
 
-        popSourceInfo();
+        popSourceInfo()
     }
 
-    @Override
-    public void visitTemplateSegmentInterpolation(@NotNull JsTemplateStringLiteral.Segment.Interpolation x) {
-        pushSourceInfo(x.getSource());
+    override fun visitTemplateSegmentInterpolation(x: JsTemplateStringLiteral.Segment.Interpolation) {
+        pushSourceInfo(x.source)
 
-        p.print("${");
-        accept(x.getExpression());
-        p.print('}');
+        p.print($$"${")
+        accept(x.expression)
+        p.print('}')
 
-        popSourceInfo();
+        popSourceInfo()
     }
 
-    @Override
-    public void visit(@NotNull JsSwitch x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    override fun visit(x: JsSwitch) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        p.print(CHARS_SWITCH);
-        space();
-        leftParen();
-        accept(x.getExpression());
-        rightParen();
+        p.print(CHARS_SWITCH)
+        space()
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        leftParen()
+        accept(x.expression)
+        rightParen()
 
+        printCommentsAfterNode(x)
+        popSourceInfo()
 
-        sourceLocationConsumer.pushSourceInfo(null);
-        space();
-        blockOpen();
-        acceptList(x.getCases());
-        blockClose();
-        sourceLocationConsumer.popSourceInfo();
+        sourceLocationConsumer.pushSourceInfo(null)
+        space()
+
+        blockOpen()
+        acceptList(x.cases)
+        blockClose()
+        sourceLocationConsumer.popSourceInfo()
     }
 
-    @Override
-    public void visitThis(@NotNull JsThisRef x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    override fun visitThis(x: JsThisRef) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        p.print(CHARS_THIS);
+        p.print(CHARS_THIS)
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitSuper(@NotNull JsSuperRef x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    override fun visitSuper(x: JsSuperRef) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        p.print(CHARS_SUPER);
+        p.print(CHARS_SUPER)
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitThrow(@NotNull JsThrow x) {
-        pushSourceInfo(x.getSource());
-        printCommentsBeforeNode(x);
+    override fun visitThrow(x: JsThrow) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        p.print(CHARS_THROW);
-        space();
-        accept(x.getExpression());
+        p.print(CHARS_THROW)
+        space()
 
-        printCommentsAfterNode(x);
-        popSourceInfo();
+        accept(x.expression)
+
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitTry(@NotNull JsTry x) {
-        printCommentsBeforeNode(x);
-        pushSourceInfo(x.getSource());
-        p.print(CHARS_TRY);
-        space();
-        lineBreakAfterBlock = false;
-        popSourceInfo();
-        accept(x.getTryBlock());
+    override fun visitTry(x: JsTry) {
+        printCommentsBeforeNode(x)
+        pushSourceInfo(x.source)
 
-        acceptList(x.getCatches());
+        p.print(CHARS_TRY)
+        space()
+        lineBreakAfterBlock = false
 
-        JsBlock finallyBlock = x.getFinallyBlock();
+        popSourceInfo()
+
+        accept(x.tryBlock)
+        acceptList(x.catches)
+
+        val finallyBlock = x.finallyBlock
         if (finallyBlock != null) {
-            p.print(CHARS_FINALLY);
-            space();
-            accept(finallyBlock);
+            p.print(CHARS_FINALLY)
+            space()
+
+            accept(finallyBlock)
         }
-        printCommentsAfterNode(x);
+
+        printCommentsAfterNode(x)
     }
 
-    @Override
-    public void visit(@NotNull JsVar var) {
-        pushSourceInfo(var.getSource());
-        printCommentsBeforeNode(var);
+    override fun visit(x: JsVars.JsVar) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        accept(var.getDeclarable());
-        JsExpression initExpr = var.getInitExpression();
-        if (initExpr != null) {
-            space();
-            assignment();
-            space();
-            boolean isEnclosed = parenPushIfCommaExpression(initExpr);
-            accept(initExpr);
+        accept(x.declarable)
+        x.initExpression?.let {
+            space()
+            assignment()
+            space()
+
+            val isEnclosed = parenPushIfCommaExpression(it)
+            accept(it)
             if (isEnclosed) {
-                rightParen();
+                rightParen()
             }
         }
 
-        printCommentsAfterNode(var);
-        popSourceInfo();
+        printCommentsAfterNode(x)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitVars(@NotNull JsVars vars) {
-        pushSourceInfo(vars.getSource());
-        printCommentsBeforeNode(vars);
+    override fun visitVars(x: JsVars) {
+        pushSourceInfo(x.source)
+        printCommentsBeforeNode(x)
 
-        varModifier(vars.getVariant());
-        space();
-        boolean sep = false;
-        for (JsVar var : vars) {
-            if (sep) {
-                if (vars.isMultiline()) {
-                    newline();
-                }
-                p.print(',');
-                space();
-            }
-            else {
-                sep = true;
-            }
+        varModifier(x.variant)
+        space()
 
-            accept(var);
-        }
-
-        printCommentsAfterNode(vars);
-        popSourceInfo();
-    }
-
-    @Override
-    public void visitSingleLineComment(@NotNull JsSingleLineComment comment) {
-        if (needSemi && insideComments) {
-            semi();
-            space();
-        }
-        p.print("//");
-        p.print(comment.getText());
-        newline();
-        needSemi = false;
-    }
-
-    @Override
-    public void visitMultiLineComment(@NotNull JsMultiLineComment comment) {
-        List<String> lines = StringsKt.lines(comment.getText());
-
-        p.print("/*");
-        p.print(lines.get(0).trim());
-
-        for (int i = 1; i < lines.size(); i++) {
-            newline();
-            p.print(lines.get(i).trim());
-        }
-
-        p.print("*/");
-    }
-
-    @Override
-    public void visitDocComment(@NotNull JsDocComment comment) {
-        boolean asSingleLine = comment.getTags().size() == 1;
-        if (!asSingleLine) {
-            newline();
-        }
-        p.print("/**");
-        if (asSingleLine) {
-            space();
-        }
-        else {
-            newline();
-        }
-
-        boolean notFirst = false;
-        for (Map.Entry<String, Object> entry : comment.getTags().entrySet()) {
+        var notFirst = false
+        for (`var` in x) {
             if (notFirst) {
-                newline();
-                p.print(' ');
-                p.print('*');
-            }
-            else {
-                notFirst = true;
+                if (x.isMultiline) newline()
+                p.print(',')
+                space()
+            } else {
+                notFirst = true
             }
 
-            p.print('@');
-            p.print(entry.getKey());
-            Object value = entry.getValue();
+            accept(`var`)
+        }
+
+        printCommentsAfterNode(x)
+        popSourceInfo()
+    }
+
+    override fun visitSingleLineComment(comment: JsSingleLineComment) {
+        if (needSemi && insideComments) {
+            semi()
+            space()
+        }
+        p.print("//")
+        p.print(comment.text)
+        newline()
+        needSemi = false
+    }
+
+    override fun visitMultiLineComment(comment: JsMultiLineComment) {
+        val lines = comment.text.lines()
+
+        p.print("/*")
+        p.print(lines[0].trim { it <= ' ' })
+
+        for (i in 1..<lines.size) {
+            newline()
+            p.print(lines[i].trim { it <= ' ' })
+        }
+
+        p.print("*/")
+    }
+
+    override fun visitDocComment(comment: JsDocComment) {
+        val asSingleLine = comment.tags.size == 1
+        if (!asSingleLine) newline()
+
+        p.print("/**")
+
+        if (asSingleLine) {
+            space()
+        } else {
+            newline()
+        }
+
+        var notFirst = false
+        for ((key, value) in comment.tags) {
+            if (notFirst) {
+                newline()
+                p.print(" *")
+            } else {
+                notFirst = true
+            }
+
+            p.print("@$key")
+
             if (value != null) {
-                space();
-                if (value instanceof CharSequence) {
-                    p.print((CharSequence) value);
-                }
-                else {
-                    visitNameRef((JsNameRef) value);
+                space()
+
+                when (value) {
+                    is CharSequence -> p.print(value)
+                    is JsNameRef -> visitNameRef(value)
+                    else -> error("Unsupported type of the '$key' doc comment tag value: ${value.javaClass}")
                 }
             }
 
             if (!asSingleLine) {
-                newline();
+                newline()
             }
         }
 
         if (asSingleLine) {
-            space();
-        }
-        else {
-            newline();
+            space()
+        } else {
+            newline()
         }
 
-        p.print('*');
-        p.print('/');
+        p.print("*/")
+
         if (asSingleLine) {
-            space();
+            space()
         }
     }
 
-    @Override
-    public void visitExport(@NotNull JsExport export) {
-        p.print("export");
-        space();
-        JsExport.Subject subject = export.getSubject();
+    override fun visitExport(export: JsExport) {
+        p.print("export")
+        space()
 
-        if (subject instanceof JsExport.Subject.All) {
-            p.print("*");
-        } else if (subject instanceof JsExport.Subject.Default) {
-            p.print("default");
-            space();
-            visitNameRef(((JsExport.Subject.Default) subject).getName());
+        when (val subject = export.subject) {
+            is JsExport.Subject.All -> {
+                p.print("*")
+            }
+            is JsExport.Subject.Default -> {
+                p.print("default")
+                space()
+                visitNameRef(subject.name)
+            }
+            is JsExport.Subject.Elements -> {
+                blockOpen()
+                for (element in subject.elements) {
+                    visitNameRef(element.name)
+                    val alias = element.alias
+                    if (alias != null) {
+                        p.print(" as ")
+                        if (alias.ident.isValidES5Identifier()) {
+                            nameDef(alias)
+                        } else {
+                            p.print(javaScriptString(alias.ident))
+                        }
+                    }
+                    p.print(',')
+                    p.newline()
+                }
+                p.indentOut()
+                p.print('}')
+            }
         }
-        else if (subject instanceof JsExport.Subject.Elements) {
-            blockOpen();
-            List<JsExport.Element> elements = ((JsExport.Subject.Elements) subject).getElements();
-            for (JsExport.Element element : elements) {
-                visitNameRef(element.getName());
-                JsName alias = element.getAlias();
-                if (alias != null) {
-                    p.print(" as ");
-                    if (IdentifierPolicyKt.isValidES5Identifier(alias.getIdent())) {
-                        nameDef(alias);
+
+        if (export.fromModule != null) {
+            p.print(" from ")
+            p.print(javaScriptString(export.fromModule))
+        }
+
+        needSemi = true
+    }
+
+    override fun visitImport(import: JsImport) {
+        val target = import.target
+
+        p.print("import ")
+
+        when (target) {
+            is JsImport.Target.Default -> {
+                visitNameRef(target.name)
+            }
+            is JsImport.Target.All -> {
+                p.print("* as ")
+                visitNameRef(target.alias)
+            }
+            is JsImport.Target.Elements -> {
+                val elements = target.elements
+
+                p.print("{")
+                val isMultiline = elements.size > 1
+                p.indentIn()
+
+                if (isMultiline) newline()
+                else space()
+
+                for (element in elements) {
+                    val importedName = element.name
+
+                    if (importedName.ident.isValidES5Identifier()) {
+                        nameDef(importedName)
                     } else {
-                        p.print(javaScriptString(alias.getIdent()));
+                        p.print(javaScriptString(importedName.ident))
+                    }
+
+                    val alias = element.alias
+                    if (alias != null) {
+                        p.print(" as ")
+                        visitNameRef(alias)
+                    }
+
+                    if (isMultiline) {
+                        p.print(',')
+                        newline()
+                    } else {
+                        space()
                     }
                 }
-                p.print(',');
-                p.newline();
+
+                p.indentOut()
+                p.print("}")
             }
-            p.indentOut();
-            p.print('}');
+            else -> {}
         }
 
-        if (export.getFromModule() != null) {
-            p.print(" from ");
-            p.print(javaScriptString(export.getFromModule()));
-        }
-        needSemi = true;
+        if (target !is JsImport.Target.Effect)
+            p.print(" from ")
+
+        p.print(javaScriptString(import.module))
     }
 
-    @Override
-    public void visitImport(@NotNull JsImport jsImport) {
-        JsImport.Target target = jsImport.getTarget();
+    override fun visitNamedDeclarable(declarable: JsDeclarable.Named) {
+        nameDef(declarable.name)
+    }
 
-        p.print("import ");
+    override fun visitArrayPatternDeclarable(pattern: JsDeclarable.ArrayPattern) {
+        pushSourceInfo(pattern.source)
+        printCommentsBeforeNode(pattern)
 
-        if (target instanceof JsImport.Target.Default) {
-            visitNameRef(((JsImport.Target.Default) target).getName());
-        } else if (target instanceof JsImport.Target.All) {
-            p.print("* as ");
-            visitNameRef(((JsImport.Target.All) target).getAlias());
-        } else if (target instanceof JsImport.Target.Elements) {
-            List<JsImport.Element> elements = ((JsImport.Target.Elements) target).getElements();
+        p.print('[')
 
-            p.print("{");
-            boolean isMultiline = elements.size() > 1;
-            p.indentIn();
-            if (isMultiline)
-                newline();
-            else
-                space();
+        var notFirst = false
+        for (item in pattern.elements) {
+            notFirst = sepCommaSpace(notFirst)
 
-            for (JsImport.Element element : elements) {
-                JsName importedName = element.getName();
-
-                if (IdentifierPolicyKt.isValidES5Identifier(importedName.getIdent())) {
-                    nameDef(importedName);
-                } else {
-                    p.print(javaScriptString(importedName.getIdent()));
-                }
-
-                JsNameRef alias = element.getAlias();
-                if (alias != null) {
-                    p.print(" as ");
-                    visitNameRef(alias);
-                }
-
-                if (isMultiline) {
-                    p.print(',');
-                    newline();
-                }
-                else {
-                    space();
-                }
+            val element = when (item) {
+                is JsBindingArrayItem.Hole -> continue
+                is JsBindingArrayItem.Element -> item.element
             }
-            p.indentOut();
-            p.print("}");
+            visitBindingElement(element)
         }
 
-        if (!(target == JsImport.Target.Effect.INSTANCE)) {
-            p.print(" from ");
-        }
+        p.print(']')
 
-        p.print(javaScriptString(jsImport.getModule()));
+        printCommentsAfterNode(pattern)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitNamedDeclarable(@NotNull JsDeclarable.Named declarable) {
-        nameDef(declarable.getName());
-    }
+    override fun visitObjectPatternDeclarable(pattern: JsDeclarable.ObjectPattern) {
+        pushSourceInfo(pattern.source)
+        printCommentsBeforeNode(pattern)
 
-    @Override
-    public void visitArrayPatternDeclarable(@NotNull JsDeclarable.ArrayPattern pattern) {
-        pushSourceInfo(pattern.getSource());
-        printCommentsBeforeNode(pattern);
+        p.print('{')
+        var notFirst = false
+        for (property in pattern.properties) {
+            notFirst = sepCommaSpace(notFirst)
 
-        p.print('[');
-
-        boolean notFirst = false;
-        for (JsBindingArrayItem item : pattern.getElements()) {
-            notFirst = sepCommaSpace(notFirst);
-
-            if (item instanceof JsBindingArrayItem.Hole) {
-                continue;
-            }
-
-            JsBindingElement element = ((JsBindingArrayItem.Element) item).getElement();
-            visitBindingElement(element);
-        }
-
-        p.print(']');
-
-        printCommentsAfterNode(pattern);
-        popSourceInfo();
-    }
-
-    @Override
-    public void visitObjectPatternDeclarable(@NotNull JsDeclarable.ObjectPattern pattern) {
-        pushSourceInfo(pattern.getSource());
-        printCommentsBeforeNode(pattern);
-
-        p.print('{');
-
-        boolean notFirst = false;
-        for (JsBindingProperty property : pattern.getProperties()) {
-            notFirst = sepCommaSpace(notFirst);
-
-            JsExpression propertyName = property.getPropertyName();
-            JsBindingElement element = property.getElement();
+            val propertyName = property.propertyName
+            val element = property.element
 
             if (propertyName != null) {
-                propertyName.accept(this);
-                _colon();
-                space();
+                propertyName.accept(this)
+                colon()
+                space()
             }
 
-            visitBindingElement(element);
+            visitBindingElement(element)
         }
+        p.print('}')
 
-        p.print('}');
-
-        printCommentsAfterNode(pattern);
-        popSourceInfo();
+        printCommentsAfterNode(pattern)
+        popSourceInfo()
     }
 
-    @Override
-    public void visitBindingElement(@NotNull JsBindingElement element) {
-        if (element.isSpread()) {
-            ellipsis();
+    override fun visitBindingElement(element: JsBindingElement) {
+        if (element.isSpread) {
+            ellipsis()
         }
 
-        element.getTarget().accept(this);
+        element.target.accept(this)
+        element.defaultValue?.let {
+            space()
+            assignment()
 
-        JsExpression defaultValue = element.getDefaultValue();
-        if (defaultValue != null) {
-            space();
-            assignment();
-            space();
-            accept(defaultValue);
+            space()
+
+            accept(it)
         }
     }
 
-    private void newline() {
-        p.newline();
-        sourceLocationConsumer.newLine();
+    private fun newline() {
+        p.newline()
+        sourceLocationConsumer.newLine()
     }
 
-    private void pushSourceInfo(JsLocationWithSource location) {
-        p.maybeIndent();
-        sourceInfoStack.add(location);
+    private fun pushSourceInfo(location: JsLocationWithSource?) {
+        p.maybeIndent()
+        sourceInfoStack.add(location)
         if (location != null) {
-            sourceLocationConsumer.pushSourceInfo(location);
+            sourceLocationConsumer.pushSourceInfo(location)
         }
     }
 
-    private void pushDeclaration(@NotNull JsFunction declaration) {
-        sourceLocationConsumer.pushDeclarationInfo(declaration.getSource());
+    private fun pushDeclaration(declaration: JsFunction) {
+        sourceLocationConsumer.pushDeclarationInfo(declaration.source)
     }
 
-    private void printCommentsBeforeNode(JsNode x) {
-       printComments(x.getCommentsBeforeNode(), false);
+    private fun printCommentsBeforeNode(x: JsNode) {
+        printComments(x.commentsBeforeNode, false)
     }
 
-    private void printCommentsAfterNode(JsNode x) {
-        printComments(x.getCommentsAfterNode(), true);
+    private fun printCommentsAfterNode(x: JsNode) {
+        printComments(x.commentsAfterNode, true)
     }
 
-    private void printComments(List<JsComment> comments, boolean isAfterNode) {
-        if (comments == null) return;
+    private fun printComments(comments: List<JsComment>?, isAfterNode: Boolean) {
+        if (comments == null) return
 
-        boolean previousNeedSemi = needSemi;
-        needSemi = isAfterNode;
-        insideComments = true;
+        val previousNeedSemi = needSemi
+        needSemi = isAfterNode
+        insideComments = true
 
-        for (JsComment comment : comments) {
-            comment.accept(this);
+        for (comment in comments) {
+            comment.accept(this)
         }
 
-        insideComments = false;
+        insideComments = false
 
         if (!isAfterNode) {
-            needSemi = previousNeedSemi;
+            needSemi = previousNeedSemi
         }
     }
 
-    private void popSourceInfo() {
-        if (!sourceInfoStack.isEmpty() && sourceInfoStack.remove(sourceInfoStack.size() - 1) != null) {
-            sourceLocationConsumer.popSourceInfo();
+    private fun popSourceInfo() {
+        if (sourceInfoStack.isNotEmpty() && sourceInfoStack.removeLast() != null) {
+            sourceLocationConsumer.popSourceInfo()
         }
     }
 
-    private void popDeclaration() {
-        sourceLocationConsumer.popDeclarationInfo();
+    private fun popDeclaration() {
+        sourceLocationConsumer.popDeclarationInfo()
     }
 
-    private void printJsBlock(JsBlock x, boolean finalNewline, @Nullable JsLocationWithSource defaultClosingBraceLocation) {
+    private fun printJsBlock(x: JsBlock, finalNewline: Boolean, defaultClosingBraceLocation: JsLocationWithSource?) {
+        var finalNewline = finalNewline
         if (!lineBreakAfterBlock) {
-            finalNewline = false;
-            lineBreakAfterBlock = true;
+            finalNewline = false
+            lineBreakAfterBlock = true
         }
 
-        printCommentsBeforeNode(x);
+        printCommentsBeforeNode(x)
 
-        boolean needBraces = !x.isTransparent();
+        val needBraces = !x.isTransparent
 
         if (needBraces) {
-            sourceLocationConsumer.pushSourceInfo(x.getSource());
-            blockOpen();
-            sourceLocationConsumer.popSourceInfo();
+            sourceLocationConsumer.pushSourceInfo(x.source)
+            blockOpen()
+            sourceLocationConsumer.popSourceInfo()
         }
 
-        sourceLocationConsumer.pushSourceInfo(null);
+        sourceLocationConsumer.pushSourceInfo(null)
 
-        Iterator<JsStatement> iterator = x.getStatements().iterator();
+        val iterator = x.statements.iterator()
         while (iterator.hasNext()) {
-            boolean isGlobal = x.isTransparent() || globalBlocks.contains(x);
+            val isGlobal = x.isTransparent || globalBlocks.contains(x)
 
-            JsStatement statement = iterator.next();
-            if (statement instanceof JsEmpty) {
-                continue;
+            val statement = iterator.next()
+            if (statement is JsEmpty) {
+                continue
             }
 
-            needSemi = true;
-            boolean stmtIsGlobalBlock = false;
+            needSemi = true
+            var stmtIsGlobalBlock = false
             if (isGlobal) {
-                if (statement instanceof JsBlock) {
+                if (statement is JsBlock) {
                     // A block inside a global block is still considered global
-                    stmtIsGlobalBlock = true;
-                    globalBlocks.add((JsBlock) statement);
+                    stmtIsGlobalBlock = true
+                    globalBlocks.add(statement)
                 }
             }
 
-            accept(statement);
+            accept<JsStatement?>(statement)
             if (stmtIsGlobalBlock) {
-                globalBlocks.remove(statement);
+                globalBlocks.remove(statement)
             }
             if (needSemi) {
                 /*
@@ -1872,262 +1746,239 @@ public class JsToStringGenerationVisitor extends JsVisitor {
                 * statement (i.e. not part of an assignment operation), just give them
                 * a newline instead of a semi.
                 */
-                boolean functionStmt =
-                        statement instanceof JsExpressionStatement && ((JsExpressionStatement) statement).getExpression() instanceof JsFunction;
+                val functionStmt =
+                    statement is JsExpressionStatement && statement.expression is JsFunction
                 /*
                 * Special treatment of the last statement in a block: only a few
                 * statements at the end of a block require semicolons.
                 */
-                boolean lastStatement = !iterator.hasNext() && needBraces && !JsRequiresSemiVisitor.exec(statement);
+                val lastStatement = !iterator.hasNext() && needBraces && !JsRequiresSemiVisitor.exec(statement)
                 if (functionStmt) {
+                    newline()
+                } else {
                     if (lastStatement) {
-                        newline();
+                        p.print(';')
+                    } else {
+                        semi()
                     }
-                    else {
-                        newline();
-                    }
-                }
-                else {
-                    if (lastStatement) {
-                        p.print(';');
-                    }
-                    else {
-                        semi();
-                    }
-                    newline();
+                    newline()
                 }
             }
         }
 
         if (needBraces) {
             // _blockClose() modified
-            p.indentOut();
+            p.indentOut()
 
-            sourceLocationConsumer.popSourceInfo();
+            sourceLocationConsumer.popSourceInfo()
 
-            JsLocationWithSource closingBraceLocation = x.getClosingBraceSource();
-            if (closingBraceLocation == null)
-                closingBraceLocation = defaultClosingBraceLocation;
+            val closingBraceLocation = x.closingBraceSource ?: defaultClosingBraceLocation
 
             if (closingBraceLocation != null) {
-                pushSourceInfo(closingBraceLocation);
+                pushSourceInfo(closingBraceLocation)
             }
-            p.print('}');
+            p.print('}')
             if (closingBraceLocation != null) {
-                popSourceInfo();
+                popSourceInfo()
             }
 
             if (finalNewline) {
-                newline();
+                newline()
             }
         } else {
-            sourceLocationConsumer.popSourceInfo();
+            sourceLocationConsumer.popSourceInfo()
         }
-        needSemi = false;
-        printCommentsAfterNode(x);
+        needSemi = false
+        printCommentsAfterNode(x)
     }
 
-    private void assignment() {
-        p.print('=');
+    private fun assignment() {
+        p.print('=')
     }
 
-    private void arrow() {
-        p.print("=>");
+    private fun arrow() {
+        p.print("=>")
     }
 
-    private void blockClose() {
-        p.indentOut();
-        p.print('}');
-        newline();
+    private fun blockClose() {
+        p.indentOut()
+        p.print('}')
+        newline()
     }
 
-    private void blockOpen() {
-        p.print('{');
-        p.indentIn();
-        newline();
+    private fun blockOpen() {
+        p.print('{')
+        p.indentIn()
+        newline()
     }
 
-    private void _colon() {
-        p.print(':');
+    private fun colon() {
+        p.print(':')
     }
 
-    private void _for() {
-        p.print(CHARS_FOR);
+    private fun _for() {
+        p.print(CHARS_FOR)
     }
 
-    private void _if() {
-        p.print(CHARS_IF);
+    private fun _if() {
+        p.print(CHARS_IF)
     }
 
-    private void leftParen() {
-        p.print('(');
+    private fun leftParen() {
+        p.print('(')
     }
 
-    private void leftSquare() {
-        p.print('[');
+    private fun leftSquare() {
+        p.print('[')
     }
 
-    private void nameDef(JsName name) {
-        p.print(name.getIdent());
+    private fun nameDef(name: JsName) {
+        p.print(name.ident)
     }
 
-    private void nameOf(HasName hasName) {
-        nameDef(hasName.getName());
+    private fun nameOf(hasName: HasName) {
+        nameDef(hasName.name)
     }
 
-    private boolean nestedPop(JsStatement statement) {
-        boolean pop = !(statement instanceof JsBlock);
-        if (pop) {
-            p.indentOut();
+    private fun nestedPop(statement: JsStatement?) {
+        if (statement !is JsBlock) {
+            p.indentOut()
         }
-        return pop;
     }
 
-    private boolean nestedPush(JsStatement statement) {
-        boolean push = !(statement instanceof JsBlock);
-        if (push) {
-            newline();
-            p.indentIn();
+    private fun nestedPush(statement: JsStatement?) {
+        when (statement) {
+            is JsBlock -> space()
+            else -> {
+                newline()
+                p.indentIn()
+            }
         }
-        else {
-            space();
-        }
-        return push;
-    }
-
-    private static boolean parenCalc(JsExpression parent, JsExpression child, boolean wrongAssoc) {
-        int parentPrec = JsPrecedenceVisitor.exec(parent);
-        int childPrec = JsPrecedenceVisitor.exec(child);
-        return parentPrec > childPrec || parentPrec == childPrec && wrongAssoc;
-    }
-
-    private boolean _parenPopOrSpace(JsExpression parent, JsExpression child, boolean wrongAssoc) {
-        boolean doPop = parenCalc(parent, child, wrongAssoc);
-        if (doPop) {
-            rightParen();
-        }
-        else {
-            space();
-        }
-        return doPop;
-    }
-
-    private boolean parenPush(JsExpression parent, JsExpression child, boolean wrongAssoc) {
-        boolean doPush = parenCalc(parent, child, wrongAssoc);
-        if (doPush) {
-            leftParen();
-        }
-        return doPush;
-    }
-
-    private boolean parenPushIfCommaExpression(JsExpression x) {
-        boolean doPush = x instanceof JsBinaryOperation && ((JsBinaryOperation) x).getOperator() == JsBinaryOperator.COMMA;
-        if (doPush) {
-            leftParen();
-        }
-        return doPush;
-    }
-
-    private boolean _parenPushOrSpace(JsExpression parent, JsExpression child, boolean wrongAssoc) {
-        boolean doPush = parenCalc(parent, child, wrongAssoc);
-        if (doPush) {
-            leftParen();
-        }
-        else {
-            space();
-        }
-        return doPush;
-    }
-
-    private void rightParen() {
-        p.print(')');
-    }
-
-    private void rightSquare() {
-        p.print(']');
-    }
-
-    private void semi() {
-        p.print(';');
-    }
-
-    private boolean sepCommaSpace(boolean sep) {
-        if (sep) {
-            p.print(',');
-            space();
-        }
-        return true;
-    }
-
-    private void slash() {
-        p.print('/');
-    }
-
-    private void space() {
-        p.print(' ');
     }
 
     /**
-     * Decide whether, if <code>op</code> is printed followed by <code>arg</code>,
+     * Calculates whether parenthesis are needed around the [child] node, which is inside the [parent] node.
+     *
+     * @return `true`, if left and right parens are required, otherwise `false`.
+     */
+    private fun parenCalc(parent: JsExpression, child: JsExpression, wrongAssoc: Boolean): Boolean {
+        val parentPrecedence = JsPrecedenceVisitor.exec(parent)
+        val childPrecedence = JsPrecedenceVisitor.exec(child)
+        return parentPrecedence > childPrecedence || parentPrecedence == childPrecedence && wrongAssoc
+    }
+
+    private fun parenPopOrSpace(parent: JsExpression, child: JsExpression, wrongAssoc: Boolean) {
+        if (parenCalc(parent, child, wrongAssoc)) {
+            rightParen()
+        } else {
+            space()
+        }
+    }
+
+    private fun parenPush(parent: JsExpression, child: JsExpression, wrongAssoc: Boolean): Boolean {
+        return parenCalc(parent, child, wrongAssoc).also { doPush ->
+            if (doPush) leftParen()
+        }
+    }
+
+    private fun parenPushIfCommaExpression(x: JsExpression?): Boolean {
+        return (x is JsBinaryOperation && x.operator == JsBinaryOperator.COMMA).also { doPush ->
+            if (doPush) leftParen()
+        }
+    }
+
+    private fun parenPushOrSpace(parent: JsExpression, child: JsExpression, wrongAssoc: Boolean): Boolean {
+        return parenCalc(parent, child, wrongAssoc).also { doPush ->
+            if (doPush) leftParen()
+            else space()
+        }
+    }
+
+    private fun rightParen() {
+        p.print(')')
+    }
+
+    private fun rightSquare() {
+        p.print(']')
+    }
+
+    private fun semi() {
+        p.print(';')
+    }
+
+    private fun sepCommaSpace(isNonFirst: Boolean): Boolean {
+        if (isNonFirst) {
+            p.print(',')
+            space()
+        }
+        return true
+    }
+
+    private fun slash() {
+        p.print('/')
+    }
+
+    private fun space() {
+        p.print(' ')
+    }
+
+    /**
+     * Decide whether, if `op` is printed followed by `arg`,
      * there needs to be a space between the operator and expression.
      *
-     * @return <code>true</code> if a space needs to be printed
+     * @return `true` if a space needs to be printed
      */
-    private static boolean spaceCalc(JsOperator op, JsExpression arg) {
-        if (op.isKeyword()) {
-            return true;
+    private fun spaceCalc(op: JsOperator, arg: JsExpression?): Boolean {
+        if (op.isKeyword) {
+            return true
         }
-        if (arg instanceof JsBinaryOperation) {
-            JsBinaryOperation binary = (JsBinaryOperation) arg;
-            /*
-            * If the binary operation has a higher precedence than op, then it won't
-            * be parenthesized, so check the first argument of the binary operation.
-            */
-            return binary.getOperator().getPrecedence() > op.getPrecedence() && spaceCalc(op, binary.getArg1());
+        if (arg is JsBinaryOperation) {
+            // If the binary operation has a higher precedence than op, then it won't be parenthesized,
+            // so check the first argument of the binary operation.
+            return arg.operator.precedence > op.precedence && spaceCalc(op, arg.arg1)
         }
-        if (arg instanceof JsPrefixOperation) {
-            JsOperator op2 = ((JsPrefixOperation) arg).getOperator();
+        if (arg is JsPrefixOperation) {
+            val prefixOp = arg.operator
             return (op == JsBinaryOperator.SUB || op == JsUnaryOperator.NEG)
-                   && (op2 == JsUnaryOperator.DEC || op2 == JsUnaryOperator.NEG)
-                   || (op == JsBinaryOperator.ADD && op2 == JsUnaryOperator.INC);
+                    && (prefixOp == JsUnaryOperator.DEC || prefixOp == JsUnaryOperator.NEG)
+                    || (op == JsBinaryOperator.ADD && prefixOp == JsUnaryOperator.INC)
         }
-        if ((arg instanceof JsNumberLiteral || arg instanceof JsBigIntLiteral) && (op == JsBinaryOperator.SUB || op == JsUnaryOperator.NEG)) {
-            if (arg instanceof JsIntLiteral) {
-                return ((JsIntLiteral) arg).value < 0;
-            } else if (arg instanceof JsBigIntLiteral) {
-                return ((JsBigIntLiteral) arg).getValue().compareTo(BigInteger.ZERO) < 0;
-            } else {
-                assert arg instanceof JsDoubleLiteral;
-                //noinspection CastConflictsWithInstanceof
-                return ((JsDoubleLiteral) arg).value < 0;
+        if ((arg is JsNumberLiteral || arg is JsBigIntLiteral) && (op == JsBinaryOperator.SUB || op == JsUnaryOperator.NEG)) {
+            return when (arg) {
+                is JsIntLiteral -> arg.value < 0
+                is JsBigIntLiteral -> arg.value < BigInteger.ZERO
+                is JsDoubleLiteral -> arg.value < 0
+                else -> error("spaceCalc numeric argument type is not supported: ${arg.javaClass}")
             }
         }
-        return false;
+        return false
     }
 
-    private void varModifier(JsVars.Variant variant) {
-        switch (variant) {
-            case Var: var(); break;
-            case Let: let(); break;
-            case Const: _const(); break;
+    private fun varModifier(variant: JsVars.Variant) {
+        when (variant) {
+            JsVars.Variant.Var -> _var()
+            JsVars.Variant.Let -> let()
+            JsVars.Variant.Const -> _const()
         }
     }
 
-    private void var() {
-        p.print(CHARS_VAR);
+    private fun _var() {
+        p.print(CHARS_VAR)
     }
 
-    private void let() {
-        p.print(CHARS_LET);
+    private fun let() {
+        p.print(CHARS_LET)
     }
 
-    private void _const() {
-        p.print(CHARS_CONST);
+    private fun _const() {
+        p.print(CHARS_CONST)
     }
 
-    private void _while() {
-        p.print(CHARS_WHILE);
+    private fun _while() {
+        p.print(CHARS_WHILE)
     }
 
-    private void ellipsis() { p.print(CHARS_ELLIPSIS); }
+    private fun ellipsis() {
+        p.print(CHARS_ELLIPSIS)
+    }
 }
