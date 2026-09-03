@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
+import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrStatement
@@ -33,8 +34,8 @@ abstract class LazyGlobalInitializationGenerator {
     protected abstract val backendContext: JsCommonBackendContext
 
     private object InitializationState {
-        const val UNINITIALIZED: Int = 0
-        const val INITIALIZED: Int = 1
+        const val UNINITIALIZED: Int = 1
+        const val INITIALIZED: Int = 0
         const val ERROR: Int = 2
     }
 
@@ -54,7 +55,7 @@ abstract class LazyGlobalInitializationGenerator {
         return listOf(
             state,
             irIfThen(
-                irEqeqeq(irGet(state), irInt(InitializationState.INITIALIZED)),
+                irNot(irGet(state)), // state == InitializationState.INITIALIZED
                 irReturnUnit()
             ),
             irIfThen(
