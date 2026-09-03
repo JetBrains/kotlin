@@ -30,9 +30,13 @@ class OutputFiles(val outputName: String, target: KonanTarget, val produce: Comp
      * Compiler's main output file.
      */
     val mainFileName =
-            if (produce.isCache)
-                outputName
-            else
+            if (produce.isCache) {
+                if (produce == CompilerOutputKind.OBJC_CACHE) {
+                    if (outputName.endsWith(".objc_cache")) outputName else "$outputName.objc_cache"
+                } else {
+                    outputName
+                }
+            } else
                 outputName.fullOutputName()
 
     val mainFile = File(mainFileName)
@@ -63,6 +67,8 @@ class OutputFiles(val outputName: String, target: KonanTarget, val produce: Comp
     val symbolicInfoFile = "$nativeBinaryFile.dSYM"
 
     val cacheMetadata = tempCacheDirectory?.child(CachedLibraries.METADATA_FILE_NAME)
+
+    val objcCacheMetadataFile = tempCacheDirectory?.cacheBinaryPart()?.child(CachedLibraries.OBJC_CACHE_METADATA_FILE_NAME)
 
     val bitcodeDependenciesFile = tempCacheDirectory?.cacheBinaryPart()?.child(CachedLibraries.BITCODE_DEPENDENCIES_FILE_NAME)
 

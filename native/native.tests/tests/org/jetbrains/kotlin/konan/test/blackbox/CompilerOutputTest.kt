@@ -402,6 +402,103 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         module4.files += TestFile.createCommitted(testClashingBindClassToObjCNameRootDir.resolve("main.kt"), module4)
         add(module4)
     })
+
+    private fun doTestProduceObjCCacheValidation(
+        args: List<String>,
+        expectedErrorMessage: String,
+        includeSources: Boolean = false,
+    ) {
+        val testCase = generateTestCaseWithSingleFile(
+            testClashingBindClassToObjCNameRootDir.resolve("class.kt"),
+            freeCompilerArgs = TestCompilerArgs(args),
+            extras = TestCase.NoTestRunnerExtras(),
+            testKind = TestKind.STANDALONE_NO_TR,
+        )
+        val compilation = ExecutableCompilation(
+            testRunSettings,
+            freeCompilerArgs = testCase.freeCompilerArgs,
+            sourceModules = if (includeSources) testCase.modules else emptyList(),
+            extras = testCase.extras,
+            dependencies = emptyList(),
+            expectedArtifact = TestCompilationArtifact.Executable(buildDir.resolve("objc_cache_validation_${System.nanoTime()}")),
+        )
+        val compilationResult = compilation.result
+        assertIs<TestCompilationResult.Failure>(compilationResult)
+        val output = compilationResult.toOutput().sanitizeCompilationOutput()
+        assertContains(output, expectedErrorMessage)
+    }
+
+    @Test
+    fun testProduceObjCCacheRequiresAddCache() {
+        Assumptions.assumeTrue(targets.hostTarget.family.isAppleFamily)
+        doTestProduceObjCCacheValidation(
+            listOf("-produce", "objc_cache", "-module-name", "Kt", "-Xcache-directory=/dummy/cache"),
+            "-produce objc_cache requires -Xadd-cache to be specified"
+        )
+    }
+
+    @Test
+    fun testProduceObjCCacheRequiresModuleName() {
+        Assumptions.assumeTrue(targets.hostTarget.family.isAppleFamily)
+        doTestProduceObjCCacheValidation(
+            listOf("-produce", "objc_cache", "-Xadd-cache=/dummy/path", "-Xcache-directory=/dummy/cache"),
+            "-produce objc_cache requires -module-name to be specified"
+        )
+    }
+
+    @Test
+    fun testProduceObjCCacheRequiresCacheDirectory() {
+        Assumptions.assumeTrue(targets.hostTarget.family.isAppleFamily)
+        doTestProduceObjCCacheValidation(
+            listOf("-produce", "objc_cache", "-Xadd-cache=/dummy/path", "-module-name", "Kt"),
+            "-produce objc_cache requires -Xcache-directory to be specified"
+        )
+    }
+
+    @Test
+    fun testProduceObjCCacheRejectsSourceFiles() {
+        Assumptions.assumeTrue(targets.hostTarget.family.isAppleFamily)
+        doTestProduceObjCCacheValidation(
+            listOf("-produce", "objc_cache", "-Xadd-cache=/dummy/path", "-module-name", "Kt", "-Xcache-directory=/dummy/cache"),
+            "-produce objc_cache does not accept source files",
+            includeSources = true,
+        )
+    }
+
+    @Test
+    fun testProduceObjCCacheRejectsNonAppleTarget() {
+        doTestProduceObjCCacheValidation(
+            listOf("-produce", "objc_cache", "-target", "linux_x64"),
+            "producing objc_cache is only supported for Apple targets"
+        )
+    }
+
+    @Test
+    fun testProduceObjCCacheRejectsPerFileCache() {
+        Assumptions.assumeTrue(targets.hostTarget.family.isAppleFamily)
+        doTestProduceObjCCacheValidation(
+            listOf("-produce", "objc_cache", "-Xadd-cache=/dummy/path", "-module-name", "Kt", "-Xcache-directory=/dummy/cache", "-Xmake-per-file-cache"),
+            "-produce objc_cache does not support per-file caching"
+        )
+    }
+
+    @Test
+    fun testProduceObjCCacheRejectsOptimization() {
+        Assumptions.assumeTrue(targets.hostTarget.family.isAppleFamily)
+        doTestProduceObjCCacheValidation(
+            listOf("-produce", "objc_cache", "-Xadd-cache=/dummy/path", "-module-name", "Kt", "-Xcache-directory=/dummy/cache", "-opt"),
+            "-produce objc_cache does not support optimization (-opt)"
+        )
+    }
+
+    @Test
+    fun testProduceObjCCacheRejectsOutput() {
+        Assumptions.assumeTrue(targets.hostTarget.family.isAppleFamily)
+        doTestProduceObjCCacheValidation(
+            listOf("-produce", "objc_cache", "-Xadd-cache=/dummy/path", "-module-name", "Kt", "-Xcache-directory=/dummy/cache", "-o", "/dummy/out"),
+            "-produce objc_cache does not accept output file name (-o)"
+        )
+    }
 }
 
 @TestDataPath("\$PROJECT_ROOT")

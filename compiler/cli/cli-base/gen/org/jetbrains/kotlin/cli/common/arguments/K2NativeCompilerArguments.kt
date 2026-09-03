@@ -951,7 +951,7 @@ Note: This option is deprecated and will be removed in one of the future release
     @Argument(
         value = "-produce",
         shortName = "-p",
-        valueDescription = "{program|static|dynamic|framework|library|bitcode}",
+        valueDescription = "{program|static|dynamic|framework|library|bitcode|objc_cache}",
         description = "Specify the output file kind.",
     )
     var produce: String? = null

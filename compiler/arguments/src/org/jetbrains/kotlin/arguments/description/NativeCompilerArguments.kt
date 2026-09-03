@@ -335,7 +335,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         shortName = "p"
         description = "Specify the output file kind.".asReleaseDependent()
         valueType = StringType.defaultNull
-        valueDescription = "{program|static|dynamic|framework|library|bitcode}".asReleaseDependent()
+        valueDescription = "{program|static|dynamic|framework|library|bitcode|objc_cache}".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
