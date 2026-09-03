@@ -128,7 +128,7 @@ internal abstract class EsmBundleKotlinJsTests @Inject constructor(
                 oldValue = "<script src=\"tests.bundle.js\"></script>",
                 newValue = ""
             )
-        outputDirectory.file("test.html").get().asFile.writeText(testHtmlFileContent)
+        outputDirectory.file("test.html").get().asFile.writeText(pinMochaCdnUrls(testHtmlFileContent))
     }
 }
 
