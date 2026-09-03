@@ -7,17 +7,13 @@ package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
-import org.jetbrains.kotlin.descriptors.isAnnotationClass
 import org.jetbrains.kotlin.fir.StandardTypes
-import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -157,10 +153,7 @@ private class RecreatedFirAnnotationPointer(
     private val argumentPointers: Map<Name, FirAnnotationArgumentPointer>,
 ) : FirAnnotationPointer, FirAnnotationArgumentPointer {
     override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): FirAnnotation? {
-        val classSymbol = session.firSession.symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
-        if (classSymbol.classKind?.isAnnotationClass != true) {
-            return null
-        }
+        val classSymbol = findAnnotationClassSymbol(classId, session) ?: return null
 
         val argumentMapping = if (argumentPointers.isEmpty()) {
             FirEmptyAnnotationArgumentMapping
@@ -172,13 +165,7 @@ private class RecreatedFirAnnotationPointer(
             }
         }
 
-        return buildAnnotation {
-            annotationTypeRef = buildResolvedTypeRef {
-                coneType = classSymbol.defaultType()
-            }
-
-            this.argumentMapping = argumentMapping
-        }
+        return buildFirAnnotation(classSymbol, argumentMapping)
     }
 }
 
