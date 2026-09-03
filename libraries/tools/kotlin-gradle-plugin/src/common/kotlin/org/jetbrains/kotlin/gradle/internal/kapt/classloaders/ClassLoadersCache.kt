@@ -12,7 +12,6 @@ import java.io.File
 import java.net.URLClassLoader
 import java.time.Duration
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentMap
 
 /**
  * LRU cache for [ClassLoader]s by class path.
@@ -20,12 +19,12 @@ import java.util.concurrent.ConcurrentMap
 class ClassLoadersCache(
     size: Int,
     private val parentClassLoader: ClassLoader = ClassLoader.getSystemClassLoader(),
-    ttl: Duration = Duration.ofHours(1)
+    ttl: Duration = Duration.ofHours(1),
 ) : AutoCloseable {
 
     private val logger = LoggerFactory.getLogger(ClassLoadersCache::class.java)
 
-    private val guavaCache: Cache<CacheKey, URLClassLoader> =
+    private val cache: Cache<CacheKey, URLClassLoader> =
         CacheBuilder
             .newBuilder()
             .maximumSize(size.toLong())
@@ -35,9 +34,7 @@ class ClassLoadersCache(
                 logger.info("Removing classloader from cache: ${key.entries.map { it.path }}")
                 cl.close()
             }
-            .build<CacheKey, URLClassLoader>()
-
-    private val cache: ConcurrentMap<CacheKey, URLClassLoader> = guavaCache.asMap()
+            .build()
 
     /**
      * Class loaders created for classpath entries that must not be retained (see [getForSplitPaths]),
@@ -50,13 +47,13 @@ class ClassLoadersCache(
 
     private fun getForClassPath(files: List<File>, parent: ClassLoader): ClassLoader {
         val key = makeKey(files)
-        val classLoader = cache.computeIfAbsent(key) {
-            makeClassLoader(key, parent)
+        val classLoader = cache.asMap().computeIfAbsent(key) {
+            makeClassLoader(files, parent)
         }
         // Guava delivers removal notifications during subsequent cache operations. This cache is
         // touched about once per kapt task, so without an explicit cleanUp an evicted loader can go
         // unclosed - and keep its jars open - indefinitely.
-        guavaCache.cleanUp()
+        cache.cleanUp()
         return classLoader
     }
 
@@ -77,7 +74,7 @@ class ClassLoadersCache(
         val parent = if (top.isEmpty()) parentClassLoader else getForClassPath(top)
         if (bottom.isEmpty()) return parent
 
-        val local = makeClassLoader(makeKey(bottom), parent)
+        val local = makeClassLoader(bottom, parent)
         // Not closed here: loaders handed out earlier in the same execution may still be in use.
         transientLoaders.computeIfAbsent(Thread.currentThread()) { mutableListOf() }.add(local)
         return local
@@ -94,14 +91,12 @@ class ClassLoadersCache(
     override fun close() {
         transientLoaders.values.forEach { loaders -> loaders.forEach { it.close() } }
         transientLoaders.clear()
-        cache.clear()
-        guavaCache.cleanUp()
+        cache.cleanUp()
     }
 
-    private fun makeClassLoader(key: CacheKey, parent: ClassLoader): URLClassLoader {
-        val cp = key.entries.map { it.path }
-        logger.info("Creating new classloader for classpath: $cp")
-        return URLClassLoader(cp.map { it.toURI().toURL() }.toTypedArray(), parent)
+    private fun makeClassLoader(files: List<File>, parent: ClassLoader): URLClassLoader {
+        logger.info("Creating new classloader for classpath: ${files.map { it.path }}")
+        return URLClassLoader(files.map { it.toURI().toURL() }.toTypedArray(), parent)
     }
 
     private fun makeKey(files: List<File>): CacheKey {
