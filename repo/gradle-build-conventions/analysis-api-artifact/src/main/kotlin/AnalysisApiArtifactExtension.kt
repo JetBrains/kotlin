@@ -66,7 +66,6 @@ abstract class AnalysisApiArtifactExtension @Inject constructor(private val proj
 
             addEmbeddedSources(artifactContentElements.name)
             addEmbeddedLibrarySources(artifactContentElements)
-            addEmbeddedProjectSourcesJars(artifactContentElements)
         }
 
         javadocJar()

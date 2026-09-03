@@ -8,14 +8,11 @@ import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.PublishArtifact
-import org.gradle.api.artifacts.component.ProjectComponentIdentifier
-import org.gradle.api.attributes.Category
-import org.gradle.api.attributes.DocsType
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPlugin.JAVADOC_ELEMENTS_CONFIGURATION_NAME
@@ -27,12 +24,11 @@ import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.internal.component.external.model.TestFixturesSupport
-import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.jvm.JvmLibrary
 import org.gradle.jvm.tasks.Jar
-import org.gradle.language.base.artifact.SourcesArtifact
 import org.gradle.kotlin.dsl.*
 import org.gradle.kotlin.dsl.support.serviceOf
+import org.gradle.language.base.artifact.SourcesArtifact
 import plugins.KotlinBuildPublishingPlugin
 import plugins.mainPublicationName
 
@@ -216,61 +212,10 @@ fun Project.emptyJavadocJar() {
  * Also embeds into final '-sources.jar' file source files from embedded dependencies.
  */
 fun Project.sourcesJarWithSourcesFromEmbedded(
-    vararg embeddedDepSourcesJarTasks: TaskProvider<out Jar>,
     body: Jar.() -> Unit = {},
-): TaskProvider<Jar> {
-    val sourcesJarTask = sourcesJar(body)
+): TaskProvider<Jar> = sourcesJar(body)
 
-    sourcesJarTask.configure {
-        val archiveOperations = serviceOf<ArchiveOperations>()
-        embeddedDepSourcesJarTasks.forEach { embeddedSourceJarTask ->
-            dependsOn(embeddedSourceJarTask)
-            from(embeddedSourceJarTask.map { archiveOperations.zipTree(it.archiveFile) })
-        }
-    }
 
-    return sourcesJarTask
-}
-
-@JvmOverloads
-fun Jar.addEmbeddedSources(configurationName: String = "embedded") {
-    project.configurations.findByName(configurationName)?.let { embedded ->
-        val allSources by lazy {
-            embedded.resolvedConfiguration
-                .resolvedArtifacts
-                .map { it.id.componentIdentifier }
-                .filterIsInstance<ProjectComponentIdentifier>()
-                .mapNotNull {
-                    project.project(it.projectPath).sources()
-                }
-        }
-        from({ allSources })
-    }
-}
-
-/**
- * Adds the published sources of all projects resolved through the [configuration] to this (sources) [Jar].
- * Unlike [addEmbeddedSources], this uses the published `sourcesElements` JAR – this approach is generally more correct as it
- * transparently supports source processing and fat-JARs.
- */
-fun Jar.addEmbeddedProjectSourcesJars(configuration: Configuration) {
-    val archiveOperations = project.serviceOf<ArchiveOperations>()
-    val objectFactory = project.objects
-    val sourcesJars = configuration.incoming.artifactView {
-        withVariantReselection()
-        isLenient = true
-        attributes {
-            attribute(Category.CATEGORY_ATTRIBUTE, objectFactory.named(Category::class.java, Category.DOCUMENTATION))
-            attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objectFactory.named(DocsType::class.java, DocsType.SOURCES))
-        }
-    }.files
-
-    // Build the producing `sourcesElements` tasks (e.g. the modules' fat sources jars) before packing them:
-    // `zipTree` below only carries a file path, not its producer task, so without this the reselected jars
-    // may not exist yet (fails with "Cannot expand ZIP ... as it does not exist").
-    dependsOn(sourcesJars)
-    from({ sourcesJars.map { archiveOperations.zipTree(it) } })
-}
 
 /**
  * Adds the resolved `-sources.jar` artifacts of every component resolved through [configuration] to this
@@ -310,6 +255,7 @@ fun Project.javadocJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
             dependsOn(it)
             from(it.destinationDir)
         }
+        addEmbeddedJavadoc()
         body()
     }
 
@@ -326,22 +272,8 @@ fun Project.javadocJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
  * Also embeds into final '-javadoc.jar' file javadoc files from embedded dependencies.
  */
 fun Project.javadocJarWithJavadocFromEmbedded(
-    vararg embeddedDepJavadocJarTasks: TaskProvider<out Jar>,
     body: Jar.() -> Unit = {},
-): TaskProvider<Jar> {
-    val javadocJarTask = javadocJar(body)
-
-    javadocJarTask.configure {
-        val archiveOperations = serviceOf<ArchiveOperations>()
-        embeddedDepJavadocJarTasks.forEach { embeddedJavadocJarTask ->
-            dependsOn(embeddedJavadocJarTask)
-            from(embeddedJavadocJarTask.map { archiveOperations.zipTree(it.archiveFile) })
-        }
-    }
-
-    return javadocJarTask
-}
-
+): TaskProvider<Jar> = javadocJar(body)
 
 fun Project.standardPublicJars() {
     runtimeJar()
