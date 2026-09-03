@@ -11,7 +11,6 @@ plugins {
 
 dependencies {
     api(kotlinStdlib())
-    api(project(":core:util.runtime"))
 
     compileOnly(intellijCore())
 }
