@@ -14,8 +14,12 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedDependency
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exportedSwiftExportApiConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.targets.native.resolvableApiConfiguration
 
 /**
@@ -35,10 +39,15 @@ internal interface SwiftExportConfigurationCompat {
     val rootPackage: Property<String>
 
     /**
-     * Provider for a resolvable api configuration from which dependencies will be exported. Implementations that don't export api
-     * dependencies should return an empty provider.
+     * Provider for a resolvable api configuration from which dependencies will be fully exported. Implementations that don't export direct
+     * api dependencies should return an empty provider.
      */
     val apiConfiguration: Provider<Configuration?>
+
+    /**
+     * Provider for a resolvable configuration from which dependencies will be transitively exported.
+     */
+    val exportConfiguration: Provider<Configuration>
 
     /**
      * Returns a list of exported modules.
@@ -71,6 +80,9 @@ internal interface SwiftExportConfigurationCompat {
                 override val apiConfiguration: Provider<Configuration?>
                     get() = providers.provider { kotlinNativeCompilation.resolvableApiConfiguration() }
 
+                override val exportConfiguration: Provider<Configuration>
+                    get() = providers.provider { kotlinNativeCompilation.internal.configurations.compileDependencyConfiguration }
+
                 override val exportedModules: Provider<Set<SwiftExportedDependency>>
                     get() = providers.provider { emptySet() } // TODO: KT-85687
                 override val settings: MapProperty<String, String>
@@ -85,6 +97,9 @@ internal interface SwiftExportConfigurationCompat {
 
         fun from(
             extension: SwiftExportExtension,
+            target: KotlinNativeTarget,
+            kotlinNativeCompilation: KotlinNativeCompilation,
+            buildType: NativeBuildType,
             providers: ProviderFactory,
         ): SwiftExportConfigurationCompat =
             object : SwiftExportConfigurationCompat {
@@ -94,6 +109,14 @@ internal interface SwiftExportConfigurationCompat {
 
                 override val apiConfiguration: Provider<Configuration?>
                     get() = providers.provider { null }
+
+                override val exportConfiguration: Provider<Configuration>
+                    get() = providers.provider {
+                        target.exportedSwiftExportApiConfiguration(
+                            buildType,
+                            kotlinNativeCompilation.internal.configurations.compileDependencyConfiguration
+                        )
+                    }
 
                 override val settings: MapProperty<String, String> get() = extension.advancedConfiguration.settings
                 override val freeCompilerArgs: ListProperty<String> get() = extension.advancedConfiguration.freeCompilerArgs

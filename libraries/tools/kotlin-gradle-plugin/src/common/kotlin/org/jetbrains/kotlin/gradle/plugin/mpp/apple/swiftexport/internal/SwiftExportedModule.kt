@@ -59,10 +59,10 @@ internal fun createTransitiveSwiftExportedModule(
 }
 
 internal fun Project.collectModules(
-    swiftExportConfigurationProvider: Provider<LazyResolvedConfigurationWithArtifacts>,
+    exportConfigurationProvider: Provider<LazyResolvedConfigurationWithArtifacts>,
     apiConfigurationProvider: Provider<LazyResolvedConfigurationWithArtifacts?>,
     exportedModulesProvider: Provider<Set<SwiftExportedDependency>>,
-): Provider<List<SwiftExportedModule>> = swiftExportConfigurationProvider
+): Provider<List<SwiftExportedModule>> = exportConfigurationProvider
     .map { exportConfiguration ->
         val apiConfiguration = apiConfigurationProvider.orNull
         return@map exportConfiguration to apiConfiguration
