@@ -1783,24 +1783,6 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
-    @TestMetadata("firHello.args")
-    public void testFirHello() {
-      run("firHello.args");
-    }
-
-    @Test
-    @TestMetadata("firHello20.args")
-    public void testFirHello20() {
-      run("firHello20.args");
-    }
-
-    @Test
-    @TestMetadata("firLightTreeOn.args")
-    public void testFirLightTreeOn() {
-      run("firLightTreeOn.args");
-    }
-
-    @Test
     @TestMetadata("firStdlibDependency.args")
     public void testFirStdlibDependency() {
       run("firStdlibDependency.args");
@@ -2107,9 +2089,9 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
-    @TestMetadata("syntaxError_lt.args")
-    public void testSyntaxError_lt() {
-      run("syntaxError_lt.args");
+    @TestMetadata("syntaxError.args")
+    public void testSyntaxError() {
+      run("syntaxError.args");
     }
 
     @Test
@@ -2385,9 +2367,9 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
-    @TestMetadata("k2LightTree.args")
-    public void testK2LightTree() {
-      run("k2LightTree.args");
+    @TestMetadata("k2.args")
+    public void testK2() {
+      run("k2.args");
     }
 
     @Test
@@ -2619,9 +2601,9 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
-    @TestMetadata("syntaxError_lt.args")
-    public void testSyntaxError_lt() {
-      run("syntaxError_lt.args");
+    @TestMetadata("syntaxError.args")
+    public void testSyntaxError() {
+      run("syntaxError.args");
     }
 
     @Test
@@ -2905,9 +2887,9 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
-    @TestMetadata("syntaxError_lt.args")
-    public void testSyntaxError_lt() {
-      run("syntaxError_lt.args");
+    @TestMetadata("syntaxError.args")
+    public void testSyntaxError() {
+      run("syntaxError.args");
     }
 
     @Test
