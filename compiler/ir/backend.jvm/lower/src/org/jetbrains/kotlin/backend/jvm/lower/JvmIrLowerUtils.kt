@@ -60,7 +60,7 @@ internal fun IrProperty.getRichPropertyReferenceForOptimizableDelegatedProperty(
     return delegate
 }
 
-internal val IrRichPropertyReference.boundContextArgumentCount: Int
+internal val IrRichPropertyReference.contextParametersCount: Int
     get() {
         val getter = when (val target = reflectionTargetSymbol?.owner) {
             is IrProperty -> target.getter?.let { it.resolveFakeOverride() ?: it } ?: return 0
@@ -70,8 +70,9 @@ internal val IrRichPropertyReference.boundContextArgumentCount: Int
         return getter.parameters.count { it.kind == IrParameterKind.Context }
     }
 
+// If the receiver is bound, then everything is bound
 internal val IrRichPropertyReference.hasBoundReceiver: Boolean
-    get() = boundValues.size > boundContextArgumentCount
+    get() = boundValues.size > contextParametersCount
 
 internal val IrRichPropertyReference.boundReceiverOrNull: IrExpression?
     get() = if (hasBoundReceiver) boundValues.last() else null

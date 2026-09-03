@@ -65,7 +65,7 @@ internal class PropertyReferenceDelegationLowering(val context: JvmBackendContex
  * as usual.
  */
 private val IrRichPropertyReference.isContextual: Boolean
-    get() = boundContextArgumentCount > 0
+    get() = contextParametersCount > 0
 
 private class PropertyReferenceDelegationTransformer(val context: JvmBackendContext) : IrElementTransformerVoid() {
 

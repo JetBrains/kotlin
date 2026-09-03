@@ -315,13 +315,17 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         val referenceClass = propertyReferenceClassFor(expression)
         return context.createJvmIrBuilder(currentScope!!, expression).run {
             val constructor = referenceClass.owner.callableReferenceSuperConstructor(
-                hasBoundContextArguments = expression.boundContextArgumentCount > 0,
+                hasBoundContextArguments = expression.contextParametersCount > 0,
                 hasBoundReceiver = expression.hasBoundReceiver,
             )
             irCall(constructor.symbol).apply {
                 fillReflectedPropertyArguments(
                     this, expression,
-                    boundArguments = packBoundValues(expression.boundValues, expression.boundContextArgumentCount, expression.hasBoundReceiver),
+                    boundArguments = packBoundValues(
+                        expression.boundValues,
+                        expression.contextParametersCount,
+                        expression.hasBoundReceiver
+                    ),
                 )
             }
         }
@@ -385,7 +389,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
                 +referenceClass
                 +irCall(referenceClass.constructors.single()).apply {
                     arguments.assignFrom(
-                        packBoundValues(expression.boundValues, expression.boundContextArgumentCount, expression.hasBoundReceiver)
+                        packBoundValues(expression.boundValues, expression.contextParametersCount, expression.hasBoundReceiver)
                     )
                 }
             }
@@ -416,7 +420,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
 
         fun JvmIrBuilder.getArguments(function: IrSimpleFunction): List<() -> IrExpression> {
             val boundExpressions = buildList<() -> IrExpression> {
-                for (contextIndex in 0 until expression.boundContextArgumentCount) {
+                for (contextIndex in 0 until expression.contextParametersCount) {
                     add {
                         irCall(arrayItemGetter).apply {
                             arguments[0] = irGetField(irGet(function.dispatchReceiverParameter!!), boundContextArgumentsField)
@@ -480,7 +484,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     }
 
     private fun addConstructor(expression: IrRichPropertyReference, referenceClass: IrClass, superClass: IrClass) {
-        val hasContextArguments = expression.boundContextArgumentCount > 0
+        val hasContextArguments = expression.contextParametersCount > 0
         val superConstructor = superClass.callableReferenceSuperConstructor(
             hasBoundContextArguments = hasContextArguments,
             hasBoundReceiver = expression.hasBoundReceiver,
