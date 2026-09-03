@@ -1380,6 +1380,26 @@ public class CliTestGenerated extends AbstractCliTest {
   }
 
   @Nested
+  @TestMetadata("compiler/testData/cli/jvm/XminimumRuntimeJdk")
+  @TestDataPath("$PROJECT_ROOT")
+  public class XminimumRuntimeJdk {
+    private void run(String fileName) {
+      doJvmTest("compiler/testData/cli/jvm/XminimumRuntimeJdk/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInXminimumRuntimeJdk() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/XminimumRuntimeJdk"), Pattern.compile("^(.+)\\.args$"), null, false);
+    }
+
+    @Test
+    @TestMetadata("minimumRuntimeJdkMinAllowed.args")
+    public void testMinimumRuntimeJdkMinAllowed() {
+      run("minimumRuntimeJdkMinAllowed.args");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/cli/jvm/XnewInference")
   @TestDataPath("$PROJECT_ROOT")
   public class XnewInference {

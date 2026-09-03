@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_ALLOW_HOLDSIN_CONTRACT
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_ALLOW_KOTLIN_PACKAGE
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_ALLOW_PRE_17_RUNTIME_JDK
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_ALLOW_REIFIED_TYPE_IN_CATCH
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_ALLOW_RETURNS_RESULT_OF
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_ANNOTATION_DEFAULT_TARGET
@@ -218,6 +219,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS in this) { arguments.allowContractsOnMoreFunctions = get(X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS)}
     if (X_ALLOW_HOLDSIN_CONTRACT in this) { arguments.allowHoldsinContract = get(X_ALLOW_HOLDSIN_CONTRACT)}
     if (X_ALLOW_KOTLIN_PACKAGE in this) { arguments.allowKotlinPackage = get(X_ALLOW_KOTLIN_PACKAGE)}
+    if (X_ALLOW_PRE_17_RUNTIME_JDK in this) { arguments.allowPre17RuntimeJdk = get(X_ALLOW_PRE_17_RUNTIME_JDK)}
     if (X_ALLOW_REIFIED_TYPE_IN_CATCH in this) { arguments.allowReifiedTypeInCatch = get(X_ALLOW_REIFIED_TYPE_IN_CATCH)}
     if (X_ALLOW_RETURNS_RESULT_OF in this) { arguments.allowReturnsResultOf = get(X_ALLOW_RETURNS_RESULT_OF)}
     if (X_ANNOTATION_DEFAULT_TARGET in this) { arguments.annotationDefaultTarget = get(X_ANNOTATION_DEFAULT_TARGET)?.stringValue}
@@ -334,6 +336,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS] = arguments.allowContractsOnMoreFunctions } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_HOLDSIN_CONTRACT] = arguments.allowHoldsinContract } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_KOTLIN_PACKAGE] = arguments.allowKotlinPackage } catch (_: NoSuchMethodError) {  }
+    try { this[X_ALLOW_PRE_17_RUNTIME_JDK] = arguments.allowPre17RuntimeJdk } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_REIFIED_TYPE_IN_CATCH] = arguments.allowReifiedTypeInCatch } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_RETURNS_RESULT_OF] = arguments.allowReturnsResultOf } catch (_: NoSuchMethodError) {  }
     try { this[X_ANNOTATION_DEFAULT_TARGET] = arguments.annotationDefaultTarget?.let { AnnotationDefaultTargetMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::annotationDefaultTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xannotation-default-target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
@@ -449,6 +452,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS in this) { arguments.allowContractsOnMoreFunctions = get(X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS)}
     if (X_ALLOW_HOLDSIN_CONTRACT in this) { arguments.allowHoldsinContract = get(X_ALLOW_HOLDSIN_CONTRACT)}
     if (X_ALLOW_KOTLIN_PACKAGE in this) { arguments.allowKotlinPackage = get(X_ALLOW_KOTLIN_PACKAGE)}
+    if (X_ALLOW_PRE_17_RUNTIME_JDK in this) { arguments.allowPre17RuntimeJdk = get(X_ALLOW_PRE_17_RUNTIME_JDK)}
     if (X_ALLOW_REIFIED_TYPE_IN_CATCH in this) { arguments.allowReifiedTypeInCatch = get(X_ALLOW_REIFIED_TYPE_IN_CATCH)}
     if (X_ALLOW_RETURNS_RESULT_OF in this) { arguments.allowReturnsResultOf = get(X_ALLOW_RETURNS_RESULT_OF)}
     if (X_ANNOTATION_DEFAULT_TARGET in this) { arguments.annotationDefaultTarget = get(X_ANNOTATION_DEFAULT_TARGET)?.stringValue}
@@ -587,6 +591,9 @@ internal abstract class CommonCompilerArgumentsImpl(
 
     public val X_ALLOW_KOTLIN_PACKAGE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_ALLOW_KOTLIN_PACKAGE")
+
+    public val X_ALLOW_PRE_17_RUNTIME_JDK: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_ALLOW_PRE_17_RUNTIME_JDK")
 
     public val X_ALLOW_REIFIED_TYPE_IN_CATCH: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_ALLOW_REIFIED_TYPE_IN_CATCH")

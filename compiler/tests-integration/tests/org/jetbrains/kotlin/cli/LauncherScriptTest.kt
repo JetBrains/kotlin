@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Files
+import kotlin.collections.mapOf
 
 class LauncherScriptTest : TestCaseWithTmpdir() {
     private fun runProcess(
@@ -233,7 +234,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         runProcess(
             "kotlinr", "-howtorun", "jar", "test.HelloWorldKt", workDirectory = tmpdir,
             expectedExitCode = 1,
-            expectedStderr = "error: could not read manifest from test.HelloWorldKt: test.HelloWorldKt (No such file or directory)\n"
+            expectedStderr = "error: could not read manifest from test.HelloWorldKt: test.HelloWorldKt\n"
         )
         runProcess("kotlinr", "-howtorun", "classfile", "test.HelloWorldKt", expectedStdout = "Hello!\n", workDirectory = tmpdir)
     }
@@ -425,6 +426,30 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             expectedExitCode = 0,
             expectedStdout = "",
             expectedStderr = ""
+        )
+    }
+
+    @Test
+    fun testPre17RuntimeJdk() {
+        runProcess(
+            "kotlinc",
+            "$testDataDirectory/helloWorld.kt",
+            K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
+            environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath),
+            expectedStderr = "warning: running Kotlin compiler using JDK 11 will not be supported in future versions of Kotlin. Consider upgrading to at least JDK 17 or supplying '-Xallow-pre-17-runtime-jdk' (which will only work until Kotlin 2.5.20-Beta1). See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.",
+            expectedExitCode = 0,
+        )
+    }
+
+    @Test
+    fun testPre17RuntimeJdkTemporarilyPreserved() {
+        runProcess(
+            "kotlinc",
+            "-Xallow-pre-17-runtime-jdk", "$testDataDirectory/helloWorld.kt",
+            K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
+            environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath),
+            expectedStderr = "",
+            expectedExitCode = 0,
         )
     }
 
