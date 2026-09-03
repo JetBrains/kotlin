@@ -989,11 +989,11 @@ open class JsToStringGenerationVisitor(
 
         val qualifier = nameRef.qualifier
         if (qualifier != null) {
-            val enclose = if (qualifier is JsLiteral.JsValueLiteral) {
-                // "42.foo" is not allowed, but "(42).foo" is.
-                qualifier is JsNumberLiteral
-            } else {
-                parenCalc(nameRef, qualifier, false)
+            val enclose = when (qualifier) {
+                // "42.foo" is not allowed, but "(42).foo" is. A BigInt literal needs no parens:
+                // the `n` suffix terminates it, so `1n.foo` already parses as a member access.
+                is JsIntLiteral, is JsDoubleLiteral -> true
+                else -> parenCalc(nameRef, qualifier, false)
             }
 
             if (enclose) leftParen()
@@ -1115,7 +1115,7 @@ open class JsToStringGenerationVisitor(
                             } else
                                 accept(labelExpr)
                         }
-                        is JsNumberLiteral, is JsBigIntLiteral -> accept(labelExpr)
+                        is JsNumberLiteral -> accept(labelExpr)
                         else -> {
                             leftSquare()
                             accept(labelExpr)
@@ -1929,29 +1929,27 @@ open class JsToStringGenerationVisitor(
      * @return `true` if a space needs to be printed
      */
     private fun spaceCalc(op: JsOperator, arg: JsExpression?): Boolean {
-        if (op.isKeyword) {
-            return true
-        }
-        if (arg is JsBinaryOperation) {
-            // If the binary operation has a higher precedence than op, then it won't be parenthesized,
-            // so check the first argument of the binary operation.
-            return arg.operator.precedence > op.precedence && spaceCalc(op, arg.arg1)
-        }
-        if (arg is JsPrefixOperation) {
-            val prefixOp = arg.operator
-            return (op == JsBinaryOperator.SUB || op == JsUnaryOperator.NEG)
-                    && (prefixOp == JsUnaryOperator.DEC || prefixOp == JsUnaryOperator.NEG)
-                    || (op == JsBinaryOperator.ADD && prefixOp == JsUnaryOperator.INC)
-        }
-        if ((arg is JsNumberLiteral || arg is JsBigIntLiteral) && (op == JsBinaryOperator.SUB || op == JsUnaryOperator.NEG)) {
-            return when (arg) {
-                is JsIntLiteral -> arg.value < 0
-                is JsBigIntLiteral -> arg.value < BigInteger.ZERO
-                is JsDoubleLiteral -> arg.value < 0
-                else -> error("spaceCalc numeric argument type is not supported: ${arg.javaClass}")
+        return op.isKeyword || when (arg) {
+            is JsBinaryOperation ->
+                // If the binary operation has a higher precedence than op, then it won't be parenthesized,
+                // so check the first argument of the binary operation.
+                arg.operator.precedence > op.precedence && spaceCalc(op, arg.arg1)
+            is JsPrefixOperation -> {
+                val prefixOp = arg.operator
+                (op == JsBinaryOperator.SUB || op == JsUnaryOperator.NEG)
+                        && (prefixOp == JsUnaryOperator.DEC || prefixOp == JsUnaryOperator.NEG)
+                        || (op == JsBinaryOperator.ADD && prefixOp == JsUnaryOperator.INC)
             }
+            is JsNumberLiteral if (op == JsBinaryOperator.SUB || op == JsUnaryOperator.NEG) -> {
+                when (arg) {
+                    is JsIntLiteral -> arg.value < 0
+                    is JsBigIntLiteral -> arg.value < BigInteger.ZERO
+                    is JsDoubleLiteral -> arg.value < 0
+                    else -> error("spaceCalc numeric argument type is not supported: ${arg.javaClass}")
+                }
+            }
+            else -> false
         }
-        return false
     }
 
     private fun varModifier(variant: JsVars.Variant) {
