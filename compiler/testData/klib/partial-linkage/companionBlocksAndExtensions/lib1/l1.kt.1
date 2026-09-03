@@ -76,16 +76,22 @@ companion fun TA.aliasFun() = "aliasFun"
 companion fun A.aliasToClassFun() = "aliasToClassFun"
 companion fun TA.classToAliasFun() = "classToAliasFun"
 
-open class BaseClass {
+open class Grandparent {
     companion {
-        fun funMovedToParentClass() = "moved"
-        val propMovedToParentClass = 42
+        fun funMovedToGrandparentClass() = "moved.v2"
+        val propMovedToGrandparentClass = 43
+    }
+}
+open class BaseClass : Grandparent() {
+    companion {
+        fun funMovedToParentClass() = "moved.v2"
+        val propMovedToParentClass = 43
     }
 }
 interface Interface {
     companion {
-        fun funMovedToParentInterface() = "moved"
-        val propMovedToParentInterface = 42
+        fun funMovedToParentInterface() = "moved.v2"
+        val propMovedToParentInterface = 43
     }
 }
 class Derived : BaseClass(), Interface {}

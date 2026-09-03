@@ -67,8 +67,16 @@ fun box() = abiTest {
     expectSuccess("classToAliasFun") { classToAliasFunCall() }
 
     // To follow the JVM rules, moving companion members to a superclass is ABI compatible, but moving to a superinterface is not.
-    expectSuccess("moved") { funMovedToParentClass() }
-    expectSuccess(42) { propMovedToParentClass() }
+    expectSuccess("moved.v2") { funMovedToParentClass() }
+    expectSuccess(43) { propMovedToParentClass() }
+    expectSuccess("moved.v2") { funMovedToParentClassRef.invoke() }
+    expectSuccess(43) { propMovedToParentClassRef.invoke() }
+    expectSuccess("moved.v2") { funMovedToGrandparentClass() }
+    expectSuccess(43) { propMovedToGrandparentClass() }
+    expectSuccess("moved.v2") { funMovedToGrandparentClassRef.invoke() }
+    expectSuccess(43) { propMovedToGrandparentClassRef.invoke() }
     expectFailure(linkage("Function 'funMovedToParentInterface' can not be called: No function found for symbol '/Derived.funMovedToParentInterface'")) { funMovedToParentInterface() }
     expectFailure(linkage("Property accessor 'propMovedToParentInterface.<get-propMovedToParentInterface>' can not be called: No property accessor found for symbol '/Derived.propMovedToParentInterface.<get-propMovedToParentInterface>'")) { propMovedToParentInterface() }
+    expectFailure(linkage("Function 'funMovedToParentInterface' can not be called: No function found for symbol '/Derived.funMovedToParentInterface'")) { funMovedToParentInterfaceRef.invoke() }
+    expectFailure(linkage("Property accessor 'propMovedToParentInterface.<get-propMovedToParentInterface>' can not be called: No property accessor found for symbol '/Derived.propMovedToParentInterface.<get-propMovedToParentInterface>'")) { propMovedToParentInterfaceRef.invoke() }
 }
