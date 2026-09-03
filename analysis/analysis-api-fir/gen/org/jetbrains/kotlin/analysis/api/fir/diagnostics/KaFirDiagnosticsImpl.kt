@@ -965,6 +965,11 @@ internal class AnnotationArgumentMustBeKclassLiteralImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.AnnotationArgumentMustBeKclassLiteral
 
+internal class AnnotationArgumentWithControlFlowNotSupportedImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.AnnotationArgumentWithControlFlowNotSupported
+
 internal class AnnotationClassMemberImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
@@ -3889,6 +3894,11 @@ internal class ConstValWithNonConstInitializerImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ConstValWithNonConstInitializer
+
+internal class ConstValWithControlFlowInInitializerImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ConstValWithControlFlowInInitializer
 
 internal class DelegateUsesExtensionPropertyTypeParameterErrorImpl(
     override val usedTypeParameter: KaTypeParameterSymbol,

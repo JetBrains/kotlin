@@ -1235,6 +1235,12 @@ private fun KaDiagnosticConverterBuilder.addConversions22() {
             token,
         )
     }
+    add(FirErrors.CONST_VAL_WITH_CONTROL_FLOW_IN_INITIALIZER) { firDiagnostic ->
+        ConstValWithControlFlowInInitializerImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.ACCESSOR_FOR_DELEGATED_PROPERTY) { firDiagnostic ->
         AccessorForDelegatedPropertyImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -2140,6 +2146,12 @@ private fun KaDiagnosticConverterBuilder.addConversions43() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions44() {
+    add(FirErrors.ANNOTATION_ARGUMENT_WITH_CONTROL_FLOW_NOT_SUPPORTED) { firDiagnostic ->
+        AnnotationArgumentWithControlFlowNotSupportedImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.VAR_TYPE_MISMATCH_ON_INHERITANCE) { firDiagnostic ->
         VarTypeMismatchOnInheritanceImpl(
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
