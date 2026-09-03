@@ -9,7 +9,9 @@ sealed class S {
     data class DataClass(val x: Int) : S()
     data object DataObject
     inner class InnerClass
-    companion object
+    companion object {
+        val anonymousObject = object : Any() {}
+    }
     object RegularObject
     fun interface FunInterface { fun invoke() }
 }
@@ -76,6 +78,13 @@ fun box(): String {
     assertFalse(JavaInterface::class.isCompanion)
     assertFalse(JavaInterface::class.isFun)
     assertFalse(JavaInterface::class.isValue)
+
+    assertFalse(S.anonymousObject::class.isSealed)
+    assertFalse(S.anonymousObject::class.isData)
+    assertFalse(S.anonymousObject::class.isInner)
+    assertFalse(S.anonymousObject::class.isCompanion)
+    assertFalse(S.anonymousObject::class.isFun)
+    assertFalse(S.anonymousObject::class.isValue)
 
     assertFalse(V::class.isSealed)
     assertFalse(V::class.isData)

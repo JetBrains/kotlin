@@ -10,6 +10,7 @@ public interface Interface {
 public class J {
     public class Inner {}
     public static class Nested {}
+    public static final Object anonymousClass = new Object() {};
 }
 
 // FILE: box.kt
@@ -35,6 +36,12 @@ fun box(): String {
     assertFalse(J.Inner::class.isCompanion)
     assertFalse(J.Inner::class.isFun)
     assertFalse(J.Inner::class.isValue)
+
+    assertFalse(J.anonymousClass::class.isData)
+    assertFalse(J.anonymousClass::class.isInner)
+    assertFalse(J.anonymousClass::class.isCompanion)
+    assertFalse(J.anonymousClass::class.isFun)
+    assertFalse(J.anonymousClass::class.isValue)
 
     return "OK"
 }
