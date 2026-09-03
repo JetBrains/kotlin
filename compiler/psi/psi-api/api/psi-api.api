@@ -4079,28 +4079,6 @@ public final class org/jetbrains/kotlin/psi/utils/ConstantExpressionUtils {
 	public static final fun toConstantExpressionElementType (Lorg/jetbrains/kotlin/psi/stubs/ConstantValueKind;)Lorg/jetbrains/kotlin/KtNodeType;
 }
 
-public final class org/jetbrains/kotlin/psi/utils/OperatorTokens {
-	public static final field ASSIGNMENTS_FOR_OPERATIONS Ljava/util/Map;
-	public static final field ASSIGNMENT_OPERATION_NAMES Ljava/util/Map;
-	public static final field ASSIGNMENT_OPERATION_TOKENS Ljava/util/Map;
-	public static final field BINARY_OPERATION_NAMES Ljava/util/Map;
-	public static final field BINARY_OPERATION_TOKENS Ljava/util/Map;
-	public static final field COMPARISON_OPERATIONS Ljava/util/Set;
-	public static final field CONVENTION_NAMES Ljava/util/Set;
-	public static final field EQUALS_OPERATIONS Ljava/util/Set;
-	public static final field IDENTITY_EQUALS_OPERATIONS Ljava/util/Set;
-	public static final field INCREMENT_OPERATIONS Ljava/util/Set;
-	public static final field INSTANCE Lorg/jetbrains/kotlin/psi/utils/OperatorTokens;
-	public static final field IN_OPERATIONS Ljava/util/Set;
-	public static final field OPERATIONS_FOR_ASSIGNMENTS Ljava/util/Map;
-	public static final field UNARY_OPERATION_NAMES Ljava/util/Map;
-	public static final field UNARY_OPERATION_TOKENS Ljava/util/Map;
-	public static final fun isConventionName (Lorg/jetbrains/kotlin/name/Name;)Z
-	public static final fun operationName (Lorg/jetbrains/kotlin/lexer/KtToken;)Lorg/jetbrains/kotlin/name/Name;
-	public static final fun operationName (Lorg/jetbrains/kotlin/lexer/KtToken;ZZ)Lorg/jetbrains/kotlin/name/Name;
-	public static final fun operationToken (Lorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/lexer/KtToken;
-}
-
 public abstract interface class org/jetbrains/kotlin/references/KotlinPsiReferenceProviderContributor {
 	public abstract fun getElementClass ()Ljava/lang/Class;
 	public abstract fun getReferenceProvider ()Lorg/jetbrains/kotlin/references/KotlinPsiReferenceProviderContributor$ReferenceProvider;
