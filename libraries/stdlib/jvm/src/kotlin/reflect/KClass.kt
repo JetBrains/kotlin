@@ -99,6 +99,14 @@ public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedEleme
     public val isInterface: Boolean
 
     /**
+     * `true` if this is an enum class.
+     * See the [Kotlin language documentation](https://kotlinlang.org/docs/enum-classes.html)
+     * for more information.
+     */
+    @SinceKotlin("2.5")
+    public val isEnumClass: Boolean
+
+    /**
      * `true` if this class is `final`.
      */
     @SinceKotlin("1.1")
