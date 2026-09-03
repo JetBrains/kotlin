@@ -17,15 +17,15 @@ class Class {
 
 @Ann1(
     <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>foo<!>,
-    <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>foo + bar<!>,
-    <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"$foo $bar"<!>,
-    <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"${baz()} "<!>
+    <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>foo<!> + bar,
+    "$<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>foo<!> $bar",
+    "${<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>baz()<!>} "
 )
 @Ann2(
     <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>intArrayOf(
         <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>bar<!>,
         <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>baz()<!>,
-        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>bar + cnst<!>
+        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>bar<!> + cnst
     )<!>
 )
 @Ann3(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>arr<!>)

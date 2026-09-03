@@ -9,7 +9,7 @@ annotation class Bad(val bar: Bar = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE
 
 @Foo
 @Bar([])
-@Baz(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>Bar([<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>])<!>)
+@Baz(Bar([<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL!>[]<!>]))
 fun target() = Unit
 
 @Foo([Bar([])])

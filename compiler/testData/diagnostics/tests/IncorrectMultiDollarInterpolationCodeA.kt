@@ -195,42 +195,42 @@ val runTimeConstant get() = 42
 // interpolation kinds: of simple identifier, of identifier in backticks, of arbitrary expression
 // string literal kinds: single-line, multi-line
 
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"$runTimeConstant"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, REDUNDANT_INTERPOLATION_PREFIX!>$"$runTimeConstant"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$"$$runTimeConstant"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$"$$$$runTimeConstant"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$$$$$"$$$$$$$$runTimeConstant"<!>)
+@Annotation("$<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>runTimeConstant<!>")
+@Annotation(<!REDUNDANT_INTERPOLATION_PREFIX!>$"$<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>runTimeConstant<!>"<!>)
+@Annotation($$"$$<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>runTimeConstant<!>")
+@Annotation($$$$"$$$$<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>runTimeConstant<!>")
+@Annotation($$$$$$$$"$$$$$$$$<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>runTimeConstant<!>")
 
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"$`runTimeConstant`"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, REDUNDANT_INTERPOLATION_PREFIX!>$"$`runTimeConstant`"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$"$$`runTimeConstant`"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$"$$$$`runTimeConstant`"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$$$$$"$$$$$$$$`runTimeConstant`"<!>)
+@Annotation("$<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>`runTimeConstant`<!>")
+@Annotation(<!REDUNDANT_INTERPOLATION_PREFIX!>$"$<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>`runTimeConstant`<!>"<!>)
+@Annotation($$"$$<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>`runTimeConstant`<!>")
+@Annotation($$$$"$$$$<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>`runTimeConstant`<!>")
+@Annotation($$$$$$$$"$$$$$$$$<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>`runTimeConstant`<!>")
 
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"${0 + runTimeConstant}"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, REDUNDANT_INTERPOLATION_PREFIX!>$"${0 + runTimeConstant}"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$"$${0 + runTimeConstant}"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$"$$$${0 + runTimeConstant}"<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$$$$$"$$$$$$$${0 + runTimeConstant}"<!>)
+@Annotation("${0 + <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>runTimeConstant<!>}")
+@Annotation(<!REDUNDANT_INTERPOLATION_PREFIX!>$"${0 + <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>runTimeConstant<!>}"<!>)
+@Annotation($$"$${0 + <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>runTimeConstant<!>}")
+@Annotation($$$$"$$$${0 + <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>runTimeConstant<!>}")
+@Annotation($$$$$$$$"$$$$$$$${0 + <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>runTimeConstant<!>}")
 
 
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"""$runTimeConstant"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, REDUNDANT_INTERPOLATION_PREFIX!>$"""$runTimeConstant"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$"""$$runTimeConstant"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$"""$$$$runTimeConstant"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$$$$$"""$$$$$$$$runTimeConstant"""<!>)
+@Annotation("""$<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>runTimeConstant<!>""")
+@Annotation(<!REDUNDANT_INTERPOLATION_PREFIX!>$"""$<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>runTimeConstant<!>"""<!>)
+@Annotation($$"""$$<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>runTimeConstant<!>""")
+@Annotation($$$$"""$$$$<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>runTimeConstant<!>""")
+@Annotation($$$$$$$$"""$$$$$$$$<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>runTimeConstant<!>""")
 
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"""$`runTimeConstant`"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, REDUNDANT_INTERPOLATION_PREFIX!>$"""$`runTimeConstant`"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$"""$$`runTimeConstant`"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$"""$$$$`runTimeConstant`"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$$$$$"""$$$$$$$$`runTimeConstant`"""<!>)
+@Annotation("""$<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>`runTimeConstant`<!>""")
+@Annotation(<!REDUNDANT_INTERPOLATION_PREFIX!>$"""$<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>`runTimeConstant`<!>"""<!>)
+@Annotation($$"""$$<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>`runTimeConstant`<!>""")
+@Annotation($$$$"""$$$$<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>`runTimeConstant`<!>""")
+@Annotation($$$$$$$$"""$$$$$$$$<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>`runTimeConstant`<!>""")
 
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"""${0 + runTimeConstant}"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, REDUNDANT_INTERPOLATION_PREFIX!>$"""${0 + runTimeConstant}"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$"""$${0 + runTimeConstant}"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$"""$$$${0 + runTimeConstant}"""<!>)
-@Annotation(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>$$$$$$$$"""$$$$$$$${0 + runTimeConstant}"""<!>)
+@Annotation("""${0 + <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>runTimeConstant<!>}""")
+@Annotation(<!REDUNDANT_INTERPOLATION_PREFIX!>$"""${0 + <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>runTimeConstant<!>}"""<!>)
+@Annotation($$"""$${0 + <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>runTimeConstant<!>}""")
+@Annotation($$$$"""$$$${0 + <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>runTimeConstant<!>}""")
+@Annotation($$$$$$$$"""$$$$$$$${0 + <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>runTimeConstant<!>}""")
 
 fun stringsWithInterpolationAsInvalidAnnotationArguments() {}
 
@@ -238,42 +238,42 @@ fun stringsWithInterpolationAsInvalidAnnotationArguments() {}
 // interpolation kinds: of simple identifier, of identifier in backticks, of arbitrary expression
 // string literal kinds: single-line, multi-line
 
-const val stringWithInterpolationAsInvalidConstantInitializer01 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"$runTimeConstant"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer02 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, REDUNDANT_INTERPOLATION_PREFIX!>$"$runTimeConstant"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer03 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$"$$runTimeConstant"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer04 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$"$$$$runTimeConstant"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer05 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$$$$$"$$$$$$$$runTimeConstant"<!>
+const val stringWithInterpolationAsInvalidConstantInitializer01 = "$<!CONST_VAL_WITH_NON_CONST_INITIALIZER!>runTimeConstant<!>"
+const val stringWithInterpolationAsInvalidConstantInitializer02 = <!REDUNDANT_INTERPOLATION_PREFIX!>$"$<!CONST_VAL_WITH_NON_CONST_INITIALIZER!>runTimeConstant<!>"<!>
+const val stringWithInterpolationAsInvalidConstantInitializer03 = $$"$$<!CONST_VAL_WITH_NON_CONST_INITIALIZER!>runTimeConstant<!>"
+const val stringWithInterpolationAsInvalidConstantInitializer04 = $$$$"$$$$<!CONST_VAL_WITH_NON_CONST_INITIALIZER!>runTimeConstant<!>"
+const val stringWithInterpolationAsInvalidConstantInitializer05 = $$$$$$$$"$$$$$$$$<!CONST_VAL_WITH_NON_CONST_INITIALIZER!>runTimeConstant<!>"
 
-const val stringWithInterpolationAsInvalidConstantInitializer06 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"$`runTimeConstant`"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer07 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, REDUNDANT_INTERPOLATION_PREFIX!>$"$`runTimeConstant`"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer08 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$"$$`runTimeConstant`"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer09 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$"$$$$`runTimeConstant`"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer10 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$$$$$"$$$$$$$$`runTimeConstant`"<!>
+const val stringWithInterpolationAsInvalidConstantInitializer06 = "$<!CONST_VAL_WITH_NON_CONST_INITIALIZER!>`runTimeConstant`<!>"
+const val stringWithInterpolationAsInvalidConstantInitializer07 = <!REDUNDANT_INTERPOLATION_PREFIX!>$"$<!CONST_VAL_WITH_NON_CONST_INITIALIZER!>`runTimeConstant`<!>"<!>
+const val stringWithInterpolationAsInvalidConstantInitializer08 = $$"$$<!CONST_VAL_WITH_NON_CONST_INITIALIZER!>`runTimeConstant`<!>"
+const val stringWithInterpolationAsInvalidConstantInitializer09 = $$$$"$$$$<!CONST_VAL_WITH_NON_CONST_INITIALIZER!>`runTimeConstant`<!>"
+const val stringWithInterpolationAsInvalidConstantInitializer10 = $$$$$$$$"$$$$$$$$<!CONST_VAL_WITH_NON_CONST_INITIALIZER!>`runTimeConstant`<!>"
 
-const val stringWithInterpolationAsInvalidConstantInitializer11 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"${0 + runTimeConstant}"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer12 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, REDUNDANT_INTERPOLATION_PREFIX!>$"${0 + runTimeConstant}"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer13 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$"$${0 + runTimeConstant}"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer14 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$"$$$${0 + runTimeConstant}"<!>
-const val stringWithInterpolationAsInvalidConstantInitializer15 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$$$$$"$$$$$$$${0 + runTimeConstant}"<!>
+const val stringWithInterpolationAsInvalidConstantInitializer11 = "${0 + <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>runTimeConstant<!>}"
+const val stringWithInterpolationAsInvalidConstantInitializer12 = <!REDUNDANT_INTERPOLATION_PREFIX!>$"${0 + <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>runTimeConstant<!>}"<!>
+const val stringWithInterpolationAsInvalidConstantInitializer13 = $$"$${0 + <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>runTimeConstant<!>}"
+const val stringWithInterpolationAsInvalidConstantInitializer14 = $$$$"$$$${0 + <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>runTimeConstant<!>}"
+const val stringWithInterpolationAsInvalidConstantInitializer15 = $$$$$$$$"$$$$$$$${0 + <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>runTimeConstant<!>}"
 
 
-const val stringWithInterpolationAsInvalidConstantInitializer16 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"""$runTimeConstant"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer17 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, REDUNDANT_INTERPOLATION_PREFIX!>$"""$runTimeConstant"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer18 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$"""$$runTimeConstant"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer19 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$"""$$$$runTimeConstant"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer20 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$$$$$"""$$$$$$$$runTimeConstant"""<!>
+const val stringWithInterpolationAsInvalidConstantInitializer16 = """$<!CONST_VAL_WITH_NON_CONST_INITIALIZER!>runTimeConstant<!>"""
+const val stringWithInterpolationAsInvalidConstantInitializer17 = <!REDUNDANT_INTERPOLATION_PREFIX!>$"""$<!CONST_VAL_WITH_NON_CONST_INITIALIZER!>runTimeConstant<!>"""<!>
+const val stringWithInterpolationAsInvalidConstantInitializer18 = $$"""$$<!CONST_VAL_WITH_NON_CONST_INITIALIZER!>runTimeConstant<!>"""
+const val stringWithInterpolationAsInvalidConstantInitializer19 = $$$$"""$$$$<!CONST_VAL_WITH_NON_CONST_INITIALIZER!>runTimeConstant<!>"""
+const val stringWithInterpolationAsInvalidConstantInitializer20 = $$$$$$$$"""$$$$$$$$<!CONST_VAL_WITH_NON_CONST_INITIALIZER!>runTimeConstant<!>"""
 
-const val stringWithInterpolationAsInvalidConstantInitializer21 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"""$`runTimeConstant`"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer22 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, REDUNDANT_INTERPOLATION_PREFIX!>$"""$`runTimeConstant`"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer23 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$"""$$`runTimeConstant`"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer24 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$"""$$$$`runTimeConstant`"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer25 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$$$$$"""$$$$$$$$`runTimeConstant`"""<!>
+const val stringWithInterpolationAsInvalidConstantInitializer21 = """$<!CONST_VAL_WITH_NON_CONST_INITIALIZER!>`runTimeConstant`<!>"""
+const val stringWithInterpolationAsInvalidConstantInitializer22 = <!REDUNDANT_INTERPOLATION_PREFIX!>$"""$<!CONST_VAL_WITH_NON_CONST_INITIALIZER!>`runTimeConstant`<!>"""<!>
+const val stringWithInterpolationAsInvalidConstantInitializer23 = $$"""$$<!CONST_VAL_WITH_NON_CONST_INITIALIZER!>`runTimeConstant`<!>"""
+const val stringWithInterpolationAsInvalidConstantInitializer24 = $$$$"""$$$$<!CONST_VAL_WITH_NON_CONST_INITIALIZER!>`runTimeConstant`<!>"""
+const val stringWithInterpolationAsInvalidConstantInitializer25 = $$$$$$$$"""$$$$$$$$<!CONST_VAL_WITH_NON_CONST_INITIALIZER!>`runTimeConstant`<!>"""
 
-const val stringWithInterpolationAsInvalidConstantInitializer26 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"""${0 + runTimeConstant}"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer27 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, REDUNDANT_INTERPOLATION_PREFIX!>$"""${0 + runTimeConstant}"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer28 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$"""$${0 + runTimeConstant}"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer29 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$"""$$$${0 + runTimeConstant}"""<!>
-const val stringWithInterpolationAsInvalidConstantInitializer30 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>$$$$$$$$"""$$$$$$$${0 + runTimeConstant}"""<!>
+const val stringWithInterpolationAsInvalidConstantInitializer26 = """${0 + <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>runTimeConstant<!>}"""
+const val stringWithInterpolationAsInvalidConstantInitializer27 = <!REDUNDANT_INTERPOLATION_PREFIX!>$"""${0 + <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>runTimeConstant<!>}"""<!>
+const val stringWithInterpolationAsInvalidConstantInitializer28 = $$"""$${0 + <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>runTimeConstant<!>}"""
+const val stringWithInterpolationAsInvalidConstantInitializer29 = $$$$"""$$$${0 + <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>runTimeConstant<!>}"""
+const val stringWithInterpolationAsInvalidConstantInitializer30 = $$$$$$$$"""$$$$$$$${0 + <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>runTimeConstant<!>}"""
 
 // interpolation prefix length: 1, 2, 4, 8
 fun orphanedInterpolationPrefix() {
