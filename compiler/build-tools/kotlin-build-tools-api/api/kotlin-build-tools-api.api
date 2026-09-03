@@ -1863,7 +1863,6 @@ public class org/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncremental
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$Companion;
 	public static final field DUMP_DEFAULT_PARAMETER_VALUES Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$Option;
-	public static final field INCREMENTAL_DATA_OUTPUT_DIR Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$Option;
 	public static final field INFO_AS_WARNINGS Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$Option;
 	public static final field VERBOSE Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$Option;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$Option;)Ljava/lang/Object;
@@ -1874,13 +1873,11 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/KaptConf
 	public abstract fun getStubsOutputDir ()Ljava/nio/file/Path;
 	public abstract fun getStubsPhase ()Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$StubsPhase;
 	public abstract fun toBuilder ()Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$Builder;
-	public abstract fun toCompilerPlugin ()Lorg/jetbrains/kotlin/buildtools/api/arguments/CompilerPlugin;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$AptPhase {
 	public static final field ANNOTATION_PROCESSORS Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$AptPhase$Option;
 	public static final field APT_OPTIONS Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$AptPhase$Option;
-	public static final field CHANGED_FILES Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$AptPhase$Option;
 	public static final field CLASSPATH_CHANGES Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$AptPhase$Option;
 	public static final field CLASS_OUTPUT_DIR Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$AptPhase$Option;
 	public static final field COMPILED_SOURCES_DIR Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$AptPhase$Option;
@@ -1890,10 +1887,8 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/KaptConf
 	public static final field DUMP_FILE_READ_HISTORY Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$AptPhase$Option;
 	public static final field DUMP_PROCESSOR_STATS Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$AptPhase$Option;
 	public static final field INCLUDE_COMPILE_CLASSPATH Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$AptPhase$Option;
-	public static final field INCREMENTAL_CACHE Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$AptPhase$Option;
 	public static final field JAVAC_OPTIONS Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$AptPhase$Option;
 	public static final field MAP_DIAGNOSTIC_LOCATIONS Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$AptPhase$Option;
-	public static final field PROCESS_INCREMENTALLY Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$AptPhase$Option;
 	public static final field SHOW_PROCESSOR_STATS Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$AptPhase$Option;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptConfiguration$AptPhase$Option;)Ljava/lang/Object;
 }
@@ -2009,6 +2004,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operatio
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Companion;
 	public static final field GENERATE_COMPILER_REF_INDEX Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;
 	public static final field INCREMENTAL_COMPILATION Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;
+	public static final field KAPT_CONFIGURATION Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;
 	public static final field KOTLINSCRIPT_EXTENSIONS Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;
 	public static final field LOOKUP_TRACKER Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;)Ljava/lang/Object;
