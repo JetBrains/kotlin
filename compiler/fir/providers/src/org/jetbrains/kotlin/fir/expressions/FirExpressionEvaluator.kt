@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.declarations.isArrayOfFunction
 import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -499,10 +500,32 @@ object FirExpressionEvaluator {
             if (functionCall.getExpandedType(session).classId == StandardClassIds.KClass) return NotKClassLiteral(functionCall.source)
 
             return when (val symbol = calleeReference.resolvedSymbol) {
-                is FirNamedFunctionSymbol -> visitNamedFunction(functionCall, symbol)
+                is FirNamedFunctionSymbol -> when {
+                    symbol.isArrayOfFunction() -> visitArrayOfCall(functionCall)
+                    else -> visitNamedFunction(functionCall, symbol)
+                }
                 is FirConstructorSymbol -> visitConstructorCall(functionCall)
                 else -> NotConst(functionCall.source)
             }
+        }
+
+        /**
+         * When [LanguageFeature.CollectionLiteralsBasedAnnotationResolution] is used,
+         * it is a task of constant evaluator to transform `arrayOf` family to collection literals.
+         */
+        private fun visitArrayOfCall(functionCall: FirFunctionCall): FirEvaluatorResult {
+            return buildCollectionLiteral {
+                source = functionCall.source
+                coneTypeOrNull = functionCall.resolvedType
+                annotations.addAll(functionCall.annotations)
+                argumentList = buildArgumentList {
+                    arguments.addAll(evaluateVarargOr(functionCall.elementArguments()) { return it })
+                }
+            }.wrap()
+        }
+
+        private fun FirFunctionCall.elementArguments(): List<FirExpression> {
+            return arguments.flatMap { (it as? FirVarargArgumentsExpression)?.arguments ?: [] }
         }
 
         private fun visitNamedFunction(functionCall: FirFunctionCall, symbol: FirNamedFunctionSymbol): FirEvaluatorResult {
