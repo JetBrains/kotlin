@@ -569,6 +569,9 @@ internal class KClassImpl<T : Any>(
     override val visibility: KVisibility?
         get() = descriptor.visibility.toKVisibility()
 
+    override val isRegularClass: Boolean
+        get() = classKind == ClassKind.CLASS && !jClass.isAnonymousClass
+
     private val modality: Modality
         get() = kmClass?.modality ?: when {
             jClass.isAnnotation || jClass.isEnum -> Modality.FINAL

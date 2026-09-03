@@ -78,6 +78,15 @@ public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedEleme
     public val visibility: KVisibility?
 
     /**
+     * `true` if this is a regular class, meaning it is not an `object`, an interface, an annotation,
+     * an enum class/entry, or an anonymous class.
+     *
+     * Modality (`open` / `abstract` / `final` / `sealed`) is ignored.
+     */
+    @SinceKotlin("2.5")
+    public val isRegularClass: Boolean
+
+    /**
      * `true` if this class is `final`.
      */
     @SinceKotlin("1.1")
