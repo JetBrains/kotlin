@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
+import org.jetbrains.kotlin.backend.konan.llvm.LlvmDeclarations
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
@@ -96,10 +97,10 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             try {
                 val module = fragment.irModule
                 newEngine(generationState) { generationStateEngine ->
-                    if (context.config.produce.isCache) {
+                    if (context.config.produce.isFullCache) {
                         generationStateEngine.runAndMeasurePhase(BuildAdditionalCacheInfoPhase, module)
-                        if (context.config.produce.isHeaderCache) return@newEngine
                     }
+                    if (context.config.produce.isHeaderCache || context.config.produce.isObjCCache) return@newEngine
                     if (context.config.produce == CompilerOutputKind.PROGRAM) {
                         generationStateEngine.runAndMeasurePhase(EntryPointPhase, module)
                     }
@@ -146,6 +147,13 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
 
         fun List<BackendJobFragment>.runAllLowerings(): List<NativeGenerationState> {
             val generationStates = this.map { fragment -> createGenerationState(fragment) }
+            // For HEADER_CACHE and OBJC_CACHE, lowerings are completely bypassed:
+            // - HEADER_CACHE only produces metadata headers.
+            // - OBJC_CACHE only emits Objective-C class stubs and type adapters,
+            //   relying on the library's static binary cache for all lowered Kotlin code.
+            if (context.config.produce.isHeaderCache || context.config.produce.isObjCCache) {
+                return generationStates
+            }
             val fragmentWithState = this.zip(generationStates)
 
             // In Kotlin/Native, lowerings are run not over modules, but over individual files.
@@ -353,7 +361,9 @@ private fun PhaseEngine<out NativeBackendContext>.splitIntoFragments(
             )
         }
     } else {
-        val llvmModuleSpecification = if (config.produce.isCache) {
+        val llvmModuleSpecification = if (config.produce.isObjCCache) {
+            ObjCCacheLlvmModuleSpecification(config.cachedLibraries)
+        } else if (config.produce.isCache) {
             val containsStdlib = config.libraryToCache!!.klib == context.stdlibModule.konanLibrary
             CacheLlvmModuleSpecification(config.cachedLibraries, context.config.libraryToCache!!, containsStdlib = containsStdlib)
         } else {
@@ -428,7 +438,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLink(
     val [linkerInput, cacheBinaries] = run {
         val resolvedCacheBinaries by lazy { resolveCacheBinaries(context.config.cachedLibraries, moduleCompilationOutput.dependenciesTrackingResult) }
         when {
-            context.config.produce == CompilerOutputKind.STATIC_CACHE -> {
+            context.config.produce == CompilerOutputKind.STATIC_CACHE || context.config.produce.isObjCCache -> {
                 compilationResult to ResolvedCacheBinaries(emptyList(), emptyList())
             }
             shouldPerformPreLink(context.config, resolvedCacheBinaries, linkerOutputKind) -> {
@@ -531,6 +541,11 @@ internal fun <Context, Output, P> PhaseEngine<Context>.runAndMeasurePhase(phase:
  * @return absolute path to object file.
  */
 private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns) {
+    if (context.config.produce.isObjCCache) {
+        context.llvmDeclarations = LlvmDeclarations(emptyMap())
+        runAndMeasurePhase(CodegenPhase, CodegenInput(module, irBuiltIns, emptyMap()))
+        return
+    }
     val optimize = context.shouldOptimize()
     // It's ok to run global optimizations on a cache as long as it doesn't have other dependencies (stdlib)
     val runGlobalOptimizations = optimize && !context.config.cachedLibraries.hasStaticCaches

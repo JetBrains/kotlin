@@ -72,3 +72,23 @@ internal class CacheLlvmModuleSpecification(
                 ?.filePath.let { it == null || it == declaration.fileOrNull?.path }
     }
 }
+
+/**
+ * [LlvmModuleSpecification] for Objective-C export cache compilation (`-produce objc_cache`).
+ *
+ * In this mode, no Kotlin definitions are emitted into the object file; all Kotlin declarations
+ * are treated as external ([containsLibrary] = false, [containsDeclaration] = false), and all
+ * cross-module references are imported from other object files ([importsKotlinDeclarationsFromOtherObjectFiles] = true).
+ * The resulting LLVM module contains only Objective-C runtime class descriptors and type adapter metadata.
+ */
+internal class ObjCCacheLlvmModuleSpecification(
+        cachedLibraries: CachedLibraries,
+) : LlvmModuleSpecificationBase(cachedLibraries) {
+    override val isFinal = false
+
+    override fun importsKotlinDeclarationsFromOtherObjectFiles(): Boolean = true
+
+    override fun containsLibrary(library: KotlinLibrary): Boolean = false
+
+    override fun containsDeclaration(declaration: IrDeclaration): Boolean = false
+}

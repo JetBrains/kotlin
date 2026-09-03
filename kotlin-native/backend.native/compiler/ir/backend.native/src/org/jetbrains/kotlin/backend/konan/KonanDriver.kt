@@ -145,7 +145,7 @@ class KonanDriver(
                 return
         }
 
-        if (!config.produce.isHeaderCache) {
+        if (!config.produce.isHeaderCache && !config.produce.isObjCCache) {
             config.cacheSupport.checkConsistency()
         }
 
@@ -153,7 +153,7 @@ class KonanDriver(
     }
 
     private fun ensureModuleName(config: NativeSecondStageCompilationConfig) {
-        if (environment.getSourceFiles().isEmpty()) {
+        if (config.produce == CompilerOutputKind.PROGRAM && environment.getSourceFiles().isEmpty()) {
             // Note: The order of libraries is not important.
             val libraries = config.resolvedLibraries.getFullList()
             val moduleName = config.moduleId

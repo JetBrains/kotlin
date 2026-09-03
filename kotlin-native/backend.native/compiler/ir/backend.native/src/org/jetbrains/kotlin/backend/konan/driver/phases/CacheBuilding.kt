@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.konan.target.isObjCCache
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 
 /**
@@ -57,5 +58,5 @@ internal val FinalizeCachePhase = createSimpleNamedCompilerPhase<NativeBackendPh
         name = "FinalizeCache",
 ) { context, outputFiles ->
     //  TODO: Explicit parameter
-    CacheStorage.renameOutput(outputFiles, overwrite = context.config.producePerFileCache)
+    CacheStorage.renameOutput(outputFiles, overwrite = context.config.producePerFileCache || context.config.produce.isObjCCache)
 }
