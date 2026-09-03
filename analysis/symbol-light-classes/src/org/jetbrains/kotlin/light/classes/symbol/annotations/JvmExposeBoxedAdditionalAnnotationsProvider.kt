@@ -87,7 +87,7 @@ internal object JvmExposeBoxedAdditionalAnnotationsProvider : AdditionalAnnotati
     override fun isSpecialQualifier(qualifiedName: String): Boolean = false
 }
 
-private fun PsiElement.isJvmExposeBoxed(): Boolean = this is SymbolLightMethodBase && isJvmExposedBoxed
+private fun PsiElement.isJvmExposeBoxed(): Boolean = this is SymbolLightMethodBase && isJvmExposeBoxed
 
 private fun SymbolLightLazyAnnotation.firstArgument(): AnnotationArgument? =
     annotationApplicationWithArgumentsInfo.value.annotation.arguments.firstOrNull()

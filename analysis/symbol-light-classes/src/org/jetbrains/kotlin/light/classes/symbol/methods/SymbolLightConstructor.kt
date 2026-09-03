@@ -87,7 +87,7 @@ internal class SymbolLightConstructor private constructor(
 
         else -> withFunctionSymbol { symbol ->
             // A constructor cannot be renamed, so the JVM backend makes it private instead of mangling its name
-            val visibility = if (!isJvmExposedBoxed &&
+            val visibility = if (!isJvmExposeBoxed &&
                 hasManglingValueClassInParameterPosition(symbol, valueParameterPickMask = valueParameterPickMask)
             ) {
                 PsiModifier.PRIVATE
