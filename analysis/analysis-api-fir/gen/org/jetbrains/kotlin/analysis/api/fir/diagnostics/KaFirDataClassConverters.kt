@@ -5022,7 +5022,7 @@ private fun KaDiagnosticConverterBuilder.addConversions109() {
         LateinitValOverriddenByValImpl(
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b),
-            firDiagnostic as KtPsiDiagnostic,
+            firDiagnostic as KtDiagnosticWithSource,
             token,
         )
     }
@@ -6955,7 +6955,7 @@ private fun KaDiagnosticConverterBuilder.addConversions151() {
     }
     add(FirErrors.LATEINIT_INTRINSIC_CALL_ON_LATEINIT_VAL) { firDiagnostic ->
         LateinitIntrinsicCallOnLateinitValImpl(
-            firDiagnostic as KtPsiDiagnostic,
+            firDiagnostic as KtDiagnosticWithSource,
             token,
         )
     }

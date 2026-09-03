@@ -4855,6 +4855,16 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface LateinitValOverriddenByVal : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass: KClass<LateinitValOverriddenByVal>
+            get() = LateinitValOverriddenByVal::class
+
+        public val overridingDeclaration: KaCallableSymbol
+        public val overriddenDeclaration: KaCallableSymbol
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface NonFinalMemberInFinalClass : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass: KClass<NonFinalMemberInFinalClass>
             get() = NonFinalMemberInFinalClass::class
@@ -5708,6 +5718,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface LateinitIntrinsicCallOnNonLateinit : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<LateinitIntrinsicCallOnNonLateinit>
             get() = LateinitIntrinsicCallOnNonLateinit::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface LateinitIntrinsicCallOnLateinitVal : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<LateinitIntrinsicCallOnLateinitVal>
+            get() = LateinitIntrinsicCallOnLateinitVal::class
     }
 
     @KaUnstableDiagnosticApi

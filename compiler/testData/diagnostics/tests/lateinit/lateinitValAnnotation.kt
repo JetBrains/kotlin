@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +LateinitVals, +CompanionBlocksAndExtensions
+// LANGUAGE: +LateinitVals, +CompanionBlocks
 
 annotation class Ann
 
