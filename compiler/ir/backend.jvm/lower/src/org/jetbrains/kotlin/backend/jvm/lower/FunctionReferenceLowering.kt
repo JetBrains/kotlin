@@ -195,9 +195,9 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         private val isHeavyweightLambda = isLambda && !isLightweightLambda
         private val isSuspend = irFunctionReference.overriddenFunctionSymbol.isSuspend
 
-        private val boundContextArgumentCount: Int =
+        private val contextParametersCount: Int =
             irFunctionReference.reflectionTargetSymbol?.owner?.parameters?.count { it.kind == IrParameterKind.Context } ?: 0
-        private val hasBoundReceiver get() = irFunctionReference.boundValues.size > boundContextArgumentCount
+        private val hasBoundReceiver get() = irFunctionReference.boundValues.size > contextParametersCount
 
         // The type of the reference is KFunction<in A1, ..., in An, out R>
         private val parameterTypes = (irFunctionReference.type as IrSimpleType).arguments.map {
@@ -323,7 +323,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 } else {
                     val receiverField = functionReferenceClass.getReceiverField(backendContext)
                     val boundValues = buildList {
-                        for (index in 0 until boundContextArgumentCount) {
+                        for (index in 0 until contextParametersCount) {
                             add(BoundValue.StoredInBoundContextValuesArray(index))
                         }
                         if (hasBoundReceiver) {
@@ -332,7 +332,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     }
                     createInvokeMethod(boundValues)
                     +irCall(constructor.symbol).apply {
-                        arguments.assignFrom(packBoundValues(irFunctionReference.boundValues, boundContextArgumentCount, hasBoundReceiver))
+                        arguments.assignFrom(packBoundValues(irFunctionReference.boundValues, contextParametersCount, hasBoundReceiver))
                     }
                 }
 
@@ -356,14 +356,14 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     else -> backendContext.symbols.functionReferenceImpl
                 }
                 val constructor = internalClass.owner.callableReferenceSuperConstructor(
-                    hasBoundContextArguments = boundContextArgumentCount > 0,
+                    hasBoundContextArguments = contextParametersCount > 0,
                     hasBoundReceiver = hasBoundReceiver,
                 )
                 backendContext.createJvmIrBuilder(scope.scopeOwnerSymbol).run {
                     irCallConstructor(constructor.symbol, typeArguments = emptyList()).apply {
                         generateConstructorCallArguments(
                             this,
-                            packBoundValues(boundValueVars.map { irGet(it.symbol) }, boundContextArgumentCount, hasBoundReceiver),
+                            packBoundValues(boundValueVars.map { irGet(it.symbol) }, contextParametersCount, hasBoundReceiver),
                         )
                     }
                 }
@@ -377,7 +377,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 isPrimary = true
             }.apply {
                 if (samSuperType == null) {
-                    if (boundContextArgumentCount > 0) {
+                    if (contextParametersCount > 0) {
                         addValueParameter(JvmSymbols.CONTEXT_ARGUMENTS_PARAMETER_NAME, arrayOfAnyNType)
                     }
                     if (hasBoundReceiver) {
@@ -405,7 +405,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                             superClass?.getClass()!!.constructors.single { it.parameters.size == 1 }
                         else ->
                             superClass?.getClass()!!.callableReferenceSuperConstructor(
-                                hasBoundContextArguments = boundContextArgumentCount > 0,
+                                hasBoundContextArguments = contextParametersCount > 0,
                                 hasBoundReceiver = hasBoundReceiver,
                             )
                     }
