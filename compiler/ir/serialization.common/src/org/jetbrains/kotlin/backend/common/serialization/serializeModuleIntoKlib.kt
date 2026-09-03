@@ -107,19 +107,19 @@ fun <SourceFile> serializeModuleIntoKlib(
     metadataSerializer: KlibSingleFileMetadataSerializer<SourceFile>,
     processCompiledFileData: ((File, KotlinFileSerializedData) -> Unit)? = null,
 ): SerializerOutput {
-    val serializedIr = irModuleFragment?.let {
+    val serializedIrFromDirtySources = irModuleFragment?.let {
         createModuleSerializer(
             diagnosticReporter,
         ).serializedIrModule(it)
     }
 
-    val serializedFiles = serializedIr?.files?.toList()
-    val serializedInlineFiles = serializedIr?.filesWithPreparedInlinableFunctions?.toList()
+    val serializedDirtyFiles = serializedIrFromDirtySources?.files?.toList()
+    val serializedDirtyInlineFiles = serializedIrFromDirtySources?.filesWithPreparedInlinableFunctions?.toList()
 
     val compiledKotlinFiles = buildList {
         addAll(cleanFiles)
         metadataSerializer.forEachFile { i, ioFile, sourceFile, ktSourceFile, packageFqName ->
-            val binaryFile = serializedFiles?.get(i)?.also {
+            val binaryFile = serializedDirtyFiles?.get(i)?.also {
                 assert(ktSourceFile == null || ktSourceFile.path == it.path) {
                     """The Kt and Ir files are put in different order
                     Kt: ${ktSourceFile?.path}
@@ -128,7 +128,7 @@ fun <SourceFile> serializeModuleIntoKlib(
                 }
             }
 
-            val inlineBinaryFile = serializedInlineFiles?.firstOrNull { it.path == binaryFile?.path && it.fqName == binaryFile.fqName }
+            val inlineBinaryFile = serializedDirtyInlineFiles?.firstOrNull { it.path == binaryFile?.path && it.fqName == binaryFile.fqName }
 
             val protoBuf = metadataSerializer.serializeSingleFileMetadata(sourceFile)
             val metadata = protoBuf.toByteArray()
@@ -171,7 +171,7 @@ fun <SourceFile> serializeModuleIntoKlib(
 
     return SerializerOutput(
         serializedMetadata = serializedMetadata,
-        serializedIr = if (serializedIr == null) null
+        serializedIr = if (serializedIrFromDirtySources == null) null
         else SerializedIrModule(
             compiledKotlinFiles.mapNotNull { it.irData },
             compiledKotlinFiles.mapNotNull { it.irInlineData },
