@@ -10,18 +10,14 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.cameFromKotlinLibrary
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.createCompatibleSmartPointer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
-import org.jetbrains.kotlin.descriptors.isAnnotationClass
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.StandardTypes
-import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.declarations.getTargetType
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassIdSafe
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
@@ -129,10 +125,7 @@ private class RecreatedFirAnnotationPointer(
     private val argumentPointers: Map<Name, FirAnnotationArgumentPointer>,
 ) : FirAnnotationPointer, FirAnnotationArgumentPointer {
     override fun restore(session: KaFirSession): FirAnnotation? {
-        val classSymbol = session.firSession.symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
-        if (classSymbol.classKind?.isAnnotationClass != true) {
-            return null
-        }
+        val classSymbol = findAnnotationClassSymbol(classId, session) ?: return null
 
         val argumentMapping = if (argumentPointers.isEmpty()) {
             FirEmptyAnnotationArgumentMapping
@@ -144,13 +137,7 @@ private class RecreatedFirAnnotationPointer(
             }
         }
 
-        return buildAnnotation {
-            annotationTypeRef = buildResolvedTypeRef {
-                coneType = classSymbol.defaultType()
-            }
-
-            this.argumentMapping = argumentMapping
-        }
+        return buildFirAnnotation(classSymbol, argumentMapping)
     }
 }
 
