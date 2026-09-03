@@ -327,7 +327,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         }
 
         checkUnclosedBlockComment()
-        fileMarker.done(KtNodeTypes.KT_FILE)
+        fileMarker.done(KtNodeTypes.FILE)
     }
 
     private fun checkUnclosedBlockComment() {
@@ -406,7 +406,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         scriptMarker.done(KtNodeTypes.SCRIPT)
         scriptMarker.setCustomEdgeTokenBinders(PRECEDING_ALL_BINDER, TRAILING_ALL_BINDER)
 
-        fileMarker.done(KtNodeTypes.KT_FILE)
+        fileMarker.done(KtNodeTypes.FILE)
     }
 
     private fun checkForUnexpectedSymbols() {

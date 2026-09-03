@@ -17,9 +17,9 @@ object KtNodeTypes : SyntaxElementTypesWithIds() {
      * They should match corresponding element types.
      * As an example, see [SyntaxElementTypesWithIds.getElementTypeId] usages.
      */
-    const val KT_FILE_ID: Int = KtTokens.WHITE_SPACE_ID + 1
+    const val FILE_ID: Int = KtTokens.WHITE_SPACE_ID + 1
 
-    const val CLASS_ID: Int = KT_FILE_ID + 1
+    const val CLASS_ID: Int = FILE_ID + 1
     const val FUNCTION_ID: Int = CLASS_ID + 1
     const val PROPERTY_ID: Int = FUNCTION_ID + 1
     const val DESTRUCTURING_DECLARATION_ID: Int = PROPERTY_ID + 1
@@ -35,10 +35,7 @@ object KtNodeTypes : SyntaxElementTypesWithIds() {
     const val SECONDARY_CONSTRUCTOR_ID: Int = SCRIPT_INITIALIZER_ID + 1
     const val PRIMARY_CONSTRUCTOR_ID: Int = SECONDARY_CONSTRUCTOR_ID + 1
     const val CONTEXT_RECEIVER_ID: Int = PRIMARY_CONSTRUCTOR_ID + 1
-
-    // +2 because of deprecated CONTEXT_RECEIVER_LIST
-    const val CONTEXT_PARAMETER_LIST_ID: Int = CONTEXT_RECEIVER_ID + 2
-
+    const val CONTEXT_PARAMETER_LIST_ID: Int = CONTEXT_RECEIVER_ID + 1
     const val TYPE_PARAMETER_LIST_ID: Int = CONTEXT_PARAMETER_LIST_ID + 1
     const val TYPE_PARAMETER_ID: Int = TYPE_PARAMETER_LIST_ID + 1
     const val SUPER_TYPE_LIST_ID: Int = TYPE_PARAMETER_ID + 1
@@ -166,7 +163,7 @@ object KtNodeTypes : SyntaxElementTypesWithIds() {
     const val EXPRESSION_CODE_FRAGMENT_ID: Int = TYPE_CODE_FRAGMENT_ID + 1
     const val BLOCK_CODE_FRAGMENT_ID: Int = EXPRESSION_CODE_FRAGMENT_ID + 1
 
-    val KT_FILE: SyntaxElementType = register(KT_FILE_ID, "kotlin.FILE")
+    val FILE: SyntaxElementType = register(FILE_ID, "kotlin.FILE")
 
     // Start of stub element types
 

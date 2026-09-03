@@ -23,8 +23,7 @@ class PsiTokenUtilsTest {
         psiFields.forEach { psiField ->
             val psiNodeType = psiField.get(null) as IElementType
             val psiId = psiNodeType.kmpId()
-            if (psiNodeType.debugName.contains("kotlin.")) return@forEach
-            if (psiField.name == "CONTEXT_RECEIVER_LIST") return@forEach
+            if (psiField.isAnnotationPresent(java.lang.Deprecated::class.java)) return@forEach
 
             val kmpField = kmpFields.find { it.name == psiField.name }
                 ?: error("PSI_NODE_TYPE = $psiNodeType not found in KMP")
@@ -45,7 +44,6 @@ class PsiTokenUtilsTest {
         val kmpFields = org.jetbrains.kotlin.kmp.lexer.KtTokens::class.members.filterIsInstance<KProperty<*>>().filter { !it.isConst }
 
         psiFields.forEach { psiField ->
-            if (psiField.name == "DEFAULT_VISIBILITY_KEYWORD") return@forEach
             val psiNodeType = psiField.get(null) as? KtToken ?: return@forEach
             val psiId = psiNodeType.kmpId()
 
