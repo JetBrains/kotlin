@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl
 import org.jetbrains.kotlin.gradle.plugin.getExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportDSLConstants
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.EXPORT_EXTENSION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.ExportExtension
 import org.jetbrains.kotlin.gradle.unitTests.utils.applyEmbedAndSignEnvironment
@@ -25,6 +27,16 @@ internal val Project.exportExtension: ExportExtension
     get() = assertNotNull(
         multiplatformExtension.getExtension(EXPORT_EXTENSION_NAME),
         "Expected the `$EXPORT_EXTENSION_NAME` extension to be registered on the multiplatform extension"
+    )
+
+/**
+ * The legacy `swiftExport { }` extension, read through the Gradle extension container so that reading it
+ * does not itself mark Swift Export as requested.
+ */
+internal val Project.legacySwiftExportExtension: SwiftExportExtension
+    get() = assertNotNull(
+        multiplatformExtension.getExtension(SwiftExportDSLConstants.SWIFT_EXPORT_EXTENSION_NAME),
+        "Expected the `${SwiftExportDSLConstants.SWIFT_EXPORT_EXTENSION_NAME}` extension to be registered on the multiplatform extension"
     )
 
 /**
