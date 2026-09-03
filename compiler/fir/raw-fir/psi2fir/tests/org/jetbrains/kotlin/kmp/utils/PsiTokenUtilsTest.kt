@@ -48,6 +48,7 @@ class PsiTokenUtilsTest {
         psiFields.forEach { psiField ->
             val psiNodeType = psiField.get(null) as? KtToken ?: return@forEach
             val psiId = psiNodeType.kmpId()
+            if (psiField.isAnnotationPresent(java.lang.Deprecated::class.java)) return@forEach
 
             val kmpField = kmpFields.find { it.name == psiField.name || it.name.replace("_MODIFIER", "_KEYWORD") == psiField.name }
                 ?: error("PSI_NODE_TYPE = $psiNodeType (${psiField.name}) not found in KMP")
