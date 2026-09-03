@@ -186,7 +186,7 @@ private fun createRawJavaType(
 }
 
 internal val KClass<*>.isMappedBuiltin: Boolean
-    get() = java.canonicalName != qualifiedName
+    get() = qualifiedName.let { it != null && java.canonicalName != it && it.startsWith("kotlin") }
 
 private fun SimpleKType.createMutableCollectionType(javaType: Type): SimpleKType? {
     val klass = classifier as? KClass<*> ?: return null
