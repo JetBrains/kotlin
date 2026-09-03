@@ -1,0 +1,7 @@
+# Changes in the compiler diagnostics
+watch = [
+    "compiler/fir/checkers/checkers-component-generator/src/org/jetbrains/kotlin/fir/checkers/generator/diagnostics/",
+]
+
+# Doesn't require changes in other places. All we need is to display a reminder with a new diagnostic checklist.
+requires = []
