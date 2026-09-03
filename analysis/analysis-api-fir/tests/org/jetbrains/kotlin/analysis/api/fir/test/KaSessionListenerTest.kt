@@ -30,7 +30,7 @@ class KaSessionListenerTest : AbstractAnalysisApiExecutionTest("testData/session
     override val configurator = LLSourceLikeTestConfigurator()
 
     override val additionalServiceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
-        get() = super.additionalServiceRegistrars + listOf(KaSessionListenerTestServiceRegistrar)
+        get() = super.additionalServiceRegistrars + KaSessionListenerTestServiceRegistrar
 
     data class TestResult(val trace: List<String>, val thrown: Throwable?)
 

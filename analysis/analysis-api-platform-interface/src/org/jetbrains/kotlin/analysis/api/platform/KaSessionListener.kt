@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.platform
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
@@ -16,13 +15,13 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  *
  * In the absence of exceptions, the lifecycle of a listener is as follows:
  * 1. [beforeAcquiringSession] is called for each listener.
- * 2. The session is created.
+ * 2. The session is acquired.
  * 3. [afterAcquiringSession] is called for each listener.
  * 4. [beforeEnteringAnalysis] is called for each listener.
  * 5. The analysis body runs.
  * 6. [afterLeavingAnalysis] is called for each listener.
  *
- * If an exception is thrown by a listener implementation method itself, it is caught, logged via [Logger.error],
+ * If an exception is thrown by a listener implementation method itself, it is caught, logged,
  * and isolated so that it does not crash analysis or prevent remaining listeners from executing.
  */
 @KaPlatformInterface
@@ -39,7 +38,7 @@ public interface KaSessionListener {
     public fun onSessionAcquisitionException(useSiteModule: KaModule, useSiteElement: PsiElement?, throwable: Throwable) {}
 
     /**
-     * Called after a [org.jetbrains.kotlin.analysis.api.KaSession] has been created, or after [onSessionAcquisitionException] if an exception occurred.
+     * Called after a [org.jetbrains.kotlin.analysis.api.KaSession] has been acquired, or after [onSessionAcquisitionException] if an exception occurred.
      */
     public fun afterAcquiringSession(useSiteModule: KaModule, useSiteElement: PsiElement?) {}
 

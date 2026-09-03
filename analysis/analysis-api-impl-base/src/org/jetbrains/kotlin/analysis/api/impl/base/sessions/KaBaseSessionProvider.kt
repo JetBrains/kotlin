@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.isResolvable
 import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
-import org.jetbrains.kotlin.utils.exceptions.shouldIjPlatformExceptionBeRethrown
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
 @KaImplementationDetail
 abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(project) {
@@ -82,6 +82,8 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
         beforeEnteringAnalysisInternal(session, useSiteModule, null)
     }
 
+    protected fun forEachListenerSafe(action: (KaSessionListener) -> Unit) = KaSessionListener.EP_NAME.forEachExtensionSafe(action)
+
     private fun beforeEnteringAnalysisInternal(session: KaSession, useSiteModule: KaModule, useSiteElement: PsiElement?) {
         if (!permissionChecker.isAnalysisAllowed()) {
             throw ProhibitedAnalysisException("Analysis is not allowed: ${permissionChecker.getRejectionReason()}")
@@ -98,7 +100,7 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
         lifetimeTracker.beforeEnteringAnalysis(session)
         writeActionStartedChecker.beforeEnteringAnalysis()
 
-        KaSessionListener.EP_NAME.forEachExtensionSafe { it.beforeEnteringAnalysis(useSiteModule, useSiteElement) }
+        forEachListenerSafe { it.beforeEnteringAnalysis(useSiteModule, useSiteElement) }
     }
 
     override fun handleAnalysisException(throwable: Throwable, session: KaSession, useSiteElement: PsiElement): Nothing {
@@ -114,13 +116,10 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
         useSiteModule: KaModule,
         useSiteElement: PsiElement?,
     ): Nothing {
-        KaSessionListener.EP_NAME.forEachExtensionSafe { it.onAnalysisException(useSiteModule, useSiteElement, throwable) }
+        rethrowIntellijPlatformExceptionIfNeeded(throwable)
+        forEachListenerSafe { it.onAnalysisException(useSiteModule, useSiteElement, throwable) }
 
-        if (
-            restrictedAnalysisService?.isAnalysisRestricted == true &&
-            throwable !is Error &&
-            !shouldIjPlatformExceptionBeRethrown(throwable)
-        ) {
+        if (restrictedAnalysisService?.isAnalysisRestricted == true && throwable !is Error) {
             throw KaBaseRestrictedAnalysisException(cause = throwable)
         }
 
@@ -136,7 +135,7 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
     }
 
     private fun afterLeavingAnalysisInternal(session: KaSession, useSiteModule: KaModule, useSiteElement: PsiElement?) {
-        KaSessionListener.EP_NAME.forEachExtensionSafe { it.afterLeavingAnalysis(useSiteModule, useSiteElement) }
+        forEachListenerSafe { it.afterLeavingAnalysis(useSiteModule, useSiteElement) }
 
         try {
             // `writeActionStartedChecker` might throw an "illegal write action" exception.

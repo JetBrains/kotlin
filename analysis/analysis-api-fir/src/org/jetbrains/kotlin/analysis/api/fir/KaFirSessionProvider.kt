@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.util.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
-import org.jetbrains.kotlin.analysis.api.platform.KaSessionListener
 import org.jetbrains.kotlin.analysis.api.platform.KotlinAnalysisInWriteActionListener
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinReadActionConfinementLifetimeToken
@@ -42,6 +41,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.structure.LLSess
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.domains.LLAnalysisSessionStatistics
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import java.nio.file.Files
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -111,15 +111,16 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
         useSiteModule: KaModule,
         useSiteElement: PsiElement?,
     ): KaSession {
-        KaSessionListener.EP_NAME.forEachExtensionSafe { it.beforeAcquiringSession(useSiteModule, useSiteElement) }
+        forEachListenerSafe { it.beforeAcquiringSession(useSiteModule, useSiteElement) }
 
         return try {
             acquireAnalysisSession(useSiteModule)
         } catch (t: Throwable) {
-            KaSessionListener.EP_NAME.forEachExtensionSafe { it.onSessionAcquisitionException(useSiteModule, useSiteElement, t) }
+            rethrowIntellijPlatformExceptionIfNeeded(t)
+            forEachListenerSafe { it.onSessionAcquisitionException(useSiteModule, useSiteElement, t) }
             throw t
         } finally {
-            KaSessionListener.EP_NAME.forEachExtensionSafe { it.afterAcquiringSession(useSiteModule, useSiteElement) }
+            forEachListenerSafe { it.afterAcquiringSession(useSiteModule, useSiteElement) }
         }
     }
 
