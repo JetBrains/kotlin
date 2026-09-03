@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
+#include "CompilerConstants.hpp"
 #include "mm/ThreadData.hpp"
 #include "mm/ThreadSuspension.hpp"
 
@@ -65,6 +66,9 @@ kotlin::ThreadState kotlin::mm::ThreadSuspensionData::setState(kotlin::ThreadSta
 
 NO_EXTERNAL_CALLS_CHECK void kotlin::mm::ThreadSuspensionData::suspendIfRequested() noexcept {
     if (IsThreadSuspensionRequested()) {
+        if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
+            threadData_.pushLastStackMapAnchor();
+        }
         auto pauseHandle = pauseMutationInScope(internal::gSuspensionRequestReason.load(std::memory_order_relaxed));
 
         threadData_.gc().OnSuspendForGC();
@@ -73,6 +77,9 @@ NO_EXTERNAL_CALLS_CHECK void kotlin::mm::ThreadSuspensionData::suspendIfRequeste
 
         // Must return to running state under the lock.
         pauseHandle.resume();
+        if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
+            threadData_.popStackMapAnchor();
+        }
     }
 }
 

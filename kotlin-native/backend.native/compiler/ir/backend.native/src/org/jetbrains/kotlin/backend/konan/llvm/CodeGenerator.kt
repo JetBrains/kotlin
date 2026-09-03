@@ -778,14 +778,39 @@ internal abstract class FunctionGenerationContext(
 
     //-------------------------------------------------------------------------//
 
-    fun switchThreadState(state: ThreadState) {
+    /**
+     * Switches the current thread's state to [state].
+     *
+     * [isOutboundNativeCall] distinguishes two unrelated situations that both flip the thread
+     * state, and must be routed to different runtime entry points under the delta-main GC
+     * stack-map scheme:
+     * - `true` (K2N, the default): this Kotlin function is calling *out* to native code and
+     *   expects that same call to return here. Under delta-main, switching to [Native] here
+     *   pushes a `{fp, pc}` anchor describing this call site, and the matching switch back to
+     *   [Runnable] pops it once the call returns.
+     * - `false` (N2K): this is a function's own entry/exit boundary for being called *from*
+     *   native code (e.g. an exported/interop entry point). Entering such a function is a brand
+     *   new, independent activation, not a resumption of some earlier K2N call - it must never
+     *   touch the anchor stack. Routing an N2K boundary through the K2N (anchor-touching) path
+     *   pops whatever anchor happens to be on top, which may belong to a completely unrelated,
+     *   still-live Kotlin frame lower on the stack (e.g. one blocked in a native call that
+     *   reentered Kotlin) - silently corrupting GC root scanning for that frame.
+     */
+    fun switchThreadState(state: ThreadState, isOutboundNativeCall: Boolean = true) {
         check(!forbidRuntime) {
             "Attempt to switch the thread state when runtime is forbidden"
         }
-        when (state) {
-            Native -> call(llvm.Kotlin_mm_switchThreadStateNative, emptyList())
-            Runnable -> call(llvm.Kotlin_mm_switchThreadStateRunnable, emptyList())
-        }.let {} // Force exhaustive.
+        if (isOutboundNativeCall) {
+            when (state) {
+                Native -> call(llvm.Kotlin_mm_switchThreadStateNative, emptyList())
+                Runnable -> call(llvm.Kotlin_mm_switchThreadStateRunnable, emptyList())
+            }.let {} // Force exhaustive.
+        } else {
+            when (state) {
+                Native -> call(llvm.Kotlin_mm_switchThreadStateNative_n2k, emptyList())
+                Runnable -> call(llvm.Kotlin_mm_switchThreadStateRunnable_n2k, emptyList())
+            }.let {} // Force exhaustive.
+        }
     }
 
     fun memset(pointer: LLVMValueRef, value: Byte, size: Int, isVolatile: Boolean = false) =
@@ -1412,7 +1437,7 @@ internal abstract class FunctionGenerationContext(
                 call(llvm.initRuntimeIfNeeded, emptyList())
             }
             if (switchToRunnable) {
-                switchThreadState(Runnable)
+                switchThreadState(Runnable, isOutboundNativeCall = false)
             }
             if (needSlots || needCleanupLandingpadAndLeaveFrame) {
                 call(llvm.enterFrameFunction, listOf(slotsPhi!!, llvm.int32(vars.skipSlots), llvm.int32(slotCount)))
@@ -1463,7 +1488,7 @@ internal abstract class FunctionGenerationContext(
     private fun handleEpilogueExperimentalMM() {
         if (switchToRunnable) {
             check(!forbidRuntime) { "Generating a bridge when runtime is forbidden" }
-            switchThreadState(Native)
+            switchThreadState(Native, isOutboundNativeCall = false)
         }
     }
 

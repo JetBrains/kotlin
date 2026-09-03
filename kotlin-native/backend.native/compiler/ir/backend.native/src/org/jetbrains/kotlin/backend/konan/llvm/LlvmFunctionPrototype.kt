@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GCStackMapScheme
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.isNothing
@@ -204,6 +205,9 @@ internal class LlvmFunctionProto(
         val function = LLVMAddFunction(llvmModule, name, signature.llvmFunctionType)!!
         addDefaultLlvmFunctionAttributes(context, function)
         addTargetCpuAndFeaturesAttributes(context, function)
+        if (context.config.gcStackMapScheme == GCStackMapScheme.DELTA_MAIN) {
+            LLVMSetGC(function, "kotlin-native")
+        }
         signature.addFunctionAttributes(function)
         LLVMSetLinkage(function, linkage)
         return LlvmFunction.Definition(function, signature)

@@ -7,6 +7,7 @@
 
 #include <atomic>
 
+#include "CompilerConstants.hpp"
 #include "gcScheduler/GCScheduler.hpp"
 #include "KAssert.h"
 #include "Logging.hpp"
@@ -78,6 +79,10 @@ ALWAYS_INLINE void slowPathImpl(mm::ThreadData& threadData) noexcept {
     // reread an action to avoid register pollution outside the function
     auto action = safePointAction.load(std::memory_order_seq_cst);
     if (action != nullptr) {
+        if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
+            kotlin::mm::KotlinFrameAnchor kotlinFrameAnchor = mm::KotlinFrameAnchor::getKotlinFrameAnchor();
+            threadData.setLastFrame(kotlinFrameAnchor);
+        }
         action(threadData);
     }
 }

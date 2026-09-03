@@ -137,6 +137,9 @@ class NativeSecondStageCompilationConfig(
     private val defaultGC get() = GC.CONCURRENT_MARK_AND_SWEEP
     val gc: GC
         get() = configuration.get(BinaryOptions.gc) ?: defaultGC
+    private val defaultGCStackMapScheme get() = GCStackMapScheme.SHADOW_STACK
+    val gcStackMapScheme: GCStackMapScheme
+        get() = configuration.get(BinaryOptions.gcStackMapScheme) ?: defaultGCStackMapScheme
     val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(BinaryOptions.runtimeAssertionsMode) ?: RuntimeAssertsMode.IGNORE
     val checkStateAtExternalCalls: Boolean get() = configuration.get(BinaryOptions.checkStateAtExternalCalls) ?: false
     private val defaultDisableMmap get() = target.family == Family.MINGW || !pagedAllocator

@@ -11,6 +11,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GCStackMapScheme
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.*
@@ -449,13 +450,36 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val getObjCKotlinTypeInfo by lazy { importRtFunction("GetObjCKotlinTypeInfo", false) }
     val missingInitImp by lazy { importRtFunction("MissingInitImp", false) }
 
+    // K2N only: Kotlin calling *out* to native code and expecting that same call to return here
+    // (CodeGenerator.switchThreadState's isOutboundNativeCall = true path). Under delta-main this
+    // pushes/pops a GC-walker anchor, so it must never be used for a function's own N2K
+    // entry/exit boundary - see Kotlin_mm_switchThreadStateNative_n2k/Runnable_n2k below for that.
     val Kotlin_mm_switchThreadStateNative by lazy {
+        if (generationState.config.gcStackMapScheme == GCStackMapScheme.DELTA_MAIN) {
+            importRtFunction("Kotlin_mm_switchThreadStateNative_delta_main", false);
+        } else {
+            Kotlin_mm_switchThreadStateNative_n2k;
+        }
+    }
+    val Kotlin_mm_switchThreadStateRunnable by lazy {
+        if (generationState.config.gcStackMapScheme == GCStackMapScheme.DELTA_MAIN) {
+            importRtFunction("Kotlin_mm_switchThreadStateRunnable_delta_main", false);
+        } else {
+            Kotlin_mm_switchThreadStateRunnable_n2k
+        }
+    }
+
+    // N2K only: a function's own entry/exit boundary for being called *from* native code (e.g. an
+    // exported/interop entry point). This is always a brand new activation, never a resumption of
+    // some earlier K2N call, so it must never touch the delta-main GC-walker anchor stack -
+    // intentionally ignores gcStackMapScheme, unlike the K2N pair above.
+    val Kotlin_mm_switchThreadStateNative_n2k by lazy {
         importRtFunction(
                 if (generationState.shouldOptimize()) "Kotlin_mm_switchThreadStateNative" else "Kotlin_mm_switchThreadStateNative_debug",
                 false
         )
     }
-    val Kotlin_mm_switchThreadStateRunnable by lazy {
+    val Kotlin_mm_switchThreadStateRunnable_n2k by lazy {
         importRtFunction(
                 if (generationState.shouldOptimize()) "Kotlin_mm_switchThreadStateRunnable" else "Kotlin_mm_switchThreadStateRunnable_debug",
                 false

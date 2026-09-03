@@ -8,6 +8,7 @@
 #include "Common.h"
 #include "Logging.hpp"
 #include "SourceInfo.h"
+#include "KAssert.h"
 
 using namespace kotlin;
 
@@ -113,4 +114,16 @@ ALWAYS_INLINE bool compiler::minidumpOnSIGTERM() noexcept {
 
 ALWAYS_INLINE const int32_t* compiler::runtimeLogs() noexcept {
     return Kotlin_runtimeLogs;
+}
+
+ALWAYS_INLINE compiler::GCStackMapScheme compiler::gcStackMapScheme() noexcept {
+    static const GCStackMapScheme value = [] {
+        if (std::strcmp(Kotlin_gcStackMapScheme, DELTA_MAIN) == 0) {
+            return GCStackMapScheme::kDeltaMain;
+        }
+        RuntimeAssert(std::strcmp(Kotlin_gcStackMapScheme, SHADOW_STACK) == 0, "Unknown gcStackMapScheme value: %s", Kotlin_gcStackMapScheme);
+        return GCStackMapScheme::kShadowStack;
+    } ();
+
+    return value;
 }

@@ -396,12 +396,25 @@ extern "C" NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative_debu
     SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kNative);
 }
 
+extern "C" NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative_delta_main() {
+    uint64_t* fp = reinterpret_cast<uint64_t*>(__builtin_frame_address(0));
+    uint64_t* pc = reinterpret_cast<uint64_t*>(*(fp + 1)); // return address is the callsite
+    uint64_t* callerFp = reinterpret_cast<uint64_t*>(*fp);
+    mm::ThreadRegistry::Instance().CurrentThreadData()->pushStackMapAnchor(callerFp, pc);
+    SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kNative);
+}
+
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable() {
     SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kRunnable);
 }
 
 extern "C" NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable_debug() {
     SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kRunnable);
+}
+
+extern "C" NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable_delta_main() {
+    SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kRunnable);
+    mm::ThreadRegistry::Instance().CurrentThreadData()->popStackMapAnchor();
 }
 
 MemoryState* kotlin::mm::GetMemoryState() noexcept {

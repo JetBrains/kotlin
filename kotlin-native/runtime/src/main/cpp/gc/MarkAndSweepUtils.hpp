@@ -6,6 +6,10 @@
 #ifndef RUNTIME_GC_COMMON_MARK_AND_SWEEP_UTILS_H
 #define RUNTIME_GC_COMMON_MARK_AND_SWEEP_UTILS_H
 
+#include <cstdint>
+#include "stackmap/DeltaMainStackMap.hpp"
+#include "KAssert.h"
+#include "stackmap/RootsInfo.hpp"
 #include "mm/ExtraObjectData.hpp"
 #include "FinalizerHooks.hpp"
 #include "mm/GlobalData.hpp"
@@ -15,10 +19,8 @@
 #include "mm/ObjectOps.hpp"
 #include "mm/ObjectTraversal.hpp"
 #include "mm/RootSet.hpp"
-#include "Runtime.h"
 #include "mm/ExternalRCRefRegistry.hpp"
 #include "mm/ThreadData.hpp"
-#include "Types.h"
 
 namespace kotlin {
 namespace gc {
@@ -127,6 +129,56 @@ void collectRootSetForThread(GCHandle gcHandle, typename Traits::MarkQueue& mark
                     handle.addThreadLocalRoot();
                     break;
             }
+        }
+    }
+}
+
+template <typename Traits>
+void collectRootSetFromMapForThread(GCHandle gcHandle, typename Traits::MarkQueue& markQueue, kotlin::stackMap::DeltaMainStackMapBuilder& stackMapBuilder, mm::ThreadData& thread) {
+    const int maxHopAmount = 4;
+    auto handle = gcHandle.collectThreadRoots(thread);
+
+    for (auto anchor : thread.frameAnchors()) {
+        uint64_t* fp = anchor.fp;
+        uint64_t* pc = anchor.pc;
+        RuntimeLogDebug({logging::Tag::kGC}, "Start new anchor pc=%p fp=%p", pc, fp);
+
+        int i = 0;
+        while (i < maxHopAmount
+               && (stackMapBuilder.pc2RootsInfo().find((uintptr_t) pc) == stackMapBuilder.pc2RootsInfo().end())) {
+            pc = (uint64_t*) (*(fp + 1));
+            fp = (uint64_t*)(*fp);
+            RuntimeLogDebug({logging::Tag::kGC}, "Hop one frame up pc=%p fp=%p", pc, fp);
+            i++;
+        }
+
+        if (stackMapBuilder.pc2RootsInfo().find((uintptr_t) pc) == stackMapBuilder.pc2RootsInfo().end()) {
+            RuntimeLogDebug({logging::Tag::kGC}, "Could not find live kotlin frame");
+
+        }
+
+        while (stackMapBuilder.pc2RootsInfo().find((uintptr_t) pc) != stackMapBuilder.pc2RootsInfo().end()) {
+            RuntimeLogDebug({logging::Tag::kGC}, "Start new frame pc=%p fp=%p", pc, fp);
+            for (stackMap::RootLocation rootsInfo : stackMapBuilder.pc2RootsInfo().at((uintptr_t)pc)) {
+                if (rootsInfo.Type == stackMap::RootLocation::Indirect) {
+                    uint8_t* address = (uint8_t*) fp + rootsInfo.Offset;
+                    RuntimeLogDebug({logging::Tag::kGC}, "Trying to collect root slot pc=%p fp=%p address=%p", pc, fp, address);
+                    ObjHeader* object = *reinterpret_cast<ObjHeader**>(address);
+                    RuntimeLogDebug({logging::Tag::kGC}, "Object address=%p", object);
+                    if (internal::collectRoot<Traits>(markQueue, object)) {
+                        handle.addStackRoot();
+                        RuntimeLogDebug({logging::Tag::kGC}, "collected root slot pc=%p fp=%p address=%p", pc, fp, address);
+                    } else {
+                        RuntimeLogDebug({logging::Tag::kGC}, "root slot is not collected pc=%p fp=%p address=%p", pc, fp, address);
+                    }
+
+                } else {
+                    RuntimeFail("Indirect only expected");
+                }
+            }
+
+            pc = (uint64_t*) (*(fp + 1));
+            fp = (uint64_t*)(*fp);
         }
     }
 }

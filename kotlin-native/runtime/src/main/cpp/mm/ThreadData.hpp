@@ -10,6 +10,8 @@
 #include <cstdint>
 #include <vector>
 
+#include "Common.h"
+#include "KAssert.h"
 #include "mm/GlobalData.hpp"
 #include "mm/GlobalsRegistry.hpp"
 #include "gc/GC.hpp"
@@ -23,6 +25,19 @@ struct ObjHeader;
 
 namespace kotlin {
 namespace mm {
+
+struct KotlinFrameAnchor {
+    uint64_t* fp;
+    uint64_t* pc;
+
+    KotlinFrameAnchor() = default;
+    KotlinFrameAnchor(uint64_t* fp, uint64_t* pc) : fp(fp), pc(pc) {}
+
+    ALWAYS_INLINE static KotlinFrameAnchor getKotlinFrameAnchor() {
+        uint64_t* fp = reinterpret_cast<uint64_t*>(__builtin_frame_address(0));
+        return KotlinFrameAnchor{(uint64_t*) fp[0], (uint64_t*) fp[1]};
+    }
+};
 
 // `ThreadData` is supposed to be thread local singleton.
 // Pin it in memory to prevent accidental copying.
@@ -75,6 +90,27 @@ public:
         allocator_.clearForTests();
     }
 
+    void pushStackMapAnchor(uint64_t* fp, uint64_t* pc) noexcept {
+        frameAnchors_.emplace_back(fp, pc);
+    }
+
+    void pushLastStackMapAnchor() noexcept {
+        RuntimeAssert(lastFrame_.fp != nullptr, "Trying push last anchor, but last anchor is not initialized");
+        frameAnchors_.emplace_back(lastFrame_);
+    }
+
+    void popStackMapAnchor() noexcept {
+        frameAnchors_.pop_back();
+    }
+
+    const std::vector<KotlinFrameAnchor>& frameAnchors() {
+        return frameAnchors_;
+    }
+
+    void setLastFrame(KotlinFrameAnchor anchor) noexcept {
+        lastFrame_ = anchor;
+    }
+
 private:
     const uintptr_t threadId_;
     GlobalsRegistry::ThreadQueue globalsThreadQueue_;
@@ -86,6 +122,8 @@ private:
     gc::GC::ThreadData gc_;
     std::vector<std::pair<ObjHeader**, ObjHeader*>> initializingSingletons_;
     ThreadSuspensionData suspensionData_;
+    std::vector<KotlinFrameAnchor> frameAnchors_;
+    KotlinFrameAnchor lastFrame_ = {};
 };
 
 } // namespace mm

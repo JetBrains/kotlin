@@ -258,6 +258,10 @@ RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable();
 // by outlining certain CAS instructions from user code:
 NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative_debug();
 NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable_debug();
+// Sets state of the current thread to NATIVE (used to trace fp, pc for delta-main maps).
+NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative_delta_main();
+// Sets state of the current thread to RUNNABLE (used to trace fp, pc for delta-main maps).
+NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable_delta_main();
 
 // Safe point callbacks from Kotlin code generator.
 void Kotlin_mm_safePointFunctionPrologue() RUNTIME_NOTHROW;

@@ -7,6 +7,7 @@
 
 #include <mutex>
 
+#include "gc/stackmap/RootsInfo.hpp"
 #include "gc/GCStatistics.hpp"
 #include "ManuallyScoped.hpp"
 #include "ObjectData.hpp"

@@ -16,7 +16,7 @@
 using namespace kotlin;
 
 gc::GC::ThreadData::ThreadData(GC& gc, mm::ThreadData& threadData) noexcept :
-    impl_(std::make_unique<Impl>(gc.impl().mark_, threadData)) {}
+    impl_(std::make_unique<Impl>(gc.impl().mark_, threadData, gc.impl().stackMapBuilder_)) {}
 
 gc::GC::ThreadData::~ThreadData() = default;
 

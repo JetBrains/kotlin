@@ -52,6 +52,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val gcSchedulerType by option<GCSchedulerType>(hideValue = { it.deprecatedWithReplacement != null })
 
+    val gcStackMapScheme by option<GCStackMapScheme>(shortcut = { it.shortcut })
+
     val gcMarkSingleThreaded by booleanOption()
 
     val fixedBlockPageSize by uintOption()
