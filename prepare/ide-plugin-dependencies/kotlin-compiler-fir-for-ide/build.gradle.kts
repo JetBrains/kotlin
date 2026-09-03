@@ -8,6 +8,7 @@ val firCompilerModules: Array<String> = CompilerModules.firCompilerModules
 val jvmCompilerModules: Array<String> = CompilerModules.jvmCompilerModules
 
 val excludedFirModules = listOf(
+    ":compiler:fir:raw-fir:mp-parsing2fir",
     ":compiler:fir:raw-fir:light-tree2fir",
     ":compiler:multiplatform-parsing",
 )
