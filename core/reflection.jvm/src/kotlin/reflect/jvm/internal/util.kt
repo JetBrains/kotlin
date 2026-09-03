@@ -319,9 +319,11 @@ internal fun Any?.asReflectCallable(): ReflectKCallable<*>? = when (this) {
 internal val DescriptorKCallable<*>.instanceReceiverParameter: ReceiverParameterDescriptor?
     get() {
         val descriptor = descriptor
+        val propertyIfAccessor = propertyIfAccessor
         return when {
-            overriddenStorage.isFakeOverride && isStatic -> null
-            overriddenStorage.isFakeOverride && !isStatic -> (this.container as? KClassImpl<*>)?.descriptor?.thisAsReceiverParameter
+            propertyIfAccessor.overriddenStorage.isFakeOverride ->
+                if (propertyIfAccessor.isStatic) null
+                else (this.container as? KClassImpl<*>)?.descriptor?.thisAsReceiverParameter
             descriptor is ConstructorDescriptor -> descriptor.dispatchReceiverParameter
             descriptor.dispatchReceiverParameter != null -> (descriptor.containingDeclaration as ClassDescriptor).thisAsReceiverParameter
             else -> null
