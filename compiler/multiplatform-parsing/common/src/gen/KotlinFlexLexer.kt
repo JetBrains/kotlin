@@ -309,23 +309,23 @@ companion object {
     "\u0001\u0007\u0001\u0008\u0001\u0009\u0001\u000a\u0001\u000b\u0001\u000c\u0001\u000d\u0001\u000e"+
     "\u0001\u000f\u0001\u0010\u0002\u0011\u0001\u0012\u0001\u0013\u0001\u0014\u0001\u0015\u0001\u0016"+
     "\u0001\u0017\u0001\u0018\u0001\u0019\u0001\u001a\u0001\u001b\u0001\u001c\u000f\u0019\u0001\u001d"+
-    "\u0001\u0001\u0001\u001e\u0001\u001f\u0001\u0020\u0001\u0021\u0001\u0022\u0001\u0020\u0001\u0001"+
-    "\u0002\u0020\u0001\u0023\u0001\u0001\u0001\u0023\u0003\u0024\u0001\u0025\u0001\u0026\u0001\u0027"+
-    "\u0001\u0000\u0001\u0028\u0001\u0000\u0001\u0029\u0001\u0000\u0001\u002a\u0001\u002b\u0002\u0008"+
-    "\u0001\u002c\u0001\u002d\u0001\u002e\u0001\u002f\u0001\u0030\u0001\u0031\u0001\u0032\u0001\u0033"+
-    "\u0001\u0034\u0001\u0035\u0001\u0036\u0001\u0000\u0001\u0011\u0002\u0033\u0003\u0011\u0001\u0037"+
-    "\u0001\u0038\u0001\u0039\u0001\u003a\u0001\u003b\u0001\u003c\u0001\u0000\u0001\u003d\u0003\u0019"+
-    "\u0001\u003e\u0004\u0019\u0001\u003f\u0001\u0040\u0001\u0041\u000a\u0019\u0001\u0042\u0001\u0000"+
-    "\u0001\u0043\u0001\u0000\u0001\u0044\u0002\u0045\u0002\u0000\u0001\u0023\u0001\u0046\u0001\u0047"+
-    "\u0001\u0048\u0001\u0049\u0001\u004a\u0001\u0000\u0001\u004b\u0001\u004c\u0001\u004d\u0001\u004e"+
-    "\u0001\u0000\u0001\u0033\u0001\u004f\u0001\u0019\u0001\u0050\u0005\u0019\u0001\u0051\u0001\u0052"+
-    "\u0009\u0019\u0001\u0053\u0001\u0019\u0001\u0054\u0001\u0055\u0002\u0019\u0001\u0056\u0002\u0000"+
-    "\u0001\u0057\u0002\u0023\u0001\u0058\u0001\u0029\u0001\u0059\u0003\u0019\u0001\u005a\u0002\u0019"+
-    "\u0001\u005b\u0004\u0019\u0001\u005c\u0001\u0019\u0001\u005d\u0001\u0019\u0001\u005e\u0001\u0019"+
-    "\u0001\u0043\u0001\u0000\u0001\u005f\u0001\u0060\u0001\u0061\u0001\u0019\u0001\u0062\u0004\u0019"+
-    "\u0001\u0063\u0001\u0064\u0002\u0019\u0001\u0065\u0001\u0000\u0002\u0019\u0001\u0066\u0001\u0019"+
-    "\u0001\u0067\u0001\u0019\u0001\u0068\u0002\u0019\u0001\u0069\u0001\u0019\u0001\u006a\u0002\u0019"+
-    "\u0001\u006b\u0001\u006c"
+    "\u0001\u001e\u0001\u001f\u0001\u0020\u0001\u0021\u0001\u0022\u0001\u0023\u0001\u0021\u0001\u0001"+
+    "\u0002\u0021\u0001\u0024\u0001\u0001\u0001\u0024\u0003\u0025\u0001\u0026\u0001\u0027\u0001\u0028"+
+    "\u0001\u0000\u0001\u0029\u0001\u0000\u0001\u002a\u0001\u0000\u0001\u002b\u0001\u002c\u0002\u0008"+
+    "\u0001\u002d\u0001\u002e\u0001\u002f\u0001\u0030\u0001\u0031\u0001\u0032\u0001\u0033\u0001\u0034"+
+    "\u0001\u0035\u0001\u0036\u0001\u0037\u0001\u0000\u0001\u0011\u0002\u0034\u0003\u0011\u0001\u0038"+
+    "\u0001\u0039\u0001\u003a\u0001\u003b\u0001\u003c\u0001\u003d\u0001\u0000\u0001\u003e\u0003\u0019"+
+    "\u0001\u003f\u0004\u0019\u0001\u0040\u0001\u0041\u0001\u0042\u000a\u0019\u0001\u0043\u0001\u0000"+
+    "\u0001\u0044\u0001\u0000\u0001\u0045\u0002\u0046\u0002\u0000\u0001\u0024\u0001\u0047\u0001\u0048"+
+    "\u0001\u0049\u0001\u004a\u0001\u004b\u0001\u0000\u0001\u004c\u0001\u004d\u0001\u004e\u0001\u004f"+
+    "\u0001\u0000\u0001\u0034\u0001\u0050\u0001\u0019\u0001\u0051\u0005\u0019\u0001\u0052\u0001\u0053"+
+    "\u0009\u0019\u0001\u0054\u0001\u0019\u0001\u0055\u0001\u0056\u0002\u0019\u0001\u0057\u0002\u0000"+
+    "\u0001\u0058\u0002\u0024\u0001\u0059\u0001\u002a\u0001\u005a\u0003\u0019\u0001\u005b\u0002\u0019"+
+    "\u0001\u005c\u0004\u0019\u0001\u005d\u0001\u0019\u0001\u005e\u0001\u0019\u0001\u005f\u0001\u0019"+
+    "\u0001\u0044\u0001\u0000\u0001\u0060\u0001\u0061\u0001\u0062\u0001\u0019\u0001\u0063\u0004\u0019"+
+    "\u0001\u0064\u0001\u0065\u0002\u0019\u0001\u0066\u0001\u0000\u0002\u0019\u0001\u0067\u0001\u0019"+
+    "\u0001\u0068\u0001\u0019\u0001\u0069\u0002\u0019\u0001\u006a\u0001\u0019\u0001\u006b\u0002\u0019"+
+    "\u0001\u006c\u0001\u006d"
 
   @JvmStatic
   private fun zzUnpackAction(): IntArray {
@@ -1100,17 +1100,17 @@ companion object {
             return SyntaxTokenTypes.BAD_CHARACTER
             }
           // fall through
-          109 -> break
+          110 -> break
           2 -> {
             return KtTokens.WHITE_SPACE
             }
           // fall through
-          110 -> break
+          111 -> break
           3 -> {
             return KtTokens.EXCL
             }
           // fall through
-          111 -> break
+          112 -> break
           4 -> {
             val interpolationPrefix = yylength() - 1
             pushInterpolationPrefix(maxOf(interpolationPrefix, 1))
@@ -1118,180 +1118,185 @@ companion object {
             if (interpolationPrefix != 0) return KtTokens.INTERPOLATION_PREFIX
             }
           // fall through
-          112 -> break
+          113 -> break
           5 -> {
             return KtTokens.HASH
             }
           // fall through
-          113 -> break
+          114 -> break
           6 -> {
             return KtTokens.PERC
             }
           // fall through
-          114 -> break
+          115 -> break
           7 -> {
             return KtTokens.AND
             }
           // fall through
-          115 -> break
+          116 -> break
           8 -> {
             return KtTokens.CHARACTER_LITERAL
             }
           // fall through
-          116 -> break
+          117 -> break
           9 -> {
             return KtTokens.LPAR
             }
           // fall through
-          117 -> break
+          118 -> break
           10 -> {
             return KtTokens.RPAR
             }
           // fall through
-          118 -> break
+          119 -> break
           11 -> {
             return KtTokens.MUL
             }
           // fall through
-          119 -> break
+          120 -> break
           12 -> {
             return KtTokens.PLUS
             }
           // fall through
-          120 -> break
+          121 -> break
           13 -> {
             return KtTokens.COMMA
             }
           // fall through
-          121 -> break
+          122 -> break
           14 -> {
             return KtTokens.MINUS
             }
           // fall through
-          122 -> break
+          123 -> break
           15 -> {
             return KtTokens.DOT
             }
           // fall through
-          123 -> break
+          124 -> break
           16 -> {
             return KtTokens.DIV
             }
           // fall through
-          124 -> break
+          125 -> break
           17 -> {
             return KtTokens.INTEGER_LITERAL
             }
           // fall through
-          125 -> break
+          126 -> break
           18 -> {
             return KtTokens.COLON
             }
           // fall through
-          126 -> break
+          127 -> break
           19 -> {
             return KtTokens.SEMICOLON
             }
           // fall through
-          127 -> break
+          128 -> break
           20 -> {
             return KtTokens.LT
             }
           // fall through
-          128 -> break
+          129 -> break
           21 -> {
             return KtTokens.EQ
             }
           // fall through
-          129 -> break
+          130 -> break
           22 -> {
             return KtTokens.GT
             }
           // fall through
-          130 -> break
+          131 -> break
           23 -> {
             return KtTokens.QUEST
             }
           // fall through
-          131 -> break
+          132 -> break
           24 -> {
             return KtTokens.AT
             }
           // fall through
-          132 -> break
+          133 -> break
           25 -> {
             return KtTokens.IDENTIFIER
             }
           // fall through
-          133 -> break
+          134 -> break
           26 -> {
             return KtTokens.LBRACKET
             }
           // fall through
-          134 -> break
+          135 -> break
           27 -> {
             return KtTokens.RBRACKET
             }
           // fall through
-          135 -> break
+          136 -> break
           28 -> {
             pushState(UNMATCHED_BACKTICK)
             return SyntaxTokenTypes.BAD_CHARACTER
             }
           // fall through
-          136 -> break
+          137 -> break
           29 -> {
             return KtTokens.LBRACE
             }
           // fall through
-          137 -> break
+          138 -> break
           30 -> {
+            return KtTokens.OR
+            }
+          // fall through
+          139 -> break
+          31 -> {
             return KtTokens.RBRACE
             }
           // fall through
-          138 -> break
-          31 -> {
+          140 -> break
+          32 -> {
             yybegin(STRING)
             return KtTokens.OPEN_QUOTE
             }
           // fall through
-          139 -> break
-          32 -> {
+          141 -> break
+          33 -> {
             return KtTokens.REGULAR_STRING_PART
             }
           // fall through
-          140 -> break
-          33 -> {
+          142 -> break
+          34 -> {
             popState()
             yypushback(1)
             return KtTokens.DANGLING_NEWLINE
             }
           // fall through
-          141 -> break
-          34 -> {
+          143 -> break
+          35 -> {
             popState()
             return KtTokens.CLOSING_QUOTE
             }
           // fall through
-          142 -> break
-          35 -> {
+          144 -> break
+          36 -> {
             popState()
             return KtTokens.IDENTIFIER
             }
           // fall through
-          143 -> break
-          36 -> {
+          145 -> break
+          37 -> {
             
             }
           // fall through
-          144 -> break
-          37 -> {
+          146 -> break
+          38 -> {
             lBraceCount++
             return KtTokens.LBRACE
             }
           // fall through
-          145 -> break
-          38 -> {
+          147 -> break
+          39 -> {
             if (lBraceCount == 0) {
                 popState()
                 return KtTokens.LONG_TEMPLATE_ENTRY_END
@@ -1300,13 +1305,13 @@ companion object {
             return KtTokens.RBRACE
             }
           // fall through
-          146 -> break
-          39 -> {
+          148 -> break
+          40 -> {
             return KtTokens.EXCLEQ
             }
           // fall through
-          147 -> break
-          40 -> {
+          149 -> break
+          41 -> {
             if (zzCurrentPos == 0) {
                 return KtTokens.SHEBANG_COMMENT
             }
@@ -1316,140 +1321,140 @@ companion object {
             }
             }
           // fall through
-          148 -> break
-          41 -> {
+          150 -> break
+          42 -> {
             return KtTokens.FIELD_IDENTIFIER
             }
           // fall through
-          149 -> break
-          42 -> {
+          151 -> break
+          43 -> {
             return KtTokens.PERCEQ
             }
           // fall through
-          150 -> break
-          43 -> {
+          152 -> break
+          44 -> {
             return KtTokens.ANDAND
             }
           // fall through
-          151 -> break
-          44 -> {
+          153 -> break
+          45 -> {
             return KtTokens.MULTEQ
             }
           // fall through
-          152 -> break
-          45 -> {
+          154 -> break
+          46 -> {
             return KtTokens.PLUSPLUS
             }
           // fall through
-          153 -> break
-          46 -> {
+          155 -> break
+          47 -> {
             return KtTokens.PLUSEQ
             }
           // fall through
-          154 -> break
-          47 -> {
+          156 -> break
+          48 -> {
             return KtTokens.MINUSMINUS
             }
           // fall through
-          155 -> break
-          48 -> {
+          157 -> break
+          49 -> {
             return KtTokens.MINUSEQ
             }
           // fall through
-          156 -> break
-          49 -> {
+          158 -> break
+          50 -> {
             return KtTokens.ARROW
             }
           // fall through
-          157 -> break
-          50 -> {
+          159 -> break
+          51 -> {
             return KtTokens.RANGE
             }
           // fall through
-          158 -> break
-          51 -> {
+          160 -> break
+          52 -> {
             return KtTokens.FLOAT_LITERAL
             }
           // fall through
-          159 -> break
-          52 -> {
+          161 -> break
+          53 -> {
             pushState(BLOCK_COMMENT)
             commentDepth = 0
             commentStart = getTokenStart()
             }
           // fall through
-          160 -> break
-          53 -> {
+          162 -> break
+          54 -> {
             return KtTokens.EOL_COMMENT
             }
           // fall through
-          161 -> break
-          54 -> {
+          163 -> break
+          55 -> {
             return KtTokens.DIVEQ
             }
           // fall through
-          162 -> break
-          55 -> {
+          164 -> break
+          56 -> {
             return KtTokens.COLONCOLON
             }
           // fall through
-          163 -> break
-          56 -> {
+          165 -> break
+          57 -> {
             return KtTokens.DOUBLE_SEMICOLON
             }
           // fall through
-          164 -> break
-          57 -> {
+          166 -> break
+          58 -> {
             return KtTokens.LTEQ
             }
           // fall through
-          165 -> break
-          58 -> {
+          167 -> break
+          59 -> {
             return KtTokens.EQEQ
             }
           // fall through
-          166 -> break
-          59 -> {
+          168 -> break
+          60 -> {
             return KtTokens.DOUBLE_ARROW
             }
           // fall through
-          167 -> break
-          60 -> {
+          169 -> break
+          61 -> {
             return KtTokens.GTEQ
             }
           // fall through
-          168 -> break
-          61 -> {
+          170 -> break
+          62 -> {
             return KtTokens.AS_KEYWORD
             }
           // fall through
-          169 -> break
-          62 -> {
+          171 -> break
+          63 -> {
             return KtTokens.DO_KEYWORD
             }
           // fall through
-          170 -> break
-          63 -> {
+          172 -> break
+          64 -> {
             return KtTokens.IF_KEYWORD
             }
           // fall through
-          171 -> break
-          64 -> {
+          173 -> break
+          65 -> {
             return KtTokens.IN_MODIFIER
             }
           // fall through
-          172 -> break
-          65 -> {
+          174 -> break
+          66 -> {
             return KtTokens.IS_KEYWORD
             }
           // fall through
-          173 -> break
-          66 -> {
+          175 -> break
+          67 -> {
             return KtTokens.OROR
             }
           // fall through
-          174 -> break
-          67 -> {
+          176 -> break
+          68 -> {
             var interpolationPrefix = 0
             var i = 0
             while (i < yylength()) {
@@ -1474,8 +1479,8 @@ companion object {
             }
             }
           // fall through
-          175 -> break
-          68 -> {
+          177 -> break
+          69 -> {
             val interpolationPrefix = yylength() - 1
             if (interpolationPrefix == requiredInterpolationPrefix) {
                 pushState(LONG_TEMPLATE_ENTRY)
@@ -1489,13 +1494,13 @@ companion object {
             }
             }
           // fall through
-          176 -> break
-          69 -> {
+          178 -> break
+          70 -> {
             return KtTokens.ESCAPE_SEQUENCE
             }
           // fall through
-          177 -> break
-          70 -> {
+          179 -> break
+          71 -> {
             if (commentDepth > 0) {
                 commentDepth--
             }
@@ -1507,92 +1512,92 @@ companion object {
             }
             }
           // fall through
-          178 -> break
-          71 -> {
+          180 -> break
+          72 -> {
             commentDepth++
             }
           // fall through
-          179 -> break
-          72 -> {
+          181 -> break
+          73 -> {
             return KtTokens.EXCLEQEQEQ
             }
           // fall through
-          180 -> break
-          73 -> {
+          182 -> break
+          74 -> {
             return KtTokens.NOT_IN
             }
           // fall through
-          181 -> break
-          74 -> {
+          183 -> break
+          75 -> {
             return KtTokens.NOT_IS
             }
           // fall through
-          182 -> break
-          75 -> {
+          184 -> break
+          76 -> {
             return KtTokens.RESERVED
             }
           // fall through
-          183 -> break
-          76 -> {
+          185 -> break
+          77 -> {
             return KtTokens.RANGE_UNTIL
             }
           // fall through
-          184 -> break
-          77 -> {
+          186 -> break
+          78 -> {
             pushState(DOC_COMMENT)
             commentDepth = 0
             commentStart = getTokenStart()
             }
           // fall through
-          185 -> break
-          78 -> {
+          187 -> break
+          79 -> {
             yypushback(2)
             return KtTokens.INTEGER_LITERAL
             }
           // fall through
-          186 -> break
-          79 -> {
+          188 -> break
+          80 -> {
             return KtTokens.EQEQEQ
             }
           // fall through
-          187 -> break
-          80 -> {
+          189 -> break
+          81 -> {
             return KtTokens.AS_SAFE
             }
           // fall through
-          188 -> break
-          81 -> {
+          190 -> break
+          82 -> {
             return KtTokens.FOR_KEYWORD
             }
           // fall through
-          189 -> break
-          82 -> {
+          191 -> break
+          83 -> {
             return KtTokens.FUN_MODIFIER
             }
           // fall through
-          190 -> break
-          83 -> {
+          192 -> break
+          84 -> {
             return KtTokens.TRY_KEYWORD
             }
           // fall through
-          191 -> break
-          84 -> {
+          193 -> break
+          85 -> {
             return KtTokens.VAL_KEYWORD
             }
           // fall through
-          192 -> break
-          85 -> {
+          194 -> break
+          86 -> {
             return KtTokens.VAR_KEYWORD
             }
           // fall through
-          193 -> break
-          86 -> {
+          195 -> break
+          87 -> {
             yybegin(RAW_STRING)
             return KtTokens.OPEN_QUOTE
             }
           // fall through
-          194 -> break
-          87 -> {
+          196 -> break
+          88 -> {
             val length = yytext().length
             if (length <= 3) { // closing """
                 popState()
@@ -1603,114 +1608,114 @@ companion object {
             }
             }
           // fall through
-          195 -> break
-          88 -> {
+          197 -> break
+          89 -> {
             yypushback(3)
             return KtTokens.EXCL
             }
           // fall through
-          196 -> break
-          89 -> {
+          198 -> break
+          90 -> {
             return KtTokens.BLOCK_COMMENT
             }
           // fall through
-          197 -> break
-          90 -> {
+          199 -> break
+          91 -> {
             return KtTokens.ELSE_KEYWORD
             }
           // fall through
-          198 -> break
-          91 -> {
+          200 -> break
+          92 -> {
             return KtTokens.NULL_KEYWORD
             }
           // fall through
-          199 -> break
-          92 -> {
+          201 -> break
+          93 -> {
             return KtTokens.THIS_KEYWORD
             }
           // fall through
-          200 -> break
-          93 -> {
+          202 -> break
+          94 -> {
             return KtTokens.TRUE_KEYWORD
             }
           // fall through
-          201 -> break
-          94 -> {
+          203 -> break
+          95 -> {
             return KtTokens.WHEN_KEYWORD
             }
           // fall through
-          202 -> break
-          95 -> {
+          204 -> break
+          96 -> {
             popState()
             return KtTokens.THIS_KEYWORD
             }
           // fall through
-          203 -> break
-          96 -> {
+          205 -> break
+          97 -> {
             return KtTokens.BREAK_KEYWORD
             }
           // fall through
-          204 -> break
-          97 -> {
+          206 -> break
+          98 -> {
             return KtTokens.CLASS_KEYWORD
             }
           // fall through
-          205 -> break
-          98 -> {
+          207 -> break
+          99 -> {
             return KtTokens.FALSE_KEYWORD
             }
           // fall through
-          206 -> break
-          99 -> {
+          208 -> break
+          100 -> {
             return KtTokens.SUPER_KEYWORD
             }
           // fall through
-          207 -> break
-          100 -> {
+          209 -> break
+          101 -> {
             return KtTokens.THROW_KEYWORD
             }
           // fall through
-          208 -> break
-          101 -> {
+          210 -> break
+          102 -> {
             return KtTokens.WHILE_KEYWORD
             }
           // fall through
-          209 -> break
-          102 -> {
+          211 -> break
+          103 -> {
             return KtTokens.OBJECT_KEYWORD
             }
           // fall through
-          210 -> break
-          103 -> {
+          212 -> break
+          104 -> {
             return KtTokens.RETURN_KEYWORD
             }
           // fall through
-          211 -> break
-          104 -> {
+          213 -> break
+          105 -> {
             return KtTokens.TYPEOF_KEYWORD
             }
           // fall through
-          212 -> break
-          105 -> {
+          214 -> break
+          106 -> {
             return KtTokens.PACKAGE_KEYWORD
             }
           // fall through
-          213 -> break
-          106 -> {
+          215 -> break
+          107 -> {
             return KtTokens.CONTINUE_KEYWORD
             }
           // fall through
-          214 -> break
-          107 -> {
+          216 -> break
+          108 -> {
             return KtTokens.INTERFACE_KEYWORD
             }
           // fall through
-          215 -> break
-          108 -> {
+          217 -> break
+          109 -> {
             return KtTokens.TYPE_ALIAS_KEYWORD
             }
           // fall through
-          216 -> break
+          218 -> break
           else ->
             zzScanError(ZZ_NO_MATCH)
         }

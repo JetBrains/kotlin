@@ -491,6 +491,10 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitTypeElement(definitelyNotNullType, data);
     }
 
+    public R visitUnionType(@NotNull KtUnionType unionType, D data) {
+        return visitTypeElement(unionType, data);
+    }
+
     public R visitTypeProjection(@NotNull KtTypeProjection typeProjection, D data) {
         return visitKtElement(typeProjection, data);
     }

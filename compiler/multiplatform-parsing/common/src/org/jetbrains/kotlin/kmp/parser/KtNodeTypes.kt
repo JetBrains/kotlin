@@ -72,7 +72,8 @@ object KtNodeTypes : SyntaxElementTypesWithIds() {
     const val FUNCTION_TYPE_RECEIVER_ID: Int = FUNCTION_TYPE_ID + 1
     const val NULLABLE_TYPE_ID: Int = FUNCTION_TYPE_RECEIVER_ID + 1
     const val INTERSECTION_TYPE_ID: Int = NULLABLE_TYPE_ID + 1
-    const val TYPE_PROJECTION_ID: Int = INTERSECTION_TYPE_ID + 1
+    const val UNION_TYPE_ID: Int = INTERSECTION_TYPE_ID + 1
+    const val TYPE_PROJECTION_ID: Int = UNION_TYPE_ID + 1
 
     const val PROPERTY_ACCESSOR_ID: Int = TYPE_PROJECTION_ID + 1
     const val BACKING_FIELD_ID: Int = PROPERTY_ACCESSOR_ID + 1
@@ -214,6 +215,7 @@ object KtNodeTypes : SyntaxElementTypesWithIds() {
     val NULLABLE_TYPE: SyntaxElementType = register(NULLABLE_TYPE_ID, "NULLABLE_TYPE")
 
     val INTERSECTION_TYPE: SyntaxElementType = register(INTERSECTION_TYPE_ID, "INTERSECTION_TYPE")
+    val UNION_TYPE: SyntaxElementType = register(UNION_TYPE_ID, "UNION_TYPE")
 
     val TYPE_REFERENCE: SyntaxElementType = register(TYPE_REFERENCE_ID, "TYPE_REFERENCE")
 

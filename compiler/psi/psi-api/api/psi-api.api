@@ -120,6 +120,7 @@ public abstract interface class org/jetbrains/kotlin/KtNodeTypes {
 	public static final field TYPE_PARAMETER_LIST Lcom/intellij/psi/tree/IElementType;
 	public static final field TYPE_PROJECTION Lcom/intellij/psi/tree/IElementType;
 	public static final field TYPE_REFERENCE Lcom/intellij/psi/tree/IElementType;
+	public static final field UNION_TYPE Lcom/intellij/psi/tree/IElementType;
 	public static final field USER_TYPE Lcom/intellij/psi/tree/IElementType;
 	public static final field VALUE_ARGUMENT Lcom/intellij/psi/tree/IElementType;
 	public static final field VALUE_ARGUMENT_LIST Lcom/intellij/psi/tree/IElementType;
@@ -617,8 +618,10 @@ public abstract interface class org/jetbrains/kotlin/lexer/KtTokens {
 	public static final field OPERATIONS Lcom/intellij/psi/tree/TokenSet;
 	public static final field OPERATOR_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
 	public static final field OPERATOR_KEYWORD_Id I
+	public static final field OR Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public static final field OROR Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public static final field OROR_Id I
+	public static final field OR_Id I
 	public static final field OUT_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
 	public static final field OUT_KEYWORD_Id I
 	public static final field OVERRIDE_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
@@ -2909,6 +2912,7 @@ public class org/jetbrains/kotlin/psi/KtVisitor : com/intellij/psi/PsiElementVis
 	public fun visitTypeProjection (Lorg/jetbrains/kotlin/psi/KtTypeProjection;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitTypeReference (Lorg/jetbrains/kotlin/psi/KtTypeReference;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitUnaryExpression (Lorg/jetbrains/kotlin/psi/KtUnaryExpression;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun visitUnionType (Lorg/jetbrains/kotlin/psi/KtUnionType;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitUserType (Lorg/jetbrains/kotlin/psi/KtUserType;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitValueArgumentList (Lorg/jetbrains/kotlin/psi/KtValueArgumentList;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun visitWhenConditionInRange (Lorg/jetbrains/kotlin/psi/KtWhenConditionInRange;Ljava/lang/Object;)Ljava/lang/Object;
@@ -3225,6 +3229,9 @@ public class org/jetbrains/kotlin/psi/KtVisitorVoid : org/jetbrains/kotlin/psi/K
 	public fun visitUnaryExpression (Lorg/jetbrains/kotlin/psi/KtUnaryExpression;)V
 	public synthetic fun visitUnaryExpression (Lorg/jetbrains/kotlin/psi/KtUnaryExpression;Ljava/lang/Object;)Ljava/lang/Object;
 	public final fun visitUnaryExpression (Lorg/jetbrains/kotlin/psi/KtUnaryExpression;Ljava/lang/Void;)Ljava/lang/Void;
+	public fun visitUnionType (Lorg/jetbrains/kotlin/psi/KtUnionType;)V
+	public synthetic fun visitUnionType (Lorg/jetbrains/kotlin/psi/KtUnionType;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun visitUnionType (Lorg/jetbrains/kotlin/psi/KtUnionType;Ljava/lang/Void;)Ljava/lang/Void;
 	public fun visitUserType (Lorg/jetbrains/kotlin/psi/KtUserType;)V
 	public synthetic fun visitUserType (Lorg/jetbrains/kotlin/psi/KtUserType;Ljava/lang/Object;)Ljava/lang/Object;
 	public final fun visitUserType (Lorg/jetbrains/kotlin/psi/KtUserType;Ljava/lang/Void;)Ljava/lang/Void;

@@ -168,6 +168,10 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val intersectionTypeType: KtNodeType
         get() = KtStubElementTypes.INTERSECTION_TYPE
 
+    @KtExperimentalApi
+    override val unionTypeType: KtNodeType
+        get() = KtStubElementTypes.UNION_TYPE
+
     override val typeProjectionType: KtNodeType
         get() = KtStubElementTypes.TYPE_PROJECTION
 

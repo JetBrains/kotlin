@@ -91,6 +91,8 @@ interface KotlinElementTypeProvider {
     val functionTypeReceiverType: KtNodeType
     val nullableTypeType: KtNodeType
     val intersectionTypeType: KtNodeType
+    @KtExperimentalApi
+    val unionTypeType: KtNodeType
     val typeProjectionType: KtNodeType
 
     // Constants

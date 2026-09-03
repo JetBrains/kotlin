@@ -278,12 +278,12 @@ internal open class KotlinExpressionParsing(
 
             val resultType: SyntaxElementType = when (KtTokens.getElementTypeId(operation)) {
                 KtTokens.AS_KEYWORD_ID, KtTokens.AS_SAFE_ID -> {
-                    kotlinParsing.parseTypeRefWithoutIntersections()
+                    kotlinParsing.parseTypeRefWithoutIntersectionsOrUnions()
                     minPrecedence = BinaryOperationPrecedence.AS
                     KtNodeTypes.BINARY_WITH_TYPE
                 }
                 KtTokens.IS_KEYWORD_ID, KtTokens.NOT_IS_ID -> {
-                    kotlinParsing.parseTypeRefWithoutIntersections()
+                    kotlinParsing.parseTypeRefWithoutIntersectionsOrUnions()
                     // The handling of `is`, it doesn't parse RHS recursively and greedily.
                     // To prevent parsing of more prioritized operations next to `is` (for instance, INFIX, RANGE, and others),
                     // use the `minPrecedence` in addition to `maxPrecedence`.

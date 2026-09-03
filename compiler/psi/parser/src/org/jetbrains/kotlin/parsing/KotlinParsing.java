@@ -1916,7 +1916,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         if (!receiverPresent) return false;
 
-        createTruncatedBuilder(lastDot).parseTypeRefWithoutIntersections();
+        createTruncatedBuilder(lastDot).parseTypeRefWithoutIntersectionsOrUnions();
 
         if (atSet(RECEIVER_TYPE_TERMINATORS)) {
             advance(); // expectation
@@ -2226,22 +2226,22 @@ public class KotlinParsing extends AbstractKotlinParsing {
         parseTypeRef(TokenSet.EMPTY);
     }
 
-    void parseTypeRefWithoutIntersections() {
-        parseTypeRef(TokenSet.EMPTY, /* allowSimpleIntersectionTypes */ false);
+    void parseTypeRefWithoutIntersectionsOrUnions() {
+        parseTypeRef(TokenSet.EMPTY, /* allowSimpleIntersectionTypes */ false, /* allowUnionTypes */ false);
     }
 
     void parseTypeRef(TokenSet extraRecoverySet) {
-        parseTypeRef(extraRecoverySet, /* allowSimpleIntersectionTypes */ true);
+        parseTypeRef(extraRecoverySet, /* allowSimpleIntersectionTypes */ true, /* allowUnionTypes */ true);
     }
 
-    private void parseTypeRef(TokenSet extraRecoverySet, boolean allowSimpleIntersectionTypes) {
-        PsiBuilder.Marker typeRefMarker = parseTypeRefContents(extraRecoverySet, allowSimpleIntersectionTypes);
+    private void parseTypeRef(TokenSet extraRecoverySet, boolean allowSimpleIntersectionTypes, boolean allowUnionTypes) {
+        PsiBuilder.Marker typeRefMarker = parseTypeRefContents(extraRecoverySet, allowSimpleIntersectionTypes, allowUnionTypes);
         typeRefMarker.done(TYPE_REFERENCE);
     }
 
     // The extraRecoverySet is needed for the foo(bar<x, 1, y>(z)) case, to tell whether we should stop
     // on expression-indicating symbols or not
-    private PsiBuilder.Marker parseTypeRefContents(TokenSet extraRecoverySet, boolean allowSimpleIntersectionTypes) {
+    private PsiBuilder.Marker parseTypeRefContents(TokenSet extraRecoverySet, boolean allowSimpleIntersectionTypes, boolean allowUnionTypes) {
         PsiBuilder.Marker typeRefMarker = mark();
 
         parseTypeModifierList();
@@ -2273,7 +2273,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
             // This may be a function parameter list or just a parenthesized type
             advance(); // LPAR
-            parseTypeRefContents(TokenSet.EMPTY, /* allowSimpleIntersectionTypes */ true).drop(); // parenthesized types, no reference element around it is needed
+            parseTypeRefContents(TokenSet.EMPTY, /* allowSimpleIntersectionTypes */ true, true).drop(); // parenthesized types, no reference element around it is needed
 
             if (at(RPAR) && lookahead(1) != ARROW) {
                 // It's a parenthesized type
@@ -2315,13 +2315,31 @@ public class KotlinParsing extends AbstractKotlinParsing {
             leftTypeRef.done(TYPE_REFERENCE);
 
             advance(); // &
-            parseTypeRef(extraRecoverySet, /* allowSimpleIntersectionTypes */ true);
+            parseTypeRef(extraRecoverySet, /* allowSimpleIntersectionTypes */ true, /* allowUnionTypes */ false);
 
             intersectionType.done(INTERSECTION_TYPE);
             wasIntersection = true;
         }
 
-        if (typeBeforeDot && at(DOT) && !wasIntersection && !wasFunctionTypeParsed) {
+        boolean wasUnion = false;
+        if (allowUnionTypes && at(OR)) {
+            PsiBuilder.Marker firstTypeRef = typeElementMarker;
+
+            typeElementMarker = typeElementMarker.precede();
+            PsiBuilder.Marker unionType = firstTypeRef.precede();
+
+            firstTypeRef.done(TYPE_REFERENCE);
+
+            while (at(OR)) {
+                advance(); // |
+                parseTypeRef(extraRecoverySet, /* allowSimpleUnionTypes */ true, /* allowUnionTypes */ false);
+            }
+
+            unionType.done(UNION_TYPE);
+            wasUnion = true;
+        }
+
+        if (typeBeforeDot && at(DOT) && !wasIntersection && !wasUnion && !wasFunctionTypeParsed) {
             // This is a receiver for a function type
             //  A.(B) -> C
             //   ^
