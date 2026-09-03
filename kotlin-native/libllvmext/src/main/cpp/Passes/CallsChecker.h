@@ -38,7 +38,6 @@ public:
 private:
   bool load(Module &M);
   void loadIgnoredFunctions(Module &M);
-  void loadGoodFunctions(Module &M);
 
   Value *placeCString(Module &M, StringRef S);
 

@@ -3,10 +3,7 @@
 ; CHECK: @0 = internal constant [2 x i8] c"f\00"
 ; CHECK: @1 = internal constant [7 x i8] c"sinBad\00"
 
-; Runtime is linked in the module.
-@.str.0 = private unnamed_addr constant [4 x i8] c"sin\00", align 1
-@.str.1 = private unnamed_addr constant [11 x i8] c"llvm.sin.*\00", align 1
-@Kotlin_callsCheckerGoodFunctionNames = local_unnamed_addr global [2 x ptr] [ptr @.str.0, ptr @.str.1], align 8
+; sin and llvm.sin.* are both defined in GoodFunctionNames
 
 declare double @sin(double)
 declare double @sinBad(double)
