@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -31,6 +32,9 @@ import java.util.concurrent.ConcurrentHashMap
  * Needed for parsing-level unit tests that use barely initialized sessions.
  */
 internal val FirSession.nullableSymbolProvider: FirSymbolProvider? by FirSession.nullableSessionComponentAccessor()
+
+/** Nullable variant of [org.jetbrains.kotlin.fir.resolve.providers.firProvider], for the same reason. */
+internal val FirSession.nullableFirProvider: FirProvider? by FirSession.nullableSessionComponentAccessor()
 
 /**
  * Per-session set of [ClassId]s currently being resolved by [cycleSafeClassLikeSymbol].
