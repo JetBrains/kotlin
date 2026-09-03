@@ -1,6 +1,4 @@
-Type has changed on restoration
-
-Before:
+Restored type is the same as the original one
 
 KaDynamicType:
   abbreviation: null
@@ -10,15 +8,6 @@ KaDynamicType:
     AnnoWithArgs(x = "")
       psi: KtAnnotationEntry
   ]
-  isMarkedNullable: false
-  isNullable: true
-  hasFlexibleNullability: true
-
-After:
-
-KaDynamicType:
-  abbreviation: null
-  annotations: []
   isMarkedNullable: false
   isNullable: true
   hasFlexibleNullability: true

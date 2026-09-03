@@ -188,7 +188,7 @@ internal fun <T : ConeKotlinType> T.createPointer(
     return guard.createPointer(coneType = this) { coneType ->
         @Suppress("UNCHECKED_CAST")
         when (coneType) {
-            is ConeDynamicType -> ConeDynamicTypePointer
+            is ConeDynamicType -> ConeDynamicTypePointer(coneType, builder)
             is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullTypePointer(coneType, builder, guard)
             is ConeIntersectionType -> ConeIntersectionTypePointer(coneType, builder, guard)
             is ConeRawType -> ConeRawTypePointer(coneType, builder, guard)
@@ -229,6 +229,7 @@ private class ConeClassLikeTypePointer(
     private val isNullable = coneType.isMarkedNullable
     private val abbreviatedTypePointer = coneType.abbreviatedType?.createPointer(builder, guard)
     private val isTypeAlias = lookupTag.toSymbol(builder.rootSession) is FirTypeAliasSymbol
+    private val annotationPointer = ConeAnnotationPointer.create(coneType, builder.rootSession)
 
     // function types-specific attributes
     private val hasReceiverType = coneType.receiverType(builder.rootSession) != null
@@ -254,6 +255,7 @@ private class ConeClassLikeTypePointer(
             if (contextParameterNumber != 0) {
                 add(CompilerConeAttributes.ContextFunctionTypeParams(contextParameterNumber))
             }
+            addAll(annotationPointer.restore(session))
         }
 
         return ConeClassLikeTypeImpl(
@@ -271,12 +273,13 @@ private class ConeTypeParameterTypePointer(
 ) : ConeTypePointer<ConeTypeParameterType> {
     private val typeParameterPointer = builder.classifierBuilder.buildTypeParameterSymbol(coneType.lookupTag.symbol).createPointer()
     private val isNullable = coneType.isMarkedNullable
+    private val annotationPointer = ConeAnnotationPointer.create(coneType, builder.rootSession)
 
     override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeTypeParameterType? {
         val typeParameterSymbol = typeParameterPointer.restoreSymbol(session) ?: return null
 
         val lookupTag = ConeTypeParameterLookupTag(typeParameterSymbol.firSymbol)
-        return ConeTypeParameterType(lookupTag, isNullable)
+        return ConeTypeParameterType(lookupTag, isNullable, attributes = annotationPointer.restore(session))
     }
 }
 
@@ -286,6 +289,7 @@ private class ConeTypeVariableTypePointer(
 ) : ConeTypePointer<ConeTypeVariableType> {
     private val debugName = coneType.typeConstructor.debugName
     private val isMarkedNullable = coneType.isMarkedNullable
+    private val annotationPointer = ConeAnnotationPointer.create(coneType, builder.rootSession)
 
     private val typeParameterSymbolPointer: KaSymbolPointer<KaTypeParameterSymbol>? = run {
         val typeParameterLookupTag = coneType.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag
@@ -300,7 +304,7 @@ private class ConeTypeVariableTypePointer(
         val typeParameterSymbol = typeParameterSymbolPointer?.let { it.restoreSymbol(session) ?: return null }
 
         val typeConstructor = ConeTypeVariableTypeConstructor(debugName, typeParameterSymbol?.firSymbol?.toLookupTag())
-        return ConeTypeVariableType(isMarkedNullable, typeConstructor)
+        return ConeTypeVariableType(isMarkedNullable, typeConstructor, attributes = annotationPointer.restore(session))
     }
 }
 
@@ -314,6 +318,7 @@ private class ConeCapturedTypePointer(
     private val isMarkedNullable = coneType.isMarkedNullable
     private val coneProjectionPointer = ConeTypeProjectionPointer(coneType.constructor.projection, builder, guard)
     private val constructorSupertypePointers = coneType.constructor.supertypes?.map { it.createPointer(builder, guard) }
+    private val annotationPointer = ConeAnnotationPointer.create(coneType, builder.rootSession)
 
     private val typeParameterSymbolPointer: KaSymbolPointer<KaTypeParameterSymbol>? = run {
         val typeParameterLookupTag = coneType.constructor.typeParameterMarker as? ConeTypeParameterLookupTag
@@ -346,6 +351,7 @@ private class ConeCapturedTypePointer(
         return ConeCapturedType(
             isMarkedNullable,
             typeConstructor,
+            annotationPointer.restore(session),
         )
     }
 
@@ -466,6 +472,7 @@ private class ConeErrorTypePointer(
     private val delegatedTypePointer = coneType.delegatedType?.createPointer(builder, guard)
     private val typeArgumentPointers = coneType.typeArguments.map { ConeTypeProjectionPointer(it, builder, guard) }
     private val nullable = coneType.nullable
+    private val annotationPointer = ConeAnnotationPointer.create(coneType, builder.rootSession)
 
     override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeErrorType? {
         val coneDiagnostic = coneDiagnosticPointer.restore(session) ?: return null
@@ -477,14 +484,17 @@ private class ConeErrorTypePointer(
             isUninferredParameter = isUninferredParameter,
             delegatedType = delegatedConeType,
             typeArguments = typeArguments.toTypedArray(),
+            attributes = annotationPointer.restore(session),
             nullable = nullable,
         )
     }
 }
 
-private object ConeDynamicTypePointer : ConeTypePointer<ConeDynamicType> {
+private class ConeDynamicTypePointer(coneType: ConeDynamicType, builder: KaSymbolByFirBuilder) : ConeTypePointer<ConeDynamicType> {
+    private val annotationPointer = ConeAnnotationPointer.create(coneType, builder.rootSession)
+
     override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeDynamicType {
-        return ConeDynamicType.create(session.firSession)
+        return ConeDynamicType.create(session.firSession, attributes = annotationPointer.restore(session))
     }
 }
 

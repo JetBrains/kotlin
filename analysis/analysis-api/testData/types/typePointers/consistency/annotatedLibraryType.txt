@@ -1,6 +1,4 @@
-Type has changed on restoration
-
-Before:
+Restored type is the same as the original one
 
 KaUsualClassType:
   abbreviation: null
@@ -48,56 +46,6 @@ KaUsualClassType:
         library/AnnoWithArgs(x = "")
           psi: null
       ]
-      classId: kotlin/String
-      qualifiers: [
-        KaResolvedClassTypeQualifier:
-          name: String
-          symbol: KaNamedClassSymbol(kotlin/String)
-          typeArguments: []
-      ]
-      symbol: KaNamedClassSymbol(kotlin/String)
-      typeArguments: []
-      isMarkedNullable: false
-      isNullable: false
-      hasFlexibleNullability: false
-  ]
-  isMarkedNullable: false
-  isNullable: false
-  hasFlexibleNullability: false
-
-After:
-
-KaUsualClassType:
-  abbreviation: null
-  annotations: []
-  classId: kotlin/collections/List
-  qualifiers: [
-    KaResolvedClassTypeQualifier:
-      name: List
-      symbol: KaNamedClassSymbol(kotlin/collections/List)
-      typeArguments: [
-        KaUsualClassType:
-          abbreviation: null
-          annotations: []
-          classId: kotlin/String
-          qualifiers: [
-            KaResolvedClassTypeQualifier:
-              name: String
-              symbol: KaNamedClassSymbol(kotlin/String)
-              typeArguments: []
-          ]
-          symbol: KaNamedClassSymbol(kotlin/String)
-          typeArguments: []
-          isMarkedNullable: false
-          isNullable: false
-          hasFlexibleNullability: false
-      ]
-  ]
-  symbol: KaNamedClassSymbol(kotlin/collections/List)
-  typeArguments: [
-    KaUsualClassType:
-      abbreviation: null
-      annotations: []
       classId: kotlin/String
       qualifiers: [
         KaResolvedClassTypeQualifier:

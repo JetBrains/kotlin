@@ -1,9 +1,3 @@
-Type has changed on restoration
-
-Before:
+Restored type is the same as the original one
 
 kotlin.collections.List<@Anno2 @AnnoWithArgs2(x = "") T>
-
-After:
-
-kotlin.collections.List<T>

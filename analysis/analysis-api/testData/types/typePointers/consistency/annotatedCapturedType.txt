@@ -1,6 +1,4 @@
-Type has changed on restoration
-
-Before:
+Restored type is the same as the original one
 
 KaCapturedType:
   abbreviation: null
@@ -18,30 +16,6 @@ KaCapturedType:
       AnnoWithArgs1(x = "")
         psi: KtAnnotationEntry
     ]
-    classId: kotlin/CharSequence
-    qualifiers: [
-      KaResolvedClassTypeQualifier:
-        name: CharSequence
-        symbol: KaNamedClassSymbol(kotlin/CharSequence)
-        typeArguments: []
-    ]
-    symbol: KaNamedClassSymbol(kotlin/CharSequence)
-    typeArguments: []
-    isMarkedNullable: false
-    isNullable: false
-    hasFlexibleNullability: false
-  isMarkedNullable: true
-  isNullable: true
-  hasFlexibleNullability: false
-
-After:
-
-KaCapturedType:
-  abbreviation: null
-  annotations: []
-  projection: out KaUsualClassType:
-    abbreviation: null
-    annotations: []
     classId: kotlin/CharSequence
     qualifiers: [
       KaResolvedClassTypeQualifier:

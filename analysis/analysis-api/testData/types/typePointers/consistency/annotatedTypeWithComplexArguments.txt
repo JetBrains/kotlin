@@ -1,6 +1,4 @@
-Type has changed on restoration
-
-Before:
+Restored type is the same as the original one
 
 KaUsualClassType:
   abbreviation: null
@@ -8,56 +6,6 @@ KaUsualClassType:
     Complex(b = true, c = `c`, classes = [kotlin.Int::class, kotlin.Array<kotlin.String>::class], d = 1.5, e = E.B, enums = [E.A, E.B], i = 3, k = kotlin.collections.List<*>::class, l = 42, nested = /Nested(i = 7, ), s = "s", strings = ["a", "b"], uByte = 4u, x = [1, 2, 3])
       psi: KtAnnotationEntry
   ]
-  classId: kotlin/collections/List
-  qualifiers: [
-    KaResolvedClassTypeQualifier:
-      name: List
-      symbol: KaNamedClassSymbol(kotlin/collections/List)
-      typeArguments: [
-        KaUsualClassType:
-          abbreviation: null
-          annotations: []
-          classId: kotlin/String
-          qualifiers: [
-            KaResolvedClassTypeQualifier:
-              name: String
-              symbol: KaNamedClassSymbol(kotlin/String)
-              typeArguments: []
-          ]
-          symbol: KaNamedClassSymbol(kotlin/String)
-          typeArguments: []
-          isMarkedNullable: false
-          isNullable: false
-          hasFlexibleNullability: false
-      ]
-  ]
-  symbol: KaNamedClassSymbol(kotlin/collections/List)
-  typeArguments: [
-    KaUsualClassType:
-      abbreviation: null
-      annotations: []
-      classId: kotlin/String
-      qualifiers: [
-        KaResolvedClassTypeQualifier:
-          name: String
-          symbol: KaNamedClassSymbol(kotlin/String)
-          typeArguments: []
-      ]
-      symbol: KaNamedClassSymbol(kotlin/String)
-      typeArguments: []
-      isMarkedNullable: false
-      isNullable: false
-      hasFlexibleNullability: false
-  ]
-  isMarkedNullable: false
-  isNullable: false
-  hasFlexibleNullability: false
-
-After:
-
-KaUsualClassType:
-  abbreviation: null
-  annotations: []
   classId: kotlin/collections/List
   qualifiers: [
     KaResolvedClassTypeQualifier:
