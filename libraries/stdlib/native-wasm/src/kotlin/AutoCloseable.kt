@@ -8,6 +8,15 @@ package kotlin
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+/**
+ * Represents an object that may hold resources, like open files or network connections, until [close] is called.
+ *
+ * Instances should normally be managed with [use], which closes the object after the operation completes, including when the operation
+ * throws an exception.
+ *
+ * @sample samples.misc.AutoCloseables.naive
+ * @sample samples.misc.AutoCloseables.idempotent
+ */
 @SinceKotlin("2.0")
 @WasExperimental(ExperimentalStdlibApi::class)
 public actual interface AutoCloseable {
