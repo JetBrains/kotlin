@@ -67,6 +67,7 @@ class KonanDriver(
                 configuration.makePerFileCache -> {
                     val result = KlibLoader {
                         libraryPaths(libPath)
+                        minPermittedAbiVersion(KotlinAbiVersion.FIRST_SUPPORTED)
                         maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
                         configuration.zipFileSystemAccessor?.let(::zipFileSystemAccessor)
                     }.load()

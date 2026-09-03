@@ -505,6 +505,81 @@ abstract class AbstractKlibLoaderTest {
     }
 
     @Test
+    fun testAllKnownAbiVersionsAreTreatedAsExpected() {
+        for (abiVersion in findAllKnownUnsupportedAbiVersions()) {
+            val libraryPath = generateNewKlib(asFile = false, fileExtension = "", abiVersion = abiVersion)
+
+            KlibLoader {
+                libraryPaths(libraryPath)
+                minPermittedAbiVersion(KotlinAbiVersion.FIRST_SUPPORTED)
+                maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
+            }.load()
+                .assertNoLoadedLibraries()
+                .assertProblematicLibraries(incompatibleAbiVersionPaths = listOf(libraryPath))
+        }
+
+        for (abiVersion in findAllKnownSupportedAbiVersions()) {
+            val libraryPath = generateNewKlib(asFile = false, fileExtension = "", abiVersion = abiVersion)
+
+            KlibLoader {
+                libraryPaths(libraryPath)
+                minPermittedAbiVersion(KotlinAbiVersion.FIRST_SUPPORTED)
+                maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
+            }.load()
+                .assertLoadedLibraries(listOf(libraryPath))
+                .assertNoProblematicLibraries()
+        }
+    }
+
+    private fun findAllKnownUnsupportedAbiVersions(): List<KotlinAbiVersion> {
+        val knownUnsupportedSingleDigitAbiVersions = listOf(1, 2, 5, 8, 9, 14, 17, 22).map { KotlinAbiVersion(it) }
+
+        // Sanity: Make sure that all are unique.
+        assertEquals(knownUnsupportedSingleDigitAbiVersions.size, knownUnsupportedSingleDigitAbiVersions.toSet().size)
+
+        val knownUnsupportedThreeDigitAbiVersions = listOf(
+            KotlinAbiVersion(1, 4, 0),
+            KotlinAbiVersion(1, 4, 1),
+            KotlinAbiVersion(1, 4, 2),
+            KotlinAbiVersion(1, 5, 0),
+            KotlinAbiVersion(1, 6, 0),
+            KotlinAbiVersion(1, 7, 0),
+        )
+
+        // Sanity: Make sure that all are unique.
+        assertEquals(knownUnsupportedThreeDigitAbiVersions.size, knownUnsupportedThreeDigitAbiVersions.toSet().size)
+
+        // Sanity: Make sure that they don't intersect with `knownLegacySingleDigitAbiVersions`.
+        assertEquals(emptySet<KotlinAbiVersion>(), knownUnsupportedSingleDigitAbiVersions.toSet() intersect knownUnsupportedThreeDigitAbiVersions.toSet())
+
+        // Sanity: Make sure that the next version after `knownLegacyThreeDigitAbiVersions` is exactly `KotlinAbiVersion.FIRST_SUPPORTED`.
+        assertEquals(KotlinAbiVersion.FIRST_SUPPORTED, knownUnsupportedThreeDigitAbiVersions.last().next())
+
+        return knownUnsupportedSingleDigitAbiVersions + knownUnsupportedThreeDigitAbiVersions
+    }
+
+    private fun findAllKnownSupportedAbiVersions(): List<KotlinAbiVersion> {
+        val knownSupportedAbiVersions = buildList {
+            this += KotlinAbiVersion(1, 8, 0)
+            this += KotlinAbiVersion(1, 201, 0)
+
+            generateSequence(KotlinAbiVersion(2, 2, 0)) { it.next() }
+                .takeWhile { it.isAtMost(KotlinAbiVersion.CURRENT) }
+                .mapTo(this) { it }
+        }
+
+        // Sanity: Make sure that all are unique.
+        assertEquals(knownSupportedAbiVersions.size, knownSupportedAbiVersions.toSet().size)
+
+        // Sanity: The first element in `knownSupportedAbiVersions` is exactly `KotlinAbiVersion.FIRST_SUPPORTED`,
+        // and the last element is exactly `KotlinAbiVersion.CURRENT`.
+        assertEquals(KotlinAbiVersion.FIRST_SUPPORTED, knownSupportedAbiVersions.first())
+        assertEquals(KotlinAbiVersion.CURRENT, knownSupportedAbiVersions.last())
+
+        return knownSupportedAbiVersions
+    }
+
+    @Test
     fun testMaxPermittedAbiVersionAndNoAbiVersionInManifest() {
         // This list of ABI versions only starts from the current version.
         // Thus, it contains 4 more versions that are definitely not supported by the current compiler.
