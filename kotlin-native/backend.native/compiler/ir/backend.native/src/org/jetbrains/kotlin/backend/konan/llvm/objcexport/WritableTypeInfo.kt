@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.StaticData
 import org.jetbrains.kotlin.backend.konan.llvm.Struct
 import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.backend.konan.llvm.llvmType
+import org.jetbrains.kotlin.backend.konan.llvm.objc.isBoundToObjCNameInCaches
 import org.jetbrains.kotlin.backend.konan.llvm.replaceExternalWeakOrCommonGlobal
 import org.jetbrains.kotlin.backend.konan.llvm.toTypeString
 import org.jetbrains.kotlin.backend.konan.llvm.writableTypeInfoSymbolName
@@ -27,6 +28,8 @@ private class FixedWritableTypeInfo(global: StaticData.Global) : WritableTypeInf
 
 private class OverridableWritableTypeInfo(private val global: StaticData.Global) : WritableTypeInfoPointer, ConstPointer by global.pointer {
     private var replaced = false
+
+    fun canReplace(): Boolean = !replaced
 
     fun tryReplaceWith(value: ConstValue): Boolean {
         if (replaced) {
@@ -95,15 +98,29 @@ internal fun CodeGenerator.bindObjCExportConvertToRetained(
  */
 internal fun CodeGenerator.bindObjCExportTypeAdapterTo(
         irClass: IrClass,
-        typeAdapter: ConstPointer
+        typeAdapter: ConstPointer,
+        convertToRetained: ConstPointer? = null,
 ) = setWritableTypeInfo(
         irClass,
         buildWritableTypeInfoValue(
-                convertToRetained = null,
+                convertToRetained = convertToRetained,
                 objCClass = null,
                 typeAdapter = typeAdapter,
         )
 )
+
+/**
+ * Return `true` if type info hasn't already been bound for [irClass].
+ * If `false` is returned, calling one of the bind functions would fail.
+ */
+internal fun CodeGenerator.canBindTypeInfo(irClass: IrClass): Boolean {
+    if (isExternal(irClass)) {
+        return staticData.getGlobal(irClass.writableTypeInfoSymbolName) == null && !isBoundToObjCNameInCaches(irClass)
+    } else {
+        val writeableTypeInfoGlobal = generationState.llvmDeclarations.forClass(irClass).writableTypeInfoGlobal
+        return writeableTypeInfoGlobal is OverridableWritableTypeInfo && writeableTypeInfoGlobal.canReplace()
+    }
+}
 
 private fun CodeGenerator.setWritableTypeInfo(
         irClass: IrClass,

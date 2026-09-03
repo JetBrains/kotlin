@@ -48,6 +48,7 @@ internal fun buildSirSession(
     referencedTypeHandler = referenceHandler,
     enableCoroutinesSupport = config.enableCoroutinesSupport,
     hiddenModules = kaModules.hiddenModules,
+    collectionsV2 = config.collectionsV2,
 )
 
 /**
