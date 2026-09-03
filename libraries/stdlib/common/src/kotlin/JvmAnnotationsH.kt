@@ -197,7 +197,7 @@ public expect annotation class Strictfp()
  * Note that for an extension function, the monitor of the facade class, where it gets compiled to a static method, is used.
  * Therefore, this annotation is recommended to be applied only to member functions and properties.
  *
- * If you need to annotate a common method as JVM-synchronized, add a new [OptionalExpectation] annotation in your common code:
+ * If you need to annotate a common method as JVM-synchronized, introduce a new annotation marked with [OptionalExpectation] in your common code:
  * ```kotlin
  * @OptionalExpectation
  * expect annotation class JvmSynchronized
