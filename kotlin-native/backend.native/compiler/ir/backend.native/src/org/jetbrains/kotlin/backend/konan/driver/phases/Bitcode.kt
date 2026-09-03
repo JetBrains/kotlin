@@ -60,16 +60,14 @@ internal val WriteBitcodeFilePhase = createSimpleNamedCompilerPhase<NativeBacken
     LLVMWriteBitcodeToFile(llvmModule, outputFile.canonicalPath)
 }
 
-internal val CheckExternalCallsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
-        name = "CheckExternalCalls",
-        postactions = getDefaultLlvmModuleActions(),
-) { context, _ ->
-    checkLlvmModuleExternalCalls(context)
-}
-
 internal val ModuleCallsChecker = optimizationPipelinePass(
         name = "ModuleCallsChecker",
         pipeline = ::ModuleCallsCheckerPipeline
+)
+
+internal val CallsChecker = optimizationPipelinePass(
+        name = "CallsChecker",
+        pipeline = ::CallsCheckerPipeline
 )
 
 internal class OptimizationState(
@@ -178,6 +176,10 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
     )
     useContext(OptimizationState(context.config, optimizationConfig, context.performanceManager)) {
         val module = this@runBitcodePostProcessing.context.llvmModule
+        if (context.config.checkStateAtExternalCalls) {
+            // Instrument functions before running any lowerings and optimizations, that could complicate the callgraph.
+            it.runAndMeasurePhase(CallsChecker, module)
+        }
         if (context.config.runLLVMPassesInCompiler) {
             it.runAndMeasurePhase(StackProtectorPhaseInCompiler, module)
         } else {
@@ -195,6 +197,7 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
             it.runAndMeasurePhase(RemoveRedundantSafepointsPhaseInLLVM, module)
         }
         if (context.config.checkStateAtExternalCalls) {
+            // The list of known functions has to be created after all optimizations (notably, DCE).
             it.runAndMeasurePhase(ModuleCallsChecker, module)
         }
     }
