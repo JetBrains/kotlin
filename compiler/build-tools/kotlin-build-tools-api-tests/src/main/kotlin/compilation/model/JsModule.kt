@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.model
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.FORCE_RECOMPILATION
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.MODULE_BUILD_DIR
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.IR_OUTPUT_NAME
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.LIBRARIES
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.NOPACK
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerLinkingArguments.Companion.X_GENERATE_DTS
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.js.IncrementalModule
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
@@ -28,7 +30,7 @@ import java.nio.file.Path
 import kotlin.io.path.pathString
 import kotlin.io.path.walk
 
-@OptIn(ExperimentalCompilerArgument::class)
+@OptIn(ExperimentalBuildToolsApi::class, ExperimentalCompilerArgument::class)
 class JsModule(
     private val kotlinToolchain: KotlinToolchains,
     val buildSession: KotlinToolchains.BuildSession,
@@ -40,6 +42,7 @@ class JsModule(
     moduleCompilationConfigAction: (JsKlibCompilationOperation.Builder) -> Unit = {},
     private val stdlibKlibLocation: List<Path>,
     private val registeredModules: Set<JsModule> = mutableSetOf(),
+    private val useRichDtsGenerator: Boolean = false,
 ) : AbstractModule<JsKlibCompilationOperation, JsKlibCompilationOperation.Builder, JsHistoryBasedIncrementalCompilationConfiguration.Builder>(
     project,
     moduleName,
@@ -51,49 +54,37 @@ class JsModule(
 
     var lastCompileProducedPackedKlib = false
 
-    /**
-     * The output name the last compilation actually used. It defines the file name of the produced klib, so the linking
-     * operation has to resolve the packed klib through it rather than through [moduleName], which a test may override.
-     */
-    var lastCompileIrOutputName: String = moduleName
-        private set
-
     private val dependencyFiles: List<Path>
         get() = dependencies.map { it.location }.plus(stdlibKlibLocation)
     override val expectedOutputFileName: String
         get() = "$moduleName.js"
 
-    /**
-     * The directory the linking operation writes the `.js` artifact into. It is intentionally separate from
-     * [outputDirectory] (which holds the input klib), mirroring the KGP, where the klib and the linked
-     * `.js` live in different directories. Keeping them separate also prevents the linking operation from deleting its
-     * own input klib (the JS output writer removes everything it did not write from its destination directory).
-     */
-    val linkOutputDirectory: Path
-        get() = buildDirectory.resolve("dist")
-
-    override fun link(
-        strategyConfig: ExecutionPolicy,
-        forceOutput: LogLevel?,
-        compilationConfigAction: (JsLinkingOperation.Builder) -> Unit,
-        compilationAction: (JsLinkingOperation) -> Unit,
-        assertions: context(ModuleContext) CompilationOutcome.() -> Unit,
+    // TODO: move it to the common test infra
+    fun link(
+        destinationDirectory: Path,
+        strategyConfig: ExecutionPolicy = defaultStrategyConfig,
+        forceOutput: LogLevel? = null,
+        compilationConfigAction: (JsLinkingOperation.Builder) -> Unit = {},
+        compilationAction: (JsLinkingOperation) -> Unit = {},
+        assertions: context(ModuleContext) CompilationOutcome.() -> Unit = {},
     ): CompilationResult {
         val kotlinLogger = TestKotlinLogger()
+        // handle both cases of NOPACK set to true and false
+        val klibCompilationOutput = if (lastCompileProducedPackedKlib) {
+            outputDirectory.resolve("$moduleName.klib")
+        } else {
+            outputDirectory
+        }
+
         val compilationOperation = kotlinToolchain.js.jsLinkingOperation(
-            // handle both cases of NOPACK set to true and false
-            if (lastCompileProducedPackedKlib) {
-                outputDirectory.resolve("$lastCompileIrOutputName.klib")
-            } else {
-                outputDirectory
-            },
-            // write the '.js' into a dedicated directory, separate from the input klib in outputDirectory
-            linkOutputDirectory,
+            sources = outputDirectory,
+            destinationDirectory = destinationDirectory
         ) {
             // both are set before the caller's action, so that a test is able to override them
             compilerArguments[IR_OUTPUT_NAME] = moduleName
             compilerArguments[LIBRARIES] = dependencyFiles
             compilationConfigAction(this)
+            compilerArguments[X_GENERATE_DTS] = compilerArguments[X_GENERATE_DTS] && !useRichDtsGenerator
 
             // TODO: workaround to be removed after KT-86169
             if (compilerArguments[IR_OUTPUT_NAME] == null) {
@@ -103,15 +94,44 @@ class JsModule(
                 compilerArguments[LIBRARIES] = dependencyFiles
             }
         }
+
         val result = compilationOperation.let {
             compilationAction(it)
             buildSession.executeOperation(it, strategyConfig, kotlinLogger)
         }
 
+        if (useRichDtsGenerator) {
+            val dtsOperation = kotlinToolchain.js.jsDtsGenerationOperationBuilder(
+                dependencyFiles + listOf(klibCompilationOutput),
+                destinationDirectory,
+            )
+                .apply { configureFrom(compilationOperation) }
+                .build()
+
+            buildSession.executeOperation(dtsOperation, strategyConfig, kotlinLogger)
+        }
+
+
         // the assertions resolve files against outputDirectory, so point them at the linking output directory
-        processOutcome(kotlinLogger, result, assertions, forceOutput, LinkOutputContext(this, linkOutputDirectory))
+        processOutcome(kotlinLogger, result, assertions, forceOutput, LinkOutputContext(this, destinationDirectory))
         return result
     }
+
+    override fun link(
+        strategyConfig: ExecutionPolicy,
+        forceOutput: LogLevel?,
+        compilationConfigAction: (JsLinkingOperation.Builder) -> Unit,
+        compilationAction: (JsLinkingOperation) -> Unit,
+        assertions: context(ModuleContext) CompilationOutcome.() -> Unit,
+    ): CompilationResult =
+        link(
+            outputDirectory,
+            strategyConfig,
+            forceOutput,
+            compilationConfigAction,
+            compilationAction,
+            assertions,
+        )
 
     override fun compileImpl(
         strategyConfig: ExecutionPolicy,
@@ -128,18 +148,12 @@ class JsModule(
             outputDirectory,
         ) {
             compilerArguments[NOPACK] = true
-            compilerArguments[IR_OUTPUT_NAME] = moduleName
             moduleCompilationConfigAction(this)
             compilationConfigAction(this)
             compilerArguments[LIBRARIES] = dependencyFiles
-
-            // TODO: workaround to be removed after KT-86169
-            if (compilerArguments[IR_OUTPUT_NAME] == null) {
-                compilerArguments[IR_OUTPUT_NAME] = moduleName
-            }
+            compilerArguments[IR_OUTPUT_NAME] = moduleName
 
             lastCompileProducedPackedKlib = !compilerArguments[NOPACK]
-            lastCompileIrOutputName = compilerArguments[IR_OUTPUT_NAME] ?: moduleName
         }
 
         return compilationOperation.let {
