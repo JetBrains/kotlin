@@ -30,14 +30,15 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.POLYMORPHIC_SEALED_CLASS_ID
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.RAW_VALUE_ANNOTATION_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.TYPE_PARCELER_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_WITH_CLASS_IDS
+import org.jetbrains.kotlin.parcelize.fir.parcelizeService
 
 // TODO: extract common checker for expect interfaces
-class FirParcelizeAnnotationChecker(private val parcelizeAnnotationClassIds: List<ClassId>) :
-    FirAnnotationCallChecker(MppCheckerKind.Platform) {
+object FirParcelizeAnnotationChecker : FirAnnotationCallChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirAnnotationCall) {
         val annotationType = expression.annotationTypeRef.coneType.fullyExpandedType() as? ConeClassLikeType ?: return
         val resolvedAnnotationSymbol = annotationType.lookupTag.toRegularClassSymbol() ?: return
+        val parcelizeAnnotationClassIds = context.session.parcelizeService.parcelizeAnnotations
         when (val annotationClassId = resolvedAnnotationSymbol.classId) {
             in TYPE_PARCELER_CLASS_IDS -> {
                 if (checkDeprecatedAnnotations(expression, annotationClassId, context, reporter, isForbidden = true)) {
@@ -158,7 +159,7 @@ class FirParcelizeAnnotationChecker(private val parcelizeAnnotationClassIds: Lis
     private fun checkIfTheContainingClassIsParcelize(annotationCall: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val enclosingClass = context.findClosestClassOrObject() ?: return
 
-        if (!enclosingClass.isParcelize(context.session, parcelizeAnnotationClassIds)) {
+        if (!enclosingClass.isParcelize(context.session)) {
             val reportElement = annotationCall.calleeReference.source ?: annotationCall.source
             reporter.reportOn(reportElement, KtErrorsParcelize.CLASS_SHOULD_BE_PARCELIZE, enclosingClass, context)
         }
