@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.kapt.base
 
 import org.jetbrains.kotlin.kapt.base.incremental.DeclaredProcType
+import org.jetbrains.kotlin.kapt.base.incremental.INCREMENTAL_ANNOTATION_MARKERS_FLAG
 import org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor
-import org.jetbrains.kotlin.kapt.base.incremental.INCREMENTAL_ANNOTATION_FLAG
 import org.jetbrains.kotlin.kapt.base.incremental.parseIncrementalProcessorDeclarations
 import org.jetbrains.kotlin.kapt.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt.base.util.info
 import java.io.Closeable
 import java.io.File
-import java.io.InputStream
 import java.net.URLClassLoader
 import java.util.zip.ZipFile
 import javax.annotation.processing.Processor
@@ -24,7 +23,7 @@ interface ProcessorLoader : Closeable {
     fun loadProcessors(parentClassLoader: ClassLoader = ClassLoader.getSystemClassLoader()): LoadedProcessors
 }
 
-open class ProcessorLoaderImpl(private val options: KaptOptions, private val logger: KaptLogger) : ProcessorLoader {
+class ProcessorLoaderImpl(private val options: KaptOptions, private val logger: KaptLogger) : ProcessorLoader {
     private companion object {
         const val SERVICE_FILE = "META-INF/services/javax.annotation.processing.Processor"
     }
@@ -49,7 +48,7 @@ open class ProcessorLoaderImpl(private val options: KaptOptions, private val log
             options.processors.mapNotNull { tryLoadProcessor(it, classLoader) }
         } else {
             logger.info("Need to discovery annotation processors in the AP classpath")
-            doLoadProcessors(classpath, classLoader, classpathScan)
+            doLoadProcessors(classLoader, classpathScan)
         }
 
         if (processors.isEmpty()) {
@@ -98,7 +97,7 @@ open class ProcessorLoaderImpl(private val options: KaptOptions, private val log
      * as `JarFileFactory` is shared between concurrent runs in the same class loader.
      * See https://youtrack.jetbrains.com/issue/KT-34604 and https://youtrack.jetbrains.com/issue/KT-22513.
      */
-    protected fun scanClasspath(classpath: Iterable<File>): ClasspathScan {
+    private fun scanClasspath(classpath: Iterable<File>): ClasspathScan {
         val processorNames = mutableSetOf<String>()
         val incrementalMarkers = mutableMapOf<String, DeclaredProcType>()
 
@@ -117,7 +116,7 @@ open class ProcessorLoaderImpl(private val options: KaptOptions, private val log
                     file.resolve(SERVICE_FILE).takeIf { it.isFile }?.let { serviceFileInDir ->
                         serviceFileInDir.inputStream().use { addServiceNames(it.bufferedReader().lineSequence()) }
                     }
-                    file.resolve(INCREMENTAL_ANNOTATION_FLAG).takeIf { it.isFile }?.let { markerFile ->
+                    file.resolve(INCREMENTAL_ANNOTATION_MARKERS_FLAG).takeIf { it.isFile }?.let { markerFile ->
                         incrementalMarkers += parseIncrementalProcessorDeclarations(markerFile.bufferedReader().readLines())
                     }
                 }
@@ -126,7 +125,7 @@ open class ProcessorLoaderImpl(private val options: KaptOptions, private val log
                         zipFile.getEntry(SERVICE_FILE)?.let { zipEntry ->
                             zipFile.getInputStream(zipEntry).use { addServiceNames(it.bufferedReader().lineSequence()) }
                         }
-                        zipFile.getEntry(INCREMENTAL_ANNOTATION_FLAG)?.let { zipEntry ->
+                        zipFile.getEntry(INCREMENTAL_ANNOTATION_MARKERS_FLAG)?.let { zipEntry ->
                             zipFile.getInputStream(zipEntry).use {
                                 incrementalMarkers += parseIncrementalProcessorDeclarations(it.bufferedReader().readLines())
                             }
@@ -142,8 +141,7 @@ open class ProcessorLoaderImpl(private val options: KaptOptions, private val log
         return ClasspathScan(processorNames, incrementalMarkers)
     }
 
-    open fun doLoadProcessors(
-        classpath: LinkedHashSet<File>,
+    fun doLoadProcessors(
         classLoader: ClassLoader,
         classpathScan: ClasspathScan,
     ): List<Processor> {
