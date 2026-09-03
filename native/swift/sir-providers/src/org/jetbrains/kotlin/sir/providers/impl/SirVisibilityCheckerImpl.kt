@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.sir.SirAvailability
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -294,7 +295,9 @@ private fun hasUnboundInputTypeParameters(
     isReturnType: Boolean
 ): Boolean = (type.resolveUpperBound()?.fullyExpandedType as? KaClassType)?.let { classType ->
     if (sirSession.isTypeSupported(classType)) return@let false
+    // TODO: Make custom typed check generic KT-88831
     if (classType.classId in SirTypeProviderImpl.FLOW_CLASS_IDS) return@let false
+    if (classType.classId in listOf(StandardClassIds.List, StandardClassIds.MutableList)) return@let false
     if (classType is KaFunctionType) {
         return@let buildList {
             addAll(classType.contextParameterTypes)
