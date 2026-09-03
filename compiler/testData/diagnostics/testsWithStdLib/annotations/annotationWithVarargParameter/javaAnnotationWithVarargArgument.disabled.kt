@@ -6,7 +6,7 @@ public @interface A {
 }
 
 // FILE: b.kt
-@A(*<!ARGUMENT_TYPE_MISMATCH!><!TYPE_INTERSECTION_AS_REIFIED_ERROR!>arrayOf<!>(1, "b")<!>)
+@A(*<!ARGUMENT_TYPE_MISMATCH!>arrayOf(1, "b")<!>)
 fun test() {
 }
 

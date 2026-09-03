@@ -58,7 +58,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.PackageResolutionResult
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -938,13 +937,8 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
     private fun evaluateFirExpression(initialExpression: FirExpression): Any? {
         val session = kaptContext.firSession!!
-        val expression =
-            if (initialExpression is FirFunctionCall)
-                FirArrayOfCallTransformer().transformFunctionCall(initialExpression, session)
-            else initialExpression
-
         val result = try {
-            expression.evaluateAs<FirElement>(session)
+            initialExpression.evaluateAs<FirElement>(session)
         } catch (_: Exception) {
             null
         } ?: return null
