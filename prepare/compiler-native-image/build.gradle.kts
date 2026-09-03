@@ -184,6 +184,7 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
         .withPropertyName("nativeImageClasspath")
 
     inputs.property("nativeArgs", nativeArgs)
+    inputs.property("os", currentOs.name)
 
     val isWindows = currentOs.isWindows
     val mainClass = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
