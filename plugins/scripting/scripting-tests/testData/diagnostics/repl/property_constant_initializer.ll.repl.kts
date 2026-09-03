@@ -1,7 +1,8 @@
 // LL_FIR_DIVERGENCE
 // KT-85026: no multi-snippet support yet
 // LL_FIR_DIVERGENCE
-
+// IGNORE_FIR_DIAGNOSTICS_DIFF
+// ^^^ KT-89088 Difference in ReplViaApiDiagnosticsTestGenerated and ReplWithTestExtensionsDiagnosticsTestGenerated
 // SNIPPET
 
 const val x = 1
