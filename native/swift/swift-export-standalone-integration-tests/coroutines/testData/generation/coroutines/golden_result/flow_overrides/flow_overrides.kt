@@ -99,20 +99,20 @@ public fun namespace_MutableStateFoo_voo_get__reverse(self: namespace.MutableSta
 internal external fun namespace_Nar_foo__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
 @BindReverseBridgeToMethod(namespace.Nar::class, "foo")
-public fun namespace_Nar_foo__reverse(self: namespace.Nar): kotlinx.coroutines.flow.Flow<Nothing> {
+public fun namespace_Nar_foo__reverse(self: namespace.Nar): kotlinx.coroutines.flow.Flow<kotlin.Nothing> {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = namespace_Nar_foo__reverse_swift(__self)
-    return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlinx.coroutines.flow.Flow<Nothing>
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlinx.coroutines.flow.Flow<kotlin.Nothing>
 }
 
 @ImportedBridge("namespace_Nar_voo_get__reverse_swift")
 internal external fun namespace_Nar_voo_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
 @BindReverseBridgeToMethod(namespace.Nar::class, "<get-voo>")
-public fun namespace_Nar_voo_get__reverse(self: namespace.Nar): kotlinx.coroutines.flow.Flow<Nothing> {
+public fun namespace_Nar_voo_get__reverse(self: namespace.Nar): kotlinx.coroutines.flow.Flow<kotlin.Nothing> {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = namespace_Nar_voo_get__reverse_swift(__self)
-    return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlinx.coroutines.flow.Flow<Nothing>
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlinx.coroutines.flow.Flow<kotlin.Nothing>
 }
 
 @ImportedBridge("namespace_SharedFoo_foo__reverse_swift")
