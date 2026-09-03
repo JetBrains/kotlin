@@ -8,13 +8,13 @@ public final class InternalConstructor /* InternalConstructor*/ {
 
 @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
 public final class InternalNames /* InternalNames*/ {
-  @kotlin.jvm.JvmExposeBoxed()
-  @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() ValueInt jvmNamed(@org.jetbrains.annotations.NotNull() ValueInt);//  jvmNamed(@org.jetbrains.annotations.NotNull() ValueInt)
-
   @kotlin.jvm.JvmExposeBoxed(jvmName = "explicitBoxedName")
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() ValueInt explicitBoxedName(@org.jetbrains.annotations.NotNull() ValueInt);//  explicitBoxedName(@org.jetbrains.annotations.NotNull() ValueInt)
+
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "jvmNamed")
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() ValueInt jvmNamed(@org.jetbrains.annotations.NotNull() ValueInt);//  jvmNamed(@org.jetbrains.annotations.NotNull() ValueInt)
 
   @kotlin.jvm.JvmName(name = "ignoredJvmName")
   public final int ignoredJvmName(int);//  ignoredJvmName(int)
