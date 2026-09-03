@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.arguments.dsl.defaultEmpty
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultOne
-import org.jetbrains.kotlin.arguments.dsl.defaultTrue
 import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -986,7 +985,7 @@ The default value is 'inline'.""",
     compilerArgument {
         name = "Xjava-direct"
         description = "Experimental direct java support.".asReleaseDependent()
-        valueType = BooleanType.defaultTrue
+        valueType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_5_0,
