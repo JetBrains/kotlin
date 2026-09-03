@@ -20,8 +20,10 @@ interface ObjCEntryPoints {
 
         fun create(descriptors: Set<CallableMemberDescriptor>): ObjCEntryPoints =
             object : ObjCEntryPoints {
-                override fun shouldBeExposed(descriptor: CallableMemberDescriptor): Boolean =
-                    descriptors.contains(descriptor.original)
+                override fun shouldBeExposed(descriptor: CallableMemberDescriptor): Boolean {
+                    val target = (descriptor as? PropertyAccessorDescriptor)?.correspondingProperty ?: descriptor
+                    return descriptors.contains(descriptor.original) || descriptors.contains(target.original)
+                }
             }
     }
 }
@@ -34,10 +36,12 @@ fun File.readObjCEntryPoints(): ObjCEntryPoints =
         .toSet()
         .let { entryPointSet ->
             object : ObjCEntryPoints {
-                override fun shouldBeExposed(descriptor: CallableMemberDescriptor): Boolean =
-                    descriptor.objCEntryPointKindOrNull
-                        ?.let { objcEntryPointKind -> shouldBeExposed(objcEntryPointKind, descriptor.fqNameSafe) }
+                override fun shouldBeExposed(descriptor: CallableMemberDescriptor): Boolean {
+                    val target = (descriptor as? PropertyAccessorDescriptor)?.correspondingProperty ?: descriptor
+                    return target.objCEntryPointKindOrNull
+                        ?.let { objcEntryPointKind -> shouldBeExposed(objcEntryPointKind, target.fqNameSafe) }
                         ?: false
+                }
 
                 private fun shouldBeExposed(kind: ObjCEntryPoint.Kind, fqName: FqName): Boolean =
                     entryPointSet.contains(ObjCEntryPoint(kind, fqName.toObjCExplicitPattern())) ||
@@ -115,6 +119,10 @@ fun computeDownwardClosure(
     while (todo.isNotEmpty()) {
         val current = todo.removeLast()
         if (closure.add(current)) {
+            if (current is PropertyDescriptor) {
+                current.getter?.let { closure.add(it.original) }
+                current.setter?.let { closure.add(it.original) }
+            }
             overriddenToOverride[current]?.forEach { override ->
                 todo.add(override.original)
             }

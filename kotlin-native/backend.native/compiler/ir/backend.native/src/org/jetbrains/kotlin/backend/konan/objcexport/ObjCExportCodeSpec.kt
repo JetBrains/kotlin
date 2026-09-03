@@ -38,10 +38,10 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
     fun List<CallableMemberDescriptor>.toObjCMethods() = createObjCMethods(this.flatMap {
         when (it) {
             is PropertyDescriptor -> listOfNotNull(
-                    it.getter,
+                    it.getter?.takeIf(mapper::shouldBeExposed),
                     it.setter?.takeIf(mapper::shouldBeExposed) // Similar to [ObjCExportTranslatorImpl.buildProperty].
             )
-            is FunctionDescriptor -> listOf(it)
+            is FunctionDescriptor -> listOfNotNull(it.takeIf(mapper::shouldBeExposed))
             else -> error(it)
         }
     })
@@ -315,7 +315,7 @@ internal class ObjCProtocolForKotlinInterface(
 
 internal class ObjCClassForKotlinFile(
         binaryName: String,
-        private val sourceFile: SourceFile,
+        val sourceFile: SourceFile,
         val methods: List<ObjCMethodForKotlinMethod>
 ) : ObjCTypeSpec(binaryName) {
     override fun toString(): String =
