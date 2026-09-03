@@ -1,0 +1,31 @@
+import org.jetbrains.kotlin.build.foreign.registerForeignClassUsageTasks
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
+
+plugins {
+    id("common-configuration")
+    id("com.autonomousapps.dependency-analysis")
+    kotlin("jvm")
+    id("gradle-plugin-compiler-dependency-configuration")
+    id("kotlin-git.gradle-build-conventions.foreign-class-usage-checker")
+}
+
+dependencies {
+    api(kotlinStdlib())
+    api(project(":core:util.runtime"))
+
+    compileOnly(intellijCore())
+}
+
+kotlin {
+    @OptIn(ExperimentalAbiValidation::class)
+    abiValidation()
+}
+
+sourceSets {
+    "main" { projectDefault() }
+    "test" { none() }
+}
+
+registerForeignClassUsageTasks {
+    outputFile = file("api/error-handling-api.foreign")
+}

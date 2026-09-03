@@ -45,6 +45,7 @@ object CompilerModules {
         ":core:compiler.common.wasm",
         ":core:compiler.common.web",
         ":core:util.runtime",
+        ":core:error.handling",
         ":core:names",
         ":core:language.model",
         ":core:language.targets",
@@ -190,6 +191,7 @@ object CompilerModules {
     )
 
     val analysisApiSurfaceDependencies = listOf(
+        ":core:error.handling",
         ":core:names",
         ":core:language.model",
         ":core:language.targets",
@@ -417,6 +419,7 @@ object CompilerModules {
     ":wasm:wasm.config",
     ":native:native.config",
     ":core:util.runtime",
+    ":core:error.handling",
     ":compiler:compiler.version",
     ":compiler:build-tools:kotlin-build-statistics",
     ":kotlin-build-common",
