@@ -17,8 +17,9 @@ import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirScopeDefiningDeclaration
 import org.jetbrains.kotlin.sir.SirTupleType
 import org.jetbrains.kotlin.sir.SirType
-import org.jetbrains.kotlin.sir.SirTypedFlowType
+import org.jetbrains.kotlin.sir.SirTypedType
 import org.jetbrains.kotlin.sir.SirUnsupportedType
+import org.jetbrains.kotlin.sir.SirUntypedType
 import org.jetbrains.kotlin.sir.providers.SirTypeNamer
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.utils.KotlinCoroutineSupportModule
@@ -65,15 +66,9 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
     )
 
     private fun kotlinFqName(type: SirType): String = when (type) {
+        is SirTypedType -> kotlinFqName(type.untypedType.kotlinType)
+        is SirUntypedType -> kotlinFqName(type.kotlinType)
         is SirNominalType -> kotlinFqName(type)
-        is SirTypedFlowType -> when (type.typedProtocol) {
-            KotlinCoroutineSupportModule.kotlinTypedFlow -> "kotlinx.coroutines.flow.Flow<${kotlinParametrizedName(type.elementType)}>"
-            KotlinCoroutineSupportModule.kotlinTypedSharedFlow -> "kotlinx.coroutines.flow.SharedFlow<${kotlinParametrizedName(type.elementType)}>"
-            KotlinCoroutineSupportModule.kotlinTypedMutableSharedFlow -> "kotlinx.coroutines.flow.MutableSharedFlow<${kotlinParametrizedName(type.elementType)}>"
-            KotlinCoroutineSupportModule.kotlinTypedStateFlow -> "kotlinx.coroutines.flow.StateFlow<${kotlinParametrizedName(type.elementType)}>"
-            KotlinCoroutineSupportModule.kotlinTypedMutableStateFlow -> "kotlinx.coroutines.flow.MutableStateFlow<${kotlinParametrizedName(type.elementType)}>"
-            else -> error("TypedFlowType $type can not be named")
-        }
         is SirExistentialType -> kotlinFqName(type)
         is SirFunctionalType -> "${"kotlin.coroutines.Suspend".takeIf { type.isAsync } ?: ""}Function${type.contextTypes.count() + type.parameterTypes.count()}<${(type.contextTypes + type.parameterTypes + type.returnType).joinToString { kotlinFqName(it) }}>"
         is SirErrorType, is SirUnsupportedType, is SirTupleType, is SirType.Metatype ->
@@ -81,17 +76,22 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
     }
 
     private fun kotlinParametrizedName(type: SirType): String = when (type) {
+        is SirTypedType -> kotlinFqName(type.untypedType.kotlinType)
+        is SirUntypedType -> kotlinFqName(type.kotlinType)
         is SirNominalType -> type.typeDeclaration.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName()
         is SirExistentialType -> type.protocols.singleOrNull()?.first?.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName()
         is SirErrorType, is SirFunctionalType, is SirUnsupportedType, is SirTupleType, is SirType.Metatype -> null
     } ?: kotlinFqName(type)
 
-    private fun kotlinFqName(type: SirExistentialType): String = type.protocols.single().let { [protocol, _] ->
+    private fun kotlinFqName(type: SirExistentialType): String = type.protocols.single().let { [protocol, typeArguments] ->
         if (protocol == KotlinRuntimeSupportModule.kotlinBridgeable) return@let "kotlin.Any"
         val symbol = protocol.kaSymbolOrNull<KaClassLikeSymbol>()!!
         val fqName = symbol.classId!!.asFqNameString()
-        // Generics aren't supported yet, so we don't have the actual typeArguments, fallback to the upperbound
-        val typeArgs = symbol.typeParameters.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") { "*" } ?: ""
+        val typeArgs = when {
+            symbol.typeParameters.isEmpty() -> null
+            typeArguments.isEmpty() -> symbol.typeParameters.map { "*" }
+            else -> typeArguments.map(::kotlinParametrizedName)
+        }?.joinToString(prefix = "<", postfix = ">") ?: ""
         "$fqName$typeArgs"
     }
 
@@ -129,8 +129,11 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
 
             else -> declaration.kaSymbolOrNull<KaClassLikeSymbol>()?.let { symbol ->
                 val fqName = symbol.classId?.asFqNameString() ?: return@let null
-                // Generics aren't supported yet, so we don't have the actual typeArguments, fallback to the upperbound
-                val typeArgs = symbol.typeParameters.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") { "*" } ?: ""
+                val typeArgs = when {
+                    symbol.typeParameters.isEmpty() -> null
+                    type.typeArguments.isEmpty() -> symbol.typeParameters.map { "*" }
+                    else -> type.typeArguments.map(::kotlinParametrizedName)
+                }?.joinToString(prefix = "<", postfix = ">") ?: ""
                 "$fqName$typeArgs"
             } ?: error("Unnameable declaration $declaration")
         }
