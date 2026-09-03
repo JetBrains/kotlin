@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.backend.common.phaser.createModulePhases
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.PerformanceManagerContext
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.phases.runModuleWisePhase
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
@@ -590,9 +589,7 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
 }
 
 private fun PhaseEngine<NativeGenerationState>.findDependenciesToCompile(): List<IrModuleFragment> {
-    return context.config.librariesWithDependencies()
-            .mapNotNull { context.context.irModules[it.path] }
-            .filter { context.llvmModuleSpecification.containsModule(it) }
+    return context.context.irModules.filter { context.llvmModuleSpecification.containsModule(it) }
 }
 
 // Save all files for codegen in reverse topological order.

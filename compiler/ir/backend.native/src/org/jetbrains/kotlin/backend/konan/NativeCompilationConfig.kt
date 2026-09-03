@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.metadataKlib
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
-import org.jetbrains.kotlin.konan.config.konanFriendLibraries
 import org.jetbrains.kotlin.konan.config.konanIncludedBinaries
 import org.jetbrains.kotlin.konan.config.konanNativeLibraries
 import org.jetbrains.kotlin.konan.config.konanOutputPath
@@ -45,10 +44,6 @@ interface NativeCompilationConfig {
 
     val metadataKlib: Boolean
         get() = configuration.metadataKlib
-
-    // TODO(KT-61096): Read friend paths from `LoadedNativeKlibs.friends`, drop this property.
-    val friendModuleFiles: Set<Path>
-        get() = configuration.konanFriendLibraries.map { Path(it) }.toSet()
 
     val refinesModuleFiles: Set<Path>
         get() = configuration.konanRefinesModules.map { Path(it) }.toSet()
