@@ -136,7 +136,7 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         }
         when (module.directives.singleOrZeroValue(FirDiagnosticsDirectives.FIR_PARSER)) {
             FirParser.Psi -> configuration.useLightTree = false
-            FirParser.LightTree -> configuration.useLightTree = true
+            FirParser.LightTree, FirParser.MultiplatformParsing -> configuration.useLightTree = true
             null -> {}
         }
         configuration.allowNoSourceFiles = true

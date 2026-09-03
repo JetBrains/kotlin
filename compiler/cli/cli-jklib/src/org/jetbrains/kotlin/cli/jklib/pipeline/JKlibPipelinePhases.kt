@@ -262,6 +262,7 @@ object JKlibFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact,
             val firFiles = session.buildFirViaLightTree(
                 files,
                 diagnosticsReporter,
+                useMultiplatformParsing = false,
                 reportFilesAndLines = null
             )
             resolveAndCheckFir(session, firFiles, diagnosticsReporter)

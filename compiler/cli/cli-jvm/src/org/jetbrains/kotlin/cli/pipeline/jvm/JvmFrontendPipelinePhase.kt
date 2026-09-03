@@ -175,7 +175,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val diagnosticsCollector = configuration.diagnosticsCollector
         val outputs = sessionsWithSources.map { (val session, val sources = files) ->
             val rawFirFiles = when (configuration.useLightTree) {
-                true -> session.buildFirViaLightTree(sources, diagnosticsCollector, countFilesAndLines)
+                true -> session.buildFirViaLightTree(sources, diagnosticsCollector, useMultiplatformParsing = false, countFilesAndLines)
                 else -> session.buildFirFromKtFiles(sources.asKtFilesList())
             }
             resolveAndCheckFir(session, rawFirFiles, diagnosticsCollector)
