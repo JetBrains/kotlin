@@ -15,6 +15,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.allowContractsOnMoreFunctions = from.allowContractsOnMoreFunctions
     to.allowHoldsinContract = from.allowHoldsinContract
     to.allowKotlinPackage = from.allowKotlinPackage
+    to.allowPre17RuntimeJdk = from.allowPre17RuntimeJdk
     to.allowReifiedTypeInCatch = from.allowReifiedTypeInCatch
     to.allowReturnsResultOf = from.allowReturnsResultOf
     to.annotationDefaultTarget = from.annotationDefaultTarget

@@ -140,6 +140,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_ALLOW_HOLDSIN_CONTRACT", KotlinReleaseVersion(2, 2, 20))
 
     /**
+     * Temporarily allow running Kotlin compiler with JDK older than JDK 17. This option will not work starting Kotlin 2.5.20-Beta1. See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_ALLOW_PRE_17_RUNTIME_JDK: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_ALLOW_PRE_17_RUNTIME_JDK", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Allow 'catch' parameters to have reified types.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
