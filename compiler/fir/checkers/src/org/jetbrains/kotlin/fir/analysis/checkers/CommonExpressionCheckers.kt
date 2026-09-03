@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import org.jetbrains.kotlin.fir.ArrayLiteralResolution
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.*
+import org.jetbrains.kotlin.util.ArrayLiteralResolution
 
 object CommonExpressionCheckers : ExpressionCheckers() {
     override val annotationCallCheckers: Set<FirAnnotationCallChecker> = setOf(

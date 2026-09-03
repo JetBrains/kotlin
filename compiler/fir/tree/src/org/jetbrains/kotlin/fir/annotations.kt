@@ -38,11 +38,5 @@ annotation class PrivateSessionConstructor
 @RequiresOptIn
 annotation class SessionConfiguration
 
-/**
- * Declaration is only relevant for old (pre-CL) resolution of array literals for annotations.
- */
-@RequiresOptIn
-annotation class ArrayLiteralResolution
-
 @RequiresOptIn
 annotation class FirIdeOnly

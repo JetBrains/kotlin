@@ -16,3 +16,11 @@ import org.jetbrains.kotlin.config.LanguageFeature
 @Suppress("unused")
 @RequiresOptIn
 annotation class OnlyForDefaultLanguageFeatureDisabled(val languageFeature: LanguageFeature, vararg val otherFeatures: LanguageFeature)
+
+/**
+ * Declaration is only relevant for old (pre-CL) resolution of array literals for annotations.
+ *
+ * A special case of [OnlyForDefaultLanguageFeatureDisabled] for [LanguageFeature.CollectionLiteralsBasedAnnotationResolution].
+ */
+@RequiresOptIn
+annotation class ArrayLiteralResolution
