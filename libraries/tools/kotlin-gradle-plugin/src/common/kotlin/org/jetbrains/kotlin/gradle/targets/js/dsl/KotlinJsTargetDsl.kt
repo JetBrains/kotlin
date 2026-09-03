@@ -372,6 +372,21 @@ interface KotlinJsSubTargetDsl {
 interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
 
     /**
+     * Represents the bundling mechanism used during the browser execution phase of the Kotlin JS or Wasm target.
+     *
+     * This property allows you to configure the type of bundler that is used, with support for predefined options.
+     *
+     * The supported bundlers include:
+     * - [KotlinBrowserBundler.WEBPACK]: Utilizes Webpack as the bundler.
+     * - [KotlinBrowserBundler.NONE]: Disables bundling.
+     *
+     * The selected bundler will affect how the application's assets are prepared for the browser environment.
+     *
+     * Note: Currently it has an effect only for Kotlin/Wasm target.
+     */
+    val bundler: Property<KotlinBrowserBundler>
+
+    /**
      * Browser test runner configuration.
      */
     @ExperimentalJsTestDsl
