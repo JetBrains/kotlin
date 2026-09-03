@@ -43,6 +43,7 @@ static void injectToRuntime();
 extern "C" KInt Kotlin_hashCode(KRef str);
 extern "C" KBoolean Kotlin_equals(KRef lhs, KRef rhs);
 extern "C" OBJ_GETTER(Kotlin_toString, KRef obj);
+extern "C" KBoolean Kotlin_IsList(KRef obj);
 
 namespace {
 
@@ -267,6 +268,13 @@ static VTableElement nonRecursiveAnyMemberImpl(KRef obj, const KotlinToObjCMetho
         kotlin::CalledFromNativeGuard guard;
         // `ref` holds a strong reference to obj, no need to place obj onto a stack.
         KRef obj = regularRef.ref();
+
+        // ObjC needs a NSArray for List and Swift Export is exporting custom types.
+        // We skip caching these custom types to make sure we don't break ObjC code.
+        // TODO: Fix issue with conflicting associated objects KT-88831
+        if (Kotlin_IsList(obj)) {
+            shouldCache = NO;
+        }
 
         shouldCache ? AtomicCompareAndSwapAssociatedObject(obj, nullptr, self) : Kotlin_ObjCExport_GetAssociatedObject(obj);
     });

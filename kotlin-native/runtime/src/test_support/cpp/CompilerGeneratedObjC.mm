@@ -171,6 +171,10 @@ OBJ_GETTER(Kotlin_toString, KRef obj) {
     throw std::runtime_error("Not implemented for tests");
 }
 
+KBoolean Kotlin_IsList(KRef obj) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
 } // extern "C"
 
 #endif // KONAN_OBJC_INTEROP

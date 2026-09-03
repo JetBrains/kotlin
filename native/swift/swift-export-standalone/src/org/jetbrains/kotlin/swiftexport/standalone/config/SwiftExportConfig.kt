@@ -27,6 +27,7 @@ public data class SwiftExportConfig(
     val errorTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.Fail,
     val unsupportedTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.SpecialType,
     val logger: SwiftExportLogger = createDummyLogger(),
+    val collectionsV2: Boolean = false,
 ) {
     val moduleForPackagesName: String = "ExportedKotlinPackages"
     val runtimeSupportModuleName: String = "KotlinRuntimeSupport"

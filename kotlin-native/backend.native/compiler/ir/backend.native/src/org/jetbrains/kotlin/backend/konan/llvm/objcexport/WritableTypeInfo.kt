@@ -28,6 +28,8 @@ private class FixedWritableTypeInfo(global: StaticData.Global) : WritableTypeInf
 private class OverridableWritableTypeInfo(private val global: StaticData.Global) : WritableTypeInfoPointer, ConstPointer by global.pointer {
     private var replaced = false
 
+    fun canReplace(): Boolean = !replaced
+
     fun tryReplaceWith(value: ConstValue): Boolean {
         if (replaced) {
             return false
@@ -95,15 +97,29 @@ internal fun CodeGenerator.bindObjCExportConvertToRetained(
  */
 internal fun CodeGenerator.bindObjCExportTypeAdapterTo(
         irClass: IrClass,
-        typeAdapter: ConstPointer
+        typeAdapter: ConstPointer,
+        convertToRetained: ConstPointer? = null,
 ) = setWritableTypeInfo(
         irClass,
         buildWritableTypeInfoValue(
-                convertToRetained = null,
+                convertToRetained = convertToRetained,
                 objCClass = null,
                 typeAdapter = typeAdapter,
         )
 )
+
+/**
+ * Return `true` if type info hasn't already been bound for [irClass].
+ * If `false` is returned, calling one of the bind functions would fail.
+ */
+internal fun CodeGenerator.canBindTypeInfo(irClass: IrClass): Boolean {
+    if (isExternal(irClass)) {
+        return staticData.getGlobal(irClass.writableTypeInfoSymbolName) == null
+    } else {
+        val writeableTypeInfoGlobal = generationState.llvmDeclarations.forClass(irClass).writableTypeInfoGlobal
+        return writeableTypeInfoGlobal is OverridableWritableTypeInfo && writeableTypeInfoGlobal.canReplace()
+    }
+}
 
 private fun CodeGenerator.setWritableTypeInfo(
         irClass: IrClass,
