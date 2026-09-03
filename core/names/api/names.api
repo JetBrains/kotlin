@@ -147,6 +147,14 @@ public final class org/jetbrains/kotlin/name/NameRenderingUtils {
 	public static synthetic fun render$default (Lorg/jetbrains/kotlin/name/Name;ZILjava/lang/Object;)Ljava/lang/String;
 }
 
+public final class org/jetbrains/kotlin/name/ScriptNames {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/name/ScriptNames;
+	public static final fun getScriptNameForFile (Ljava/lang/String;)Lorg/jetbrains/kotlin/name/Name;
+	public static final fun getScriptTargetClassName (Lorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/name/Name;
+	public static final fun getSnippetTargetClassName (Ljava/lang/String;)Lorg/jetbrains/kotlin/name/Name;
+	public static final fun getSnippetTargetClassName (Lorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/name/Name;
+}
+
 public final class org/jetbrains/kotlin/name/SpecialNames {
 	public static final field ANONYMOUS Lorg/jetbrains/kotlin/name/Name;
 	public static final field ANONYMOUS_FQ_NAME Lorg/jetbrains/kotlin/name/FqName;

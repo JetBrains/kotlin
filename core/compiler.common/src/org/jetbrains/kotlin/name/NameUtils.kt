@@ -39,21 +39,16 @@ object NameUtils {
     // "pkg/someScript.kts" -> "SomeScript"
     @JvmStatic
     fun getScriptNameForFile(filePath: String): Name =
-        Name.identifier(NameUtils.getPackagePartClassNamePrefix(filePath.substringAfterLast('/').substringBeforeLast('.')))
+        ScriptNames.getScriptNameForFile(filePath)
 
     @JvmStatic
-    fun getScriptTargetClassName(originalName: Name): Name = getSnippetOrScriptTargetClassName(originalName, "script-")
+    fun getScriptTargetClassName(originalName: Name): Name = ScriptNames.getScriptTargetClassName(originalName)
 
     @JvmStatic
-    fun getSnippetTargetClassName(originalName: Name): Name = getSnippetOrScriptTargetClassName(originalName, "snippet-")
+    fun getSnippetTargetClassName(originalName: Name): Name = ScriptNames.getSnippetTargetClassName(originalName)
 
     @JvmStatic
-    fun getSnippetTargetClassName(fileName: String): Name = getSnippetTargetClassName(Name.special("<$fileName>"))
-
-    private fun getSnippetOrScriptTargetClassName(originalName: Name, prefix: String): Name =
-        if (originalName.isSpecial) {
-            getScriptNameForFile(originalName.asStringStripSpecialMarkers().removePrefix(prefix))
-        } else originalName
+    fun getSnippetTargetClassName(fileName: String): Name = ScriptNames.getSnippetTargetClassName(fileName)
 
     @JvmStatic
     fun hasName(name: Name) = name != SpecialNames.NO_NAME_PROVIDED && name != SpecialNames.ANONYMOUS
