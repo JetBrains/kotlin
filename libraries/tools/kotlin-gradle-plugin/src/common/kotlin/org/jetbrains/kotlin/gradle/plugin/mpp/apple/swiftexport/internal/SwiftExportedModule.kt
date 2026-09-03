@@ -75,6 +75,7 @@ private class ResolvedArtifactWithVersionIdentifier(
     val moduleVersion: ModuleVersionIdentifier,
     val artifact: ResolvedArtifactResult
 ) : Serializable {
+    private val artifactFilePath: String get() = artifact.file.absolutePath
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -82,11 +83,11 @@ private class ResolvedArtifactWithVersionIdentifier(
 
         other as ResolvedArtifactWithVersionIdentifier
 
-        return artifact == other.artifact
+        return artifactFilePath == other.artifactFilePath
     }
 
     override fun hashCode(): Int {
-        return 31 * artifact.hashCode()
+        return 31 * artifactFilePath.hashCode()
     }
 
     fun defaultExportedModuleName(): String {
@@ -104,8 +105,13 @@ private fun Project.swiftExportedModules(
     exportedModules: Set<SwiftExportedDependency>,
 ) = findAndCreateSwiftExportedModules(
     exportedModules = exportedModules,
-    resolvedExportArtifacts = exportConfiguration.filteredArtifacts(LazyResolvedConfigurationWithArtifacts::allResolvedDependencies),
-    resolvedDirectApiArtifacts = apiConfiguration?.filteredArtifacts { root.dependencies.filterIsInstance<ResolvedDependencyResult>() }
+    resolvedExportArtifacts = exportConfiguration.filteredArtifacts { allResolvedDependencies },
+    resolvedDirectApiArtifacts = apiConfiguration
+        ?.filteredArtifacts {
+            root.dependencies
+                .filterIsInstance<ResolvedDependencyResult>()
+                .filterNot { it.isConstraint }
+        }
         ?: emptySet(),
 )
 

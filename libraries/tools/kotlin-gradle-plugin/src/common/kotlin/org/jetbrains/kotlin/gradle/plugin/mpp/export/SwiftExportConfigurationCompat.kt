@@ -79,6 +79,10 @@ internal interface SwiftExportConfigurationCompat {
 
                 override val apiConfiguration: Provider<Configuration?>
                     get() = providers.provider { kotlinNativeCompilation.resolvableApiConfiguration() }
+                        .zip(exportConfiguration) { apiConfiguration, exportConfiguration ->
+                            // Make sure direct api dependencies and the rest of the compile dependency graph are resolved consistently.
+                            apiConfiguration.shouldResolveConsistentlyWith(exportConfiguration)
+                        }
 
                 override val exportConfiguration: Provider<Configuration>
                     get() = providers.provider { kotlinNativeCompilation.internal.configurations.compileDependencyConfiguration }
