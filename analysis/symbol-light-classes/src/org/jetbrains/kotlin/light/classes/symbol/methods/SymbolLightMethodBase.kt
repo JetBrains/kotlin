@@ -43,7 +43,7 @@ internal abstract class SymbolLightMethodBase(
     /**
      * Whether this method is the Java-facing declaration whose value-class types are boxed.
      */
-    val isJvmExposedBoxed: Boolean get() = generationMode is MethodGenerationMode.Boxed
+    val isJvmExposeBoxed: Boolean get() = generationMode is MethodGenerationMode.Boxed
 
     override fun getBody(): PsiCodeBlock? = null
 
@@ -165,7 +165,7 @@ internal abstract class SymbolLightMethodBase(
             // implicitly override generic 'invoke' from a corresponding base class.
             symbol is KaNamedFunctionSymbol && symbol.isBuiltinFunctionInvoke && isInlineClassType(returnType) -> true
 
-            isJvmExposedBoxed && typeForValueClass(returnType) -> true
+            isJvmExposeBoxed && typeForValueClass(returnType) -> true
 
             returnType.isPrimitiveBacked -> {
                 if (symbol.origin == KaSymbolOrigin.DELEGATED) {
