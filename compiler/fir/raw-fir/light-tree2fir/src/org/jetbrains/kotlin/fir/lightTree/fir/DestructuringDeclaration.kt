@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.fir.lightTree.fir
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder
+import org.jetbrains.kotlin.fir.analysis.NodeTypeAnalyzer
+import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.DestructuringContext
 import org.jetbrains.kotlin.fir.builder.DestructuringKind
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
@@ -35,7 +36,8 @@ data class DestructuringDeclaration(
     val annotations: List<FirAnnotation>,
 ) {
     fun toFirDestructingDeclaration(
-        builder: AbstractRawFirBuilder<*>,
+        builder: NodeTypeAnalyzer<*, *>,
+        context: Context<*>,
         moduleData: FirModuleData,
         tmpVariable: Boolean = true,
     ): FirBlock {
@@ -52,6 +54,7 @@ data class DestructuringDeclaration(
             with(builder) {
                 addDestructuringStatements(
                     statements,
+                    context,
                     moduleData,
                     this@DestructuringDeclaration,
                     baseVariable,
@@ -92,8 +95,9 @@ class DestructuringEntry(
     }
 }
 
-fun AbstractRawFirBuilder<*>.addDestructuringStatements(
+fun NodeTypeAnalyzer<*, *>.addDestructuringStatements(
     destination: MutableList<in FirVariable>,
+    context: Context<*>,
     moduleData: FirModuleData,
     multiDeclaration: DestructuringDeclaration,
     container: FirVariable,
@@ -104,6 +108,7 @@ fun AbstractRawFirBuilder<*>.addDestructuringStatements(
     with(DestructuringEntry.Companion) {
         addDestructuringVariables(
             destination,
+            context,
             moduleData,
             container,
             entries = multiDeclaration.entries,

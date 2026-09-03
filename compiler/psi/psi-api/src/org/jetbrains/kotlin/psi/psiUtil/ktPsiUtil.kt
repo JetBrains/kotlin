@@ -663,7 +663,7 @@ fun KtModifierListOwner.visibilityModifierType(): KtModifierKeywordToken? =
 
 /** Returns the type of this declaration's visibility modifier, or the default visibility (`public`) if none is present. */
 fun KtModifierListOwner.visibilityModifierTypeOrDefault(): KtModifierKeywordToken =
-    visibilityModifierType() ?: KtTokens.DEFAULT_VISIBILITY_KEYWORD
+    visibilityModifierType() ?: KtTokens.PUBLIC_KEYWORD
 
 /** Returns the modality modifier token (`abstract`/`open`/`final`/`sealed`), or `null` if none is present. */
 fun KtDeclaration.modalityModifier() = modifierFromTokenSet(MODALITY_MODIFIERS)

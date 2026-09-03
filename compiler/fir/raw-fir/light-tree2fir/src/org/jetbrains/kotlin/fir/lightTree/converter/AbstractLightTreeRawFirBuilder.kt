@@ -14,19 +14,16 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder
 import org.jetbrains.kotlin.fir.builder.Context
-import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
+import org.jetbrains.kotlin.kmp.utils.kmpId
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtPsiUtil.unquoteIdentifier
+import org.jetbrains.kotlin.util.getChildren
 
 abstract class AbstractLightTreeRawFirBuilder(
     baseSession: FirSession,
     val tree: FlyweightCapableTreeStructure<LighterASTNode>,
     context: Context<LighterASTNode> = Context()
-) : AbstractRawFirBuilder<LighterASTNode>(baseSession, context) {
+) : AbstractTreeRawFirBuilder<LighterASTNode, IElementType>(baseSession, context) {
     companion object {
         protected val ignoredTokens: TokenSet = TokenSet.orSet(
             COMMENTS,
@@ -34,71 +31,26 @@ abstract class AbstractLightTreeRawFirBuilder(
         )
     }
 
-    protected val implicitType: FirImplicitTypeRef = FirImplicitTypeRefImplWithoutSource
-
     override fun LighterASTNode.toFirSourceElement(kind: KtFakeSourceElementKind?): KtLightSourceElement {
         val startOffset = tree.getStartOffset(this)
         val endOffset = tree.getEndOffset(this)
         return toKtLightSourceElement(tree, kind ?: KtRealSourceElementKind, startOffset, endOffset)
     }
 
+    override fun KtSourceElement.toNode(): LighterASTNode {
+        return (this as KtLightSourceElement).lighterASTNode
+    }
+
     override val LighterASTNode.elementType: IElementType
         get() = this.tokenType
+
+    override fun IElementType.typeToTokenId(): Int = kmpId()
 
     override val LighterASTNode.asText: String
         get() = this.toString()
 
-    override fun LighterASTNode.getReferencedNameAsName(): Name {
-        return this.asText.nameAsSafeName()
-    }
-
-    override fun LighterASTNode.getLabelName(): String? {
-        if (tokenType == KtNodeTypes.FUN) {
-            return getParent()?.getLabelName()
-        }
-        this.forEachChildren {
-            when (it.tokenType) {
-                KtNodeTypes.LABEL_QUALIFIER -> return it.asText.replaceFirst("@", "").let(::unquoteIdentifier)
-            }
-        }
-
-        return null
-    }
-
-    override fun LighterASTNode.getExpressionInParentheses(): LighterASTNode? = getFirstChildExpression()
-
-    override fun LighterASTNode.getAnnotatedExpression(): LighterASTNode? = getFirstChildExpression()
-
-    override fun LighterASTNode.getLabeledExpression(): LighterASTNode? = getLastChildExpression()
-
-    fun LighterASTNode.getChildExpression(): LighterASTNode? = getFirstChildExpression()
-
-    private fun LighterASTNode.getFirstChildExpression(): LighterASTNode? {
-        forEachChildren {
-            if (it.isExpression()) return it
-        }
-
-        return null
-    }
-
-    protected fun LighterASTNode.getFirstChildExpressionUnwrapped(): LighterASTNode? {
-        val expression = getFirstChildExpression() ?: return null
-        return if (expression.tokenType == KtNodeTypes.PARENTHESIZED) {
-            expression.getFirstChildExpressionUnwrapped()
-        } else {
-            expression
-        }
-    }
-
-    fun LighterASTNode.getLastChildExpression(): LighterASTNode? {
-        var result: LighterASTNode? = null
-        forEachChildren {
-            if (it.isExpression()) {
-                result = it
-            }
-        }
-
-        return result
+    override fun LighterASTNode.getChildren(): List<LighterASTNode> {
+        return getChildren(tree)
     }
 
     override fun LighterASTNode.getChildNodeByType(type: IElementType): LighterASTNode? {
@@ -108,46 +60,38 @@ abstract class AbstractLightTreeRawFirBuilder(
     override val LighterASTNode?.receiverExpression: LighterASTNode?
         get() {
             var candidate: LighterASTNode? = null
+            var result: LighterASTNode? = null
             this?.forEachChildren {
+                if (result != null) return@forEachChildren
                 when (it.tokenType) {
-                    DOT, SAFE_ACCESS -> return if (candidate?.elementType != TokenType.ERROR_ELEMENT) candidate else null
+                    DOT, SAFE_ACCESS -> result = if (candidate?.elementType != TokenType.ERROR_ELEMENT) candidate else null
                     else -> candidate = it
                 }
             }
-            return null
+            return result
         }
 
     override val LighterASTNode?.selectorExpression: LighterASTNode?
         get() {
             var isSelector = false
+            var result: LighterASTNode? = null
             this?.forEachChildren {
+                if (result != null) return@forEachChildren
                 when (it.tokenType) {
                     DOT, SAFE_ACCESS -> isSelector = true
-                    else -> if (isSelector) return if (it.elementType != TokenType.ERROR_ELEMENT) it else null
+                    else -> if (isSelector) {
+                        result = if (it.elementType != TokenType.ERROR_ELEMENT) it else null
+                    }
                 }
             }
-            return null
+            return result
         }
-
-    override val LighterASTNode?.arrayExpression: LighterASTNode?
-        get() = this?.getFirstChildExpression()
 
     override val LighterASTNode?.indexExpressions: List<LighterASTNode>?
         get() = this?.getLastChildExpression()?.getChildrenAsArray()?.filterNotNull()?.filter { it.isExpression() }
 
-    override val LighterASTNode.isVararg: Boolean
-        get() = getChildNodeByType(KtNodeTypes.MODIFIER_LIST)?.getChildNodeByType(VARARG_KEYWORD) != null
-
-    fun LighterASTNode.getParent(): LighterASTNode? {
+    override fun LighterASTNode.getParent(): LighterASTNode? {
         return tree.getParent(this)
-    }
-
-    fun LighterASTNode?.getChildNodesByType(type: IElementType): List<LighterASTNode> {
-        return this?.forEachChildrenReturnList { node, container ->
-            when (node.tokenType) {
-                type -> container += node
-            }
-        } ?: emptyList()
     }
 
     fun LighterASTNode?.getChildrenAsArray(): Array<out LighterASTNode?> {
@@ -158,11 +102,7 @@ abstract class AbstractLightTreeRawFirBuilder(
         return kidsRef.get()
     }
 
-    fun LighterASTNode?.getFirstChild(): LighterASTNode? {
-        return getChildrenAsArray().firstOrNull()
-    }
-
-    protected inline fun LighterASTNode.forEachChildren(f: (LighterASTNode) -> Unit) {
+    override fun LighterASTNode.forEachChildren(f: (LighterASTNode) -> Unit) {
         val kidsArray = this.getChildrenAsArray()
         for (kid in kidsArray) {
             if (kid == null) break
@@ -171,7 +111,7 @@ abstract class AbstractLightTreeRawFirBuilder(
         }
     }
 
-    protected inline fun <T> LighterASTNode.forEachChildrenReturnList(f: (LighterASTNode, MutableList<T>) -> Unit): MutableList<T> {
+    override fun <T> LighterASTNode.forEachChildrenReturnList(f: (LighterASTNode, MutableList<T>) -> Unit): MutableList<T> {
         val kidsArray = this.getChildrenAsArray()
 
         val container = mutableListOf<T>()

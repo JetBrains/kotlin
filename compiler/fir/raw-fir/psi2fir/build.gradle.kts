@@ -16,12 +16,14 @@ dependencies {
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":compiler:psi:psi-impl"))
     implementation(project(":compiler:psi:psi-frontend-utils"))
+    implementation(project(":compiler:multiplatform-parsing"))
 
     compileOnly(intellijCore())
     compileOnly(libs.guava)
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
+    testImplementation(project(":compiler:multiplatform-parsing"))
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
 
@@ -31,8 +33,6 @@ dependencies {
     testFixturesApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     testCompileOnly(kotlinTest("junit"))
-
-    testFixturesCompileOnly(intellijCore())
 }
 
 sourceSets {

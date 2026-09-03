@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import java.net.URI
 
 plugins {
     id("common-configuration")

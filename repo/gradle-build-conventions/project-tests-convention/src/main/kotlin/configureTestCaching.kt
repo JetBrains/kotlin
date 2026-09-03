@@ -18,6 +18,7 @@ internal fun Project.configureTestCaching() {
             ":compiler:build-tools:kotlin-build-tools-generator",
             ":compiler:fir:modularized-tests",
             ":compiler:fir:raw-fir:light-tree2fir",
+            ":compiler:fir:raw-fir:mp-parsing2fir",
             ":compiler:fir:raw-fir:psi2fir",
             ":compiler:multiplatform-parsing",
             ":compiler:test-infrastructure-utils",

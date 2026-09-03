@@ -13,16 +13,16 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
-import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.*
+import org.jetbrains.kotlin.kmp.tree.LightNode
+import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 abstract class JavaTypeOverAst(
-    val node: JavaLightNode,
-    val tree: JavaLightTree,
+    val node: LightNode,
+    val tree: LightSyntaxTree,
     protected val resolutionContext: JavaResolutionContext,
     // Annotations written in the type position itself (e.g. `@NotNull` in `List<@NotNull Integer>`,
     // where ANNOTATION is a direct child of the TYPE node) — TYPE_USE by syntactic position,
@@ -66,10 +66,10 @@ abstract class JavaTypeOverAst(
  * - Generic: "List<String>" → ["List"]
  * - Nested generic: "Outer<T>.Inner<U>" → ["Outer", "Inner"]
  */
-private fun JavaLightTree.extractReferenceNameParts(node: JavaLightNode): List<String> {
+private fun LightSyntaxTree.extractReferenceNameParts(node: LightNode): List<String> {
     val parts = mutableListOf<String>()
 
-    fun collectIdentifiers(current: JavaLightNode) {
+    fun collectIdentifiers(current: LightNode) {
         for (child in getChildren(current)) {
             when (getType(child)) {
                 JavaSyntaxTokenType.IDENTIFIER -> parts.add(getText(child).toString())
@@ -84,8 +84,8 @@ private fun JavaLightTree.extractReferenceNameParts(node: JavaLightNode): List<S
 }
 
 class JavaClassifierTypeOverAst(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     resolutionContext: JavaResolutionContext,
     extraAnnotations: Collection<JavaAnnotation> = emptyList(),
     memberAnnotations: Collection<JavaAnnotation> = emptyList(),
@@ -253,8 +253,8 @@ class JavaClassifierTypeOverAst(
      * traversing into child JAVA_CODE_REFERENCE nodes (for nested qualified types).
      * For "A<T>.B<U>" → [paramList(<T>), paramList(<U>)] regardless of AST structure.
      */
-    private fun collectAllRefParamLists(n: JavaLightNode): List<JavaLightNode> {
-        val result = mutableListOf<JavaLightNode>()
+    private fun collectAllRefParamLists(n: LightNode): List<LightNode> {
+        val result = mutableListOf<LightNode>()
         for (child in tree.getChildren(n)) {
             when (tree.getType(child)) {
                 JavaSyntaxElementType.JAVA_CODE_REFERENCE -> result.addAll(collectAllRefParamLists(child))
@@ -270,7 +270,7 @@ class JavaClassifierTypeOverAst(
  * [JavaClassifierType] backed by an already-resolved [JavaClass], surfaced directly without
  * going through AST-based classifier resolution. Used for:
  *  - enum entry fields, where the constant's type is its containing enum class
- *    ([JavaMemberOverAst.computeType]);
+ *    ([JavaFieldOverAst.computeType]);
  *  - implicit permitted types ([JavaClassOverAst.deriveImplicitPermittedTypes]), where it keeps
  *    the FIR-side `setSealedClassInheritors` consumer on the non-null `classifier` branch.
  */
@@ -288,8 +288,8 @@ class ResolvedJavaClassifierType(
 }
 
 class JavaPrimitiveTypeOverAst(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     resolutionContext: JavaResolutionContext,
     extraAnnotations: Collection<JavaAnnotation> = emptyList(),
     memberAnnotations: Collection<JavaAnnotation> = emptyList(),
@@ -315,8 +315,8 @@ class JavaPrimitiveTypeOverAst(
 }
 
 class JavaArrayTypeOverAst(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     resolutionContext: JavaResolutionContext,
     override val componentType: JavaType,
     // Annotations of *this* array level only, already bound by [arrayLevelAnnotations].
@@ -327,8 +327,8 @@ class JavaArrayTypeOverAst(
 ) : JavaTypeOverAst(node, tree, resolutionContext), JavaArrayType
 
 class JavaWildcardTypeOverAst(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     resolutionContext: JavaResolutionContext,
     override val bound: JavaType?,
     override val isExtends: Boolean,
@@ -353,8 +353,8 @@ class JavaTypeParameterTypeOverAst(
 }
 
 fun createJavaType(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     resolutionContext: JavaResolutionContext,
     memberAnnotations: Collection<JavaAnnotation> = emptyList(),
 ): JavaType {
@@ -399,8 +399,8 @@ fun createJavaType(
  *   being what reaches FIR as the container annotations of the declaration.
  */
 private fun tryCreateArrayOrVarargFromTypeNode(
-    typeNode: JavaLightNode,
-    tree: JavaLightTree,
+    typeNode: LightNode,
+    tree: LightSyntaxTree,
     resolutionContext: JavaResolutionContext,
     memberAnnotations: Collection<JavaAnnotation>,
 ): JavaType? {
@@ -431,8 +431,8 @@ private fun tryCreateArrayOrVarargFromTypeNode(
  * `String [] @Nullable ... x` is an array of `@Nullable` arrays of `String`.
  */
 private fun arrayLevelAnnotations(
-    typeNode: JavaLightNode,
-    tree: JavaLightTree,
+    typeNode: LightNode,
+    tree: LightSyntaxTree,
     resolutionContext: JavaResolutionContext,
 ): List<List<JavaAnnotation>> {
     val levels = mutableListOf<List<JavaAnnotation>>()
@@ -454,8 +454,8 @@ private fun arrayLevelAnnotations(
  * AST structure: `TYPE -> [QUEST, (EXTENDS_KEYWORD|SUPER_KEYWORD)?, TYPE?]`.
  */
 private fun createWildcardType(
-    typeNode: JavaLightNode,
-    tree: JavaLightTree,
+    typeNode: LightNode,
+    tree: LightSyntaxTree,
     resolutionContext: JavaResolutionContext,
     memberAnnotations: Collection<JavaAnnotation>,
 ): JavaWildcardTypeOverAst {
@@ -471,8 +471,8 @@ private fun createWildcardType(
  * ([JavaClassifierTypeOverAst]) type depending on which child [typeNode] has.
  */
 private fun createClassifierOrPrimitive(
-    typeNode: JavaLightNode,
-    tree: JavaLightTree,
+    typeNode: LightNode,
+    tree: LightSyntaxTree,
     resolutionContext: JavaResolutionContext,
     memberAnnotations: Collection<JavaAnnotation>,
 ): JavaType {
@@ -517,9 +517,9 @@ private fun createClassifierOrPrimitive(
  * annotations are returned unconditionally.
  */
 fun createJavaTypeWithAnnotations(
-    typeNode: JavaLightNode,
-    modifierList: JavaLightNode?,
-    tree: JavaLightTree,
+    typeNode: LightNode,
+    modifierList: LightNode?,
+    tree: LightSyntaxTree,
     resolutionContext: JavaResolutionContext,
 ): JavaType {
     val memberAnnotations = parseAnnotationsFromModifierList(modifierList, tree, resolutionContext)
@@ -531,8 +531,8 @@ fun createJavaTypeWithAnnotations(
  * empty list when [modifierList] is `null`.
  */
 internal fun parseAnnotationsFromModifierList(
-    modifierList: JavaLightNode?,
-    tree: JavaLightTree,
+    modifierList: LightNode?,
+    tree: LightSyntaxTree,
     resolutionContext: JavaResolutionContext,
 ): List<JavaAnnotation> =
     modifierList?.let { ml ->
@@ -546,8 +546,8 @@ internal fun parseAnnotationsFromModifierList(
  * the construct).
  */
 private fun collectModifierListAndDirectAnnotations(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     resolutionContext: JavaResolutionContext,
 ): List<JavaAnnotation> {
     val modifierListAnnotations =
@@ -570,8 +570,8 @@ private fun collectModifierListAndDirectAnnotations(
  * `computeTypeParameters` constructs instances and always completes phase 2 first.
  */
 class JavaTypeParameterOverAst(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     initialResolutionContext: JavaResolutionContext,
 ) : JavaElementOverAst(node, tree), JavaTypeParameter {
 

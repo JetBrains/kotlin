@@ -563,7 +563,6 @@ public abstract interface class org/jetbrains/kotlin/lexer/KtTokens {
 	public static final field INTERNAL_KEYWORD_Id I
 	public static final field INTERPOLATION_PREFIX Lorg/jetbrains/kotlin/lexer/KtToken;
 	public static final field INTERPOLATION_PREFIX_Id I
-	public static final field INVALID_Id I
 	public static final field IN_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
 	public static final field IN_KEYWORD_Id I
 	public static final field IS_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;

@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.java.direct.parse.JAVA_DIRECT_PLACEHOLDER_TYPE
 import org.jetbrains.kotlin.java.direct.parse.JavaLightAstNode
-import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
-import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
+import org.jetbrains.kotlin.java.direct.parse.JavaLightTreeStructure
 import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
-import org.jetbrains.kotlin.text
+import org.jetbrains.kotlin.kmp.tree.LightNode
+import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
@@ -36,17 +36,17 @@ class JavaLightSourceElementTest {
         }
     """.trimIndent()
 
-    private fun parse(text: String): JavaLightTree = parseJavaToLightTree(text, 0)
+    private fun parse(text: String): LightSyntaxTree = parseJavaToLightTree(text, 0)
 
-    private fun JavaLightTree.firstClass(): JavaLightNode =
+    private fun LightSyntaxTree.firstClass(): LightNode =
         getChildrenByType(getRoot(), JavaSyntaxElementType.CLASS).first()
 
-    private fun JavaLightTree.sourceElement(node: JavaLightNode, kind: org.jetbrains.kotlin.KtSourceElementKind = KtRealSourceElementKind) =
+    private fun LightSyntaxTree.sourceElement(node: LightNode, kind: org.jetbrains.kotlin.KtSourceElementKind = KtRealSourceElementKind) =
         KtLightSourceElement(
             JavaLightAstNode(this, node),
             getStartOffset(node),
             getEndOffset(node),
-            lightSourceTreeStructure,
+            lightSourceTreeStructure as JavaLightTreeStructure,
             kind,
         )
 

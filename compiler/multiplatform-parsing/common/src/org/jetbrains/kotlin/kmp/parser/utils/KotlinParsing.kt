@@ -327,7 +327,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         }
 
         checkUnclosedBlockComment()
-        fileMarker.done(KtNodeTypes.KT_FILE)
+        fileMarker.done(KtNodeTypes.FILE)
     }
 
     private fun checkUnclosedBlockComment() {
@@ -406,7 +406,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         scriptMarker.done(KtNodeTypes.SCRIPT)
         scriptMarker.setCustomEdgeTokenBinders(PRECEDING_ALL_BINDER, TRAILING_ALL_BINDER)
 
-        fileMarker.done(KtNodeTypes.KT_FILE)
+        fileMarker.done(KtNodeTypes.FILE)
     }
 
     private fun checkForUnexpectedSymbols() {
@@ -641,7 +641,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         if (declType == null && at(KtTokens.LBRACE)) {
             error("Expecting a top level declaration")
             parseBlock()
-            declType = KtNodeTypes.FUNCTION
+            declType = KtNodeTypes.FUN
         }
 
         if (declType == null) {
@@ -1495,7 +1495,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         } else if (at(KtTokens.LBRACE)) {
             error("Expecting member declaration")
             parseBlock()
-            declType = KtNodeTypes.FUNCTION
+            declType = KtNodeTypes.FUN
         }
         return declType
     }
@@ -1964,7 +1964,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         // Recovery for the case of class A { fun| }
         if (at(KtTokens.RBRACE)) {
             error("Function body expected")
-            return KtNodeTypes.FUNCTION
+            return KtNodeTypes.FUN
         }
 
         var typeParameterListOccurred = false
@@ -2034,7 +2034,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             parseFunctionBody()
         }
 
-        return KtNodeTypes.FUNCTION
+        return KtNodeTypes.FUN
     }
 
     /*

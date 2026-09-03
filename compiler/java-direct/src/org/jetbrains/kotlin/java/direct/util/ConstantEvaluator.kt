@@ -13,13 +13,12 @@ import com.intellij.java.syntax.element.SyntaxElementTypes
 import com.intellij.platform.syntax.SyntaxElementType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.model.JavaPrimitiveTypeOverAst
-import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.findClassInCurrentScope
 import org.jetbrains.kotlin.java.direct.resolution.getStaticImport
 import org.jetbrains.kotlin.java.direct.resolution.resolve
-import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.kmp.tree.LightNode
+import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import kotlin.experimental.inv
 
 /**
@@ -31,7 +30,7 @@ import kotlin.experimental.inv
  * @param resolveExternalReference optional callback to resolve references to external classes (e.g., Kotlin classes)
  */
 class ConstantEvaluator private constructor(
-    private val tree: JavaLightTree,
+    private val tree: LightSyntaxTree,
     private val resolutionContext: JavaResolutionContext,
     private val containingClass: JavaClassOverAst?,
     private val resolveExternalReference: ((classQualifier: String?, fieldName: String) -> Any?)?,
@@ -47,7 +46,7 @@ class ConstantEvaluator private constructor(
      * annotation-method default value.
      */
     constructor(
-        tree: JavaLightTree,
+        tree: LightSyntaxTree,
         resolutionContext: JavaResolutionContext,
         resolveExternalReference: ((classQualifier: String?, fieldName: String) -> Any?)? = null,
     ) : this(tree, resolutionContext, resolutionContext.scopeContext.containingClass as? JavaClassOverAst, resolveExternalReference)
@@ -56,7 +55,7 @@ class ConstantEvaluator private constructor(
      * Evaluates a constant expression node and returns the computed value.
      * Returns null if the expression cannot be evaluated as a constant.
      */
-    fun evaluate(node: JavaLightNode): Any? {
+    fun evaluate(node: LightNode): Any? {
         return when (tree.getType(node)) {
             JavaSyntaxElementType.LITERAL_EXPRESSION -> evaluateLiteral(node)
             JavaSyntaxElementType.BINARY_EXPRESSION -> evaluateBinaryExpression(node)
@@ -69,10 +68,10 @@ class ConstantEvaluator private constructor(
         }
     }
 
-    private fun evaluateLiteral(node: JavaLightNode): Any? =
+    private fun evaluateLiteral(node: LightNode): Any? =
         JavaLiteralParser.evaluateLiteral(node, tree)
 
-    private fun evaluateBinaryExpression(node: JavaLightNode): Any? {
+    private fun evaluateBinaryExpression(node: LightNode): Any? {
         val children = tree.getChildren(node)
         if (children.size < 3) return null
 
@@ -83,7 +82,7 @@ class ConstantEvaluator private constructor(
         return evaluateBinaryOp(lhs, operator, rhs)
     }
 
-    private fun evaluatePolyadicExpression(node: JavaLightNode): Any? {
+    private fun evaluatePolyadicExpression(node: LightNode): Any? {
         val children = tree.getChildren(node)
         if (children.size < 3) return null
 
@@ -138,7 +137,7 @@ class ConstantEvaluator private constructor(
         return null
     }
 
-    private fun evaluatePrefixExpression(node: JavaLightNode): Any? {
+    private fun evaluatePrefixExpression(node: LightNode): Any? {
         val children = tree.getChildren(node)
         if (children.size < 2) return null
 
@@ -166,7 +165,7 @@ class ConstantEvaluator private constructor(
         }
     }
 
-    private fun evaluateParensExpression(node: JavaLightNode): Any? {
+    private fun evaluateParensExpression(node: LightNode): Any? {
         val innerExpr = tree.getChildren(node).firstOrNull {
             val t = tree.getType(it)
             t != JavaSyntaxTokenType.LPARENTH && t != JavaSyntaxTokenType.RPARENTH
@@ -174,7 +173,7 @@ class ConstantEvaluator private constructor(
         return evaluate(innerExpr)
     }
 
-    private fun evaluateTypeCastExpression(node: JavaLightNode): Any? {
+    private fun evaluateTypeCastExpression(node: LightNode): Any? {
         val children = tree.getChildren(node)
         val typeNode = children.firstOrNull { tree.getType(it) == JavaSyntaxElementType.TYPE } ?: return null
         val rparenthIndex = children.indexOfFirst { tree.getType(it) == JavaSyntaxTokenType.RPARENTH }
@@ -189,7 +188,7 @@ class ConstantEvaluator private constructor(
         return JavaLiteralParser.coerceToPrimitive(value, primitive)
     }
 
-    private fun evaluateReferenceExpression(node: JavaLightNode): Any? {
+    private fun evaluateReferenceExpression(node: LightNode): Any? {
         val refText = tree.getText(node).toString()
 
         val lastDot = refText.lastIndexOf('.')
