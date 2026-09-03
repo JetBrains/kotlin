@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.backend.konan.CachedLibraries
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.moduleDescriptor
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 
 /**
  * A wrapper class around [KonanIrLinker] that provides access to [KonanPartialModuleDeserializer].
@@ -30,13 +30,12 @@ internal class ModuleDeserializerProvider(
      */
     fun getDeserializerOrNull(declaration: IrDeclaration): KonanPartialModuleDeserializer? {
         val packageFragment = declaration.getPackageFragment()
-        val moduleDescriptor = packageFragment.moduleDescriptor
         val klib = packageFragment.konanLibrary
         val isFromLibraryBeingCached = klib != null && libraryBeingCached?.klib == klib
         val declarationBeingCached = packageFragment is IrFile && isFromLibraryBeingCached
                 && libraryBeingCached.strategy.contains(packageFragment.path)
         return if (klib != null
-                && !moduleDescriptor.isFromCInteropLibrary()
+                && !klib.isCInteropLibrary()
                 // Caches for dependencies must be fully compiled; an incomplete cache may only be used for the current library.
                 && cachedLibraries.isLibraryCached(klib, allowIncomplete = isFromLibraryBeingCached)
                 && !declarationBeingCached

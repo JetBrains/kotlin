@@ -34,9 +34,10 @@ import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
-import org.jetbrains.kotlin.library.metadata.kotlinLibrary
+import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.native.pipeline.NativeLoadedIrArtifact
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -97,7 +98,8 @@ class NativeDeserializerFacade(
         moduleDescriptors: List<ModuleDescriptorImpl>,
         forwardDeclarationsModuleDescriptor: ModuleDescriptorImpl,
     ): IrModuleInfo {
-        val libraryToModuleDescriptor: Map<KotlinLibrary, ModuleDescriptorImpl> = moduleDescriptors.associateBy { it.kotlinLibrary }
+        val libraryToModuleDescriptor: Map<KotlinLibrary, ModuleDescriptorImpl> =
+            moduleDescriptors.associateBy { (it.klibModuleOrigin as DeserializedKlibModuleOrigin).library }
 
         val mainLibrary = loadedKlibs.included.single()
         val mainModuleDescriptor = libraryToModuleDescriptor.getValue(mainLibrary)
