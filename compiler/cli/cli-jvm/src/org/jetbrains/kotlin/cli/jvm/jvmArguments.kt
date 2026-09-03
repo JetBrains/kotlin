@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.getRuntimeJdkVersion
 import org.jetbrains.kotlin.cli.common.getLibraryFromHome
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
@@ -41,7 +42,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
             this.report(COMPILER_ARGUMENTS_ERROR, "Unknown JDK release version: $releaseTargetArg")
         } else {
             //don't use release flag if it equals to compilation JDK version
-            if (value != getJavaVersion() || arguments.jdkHome != null) {
+            if (value != getRuntimeJdkVersion() || arguments.jdkHome != null) {
                 put(JVMConfigurationKeys.JDK_RELEASE, value)
             }
             if (jvmTargetArg != null && !isCompatibleJvmTargetAndRelease(jvmTargetArg, releaseTargetArg)) {
@@ -361,6 +362,3 @@ private fun CompilerConfiguration.parseBackendThreads(stringValue: String): Int 
     }
     return value
 }
-
-private fun getJavaVersion(): Int =
-    System.getProperty("java.specification.version")?.substringAfter('.')?.toIntOrNull() ?: 6

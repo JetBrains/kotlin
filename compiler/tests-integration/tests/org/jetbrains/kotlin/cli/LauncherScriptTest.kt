@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Files
+import kotlin.collections.mapOf
 
 class LauncherScriptTest : TestCaseWithTmpdir() {
     private fun runProcess(
@@ -420,6 +421,18 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             expectedExitCode = 0,
             expectedStdout = "",
             expectedStderr = ""
+        )
+    }
+
+    @Test
+    fun testPre17RuntimeJdk() {
+        runProcess(
+            "kotlinc",
+            "$testDataDirectory/helloWorld.kt",
+            K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
+            environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath),
+            expectedStderr = "warning: running Kotlin compiler using JDK 11 will not be supported in future versions of Kotlin. Consider upgrading to at least JDK 17. See https://jb.gg/ztwbfx for more details.",
+            expectedExitCode = 0,
         )
     }
 

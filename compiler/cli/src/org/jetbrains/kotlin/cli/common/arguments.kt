@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
+import kotlin.reflect.KProperty1
 
 fun CompilerConfiguration.setupCommonArguments(
     arguments: CommonCompilerArguments,
@@ -99,7 +100,25 @@ fun CompilerConfiguration.setupCommonArguments(
     }
 
     put(CommonConfigurationKeys.DONT_SORT_SOURCE_FILES, arguments.dontSortSourceFiles)
+
+    checkMinimumRuntimeJdk(requiredRuntimeJdk = 17)
 }
+
+fun CompilerConfiguration.checkMinimumRuntimeJdk(requiredRuntimeJdk: Int) {
+    val currentJdkVersion = getRuntimeJdkVersion()
+
+    if (currentJdkVersion < requiredRuntimeJdk) {
+        report(
+            COMPILER_ARGUMENTS_WARNING,
+            "Running Kotlin compiler using JDK $currentJdkVersion will not be supported in future versions of Kotlin. " +
+                    "Consider upgrading to at least JDK $requiredRuntimeJdk. " +
+                    "See https://jb.gg/ztwbfx for more details.",
+        )
+    }
+}
+
+fun getRuntimeJdkVersion(): Int =
+    System.getProperty("java.specification.version")?.substringAfter('.')?.toIntOrNull() ?: 6
 
 fun CompilerConfiguration.setupMetadataVersion(
     arguments: CommonCompilerArguments,
