@@ -325,6 +325,8 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
         val module = TestModule.newDefaultModule()
         sources.forEach { module.files += TestFile.createCommitted(it, module) }
 
+        val icCacheDir = buildDir(testName).resolve("__ic_cache__").also { it.mkdirs() }
+
         val regexes = testPathFull.list()!!
             .singleOrNull { it.endsWith(".out.re") }
             ?.let { testPathFull.resolve(it) }
@@ -346,6 +348,8 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
                     "-opt-in",
                     "kotlin.native.internal.InternalForKotlinNative", // for uninitialized object instance manipulation, and ExternalRCRef.
                     "-Xbinary=swiftExport=true",
+                    "-Xenable-incremental-compilation",
+                    "-Xic-cache-dir=${icCacheDir.absolutePath}",
                     "-Xdisable-ir-checkers=IrFieldVisibilityChecker,IrTypeParameterScopeChecker", // triggered by kotlinx.coroutines 1.9.0
                     "-XXLanguage:+CompanionBlocks", // needed by companionBlocksAndExtensions test
                     "-XXLanguage:+CompanionExtensions", // needed by companionBlocksAndExtensions test
