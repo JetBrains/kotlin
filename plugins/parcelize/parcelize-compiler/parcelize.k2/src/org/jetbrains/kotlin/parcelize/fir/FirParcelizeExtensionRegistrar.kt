@@ -16,13 +16,10 @@ class FirParcelizeExtensionRegistrar(
     private val experimentalCodeGeneration: Boolean = false,
 ) : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
+        +FirParcelizeService.getFactory(parcelizeAnnotationFqNames, experimentalCodeGeneration)
         +::FirParcelizeDeclarationGenerator.bind(parcelizeAnnotationFqNames)
-        +::firParcelizeCheckersExtension
+        +::FirParcelizeCheckersExtension
 
         registerDiagnosticContainers(KtErrorsParcelize)
     }
-
-    private fun firParcelizeCheckersExtension(session: FirSession) =
-        FirParcelizeCheckersExtension(session, parcelizeAnnotationFqNames.map { ClassId.topLevel(it) }, experimentalCodeGeneration)
-
 }

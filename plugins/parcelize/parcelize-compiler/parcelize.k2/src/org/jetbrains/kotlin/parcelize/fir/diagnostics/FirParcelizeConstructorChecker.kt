@@ -25,13 +25,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.parcelize.ParcelizeNames
+import org.jetbrains.kotlin.parcelize.fir.parcelizeService
 
-class FirParcelizeConstructorChecker(
-    private val parcelizeAnnotations: List<ClassId>,
-    private val experimentalCodeGeneration: Boolean
-) : FirConstructorChecker(MppCheckerKind.Platform) {
+object FirParcelizeConstructorChecker : FirConstructorChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirConstructor) {
         if (!declaration.isPrimary) return
@@ -41,7 +38,7 @@ class FirParcelizeConstructorChecker(
 
         @OptIn(SymbolInternals::class)
         val containingClass = containingClassSymbol.fir
-        if (!containingClassSymbol.isParcelize(context.session, parcelizeAnnotations)
+        if (!containingClassSymbol.isParcelize(context.session)
             || containingClass.hasCustomParceler(context.session)) {
             return
         }
@@ -68,8 +65,9 @@ class FirParcelizeConstructorChecker(
             }
         }
         val superIsParcelize = containingClass.superTypeRefs.any {
-            it.toRegularClassSymbol(context.session)?.isParcelize(context.session, parcelizeAnnotations) == true
+            it.toRegularClassSymbol(context.session)?.isParcelize(context.session) == true
         }
+        val experimentalCodeGeneration = context.session.parcelizeService.experimentalCodeGeneration
         val allowBareValueArguments = experimentalCodeGeneration
                 && superIsParcelize
                 && !containingClassSymbol.hasParcelerCompanionInChain(context.session)
@@ -94,7 +92,7 @@ class FirParcelizeConstructorChecker(
     }
 
     private fun FirRegularClassSymbol.hasParcelerCompanionInChain(session: FirSession): Boolean {
-        if (!isParcelize(session, parcelizeAnnotations)) return false
+        if (!isParcelize(session)) return false
         return hasCustomParceler(session) || this.resolvedSuperTypeRefs.any {
             it.toRegularClassSymbol(session)?.hasParcelerCompanionInChain(session) == true
         }

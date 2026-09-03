@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCEL_TAG_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.POLYMORPHIC_SEALED_CLASS_IDS
+import org.jetbrains.kotlin.parcelize.fir.parcelizeService
 
-class FirPolymorphicSealedClassChecker(private val parcelizeAnnotations: List<ClassId>) : FirClassChecker(MppCheckerKind.Platform) {
+object FirPolymorphicSealedClassChecker : FirClassChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
         checkPolymorphicSealedDeclaration(declaration, context, reporter)
@@ -44,6 +44,7 @@ class FirPolymorphicSealedClassChecker(private val parcelizeAnnotations: List<Cl
             return
         }
 
+        val parcelizeAnnotations = context.session.parcelizeService.parcelizeAnnotations
         val hasParcelize = klass.symbol.resolvedAnnotationsWithClassIds.any {
             it.toAnnotationClassId(context.session) in parcelizeAnnotations
         }
