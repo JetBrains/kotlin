@@ -89,12 +89,14 @@ class KlibLoaderResult(
         ) : ExistingKlibProblem()
 
         /**
-         * The library does not match the ABI version requirements that were set in [KlibLoaderSpec.maxPermittedAbiVersion].
+         * The library does not match the ABI version requirements that were set in [KlibLoaderSpec.minPermittedAbiVersion]
+         * or in [KlibLoaderSpec.maxPermittedAbiVersion].
          *
          * @property libraryVersions The actual versions (including the ABI version) in a KLIB.
+         * @property minPermittedAbiVersion The min permitted ABI version set in [KlibLoader] via
+         *  [KlibLoaderSpec.minPermittedAbiVersion] call.
          * @property maxPermittedAbiVersion The max permitted ABI version set in [KlibLoader] via
          *  [KlibLoaderSpec.maxPermittedAbiVersion] call.
-         * @property minPermittedAbiVersion The min permitted ABI version (reserved for the future).
          */
         class IncompatibleAbiVersion(
             val libraryVersions: KotlinLibraryVersioning,
