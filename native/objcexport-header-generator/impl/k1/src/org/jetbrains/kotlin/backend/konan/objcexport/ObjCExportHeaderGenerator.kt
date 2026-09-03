@@ -123,9 +123,12 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
                 .filterIsInstance<CallableMemberDescriptor>()
                 .filter { mapper.shouldBeExposed(it) }
                 .forEach {
-                    val classDescriptor = getClassIfCategory(it)
+                    val classDescriptor = mapper.getClassIfCategory(it)
                     if (classDescriptor == null) {
-                        topLevel.getOrPut(it.findSourceFile(), { mutableListOf() }) += it
+                        val sourceFile = it.findSourceFile()
+                        if (sourceFile != SourceFile.NO_SOURCE_FILE) {
+                            topLevel.getOrPut(sourceFile, { mutableListOf() }) += it
+                        }
                     } else {
                         // If a class is hidden from Objective-C API then it is meaningless
                         // to export its extensions.
@@ -249,6 +252,7 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
             objcExportBlockExplicitParameterNames: Boolean,
             shouldExportKDoc: Boolean,
             additionalImports: List<String>,
+            restrictToLocalModules: Boolean = false,
         ): ObjCExportHeaderGenerator = ObjCExportHeaderGeneratorImpl(
             moduleDescriptors,
             mapper,
@@ -257,7 +261,8 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
             objcGenerics,
             objcExportBlockExplicitParameterNames,
             shouldExportKDoc,
-            additionalImports
+            additionalImports,
+            restrictToLocalModules
         )
     }
 }
