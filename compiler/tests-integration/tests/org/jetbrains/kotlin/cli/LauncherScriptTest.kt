@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Files
+import kotlin.collections.mapOf
 
 class LauncherScriptTest : TestCaseWithTmpdir() {
     private fun runProcess(
@@ -426,6 +427,30 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             expectedExitCode = 0,
             expectedStdout = "",
             expectedStderr = ""
+        )
+    }
+
+    @Test
+    fun testPre17RuntimeJdk() {
+        runProcess(
+            "kotlinc",
+            "$testDataDirectory/helloWorld.kt",
+            K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
+            environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath),
+            expectedStderr = "",
+            expectedExitCode = 0,
+        )
+    }
+
+    @Test
+    fun testPre17RuntimeJdkTemporarilyPreserved() {
+        runProcess(
+            "kotlinc",
+            "-Xallow-pre-17-runtime-jdk", "$testDataDirectory/helloWorld.kt",
+            K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
+            environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath),
+            expectedStderr = "",
+            expectedExitCode = 0,
         )
     }
 

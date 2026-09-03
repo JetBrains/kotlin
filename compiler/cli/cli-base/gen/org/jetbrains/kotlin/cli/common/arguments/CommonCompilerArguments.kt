@@ -151,6 +151,16 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
         }
 
     @Argument(
+        value = "-Xallow-pre-17-runtime-jdk",
+        description = "Temporarily allow running Kotlin compiler with JDK older than JDK 17. This option will not work starting Kotlin 2.5.20-Beta1. See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.",
+    )
+    var allowPre17RuntimeJdk: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xallow-reified-type-in-catch",
         description = "Allow 'catch' parameters to have reified types.",
     )

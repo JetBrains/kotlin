@@ -2595,6 +2595,51 @@
                         "deprecatedMessage": null
                     },
                     {
+                        "name": "Xallow-pre-17-runtime-jdk",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Temporarily allow running Kotlin compiler with JDK older than JDK 17. This option will not work starting Kotlin 2.5.20-Beta1. See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.5.0",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        },
+                        "argumentType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "deprecatedMessage": null
+                    },
+                    {
                         "name": "Xallow-reified-type-in-catch",
                         "shortName": null,
                         "deprecatedName": null,
