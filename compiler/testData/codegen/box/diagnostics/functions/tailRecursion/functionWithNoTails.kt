@@ -1,6 +1,6 @@
-<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun noTails() {
+<!NO_TAIL_CALLS_FOUND_IN_IR!><!NO_TAIL_CALLS_FOUND!>tailrec<!> fun noTails() {
     // nothing here
-}
+}<!>
 
 fun box(): String {
     noTails()

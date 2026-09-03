@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.handlers.SerializedIrDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.deserializedIrHandlersStep
+import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
+import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.IGNORE_IR_DESERIALIZATION_TEST
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
@@ -37,7 +39,13 @@ open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerNativeTes
         commonConfigurationForNativeFirstStageUpToSerialization(
             customIgnoreDirective = IGNORE_IR_DESERIALIZATION_TEST,
         )
-        loweredIrHandlersStep { useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = false) }) }
+        irHandlersStep {
+            commonIrHandlersForCodegenTest()
+        }
+        loweredIrHandlersStep {
+            commonIrHandlersForCodegenTest()
+            useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = false) })
+        }
 
         facadeStep(::KlibSerializerNativeCliFacade)
         klibArtifactsHandlersStep {
