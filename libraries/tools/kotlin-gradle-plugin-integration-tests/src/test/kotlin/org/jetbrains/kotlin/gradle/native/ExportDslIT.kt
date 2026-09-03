@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.native
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
@@ -152,6 +153,60 @@ class ExportDslIT : KGPBaseTest() {
             ) {
                 assertTasksExecuted(":iosArm64DebugSwiftExport")
                 assertTasksExecuted(":$EMBED_SWIFT_EXPORT_TASK_NAME")
+            }
+        }
+    }
+
+    @DisplayName("A legacy swiftExport build still configures and reports the deprecation")
+    @GradleTest
+    fun testLegacyDslStillWorksAndReportsDeprecation(
+        gradleVersion: GradleVersion,
+    ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                }
+                swiftExport.moduleName.set("Legacy")
+            }
+
+            build("help") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.DeprecatedSwiftExportDsl)
+                assertNoDiagnostic(KotlinToolingDiagnostics.ConflictingSwiftExportDsls)
+            }
+
+            assertTrue(isEmbedSwiftExportTaskRegistered())
+        }
+    }
+
+    @DisplayName("Configuring both Swift Export DSLs fails the build")
+    @GradleTest
+    fun testConfiguringBothDslsFailsTheBuild(
+        gradleVersion: GradleVersion,
+    ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                }
+                swiftExport.moduleName.set("Legacy")
+                export.swift {
+                    moduleName.set("Shared")
+                    xcodeIntegration()
+                }
+            }
+
+            buildAndFail(":compileKotlinIosArm64") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.ConflictingSwiftExportDsls)
+                assertNoDiagnostic(KotlinToolingDiagnostics.DeprecatedSwiftExportDsl)
             }
         }
     }

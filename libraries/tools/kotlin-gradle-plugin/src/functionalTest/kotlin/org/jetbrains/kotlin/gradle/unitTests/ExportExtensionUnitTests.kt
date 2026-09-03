@@ -7,15 +7,15 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
-import org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
+import org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.EmbedSwiftExportForXcodeTask
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
+import org.jetbrains.kotlin.gradle.util.EMBED_SWIFT_EXPORT_TASK_NAME
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
-import org.jetbrains.kotlin.gradle.util.EMBED_SWIFT_EXPORT_TASK_NAME
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.exportDslProject
 import org.jetbrains.kotlin.gradle.util.exportExtension
@@ -265,7 +265,7 @@ class LegacySwiftExportDslDiagnosticsTests {
     }
 
     @Test
-    fun `test the deprecation is reported regardless of the dsl call order`() {
+    fun `test the conflict is reported regardless of the dsl call order`() {
         val project = legacyDslProject {
             exportExtension.swift {
                 xcodeIntegration()
@@ -274,6 +274,20 @@ class LegacySwiftExportDslDiagnosticsTests {
         }
 
         project.assertContainsDiagnostic(KotlinToolingDiagnostics.ConflictingSwiftExportDsls)
+        project.assertNoDiagnostics(KotlinToolingDiagnostics.DeprecatedSwiftExportDsl)
+    }
+
+    @Test
+    fun `test the deprecation is reported when the legacy dsl is configured before the targets`() {
+        val project = buildProjectWithMPP(
+            code = {
+                legacySwiftExportExtension.moduleName.set("Legacy")
+                kotlin { jvm() }
+            }
+        ).also { it.evaluate() }
+
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.DeprecatedSwiftExportDsl)
+        project.assertNoDiagnostics(KotlinToolingDiagnostics.ConflictingSwiftExportDsls)
     }
 
     @Test
