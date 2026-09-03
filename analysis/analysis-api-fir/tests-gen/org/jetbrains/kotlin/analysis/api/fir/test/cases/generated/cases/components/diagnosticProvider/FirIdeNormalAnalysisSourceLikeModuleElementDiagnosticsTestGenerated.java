@@ -62,6 +62,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleElementDiagnosticsTestGenerated
   }
 
   @Test
+  @TestMetadata("defaultValueInFunctionWithOverride.kt")
+  public void testDefaultValueInFunctionWithOverride() {
+    run("defaultValueInFunctionWithOverride.kt");
+  }
+
+  @Test
   @TestMetadata("delegatedClass.kt")
   public void testDelegatedClass() {
     run("delegatedClass.kt");
