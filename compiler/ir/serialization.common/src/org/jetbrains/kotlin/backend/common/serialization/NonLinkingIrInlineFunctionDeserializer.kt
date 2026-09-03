@@ -27,6 +27,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+annotation class InternalIrInlineDeserializerAPI
+
 class NonLinkingIrInlineFunctionDeserializer(
     private val irBuiltIns: IrBuiltIns,
     private val signatureComputer: PublicIdSignatureComputer,
@@ -116,7 +119,7 @@ class NonLinkingIrInlineFunctionDeserializer(
          * Deserialize declarations only on demand. Cache top-level declarations to avoid repetitive deserialization
          * if the declaration happens to have multiple inline functions.
          */
-        val reversedSignatureIndex: Map<IdSignature, Pair<Int, FileDeserializer>> = buildMap {
+        private val reversedSignatureIndex: Map<IdSignature, Pair<Int, FileDeserializer>> = buildMap {
             for ((index, deserializer = value) in fileDeserializers.withIndex()) {
                 val fileStream = inlinableFunctionsIr.irFile(index).codedInputStream
                 val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.getEmptyRegistry())
@@ -129,7 +132,7 @@ class NonLinkingIrInlineFunctionDeserializer(
 
         private val deserializedFunctionCache = mutableMapOf<IdSignature, IrSimpleFunction?>()
 
-        fun deserializeInlineFunction(
+        internal fun deserializeInlineFunction(
             signature: IdSignature,
             originalFunctionPackage: IrPackageFragment,
             originalFunctionModule: IrModuleFragment,
@@ -138,9 +141,22 @@ class NonLinkingIrInlineFunctionDeserializer(
                 [val idSigIndex, val deserializer] = reversedSignatureIndex[signature] ?: return@getOrPut null
                 deserializer.deserializeInlineFunction(idSigIndex, originalFunctionPackage, originalFunctionModule)
             }
+
+        @InternalIrInlineDeserializerAPI
+        fun deserializeAllInlineFunctions(
+            originalFunctionPackage: IrPackageFragment,
+            originalFunctionModule: IrModuleFragment,
+        ): List<IrSimpleFunction> {
+            return buildList {
+                for ([val signature, val _] in reversedSignatureIndex) {
+                    val inlineFunction = deserializeInlineFunction(signature, originalFunctionPackage, originalFunctionModule) ?: continue
+                    add(inlineFunction)
+                }
+            }
+        }
     }
 
-    class FileDeserializer(
+    private class FileDeserializer(
         private val fileReader: IrLibraryFile,
         private val fileEntryDeserializer: FileEntryDeserializer,
         private val irInterner: IrInterningService,
