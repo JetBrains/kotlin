@@ -1,5 +1,5 @@
 public final class Foo /* Foo*/ {
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "setter")
   public final void setter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  setter(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() StringWrapper)
 
   @kotlin.jvm.JvmName(name = "setter")

@@ -1,5 +1,5 @@
 public final class Implicit /* Implicit*/ {
-  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "foo11")
   public final int foo11(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  foo11(@org.jetbrains.annotations.NotNull() StringWrapper)
 
   @kotlin.jvm.JvmName(name = "foo11")

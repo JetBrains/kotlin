@@ -19,13 +19,13 @@ import com.intellij.psi.PsiElement
  */
 internal sealed interface AdditionalAnnotationsProvider {
     /**
-     * Adds new annotations to [currentRawAnnotations] and [foundQualifiers].
-     * [currentRawAnnotations] and [foundQualifiers] must be consistent with each other.
-     * A parent for all new annotations must be [owner].
+     * Adds annotations to [currentRawAnnotations] and their qualified names to [foundQualifiers].
+     * An existing annotation may also be replaced with an equivalent one. The two collections must remain consistent,
+     * and every new annotation must have [owner] as its parent.
      *
-     * @param currentRawAnnotations a list of already presented annotations
-     * @param foundQualifiers a list of already presented qualifiers. Used to optimize computation
-     * @param owner an owner for new annotations
+     * @param currentRawAnnotations annotations already present
+     * @param foundQualifiers qualified names already present; used to optimize computation
+     * @param owner parent for new annotations
      */
     fun addAllAnnotations(currentRawAnnotations: MutableList<in PsiAnnotation>, foundQualifiers: MutableSet<String>, owner: PsiElement)
 
@@ -47,18 +47,20 @@ internal sealed interface AdditionalAnnotationsProvider {
     fun findSpecialAnnotation(annotationsBox: GranularAnnotationsBox, qualifiedName: String, owner: PsiElement): PsiAnnotation?
 
     /**
-     * Adds a new annotation with [qualifier] name to [currentRawAnnotations] and [foundQualifiers] if not already present
+     * Adds an annotation with the qualified name [qualifier] and [arguments] to [currentRawAnnotations], recording
+     * [qualifier] in [foundQualifiers]. Does nothing if [foundQualifiers] already contains [qualifier].
      */
     fun addSimpleAnnotationIfMissing(
         qualifier: String,
         currentRawAnnotations: MutableList<in PsiAnnotation>,
         foundQualifiers: MutableSet<String>,
         owner: PsiElement,
+        arguments: List<AnnotationArgument> = emptyList(),
     ) {
         val isNewQualifier = foundQualifiers.add(qualifier)
         if (!isNewQualifier) return
 
-        currentRawAnnotations += SymbolLightSimpleAnnotation(qualifier, owner)
+        currentRawAnnotations += SymbolLightSimpleAnnotation(qualifier, owner, arguments)
     }
 
     fun createSimpleAnnotationIfMatches(
