@@ -51,6 +51,7 @@ analysisApiArtifact {
             addAll(compilerModules)
             addAll(additionalCompilerProjects)
             addAll(analysisApiModules)
+            add(":kotlin-tooling-core")
 
             removeAll(excludedCompilerProjects)
 
