@@ -253,6 +253,32 @@ class SirTypedFlowType(
     }
 }
 
+class SirTypedListType(
+    val typedProtocol: SirProtocol,
+    val typedStruct: SirStruct,
+    val elementType: SirType,
+    override val untypedType: SirUntypedType,
+) : SirExistentialType(typedProtocol to listOf(elementType)), SirTypedType {
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || other !is SirTypedFlowType) return false
+        if (typedProtocol != other.typedProtocol) return false
+        if (typedStruct != other.typedStruct) return false
+        if (elementType != other.elementType) return false
+        if (untypedType != other.untypedType) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = typedProtocol.hashCode()
+        result = 31 * result + typedStruct.hashCode()
+        result = 31 * result + elementType.hashCode()
+        result = 31 * result + untypedType.hashCode()
+        return result
+    }
+}
+
 val SirNominalType.escaping: SirNominalType get() = copyAppendingAttributes(SirAttribute.Escaping)
 
 val SirFunctionalType.escaping: SirFunctionalType get() = copyAppendingAttributes(SirAttribute.Escaping)
