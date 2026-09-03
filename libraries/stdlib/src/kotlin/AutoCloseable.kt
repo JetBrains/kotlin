@@ -9,24 +9,27 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 /**
- * A resource that can be closed or released.
+ * Represents an object that may hold resources, like open files or network connections, until [close] is called.
+ *
+ * Instances should normally be managed with [use], which closes the object after the operation completes, including when the operation
+ * throws an exception.
+ *
+ * @sample samples.misc.AutoCloseables.naive
+ * @sample samples.misc.AutoCloseables.idempotent
  */
 @SinceKotlin("2.0")
 @WasExperimental(ExperimentalStdlibApi::class)
 public expect interface AutoCloseable {
     /**
-     * Closes this resource.
+     * Releases the resources held by this object.
      *
-     * This function may throw, thus it is strongly recommended to use the [use] function instead,
-     * which closes this resource correctly whether an exception is thrown or not.
+     * This function may throw, and unless the object is managed by [use], it's caller's responsibility to catch those exceptions.
      *
-     * Implementers of this interface should pay increased attention to cases where the close operation may fail.
-     * It is recommended that all underlying resources are closed and the resource internally is marked as closed
-     * before throwing an exception. Such a strategy ensures that the resources are released in a timely manner,
-     * and avoids many problems that could come up when the resource wraps, or is wrapped, by another resource.
+     * In case of a failure implementations should release their underlying resources and mark the object as closed before
+     * throwing an exception. This helps to ensure timely cleanup, especially when the resources wrap, or are wrapped by, other resources.
      *
-     * Note that calling this function more than once may have some visible side effect.
-     * However, implementers of this interface are strongly recommended to make this function idempotent.
+     * Calling this function more than once may have observable side effects. However, implementations should make it idempotent whenever
+     * feasible.
      */
     public fun close(): Unit
 }
