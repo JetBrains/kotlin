@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
-import org.jetbrains.kotlin.utils.sure
 
 /**
  * Represents an init block in a class that executes during instance initialization.
@@ -55,7 +54,7 @@ class KtClassInitializer : KtDeclarationStub<KotlinPlaceHolderStub<KtClassInitia
 
     /** The [KtClassOrObject] that declares this `init` block. */
     override val containingDeclaration: KtClassOrObject
-        get() = getParentOfType<KtClassOrObject>(true).sure { "Should only be present in class or object" }
+        get() = getParentOfType<KtClassOrObject>(true) ?: throw AssertionError("Should only be present in class or object")
 
     companion object {
         /** A shared empty array, which can be reused to avoid unnecessary allocations. */

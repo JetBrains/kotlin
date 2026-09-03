@@ -9,7 +9,6 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
-import org.jetbrains.kotlin.utils.sure
 
 /**
  * Represents an initializer expression in a script. Effectively, it is a wrapper for top-level expressions
@@ -35,7 +34,7 @@ class KtScriptInitializer : KtDeclarationStub<KotlinPlaceHolderStub<KtScriptInit
 
     /** The [KtScript] that contains this top-level script initializer. */
     override val containingDeclaration: KtScript
-        get() = getParentOfType<KtScript>(true).sure { "Should only be present in script" }
+        get() = getParentOfType<KtScript>(true) ?: throw AssertionError("Should only be present in script")
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R = visitor.visitScriptInitializer(this, data)
 }
