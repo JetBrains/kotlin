@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.objcexport.readObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibs
+import org.jetbrains.kotlin.backend.konan.util.compilerFingerprint
 import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.backend.konan.util.systemCacheRootDirectory
 import org.jetbrains.kotlin.backend.konan.util.toObsoleteKind
@@ -640,7 +641,8 @@ class NativeSecondStageCompilationConfig(
             autoCacheDirectory = autoCacheDirectory,
             incrementalCacheDirectory = incrementalCacheDirectory,
             target = target,
-            produce = produce
+            produce = produce,
+            compilerFingerprint = runCatching { distribution.compilerFingerprint }.getOrNull(),
     )
 
     internal fun reloadCacheSupport() {

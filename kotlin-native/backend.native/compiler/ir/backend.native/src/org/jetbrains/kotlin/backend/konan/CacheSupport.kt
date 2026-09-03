@@ -70,7 +70,8 @@ class CacheSupport(
         autoCacheDirectory: Path,
         incrementalCacheDirectory: Path?,
         target: KonanTarget,
-        val produce: CompilerOutputKind
+        val produce: CompilerOutputKind,
+        private val compilerFingerprint: String? = null,
 ) {
     // Note: The order of libraries is not important here.
     private val pathToLibrary = allLibraries.associateBy { it.path }
@@ -97,7 +98,9 @@ class CacheSupport(
         val cacheDirectory = implicitCacheDirectories.firstOrNull() ?: return null
         val singleFileStrategy = cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile
         val baseLibraryCacheDirectory = cacheDirectory.resolve(
-                if (singleFileStrategy == null)
+                if (produce.isObjCCache)
+                    CachedLibraries.getObjCCachedLibraryName(libraryToCache.klib, configuration.get(NativeConfigurationKeys.FULL_EXPORTED_NAME_PREFIX) ?: "")
+                else if (singleFileStrategy == null)
                     CachedLibraries.getCachedLibraryName(libraryToCache.klib)
                 else
                     CachedLibraries.getPerFileCachedLibraryName(libraryToCache.klib)
@@ -135,6 +138,7 @@ class CacheSupport(
                 autoCacheDirectory = autoCacheDirectory,
                 autoCacheableFrom = if (ignoreCachedLibraries) emptyList() else autoCacheableFrom,
                 libraryToCache = configuration.konanLibraryToAddToCache?.let { getLibrary(Path(it)) },
+                compilerFingerprint = compilerFingerprint,
         )
     }
 
@@ -147,8 +151,12 @@ class CacheSupport(
     internal val libraryToCache = configuration.konanLibraryToAddToCache?.let {
         val libraryToAddToCacheFile = Path(it)
         val libraryToAddToCache = getLibrary(libraryToAddToCacheFile)
-        val libraryCache = cachedLibraries.getLibraryCache(libraryToAddToCache, allowIncomplete = true)
-        if (libraryCache is CachedLibraries.Cache.Monolithic)
+        val libraryCache = if (produce.isObjCCache) {
+            null
+        } else {
+            cachedLibraries.getLibraryCache(libraryToAddToCache, allowIncomplete = true)
+        }
+        if (libraryCache is CachedLibraries.Cache.Monolithic && (produce.isHeaderCache || libraryCache.kind != CachedLibraries.Kind.HEADER))
             null
         else {
             val filesToCache = configuration.filesToCache
@@ -189,10 +197,10 @@ class CacheSupport(
         }
 
         // Ensure not making cache for libraries that are already cached:
-        libraryToCache?.klib?.let {
-            val cache = cachedLibraries.getLibraryCache(it)
-            if (cache is CachedLibraries.Cache.Monolithic) {
-                configuration.reportCompilationErrorAndThrow("can't cache library '${it.path}' " +
+        configuration.konanLibraryToAddToCache?.let { Path(it) }?.let { getLibrary(it) }?.let { library ->
+            val cache = cachedLibraries.getLibraryCache(library)
+            if (cache is CachedLibraries.Cache.Monolithic && (produce.isHeaderCache || cache.kind != CachedLibraries.Kind.HEADER)) {
+                configuration.reportCompilationErrorAndThrow("can't cache library '${library.path}' " +
                         "that is already cached in '${cache.path}'")
             }
         }

@@ -270,7 +270,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
                 "${K2NativeCompilerArguments::libraryToAddToCache.cliArgument} can't be used when not producing cache"
             )
             null
-        } else if (!arguments.outputName.isNullOrEmpty()) {
+        } else if (!arguments.outputName.isNullOrEmpty() && outputKind != CompilerOutputKind.OBJC_CACHE) {
             report(
                 KONAN_ARGUMENT_ERROR,
                 "${K2NativeCompilerArguments::libraryToAddToCache.cliArgument} already implicitly sets output file name"

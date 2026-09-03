@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.nativeBinaryOptions.*
 import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.native.pipeline.NativeKlibConfigurationUpdater
 import kotlin.io.path.Path
@@ -54,6 +56,37 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     }
 
     val outputKind = konanProducedArtifactKind!!
+    if (outputKind == CompilerOutputKind.OBJC_CACHE) {
+        val target = if (arguments.target != null) {
+            KonanTarget.predefinedTargets[arguments.target]
+        } else {
+            HostManager.host
+        }
+        if (target == null || !target.family.isAppleFamily) {
+            report(KONAN_ARGUMENT_ERROR, "producing objc_cache is only supported for Apple targets, but target is ${arguments.target ?: "unknown"}")
+        }
+        if (arguments.moduleName.isNullOrEmpty()) {
+            report(KONAN_ARGUMENT_ERROR, "-produce objc_cache requires -module-name to be specified")
+        }
+        if (arguments.libraryToAddToCache.isNullOrEmpty()) {
+            report(KONAN_ARGUMENT_ERROR, "-produce objc_cache requires -Xadd-cache to be specified")
+        }
+        if (arguments.freeArgs.isNotEmpty()) {
+            report(KONAN_ARGUMENT_ERROR, "-produce objc_cache does not accept source files")
+        }
+        if (arguments.makePerFileCache) {
+            report(KONAN_ARGUMENT_ERROR, "-produce objc_cache does not support per-file caching")
+        }
+        if (arguments.optimization) {
+            report(KONAN_ARGUMENT_ERROR, "-produce objc_cache does not support optimization (-opt)")
+        }
+        if (!arguments.outputName.isNullOrEmpty()) {
+            report(KONAN_ARGUMENT_ERROR, "-produce objc_cache does not accept output file name (-o)")
+        }
+        if (arguments.cacheDirectories.isEmpty() && arguments.autoCacheDir.isNullOrEmpty()) {
+            report(KONAN_ARGUMENT_ERROR, "-produce objc_cache requires -Xcache-directory to be specified")
+        }
+    }
 
     put(LIST_TARGETS, arguments.listTargets)
     put(OPTIMIZATION, arguments.optimization)
@@ -130,7 +163,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(DEBUG_INFO_VERSION, arguments.debugInfoFormatVersion.toInt())
     put(OBJC_GENERICS, !arguments.noObjcGenerics)
     put(DEBUG_PREFIX_MAP, parseDebugPrefixMap(arguments, this@setupFromArguments))
-
     put(CACHED_LIBRARIES, parseCachedLibraries(arguments, this@setupFromArguments))
     put(CACHE_DIRECTORIES, arguments.cacheDirectories.toNonNullList())
     put(AUTO_CACHEABLE_FROM, arguments.autoCacheableFrom.toNonNullList())

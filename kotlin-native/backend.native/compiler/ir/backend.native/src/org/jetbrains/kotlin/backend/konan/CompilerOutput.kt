@@ -18,6 +18,10 @@ import org.jetbrains.kotlin.konan.file.isBitcode
 import org.jetbrains.kotlin.konan.library.components.bitcode
 import org.jetbrains.kotlin.konan.library.linkerOpts
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.isCache as targetIsCache
+import org.jetbrains.kotlin.konan.target.isFullCache as targetIsFullCache
+import org.jetbrains.kotlin.konan.target.isHeaderCache as targetIsHeaderCache
+import org.jetbrains.kotlin.konan.target.isObjCCache as targetIsObjCCache
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.supportsCoreSymbolication
 import org.jetbrains.kotlin.konan.target.supportsLibBacktrace
@@ -34,7 +38,7 @@ import kotlin.io.path.pathString
 val NativeSecondStageCompilationConfig.isFinalBinary: Boolean get() = when (this.produce) {
     CompilerOutputKind.PROGRAM, CompilerOutputKind.DYNAMIC,
     CompilerOutputKind.STATIC -> true
-    CompilerOutputKind.DYNAMIC_CACHE, CompilerOutputKind.STATIC_CACHE, CompilerOutputKind.HEADER_CACHE,
+    CompilerOutputKind.DYNAMIC_CACHE, CompilerOutputKind.STATIC_CACHE, CompilerOutputKind.HEADER_CACHE, CompilerOutputKind.OBJC_CACHE,
     CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE -> false
     CompilerOutputKind.FRAMEWORK -> !omitFrameworkBinary
     CompilerOutputKind.TEST_BUNDLE -> true
@@ -69,13 +73,16 @@ internal val NativeGenerationState.shouldLinkRuntimeNativeLibraries: Boolean
     get() = producedLlvmModuleContainsStdlib && cacheDeserializationStrategy.containsRuntime
 
 val CompilerOutputKind.isFullCache: Boolean
-    get() = this == CompilerOutputKind.STATIC_CACHE || this == CompilerOutputKind.DYNAMIC_CACHE
+    get() = this.targetIsFullCache
 
 val CompilerOutputKind.isHeaderCache: Boolean
-    get() = this == CompilerOutputKind.HEADER_CACHE
+    get() = this.targetIsHeaderCache
+
+val CompilerOutputKind.isObjCCache: Boolean
+    get() = this.targetIsObjCCache
 
 val CompilerOutputKind.isCache: Boolean
-    get() = this.isFullCache || this.isHeaderCache
+    get() = this.targetIsCache
 
 internal fun produceCStubs(generationState: NativeGenerationState) {
     generationState.cStubsManager.compile(
