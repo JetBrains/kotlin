@@ -11,7 +11,7 @@ import kotlin.internal.staticInitializationFailure
 private const val INITIALIZATION_STATE_INITIALIZED: Int = 1
 private const val INITIALIZATION_STATE_ERROR: Int = 2
 
-// TODO: remove after bootstrap
+// TODO: remove after bootstrap KT-89126
 @UsedFromCompilerGeneratedCode
 internal fun checkStaticInitializationState(state: Int, ctor: Ctor?): Boolean {
     if (state == INITIALIZATION_STATE_ERROR) {

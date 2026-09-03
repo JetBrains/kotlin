@@ -58,7 +58,10 @@ import org.jetbrains.kotlin.name.Name
  *   companion {
  *     var static_init_called = 0
  *     static_init() {
- *       if (checkInitializationState(static_init_called, Foo::class)) return
+ *       if (static_init_called == 1) return
+ *       if (static_init_called == 2) {
+ *         staticInitializationFailureWithClassName(Foo::class)
+ *       }
  *       static_init_called = 1
  *       try {
  *         first = initFirst()

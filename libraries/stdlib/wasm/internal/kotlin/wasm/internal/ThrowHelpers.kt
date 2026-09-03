@@ -73,7 +73,7 @@ internal fun rangeCheck(index: Int, size: Int) {
 private const val INITIALIZATION_STATE_INITIALIZED: Int = 1
 private const val INITIALIZATION_STATE_ERROR: Int = 2
 
-// TODO: Remove after bootstrap
+// TODO: Remove after bootstrap KT-89126
 @UsedFromCompilerGeneratedCode
 internal fun checkStaticInitializationState(state: Int, klass: KClass<*>?): Boolean {
     if (state == INITIALIZATION_STATE_ERROR) {
