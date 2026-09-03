@@ -22,7 +22,6 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KVisibility
-import kotlin.reflect.jvm.internal.types.DescriptorKType
 import org.jetbrains.kotlin.descriptors.Modality as DescriptorModality
 
 internal abstract class DescriptorKCallable<out R>(
@@ -30,7 +29,7 @@ internal abstract class DescriptorKCallable<out R>(
 ) : ReflectKCallableImpl<R>(overriddenStorage) {
     abstract val descriptor: CallableMemberDescriptor
 
-    protected abstract fun computeReturnType(): DescriptorKType
+    protected abstract fun computeReturnType(): KType
 
     private val _annotations = ReflectProperties.lazySoft { descriptor.computeAnnotations() }
 
@@ -115,7 +114,8 @@ internal abstract class DescriptorKCallable<out R>(
     private val _typeParameters = ReflectProperties.lazySoft {
         val typeParametersWithNotYetSubstitutedUpperBounds =
             descriptor.typeParameters.map { descriptor -> KTypeParameterImpl(unbindAllReceivers(), descriptor) }
-        val substitutor = overriddenStorage.getTypeSubstitutor(typeParametersWithNotYetSubstitutedUpperBounds, memberNameForDebug = name)
+        val substitutor = propertyIfAccessor.overriddenStorage
+            .getTypeSubstitutor(typeParametersWithNotYetSubstitutedUpperBounds, memberNameForDebug = name)
         for (typeParameter in typeParametersWithNotYetSubstitutedUpperBounds) {
             typeParameter.upperBounds = typeParameter.upperBounds.map { type ->
                 substitutor.substituteTopLevelType(type, name)
