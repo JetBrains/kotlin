@@ -431,6 +431,43 @@ abstract class AbstractKlibLoaderTest {
     }
 
     @Test
+    fun testMinPermittedAbiVersion() {
+        // This list of ABI versions only starts from the current version.
+        // Thus, it contains 4 more versions that are definitely not supported by the current compiler.
+        val abiVersionsStartingFromCurrent: List<KotlinAbiVersion> =
+            generateSequence(KotlinAbiVersion.CURRENT) { it.prev() }.take(5).toList()
+
+        val abiVersionsToLibraryPaths: List<Pair<KotlinAbiVersion, String>> = abiVersionsStartingFromCurrent.map { abiVersion ->
+            val library = generateNewKlib(asFile = false, fileExtension = "", abiVersion = abiVersion)
+            abiVersion to library
+        }
+
+        val libraryPaths: List<String> = abiVersionsToLibraryPaths.map { (_, libraryPath) -> libraryPath }
+
+        // Load without ABI version check.
+        KlibLoader {
+            libraryPaths(libraryPaths)
+        }.load()
+            .assertLoadedLibraries(libraryPaths) // All libraries are loaded.
+            .assertNoProblematicLibraries()
+            .run {
+                // Check that the requested ABI versions are indeed written to KLIBs.
+                (abiVersionsStartingFromCurrent zip librariesStdlibFirst).forEach { (abiVersion, library) ->
+                    assertEquals(abiVersion, library.versions.abiVersion)
+                }
+            }
+
+        for (i in abiVersionsStartingFromCurrent.indices) {
+            KlibLoader {
+                libraryPaths(libraryPaths)
+                minPermittedAbiVersion(abiVersionsStartingFromCurrent[i])
+            }.load()
+                .assertLoadedLibraries(libraryPaths.take(i + 1))
+                .assertProblematicLibraries(incompatibleAbiVersionPaths = libraryPaths.drop(i + 1))
+        }
+    }
+
+    @Test
     fun testMaxPermittedAbiVersion() {
         // This list of ABI versions only starts from the current version.
         // Thus, it contains 4 more versions that are definitely not supported by the current compiler.
@@ -600,6 +637,9 @@ abstract class AbstractKlibLoaderTest {
 
     protected abstract val ownPlatformCheckers: List<KlibPlatformChecker>
     protected abstract val alienPlatformCheckers: List<KlibPlatformChecker>
+
+    private fun KotlinAbiVersion.prev() =
+        if (minor >= 0) KotlinAbiVersion(major, minor - 1, patch) else KotlinAbiVersion(major - 1, 255, 0)
 
     private fun KotlinAbiVersion.next() = KotlinAbiVersion(major, minor + 1, patch)
 
