@@ -11,10 +11,12 @@ plugins {
 }
 
 dependencies {
-    api(project(":core:compiler.common"))
+    api(project(":core:names"))
+    api(project(":core:language.model"))
     implementation(project(":core:error.handling"))
 
     compileOnly(intellijCore())
+    compileOnly(libs.org.jetbrains.annotations)
 
     testFixturesApi(platform(libs.junit.bom))
     testFixturesImplementation(libs.junit.jupiter.api)

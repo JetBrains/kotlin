@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.kdoc.parser
 
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
-
 enum class KDocKnownTag(val isReferenceRequired: Boolean, val isSectionStart: Boolean) {
     AUTHOR(false, false),
     THROWS(true, false),
@@ -46,4 +44,12 @@ enum class KDocKnownTag(val isReferenceRequired: Boolean, val isSectionStart: Bo
             return null
         }
     }
+}
+
+private fun String.toUpperCaseAsciiOnly(): String {
+    val builder = StringBuilder(length)
+    for (c in this) {
+        builder.append(if (c in 'a'..'z') c.uppercaseChar() else c)
+    }
+    return builder.toString()
 }

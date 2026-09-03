@@ -19,7 +19,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement;
 import org.jetbrains.kotlin.lang.BinaryOperationPrecedence;
 import org.jetbrains.kotlin.lexer.KtToken;
@@ -45,6 +44,8 @@ import java.util.function.Predicate;
  * is not instantiable.
  */
 public class KtPsiUtil {
+    private static final Name DEPRECATED_ANNOTATION_SHORT_NAME = Name.identifier("Deprecated");
+
     private KtPsiUtil() {
     }
 
@@ -196,7 +197,7 @@ public class KtPsiUtil {
             List<KtAnnotationEntry> annotationEntries = modifierList.getAnnotationEntries();
             for (KtAnnotationEntry annotation : annotationEntries) {
                 Name shortName = annotation.getShortName();
-                if (StandardNames.FqNames.deprecated.shortName().equals(shortName)) {
+                if (DEPRECATED_ANNOTATION_SHORT_NAME.equals(shortName)) {
                     return true;
                 }
             }

@@ -22,8 +22,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-
 /**
  * Returns the type reference written after the `:` of the given callable [declaration] (its explicit return type or property type), or
  * `null` if the type is not written explicitly.
@@ -31,7 +29,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 fun getTypeReference(declaration: KtCallableDeclaration): KtTypeReference? {
     return declaration.firstChild!!.siblings(forward = true)
         .dropWhile { it.node!!.elementType != KtTokens.COLON }
-        .firstIsInstanceOrNull<KtTypeReference>()
+        .filterIsInstance<KtTypeReference>()
+        .firstOrNull()
 }
 
 @Deprecated(
