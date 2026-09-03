@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.compilerRunner.btapi.js
 
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
@@ -30,6 +29,13 @@ internal class JsKlibBuildOperationFactory(private val compilerArgs: List<String
         val destination = Path(requireNotNull(args.outputDir))
         val compilationOperationBuilder =
             kotlinToolchains.js.jsKlibCompilationOperationBuilder(extractSourceFiles(args.freeArgs), destination)
+
+        args.outputDir = null
+        @Suppress("DEPRECATION")
+        args.irProduceKlibDir = null
+        @Suppress("DEPRECATION")
+        args.irProduceKlibFile = null
+
         compilationOperationBuilder.compilerArguments.applyArgumentStrings(
             args.toArgumentStrings(
                 allowArgFileInValues = false
@@ -51,6 +57,11 @@ internal class JsLinkingBuildOperationFactory(private val compilerArgs: List<Str
         val destination = Path(requireNotNull(args.outputDir))
         val includes = Path(requireNotNull(args.includes))
         val compilationOperationBuilder = kotlinToolchains.js.jsLinkingOperationBuilder(includes, destination)
+
+        args.outputDir = null
+        args.irProduceJs = K2JSCompilerArguments().irProduceJs
+        args.includes = null
+
         compilationOperationBuilder.compilerArguments.applyArgumentStrings(
             args.toArgumentStrings(
                 allowArgFileInValues = false
