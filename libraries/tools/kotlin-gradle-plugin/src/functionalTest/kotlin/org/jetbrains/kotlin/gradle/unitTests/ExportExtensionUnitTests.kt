@@ -8,8 +8,13 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl
+import org.gradle.api.Project
+import org.gradle.api.internal.project.ProjectInternal
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.EmbedSwiftExportForXcodeTask
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
+import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
+import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.EMBED_SWIFT_EXPORT_TASK_NAME
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.exportDslProject
@@ -195,7 +200,7 @@ class ExportExtensionXcodeIntegrationTests {
     }
 
     @Test
-    fun `test the export dsl takes precedence over the legacy swift export dsl`() {
+    fun `test configuring both dsls reports a conflict and keeps the export dsl precedence`() {
         val project = exportDslProject {
             kotlin {
                 swiftExport {
@@ -207,8 +212,90 @@ class ExportExtensionXcodeIntegrationTests {
             }
         }
 
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.ConflictingSwiftExportDsls)
         assertNull(project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME))
     }
+}
+
+class LegacySwiftExportDslDiagnosticsTests {
+
+    @Test
+    fun `test no diagnostics are reported when neither dsl is used`() {
+        val project = legacyDslProject { }
+
+        project.assertNoDiagnostics(KotlinToolingDiagnostics.DeprecatedSwiftExportDsl)
+        project.assertNoDiagnostics(KotlinToolingDiagnostics.ConflictingSwiftExportDsls)
+    }
+
+    @Test
+    fun `test no diagnostics are reported when only the export dsl is used`() {
+        val project = legacyDslProject {
+            exportExtension.swift {
+                moduleName.set("Shared")
+            }
+        }
+
+        project.assertNoDiagnostics(KotlinToolingDiagnostics.DeprecatedSwiftExportDsl)
+        project.assertNoDiagnostics(KotlinToolingDiagnostics.ConflictingSwiftExportDsls)
+    }
+
+    @Test
+    fun `test the deprecation is reported when only the legacy dsl is used`() {
+        val project = legacyDslProject {
+            legacySwiftExportExtension.moduleName.set("Legacy")
+        }
+
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.DeprecatedSwiftExportDsl)
+        project.assertNoDiagnostics(KotlinToolingDiagnostics.ConflictingSwiftExportDsls)
+    }
+
+    @Test
+    fun `test the conflict is reported when both dsls are used`() {
+        val project = legacyDslProject {
+            legacySwiftExportExtension.moduleName.set("Legacy")
+            exportExtension.swift {
+                moduleName.set("Shared")
+            }
+        }
+
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.ConflictingSwiftExportDsls)
+        project.assertNoDiagnostics(KotlinToolingDiagnostics.DeprecatedSwiftExportDsl)
+    }
+
+    @Test
+    fun `test the deprecation is reported regardless of the dsl call order`() {
+        val project = legacyDslProject {
+            exportExtension.swift {
+                xcodeIntegration()
+            }
+            legacySwiftExportExtension.moduleName.set("Legacy")
+        }
+
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.ConflictingSwiftExportDsls)
+    }
+
+    @Test
+    fun `test the deprecation is reported when the legacy dsl is used through the kotlin entry point`() {
+        val project = legacyDslProject {
+            kotlin {
+                swiftExport()
+            }
+        }
+
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.DeprecatedSwiftExportDsl)
+    }
+
+    /**
+     * JVM-only so these tests stay host-independent: the diagnostics only depend on which DSL was
+     * configured, and the Xcode wiring itself is only exercised for Apple targets, which needs macOS.
+     */
+    private fun legacyDslProject(configure: Project.() -> Unit): ProjectInternal =
+        buildProjectWithMPP(
+            code = {
+                kotlin { jvm() }
+                configure()
+            }
+        ).also { it.evaluate() }
 }
 
 class LegacySwiftExportDslDetectionTests {
