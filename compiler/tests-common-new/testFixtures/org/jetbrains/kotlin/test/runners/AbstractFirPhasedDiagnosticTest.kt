@@ -64,6 +64,7 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
     }
 }
 
+open class AbstractPhasedJvmDiagnosticMultiplatformParsingTest : AbstractFirPhasedDiagnosticTest(FirParser.MultiplatformParsing)
 open class AbstractPhasedJvmDiagnosticLightTreeTest : AbstractFirPhasedDiagnosticTest(FirParser.LightTree)
 open class AbstractPhasedJvmDiagnosticPsiTest : AbstractFirPhasedDiagnosticTest(FirParser.Psi)
 

@@ -6,5 +6,5 @@
 package org.jetbrains.kotlin.test
 
 enum class FirParser {
-    Psi, LightTree
+    Psi, LightTree, MultiplatformParsing
 }
