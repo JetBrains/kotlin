@@ -90,6 +90,7 @@ private fun bridgeTypeForVariadicParameter(type: SirType): Bridge =
 context(session: SirSession)
 internal fun bridgeType(type: SirType, position: SirTypeVariance): Bridge =
     when (type) {
+        is SirTypedType -> bridgeTypedWrapper(type, position)
         is SirNominalType -> bridgeNominalType(type, position)
         is SirExistentialType -> bridgeExistential(type, position)
         is SirFunctionalType -> when (position) {
@@ -100,19 +101,23 @@ internal fun bridgeType(type: SirType, position: SirTypeVariance): Bridge =
         else -> error("Attempt to bridge unbridgeable type: $type.")
     }
 
+context(session: SirSession)
+private fun bridgeTypedWrapper(type: SirTypedType, position: SirTypeVariance): Bridge {
+    val untypedBridge = bridgeType(type.untypedType, position)
+    check(untypedBridge is BidirectionalBridge) { "Typed type $type requires a BidirectionalBridge" }
+    return when (type) {
+        is SirTypedFlowType -> AsTyped.Flow(type, untypedBridge)
+    }
+}
+
 private fun bridgeExistential(type: SirExistentialType, position: SirTypeVariance): Bridge {
-    if (type is SirTypedFlowType) return AsTypedFlow(type)
     if (type.protocols.singleOrNull()?.first == KotlinRuntimeSupportModule.kotlinBridgeable) {
         return AsAnyBridgeable
     }
     if (type.protocols.singleOrNull()?.first?.parent is SirPlatformLikeModule) {
         return AsObjCProtocol(type)
     }
-    return AsExistential(
-        swiftType = type,
-        KotlinType.KotlinObject,
-        CType.Object
-    )
+    return AsExistential(type)
 }
 
 context(session: SirSession)
@@ -127,7 +132,7 @@ internal fun bridgeAsNSCollectionElement(type: SirType): BidirectionalBridge = w
     is AsObject,
     is AsExistential,
     is AsAnyBridgeable,
-    is AsTypedFlow,
+    is AsTyped,
     is AsOpaqueObject,
     is SirCustomTypeTranslatorImpl.RangeBridge,
     AsNothing,
@@ -155,7 +160,7 @@ private fun bridgeNominalType(type: SirNominalType, position: SirTypeVariance): 
             is AsObjCBridged,
             is AsExistential,
             is AsAnyBridgeable,
-            is AsTypedFlow,
+            is AsTyped,
             is AsContravariantBlock,
             is AsCovariantBlock,
             is AsInvariantBlock,
@@ -515,16 +520,16 @@ internal sealed interface Bridge {
      * 3. After receiving the Kotlin result, the wrapper function calls `createRetainedExternalRCRef(res)` to obtain the pointer back.
      * 4. Finally, the Swift function calls `__createProtocolWrapper(externalRCRef: ptr, conformsTo: SwiftProtocolName.Type.self)` to reconstruct the Swift value.
      */
-    class AsExistential(override val swiftType: SirExistentialType, override val kotlinType: KotlinType, override val cType: CType) : BidirectionalBridge {
+    class AsExistential(override val swiftType: SirExistentialType) : BidirectionalBridge {
+        override val kotlinType = KotlinType.KotlinObject
+        override val cType = CType.Object
+
         override val inKotlinSources = object : ValueConversion {
             context(session: SirSession)
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
-                "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as ${
-                    typeNamer.kotlinFqName(
-                        swiftType,
-                        SirTypeNamer.KotlinNameType.PARAMETRIZED
-                    )
-                }"
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val fqName = typeNamer.kotlinFqName(swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)
+                return "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as $fqName"
+            }
 
             context(session: SirSession)
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
@@ -539,63 +544,55 @@ internal sealed interface Bridge {
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                 val kotlinBase = typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))
                 val swiftFqName = typeNamer.swiftFqName(swiftType)
-                val swiftType = typeNamer.swiftFqName(SirType.Metatype(swiftType))
-                return "${kotlinBase}.__createProtocolWrapper(externalRCRef: $valueExpression, conformsTo: $swiftType.self) as! $swiftFqName"
+                val swiftMetaFqName = typeNamer.swiftFqName(SirType.Metatype(swiftType))
+                return "${kotlinBase}.__createProtocolWrapper(externalRCRef: $valueExpression, conformsTo: $swiftMetaFqName.self) as! $swiftFqName"
             }
         }
     }
 
-    /**
-     * A bridge for the typed `KotlinTypedFlow<Element>` wrapper protocols/structs.
-     *
-     * On the Kotlin/C side it's the same opaque pointer as for [AsExistential].
-     * On the Swift side, the return path wraps the pointer in a `KotlinTypedFlow<Element>` protocol,
-     * and the parameter path (theoretical – typed flow only appears in return position)
-     * unwraps via `.wrapped.__externalRCRef()`.
-     */
-    class AsTypedFlow(override val swiftType: SirTypedFlowType) : BidirectionalBridge {
-        override val kotlinType = KotlinType.KotlinObject
-        override val cType = CType.Object
+    sealed class AsTyped : BidirectionalBridge, ValueConversion {
 
-        private val structType = SirNominalType(
-            typeDeclaration = when (swiftType.typedProtocol) {
-                KotlinCoroutineSupportModule.kotlinTypedFlow -> KotlinCoroutineSupportModule.kotlinTypedFlowImpl
-                KotlinCoroutineSupportModule.kotlinTypedSharedFlow -> KotlinCoroutineSupportModule.kotlinTypedSharedFlowImpl
-                KotlinCoroutineSupportModule.kotlinTypedMutableSharedFlow -> KotlinCoroutineSupportModule.kotlinTypedMutableSharedFlowImpl
-                KotlinCoroutineSupportModule.kotlinTypedStateFlow -> KotlinCoroutineSupportModule.kotlinTypedStateFlowImpl
-                KotlinCoroutineSupportModule.kotlinTypedMutableStateFlow -> KotlinCoroutineSupportModule.kotlinTypedMutableStateFlowImpl
-                else -> error("Unsupported typed flow type: ${swiftType.typedProtocol}")
-            },
-            typeArguments = listOf(swiftType.elementType)
-        )
+        abstract val untypedBridge: BidirectionalBridge
 
-        override val inKotlinSources = object : ValueConversion {
+        abstract override val swiftType: SirTypedType
+        final override val kotlinType get() = untypedBridge.kotlinType
+        final override val cType get() = untypedBridge.cType
+
+        final override val inKotlinSources get() = untypedBridge.inKotlinSources
+        final override val inSwiftSources = object : ValueConversion {
             context(session: SirSession)
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
-                "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as ${
-                    typeNamer.kotlinFqName(
-                        swiftType,
-                        SirTypeNamer.KotlinNameType.PARAMETRIZED)}"
-
-            context(session: SirSession)
-            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
-                "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
-        }
-
-        override val inSwiftSources = object : ValueConversion {
-            context(session: SirSession)
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
-                "${valueExpression}.wrapped.__externalRCRef()"
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val valueExpression = this@AsTyped.swiftToKotlin(typeNamer, valueExpression)
+                return untypedBridge.inSwiftSources.swiftToKotlin(typeNamer, valueExpression)
+            }
 
             context(session: SirSession)
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
-                val kotlinBaseName = typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))
-                val flowProtocolFqName = typeNamer.swiftFqName(swiftType.flowType)
-                val structFqName = typeNamer.swiftFqName(structType)
-                val flowProtocolType = typeNamer.swiftFqName(SirType.Metatype(swiftType.flowType))
-                val nonOptionalElementType = (swiftType.elementType as? SirOptionalType)?.wrappedType ?: swiftType.elementType
-                val elementType = typeNamer.swiftFqName(SirType.Metatype(nonOptionalElementType))
-                return "$structFqName.create($kotlinBaseName.__createProtocolWrapper(externalRCRef: $valueExpression, conformsTo: $flowProtocolType.self) as! $flowProtocolFqName, $elementType.self)"
+                val valueExpression = untypedBridge.inSwiftSources.kotlinToSwift(typeNamer, valueExpression)
+                return this@AsTyped.kotlinToSwift(typeNamer, valueExpression)
+            }
+        }
+
+        /**
+         * A bridge for the typed `KotlinTypedFlow<Element>` wrapper protocols/structs.
+         *
+         * On the Kotlin/C side it's the same opaque pointer as for [AsExistential].
+         * On the Swift side, the return path wraps the pointer in a `KotlinTypedFlow<Element>` protocol,
+         * and the parameter path (theoretical – typed flow only appears in return position)
+         * unwraps via `.wrapped.__externalRCRef()`.
+         */
+        class Flow(
+            override val swiftType: SirTypedFlowType,
+            override val untypedBridge: BidirectionalBridge,
+        ) : AsTyped() {
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "${valueExpression}.wrapped"
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val structFqName = typeNamer.swiftFqName(swiftType.structType)
+                val elementType = typeNamer.swiftFqName(SirType.Metatype(swiftType.elementType.nonOptional()))
+                return "$structFqName.create($valueExpression, $elementType.self)"
             }
         }
     }
@@ -956,7 +953,7 @@ internal sealed interface Bridge {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
                 require(
                     wrappedObject is AsObjCBridged || wrappedObject is AsObject ||
-                            wrappedObject is AsExistential || wrappedObject is AsAnyBridgeable || wrappedObject is AsTypedFlow ||
+                            wrappedObject is AsExistential || wrappedObject is AsAnyBridgeable || wrappedObject is AsTyped ||
                             wrappedObject is AsContravariantBlock || wrappedObject is AsInvariantBlock ||
                             wrappedObject is AsError ||
                             wrappedObject is SirCustomTypeTranslatorImpl.RangeBridge
@@ -970,7 +967,7 @@ internal sealed interface Bridge {
                 return when (wrappedObject) {
                     is AsObjCBridged, is AsCovariantBlock, is AsInvariantBlock ->
                         valueExpression.mapSwift { wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, it) }
-                    is AsObject, is AsExistential, is AsAnyBridgeable, is AsTypedFlow, is AsError, is SirCustomTypeTranslatorImpl.RangeBridge ->
+                    is AsObject, is AsExistential, is AsAnyBridgeable, is AsTyped, is AsError, is SirCustomTypeTranslatorImpl.RangeBridge ->
                         "{ switch $valueExpression { case ${wrappedObject.renderNil()}: .none; case let res?: ${
                             wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
                         }; } }()"
