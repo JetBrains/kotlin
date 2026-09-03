@@ -59,11 +59,7 @@ internal class PropertyReferenceDelegationLowering(val context: JvmBackendContex
     }
 }
 
-/**
- * A reference to a declaration with context parameters binds a value per context argument, which the code below is not prepared for:
- * it assumes that the only bound value, if any, is the receiver. Such references are not optimized here: the delegate is constructed
- * as usual.
- */
+// For now, the lowering does nothing with contextual references
 private val IrRichPropertyReference.isContextual: Boolean
     get() = contextParametersCount > 0
 
