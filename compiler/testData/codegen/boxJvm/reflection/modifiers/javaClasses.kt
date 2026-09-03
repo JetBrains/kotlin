@@ -25,6 +25,7 @@ import kotlin.test.assertFalse
 
 fun box(): String {
     assertFalse(Interface::class.isRegularClass)
+    assertTrue(Interface::class.isInterface)
     assertFalse(Interface::class.isData)
     assertFalse(Interface::class.isInner)
     assertFalse(Interface::class.isCompanion)
@@ -32,6 +33,7 @@ fun box(): String {
     assertFalse(Interface::class.isValue)
 
     assertFalse(Annotation::class.isRegularClass)
+    assertFalse(Annotation::class.isInterface)
     assertFalse(Annotation::class.isData)
     assertFalse(Annotation::class.isInner)
     assertFalse(Annotation::class.isCompanion)
@@ -39,6 +41,7 @@ fun box(): String {
     assertFalse(Annotation::class.isValue)
 
     assertTrue(J.Nested::class.isRegularClass)
+    assertFalse(J.Nested::class.isInterface)
     assertFalse(J.Nested::class.isData)
     assertFalse(J.Nested::class.isInner)
     assertFalse(J.Nested::class.isCompanion)
@@ -46,6 +49,7 @@ fun box(): String {
     assertFalse(J.Nested::class.isValue)
 
     assertTrue(J.Inner::class.isRegularClass)
+    assertFalse(J.Inner::class.isInterface)
     assertFalse(J.Inner::class.isData)
     assertTrue(J.Inner::class.isInner)
     assertFalse(J.Inner::class.isCompanion)
@@ -53,6 +57,7 @@ fun box(): String {
     assertFalse(J.Inner::class.isValue)
 
     assertFalse(J.anonymousClass::class.isRegularClass)
+    assertFalse(J.anonymousClass::class.isInterface)
     assertFalse(J.anonymousClass::class.isData)
     assertFalse(J.anonymousClass::class.isInner)
     assertFalse(J.anonymousClass::class.isCompanion)

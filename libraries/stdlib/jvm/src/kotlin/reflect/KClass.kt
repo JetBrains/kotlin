@@ -87,6 +87,18 @@ public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedEleme
     public val isRegularClass: Boolean
 
     /**
+     * `true` if this is an interface.
+     * See the [Kotlin language documentation](https://kotlinlang.org/docs/interfaces.html)
+     * for more information.
+     *
+     * Note that, unlike Java reflection, this does not include annotations, see [isAnnotation].
+     *
+     * @see isSealed
+     */
+    @SinceKotlin("2.5")
+    public val isInterface: Boolean
+
+    /**
      * `true` if this class is `final`.
      */
     @SinceKotlin("1.1")
