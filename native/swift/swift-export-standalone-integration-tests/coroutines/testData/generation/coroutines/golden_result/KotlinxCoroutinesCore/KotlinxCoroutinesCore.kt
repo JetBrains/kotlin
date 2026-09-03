@@ -84,10 +84,10 @@ public fun kotlinx_coroutines_flow_MutableSharedFlow_resetReplayCache__reverse(s
 internal external fun kotlinx_coroutines_flow_MutableSharedFlow_subscriptionCount_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
 @BindReverseBridgeToMethod(kotlinx.coroutines.flow.MutableSharedFlow::class, "<get-subscriptionCount>")
-public fun kotlinx_coroutines_flow_MutableSharedFlow_subscriptionCount_get__reverse(self: kotlinx.coroutines.flow.MutableSharedFlow<kotlin.Any?>): kotlinx.coroutines.flow.StateFlow<Int> {
+public fun kotlinx_coroutines_flow_MutableSharedFlow_subscriptionCount_get__reverse(self: kotlinx.coroutines.flow.MutableSharedFlow<kotlin.Any?>): kotlinx.coroutines.flow.StateFlow<kotlin.Int> {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = kotlinx_coroutines_flow_MutableSharedFlow_subscriptionCount_get__reverse_swift(__self)
-    return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlinx.coroutines.flow.StateFlow<Int>
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlinx.coroutines.flow.StateFlow<kotlin.Int>
 }
 
 @ImportedBridge("kotlinx_coroutines_flow_MutableSharedFlow_tryEmit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
