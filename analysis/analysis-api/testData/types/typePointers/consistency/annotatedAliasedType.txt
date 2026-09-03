@@ -207,7 +207,12 @@ After:
 KaUsualClassType:
   abbreviation: KaUsualClassType:
     abbreviation: null
-    annotations: []
+    annotations: [
+      Anno1()
+        psi: null
+      AnnoWithArgs1(x = "")
+        psi: null
+    ]
     classId: MyList
     qualifiers: [
       KaResolvedClassTypeQualifier:
@@ -217,7 +222,12 @@ KaUsualClassType:
           KaUsualClassType:
             abbreviation: KaUsualClassType:
               abbreviation: null
-              annotations: []
+              annotations: [
+                Anno2()
+                  psi: null
+                AnnoWithArgs2(x = "")
+                  psi: null
+              ]
               classId: MyString
               qualifiers: [
                 KaResolvedClassTypeQualifier:
@@ -230,7 +240,12 @@ KaUsualClassType:
               isMarkedNullable: false
               isNullable: false
               hasFlexibleNullability: false
-            annotations: []
+            annotations: [
+              Anno2()
+                psi: null
+              AnnoWithArgs2(x = "")
+                psi: null
+            ]
             classId: kotlin/String
             qualifiers: [
               KaResolvedClassTypeQualifier:
@@ -250,7 +265,12 @@ KaUsualClassType:
       KaUsualClassType:
         abbreviation: KaUsualClassType:
           abbreviation: null
-          annotations: []
+          annotations: [
+            Anno2()
+              psi: null
+            AnnoWithArgs2(x = "")
+              psi: null
+          ]
           classId: MyString
           qualifiers: [
             KaResolvedClassTypeQualifier:
@@ -263,7 +283,12 @@ KaUsualClassType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
-        annotations: []
+        annotations: [
+          Anno2()
+            psi: null
+          AnnoWithArgs2(x = "")
+            psi: null
+        ]
         classId: kotlin/String
         qualifiers: [
           KaResolvedClassTypeQualifier:
@@ -280,7 +305,12 @@ KaUsualClassType:
     isMarkedNullable: false
     isNullable: false
     hasFlexibleNullability: false
-  annotations: []
+  annotations: [
+    Anno1()
+      psi: null
+    AnnoWithArgs1(x = "")
+      psi: null
+  ]
   classId: kotlin/collections/List
   qualifiers: [
     KaResolvedClassTypeQualifier:
@@ -290,7 +320,12 @@ KaUsualClassType:
         KaUsualClassType:
           abbreviation: KaUsualClassType:
             abbreviation: null
-            annotations: []
+            annotations: [
+              Anno2()
+                psi: null
+              AnnoWithArgs2(x = "")
+                psi: null
+            ]
             classId: MyString
             qualifiers: [
               KaResolvedClassTypeQualifier:
@@ -303,7 +338,12 @@ KaUsualClassType:
             isMarkedNullable: false
             isNullable: false
             hasFlexibleNullability: false
-          annotations: []
+          annotations: [
+            Anno2()
+              psi: null
+            AnnoWithArgs2(x = "")
+              psi: null
+          ]
           classId: kotlin/String
           qualifiers: [
             KaResolvedClassTypeQualifier:
@@ -323,7 +363,12 @@ KaUsualClassType:
     KaUsualClassType:
       abbreviation: KaUsualClassType:
         abbreviation: null
-        annotations: []
+        annotations: [
+          Anno2()
+            psi: null
+          AnnoWithArgs2(x = "")
+            psi: null
+        ]
         classId: MyString
         qualifiers: [
           KaResolvedClassTypeQualifier:
@@ -336,7 +381,12 @@ KaUsualClassType:
         isMarkedNullable: false
         isNullable: false
         hasFlexibleNullability: false
-      annotations: []
+      annotations: [
+        Anno2()
+          psi: null
+        AnnoWithArgs2(x = "")
+          psi: null
+      ]
       classId: kotlin/String
       qualifiers: [
         KaResolvedClassTypeQualifier:

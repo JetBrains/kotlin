@@ -25,7 +25,10 @@ After:
 
 KaUsualClassType:
   abbreviation: null
-  annotations: []
+  annotations: [
+    Anno(number = 0)
+      psi: null
+  ]
   classId: kotlin/String
   qualifiers: [
     KaResolvedClassTypeQualifier:

@@ -71,7 +71,12 @@ KaUsualClassType:
       typeArguments: [
         KaClassErrorType:
           abbreviation: null
-          annotations: []
+          annotations: [
+            Anno()
+              psi: null
+            AnnoWithArgs(x = "")
+              psi: null
+          ]
           candidateSymbols: []
           errorMessage: Symbol not found for Foo
           presentableText: Foo
@@ -89,7 +94,12 @@ KaUsualClassType:
   typeArguments: [
     KaClassErrorType:
       abbreviation: null
-      annotations: []
+      annotations: [
+        Anno()
+          psi: null
+        AnnoWithArgs(x = "")
+          psi: null
+      ]
       candidateSymbols: []
       errorMessage: Symbol not found for Foo
       presentableText: Foo

@@ -57,7 +57,10 @@ After:
 
 KaUsualClassType:
   abbreviation: null
-  annotations: []
+  annotations: [
+    Complex(b = true, c = `c`, classes = [kotlin.Int::class, kotlin.Array<kotlin.String>::class], d = 1.5, e = E.B, enums = [E.A, E.B], i = 3, k = kotlin.collections.List<*>::class, l = 42, nested = /Nested(i = 7, , klass = kotlin.collections.List<*>::class, , enums = [E.A, E.B], , x = [kotlin.String::class, A::class], ), primitiveArray = [true, false, false], s = "s", strings = ["a", "b"], uByte = 4u, x = [1, 2, 3, 1, 2, 3])
+      psi: null
+  ]
   classId: kotlin/collections/List
   qualifiers: [
     KaResolvedClassTypeQualifier:

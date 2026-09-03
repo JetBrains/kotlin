@@ -252,7 +252,10 @@ KaFunctionType:
   parameterTypes: [
     KaUsualClassType:
       abbreviation: null
-      annotations: []
+      annotations: [
+        kotlin/ParameterName(name = "par1")
+          psi: null
+      ]
       classId: kotlin/String
       qualifiers: [
         KaResolvedClassTypeQualifier:
@@ -267,7 +270,10 @@ KaFunctionType:
       hasFlexibleNullability: false
     KaUsualClassType:
       abbreviation: null
-      annotations: []
+      annotations: [
+        kotlin/ParameterName(name = "OneName")
+          psi: null
+      ]
       classId: kotlin/Int
       qualifiers: [
         KaResolvedClassTypeQualifier:
@@ -282,7 +288,10 @@ KaFunctionType:
       hasFlexibleNullability: false
     KaUsualClassType:
       abbreviation: null
-      annotations: []
+      annotations: [
+        kotlin/ParameterName(name = "AnotherName")
+          psi: null
+      ]
       classId: kotlin/Int
       qualifiers: [
         KaResolvedClassTypeQualifier:
@@ -297,9 +306,9 @@ KaFunctionType:
       hasFlexibleNullability: false
   ]
   parameters: [
-    KaBaseFunctionValueParameter [name: null, type: kotlin/String]
-    KaBaseFunctionValueParameter [name: null, type: kotlin/Int]
-    KaBaseFunctionValueParameter [name: null, type: kotlin/Int]
+    KaBaseFunctionValueParameter [name: par1, type: kotlin/String]
+    KaBaseFunctionValueParameter [name: OneName, type: kotlin/Int]
+    KaBaseFunctionValueParameter [name: AnotherName, type: kotlin/Int]
   ]
   qualifiers: [
     KaResolvedClassTypeQualifier:
@@ -308,7 +317,10 @@ KaFunctionType:
       typeArguments: [
         KaUsualClassType:
           abbreviation: null
-          annotations: []
+          annotations: [
+            kotlin/ParameterName(name = "par1")
+              psi: null
+          ]
           classId: kotlin/String
           qualifiers: [
             KaResolvedClassTypeQualifier:
@@ -323,7 +335,10 @@ KaFunctionType:
           hasFlexibleNullability: false
         KaUsualClassType:
           abbreviation: null
-          annotations: []
+          annotations: [
+            kotlin/ParameterName(name = "OneName")
+              psi: null
+          ]
           classId: kotlin/Int
           qualifiers: [
             KaResolvedClassTypeQualifier:
@@ -338,7 +353,10 @@ KaFunctionType:
           hasFlexibleNullability: false
         KaUsualClassType:
           abbreviation: null
-          annotations: []
+          annotations: [
+            kotlin/ParameterName(name = "AnotherName")
+              psi: null
+          ]
           classId: kotlin/Int
           qualifiers: [
             KaResolvedClassTypeQualifier:
@@ -388,7 +406,10 @@ KaFunctionType:
   typeArguments: [
     KaUsualClassType:
       abbreviation: null
-      annotations: []
+      annotations: [
+        kotlin/ParameterName(name = "par1")
+          psi: null
+      ]
       classId: kotlin/String
       qualifiers: [
         KaResolvedClassTypeQualifier:
@@ -403,7 +424,10 @@ KaFunctionType:
       hasFlexibleNullability: false
     KaUsualClassType:
       abbreviation: null
-      annotations: []
+      annotations: [
+        kotlin/ParameterName(name = "OneName")
+          psi: null
+      ]
       classId: kotlin/Int
       qualifiers: [
         KaResolvedClassTypeQualifier:
@@ -418,7 +442,10 @@ KaFunctionType:
       hasFlexibleNullability: false
     KaUsualClassType:
       abbreviation: null
-      annotations: []
+      annotations: [
+        kotlin/ParameterName(name = "AnotherName")
+          psi: null
+      ]
       classId: kotlin/Int
       qualifiers: [
         KaResolvedClassTypeQualifier:

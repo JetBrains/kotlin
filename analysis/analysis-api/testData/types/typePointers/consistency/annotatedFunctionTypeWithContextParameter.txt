@@ -190,7 +190,12 @@ KaFunctionType:
   contextParameterTypes: [
     KaUsualClassType:
       abbreviation: null
-      annotations: []
+      annotations: [
+        Anno()
+          psi: null
+        AnnoWithArgs(x = "")
+          psi: null
+      ]
       classId: kotlin/String
       qualifiers: [
         KaResolvedClassTypeQualifier:
@@ -234,7 +239,12 @@ KaFunctionType:
       typeArguments: [
         KaUsualClassType:
           abbreviation: null
-          annotations: []
+          annotations: [
+            Anno()
+              psi: null
+            AnnoWithArgs(x = "")
+              psi: null
+          ]
           classId: kotlin/String
           qualifiers: [
             KaResolvedClassTypeQualifier:
@@ -299,7 +309,12 @@ KaFunctionType:
   typeArguments: [
     KaUsualClassType:
       abbreviation: null
-      annotations: []
+      annotations: [
+        Anno()
+          psi: null
+        AnnoWithArgs(x = "")
+          psi: null
+      ]
       classId: kotlin/String
       qualifiers: [
         KaResolvedClassTypeQualifier:

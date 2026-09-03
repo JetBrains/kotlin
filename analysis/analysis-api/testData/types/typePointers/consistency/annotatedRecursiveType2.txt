@@ -77,7 +77,10 @@ KaUsualClassType:
       typeArguments: [
         KaUsualClassType:
           abbreviation: null
-          annotations: []
+          annotations: [
+            Anno()
+              psi: null
+          ]
           classId: A
           qualifiers: [
             KaResolvedClassTypeQualifier:
@@ -100,7 +103,10 @@ KaUsualClassType:
   typeArguments: [
     KaUsualClassType:
       abbreviation: null
-      annotations: []
+      annotations: [
+        Anno()
+          psi: null
+      ]
       classId: A
       qualifiers: [
         KaResolvedClassTypeQualifier:

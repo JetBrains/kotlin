@@ -159,7 +159,12 @@ After:
 
 KaFunctionType:
   abbreviation: null
-  annotations: []
+  annotations: [
+    Anno1()
+      psi: null
+    AnnoWithArgs1(x = "")
+      psi: null
+  ]
   classId: kotlin/Function1
   contextParameterTypes: []
   hasReceiver: false
@@ -168,7 +173,12 @@ KaFunctionType:
   parameterTypes: [
     KaUsualClassType:
       abbreviation: null
-      annotations: []
+      annotations: [
+        Anno2()
+          psi: null
+        AnnoWithArgs2(x = "")
+          psi: null
+      ]
       classId: kotlin/String
       qualifiers: [
         KaResolvedClassTypeQualifier:
@@ -192,7 +202,12 @@ KaFunctionType:
       typeArguments: [
         KaUsualClassType:
           abbreviation: null
-          annotations: []
+          annotations: [
+            Anno2()
+              psi: null
+            AnnoWithArgs2(x = "")
+              psi: null
+          ]
           classId: kotlin/String
           qualifiers: [
             KaResolvedClassTypeQualifier:
@@ -207,7 +222,12 @@ KaFunctionType:
           hasFlexibleNullability: false
         KaUsualClassType:
           abbreviation: null
-          annotations: []
+          annotations: [
+            Anno3()
+              psi: null
+            AnnoWithArgs3(x = "")
+              psi: null
+          ]
           classId: kotlin/Int
           qualifiers: [
             KaResolvedClassTypeQualifier:
@@ -225,7 +245,12 @@ KaFunctionType:
   receiverType: null
   returnType: KaUsualClassType:
     abbreviation: null
-    annotations: []
+    annotations: [
+      Anno3()
+        psi: null
+      AnnoWithArgs3(x = "")
+        psi: null
+    ]
     classId: kotlin/Int
     qualifiers: [
       KaResolvedClassTypeQualifier:
@@ -242,7 +267,12 @@ KaFunctionType:
   typeArguments: [
     KaUsualClassType:
       abbreviation: null
-      annotations: []
+      annotations: [
+        Anno2()
+          psi: null
+        AnnoWithArgs2(x = "")
+          psi: null
+      ]
       classId: kotlin/String
       qualifiers: [
         KaResolvedClassTypeQualifier:
@@ -257,7 +287,12 @@ KaFunctionType:
       hasFlexibleNullability: false
     KaUsualClassType:
       abbreviation: null
-      annotations: []
+      annotations: [
+        Anno3()
+          psi: null
+        AnnoWithArgs3(x = "")
+          psi: null
+      ]
       classId: kotlin/Int
       qualifiers: [
         KaResolvedClassTypeQualifier:

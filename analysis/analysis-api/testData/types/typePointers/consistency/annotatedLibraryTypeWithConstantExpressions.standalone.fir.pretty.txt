@@ -6,4 +6,4 @@ Before:
 
 After:
 
-kotlin.String
+@library.Complex(template = "astrb3", negative = -3, unsigned = 7u, enums = [library.E.A, library.E.B], nestedArray = [library/Nested(classes = [kotlin.String::class], ), library/Nested(i = 3, , classes = [kotlin.Int::class, library.E::class], )], x = [3, 4]) kotlin.String

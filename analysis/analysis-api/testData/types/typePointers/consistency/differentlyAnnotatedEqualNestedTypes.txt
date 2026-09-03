@@ -348,7 +348,10 @@ KaUsualClassType:
               typeArguments: [
                 KaUsualClassType:
                   abbreviation: null
-                  annotations: []
+                  annotations: [
+                    Anno(number = 1)
+                      psi: null
+                  ]
                   classId: kotlin/String
                   qualifiers: [
                     KaResolvedClassTypeQualifier:
@@ -367,7 +370,10 @@ KaUsualClassType:
           typeArguments: [
             KaUsualClassType:
               abbreviation: null
-              annotations: []
+              annotations: [
+                Anno(number = 1)
+                  psi: null
+              ]
               classId: kotlin/String
               qualifiers: [
                 KaResolvedClassTypeQualifier:
@@ -442,7 +448,10 @@ KaUsualClassType:
               typeArguments: [
                 KaUsualClassType:
                   abbreviation: null
-                  annotations: []
+                  annotations: [
+                    Anno(number = 2)
+                      psi: null
+                  ]
                   classId: kotlin/String
                   qualifiers: [
                     KaResolvedClassTypeQualifier:
@@ -461,7 +470,10 @@ KaUsualClassType:
           typeArguments: [
             KaUsualClassType:
               abbreviation: null
-              annotations: []
+              annotations: [
+                Anno(number = 2)
+                  psi: null
+              ]
               classId: kotlin/String
               qualifiers: [
                 KaResolvedClassTypeQualifier:
@@ -493,7 +505,10 @@ KaUsualClassType:
           typeArguments: [
             KaUsualClassType:
               abbreviation: null
-              annotations: []
+              annotations: [
+                Anno(number = 1)
+                  psi: null
+              ]
               classId: kotlin/String
               qualifiers: [
                 KaResolvedClassTypeQualifier:
@@ -512,7 +527,10 @@ KaUsualClassType:
       typeArguments: [
         KaUsualClassType:
           abbreviation: null
-          annotations: []
+          annotations: [
+            Anno(number = 1)
+              psi: null
+          ]
           classId: kotlin/String
           qualifiers: [
             KaResolvedClassTypeQualifier:
@@ -587,7 +605,10 @@ KaUsualClassType:
           typeArguments: [
             KaUsualClassType:
               abbreviation: null
-              annotations: []
+              annotations: [
+                Anno(number = 2)
+                  psi: null
+              ]
               classId: kotlin/String
               qualifiers: [
                 KaResolvedClassTypeQualifier:
@@ -606,7 +627,10 @@ KaUsualClassType:
       typeArguments: [
         KaUsualClassType:
           abbreviation: null
-          annotations: []
+          annotations: [
+            Anno(number = 2)
+              psi: null
+          ]
           classId: kotlin/String
           qualifiers: [
             KaResolvedClassTypeQualifier:

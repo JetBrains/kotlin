@@ -18,7 +18,12 @@ After:
 
 KaDynamicType:
   abbreviation: null
-  annotations: []
+  annotations: [
+    Anno()
+      psi: null
+    AnnoWithArgs(x = "")
+      psi: null
+  ]
   isMarkedNullable: false
   isNullable: true
   hasFlexibleNullability: true

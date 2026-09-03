@@ -38,10 +38,20 @@ After:
 
 KaCapturedType:
   abbreviation: null
-  annotations: []
+  annotations: [
+    Anno3()
+      psi: null
+    AnnoWithArgs3(x = "")
+      psi: null
+  ]
   projection: out KaUsualClassType:
     abbreviation: null
-    annotations: []
+    annotations: [
+      Anno1()
+        psi: null
+      AnnoWithArgs1(x = "")
+        psi: null
+    ]
     classId: kotlin/CharSequence
     qualifiers: [
       KaResolvedClassTypeQualifier:

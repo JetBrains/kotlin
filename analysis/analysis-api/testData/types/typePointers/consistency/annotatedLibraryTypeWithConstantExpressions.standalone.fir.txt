@@ -25,7 +25,10 @@ After:
 
 KaUsualClassType:
   abbreviation: null
-  annotations: []
+  annotations: [
+    library/Complex(enums = [library.E.A, library.E.B], negative = -3, nestedArray = [library/Nested(classes = [kotlin.String::class], ), library/Nested(i = 3, , classes = [kotlin.Int::class, library.E::class], )], template = "astrb3", unsigned = 7u, x = [3, 4])
+      psi: null
+  ]
   classId: kotlin/String
   qualifiers: [
     KaResolvedClassTypeQualifier:

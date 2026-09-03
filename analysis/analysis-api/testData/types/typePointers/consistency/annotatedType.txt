@@ -69,7 +69,12 @@ After:
 
 KaUsualClassType:
   abbreviation: null
-  annotations: []
+  annotations: [
+    Anno()
+      psi: null
+    AnnoWithArgs(x = "")
+      psi: null
+  ]
   classId: kotlin/collections/List
   qualifiers: [
     KaResolvedClassTypeQualifier:
@@ -78,7 +83,12 @@ KaUsualClassType:
       typeArguments: [
         KaUsualClassType:
           abbreviation: null
-          annotations: []
+          annotations: [
+            Anno()
+              psi: null
+            AnnoWithArgs(x = "")
+              psi: null
+          ]
           classId: kotlin/String
           qualifiers: [
             KaResolvedClassTypeQualifier:
@@ -97,7 +107,12 @@ KaUsualClassType:
   typeArguments: [
     KaUsualClassType:
       abbreviation: null
-      annotations: []
+      annotations: [
+        Anno()
+          psi: null
+        AnnoWithArgs(x = "")
+          psi: null
+      ]
       classId: kotlin/String
       qualifiers: [
         KaResolvedClassTypeQualifier:

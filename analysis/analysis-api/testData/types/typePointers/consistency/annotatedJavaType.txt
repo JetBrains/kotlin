@@ -1,6 +1,4 @@
-Type has changed on restoration
-
-Before:
+Restored type is the same as the original one
 
 KaFlexibleType:
   abbreviation: null
@@ -32,45 +30,6 @@ KaFlexibleType:
       JavaAnno(klass = kotlin.String::class, number = 6, strings = ["a", "b"], target = java.lang.annotation.ElementType.FIELD)
         psi: null
     ]
-    classId: kotlin/String
-    qualifiers: [
-      KaResolvedClassTypeQualifier:
-        name: String
-        symbol: KaNamedClassSymbol(kotlin/String)
-        typeArguments: []
-    ]
-    symbol: KaNamedClassSymbol(kotlin/String)
-    typeArguments: []
-    isMarkedNullable: true
-    isNullable: true
-    hasFlexibleNullability: false
-  isMarkedNullable: false
-  isNullable: true
-  hasFlexibleNullability: true
-
-After:
-
-KaFlexibleType:
-  abbreviation: null
-  annotations: []
-  lowerBound: KaUsualClassType:
-    abbreviation: null
-    annotations: []
-    classId: kotlin/String
-    qualifiers: [
-      KaResolvedClassTypeQualifier:
-        name: String
-        symbol: KaNamedClassSymbol(kotlin/String)
-        typeArguments: []
-    ]
-    symbol: KaNamedClassSymbol(kotlin/String)
-    typeArguments: []
-    isMarkedNullable: false
-    isNullable: false
-    hasFlexibleNullability: false
-  upperBound: KaUsualClassType:
-    abbreviation: null
-    annotations: []
     classId: kotlin/String
     qualifiers: [
       KaResolvedClassTypeQualifier:

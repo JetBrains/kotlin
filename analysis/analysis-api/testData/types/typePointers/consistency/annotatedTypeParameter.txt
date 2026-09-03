@@ -99,7 +99,12 @@ KaUsualClassType:
       typeArguments: [
         KaTypeParameterType:
           abbreviation: null
-          annotations: []
+          annotations: [
+            Anno2()
+              psi: null
+            AnnoWithArgs2(x = "")
+              psi: null
+          ]
           name: T
           symbol: KaTypeParameterSymbol:
             anchorPsi: KtTypeParameter
@@ -131,7 +136,12 @@ KaUsualClassType:
   typeArguments: [
     KaTypeParameterType:
       abbreviation: null
-      annotations: []
+      annotations: [
+        Anno2()
+          psi: null
+        AnnoWithArgs2(x = "")
+          psi: null
+      ]
       name: T
       symbol: KaTypeParameterSymbol:
         anchorPsi: KtTypeParameter
