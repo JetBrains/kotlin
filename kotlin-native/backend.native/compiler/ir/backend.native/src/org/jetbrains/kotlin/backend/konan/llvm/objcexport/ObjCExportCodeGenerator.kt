@@ -434,6 +434,8 @@ internal class ObjCExportCodeGenerator(
     internal fun generate(spec: ObjCExportCodeSpec?) {
         generateTypeAdapters(spec)
 
+        emitAnyVtableIndices()
+
         NSNumberKind.entries.mapNotNull { it.mappedKotlinClassId }.forEach {
             dataGenerator.exportClass(namer.numberBoxName(it).binaryName)
         }
@@ -518,6 +520,19 @@ internal class ObjCExportCodeGenerator(
         }
     }
 
+    private fun emitAnyVtableIndices() {
+        anyVtableIndexGlobalNames.forEach { [kotlinName, globalName] ->
+            val irFunction = irBuiltIns.anyClass.owner.simpleFunctions()
+                    .single { it.name == Name.identifier(kotlinName) }
+                    .getLowered<IrSimpleFunction>()
+
+            codegen.replaceExternalWeakOrCommonGlobalFromNativeRuntime(
+                    globalName,
+                    llvm.constInt32(vtableIndex(irFunction) ?: -1)
+            )
+        }
+    }
+
     private fun emitKt42254Hint() {
         if (determineLinkerOutput(context) == LinkerOutputKind.STATIC_LIBRARY) {
             // Might be affected by https://youtrack.jetbrains.com/issue/KT-42254.
@@ -535,6 +550,13 @@ internal class ObjCExportCodeGenerator(
             }
         }
     }
+
+    // Keep in sync with the weak globals of the same names in ObjCExportClasses.mm.
+    private val anyVtableIndexGlobalNames = listOf(
+            "equals" to "Kotlin_ObjCExport_anyEqualsVtableIndex",
+            "hashCode" to "Kotlin_ObjCExport_anyHashCodeVtableIndex",
+            "toString" to "Kotlin_ObjCExport_anyToStringVtableIndex",
+    )
 
     // TODO: consider including this into ObjCExportCodeSpec.
     @OptIn(K1Deprecation::class)
