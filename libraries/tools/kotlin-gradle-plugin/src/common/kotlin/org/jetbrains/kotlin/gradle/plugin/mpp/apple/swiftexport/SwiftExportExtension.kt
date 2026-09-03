@@ -108,10 +108,30 @@ abstract class SwiftExportExtension @Inject constructor(
     private val projectByPath: ProjectByPath,
 ) : SwiftExportedModuleMetadata {
     /**
+     * Whether this DSL was configured in this project.
+     *
+     * True if a DSL function set it directly, or if [moduleName] or [flattenPackage] is present. Those are
+     * plain [Property] instances with no invocation hook, so presence is checked instead. Only meaningful
+     * once the DSL is finalised.
+     *
+     * Unlike [org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension.isSwiftExportRequested], this
+     * also catches a Groovy script reaching the extension directly through the Gradle extension container.
+     *
+     * One gap: an empty `swiftExport { }` block sets nothing, and
+     * [isSwiftExportXcodeIntegrationActivated] turns on Xcode integration for Apple targets regardless,
+     * so that block looks the same as no block at all.
+     */
+    internal val isConfigured: Boolean
+        get() = wasConfigured || moduleName.isPresent || flattenPackage.isPresent
+
+    private var wasConfigured = false
+
+    /**
      * Configure Link task.
      */
     @ExperimentalSwiftExportDsl
     fun linkTask(configure: KotlinNativeLink.() -> Unit = {}) {
+        wasConfigured = true
         forAllSwiftExportBinaries {
             linkTaskProvider.configure { linkTask ->
                 configure(linkTask)
@@ -132,6 +152,7 @@ abstract class SwiftExportExtension @Inject constructor(
      */
     @ExperimentalSwiftExportDsl
     fun configure(configure: SwiftExportAdvancedConfiguration.() -> Unit = {}) {
+        wasConfigured = true
         advancedConfiguration.configure()
     }
 
@@ -148,6 +169,7 @@ abstract class SwiftExportExtension @Inject constructor(
      */
     @ExperimentalSwiftExportDsl
     fun export(dependency: Any, configure: SwiftExportedModuleMetadata.() -> Unit = {}) {
+        wasConfigured = true
         when (dependency) {
             is Provider<*> -> {
                 addDependencyToExportConfiguration(dependency.map { dep ->

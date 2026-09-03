@@ -15,15 +15,18 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.exportDslProject
 import org.jetbrains.kotlin.gradle.util.exportExtension
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.gradle.util.legacySwiftExportExtension
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.Assumptions
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 class ExportExtensionUnitTests {
 
@@ -205,5 +208,56 @@ class ExportExtensionXcodeIntegrationTests {
         }
 
         assertNull(project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME))
+    }
+}
+
+class LegacySwiftExportDslDetectionTests {
+
+    @Test
+    fun `test the legacy dsl is not reported as configured on a fresh project`() {
+        val project = buildProjectWithMPP()
+        assertFalse(project.legacySwiftExportExtension.isConfigured)
+    }
+
+    @Test
+    fun `test setting the module name marks the legacy dsl as configured`() {
+        val project = buildProjectWithMPP()
+        project.legacySwiftExportExtension.moduleName.set("Legacy")
+
+        assertTrue(project.legacySwiftExportExtension.isConfigured)
+    }
+
+    @Test
+    fun `test setting the flatten package marks the legacy dsl as configured`() {
+        val project = buildProjectWithMPP()
+        project.legacySwiftExportExtension.flattenPackage.set("com.example.legacy")
+
+        assertTrue(project.legacySwiftExportExtension.isConfigured)
+    }
+
+    @Test
+    fun `test configuring advanced parameters marks the legacy dsl as configured`() {
+        val project = buildProjectWithMPP()
+        project.legacySwiftExportExtension.configure {
+            freeCompilerArgs.add("-Xbinary=bundleId=com.example")
+        }
+
+        assertTrue(project.legacySwiftExportExtension.isConfigured)
+    }
+
+    @Test
+    fun `test configuring the link task marks the legacy dsl as configured`() {
+        val project = buildProjectWithMPP()
+        project.legacySwiftExportExtension.linkTask { }
+
+        assertTrue(project.legacySwiftExportExtension.isConfigured)
+    }
+
+    @Test
+    fun `test exporting a dependency marks the legacy dsl as configured`() {
+        val project = buildProjectWithMPP()
+        project.legacySwiftExportExtension.export("org.example:lib:1.0")
+
+        assertTrue(project.legacySwiftExportExtension.isConfigured)
     }
 }
