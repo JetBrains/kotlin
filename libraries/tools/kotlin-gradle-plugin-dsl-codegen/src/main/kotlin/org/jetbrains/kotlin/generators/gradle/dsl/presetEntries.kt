@@ -97,7 +97,7 @@ internal val nativePresetEntries = HostManager().targets
         }
 
         val deprecation = KotlinPresetEntry.Deprecation(
-            message = "DEPRECATED_TARGET_MESSAGE",
+            message = if (target in KonanTarget.toleratedDeprecatedTargets) "DEPRECATED_TARGET_MESSAGE" else "DEPRECATED_TARGET_AS_ERROR_MESSAGE" ,
             messageIsTheCode = true,
             level = if (target in KonanTarget.toleratedDeprecatedTargets) DeprecationLevel.WARNING else DeprecationLevel.ERROR
         ).takeIf { target in KonanTarget.deprecatedTargets }
