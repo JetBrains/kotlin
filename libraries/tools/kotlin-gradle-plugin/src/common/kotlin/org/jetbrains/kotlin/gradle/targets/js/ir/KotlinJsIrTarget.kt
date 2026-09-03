@@ -199,14 +199,17 @@ internal constructor(
     }
 
     //region Browser
-
     private val browserLazyDelegate = lazy {
         commonLazy
         addSubTarget(KotlinBrowserJsIr::class.java) {
             configureSubTarget()
-            subTargetConfigurators.add(SwcConfigurator(this))
-            subTargetConfigurators.add(LibraryConfigurator(this))
-            bundleConfigurator()
+            bundler.convention(KotlinBrowserBundler.WEBPACK)
+            project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseDsl) {
+                bundler.finalizeValue()
+                subTargetConfigurators.add(SwcConfigurator(this@addSubTarget))
+                subTargetConfigurators.add(LibraryConfigurator(this@addSubTarget))
+                bundleConfigurator()
+            }
         }
     }
 
@@ -215,7 +218,6 @@ internal constructor(
     override fun browser(body: KotlinJsBrowserDsl.() -> Unit) {
         body(browser)
     }
-
     //endregion
 
     //region node.js
