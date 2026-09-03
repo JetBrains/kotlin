@@ -175,10 +175,12 @@ object KtTokens : SyntaxElementTypesWithIds() {
     const val ACTUAL_MODIFIER_ID: Int = EXPECT_MODIFIER_ID + 1
     const val INTERPOLATION_PREFIX_ID: Int = ACTUAL_MODIFIER_ID + 1
     const val ALL_KEYWORD_ID: Int = INTERPOLATION_PREFIX_ID + 1
+    const val ERROR_MODIFIER_ID: Int = ALL_KEYWORD_ID + 1
 
-    const val DOC_COMMENT_ID: Int = ALL_KEYWORD_ID + 1
+    // Remember to update DOC_COMMENT_ID below after adding new tokens here ^^^
+
+    const val DOC_COMMENT_ID: Int = ERROR_MODIFIER_ID + 1
     const val WHITE_SPACE_ID: Int = DOC_COMMENT_ID + 1
-    // Remember to update the first ID constant in `KtNodeTypes` after adding a new token
 
     private val softKeywordsAndModifiers: MutableSet<SyntaxElementType> = mutableSetOf()
     private val hardKeywordsAndModifiers: MutableSet<SyntaxElementType> = mutableSetOf()
@@ -359,6 +361,7 @@ object KtTokens : SyntaxElementTypesWithIds() {
     val CROSSINLINE_MODIFIER: SyntaxElementType = registerToken(CROSSINLINE_MODIFIER_ID, "crossinline", soft = true, modifier = true)
     val OPERATOR_MODIFIER: SyntaxElementType = registerToken(OPERATOR_MODIFIER_ID, "operator", soft = true, modifier = true)
     val INFIX_MODIFIER: SyntaxElementType = registerToken(INFIX_MODIFIER_ID, "infix", soft = true, modifier = true)
+    val ERROR_MODIFIER: SyntaxElementType = registerToken(ERROR_MODIFIER_ID, "error", soft = true, modifier = true)
 
     val CONST_MODIFIER: SyntaxElementType = registerToken(CONST_MODIFIER_ID, "const", soft = true, modifier = true)
 
