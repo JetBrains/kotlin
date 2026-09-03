@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.sir
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.expandedType
 import org.jetbrains.kotlin.sir.util.swiftFqName
+import kotlin.collections.emptyList
+import kotlin.collections.map
 import kotlin.collections.plus
 
 sealed interface SirType {
@@ -47,6 +49,20 @@ sealed interface SirType {
  * It's important mainly for rendering purposes.
  */
 sealed interface SirWrappedType : SirType
+
+/**
+ * An untyped [SirType] for the typed [kotlinType].
+ */
+sealed interface SirUntypedType : SirType {
+    val kotlinType: SirType
+}
+
+/**
+ * A custom typed [SirType] for the [untypedType].
+ */
+sealed interface SirTypedType : SirType, SirWrappedType {
+    val untypedType: SirUntypedType
+}
 
 class SirFunctionalType(
     val contextTypes: List<SirType> = emptyList(),
@@ -191,13 +207,51 @@ open class SirExistentialType(
     override fun hashCode(): Int {
         return this::class.hashCode()
     }
+
+    class Untyped(
+        override val kotlinType: SirExistentialType,
+    ) : SirExistentialType(kotlinType.protocols.map { it.first to emptyList() }), SirUntypedType {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || other !is Untyped) return false
+            if (!super.equals(other)) return false
+            return kotlinType == other.kotlinType
+        }
+
+        override fun hashCode(): Int {
+            var result = super.hashCode()
+            result += 31 * kotlinType.hashCode()
+            return result
+        }
+    }
 }
 
 class SirTypedFlowType(
     val typedProtocol: SirProtocol,
+    val typedStruct: SirStruct,
     val elementType: SirType,
-    val flowType: SirExistentialType,
-) : SirExistentialType(typedProtocol to listOf(elementType)), SirWrappedType
+    override val untypedType: SirUntypedType,
+) : SirExistentialType(typedProtocol to listOf(elementType)), SirTypedType {
+    val structType: SirNominalType = SirNominalType(typedStruct, listOf(elementType))
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || other !is SirTypedFlowType) return false
+        if (typedProtocol != other.typedProtocol) return false
+        if (typedStruct != other.typedStruct) return false
+        if (elementType != other.elementType) return false
+        if (untypedType != other.untypedType) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = typedProtocol.hashCode()
+        result = 31 * result + typedStruct.hashCode()
+        result = 31 * result + elementType.hashCode()
+        result = 31 * result + untypedType.hashCode()
+        return result
+    }
+}
 
 val SirNominalType.escaping: SirNominalType get() = copyAppendingAttributes(SirAttribute.Escaping)
 
@@ -228,6 +282,8 @@ data object SirUnsupportedType : SirType {
 }
 
 fun SirType.optional(): SirNominalType = SirOptionalType(this)
+
+fun SirType.nonOptional(): SirType = (this as? SirOptionalType)?.wrappedType ?: this
 
 fun SirType.implicitlyUnwrappedOptional(): SirNominalType = SirImplicitlyUnwrappedOptionalType(this)
 
