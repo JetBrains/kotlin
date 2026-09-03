@@ -249,6 +249,7 @@ include(
     ":native:external-projects-test-utils:testInternalLibrary",
     ":native:external-projects-test-utils:testExtensionsLibrary",
     ":native:cinterop.deserialization",
+    ":core:error.handling",
     ":core:names",
     ":core:language.model",
     ":core:language.targets",

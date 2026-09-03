@@ -1,0 +1,6 @@
+com/intellij/openapi/diagnostic/Attachment
+com/intellij/openapi/diagnostic/ExceptionWithAttachments
+com/intellij/openapi/diagnostic/Logger
+com/intellij/openapi/vfs/VirtualFile
+com/intellij/psi/PsiElement
+org/jetbrains/kotlin/utils/SmartPrinter
