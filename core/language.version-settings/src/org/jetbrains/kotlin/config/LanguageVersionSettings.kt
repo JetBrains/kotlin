@@ -676,6 +676,7 @@ enum class LanguageFeature(
     DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives(sinceVersion = null, "KT-70722", enabledInLatestLVTests = false),
     ExportKlibToOlderAbiVersion(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-76131", enabledInLatestLVTests = false),
     JvmLoadAnnotationsOnAnnotationProperties(sinceVersion = null, "KT-22463", enabledInLatestLVTests = false),
+    RichErrors(sinceVersion = null, "KT-68296", enabledInLatestLVTests = true, testOnly = true, forcesPreReleaseBinaries = true),
     ExportKDocDocumentationToKlib(sinceVersion = null, "KT-83921", enabledInLatestLVTests = false),
     FullValueClasses(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-84904", enabledInLatestLVTests = true) {
         context(context: CrossFeatureChecksResultsCollector)
