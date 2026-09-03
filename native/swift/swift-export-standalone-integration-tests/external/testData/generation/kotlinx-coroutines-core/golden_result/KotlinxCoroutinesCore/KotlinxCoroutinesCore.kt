@@ -1142,10 +1142,10 @@ public fun kotlinx_coroutines_flow_MutableSharedFlow_resetReplayCache__reverse(s
 internal external fun kotlinx_coroutines_flow_MutableSharedFlow_subscriptionCount_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
 @BindReverseBridgeToMethod(kotlinx.coroutines.flow.MutableSharedFlow::class, "<get-subscriptionCount>")
-public fun kotlinx_coroutines_flow_MutableSharedFlow_subscriptionCount_get__reverse(self: kotlinx.coroutines.flow.MutableSharedFlow<kotlin.Any?>): kotlinx.coroutines.flow.StateFlow<Int> {
+public fun kotlinx_coroutines_flow_MutableSharedFlow_subscriptionCount_get__reverse(self: kotlinx.coroutines.flow.MutableSharedFlow<kotlin.Any?>): kotlinx.coroutines.flow.StateFlow<kotlin.Int> {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = kotlinx_coroutines_flow_MutableSharedFlow_subscriptionCount_get__reverse_swift(__self)
-    return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlinx.coroutines.flow.StateFlow<Int>
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlinx.coroutines.flow.StateFlow<kotlin.Int>
 }
 
 @ImportedBridge("kotlinx_coroutines_flow_MutableSharedFlow_tryEmit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
@@ -1221,7 +1221,7 @@ public fun kotlinx_coroutines_flow_SharedFlow_replayCache_get__reverse(self: kot
 internal external fun kotlinx_coroutines_flow_SharingStarted_command__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedStateFlow_Swift_Int32_____reverse_swift(self: kotlin.native.internal.NativePtr, subscriptionCount: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
 @BindReverseBridgeToMethod(kotlinx.coroutines.flow.SharingStarted::class, "command")
-public fun kotlinx_coroutines_flow_SharingStarted_command__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedStateFlow_Swift_Int32_____reverse(self: kotlinx.coroutines.flow.SharingStarted, subscriptionCount: kotlinx.coroutines.flow.StateFlow<Int>): kotlinx.coroutines.flow.Flow<kotlinx.coroutines.flow.SharingCommand> {
+public fun kotlinx_coroutines_flow_SharingStarted_command__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedStateFlow_Swift_Int32_____reverse(self: kotlinx.coroutines.flow.SharingStarted, subscriptionCount: kotlinx.coroutines.flow.StateFlow<kotlin.Int>): kotlinx.coroutines.flow.Flow<kotlinx.coroutines.flow.SharingCommand> {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __subscriptionCount = kotlin.native.internal.ref.createRetainedExternalRCRef(subscriptionCount)
     val _result = kotlinx_coroutines_flow_SharingStarted_command__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedStateFlow_Swift_Int32_____reverse_swift(__self, __subscriptionCount)
@@ -4696,7 +4696,7 @@ public fun kotlinx_coroutines_flow_SharingStarted__TypesOfArguments__U28anyU20Ko
     val __function = run {
         val closurePtr = function;
         val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
-        { arg0: kotlinx.coroutines.flow.StateFlow<Int> ->
+        { arg0: kotlinx.coroutines.flow.StateFlow<kotlin.Int> ->
             val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
             val _result = KotlinxCoroutinesCore_internal_functional_type_callee_anyU20KotlinCoroutineSupportU2EKotlinTypedFlowU3CExportedKotlinPackagesU2EkotlinxU2EcoroutinesU2EflowU2ESharingCommandU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinCoroutineSupport_KotlinTypedStateFlow_Swift_Int32___(closureBox.objcPtr(), _arg0)
             kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlinx.coroutines.flow.Flow<kotlinx.coroutines.flow.SharingCommand>
@@ -4738,7 +4738,7 @@ public fun kotlinx_coroutines_flow_SharingStarted_Companion_get(): kotlin.native
 @ExportedBridge("kotlinx_coroutines_flow_SharingStarted_command__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedStateFlow_Swift_Int32___")
 public fun kotlinx_coroutines_flow_SharingStarted_command__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedStateFlow_Swift_Int32___(self: kotlin.native.internal.NativePtr, subscriptionCount: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.coroutines.flow.SharingStarted
-    val __subscriptionCount = kotlin.native.internal.ref.dereferenceExternalRCRef(subscriptionCount) as kotlinx.coroutines.flow.StateFlow<Int>
+    val __subscriptionCount = kotlin.native.internal.ref.dereferenceExternalRCRef(subscriptionCount) as kotlinx.coroutines.flow.StateFlow<kotlin.Int>
     val _result = run { __self.command(__subscriptionCount) }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
