@@ -5,6 +5,7 @@
 // ISSUE: KT-86452
 
 import kotlin.jvm.internal.CallableReference
+import kotlin.test.assertEquals
 
 context(a: String, b: Int)
 fun foo(): String = a + b
@@ -24,34 +25,26 @@ var mutableProp: String
 
 fun plain(): String = "plain"
 
+private fun Any.check(vararg values: Any?) {
+    val args = (this as CallableReference).boundContextArguments ?: throw AssertionError("Fail: boundContextArguments is null")
+    assertEquals(values.toList(), args.toList())
+}
+
 fun box(): String {
     val r: () -> String = context("A", 1) { ::foo }
-    val rRef = r as CallableReference
-    val rArgs = rRef.boundContextArguments
-        ?: return "FAIL: boundContextArguments is null for a contextual function reference"
-    if (rArgs.size != 2 || rArgs[0] != "A" || rArgs[1] != 1) return "FAIL foo args: ${rArgs.toList()}"
-    if (rRef.boundReceiver !== CallableReference.NO_RECEIVER) return "FAIL: unexpected bound receiver: ${rRef.boundReceiver}"
+    r.check("A", 1)
 
     val c = C("X")
     val rb: () -> String = context("A") { c::bar }
-    val rbRef = rb as CallableReference
-    val rbArgs = rbRef.boundContextArguments
-        ?: return "FAIL: boundContextArguments is null for a bound contextual function reference"
-    if (rbArgs.size != 1 || rbArgs[0] != "A") return "FAIL bar args: ${rbArgs.toList()}"
-    if (rbRef.boundReceiver !== c) return "FAIL: bound receiver is not the captured instance: ${rbRef.boundReceiver}"
+    rb.check("A")
 
-    val rp = context("A") { ::prop } as CallableReference
-    val rpArgs = rp.boundContextArguments
-        ?: return "FAIL: boundContextArguments is null for a contextual property reference"
-    if (rpArgs.size != 1 || rpArgs[0] != "A") return "FAIL prop args: ${rpArgs.toList()}"
+    val rp = context("A") { ::prop }
+    rp.check("A")
 
-    val rm = context("A") { ::mutableProp } as CallableReference
-    val rmArgs = rm.boundContextArguments
-        ?: return "FAIL: boundContextArguments is null for a contextual mutable property reference"
-    if (rmArgs.size != 1 || rmArgs[0] != "A") return "FAIL mutableProp args: ${rmArgs.toList()}"
+    val rm = context("A") { ::mutableProp }
+    rm.check("A")
 
-    if ((::plain as CallableReference).boundContextArguments != null)
-        return "FAIL: boundContextArguments is not null for a non-contextual reference"
+    assertEquals(null, (::plain as CallableReference).boundContextArguments)
 
     return "OK"
 }
