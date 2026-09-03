@@ -39,6 +39,16 @@ sealed interface SirType {
                 override val reifiedType = SirExistentialType(listOf(typedProtocol to listOf(elementType)), this)
                 val structType = SirNominalType(typedStruct, listOf(elementType))
             }
+
+            data class List(
+                val typedProtocol: SirProtocol,
+                val typedStruct: SirStruct,
+                val elementType: SirType,
+                override val erasedType: SirType,
+            ) : ReifiedType {
+                override val reifiedType = SirExistentialType(listOf(typedProtocol to listOf(elementType)), this)
+                val structType = SirNominalType(typedStruct, listOf(elementType))
+            }
         }
 
         interface Foreign : Origin
