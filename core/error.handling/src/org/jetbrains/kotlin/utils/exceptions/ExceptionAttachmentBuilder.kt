@@ -6,36 +6,30 @@
 package org.jetbrains.kotlin.utils.exceptions
 
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.kotlin.utils.SmartPrinter
-import org.jetbrains.kotlin.utils.withIndent
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 class ExceptionAttachmentBuilder {
-    private val printer = SmartPrinter(StringBuilder())
+    private val builder = StringBuilder()
 
     fun <T> withEntry(name: String, value: T, render: (T & Any) -> String) {
         withEntry(name) {
-            println("Class: ${value?.let { it::class.java.name } ?: "<null>"}")
-            println("Value:")
-            withIndent {
-                println(value?.let(render) ?: "<null>")
-            }
+            appendLine("Class: ${value?.let { it::class.java.name } ?: "<null>"}")
+            appendLine("Value:")
+            appendIndented(value?.let(render) ?: "<null>")
         }
     }
 
     fun withEntry(name: String, value: String?) {
-        with(printer) {
-            println("- $name:")
-            withIndent {
-                println(value ?: "<null>")
-            }
-            println(separator)
+        with(builder) {
+            append("- ").append(name).appendLine(":")
+            appendIndented(value ?: "<null>")
+            appendLine(separator)
         }
     }
 
-    fun withEntry(name: String, buildValue: SmartPrinter.() -> Unit) {
-        withEntry(name, SmartPrinter(StringBuilder()).apply(buildValue).toString())
+    fun withEntry(name: String, buildValue: StringBuilder.() -> Unit) {
+        withEntry(name, StringBuilder().apply(buildValue).toString())
     }
 
     fun withEntryGroup(groupName: String, build: ExceptionAttachmentBuilder.() -> Unit) {
@@ -43,10 +37,17 @@ class ExceptionAttachmentBuilder {
         withEntry(groupName, builder) { it.buildString() }
     }
 
-    fun buildString(): String = printer.toString()
+    fun buildString(): String = builder.toString()
 
     private companion object {
         private const val separator = "========"
+        private const val indent = "    "
+
+        private fun StringBuilder.appendIndented(value: String) {
+            for (line in value.lines()) {
+                if (line.isBlank()) appendLine() else append(indent).appendLine(line)
+            }
+        }
     }
 }
 
