@@ -203,6 +203,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, DeprecatedNativeHostChecker)
             register(project, MultipleSourceSetRootsInCompilationChecker)
             register(project, SwiftExportModuleNameChecker)
+            register(project, SwiftExportDslDeprecationChecker)
             register(project, CinteropCrossCompilationChecker)
             register(project, NativeBinaryConfigurationChecker)
         }
