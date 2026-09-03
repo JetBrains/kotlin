@@ -975,7 +975,7 @@ private fun ObjCExportMapper.canHaveCommonSubtype(
     second: ClassDescriptor,
     ignoreInterfaceMethodCollisions: Boolean,
 ): Boolean {
-    if (first.isSubclassOf(second) || second.isSubclassOf(first)) {
+    if (first == second || first.isSubclassOf(second) || second.isSubclassOf(first)) {
         return true
     }
 
@@ -991,6 +991,8 @@ private fun ObjCExportMapper.canBeInheritedBySameClass(
     second: CallableMemberDescriptor,
     ignoreInterfaceMethodCollisions: Boolean,
 ): Boolean {
+    if (first == second) return true
+
     if (isTopLevel(first) || isTopLevel(second)) {
         return isTopLevel(first) && isTopLevel(second) &&
             first.propertyIfAccessor.findSourceFile() == second.propertyIfAccessor.findSourceFile()
@@ -999,12 +1001,16 @@ private fun ObjCExportMapper.canBeInheritedBySameClass(
     val firstClass = getClassIfCategory(first) ?: first.containingDeclaration as ClassDescriptor
     val secondClass = getClassIfCategory(second) ?: second.containingDeclaration as ClassDescriptor
 
+    if (firstClass == secondClass) {
+        return true
+    }
+
     if (first is ConstructorDescriptor) {
-        return firstClass == secondClass || second !is ConstructorDescriptor && firstClass.isSubclassOf(secondClass)
+        return second !is ConstructorDescriptor && firstClass.isSubclassOf(secondClass)
     }
 
     if (second is ConstructorDescriptor) {
-        return secondClass == firstClass || first !is ConstructorDescriptor && secondClass.isSubclassOf(firstClass)
+        return first !is ConstructorDescriptor && secondClass.isSubclassOf(firstClass)
     }
 
     return canHaveCommonSubtype(firstClass, secondClass, ignoreInterfaceMethodCollisions)
