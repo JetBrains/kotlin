@@ -6,6 +6,11 @@ public interface Interface {
     int invoke(String s);
 }
 
+// FILE: Annotation.java
+public @interface Annotation {
+
+}
+
 // FILE: J.java
 public class J {
     public class Inner {}
@@ -24,6 +29,12 @@ fun box(): String {
     assertFalse(Interface::class.isCompanion)
     assertFalse(Interface::class.isFun)
     assertFalse(Interface::class.isValue)
+
+    assertFalse(Annotation::class.isData)
+    assertFalse(Annotation::class.isInner)
+    assertFalse(Annotation::class.isCompanion)
+    assertFalse(Annotation::class.isFun)
+    assertFalse(Annotation::class.isValue)
 
     assertFalse(J.Nested::class.isData)
     assertFalse(J.Nested::class.isInner)

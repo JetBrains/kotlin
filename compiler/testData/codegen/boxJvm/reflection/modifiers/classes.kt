@@ -14,6 +14,7 @@ sealed class S {
     }
     object RegularObject
     fun interface FunInterface { fun invoke() }
+    annotation class Annotation
 }
 
 @JvmInline
@@ -78,6 +79,13 @@ fun box(): String {
     assertFalse(JavaInterface::class.isCompanion)
     assertFalse(JavaInterface::class.isFun)
     assertFalse(JavaInterface::class.isValue)
+
+    assertFalse(S.Annotation::class.isSealed)
+    assertFalse(S.Annotation::class.isData)
+    assertFalse(S.Annotation::class.isInner)
+    assertFalse(S.Annotation::class.isCompanion)
+    assertFalse(S.Annotation::class.isFun)
+    assertFalse(S.Annotation::class.isValue)
 
     assertFalse(S.anonymousObject::class.isSealed)
     assertFalse(S.anonymousObject::class.isData)
