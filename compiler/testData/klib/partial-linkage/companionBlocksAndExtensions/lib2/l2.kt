@@ -70,5 +70,13 @@ fun classToAliasFunCall() = B.classToAliasFun()
 
 fun funMovedToParentClass() = Derived.funMovedToParentClass()
 fun propMovedToParentClass() = Derived.propMovedToParentClass
+val funMovedToParentClassRef = Derived::funMovedToParentClass
+val propMovedToParentClassRef = Derived::propMovedToParentClass
+fun funMovedToGrandparentClass() = Derived.funMovedToGrandparentClass()
+fun propMovedToGrandparentClass() = Derived.propMovedToGrandparentClass
+val funMovedToGrandparentClassRef = Derived::funMovedToGrandparentClass
+val propMovedToGrandparentClassRef = Derived::propMovedToGrandparentClass
 fun funMovedToParentInterface() = Derived.funMovedToParentInterface()
 fun propMovedToParentInterface() = Derived.propMovedToParentInterface
+val funMovedToParentInterfaceRef = Derived::funMovedToParentInterface
+val propMovedToParentInterfaceRef = Derived::propMovedToParentInterface
