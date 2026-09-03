@@ -590,6 +590,12 @@ public class OutOfContentRootLazyTypeAnnotationsTestGenerated extends AbstractOu
     public void testTypePropagationFromPropertyWithInaccessibleAnnotationArgument() {
       run("typePropagationFromPropertyWithInaccessibleAnnotationArgument.kt");
     }
+
+    @Test
+    @TestMetadata("unresolvedAnnotations.kt")
+    public void testUnresolvedAnnotations() {
+      run("unresolvedAnnotations.kt");
+    }
   }
 
   @Nested

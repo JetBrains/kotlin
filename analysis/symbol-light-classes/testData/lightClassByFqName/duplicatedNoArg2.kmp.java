@@ -1,9 +1,7 @@
 public final class Foo /* test.pkg.Foo*/ {
-  @<error>()
   @test.pkg.A()
   public  Foo();//  .ctor()
 
-  @<error>()
   @test.pkg.A()
   public  Foo(int);//  .ctor(int)
 

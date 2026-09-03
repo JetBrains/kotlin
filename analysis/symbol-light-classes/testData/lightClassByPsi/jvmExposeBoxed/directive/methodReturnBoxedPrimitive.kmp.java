@@ -6,7 +6,6 @@ public final class Foo /* Foo*/ {
   public  Foo();//  .ctor()
 }
 
-@<error>()
 public final class IntWrapper /* IntWrapper*/ {
   private final int i;
 

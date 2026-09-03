@@ -27,6 +27,11 @@ internal abstract class SymbolLightAbstractAnnotation(parent: PsiElement) :
 
     override fun getOwner() = parent as? PsiAnnotationOwner
 
+    /**
+     * A light class annotation always has a qualified name, as an unresolved annotation cannot be represented in a light class.
+     */
+    abstract override fun getQualifiedName(): String
+
     private val KtExpression.nameReference: KtNameReferenceExpression?
         get() = when (this) {
             is KtConstructorCalleeExpression -> constructorReferenceExpression as? KtNameReferenceExpression

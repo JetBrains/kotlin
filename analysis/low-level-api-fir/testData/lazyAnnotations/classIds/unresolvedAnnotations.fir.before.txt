@@ -1,0 +1,1 @@
+@T[Unresolved]() @Unresolved[Unresolved]() @Int[Unresolved]() public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|

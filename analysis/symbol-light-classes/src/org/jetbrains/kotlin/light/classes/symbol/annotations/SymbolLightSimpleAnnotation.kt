@@ -11,18 +11,18 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.psi.KtCallElement
 
 internal class SymbolLightSimpleAnnotation(
-    private val fqName: String?,
+    private val fqName: String,
     parent: PsiElement,
     private val arguments: List<AnnotationArgument> = listOf(),
     override val kotlinOrigin: KtCallElement? = null,
 ) : SymbolLightAbstractAnnotation(parent) {
     override fun createReferenceInformationProvider(): ReferenceInformationProvider = ReferenceInformationHolder(
-        referenceName = fqName?.substringAfterLast('.'),
+        referenceName = fqName.substringAfterLast('.'),
     )
 
-    override fun getQualifiedName(): String? = fqName
+    override fun getQualifiedName(): String = fqName
 
-    override fun getName(): String? = fqName
+    override fun getName(): String = fqName
 
     override fun equals(other: Any?): Boolean =
         this === other ||

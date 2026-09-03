@@ -3,8 +3,6 @@ public final class InternalNames /* InternalNames*/ {
   public  InternalNames();//  .ctor()
 }
 
-@<error>()
-@<error>()
 @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
 public final class ValueInt /* ValueInt*/ {
   private final int i;

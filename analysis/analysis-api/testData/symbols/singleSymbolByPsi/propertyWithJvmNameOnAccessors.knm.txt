@@ -44,7 +44,7 @@ KaKotlinPropertySymbol:
   getter: KaPropertyGetterSymbol:
     anchorPsi: KtPropertyAccessor
     annotations: [
-      <error>()
+      null()
         psi: KtAnnotationEntry
     ]
     callableId: null
@@ -112,7 +112,7 @@ KaKotlinPropertySymbol:
   setter: KaPropertySetterSymbol:
     anchorPsi: KtPropertyAccessor
     annotations: [
-      <error>()
+      null()
         psi: KtAnnotationEntry
     ]
     callableId: null

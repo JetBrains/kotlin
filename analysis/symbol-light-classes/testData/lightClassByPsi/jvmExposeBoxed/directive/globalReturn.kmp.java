@@ -3,7 +3,6 @@ public final class GlobalReturnKt /* GlobalReturnKt*/ {
   public static final @org.jetbrains.annotations.NotNull() java.lang.String foo();//  foo()
 }
 
-@<error>()
 public final class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String s;

@@ -1,7 +1,7 @@
 KaNamedClassSymbol:
   anchorPsi: PsiClassImpl
   annotations: [
-    <error>()
+    null()
       psi: null
   ]
   classId: JavaClass
