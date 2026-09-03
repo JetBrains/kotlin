@@ -1,10 +1,8 @@
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
-    id("project-tests-convention")
     id("require-explicit-types")
 }
 
@@ -26,6 +24,7 @@ dependencies {
 
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
     testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:raw-fir.common")))
 
     testCompileOnly(kotlinTest("junit"))
@@ -57,7 +56,7 @@ projectTests {
         workingDir = rootDir
     }
 
-    //testGenerator("org.jetbrains.kotlin.fir.lightTree.TestGeneratorForLightTree2FirKt")
+    testGenerator("org.jetbrains.kotlin.fir.builder.TestGeneratorForMultiplatformParsing2FirKt")
 }
 
 testsJar()

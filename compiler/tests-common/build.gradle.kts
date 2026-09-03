@@ -18,6 +18,7 @@ dependencies {
     testFixturesApi(project(":compiler:fir:tree"))
     testFixturesApi(project(":compiler:fir:raw-fir:psi2fir"))
     testFixturesApi(project(":compiler:fir:raw-fir:light-tree2fir"))
+    testFixturesApi(project(":compiler:fir:raw-fir:mp-parsing2fir"))
     testFixturesApi(project(":compiler:fir:fir2ir"))
     testFixturesApi(project(":compiler:fir:fir2ir:jvm-backend"))
     testFixturesApi(project(":compiler:fir:fir-serialization"))
