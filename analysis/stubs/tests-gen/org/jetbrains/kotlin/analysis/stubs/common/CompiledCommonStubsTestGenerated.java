@@ -4968,6 +4968,24 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
     public void testErrorModifierSmoke() {
       run("errorModifierSmoke.kt");
     }
+
+    @Test
+    @TestMetadata("unionTypeParsingErrors.kt")
+    public void testUnionTypeParsingErrors() {
+      run("unionTypeParsingErrors.kt");
+    }
+
+    @Test
+    @TestMetadata("unionTypeSemanticErrors.kt")
+    public void testUnionTypeSemanticErrors() {
+      run("unionTypeSemanticErrors.kt");
+    }
+
+    @Test
+    @TestMetadata("unionTypeSmoke.kt")
+    public void testUnionTypeSmoke() {
+      run("unionTypeSmoke.kt");
+    }
   }
 
   @Nested

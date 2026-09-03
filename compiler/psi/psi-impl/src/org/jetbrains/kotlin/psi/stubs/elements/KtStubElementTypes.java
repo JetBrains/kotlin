@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtNodeType;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.impl.KtUnionTypeImpl;
 
 /**
  * A container for all stub-based elements {@link StubElementTypeHolderEP}.
@@ -69,6 +70,8 @@ public interface KtStubElementTypes {
     @NotNull KtNodeType NULLABLE_TYPE = new KtNodeType("NULLABLE_TYPE", KtNullableType::new);
 
     @NotNull KtNodeType INTERSECTION_TYPE = new KtNodeType("INTERSECTION_TYPE", KtIntersectionType::new);
+
+    @NotNull KtNodeType UNION_TYPE = new KtNodeType("UNION_TYPE", KtUnionTypeImpl::new);
 
     @NotNull KtNodeType TYPE_REFERENCE = new KtNodeType("TYPE_REFERENCE", KtTypeReference::new);
 

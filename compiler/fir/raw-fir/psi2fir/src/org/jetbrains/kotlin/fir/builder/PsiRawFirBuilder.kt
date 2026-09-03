@@ -2839,6 +2839,7 @@ open class PsiRawFirBuilder(
             return typeReference.toFirType()
         }
 
+        @OptIn(KtExperimentalApi::class)
         private fun KtTypeReference.toFirType(): FirTypeRef {
             val typeElement = typeElement
             val source = toFirSourceElement()
@@ -2930,6 +2931,10 @@ open class PsiRawFirBuilder(
                     isMarkedNullable = isNullable
                     leftType = unwrappedElement.getLeftTypeRef().toFirOrErrorType()
                     rightType = unwrappedElement.getRightTypeRef().toFirOrErrorType()
+                }
+                is KtUnionType -> FirErrorTypeRefBuilder().apply {
+                    this.source = source
+                    diagnostic = ConeSyntaxDiagnostic("Union types are not supported")
                 }
                 null -> FirErrorTypeRefBuilder().apply {
                     this.source = source

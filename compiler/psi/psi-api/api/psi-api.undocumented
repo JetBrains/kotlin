@@ -79,6 +79,7 @@ org.jetbrains.kotlin.KotlinElementTypeProvider.typeParameterListType
 org.jetbrains.kotlin.KotlinElementTypeProvider.typeParameterType
 org.jetbrains.kotlin.KotlinElementTypeProvider.typeProjectionType
 org.jetbrains.kotlin.KotlinElementTypeProvider.typeReferenceType
+org.jetbrains.kotlin.KotlinElementTypeProvider.unionTypeType
 org.jetbrains.kotlin.KotlinElementTypeProvider.userTypeType
 org.jetbrains.kotlin.KotlinElementTypeProvider.valueArgumentListType
 org.jetbrains.kotlin.KotlinElementTypeProvider.valueArgumentNameType
@@ -200,6 +201,7 @@ org.jetbrains.kotlin.KtNodeTypes:TYPE_PARAMETER
 org.jetbrains.kotlin.KtNodeTypes:TYPE_PARAMETER_LIST
 org.jetbrains.kotlin.KtNodeTypes:TYPE_PROJECTION
 org.jetbrains.kotlin.KtNodeTypes:TYPE_REFERENCE
+org.jetbrains.kotlin.KtNodeTypes:UNION_TYPE
 org.jetbrains.kotlin.KtNodeTypes:USER_TYPE
 org.jetbrains.kotlin.KtNodeTypes:VALUE_ARGUMENT
 org.jetbrains.kotlin.KtNodeTypes:VALUE_ARGUMENT_LIST
@@ -596,6 +598,7 @@ org.jetbrains.kotlin.psi.KtVisitor:visitTypeParameterList(KtTypeParameterList, D
 org.jetbrains.kotlin.psi.KtVisitor:visitTypeProjection(KtTypeProjection, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitTypeReference(KtTypeReference, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitUnaryExpression(KtUnaryExpression, D)
+org.jetbrains.kotlin.psi.KtVisitor:visitUnionType(KtUnionType, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitUserType(KtUserType, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitValueArgumentList(KtValueArgumentList, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitWhenConditionInRange(KtWhenConditionInRange, D)
@@ -705,6 +708,7 @@ org.jetbrains.kotlin.psi.KtVisitorVoid:visitTypeParameterList(KtTypeParameterLis
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitTypeProjection(KtTypeProjection)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitTypeReference(KtTypeReference)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitUnaryExpression(KtUnaryExpression)
+org.jetbrains.kotlin.psi.KtVisitorVoid:visitUnionType(KtUnionType)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitUserType(KtUserType)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitValueArgumentList(KtValueArgumentList)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitWhenConditionInRange(KtWhenConditionInRange)
