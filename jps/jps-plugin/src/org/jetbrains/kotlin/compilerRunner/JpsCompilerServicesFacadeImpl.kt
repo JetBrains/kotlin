@@ -35,7 +35,6 @@ internal class JpsCompilerServicesFacadeImpl(
     env.services[ExpectActualTracker::class.java],
     env.services[InlineConstTracker::class.java],
     env.services[EnumWhenTracker::class.java],
-    env.services[ImportTracker::class.java],
     port = port
 ), JpsCompilerServicesFacade {
 

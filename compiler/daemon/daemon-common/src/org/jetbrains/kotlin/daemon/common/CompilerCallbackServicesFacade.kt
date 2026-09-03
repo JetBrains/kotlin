@@ -43,15 +43,6 @@ interface CompilerCallbackServicesFacade : Remote {
     @Throws(RemoteException::class)
     fun hasEnumWhenTracker(): Boolean
 
-    @Throws(RemoteException::class)
-    fun hasImportTracker(): Boolean
-
-    @Throws(RemoteException::class)
-    fun hasIncrementalResultsConsumer(): Boolean
-
-    @Throws(RemoteException::class)
-    fun hasIncrementalDataProvider(): Boolean
-
     // ----------------------------------------------------
     // IncrementalCache
     @Throws(RemoteException::class)
@@ -68,9 +59,6 @@ interface CompilerCallbackServicesFacade : Remote {
 
     @Throws(RemoteException::class)
     fun incrementalCache_getMetadata(target: TargetId, fragmentName: String): Map<File, ByteArray>
-
-    @Throws(RemoteException::class)
-    fun incrementalCache_registerInline(target: TargetId, fromPath: String, jvmSignature: String, toPath: String)
 
     @Throws(RemoteException::class)
     fun incrementalCache_getClassFilePath(target: TargetId, internalClassName: String): String
@@ -114,48 +102,6 @@ interface CompilerCallbackServicesFacade : Remote {
     // EnumWhenTracker
     @Throws(RemoteException::class)
     fun enumWhenTracker_report(whenUsageClassPath: String, enumClassFqName: String)
-
-    // ---------------------------------------------------
-    // ImportTracker
-    @Throws(RemoteException::class)
-    fun importTracker_report(filePath: String, importedFqName: String)
-
-    // ---------------------------------------------------
-    // IncrementalResultsConsumer (js)
-    @Throws(RemoteException::class)
-    fun incrementalResultsConsumer_processHeader(headerMetadata: ByteArray)
-
-    @Throws(RemoteException::class)
-    fun incrementalResultsConsumer_processPackagePart(sourceFilePath: String, packagePartMetadata: ByteArray, binaryAst: ByteArray, inlineData: ByteArray)
-
-    @Throws(RemoteException::class)
-    fun incrementalResultsConsumer_processPackageMetadata(packageName: String, metadata: ByteArray)
-
-    // ---------------------------------------------------
-    // IncrementalDataProvider (js)
-    @Throws(RemoteException::class)
-    fun incrementalDataProvider_getHeaderMetadata(): ByteArray
-
-    @Throws(RemoteException::class)
-    fun incrementalDataProvider_getCompiledPackageParts(): Collection<CompiledPackagePart>
-
-    @Throws(RemoteException::class)
-    fun incrementalDataProvider_getPackageMetadata(): Collection<PackageMetadata>
-}
-
-class CompiledPackagePart(
-    val filePath: String,
-    val metadata: ByteArray, val binaryAst: ByteArray, val inlineData: ByteArray
-) : Serializable
-
-class PackageMetadata(
-    val packageName: String,
-    val metadata: ByteArray
-) : Serializable {
-    companion object {
-        // just a random number, but should never be changed to avoid deserialization problems
-        private val serialVersionUID: Long = 54021986502349756L
-    }
 }
 
 
