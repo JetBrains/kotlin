@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.SmartSet
 
 /**
  * Performs local, PSI-only name lookups.
@@ -117,7 +118,7 @@ private class LocalReferenceTargetLookupVisitor(val element: KtSimpleNameExpress
     private var previousElement: KtElement? = null
     private val name: Name = element.getReferencedNameAsName()
 
-    private val resolveIgnore: MutableSet<KtElement> = mutableSetOf()
+    private val resolveIgnore: MutableSet<KtElement> = SmartSet.create()
 
     private fun ignore(element: KtElement) {
         resolveIgnore.add(element)
@@ -218,6 +219,12 @@ private class LocalReferenceTargetLookupVisitor(val element: KtSimpleNameExpress
      * @see next
      */
     private fun processIgnores(current: KtElement) {
+        // INV: we don't need to keep track of the previous ignored declarations.
+        //
+        // We apply a convention that if we ignore a parent KtNamedFunction, then we implicitly ignore all its parameters etc.
+        // So we keep at most 1 ignored element / source element at every step.
+        resolveIgnore.clear()
+
         when (current) {
             is KtProperty -> {
                 if (lastDirectionIs(LastDirection.PARENT) && previousElement == current.delegateExpressionOrInitializer) {
@@ -237,7 +244,6 @@ private class LocalReferenceTargetLookupVisitor(val element: KtSimpleNameExpress
                     //                   ^ for the same reason as with KtProperties, x in the initializer cannot refer to the entry
                     // }
                     ignore(current)
-                    current.entries.forEach(::ignore)
                 }
             }
 
@@ -251,9 +257,7 @@ private class LocalReferenceTargetLookupVisitor(val element: KtSimpleNameExpress
                     //      val y = x
                     //              ^ this x cannot be resolved to the x parameter of g
                     // }
-                    current.valueParameters.forEach(::ignoreParameter)
-                    current.typeParameters.forEach(::ignore)
-                    current.contextParameters.forEach(::ignoreParameter)
+                    ignore(current)
                 }
             }
 
@@ -267,7 +271,7 @@ private class LocalReferenceTargetLookupVisitor(val element: KtSimpleNameExpress
                     //     return x
                     //            ^ this x cannot be resolved to the x parameter of the lambda
                     // }
-                    current.valueParameters.forEach(::ignoreParameter)
+                    ignore(current)
                 }
             }
 
@@ -279,15 +283,10 @@ private class LocalReferenceTargetLookupVisitor(val element: KtSimpleNameExpress
                     //                     the loop parameter.
                     // }
                     val loopParameter = current.loopParameter ?: return
-                    ignoreParameter(loopParameter)
+                    ignore(loopParameter)
                 }
             }
         }
-    }
-
-    private fun ignoreParameter(param: KtParameter) {
-        ignore(param)
-        param.destructuringDeclaration?.entries?.forEach(::ignore)
     }
 
     override fun visitForExpression(element: KtForExpression) {
@@ -315,6 +314,8 @@ private class LocalReferenceTargetLookupVisitor(val element: KtSimpleNameExpress
     }
 
     override fun visitNamedFunction(element: KtNamedFunction) {
+        if (isIgnored(element)) return
+
         element.valueParameters.processMany(::processParameter)
         element.contextParameters.processMany(::processParameter)
         element.typeParameters.processMany(::processTypeParameter)
@@ -329,6 +330,8 @@ private class LocalReferenceTargetLookupVisitor(val element: KtSimpleNameExpress
     }
 
     override fun visitLambdaExpression(element: KtLambdaExpression) {
+        if (isIgnored(element)) return
+
         element.valueParameters.processMany(::processParameter)
     }
 
