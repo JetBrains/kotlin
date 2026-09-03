@@ -315,6 +315,7 @@ public:
         return known_functions_.find(fun) != known_functions_.end();
     }
 
+    // Shared with CallsCheckerPass in libllvmext.
     bool isSafeByName(std::string_view name) const noexcept {
         auto it = std::lower_bound(std::begin(good_names_copy_), std::end(good_names_copy_), name);
         auto check = [&](std::string_view banned) {
