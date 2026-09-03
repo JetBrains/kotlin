@@ -176,8 +176,6 @@ object KtTokens : SyntaxElementTypesWithIds() {
     const val INTERPOLATION_PREFIX_ID: Int = ACTUAL_MODIFIER_ID + 1
     const val ALL_KEYWORD_ID: Int = INTERPOLATION_PREFIX_ID + 1
 
-    val modifiersIdExceptInModifier = ABSTRACT_MODIFIER_ID..ACTUAL_MODIFIER_ID
-
     const val DOC_COMMENT_ID: Int = ALL_KEYWORD_ID + 1
     const val WHITE_SPACE_ID: Int = DOC_COMMENT_ID + 1
     // Remember to update the first ID constant in `KtNodeTypes` after adding a new token

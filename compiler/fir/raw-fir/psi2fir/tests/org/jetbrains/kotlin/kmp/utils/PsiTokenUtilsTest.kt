@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.junit.jupiter.api.Test
 import kotlin.reflect.KProperty
+import kotlin.test.assertEquals
 
 class PsiTokenUtilsTest {
     @Suppress("UnstableApiUsage")
@@ -31,9 +32,10 @@ class PsiTokenUtilsTest {
             val kmpNodeType = kmpField.getter.call(org.jetbrains.kotlin.kmp.parser.KtNodeTypes) as SyntaxElementType
             val kmpId = org.jetbrains.kotlin.kmp.parser.KtNodeTypes.getElementTypeId(kmpNodeType)
 
-            assert(kmpId == psiId) {
+            assertEquals(
+                psiId, kmpId,
                 "KMP_ID = $kmpId KMP_NODE_TYPE = $kmpNodeType PSI_ID = $psiId PSI_NODE_TYPE = $psiNodeType"
-            }
+            )
         }
     }
 
@@ -53,9 +55,10 @@ class PsiTokenUtilsTest {
             val kmpNodeType = kmpField.getter.call(org.jetbrains.kotlin.kmp.lexer.KtTokens) as SyntaxElementType
             val kmpId = org.jetbrains.kotlin.kmp.lexer.KtTokens.getElementTypeId(kmpNodeType)
 
-            assert(kmpId == psiId) {
+            assertEquals(
+                psiId, kmpId,
                 "KMP_ID = $kmpId KMP_NODE_TYPE = $kmpNodeType PSI_ID = $psiId PSI_NODE_TYPE = $psiNodeType"
-            }
+            )
         }
     }
 }

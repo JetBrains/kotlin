@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.lexer.KtToken
 /**
  * @receiver Some of Kotlin-based element types
  * @return Same integer ID as the corresponding [com.intellij.platform.syntax.SyntaxElementType] has.
- * If the element type is not Kotlin-based, the result is undefined.
+ * If the element type is not Kotlin-based, the result is 0.
  */
 fun IElementType.kmpId(): Int =
     if (this is KtToken) tokenId else IdStorage.map[this] ?: 0
