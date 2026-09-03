@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.supportedAppleTargets
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.addExtension
 import org.jetbrains.kotlin.gradle.plugin.findExtension
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedSwiftExportTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.initSwiftExportClasspathConfigurations
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.EXPORT_EXTENSION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.ExportExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationCompat
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.tasks.locateOrRegisterSwiftExportMetadataTaskAndConsumableConfiguration
 
 internal object SwiftExportDSLConstants {
@@ -95,16 +93,6 @@ private fun Project.registerSwiftExportPipeline(
     multiplatformExtension
         .supportedAppleTargets()
         .configureEach { target ->
-            val swiftExportConfiguration = if (exportExtension.isSwiftExportConfigured) {
-                SwiftExportConfigurationCompat.from(
-                    configuration = exportExtension.swiftExportConfiguration,
-                    kotlinNativeCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME),
-                    providers = providers,
-                    objects = objects,
-                )
-            } else {
-                SwiftExportConfigurationCompat.from(swiftExportExtension, providers)
-            }
-            registerEmbedSwiftExportTask(target, environment, swiftExportConfiguration)
+            registerEmbedSwiftExportTask(target, environment, swiftExportExtension, exportExtension)
         }
 }
