@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.fir.deserialization
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.FirCachesFactory.ValueReferenceStrength
 import org.jetbrains.kotlin.fir.caches.createCache
+import org.jetbrains.kotlin.fir.caches.createCacheWithSuggestedLimits
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -171,7 +173,10 @@ abstract class AbstractFirDeserializedSymbolProvider(
             getPackageParts(fqName).flatMapTo(mutableSetOf()) { it.typeAliasNameIndex.keys }
         }
 
-    private val packagePartsCache = session.firCachesFactory.createCache(::tryComputePackagePartInfos)
+    private val packagePartsCache = session.firCachesFactory.createCacheWithSuggestedLimits(
+        valueHardness = ValueReferenceStrength.SOFT,
+        createValue = ::tryComputePackagePartInfos
+    )
 
     private val typeAliasCache: FirCache<ClassId, FirTypeAliasSymbol?, FirNestedTypeAliasDeserializationContext?> =
         session.firCachesFactory.createCacheWithPostCompute(
