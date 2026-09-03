@@ -91,6 +91,14 @@ data class KotlinAbiVersion(val major: Int, val minor: Int, val patch: Int) {
         val CURRENT = KotlinAbiVersion(2, 5, 0)
 
         /**
+         * The oldest ABI version supported by  the compiler.
+         *
+         * Note: At the moment this is 1.6.0 (corresponds to the compiler versions 1.6.x). But we are going to raise this limit
+         * at least up to 1.8.0 (compiler 1.9.20) in the future releases.
+         */
+        val FIRST_SUPPORTED = KotlinAbiVersion(1, 6, 0)
+
+        /**
          * Versions before 1.4.1 were the active development phase.
          * Starting with 1.4.1 we are trying to maintain experimental backward compatibility.
          */

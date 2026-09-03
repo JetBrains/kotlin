@@ -65,6 +65,7 @@ fun loadNativeKlibs(
         libraryProviders(distributionLibrariesProvider)
         libraryPaths(configuration.konanLibraries)
         platformChecker(platformChecker)
+        minPermittedAbiVersion(KotlinAbiVersion.FIRST_SUPPORTED)
         maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
         configuration.zipFileSystemAccessor?.let { zipFileSystemAccessor(it) }
         manifestTransformer(KlibNativeManifestTransformer(nativeTarget))
