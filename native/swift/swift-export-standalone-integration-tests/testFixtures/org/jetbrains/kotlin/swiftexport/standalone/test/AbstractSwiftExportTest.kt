@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.swiftexport.standalone.test
 
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.SwiftCompilation
@@ -48,7 +49,10 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
     * execution and generation context, simulating a case when a user has a dependency in their Gradle project.
     * */
     var givenModules: Set<TestModule.Given> = emptySet()
-    var minOSVersion: String? = null
+    val minOSVersion: MutableMap<Family, String> = mutableMapOf(
+        Family.OSX to "13.0",
+        Family.IOS to "16.0",
+    )
 
     /**
      * Single target gate for all Swift Export suites: skips (does not fail) the test when its `testTarget`
@@ -184,6 +188,9 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
         exportMode: SwiftModuleExportMode,
     ): InputModule {
         val config = (testModule as? TestModule.Exclusive)?.swiftExportConfigMap()
+        val experimentalFeatures = config?.filterKeys {
+            it == SwiftModuleConfig.COLLECTIONS_V2
+        } ?: emptyMap()
         // Whether a module is a cinterop re-export container is detected by Swift Export from the klib
         // manifest (interop=true), so nothing has to be flagged here.
         return testModule.constructSwiftInput(
@@ -191,6 +198,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
             SwiftModuleConfig(
                 rootPackage = config?.get(SwiftModuleConfig.ROOT_PACKAGE),
                 unsupportedDeclarationReporterKind = getUnsupportedDeclarationsReporterKind(config),
+                experimentalFeatures = experimentalFeatures,
                 exportMode = exportMode,
             )
         )
@@ -312,7 +320,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
                 "-package-name", "SwiftExportTests",
             ) + extraSwiftCompilerOptions,
             outputFile = { it.binaryLibrary },
-            minOSVersion = minOSVersion,
+            minOSVersion = minOSVersion[targets.testTarget.family],
         ).result.assertSuccess().resultingArtifact
     }
 

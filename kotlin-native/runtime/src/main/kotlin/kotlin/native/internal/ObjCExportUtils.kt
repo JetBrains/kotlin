@@ -326,3 +326,5 @@ internal fun Kotlin_equals(lhs: Any, rhs: Any): Boolean = lhs == rhs
 @PublishedApi
 @ExportForCppRuntime("Kotlin_toString")
 internal fun Kotlin_toString(obj: Any): String = obj.toString()
+
+@ExportForCppRuntime private fun Kotlin_IsList(obj: Any): Boolean = obj is List<*>
