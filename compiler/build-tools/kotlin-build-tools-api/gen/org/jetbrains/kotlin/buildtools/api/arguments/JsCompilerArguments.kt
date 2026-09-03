@@ -59,6 +59,16 @@ public interface JsCompilerArguments : CommonJsAndWasmArguments {
 
   public companion object {
     /**
+     * Export KDoc entries as JSDoc into the TypeScript declaration files.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_EXPORT_KDOC: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_EXPORT_KDOC", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Enable exporting suspend lambdas to JavaScript/TypeScript.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

@@ -14015,6 +14015,51 @@
                                                         "deprecatedMessage": null
                                                     },
                                                     {
+                                                        "name": "Xexport-kdoc",
+                                                        "shortName": null,
+                                                        "deprecatedName": null,
+                                                        "description": {
+                                                            "current": "Export KDoc entries as JSDoc into the TypeScript declaration files.",
+                                                            "valueInVersions": []
+                                                        },
+                                                        "delimiter": null,
+                                                        "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": null,
+                                                        "valueType": {
+                                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                            "isNullable": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            },
+                                                            "defaultValue": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            }
+                                                        },
+                                                        "valueDescription": {
+                                                            "current": null,
+                                                            "valueInVersions": []
+                                                        },
+                                                        "releaseVersionsMetadata": {
+                                                            "introducedVersion": "2.5.0",
+                                                            "stabilizedVersion": null,
+                                                            "deprecatedVersion": null,
+                                                            "removedVersion": null
+                                                        },
+                                                        "argumentType": {
+                                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                            "isNullable": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            },
+                                                            "defaultValue": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            }
+                                                        },
+                                                        "deprecatedMessage": null
+                                                    },
+                                                    {
                                                         "name": "Xgenerate-polyfills",
                                                         "shortName": null,
                                                         "deprecatedName": null,

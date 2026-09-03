@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Comp
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ES_CLASSES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ES_GENERATORS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_ES_LONG_AS_BIGINT
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_EXPORT_KDOC
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_GENERATE_POLYFILLS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_INTEGER_DIVISION_CHECK
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_BUILD_CACHE
@@ -157,6 +158,7 @@ internal class JsArgumentsImpl(
     if (X_ES_CLASSES in this) { arguments.useEsClasses = get(X_ES_CLASSES)}
     if (X_ES_GENERATORS in this) { arguments.useEsGenerators = get(X_ES_GENERATORS)}
     if (X_ES_LONG_AS_BIGINT in this) { arguments.compileLongAsBigInt = get(X_ES_LONG_AS_BIGINT)}
+    if (X_EXPORT_KDOC in this) { arguments.exportKDoc = get(X_EXPORT_KDOC)}
     if (X_GENERATE_POLYFILLS in this) { arguments.generatePolyfills = get(X_GENERATE_POLYFILLS)}
     if (X_INTEGER_DIVISION_CHECK in this) { arguments.integerDivisionCheck = get(X_INTEGER_DIVISION_CHECK)}
     if (X_IR_BUILD_CACHE in this) { arguments.irBuildCache = get(X_IR_BUILD_CACHE)}
@@ -189,6 +191,7 @@ internal class JsArgumentsImpl(
     try { this[X_ES_CLASSES] = arguments.useEsClasses } catch (_: NoSuchMethodError) {  }
     try { this[X_ES_GENERATORS] = arguments.useEsGenerators } catch (_: NoSuchMethodError) {  }
     try { this[X_ES_LONG_AS_BIGINT] = arguments.compileLongAsBigInt } catch (_: NoSuchMethodError) {  }
+    try { this[X_EXPORT_KDOC] = arguments.exportKDoc } catch (_: NoSuchMethodError) {  }
     try { this[X_GENERATE_POLYFILLS] = arguments.generatePolyfills } catch (_: NoSuchMethodError) {  }
     try { this[X_INTEGER_DIVISION_CHECK] = arguments.integerDivisionCheck } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_BUILD_CACHE] = arguments.irBuildCache } catch (_: NoSuchMethodError) {  }
@@ -219,6 +222,7 @@ internal class JsArgumentsImpl(
     if (X_ES_CLASSES in this) { arguments.useEsClasses = get(X_ES_CLASSES)}
     if (X_ES_GENERATORS in this) { arguments.useEsGenerators = get(X_ES_GENERATORS)}
     if (X_ES_LONG_AS_BIGINT in this) { arguments.compileLongAsBigInt = get(X_ES_LONG_AS_BIGINT)}
+    if (X_EXPORT_KDOC in this) { arguments.exportKDoc = get(X_EXPORT_KDOC)}
     if (X_GENERATE_POLYFILLS in this) { arguments.generatePolyfills = get(X_GENERATE_POLYFILLS)}
     if (X_INTEGER_DIVISION_CHECK in this) { arguments.integerDivisionCheck = get(X_INTEGER_DIVISION_CHECK)}
     if (X_IR_BUILD_CACHE in this) { arguments.irBuildCache = get(X_IR_BUILD_CACHE)}
@@ -289,6 +293,8 @@ internal class JsArgumentsImpl(
     public val X_ES_GENERATORS: JsArgument<Boolean?> = JsArgument("X_ES_GENERATORS")
 
     public val X_ES_LONG_AS_BIGINT: JsArgument<Boolean?> = JsArgument("X_ES_LONG_AS_BIGINT")
+
+    public val X_EXPORT_KDOC: JsArgument<Boolean> = JsArgument("X_EXPORT_KDOC")
 
     public val X_GENERATE_POLYFILLS: JsArgument<Boolean> = JsArgument("X_GENERATE_POLYFILLS")
 
