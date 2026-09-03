@@ -1,206 +1,167 @@
-// Copyright (c) 2011, the Dart project authors.  Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
-package org.jetbrains.kotlin.js.backend;
+package org.jetbrains.kotlin.js.backend
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.js.backend.ast.*;
+import org.jetbrains.kotlin.js.backend.ast.*
 
 /**
- * Precedence indices from "JavaScript - The Definitive Guide" 4th Edition (page
- * 57)
- * <p/>
+ * Precedence indices from "JavaScript - The Definitive Guide" 4th Edition (page 57)
+ *
  * Precedence 17 is for indivisible primaries that either don't have children,
  * or provide their own delimiters.
- * <p/>
+ *
  * Precedence 16 is for really important things that have their own AST classes.
- * <p/>
+ *
  * Precedence 15 is for the new construct.
- * <p/>
+ *
  * Precedence 14 is for unary operators.
- * <p/>
+ *
  * Precedences 12 through 4 are for non-assigning binary operators.
- * <p/>
+ *
  * Precedence 3 is for the tertiary conditional.
- * <p/>
+ *
  * Precedence 2 is for assignments.
- * <p/>
+ *
  * Precedence 1 is for comma operations.
  */
-class JsPrecedenceVisitor extends JsVisitor {
-    static final int PRECEDENCE_NEW = 15;
+internal class JsPrecedenceVisitor private constructor() : JsVisitor() {
+    private var answer = -1
 
-    private int answer = -1;
-
-    private JsPrecedenceVisitor() {
+    override fun visitArrayAccess(x: JsArrayAccess) {
+        answer = 16
     }
 
-    public static int exec(JsExpression expression) {
-        JsPrecedenceVisitor visitor = new JsPrecedenceVisitor();
-        visitor.accept(expression);
-        if (visitor.answer < 0) {
-            throw new RuntimeException("Precedence must be >= 0!");
+    override fun visitArray(x: JsArrayLiteral) {
+        answer = 17 // primary
+    }
+
+    override fun visitBinaryExpression(x: JsBinaryOperation) {
+        answer = x.operator.precedence
+    }
+
+    override fun visitSimpleAssignment(x: JsAssignmentOperation.Simple) {
+        answer = JsAssignmentOperation.PRECEDENCE
+    }
+
+    override fun visitDestructuringAssignment(x: JsAssignmentOperation.Destructuring) {
+        answer = JsAssignmentOperation.PRECEDENCE
+    }
+
+    override fun visitBoolean(x: JsBooleanLiteral) {
+        answer = 17 // primary
+    }
+
+    override fun visitConditional(x: JsConditional) {
+        answer = 3
+    }
+
+    override fun visitFunction(x: JsFunction) {
+        answer =
+            if (x.isEs6Arrow) 2
+            else 17 // primary
+    }
+
+    override fun visitInvocation(invocation: JsInvocation) {
+        answer = 16
+    }
+
+    override fun visitYield(x: JsYield) {
+        answer = 2 // https://esdiscuss.org/topic/precedence-of-yield-operator
+    }
+
+    override fun visitYieldStar(x: JsYieldStar) {
+        answer = 2 // https://esdiscuss.org/topic/precedence-of-yield-operator
+    }
+
+    override fun visitNameRef(nameRef: JsNameRef) {
+        answer =
+            if (nameRef.isLeaf) 17 // primary
+            else 16 // property access
+    }
+
+    override fun visitNew(x: JsNew) {
+        answer = PRECEDENCE_NEW
+    }
+
+    override fun visitNull(x: JsNullLiteral) {
+        answer = 17 // primary
+    }
+
+    override fun visitInt(x: JsIntLiteral) {
+        answer = 17 // primary
+    }
+
+    override fun visitDouble(x: JsDoubleLiteral) {
+        answer = 17 // primary
+    }
+
+    override fun visitBigInt(x: JsBigIntLiteral) {
+        answer = 17 // primary
+    }
+
+    override fun visitObjectLiteral(x: JsObjectLiteral) {
+        answer = 17 // primary
+    }
+
+    override fun visitClass(x: JsClass) {
+        answer = 17 // primary
+    }
+
+    override fun visitPostfixOperation(x: JsPostfixOperation) {
+        answer = x.operator.precedence
+    }
+
+    override fun visitPrefixOperation(x: JsPrefixOperation) {
+        answer = x.operator.precedence
+    }
+
+    override fun visitPropertyInitializer(x: JsPropertyInitializer) {
+        answer = 17 // primary
+    }
+
+    override fun visitRegExp(x: JsRegExp) {
+        answer = 17 // primary
+    }
+
+    override fun visitString(x: JsStringLiteral) {
+        answer = 17 // primary
+    }
+
+    override fun visitTemplateString(x: JsTemplateStringLiteral) {
+        answer =
+            if (x.tag != null) 2
+            else 17 // primary
+    }
+
+    override fun visitThis(x: JsThisRef) {
+        answer = 17 // primary
+    }
+
+    override fun visitSuper(x: JsSuperRef) {
+        answer = 17 // primary
+    }
+
+    override fun visitSpread(spread: JsSpread) {
+        answer = 17 // primary
+    }
+
+    override fun visitElement(node: JsNode) {
+        error("Only expressions have precedence.")
+    }
+
+    companion object {
+        const val PRECEDENCE_NEW = 15
+
+        fun exec(expression: JsExpression): Int {
+            val visitor = JsPrecedenceVisitor()
+            visitor.accept(expression)
+            if (visitor.answer < 0) {
+                error("Precedence must be >= 0!")
+            }
+            return visitor.answer
         }
-        return visitor.answer;
-    }
-
-    @Override
-    public void visitArrayAccess(@NotNull JsArrayAccess x) {
-        answer = 16;
-    }
-
-    @Override
-    public void visitArray(@NotNull JsArrayLiteral x) {
-        answer = 17; // primary
-    }
-
-    @Override
-    public void visitBinaryExpression(@NotNull JsBinaryOperation x) {
-        answer = x.getOperator().getPrecedence();
-    }
-
-    @Override
-    public void visitSimpleAssignment(@NotNull JsAssignmentOperation.Simple x) {
-        answer = JsAssignmentOperation.PRECEDENCE;
-    }
-
-    @Override
-    public void visitDestructuringAssignment(@NotNull JsAssignmentOperation.Destructuring x) {
-        answer = JsAssignmentOperation.PRECEDENCE;
-    }
-
-    @Override
-    public void visitBoolean(@NotNull JsBooleanLiteral x) {
-        answer = 17; // primary
-    }
-
-    @Override
-    public void visitConditional(@NotNull JsConditional x) {
-        answer = 3;
-    }
-
-    @Override
-    public void visitFunction(@NotNull JsFunction x) {
-        if (x.isEs6Arrow()) {
-            answer = 2;
-        } else {
-            answer = 17; // primary
-        }
-    }
-
-    @Override
-    public void visitInvocation(@NotNull JsInvocation invocation) {
-        answer = 16;
-    }
-
-    @Override
-    public void visitYield(@NotNull JsYield yield) {
-        answer = 2; // https://esdiscuss.org/topic/precedence-of-yield-operator
-    }
-
-    @Override
-    public void visitYieldStar(@NotNull JsYieldStar yield) {
-        answer = 2; // https://esdiscuss.org/topic/precedence-of-yield-operator
-    }
-
-    @Override
-    public void visitNameRef(@NotNull JsNameRef nameRef) {
-        if (nameRef.isLeaf()) {
-            answer = 17; // primary
-        }
-        else {
-            answer = 16; // property access
-        }
-    }
-
-    @Override
-    public void visitNew(@NotNull JsNew x) {
-        answer = PRECEDENCE_NEW;
-    }
-
-    @Override
-    public void visitNull(@NotNull JsNullLiteral x) {
-        answer = 17; // primary
-    }
-
-    @Override
-    public void visitInt(@NotNull JsIntLiteral x) {
-        answer = 17; // primary
-    }
-
-    @Override
-    public void visitDouble(@NotNull JsDoubleLiteral x) {
-        answer = 17; // primary
-    }
-
-    @Override
-    public void visitBigInt(@NotNull JsBigIntLiteral x) {
-        answer = 17; // primary
-    }
-
-    @Override
-    public void visitObjectLiteral(@NotNull JsObjectLiteral x) {
-        answer = 17; // primary
-    }
-
-    @Override
-    public void visitClass(@NotNull JsClass x) {
-        answer = 17; // primary
-    }
-
-    @Override
-    public void visitPostfixOperation(@NotNull JsPostfixOperation x) {
-        answer = x.getOperator().getPrecedence();
-    }
-
-    @Override
-    public void visitPrefixOperation(@NotNull JsPrefixOperation x) {
-        answer = x.getOperator().getPrecedence();
-    }
-
-    @Override
-    public void visitPropertyInitializer(@NotNull JsPropertyInitializer x) {
-        answer = 17; // primary
-    }
-
-    @Override
-    public void visitRegExp(@NotNull JsRegExp x) {
-        answer = 17; // primary
-    }
-
-    @Override
-    public void visitString(@NotNull JsStringLiteral x) {
-        answer = 17; // primary
-    }
-
-    @Override
-    public void visitTemplateString(@NotNull JsTemplateStringLiteral x) {
-        if (x.getTag() != null) {
-            answer = 2;
-        }
-        else {
-            answer = 17; // primary
-        }
-    }
-
-    @Override
-    public void visitThis(@NotNull JsThisRef x) {
-        answer = 17; // primary
-    }
-
-    @Override
-    public void visitSuper(@NotNull JsSuperRef x) {
-        answer = 17; // primary
-    }
-
-    @Override
-    public void visitSpread(@NotNull JsSpread x) {
-        answer = 17; // primary
-    }
-
-    @Override
-    protected void visitElement(@NotNull JsNode node) {
-        throw new RuntimeException("Only expressions have precedence.");
     }
 }
