@@ -187,6 +187,7 @@ class ExportExtensionXcodeIntegrationTests {
     }
 
     @Test
+    @Suppress("DEPRECATION") // Exercises the deprecated legacy Swift Export DSL on purpose.
     fun `test embed task is registered when the legacy swift export dsl is used`() {
         val project = exportDslProject {
             kotlin {
@@ -200,6 +201,7 @@ class ExportExtensionXcodeIntegrationTests {
     }
 
     @Test
+    @Suppress("DEPRECATION") // Exercises the deprecated legacy Swift Export DSL on purpose.
     fun `test configuring both dsls reports a conflict and keeps the export dsl precedence`() {
         val project = exportDslProject {
             kotlin {
@@ -275,6 +277,7 @@ class LegacySwiftExportDslDiagnosticsTests {
     }
 
     @Test
+    @Suppress("DEPRECATION") // Exercises the deprecated legacy Swift Export DSL on purpose.
     fun `test the deprecation is reported when the legacy dsl is used through the kotlin entry point`() {
         val project = legacyDslProject {
             kotlin {

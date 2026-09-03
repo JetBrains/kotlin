@@ -86,8 +86,9 @@ internal fun KotlinMultiplatformExtension.isSwiftExportXcodeIntegrationActivated
 
     if (isSwiftExportRequested) return true
 
-    // TODO(KT-87989): Return false here once the legacy `swiftExport { }` DSL is deprecated. Until then projects that
-    //  never ask for Swift Export keep the integration that is set up for every project with Apple targets today.
+    // TODO(KT-89151): Return false here once the legacy `swiftExport { }` DSL is removed in Kotlin 2.7.
+    //  Un-registering `embedSwiftExportForXcode` now would silently break a project whose Xcode build phase
+    //  already invokes that task without a `swiftExport { }` block. Keep the integration until the DSL is gone.
     return true
 }
 

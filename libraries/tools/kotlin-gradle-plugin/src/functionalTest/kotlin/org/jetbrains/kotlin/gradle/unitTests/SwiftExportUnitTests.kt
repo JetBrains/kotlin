@@ -1268,6 +1268,7 @@ private fun multiModuleSwiftExportProject(
     return listOf(project) + projectDependencies
 }
 
+@Suppress("DEPRECATION") // Exercises the deprecated legacy Swift Export DSL on purpose.
 private fun swiftExportProject(
     configuration: String = "DEBUG",
     sdk: String = "iphonesimulator",
@@ -1297,6 +1298,7 @@ private fun swiftExportProject(
     }
 )
 
+@Suppress("DEPRECATION") // Exercises the deprecated legacy Swift Export DSL on purpose.
 private fun ProjectInternal.setupForSwiftExport(
     configuration: String = "DEBUG",
     sdk: String = "iphonesimulator",
