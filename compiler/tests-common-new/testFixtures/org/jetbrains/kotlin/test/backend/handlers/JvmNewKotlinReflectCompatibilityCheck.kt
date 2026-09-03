@@ -195,13 +195,12 @@ private fun Class<*>.newInstanceInNewClassloader(parentClassLoader: ClassLoader?
 
 class AlienInstance(private val alien: Any) {
     val classLoader: ClassLoader get() = alien.javaClass.classLoader
-    private val method = alien::class.java.getMethod(dumpKClasses, *::dumpKClasses.javaMethod!!.parameterTypes)
+    private val method = alien::class.java.getMethod("dumpKClasses", *::dumpKClasses.javaMethod!!.parameterTypes)
 
     fun dumpKClasses(classLoader: ClassLoader, fqNames: List<String>): String =
         method.invoke(alien, classLoader, fqNames) as String
 }
 
-private const val dumpKClasses = "dumpKClasses"
 private const val indentLiteral = "  "
 
 // This class is run inside an ad-hoc classloader so that we can work with KClass conveniently statically
@@ -210,7 +209,7 @@ class RunInAlienClassLoader {
     annotation class PrivateVisibility
 
     @PrivateVisibility // Emulate private visibility
-    @JvmName(dumpKClasses)
+    @JvmName("dumpKClasses")
     // The function name doesn't matter in compile time since it's always called with reflection
     fun `_`(loader: ClassLoader, fqNames: List<String>): String {
         val out = IndentedStringBuilder()
