@@ -107,6 +107,7 @@ private fun bridgeTypedWrapper(type: SirTypedType, position: SirTypeVariance): B
     check(untypedBridge is BidirectionalBridge) { "Typed type $type requires a BidirectionalBridge" }
     return when (type) {
         is SirTypedFlowType -> AsTyped.Flow(type, untypedBridge)
+        is SirTypedListType -> AsTyped.List(type, untypedBridge)
     }
 }
 
@@ -593,6 +594,22 @@ internal sealed interface Bridge {
                 val structFqName = typeNamer.swiftFqName(swiftType.structType)
                 val elementType = typeNamer.swiftFqName(SirType.Metatype(swiftType.elementType.nonOptional()))
                 return "$structFqName.create($valueExpression, $elementType.self)"
+            }
+        }
+
+        class List(
+            override val swiftType: SirTypedListType,
+            override val untypedBridge: BidirectionalBridge,
+        ) : AsTyped() {
+            context(session: SirSession)
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "${valueExpression}.__rawList"
+
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val structType = SirNominalType(swiftType.typedStruct, listOf(swiftType.elementType))
+                val structFqName = typeNamer.swiftFqName(structType)
+                val elementMetaFqName = typeNamer.swiftFqName(SirType.Metatype(swiftType.elementType.nonOptional()))
+                return "$structFqName(rawList: $valueExpression, conformsTo: $elementMetaFqName.self)"
             }
         }
     }
