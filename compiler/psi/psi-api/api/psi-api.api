@@ -1951,7 +1951,6 @@ public final class org/jetbrains/kotlin/psi/KtOperationReferenceExpression : org
 	public fun getReferencedNameAsName ()Lorg/jetbrains/kotlin/name/Name;
 	public fun getReferencedNameElement ()Lcom/intellij/psi/PsiElement;
 	public fun getReferencedNameElementType ()Lcom/intellij/psi/tree/IElementType;
-	public final fun isConventionOperator ()Z
 }
 
 public class org/jetbrains/kotlin/psi/KtPackageDirective : org/jetbrains/kotlin/psi/KtModifierListOwnerStub {

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.stubs.KotlinOperationReferenceExpressionStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
-import org.jetbrains.kotlin.psi.utils.OperatorTokens
 import org.jetbrains.kotlin.resolution.KtResolvableCall
 
 /**
@@ -188,13 +187,4 @@ class KtOperationReferenceExpression :
 
             return (firstChild as? TreeElement)?.elementType as? KtSingleValueToken
         }
-
-    /**
-     * Returns `true` if this operation sign corresponds to a convention operator that maps to a named operator function (for example, `+`
-     * maps to `plus`). Returns `false` for non-convention signs such as `&&`.
-     */
-    fun isConventionOperator(): Boolean {
-        val tokenType = operationSignTokenType ?: return false
-        return OperatorTokens.operationName(tokenType) != null
-    }
 }
