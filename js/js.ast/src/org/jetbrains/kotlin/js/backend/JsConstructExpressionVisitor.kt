@@ -1,96 +1,83 @@
-// Copyright (c) 2011, the Dart project authors.  Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
-package org.jetbrains.kotlin.js.backend;
+package org.jetbrains.kotlin.js.backend
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.js.backend.ast.*;
+import org.jetbrains.kotlin.js.backend.ast.*
 
 /**
  * Searches for method invocations in constructor expressions that would not
  * normally be surrounded by parentheses.
  */
-public class JsConstructExpressionVisitor extends RecursiveJsVisitor {
-    public static boolean exec(JsExpression expression) {
-        if (JsPrecedenceVisitor.exec(expression) < JsPrecedenceVisitor.PRECEDENCE_NEW) {
-            return true;
-        }
-        JsConstructExpressionVisitor visitor = new JsConstructExpressionVisitor();
-        visitor.accept(expression);
-        return visitor.containsInvocation;
-    }
-
-    private boolean containsInvocation;
-
-    private JsConstructExpressionVisitor() {
-    }
+class JsConstructExpressionVisitor private constructor() : RecursiveJsVisitor() {
+    private var containsInvocation = false
 
     /**
      * We only look at the array expression since the index has its own scope.
      */
-    @Override
-    public void visitArrayAccess(@NotNull JsArrayAccess x) {
-        accept(x.getArrayExpression());
+    override fun visitArrayAccess(x: JsArrayAccess) {
+        accept(x.arrayExpression)
     }
 
     /**
      * Array literals have their own scoping.
      */
-    @Override
-    public void visitArray(@NotNull JsArrayLiteral x) {
+    override fun visitArray(x: JsArrayLiteral) {
     }
 
     /**
      * Functions have their own scoping.
      */
-    @Override
-    public void visitFunction(@NotNull JsFunction x) {
+    override fun visitFunction(x: JsFunction) {
     }
 
-    @Override
-    public void visitInvocation(@NotNull JsInvocation invocation) {
-        containsInvocation = true;
+    override fun visitInvocation(invocation: JsInvocation) {
+        containsInvocation = true
     }
 
-    @Override
-    public void visitNameRef(@NotNull JsNameRef nameRef) {
-        if (!nameRef.isLeaf()) {
-            accept(nameRef.getQualifier());
+    override fun visitNameRef(nameRef: JsNameRef) {
+        if (!nameRef.isLeaf) {
+            accept(nameRef.qualifier)
         }
     }
 
     /**
      * New constructs bind to the nearest set of parentheses.
      */
-    @Override
-    public void visitNew(@NotNull JsNew x) {
+    override fun visitNew(x: JsNew) {
     }
 
     /**
      * Object literals have their own scope.
      */
-    @Override
-    public void visitObjectLiteral(@NotNull JsObjectLiteral x) {
+    override fun visitObjectLiteral(x: JsObjectLiteral) {
     }
 
     /**
      * We only look at nodes that would not normally be surrounded by parentheses.
      */
-    @Override
-    public <T extends JsNode> void accept(T node) {
-        // Assign to Object to prevent 'inconvertible types' compile errors due
-        // to http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6548436
-        // reproducible in jdk1.6.0_02.
-        if (node instanceof JsExpression) {
-            JsExpression expression = (JsExpression) node;
-            int precedence = JsPrecedenceVisitor.exec(expression);
+    override fun <T : JsNode?> accept(node: T) {
+        if (node is JsExpression) {
+            val precedence = JsPrecedenceVisitor.exec(node)
             // Only visit expressions that won't automatically be surrounded by
             // parentheses
             if (precedence < JsPrecedenceVisitor.PRECEDENCE_NEW) {
-                return;
+                return
             }
         }
-        super.accept(node);
+        super.accept(node)
+    }
+
+    companion object {
+        fun exec(expression: JsExpression): Boolean {
+            if (JsPrecedenceVisitor.exec(expression) < JsPrecedenceVisitor.PRECEDENCE_NEW) {
+                return true
+            }
+            val visitor = JsConstructExpressionVisitor()
+            visitor.accept(expression)
+            return visitor.containsInvocation
+        }
     }
 }
