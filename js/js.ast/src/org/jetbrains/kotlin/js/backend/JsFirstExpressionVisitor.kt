@@ -1,119 +1,100 @@
-// Copyright (c) 2011, the Dart project authors.  Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
-package org.jetbrains.kotlin.js.backend;
+package org.jetbrains.kotlin.js.backend
 
-import org.jetbrains.kotlin.js.backend.ast.*;
-import org.jetbrains.kotlin.js.backend.ast.JsExpressionStatement;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.backend.ast.*
 
 /**
  * Determines if an expression statement needs to be surrounded by parentheses.
- * <p/>
+ *
  * The statement or the left-most expression needs to be surrounded by
  * parentheses if the left-most expression is an object literal or a function
  * object. Function declarations do not need parentheses.
- * <p/>
- * For example the following require parentheses:<br>
- * <ul>
- * <li>{ key : 'value'}</li>
- * <li>{ key : 'value'}.key</li>
- * <li>function () {return 1;}()</li>
- * <li>function () {return 1;}.prototype</li>
- * </ul>
- * <p/>
- * The following do not require parentheses:<br>
- * <ul>
- * <li>var x = { key : 'value'}</li>
- * <li>"string" + { key : 'value'}.key</li>
- * <li>function func() {}</li>
- * <li>function() {}</li>
- * </ul>
+ *
+ * For example the following require parentheses:
+ * - `{ key : 'value'}`
+ * - `{ key : 'value'}.key`
+ * - `function () {return 1;}()`
+ * - `function () {return 1;}.prototype`
+ *
+ * The following do not require parentheses:
+ * - `var x = { key : 'value'}`
+ * - `"string" + { key : 'value'}.key`
+ * - `function func() {}`
+ * - `function() {}`
  */
-public class JsFirstExpressionVisitor extends RecursiveJsVisitor {
-    public static boolean exec(JsExpressionStatement statement) {
-        JsExpression expression = statement.getExpression();
-        // Pure function declarations do not need parentheses
-        if (expression instanceof JsFunction || expression instanceof JsClass) {
-            return false;
-        }
+internal class JsFirstExpressionVisitor private constructor() : RecursiveJsVisitor() {
+    private var needsParentheses = false
 
-        JsFirstExpressionVisitor visitor = new JsFirstExpressionVisitor();
-        visitor.accept(statement.getExpression());
-        return visitor.needsParentheses;
+    override fun visitArrayAccess(x: JsArrayAccess) {
+        accept(x.arrayExpression)
     }
 
-    private boolean needsParentheses = false;
-
-    private JsFirstExpressionVisitor() {
+    override fun visitArray(x: JsArrayLiteral) {
     }
 
-    @Override
-    public void visitArrayAccess(@NotNull JsArrayAccess x) {
-        accept(x.getArrayExpression());
+    override fun visitBinaryExpression(x: JsBinaryOperation) {
+        accept(x.arg1)
     }
 
-    @Override
-    public void visitArray(@NotNull JsArrayLiteral x) {
+    override fun visitConditional(x: JsConditional) {
+        accept(x.testExpression)
     }
 
-    @Override
-    public void visitBinaryExpression(@NotNull JsBinaryOperation x) {
-        accept(x.getArg1());
+    override fun visitFunction(x: JsFunction) {
+        needsParentheses = true
     }
 
-    @Override
-    public void visitConditional(@NotNull JsConditional x) {
-        accept(x.getTestExpression());
+    override fun visitInvocation(invocation: JsInvocation) {
+        accept(invocation.qualifier)
     }
 
-    @Override
-    public void visitFunction(@NotNull JsFunction x) {
-        needsParentheses = true;
-    }
-
-    @Override
-    public void visitInvocation(@NotNull JsInvocation invocation) {
-        accept(invocation.getQualifier());
-    }
-
-    @Override
-    public void visitNameRef(@NotNull JsNameRef nameRef) {
-        if (!nameRef.isLeaf()) {
-            accept(nameRef.getQualifier());
+    override fun visitNameRef(nameRef: JsNameRef) {
+        if (!nameRef.isLeaf) {
+            accept(nameRef.qualifier)
         }
     }
 
-    @Override
-    public void visitNew(@NotNull JsNew x) {
+    override fun visitNew(x: JsNew) {
     }
 
-    @Override
-    public void visitObjectLiteral(@NotNull JsObjectLiteral x) {
-        needsParentheses = true;
+    override fun visitObjectLiteral(x: JsObjectLiteral) {
+        needsParentheses = true
     }
 
-    @Override
-    public void visitSimpleAssignment(@NotNull JsAssignmentOperation.Simple x) {
-        accept(x.getTarget());
+    override fun visitSimpleAssignment(x: JsAssignmentOperation.Simple) {
+        accept(x.target)
     }
 
-    @Override
-    public void visitDestructuringAssignment(@NotNull JsAssignmentOperation.Destructuring x) {
+    override fun visitDestructuringAssignment(x: JsAssignmentOperation.Destructuring) {
         // The left-most token is the assignment target. An object pattern starts with '{',
         // which would otherwise be parsed as a block at the beginning of a statement.
-        if (x.getPattern() instanceof JsDeclarable.ObjectPattern) {
-            needsParentheses = true;
+        if (x.pattern is JsDeclarable.ObjectPattern) {
+            needsParentheses = true
         }
     }
 
-    @Override
-    public void visitPostfixOperation(@NotNull JsPostfixOperation x) {
-        accept(x.getArg());
+    override fun visitPostfixOperation(x: JsPostfixOperation) {
+        accept(x.arg)
     }
 
-    @Override
-    public void visitPrefixOperation(@NotNull JsPrefixOperation x) {
+    override fun visitPrefixOperation(x: JsPrefixOperation) {
+    }
+
+    companion object {
+        fun exec(statement: JsExpressionStatement): Boolean {
+            val expression = statement.expression
+            // Pure function declarations do not need parentheses
+            if (expression is JsFunction || expression is JsClass) {
+                return false
+            }
+
+            val visitor = JsFirstExpressionVisitor()
+            visitor.accept(statement.expression)
+            return visitor.needsParentheses
+        }
     }
 }
