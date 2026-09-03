@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.builder.MultiplatformParsing2Fir
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -20,16 +21,20 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.readSourceFileWithMapping
-import kotlin.reflect.KFunction2
 
 fun FirSession.buildFirViaLightTree(
     files: Collection<KtSourceFile>,
     diagnosticsReporter: DiagnosticReporter?,
+    useMultiplatformParsing: Boolean,
     reportFilesAndLines: ((Int, Int) -> Unit)?,
 ): List<FirFile> {
     val firProvider = (firProvider as FirProviderImpl)
     val sourcesToPathsMapper = sourcesToPathsMapper
-    val builder = LightTree2Fir(this, firProvider.kotlinScopeProvider, diagnosticsReporter)
+    val builder = if (useMultiplatformParsing) {
+        MultiplatformParsing2Fir(this, firProvider.kotlinScopeProvider, diagnosticsReporter)
+    } else {
+        LightTree2Fir(this, firProvider.kotlinScopeProvider, diagnosticsReporter)
+    }
     val shouldCountLines = (reportFilesAndLines != null)
     var linesCount = 0
     val firFiles = files.map { file ->
@@ -89,6 +94,6 @@ fun buildResolveAndCheckFirViaLightTree(
     diagnosticsReporter: BaseDiagnosticsCollector,
     countFilesAndLines: ((Int, Int) -> Unit)?
 ): SingleModuleFrontendOutput {
-    val firFiles = session.buildFirViaLightTree(ktFiles, diagnosticsReporter, countFilesAndLines)
+    val firFiles = session.buildFirViaLightTree(ktFiles, diagnosticsReporter, useMultiplatformParsing = false, countFilesAndLines)
     return resolveAndCheckFir(session, firFiles, diagnosticsReporter)
 }

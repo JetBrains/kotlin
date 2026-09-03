@@ -134,9 +134,10 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         if (FirDiagnosticsDirectives.WITH_EXPERIMENTAL_CHECKERS in module.directives) {
             configuration.useFirExperimentalCheckers = true
         }
+        // TODO: KT-89415
         when (module.directives.singleOrZeroValue(FirDiagnosticsDirectives.FIR_PARSER)) {
             FirParser.Psi -> configuration.useLightTree = false
-            FirParser.LightTree -> configuration.useLightTree = true
+            FirParser.LightTree, FirParser.MultiplatformParsing -> configuration.useLightTree = true
             null -> {}
         }
         configuration.allowNoSourceFiles = true
