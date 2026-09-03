@@ -120,6 +120,7 @@ public abstract interface class org/jetbrains/kotlin/KtNodeTypes {
 	public static final field TYPE_PARAMETER_LIST Lcom/intellij/psi/tree/IElementType;
 	public static final field TYPE_PROJECTION Lcom/intellij/psi/tree/IElementType;
 	public static final field TYPE_REFERENCE Lcom/intellij/psi/tree/IElementType;
+	public static final field UNION_TYPE Lcom/intellij/psi/tree/IElementType;
 	public static final field USER_TYPE Lcom/intellij/psi/tree/IElementType;
 	public static final field VALUE_ARGUMENT Lcom/intellij/psi/tree/IElementType;
 	public static final field VALUE_ARGUMENT_LIST Lcom/intellij/psi/tree/IElementType;
@@ -617,8 +618,10 @@ public abstract interface class org/jetbrains/kotlin/lexer/KtTokens {
 	public static final field OPERATIONS Lcom/intellij/psi/tree/TokenSet;
 	public static final field OPERATOR_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
 	public static final field OPERATOR_KEYWORD_Id I
+	public static final field OR Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public static final field OROR Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public static final field OROR_Id I
+	public static final field OR_Id I
 	public static final field OUT_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
 	public static final field OUT_KEYWORD_Id I
 	public static final field OVERRIDE_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
