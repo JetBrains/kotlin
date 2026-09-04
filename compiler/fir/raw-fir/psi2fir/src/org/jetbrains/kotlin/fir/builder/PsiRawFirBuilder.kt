@@ -2002,6 +2002,7 @@ open class PsiRawFirBuilder(
                         isValue = classOrObject.hasModifier(VALUE_KEYWORD)
                         isFun = classOrObject.hasModifier(FUN_KEYWORD)
                         isExternal = classOrObject.hasModifier(EXTERNAL_KEYWORD)
+                        isRichError = classOrObject.hasModifier(ERROR_KEYWORD)
                     }
                     val firTypeParameters = classOrObject.convertTypeParameters(classSymbol)
 
