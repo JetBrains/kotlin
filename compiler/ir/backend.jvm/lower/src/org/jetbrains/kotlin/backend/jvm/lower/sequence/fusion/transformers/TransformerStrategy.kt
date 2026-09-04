@@ -11,6 +11,11 @@ import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceReplacemen
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 
+sealed class TakeOrDrop {
+    object Take : TakeOrDrop()
+    object Drop : TakeOrDrop()
+}
+
 internal typealias UnaryPredicate = (IrBuilderWithParent) -> (IrValueDeclaration) -> IrExpression
 internal typealias BinaryPredicate = (IrBuilderWithParent) -> (IrValueDeclaration, IrValueDeclaration) -> IrExpression
 
@@ -29,6 +34,16 @@ internal sealed class SequenceTransformer {
     class Filter(
         val predicateCall: UnaryPredicate
     ) : SequenceTransformer()
+
+    class Take(
+        val argument: IrExpression,
+        val takeType: TakeOrDrop,
+    ) : SequenceTransformer()
+
+    class TakeWhile(
+        val predicateCall: UnaryPredicate,
+        val takeType: TakeOrDrop,
+    ) : SequenceTransformer()
 }
 
 internal abstract class TransformerStrategy(val builderWithParent: IrBuilderWithParent) {
@@ -44,6 +59,8 @@ internal abstract class TransformerStrategy(val builderWithParent: IrBuilderWith
         ): TransformerStrategy =
             when (sequenceTransformer) {
                 is SequenceTransformer.Filter -> FilterStrategy(sequenceTransformer, builderWithParent)
+                is SequenceTransformer.Take -> TakeStrategy(sequenceTransformer, builderWithParent, context)
+                is SequenceTransformer.TakeWhile -> TakeWhileStrategy(sequenceTransformer, builderWithParent)
                 is SequenceTransformer.Map -> MapStrategy(sequenceTransformer, builderWithParent, context)
             }
     }
