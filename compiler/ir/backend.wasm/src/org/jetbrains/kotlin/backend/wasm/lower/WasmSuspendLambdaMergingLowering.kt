@@ -324,7 +324,7 @@ internal class WasmSuspendLambdaMergingLowering(val context: WasmBackendContext)
                 append('$')
             }
             append(originalClass.name.asString())
-            append("\.doResume")
+            append(".doResume")
         }
 
         return context.irFactory.addFunction(irFile) {
