@@ -1,9 +1,9 @@
 ; OPT: --passes=kotlin-calls-checker
 
-; CHECK: @0 = internal constant [36 x i8] c"invokeSelector0 (over objc_msgSend)\00"
-; CHECK: @1 = internal constant [36 x i8] c"invokeSelector1 (over objc_msgSend)\00"
-; CHECK: @2 = internal constant [47 x i8] c"invokeSuperSelector0 (over objc_msgSendSuper2)\00"
-; CHECK: @3 = internal constant [47 x i8] c"invokeSuperSelector1 (over objc_msgSendSuper2)\00"
+; CHECK: @0 = private constant [36 x i8] c"invokeSelector0 (over objc_msgSend)\00"
+; CHECK: @1 = private constant [36 x i8] c"invokeSelector1 (over objc_msgSend)\00"
+; CHECK: @2 = private constant [47 x i8] c"invokeSuperSelector0 (over objc_msgSendSuper2)\00"
+; CHECK: @3 = private constant [47 x i8] c"invokeSuperSelector1 (over objc_msgSendSuper2)\00"
 
 declare ptr @personality()
 

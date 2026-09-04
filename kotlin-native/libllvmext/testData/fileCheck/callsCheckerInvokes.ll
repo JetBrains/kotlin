@@ -1,17 +1,17 @@
 ; OPT: --passes=kotlin-calls-checker
 
-; CHECK: @0 = internal constant [23 x i8] c"invokeExternalFunction\00"
-; CHECK: @1 = internal constant [17 x i8] c"externalFunction\00"
-; CHECK: @2 = internal constant [20 x i8] c"invokeLLVMIntrinsic\00"
-; CHECK: @3 = internal constant [15 x i8] c"llvm.donothing\00"
-; CHECK: @4 = internal constant [23 x i8] c"invokeFunctionFromLoad\00"
-; CHECK: @5 = internal constant [22 x i8] c"invokeFunctionFromArg\00"
-; CHECK: @6 = internal constant [22 x i8] c"invokeFunctionFromPhi\00"
-; CHECK: @7 = internal constant [25 x i8] c"invokeFunctionFromSelect\00"
-; CHECK: @8 = internal constant [23 x i8] c"invokeFunctionFromCall\00"
-; CHECK: @9 = internal constant [22 x i8] c"invokeFunctionFromVec\00"
-; CHECK: @10 = internal constant [32 x i8] c"invokeExternalFunctionWithCasts\00"
-; CHECK: @11 = internal constant [31 x i8] c"invokeFunctionFromArgWithCasts\00"
+; CHECK: @0 = private constant [23 x i8] c"invokeExternalFunction\00"
+; CHECK: @1 = private constant [17 x i8] c"externalFunction\00"
+; CHECK: @2 = private constant [20 x i8] c"invokeLLVMIntrinsic\00"
+; CHECK: @3 = private constant [15 x i8] c"llvm.donothing\00"
+; CHECK: @4 = private constant [23 x i8] c"invokeFunctionFromLoad\00"
+; CHECK: @5 = private constant [22 x i8] c"invokeFunctionFromArg\00"
+; CHECK: @6 = private constant [22 x i8] c"invokeFunctionFromPhi\00"
+; CHECK: @7 = private constant [25 x i8] c"invokeFunctionFromSelect\00"
+; CHECK: @8 = private constant [23 x i8] c"invokeFunctionFromCall\00"
+; CHECK: @9 = private constant [22 x i8] c"invokeFunctionFromVec\00"
+; CHECK: @10 = private constant [32 x i8] c"invokeExternalFunctionWithCasts\00"
+; CHECK: @11 = private constant [31 x i8] c"invokeFunctionFromArgWithCasts\00"
 
 declare ptr @personality()
 
