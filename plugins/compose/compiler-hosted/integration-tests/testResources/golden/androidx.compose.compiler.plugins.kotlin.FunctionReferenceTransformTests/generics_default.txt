@@ -28,7 +28,7 @@ fun <T> Ref(content: Function3<T, Composer, Int, Unit>, %composer: Composer?, %c
       val tmp0_group = %composer.cache(false) {
         @Composable
         fun <T> Fn(t: T?, %composer: Composer?, %changed: Int) {
-          Fn(t, %composer, 0b1000 and %changed or 0b1110 and %changed, 0)
+          return Fn(t, %composer, 0b1000 and %changed or 0b1110 and %changed, 0)
         }
         ::Fn
       }
@@ -40,7 +40,7 @@ fun <T> Ref(content: Function3<T, Composer, Int, Unit>, %composer: Composer?, %c
       val tmp1_group = %composer.cache(false) {
         @Composable
         fun IntFn(t: Int, %composer: Composer?, %changed: Int) {
-          IntFn(t, %composer, 0b1110 and %changed, 0)
+          return IntFn(t, %composer, 0b1110 and %changed, 0)
         }
         ::IntFn
       }

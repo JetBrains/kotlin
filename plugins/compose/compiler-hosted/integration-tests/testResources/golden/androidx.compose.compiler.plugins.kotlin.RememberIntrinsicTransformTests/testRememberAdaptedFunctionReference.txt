@@ -32,7 +32,7 @@ fun Test(a: Int, %composer: Composer?, %changed: Int) {
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100, <block>{
         fun effect(): Int {
-          effect()
+          return effect()
         }
         ::effect
       })

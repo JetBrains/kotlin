@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.getAnnotationRetention
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -64,7 +63,13 @@ class ComposeIrGenerationExtension(
             stableTypeMatchers,
         )
 
-        moduleFragment.acceptVoid(ComposableLambdaAnnotator(pluginContext))
+        ComposableLambdaAnnotator(
+            pluginContext,
+            moduleFragment,
+            metrics,
+            stabilityInferencer,
+            featureFlags,
+        ).lower(moduleFragment)
 
         if (moduleMetricsFactory != null) {
             metrics = moduleMetricsFactory.invoke(stabilityInferencer, featureFlags)

@@ -45,7 +45,7 @@ fun Test() {
 class CurrentHolder {
   val current: Int
     @ReadOnlyComposable @Composable @JvmName(name = "getCurrent") @FunctionKeyMeta(key = -1234923825, startOffset = 214, endOffset = 295)
-    get() {
+    get(%composer: Composer?, %changed: Int) {
       sourceInformationMarkerStart(%composer, <>, "CC(<get-current>):Test.kt")
       val tmp0 = 0
       sourceInformationMarkerEnd(%composer)
@@ -61,7 +61,7 @@ class HolderHolder {
   val _currentHolder: CurrentHolder = CurrentHolder()
   val current: Int
     @ReadOnlyComposable @Composable @JvmName(name = "getCurrent") @FunctionKeyMeta(key = 1636580468, startOffset = 458, endOffset = 560)
-    get() {
+    get(%composer: Composer?, %changed: Int) {
       sourceInformationMarkerStart(%composer, <>, "C(<get-current>)<curren...>:Test.kt")
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, "HolderHolder.<get-current> (Test.kt:16)")

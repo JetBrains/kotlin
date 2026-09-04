@@ -36,19 +36,22 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import kotlin.math.min
 
@@ -100,7 +103,9 @@ class ComposerParamTransformer(
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
         val fn = declaration.withComposerParamIfNeeded()
         if (fn.hasComposableAnnotation() &&
-            !fn.isBodyProcessedDefaultParamStub) { //those stubs have already processed `IrCall`s to original function. so we shouldnt process them again
+            //those stubs have already processed `IrCall`s to original function. so we shouldnt process them again
+            !fn.isBodyProcessedDefaultParamStub
+        ) {
             fn.transformComposableBodyCalls()
         }
         return super.visitSimpleFunction(fn)
@@ -152,9 +157,54 @@ class ComposerParamTransformer(
                 // this is required to avoid function location to be written in `calculateSourceInfo`
                 adapterCall.startOffset = UNDEFINED_OFFSET
                 adapterCall.endOffset = UNDEFINED_OFFSET
+            } else {
+                fn.isComposableReferenceInvoke = true
             }
         }
         return super.visitBlock(expression)
+    }
+
+
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+        if (!expression.type.isKComposableFunction() && !expression.type.isSyntheticComposableFunction()) {
+            return super.visitRichFunctionReference(expression)
+        }
+
+        val targetFn = when (val target = expression.reflectionTargetSymbol?.owner) {
+            is IrSimpleFunction -> if (target.isLambdaInvoke()) {
+                target.lambdaInvokeWithComposerParam(context)
+            } else {
+                target.withComposerParamIfNeeded()
+            }
+            else -> null
+        }
+
+        if (targetFn != null &&
+            targetFn.origin != IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE &&
+            !inlineLambdaInfo.isInlineFunctionExpression(expression) &&
+            !targetFn.shouldBeRestartable()
+        ) {
+            // Non-restartable functions may not contain a group and should be wrapped with a separate
+            // adapter.
+            // This might mess with the reflection that tries to find a containing class, but the name
+            // will be preserved. This is fine, since AdaptedFunctionReference does not support reflection
+            // either.
+            expression.invokeFunction.isComposableReferenceAdapter = true
+        } else {
+            expression.invokeFunction.isComposableReferenceInvoke = true
+        }
+
+        return super.visitRichFunctionReference(expression)
+    }
+
+    override fun visitRichPropertyReference(expression: IrRichPropertyReference): IrExpression {
+        if (expression.getterFunction.hasComposableAnnotation()) {
+            expression.getterFunction.isComposableReferenceInvoke = true
+        }
+        if (expression.setterFunction?.hasComposableAnnotation() == true) {
+            expression.setterFunction?.isComposableReferenceInvoke = true
+        }
+        return super.visitRichPropertyReference(expression)
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
@@ -164,49 +214,51 @@ class ComposerParamTransformer(
 
         val origFn = expression.symbol.owner as? IrSimpleFunction ?: return super.visitFunctionReference(expression)
 
-        if (origFn.isInvoke()) {    // will be transformed by [ComposableTypeTransformer.visitFunctionReference] later without adding local function declaration
+        if (origFn.isLambdaInvoke()) {    // will be transformed by [ComposableTypeTransformer.visitFunctionReference] later without adding local function declaration
             return super.visitFunctionReference(expression)
         }
 
         val fn = origFn.withComposerParamIfNeeded()
 
-        if (!fn.isComposableReferenceAdapter &&
+        if (
+            !fn.isComposableReferenceAdapter &&
+            !fn.isComposableReferenceInvoke &&
             fn.origin != IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE &&
             !inlineLambdaInfo.isInlineFunctionExpression(expression) &&
             !fn.shouldBeRestartable()
         ) {
             // Non-restartable functions may not contain a group and should be wrapped with a separate
-            // adapter. This is different from Kotlin's adapted function reference since it is treated
-            // as a regular local function and is not inlined into AdaptedFunctionReference.
+            // adapter.
             // This might mess with the reflection that tries to find a containing class, but the name
             // will be preserved. This is fine, since AdaptedFunctionReference does not support reflection
             // either.
-            return adaptComposableReference(expression, fn, useAdaptedOrigin = false)
-        } else if (!fn.isComposableReferenceAdapter && fn.requiresDefaultParameter()) {
+            return adaptComposableReference(expression, fn, isAdapter = false)
+        } else if (
+            !fn.isComposableReferenceAdapter &&
+            !fn.isComposableReferenceInvoke &&
+            !inlineLambdaInfo.isInlineFunctionExpression(expression) &&
+            fn.requiresDefaultParameter()
+        ) {
             // Composable functions with default parameters add a $default mask parameter that is not expected
             // by the lambda side.
             // We need to create an adapter function that will call the original function with correct parameters.
-            return adaptComposableReference(expression, fn, useAdaptedOrigin = true)
+            return adaptComposableReference(expression, fn, isAdapter = true)
         } else {
             return super.visitFunctionReference(expression)
         }
     }
 
-    override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
-        expression.overriddenFunctionSymbol = expression.overriddenFunctionSymbol.owner.withComposerParamIfNeeded().symbol
-
-        return super.visitRichFunctionReference(expression)
-    }
-
-    private fun IrFunction.findCallInBody(): IrCall? {
+    private fun IrFunction.findCallInBody(targetSymbol: IrSimpleFunctionSymbol? = null): IrCall? {
         var call: IrCall? = null
         body?.acceptChildrenVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
+                if (call == null) {
+                    element.acceptChildrenVoid(this)
+                }
             }
 
             override fun visitCall(expression: IrCall) {
-                if (call == null) {
+                if (call == null && (targetSymbol == null || expression.symbol == targetSymbol)) {
                     call = expression
                 }
                 return
@@ -221,15 +273,14 @@ class ComposerParamTransformer(
     private fun adaptComposableReference(
         expression: IrFunctionReference,
         transformedFn: IrSimpleFunction,
-        useAdaptedOrigin: Boolean
+        isAdapter: Boolean,
     ): IrExpression {
-
         val adapter = irBlock(
             type = expression.type,
-            origin = if (useAdaptedOrigin) IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE else null,
+            origin = if (isAdapter) IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE else null,
             statements = buildList {
                 val adapterFn = context.irFactory.buildFun {
-                    origin = if (useAdaptedOrigin) IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE else origin
+                    origin = if (isAdapter) IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE else origin
                     name = transformedFn.name
                     visibility = DescriptorVisibilities.LOCAL
                     modality = Modality.FINAL
@@ -238,6 +289,11 @@ class ComposerParamTransformer(
                     it.copyAnnotationsFrom(transformedFn)
                     it.copyParametersFrom(transformedFn, copyDefaultValues = false)
                     it.parent = currentParent!!
+                    if (isAdapter) {
+                        it.isComposableReferenceInvoke = true
+                    } else {
+                        it.isComposableReferenceAdapter = true
+                    }
                 }
 
                 require(
@@ -259,7 +315,6 @@ class ComposerParamTransformer(
                         it.name = Name.identifier("receiver")
                     }
 
-                adapterFn.isComposableReferenceAdapter = true
                 transformedFunctionSet.add(adapterFn)
 
                 adapterFn.body = context.irFactory.createBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET) {
@@ -274,7 +329,8 @@ class ComposerParamTransformer(
                                             error("Context parameters are not supported in function references")
                                         }
                                         IrParameterKind.DispatchReceiver,
-                                        IrParameterKind.ExtensionReceiver -> {
+                                        IrParameterKind.ExtensionReceiver,
+                                            -> {
                                             irGet(adapterFn.parameters.first { it.kind == IrParameterKind.ExtensionReceiver || it.kind == IrParameterKind.DispatchReceiver })
                                         }
                                         IrParameterKind.Regular -> {
@@ -299,7 +355,7 @@ class ComposerParamTransformer(
                         symbol = adapterFn.symbol,
                         typeArgumentsCount = expression.typeArguments.size,
                         reflectionTarget = transformedFn.symbol,
-                        origin = if (useAdaptedOrigin) IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE else null
+                        origin = if (isAdapter) IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE else null
                     ).apply {
                         typeArguments.assignFrom(expression.typeArguments)
                         arguments.assignFrom(expression.arguments)
@@ -310,30 +366,7 @@ class ComposerParamTransformer(
         return adapter
     }
 
-    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
-        if (declaration.getter.isComposableDelegatedAccessor()) {
-            declaration.getter.createComposableAnnotationIfAbsent()
-        }
 
-        if (declaration.setter?.isComposableDelegatedAccessor() == true) {
-            declaration.setter!!.createComposableAnnotationIfAbsent()
-        }
-
-        return super.visitLocalDelegatedProperty(declaration)
-    }
-
-    private fun IrFunction.createComposableAnnotationIfAbsent() {
-        if (!hasComposableAnnotation()) {
-            annotations += IrAnnotationImpl(
-                startOffset = SYNTHETIC_OFFSET,
-                endOffset = SYNTHETIC_OFFSET,
-                type = composableIrClass.defaultType,
-                symbol = composableIrClass.primaryConstructor!!.symbol,
-                typeArgumentsCount = 0,
-                constructorTypeArgumentsCount = 0
-            )
-        }
-    }
 
     fun IrCall.withComposerParamIfNeeded(composerParam: IrValueParameter) {
         val newFn = when {
@@ -479,10 +512,6 @@ class ComposerParamTransformer(
         // call this with a function that has the synthetic composer parameter, we don't want to
         // transform it further).
         if (transformedFunctionSet.contains(this)) return this
-
-        if (isComposableDelegatedAccessor()) {
-            createComposableAnnotationIfAbsent()
-        }
 
         // if not a composable fn, nothing we need to do
         if (!this.hasComposableAnnotation()) {

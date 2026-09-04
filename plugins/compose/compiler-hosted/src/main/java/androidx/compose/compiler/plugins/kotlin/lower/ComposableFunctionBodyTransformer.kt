@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.ADAPTER_FOR_CALLABLE_REFERENCE
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -642,7 +641,7 @@ class ComposableFunctionBodyTransformer(
             // don't transform the body of the stub normally
             return visitComposableFunctionStub(declaration)
         }
-        if (declaration.origin == ADAPTER_FOR_CALLABLE_REFERENCE) {
+        if (declaration.isComposableReferenceInvoke) {
             return visitComposableReferenceAdapter(declaration, scope)
         }
 
@@ -3090,7 +3089,7 @@ class ComposableFunctionBodyTransformer(
         val hasDefaults = ownerFn.parameters.any {
             it.kind == IrParameterKind.Regular && it.name == ComposeNames.DefaultParameter
         }
-        if (!hasDefaults && expression.isInvoke()) {
+        if (!hasDefaults && expression.isLambdaInvoke()) {
             // in the case of an invoke without any defaults, all of the parameters are going to
             // be type parameter args which won't have special names.
             // In this case, we know that the values cannot
@@ -4217,7 +4216,11 @@ class ComposableFunctionBodyTransformer(
                     }
                 }
                 slotCount += realValueParamCount
-                if (function.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) {
+                if (
+                    function.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
+                    !function.isComposableReferenceInvoke &&
+                    !function.isComposableReferenceAdapter
+                ) {
                     slotCount++
                 }
                 changedParameter = if (composerParameter != null) {
@@ -4271,6 +4274,8 @@ class ComposableFunctionBodyTransformer(
             init {
                 if (
                     isComposable &&
+                    !function.isComposableReferenceInvoke &&
+                    !function.isComposableReferenceAdapter &&
                     (
                             // We are interested in any object which has skippable function body and
                             // is being able to capture values from outside scope. Technically, that
