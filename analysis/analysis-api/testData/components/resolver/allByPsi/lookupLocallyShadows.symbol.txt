@@ -151,7 +151,6 @@ KtNameReferenceExpression(105,106): 'x'
 KtOperationReferenceExpression(107,108): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -244,7 +243,6 @@ KtNameReferenceExpression(186,187): 'x'
 KtOperationReferenceExpression(188,190): 'to'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/to(<extension receiver>: A, that: B): kotlin.Pair<A, B>
@@ -285,7 +283,6 @@ KtNameReferenceExpression(207,208): 'x'
 KtOperationReferenceExpression(208,210): '..'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange

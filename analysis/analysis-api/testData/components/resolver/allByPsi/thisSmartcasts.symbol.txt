@@ -227,7 +227,6 @@ KtNameReferenceExpression(182,186): 'this'
 KtOperationReferenceExpression(187,189): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(190,194): 'Base'
@@ -348,7 +347,6 @@ KtNameReferenceExpression(211,214): 'baz'
 KtOperationReferenceExpression(215,216): '='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(217,220): 'baz'
@@ -378,7 +376,6 @@ KtNameReferenceExpression(229,232): 'baz'
 KtOperationReferenceExpression(233,234): '='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(235,238): 'baz'
@@ -487,7 +484,6 @@ KtNameReferenceExpression(294,298): 'this'
 KtOperationReferenceExpression(299,301): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(302,306): 'Test'
@@ -608,7 +604,6 @@ KtNameReferenceExpression(327,330): 'baz'
 KtOperationReferenceExpression(331,332): '='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(333,336): 'baz'
@@ -638,7 +633,6 @@ KtNameReferenceExpression(349,352): 'baz'
 KtOperationReferenceExpression(353,354): '='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(355,358): 'baz'
@@ -741,7 +735,6 @@ KtNameReferenceExpression(377,380): 'foo'
 KtOperationReferenceExpression(381,382): '='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(383,386): 'foo'
@@ -771,7 +764,6 @@ KtNameReferenceExpression(399,402): 'foo'
 KtOperationReferenceExpression(403,404): '='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(405,408): 'foo'
