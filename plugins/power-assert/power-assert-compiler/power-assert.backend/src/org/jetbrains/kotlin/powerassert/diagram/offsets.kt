@@ -80,16 +80,24 @@ internal fun findDisplayOffset(
         is IrClassReference -> (source.length - 5).coerceAtLeast(0)
         // For callable references, this should be on the referenced identifier name (again, calculated from the end).
         is IrCallableReference<*> -> {
-            var named = expression.symbol.owner as? IrDeclarationWithName ?: return 0
-            if (named is IrConstructor) named = named.parentAsClass
-            if (named.name.isSpecial) return 0
-            (source.length - named.name.identifier.length).coerceAtLeast(0)
+            val named = expression.symbol.owner as? IrDeclarationWithName ?: return 0
+            callableReferenceOffset(named, source)
+        }
+        is IrRichCallableReference<*> -> {
+            val named = expression.reflectionTargetSymbol?.owner as? IrDeclarationWithName ?: return 0
+            callableReferenceOffset(named, source)
         }
 
         is IrMemberAccessExpression<*> -> memberAccessOffset(expression, sourceRangeInfo, source)
         is IrTypeOperatorCall -> typeOperatorOffset(expression, sourceRangeInfo, source)
         else -> 0
     }
+}
+
+private fun callableReferenceOffset(named: IrDeclarationWithName, source: String): Int {
+    val named = if (named is IrConstructor) named.parentAsClass else named
+    return if (named.name.isSpecial) 0
+    else (source.length - named.name.identifier.length).coerceAtLeast(0)
 }
 
 private fun memberAccessOffset(
