@@ -1,3 +1,10 @@
 fun test() {
-  val x: KFunction0<Int> = 1.plus(other = 1)::unaryMinus
+  val x: KFunction0<Int> = KFunction0<Int>(
+    /* bound = */ [1.plus(other = 1)],
+    /* invoke = */    local operator fun(receiver: Int): Int {
+      return receiver.unaryMinus()
+    }
+  )
+
 }
+

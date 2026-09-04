@@ -29,19 +29,29 @@ val test7: Int /* by */
   }
 )
   get(): Int {
-    return getValue<Int>(/* <this> = #test7$delegate, */ thisRef = null, property = ::test7)
+    return getValue<Int>(/* <this> = #test7$delegate, */ thisRef = null, property = KProperty0<Int>(
+      /* bound = */ [],
+      /* getter = */      local fun(): Int    )
+)
   }
 
 var test8: Int /* by */
   field = hashMapOf<String, Int>()
   get(): Int {
-    return getValue<Int, Int>(/* <this> = #test8$delegate, */ thisRef = null, property = ::test8)
+    return getValue<Int, Int>(/* <this> = #test8$delegate, */ thisRef = null, property = KMutableProperty0<Int>(
+      /* bound = */ [],
+      /* getter = */      local fun(): Int      /* setter = */      local fun(value: Int)    )
+)
   }
   set(<set-?>: Int) {
-    return setValue<Int>(/* <this> = #test8$delegate, */ thisRef = null, property = ::test8, value = <set-?>)
+    return setValue<Int>(/* <this> = #test8$delegate, */ thisRef = null, property = KMutableProperty0<Int>(
+      /* bound = */ [],
+      /* getter = */      local fun(): Int      /* setter = */      local fun(value: Int)    )
+, value = <set-?>)
   }
 
 val test2: Int
   get(): Int {
     return 0
   }
+

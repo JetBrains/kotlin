@@ -27,63 +27,63 @@ fun fnWithVarargs(vararg xs: Int): String {
 }
 
 fun testCoercionToUnit() {
-  return coerceToUnit(fn = { // BLOCK
-    local fun fnWithDefault(p0: Int) {
+  return coerceToUnit(fn = Function1<Int, Unit>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: Int) {
       fnWithDefault(a = p0) /*~> Unit */
     }
-
-    ::fnWithDefault
-  })
+  )
+)
 }
 
 fun testDefault(): String {
-  return use(fn = { // BLOCK
-    local fun fnWithDefault(p0: Int): String {
+  return use(fn = Function1<Int, String>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: Int): String {
       return fnWithDefault(a = p0)
     }
-
-    ::fnWithDefault
-  })
+  )
+)
 }
 
 fun testDefault0(): String {
-  return use0(fn = { // BLOCK
-    local fun fnWithDefaults(): String {
+  return use0(fn = Function0<String>(
+    /* bound = */ [],
+    /* invoke = */    local fun(): String {
       return fnWithDefaults()
     }
-
-    ::fnWithDefaults
-  })
+  )
+)
 }
 
 fun testImportedObjectMember(): String {
-  return use(fn = { // BLOCK
-    local fun Host.importedObjectMemberWithVarargs(p0: Int): String {
+  return use(fn = Function1<Int, String>(
+    /* bound = */ [Host],
+    /* invoke = */    local fun(receiver: Host, p0: Int): String {
       return receiver.importedObjectMemberWithVarargs(xs = [p0])
     }
-
-    ::importedObjectMemberWithVarargs/*(receiver = Host) */
-  })
+  )
+)
 }
 
 fun testVararg(): String {
-  return use(fn = { // BLOCK
-    local fun fnWithVarargs(p0: Int): String {
+  return use(fn = Function1<Int, String>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: Int): String {
       return fnWithVarargs(xs = [p0])
     }
-
-    ::fnWithVarargs
-  })
+  )
+)
 }
 
 fun testVararg0(): String {
-  return use0(fn = { // BLOCK
-    local fun fnWithVarargs(): String {
+  return use0(fn = Function0<String>(
+    /* bound = */ [],
+    /* invoke = */    local fun(): String {
       return fnWithVarargs()
     }
-
-    ::fnWithVarargs
-  })
+  )
+)
 }
 
 fun use(fn: Function1<Int, String>): String {

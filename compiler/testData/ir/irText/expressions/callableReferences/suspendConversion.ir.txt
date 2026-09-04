@@ -50,88 +50,92 @@ FILE fqName:<root> fileName:/suspendConversion.kt
   FUN name:testNestedNullableParam visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useSuspendNestedNullable (fn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo1 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=null [suspend_conversion] reflectionTarget='public final fun foo1 (): kotlin.Unit declared in <root>'
+          overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.coroutines.SuspendFunction0 declared in kotlin.coroutines.SuspendFunction0
+          invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo1 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
             BLOCK_BODY
               CALL 'public final fun foo1 (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-          FUNCTION_REFERENCE 'local final fun foo1 (): kotlin.Unit declared in <root>.testNestedNullableParam' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun foo1 (): kotlin.Unit declared in <root>
   FUN name:testNoCoversion visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useSuspend (fn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: FUNCTION_REFERENCE 'public final fun foo0 (): kotlin.Unit declared in <root>' type=kotlin.reflect.KSuspendFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.reflect.KSuspendFunction0<kotlin.Unit> origin=null reflectionTarget='public final fun foo0 (): kotlin.Unit declared in <root>'
+          overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.reflect.KSuspendFunction0 declared in kotlin.reflect.KSuspendFunction0
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo0 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
+            BLOCK_BODY
+              CALL 'public final fun foo0 (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
   FUN name:testNullableParam visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useSuspendNullable (fn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo1 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=null [suspend_conversion] reflectionTarget='public final fun foo1 (): kotlin.Unit declared in <root>'
+          overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.coroutines.SuspendFunction0 declared in kotlin.coroutines.SuspendFunction0
+          invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo1 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
             BLOCK_BODY
               CALL 'public final fun foo1 (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-          FUNCTION_REFERENCE 'local final fun foo1 (): kotlin.Unit declared in <root>.testNullableParam' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun foo1 (): kotlin.Unit declared in <root>
   FUN name:testSuspendPlain visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useSuspend (fn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo1 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=null [suspend_conversion] reflectionTarget='public final fun foo1 (): kotlin.Unit declared in <root>'
+          overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.coroutines.SuspendFunction0 declared in kotlin.coroutines.SuspendFunction0
+          invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo1 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
             BLOCK_BODY
               CALL 'public final fun foo1 (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-          FUNCTION_REFERENCE 'local final fun foo1 (): kotlin.Unit declared in <root>.testSuspendPlain' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun foo1 (): kotlin.Unit declared in <root>
   FUN name:testSuspendWithArgs visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useSuspendInt (fn: kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: BLOCK type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:fooInt visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=null [suspend_conversion] reflectionTarget='public final fun fooInt (x: kotlin.Int): kotlin.Unit declared in <root>'
+          overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.coroutines.SuspendFunction1): R of kotlin.coroutines.SuspendFunction1 declared in kotlin.coroutines.SuspendFunction1
+          invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:fooInt visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:kotlin.Int
             BLOCK_BODY
               CALL 'public final fun fooInt (x: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                 ARG x: GET_VAR 'p0: kotlin.Int declared in <root>.testSuspendWithArgs.fooInt' type=kotlin.Int origin=null
-          FUNCTION_REFERENCE 'local final fun fooInt (p0: kotlin.Int): kotlin.Unit declared in <root>.testSuspendWithArgs' type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun fooInt (x: kotlin.Int): kotlin.Unit declared in <root>
   FUN name:testWithBoundReceiver visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useSuspend (fn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:bar visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:ExtensionReceiver name:receiver index:0 type:<root>.C
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=null [suspend_conversion] reflectionTarget='public final fun bar (): kotlin.Unit declared in <root>.C'
+          overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.coroutines.SuspendFunction0 declared in kotlin.coroutines.SuspendFunction0
+          bound receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
+          invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:bar visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.C
             BLOCK_BODY
               CALL 'public final fun bar (): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
                 ARG <this>: GET_VAR 'receiver: <root>.C declared in <root>.testWithBoundReceiver.bar' type=<root>.C origin=ADAPTED_FUNCTION_REFERENCE
-          FUNCTION_REFERENCE 'local final fun bar (receiver: <root>.C): kotlin.Unit declared in <root>.testWithBoundReceiver' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun bar (): kotlin.Unit declared in <root>.C
-            ARG receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
   FUN name:testWithCoercionToUnit visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useSuspend (fn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo3 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=null [unit_conversion,suspend_conversion] reflectionTarget='public final fun foo3 (): kotlin.Int declared in <root>'
+          overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.coroutines.SuspendFunction0 declared in kotlin.coroutines.SuspendFunction0
+          invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo3 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
             BLOCK_BODY
               TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                 CALL 'public final fun foo3 (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-          FUNCTION_REFERENCE 'local final fun foo3 (): kotlin.Unit declared in <root>.testWithCoercionToUnit' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun foo3 (): kotlin.Int declared in <root>
   FUN name:testWithDefaults visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useSuspend (fn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo4 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=null [suspend_conversion] reflectionTarget='public final fun foo4 (i: kotlin.Int): kotlin.Unit declared in <root>'
+          overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.coroutines.SuspendFunction0 declared in kotlin.coroutines.SuspendFunction0
+          invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo4 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
             BLOCK_BODY
               CALL 'public final fun foo4 (i: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-          FUNCTION_REFERENCE 'local final fun foo4 (): kotlin.Unit declared in <root>.testWithDefaults' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun foo4 (i: kotlin.Int): kotlin.Unit declared in <root>
   FUN name:testWithVararg visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useSuspend (fn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo2 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=null [suspend_conversion,vararg_conversion] reflectionTarget='public final fun foo2 (vararg xs: kotlin.Int): kotlin.Unit declared in <root>'
+          overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.coroutines.SuspendFunction0 declared in kotlin.coroutines.SuspendFunction0
+          invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo2 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
             BLOCK_BODY
               CALL 'public final fun foo2 (vararg xs: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-          FUNCTION_REFERENCE 'local final fun foo2 (): kotlin.Unit declared in <root>.testWithVararg' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun foo2 (vararg xs: kotlin.Int): kotlin.Unit declared in <root>
   FUN name:testWithVarargMapped visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useSuspendInt (fn: kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: BLOCK type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo2 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=null [suspend_conversion,vararg_conversion] reflectionTarget='public final fun foo2 (vararg xs: kotlin.Int): kotlin.Unit declared in <root>'
+          overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.coroutines.SuspendFunction1): R of kotlin.coroutines.SuspendFunction1 declared in kotlin.coroutines.SuspendFunction1
+          invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo2 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:kotlin.Int
             BLOCK_BODY
               CALL 'public final fun foo2 (vararg xs: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                 ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                   GET_VAR 'p0: kotlin.Int declared in <root>.testWithVarargMapped.foo2' type=kotlin.Int origin=null
-          FUNCTION_REFERENCE 'local final fun foo2 (p0: kotlin.Int): kotlin.Unit declared in <root>.testWithVarargMapped' type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun foo2 (vararg xs: kotlin.Int): kotlin.Unit declared in <root>
   FUN name:useSuspend visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:fn index:0 type:kotlin.coroutines.SuspendFunction0<kotlin.Unit>
     BLOCK_BODY

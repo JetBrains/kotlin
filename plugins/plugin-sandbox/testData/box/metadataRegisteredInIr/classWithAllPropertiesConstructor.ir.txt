@@ -439,7 +439,13 @@ FILE fqName:<root> fileName:/main.kt
                           GET_VAR '$this$with: @[FlexibleNullability] <root>.Derived? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] <root>.Derived? origin=IMPLICIT_ARGUMENT
                         ARG c: GET_VAR '$this$with: kotlin.String declared in <root>.box.<anonymous>.<anonymous>' type=kotlin.String origin=IMPLICIT_ARGUMENT
       VAR name:outerRef type:kotlin.reflect.KProperty1<<root>.Container<kotlin.String>, kotlin.String> [val]
-        PROPERTY_REFERENCE 'public final outerTypeProp: T of <root>.Container declared in <root>.Container' field=null getter='public final fun <get-outerTypeProp> (): T of <root>.Container declared in <root>.Container' setter=null type=kotlin.reflect.KProperty1<<root>.Container<kotlin.String>, kotlin.String> origin=null
+        RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<<root>.Container<kotlin.String>, kotlin.String> origin=null reflectionTarget='public final outerTypeProp: T of <root>.Container declared in <root>.Container'
+          getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:outerTypeProp visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Container<kotlin.String>
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun outerTypeProp (p0: <root>.Container<kotlin.String>): kotlin.String declared in <root>.box'
+                CALL 'public final fun <get-outerTypeProp> (): T of <root>.Container declared in <root>.Container' type=kotlin.String origin=null
+                  ARG <this>: GET_VAR 'p0: <root>.Container<kotlin.String> declared in <root>.box.outerTypeProp' type=<root>.Container<kotlin.String> origin=null
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
