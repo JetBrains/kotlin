@@ -182,8 +182,8 @@ class AdapterGenerator(
                 startOffset, endOffset, type,
                 reflectionTargetSymbol = irFunctionSymbol,
                 overriddenFunctionSymbol = findInvokeSymbol(callableReferenceAccess.resolvedType as ConeClassLikeType)!!,
-                invokeFunction = buildCallableReferenceAdapterFunction(createCall = { adapterFunction ->
-                    createAdapteeCallForCallableReference(irFunctionSymbol, adapterFunction)
+                invokeFunction = buildCallableReferenceAdapterFunction(isSetter = false, createCall = { adapterFunction ->
+                    createAdapteeCallForCallableReference(irFunctionSymbol, adapterFunction, isSetter = false)
                 }),
                 hasUnitConversion = needCoercionToUnit(type, function),
                 hasSuspendConversion = needSuspendConversion(type, function),
@@ -216,8 +216,8 @@ class AdapterGenerator(
             IrRichPropertyReferenceImpl(
                 startOffset, endOffset, type,
                 reflectionTargetSymbol = irPropertySymbol,
-                getterFunction = buildCallableReferenceAdapterFunction(createCall = { adapterFunction ->
-                    createAdapteeCallForCallableReference(referencedPropertyGetterSymbol, adapterFunction)
+                getterFunction = buildCallableReferenceAdapterFunction(isSetter = false, createCall = { adapterFunction ->
+                    createAdapteeCallForCallableReference(referencedPropertyGetterSymbol, adapterFunction, isSetter = false)
                 }),
                 setterFunction = referencedPropertySetterSymbol?.let {
                     buildCallableReferenceAdapterFunction(isSetter = true, createCall = { adapterFunction ->
@@ -248,7 +248,7 @@ class AdapterGenerator(
             IrRichPropertyReferenceImpl(
                 startOffset, endOffset, type,
                 reflectionTargetSymbol = irPropertySymbol,
-                getterFunction = context.buildCallableReferenceAdapterFunction(createCall = { adapterFunction ->
+                getterFunction = context.buildCallableReferenceAdapterFunction(isSetter = false, createCall = { adapterFunction ->
                     val fieldReceiver = runUnless(firAdaptee.isStatic) {
                         val receiver = adapterFunction.parameters[0]
                         IrGetValueImpl(startOffset, endOffset, receiver.type, receiver.symbol)
@@ -261,7 +261,7 @@ class AdapterGenerator(
                             val receiver = adapterFunction.parameters[0]
                             IrGetValueImpl(startOffset, endOffset, receiver.type, receiver.symbol)
                         }
-                        val param = adapterFunction.parameters[if (fieldReceiver != null) 1 else 0]
+                        val param = adapterFunction.parameters.last()
                         val value = IrGetValueImpl(startOffset, endOffset, param.type, param.symbol)
                         IrSetFieldImpl(startOffset, endOffset, irFieldSymbol, receiver = fieldReceiver, value = value, c.builtins.unitType)
                     })
@@ -271,7 +271,7 @@ class AdapterGenerator(
     }
 
     private inline fun AdaptedCallableReferenceContext.buildCallableReferenceAdapterFunction(
-        isSetter: Boolean = false,
+        isSetter: Boolean,
         crossinline createCall: (IrSimpleFunction) -> IrExpression,
     ): IrSimpleFunction {
         val irAdapterFunction = createAdapterFunctionForCallableReference(isSetter)
@@ -285,7 +285,7 @@ class AdapterGenerator(
                     builtins.nothingType,
                     irAdapterFunction.symbol,
                     when {
-                        isSetter || irAdapterFunction.returnType.isUnit() -> Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(irCall)
+                        irAdapterFunction.returnType.isUnit() -> Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(irCall)
                         else -> Fir2IrImplicitCastInserter.implicitCastOrExpression(irCall, irAdapterFunction.returnType)
                     })
             }
@@ -403,7 +403,7 @@ class AdapterGenerator(
     private fun AdaptedCallableReferenceContext.createAdapteeCallForCallableReference(
         adapteeSymbol: IrFunctionSymbol,
         adapterFunction: IrFunction,
-        isSetter: Boolean = false,
+        isSetter: Boolean,
     ): IrExpression {
         val type = if (isSetter) {
             builtins.unitType
