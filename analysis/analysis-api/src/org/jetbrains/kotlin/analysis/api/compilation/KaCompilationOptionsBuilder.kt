@@ -101,11 +101,6 @@ public interface KaCompilationOptionsBuilder : KaLifetimeOwner {
     @KaIdeApi
     public fun disableParameterAssertions(value: Boolean)
 
-    /** Ignores errors from constant expression optimization. */
-    @KaIdeApi
-    @Deprecated("`ignoreConstOptimizationErrors` option doesn't do anything in the compiler since 2.5.0")
-    public fun ignoreConstOptimizationErrors(value: Boolean)
-
     /**
      * Sets the execution stack for debugger code fragment compilation.
      *

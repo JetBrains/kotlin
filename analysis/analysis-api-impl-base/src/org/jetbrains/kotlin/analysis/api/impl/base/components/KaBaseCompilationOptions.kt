@@ -193,10 +193,6 @@ class KaBaseCompilationOptionsBuilder(
     }
 
     @KaIdeApi
-    @Deprecated("`ignoreConstOptimizationErrors` option doesn't do anything in the compiler since 2.5.0")
-    override fun ignoreConstOptimizationErrors(value: Boolean) = withValidityAssertion {}
-
-    @KaIdeApi
     override fun jvmExecutionStack(value: Sequence<PsiElement?>) = withValidityAssertion {
         jvmExecutionStackValue = value
     }
