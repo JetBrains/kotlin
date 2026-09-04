@@ -4,6 +4,7 @@
 FROM debian:12.11-slim
 
 ARG MAVEN_VERSION="3.9.12"
+ARG JDK_PLATFORM_SUFFIX="linux-x64" # linux-aarch64
 
 RUN apt-get update \
     && apt-get install -y locales \
@@ -29,26 +30,26 @@ RUN rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /usr/lib/jvm
 
-RUN curl https://corretto.aws/downloads/resources/8.502.07.1/amazon-corretto-8.502.07.1-linux-x64.tar.gz | tar -xz -C /usr/lib/jvm
+RUN curl https://corretto.aws/downloads/resources/8.502.07.1/amazon-corretto-8.502.07.1-${JDK_PLATFORM_SUFFIX}.tar.gz | tar -xz -C /usr/lib/jvm
 
-RUN curl https://corretto.aws/downloads/resources/11.0.26.4.1/amazon-corretto-11.0.26.4.1-linux-x64.tar.gz | tar -xz -C /usr/lib/jvm
+RUN curl https://corretto.aws/downloads/resources/11.0.26.4.1/amazon-corretto-11.0.26.4.1-${JDK_PLATFORM_SUFFIX}.tar.gz | tar -xz -C /usr/lib/jvm
 
-RUN curl https://corretto.aws/downloads/resources/17.0.9.8.1/amazon-corretto-17.0.9.8.1-linux-x64.tar.gz | tar -xz -C /usr/lib/jvm
+RUN curl https://corretto.aws/downloads/resources/17.0.9.8.1/amazon-corretto-17.0.9.8.1-${JDK_PLATFORM_SUFFIX}.tar.gz | tar -xz -C /usr/lib/jvm
 
-RUN curl https://corretto.aws/downloads/resources/21.0.1.12.1/amazon-corretto-21.0.1.12.1-linux-x64.tar.gz | tar -xz -C /usr/lib/jvm
+RUN curl https://corretto.aws/downloads/resources/21.0.1.12.1/amazon-corretto-21.0.1.12.1-${JDK_PLATFORM_SUFFIX}.tar.gz | tar -xz -C /usr/lib/jvm
 
-RUN curl https://corretto.aws/downloads/resources/25.0.2.10.1/amazon-corretto-25.0.2.10.1-linux-x64.tar.gz | tar -xz -C /usr/lib/jvm
+RUN curl https://corretto.aws/downloads/resources/25.0.2.10.1/amazon-corretto-25.0.2.10.1-${JDK_PLATFORM_SUFFIX}.tar.gz | tar -xz -C /usr/lib/jvm
 
-RUN curl https://download.java.net/java/early_access/valhalla/27/1/openjdk-27-jep401ea3+1-1_linux-x64_bin.tar.gz | tar -xz -C /usr/lib/jvm
+RUN curl https://download.java.net/java/early_access/valhalla/27/1/openjdk-27-jep401ea3+1-1_${JDK_PLATFORM_SUFFIX}_bin.tar.gz | tar -xz -C /usr/lib/jvm
 
-RUN curl -L https://gds.oracle.com/download/graal/25i2/latest/graalvm-jdk-25i2-25_linux-x64_bin.tar.gz | tar -xz -C /usr/lib/jvm
+RUN curl -L https://gds.oracle.com/download/graal/25i2/latest/graalvm-jdk-25i2-25_${JDK_PLATFORM_SUFFIX}_bin.tar.gz | tar -xz -C /usr/lib/jvm
 
 # New naming conventions
-ENV JDK8=/usr/lib/jvm/amazon-corretto-8.502.07.1-linux-x64 \
-    JDK11=/usr/lib/jvm/amazon-corretto-11.0.26.4.1-linux-x64 \
-    JDK17=/usr/lib/jvm/amazon-corretto-17.0.9.8.1-linux-x64 \
-    JDK21=/usr/lib/jvm/amazon-corretto-21.0.1.12.1-linux-x64 \
-    JDK25=/usr/lib/jvm/amazon-corretto-25.0.2.10.1-linux-x64
+ENV JDK8=/usr/lib/jvm/amazon-corretto-8.502.07.1-${JDK_PLATFORM_SUFFIX} \
+    JDK11=/usr/lib/jvm/amazon-corretto-11.0.26.4.1-${JDK_PLATFORM_SUFFIX} \
+    JDK17=/usr/lib/jvm/amazon-corretto-17.0.9.8.1-${JDK_PLATFORM_SUFFIX} \
+    JDK21=/usr/lib/jvm/amazon-corretto-21.0.1.12.1-${JDK_PLATFORM_SUFFIX} \
+    JDK25=/usr/lib/jvm/amazon-corretto-25.0.2.10.1-${JDK_PLATFORM_SUFFIX}
 
 # TeamCity JDK old naming conventions. Kotlin build still have dependencies in Maven build.
 ENV JDK_18=$JDK8 \
