@@ -33,8 +33,10 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.condition.OS
 import java.net.URI
 import javax.inject.Inject
+import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.test.assertContains
+import kotlin.test.assertEquals
 
 @OptIn(ExperimentalJsTestDsl::class)
 @OsCondition(
@@ -321,6 +323,32 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
 
             build(":jsBrowserTest") {
                 assertTasksUpToDate(":prepareWebpackBundleForKotlinJsTests")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `verify mocha is served from the test bundle instead of over HTTP`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions
+        ) {
+            jsProject {
+                chromium()
+            }
+
+            build(":jsBrowserTest") {
+                val bundleDir = projectPath.resolve("build/kotlinJsTest/dist")
+                assertFileExists(bundleDir.resolve("mocha.js"))
+                assertFileExists(bundleDir.resolve("mocha.css"))
+
+                val testHtml = bundleDir.resolve("test.html").readText()
+                assertEquals(
+                    listOf("mocha.css", "mocha.js"),
+                    MOCHA_ASSET_REFERENCE.findAll(testHtml).map { it.groupValues[1] }.toList(),
+                    "test.html must reference the mocha assets served next to it",
+                )
             }
         }
     }
@@ -690,3 +718,5 @@ private abstract class PostProcessTestsBundle : DefaultTask() {
         }
     }
 }
+
+private val MOCHA_ASSET_REFERENCE = Regex("""(?:href|src)="([^"]*mocha\.(?:js|css))"""")
