@@ -21,6 +21,8 @@ internal interface WasmArtifactsCollector {
         testServices.moduleStructure.modules.forEach { m ->
             m.files.forEach { file: TestFile ->
                 val name = file.name
+                // JS files are not compiler input: ship them as written in the test data, untouched by source
+                // preprocessors, the same as the grouped second stage does (see `copyJsFilesToOutputDir`).
                 when {
                     name.endsWith(".js") ->
                         jsFiles += AdditionalFile(file.name, file.originalContent)
