@@ -169,6 +169,7 @@ object JvmStandardClassIds {
             val ElementType = "ElementType".javaAnnotationId()
             val RetentionPolicy = "RetentionPolicy".javaAnnotationId()
             val Inherited = "Inherited".javaAnnotationId()
+            val Annotation = "Annotation".javaAnnotationId()
         }
 
         object ParameterNames {
@@ -177,6 +178,7 @@ object JvmStandardClassIds {
     }
 
     object Java {
+        val Object = "Object".javaLangId()
         val Record = "Record".javaLangId()
     }
 
