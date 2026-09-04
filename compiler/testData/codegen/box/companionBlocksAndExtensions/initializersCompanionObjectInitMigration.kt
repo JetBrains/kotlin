@@ -1,7 +1,4 @@
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
-// IGNORE_BACKEND: JVM_IR
-// JVM_IR initializes the second companion block before the companion
-// object init block here (`ACBI` instead of `ABIC`)
 
 var initLog = ""
 
