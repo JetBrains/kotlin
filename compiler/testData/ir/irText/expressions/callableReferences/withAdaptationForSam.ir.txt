@@ -26,10 +26,11 @@ FILE fqName:<root> fileName:/withAdaptationForSam.kt
             invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:withVararg visibility:local modality:FINAL returnType:kotlin.Unit
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:kotlin.Int
               BLOCK_BODY
-                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                  CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-                    ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-                      GET_VAR 'p0: kotlin.Int declared in <root>.test.withVararg' type=kotlin.Int origin=null
+                RETURN type=kotlin.Nothing from='local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.test'
+                  TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                    CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                      ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                        GET_VAR 'p0: kotlin.Int declared in <root>.test.withVararg' type=kotlin.Int origin=null
   FUN name:useFoo visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:foo index:0 type:<root>.IFoo
     BLOCK_BODY

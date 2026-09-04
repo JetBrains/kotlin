@@ -21,7 +21,7 @@ var test2: Int /* by */
         return <get-test2>()
       }
       /* setter = */      local fun(value: Int) {
-        <set-test2>(<set-?> = value)
+        return <set-test2>(<set-?> = value)
       }
     )
 )
@@ -34,7 +34,7 @@ var test2: Int /* by */
         return <get-test2>()
       }
       /* setter = */      local fun(value: Int) {
-        <set-test2>(<set-?> = value)
+        return <set-test2>(<set-?> = value)
       }
     )
 , newValue = <set-?>)

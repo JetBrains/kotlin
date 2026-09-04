@@ -72,9 +72,10 @@ FILE fqName:<root> fileName:/Derived.kt
                     VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Derived
                     VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.String
                     BLOCK_BODY
-                      CALL 'public final fun <set-a> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.Unit origin=null
-                        ARG <this>: GET_VAR 'receiver: <root>.Derived declared in <root>.box.a' type=<root>.Derived origin=ADAPTED_FUNCTION_REFERENCE
-                        ARG <set-?>: GET_VAR 'value: kotlin.String declared in <root>.box.a' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
+                      RETURN type=kotlin.Nothing from='local final fun a (receiver: <root>.Derived, value: kotlin.String): kotlin.Unit declared in <root>.box'
+                        CALL 'public final fun <set-a> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.Unit origin=null
+                          ARG <this>: GET_VAR 'receiver: <root>.Derived declared in <root>.box.a' type=<root>.Derived origin=ADAPTED_FUNCTION_REFERENCE
+                          ARG <set-?>: GET_VAR 'value: kotlin.String declared in <root>.box.a' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
               ARG arg1: CONST String type=kotlin.String value="OK"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CALL 'public abstract fun get (): V of kotlin.reflect.KMutableProperty0 declared in kotlin.reflect.KMutableProperty0' type=kotlin.String origin=null
@@ -90,9 +91,10 @@ FILE fqName:<root> fileName:/Derived.kt
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Derived
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.String
                   BLOCK_BODY
-                    CALL 'public final fun <set-a> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.Unit origin=null
-                      ARG <this>: GET_VAR 'receiver: <root>.Derived declared in <root>.box.a' type=<root>.Derived origin=ADAPTED_FUNCTION_REFERENCE
-                      ARG <set-?>: GET_VAR 'value: kotlin.String declared in <root>.box.a' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
+                    RETURN type=kotlin.Nothing from='local final fun a (receiver: <root>.Derived, value: kotlin.String): kotlin.Unit declared in <root>.box'
+                      CALL 'public final fun <set-a> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.Unit origin=null
+                        ARG <this>: GET_VAR 'receiver: <root>.Derived declared in <root>.box.a' type=<root>.Derived origin=ADAPTED_FUNCTION_REFERENCE
+                        ARG <set-?>: GET_VAR 'value: kotlin.String declared in <root>.box.a' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
       CALL 'public final fun <set-a> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.Unit origin=EQ
         ARG <this>: GET_VAR 'val d: <root>.Derived declared in <root>.box' type=<root>.Derived origin=null
         ARG <set-?>: CONST String type=kotlin.String value="12"

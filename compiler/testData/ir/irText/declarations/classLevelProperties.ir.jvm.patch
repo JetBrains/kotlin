@@ -21,7 +21,7 @@
                  receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test8>' type=<root>.C origin=IMPLICIT_ARGUMENT
                ARG thisRef: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test8>' type=<root>.C origin=null
                ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<<root>.C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final test8: kotlin.Int declared in <root>.C'
-@@ -146,7 +146,7 @@
+@@ -147,7 +147,7 @@
            RETURN type=kotlin.Nothing from='public final fun <set-test8> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C'
              CALL 'public final fun setValue <V> (<this>: kotlin.collections.MutableMap<in kotlin.String, in V of kotlin.collections.setValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.setValue): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
                TYPE_ARG V: kotlin.Int

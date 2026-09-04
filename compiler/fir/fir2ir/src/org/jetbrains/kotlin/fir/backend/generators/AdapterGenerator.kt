@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.ir.util.isSuspendFunction
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
@@ -278,11 +279,14 @@ class AdapterGenerator(
         if (!isForLocalDelegate) {
             irAdapterFunction.body = IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                 val irCall = createCall(irAdapterFunction)
-                if (isSetter || adaptedType.arguments.last().typeOrNull?.isUnit() == true) {
-                    statements.add(Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(irCall))
-                } else {
-                    statements.add(IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, builtins.nothingType, irAdapterFunction.symbol, irCall))
-                }
+                statements += IrReturnImpl(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    builtins.nothingType,
+                    irAdapterFunction.symbol,
+                    irCall.applyIf(isSetter || adaptedType.arguments.last().typeOrNull?.isUnit() == true) {
+                        Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(this)
+                    })
             }
         }
         return irAdapterFunction

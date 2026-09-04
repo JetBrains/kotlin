@@ -14,7 +14,7 @@ fun testSamConstructor(): KRunnable {
   return KFunction0<Unit>(
     /* bound = */ [],
     /* invoke = */    local fun() {
-      foo0()
+      return foo0()
     }
   )
  /*-> KRunnable */
@@ -24,7 +24,7 @@ fun testSamConversion() {
   use(r = KFunction0<Unit>(
     /* bound = */ [],
     /* invoke = */    local fun() {
-      foo0()
+      return foo0()
     }
   )
  /*-> KRunnable */)
@@ -34,7 +34,7 @@ fun testSamConversionOnAdapted() {
   use(r = Function0<Unit>(
     /* bound = */ [],
     /* invoke = */    local fun() {
-      foo1() /*~> Unit */
+      return foo1() /*~> Unit */
     }
   )
  /*-> KRunnable */)
@@ -44,7 +44,7 @@ fun testSamCosntructorOnAdapted(): KRunnable {
   return Function0<Unit>(
     /* bound = */ [],
     /* invoke = */    local fun() {
-      foo1() /*~> Unit */
+      return foo1() /*~> Unit */
     }
   )
  /*-> KRunnable */

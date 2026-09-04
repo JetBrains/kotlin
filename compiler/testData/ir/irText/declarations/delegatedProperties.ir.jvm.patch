@@ -21,7 +21,7 @@
              ARG thisRef: CONST Null type=kotlin.Nothing? value=null
              ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final test4: kotlin.Any declared in <root>'
                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:test4 visibility:local modality:FINAL returnType:kotlin.Any
-@@ -54,7 +54,7 @@
+@@ -55,7 +55,7 @@
          RETURN type=kotlin.Nothing from='public final fun <set-test4> (<set-?>: kotlin.Any): kotlin.Unit declared in <root>'
            CALL 'public final fun setValue <V> (<this>: kotlin.collections.MutableMap<in kotlin.String, in V of kotlin.collections.setValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.setValue): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
              TYPE_ARG V: kotlin.Any

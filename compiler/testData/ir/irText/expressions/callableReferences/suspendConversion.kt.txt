@@ -40,7 +40,7 @@ fun testNestedNullableParam() {
   useSuspendNestedNullable(fn = SuspendFunction0<Unit>(
     /* bound = */ [],
     /* invoke = */    local suspend fun() {
-      foo1()
+      return foo1()
     }
   )
 )
@@ -50,7 +50,7 @@ fun testNoCoversion() {
   useSuspend(fn = KSuspendFunction0<Unit>(
     /* bound = */ [],
     /* invoke = */    local suspend fun() {
-      foo0()
+      return foo0()
     }
   )
 )
@@ -60,7 +60,7 @@ fun testNullableParam() {
   useSuspendNullable(fn = SuspendFunction0<Unit>(
     /* bound = */ [],
     /* invoke = */    local suspend fun() {
-      foo1()
+      return foo1()
     }
   )
 )
@@ -70,7 +70,7 @@ fun testSuspendPlain() {
   useSuspend(fn = SuspendFunction0<Unit>(
     /* bound = */ [],
     /* invoke = */    local suspend fun() {
-      foo1()
+      return foo1()
     }
   )
 )
@@ -80,7 +80,7 @@ fun testSuspendWithArgs() {
   useSuspendInt(fn = SuspendFunction1<Int, Unit>(
     /* bound = */ [],
     /* invoke = */    local suspend fun(p0: Int) {
-      fooInt(x = p0)
+      return fooInt(x = p0)
     }
   )
 )
@@ -90,7 +90,7 @@ fun testWithBoundReceiver() {
   useSuspend(fn = SuspendFunction0<Unit>(
     /* bound = */ [C()],
     /* invoke = */    local suspend fun(receiver: C) {
-      receiver.bar()
+      return receiver.bar()
     }
   )
 )
@@ -100,7 +100,7 @@ fun testWithCoercionToUnit() {
   useSuspend(fn = SuspendFunction0<Unit>(
     /* bound = */ [],
     /* invoke = */    local suspend fun() {
-      foo3() /*~> Unit */
+      return foo3() /*~> Unit */
     }
   )
 )
@@ -110,7 +110,7 @@ fun testWithDefaults() {
   useSuspend(fn = SuspendFunction0<Unit>(
     /* bound = */ [],
     /* invoke = */    local suspend fun() {
-      foo4()
+      return foo4()
     }
   )
 )
@@ -120,7 +120,7 @@ fun testWithVararg() {
   useSuspend(fn = SuspendFunction0<Unit>(
     /* bound = */ [],
     /* invoke = */    local suspend fun() {
-      foo2()
+      return foo2()
     }
   )
 )
@@ -130,7 +130,7 @@ fun testWithVarargMapped() {
   useSuspendInt(fn = SuspendFunction1<Int, Unit>(
     /* bound = */ [],
     /* invoke = */    local suspend fun(p0: Int) {
-      foo2(xs = [p0])
+      return foo2(xs = [p0])
     }
   )
 )

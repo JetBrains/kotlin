@@ -8,7 +8,7 @@ class IdeWizard {
           return p0.<get-projectTemplate>()
         }
         /* setter = */        local fun(p0: IdeWizard, value: Int?) {
-          p0.<set-projectTemplate>(<set-?> = value)
+          return p0.<set-projectTemplate>(<set-?> = value)
         }
       )
 )
@@ -20,7 +20,7 @@ class IdeWizard {
           return p0.<get-projectTemplate>()
         }
         /* setter = */        local fun(p0: IdeWizard, value: Int?) {
-          p0.<set-projectTemplate>(<set-?> = value)
+          return p0.<set-projectTemplate>(<set-?> = value)
         }
       )
 , value = <set-?>)

@@ -81,7 +81,7 @@ fun test1() {
       return <get-y><String>(/* <this> = receiver */)
     }
     /* setter = */    local fun(receiver: C<String>, value: String) {
-      <set-y><String>(/* <this> = receiver, */ v = value)
+      return <set-y><String>(/* <this> = receiver, */ v = value)
     }
   )
 )
@@ -91,7 +91,7 @@ fun test1() {
       return <get-first><String, String>(/* <this> = receiver */)
     }
     /* setter = */    local fun(receiver: Pair<String, String>, value: String) {
-      <set-first><String, String>(/* <this> = receiver, */ v = value)
+      return <set-first><String, String>(/* <this> = receiver, */ v = value)
     }
   )
 )
@@ -105,7 +105,7 @@ fun test2(a: Any) {
       return <get-y><String>(/* <this> = receiver */)
     }
     /* setter = */    local fun(receiver: C<String>, value: String) {
-      <set-y><String>(/* <this> = receiver, */ v = value)
+      return <set-y><String>(/* <this> = receiver, */ v = value)
     }
   )
 )
@@ -116,7 +116,7 @@ fun test2(a: Any) {
       return <get-first><String, String>(/* <this> = receiver */)
     }
     /* setter = */    local fun(receiver: Pair<String, String>, value: String) {
-      <set-first><String, String>(/* <this> = receiver, */ v = value)
+      return <set-first><String, String>(/* <this> = receiver, */ v = value)
     }
   )
 )

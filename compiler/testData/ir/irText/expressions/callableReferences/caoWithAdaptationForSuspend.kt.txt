@@ -44,7 +44,7 @@ fun test1() {
     val tmp_1: SuspendFunction1<Int, Unit> = SuspendFunction1<Int, Unit>(
       /* bound = */ [],
       /* invoke = */      local suspend fun(p0: Int) {
-        withVararg(xs = [p0]) /*~> Unit */
+        return withVararg(xs = [p0]) /*~> Unit */
       }
     )
 

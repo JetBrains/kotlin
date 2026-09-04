@@ -14,7 +14,7 @@ fun String.test() {
   acceptSam(t = KFunction0<Unit>(
     /* bound = */ [<this>],
     /* invoke = */    local fun(c0: String) {
-      foo(/* $context-String = c0 */)
+      return foo(/* $context-String = c0 */)
     }
   )
  /*-> Sam */)

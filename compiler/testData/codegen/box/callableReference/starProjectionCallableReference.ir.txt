@@ -15,10 +15,11 @@ FILE fqName:<root> fileName:/starProjectionCallableReference.kt
             invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:mutate visibility:local modality:FINAL returnType:kotlin.Unit
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:kotlin.collections.MutableList<*>
               BLOCK_BODY
-                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                  CALL 'public final fun mutate <T> (x: kotlin.collections.MutableList<T of <root>.mutate>): kotlin.collections.MutableList<T of <root>.mutate> declared in <root>' type=kotlin.collections.MutableList<*> origin=null
-                    TYPE_ARG T: kotlin.Any?
-                    ARG x: GET_VAR 'p0: kotlin.collections.MutableList<*> declared in <root>.box.mutate' type=kotlin.collections.MutableList<*> origin=null
+                RETURN type=kotlin.Nothing from='local final fun mutate (p0: kotlin.collections.MutableList<*>): kotlin.Unit declared in <root>.box'
+                  TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                    CALL 'public final fun mutate <T> (x: kotlin.collections.MutableList<T of <root>.mutate>): kotlin.collections.MutableList<T of <root>.mutate> declared in <root>' type=kotlin.collections.MutableList<*> origin=null
+                      TYPE_ARG T: kotlin.Any?
+                      ARG x: GET_VAR 'p0: kotlin.collections.MutableList<*> declared in <root>.box.mutate' type=kotlin.collections.MutableList<*> origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="OK"
   FUN name:mutate visibility:public modality:FINAL returnType:kotlin.collections.MutableList<T of <root>.mutate>
