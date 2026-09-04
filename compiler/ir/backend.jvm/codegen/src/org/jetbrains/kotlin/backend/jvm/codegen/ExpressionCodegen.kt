@@ -1426,10 +1426,8 @@ class ExpressionCodegen(
 
         val gapEnd = afterJumpLabel ?: endOfFinallyCode
         tryWithFinallyInfo.gaps.add(gapStart to gapEnd)
-        if (config.languageVersionSettings.supportsFeature(LanguageFeature.ProperFinally)) {
-            for (it in nestedTryWithoutFinally) {
-                it.gaps.add(gapStart to gapEnd)
-            }
+        for (it in nestedTryWithoutFinally) {
+            it.gaps.add(gapStart to gapEnd)
         }
     }
 

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.codegen.optimization.fixStack.*
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckParameterIsNotNull
 import org.jetbrains.kotlin.codegen.optimization.temporaryVals.TemporaryVariablesEliminationTransformer
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.utils.SmartList
@@ -54,7 +53,6 @@ class MethodInliner(
     private val defaultMaskEnd: Int = -1,
     private val skipLineNumbers: Boolean = false,
 ) {
-    private val languageVersionSettings = inliningContext.state.config.languageVersionSettings
     private val invokeCalls = ArrayList<InvokeCall>()
     private val anonymousObjectCapturedFieldsByConstructorArgumentCache = hashMapOf<String, List<String?>>()
 
@@ -128,8 +126,7 @@ class MethodInliner(
         if (inliningContext.isRoot) {
             val remapValue = remapper.remap(parameters.argsSizeOnStack + 1).value
             InternalFinallyBlockInliner.processInlineFunFinallyBlocks(
-                resultNode, lambdasFinallyBlocks, (remapValue as StackValue.Local).index,
-                languageVersionSettings.supportsFeature(LanguageFeature.ProperFinally)
+                resultNode, lambdasFinallyBlocks, (remapValue as StackValue.Local).index
             )
         }
 
