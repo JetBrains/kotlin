@@ -302,8 +302,8 @@ private fun TestProject.buildWithAction(
         val gradleRunnerForBuild = gradleRunner
             .also { if (forwardBuildOutput) it.forwardOutput() }
             .withEnvironment(
-                if (environmentVariables.environmentalVariables.isNotEmpty()) {
-                    System.getenv() + environmentVariables.environmentalVariables
+                if (environmentVariables.environmentalVariables.isNotEmpty() || environmentVariables.removedEnvironmentVariables.isNotEmpty()) {
+                    System.getenv() - environmentVariables.removedEnvironmentVariables + environmentVariables.environmentalVariables
                 } else null
             )
             .withDebug(runWithDebug && !connectSubprocessVMToDebugger)
@@ -568,8 +568,11 @@ open class GradleProject(
  */
 class EnvironmentalVariables @EnvironmentalVariablesOverride constructor(
     val environmentalVariables: Map<String, String> = emptyMap(),
+    val removedEnvironmentVariables: Set<String> = emptySet(),
 ) {
-    val overridingEnvironmentVariablesInstantiationBacktrace: Throwable? = if (environmentalVariables.isNotEmpty()) Throwable() else null
+    val overridingEnvironmentVariablesInstantiationBacktrace: Throwable? = if (
+        environmentalVariables.isNotEmpty() || removedEnvironmentVariables.isNotEmpty()
+    ) Throwable() else null
 
     @EnvironmentalVariablesOverride
     constructor(vararg environmentVariables: Pair<String, String>) : this(mapOf(*environmentVariables))
