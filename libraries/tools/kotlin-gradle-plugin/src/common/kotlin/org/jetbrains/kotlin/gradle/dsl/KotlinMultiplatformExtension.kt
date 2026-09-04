@@ -268,7 +268,6 @@ internal constructor(
             project,
             "kotlin",
             targets,
-            publishing.adhocSoftwareComponent
         )
     }
 

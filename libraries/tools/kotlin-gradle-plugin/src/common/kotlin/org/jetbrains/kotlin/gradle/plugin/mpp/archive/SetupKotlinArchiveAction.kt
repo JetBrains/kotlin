@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.gradle.dsl.metadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.archivesName
 
@@ -50,5 +53,46 @@ internal val SetupKotlinArchiveAction = KotlinProjectSetupCoroutine {
             })
         )
         task.onlyIf { kotlinPublicationFormatProvider.get() == KotlinPublicationFormat.KOTLIN_ARCHIVE }
+    }
+
+
+    for (target in extension.awaitTargets()) {
+        target.requestKarPlatformArtifactsForCompilation()
+        target.configureTransformActionFromKarToPlatformArtifacts()
+        target.configureTransformActionFromKarToResources()
+    }
+    for (sourceSet in extension.awaitSourceSets()) {
+        // TODO: check if this is okey to do on non-shared source-sets.
+        sourceSet.requestDecompressedKarForMetadataCompilation()
+    }
+
+    configureTransformActionFromKarXzToKar()
+    configureTransformActionFromKarToPsm()
+}
+
+
+/**
+ * The only consumer of resolvableMetadataConfiguration is [org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation],
+ * they work on top of zip archive. We can potentially extract only metadata directory into a separate archive,
+ * but that would just be additional work, so we directly pass DECOMPRESSED to the task.
+ */
+private fun KotlinSourceSet.requestDecompressedKarForMetadataCompilation() {
+    internal.resolvableMetadataConfiguration.apply {
+        attributes.attribute(KarLayout.Attributes.state, KarLayout.Attributes.State.DECOMPRESSED)
+    }
+}
+
+private fun KotlinTarget.requestKarPlatformArtifactsForCompilation() {
+    if (this !is KotlinTargetWithKotlinArchiveSupport) return
+    compilations.configureEach { compilation ->
+        val configurations = compilation.internal.configurations
+
+        configurations.compileDependencyConfiguration.apply {
+            attributes.attribute(KarLayout.Attributes.state, KarLayout.Attributes.State.PLATFORM_ARTIFACTS_EXTRACTED)
+        }
+
+        configurations.runtimeDependencyConfiguration?.apply {
+            attributes.attribute(KarLayout.Attributes.state, KarLayout.Attributes.State.PLATFORM_ARTIFACTS_EXTRACTED)
+        }
     }
 }
