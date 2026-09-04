@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.IrBuilderWithParent
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceData
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceReplacement
+import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceSource
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.getGenericTypeFromExpression
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irBreak
@@ -35,6 +36,10 @@ internal class UnknownVariableStrategy(
     ): IrContainerExpression? {
         val [builder, parent] = builderWithParent
 
+        // `drop` of a `TakeSequence` or a `SubSequence` in the stdlib returns an empty sequence without iterating when everything
+        // is dropped, e.g. `s.drop(5)` for `s = x.take(2)`, which can not be known for a sequence of a variable
+        if (sequenceData.sequenceSource is SequenceSource.Variable && sequenceReplacement.leadingDropCounts.isNotEmpty()) return null
+
         val baseType = getGenericTypeFromExpression(newIteratorTarget, context) ?: return null
         val iteratorType = builder.context.irBuiltIns.iteratorClass.typeWith(baseType)
 
@@ -54,7 +59,7 @@ internal class UnknownVariableStrategy(
                 irType = iteratorType,
             ).apply { markAsSynthetic() }
 
-            val loopCondition = builderWithParent.buildCallWithReceiver(irGet(iteratorDeclaration), iteratorType, "hasNext")
+            val hasNextCall = builderWithParent.buildCallWithReceiver(irGet(iteratorDeclaration), iteratorType, "hasNext")
                 ?: return null
             val loop = createSequenceWhile()
             val nextCall = builderWithParent.buildCallWithReceiver(irGet(iteratorDeclaration), iteratorType, "next")!!
@@ -66,7 +71,7 @@ internal class UnknownVariableStrategy(
             ).apply { markAsSynthetic() }
 
             loop.apply {
-                condition = loopCondition
+                condition = hasNextCall
 
                 body = irBlock {
                     +outerLoopVariable
@@ -77,8 +82,12 @@ internal class UnknownVariableStrategy(
                     }
                 }
             }
-            +iteratorDeclaration
-            +loop
+            val iteration = irBlock {
+                +iteratorDeclaration
+                +loop
+            }
+            // `iterator()` is not called at all if the iteration is skipped
+            +skipIfNeeded(sequenceReplacement.skipIteration, iteration)
             +sequenceReplacement.finalExpression
         }
     }

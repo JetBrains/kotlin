@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceReplacemen
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irIfThen
 import org.jetbrains.kotlin.ir.builders.irWhile
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
@@ -88,8 +90,12 @@ class VariableSubstitutionTransformer(
 
 internal sealed class ProducerStrategy {
     /**
-     * Emits the initial declarations, then iterates over the elements of the sequence. Each element is passed to mainBodyBuilder,
-     * and the iteration stops when its result is `false`. The final expression is the value of the returned block.
+     * Emits the initial declarations, then evaluates skipIteration once. Unless it is `true`, iterates over the elements
+     * of the sequence: each element is passed to mainBodyBuilder, and the iteration stops after the element for which
+     * its result is `false`, without requesting another element. The final expression is the value of the returned block.
+     *
+     * All the work of producing elements (e.g. calling `iterator()` or a seed function) must be skipped together with
+     * the iteration (see [skipIfNeeded]).
      *
      * Returns null if the sequence can not be fused.
      */
@@ -99,6 +105,10 @@ internal sealed class ProducerStrategy {
         sequenceReplacement: SequenceReplacement,
     ): IrContainerExpression?
 }
+
+/** `if (!skipIteration) iteration`, or just `iteration` if nothing can make the sequence empty before it starts. */
+internal fun IrBuilderWithScope.skipIfNeeded(skipIteration: IrExpression?, iteration: IrExpression): IrExpression =
+    skipIteration?.let { irIfThen(context.irBuiltIns.unitType, irNot(it), iteration) } ?: iteration
 
 internal fun updateLoopVariableInBody(
     builder: IrBuilderWithScope,

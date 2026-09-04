@@ -59,6 +59,7 @@ internal class FilterStrategy(val filter: SequenceTransformer.Filter, builderWit
         }
         val initialDeclarations = listOfNotNull(functionVariable) + sequenceReplacement.initialDeclarations
         val finalExpression = sequenceReplacement.finalExpression
-        return SequenceReplacement(initialDeclarations, mainBodyBuilder, finalExpression)
+        val skipIteration = sequenceReplacement.skipIteration
+        return SequenceReplacement(initialDeclarations, skipIteration, mainBodyBuilder, finalExpression)
     }
 }

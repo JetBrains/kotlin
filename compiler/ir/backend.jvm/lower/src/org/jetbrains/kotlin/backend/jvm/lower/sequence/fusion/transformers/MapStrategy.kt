@@ -72,6 +72,7 @@ internal class MapStrategy(val map: SequenceTransformer.Map, builderWithParent: 
         val initialDeclarations = listOfNotNull(functionVariable) + sequenceReplacement.initialDeclarations +
                 listOfNotNull(mapIndexedVariable.takeIf { map.isIndexed })
         val finalExpression = sequenceReplacement.finalExpression
-        return SequenceReplacement(initialDeclarations, mainBodyBuilder, finalExpression)
+        val skipIteration = sequenceReplacement.skipIteration
+        return SequenceReplacement(initialDeclarations, skipIteration, mainBodyBuilder, finalExpression)
     }
 }

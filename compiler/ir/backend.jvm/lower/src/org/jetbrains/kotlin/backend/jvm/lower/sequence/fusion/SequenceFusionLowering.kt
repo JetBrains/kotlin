@@ -103,8 +103,11 @@ internal typealias ConsumerBodyBuilder = (IrValueDeclaration) -> IrContainerExpr
 
 internal data class SequenceReplacement(
     val initialDeclarations: List<IrStatement>,
+    val skipIteration: IrExpression?,
     val mainBodyBuilder: ConsumerBodyBuilder,
     val finalExpression: IrExpression,
+    // the arguments of the `drop` calls that directly follow, possibly interleaved with `take` calls
+    val leadingDropCounts: List<IrVariable> = emptyList(),
 )
 
 class SequenceFusionLowering(val context: JvmBackendContext) : FileLoweringPass {

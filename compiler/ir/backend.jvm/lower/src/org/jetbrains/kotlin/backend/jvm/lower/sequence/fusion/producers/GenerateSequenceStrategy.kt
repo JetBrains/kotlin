@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers
 
-import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.GenerateSequenceInitialValue
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.IrBuilderWithParent
@@ -97,8 +96,12 @@ internal class GenerateSequenceStrategy(
             irBlock {
                 +stateVariable
                 +sequenceReplacement.initialDeclarations
-                if (!isInitialValueEager) +irSet(stateVariable, initialExpression)
-                +loop
+                val iteration = irBlock {
+                    if (!isInitialValueEager) +irSet(stateVariable, initialExpression)
+                    +loop
+                }
+                // e.g. take(0) skips the seed function and the generating function
+                +skipIfNeeded(sequenceReplacement.skipIteration, iteration)
                 +sequenceReplacement.finalExpression
             }
         }

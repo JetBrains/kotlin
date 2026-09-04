@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.transformers.SequenceTransformer
+import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.transformers.TakeOrDrop
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
@@ -47,6 +48,10 @@ internal const val MAP_NOT_NULL_INDEXED = KOTLIN_SEQUENCES_PREFIX + "mapIndexedN
 internal const val FILTER = KOTLIN_SEQUENCES_PREFIX + "filter"
 internal const val FILTER_NOT = KOTLIN_SEQUENCES_PREFIX + "filterNot"
 internal const val FILTER_NOT_NULL = KOTLIN_SEQUENCES_PREFIX + "filterNotNull"
+internal const val TAKE = KOTLIN_SEQUENCES_PREFIX + "take"
+internal const val TAKE_WHILE = KOTLIN_SEQUENCES_PREFIX + "takeWhile"
+internal const val DROP = KOTLIN_SEQUENCES_PREFIX + "drop"
+internal const val DROP_WHILE = KOTLIN_SEQUENCES_PREFIX + "dropWhile"
 
 internal var IrExpression.sequenceDataOfExpression: SequenceData? by irAttribute(true)
 
@@ -237,6 +242,33 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         )
     }
 
+    private fun matchWithTakeOrDrop(
+        call: IrCall,
+        createTransformer: (argument: IrExpression) -> SequenceTransformer,
+    ) {
+        val argumentExpression = call.arguments.getOrNull(1) ?: return
+        val receiverData = call.receiverSequenceData() ?: return
+        call.appendTransformer(
+            receiverData,
+            createTransformer(argumentExpression),
+            copiedExpression = argumentExpression,
+            isMovable = argumentExpression.isSafeToReevaluate(),
+        )
+    }
+
+    private fun matchWithTakeWhile(
+        call: IrCall,
+        takeVersion: TakeOrDrop,
+    ) {
+        val predicate = getPredicateArgument(call, 1, isEvaluatedOnce = true) ?: return
+        val receiverData = call.receiverSequenceData() ?: return
+        call.appendTransformer(
+            receiverData,
+            SequenceTransformer.TakeWhile(predicate, takeVersion),
+            copiedExpression = predicate,
+            isMovable = predicate.isFunctionExpressionSafeToReevaluate(),
+        )
+    }
 
     private fun matchWithGenerateSequence(expression: IrCall) {
         val [initialValue, func] = when (expression.arguments.size) {
@@ -338,6 +370,10 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
             FILTER -> matchWithFilter(expression, FilterVersion.Filter)
             FILTER_NOT -> matchWithFilter(expression, FilterVersion.FilterNot)
             FILTER_NOT_NULL -> matchWithFilter(expression, FilterVersion.FilterNotNull)
+            TAKE -> matchWithTakeOrDrop(expression, SequenceTransformer::Take)
+            TAKE_WHILE -> matchWithTakeWhile(expression, TakeOrDrop.Take)
+            DROP -> matchWithTakeOrDrop(expression, SequenceTransformer::Drop)
+            DROP_WHILE -> matchWithTakeWhile(expression, TakeOrDrop.Drop)
             GENERATE_SEQUENCE -> matchWithGenerateSequence(expression)
             SEQUENCE_OF -> matchWithSequenceOf(expression)
             AS_SEQUENCE -> matchWithAsSequence(expression)
