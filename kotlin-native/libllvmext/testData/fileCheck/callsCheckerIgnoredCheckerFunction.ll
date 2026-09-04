@@ -1,7 +1,7 @@
 ; OPT: --passes=kotlin-calls-checker
 
-; CHECK: @0 = internal constant [2 x i8] c"f\00"
-; CHECK: @1 = internal constant [17 x i8] c"externalFunction\00"
+; CHECK: @0 = private constant [2 x i8] c"f\00"
+; CHECK: @1 = private constant [17 x i8] c"externalFunction\00"
 
 declare void @externalFunction()
 

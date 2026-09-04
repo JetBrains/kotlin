@@ -1,9 +1,9 @@
 ; OPT: --passes=kotlin-calls-checker
 
-; CHECK: @0 = internal constant [34 x i8] c"callSelector0 (over objc_msgSend)\00"
-; CHECK: @1 = internal constant [34 x i8] c"callSelector1 (over objc_msgSend)\00"
-; CHECK: @2 = internal constant [45 x i8] c"callSuperSelector0 (over objc_msgSendSuper2)\00"
-; CHECK: @3 = internal constant [45 x i8] c"callSuperSelector1 (over objc_msgSendSuper2)\00"
+; CHECK: @0 = private constant [34 x i8] c"callSelector0 (over objc_msgSend)\00"
+; CHECK: @1 = private constant [34 x i8] c"callSelector1 (over objc_msgSend)\00"
+; CHECK: @2 = private constant [45 x i8] c"callSuperSelector0 (over objc_msgSendSuper2)\00"
+; CHECK: @3 = private constant [45 x i8] c"callSuperSelector1 (over objc_msgSendSuper2)\00"
 
 declare ptr @objc_msgSend(ptr, ptr, ...)
 declare ptr @objc_msgSendSuper2(ptr, ptr, ...)
