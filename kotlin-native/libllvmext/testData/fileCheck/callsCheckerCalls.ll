@@ -47,7 +47,7 @@ define void @callKnownFunctionAlias() {
 
 ; CHECK: define void @callExternalFunction() {
 define void @callExternalFunction() {
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @0, ptr @1, ptr @externalFunction)
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @0, ptr @1, ptr @externalFunction)
 ; CHECK-NEXT: call void @externalFunction()
   call void @externalFunction()
 ; CHECK-NEXT: ret void
@@ -57,7 +57,7 @@ define void @callExternalFunction() {
 
 ; CHECK: define void @callLLVMIntrinsic() {
 define void @callLLVMIntrinsic() {
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @2, ptr @3, ptr inttoptr (i64 -2 to ptr))
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @2, ptr @3, ptr null)
 ; CHECK-NEXT: call void @llvm.donothing()
   call void @llvm.donothing()
 ; CHECK-NEXT: ret void
@@ -70,7 +70,7 @@ define void @callRetainAutoreleasedLLVMIntrinsic(ptr %0) {
 ; a special case, where instrumentation is placed after the call.
 ; CHECK-NEXT: %2 = call ptr @llvm.objc.retainAutoreleasedReturnValue(ptr %0)
   %2 = call ptr @llvm.objc.retainAutoreleasedReturnValue(ptr %0)
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @4, ptr @5, ptr inttoptr (i64 -2 to ptr))
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @4, ptr @5, ptr null)
 ; CHECK-NEXT: ret void
   ret void
 ; CHECK-NEXT: }{{$}}
@@ -89,7 +89,7 @@ define void @callInlineAsm() {
 define void @callFunctionFromLoad(ptr %0) {
 ; CHECK-NEXT: %2 = load ptr, ptr %0
   %2 = load ptr, ptr %0
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @6, ptr null, ptr %2)
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @6, ptr null, ptr %2)
 ; CHECK-NEXT: call void %2()
   call void %2()
 ; CHECK-NEXT: ret void
@@ -99,7 +99,7 @@ define void @callFunctionFromLoad(ptr %0) {
 
 ; CHECK: define void @callFunctionFromArg(ptr %0) {
 define void @callFunctionFromArg(ptr %0) {
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @7, ptr null, ptr %0)
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @7, ptr null, ptr %0)
 ; CHECK-NEXT: call void %0()
   call void %0()
 ; CHECK-NEXT: ret void
@@ -131,7 +131,7 @@ f:
 next:
 ; CHECK-NEXT: %1 = phi ptr [ @knownFunction, %t ], [ @externalFunction, %f ]
   %1 = phi ptr [ @knownFunction, %t ], [ @externalFunction, %f ]
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @8, ptr null, ptr %1)
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @8, ptr null, ptr %1)
 ; CHECK-NEXT: call void %1()
   call void %1()
 ; CHECK-NEXT: ret void
@@ -143,7 +143,7 @@ next:
 define void @callFunctionFromSelect(i1 %0) {
 ; CHECK-NEXT: %2 = select i1 %0, ptr @knownFunction, ptr @externalFunction
   %2 = select i1 %0, ptr @knownFunction, ptr @externalFunction
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @9, ptr null, ptr %2)
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @9, ptr null, ptr %2)
 ; CHECK-NEXT: call void %2()
   call void %2()
 ; CHECK-NEXT: ret void
@@ -155,7 +155,7 @@ define void @callFunctionFromSelect(i1 %0) {
 define void @callFunctionFromCall() {
 ; CHECK-NEXT: %1 = call ptr @knownFunctionCallback()
   %1 = call ptr @knownFunctionCallback()
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @10, ptr null, ptr %1)
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @10, ptr null, ptr %1)
 ; CHECK-NEXT: call void %1()
   call void %1()
 ; CHECK-NEXT: ret void
@@ -167,7 +167,7 @@ define void @callFunctionFromCall() {
 define void @callFunctionFromVec(<2 x ptr> %0) {
 ; CHECK-NEXT: %2 = extractelement <2 x ptr> %0, i64 0
   %2 = extractelement <2 x ptr> %0, i64 0
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @11, ptr null, ptr %2)
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @11, ptr null, ptr %2)
 ; CHECK-NEXT: call void %2()
   call void %2()
 ; CHECK-NEXT: ret void
@@ -194,7 +194,7 @@ define void @callExternalFunctionWithCasts() {
   %1 = ptrtoint ptr @externalFunction to i64
 ; CHECK-NEXT: %2 = inttoptr i64 %1 to ptr
   %2 = inttoptr i64 %1 to ptr
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @12, ptr @1, ptr @externalFunction)
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @12, ptr @1, ptr @externalFunction)
 ; CHECK-NEXT: call void %2()
   call void %2()
 ; CHECK-NEXT: ret void
@@ -208,7 +208,7 @@ define void @callFunctionFromArgWithCasts(ptr %0) {
   %2 = ptrtoint ptr %0 to i64
 ; CHECK-NEXT: %3 = inttoptr i64 %2 to ptr
   %3 = inttoptr i64 %2 to ptr
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @13, ptr null, ptr %0)
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @13, ptr null, ptr %0)
 ; CHECK-NEXT: call void %3()
   call void %3()
 ; CHECK-NEXT: ret void
@@ -216,4 +216,4 @@ define void @callFunctionFromArgWithCasts(ptr %0) {
 ; CHECK-NEXT: }{{$}}
 }
 
-; CHECK: declare void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr, ptr, ptr)
+; CHECK: declare void @Kotlin_callsChecker_check(ptr, ptr, ptr)

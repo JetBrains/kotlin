@@ -310,14 +310,12 @@ static bool isAKnownFunction(Function &F) {
   return !F.isDeclaration();
 }
 
-static constexpr int MSG_SEND_TO_NULL = -1;
-static constexpr int CALLED_LLVM_BUILTIN = -2;
-
 namespace {
 
 struct ExternalCallInfo {
-  std::optional<StringRef> Name;
-  Value *CalledPtr;
+  std::optional<StringRef> Name; // nullopt when indirect call
+  Value *CalledPtr; // LLVM intrinsics will return a constant value of null
+                    // pointer (in that case `Name` is definitely present)
 
   ExternalCallInfo(std::optional<StringRef> Name, Value *CalledPtr)
       : Name(Name), CalledPtr(CalledPtr) {}
@@ -335,15 +333,13 @@ getPossiblyExternalCalledFunction(Value *V) {
   if (auto *F = dyn_cast<Function>(V)) {
     if (isAKnownFunction(*F))
       return std::nullopt;
+    Value *CalledPtr = F;
     if (F->isIntrinsic()) {
-      auto &Ctx = V->getContext();
-      auto *Value =
-          ConstantInt::get(Type::getInt64Ty(Ctx), CALLED_LLVM_BUILTIN);
-      return ExternalCallInfo(
-          F->getName(),
-          ConstantExpr::getIntToPtr(Value, PointerType::getUnqual(Ctx)));
+      // Intrinsics might not have an address, so don't attempt to store it.
+      CalledPtr =
+          ConstantPointerNull::get(PointerType::getUnqual(F->getContext()));
     }
-    return ExternalCallInfo(F->getName(), F);
+    return ExternalCallInfo(F->getName(), CalledPtr);
   }
   if (auto *Cast = dyn_cast<CastInst>(V)) {
     return getPossiblyExternalCalledFunction(Cast->getOperand(0));
@@ -451,77 +447,47 @@ bool CallsCheckerPass::run(CallBase &C) {
     Builder.SetInsertPoint(InsertPoint);
   }
 
-  SmallString<64> CallSiteDescription;
-  std::optional<StringRef> CalledName;
-  Value *CalledPtr = nullptr;
+  auto *CallerName = placeCString(*Builder.GetInsertBlock()->getModule(),
+                                  C.getFunction()->getName());
+
   if (CalleeInfo->Name == "objc_msgSend") {
     // objc_msgSend has wrong declaration in header, so generated wrapper is
     // strange, Let's just skip it
     if (C.getNumOperands() < 2)
       return false;
-    CallSiteDescription =
-        formatv("{0} (over objc_msgSend)", C.getFunction()->getName());
-    CalledName = std::nullopt;
     auto *Obj = C.getArgOperand(0);
-    auto *ObjClass = Builder.CreateCall(GetClass, {Obj});
-    auto *IsNil =
-        Builder.CreateICmpEQ(Obj, ConstantPointerNull::get(Builder.getPtrTy()));
     auto *Selector = C.getArgOperand(1);
-    auto *CalledPtrIfNotNil =
-        Builder.CreateCall(GetMethodImpl, {ObjClass, Selector});
-    auto *CalledPtrIfNil = ConstantExpr::getIntToPtr(
-        Builder.getInt64(MSG_SEND_TO_NULL), Builder.getPtrTy());
-    CalledPtr = Builder.CreateSelect(IsNil, CalledPtrIfNil, CalledPtrIfNotNil);
+
+    Builder.CreateCall(CheckMsgSend, {CallerName, Obj, Selector});
   } else if (CalleeInfo->Name == "objc_msgSendSuper2") {
     // objc_msgSendSuper2 has wrong declaration in header, so generated wrapper
     // is strange, Let's just skip it
     if (C.getNumOperands() < 2)
       return false;
-    CallSiteDescription =
-        formatv("{0} (over objc_msgSendSuper2)", C.getFunction()->getName());
-    CalledName = std::nullopt;
-    // This is
-    // https://developer.apple.com/documentation/objectivec/objc_super?language=objc
-    // We don't want to look this type up, so let's just use our own struct.
-    auto *SuperStructType =
-        StructType::get(Builder.getPtrTy(), Builder.getPtrTy());
-    auto *SuperStruct = C.getArgOperand(0);
-    auto *SuperClassPtrPtr =
-        Builder.CreateStructGEP(SuperStructType, SuperStruct, 1);
-    auto *SuperClassPtr =
-        Builder.CreateLoad(Builder.getPtrTy(), SuperClassPtrPtr);
-    auto *ClassPtr = Builder.CreateCall(GetSuperClass, {SuperClassPtr});
+    auto *Super = C.getArgOperand(0);
     auto *Selector = C.getArgOperand(1);
-    CalledPtr = Builder.CreateCall(GetMethodImpl, {ClassPtr, Selector});
+
+    Builder.CreateCall(CheckMsgSendSuper2, {CallerName, Super, Selector});
   } else {
-    CallSiteDescription = C.getFunction()->getName();
-    CalledName = CalleeInfo->Name;
-    switch (CalleeInfo->CalledPtr->getType()->getTypeID()) {
+    auto *CalledPtr = CalleeInfo->CalledPtr;
+    switch (CalledPtr->getType()->getTypeID()) {
     case Type::PointerTyID:
-      CalledPtr = CalleeInfo->CalledPtr;
       break;
     case Type::IntegerTyID:
-      CalledPtr =
-          Builder.CreateIntToPtr(CalleeInfo->CalledPtr, Builder.getPtrTy());
+      CalledPtr = Builder.CreateIntToPtr(CalledPtr, Builder.getPtrTy());
       break;
     default:
       reportFatalUsageError(formatv("Unsupported type {0} of {1}",
-                                    CalleeInfo->CalledPtr->getType(),
-                                    CalleeInfo->CalledPtr));
+                                    CalledPtr->getType(), CalledPtr));
     }
+
+    Value *CalledName = ConstantPointerNull::get(Builder.getPtrTy());
+    if (auto Name = CalleeInfo->Name) {
+      CalledName = placeCString(*Builder.GetInsertBlock()->getModule(), *Name);
+    }
+
+    Builder.CreateCall(Check, {CallerName, CalledName, CalledPtr});
   }
-
-  auto *CallSiteDescriptionGlobal =
-      placeCString(*Builder.GetInsertBlock()->getModule(), CallSiteDescription);
-
-  Value *CalledNameV = ConstantPointerNull::get(Builder.getPtrTy());
-  if (CalledName) {
-    CalledNameV =
-        placeCString(*Builder.GetInsertBlock()->getModule(), *CalledName);
-  }
-
-  Builder.CreateCall(CheckStateAtExternalCall,
-                     {CallSiteDescriptionGlobal, CalledNameV, CalledPtr});
 
   return true;
 }
@@ -535,21 +501,22 @@ bool CallsCheckerPass::load(Module &M) {
   loadIgnoredFunctions(M);
   GoodFunctions = goodFunctionNamesSorted();
 
-  CheckStateAtExternalCall = M.getOrInsertFunction(
-      "Kotlin_mm_checkStateAtExternalFunctionCall", Type::getVoidTy(Ctx),
+  Check = M.getOrInsertFunction(
+      "Kotlin_callsChecker_check", Type::getVoidTy(Ctx),
       PointerType::getUnqual(Ctx), PointerType::getUnqual(Ctx),
       PointerType::getUnqual(Ctx));
-  // Always ignore the checker function itself.
-  IgnoredFunctions.insert(cast<Function>(CheckStateAtExternalCall.getCallee()));
-  GetMethodImpl = M.getOrInsertFunction(
-      "class_getMethodImplementation", PointerType::getUnqual(Ctx),
-      PointerType::getUnqual(Ctx), PointerType::getUnqual(Ctx));
-  GetClass =
-      M.getOrInsertFunction("object_getClass", PointerType::getUnqual(Ctx),
-                            PointerType::getUnqual(Ctx));
-  GetSuperClass =
-      M.getOrInsertFunction("class_getSuperclass", PointerType::getUnqual(Ctx),
-                            PointerType::getUnqual(Ctx));
+  CheckMsgSend = M.getOrInsertFunction(
+      "Kotlin_callsChecker_checkMsgSend", Type::getVoidTy(Ctx),
+      PointerType::getUnqual(Ctx), PointerType::getUnqual(Ctx),
+      PointerType::getUnqual(Ctx));
+  CheckMsgSendSuper2 = M.getOrInsertFunction(
+      "Kotlin_callsChecker_checkMsgSendSuper2", Type::getVoidTy(Ctx),
+      PointerType::getUnqual(Ctx), PointerType::getUnqual(Ctx),
+      PointerType::getUnqual(Ctx));
+  // Always ignore checker functions themselves.
+  IgnoredFunctions.insert(cast<Function>(Check.getCallee()));
+  IgnoredFunctions.insert(cast<Function>(CheckMsgSend.getCallee()));
+  IgnoredFunctions.insert(cast<Function>(CheckMsgSendSuper2.getCallee()));
 
   Loaded = true;
   return true;

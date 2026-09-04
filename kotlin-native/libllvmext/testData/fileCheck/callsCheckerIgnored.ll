@@ -15,11 +15,11 @@ declare void @externalFunctionIgnored()
 
 ; CHECK: define void @f() {
 define void @f() {
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @0, ptr @1, ptr @externalFunction)
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @0, ptr @1, ptr @externalFunction)
 ; CHECK-NEXT: call void @externalFunction()
   call void @externalFunction()
 ; the function itself is ignored, but to call it, we need a check.
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @0, ptr @2, ptr @externalFunctionIgnored)
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @0, ptr @2, ptr @externalFunctionIgnored)
 ; CHECK-NEXT: call void @externalFunctionIgnored()
   call void @externalFunctionIgnored()
 ; CHECK-NEXT: ret void
@@ -39,4 +39,4 @@ define void @fIgnored() {
 ; CHECK-NEXT: }{{$}}
 }
 
-; CHECK: declare void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr, ptr, ptr)
+; CHECK: declare void @Kotlin_callsChecker_check(ptr, ptr, ptr)
