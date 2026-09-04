@@ -6,7 +6,6 @@ package org.jetbrains.kotlin.compiler.plugins
 
 import org.jetbrains.kotlin.allopen.AllOpenEnvironmentConfigurator
 import org.jetbrains.kotlin.assignment.plugin.AssignmentPluginEnvironmentConfigurator
-import org.jetbrains.kotlin.lombok.LombokAdditionalSourceFileProvider
 import org.jetbrains.kotlin.lombok.LombokEnvironmentConfigurator
 import org.jetbrains.kotlin.lombok.LombokRuntimeClassPathProvider
 import org.jetbrains.kotlin.noarg.NoArgEnvironmentConfigurator
@@ -62,7 +61,6 @@ fun TestConfigurationBuilder.enablePlugins() {
     )
 
     useAdditionalSourceProviders(
-        ::LombokAdditionalSourceFileProvider,
         ::ParcelizeUtilSourcesProvider,
     )
 

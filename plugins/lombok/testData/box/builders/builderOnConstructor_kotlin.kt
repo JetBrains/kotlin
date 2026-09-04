@@ -17,6 +17,7 @@ class ConstructorExampleLibrary(val str: String, val int: Int) {
 // FILE: main.kt
 
 import lombok.Builder
+import kotlin.test.assertEquals
 
 class ConstructorExample(val str: String, val int: Int) {
     @Builder

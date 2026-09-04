@@ -70,7 +70,6 @@ fun TestConfigurationBuilder.enableLombok() {
         +ENABLE_LOMBOK
     }
     useConfigurators(::LombokEnvironmentConfigurator)
-    useAdditionalSourceProviders(::LombokAdditionalSourceFileProvider)
     useCustomRuntimeClasspathProviders(::LombokRuntimeClassPathProvider)
     useSourcePreprocessor(::ConfigCommentTransformerPreprocessor)
 }

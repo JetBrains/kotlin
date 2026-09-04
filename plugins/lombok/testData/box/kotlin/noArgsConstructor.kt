@@ -2,6 +2,9 @@
 // FILE: ConstructorExample.kt
 
 import lombok.NoArgsConstructor
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.test.assertFalse
 
 @NoArgsConstructor
 open class ConstructorExample(var boolean: Boolean, var char: Char, var int: Int, var str: String)
@@ -27,14 +30,12 @@ value class ConstructorExampleOnValueClass(val value: Int)
 
 fun box(): String {
     val zeroObject = ConstructorExample()
-    assertEquals(false, zeroObject.boolean)
+    assertFalse(zeroObject.boolean)
     assertEquals(Char(0), zeroObject.char)
     assertEquals(0, zeroObject.int)
-    assertEquals(null, zeroObject.str)
-
+    assertNull(zeroObject.str)
     val zeroObjectWithGenerics = ConstructorExampleWithGenerics<Int>()
-    assertEquals(null, zeroObjectWithGenerics.param)
-
+    assertNull(zeroObjectWithGenerics.param)
     assertEquals(0, ConstructorExampleWithForce().int)
 
     return "OK"

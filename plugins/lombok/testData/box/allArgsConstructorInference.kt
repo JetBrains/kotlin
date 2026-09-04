@@ -15,7 +15,11 @@ public class Celebrities {
 
 // FILE: main.kt
 
+import kotlin.test.assertTrue
+
 fun box(): String {
     val celebrities = Celebrities.invite(listOf())
-    return if (celebrities.names.isEmpty()) "OK" else "Fail"
+    assertTrue(celebrities.names.isEmpty())
+
+    return "OK"
 }

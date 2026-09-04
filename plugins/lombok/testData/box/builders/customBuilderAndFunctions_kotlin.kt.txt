@@ -96,18 +96,9 @@ fun box(): String {
   Companion.<set-myStaticField>(<set-?> = 84)
   val myClassBuilder: MyClassBuilder = Companion.builder(x = 0)
   val myClass: MyClass = myClassBuilder.aString(aString = "test").build()
-  return when {
-    when {
-      when {
-        myClassBuilder is CustomMyClassBuilder -> EQEQ(arg0 = Companion.<get-myStaticField>(), arg1 = 100)
-        else -> false
-      } -> EQEQ(arg0 = myClass.<get-aString>(), arg1 = "test")
-      else -> false
-    } -> { // BLOCK
-      "OK"
-    }
-    else -> { // BLOCK
-      "Error: " + myClass
-    }
-  }
+  assertIs<CustomMyClassBuilder>(value = myClassBuilder) /*~> Unit */
+  assertEquals<Int>(expected = 100, actual = Companion.<get-myStaticField>())
+  assertEquals<String>(expected = "test", actual = myClass.<get-aString>())
+  return "OK"
 }
+
