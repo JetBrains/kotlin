@@ -43,5 +43,7 @@ fun markSingleElement(
     startOffset: Int,
     endOffset: Int,
 ): TextRange {
-    return TextRange(startOffset, endOffset)
+    return PossiblyImproperTextRange(startOffset, endOffset)
 }
+
+private class PossiblyImproperTextRange(startOffset: Int, endOffset: Int) : TextRange(startOffset, endOffset, /* checkForProperTextRange = */ false)
