@@ -5,18 +5,15 @@
 
 package org.jetbrains.kotlin.java.direct.resolution
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
-import org.jetbrains.kotlin.fir.java.findJvmNameAnnotation
-import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.fir.java.findJvmNameValue
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -52,7 +49,7 @@ internal fun FirSession.resolveExternalFieldValue(
     val qualifierPackage = if (lastDotIndex == -1) currentPackage else FqName(classQualifier.substring(0, lastDotIndex))
     val qualifierClassName = classQualifier.substring(lastDotIndex + 1)
 
-    tryResolveAsTopLevel(qualifierPackage, qualifierClassName, propertyName)?.let { return it }
+    tryResolveAsTopLevelPropertyValue(qualifierPackage, qualifierClassName, propertyName)?.let { return it }
 
     val classIds = if (lastDotIndex == -1) {
         listOf(ClassId(currentPackage, Name.identifier(classQualifier)), ClassId.topLevel(FqName(classQualifier)))
@@ -68,7 +65,7 @@ internal fun FirSession.resolveExternalFieldValue(
  * Top-level Kotlin property compiled into the JVM facade class [qualifierClassName] (e.g. `MainKt.FOO`).
  * The facade check guards `codegen/box/javaDirect/javaConstantQualifiedByJavaClassVsKotlinTopLevelConst.kt`.
  */
-private fun FirSession.tryResolveAsTopLevel(qualifierPackage: FqName, qualifierClassName: String, propertyName: Name): Any? {
+private fun FirSession.tryResolveAsTopLevelPropertyValue(qualifierPackage: FqName, qualifierClassName: String, propertyName: Name): Any? {
     val provider = nullableSymbolProvider ?: return null
     for (symbol in provider.getTopLevelPropertySymbols(qualifierPackage, propertyName)) {
         if (symbol.jvmFacadeClassName() != qualifierClassName) continue
@@ -87,12 +84,8 @@ private fun FirVariableSymbol<*>.jvmFacadeClassName(): String? {
         return (source.facadeClassName ?: source.className).internalName.substringAfterLast('/')
     }
     val file = fir.moduleData.session.nullableFirProvider?.getFirCallableContainerFile(this) ?: return null
-    val jvmNameArgument = file.findJvmNameAnnotation()?.findArgumentByName(StandardNames.NAME)
-    (jvmNameArgument as? FirLiteralExpression)?.value?.let { return it as? String }
-    return file.name.removeSuffix(".kt").capitalizeAsciiOnly() + "Kt"
+    return file.findJvmNameValue() ?: (file.name.removeSuffix(".kt").capitalizeAsciiOnly() + "Kt")
 }
-
-private val FirSession.nullableFirProvider: FirProvider? by FirSession.nullableSessionComponentAccessor()
 
 /** Direct class member property (e.g. `object Foo { const val BAR = 1 }`, or a Java static field on a Kotlin class). */
 private fun FirSession.tryResolveAsClassMember(classIds: List<ClassId>, propertyName: Name): Any? {
@@ -150,7 +143,7 @@ internal fun FirSession.resolveConstFieldValue(classId: ClassId, fieldName: Name
 
     // Fallback: top-level Kotlin property exposed via the facade class (e.g., MainKt.FOO →
     // top-level const val FOO).
-    return tryResolveAsTopLevel(classId.packageFqName, classId.relativeClassName.asString(), fieldName)
+    return tryResolveAsTopLevelPropertyValue(classId.packageFqName, classId.relativeClassName.asString(), fieldName)
 }
 
 /**
