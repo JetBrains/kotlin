@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
+import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.containsBoxMethod
+import org.jetbrains.kotlin.test.services.sourceProviders.SourceContentView
+import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.kotlin.test.services.testInfo
 import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.wasm.test.blackbox.computeProxyLauncherClassName
@@ -723,17 +726,11 @@ abstract class AbstractWasmGroupingStageBoxRunner(
      * A test without a `box()` (e.g. a `// FILE: entry.mjs` driven size test) runs through a custom JS entry point
      * rather than through its `ProxyLauncher_<encoded-package>`, so it cannot report a per-test result line.
      */
-    protected fun hasBoxMethod(input: NonGroupingStageOutput): Boolean {
-        val moduleStructure = input.testServices.moduleStructure
-        for (module in moduleStructure.modules) {
-            for (file in module.files) {
-                if (MainFunctionForBlackBoxTestsSourceProvider.containsBoxMethod(file.originalContent)) {
-                    return true
-                }
-            }
-        }
-        return false
-    }
+    protected fun hasBoxMethod(input: NonGroupingStageOutput): Boolean = containsBoxMethod(
+        input.testServices.moduleStructure,
+        SourceContentView.TRANSFORMED,
+        input.testServices.sourceFileProvider,
+    )
 }
 
 private fun String.toBoundedDiagnostic(maxLength: Int): String {

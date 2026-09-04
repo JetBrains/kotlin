@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.testInfraError
-import org.jetbrains.kotlin.test.services.BatchingPackageInserter
 import org.jetbrains.kotlin.test.services.BatchingPackageInserter.Companion.computePackage
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.KotlinTestInfo
@@ -27,7 +26,10 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.artifactsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceFileProvider
-import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
+import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.detectPackage
+import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.findFileWithBoxMethod
+import org.jetbrains.kotlin.test.services.sourceProviders.SourceContentView
+import org.jetbrains.kotlin.test.services.sourceProviders.getSourceContent
 import org.jetbrains.kotlin.test.services.targetPlatform
 import org.jetbrains.kotlin.test.services.testInfo
 import org.jetbrains.kotlin.wasm.test.WasmCoroutineHelpersModuleTransformer
@@ -118,18 +120,21 @@ abstract class AbstractWasmSecondStageGroupingFacade(
         val proxyClassNames = mutableListOf<String>()
         val proxyLauncherContent = buildString {
             for ([services, _] in filteredOutputs.groupBy { it.testServices }) {
-                val additionalPackage = BatchingPackageInserter.computePackage(services.testInfo)
-                val fileWithBox = services.moduleStructure.modules.asReversed().firstNotNullOfOrNull { module ->
-                    module.files.firstOrNull {
-                        val content = services.sourceFileProvider.getContentOfSourceFile(it)
-                        MainFunctionForBlackBoxTestsSourceProvider.containsBoxMethod(content)
-                    }
-                }
+                val sourceContentView = SourceContentView.TRANSFORMED
+                val sourceFileProvider = services.sourceFileProvider
+                val fileWithBox = findFileWithBoxMethod(
+                    services.moduleStructure.modules.asReversed(),
+                    sourceContentView,
+                    sourceFileProvider,
+                )
                 if (fileWithBox == null) testInfraError("No file with box() function found in any module of the test ${services.testInfo}")
 
-                val originalPackage = fileWithBox.let { MainFunctionForBlackBoxTestsSourceProvider.detectPackage(it) }
-
-                val boxFqName = if (originalPackage != null) "$additionalPackage.$originalPackage.box" else "$additionalPackage.box"
+                // The launcher calls the box function in the per-test KLIB, so discovery and FQN extraction must use
+                // the same transformed source view that produced that KLIB. In particular, this already contains
+                // the package prefix inserted by BatchingPackageInserter; prepending it again would produce a wrong
+                // FQN, while inspecting original content could select a different file after preprocessing.
+                val transformedPackage = detectPackage(fileWithBox, sourceContentView, sourceFileProvider)
+                val boxFqName = transformedPackage?.let { "$it.box" } ?: "box"
 
                 val uniqueClassName = computeProxyLauncherClassName(services.testInfo)
                 proxyClassNames += uniqueClassName
@@ -307,8 +312,8 @@ abstract class AbstractWasmSecondStageGroupingFacade(
     /**
      * Copies all `.mjs` and `.js` files from the given modules into [outputDir].
      *
-     * Each module's files are read via the corresponding [TestServices.sourceFileProvider] and
-     * written verbatim into [outputDir], preserving the original file name.
+     * Each module's files are read from the transformed compiler-input view of the corresponding
+     * [TestServices.sourceFileProvider] and written verbatim into [outputDir], preserving the original file name.
      */
     protected fun copyJsFilesToOutputDir(
         modules: List<Pair<TestServices, TestModule>>,
@@ -318,7 +323,7 @@ abstract class AbstractWasmSecondStageGroupingFacade(
         for ([services, module] in modules) {
             for (file in module.files) {
                 if (file.name.endsWith(".mjs") || file.name.endsWith(".js")) {
-                    val content = services.sourceFileProvider.getContentOfSourceFile(file)
+                    val content = getSourceContent(file, SourceContentView.TRANSFORMED, services.sourceFileProvider)
 
                     val existingEntry = copiedJsByFileName[file.name]
                     if (existingEntry != null) {

@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.test.model.WasmFolderBinaryArtifact
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
+import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.findFileWithBoxMethod
+import org.jetbrains.kotlin.test.services.sourceProviders.SourceContentView
 import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
@@ -197,12 +199,11 @@ class CustomWasmSecondStageFacade internal constructor(
             // Per-test KLIB paths (the artifacts produced by the NonGroupingStage for this isolated batch).
             val perTestKlibPathsIsolated = filteredOutputs.map { it.klib.outputFile.absolutePath }.reversed()
 
-            val fileWithBox = testModules.firstNotNullOfOrNull { module ->
-                module.files.firstOrNull {
-                    val content = services.sourceFileProvider.getContentOfSourceFile(it)
-                    MainFunctionForBlackBoxTestsSourceProvider.containsBoxMethod(content)
-                }
-            }
+            val fileWithBox = findFileWithBoxMethod(
+                testModules,
+                SourceContentView.TRANSFORMED,
+                services.sourceFileProvider,
+            )
 
             // The per-test main KLIB is used as `-Xinclude`, preserving any `-Xfriend-modules` friendship with sibling KLIBs.
             // Sources files are removed from mainModule in case no `box()` was found, since a custom `.mjs`/`.js` entry point drives the test instead

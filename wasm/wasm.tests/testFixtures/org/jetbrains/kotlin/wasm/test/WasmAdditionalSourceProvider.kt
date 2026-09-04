@@ -11,7 +11,48 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.detectPackage
+import org.jetbrains.kotlin.test.services.sourceProviders.SourceContentView
+import org.jetbrains.kotlin.test.services.sourceProviders.getSourceContent
+import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
+
+private val WASI_BOX_METHOD_REGEX =
+    Regex("""(^|\n)(?!(?:\w+\s+)*suspend\s)(?:\w+\s+)*\bfun\s+box\(\)\s*(?::\s*String|=)""")
+
+/**
+ * Returns whether [file] has the synchronous box shape supported by the WASI helper.
+ *
+ * Module-structure source providers use [SourceContentView.ORIGINAL] because they run before the complete module
+ * structure is registered. Later artifact decisions can opt into [SourceContentView.TRANSFORMED] explicitly.
+ */
+internal fun containsWasiBoxMethod(
+    file: TestFile,
+    sourceContentView: SourceContentView = SourceContentView.ORIGINAL,
+    sourceFileProvider: SourceFileProvider? = null,
+): Boolean {
+    if (!file.isKtFile) return false
+    val content = getSourceContent(file, sourceContentView, sourceFileProvider)
+    return WASI_BOX_METHOD_REGEX.containsMatchIn(content)
+}
+
+internal fun findWasiBoxMethodFile(
+    files: List<TestFile>,
+    sourceContentView: SourceContentView = SourceContentView.ORIGINAL,
+    sourceFileProvider: SourceFileProvider? = null,
+): TestFile? {
+    val filesWithBoxMethod = files.filter {
+        containsWasiBoxMethod(it, sourceContentView, sourceFileProvider)
+    }
+    return when (filesWithBoxMethod.size) {
+        0 -> null
+        1 -> filesWithBoxMethod.single()
+        else -> testInfraError(
+            "The WASI box helper requires exactly one source file with a synchronous `box()` function, but found " +
+                    "${filesWithBoxMethod.joinToString { it.relativePath }}."
+        )
+    }
+}
 
 /**
  * Adds the `wasiBoxTestRun.kt` helper to every module that defines `box()`. The helper provides the `runBoxTest` and
@@ -27,22 +68,17 @@ class WasmWasiBoxTestHelperSourceProvider(testServices: TestServices) : Addition
         module: TestModule,
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
-        val fileWithBoxFun = module.files.singleOrNull {
-            it.isKtFile && it.originalContent.contains(Regex("(^|\\n)(?:\\w+\\s+)*\\bfun\\s+box\\(\\)\\s*(?::\\s*String|=)"))
-        }
+        // ModuleStructureExtractor invokes this provider before it registers the structure in TestServices.
+        val fileWithBoxFun = findWasiBoxMethodFile(module.files, SourceContentView.ORIGINAL) ?: return emptyList()
 
-        // no box function
-        if (fileWithBoxFun == null) return emptyList()
-
-        val matchResult = Regex("^package\\s+([\\w.]+)", RegexOption.MULTILINE).find(fileWithBoxFun.originalContent)
+        val p = detectPackage(fileWithBoxFun, SourceContentView.ORIGINAL)
 
         val boxTestRunFile = this::class.java.classLoader.getResource("wasiAdditionalFiles/wasiBoxTestRun.kt")!!
         val boxTestRunTestFile = boxTestRunFile.toTestFile()
 
         // no package
-        if (matchResult == null) return listOf(boxTestRunTestFile)
+        if (p == null) return listOf(boxTestRunTestFile)
 
-        val p = matchResult.groupValues[1]
         return listOf(
             TestFile(
                 boxTestRunTestFile.name,
