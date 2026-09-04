@@ -52,6 +52,8 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
 
         while (true) {
             current.accept(this)
+            if (_stopResolution) return null
+
             _found?.let { return it }
 
             previousElement = current
@@ -66,6 +68,10 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
 
     private val resolveIgnore: MutableSet<KtElement> = mutableSetOf()
     private var constructorParametersAllowed: Boolean = false
+    private var _stopResolution: Boolean = false
+    private fun stopResolution() {
+        _stopResolution = true
+    }
 
     private fun ignore(element: KtElement) {
         resolveIgnore.add(element)
@@ -390,6 +396,10 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
     }
 
     override fun visitLambdaExpression(element: KtLambdaExpression) {
+        if (!element.functionLiteral.hasParameterSpecification() && name == IMPLICIT_LAMBDA_PARAMETER) {
+            stopResolution()
+        }
+
         element.valueParameters.processMany(::processParameter)
     }
 
@@ -448,6 +458,8 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
         }
     }
 }
+
+private val IMPLICIT_LAMBDA_PARAMETER: Name = Name.identifier("it")
 
 @KtImplementationDetail
 object LookupLocallyInternals {
