@@ -81,6 +81,6 @@ interface KtQualifiedExpression : KtExpression, KtResolvableCall {
         get() = operationTokenNode.elementType as KtSingleValueToken
 
     private fun getExpression(afterOperation: Boolean): KtExpression? {
-        return operationTokenNodeOrNull?.psi?.siblings(afterOperation, false)?.filterIsInstance<KtExpression>()?.firstOrNull()
+        return operationTokenNodeOrNull?.psi?.siblings(afterOperation, false)?.firstNotNullOfOrNull { it as? KtExpression }
     }
 }
