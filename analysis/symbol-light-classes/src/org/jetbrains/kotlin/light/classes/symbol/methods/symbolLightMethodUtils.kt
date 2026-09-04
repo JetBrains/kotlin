@@ -20,19 +20,32 @@ internal fun isSuppressedFinalModifier(string: String, containingClass: SymbolLi
 }
 
 /**
- * Whether [JvmExposeBoxed] feature is enabled.
+ * Describes how boxed JVM exposure applies to a callable.
+ *
+ * This mode records the source of exposure, not whether a boxed wrapper is ultimately generated. Explicit and implicit
+ * exposure follow different wrapper-generation rules and differ in whether there is a declaration-level annotation to
+ * preserve.
  */
 internal enum class JvmExposeBoxedMode {
-    /** Explicit [JvmExposeBoxed] annotation on the declaration */
+    /**
+     * The callable is directly annotated with [JvmExposeBoxed].
+     *
+     * This is an explicit request for boxed exposure. The annotation remains on the single JVM declaration if the backend
+     * emits no separate boxed wrapper.
+     */
     EXPLICIT,
 
     /**
-     * The [JvmAnalysisFlags.implicitJvmExposeBoxed] feature is enabled or
-     * the containing class is marked with [JvmExposeBoxed] annotation
+     * Boxed exposure applies without a [JvmExposeBoxed] annotation directly on the callable.
+     *
+     * It is enabled either by a [JvmExposeBoxed] annotation on the containing class or by
+     * [JvmAnalysisFlags.implicitJvmExposeBoxed] for the module.
      */
     IMPLICIT,
 
-    /** The feature is disabled for the declaration */
+    /**
+     * Boxed exposure does not apply to the callable because neither a direct nor an implicit source enables it.
+     */
     NONE;
 }
 
