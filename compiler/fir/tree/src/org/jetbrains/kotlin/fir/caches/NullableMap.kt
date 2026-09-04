@@ -49,6 +49,10 @@ value class NullableMap<K, V>(
 
     @PrivateForInline
     object NullValue
+
+    fun clear() {
+        map.clear()
+    }
 }
 
 inline fun <K, V> NullableMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {

@@ -46,7 +46,7 @@ class OptionalAnnotationClassesProvider(
         }
     }
 
-    private val optionalAnnotationClassesAndPackages by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val optionalAnnotationClassesAndPackages: Pair<MutableMap<ClassId, ClassData>, MutableSet<String>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val optionalAnnotationClasses = mutableMapOf<ClassId, ClassData>()
         val optionalAnnotationPackages = mutableSetOf<String>()
 

@@ -39,4 +39,9 @@ abstract class FirDelegatingSymbolProvider(private val delegate: FirSymbolProvid
     }
 
     override fun hasPackage(fqName: FqName): Boolean = delegate.hasPackage(fqName)
+
+    @FirSymbolProviderInternals
+    override fun clearInsignificantCaches() {
+        delegate.clearInsignificantCaches()
+    }
 }
