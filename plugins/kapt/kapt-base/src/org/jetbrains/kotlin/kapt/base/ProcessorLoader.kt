@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.kapt.base
 import org.jetbrains.kotlin.kapt.base.incremental.DeclaredProcType
 import org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor
 import org.jetbrains.kotlin.kapt.base.incremental.getIncrementalProcessorsFromClasspath
+import org.jetbrains.kotlin.kapt.base.util.JdkOnlyParentClassLoader
 import org.jetbrains.kotlin.kapt.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt.base.util.info
 import java.io.Closeable
@@ -34,7 +35,13 @@ open class ProcessorLoaderImpl(private val options: KaptOptions, private val log
             }
         }
 
-        val classLoader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), parentClassLoader)
+        val effectiveParentClassLoader = if (options[KaptFlag.ISOLATE_PROCESSORS_FROM_BUILD_CLASSPATH]) {
+            // The passed parent still serves as the source of javac classes.
+            JdkOnlyParentClassLoader(parentClassLoader)
+        } else {
+            parentClassLoader
+        }
+        val classLoader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), effectiveParentClassLoader)
         this.annotationProcessingClassLoader = classLoader
 
         val processors = if (options.processors.isNotEmpty()) {

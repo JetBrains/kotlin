@@ -22,6 +22,7 @@ import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.internal.kapt.classloaders.ClassLoadersCache
+import org.jetbrains.kotlin.gradle.internal.kapt.classloaders.JdkOnlyParentClassLoader
 import org.jetbrains.kotlin.gradle.internal.kapt.classloaders.rootOrSelf
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
 import org.jetbrains.kotlin.gradle.dsl.KaptStubGenerationScheme
@@ -69,6 +70,9 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
 
     @get:Input
     val kaptProcessJvmArgs: ListProperty<String> = objectFactory.listPropertyWithConvention(emptyList())
+
+    @get:Input
+    val isolateProcessorsFromBuildClasspath: Property<Boolean> = objectFactory.propertyWithConvention(false)
 
     init {
         // Skip annotation processing if no annotation processors were provided.
@@ -131,6 +135,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
             if (mapDiagnosticLocations) add("MAP_DIAGNOSTIC_LOCATIONS")
             if (includeCompileClasspath.get()) add("INCLUDE_COMPILE_CLASSPATH")
             if (incrementalChanges is KaptIncrementalChanges.Known) add("INCREMENTAL_APT")
+            if (isolateProcessorsFromBuildClasspath.get()) add("ISOLATE_PROCESSORS_FROM_BUILD_CLASSPATH")
         }
 
         val optionsForWorker = KaptOptionsForWorker(
@@ -227,6 +232,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
             it.toolsJarURLSpec.set(toolsJarURLSpec)
             it.kaptClasspath.setFrom(kaptClasspath)
             it.classloadersCacheSize.set(classLoadersCacheSize)
+            it.isolateProcessorsFromBuildClasspath.set(isolateProcessorsFromBuildClasspath)
         }
     }
 
@@ -243,6 +249,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         val toolsJarURLSpec: Property<String>
         val kaptClasspath: ConfigurableFileCollection
         val classloadersCacheSize: Property<Int>
+        val isolateProcessorsFromBuildClasspath: Property<Boolean>
     }
 
     /**
@@ -276,7 +283,8 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
                 parameters.workerOptions.get(),
                 parameters.toolsJarURLSpec.get(),
                 parameters.kaptClasspath.toList(),
-                parameters.classloadersCacheSize.get()
+                parameters.classloadersCacheSize.get(),
+                parameters.isolateProcessorsFromBuildClasspath.get()
             ).run()
         }
     }
@@ -296,7 +304,8 @@ private class KaptExecution @Inject constructor(
     val optionsForWorker: KaptOptionsForWorker,
     val toolsJarURLSpec: String,
     val kaptClasspath: List<File>,
-    val classloadersCacheSize: Int
+    val classloadersCacheSize: Int,
+    val isolateProcessorsFromBuildClasspath: Boolean,
 ) : Runnable {
     private companion object {
         private const val JAVAC_CONTEXT_CLASS = "com.sun.tools.javac.util.Context"
@@ -321,7 +330,14 @@ private class KaptExecution @Inject constructor(
 
     override fun run(): Unit = with(optionsForWorker) {
         val kaptClasspathUrls = kaptClasspath.map { it.toURI().toURL() }.toTypedArray()
-        val rootClassLoader = findRootClassLoader()
+        // Note: since the kapt classloader (and the classloaders cache built on top of it) is cached
+        // in the companion object, changing 'kapt.isolate.processors.from.build.classpath' takes
+        // effect only after the hosting daemon is restarted, same as a 'toolsJarURLSpec' change.
+        val rootClassLoader = if (isolateProcessorsFromBuildClasspath) {
+            JdkOnlyParentClassLoader(KaptExecution::class.java.classLoader)
+        } else {
+            findRootClassLoader()
+        }
 
         val kaptClassLoader = cachedKaptClassLoader ?: run {
             val classLoaderWithToolsJar = if (toolsJarURLSpec.isNotEmpty() && !javacIsAlreadyHere()) {
@@ -336,7 +352,15 @@ private class KaptExecution @Inject constructor(
 
         if (classLoadersCache == null && classloadersCacheSize > 0) {
             logger.info("Initializing KAPT classloaders cache with size = $classloadersCacheSize")
-            classLoadersCache = ClassLoadersCache(classloadersCacheSize, kaptClassLoader)
+            // When the isolation is enabled, skip the kapt jars in the parent chain of the cached processor
+            // classloaders: otherwise kapt's own dependencies (e.g. kotlin-stdlib) leak into annotation
+            // processors. Javac and JDK platform classes stay reachable through the kapt classloader's parent.
+            val cacheParentClassLoader = if (isolateProcessorsFromBuildClasspath) {
+                kaptClassLoader.parent ?: kaptClassLoader
+            } else {
+                kaptClassLoader
+            }
+            classLoadersCache = ClassLoadersCache(classloadersCacheSize, cacheParentClassLoader)
         }
 
         val kaptMethod = kaptClassLoader.kaptClass("Kapt").declaredMethods.single { it.name == "kapt" }
