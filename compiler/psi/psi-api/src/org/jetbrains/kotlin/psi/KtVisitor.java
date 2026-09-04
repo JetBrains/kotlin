@@ -375,6 +375,11 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitQualifiedExpression(expression, data);
     }
 
+    @KtExperimentalApi
+    public R visitErrorSafeQualifiedExpression(@NotNull KtErrorSafeQualifiedExpression expression, D data) {
+        return visitQualifiedExpression(expression, data);
+    }
+
     public R visitObjectLiteralExpression(@NotNull KtObjectLiteralExpression expression, D data) {
         return visitExpression(expression, data);
     }
