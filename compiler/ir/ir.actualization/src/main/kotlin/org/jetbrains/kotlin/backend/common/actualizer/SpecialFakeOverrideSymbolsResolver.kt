@@ -167,6 +167,7 @@ class SpecialFakeOverrideSymbolsResolverVisitor(private val resolver: SpecialFak
 
     override fun visitRichFunctionReference(expression: IrRichFunctionReference) {
         expression.reflectionTargetSymbol = expression.reflectionTargetSymbol?.let(resolver::getReferencedFunction)
+        expression.overriddenFunctionSymbol = expression.overriddenFunctionSymbol.let(resolver::getReferencedSimpleFunction)
         visitElement(expression)
     }
 
