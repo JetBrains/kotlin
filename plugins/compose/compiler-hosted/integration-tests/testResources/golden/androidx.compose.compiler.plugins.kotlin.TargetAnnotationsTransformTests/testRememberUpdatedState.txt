@@ -35,7 +35,9 @@ fun Test(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed
     val updatedContent by {
       val updatedContent%delegate = rememberUpdatedState(content, %composer, 0b1110 and %dirty)
       get() {
-        return updatedContent%delegate.getValue(null, ::updatedContent%delegate)
+        return updatedContent%delegate.getValue(null, ::updatedContent {
+          fun updatedContent(): Function2<Composer, Int, Unit> }
+        )
       }
     }
     Defer(rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->

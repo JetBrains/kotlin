@@ -36,7 +36,9 @@ fun StrongSkippingState(%composer: Composer?, %changed: Int) {
         )
       }, %composer, 0)
       get() {
-        return state%delegate.getValue(null, ::state%delegate)
+        return state%delegate.getValue(null, ::state {
+          fun state(): String }
+        )
       }
     }
     %composer.cache(%composer.changed(state%delegate)) {

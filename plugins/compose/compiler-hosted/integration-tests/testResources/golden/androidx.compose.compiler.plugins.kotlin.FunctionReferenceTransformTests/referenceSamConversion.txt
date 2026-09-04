@@ -24,15 +24,17 @@ fun Ref(content: IntToInt, %composer: Composer?, %changed: Int) {
     }
     Ref(IntToInt sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
     val tmp0_group = %composer.cache(false) {
-      @Composable
-      fun Fn(int: Int, %composer: Composer?, %changed: Int): Int {
-        %composer.startReplaceGroup(<>)
-        sourceInformation(%composer, "C(Fn)N(int):Test.kt")
-        val tmp0 = Fn(int, %composer, 0b1110 and %changed)
-        %composer.endReplaceGroup()
-        return tmp0
+      ::Fn<kotlin.reflect.KFunction3> {
+        @Composable
+        @FunctionKeyMeta(key = -900713649, startOffset = 133, endOffset = 137)
+        fun Fn(p0: @[ParameterName(name = 'int')] Int, %composer: Composer?, %changed: Int): Int {
+          %composer.startReplaceGroup(<>)
+          sourceInformation(%composer, "C(Fn)N(p0)<::Fn>:Test.kt")
+          val tmp0 = Fn(p0, %composer, 0b1110 and %changed)
+          %composer.endReplaceGroup()
+          return tmp0
+        }
       }
-      ::Fn
     }
     sourceInformationMarkerEnd(%composer)
     tmp0_group, %composer, 0)

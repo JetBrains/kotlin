@@ -100,7 +100,21 @@ MODULE_FRAGMENT
                 ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:color$delegate type:androidx.compose.runtime.MutableState<home.Color> visibility:private [final] declared in home.DominantColorState' type=androidx.compose.runtime.MutableState<home.Color> origin=null
                   receiver: GET_VAR '<this>: home.DominantColorState declared in home.DominantColorState.<get-color>' type=home.DominantColorState origin=IMPLICIT_ARGUMENT
                 ARG thisObj: GET_VAR '<this>: home.DominantColorState declared in home.DominantColorState.<get-color>' type=home.DominantColorState origin=null
-                ARG property: PROPERTY_REFERENCE 'public final color: home.Color [delegated,var] declared in home.DominantColorState' field=null getter='public final fun <get-color> (): home.Color declared in home.DominantColorState' setter='private final fun <set-color> (<set-?>: home.Color): kotlin.Unit declared in home.DominantColorState' type=kotlin.reflect.KMutableProperty1<home.DominantColorState, home.Color> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+                ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<home.DominantColorState, home.Color> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final color: home.Color [delegated,var] declared in home.DominantColorState'
+                  getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:color visibility:local modality:FINAL returnType:home.Color
+                    VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:home.DominantColorState
+                    BLOCK_BODY
+                      RETURN type=kotlin.Nothing from='local final fun color (p0: home.DominantColorState): home.Color declared in home.DominantColorState.<get-color>'
+                        CALL 'public final fun <get-color> (): home.Color declared in home.DominantColorState' type=home.Color origin=null
+                          ARG <this>: GET_VAR 'p0: home.DominantColorState declared in home.DominantColorState.<get-color>.color' type=home.DominantColorState origin=null
+                  setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:color visibility:local modality:FINAL returnType:kotlin.Unit
+                    VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:home.DominantColorState
+                    VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:home.Color
+                    BLOCK_BODY
+                      RETURN type=kotlin.Nothing from='local final fun color (p0: home.DominantColorState, value: home.Color): kotlin.Unit declared in home.DominantColorState.<get-color>'
+                        CALL 'private final fun <set-color> (<set-?>: home.Color): kotlin.Unit declared in home.DominantColorState' type=kotlin.Unit origin=null
+                          ARG <this>: GET_VAR 'p0: home.DominantColorState declared in home.DominantColorState.<get-color>.color' type=home.DominantColorState origin=null
+                          ARG <set-?>: GET_VAR 'value: home.Color declared in home.DominantColorState.<get-color>.color' type=home.Color origin=ADAPTED_FUNCTION_REFERENCE
         FUN DELEGATED_PROPERTY_ACCESSOR name:<set-color> visibility:private modality:FINAL returnType:kotlin.Unit
           VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:home.DominantColorState
           VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:home.Color
@@ -112,7 +126,21 @@ MODULE_FRAGMENT
                 ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:color$delegate type:androidx.compose.runtime.MutableState<home.Color> visibility:private [final] declared in home.DominantColorState' type=androidx.compose.runtime.MutableState<home.Color> origin=null
                   receiver: GET_VAR '<this>: home.DominantColorState declared in home.DominantColorState.<set-color>' type=home.DominantColorState origin=IMPLICIT_ARGUMENT
                 ARG thisObj: GET_VAR '<this>: home.DominantColorState declared in home.DominantColorState.<set-color>' type=home.DominantColorState origin=null
-                ARG property: PROPERTY_REFERENCE 'public final color: home.Color [delegated,var] declared in home.DominantColorState' field=null getter='public final fun <get-color> (): home.Color declared in home.DominantColorState' setter='private final fun <set-color> (<set-?>: home.Color): kotlin.Unit declared in home.DominantColorState' type=kotlin.reflect.KMutableProperty1<home.DominantColorState, home.Color> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+                ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<home.DominantColorState, home.Color> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final color: home.Color [delegated,var] declared in home.DominantColorState'
+                  getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:color visibility:local modality:FINAL returnType:home.Color
+                    VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:home.DominantColorState
+                    BLOCK_BODY
+                      RETURN type=kotlin.Nothing from='local final fun color (p0: home.DominantColorState): home.Color declared in home.DominantColorState.<set-color>'
+                        CALL 'public final fun <get-color> (): home.Color declared in home.DominantColorState' type=home.Color origin=null
+                          ARG <this>: GET_VAR 'p0: home.DominantColorState declared in home.DominantColorState.<set-color>.color' type=home.DominantColorState origin=null
+                  setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:color visibility:local modality:FINAL returnType:kotlin.Unit
+                    VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:home.DominantColorState
+                    VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:home.Color
+                    BLOCK_BODY
+                      RETURN type=kotlin.Nothing from='local final fun color (p0: home.DominantColorState, value: home.Color): kotlin.Unit declared in home.DominantColorState.<set-color>'
+                        CALL 'private final fun <set-color> (<set-?>: home.Color): kotlin.Unit declared in home.DominantColorState' type=kotlin.Unit origin=null
+                          ARG <this>: GET_VAR 'p0: home.DominantColorState declared in home.DominantColorState.<set-color>.color' type=home.DominantColorState origin=null
+                          ARG <set-?>: GET_VAR 'value: home.Color declared in home.DominantColorState.<set-color>.color' type=home.Color origin=ADAPTED_FUNCTION_REFERENCE
                 ARG value: GET_VAR '<set-?>: home.Color declared in home.DominantColorState.<set-color>' type=home.Color origin=null
       PROPERTY name:$stable visibility:public modality:FINAL [val]
         FIELD name:$stable type:kotlin.Int visibility:public [final,static]
