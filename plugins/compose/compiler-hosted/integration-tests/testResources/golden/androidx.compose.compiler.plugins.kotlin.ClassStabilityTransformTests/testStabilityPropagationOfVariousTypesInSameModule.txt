@@ -39,7 +39,7 @@ class StableDelegateProp {
     get() {
       return field.getValue(<this>, ::p1)
     }
-    set(value) {
+    set(<set-?>: Int) {
       return field.setValue(<this>, ::p1, <set-?>)
     }
   val %stable: Int = 0
@@ -53,7 +53,7 @@ class UnstableDelegateProp {
     get() {
       return field.getValue(<this>, ::p1)
     }
-    set(value) {
+    set(<set-?>: Int) {
       return field.setValue(<this>, ::p1, <set-?>)
     }
   val %stable: Int = UnstableDelegate.%stable
