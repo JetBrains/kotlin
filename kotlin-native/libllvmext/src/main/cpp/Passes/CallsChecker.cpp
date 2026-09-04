@@ -450,8 +450,6 @@ bool CallsCheckerPass::run(CallBase &C) {
     }
     Builder.SetInsertPoint(InsertPoint);
   }
-  // TODO(KT-87596): consider removing, if the tests now pass.
-  Builder.SetCurrentDebugLocation(nullptr);
 
   SmallString<64> CallSiteDescription;
   std::optional<StringRef> CalledName;
