@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
 
-data class FirCompilerRequiredParameterDescription(
+class FirCompilerRequiredParameterDescription(
     val name: Name,
     val kind: FirCraParameterKind,
     val position: Int?,
