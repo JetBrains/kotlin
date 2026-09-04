@@ -118,6 +118,16 @@ projectTests {
         dependsOn(":kotlin-compiler:dist")
         dependsOn(":kotlin-stdlib:jsJarForTests")
         workingDir = rootDir
+
+        // The JPS tests run against the new dependency graph architecture.
+        // KotlinBuilder caches these properties in companion vals on class initialization,
+        // so they have to be set before the test JVM starts, not from a test fixture.
+        systemProperty("jps.use.dependency.graph", true)
+        systemProperty("kotlin.jps.dumb.mode", true)
+        systemProperty("kotlin.jps.enable.lookups.in.dumb.mode", true)
+        systemProperty("jvm-inc-builder.test.track.mock.annotations", true)
+        // for debugging tests with in-process compiler
+        systemProperty("kotlin.jps.classPrefixesToLoadByParent", "kotlin.")
         jvmArgs(
             // https://github.com/JetBrains/intellij-community/blob/b49faf433f8d73ccd46016a5717f997d167de65f/jps/jps-builders/src/org/jetbrains/jps/cmdline/ClasspathBootstrap.java#L67
             "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
