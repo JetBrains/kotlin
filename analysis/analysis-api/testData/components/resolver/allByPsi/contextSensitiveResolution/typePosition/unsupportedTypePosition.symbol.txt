@@ -73,7 +73,7 @@ KtUserType(154,169): 'SealedInterface'
 KtNameReferenceExpression(154,169): 'SealedInterface'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedInterface
@@ -160,7 +160,7 @@ KtUserType(258,269): 'SealedClass'
 KtNameReferenceExpression(258,269): 'SealedClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedClass
@@ -235,7 +235,7 @@ KtUserType(320,331): 'SealedClass'
 KtNameReferenceExpression(320,331): 'SealedClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedClass
@@ -313,7 +313,7 @@ KtUserType(403,414): 'SealedClass'
 KtNameReferenceExpression(403,414): 'SealedClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedClass
@@ -403,7 +403,7 @@ KtUserType(533,544): 'SealedClass'
 KtNameReferenceExpression(533,544): 'SealedClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedClass
@@ -526,7 +526,7 @@ KtUserType(683,694): 'SealedClass'
 KtNameReferenceExpression(683,694): 'SealedClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedClass

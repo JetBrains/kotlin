@@ -70,7 +70,7 @@ KtUserType(131,140): 'NonSealed'
 KtNameReferenceExpression(131,140): 'NonSealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /NonSealed
@@ -133,7 +133,7 @@ KtUserType(173,182): 'NonSealed'
 KtNameReferenceExpression(173,182): 'NonSealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /NonSealed
