@@ -87,13 +87,13 @@ FILE: builder_kotlin.kt
     }
     public final fun box(): R|kotlin/String| {
         lval user: R|User| = Q|User|.R|/User.Companion.builder|().R|/User.UserBuilder.name|(String(John)).R|/User.UserBuilder.age|(Int(42)).R|/User.UserBuilder.info|(Null(null)).R|/User.UserBuilder.build|()
-        R|/assertEquals|<R|kotlin/String|>(String(John), R|<local>/user|.R|/User.name|)
-        R|/assertEquals|<R|kotlin/Int|>(Int(42), R|<local>/user|.R|/User.age|)
+        R|kotlin/test/assertEquals|<R|kotlin/String|>(String(John), R|<local>/user|.R|/User.name|)
+        R|kotlin/test/assertEquals|<R|kotlin/Int|>(Int(42), R|<local>/user|.R|/User.age|)
         lval user2: R|User| = R|/User.User|(String(Sarah), Int(30), Null(null))
         lval builder2: R|User.UserBuilder| = R|<local>/user2|.R|/User.toBuilder|()
         lval user3: R|User| = R|<local>/builder2|.R|/User.UserBuilder.build|()
-        R|/assertEquals|<R|kotlin/String|>(R|<local>/user2|.R|/User.name|, R|<local>/user3|.R|/User.name|)
-        R|/assertEquals|<R|kotlin/Int|>(R|<local>/user2|.R|/User.age|, R|<local>/user3|.R|/User.age|)
-        R|/assertEquals|<R|kotlin/String?|>(R|<local>/user2|.R|/User.info|, R|<local>/user3|.R|/User.info|)
+        R|kotlin/test/assertEquals|<R|kotlin/String|>(R|<local>/user2|.R|/User.name|, R|<local>/user3|.R|/User.name|)
+        R|kotlin/test/assertEquals|<R|kotlin/Int|>(R|<local>/user2|.R|/User.age|, R|<local>/user3|.R|/User.age|)
+        R|kotlin/test/assertEquals|<R|kotlin/String?|>(R|<local>/user2|.R|/User.info|, R|<local>/user3|.R|/User.info|)
         ^box String(OK)
     }

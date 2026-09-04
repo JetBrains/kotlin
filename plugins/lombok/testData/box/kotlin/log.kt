@@ -15,6 +15,7 @@ import java.util.logging.Handler
 import java.util.logging.Level
 import java.util.logging.LogRecord
 import java.util.logging.Logger
+import kotlin.test.assertEquals
 
 val logMessages = mutableListOf<String>()
 

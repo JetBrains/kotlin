@@ -28,6 +28,8 @@ public class Other {
 // FILE: test.kt
 import com.google.common.collect.ImmutableTable
 import com.google.common.collect.HashBasedTable
+import com.google.common.collect.Table
+import kotlin.test.assertEquals
 
 fun box(): String {
     val userBuilder = User.builder()
@@ -50,19 +52,15 @@ fun box(): String {
     val expectedNumbers = mapOf("1" to 1, "2" to 2, "3" to 3)
     val expectedStatuses = listOf("hello", "world", "!")
     val expectedSome = listOf(1, 2, 3)
-    val expectedValues = HashBasedTable.create<String, String, String>().apply {
+    val expectedValues: Table<String, String, String> = HashBasedTable.create<String, String, String>().apply {
         put("1", "a", "hello")
         put("2", "b", "world")
     }
 
-    return if (
-        user.numbers == expectedNumbers &&
-        user.statuses == expectedStatuses &&
-        user.values == expectedValues &&
-        outer.some == expectedSome
-    ) {
-        "OK"
-    } else {
-        "Error: $user"
-    }
+    assertEquals(expectedNumbers, user.numbers)
+    assertEquals(expectedStatuses, user.statuses)
+    assertEquals(expectedValues, user.values)
+    assertEquals(expectedSome, outer.some)
+
+    return "OK"
 }

@@ -190,51 +190,22 @@ class NotDerivedImplicit {
 
 fun box(): String {
   val implicit: DerivedImplicit = DerivedImplicit(ownProp = "same", baseProp = 1)
-  when {
-    EQEQ(arg0 = implicit, arg1 = DerivedImplicit(ownProp = "same", baseProp = 1)).not() -> return "FAIL: chained equals rejects an equal instance"
-  }
-  when {
-    EQEQ(arg0 = implicit, arg1 = DerivedImplicit(ownProp = "same", baseProp = 2)) -> return "FAIL: equals did not chain to Base"
-  }
-  when {
-    EQEQ(arg0 = implicit.hashCode(), arg1 = DerivedImplicit(ownProp = "same", baseProp = 1).hashCode()).not() -> return "FAIL: chained hashCode is unstable"
-  }
-  when {
-    EQEQ(arg0 = implicit.hashCode(), arg1 = DerivedImplicit(ownProp = "same", baseProp = 2).hashCode()) -> return "FAIL: hashCode did not chain to Base"
-  }
-  when {
-    EQEQ(arg0 = implicit.toString(), arg1 = "DerivedImplicit(super=Base(baseProp=1), ownProp=same)").not() -> return "FAIL: " + implicit
-  }
+  assertEquals<DerivedImplicit>(expected = DerivedImplicit(ownProp = "same", baseProp = 1), actual = implicit, message = "chained equals rejects an equal instance")
+  assertNotEquals<DerivedImplicit>(illegal = DerivedImplicit(ownProp = "same", baseProp = 2), actual = implicit, message = "equals did not chain to Base")
+  assertEquals<Int>(expected = DerivedImplicit(ownProp = "same", baseProp = 1).hashCode(), actual = implicit.hashCode(), message = "chained hashCode is unstable")
+  assertNotEquals<Int>(illegal = DerivedImplicit(ownProp = "same", baseProp = 2).hashCode(), actual = implicit.hashCode(), message = "hashCode did not chain to Base")
+  assertEquals<String>(expected = "DerivedImplicit(super=Base(baseProp=1), ownProp=same)", actual = implicit.toString())
   val explicitFalse: DerivedExplicitFalse = DerivedExplicitFalse(ownProp = "same", baseProp = 1)
-  when {
-    EQEQ(arg0 = explicitFalse, arg1 = DerivedExplicitFalse(ownProp = "same", baseProp = 2)).not() -> return "FAIL: equals chained despite callSuper=false"
-  }
-  when {
-    EQEQ(arg0 = explicitFalse.hashCode(), arg1 = DerivedExplicitFalse(ownProp = "same", baseProp = 2).hashCode()).not() -> { // BLOCK
-      return "FAIL: hashCode chained despite callSuper=false"
-    }
-  }
-  when {
-    EQEQ(arg0 = explicitFalse.toString(), arg1 = "DerivedExplicitFalse(ownProp=same)").not() -> return "FAIL: " + explicitFalse
-  }
+  assertEquals<DerivedExplicitFalse>(expected = DerivedExplicitFalse(ownProp = "same", baseProp = 2), actual = explicitFalse, message = "equals chained despite callSuper=false")
+  assertEquals<Int>(expected = DerivedExplicitFalse(ownProp = "same", baseProp = 2).hashCode(), actual = explicitFalse.hashCode(), message = "hashCode chained despite callSuper=false")
+  assertEquals<String>(expected = "DerivedExplicitFalse(ownProp=same)", actual = explicitFalse.toString())
   val explicitTrue: DerivedExplicitTrue = DerivedExplicitTrue(ownProp = "same", baseProp = 1)
-  when {
-    EQEQ(arg0 = explicitTrue, arg1 = DerivedExplicitTrue(ownProp = "same", baseProp = 2)) -> return "FAIL: equals did not chain despite callSuper=true"
-  }
-  when {
-    EQEQ(arg0 = explicitTrue.toString(), arg1 = "DerivedExplicitTrue(super=Base(baseProp=1), ownProp=same)").not() -> { // BLOCK
-      return "FAIL: " + explicitTrue
-    }
-  }
+  assertNotEquals<DerivedExplicitTrue>(illegal = DerivedExplicitTrue(ownProp = "same", baseProp = 2), actual = explicitTrue, message = "equals did not chain despite callSuper=true")
+  assertEquals<String>(expected = "DerivedExplicitTrue(super=Base(baseProp=1), ownProp=same)", actual = explicitTrue.toString())
   val notDerived: NotDerivedImplicit = NotDerivedImplicit(ownProp = "same")
-  when {
-    EQEQ(arg0 = notDerived, arg1 = NotDerivedImplicit(ownProp = "same")).not() -> return "FAIL: equals chained to Any"
-  }
-  when {
-    EQEQ(arg0 = notDerived.hashCode(), arg1 = NotDerivedImplicit(ownProp = "same").hashCode()).not() -> return "FAIL: hashCode chained to Any"
-  }
-  when {
-    EQEQ(arg0 = notDerived.toString(), arg1 = "NotDerivedImplicit(ownProp=same)").not() -> return "FAIL: " + notDerived
-  }
+  assertEquals<NotDerivedImplicit>(expected = NotDerivedImplicit(ownProp = "same"), actual = notDerived, message = "equals chained to Any")
+  assertEquals<Int>(expected = NotDerivedImplicit(ownProp = "same").hashCode(), actual = notDerived.hashCode(), message = "hashCode chained to Any")
+  assertEquals<String>(expected = "NotDerivedImplicit(ownProp=same)", actual = notDerived.toString())
   return "OK"
 }
+

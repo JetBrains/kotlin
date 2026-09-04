@@ -14,6 +14,8 @@ public class User {
 
 // FILE: test.kt
 
+import kotlin.test.assertEquals
+
 fun box(): String {
     val userBuilder = User.builder()
         .created(10)
@@ -21,9 +23,9 @@ fun box(): String {
         .age(42)
 
     val user = userBuilder.build()
-    return if (user.created == 10 && user.name == "John" && user.age == 42) {
-        "OK"
-    } else {
-        "Error: $user"
-    }
+    assertEquals(10, user.created)
+    assertEquals("John", user.name)
+    assertEquals(42, user.age)
+
+    return "OK"
 }

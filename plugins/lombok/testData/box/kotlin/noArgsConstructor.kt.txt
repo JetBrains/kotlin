@@ -129,12 +129,13 @@ class ConstructorExampleWithGenerics<T : Any?> {
 
 fun box(): String {
   val zeroObject: ConstructorExample = ConstructorExample()
-  assertEquals<Boolean>(a = false, b = zeroObject.<get-boolean>())
-  assertEquals<Char>(a = Char(code = 0), b = zeroObject.<get-char>())
-  assertEquals<Int>(a = 0, b = zeroObject.<get-int>())
-  assertEquals<String?>(a = null, b = zeroObject.<get-str>())
+  assertFalse(actual = zeroObject.<get-boolean>())
+  assertEquals<Char>(expected = Char(code = 0), actual = zeroObject.<get-char>())
+  assertEquals<Int>(expected = 0, actual = zeroObject.<get-int>())
+  assertNull(actual = zeroObject.<get-str>())
   val zeroObjectWithGenerics: ConstructorExampleWithGenerics<Int> = ConstructorExampleWithGenerics<Int>()
-  assertEquals<Int?>(a = null, b = zeroObjectWithGenerics.<get-param>())
-  assertEquals<Int>(a = 0, b = ConstructorExampleWithForce().<get-int>())
+  assertNull(actual = zeroObjectWithGenerics.<get-param>())
+  assertEquals<Int>(expected = 0, actual = ConstructorExampleWithForce().<get-int>())
   return "OK"
 }
+

@@ -50,11 +50,11 @@ class WithReferencedParameter {
 
 fun box(): String {
   val withReferencedParameter: WithReferencedParameter = WithReferencedParameter()
-  assertEquals<Int?>(a = null, b = withReferencedParameter.<get-inputValue>())
+  assertNull(actual = withReferencedParameter.<get-inputValue>())
   val withInitializers: WithInitializers = WithInitializers()
-  assertEquals<String?>(a = null, b = withInitializers.<get-text>())
-  assertEquals<Int>(a = 0, b = withInitializers.<get-initialized>())
-  assertEquals<String?>(a = null, b = withInitializers.<get-fromInitBlock>())
+  assertNull(actual = withInitializers.<get-text>())
+  assertEquals<Int>(expected = 0, actual = withInitializers.<get-initialized>())
+  assertNull(actual = withInitializers.<get-fromInitBlock>())
   return "OK"
 }
 

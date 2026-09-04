@@ -669,25 +669,25 @@ object ObjectWithProperties {
 }
 
 fun box(): String {
-  assertEquals<String>(a = "Simple(name=Alice, age=30)", b = Simple(name = "Alice", age = 30).toString())
-  assertEquals<String>(a = "NoFieldNames(1, 2)", b = NoFieldNames(x = 1, y = 2).toString())
-  assertEquals<String>(a = "WithExclude(a=hello)", b = WithExclude(a = "hello", b = "world").toString())
-  assertEquals<String>(a = "WithIncludeCustomName(myName=foo, y=42)", b = WithIncludeCustomName(x = "foo", y = 42).toString())
-  assertEquals<String>(a = "OnlyIncluded(included=yes)", b = OnlyIncluded(included = "yes", excluded = "no").toString())
-  assertEquals<String>(a = "custom", b = WithExistingToString(x = 5).toString())
-  assertEquals<String>(a = "WithExistingNonConflictingToString(x=5)", b = WithExistingNonConflictingToString(x = 5).toString())
-  assertEquals<String>(a = "WithComputedProperties()", b = WithComputedProperties().toString())
-  assertEquals<String>(a = "WithComputedPropertyFirst(b=2)", b = WithComputedPropertyFirst().toString())
-  assertEquals<String>(a = "WithComputedPropertyInTheMiddle(a=1, c=3)", b = WithComputedPropertyInTheMiddle().toString())
-  assertEquals<String>(a = "CallSuperWithComputedPropertyFirst(super=CallSuperBase(baseProp=10), ownProp=2)", b = CallSuperWithComputedPropertyFirst().toString())
-  assertEquals<String>(a = "WithImplicitReturnTypeProperty(implicitReturnTypeProp=implicit return type)", b = WithImplicitReturnTypeProperty().toString())
-  assertEquals<String>(a = "WithBackingFieldAndGetter(x=42)", b = WithBackingFieldAndGetter().toString())
-  assertEquals<String>(a = "WithNonConflictingExtensionFunction(a=6)", b = WithNonConflictingExtensionFunction(a = 6).toString())
-  assertEquals<String>(a = "WithNonConflictingContextualFunction(b=str)", b = WithNonConflictingContextualFunction(b = "str").toString())
-  assertEquals<String>(a = "DataClassDefault(name=Alice, age=30)", b = DataClassDefault(name = "Alice", age = 30).toString())
-  assertEquals<String>(a = "DataClassNoFieldNames(1, 2)", b = DataClassNoFieldNames(x = 1, y = 2).toString())
-  assertEquals<String>(a = "EmptyObject()", b = EmptyObject.toString())
-  assertEquals<String>(a = "ObjectWithProperties(version=2.0, label=release)", b = ObjectWithProperties.toString())
+  assertEquals<String>(expected = "Simple(name=Alice, age=30)", actual = Simple(name = "Alice", age = 30).toString())
+  assertEquals<String>(expected = "NoFieldNames(1, 2)", actual = NoFieldNames(x = 1, y = 2).toString())
+  assertEquals<String>(expected = "WithExclude(a=hello)", actual = WithExclude(a = "hello", b = "world").toString())
+  assertEquals<String>(expected = "WithIncludeCustomName(myName=foo, y=42)", actual = WithIncludeCustomName(x = "foo", y = 42).toString())
+  assertEquals<String>(expected = "OnlyIncluded(included=yes)", actual = OnlyIncluded(included = "yes", excluded = "no").toString())
+  assertEquals<String>(expected = "custom", actual = WithExistingToString(x = 5).toString())
+  assertEquals<String>(expected = "WithExistingNonConflictingToString(x=5)", actual = WithExistingNonConflictingToString(x = 5).toString())
+  assertEquals<String>(expected = "WithComputedProperties()", actual = WithComputedProperties().toString())
+  assertEquals<String>(expected = "WithComputedPropertyFirst(b=2)", actual = WithComputedPropertyFirst().toString())
+  assertEquals<String>(expected = "WithComputedPropertyInTheMiddle(a=1, c=3)", actual = WithComputedPropertyInTheMiddle().toString())
+  assertEquals<String>(expected = "CallSuperWithComputedPropertyFirst(super=CallSuperBase(baseProp=10), ownProp=2)", actual = CallSuperWithComputedPropertyFirst().toString())
+  assertEquals<String>(expected = "WithImplicitReturnTypeProperty(implicitReturnTypeProp=implicit return type)", actual = WithImplicitReturnTypeProperty().toString())
+  assertEquals<String>(expected = "WithBackingFieldAndGetter(x=42)", actual = WithBackingFieldAndGetter().toString())
+  assertEquals<String>(expected = "WithNonConflictingExtensionFunction(a=6)", actual = WithNonConflictingExtensionFunction(a = 6).toString())
+  assertEquals<String>(expected = "WithNonConflictingContextualFunction(b=str)", actual = WithNonConflictingContextualFunction(b = "str").toString())
+  assertEquals<String>(expected = "DataClassDefault(name=Alice, age=30)", actual = DataClassDefault(name = "Alice", age = 30).toString())
+  assertEquals<String>(expected = "DataClassNoFieldNames(1, 2)", actual = DataClassNoFieldNames(x = 1, y = 2).toString())
+  assertEquals<String>(expected = "EmptyObject()", actual = EmptyObject.toString())
+  assertEquals<String>(expected = "ObjectWithProperties(version=2.0, label=release)", actual = ObjectWithProperties.toString())
   @ToString
   local class LocalClass {
     val prop: String
@@ -706,23 +706,17 @@ fun box(): String {
 
   }
 
-  assertEquals<String>(a = "LocalClass(prop=TestLocalClass)", b = LocalClass(prop = "TestLocalClass").toString())
-  assertEquals<String>(a = "WithRank(highRank=hi, defaultRank=mid, lowRank=lo)", b = WithRank(lowRank = "lo", defaultRank = "mid", highRank = "hi").toString())
-  assertEquals<String>(a = "WithSameRank(a=1, b=2, c=3)", b = WithSameRank(a = "1", b = "2", c = "3").toString())
-  assertEquals<String>(a = "WithRankOnlyIncluded(first=x, second=y)", b = WithRankOnlyIncluded(second = "y", first = "x", excluded = "z").toString())
-  assertEquals<String>(a = "CallSuperBase(baseProp=10)", b = CallSuperBase(baseProp = 10).toString())
-  assertEquals<String>(a = "CallSuperDerived(super=CallSuperBase(baseProp=10), ownProp=hello)", b = CallSuperDerived(ownProp = "hello").toString())
+  assertEquals<String>(expected = "LocalClass(prop=TestLocalClass)", actual = LocalClass(prop = "TestLocalClass").toString())
+  assertEquals<String>(expected = "WithRank(highRank=hi, defaultRank=mid, lowRank=lo)", actual = WithRank(lowRank = "lo", defaultRank = "mid", highRank = "hi").toString())
+  assertEquals<String>(expected = "WithSameRank(a=1, b=2, c=3)", actual = WithSameRank(a = "1", b = "2", c = "3").toString())
+  assertEquals<String>(expected = "WithRankOnlyIncluded(first=x, second=y)", actual = WithRankOnlyIncluded(second = "y", first = "x", excluded = "z").toString())
+  assertEquals<String>(expected = "CallSuperBase(baseProp=10)", actual = CallSuperBase(baseProp = 10).toString())
+  assertEquals<String>(expected = "CallSuperDerived(super=CallSuperBase(baseProp=10), ownProp=hello)", actual = CallSuperDerived(ownProp = "hello").toString())
   val onlyAnyParent: String = CallSuperWithOnlyAnyParent(x = 5).toString()
-  when {
-    when {
-      startsWith(/* <this> = onlyAnyParent, */ prefix = "CallSuperWithOnlyAnyParent(super=CallSuperWithOnlyAnyParent@").not() -> true
-      else -> endsWith(/* <this> = onlyAnyParent, */ suffix = ", x=5)").not()
-    } -> { // BLOCK
-      return "FAIL: " + onlyAnyParent
-    }
-  }
-  assertEquals<String>(a = "WithArrays(objectArray=[a, b], nestedArray=[[a], [b]], intArray=[1, 2], charArray=[x, y], nullArray=null)", b = WithArrays().toString())
-  assertEquals<String>(a = "WithDollarPrefixedProperties(regular=r, " + '$' + "explicitlyIncluded=i)", b = WithDollarPrefixedProperties(regular = "r", $excludedByDefault = "e", $explicitlyIncluded = "i").toString())
+  assertTrue(actual = startsWith(/* <this> = onlyAnyParent, */ prefix = "CallSuperWithOnlyAnyParent(super=CallSuperWithOnlyAnyParent@"), message = onlyAnyParent)
+  assertTrue(actual = endsWith(/* <this> = onlyAnyParent, */ suffix = ", x=5)"), message = onlyAnyParent)
+  assertEquals<String>(expected = "WithArrays(objectArray=[a, b], nestedArray=[[a], [b]], intArray=[1, 2], charArray=[x, y], nullArray=null)", actual = WithArrays().toString())
+  assertEquals<String>(expected = "WithDollarPrefixedProperties(regular=r, " + '$' + "explicitlyIncluded=i)", actual = WithDollarPrefixedProperties(regular = "r", $excludedByDefault = "e", $explicitlyIncluded = "i").toString())
   return "OK"
 }
 

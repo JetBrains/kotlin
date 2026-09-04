@@ -46,6 +46,8 @@ public class Z extends X implements I {
 
 // FILE: test.kt
 
+import kotlin.test.assertEquals
+
 fun box(): String {
     val c = Z.builder()
         .setA(1)
@@ -58,12 +60,11 @@ fun box(): String {
         .c(3)
         .build()
 
-    return if (c.a == 1 && c.aStrings == listOf("a1", "a2", "a3") &&
-        c.b == 2 && c.bList == listOf("b1") &&
-        c.c == 3
-    ) {
-        "OK"
-    } else {
-        "Error: $c"
-    }
+    assertEquals(1, c.a)
+    assertEquals(listOf("a1", "a2", "a3"), c.aStrings)
+    assertEquals(2, c.b)
+    assertEquals(listOf("b1"), c.bList)
+    assertEquals(3, c.c)
+
+    return "OK"
 }

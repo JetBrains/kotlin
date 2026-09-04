@@ -3,6 +3,8 @@
 
 import lombok.Builder
 import lombok.Singular
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 @Builder
 class User(
@@ -147,12 +149,9 @@ fun box(): String {
     assertEquals(setOf("x", "y"), multi.tags)
     assertEquals(mapOf("k" to 1, "l" to 2), multi.pairs)
 
-    try {
+    assertFailsWith<UnsupportedOperationException> {
         @Suppress("UNCHECKED_CAST")
         (multi.items as MutableList<String>).add("c")
-        return "FAIL: multi.items is not unmodifiable"
-    } catch (e: UnsupportedOperationException) {
-        // expected
     }
 
     // Building again after further mutation must not affect the already-built collection (defensive copy).

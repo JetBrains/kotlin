@@ -46,6 +46,8 @@ public class NameClashingOnMethod<T> {
 
 // FILE: test.kt
 
+import kotlin.test.assertEquals
+
 fun testNameClashing() {
     val builder: NameClashing.NameClashingBuilder<String> = NameClashing.builder<String>()
     builder.field("FAIL").customMethod("OK")

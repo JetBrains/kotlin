@@ -17,10 +17,10 @@ public class PrefixJava {
 
 fun test() {
     //not generated because doesn't have prefix from class level @Accessors
-    assertEquals(PrefixJava().<!UNRESOLVED_REFERENCE!>propA<!>, "A")
+    val propA = PrefixJava().<!UNRESOLVED_REFERENCE!>propA<!>
     //not generated because doesn't have prefix from config
-    assertEquals(PrefixJava().<!FUNCTION_CALL_EXPECTED!>propC<!>, "C")
-    assertEquals(PrefixJava().<!UNRESOLVED_REFERENCE!>propD<!>, "D")
+    val propC = PrefixJava().<!FUNCTION_CALL_EXPECTED!>propC<!>
+    val propD = PrefixJava().<!UNRESOLVED_REFERENCE!>propD<!>
 }
 
 // FILE: lombok.config

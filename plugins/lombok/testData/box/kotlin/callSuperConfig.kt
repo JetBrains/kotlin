@@ -6,6 +6,8 @@
 
 import lombok.EqualsAndHashCode
 import lombok.ToString
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 // `Base` speaks about its own state, so a subclass that chains to it tells `baseProp` apart and one that does
 // not cannot - which is what every check below turns on.
@@ -37,29 +39,29 @@ class NotDerivedImplicit(val ownProp: String)
 
 fun box(): String {
     val implicit = DerivedImplicit("same", 1)
-    if (implicit != DerivedImplicit("same", 1)) return "FAIL: chained equals rejects an equal instance"
-    if (implicit == DerivedImplicit("same", 2)) return "FAIL: equals did not chain to Base"
-    if (implicit.hashCode() != DerivedImplicit("same", 1).hashCode()) return "FAIL: chained hashCode is unstable"
-    if (implicit.hashCode() == DerivedImplicit("same", 2).hashCode()) return "FAIL: hashCode did not chain to Base"
-    if (implicit.toString() != "DerivedImplicit(super=Base(baseProp=1), ownProp=same)") return "FAIL: $implicit"
+    assertEquals(DerivedImplicit("same", 1), implicit, "chained equals rejects an equal instance")
+    assertNotEquals(DerivedImplicit("same", 2), implicit, "equals did not chain to Base")
+    assertEquals(DerivedImplicit("same", 1).hashCode(), implicit.hashCode(), "chained hashCode is unstable")
+    assertNotEquals(DerivedImplicit("same", 2).hashCode(), implicit.hashCode(), "hashCode did not chain to Base")
+    assertEquals("DerivedImplicit(super=Base(baseProp=1), ownProp=same)", implicit.toString())
 
     val explicitFalse = DerivedExplicitFalse("same", 1)
-    if (explicitFalse != DerivedExplicitFalse("same", 2)) return "FAIL: equals chained despite callSuper=false"
-    if (explicitFalse.hashCode() != DerivedExplicitFalse("same", 2).hashCode()) {
-        return "FAIL: hashCode chained despite callSuper=false"
-    }
-    if (explicitFalse.toString() != "DerivedExplicitFalse(ownProp=same)") return "FAIL: $explicitFalse"
+    assertEquals(DerivedExplicitFalse("same", 2), explicitFalse, "equals chained despite callSuper=false")
+    assertEquals(
+        DerivedExplicitFalse("same", 2).hashCode(),
+        explicitFalse.hashCode(),
+        "hashCode chained despite callSuper=false"
+    )
+    assertEquals("DerivedExplicitFalse(ownProp=same)", explicitFalse.toString())
 
     val explicitTrue = DerivedExplicitTrue("same", 1)
-    if (explicitTrue == DerivedExplicitTrue("same", 2)) return "FAIL: equals did not chain despite callSuper=true"
-    if (explicitTrue.toString() != "DerivedExplicitTrue(super=Base(baseProp=1), ownProp=same)") {
-        return "FAIL: $explicitTrue"
-    }
+    assertNotEquals(DerivedExplicitTrue("same", 2), explicitTrue, "equals did not chain despite callSuper=true")
+    assertEquals("DerivedExplicitTrue(super=Base(baseProp=1), ownProp=same)", explicitTrue.toString())
 
     val notDerived = NotDerivedImplicit("same")
-    if (notDerived != NotDerivedImplicit("same")) return "FAIL: equals chained to Any"
-    if (notDerived.hashCode() != NotDerivedImplicit("same").hashCode()) return "FAIL: hashCode chained to Any"
-    if (notDerived.toString() != "NotDerivedImplicit(ownProp=same)") return "FAIL: $notDerived"
+    assertEquals(NotDerivedImplicit("same"), notDerived, "equals chained to Any")
+    assertEquals(NotDerivedImplicit("same").hashCode(), notDerived.hashCode(), "hashCode chained to Any")
+    assertEquals("NotDerivedImplicit(ownProp=same)", notDerived.toString())
 
     return "OK"
 }

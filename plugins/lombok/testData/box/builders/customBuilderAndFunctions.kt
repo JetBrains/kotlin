@@ -31,18 +31,20 @@ public class MyClass {
 
 // FILE: test.kt
 
+import kotlin.test.assertEquals
+import kotlin.test.assertIs
+
 fun box(): String {
     MyClass.MyClassBuilder.myStaticField = 84
 
     val myClassBuilder: MyClass.MyClassBuilder = MyClass.builder(0)
     val myClass = myClassBuilder.aString("test").build()
 
-    return if (myClassBuilder is MyClass.CustomMyClassBuilder && // Check if custom `builder` method is called
-        MyClass.MyClassBuilder.myStaticField == 100 && // Check if custom `build` method is called
-        myClass.aString == "test"
-     ) {
-        "OK"
-    } else {
-        "Error: $myClass"
-    }
+    // Check if custom `builder` method is called
+    assertIs<MyClass.CustomMyClassBuilder>(myClassBuilder)
+    // Check if custom `build` method is called
+    assertEquals(100, MyClass.MyClassBuilder.myStaticField)
+    assertEquals("test", myClass.aString)
+
+    return "OK"
 }

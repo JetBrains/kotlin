@@ -42,6 +42,8 @@ public class Z extends Y {
 
 import com.google.common.collect.ImmutableTable
 import com.google.common.collect.HashBasedTable
+import com.google.common.collect.Table
+import kotlin.test.assertEquals
 
 fun box(): String {
     val c = Z.builder()
@@ -55,17 +57,14 @@ fun box(): String {
         .zValues(ImmutableTable.of("2", "b", "world"))
         .build();
 
-    val expectedZValues = HashBasedTable.create<String, String, String>().apply {
+    val expectedZValues: Table<String, String, String> = HashBasedTable.create<String, String, String>().apply {
         put("1", "a", "hello")
         put("2", "b", "world")
     }
 
-    return if (c.xStrings == listOf("hello", "world", "!") &&
-        c.yMap == mapOf("1" to 1, "2" to 2, "3" to 3) &&
-        c.zValues == expectedZValues
-    ) {
-        "OK"
-    } else {
-        "Error: $c"
-    }
+    assertEquals(listOf("hello", "world", "!"), c.xStrings)
+    assertEquals(mapOf("1" to 1, "2" to 2, "3" to 3), c.yMap)
+    assertEquals(expectedZValues, c.zValues)
+
+    return "OK"
 }

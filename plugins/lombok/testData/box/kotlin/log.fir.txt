@@ -261,7 +261,7 @@ FILE: log.kt
         Q|LogExample|.R|/LogExample.Companion.log|.R|java/util/logging/Logger.info|(String(Call from public log))
         R|/LogExample.LogExample|().R|/LogExample.test|()
         R|/LogExampleWithExistingCompanion.LogExampleWithExistingCompanion|().R|/LogExampleWithExistingCompanion.test|()
-        R|/assertEquals|<R|kotlin/String|>(String(No log), R|/LogExampleWithExistingCompanionAndLogField.LogExampleWithExistingCompanionAndLogField|().R|/LogExampleWithExistingCompanionAndLogField.test|())
+        R|kotlin/test/assertEquals|<R|kotlin/String|>(String(No log), R|/LogExampleWithExistingCompanionAndLogField.LogExampleWithExistingCompanionAndLogField|().R|/LogExampleWithExistingCompanionAndLogField.test|())
         R|/LogExampleWithTopic.LogExampleWithTopic|().R|/LogExampleWithTopic.test|()
         Q|LogOnNestedClass|.R|/LogOnNestedClass.Nested.Nested|().R|/LogOnNestedClass.Nested.test|()
         R|/LogOnInnerClass.LogOnInnerClass|<R|kotlin/String|>().R|SubstitutionOverride</LogOnInnerClass.Inner.Inner>|().R|SubstitutionOverride</LogOnInnerClass.Inner.test: R|kotlin/Unit|>|()
@@ -270,6 +270,6 @@ FILE: log.kt
         Q|LogWhenNonConflictingExtensionProperty|.R|/LogWhenNonConflictingExtensionProperty.Companion.test|()
         Q|LogWhenNonConflictingContextualProperty|.R|/LogWhenNonConflictingContextualProperty.Companion.test|()
         lval expected: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/listOf|<R|kotlin/String|>(vararg(String(INFO: Call from public log), String(INFO: Test LogExample), String(WARNING: Test LogExampleWithExistingCompanion), String(INFO: Test LogExampleWithTopic), String(INFO: Check @Log on nested class), String(INFO: Check @Log on inner class), String(INFO: Check @Log on object), String(INFO: Check @Log on enum), String(INFO: Check LogWhenNonConflictingExtensionProperty), String(INFO: Check LogWhenNonConflictingContextualProperty)))
-        R|/assertEquals|<R|kotlin/collections/List<kotlin/String>|>(R|<local>/expected|, R|/logMessages|)
+        R|kotlin/test/assertEquals|<R|kotlin/collections/List<kotlin/String>|>(R|<local>/expected|, R|/logMessages|)
         ^box String(OK)
     }

@@ -14,6 +14,8 @@ import com.google.common.collect.ImmutableTable
 import com.google.common.collect.Table
 import lombok.Builder
 import lombok.Singular
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 @Builder(toBuilder = true)
 class GuavaCollections(
@@ -62,34 +64,25 @@ fun box(): String {
     assertEquals(mapOf("one" to 1, "two" to 2), result.numbers)
     assertEquals(mapOf("A" to 1, "B" to 2), result.codes)
     assertEquals(listOf("k1", "k2"), result.scores.keys.toList())
-    val expectedCells = HashBasedTable.create<String, String, String>().apply {
+    val expectedCells: Table<String, String, String> = HashBasedTable.create<String, String, String>().apply {
         put("r1", "c1", "v1")
         put("r2", "c2", "v2")
     }
     assertEquals(expectedCells, result.cells)
 
-    try {
+    assertFailsWith<UnsupportedOperationException> {
         @Suppress("UNCHECKED_CAST")
         (result.items as MutableList<String>).add("c")
-        return "FAIL: items is not immutable"
-    } catch (e: UnsupportedOperationException) {
-        // expected
     }
 
-    try {
+    assertFailsWith<UnsupportedOperationException> {
         @Suppress("UNCHECKED_CAST")
         (result.numbers as MutableMap<String, Int>)["three"] = 3
-        return "FAIL: numbers is not immutable"
-    } catch (e: UnsupportedOperationException) {
-        // expected
     }
 
-    try {
+    assertFailsWith<UnsupportedOperationException> {
         @Suppress("UNCHECKED_CAST")
         (result.cells as Table<String, String, String>).put("x", "y", "z")
-        return "FAIL: cells is not immutable"
-    } catch (e: UnsupportedOperationException) {
-        // expected
     }
 
     builder.item("c")
@@ -98,7 +91,7 @@ fun box(): String {
     assertEquals(listOf("a", "b"), result.items.toList())
     assertEquals(listOf("a", "b", "c"), result2.items.toList())
     assertEquals(expectedCells, result.cells)
-    val expectedCells2 = HashBasedTable.create<String, String, String>().apply {
+    val expectedCells2: Table<String, String, String> = HashBasedTable.create<String, String, String>().apply {
         putAll(expectedCells)
         put("r3", "c3", "v3")
     }
@@ -112,7 +105,7 @@ fun box(): String {
         .cell("r", "c", "v").clearCells().cell("rz", "cz", "vz")
         .build()
     assertEquals(listOf("z"), cleared.items.toList())
-    val expectedClearedCells = HashBasedTable.create<String, String, String>().apply { put("rz", "cz", "vz") }
+    val expectedClearedCells: Table<String, String, String> = HashBasedTable.create<String, String, String>().apply { put("rz", "cz", "vz") }
     assertEquals(expectedClearedCells, cleared.cells)
 
     val rebuilder = result.toBuilder()
@@ -122,7 +115,7 @@ fun box(): String {
     assertEquals(listOf("a", "b"), result.items.toList())
     assertEquals(listOf("a", "b", "extra"), rebuilt.items.toList())
     assertEquals(expectedCells, result.cells)
-    val expectedRebuiltCells = HashBasedTable.create<String, String, String>().apply {
+    val expectedRebuiltCells: Table<String, String, String> = HashBasedTable.create<String, String, String>().apply {
         putAll(expectedCells)
         put("r4", "c4", "v4")
     }

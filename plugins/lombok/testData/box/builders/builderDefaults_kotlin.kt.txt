@@ -371,36 +371,32 @@ class PrimitivesAndNullables {
 
 fun box(): String {
   val obj: PrimitivesAndNullables = Companion.builder().build()
-  assertEquals<Boolean>(a = false, b = obj.<get-boolean>())
-  assertEquals<Char>(a = '\u0000', b = obj.<get-char>())
-  assertEquals<Int>(a = 0, b = obj.<get-int>())
-  assertEquals<UInt>(a = 0, b = obj.<get-uint>())
-  assertEquals<String?>(a = null, b = obj.<get-nullable>())
-  var npe: Boolean = false
-  try { // BLOCK
-    Companion.builder().build()
+  assertFalse(actual = obj.<get-boolean>())
+  assertEquals<Char>(expected = '\u0000', actual = obj.<get-char>())
+  assertEquals<Int>(expected = 0, actual = obj.<get-int>())
+  assertEquals<UInt>(expected = 0, actual = obj.<get-uint>())
+  assertNull(actual = obj.<get-nullable>())
+  assertFailsWith<NullPointerException>(block = local fun <anonymous>(): Any? {
+    return Companion.builder().build()
   }
-  catch (e: NullPointerException){ // BLOCK
-    npe = true
-  }
- /*~> Unit */
-  assertEquals<Boolean>(a = true, b = npe)
+) /*~> Unit */
   val defaultAnnObj: DefaultAnn = Companion.builder().build()
-  assertEquals<String>(a = "default", b = defaultAnnObj.<get-ann>())
+  assertEquals<String>(expected = "default", actual = defaultAnnObj.<get-ann>())
   val bothDefaulted: ChainedDefaults = Companion.builder().build()
-  assertEquals<Int>(a = 1, b = bothDefaulted.<get-a>())
-  assertEquals<Int>(a = 2, b = bothDefaulted.<get-b>())
+  assertEquals<Int>(expected = 1, actual = bothDefaulted.<get-a>())
+  assertEquals<Int>(expected = 2, actual = bothDefaulted.<get-b>())
   val onlyASet: ChainedDefaults = Companion.builder().a(a = 5).build()
-  assertEquals<Int>(a = 5, b = onlyASet.<get-a>())
-  assertEquals<Int>(a = 6, b = onlyASet.<get-b>())
+  assertEquals<Int>(expected = 5, actual = onlyASet.<get-a>())
+  assertEquals<Int>(expected = 6, actual = onlyASet.<get-b>())
   val onlyBSet: ChainedDefaults = Companion.builder().b(b = 10).build()
-  assertEquals<Int>(a = 1, b = onlyBSet.<get-a>())
-  assertEquals<Int>(a = 10, b = onlyBSet.<get-b>())
+  assertEquals<Int>(expected = 1, actual = onlyBSet.<get-a>())
+  assertEquals<Int>(expected = 10, actual = onlyBSet.<get-b>())
   val bothSet: ChainedDefaults = Companion.builder().a(a = 3).b(b = 4).build()
-  assertEquals<Int>(a = 3, b = bothSet.<get-a>())
-  assertEquals<Int>(a = 4, b = bothSet.<get-b>())
+  assertEquals<Int>(expected = 3, actual = bothSet.<get-a>())
+  assertEquals<Int>(expected = 4, actual = bothSet.<get-b>())
   val dependsOnPlain: DefaultDependsOnPlain = Companion.builder().base(base = 5).build()
-  assertEquals<Int>(a = 5, b = dependsOnPlain.<get-base>())
-  assertEquals<Int>(a = 10, b = dependsOnPlain.<get-derived>())
+  assertEquals<Int>(expected = 5, actual = dependsOnPlain.<get-base>())
+  assertEquals<Int>(expected = 10, actual = dependsOnPlain.<get-derived>())
   return "OK"
 }
+

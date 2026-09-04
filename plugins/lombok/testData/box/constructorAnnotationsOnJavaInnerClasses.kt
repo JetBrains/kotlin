@@ -92,6 +92,9 @@ public class GenericOuter<T> {
 
 // FILE: test.kt
 
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+
 // `Outer` pins the dispatch receiver the generated constructor carries, `GenericOuter` pins that it declares
 // only the inner class's own type parameters and not the outer class's as well.
 fun box(): String {
@@ -103,7 +106,7 @@ fun box(): String {
     assertEquals(1, outer.InnerValue(1).value)
 
     val genericOuter = GenericOuter<String>()
-    assertEquals(null, genericOuter.InnerNoArgs().value)
+    assertNull(genericOuter.InnerNoArgs().value)
     assertEquals("a", genericOuter.InnerRequiredArgs("a").value)
     assertEquals("b", genericOuter.InnerAllArgs("a", "b").value2)
     assertEquals("a", genericOuter.InnerData("a").value)

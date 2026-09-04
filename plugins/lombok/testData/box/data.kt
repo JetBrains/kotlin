@@ -32,16 +32,18 @@ import java.util.Arrays;
 
 // FILE: test.kt
 
+import kotlin.test.assertEquals
+
 fun box(): String {
     val obj = DataExample("name")
     obj.getName()
-    assertEquals(obj.name, "name")
+    assertEquals("name", obj.name)
     obj.getTags()
     val tags = obj.tags
     obj.setScore(1.5)
-    assertEquals(obj.score, 1.5)
+    assertEquals(1.5, obj.score)
     obj.score = 2.5
-    assertEquals(obj.score, 2.5)
+    assertEquals(2.5, obj.score)
 
     val ex: DataExample.Exercise<Int> = DataExample.Exercise.of("name", 12, listOf(1, 2, 3))
     return "OK"

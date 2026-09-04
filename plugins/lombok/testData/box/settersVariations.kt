@@ -25,13 +25,15 @@ public class SetterTest {
 
 // FILE: test.kt
 
+import kotlin.test.assertEquals
+
 fun box(): String {
     val obj = SetterTest()
     obj.fluent(12)
-    assertEquals(obj.fluent(), 12)
+    assertEquals(12, obj.fluent())
     obj.setChained("zz").getChained()
-    assertEquals(obj.getChained(), "zz")
+    assertEquals("zz", obj.getChained())
     obj.whyNotBoth("zzz").whyNotBoth()
-    assertEquals(obj.whyNotBoth(), "zzz")
+    assertEquals("zzz", obj.whyNotBoth())
     return "OK"
 }

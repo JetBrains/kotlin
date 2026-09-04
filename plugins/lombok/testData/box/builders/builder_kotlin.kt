@@ -3,6 +3,7 @@
 
 import lombok.Builder
 import lombok.AccessLevel
+import kotlin.test.assertEquals
 
 @Builder(toBuilder = true)
 class User(val name: String, val age: Int, val info: String?)
