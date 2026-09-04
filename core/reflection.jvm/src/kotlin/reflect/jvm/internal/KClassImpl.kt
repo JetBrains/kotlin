@@ -584,6 +584,12 @@ internal class KClassImpl<T : Any>(
     override val isAnnotation: Boolean
         get() = classKind == ClassKind.ANNOTATION_CLASS
 
+    override val isObject: Boolean
+        get() {
+            val classKind = kmClass?.kind
+            return classKind == ClassKind.OBJECT || classKind == ClassKind.COMPANION_OBJECT
+        }
+
     private val modality: Modality
         get() = kmClass?.modality ?: when {
             jClass.isAnnotation || jClass.isEnum -> Modality.FINAL

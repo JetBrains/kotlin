@@ -121,6 +121,16 @@ public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedEleme
     public val isAnnotation: Boolean
 
     /**
+     * `true` if this is an [object](https://kotlinlang.org/docs/object-declarations.html#object-declarations-overview),
+     * a [companion object](https://kotlinlang.org/docs/object-declarations.html#companion-objects),
+     * or a [data object](https://kotlinlang.org/docs/object-declarations.html#data-objects).
+     *
+     * Note that this excludes [anonymous objects](https://kotlinlang.org/docs/object-declarations.html#object-expressions).
+     */
+    @SinceKotlin("2.5")
+    public val isObject: Boolean
+
+    /**
      * `true` if this class is `final`.
      */
     @SinceKotlin("1.1")
