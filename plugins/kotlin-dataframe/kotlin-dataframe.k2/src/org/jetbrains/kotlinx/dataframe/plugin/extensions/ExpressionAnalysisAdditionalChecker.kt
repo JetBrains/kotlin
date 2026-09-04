@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.render
 import org.jetbrains.kotlinx.dataframe.impl.toCamelCaseByDelimiters
 import org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.CAST_ERROR
@@ -219,7 +220,7 @@ private class Checker(
         reporter.reportOn(
             expression,
             MATERIALIZED_SCHEMA_ON_CAST,
-            source.toMaterializedSchema(targetType.renderReadable(), asDataClass),
+            source.toMaterializedSchema(targetType.classId.shortClassName.render(), asDataClass),
             context
         )
     }
