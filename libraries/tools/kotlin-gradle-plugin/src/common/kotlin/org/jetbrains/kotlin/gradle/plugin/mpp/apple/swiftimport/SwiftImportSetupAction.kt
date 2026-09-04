@@ -750,6 +750,7 @@ internal fun KonanTarget.swiftPMPlatform(): SwiftPMDependency.Platform = when (t
     KonanTarget.LINUX_ARM64,
     KonanTarget.LINUX_X64,
     KonanTarget.MINGW_X64,
+    KonanTarget.WATCHOS_ARM32,
         -> error("unsupported targets")
 }
 

@@ -283,6 +283,31 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainer {
     @Suppress("DEPRECATION_ERROR")
     fun watchosX64(configure: Action<KotlinNativeTargetWithSimulatorTests>) = watchosX64 { configure.execute(this) }
 
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
+    fun watchosArm32(
+        name: String = "watchosArm32",
+        configure: KotlinNativeTarget.() -> Unit = { }
+    ): KotlinNativeTarget
+
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
+    fun watchosArm32() = watchosArm32("watchosArm32") { }
+
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
+    fun watchosArm32(name: String) = watchosArm32(name) { }
+
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
+    fun watchosArm32(
+        name: String,
+        configure: Action<KotlinNativeTarget>
+    ) = watchosArm32(name) { configure.execute(this) }
+
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION_ERROR")
+    fun watchosArm32(configure: Action<KotlinNativeTarget>) = watchosArm32 { configure.execute(this) }
+
     fun watchosSimulatorArm64(
         name: String = "watchosSimulatorArm64",
         configure: KotlinNativeTargetWithSimulatorTests.() -> Unit = { }
@@ -631,6 +656,18 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("watchosX64") as KotlinNativeTargetWithSimulatorTestsPreset,
+            project,
+            configure
+        )
+
+    @Deprecated(DEPRECATED_TARGET_AS_ERROR_MESSAGE, level = DeprecationLevel.ERROR)
+    override fun watchosArm32(
+        name: String,
+        configure: KotlinNativeTarget.() -> Unit
+    ): KotlinNativeTarget =
+        configureOrCreate(
+            name,
+            presets.getByName("watchosArm32") as KotlinNativeTargetPreset,
             project,
             configure
         )

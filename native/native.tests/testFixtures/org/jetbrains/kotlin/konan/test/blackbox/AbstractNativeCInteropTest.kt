@@ -210,6 +210,7 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
             KonanTarget.WATCHOS_DEVICE_ARM64 -> "CPointerByteVar"
             KonanTarget.WATCHOS_SIMULATOR_ARM64 -> "CPointerByteVar"
             KonanTarget.WATCHOS_X64 -> "X64"
+            KonanTarget.WATCHOS_ARM32 -> "ARM32"
         }
         return testPathFull.resolve("contents.gold.${goldenFilePart}.txt")
     }
