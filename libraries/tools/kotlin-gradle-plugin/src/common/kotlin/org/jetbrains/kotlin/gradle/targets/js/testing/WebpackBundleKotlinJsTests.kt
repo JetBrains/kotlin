@@ -213,8 +213,17 @@ constructor(
             throw IllegalArgumentException("'$staticHtmlPath' file can't be loaded ", e)
         }
 
+        val patchedHtml = replaceMochaCdnReferences(html)
+        if (patchedHtml == null) {
+            logger.warn(
+                "Could not find mocha CDN references in '$staticHtmlPath', " +
+                        "mocha will be loaded over HTTP during browser tests"
+            )
+        }
+
         val output = outputBundleDir.get().asFile.resolve(TEST_HTML_FILE_NAME)
         output.writeText(pinMochaCdnUrls(html))
+        output.writeText(patchedHtml ?: html)
     }
 
     companion object {
@@ -225,6 +234,11 @@ constructor(
 private val MOCHA_ASSET_FILE_NAMES = listOf("mocha.js", "mocha.css")
 
 private const val MOCHA_SOURCE_MAP_FILE_NAME = "mocha.js.map"
+
+private val MOCHA_CDN_URL = Regex("""https://unpkg\.com/mocha(?:@[^/"']+)?/(mocha\.(?:js|css))""")
+
+internal fun replaceMochaCdnReferences(html: String): String? =
+    if (MOCHA_CDN_URL.containsMatchIn(html)) MOCHA_CDN_URL.replace(html, "$1") else null
 
 private fun NpmProjectModules.resolveMochaBrowserAssets(): List<Path> {
     val assets = MOCHA_ASSET_FILE_NAMES.map { Path(require("mocha/$it")) }
