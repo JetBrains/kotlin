@@ -1,3 +1,4 @@
+org.jetbrains.kotlin.analysis.api.platform.KaSessionListener.Companion.EP_NAME
 org.jetbrains.kotlin.analysis.api.platform.KotlinAnalysisInWriteActionListener.Companion.TOPIC
 org.jetbrains.kotlin.analysis.api.platform.KotlinComposableProviderMerger
 org.jetbrains.kotlin.analysis.api.platform.KotlinCompositeProvider.providers
