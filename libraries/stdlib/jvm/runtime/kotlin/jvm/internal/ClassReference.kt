@@ -62,6 +62,9 @@ public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassB
     override val isEnumEntry: Boolean
         get() = error()
 
+    override val isAnnotation: Boolean
+        get() = error()
+
     @SinceKotlin("1.1")
     override val isFinal: Boolean
         get() = error()

@@ -113,6 +113,14 @@ public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedEleme
     public val isEnumEntry: Boolean
 
     /**
+     * `true` if this is an annotation.
+     * See the [Kotlin language documentation](https://kotlinlang.org/docs/annotations.html)
+     * for more information.
+     */
+    @SinceKotlin("2.5")
+    public val isAnnotation: Boolean
+
+    /**
      * `true` if this class is `final`.
      */
     @SinceKotlin("1.1")
