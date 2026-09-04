@@ -1,0 +1,26 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
+  src/alias.kt
+End of files
+Exit code: OK
+------------------------------------------
+Cleaning output files:
+  out/production/module/AliasKt.class
+  out/production/module/Foo.class
+  out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
+  src/Foo.kt
+  src/alias.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Redeclaration:
+typealias Foo = Int
+Redeclaration:
+interface Foo : Any

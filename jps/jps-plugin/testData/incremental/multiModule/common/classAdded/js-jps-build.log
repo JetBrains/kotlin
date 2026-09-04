@@ -7,13 +7,7 @@ Building module2
 Compiling files:
   module2/src/A.kt
 End of files
-After build round. Marked as dirty by Kotlin:
-  module2/src/B.kt
-  module2/src/createA.kt
-  module2/src/createB.kt
-  module2/src/useAfoo.kt
-  module2/src/useBbar.kt
-Exit code: ADDITIONAL_PASS_REQUIRED
+Exit code: OK
 ------------------------------------------
 Cleaning output files:
   out/production/module2/module2.js
