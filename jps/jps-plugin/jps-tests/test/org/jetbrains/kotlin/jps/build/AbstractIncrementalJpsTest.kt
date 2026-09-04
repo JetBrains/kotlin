@@ -143,8 +143,16 @@ abstract class AbstractIncrementalJpsTest(
         if (DEBUG_LOGGING_ENABLED) {
             enableDebugLogging()
         }
-        System.getProperties()
-            .setProperty("kotlin.jps.classPrefixesToLoadByParent", "kotlin.") // for debugging tests with in-process compiler
+
+        // for debugging tests with in-process compiler
+        System.setProperty("kotlin.jps.classPrefixesToLoadByParent", "kotlin.")
+        // enable graph implementation
+        System.setProperty("jps.use.dependency.graph", "true")
+        // Disable Kotlin JPS IC
+        System.setProperty("kotlin.jps.dumb.mode", "true")
+        System.setProperty("kotlin.jps.enable.lookups.in.dumb.mode", "true")
+        // Enable test tracker for handling custom annotations
+        System.setProperty("jvm-inc-builder.test.track.mock.annotations", "true")
     }
 
     @AfterEach
