@@ -1,0 +1,8 @@
+FILE: assertEqualsLikeWithPair.kt
+    public final fun <T> assertEquals(a: R|T|, b: R|T|): R|kotlin/Unit| {
+        ^assertEquals Q|kotlin/Unit|
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        R|/assertEquals|<R|kotlin/Pair<kotlin/Int, kotlin/collections/Collection<kotlin/Int>>|>(Int(5).R|kotlin/to|<R|kotlin/Int|, R|kotlin/collections/Set<kotlin/Int>|>(R|kotlin/collections/setOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))), Int(5).R|kotlin/to|<R|kotlin/Int|, R|kotlin/collections/List<kotlin/Int>|>(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))))
+        R|/assertEquals|<R|kotlin/Pair<kotlin/Int, kotlin/collections/Collection<kotlin/Int>>|>(R|kotlin/Pair.Pair|<R|kotlin/Int|, R|kotlin/collections/List<kotlin/Int>|>(Int(5), Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))), R|kotlin/Pair.Pair|<R|kotlin/Int|, R|kotlin/collections/Set<kotlin/Int>|>(Int(5), R|kotlin/collections/setOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))))
+    }

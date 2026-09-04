@@ -1,0 +1,33 @@
+FILE: differentFunctionalTypes.kt
+    public final class Diff : R|kotlin/Any| {
+        public constructor(): R|Diff| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Diff.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun of(vararg x: R|kotlin/Array<out context(kotlin/Int, kotlin/String) () -> kotlin/Unit>|): R|Diff| {
+                ^of R|/Diff.Diff|()
+            }
+
+            public final operator fun of(x: R|(kotlin/Int, kotlin/String) -> kotlin/Unit|): R|Diff| {
+                ^of R|/Diff.Diff|()
+            }
+
+        }
+
+    }
+    context(<unused var>: R|kotlin/Int|, <unused var>: R|kotlin/String|)
+    public final fun test(): R|kotlin/Unit| {
+        lval p: R|Diff| = Q|Diff|.R|/Diff.Companion.of|(vararg(context(<unused var>: R|kotlin/Int|, <unused var>: R|kotlin/String|) of@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^@of Unit
+        }
+        ))
+        lval q: R|Diff| = Q|Diff.Companion|.R|/Diff.Companion.of<Inapplicable(INAPPLICABLE): /Diff.Companion.of>#|(fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^ Unit
+        }
+        )
+    }
