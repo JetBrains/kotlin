@@ -76,14 +76,14 @@ fun String.test() {
   KFunction1<SubBar, Unit>(
     /* bound = */ [<this>],
     /* invoke = */    local fun(c0: String, p0: SubBar) {
-      return p0 /*as Bar */.baz(/* $context-String = c0 */)
+      return p0.baz(/* $context-String = c0 */)
     }
   )
  /*~> Unit */
   KFunction0<Unit>(
     /* bound = */ [<this>,SubBar()],
     /* invoke = */    local fun(c0: String, receiver: SubBar) {
-      return receiver /*as Bar */.baz(/* $context-String = c0 */)
+      return receiver.baz(/* $context-String = c0 */)
     }
   )
  /*~> Unit */
@@ -129,14 +129,14 @@ fun test2() {
   KFunction1<SubBar, Unit>(
     /* bound = */ [s,bb],
     /* invoke = */    local fun(c0: String, c1: Boolean, p0: SubBar) {
-      return p0 /*as Bar */.baz2(/* $context-String = c0, b = c1 */)
+      return p0.baz2(/* $context-String = c0, b = c1 */)
     }
   )
  /*~> Unit */
   KFunction0<Unit>(
     /* bound = */ [s,bb,SubBar()],
     /* invoke = */    local fun(c0: String, c1: Boolean, receiver: SubBar) {
-      return receiver /*as Bar */.baz2(/* $context-String = c0, b = c1 */)
+      return receiver.baz2(/* $context-String = c0, b = c1 */)
     }
   )
  /*~> Unit */

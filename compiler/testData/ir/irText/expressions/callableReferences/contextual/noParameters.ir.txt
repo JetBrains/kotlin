@@ -134,8 +134,7 @@ FILE fqName:<root> fileName:/noParameters.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun baz (c0: kotlin.String, p0: <root>.SubBar): kotlin.Unit declared in <root>.test'
                 CALL 'public final fun baz ($context-String: kotlin.String): kotlin.Unit declared in <root>.SubBar' type=kotlin.Unit origin=null
-                  ARG <this>: TYPE_OP type=<root>.Bar origin=IMPLICIT_CAST typeOperand=<root>.Bar
-                    GET_VAR 'p0: <root>.SubBar declared in <root>.test.baz' type=<root>.SubBar origin=null
+                  ARG <this>: GET_VAR 'p0: <root>.SubBar declared in <root>.test.baz' type=<root>.SubBar origin=null
                   ARG $context-String: GET_VAR 'c0: kotlin.String declared in <root>.test.baz' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget='public final fun baz ($context-String: kotlin.String): kotlin.Unit declared in <root>.SubBar'
@@ -148,8 +147,7 @@ FILE fqName:<root> fileName:/noParameters.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun baz (c0: kotlin.String, receiver: <root>.SubBar): kotlin.Unit declared in <root>.test'
                 CALL 'public final fun baz ($context-String: kotlin.String): kotlin.Unit declared in <root>.SubBar' type=kotlin.Unit origin=null
-                  ARG <this>: TYPE_OP type=<root>.Bar origin=IMPLICIT_CAST typeOperand=<root>.Bar
-                    GET_VAR 'receiver: <root>.SubBar declared in <root>.test.baz' type=<root>.SubBar origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG <this>: GET_VAR 'receiver: <root>.SubBar declared in <root>.test.baz' type=<root>.SubBar origin=ADAPTED_FUNCTION_REFERENCE
                   ARG $context-String: GET_VAR 'c0: kotlin.String declared in <root>.test.baz' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         RICH_FUNCTION_REFERENCE type=@[ExtensionFunctionType] kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit> origin=null reflectionTarget='public final fun qux ($context-String: kotlin.String, <this>: kotlin.Int): kotlin.Unit declared in <root>'
@@ -236,8 +234,7 @@ FILE fqName:<root> fileName:/noParameters.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun baz2 (c0: kotlin.String, c1: kotlin.Boolean, p0: <root>.SubBar): kotlin.Unit declared in <root>.test2'
                 CALL 'public final fun baz2 ($context-String: kotlin.String, b: kotlin.Boolean): kotlin.Unit declared in <root>.SubBar' type=kotlin.Unit origin=null
-                  ARG <this>: TYPE_OP type=<root>.Bar origin=IMPLICIT_CAST typeOperand=<root>.Bar
-                    GET_VAR 'p0: <root>.SubBar declared in <root>.test2.baz2' type=<root>.SubBar origin=null
+                  ARG <this>: GET_VAR 'p0: <root>.SubBar declared in <root>.test2.baz2' type=<root>.SubBar origin=null
                   ARG $context-String: GET_VAR 'c0: kotlin.String declared in <root>.test2.baz2' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
                   ARG b: GET_VAR 'c1: kotlin.Boolean declared in <root>.test2.baz2' type=kotlin.Boolean origin=ADAPTED_FUNCTION_REFERENCE
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
@@ -253,8 +250,7 @@ FILE fqName:<root> fileName:/noParameters.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun baz2 (c0: kotlin.String, c1: kotlin.Boolean, receiver: <root>.SubBar): kotlin.Unit declared in <root>.test2'
                 CALL 'public final fun baz2 ($context-String: kotlin.String, b: kotlin.Boolean): kotlin.Unit declared in <root>.SubBar' type=kotlin.Unit origin=null
-                  ARG <this>: TYPE_OP type=<root>.Bar origin=IMPLICIT_CAST typeOperand=<root>.Bar
-                    GET_VAR 'receiver: <root>.SubBar declared in <root>.test2.baz2' type=<root>.SubBar origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG <this>: GET_VAR 'receiver: <root>.SubBar declared in <root>.test2.baz2' type=<root>.SubBar origin=ADAPTED_FUNCTION_REFERENCE
                   ARG $context-String: GET_VAR 'c0: kotlin.String declared in <root>.test2.baz2' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
                   ARG b: GET_VAR 'c1: kotlin.Boolean declared in <root>.test2.baz2' type=kotlin.Boolean origin=ADAPTED_FUNCTION_REFERENCE
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
