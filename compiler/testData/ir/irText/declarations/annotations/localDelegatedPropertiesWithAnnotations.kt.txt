@@ -19,7 +19,10 @@ fun foo(m: Map<String, Int>) {
     }
 )
     local get(): Int {
-      return getValue<Int>(/* <this> = test$delegate, */ thisRef = null, property = ::test)
+      return getValue<Int>(/* <this> = test$delegate, */ thisRef = null, property = KProperty0<Int>(
+        /* bound = */ [],
+        /* getter = */        local fun(): Int      )
+)
     }
 
 }
