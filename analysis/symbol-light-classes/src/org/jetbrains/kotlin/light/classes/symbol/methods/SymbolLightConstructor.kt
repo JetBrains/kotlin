@@ -128,7 +128,7 @@ internal class SymbolLightConstructor private constructor(
                     if (exposeBoxedMode != JvmExposeBoxedMode.NONE &&
                         (hasValueClassInParameterType || destinationClassIsValueClass) &&
                         // Private declarations are inaccessible from Java, so they are never exposed as boxed
-                        !isEffectivelyPrivate(constructor)
+                        !constructor.isEffectivelyPrivate()
                     ) {
                         result += SymbolLightConstructor(
                             constructorSymbol = constructor,
@@ -161,7 +161,7 @@ internal class SymbolLightConstructor private constructor(
                         )
                     }
 
-                    primaryConstructor.jvmExposeBoxedMode() != JvmExposeBoxedMode.NONE && !isEffectivelyPrivate(primaryConstructor) -> {
+                    primaryConstructor.jvmExposeBoxedMode() != JvmExposeBoxedMode.NONE && !primaryConstructor.isEffectivelyPrivate() -> {
                         result += lightClass.noArgConstructor(
                             primaryConstructor = primaryConstructor,
                             isJvmExposedBoxed = true,
