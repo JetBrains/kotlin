@@ -133,6 +133,7 @@ org.jetbrains.kotlin.KtNodeTypes:DYNAMIC_TYPE
 org.jetbrains.kotlin.KtNodeTypes:ELSE
 org.jetbrains.kotlin.KtNodeTypes:ENUM_ENTRY
 org.jetbrains.kotlin.KtNodeTypes:ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION
+org.jetbrains.kotlin.KtNodeTypes:ERROR_SAFE_ACCESS_EXPRESSION
 org.jetbrains.kotlin.KtNodeTypes:ESCAPE_STRING_TEMPLATE_ENTRY
 org.jetbrains.kotlin.KtNodeTypes:EXPRESSION_CODE_FRAGMENT
 org.jetbrains.kotlin.KtNodeTypes:FILE
@@ -533,6 +534,7 @@ org.jetbrains.kotlin.psi.KtVisitor:visitDotQualifiedExpression(KtDotQualifiedExp
 org.jetbrains.kotlin.psi.KtVisitor:visitDoubleColonExpression(KtDoubleColonExpression, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitDynamicType(KtDynamicType, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitEnumEntry(KtEnumEntry, D)
+org.jetbrains.kotlin.psi.KtVisitor:visitErrorSafeQualifiedExpression(KtErrorSafeQualifiedExpression, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitEscapeStringTemplateEntry(KtEscapeStringTemplateEntry, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitExpression(KtExpression, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitExpressionWithLabel(KtExpressionWithLabel, D)
@@ -644,6 +646,7 @@ org.jetbrains.kotlin.psi.KtVisitorVoid:visitDotQualifiedExpression(KtDotQualifie
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitDoubleColonExpression(KtDoubleColonExpression)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitDynamicType(KtDynamicType)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitEnumEntry(KtEnumEntry)
+org.jetbrains.kotlin.psi.KtVisitorVoid:visitErrorSafeQualifiedExpression(KtErrorSafeQualifiedExpression)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitEscapeStringTemplateEntry(KtEscapeStringTemplateEntry)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitExpression(KtExpression)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitExpressionWithLabel(KtExpressionWithLabel)
@@ -749,6 +752,7 @@ org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitDotQualifiedExpressionV
 org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitDoubleColonExpressionVoid(KtDoubleColonExpression, P)
 org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitDynamicTypeVoid(KtDynamicType, P)
 org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitEnumEntryVoid(KtEnumEntry, P)
+org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitErrorSafeQualifiedExpressionVoid(KtErrorSafeQualifiedExpression, P)
 org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitEscapeStringTemplateEntryVoid(KtEscapeStringTemplateEntry, P)
 org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitExpressionVoid(KtExpression, P)
 org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitExpressionWithLabelVoid(KtExpressionWithLabel, P)

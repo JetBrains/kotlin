@@ -4970,6 +4970,12 @@ public class CompiledJsStubsTestGenerated extends AbstractCompiledJsStubsTest {
     }
 
     @Test
+    @TestMetadata("errorSafeCallSmoke.kt")
+    public void testErrorSafeCallSmoke() {
+      run("errorSafeCallSmoke.kt");
+    }
+
+    @Test
     @TestMetadata("unionTypeParsingErrors.kt")
     public void testUnionTypeParsingErrors() {
       run("unionTypeParsingErrors.kt");

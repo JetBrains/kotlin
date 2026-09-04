@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
 public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter implements SemanticWhitespaceAwarePsiBuilder {
-    private final TokenSet complexTokens = TokenSet.create(SAFE_ACCESS, ELVIS, EXCLEXCL);
+    private final TokenSet complexTokens = TokenSet.create(SAFE_ACCESS, ERROR_SAFE_ACCESS, ELVIS, EXCLEXCL);
     private final Stack<Boolean> joinComplexTokens = new Stack<>();
 
     private final Stack<Boolean> newlinesEnabled = new Stack<>();
@@ -145,6 +145,10 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
             IElementType nextRawToken = rawLookup(rawLookupSteps);
             if (nextRawToken == EXCL) return EXCLEXCL;
         }
+        else if (rawTokenType == OR) {
+            IElementType nextRawToken = rawLookup(rawLookupSteps);
+            if (nextRawToken == DOT) return ERROR_SAFE_ACCESS;
+        }
         return rawTokenType;
     }
 
@@ -173,6 +177,7 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
         if (complexTokens.contains(tokenType)) {
                 if (tokenType == ELVIS) return "?:";
                 if (tokenType == SAFE_ACCESS) return "?.";
+                if (tokenType == ERROR_SAFE_ACCESS) return "|.";
             }
         return super.getTokenText();
     }
