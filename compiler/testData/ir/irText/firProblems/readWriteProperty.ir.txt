@@ -28,9 +28,17 @@ FILE fqName:<root> fileName:/readWriteProperty.kt
               ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<<root>.IdeWizard, kotlin.Int?> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final projectTemplate: kotlin.Int? declared in <root>.IdeWizard'
                 getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:projectTemplate visibility:local modality:FINAL returnType:kotlin.Int?
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.IdeWizard
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun projectTemplate (p0: <root>.IdeWizard): kotlin.Int? declared in <root>.IdeWizard.<get-projectTemplate>'
+                      CALL 'public final fun <get-projectTemplate> (): kotlin.Int? declared in <root>.IdeWizard' type=kotlin.Int? origin=null
+                        ARG <this>: GET_VAR 'p0: <root>.IdeWizard declared in <root>.IdeWizard.<get-projectTemplate>.projectTemplate' type=<root>.IdeWizard origin=null
                 setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:projectTemplate visibility:local modality:FINAL returnType:kotlin.Unit
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.IdeWizard
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int?
+                  BLOCK_BODY
+                    CALL 'public final fun <set-projectTemplate> (<set-?>: kotlin.Int?): kotlin.Unit declared in <root>.IdeWizard' type=kotlin.Unit origin=null
+                      ARG <this>: GET_VAR 'p0: <root>.IdeWizard declared in <root>.IdeWizard.<get-projectTemplate>.projectTemplate' type=<root>.IdeWizard origin=null
+                      ARG <set-?>: GET_VAR 'value: kotlin.Int? declared in <root>.IdeWizard.<get-projectTemplate>.projectTemplate' type=kotlin.Int? origin=ADAPTED_FUNCTION_REFERENCE
       FUN DELEGATED_PROPERTY_ACCESSOR name:<set-projectTemplate> visibility:public modality:FINAL returnType:kotlin.Unit
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.IdeWizard
         VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int?
@@ -44,9 +52,17 @@ FILE fqName:<root> fileName:/readWriteProperty.kt
               ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<<root>.IdeWizard, kotlin.Int?> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final projectTemplate: kotlin.Int? declared in <root>.IdeWizard'
                 getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:projectTemplate visibility:local modality:FINAL returnType:kotlin.Int?
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.IdeWizard
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun projectTemplate (p0: <root>.IdeWizard): kotlin.Int? declared in <root>.IdeWizard.<set-projectTemplate>'
+                      CALL 'public final fun <get-projectTemplate> (): kotlin.Int? declared in <root>.IdeWizard' type=kotlin.Int? origin=null
+                        ARG <this>: GET_VAR 'p0: <root>.IdeWizard declared in <root>.IdeWizard.<set-projectTemplate>.projectTemplate' type=<root>.IdeWizard origin=null
                 setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:projectTemplate visibility:local modality:FINAL returnType:kotlin.Unit
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.IdeWizard
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int?
+                  BLOCK_BODY
+                    CALL 'public final fun <set-projectTemplate> (<set-?>: kotlin.Int?): kotlin.Unit declared in <root>.IdeWizard' type=kotlin.Unit origin=null
+                      ARG <this>: GET_VAR 'p0: <root>.IdeWizard declared in <root>.IdeWizard.<set-projectTemplate>.projectTemplate' type=<root>.IdeWizard origin=null
+                      ARG <set-?>: GET_VAR 'value: kotlin.Int? declared in <root>.IdeWizard.<set-projectTemplate>.projectTemplate' type=kotlin.Int? origin=ADAPTED_FUNCTION_REFERENCE
               ARG value: GET_VAR '<set-?>: kotlin.Int? declared in <root>.IdeWizard.<set-projectTemplate>' type=kotlin.Int? origin=null
     CONSTRUCTOR visibility:public returnType:<root>.IdeWizard [primary]
       BLOCK_BODY

@@ -4,7 +4,10 @@ val test1: Int /* by */
   get(): Int {
     return #test1$delegate.getValue(thisRef = null, kProp = KProperty0<Int>(
       /* bound = */ [],
-      /* getter = */      local fun(): Int    )
+      /* getter = */      local fun(): Int {
+        return <get-test1>()
+      }
+    )
 )
   }
 
@@ -14,14 +17,26 @@ var test2: Int /* by */
   get(): Int {
     return #test2$delegate.getValue(thisRef = null, kProp = KMutableProperty0<Int>(
       /* bound = */ [],
-      /* getter = */      local fun(): Int      /* setter = */      local fun(value: Int)    )
+      /* getter = */      local fun(): Int {
+        return <get-test2>()
+      }
+      /* setter = */      local fun(value: Int) {
+        <set-test2>(<set-?> = value)
+      }
+    )
 )
   }
   @A(x = "test2.set")
   set(@A(x = "test2.set.param") <set-?>: Int) {
     return #test2$delegate.setValue(thisRef = null, kProp = KMutableProperty0<Int>(
       /* bound = */ [],
-      /* getter = */      local fun(): Int      /* setter = */      local fun(value: Int)    )
+      /* getter = */      local fun(): Int {
+        return <get-test2>()
+      }
+      /* setter = */      local fun(value: Int) {
+        <set-test2>(<set-?> = value)
+      }
+    )
 , newValue = <set-?>)
   }
 
