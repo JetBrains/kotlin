@@ -87,6 +87,12 @@ class UselessDeclarationsRemover(
         }
     }
 
+    /**
+     * Collects the transitive supertypes of this class that survive DCE.
+     *
+     * @return an insertion-ordered set of the surviving supertypes. The insertion order is needed to keep the order of types
+     * deterministic, so that it doesn't change between compilations.
+     */
     private fun IrClassSymbol.collectUsedSuperTypes(): Set<IrClassSymbol> {
         return savedTypesCache.getOrPut(this) {
             if (owner in usefulDeclarations || context.keeper.shouldKeep(owner)) {
@@ -94,7 +100,7 @@ class UselessDeclarationsRemover(
             } else {
                 owner.superTypes
                     .flatMap { it.takeIf { !it.isAny() }?.classOrNull?.collectUsedSuperTypes() ?: emptyList() }
-                    .toHashSet()
+                    .toCollection(LinkedHashSet())
             }
         }
     }
