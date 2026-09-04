@@ -103,7 +103,7 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
             useAdditionalService { ReflectionPackageNameAnnotation }
         }
         nonGroupingStage {
-            useGroupingTestIsolators(::WasmGroupingTestIsolator)
+            useGroupingTestIsolators({ WasmGroupingTestIsolator(it, considerCustomSecondStageDirectives = true) })
             useAdditionalSourceProviders(::WasmJsLauncherAdditionalSourceProvider)
             commonCodegenConfiguration()
 

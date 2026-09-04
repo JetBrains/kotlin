@@ -10,14 +10,15 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.RegisteredDirectivesBuilder
-import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.CHECK_STATE_MACHINE
-import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.WITH_COROUTINES
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives.ESCAPE_MODULE_NAME
 import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.impl.shouldIsolateTestInGroupingConfiguration
 import org.jetbrains.kotlin.test.services.impl.TestModuleStructureImpl
+import org.jetbrains.kotlin.test.services.BatchingPackageInserter.Companion.computePackage
 
 /**
  * This transformers is used for transforming test with several files
@@ -55,8 +56,20 @@ class SplittingModuleTransformerForBoxTests(
                 ?: error("Too many `fun box()` are defined. Cannot heuristically detect which one is global")
         }
         val firstModuleFiles = realFiles.filter { it != secondModuleFile }
+        // The transformer replaces the original module with freshly named `lib` and `main` modules.
+        // In the grouping engine those names must retain the same per-test prefix that the module
+        // structure extractor would have assigned to ordinary multi-module tests; otherwise every
+        // split test contributes KLIBs with the identical unique names `lib` and `main`, and the
+        // linker rejects a grouped batch as soon as it contains two split tests.
+        val moduleNamePrefix = if (ESCAPE_MODULE_NAME in testServices.defaultDirectives &&
+            !testServices.shouldIsolateTestInGroupingConfiguration(moduleStructure, fileGenerationPhase = true)
+        ) {
+            "${computePackage(testServices.testInfo)}."
+        } else {
+            ""
+        }
         val firstModule = TestModule(
-            name = "lib",
+            name = moduleNamePrefix + "lib",
             files = firstModuleFiles + additionalFiles,
             allDependencies = emptyList(),
             module.directives,
@@ -64,7 +77,7 @@ class SplittingModuleTransformerForBoxTests(
         )
 
         val secondModule = TestModule(
-            name = "main",
+            name = moduleNamePrefix + "main",
             files = listOf(secondModuleFile), // additionalFiles are not added here, due to potential deserializing clashes between helpers' copies: coroutines and JS stepping.
             allDependencies = listOf(DependencyDescription(firstModule, DependencyKind.Binary, DependencyRelation.FriendDependency)),
             RegisteredDirectivesBuilder(module.directives).apply {

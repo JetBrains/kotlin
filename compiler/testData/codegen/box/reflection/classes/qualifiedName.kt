@@ -3,6 +3,8 @@
 // IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR
 // ^^^ Source code is not compiled in JS.
+// WASM_STANDALONE
+// ^^^ in non-standalone run, test classes will be placed in a sub-package, so `::class.qualifiedName` would give different result
 
 package test
 
