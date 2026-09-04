@@ -25,7 +25,11 @@ fun Problem() {
       }
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(false) {
-        ::foo
+        ::foo<kotlin.reflect.KFunction0> {
+          fun foo() {
+            return foo()
+          }
+        }
       }
       sourceInformationMarkerEnd(%composer)
       tmp0_group

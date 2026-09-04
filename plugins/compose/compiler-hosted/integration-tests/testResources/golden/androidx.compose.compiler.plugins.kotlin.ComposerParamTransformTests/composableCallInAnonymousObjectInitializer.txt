@@ -52,7 +52,12 @@ fun Test(inputs: List<Int>, %composer: Composer?, %changed: Int) {
           val state: State<Int> = Foo(%composer, 0)
           val value: State<Int> = Foo(%composer, 0)
             get() {
-              return field.getValue(<this>, ::value)
+              return field.getValue(<this>, ::value {
+                fun value(p0: Any?): Int {
+                  return p0 as <no name provided>.value
+                }
+              }
+              )
             }
         }
       }

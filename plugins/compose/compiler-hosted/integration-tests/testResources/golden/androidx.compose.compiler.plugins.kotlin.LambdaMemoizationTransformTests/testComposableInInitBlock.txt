@@ -33,7 +33,9 @@ class ComposeScreenSaverView {
         value = 11
       )
       get() {
-        return prefsInit%delegate.getValue(null, ::prefsInit%delegate)
+        return prefsInit%delegate.getValue(null, ::prefsInit {
+          fun prefsInit(): Int }
+        )
       }
     }
     setContent(composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->

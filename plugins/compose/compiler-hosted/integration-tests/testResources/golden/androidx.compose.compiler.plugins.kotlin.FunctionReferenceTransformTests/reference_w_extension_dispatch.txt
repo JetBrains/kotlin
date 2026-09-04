@@ -17,7 +17,7 @@ fun Ref(cls: Cls, content: @Composable String.(Int) -> Unit) {
 @FunctionKeyMeta(key = 1420357208, startOffset = 84, endOffset = 194)
 fun Ref(cls: Cls, content: @[ExtensionFunctionType] Function4<String, Int, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Ref)N(cls,content)<cls::F...>,<Ref(cl...>:Test.kt")
+  sourceInformation(%composer, "C(Ref)N(cls,content)<cls::F...>,<cls::F...>,<Ref(cl...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
@@ -35,7 +35,13 @@ fun Ref(cls: Cls, content: @[ExtensionFunctionType] Function4<String, Int, Compo
       val tmp0 = cls
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 || %dirty and 0b1000 != 0 && %composer.changedInstance(tmp0)) {
-        tmp0::Fn
+        tmp0::Fn<kotlin.reflect.KFunction4> {
+          @Composable
+          @FunctionKeyMeta(key = -1342761404, startOffset = 172, endOffset = 179)
+          fun Fn(receiver: Cls, p0: @[ParameterName(name = 'string')] String, p1: @[ParameterName(name = 'int')] Int, %composer: Composer?, %changed: Int) {
+            return receiver.Fn(p0, p1, %composer, 0b1110 and %changed shr 0b0011 or 0b01110000 and %changed shr 0b0011 or Cls.%stable shl 0b0110 or 0b001110000000 and %changed shl 0b0110)
+          }
+        }
       }
       sourceInformationMarkerEnd(%composer)
       tmp0_group

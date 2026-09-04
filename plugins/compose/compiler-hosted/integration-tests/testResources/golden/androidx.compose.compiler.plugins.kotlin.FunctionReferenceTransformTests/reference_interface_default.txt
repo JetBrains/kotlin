@@ -35,14 +35,16 @@ fun Ref(intf: Intf, content: Function3<Int, Composer, Int, Unit>, %composer: Com
       val tmp0 = intf
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 || %dirty and 0b1000 != 0 && %composer.changedInstance(tmp0)) {
-        @Composable
-        fun Intf.Fn(int: Int, %composer: Composer?, %changed: Int) {
-          %composer.startReplaceGroup(<>)
-          sourceInformation(%composer, "C(Fn)N(int):Test.kt")
-          receiver.Fn(int, %composer, 0b1110 and %changed shr 0b0011 or 0b01110000 and %changed shl 0b0011)
-          %composer.endReplaceGroup()
+        tmp0::Fn<kotlin.reflect.KFunction3> {
+          @Composable
+          @FunctionKeyMeta(key = -1892299650, startOffset = 168, endOffset = 176)
+          fun Fn(receiver: Intf, p0: @[ParameterName(name = 'int')] Int, %composer: Composer?, %changed: Int) {
+            %composer.startReplaceGroup(<>)
+            sourceInformation(%composer, "C(Fn)N(receiver,p0)<intf::...>:Test.kt")
+            Fn%default(p0, receiver, %composer, 0b1110 and %changed shr 0b0011 or 0b01110000 and %changed shl 0b0011, 0)
+            %composer.endReplaceGroup()
+          }
         }
-        tmp0::Fn
       }
       sourceInformationMarkerEnd(%composer)
       tmp0_group

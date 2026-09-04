@@ -25,12 +25,13 @@ fun Test(%composer: Composer?, %changed: Int) {
     Fn(<block>{
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(false) {
-        @Composable
-        @FunctionKeyMeta(key = -1932524105, startOffset = 117, endOffset = 125)
-        fun Target(p0: Int, p1: Int, p2: Int, p3: Int, %composer: Composer?, %changed: Int) {
-          Target(p0, p1, p2, p3, 0, 0, 0, 0, 0, 0, 0, 0, %composer, 0b1110 and %changed or 0b01110000 and %changed or 0b001110000000 and %changed or 0b0001110000000000 and %changed, 0, 0b111111110000)
+        ::Target<kotlin.Function6> {
+          @Composable
+          @FunctionKeyMeta(key = -1932524105, startOffset = 117, endOffset = 125)
+          fun Target(p0: Int, p1: Int, p2: Int, p3: Int, %composer: Composer?, %changed: Int) {
+            return Target(p0, p1, p2, p3, 0, 0, 0, 0, 0, 0, 0, 0, %composer, 0b1110 and %changed or 0b01110000 and %changed or 0b001110000000 and %changed or 0b0001110000000000 and %changed, 0, 0b111111110000)
+          }
         }
-        ::Target
       }
       sourceInformationMarkerEnd(%composer)
       tmp0_group

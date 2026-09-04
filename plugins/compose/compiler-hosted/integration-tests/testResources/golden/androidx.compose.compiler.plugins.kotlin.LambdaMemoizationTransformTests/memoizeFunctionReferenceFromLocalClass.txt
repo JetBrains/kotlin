@@ -43,7 +43,11 @@ class MainActivity {
       val tmp0 = test
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(%composer.changed(tmp0)) {
-        tmp0::go
+        tmp0::go<kotlin.reflect.KFunction0> {
+          fun go(receiver: <no name provided>) {
+            return receiver.go()
+          }
+        }
       }
       sourceInformationMarkerEnd(%composer)
       tmp0_group

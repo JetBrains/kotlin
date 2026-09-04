@@ -29,10 +29,6 @@ public final class Module_main_functionReferenceKt {
     static method <clinit>(): void
     private final static method App$lambda$0(p0: int, p1: androidx.compose.runtime.Composer, p2: int): kotlin.Unit
     public final static method App(p0: androidx.compose.runtime.Composer, p1: int): void
-    public synthetic final static method access$x$Test(p0: androidx.compose.runtime.Composer, p1: int): void
-    public synthetic final static method access$x1$TestWithParams(p0: int, p1: androidx.compose.runtime.Composer, p2: int): void
     public final static method getX(): kotlin.reflect.KFunction
     public final static method getX1(): kotlin.reflect.KFunction
-    private final static method x$Test(p0: androidx.compose.runtime.Composer, p1: int): void
-    private final static method x1$TestWithParams(p0: int, p1: androidx.compose.runtime.Composer, p2: int): void
 }

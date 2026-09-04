@@ -64,7 +64,8 @@ MODULE_FRAGMENT
                         TYPE_ARG T: home.EmailState
                         ARG <this>: GET_VAR 'val emailState$delegate: androidx.compose.runtime.MutableState<home.EmailState> [val] declared in home.Home' type=androidx.compose.runtime.MutableState<home.EmailState> origin=null
                         ARG thisObj: CONST Null type=kotlin.Nothing? value=null
-                        ARG property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val emailState: home.EmailState by (...)' delegate='val emailState$delegate: androidx.compose.runtime.MutableState<home.EmailState> [val] declared in home.Home' getter='local final fun <get-emailState> (): home.EmailState declared in home.Home' setter=null type=kotlin.reflect.KProperty0<home.EmailState> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+                        ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty0<home.EmailState> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='val emailState: home.EmailState by (...)'
+                          getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:emailState visibility:local modality:FINAL returnType:home.EmailState
               CALL 'public final fun Column (content: @[ExtensionFunctionType] kotlin.Function3<compose.ui.ColumnScope, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit [inline] declared in compose.ui' type=kotlin.Unit origin=null
                 ARG content: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function3<compose.ui.ColumnScope, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=LAMBDA
                   FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit

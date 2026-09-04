@@ -35,7 +35,11 @@ fun Something(param: String, %composer: Composer?, %changed: Int) {
     val x = <block>{
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100) {
-        ::method
+        ::method<kotlin.reflect.KFunction0> {
+          fun method() {
+            return method()
+          }
+        }
       }
       sourceInformationMarkerEnd(%composer)
       tmp0_group

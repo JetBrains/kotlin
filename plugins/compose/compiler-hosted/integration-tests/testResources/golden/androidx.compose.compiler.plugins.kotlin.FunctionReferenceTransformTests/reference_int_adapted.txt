@@ -25,16 +25,17 @@ fun Ref(content: Function2<Composer, Int, Int>, %composer: Composer?, %changed: 
     Ref(<block>{
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(false) {
-        @Composable
-        @FunctionKeyMeta(key = 1752058678, startOffset = 146, endOffset = 150)
-        fun Fn(%composer: Composer?, %changed: Int): Int {
-          %composer.startReplaceGroup(<>)
-          sourceInformation(%composer, "C(Fn):Test.kt")
-          val tmp0 = Fn(0, %composer, 0, 0b0001)
-          %composer.endReplaceGroup()
-          return tmp0
+        ::Fn<kotlin.Function2> {
+          @Composable
+          @FunctionKeyMeta(key = 1752058678, startOffset = 146, endOffset = 150)
+          fun Fn(%composer: Composer?, %changed: Int): Int {
+            %composer.startReplaceGroup(<>)
+            sourceInformation(%composer, "C(Fn)<::Fn>:Test.kt")
+            val tmp0 = Fn(0, %composer, 0, 0b0001)
+            %composer.endReplaceGroup()
+            return tmp0
+          }
         }
-        ::Fn
       }
       sourceInformationMarkerEnd(%composer)
       tmp0_group
