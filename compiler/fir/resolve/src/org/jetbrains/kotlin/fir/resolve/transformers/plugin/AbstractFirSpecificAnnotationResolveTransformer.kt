@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirAnnotationArgumentMappingImpl
 import org.jetbrains.kotlin.fir.extensions.*
@@ -111,7 +112,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             return entries.firstOrNull() ?: buildUnresolvedArgumentDuringCompilerRequiredAnnotations(arguments.first().source)
         }
 
-        val elementType = ConeClassLikeTypeImpl(parameter.enumClassId.toLookupTag(), [], isMarkedNullable = false)
+        val elementType = ConeClassLikeTypeImpl(parameter.enumClassId.toLookupTag(), typeArguments = [], isMarkedNullable = false)
         return buildVarargArgumentsExpression {
             this.arguments += entries
             coneElementTypeOrNull = elementType
@@ -140,6 +141,9 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         val calleeReference = propertyAccess.calleeReference
         val enumClassLookupTag = symbol.containingClassLookupTag()
 
+        // We deliberately omit receivers here; our goal is just to put some
+        // resolved value to the mapping. Expressions from argument mappings should
+        // never be asked for their structure, but rather for values they represent.
         return buildPropertyAccessExpression {
             source = propertyAccess.source
             this.calleeReference = buildResolvedNamedReference {
