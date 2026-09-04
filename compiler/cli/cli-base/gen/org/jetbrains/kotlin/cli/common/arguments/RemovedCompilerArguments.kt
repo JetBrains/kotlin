@@ -24,6 +24,21 @@ class RemovedCompilerArguments {
         }
 
     @all:Deprecated(
+        message = "REPL is deprecated.",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xrepl",
+        description = "Run Kotlin REPL.",
+        deprecatedVersion = "2.2.0",
+        removedVersion = "2.5.0",
+    )
+    var repl: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
         message = "This is temporary solution (see KT-63712) intended to be used only for stdlib build.",
         level = DeprecationLevel.ERROR,
     )

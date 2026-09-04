@@ -2053,12 +2053,6 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
-    @TestMetadata("replLaunchError.args")
-    public void testReplLaunchError() {
-      run("replLaunchError.args");
-    }
-
-    @Test
     @TestMetadata("reportAllWarnings.args")
     public void testReportAllWarnings() {
       run("reportAllWarnings.args");

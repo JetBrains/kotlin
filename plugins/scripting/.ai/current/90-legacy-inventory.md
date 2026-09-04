@@ -2,11 +2,12 @@
 
 > **When to consult**: K1 audit / deletion task; before executing any REMOVE step from `target/50-migration-plan.md`.
 > **Cache lifetime**: mutable-per-iteration (shrinks as steps land)
-> **Last verified**: 2026-05-16
+> **Last verified**: 2026-09-04
 
 Itemized list of every K1 / PSI-tied / IDE-coupled / duplicated piece with disposition tag.
 
 **Disposition**:
+- `REMOVED` — already dropped from the tree (since 2.5.0)
 - `REMOVE` — drop entirely; nothing depends on it after upstream cleanup
 - `MIGRATE` — re-implement on K2 / PSI-free path then remove the old
 - `KEEP-FOR-NOW` — still needed in transition; remove once upstream allows
@@ -31,40 +32,40 @@ Itemized list of every K1 / PSI-tied / IDE-coupled / duplicated piece with dispo
 
 | Artifact | Path | Disposition |
 |---|---|---|
-| `GenericReplCompiler` | `plugins/scripting/scripting-compiler/src/.../repl/GenericReplCompiler.kt` | REMOVE |
-| `cli-base` REPL helpers — see [45-embedding-daemon-legacy.md](45-embedding-daemon-legacy.md) | `compiler/cli/cli-base/src/.../cli/common/repl/*` (~13 files) | REMOVE |
-| `legacyReplCompilation.kt` (`JvmReplCompiler`) | `libraries/scripting/jvm-host/` | REMOVE |
-| `legacyReplEvaluation.kt` (`JvmReplEvaluator`) | `libraries/scripting/jvm-host/` | REMOVE |
-| `obsoleteJvmScriptEvaluation.kt` (deprecated aliases) | `libraries/scripting/jvm-host/` | REMOVE |
-| `JvmScriptCompiler.createLegacy()` + `ScriptJvmCompilerIsolated` (K1) | jvm-host + scripting-compiler | REMOVE |
-| `JvmCliReplShellExtension` | scripting-compiler | REMOVE |
-| `JvmStandardReplFactoryExtension` | scripting-compiler | REMOVE |
-| `ReplFactoryExtension` EP | scripting-compiler | REMOVE |
+| `GenericReplCompiler` | `plugins/scripting/scripting-compiler/src/.../repl/GenericReplCompiler.kt` | **REMOVED** |
+| `cli-base` REPL helpers — see [45-embedding-daemon-legacy.md](45-embedding-daemon-legacy.md) | `compiler/cli/cli-base/src/.../cli/common/repl/*` | **REMOVED** (Reduced to protocol types) |
+| `legacyReplCompilation.kt` (`JvmReplCompiler`) | `libraries/scripting/jvm-host/` | **REMOVED** |
+| `legacyReplEvaluation.kt` (`JvmReplEvaluator`) | `libraries/scripting/jvm-host/` | **REMOVED** |
+| `obsoleteJvmScriptEvaluation.kt` (deprecated aliases) | `libraries/scripting/jvm-host/` | REMOVE (still present; script evaluation, not REPL) |
+| `JvmScriptCompiler.createLegacy()` + `ScriptJvmCompilerIsolated` (K1) | jvm-host + scripting-compiler | **REMOVED** |
+| `JvmCliReplShellExtension` | scripting-compiler | **REMOVED** |
+| `JvmStandardReplFactoryExtension` | scripting-compiler | **REMOVED** |
+| `ReplFactoryExtension` EP | scripting-compiler | **REMOVED** |
 
 ## CLI
 
 | Artifact | Path | Disposition |
 |---|---|---|
-| `-Xrepl` flag | `compiler/arguments/.../CommonCompilerArguments.kt` | REMOVE |
-| `replMode` field plumbing | `compiler/cli/.../AbstractConfigurationPhase.kt` | REMOVE |
+| `-Xrepl` flag | `compiler/arguments/.../CommonCompilerArguments.kt` | **REMOVED** (2.5.0) |
+| `replMode` field plumbing | `compiler/cli/.../AbstractConfigurationPhase.kt` | **REMOVED** |
 
 ## Daemon REPL
 
 | Artifact | Path | Disposition |
 |---|---|---|
-| `CompileService.leaseReplSession` / `releaseReplSession` / `replCreateState` / `replCheck` / `replCompile` | `compiler/daemon/daemon-common/src/.../CompileService.kt` | REMOVE |
-| `ReplStateFacade` | daemon-common | REMOVE |
-| `KotlinRemoteReplService` (`KotlinJvmReplServiceBase`) | `compiler/daemon/src/.../KotlinRemoteReplService.kt` | REMOVE |
-| `KotlinRemoteReplCompilerClient` | `compiler/daemon/daemon-client/src/main/kotlin/.../KotlinRemoteReplCompilerClient.kt` | REMOVE |
-| `RemoteReplCompilerState` | same dir | REMOVE |
+| `CompileService.leaseReplSession` / `releaseReplSession` / `replCreateState` / `replCheck` / `replCompile` | `compiler/daemon/daemon-common/src/.../CompileService.kt` | **STUBBED** (Return Error) |
+| `ReplStateFacade` | daemon-common | **KEEP** (Interface for RMI compat) |
+| `KotlinRemoteReplService` (`KotlinJvmReplServiceBase`) | `compiler/daemon/src/.../KotlinRemoteReplService.kt` | **REMOVED** |
+| `KotlinRemoteReplCompilerClient` | `compiler/daemon/daemon-client/src/main/kotlin/.../KotlinRemoteReplCompilerClient.kt` | **KEEP** (Consumer compatibility stub) |
+| `RemoteReplCompilerState` | same dir | **KEEP** |
 
 ## IDE-coupled
 
 | Artifact | Path | Why | Disposition |
 |---|---|---|---|
-| `scripting-ide-services` | `plugins/scripting/scripting-ide-services/` | K1 PSI-based REPL completion / analyzer (`KJvmReplCompleter`, `IdeLikeReplCodeAnalyzer`, `KJvmReplCompilerWithIdeServices`) | REMOVE (user-flagged) |
-| `scripting-ide-services-embeddable` | same level | Packaging of above | REMOVE |
-| `scripting-ide-services-test` | same level | Tests for above | REMOVE |
+| `scripting-ide-services` | `plugins/scripting/scripting-ide-services/` | K1 PSI-based REPL completion / analyzer | **REMOVED** |
+| `scripting-ide-services-embeddable` | same level | Packaging of above | **REMOVED** |
+| `scripting-ide-services-test` | same level | Tests for above | **REMOVED** |
 | `scripting-ide-common` | `plugins/scripting/scripting-ide-common/` | **Copied from IntelliJ Community plugin** (per its README). K1+PSI. | REMOVE (future reimplementation possible in different form, definitely without K1) |
 
 ## Script definition discovery

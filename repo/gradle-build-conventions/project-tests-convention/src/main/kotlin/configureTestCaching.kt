@@ -47,7 +47,6 @@ internal fun Project.configureTestCaching() {
             ":kotlin-scripting-dependencies",
             ":kotlin-scripting-dependencies-maven",
             ":kotlin-scripting-dependencies-maven-all",
-            ":kotlin-scripting-ide-services-test",
             ":kotlin-scripting-jsr223-test",
             ":kotlin-scripting-jvm",
             ":kotlin-scripting-jvm-host-test",

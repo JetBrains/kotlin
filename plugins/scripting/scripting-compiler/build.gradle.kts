@@ -34,7 +34,6 @@ dependencies {
     api(project(":kotlin-scripting-jvm"))
     api(project(":kotlin-scripting-compiler-impl"))
     api(kotlinStdlib())
-    api(variantOf(libs.jline) { classifier("jdk8") })
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
 

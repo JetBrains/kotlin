@@ -535,9 +535,6 @@ include(
 )
 
 include(
-    ":kotlin-scripting-ide-services-unshaded",
-    ":kotlin-scripting-ide-services-test",
-    ":kotlin-scripting-ide-services",
     ":kotlin-scripting-ide-common"
 )
 
@@ -1025,9 +1022,6 @@ if (buildProperties.isInIdeaSync.get()) {
         file("$rootDir/plugins/compose/compiler-hosted/runtime-tests")
 }
 
-project(":kotlin-scripting-ide-services-unshaded").projectDir = File("$rootDir/plugins/scripting/scripting-ide-services")
-project(":kotlin-scripting-ide-services-test").projectDir = File("$rootDir/plugins/scripting/scripting-ide-services-test")
-project(":kotlin-scripting-ide-services").projectDir = File("$rootDir/plugins/scripting/scripting-ide-services-embeddable")
 project(":kotlin-scripting-ide-common").projectDir = File("$rootDir/plugins/scripting/scripting-ide-common")
 project(":kotlin-scripting-compiler").projectDir = File("$rootDir/plugins/scripting/scripting-compiler")
 project(":kotlin-scripting-compiler-impl").projectDir = File("$rootDir/plugins/scripting/scripting-compiler-impl")

@@ -288,7 +288,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_PRINT_CONFIGURATION in this) { arguments.printConfiguration = get(X_PRINT_CONFIGURATION)}
     if (X_PROFILE_PHASES in this) { arguments.profilePhases = get(X_PROFILE_PHASES)}
     if (X_RENDER_INTERNAL_DIAGNOSTIC_NAMES in this) { arguments.renderInternalDiagnosticNames = get(X_RENDER_INTERNAL_DIAGNOSTIC_NAMES)}
-    if (X_REPL in this) { arguments.repl = get(X_REPL)}
+    try { if (X_REPL in this) { arguments.setUsingReflection("repl", get(X_REPL))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_REPL. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_REPORT_ALL_WARNINGS in this) { arguments.reportAllWarnings = get(X_REPORT_ALL_WARNINGS)}
     if (X_REPORT_OUTPUT_FILES in this) { arguments.reportOutputFiles = get(X_REPORT_OUTPUT_FILES)}
     if (X_REPORT_PERF in this) { arguments.reportPerf = get(X_REPORT_PERF)}
@@ -404,7 +404,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_PRINT_CONFIGURATION] = arguments.printConfiguration } catch (_: NoSuchMethodError) {  }
     try { this[X_PROFILE_PHASES] = arguments.profilePhases } catch (_: NoSuchMethodError) {  }
     try { this[X_RENDER_INTERNAL_DIAGNOSTIC_NAMES] = arguments.renderInternalDiagnosticNames } catch (_: NoSuchMethodError) {  }
-    try { this[X_REPL] = arguments.repl } catch (_: NoSuchMethodError) {  }
+    try { this[X_REPL] = arguments.getUsingReflection<Boolean>("repl") } catch (_: NoSuchMethodError) {  }
     try { this[X_REPORT_ALL_WARNINGS] = arguments.reportAllWarnings } catch (_: NoSuchMethodError) {  }
     try { this[X_REPORT_OUTPUT_FILES] = arguments.reportOutputFiles } catch (_: NoSuchMethodError) {  }
     try { this[X_REPORT_PERF] = arguments.reportPerf } catch (_: NoSuchMethodError) {  }
@@ -509,7 +509,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_PHASES_TO_VALIDATE_BEFORE in this) { arguments.phasesToValidateBefore = get(X_PHASES_TO_VALIDATE_BEFORE).toTypedArray()}
     if (X_PLUGIN in this) { arguments.pluginClasspaths = get(X_PLUGIN) ?: emptyArray()}
     if (X_RENDER_INTERNAL_DIAGNOSTIC_NAMES in this) { arguments.renderInternalDiagnosticNames = get(X_RENDER_INTERNAL_DIAGNOSTIC_NAMES)}
-    if (X_REPL in this) { arguments.repl = get(X_REPL)}
+    try { if (X_REPL in this) { arguments.setUsingReflection("repl", get(X_REPL))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_REPL. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_RETURN_VALUE_CHECKER in this) { arguments.returnValueChecker = get(X_RETURN_VALUE_CHECKER).stringValue}
     if (X_SEPARATE_KMP_COMPILATION in this) { arguments.separateKmpCompilationScheme = get(X_SEPARATE_KMP_COMPILATION)}
     if (X_SKIP_METADATA_VERSION_CHECK in this) { arguments.skipMetadataVersionCheck = get(X_SKIP_METADATA_VERSION_CHECK)}

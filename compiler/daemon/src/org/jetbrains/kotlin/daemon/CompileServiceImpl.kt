@@ -803,14 +803,24 @@ abstract class CompileServiceImplBase(
         }
     }
 
-    protected inline fun <R, KotlinJvmReplServiceT> withValidReplImpl(
-        sessionId: Int,
-        body: KotlinJvmReplServiceT.() -> CompileService.CallResult<R>,
-    ): CompileService.CallResult<R> =
-        withValidClientOrSessionProxy(sessionId) { session ->
-            @Suppress("UNCHECKED_CAST")
-            (session?.data as? KotlinJvmReplServiceT?)?.body() ?: CompileService.CallResult.Error("Not a REPL session $sessionId")
-        }
+}
+
+private const val REPL_IS_NOT_SUPPORTED = "REPL is not supported by the daemon anymore"
+
+val internalRng = Random()
+
+inline fun getValidId(counter: AtomicInteger, check: (Int) -> Boolean): Int {
+    // fighting hypothetical integer wrapping
+    var newId = counter.incrementAndGet()
+    var attemptsLeft = 100
+    while (!check(newId)) {
+        attemptsLeft -= 1
+        if (attemptsLeft <= 0)
+            throw IllegalStateException("Invalid state or algorithm error")
+        // assuming wrap, jumping to random number to reduce probability of further clashes
+        newId = counter.addAndGet(internalRng.nextInt())
+    }
+    return newId
 }
 
 class CompileServiceImpl(
@@ -824,11 +834,6 @@ class CompileServiceImpl(
     timer: Timer,
     onShutdown: () -> Unit,
 ) : CompileService, CompileServiceImplBase(daemonOptions, compilerId, javaLanguageVersion, port, timer, onShutdown) {
-
-    private inline fun <R> withValidRepl(
-        sessionId: Int,
-        body: KotlinJvmReplService.() -> CompileService.CallResult<R>,
-    ) = withValidReplImpl(sessionId, body)
 
     override val lastUsedSeconds: Long
         get() =
@@ -1007,46 +1012,16 @@ class CompileServiceImpl(
         servicesFacade: CompilerServicesFacadeBase,
         templateClasspath: List<File>,
         templateClassName: String,
-    ): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive) {
-        if (compilationOptions.targetPlatform != CompileService.TargetPlatform.JVM)
-            CompileService.CallResult.Error("Sorry, only JVM target platform is supported now")
-        else {
-            val disposable = Disposer.newDisposable("Disposable for ${CompileServiceImpl::class.simpleName}.leaseReplSession")
-            val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions, false)
-            val repl = KotlinJvmReplService(
-                disposable, port, compilerId, templateClasspath, templateClassName,
-                messageCollector, null
-            )
-            val sessionId = state.sessions.leaseSession(ClientOrSessionProxy(aliveFlagPath, repl, disposable))
-
-            CompileService.CallResult.Good(sessionId)
-        }
-    }
+    ): CompileService.CallResult<Int> = CompileService.CallResult.Error(REPL_IS_NOT_SUPPORTED)
 
     override fun replCreateState(sessionId: Int): CompileService.CallResult<ReplStateFacade> =
-        ifAlive(minAliveness = Aliveness.Alive) {
-            withValidRepl(sessionId) {
-                CompileService.CallResult.Good(createRemoteState(port))
-            }
-        }
+        CompileService.CallResult.Error(REPL_IS_NOT_SUPPORTED)
 
     override fun replCheck(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine): CompileService.CallResult<ReplCheckResult> =
-        ifAlive(minAliveness = Aliveness.Alive) {
-            withValidRepl(sessionId) {
-                withValidReplState(replStateId) { state ->
-                    check(state, codeLine)
-                }
-            }
-        }
+        CompileService.CallResult.Error(REPL_IS_NOT_SUPPORTED)
 
     override fun replCompile(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine): CompileService.CallResult<ReplCompileResult> =
-        ifAlive(minAliveness = Aliveness.Alive) {
-            withValidRepl(sessionId) {
-                withValidReplState(replStateId) { state ->
-                    compile(state, codeLine)
-                }
-            }
-        }
+        CompileService.CallResult.Error(REPL_IS_NOT_SUPPORTED)
 
     override fun periodicAndAfterSessionCheck() {
 
