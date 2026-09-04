@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
-import kotlin.reflect.KProperty1
 
 fun CompilerConfiguration.setupCommonArguments(
     arguments: CommonCompilerArguments,
@@ -104,7 +103,7 @@ fun CompilerConfiguration.setupCommonArguments(
     checkMinimumRuntimeJdk(requiredRuntimeJdk = 17)
 }
 
-fun CompilerConfiguration.checkMinimumRuntimeJdk(requiredRuntimeJdk: Int) {
+private fun CompilerConfiguration.checkMinimumRuntimeJdk(requiredRuntimeJdk: Int) {
     val currentJdkVersion = getRuntimeJdkVersion()
 
     if (currentJdkVersion < requiredRuntimeJdk) {
