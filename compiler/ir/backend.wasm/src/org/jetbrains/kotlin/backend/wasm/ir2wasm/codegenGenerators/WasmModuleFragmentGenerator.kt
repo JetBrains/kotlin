@@ -224,7 +224,7 @@ fun compileIrFile(
     irFile.declarations.forEach {
         if (it is IrClass) {
             // Register callable reference class declarations for deduplication at link time.
-            // Multiple files may create classes with the same structure (e.g., Function1_bound1_I),
+            // Multiple files may create classes with the same structure (e.g., Function1_bound1_I, SuspendLambda_2AA),
             // and we want to deduplicate them to a single canonical set of definitions.
             if (it.origin == WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL) {
                 linkerDataContext.addEquivalentType(it.name.asString(), it.symbol)

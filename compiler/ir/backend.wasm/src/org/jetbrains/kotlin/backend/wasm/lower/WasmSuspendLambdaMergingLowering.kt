@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.name.Name
  * }
  *
  * // Per-lambda top-level function:
- * fun $useSuspendLambda1$doResume(self: SuspendLambda_1A_0): Any? {
+ * fun $useSuspendLambda1.doResume(self: SuspendLambda_1A_0): Any? {
  *     // original state machine body
  * }
  * ```
@@ -324,7 +324,7 @@ internal class WasmSuspendLambdaMergingLowering(val context: WasmBackendContext)
                 append('$')
             }
             append(originalClass.name.asString())
-            append("\$doResume")
+            append("\.doResume")
         }
 
         return context.irFactory.addFunction(irFile) {
