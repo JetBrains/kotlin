@@ -341,7 +341,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
         }
 
         // yarn.lock was not updated
-        buildAndFail(storeTaskName) {
+        buildAndFail(storeTaskName, "--info", forwardBuildOutput = true) {
             assertTasksExecuted(":$restoreTaskName")
             assertTasksFailed(":$storeTaskName")
         }
