@@ -41,7 +41,6 @@ private var IrProperty.replacementForValueClasses: IrProperty? by irAttribute(co
  * Keeps track of replacement functions and inline class box/unbox functions.
  */
 class MemoizedInlineClassReplacements(
-    private val mangleReturnTypes: Boolean,
     private val irFactory: IrFactory,
     private val context: JvmBackendContext,
 ) {
@@ -186,7 +185,7 @@ class MemoizedInlineClassReplacements(
 
     private val IrSimpleFunction.needsReplacement: Boolean
         get() = when {
-            !(shouldBeExposedByAnnotationOrFlag(context) || hasMangledParameters() || mangleReturnTypes && hasMangledReturnType) -> false
+            !(shouldBeExposedByAnnotationOrFlag(context) || hasMangledParameters() || hasMangledReturnType) -> false
             isFromJava() -> mangleCallsToJavaMethodsWithValueClasses && !overridesOnlyMethodsFromJava()
             else -> true
         }
@@ -355,7 +354,7 @@ class MemoizedInlineClassReplacements(
             else ->
                 replacementOrigin
         }
-        name = InlineClassAbi.mangledNameFor(function, mangleReturnTypes, useOldManglingScheme)
+        name = InlineClassAbi.mangledNameFor(function, mangleReturnTypes = true, useOldMangleRules = useOldManglingScheme)
     }
 }
 
