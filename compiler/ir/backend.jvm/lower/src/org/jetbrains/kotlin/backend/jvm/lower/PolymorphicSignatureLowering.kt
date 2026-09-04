@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -52,8 +51,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 internal class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrTransformer<PolymorphicSignatureLowering.Data>(),
     FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        if (context.config.languageVersionSettings.supportsFeature(LanguageFeature.PolymorphicSignature))
-            irFile.transformChildren(this, Data(null))
+        irFile.transformChildren(this, Data(null))
     }
 
     class Data(val coerceToType: IrType?) {
