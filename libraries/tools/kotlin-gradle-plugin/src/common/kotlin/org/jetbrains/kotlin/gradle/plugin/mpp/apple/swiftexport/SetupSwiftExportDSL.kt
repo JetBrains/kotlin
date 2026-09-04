@@ -26,11 +26,11 @@ internal object SwiftExportDSLConstants {
 }
 
 internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
-    val swiftExportExtension = multiplatformExtension.swiftExportInternal
+    val legacySwiftExportExtension = multiplatformExtension.swiftExportInternal
 
     multiplatformExtension.addExtension(
         SwiftExportDSLConstants.SWIFT_EXPORT_EXTENSION_NAME,
-        swiftExportExtension
+        legacySwiftExportExtension
     )
 
     // TODO: Move to a more generic SetUpExportAction.
@@ -57,7 +57,7 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
     if (!multiplatformExtension.isSwiftExportXcodeIntegrationActivated()) return@KotlinProjectSetupCoroutine
 
     initSwiftExportClasspathConfigurations()
-    registerSwiftExportPipeline(swiftExportExtension, exportExtension)
+    registerSwiftExportPipeline(legacySwiftExportExtension, exportExtension)
 }
 
 /**
@@ -85,7 +85,7 @@ internal fun KotlinMultiplatformExtension.isSwiftExportXcodeIntegrationActivated
 }
 
 private fun Project.registerSwiftExportPipeline(
-    swiftExportExtension: SwiftExportExtension,
+    legacySwiftExportExtension: SwiftExportExtension,
     exportExtension: ExportExtension,
 ) {
     val environment = XcodeEnvironment(project)
@@ -93,6 +93,6 @@ private fun Project.registerSwiftExportPipeline(
     multiplatformExtension
         .supportedAppleTargets()
         .configureEach { target ->
-            registerEmbedSwiftExportTask(target, environment, swiftExportExtension, exportExtension)
+            registerEmbedSwiftExportTask(target, environment, legacySwiftExportExtension, exportExtension)
         }
 }
