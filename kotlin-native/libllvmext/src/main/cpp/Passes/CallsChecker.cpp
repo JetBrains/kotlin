@@ -316,8 +316,8 @@ static constexpr int CALLED_LLVM_BUILTIN = -2;
 namespace {
 
 struct ExternalCallInfo {
-  std::optional<StringRef> Name;
-  Value *CalledPtr;
+  std::optional<StringRef> Name; // nullopt when indirect call
+  Value *CalledPtr; // null when llvm intrinsic (in that case `Name` is definitely present)
 
   ExternalCallInfo(std::optional<StringRef> Name, Value *CalledPtr)
       : Name(Name), CalledPtr(CalledPtr) {}
@@ -335,15 +335,8 @@ getPossiblyExternalCalledFunction(Value *V) {
   if (auto *F = dyn_cast<Function>(V)) {
     if (isAKnownFunction(*F))
       return std::nullopt;
-    if (F->isIntrinsic()) {
-      auto &Ctx = V->getContext();
-      auto *Value =
-          ConstantInt::get(Type::getInt64Ty(Ctx), CALLED_LLVM_BUILTIN);
-      return ExternalCallInfo(
-          F->getName(),
-          ConstantExpr::getIntToPtr(Value, PointerType::getUnqual(Ctx)));
-    }
-    return ExternalCallInfo(F->getName(), F);
+    // Intrinsics might not have an address, so don't attempt to store it.
+    return ExternalCallInfo(F->getName(), F->isIntrinsic() ? nullptr : F);
   }
   if (auto *Cast = dyn_cast<CastInst>(V)) {
     return getPossiblyExternalCalledFunction(Cast->getOperand(0));
@@ -496,18 +489,23 @@ bool CallsCheckerPass::run(CallBase &C) {
   } else {
     CallSiteDescription = C.getFunction()->getName();
     CalledName = CalleeInfo->Name;
-    switch (CalleeInfo->CalledPtr->getType()->getTypeID()) {
+    CalledPtr = CalleeInfo->CalledPtr;
+    if (!CalledPtr) {
+      auto *Value =
+          ConstantInt::get(Builder.getInt64Ty(), CALLED_LLVM_BUILTIN);
+      CalledPtr = ConstantExpr::getIntToPtr(Value, Builder.getPtrTy());
+    }
+    switch (CalledPtr->getType()->getTypeID()) {
     case Type::PointerTyID:
-      CalledPtr = CalleeInfo->CalledPtr;
       break;
     case Type::IntegerTyID:
       CalledPtr =
-          Builder.CreateIntToPtr(CalleeInfo->CalledPtr, Builder.getPtrTy());
+          Builder.CreateIntToPtr(CalledPtr, Builder.getPtrTy());
       break;
     default:
       reportFatalUsageError(formatv("Unsupported type {0} of {1}",
-                                    CalleeInfo->CalledPtr->getType(),
-                                    CalleeInfo->CalledPtr));
+                                    CalledPtr->getType(),
+                                    CalledPtr));
     }
   }
 
