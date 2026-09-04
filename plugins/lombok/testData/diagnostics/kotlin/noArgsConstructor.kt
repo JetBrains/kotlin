@@ -239,3 +239,10 @@ fun testLocal() {
     LocalClassWithStaticName.<!UNRESOLVED_REFERENCE!>make<!>()
     LocalClassWithStaticName(42)
 }
+
+// The static factory `staticName` asks for goes into a companion object, and a nested class of that name leaves
+// nowhere to put it, KT-88276.
+@NoArgsConstructor(staticName = "make")
+class WithNestedCompanionClass(var x: Int) {
+    class <!COMPANION_OBJECT_IS_NOT_GENERATED!>Companion<!>
+}

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.lombok.generators.hasJavaOrigin
 import org.jetbrains.kotlin.lombok.generators.isSupportedLombokTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
+import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 
 /**
  * Annotations on primary constructor val/var params with @Target(FIELD) end up in the
@@ -80,13 +81,17 @@ fun isCompanionNeeded(
         return false
     }
 
-    var companionAlreadyExists = false
+    // A companion object of any name rules one out - the members go into that one instead - and so does a nested
+    // classifier that merely takes the name `Companion` without being a companion object at all: the generated
+    // one would clash with it, and the class was left with a `REDECLARATION` it could not fix short of renaming
+    // that classifier (KT-88276). `FirLombokCompanionObjectChecker` reports what is left ungenerated because
+    // of it.
+    var companionNameIsTaken = false
     context.declaredScope?.processAllClassifiers {
-        companionAlreadyExists = companionAlreadyExists || (it as? FirClassLikeSymbol)?.isCompanion == true
+        val classLikeSymbol = it as? FirClassLikeSymbol ?: return@processAllClassifiers
+        companionNameIsTaken = companionNameIsTaken ||
+                classLikeSymbol.isCompanion ||
+                classLikeSymbol.name == DEFAULT_NAME_FOR_COMPANION_OBJECT
     }
-    if (companionAlreadyExists) {
-        return false
-    }
-
-    return true
+    return !companionNameIsTaken
 }
