@@ -355,6 +355,13 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 else -> emptyList()
             }
             for (item in items) {
+                // A declaration the parser could not read a name off - `val )` and the like - carries the special
+                // name `<no name provided>`, and every name the builder derives from it (`name$set`, a prefixed
+                // setter, `clearName`) asks that name for an identifier, which a special name refuses with an
+                // `IllegalStateException`. Nothing sensible can be generated for such an item anyway: skip it,
+                // the way `FirLombokBuilderChecker` skips it when reporting.
+                if (item.name.isSpecial) continue
+
                 val singularAnnotation = item.getAnnotationByClassId(LombokNames.SINGULAR_ID, session)
                     ?: (item.symbol as? FirPropertySymbol)?.backingFieldSymbol?.getAnnotationByClassId(LombokNames.SINGULAR_ID, session)
                 val singular: Singular? = singularAnnotation?.let { Singular.extract(it, session) }

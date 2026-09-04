@@ -126,3 +126,6 @@ class WithDoNotUseGettersFalse(val x: Int)
     of = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED!>[]<!>,
 )
 class WithUnsupportedArguments
+
+@ToString
+class IncompleteProperty(val<!SYNTAX!><!> )
