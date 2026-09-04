@@ -689,12 +689,11 @@ private fun IrField.computeFieldFlags(context: JvmBackendContext, languageVersio
             (if (hasAnnotation(VOLATILE_ANNOTATION_FQ_NAME)) Opcodes.ACC_VOLATILE else 0) or
             (if (hasAnnotation(TRANSIENT_ANNOTATION_FQ_NAME)) Opcodes.ACC_TRANSIENT else 0) or
             (if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||
-                isPrivateCompanionFieldInInterface(languageVersionSettings)
+                isPrivateCompanionFieldInInterface()
             ) Opcodes.ACC_SYNTHETIC else 0)
 
-private fun IrField.isPrivateCompanionFieldInInterface(languageVersionSettings: LanguageVersionSettings): Boolean =
+private fun IrField.isPrivateCompanionFieldInInterface(): Boolean =
     origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE &&
-            languageVersionSettings.supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField) &&
             parentAsClass.isJvmInterface &&
             DescriptorVisibilities.isPrivate(parentAsClass.companionObject()!!.visibility)
 
