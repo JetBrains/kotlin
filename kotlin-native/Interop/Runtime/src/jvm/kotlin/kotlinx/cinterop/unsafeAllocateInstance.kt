@@ -17,6 +17,5 @@ private val unsafe: Unsafe = with(Unsafe::class.java.getDeclaredField("theUnsafe
 @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 internal inline fun <reified T> unsafeAllocateInstance(): T {
     // TODO KT-66632: get rid of this.
-    @Suppress("UNCHECKED_CAST", "USELESS_CAST") // TODO: KT-89157: Remove cast
-    return unsafe.allocateInstance((T::class as KClass<T & Any>).java) as T
+    return unsafe.allocateInstance(T::class.java) as T
 }
