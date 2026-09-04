@@ -14,11 +14,9 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
-import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
-import org.jetbrains.kotlin.daemon.client.KotlinRemoteReplCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.getTestName
@@ -48,7 +46,6 @@ import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
 import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.asSuccess
-import kotlin.script.templates.ScriptTemplateDefinition
 import kotlin.test.fail
 
 val TIMEOUT_DAEMON_RUNNER_EXIT_MS = 10000L
@@ -64,10 +61,6 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     val daemonClientClassPath = listOf(File(getCompilerLib(), "kotlin-daemon-client.jar"),
                                        File(getCompilerLib(), "kotlin-compiler.jar"))
     val compilerId by lazy(LazyThreadSafetyMode.NONE) { CompilerId.makeCompilerId(compilerClassPath) }
-
-    val compilerWithScriptingId by lazy(LazyThreadSafetyMode.NONE) {
-        CompilerId.makeCompilerId(compilerWithScriptingClassPath)
-    }
 
     // Using tmpDir from TestCaseWithTmpdir leads to the file paths with >255 chars (see e.g. #KT-32490), while KtUsefulTestCase already
     // setups a separate temp dir for each tests, if shouldContainTempFiles() returns true. Therefore current temp dir is used directly
@@ -750,167 +743,6 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             assertNotNull(exception)
         }
     }
-
-    @Test
-    fun testDaemonReplScriptingNotInClasspathError() {
-        withDaemon(compilerId) { daemon ->
-            var repl: KotlinRemoteReplCompilerClient? = null
-            var isErrorThrown = false
-            try {
-                repl = KotlinRemoteReplCompilerClient(
-                    daemon, null, CompileService.TargetPlatform.JVM, emptyArray(), MessageCollectorImpl(),
-                    classpathFromClassloader(), ScriptWithNoParam::class.qualifiedName!!
-                )
-                repl.createState()
-            } catch (e: Exception) {
-                assertEquals("Unable to use scripting/REPL in the daemon: no scripting plugin loaded", e.cause?.message)
-                isErrorThrown = true
-            } finally {
-                repl?.dispose()
-            }
-            assertTrue(isErrorThrown, "Expecting exception that scripting plugin is not loaded")
-        }
-    }
-
-    @Test
-    fun testDaemonReplLocalEvalNoParams() {
-        withDaemon(compilerWithScriptingId) { daemon ->
-            val repl = KotlinRemoteReplCompilerClient(daemon, null, CompileService.TargetPlatform.JVM,
-                                                      emptyArray(),
-                                                      MessageCollectorImpl(),
-                                                      classpathFromClassloader(),
-                                                      ScriptWithNoParam::class.qualifiedName!!)
-
-            val localEvaluator = GenericReplEvaluator(emptyList(), Thread.currentThread().contextClassLoader)
-
-            doReplTestWithLocalEval(repl, localEvaluator)
-            repl.dispose()
-        }
-    }
-
-    @Test
-    fun testDaemonReplLocalEvalStandardTemplate() {
-        withDaemon(compilerWithScriptingId) { daemon ->
-            val repl = KotlinRemoteReplCompilerClient(daemon, null, CompileService.TargetPlatform.JVM, emptyArray(),
-                                                      MessageCollectorImpl(),
-                                                      classpathFromClassloader(),
-                                                      "kotlin.script.templates.standard.ScriptTemplateWithArgs")
-
-            val localEvaluator = GenericReplEvaluator(emptyList(), Thread.currentThread().contextClassLoader,
-                                                      ScriptArgsWithTypes(arrayOf(emptyArray<String>()), arrayOf(Array<String>::class)))
-
-            doReplTestWithLocalEval(repl, localEvaluator)
-            repl.dispose()
-        }
-    }
-
-    private fun doReplTestWithLocalEval(replCompiler: KotlinRemoteReplCompilerClient, localEvaluator: ReplEvaluator) {
-
-        val compilerState = replCompiler.createState()
-        val evaluatorState = localEvaluator.createState()
-
-        val res0 = replCompiler.check(compilerState, ReplCodeLine(0, 0, "val x ="))
-        assertTrue(res0 is ReplCheckResult.Incomplete) { "Unexpected check results: $res0" }
-
-        val codeLine1 = ReplCodeLine(1, 0, "val lst = listOf(1)\nval x = 5")
-        val res1 = replCompiler.compile(compilerState, codeLine1)
-        val res1c = res1 as? ReplCompileResult.CompiledClasses
-        assertNotNull(res1c) { "Unexpected compile result: $res1" }
-
-        val res11 = localEvaluator.eval(evaluatorState, res1c)
-        val res11e = res11 as? ReplEvalResult.UnitResult
-        assertNotNull(res11e) { "Unexpected eval result: $res11" }
-
-        val codeLine2 = ReplCodeLine(2, 0, "x + 2")
-        val res2 = replCompiler.compile(compilerState, codeLine2)
-        val res2c = res2 as? ReplCompileResult.CompiledClasses
-        assertNotNull(res2c) { "Unexpected compile result: $res2" }
-
-        val res21 = localEvaluator.eval(evaluatorState, res2c)
-        val res21e = res21 as? ReplEvalResult.ValueResult
-        assertNotNull(res21e) { "Unexpected eval result: $res21" }
-        assertEquals(7, res21e.value)
-    }
-
-    @Test
-    fun testDaemonReplAutoshutdownOnIdle() {
-        withFlagFile(getTestName(testInfo), ".alive") { flagFile ->
-            val daemonOptions = DaemonOptions(autoshutdownIdleSeconds = 1, autoshutdownUnusedSeconds = 1, shutdownDelayMilliseconds = 1, runFilesPath = File(testTempDir, getTestName(testInfo)).absolutePath)
-
-            withLogFile("kotlin-daemon-test") { logFile ->
-                val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
-
-                val daemon = KotlinCompilerClient.connectToCompileService(compilerWithScriptingId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
-                assertNotNull(daemon) { "failed to connect daemon" }
-
-                val replCompiler = KotlinRemoteReplCompilerClient(
-                    daemon, null, CompileService.TargetPlatform.JVM,
-                    emptyArray(),
-                    MessageCollectorImpl(),
-                    classpathFromClassloader(),
-                    ScriptWithNoParam::class.qualifiedName!!)
-
-                val compilerState = replCompiler.createState()
-
-                // use repl compiler for >> 1s, making sure that idle/unused timeouts are not firing
-                for (attempts in 1..10) {
-                    val codeLine1 = ReplCodeLine(attempts, 0, "3 + 5")
-                    val res1 = replCompiler.compile(compilerState, codeLine1)
-                    val res1c = res1 as? ReplCompileResult.CompiledClasses
-                    assertNotNull(res1c) { "Unexpected compile result: $res1" }
-                    Thread.sleep(200)
-                }
-
-                // wait up to 4s (more than 1s idle timeout)
-                for (attempts in 1..20) {
-                    if (logFile.isLogContainsSequence("Idle timeout exceeded 1s")) break
-                    Thread.sleep(200)
-                }
-                replCompiler.dispose()
-
-                Thread.sleep(200)
-                logFile.assertLogContainsSequence("Idle timeout exceeded 1s",
-                                                  "Shutdown started")
-            }
-        }
-    }
-
-    internal fun withDaemon(compilerId: CompilerId = this.compilerId, body: (CompileService) -> Unit) {
-        withFlagFile(getTestName(testInfo), ".alive") { flagFile ->
-            val daemonOptions = makeTestDaemonOptions(getTestName(testInfo))
-            withLogFile("kotlin-daemon-test") { logFile ->
-                val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
-                val daemon: CompileService? = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
-                assertNotNull(daemon) { "failed to connect daemon" }
-
-                body(daemon)
-            }
-        }
-    }
-}
-
-
-// stolen from CompilerFileLimitTest
-internal fun generateLargeKotlinFile(size: Int): String {
-    return buildString {
-        append("package large\n\n")
-        (0..size).forEach {
-            appendLine("class Class$it")
-            appendLine("{")
-            appendLine("\tfun foo(): Long = $it")
-            appendLine("}")
-            appendLine("\n")
-            repeat(2000) {
-                appendLine("// kotlin rules ... and stuff")
-            }
-        }
-        appendLine("fun main(args: Array<String>)")
-        appendLine("{")
-        appendLine("\tval result = Class5().foo() + Class$size().foo()")
-        appendLine("\tprintln(result)")
-        appendLine("}")
-    }
-
 }
 
 
@@ -991,9 +823,6 @@ open class TestKotlinScriptDummyDependenciesResolver : DependenciesResolver {
         ).asSuccess()
     }
 }
-
-@ScriptTemplateDefinition(resolver = TestKotlinScriptDummyDependenciesResolver::class)
-abstract class ScriptWithNoParam
 
 internal fun classpathFromClassloader(): List<File> {
     val additionalClasspath = System.getProperty("kotlin.test.script.classpath")?.split(File.pathSeparator)

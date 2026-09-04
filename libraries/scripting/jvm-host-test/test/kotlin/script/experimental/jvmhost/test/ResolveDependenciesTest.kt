@@ -15,7 +15,6 @@ import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
-import kotlin.script.experimental.jvmhost.test.ReplTest.Companion.checkEvaluateInRepl
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -63,22 +62,6 @@ class ResolveDependenciesTest {
     @Disabled("KT-60443")
     fun testResolveFunAndValFromClassloader() {
         runScriptAndCheckResult(funAndValAccessScript, configurationWithDependenciesFromClassloader, null, 42)
-        runScriptAndCheckResult(funAndValImportScript, configurationWithDependenciesFromClassloader, null, 42)
-    }
-
-    @Test
-    @Disabled("KT-60443")
-    fun testReplResolveFunAndValFromClassloader() {
-        checkEvaluateInRepl(
-            sequenceOf(funAndValAccessScriptText, funAndValAccessScriptText), sequenceOf(42, 42),
-            configurationWithDependenciesFromClassloader,
-            null
-        )
-        checkEvaluateInRepl(
-            funAndValImportScriptText.split('\n').asSequence(), sequenceOf(null, null, 42),
-            configurationWithDependenciesFromClassloader,
-            null
-        )
         runScriptAndCheckResult(funAndValImportScript, configurationWithDependenciesFromClassloader, null, 42)
     }
 

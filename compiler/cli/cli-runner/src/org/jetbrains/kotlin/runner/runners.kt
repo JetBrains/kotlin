@@ -143,17 +143,6 @@ private fun ArrayList<String>.addScriptArguments(arguments: List<String>) {
     addAll(arguments)
 }
 
-class ReplRunner : RunnerWithCompiler() {
-    override fun run(classpath: List<URL>, compilerArguments: List<String>, arguments: List<String>, compilerClasspath: List<URL>) {
-        val compilerArgs = ArrayList<String>().apply {
-            addClasspathArgIfNeeded(classpath)
-            addAll(compilerArguments)
-            addScriptArguments(arguments)
-        }
-        runCompiler(compilerClasspath, compilerArgs)
-    }
-}
-
 class ScriptRunner(private val path: String) : RunnerWithCompiler() {
     override fun run(classpath: List<URL>, compilerArguments: List<String>, arguments: List<String>, compilerClasspath: List<URL>) {
         val compilerArgs = ArrayList<String>().apply {

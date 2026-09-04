@@ -28,7 +28,6 @@ object Main {
         CLASSFILE("classfile"),
         JAR("jar"),
         SCRIPT("script");
-        // TODO: consider implementing REPL as well
 
         companion object {
             val validValues = "${GUESS.argName} (default), ${CLASSFILE.argName}, ${JAR.argName}, ${SCRIPT.argName} (or .<script filename extension>)"
@@ -109,11 +108,6 @@ object Main {
                     restAsArguments()
                     break
                 }
-                "-repl" == arg || "-Xrepl" == arg -> {
-                    setRunner(ReplRunner())
-                    compilerArguments.add("-Xrepl")
-                    break
-                }
                 "-no-stdlib" == arg -> {
                     noStdLib = true
                     compilerArguments.add(arg)
@@ -180,7 +174,7 @@ object Main {
         }
 
         if (runner == null) {
-            setRunner(ReplRunner())
+            throw RunnerException("no command specified, see 'kotlin -help'")
         }
 
         if (runner is RunnerWithCompiler && compilerClasspath.isEmpty()) {
@@ -189,7 +183,7 @@ object Main {
             }
         }
 
-        runner!!.run(classpath, compilerArguments, arguments, compilerClasspath)
+        runner.run(classpath, compilerArguments, arguments, compilerClasspath)
     }
 
     private fun MutableList<URL>.addPath(path: String) {
@@ -221,7 +215,7 @@ object Main {
         }.toTypedArray()
 
     private fun printUsageAndExit() {
-        println("""kotlin: run Kotlin programs, scripts or REPL.
+        println("""kotlin: run Kotlin programs or scripts.
 
 Usage: kotlin <options> <command> [<arguments>]
 where possible options include:
@@ -232,7 +226,7 @@ where possible options include:
   -J<option>                 Pass an option directly to JVM
   -no-stdlib                 Don't include Kotlin standard library into classpath
   -no-reflect                Don't include Kotlin reflection implementation into classpath
-  -compiler-path             Kotlin compiler classpath for compiling script or expression or running REPL 
+  -compiler-path             Kotlin compiler classpath for compiling script or expression
                              If not specified, try to find the compiler in the environment
   -X<flag>[=value]           Pass -X argument to the compiler
   -version                   Display Kotlin version
@@ -245,7 +239,6 @@ or, in case of guess, according to the following rules:
                              (compiler arguments are ignored and no Kotlin stdlib is added to the classpath)
   script.kts                 Compiles and runs the given script, passing <arguments> to it
   -expression (-e) '2+2'     Evaluates the expression and prints the result, passing <arguments> to it
-  -repl                      Runs Kotlin REPL
 arguments are passed to the main function when running class or jar file, and for standard script definitions
 as the 'args' parameter when running script or expression
 """)

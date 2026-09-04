@@ -2,7 +2,7 @@
 
 > **When to consult**: picking a step or checking sequencing constraints. Steps 1–14 are referenceable IDs. Canonical home for KT-83498 design notes (step 2).
 > **Cache lifetime**: mutable-per-iteration (step strike-throughs accumulate)
-> **Last verified**: 2026-06-29 (step 3 — daemon-execution **consumer** landed: the regular compile entry now branches into `compileReplSnippet(...)` on `REPL_SNIPPET_COMPILATION_MODE`, driving `K2ReplStatelessCompiler` and writing the artifact; see iteration `2026-06-29c_stateless-repl-snippet-compile-pipeline-branch.md`)
+> **Last verified**: 2026-09-04 (K1 REPL cleanup chain: steps 4, 5, 7, 8, 9 landed; step 6 partially landed — `cli-base/cli/common/repl/*` is now only the daemon RMI protocol types)
 
 Ordered, each step independently mergeable. Each step is a small set of commits, not a single mega-MR.
 
@@ -125,53 +125,35 @@ Ordered, each step independently mergeable. Each step is a small set of commits,
 
 **Out of scope for the prototype**: BTA transport, in-process embedding, IntelliJ consumer migration — those follow once the core proves out. See [40-jsr223-target.md](40-jsr223-target.md).
 
-### 4. Delete daemon REPL
+### 4. ~~Delete daemon REPL~~ — landed 2026-09-04
 
-**Touch**:
-- `compiler/daemon/daemon-common/src/.../CompileService.kt` — drop REPL methods + `ReplStateFacade`
-- `compiler/daemon/src/.../KotlinRemoteReplService.kt` — delete
-- `compiler/daemon/daemon-client/src/main/kotlin/.../KotlinRemoteReplCompilerClient.kt` + `RemoteReplCompilerState.kt` — delete
-- Update daemon protocol version
+`KotlinRemoteReplService.kt` and `RemoteReplStateFacadeImpl.kt` are deleted. The RMI surface is kept for protocol compatibility: `CompileService`'s `leaseReplSession` / `replCreateState` / `replCheck` / `replCompile` and the `ReplStateFacade` interface still exist, and the four `CompileServiceImpl` overrides return `CallResult.Error("REPL is not supported by the daemon anymore")`. The daemon-client classes (`KotlinRemoteReplCompilerClient`, `RemoteReplCompilerState`) are kept for the IntelliJ consumer pin (Q5e) and now receive those errors. No protocol version bump: no signature changed.
 
-**Coupling**: stops the only caller of cli-base/repl/* from the daemon side.
+**Remaining**: dropping the RMI methods themselves, and with them the daemon-client REPL classes — gated on the IntelliJ consumer (Q5e).
 
-### 5. Delete `-Xrepl` CLI flag and shell
+### 5. ~~Delete `-Xrepl` CLI flag and shell~~ — landed 2026-09-04
 
-**Touch**:
-- `compiler/arguments/.../CommonCompilerArguments.kt` — remove `-Xrepl`
-- `compiler/cli/.../AbstractConfigurationPhase.kt` — remove `replMode` plumbing
-- `plugins/scripting/scripting-compiler/.../pluginRegisrar.kt` — remove `JvmCliReplShellExtension` registration
-- Delete `JvmCliReplShellExtension`, `JvmStandardReplFactoryExtension`, `ReplFactoryExtension` EP
+`-Xrepl` is retired through the arguments framework (`removedVersion = v2_5_0`, generated into `RemovedCompilerArguments.kt`), so passing it is a removed-argument error. `replMode` plumbing, `JvmScriptPipelinePhase`'s REPL branch, the `ShellExtension` / `ReplFactoryExtension` EPs and their scripting-side impls are gone, as is the `kotlin` launcher's `-repl` option and `ReplRunner`.
 
-### 6. Delete `cli-base/cli/common/repl/*`
+### 6. Delete `cli-base/cli/common/repl/*` — partially landed 2026-09-04
 
-After steps 4 + 5 + step 7 prerequisite (no jvm-host caller left). Delete `compiler/cli/cli-base/src/.../cli/common/repl/` directory.
+The package is down to `ReplApi.kt` + `ReplState.kt`, holding only what types the daemon RMI protocol: `ReplCodeLine`, `CompiledReplCodeLine`, `CompiledClassData`, `ReplCheckResult`, `ReplCompileResult`, `ReplCompiler` and the action interfaces, plus `ILineId` / `LineId` / `ReplHistoryRecord` / `IReplStageHistory` / `IReplStageState`. Everything else is deleted, including the whole eval half of `ReplApi.kt`.
 
-### 7. Delete jvm-host legacy REPL wrappers
+Full deletion is blocked by the decision in step 4 to keep the daemon REPL methods: `CompileService` and `ReplStateFacade` are typed in terms of these classes. It becomes possible only if those RMI methods are dropped (which needs the IntelliJ consumer off the daemon REPL client first).
 
-**Touch**:
-- `libraries/scripting/jvm-host/legacyReplCompilation.kt` — delete
-- `libraries/scripting/jvm-host/legacyReplEvaluation.kt` — delete
-- `libraries/scripting/jvm-host/obsoleteJvmScriptEvaluation.kt` — delete (some entries already `DeprecationLevel.ERROR`)
+### 7. ~~Delete jvm-host legacy REPL wrappers~~ — landed 2026-09-04
 
-**Prereq**: external users updated to K2 engine. If public Kotlin API stability matters, do a deprecation cycle first.
+`legacyReplCompilation.kt` and `legacyReplEvaluation.kt` are deleted. `obsoleteJvmScriptEvaluation.kt` is out of scope here — it is script evaluation, not REPL.
 
-### 8. Delete K1 `GenericReplCompiler` + Scripting K1 registrar
+### 8. ~~Delete K1 `GenericReplCompiler` + Scripting K1 registrar~~ — landed 2026-09-04
 
-**Touch**:
-- `plugins/scripting/scripting-compiler/src/.../repl/GenericReplCompiler.kt` — delete
-- `plugins/scripting/scripting-compiler/.../pluginRegisrar.kt` — remove `ScriptingCompilerConfigurationComponentRegistrar` entirely
-- `JvmScriptCompiler.createLegacy()` — delete
+`GenericReplCompiler.kt`, `GenericReplChecker.kt`, `GenericCompilerState.kt`, `KJvmReplCompilerBase.kt`, `ReplCodeAnalyzer.kt`, `jvmReplCompilation.kt`, `ReplFromTerminal.kt`, `ReplInterpreter.kt` and the terminal `configuration/` / `reader/` / `writer/` / `messages/` cluster are deleted; `repl/` retains only `JvmGeneratorExtensionsImpl.kt`, used by the live `impl/K1JvmIrCodegenFactory.kt`.
 
-### 9. Delete `scripting-ide-services` + companions
+`ScriptingCompilerConfigurationComponentRegistrar`, `JvmScriptCompiler.createLegacy()` and `ScriptJvmCompilerIsolated` are gone too. `CLICompiler.SCRIPT_PLUGIN_REGISTRAR_NAME` still names the removed registrar and is still used as a filter in `JvmFrontendPipelinePhase` — dead, and cheap to drop with the K1 frontend bindings (step 11).
 
-**Touch**:
-- `plugins/scripting/scripting-ide-services/` — delete
-- `plugins/scripting/scripting-ide-services-embeddable/` — delete
-- `plugins/scripting/scripting-ide-services-test/` — delete
-- Remove from settings.gradle.kts + parent module deps
+### 9. ~~Delete `scripting-ide-services` + companions~~ — landed 2026-09-04
 
-**Coupling**: confirm no in-tree consumer (search: `KJvmReplCompiler`, `IdeLikeReplCodeAnalyzer`).
+All three modules are deleted, together with their `settings.gradle.kts` entries, the `kotlin-bom` artifact entry, the `configureTestCaching.kt` row, the `testLifecycleTask.dump.txt` task entries and the `repo/artifacts-tests` reference poms. No in-tree consumer of `KJvmReplCompilerWithIdeServices` / `IdeLikeReplCodeAnalyzer` / `KJvmReplCompleter` remained.
 
 ### 10. Delete `scripting-ide-common`
 
@@ -221,9 +203,8 @@ Once K1 frontend is gone and snippet LT path is complete (step 2), audit any rem
 ## Sequencing constraints
 
 - Steps 1, 1b, 2, 3 are independent of each other; step 1b removes the `@Disabled` markers introduced by step 1 once landed.
-- Steps 4, 5 are independent of each other.
-- Step 6 requires 4, 5, and (7 done OR jvm-host legacy still building, then delete after).
-- Step 8 requires no remaining K1 REPL callers (i.e. after 5 + 7).
+- Steps 4, 5, 7, 8, 9 landed 2026-09-04.
+- Step 6's remainder requires the daemon RMI REPL methods to go, which requires the IntelliJ consumer off the daemon REPL client (Q5e).
 - Step 11 gates on whole-compiler K1 retirement — not scripting's call.
 - Step 12 (test cleanup) follows steps 4, 5, 6 (REPL removal cascade) and step 11 (K1 retirement) for the K1 PSI parts.
 - Steps 13, 14 are independent of the K1 cleanup chain.

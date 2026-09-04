@@ -1,6 +1,6 @@
 # Scripting/REPL — Agent Instructions
 
-**Current status**: Pre-cleanup snapshot. K2 path is the active path for scripts (LightTree-based, parser-agnostic core). K1 frontend retirement in progress. Multiple parallel impls still live for back-compat. K2 REPL is parser-agnostic too (**KT-83498** landed 2026-09-04 — LightTree for REPL snippets). Two open workstreams: **JSR-223 K2 bindings** (Option D recommended), **stateless remote REPL compilation** prototype.
+**Current status**: K2 path is the active path for scripts (LightTree-based, parser-agnostic core), and K2 REPL is parser-agnostic too (**KT-83498** landed 2026-09-04 — LightTree for REPL snippets). The legacy K1 REPL is gone as of 2026-09-04: no daemon REPL service, no `-Xrepl`, no `GenericReplCompiler` / `KJvmReplCompilerBase` / terminal REPL, no `scripting-ide-services`. The daemon's REPL RMI methods survive and report an error. K1 frontend retirement is still in progress. Two open workstreams: **JSR-223 K2 bindings** (Option D recommended), **stateless remote REPL compilation** prototype.
 
 **Scope**: `plugins/scripting/*`, `libraries/scripting/*`, `libraries/tools/kotlin-main-kts*`, the scripting-related parts of `compiler/cli/`, `compiler/daemon/`, `compiler/fir/`, `compiler/ir/`, `compiler/build-tools/`, and `libraries/tools/kotlin-gradle-plugin/.../scripting/`.
 
@@ -27,7 +27,7 @@
 
 1. **No new K1 paths.** Modules tagged REMOVE in [`current/90-legacy-inventory.md`](current/90-legacy-inventory.md) are slated for deletion — don't extend them, don't add new callers.
 2. **No new public extension points without ratification.** Compiler-internal EPs are documented in [`current/10-compiler-representation.md`](current/10-compiler-representation.md). User customizations go through the `ScriptCompilationConfiguration` refinement DSL — see [`current/20-customization.md`](current/20-customization.md).
-3. **No reviving daemon REPL / `-Xrepl` / `cli-base/repl/*`.** Goal is to delete these entirely (see [`target/30-embedding-target.md`](target/30-embedding-target.md)).
+3. **No reviving daemon REPL / `-Xrepl` / `cli-base/repl/*`.** These are removed (2026-09-04). What remains is `ReplApi.kt` + `ReplState.kt`, kept only to type the daemon RMI methods, which return an error; don't build on them (see [`target/30-embedding-target.md`](target/30-embedding-target.md)).
 4. **Don't add a PSI-only K2 path.** `ScriptJvmK2CompilerImpl`'s `convertToFir` lambda is the seam. LT is the only wired converter today. If you need a non-LT path for a real reason, discuss before coding.
 5. **Don't re-introduce PSI into `K2ReplCompiler`.** **KT-83498** landed (2026-09-04): every `SourceCode` goes through the `convertToFir` lambda (LT default) and the snippet id travels via `repl.currentLineId` in the refined configuration. Need PSI? Inject a converter, don't add branches. Line anchors in [`current/10-compiler-representation.md`](current/10-compiler-representation.md); design record in [`target/50-migration-plan.md`](target/50-migration-plan.md) step 2.
 6. **No `intellij-community` plugin dependencies in `plugins/scripting/*`.** `scripting-ide-common` (copied from IntelliJ monorepo) is REMOVE.
@@ -155,8 +155,8 @@ Priority TBD — the list below is unordered.
 - ~~**KT-83498** — Full LightTree path in `K2ReplCompiler`~~ — **landed 2026-09-04**. G15 resolved 2026-09-04 (imports as preceding snippets). See [`target/50-migration-plan.md`](target/50-migration-plan.md) step 2.
 - **JSR-223 K2 bindings** — Option D — synthetic-snippets refinement-DSL callback (`prependSyntheticSnippets`). Partial landing 2026-05-17. See [`target/40-jsr223-target.md`](target/40-jsr223-target.md) and [`target/50-migration-plan.md`](target/50-migration-plan.md) step 1.
 - **Stateless remote REPL compilation** prototype — See [`target/40-jsr223-target.md`](target/40-jsr223-target.md) and [`target/50-migration-plan.md`](target/50-migration-plan.md) step 3.
-- **K1 cleanup chain** — Daemon REPL → `-Xrepl` → `cli-base/repl/*` → `legacyRepl*.kt` → `GenericReplCompiler` → K1 frontend bindings. Sequenced in [`target/50-migration-plan.md`](target/50-migration-plan.md) steps 4–11.
-- **`scripting-ide-{common,services}` deletion** — [`target/50-migration-plan.md`](target/50-migration-plan.md) steps 9–10.
+- ~~**K1 cleanup chain** — Daemon REPL → `-Xrepl` → `legacyRepl*.kt` → `GenericReplCompiler`~~ — **landed 2026-09-04** (steps 4, 5, 7, 8). What's left of the chain: the last of `cli-base/repl/*` (step 6, blocked while the daemon RMI methods stay) and the K1 frontend bindings (step 11, gated on whole-compiler K1 retirement).
+- **`scripting-ide-common` deletion** — [`target/50-migration-plan.md`](target/50-migration-plan.md) step 10. (`scripting-ide-services` — step 9 — landed 2026-09-04.)
 - **Classpath-discovery SPI decision** (KT-82551) — un-deprecate + document or design successor. [`target/50-migration-plan.md`](target/50-migration-plan.md) step 13.
 - **Compiler-side test cleanup** — [`target/50-migration-plan.md`](target/50-migration-plan.md) step 12.
 
@@ -352,7 +352,7 @@ Each doc has a "When to consult / Cache lifetime / Last verified" header — che
 | [`current/20-customization.md`](current/20-customization.md) | Refinement DSL + how it wires into FIR. Read before touching extension impls. |
 | [`current/30-api-layer.md`](current/30-api-layer.md) | `libraries/scripting/*` catalog. K2 compilation core wrappers. |
 | [`current/40-embedding-cli.md`](current/40-embedding-cli.md) | `-script` / plugin autoload / CLI K2 entry chain (ACTIVE surface). |
-| [`current/45-embedding-daemon-legacy.md`](current/45-embedding-daemon-legacy.md) | Daemon REPL + `-Xrepl` + cli-base/repl/* (ALL REMOVE). **Consult ONLY when executing migration step 4, 5, or 6.** |
+| [`current/45-embedding-daemon-legacy.md`](current/45-embedding-daemon-legacy.md) | Historical: what the daemon REPL / `-Xrepl` / cli-base/repl/* surface was, and what survives of it. **Consult ONLY when finishing migration step 6.** |
 | [`current/41-embedding-build.md`](current/41-embedding-build.md) | Gradle subplugin + BTA discovery op. |
 | [`current/50-script-definitions.md`](current/50-script-definitions.md) | Definition discovery + main-kts canonical example. |
 | [`current/60-jsr223.md`](current/60-jsr223.md) | K2 engine state; bindings design → `target/40-jsr223-target.md` Option D. |

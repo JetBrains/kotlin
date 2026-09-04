@@ -525,8 +525,6 @@ Not connected to any 'lifecycleTestTask':
   - :kotlin-power-assert-runtime:jsNodeTest [CompilerPlugins]
   - :kotlin-power-assert-runtime:wasmJsNodeTest [CompilerPlugins]
   - :kotlin-power-assert-runtime:wasmWasiNodeTest [CompilerPlugins]
-  - :kotlin-scripting-ide-services-test:embeddableTest [AnalysisApi;CompilerPlugins]
-  - :kotlin-scripting-ide-services-test:test [AnalysisApi;CompilerPlugins]
   - :kotlin-scripting-jsr223-test:embeddableTest [CompilerPlugins]
   - :kotlin-stdlib:jvmLongRunningTest [CoreLibs]
   - :kotlinx-atomicfu-runtime:jsBrowserTest [CompilerPlugins]

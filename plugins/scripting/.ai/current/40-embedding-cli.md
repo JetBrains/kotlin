@@ -2,9 +2,9 @@
 
 > **When to consult**: `-script` flag, plugin autoload, CLI K2 entry chain.
 > **Cache lifetime**: stable
-> **Last verified**: 2026-05-16
+> **Last verified**: 2026-09-04
 
-Legacy daemon + cli-base REPL surface is split out into [`45-embedding-daemon-legacy.md`](45-embedding-daemon-legacy.md). Read that file only when executing migration steps 4, 5, or 6.
+Legacy daemon + cli-base REPL surface is split out into [`45-embedding-daemon-legacy.md`](45-embedding-daemon-legacy.md). Everything there is now removed/stubbed.
 
 ## Arguments
 
@@ -15,7 +15,7 @@ Legacy daemon + cli-base REPL surface is split out into [`45-embedding-daemon-le
 | `-script` | Boolean | 1.3.70 | active — evaluates `.kts` files |
 | `-Xdisable-default-scripting-plugin` | Boolean | — | active |
 
-(`-Xrepl` is REMOVE — see [`45-embedding-daemon-legacy.md`](45-embedding-daemon-legacy.md).)
+(`-Xrepl` is retired/removed as of 2.5.0 — see [`45-embedding-daemon-legacy.md`](45-embedding-daemon-legacy.md).)
 
 ## Pipeline integration
 
@@ -23,7 +23,7 @@ Legacy daemon + cli-base REPL surface is split out into [`45-embedding-daemon-le
 
 | Method | Role |
 |---|---|
-| `setupCommonConfiguration()` | Reads `arguments.script` / `arguments.repl` into `CompilerConfiguration`. |
+| `setupCommonConfiguration()` | Reads `arguments.script` into `CompilerConfiguration`. (`replMode` deleted) |
 | `provideCustomScriptingPluginOptions()` | Hook for custom plugin options. |
 | `loadCompilerPlugins()` | Discovery + load. |
 | `tryLoadScriptingPluginFromCurrentClassLoader()` | Fallback when in distribution. |

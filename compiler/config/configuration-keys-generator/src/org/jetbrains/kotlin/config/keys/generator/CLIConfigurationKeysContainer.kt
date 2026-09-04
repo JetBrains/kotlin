@@ -31,7 +31,6 @@ object CLIConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli.c
 
     val PRINT_VERSION by key<Boolean>()
     val SCRIPT_MODE by key<Boolean>()
-    val REPL_MODE by key<Boolean>("Runs Kotlin REPL (deprecated).")
     val KOTLIN_PATHS by key<KotlinPaths>()
 
     val ALLOW_NO_SOURCE_FILES by key<Boolean>()

@@ -42,7 +42,7 @@ class JvmCliPipeline(override val defaultPerformanceManager: PerformanceManager)
         get() = buildFile == null &&
                 !version &&
                 !allowNoSourceFiles &&
-                (script || expression != null || @Suppress("DEPRECATION") repl || freeArgs.isEmpty())
+                (script || expression != null || freeArgs.isEmpty())
 
     override fun isKaptMode(arguments: K2JVMCompilerArguments): Boolean {
         return arguments.pluginOptions.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") }

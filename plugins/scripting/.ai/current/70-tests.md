@@ -2,7 +2,7 @@
 
 > **When to consult**: test triage, before migration step 12, before removing K1 fixtures.
 > **Cache lifetime**: mutable-per-iteration
-> **Last verified**: 2026-07-02b (Q14 binding-name encoding refined again — marker alphabet switched from named mnemonics to a uniform hex code-point scheme — `testEvalWithContextNamesWithSymbols` → PASS; only Q16 remains `@Disabled` pending design sign-off; JSR-223 suite green 23 / 1-skip / 0-fail)
+> **Last verified**: 2026-09-04 (Legacy K1 REPL removal; IDE services test module deleted; `jvm-host-test/ReplTest.kt` deleted)
 
 Where the tests live and how to run them.
 
@@ -12,14 +12,14 @@ Where the tests live and how to run them.
 |---|---|---|
 | Common API | `libraries/scripting/common/test/` | Smoke tests for API surface |
 | JVM impls | `libraries/scripting/jvm/test/` + testData | Evaluator, classloader, snippet history |
-| Host & REPL | `libraries/scripting/jvm-host-test/` (19 test files) | `ReplTest` (K2), `LegacyReplTest` (K1), `ScriptingHostTest`, `ConfigurationDslTest`, `CachingTest`, `ResolveDependenciesTest` (K2-skipped), `ImplicitsFromScriptResultTest` |
+| Host & REPL | `libraries/scripting/jvm-host-test/` (10 test files) | `ScriptingHostTest`, `ConfigurationDslTest`, `CachingTest`, `ResolveDependenciesTest` (K2-skipped), `ImplicitsFromScriptResultTest` |
 | JSR-223 | `libraries/scripting/jsr223-test/test/` | `KotlinJsr223ScriptEngineIT.kt` — JSR-223 compliance + manual memory tests |
 | Dependencies API | `libraries/scripting/dependencies/test/` (4 files) | Resolver API |
 | Dependencies Maven | `libraries/scripting/dependencies-maven/test/` (2 files) | Aether integration |
 | Dependencies Maven shaded | `libraries/scripting/dependencies-maven-all/test/` | Smoke |
 | main-kts | `libraries/tools/kotlin-main-kts-test/` | Script def integration |
-| Scripting plugin tests | `plugins/scripting/scripting-tests/` | Compiler-side integration |
-| IDE services | `plugins/scripting/scripting-ide-services-test/` | Completion / analysis (K1) |
+| Scripting plugin tests | `plugins/scripting/scripting-tests/` | Compiler-side integration (REPL example deleted) |
+| IDE services | `plugins/scripting/scripting-ide-services-test/` | **DELETED** |
 | Test fixture def | `plugins/scripting/test-script-definition/` | Tiny custom definition used by other tests |
 
 ## K1/K2 markers

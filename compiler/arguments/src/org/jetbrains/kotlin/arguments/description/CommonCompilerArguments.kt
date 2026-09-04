@@ -103,6 +103,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         lifecycle(
             introducedVersion = introducedVersion,
             deprecatedVersion = introducedVersion, // According to https://github.com/JetBrains/kotlin/commit/79a2a82637064e19f81e1d837b5b7f6ff20988be
+            removedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
 
