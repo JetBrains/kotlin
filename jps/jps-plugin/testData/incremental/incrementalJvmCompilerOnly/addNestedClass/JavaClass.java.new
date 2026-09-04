@@ -1,0 +1,9 @@
+public class JavaClass {
+    public String foo() { return null; }
+    public static class Nested {
+
+        public int getBar() {
+            return 1;
+        }
+    }
+}

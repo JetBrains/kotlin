@@ -7,7 +7,6 @@ kotlin-data-container
 Module 'module1' production
     format-version.txt
     jvm-build-meta-info.txt
-    internal-name-to-source.tab
     package-parts.tab
     proto.tab
     source-to-classes.tab
@@ -15,7 +14,6 @@ Module 'module1' tests
 Module 'module2' production
     format-version.txt
     jvm-build-meta-info.txt
-    internal-name-to-source.tab
     package-parts.tab
     proto.tab
     source-to-classes.tab
@@ -23,7 +21,6 @@ Module 'module2' tests
 Module 'module3' production
     format-version.txt
     jvm-build-meta-info.txt
-    internal-name-to-source.tab
     package-parts.tab
     proto.tab
     source-to-classes.tab

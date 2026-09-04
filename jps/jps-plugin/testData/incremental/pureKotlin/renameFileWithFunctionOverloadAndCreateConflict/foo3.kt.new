@@ -1,0 +1,3 @@
+package foo
+
+fun f(a: Any) {} // same as fun f in foo1
