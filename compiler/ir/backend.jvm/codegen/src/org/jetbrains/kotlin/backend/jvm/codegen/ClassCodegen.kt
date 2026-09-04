@@ -152,10 +152,7 @@ class ClassCodegen private constructor(
         if (shouldSkipCodeGenerationAccordingToGenerationFilter()) return
 
         // Generate PermittedSubclasses attribute for sealed class.
-        if (config.languageVersionSettings.supportsFeature(LanguageFeature.JvmPermittedSubclassesAttributeForSealed) &&
-            irClass.modality == Modality.SEALED &&
-            config.target >= JvmTarget.JVM_17
-        ) {
+        if (irClass.modality == Modality.SEALED && config.target >= JvmTarget.JVM_17) {
             generatePermittedSubclasses()
         }
 
