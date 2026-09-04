@@ -22,9 +22,21 @@ object TestCompilePaths {
     const val KOTLIN_WASM_STDLIB_KLIB_PATH: String = "kotlin.wasm-js.stdlib.path"
     const val KOTLIN_JS_REDUCED_STDLIB_PATH: String = "kotlin.js.reduced.stdlib.path"
     const val KOTLIN_JS_KOTLIN_TEST_KLIB_PATH: String = "kotlin.js.kotlin.test.klib.path"
+
+    const val KOTLIN_WASM_JS_STDLIB_KLIB_PATH: String = "kotlin.wasm-js.stdlib.path"
+    const val KOTLIN_WASM_WASI_STDLIB_KLIB_PATH: String = "kotlin.wasm-wasi.stdlib.path"
+    const val KOTLIN_WASM_JS_KOTLIN_TEST_KLIB_PATH: String = "kotlin.wasm-js.kotlin.test.path"
+    const val KOTLIN_WASM_WASI_KOTLIN_TEST_KLIB_PATH: String = "kotlin.wasm-wasi.kotlin.test.path"
+
+    const val PLUGIN_SANDBOX_ANNOTATIONS_JAR_PATH: String = "firPluginAnnotations.jvm.path"
+    const val PLUGIN_SANDBOX_ANNOTATIONS_JS_KLIB_PATH: String = "firPluginAnnotations.js.path"
+    const val PLUGIN_SANDBOX_ANNOTATIONS_WASM_KLIB_PATH: String = "firPluginAnnotations.wasm.path"
+    const val PLUGIN_SANDBOX_JAR_PATH: String = "firPlugin.jar.path"
+
     const val KOTLIN_SCRIPTING_PLUGIN_CLASSPATH = "kotlin.scriptingPlugin.classpath"
     const val KOTLIN_TEST_SCRIPT_DEFINITION_CLASSPATH = "kotlin.script.test.script.definition.classpath"
     const val KOTLIN_SCRIPTING_TESTS_RUNTIME_CLASSPATH = "kotlin.scripting.tests.runtime.classpath"
+
     const val KOTLIN_DIST_PATH = "kotlin.dist.path"
     const val KOTLIN_NATIVE_IMAGE_DIST_PATH = "kotlin.native-image.dist.path"
     const val KOTLIN_NATIVE_IMAGE_RESOURCES_PATH = "kotlin.native-image.resources.path"
@@ -38,10 +50,7 @@ object TestCompilePaths {
     const val KOTLIN_THIRDPARTY_JAVA9_ANNOTATIONS_PATH = "third-party/java9-annotations"
     const val KOTLIN_THIRDPARTY_JSR305_PATH = "third-party/jsr305"
     const val KOTLIN_TESTDATA_ROOTS = "kotlin.testData.roots"
-    const val PLUGIN_SANDBOX_ANNOTATIONS_JAR_PATH: String = "firPluginAnnotations.jvm.path"
-    const val PLUGIN_SANDBOX_ANNOTATIONS_JS_KLIB_PATH: String = "firPluginAnnotations.js.path"
-    const val PLUGIN_SANDBOX_ANNOTATIONS_WASM_KLIB_PATH: String = "firPluginAnnotations.wasm.path"
-    const val PLUGIN_SANDBOX_JAR_PATH: String = "firPlugin.jar.path"
+
     const val LOMBOK_COMPILER_PLUGIN_JAR_PATH: String = "lombok.compiler.plugin.jar.path"
     const val ALLOPEN_COMPILER_PLUGIN_JAR_PATH: String = "allopen.compiler.plugin.jar.path"
     const val NOARG_COMPILER_PLUGIN_JAR_PATH: String = "noarg.compiler.plugin.jar.path"
