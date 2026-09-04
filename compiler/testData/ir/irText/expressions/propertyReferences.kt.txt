@@ -137,11 +137,26 @@ val test_constVal: KProperty0<Int>
   get
 
 val test_J_CONST: KProperty0<Int>
-  field = ::CONST
+  field = KProperty0<Int>(
+    /* bound = */ [],
+    /* getter = */    local fun(): Int {
+      return 1
+    }
+  )
+
   get
 
 val test_J_nonConst: KMutableProperty0<Int>
-  field = ::nonConst
+  field = KMutableProperty0<Int>(
+    /* bound = */ [],
+    /* getter = */    local fun(): Int {
+      return #nonConst
+    }
+    /* setter = */    local fun(value: Int) {
+      #nonConst = value
+    }
+  )
+
   get
 
 val test_varWithPrivateSet: KProperty1<C, Int>

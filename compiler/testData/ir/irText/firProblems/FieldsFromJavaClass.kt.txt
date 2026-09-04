@@ -1,10 +1,73 @@
 fun f(j: J, x: X, j1: J1<String>) {
-  val jf: KMutableProperty0<Int> = ::f
-  val js: KMutableProperty0<Int> = ::s
-  val xf: KMutableProperty0<Int> = ::f
-  val xs: KMutableProperty0<Int> = ::s
-  val xf2: KMutableProperty0<Int> = ::f2
-  val xs2: KMutableProperty0<Int> = ::s2
-  val j1f: KMutableProperty0<@FlexibleNullability String?> = ::f
+  val jf: KMutableProperty0<Int> = KMutableProperty0<Int>(
+    /* bound = */ [j],
+    /* getter = */    local fun(receiver: J): Int {
+      return receiver.#f
+    }
+    /* setter = */    local fun(receiver: J, value: Int) {
+      receiver.#f = value
+    }
+  )
+
+  val js: KMutableProperty0<Int> = KMutableProperty0<Int>(
+    /* bound = */ [],
+    /* getter = */    local fun(): Int {
+      return #s
+    }
+    /* setter = */    local fun(value: Int) {
+      #s = value
+    }
+  )
+
+  val xf: KMutableProperty0<Int> = KMutableProperty0<Int>(
+    /* bound = */ [x],
+    /* getter = */    local fun(receiver: X): Int {
+      return receiver.#f
+    }
+    /* setter = */    local fun(receiver: X, value: Int) {
+      receiver.#f = value
+    }
+  )
+
+  val xs: KMutableProperty0<Int> = KMutableProperty0<Int>(
+    /* bound = */ [],
+    /* getter = */    local fun(): Int {
+      return #s
+    }
+    /* setter = */    local fun(value: Int) {
+      #s = value
+    }
+  )
+
+  val xf2: KMutableProperty0<Int> = KMutableProperty0<Int>(
+    /* bound = */ [x],
+    /* getter = */    local fun(receiver: X): Int {
+      return receiver.#f2
+    }
+    /* setter = */    local fun(receiver: X, value: Int) {
+      receiver.#f2 = value
+    }
+  )
+
+  val xs2: KMutableProperty0<Int> = KMutableProperty0<Int>(
+    /* bound = */ [],
+    /* getter = */    local fun(): Int {
+      return #s2
+    }
+    /* setter = */    local fun(value: Int) {
+      #s2 = value
+    }
+  )
+
+  val j1f: KMutableProperty0<@FlexibleNullability String?> = KMutableProperty0<@FlexibleNullability String?>(
+    /* bound = */ [j1],
+    /* getter = */    local fun(receiver: J1<String>): @FlexibleNullability String? {
+      return receiver.#f
+    }
+    /* setter = */    local fun(receiver: J1<String>, value: @FlexibleNullability String?) {
+      receiver.#f = value
+    }
+  )
+
 }
 
