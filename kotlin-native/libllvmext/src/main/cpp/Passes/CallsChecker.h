@@ -20,7 +20,7 @@ namespace llvm::kotlin {
 ///   * a call is to a function defined in this module (assumed to be a Kotlin
 ///     function)
 ///   * a call is to a "good" function (defined as names in
-///     `Kotlin_callsCheckerGoodFunctionNames` in the runtime)
+///     `GoodFunctionNames` in the pass implementation)
 /// * before the call (or after in case of
 ///   `llvm.objc.retainAutoreleasedReturnValue`) insert a call into the runtime
 ///   `Kotlin_mm_checkStateAtExternalFunctionCall` and give it all info about
