@@ -46,7 +46,7 @@ KtUserType(138,146): 'Settings'
 KtNameReferenceExpression(138,146): 'Settings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings
@@ -82,7 +82,7 @@ KtUserType(182,190): 'Settings'
 KtNameReferenceExpression(182,190): 'Settings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings
@@ -454,7 +454,7 @@ KtUserType(540,552): 'OpenSettings'
 KtNameReferenceExpression(540,552): 'OpenSettings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings
@@ -499,7 +499,7 @@ KtUserType(594,606): 'OpenSettings'
 KtNameReferenceExpression(594,606): 'OpenSettings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings
