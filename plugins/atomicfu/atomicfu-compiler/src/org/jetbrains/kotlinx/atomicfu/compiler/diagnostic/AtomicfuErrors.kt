@@ -9,12 +9,28 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 
 object AtomicfuErrors : KtDiagnosticsContainer() {
     val PUBLIC_ATOMICS_ARE_FORBIDDEN by error1<KtProperty, String>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val PUBLISHED_API_ATOMICS_ARE_FORBIDDEN by error1<KtProperty, String>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val ATOMIC_PROPERTIES_SHOULD_BE_VAL by error1<KtProperty, String>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
-    val NON_PRIVATE_ATOMIC_COMPANIONS_ARE_FORBIDDEN by error1<KtProperty, String>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
+    val NON_PRIVATE_ATOMIC_COMPANIONS_ARE_FORBIDDEN by error0<KtProperty>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
+    val ATOMIC_FUNCTION_CALLABLE_REFERENCES_ARE_FORBIDDEN by error0<KtCallableReferenceExpression>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val ATOMIC_FACTORIES_ARE_FOR_INITIALIZATION_ONLY by error0<KtCallExpression>(SourceElementPositioningStrategies.DEFAULT)
+    val ATOMIC_PROPERTIES_MUST_HAVE_BACKING_FIELD by error0<KtProperty>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
+    val ATOMIC_LOCALS_ARE_FORBIDDEN by error0<KtProperty>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
+    val ATOMIC_VALUE_PARAMETERS_ARE_FORBIDDEN by error0<KtNamedDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val ATOMIC_EXTENSION_MUST_BE_NON_PUBLIC_INLINE by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val ATOMIC_ARRAY_EXTENSION_PROPERTIES_ARE_FORBIDDEN by error0<KtProperty>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val NULLABLE_ATOMIC_PROPERTIES_ARE_FORBIDDEN by error0<KtProperty>(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)
+    val ATOMIC_TYPE_OPERATOR_IS_FORBIDDEN by error0<KtExpression>(SourceElementPositioningStrategies.DEFAULT)
+    val ATOMIC_PROPERTY_ACCESS_WITHOUT_OPERATION by error0<KtExpression>(SourceElementPositioningStrategies.DEFAULT)
+    val ATOMIC_DOES_NOT_INHERIT_FUNCTIONS_FROM_ANY by error0<KtExpression>(SourceElementPositioningStrategies.CALL_ELEMENT_WITH_DOT)
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = AtomicfuErrorMessages
 }
