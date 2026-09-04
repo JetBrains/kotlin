@@ -49,7 +49,7 @@ class ProgramWithDependencyOnCompiler(
         fun runJava(workingDirectory: File, vararg arguments: String): String {
             val pb = ProcessBuilder()
                 .directory(workingDirectory)
-                .command(KotlinIntegrationTestBase.getJavaRuntime().absolutePath, *arguments).redirectErrorStream(true)
+                .command(KotlinIntegrationTestBase.getJava17Runtime().absolutePath, *arguments).redirectErrorStream(true)
             val process = pb.start()
             val stdout = StringBuilder()
 
