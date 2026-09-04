@@ -20,6 +20,10 @@ import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.builders.irTrue
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 
+/**
+ * Fuses `takeWhile` and `dropWhile`: remembers whether the predicate has ever returned `false`,
+ * which stops the iteration for `takeWhile` and starts passing the elements downstream for `dropWhile`.
+ */
 internal class TakeWhileStrategy(val takeWhile: SequenceTransformer.TakeWhile, builderWithParent: IrBuilderWithParent) :
     TransformerStrategy(builderWithParent) {
     override fun addTransformerToBodyBuilder(sequenceReplacement: SequenceReplacement): SequenceReplacement {

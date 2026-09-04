@@ -23,6 +23,10 @@ import org.jetbrains.kotlin.ir.builders.irTrue
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.types.makeNotNull
 
+/**
+ * Fuses `map`, `mapIndexed`, `mapNotNull` and `mapIndexedNotNull`: the downstream body receives the result of the function;
+ * the `NotNull` versions skip `null` results.
+ */
 internal class MapStrategy(val map: SequenceTransformer.Map, builderWithParent: IrBuilderWithParent, val context: JvmBackendContext) :
     TransformerStrategy(builderWithParent) {
     override fun addTransformerToBodyBuilder(

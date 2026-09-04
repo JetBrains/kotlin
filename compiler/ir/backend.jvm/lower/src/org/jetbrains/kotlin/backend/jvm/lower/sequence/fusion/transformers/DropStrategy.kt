@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.ir.builders.irIfThenElse
 import org.jetbrains.kotlin.ir.builders.irTrue
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 
+/**
+ * Fuses `drop(n)`: the first `n` elements are counted and not passed to the downstream body.
+ */
 internal class DropStrategy(val drop: SequenceTransformer.Drop, builderWithParent: IrBuilderWithParent, val context: JvmBackendContext) :
     TransformerStrategy(builderWithParent) {
     override fun addTransformerToBodyBuilder(

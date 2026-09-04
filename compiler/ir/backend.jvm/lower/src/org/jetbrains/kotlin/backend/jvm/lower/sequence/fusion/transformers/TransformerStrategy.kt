@@ -52,6 +52,10 @@ internal sealed class SequenceTransformer {
         val function: IrExpression,
         val takeOrDrop: TakeOrDrop,
     ) : SequenceTransformer()
+
+    class WithIndex(
+        val call: IrExpression,
+    ) : SequenceTransformer()
 }
 
 internal abstract class TransformerStrategy(val builderWithParent: IrBuilderWithParent) {
@@ -71,6 +75,7 @@ internal abstract class TransformerStrategy(val builderWithParent: IrBuilderWith
                 is SequenceTransformer.Take -> TakeStrategy(sequenceTransformer, builderWithParent, context)
                 is SequenceTransformer.Drop -> DropStrategy(sequenceTransformer, builderWithParent, context)
                 is SequenceTransformer.TakeWhile -> TakeWhileStrategy(sequenceTransformer, builderWithParent)
+                is SequenceTransformer.WithIndex -> WithIndexStrategy(sequenceTransformer, builderWithParent, context)
             }
     }
 }

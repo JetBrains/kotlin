@@ -29,6 +29,10 @@ internal sealed class IndexOfVersion {
     object IndexOfLast : IndexOfVersion()
 }
 
+/**
+ * Fuses `indexOf`, `indexOfFirst` and `indexOfLast`: counts the elements and records the index of the matching one,
+ * stopping at the first match except for `indexOfLast`; the result is `-1` if nothing matched.
+ */
 internal class IndexOfStrategy(data: ConsumerData, expression: IrCall, val indexOfVersion: IndexOfVersion, val context: JvmBackendContext) :
     ConsumerStrategy(data, expression) {
     val builder = data.builder

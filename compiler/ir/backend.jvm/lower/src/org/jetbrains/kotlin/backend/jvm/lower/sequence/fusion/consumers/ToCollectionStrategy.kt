@@ -26,6 +26,10 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.properties
 
+/**
+ * Fuses `toList`, `toMutableList`, `toSet`, `toMutableSet` and `toCollection`: adds every element to the destination,
+ * reproducing the collection types returned by the stdlib.
+ */
 internal class ToCollectionStrategy(
     data: ConsumerData, expression: IrCall, val collectionVersion: CollectionVersion, val isReadOnly: Boolean,
 ) :

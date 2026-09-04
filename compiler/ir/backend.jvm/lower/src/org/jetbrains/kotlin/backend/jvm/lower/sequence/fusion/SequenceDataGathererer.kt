@@ -55,6 +55,7 @@ internal const val TAKE = KOTLIN_SEQUENCES_PREFIX + "take"
 internal const val TAKE_WHILE = KOTLIN_SEQUENCES_PREFIX + "takeWhile"
 internal const val DROP = KOTLIN_SEQUENCES_PREFIX + "drop"
 internal const val DROP_WHILE = KOTLIN_SEQUENCES_PREFIX + "dropWhile"
+internal const val WITH_INDEX = KOTLIN_SEQUENCES_PREFIX + "withIndex"
 
 internal var IrExpression.sequenceDataOfExpression: SequenceData? by irAttribute(true)
 
@@ -334,6 +335,14 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         }
     }
 
+    private fun matchWithWithIndex(expression: IrCall) {
+        val receiverData = expression.receiverSequenceData() ?: return
+        expression.appendTransformer(
+            receiverData,
+            SequenceTransformer.WithIndex(expression),
+            copiedExpression = null,
+        )
+    }
 
     private fun matchWithSequenceOf(expression: IrCall) {
         // store the sequence of arguments inside the sequence source
@@ -385,6 +394,7 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
             TAKE_WHILE -> matchWithTakeWhile(expression, TakeOrDrop.Take)
             DROP -> matchWithTakeOrDrop(expression, SequenceTransformer::Drop)
             DROP_WHILE -> matchWithTakeWhile(expression, TakeOrDrop.Drop)
+            WITH_INDEX -> matchWithWithIndex(expression)
             GENERATE_SEQUENCE -> matchWithGenerateSequence(expression)
             SEQUENCE_OF -> matchWithSequenceOf(expression)
             AS_SEQUENCE -> matchWithAsSequence(expression)

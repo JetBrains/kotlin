@@ -18,6 +18,10 @@ import org.jetbrains.kotlin.ir.builders.irSet
 import org.jetbrains.kotlin.ir.builders.irTrue
 import org.jetbrains.kotlin.ir.expressions.IrCall
 
+/**
+ * Fuses `firstNotNullOf` and `firstNotNullOfOrNull`: stops at the first non-null result of the transform;
+ * `firstNotNullOf` throws `NoSuchElementException` if there is none.
+ */
 internal class FirstNotNullOfStrategy(data: ConsumerData, expression: IrCall, isOrNull: Boolean) :
     FirstLastStrategy(data, expression, isFirst = true, isOrNull, isFind = false) {
     val builder = data.builder

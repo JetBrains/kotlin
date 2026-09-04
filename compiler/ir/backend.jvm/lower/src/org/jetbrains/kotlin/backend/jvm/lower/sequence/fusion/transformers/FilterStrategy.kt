@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.ir.builders.irTrue
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.types.makeNotNull
 
+/**
+ * Fuses `filter`, `filterNot` and `filterNotNull`: the downstream body is called only for the matching elements.
+ */
 internal class FilterStrategy(val filter: SequenceTransformer.Filter, builderWithParent: IrBuilderWithParent) :
     TransformerStrategy(builderWithParent) {
     override fun addTransformerToBodyBuilder(

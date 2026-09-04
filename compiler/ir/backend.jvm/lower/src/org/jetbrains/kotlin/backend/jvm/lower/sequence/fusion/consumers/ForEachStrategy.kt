@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 
+/**
+ * Fuses `forEach` and `forEachIndexed`: calls the action for every element, with an incremented index for `forEachIndexed`.
+ */
 internal class ForEachStrategy(data: ConsumerData, expression: IrCall, val isIndexed: Boolean, val context: JvmBackendContext) :
     ConsumerStrategy(data, expression) {
     val builder = data.builder

@@ -28,6 +28,10 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 
+/**
+ * Fuses `generateSequence`: a nullable state variable holds the current element, the loop runs while it is not `null`,
+ * and the generating function computes the next state after the element is consumed.
+ */
 internal class GenerateSequenceStrategy(
     val source: SequenceSource.GenerateSequence
 ) : ProducerStrategy() {

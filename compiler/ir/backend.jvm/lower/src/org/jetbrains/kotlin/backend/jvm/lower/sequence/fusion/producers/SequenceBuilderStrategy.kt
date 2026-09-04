@@ -288,6 +288,10 @@ private fun getSequenceElementTypeIfLowerable(parent: IrDeclarationParent, seque
 private fun isConsumerFunctionLowerable(localConsumerFunction: IrFunction): Boolean = !localConsumerFunction.containsJumpsOutside()
         && !containsUnlowerableCalls(localConsumerFunction.body!!, allowSequenceYields = false)
 
+/**
+ * Fuses `sequence { ... }`: the builder body is inlined, the consumer is moved into a local function `sequenceYieldConsumer`,
+ * and every `yield`/`yieldAll` is replaced with calls to it (see `YieldReplacer`), returning from the body when it yields `false`.
+ */
 internal class SequenceBuilderStrategy(
     val sequenceScope: IrRichFunctionReference,
     val context: JvmBackendContext,

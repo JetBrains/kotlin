@@ -67,41 +67,24 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 /**
- * transformation:
- * ```
- * fun myFun(seq: Sequence<Int>) {
- *     val seq2 = seq.map { it * 2 }.map { it + 1 }
- *     for (x in seq2) println(x)
- * }
- * ```
- * becomes (see `UnknownVariableStrategy`)
- * ```
- * fun myFun(seq: Sequence<Int>) {
- *     val seq2 = seq.map { it * 2 }.map { it + 1 }
- *     val iterator = seq.iterator()
- *     while (iterator.hasNext()) println({ y -> { x -> x * 2 }(y) + 1 }(iterator.next()))
- * }
- * ```
- *
- * ```
- * val seq = sequenceOf(1, 2, 3).map { it * 2 }.map { it + 1 }
- * for (x in seq) println(x)
- * ```
- * becomes (see `SequenceOfStrategy`)
- * ```
- * val seq = sequenceOf(1, 2, 3).map { it * 2 }.map { it + 1 }
- * val e0 = 1; val e1 = 2; val e2 = 3
- * var n = 0
- * while (n < 3) {
- *     val x = when (n) { 0 -> e0; 1 -> e1; 2 -> e2; else -> throw NoWhenBranchMatchedException() }
- *     println({ y -> { x -> x * 2 }(y) + 1 }(x))
- *     n++
- * }
- * ```
+ * Builds the IR executed for one element of the sequence; the element is passed as the parameter.
+ * The built expression evaluates to `false` when the iteration has to stop after this element, and to `true` otherwise.
+ * This is the only way to stop the iteration once it has started: a transformer that calls the downstream body
+ * must return `false` as soon as the downstream body does.
  */
-
 internal typealias ConsumerBodyBuilder = (IrValueDeclaration) -> IrContainerExpression
 
+/**
+ * The fused form of a consumer, possibly wrapped by transformers, which a `ProducerStrategy` turns into a loop.
+ *
+ * - [initialDeclarations] are evaluated once, in order, before the iteration (the state of the transformers and the consumer,
+ *   and the arguments of the operations which must be evaluated exactly once).
+ * - [skipIteration], if not null, is evaluated once, after [initialDeclarations]. When it is `true`, the sequence is
+ *   known to be empty before it starts (e.g. `take(0)`), and the producer skips the iteration entirely, together with
+ *   any work done before the first element, such as calling `iterator()` or a seed function.
+ * - [mainBodyBuilder] builds the body executed for every element, see [ConsumerBodyBuilder].
+ * - [finalExpression] is evaluated after the iteration, and it is the value of the whole fused expression.
+ */
 internal data class SequenceReplacement(
     val initialDeclarations: List<IrStatement>,
     val skipIteration: IrExpression?,
@@ -111,6 +94,48 @@ internal data class SequenceReplacement(
     val leadingDropCounts: List<IrVariable> = emptyList(),
 )
 
+/**
+ * Fuses a chain of `kotlin.sequences.Sequence` operations of the form `producer -> transformer* -> consumer`
+ * into a single `while` loop, so that no intermediate `Sequence` and `Iterator` objects are created
+ * and the lambdas of the operations are called directly in the loop.
+ *
+ * - Producers (see `ProducerStrategy`): `sequenceOf`, `emptySequence`, `Iterable.asSequence`, `sequence { ... }`,
+ *   `generateSequence`, and any other sequence value, which is iterated through its `iterator()`.
+ * - Transformers (see `TransformerStrategy`): `map`, `mapIndexed`, `mapNotNull`, `mapIndexedNotNull`,
+ *   `filter`, `filterNot`, `filterNotNull`, `take`, `takeWhile`, `drop`, `dropWhile`, `withIndex`.
+ * - Consumers (see `ConsumerStrategy`): `for` loops, `forEach`, `forEachIndexed`, `first`, `firstOrNull`,
+ *   `last`, `lastOrNull`, `find`, `findLast`, `firstNotNullOf`, `firstNotNullOfOrNull`, `indexOf`,
+ *   `indexOfFirst`, `indexOfLast`, `filterTo`, `filterNotTo`, `filterNotNullTo`, `toList`, `toMutableList`,
+ *   `toSet`, `toMutableSet`, `toCollection`.
+ *
+ * Each file is processed in two passes:
+ * 1. `ReusedSequenceMarker` counts the reads of every sequence variable and records whether a read can be executed
+ *    more than once. This decides whether the chain stored in the variable may be copied to the places it is read at.
+ * 2. `SequenceFusionTransformer` visits the IR bottom-up. For every `for` loop over a sequence and every consumer call,
+ *    `SequenceDataGatherer` describes the receiver as `SequenceData`: a `SequenceSource` and a list of
+ *    `SequenceTransformer`s, following the initializers of `val`s. The consumer strategy creates a [SequenceReplacement],
+ *    every transformer strategy wraps it, from the consumer back to the source (see `addTransformers`),
+ *    and the producer strategy emits the loop. If any step is not provably safe, the original code is kept.
+ *
+ * For example,
+ * ```
+ * for (x in sequenceOf(1, 2).map { it * 2 }) println(x)
+ * ```
+ * becomes approximately (see `SequenceOfStrategy`)
+ * ```
+ * var i = 0
+ * val e0 = 1
+ * val e1 = 2
+ * while (i < 2) {
+ *     val currentElement = when (i) { 0 -> e0; 1 -> e1; else -> throw NoWhenBranchMatchedException() }
+ *     val mapResult = { it: Int -> it * 2 }(currentElement)
+ *     println(mapResult) // the loop body; `break` and `continue` in it become "stop" and "continue" results
+ *     i++
+ * }
+ * ```
+ *
+ * See `README.md` in this package for the design, the safety rules, and how to add a new operation.
+ */
 class SequenceFusionLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         val reuseMarker = ReusedSequenceMarker(context)

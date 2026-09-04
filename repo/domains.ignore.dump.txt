@@ -45,6 +45,7 @@ ignored:
  - compiler/ir/backend.jvm/ReadMe.md
  - compiler/ir/backend.jvm/codegen/ReadMe.md
  - compiler/ir/backend.jvm/lower/ReadMe.md
+ - compiler/ir/backend.jvm/lower/src/org/jetbrains/kotlin/backend/jvm/lower/sequence/fusion/README.md
  - compiler/ir/backend.native/ReadMe.md
  - compiler/ir/backend.wasm/ReadMe.md
  - compiler/ir/ir.actualization/ReadMe.md
@@ -165,7 +166,6 @@ ignored:
  - plugins/kotlinx-serialization/README.md
  - plugins/lombok/README.md
  - plugins/parcelize/README.md
- - plugins/scripting/scripting-ide-common/README.md
  - prepare/compiler-native-image/README.md
  - repo/artifacts-tests/README.md
  - repo/auto-code-review/README.md

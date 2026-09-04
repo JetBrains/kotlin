@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.functions
 
+/**
+ * Fuses `take(n)`: counts the elements and stops the iteration after `n` of them, without requesting the next element.
+ */
 internal class TakeStrategy(val take: SequenceTransformer.Take, builderWithParent: IrBuilderWithParent, val context: JvmBackendContext) :
     TransformerStrategy(builderWithParent) {
     override fun addTransformerToBodyBuilder(

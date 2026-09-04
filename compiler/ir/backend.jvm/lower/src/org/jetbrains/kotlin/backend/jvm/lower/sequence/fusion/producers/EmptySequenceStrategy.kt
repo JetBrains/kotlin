@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceReplacemen
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 
+/**
+ * Fuses `emptySequence()` / `sequenceOf()`: only the initial declarations and the final expression are emitted.
+ */
 internal data object EmptySequenceStrategy : ProducerStrategy() {
     override fun fuseConsumer(
         builderWithParent: IrBuilderWithParent,

@@ -19,6 +19,10 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 
+/**
+ * Fuses a `for` loop over a sequence: the loop body becomes the consumer body, with `break` and `continue`
+ * of the loop replaced by returning `false` and `true` from it.
+ */
 internal class ForLoopStrategy(
     data: ConsumerData, val loopData: LoopData, expression: IrBlock,
 ) : ConsumerStrategy(data, expression) {

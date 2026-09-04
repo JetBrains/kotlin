@@ -24,6 +24,10 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 
+/**
+ * Iterates over an arbitrary sequence value (or the receiver of `asSequence`) through its own `iterator()`,
+ * `hasNext()` and `next()`, evaluating the sequence expression once.
+ */
 internal class UnknownVariableStrategy(
     val newIteratorTarget: IrExpression,
     val context: JvmBackendContext
