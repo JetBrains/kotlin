@@ -193,7 +193,11 @@ abstract class AbstractWasmGroupingStageBoxRunner(
                     )
                 }
                 // Nothing was attributed, so no VM failure the batch collected is accounted for yet.
-                failWithUnexplainedExceptions(exceptions, parsedExceptionOutputs, crashAttributedIds = emptySet())
+                failWithUnexplainedExceptions(
+                    exceptions,
+                    parsedExceptionOutputs,
+                    allowCrashAttribution = false,
+                )
                 return
             }
 
@@ -215,7 +219,11 @@ abstract class AbstractWasmGroupingStageBoxRunner(
                                 "results from the other VMs cannot establish complete test coverage.",
                     )
                 }
-                failWithUnexplainedExceptions(exceptions, parsedExceptionOutputs, crashAttributedIds = emptySet())
+                failWithUnexplainedExceptions(
+                    exceptions,
+                    parsedExceptionOutputs,
+                    allowCrashAttribution = false,
+                )
                 return
             }
         }
@@ -248,7 +256,11 @@ abstract class AbstractWasmGroupingStageBoxRunner(
                             "means no test of this batch actually ran.",
                 )
             }
-            failWithUnexplainedExceptions(exceptions, parsedExceptionOutputs, crashAttributedIds = emptySet())
+            failWithUnexplainedExceptions(
+                exceptions,
+                parsedExceptionOutputs,
+                allowCrashAttribution = false,
+            )
             return
         }
 
@@ -277,7 +289,8 @@ abstract class AbstractWasmGroupingStageBoxRunner(
                     "$malformedLines. The result block cannot be trusted; this indicates a problem in the " +
                     "grouped-test driver or in the test output."
 
-        val crashAttributedIds = analysis.crashedIds
+        // A malformed output may still provide a best-effort diagnostic candidate, but it cannot authenticate the
+        // VM exception. Only parser-state-authenticated candidates from that same exception output may account for it.
         for (input in testServices.groupingStageInputs) {
             val id = computeProxyLauncherClassName(input.testServices.testInfo)
             input.failWithCollectedOutputs(
@@ -294,7 +307,7 @@ abstract class AbstractWasmGroupingStageBoxRunner(
             )
         }
 
-        failWithUnexplainedExceptions(exceptions, parsedExceptionOutputs, crashAttributedIds)
+        failWithUnexplainedExceptions(exceptions, parsedExceptionOutputs)
     }
 
     private fun untrustedReportFor(
@@ -374,8 +387,6 @@ abstract class AbstractWasmGroupingStageBoxRunner(
 
         // There is no batch-level failure sink, so an empty report is prepended to every missing test below.
         val emptyReportReason = (TestReportChecks.checkNonEmpty(analysis.testReport) as? TestReportChecks.Result.Failed)?.reason
-        val crashAttributedIds = analysis.crashedIds
-
         for (input in testServices.groupingStageInputs) {
             val id = computeProxyLauncherClassName(input.testServices.testInfo)
             val failure = analysis.failures[id]
@@ -478,17 +489,18 @@ abstract class AbstractWasmGroupingStageBoxRunner(
             }
         }
 
-        failWithUnexplainedExceptions(exceptions, parsedExceptionOutputs, crashAttributedIds)
+        failWithUnexplainedExceptions(exceptions, parsedExceptionOutputs)
     }
 
     private fun failWithUnexplainedExceptions(
         exceptions: List<Throwable>,
         parsedExceptionOutputs: List<List<GroupedTestsResultProtocol.ParsedExecution>>,
-        crashAttributedIds: Set<String>,
+        allowCrashAttribution: Boolean = true,
     ) {
         val unexplainedExceptions = exceptions.filterIndexed { index, _ ->
-            val crashedThere = parsedExceptionOutputs[index].flatMapTo(mutableSetOf()) { it.crashedIds }
-            crashedThere.none { it in crashAttributedIds }
+            !allowCrashAttribution || parsedExceptionOutputs[index].none { parsed ->
+                parsed.crashAttributedIds.isNotEmpty()
+            }
         }
         if (unexplainedExceptions.isNotEmpty()) {
             testServices.assertions.failAll(unexplainedExceptions)
