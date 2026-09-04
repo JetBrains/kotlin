@@ -457,7 +457,6 @@ KtNameReferenceExpression(533,541): 'instance'
 KtOperationReferenceExpression(542,544): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(545,561): 'SealedInheritor1'
@@ -526,7 +525,6 @@ KtNameReferenceExpression(588,596): 'instance'
 KtOperationReferenceExpression(597,599): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(600,605): 'Inner'
@@ -595,7 +593,6 @@ KtNameReferenceExpression(636,644): 'instance'
 KtOperationReferenceExpression(645,647): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(648,671): 'IndirectSealedInheritor'
@@ -664,7 +661,6 @@ KtNameReferenceExpression(698,706): 'instance'
 KtOperationReferenceExpression(707,710): '!is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(711,727): 'SealedInheritor2'
@@ -715,7 +711,6 @@ KtNameReferenceExpression(745,753): 'instance'
 KtOperationReferenceExpression(754,757): '!is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(758,780): 'SealedSealedInheritor1'
@@ -1171,7 +1166,6 @@ KtNameReferenceExpression(1277,1285): 'instance'
 KtOperationReferenceExpression(1286,1288): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(1289,1312): 'IndirectSealedInheritor'
@@ -1264,7 +1258,6 @@ KtNameReferenceExpression(1383,1391): 'instance'
 KtOperationReferenceExpression(1392,1394): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(1395,1411): 'SealedInheritor2'
@@ -1357,7 +1350,6 @@ KtNameReferenceExpression(1462,1470): 'instance'
 KtOperationReferenceExpression(1471,1473): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(1474,1490): 'SealedInheritor1'
@@ -1450,7 +1442,6 @@ KtNameReferenceExpression(1541,1549): 'instance'
 KtOperationReferenceExpression(1550,1552): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(1553,1575): 'SealedSealedInheritor1'

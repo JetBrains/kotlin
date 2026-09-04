@@ -391,7 +391,6 @@ KtNameReferenceExpression(298,299): 's'
 KtOperationReferenceExpression(300,302): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(303,307): 'Left'
@@ -475,7 +474,6 @@ KtNameReferenceExpression(334,335): 's'
 KtOperationReferenceExpression(336,338): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(339,344): 'Right'
@@ -532,7 +530,6 @@ KtNameReferenceExpression(350,355): 'value'
 KtOperationReferenceExpression(356,357): '*'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.times(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -562,7 +559,6 @@ KtNameReferenceExpression(375,376): 's'
 KtOperationReferenceExpression(377,380): '!is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(381,385): 'Left'
@@ -643,7 +639,6 @@ KtConstantExpression(425,426): '1'
 KtOperationReferenceExpression(427,429): '=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
@@ -697,7 +692,6 @@ KtNameReferenceExpression(455,456): 's'
 KtOperationReferenceExpression(457,459): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(460,464): 'Left'
@@ -790,7 +784,6 @@ KtNameReferenceExpression(500,501): 's'
 KtOperationReferenceExpression(502,505): 'as?'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(506,511): 'Right'

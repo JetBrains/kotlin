@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExperimentalApi
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.lookupLocally
 import org.jetbrains.kotlin.resolution.KtResolvable
@@ -54,7 +55,9 @@ internal fun AbstractResolveByElementTest.generateSymbolOutput(mainElement: KtEl
         if (mainElement is KtSimpleNameExpression) {
             appendLine("isImplicitReferenceToCompanion: ${mainElement.isImplicitReferenceToCompanion}")
             appendLine("contextSensitiveResolutionStatus: ${mainElement.contextSensitiveResolutionStatus}")
-            appendLine("lookupLocally: $localLookup")
+            if (mainElement is KtNameReferenceExpression) {
+                appendLine("lookupLocally: $localLookup")
+            }
         }
 
         val representation = stringRepresentation(symbolAttempt)
@@ -131,7 +134,7 @@ private fun AbstractResolveByElementTest.checkLookupLocally(
     symbolAttempt: KaSymbolResolutionAttempt?,
     testServices: TestServices,
 ): Boolean {
-    if (mainElement !is KtSimpleNameExpression) return true
+    if (mainElement !is KtNameReferenceExpression) return true
 
     val localLookup = mainElement.lookupLocally()
     val resolved = symbolAttempt?.successfulSymbols?.singleOrNull()?.psi

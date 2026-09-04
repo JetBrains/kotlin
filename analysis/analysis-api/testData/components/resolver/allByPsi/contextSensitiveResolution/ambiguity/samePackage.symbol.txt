@@ -913,7 +913,6 @@ KtNameReferenceExpression(675,676): 's'
 KtOperationReferenceExpression(677,679): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(680,681): 'A'
@@ -1015,7 +1014,6 @@ KtNameReferenceExpression(735,736): 's'
 KtOperationReferenceExpression(737,739): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(740,741): 'B'
@@ -1117,7 +1115,6 @@ KtNameReferenceExpression(796,797): 's'
 KtOperationReferenceExpression(798,800): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(801,809): 'Sealed.A'
@@ -1234,7 +1231,6 @@ KtNameReferenceExpression(864,865): 's'
 KtOperationReferenceExpression(866,868): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(869,877): 'Sealed.B'
@@ -1351,7 +1347,6 @@ KtNameReferenceExpression(934,935): 's'
 KtOperationReferenceExpression(936,938): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(939,944): 'foo.A'
@@ -1468,7 +1463,6 @@ KtNameReferenceExpression(1001,1002): 's'
 KtOperationReferenceExpression(1003,1005): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(1006,1011): 'foo.B'
@@ -1585,7 +1579,6 @@ KtNameReferenceExpression(1062,1063): 's'
 KtOperationReferenceExpression(1064,1066): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(1067,1068): 'C'
@@ -1687,7 +1680,6 @@ KtNameReferenceExpression(1119,1120): 's'
 KtOperationReferenceExpression(1121,1123): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(1124,1125): 'D'
@@ -1789,7 +1781,6 @@ KtNameReferenceExpression(1183,1184): 's'
 KtOperationReferenceExpression(1185,1187): '=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -1873,7 +1864,6 @@ KtNameReferenceExpression(1232,1233): 's'
 KtOperationReferenceExpression(1234,1236): '=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -1969,7 +1959,6 @@ KtNameReferenceExpression(1290,1291): 's'
 KtOperationReferenceExpression(1292,1294): '=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -2065,7 +2054,6 @@ KtNameReferenceExpression(1339,1340): 's'
 KtOperationReferenceExpression(1341,1343): '=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean

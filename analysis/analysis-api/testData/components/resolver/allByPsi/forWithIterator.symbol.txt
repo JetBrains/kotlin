@@ -251,7 +251,6 @@ KtContainerNode(151,160): '@iterator'
 KtLabelReferenceExpression(151,160): '@iterator'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       f/iterator(<extension receiver>: f.IntProgression): kotlin.collections.Iterator<kotlin.Int>
@@ -293,7 +292,6 @@ KtNameReferenceExpression(196,203): 'current'
 KtOperationReferenceExpression(204,206): '<='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -378,7 +376,6 @@ KtContainerNode(211,220): '@iterator'
 KtLabelReferenceExpression(211,220): '@iterator'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       f/iterator(<extension receiver>: f.IntProgression): kotlin.collections.Iterator<kotlin.Int>
@@ -442,7 +439,6 @@ KtNameReferenceExpression(256,263): 'current'
 KtOperationReferenceExpression(263,265): '++'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int

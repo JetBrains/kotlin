@@ -155,7 +155,6 @@ KtNameReferenceExpression(27,31): 'this'
 KtOperationReferenceExpression(32,33): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -336,7 +335,6 @@ KtNameReferenceExpression(71,75): 'this'
 KtOperationReferenceExpression(76,78): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(79,80): 'b'
@@ -441,7 +439,6 @@ KtConstantExpression(114,115): '3'
 KtOperationReferenceExpression(117,120): 'as?'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(121,124): 'Int'
