@@ -246,9 +246,11 @@ class PrettyResultsHandler(
 
         if (phaseInputs.size == 1) {
             // A single (isolated) testcase is not moved into a dedicated package, so it can't be matched by package name.
-            // Just verify that exactly one distinct testcase was executed.
-            check(executedTests.size == 1) { // TODO: replace with checkTestInfrastructure, so it won't be masked by IGNORE_* directives
-                "Expected exactly one executed testcase in the batch mode, but ${executedTests.size} were executed: $executedTests"
+            // Verify that exactly one outcome was reported, retaining duplicate reports for the same test name.
+            val reportedTestCount = runResult.processOutput.stdOut.reportedTestCount ?: return
+            check(reportedTestCount == 1) { // TODO: replace with checkTestInfrastructure, so it won't be masked by IGNORE_* directives
+                "Expected exactly one executed testcase in the batch mode, but $reportedTestCount outcomes were " +
+                        "reported for $executedTests"
             }
             return
         }
