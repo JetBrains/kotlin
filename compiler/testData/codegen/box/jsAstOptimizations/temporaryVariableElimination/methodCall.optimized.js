@@ -8,24 +8,18 @@ function foo_(n) {
 function test1() {
   var foo = foo_$ref();
   init();
-  var tmp1 = foo(1);
-  var tmp2 = foo(2);
-  return foo(tmp1 + tmp2 | 0);
+  return foo(foo(1) + foo(2) | 0);
 }
 function test2() {
   var foo = foo_$ref();
   init();
   var tmp2 = foo(2);
-  var tmp1 = foo(1);
-  return foo(tmp1 + tmp2 | 0);
+  return foo(foo(1) + tmp2 | 0);
 }
 function test3() {
   var foo = foo_$ref();
   init();
-  var tmp1 = foo(1);
-  var tmp2 = foo(2);
-  var tmp3 = foo(3);
-  return foo((tmp1 + tmp2 | 0) + foo(tmp3) | 0);
+  return foo((foo(1) + foo(2) | 0) + foo(foo(3)) | 0);
 }
 function test4() {
   var foo = foo_$ref();

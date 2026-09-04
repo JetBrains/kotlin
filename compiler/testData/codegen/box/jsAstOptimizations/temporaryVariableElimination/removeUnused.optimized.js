@@ -1,22 +1,16 @@
 function test1() {
-  var _unary__edvuaz = global;
-  global = _unary__edvuaz + 1 | 0;
-  var tmp = _unary__edvuaz;
+  global = global + 1 | 0;
   return global;
 }
 function test2() {
-  var _unary__edvuaz = global;
-  global = _unary__edvuaz + 1 | 0;
-  var tmp = _unary__edvuaz;
+  global = global + 1 | 0;
   return global;
 }
 function test3() {
+  global = global + 1 | 0;
   var _unary__edvuaz = global;
-  global = _unary__edvuaz + 1 | 0;
-  var a = _unary__edvuaz;
-  var _unary__edvuaz_0 = global;
-  global = _unary__edvuaz_0 - 1 | 0;
-  var b = _unary__edvuaz_0;
+  global = _unary__edvuaz - 1 | 0;
+  var b = _unary__edvuaz;
   return b + b | 0;
 }
 function box() {
