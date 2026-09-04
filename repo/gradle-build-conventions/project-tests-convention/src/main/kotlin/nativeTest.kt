@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import java.io.File
-import java.util.Properties
 import javax.inject.Inject
 
 private enum class TestProperty(shortName: String) {
@@ -332,22 +330,6 @@ private fun Project.hostXcodeConfiguration(): Configuration =
         }
     }
 
-private fun Project.expectedXcodeDeveloperDir(): Provider<String> {
-    val konanProperties = project(":kotlin-native").isolated.projectDirectory.file("konan/konan.properties")
-    val dependenciesRoot = DependencyDirectories.getDependenciesRoot(
-        providers.gradleProperty("konan.data.dir").orNull
-    )
-    return providers.fileContents(konanProperties).asText.map { text ->
-        val properties = Properties().apply { text.reader().use { load(it) } }
-        fun requiredProperty(name: String) = properties.getProperty(name)
-            ?: error("No '$name' property in ${konanProperties.asFile.absolutePath}")
-        dependenciesRoot
-            .resolve("xcode_${requiredProperty("xcodeVersion")}_${requiredProperty("xcodeBuild")}")
-            .resolve("Contents/Developer")
-            .absolutePath
-    }
-}
-
 private const val HOST_XCODE_CONFIGURATION = "nativeTestHostXcode"
 
 /**
@@ -460,7 +442,10 @@ fun ProjectTestsExtension.nativeTestTask(
             kotlinBuildProperties.booleanProperty("kotlin.native.internalServer.wholeXcode", false).get()
         ) {
             dependsOn(project.hostXcodeConfiguration())
-            environment("DEVELOPER_DIR", project.expectedXcodeDeveloperDir().get())
+            environment(
+                "DEVELOPER_DIR",
+                project.hostXcodeConfiguration().singleFile.resolve("Contents/Developer").absolutePath
+            )
         }
 
         useJUnitPlatform {

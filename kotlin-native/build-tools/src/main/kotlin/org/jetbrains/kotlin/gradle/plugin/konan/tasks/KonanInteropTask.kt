@@ -174,8 +174,7 @@ open class KonanInteropTask @Inject constructor(
             addAll(extraOpts.get())
 
             if (useProvisionedXcode.get()) {
-                add("-Xoverride-konan-properties")
-                add("useProvisionedXcode=true")
+                add("-Xoverride-konan-properties=useProvisionedXcode=true")
             }
 
             add("-Xproject-dir")
