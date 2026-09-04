@@ -12,7 +12,7 @@ plugins {
 
 dependencies {
     api(project(":core:compiler.common"))
-    api(project(":core:error.handling"))
+    implementation(project(":core:error.handling"))
 
     compileOnly(intellijCore())
 
