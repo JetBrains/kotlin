@@ -60,35 +60,33 @@ internal class TakeStrategy(val take: SequenceTransformer.Take, builderWithParen
             throwExpression
         )
         val mainBodyBuilder =
-            with(builder) {
-                { sequenceVariable: IrValueDeclaration ->
-                    irBlock {
-                        +builder.increment(takeVariable, this@TakeStrategy.context)
-                        when (take.takeType) {
-                            TakeOrDrop.Take -> {
-                                val condition = irCall(lessOrEqualSymbol).apply {
-                                    arguments[0] = irGet(takeVariable)
-                                    arguments[1] = irGet(takeArgumentVariable)
-                                }
-                                +irIfThenElse(
-                                    context.irBuiltIns.booleanType,
-                                    condition,
-                                    sequenceReplacement.mainBodyBuilder(sequenceVariable),
-                                    irFalse()
-                                )
+            { sequenceVariable: IrValueDeclaration ->
+                builder.irBlock {
+                    +increment(takeVariable, this@TakeStrategy.context)
+                    when (take.takeOrDrop) {
+                        TakeOrDrop.Take -> {
+                            val condition = irCall(lessOrEqualSymbol).apply {
+                                arguments[0] = irGet(takeVariable)
+                                arguments[1] = irGet(takeArgumentVariable)
                             }
-                            TakeOrDrop.Drop -> {
-                                val condition = irCall(lessOrEqualSymbol).apply {
-                                    arguments[0] = irGet(takeVariable)
-                                    arguments[1] = irGet(takeArgumentVariable)
-                                }
-                                +irIfThenElse(
-                                    context.irBuiltIns.booleanType,
-                                    condition,
-                                    irTrue(),
-                                    sequenceReplacement.mainBodyBuilder(sequenceVariable),
-                                )
+                            +irIfThenElse(
+                                context.irBuiltIns.booleanType,
+                                condition,
+                                sequenceReplacement.mainBodyBuilder(sequenceVariable),
+                                irFalse()
+                            )
+                        }
+                        TakeOrDrop.Drop -> {
+                            val condition = irCall(lessOrEqualSymbol).apply {
+                                arguments[0] = irGet(takeVariable)
+                                arguments[1] = irGet(takeArgumentVariable)
                             }
+                            +irIfThenElse(
+                                context.irBuiltIns.booleanType,
+                                condition,
+                                irTrue(),
+                                sequenceReplacement.mainBodyBuilder(sequenceVariable),
+                            )
                         }
                     }
                 }

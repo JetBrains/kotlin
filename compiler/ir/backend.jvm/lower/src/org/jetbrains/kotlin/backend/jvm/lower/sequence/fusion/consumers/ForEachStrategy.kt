@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.callPredicate
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.getPredicateArgument
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.increment
 import org.jetbrains.kotlin.ir.builders.irBlock
-import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irInt
-import org.jetbrains.kotlin.ir.builders.irSet
 import org.jetbrains.kotlin.ir.builders.irTrue
 import org.jetbrains.kotlin.ir.builders.irUnit
 import org.jetbrains.kotlin.ir.declarations.IrVariable
