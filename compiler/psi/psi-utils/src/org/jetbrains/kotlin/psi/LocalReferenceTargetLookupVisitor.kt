@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.TokenType
 import com.intellij.psi.util.elementType
 import org.jetbrains.annotations.TestOnly
@@ -24,13 +25,19 @@ import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
  *
  * This is available as a local-only optimization. It makes use of the fact that local scopes always have the highest
  * priority in resolution.
+ *
+ * Note: in dangling files, lookupLocally does not work.
  */
 @KtExperimentalApi
 fun KtNameReferenceExpression.lookupLocally(): KtNamedDeclaration? {
+    if (containingFile.isDangling()) return null
+
     val contextKind = localLookupContextKind ?: return null
 
     return LocalReferenceTargetLookupVisitor(this, contextKind).lookup()
 }
+
+private fun PsiFile.isDangling(): Boolean = !isEquivalentTo(originalFile)
 
 /**
  * Returns `true` if can perform a local lookup from the given starting expression.
@@ -41,7 +48,7 @@ fun KtNameReferenceExpression.lookupLocally(): KtNamedDeclaration? {
  */
 @TestOnly
 @KtImplementationDetail
-fun KtNameReferenceExpression.canPerformLocalLookup(): Boolean = localLookupContextKind != null
+fun KtNameReferenceExpression.canPerformLocalLookup(): Boolean = !containingFile.isDangling() && localLookupContextKind != null
 
 private val KtElement.nonContainerParent: KtElement?
     get() {
