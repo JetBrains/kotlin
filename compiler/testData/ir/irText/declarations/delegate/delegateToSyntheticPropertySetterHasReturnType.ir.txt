@@ -29,9 +29,10 @@ FILE fqName:<root> fileName:/test.kt
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:@[FlexibleNullability] kotlin.String?
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun foo (receiver: <root>.J, value: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Foo.bar$delegate'
-                  CALL 'public open fun setFoo (foo: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=kotlin.Unit origin=null
-                    ARG <this>: GET_VAR 'receiver: <root>.J declared in <root>.Foo.bar$delegate.foo' type=<root>.J origin=ADAPTED_FUNCTION_REFERENCE
-                    ARG foo: GET_VAR 'value: @[FlexibleNullability] kotlin.String? declared in <root>.Foo.bar$delegate.foo' type=@[FlexibleNullability] kotlin.String? origin=ADAPTED_FUNCTION_REFERENCE
+                  TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                    CALL 'public open fun setFoo (foo: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null
+                      ARG <this>: GET_VAR 'receiver: <root>.J declared in <root>.Foo.bar$delegate.foo' type=<root>.J origin=ADAPTED_FUNCTION_REFERENCE
+                      ARG foo: GET_VAR 'value: @[FlexibleNullability] kotlin.String? declared in <root>.Foo.bar$delegate.foo' type=@[FlexibleNullability] kotlin.String? origin=ADAPTED_FUNCTION_REFERENCE
       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:FINAL returnType:@[FlexibleNullability] kotlin.String?
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Foo
         correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL [delegated,var]

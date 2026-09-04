@@ -10,7 +10,7 @@ class Foo {
         return receiver.getFoo()
       }
       /* setter = */      local fun(receiver: J, value: @FlexibleNullability String?) {
-        return receiver.setFoo(foo = value)
+        return receiver.setFoo(foo = value) /*~> Unit */
       }
     )
 

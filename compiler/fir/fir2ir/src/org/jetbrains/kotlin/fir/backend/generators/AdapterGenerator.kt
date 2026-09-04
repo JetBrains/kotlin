@@ -405,11 +405,15 @@ class AdapterGenerator(
         adapterFunction: IrFunction,
         isSetter: Boolean,
     ): IrExpression {
-        val type = if (isSetter) {
-            builtins.unitType
+        val firType = if (isSetter) {
+            // Synthetic property setters can have non-Unit return types
+            (firAdaptee as FirProperty).setter?.returnTypeRef?.coneType
         } else {
-            substitutor.substituteOrSelf(firAdaptee.returnTypeRef.coneType).toIrType()
+            firAdaptee.returnTypeRef.coneType
         }
+        val type = firType?.let { substitutor.substituteOrSelf(it).toIrType() } ?: builtins.unitType
+
+
         val irCall = when (adapteeSymbol) {
             is IrConstructorSymbol ->
                 IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, adapteeSymbol)
