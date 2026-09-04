@@ -88,7 +88,7 @@ KtUserType(161,172): 'SealedClass'
 KtNameReferenceExpression(161,172): 'SealedClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SealedClass
@@ -393,7 +393,7 @@ KtUserType(530,539): 'OpenClass'
 KtNameReferenceExpression(530,539): 'OpenClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass

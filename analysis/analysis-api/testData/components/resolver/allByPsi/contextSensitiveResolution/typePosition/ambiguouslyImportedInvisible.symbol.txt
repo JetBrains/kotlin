@@ -97,7 +97,7 @@ KtUserType(110,118): 'MySealed'
 KtNameReferenceExpression(110,118): 'MySealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -160,7 +160,7 @@ KtUserType(151,159): 'MySealed'
 KtNameReferenceExpression(151,159): 'MySealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MySealed

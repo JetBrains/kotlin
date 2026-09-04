@@ -49,7 +49,7 @@ KtUserType(130,137): 'MyClass'
 KtNameReferenceExpression(130,137): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -564,7 +564,7 @@ KtUserType(791,801): 'OtherClass'
 KtNameReferenceExpression(791,801): 'OtherClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass
@@ -690,7 +690,7 @@ KtUserType(863,873): 'OtherClass'
 KtNameReferenceExpression(863,873): 'OtherClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass
@@ -993,7 +993,7 @@ KtUserType(1206,1215): 'OpenClass'
 KtNameReferenceExpression(1206,1215): 'OpenClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass

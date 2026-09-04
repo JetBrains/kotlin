@@ -163,12 +163,34 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
 
     private var myLastDirection: LastDirection = LastDirection.INITIAL
 
-    private fun isStopElement(element: KtElement): Boolean =
-        element is KtNamedFunction && element.isTopLevel && lastDirectionIs(LastDirection.PARENT)
-                || element is KtProperty && element.isTopLevel && lastDirectionIs(LastDirection.PARENT)
-                || (element is KtClassOrObject && lastDirectionIs(LastDirection.PARENT) &&
-                (element.isTopLevel() || element is KtObjectDeclaration && element.isCompanion()))
-                || (element.parent is KtBlockExpression && element.parent.parent is KtScript)
+    private val KtElement.isScriptTopLevelElement: Boolean
+        get() = parent is KtBlockExpression && parent.parent is KtScript
+
+    private val KtElement.isStopElementInValueContext: Boolean
+        get() = lastDirectionIs(LastDirection.PARENT) && when (this) {
+            is KtNamedFunction -> isTopLevel
+            is KtProperty -> isTopLevel
+            is KtClassOrObject -> isTopLevel() || this is KtObjectDeclaration && this.isCompanion()
+            else -> false
+        } || isScriptTopLevelElement
+
+    private val KtElement.isStopElementInTypeContext: Boolean
+        get() = lastDirectionIs(LastDirection.PARENT) && when (this) {
+            is KtNamedFunction -> !this.isLocal
+            is KtProperty -> !this.isLocal
+            is KtClassOrObject,
+            is KtAnonymousInitializer,
+            is KtConstructor<*>,
+                -> true
+            else -> false
+        } || isScriptTopLevelElement
+
+    private val KtElement.isStopElement: Boolean
+        get() = when (contextKind) {
+            LocalLookupContextKind.VALUE -> isStopElementInValueContext
+            LocalLookupContextKind.TYPE -> isStopElementInTypeContext
+            LocalLookupContextKind.VALUE_OR_TYPE -> isStopElementInValueContext || isStopElementInTypeContext
+        }
 
     private fun shouldStopBeforeProcessing(element: KtElement): Boolean =
         element is KtFile && element.elementType !in CODE_FRAGMENTS
@@ -177,7 +199,7 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
      * Given the current element, this function returns the next element we should visit.
      */
     private fun next(element: KtElement): KtElement? {
-        if (isStopElement(element)) return null
+        if (element.isStopElement) return null
 
         myLastDirection = LastDirection.UNKNOWN
         return when (val p = element.parent) {
