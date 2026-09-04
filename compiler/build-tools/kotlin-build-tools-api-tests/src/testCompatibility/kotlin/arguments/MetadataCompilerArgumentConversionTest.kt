@@ -82,7 +82,7 @@ internal class MetadataCompilerArgumentConversionTest : BaseCompilationTest() {
         assumeArgumentSupported()
         for (value in argumentRawValues) {
             val operation = kotlinToolchain.metadata.metadataKlibCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
-                compilerArguments.applyArgumentStrings(expectedArgumentStringsFor(value))
+                compilerArguments.applyCommandLineArguments(expectedArgumentStringsFor(value))
             }.build()
 
             assertEquals(value, getValueString(operation.compilerArguments[argumentKey]))
@@ -94,7 +94,7 @@ internal class MetadataCompilerArgumentConversionTest : BaseCompilationTest() {
     fun <T> MetadataArgumentConfiguration<T>.testNoRawArgumentStrings() {
         assumeArgumentSupported()
         val operation = kotlinToolchain.metadata.metadataKlibCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
-            compilerArguments.applyArgumentStrings(listOf())
+            compilerArguments.applyCommandLineArguments(listOf())
         }.build()
 
         assertEquals(
@@ -127,7 +127,7 @@ internal class MetadataCompilerArgumentConversionTest : BaseCompilationTest() {
             module.sourcesDirectory.resolve("box.kt").writeText("fun box(): String = \"OK\"")
             for (invalidValue in argumentConfig.invalidRawValues) {
                 module.compile(compilationConfigAction = {
-                    it.compilerArguments.applyArgumentStrings(argumentConfig.expectedArgumentStringsFor(invalidValue))
+                    it.compilerArguments.applyCommandLineArguments(argumentConfig.expectedArgumentStringsFor(invalidValue))
                 }) {
                     expectFail()
                     assertLogContainsPatterns(LogLevel.ERROR, Regex(".*${Regex.escape(invalidValue)}.*"))

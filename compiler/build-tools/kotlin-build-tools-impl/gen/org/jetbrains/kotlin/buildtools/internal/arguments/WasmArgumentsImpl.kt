@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.buildtools.`internal`.arguments
 import java.lang.IllegalStateException
 import kotlin.Any
 import kotlin.Boolean
+import kotlin.Deprecated
+import kotlin.DeprecationLevel
 import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
@@ -47,6 +49,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Co
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.WasmTarget
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerArguments
@@ -233,8 +236,23 @@ internal class WasmArgumentsImpl(
     return arguments
   }
 
+  @Deprecated(
+    message = "This method is deprecated. Use applyCommandLineArguments instead.",
+    level = DeprecationLevel.WARNING,
+  )
   override fun applyArgumentStrings(arguments: List<String>) {
     val compilerArgs: KotlinWasmCompilerArguments = parseCommandLineArguments(arguments)
+    collectRestrictedArgViolations(compilerArgs, KotlinWasmCompilerArguments())
+    validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
+    argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }
+    applyCompilerArguments(compilerArgs)
+  }
+
+  @DelicateBuildToolsApi
+  override fun applyCommandLineArguments(arguments: List<String>) {
+    val compilerArgs = toCompilerArguments()
+    parseCommandLineArguments(arguments, compilerArgs, false)
+    handleCustomPluginArguments(this, compilerArgs)
     collectRestrictedArgViolations(compilerArgs, KotlinWasmCompilerArguments())
     validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
     argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }

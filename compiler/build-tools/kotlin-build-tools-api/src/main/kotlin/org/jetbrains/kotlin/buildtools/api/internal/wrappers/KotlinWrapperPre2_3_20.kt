@@ -33,8 +33,10 @@ import kotlin.io.path.Path
  */
 @Suppress("ClassName")
 internal class KotlinWrapperPre2_3_20(
-    private val base: KotlinToolchains,
-) : KotlinToolchains by base {
+    override val base: KotlinToolchains,
+) : KotlinToolchains by base, KotlinToolchainsWrapper {
+
+    override val implClassloader: ClassLoader by lazy { getImplClassloader() }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : KotlinToolchains.Toolchain> getToolchain(type: Class<T>): T = when (type) {
@@ -349,8 +351,18 @@ internal class KotlinWrapperPre2_3_20(
             base.set(key, value)
         }
 
+        @Deprecated(
+            "This method is deprecated. Use applyCommandLineArguments instead.",
+            replaceWith = ReplaceWith("applyCommandLineArguments(arguments)")
+        )
         override fun applyArgumentStrings(arguments: List<String>) {
             base.applyArgumentStrings(arguments)
+        }
+
+        @OptIn(DelicateBuildToolsApi::class)
+        override fun applyCommandLineArguments(arguments: List<String>) {
+            // this will never get called because KotlinWrapperPre2_5_0 will provide this functionality for all lower versions
+            TODO("Not implemented")
         }
     }
 }

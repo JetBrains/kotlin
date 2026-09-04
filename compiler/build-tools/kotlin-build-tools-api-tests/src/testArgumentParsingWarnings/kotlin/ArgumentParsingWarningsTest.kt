@@ -27,13 +27,13 @@ import org.junit.jupiter.api.DisplayName
 @DisplayName("Argument-parsing warnings are reported through the Build Tools API")
 class ArgumentParsingWarningsTest : BaseCompilationTest() {
     @BtaV2StrategyAndPlatformAgnosticCompilationTest
-    @DisplayName("An argument passed multiple times within a single applyArgumentStrings call is reported")
+    @DisplayName("An argument passed multiple times within a single applyCommandLineArguments call is reported")
     @TestMetadata("basic-multimodule-project/module-1")
     fun testArgumentPassedMultipleTimesInOneCallReportsWarning(project: ProjectCreator) {
         project {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-language-version=2.4", "-language-version=2.5"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-language-version=2.4", "-language-version=2.5"))
             }) {
                 assertPassedMultipleTimes("-language-version", "2.4", "2.5")
             }
@@ -41,14 +41,14 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
-    @DisplayName("An argument set via the typed API and then via applyArgumentStrings is reported")
+    @DisplayName("An argument set via the typed API and then via applyCommandLineArguments is reported")
     @TestMetadata("basic-multimodule-project/module-1")
     fun testArgumentSetViaTypedApiThenArgumentStringsReportsWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments[LANGUAGE_VERSION] = KotlinVersion.V2_5
-                it.compilerArguments.applyArgumentStrings(listOf("-language-version=2.4"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-language-version=2.4"))
             }) {
                 assertPassedMultipleTimes("-language-version", "2.5", "2.4")
             }
@@ -56,13 +56,13 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
-    @DisplayName("An argument set via applyArgumentStrings and then via the typed API is reported")
+    @DisplayName("An argument set via applyCommandLineArguments and then via the typed API is reported")
     @TestMetadata("basic-multimodule-project/module-1")
     fun testArgumentSetViaArgumentStringsThenTypedApiReportsWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-language-version=2.4"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-language-version=2.4"))
                 it.compilerArguments[LANGUAGE_VERSION] = KotlinVersion.V2_5
             }) {
                 assertPassedMultipleTimes("-language-version", "2.4", "2.5")
@@ -71,13 +71,13 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
-    @DisplayName("An argument set just once via applyArgumentStrings is not reported")
+    @DisplayName("An argument set just once via applyCommandLineArguments is not reported")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testArgumentSetOnlyViaApplyArgumentStringsReportsNoWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    fun testArgumentSetOnlyViaApplyCommandLineArgumentsReportsNoWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-language-version=2.4"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-language-version=2.4"))
             }) {
                 assertNoPassedMultipleTimesWarnings()
             }
@@ -105,7 +105,7 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
         project {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-Xnot-a-real-flag"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-Xnot-a-real-flag"))
             }) {
                 // an unknown -X flag is not an error, the compilation is expected to succeed
                 assertLogContainsPatternExactlyTimes(
@@ -124,7 +124,7 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
         project {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-not-a-real-flag"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-not-a-real-flag"))
             }) {
                 expectFail()
                 assertLogContainsPatternExactlyTimes(
@@ -143,7 +143,7 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-Xjsr305-annotations=strict"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-Xjsr305-annotations=strict"))
             }) {
                 assertLogContainsPatternExactlyTimes(
                     LogLevel.WARN,
@@ -161,7 +161,7 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
         project {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-Xcontext-receivers"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-Xcontext-receivers"))
             }) {
                 assertLogContainsPatternExactlyTimes(
                     LogLevel.WARN,
@@ -181,7 +181,7 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-Xsuppress-warning=NOTHING_TO_INLINE"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-Xsuppress-warning=NOTHING_TO_INLINE"))
             }) {
                 assertLogContainsSubstringExactlyTimes(
                     LogLevel.WARN,
@@ -200,9 +200,9 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-language-version=2.4"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-language-version=2.4"))
                 it.compilerArguments[LANGUAGE_VERSION] = KotlinVersion.V2_5
-                it.compilerArguments.applyArgumentStrings(listOf("-language-version=2.6"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-language-version=2.6"))
             }) {
                 assertPassedMultipleTimes("-language-version", "2.4", "2.5", "2.6")
             }
@@ -216,8 +216,8 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-language-version=2.4"))
-                it.compilerArguments.applyArgumentStrings(listOf("-language-version=2.5"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-language-version=2.4"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-language-version=2.5"))
                 it.compilerArguments[WERROR] = true
             }) {
                 expectFail()
@@ -227,14 +227,14 @@ class ArgumentParsingWarningsTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
-    @DisplayName("An argument set via two separate applyArgumentStrings calls is reported")
+    @DisplayName("An argument set via two separate applyCommandLineArguments calls is reported")
     @TestMetadata("basic-multimodule-project/module-1")
     fun testArgumentSetViaTwoArgumentStringsCallsReportsWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-language-version=2.4"))
-                it.compilerArguments.applyArgumentStrings(listOf("-language-version=2.5"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-language-version=2.4"))
+                it.compilerArguments.applyCommandLineArguments(listOf("-language-version=2.5"))
             }) {
                 assertPassedMultipleTimes("-language-version", "2.4", "2.5")
             }

@@ -118,6 +118,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.SamConv
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.StringConcatMode
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.WhenExpressionsMode
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.Jsr305
@@ -351,10 +352,19 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
+  @Deprecated(
+    message = "This method is deprecated. Use applyCommandLineArguments instead.",
+    level = DeprecationLevel.WARNING,
+  )
   override fun applyArgumentStrings(arguments: List<String>) {
     val compilerArgs: K2JVMCompilerArguments = parseCommandLineArguments(arguments)
     validateArguments(compilerArgs.errors)?.let { throw CompilerArgumentsParseException(it) }
     applyCompilerArguments(compilerArgs)
+  }
+
+  @DelicateBuildToolsApi
+  override fun applyCommandLineArguments(arguments: List<String>) {
+    error("Will never be called, it's handled in JvmCompilerArgumentsImplV1Adapter")
   }
 
   override fun toArgumentStrings(): List<String> {

@@ -126,6 +126,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.StringConcatMo
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.ValhallaSupportMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.WhenExpressionsMode
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.Jsr305
@@ -461,8 +462,23 @@ internal class JvmCompilerArgumentsImpl(
     return arguments
   }
 
+  @Deprecated(
+    message = "This method is deprecated. Use applyCommandLineArguments instead.",
+    level = DeprecationLevel.WARNING,
+  )
   override fun applyArgumentStrings(arguments: List<String>) {
     val compilerArgs: K2JVMCompilerArguments = parseCommandLineArguments(arguments)
+    collectRestrictedArgViolations(compilerArgs, K2JVMCompilerArguments())
+    validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
+    argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }
+    applyCompilerArguments(compilerArgs)
+  }
+
+  @DelicateBuildToolsApi
+  override fun applyCommandLineArguments(arguments: List<String>) {
+    val compilerArgs = toCompilerArguments()
+    parseCommandLineArguments(arguments, compilerArgs, false)
+    handleCustomPluginArguments(this, compilerArgs)
     collectRestrictedArgViolations(compilerArgs, K2JVMCompilerArguments())
     validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
     argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }
