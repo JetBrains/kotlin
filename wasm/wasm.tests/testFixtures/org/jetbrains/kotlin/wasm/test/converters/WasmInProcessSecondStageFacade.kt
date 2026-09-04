@@ -112,7 +112,7 @@ class WasmInProcessSecondStageFacade {
 
             val outputDir = services.getWasmTestOutputDirectory()
             outputDir.mkdirs()
-            copyJsFilesToOutputDir(context.filteredOutputs.map { it.testServices to it.testModule }, outputDir)
+            copyJsFilesToOutputDir(context.filteredOutputs.map { it.testModule }, outputDir)
 
             return result ?: testInfraError("WasmInProcessSecondStageFacade: groupedBatch produced no Wasm artifact")
         }
@@ -159,7 +159,7 @@ class WasmInProcessSecondStageFacade {
             configuration.libraries = runtimeKlibs + deps.regular.toList() + deps.friend.toList() + libraries + listOf(includedLibrary)
             val outputDir = services.getWasmTestOutputDirectory()
             outputDir.mkdirs()
-            copyJsFilesToOutputDir(testModules.map { services to it }, outputDir)
+            copyJsFilesToOutputDir(testModules, outputDir)
             val klibArtifact = BinaryArtifacts.KLib(File(includedLibrary), configuration.diagnosticsCollector)
             return WasmBackendFacade(services).transform(mainModule, klibArtifact)
                 ?: testInfraError("WasmInProcessSecondStageFacade.doIsolatedInProcess() produced no Wasm artifact")
