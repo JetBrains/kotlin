@@ -529,6 +529,7 @@ class LightTreeRawFirDeclarationBuilder(
                     isInline = calculatedModifiers.isInlineClass()
                     isValue = calculatedModifiers.isValueClass()
                     isFun = calculatedModifiers.isFunctionalInterface()
+                    isRichError = calculatedModifiers.isErrorClass()
                     isExternal = calculatedModifiers.hasExternal()
                 }
 
