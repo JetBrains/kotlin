@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 open class UpgradeCallableReferences(
     val context: LoweringContext,
     val upgradeSamConversions: Boolean = true,
-    val castDispatchReceiver: Boolean = true,
 ) : FileLoweringPass {
 
     override fun lower(irFile: IrFile) {
@@ -473,9 +472,14 @@ open class UpgradeCallableReferences(
                     ).apply {
                         for ([parameter, forwardParameter] in referencedFunction.parameters.zip(forwardOrder)) {
                             val rawArgument = builder.irGet(forwardParameter)
-                            this.arguments[parameter] =
-                                if (!castDispatchReceiver && parameter.kind == IrParameterKind.DispatchReceiver) rawArgument
-                                else rawArgument.implicitCastIfNeededTo(typeSubstitutor.substitute(parameter.type))
+                            // If referencedFunction is a fake override, its dispatch receiver type is some supertype of the containing class.
+                            // We take the conainting class type instead to prevent a crash in synthetic property lowering.
+                            val castType = if (parameter.kind == IrParameterKind.DispatchReceiver) {
+                                referencedFunction.parentAsClass.defaultType
+                            } else {
+                                parameter.type
+                            }
+                            this.arguments[parameter] = rawArgument.implicitCastIfNeededTo(typeSubstitutor.substitute(castType))
                         }
                     }.implicitCastIfNeededTo(expectedReturnType)
                 +irReturn(exprToReturn)
