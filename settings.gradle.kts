@@ -725,11 +725,7 @@ include(
     ":analysis:light-classes-base",
     ":analysis:analysis-api-standalone",
     ":analysis:analysis-api-standalone:analysis-api-standalone-fir",
-    ":analysis:decompiled:decompiler-to-psi",
-    ":analysis:decompiled:decompiler-to-stubs",
-    ":analysis:decompiled:decompiler-to-file-stubs",
-    ":analysis:decompiled:decompiler-js",
-    ":analysis:decompiled:decompiler-native",
+    ":analysis:decompiled:decompiler",
     ":analysis:decompiled:light-classes-for-decompiled",
     ":tools:ide-plugin-dependencies-validator"
 )

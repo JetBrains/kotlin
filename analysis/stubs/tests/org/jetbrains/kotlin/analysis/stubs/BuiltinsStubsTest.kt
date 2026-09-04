@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSour
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
+import org.jetbrains.kotlin.psi.KtPlatformInterface
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.junit.jupiter.api.Test
@@ -23,6 +24,7 @@ import kotlin.io.path.name
 class BuiltinsStubsTest : AbstractAnalysisApiExecutionTest("testData/builtins/stubs") {
     override val configurator: AnalysisApiTestConfigurator = LLSourceLikeTestConfigurator()
 
+    @OptIn(KtPlatformInterface::class)
     @Test
     fun test(testServices: TestServices) {
         val project = testServices.ktTestModuleStructure.project

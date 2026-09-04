@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,8 +9,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.BinaryLightVirtualFile
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.BuiltinsVirtualFileProviderCliImpl
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
-import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProviderCliImpl
+import org.jetbrains.kotlin.psi.KtPlatformInterface
 
 /**
  * In production (IDE & Standalone modes), builtins usually reside in the
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProviderC
  * For `KaBuiltinsModule`, we now create VirtualFiles in the air. This allows us to
  * decompile our builtins in both cases differently. See KT-61757 for the context.
  */
+@OptIn(KtPlatformInterface::class)
 internal class BuiltinsVirtualFileProviderTestImpl() : BuiltinsVirtualFileProvider() {
     private val coreVirtualFileProvider = BuiltinsVirtualFileProviderCliImpl()
 

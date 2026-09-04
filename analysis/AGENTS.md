@@ -89,6 +89,7 @@ For full options, see [test-data-manager-convention](../repo/gradle-build-conven
 - [`analysis-api-impl-base/`](analysis-api-impl-base) - Shared implementation utilities
 - [`low-level-api-fir/`](low-level-api-fir) - K2-specific infrastructure for lazy/incremental analysis
 - [`symbol-light-classes/`](symbol-light-classes) - Java PSI view of Kotlin declarations for interop
+- [`decompiled/decompiler`](decompiled/decompiler) - Decompilers, cls stub builders, and decompiled PSI
 - [`decompiled/light-classes-for-decompiled`](decompiled/light-classes-for-decompiled) - Light classes for decompiled/library code
 - [`test-data-manager/`](test-data-manager) - Infrastructure for managing test data files with variant chains
 

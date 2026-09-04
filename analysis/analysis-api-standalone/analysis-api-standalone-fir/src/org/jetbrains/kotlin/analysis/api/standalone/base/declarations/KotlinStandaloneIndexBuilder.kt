@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.KtPlatformInterface
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.deepCopy
 
@@ -217,6 +218,7 @@ internal class KotlinStandaloneIndexBuilder private constructor(
 
     private val decompiledFilesFromBuiltins = mutableSetOf<IndexableFile>()
 
+    @OptIn(KtPlatformInterface::class)
     fun collectDecompiledFilesFromBuiltins() {
         for (virtualFile in BuiltinsVirtualFileProvider.getInstance().getBuiltinVirtualFiles()) {
             if (cacheService != null) {

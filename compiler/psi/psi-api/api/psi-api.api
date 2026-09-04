@@ -135,6 +135,28 @@ public abstract interface class org/jetbrains/kotlin/KtNodeTypes {
 	public static final field WHILE Lcom/intellij/psi/tree/IElementType;
 }
 
+public final class org/jetbrains/kotlin/analysis/decompiler/konan/KlibMetaFileType : com/intellij/openapi/fileTypes/FileType {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/decompiler/konan/KlibMetaFileType;
+	public fun getCharset (Lcom/intellij/openapi/vfs/VirtualFile;[B)Ljava/lang/String;
+	public fun getDefaultExtension ()Ljava/lang/String;
+	public fun getDescription ()Ljava/lang/String;
+	public fun getIcon ()Ljavax/swing/Icon;
+	public fun getName ()Ljava/lang/String;
+	public fun isBinary ()Z
+	public fun isReadOnly ()Z
+}
+
+public final class org/jetbrains/kotlin/analysis/decompiler/psi/KotlinBuiltInFileType : com/intellij/openapi/fileTypes/FileType {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/decompiler/psi/KotlinBuiltInFileType;
+	public fun getCharset (Lcom/intellij/openapi/vfs/VirtualFile;[B)Ljava/lang/String;
+	public fun getDefaultExtension ()Ljava/lang/String;
+	public fun getDescription ()Ljava/lang/String;
+	public fun getIcon ()Ljavax/swing/Icon;
+	public fun getName ()Ljava/lang/String;
+	public fun isBinary ()Z
+	public fun isReadOnly ()Z
+}
+
 public class org/jetbrains/kotlin/diagnostics/PsiDiagnosticUtils {
 	public fun <init> ()V
 	public static fun atLocation (Lcom/intellij/lang/ASTNode;)Ljava/lang/String;
