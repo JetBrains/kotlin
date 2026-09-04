@@ -16,6 +16,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
@@ -173,6 +174,14 @@ internal class KotlinPlaywrightJsTestFramework(
             nodeExecutable = executable.get(),
             playwrightCli = modules.require("playwright-core/cli.js"),
             ideDebugSessionUrl = frameworkTaskInputs.ideDebugSessionUrl.orNull,
+            onNoChromiumRunnerWhenDebugIsRequested = { declaredRunnersNames ->
+                task.reportDiagnostic(
+                    KotlinToolingDiagnostics.JsBrowserTestDebugRequiresChromiumRunner(
+                        taskPath = task.path,
+                        runnerNames = declaredRunnersNames,
+                    )
+                )
+            },
         )
     }
 

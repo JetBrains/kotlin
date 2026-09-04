@@ -2466,6 +2466,20 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object JsBrowserTestDebugRequiresChromiumRunner : ToolingDiagnosticFactory(
+        predefinedSeverity = FATAL,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(taskPath: String, runnerNames: List<String>) = build {
+            title { "Debugging Kotlin/JS browser tests requires a Chromium browser runner" }
+                .description {
+                    "The '$taskPath' task was launched with debugger. But none of $runnerNames is Chromium."
+                }
+                .solution { "Please configure a chromium() browser runner, or run the tests without a debugger" }
+                .documentationLink(URI("https://kotl.in/new-js-browser-test-dsl"))
+        }
+    }
+
     internal object NoBrowserSpecifiedForJsBrowserTestFramework : ToolingDiagnosticFactory(
         predefinedSeverity = WARNING,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
