@@ -578,13 +578,11 @@ void CallsCheckerPass::loadIgnoredFunctions(Module &M) {
 }
 
 Value *CallsCheckerPass::placeCString(Module &M, StringRef S) {
-  // TODO(KT-87596): built-in LLVM way?
   auto [It, New] = Strings.try_emplace(S, nullptr);
   if (New) {
     auto *V = ConstantDataArray::getString(M.getContext(), S);
-    // TODO(KT-87596): private linkage
     It->second = new GlobalVariable(M, V->getType(), true,
-                                    GlobalValue::InternalLinkage, V);
+                                    GlobalValue::PrivateLinkage, V);
   }
   return It->second;
 }

@@ -1,8 +1,8 @@
 ; OPT: --passes=kotlin-calls-checker
 
-; CHECK: @0 = internal constant [2 x i8] c"f\00"
-; CHECK: @1 = internal constant [17 x i8] c"externalFunction\00"
-; CHECK: @2 = internal constant [24 x i8] c"externalFunctionIgnored\00"
+; CHECK: @0 = private constant [2 x i8] c"f\00"
+; CHECK: @1 = private constant [17 x i8] c"externalFunction\00"
+; CHECK: @2 = private constant [24 x i8] c"externalFunctionIgnored\00"
 
 @value = private unnamed_addr constant [24 x i8] c"no_external_calls_check\00", section "llvm.metadata"
 @llvm.global.annotations = appending global [2 x { ptr, ptr, ptr, i32, ptr }] [

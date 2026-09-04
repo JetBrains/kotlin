@@ -1,7 +1,7 @@
 ; OPT: --passes=kotlin-calls-checker
 
-; CHECK: @0 = internal constant [2 x i8] c"f\00"
-; CHECK: @1 = internal constant [7 x i8] c"sinBad\00"
+; CHECK: @0 = private constant [2 x i8] c"f\00"
+; CHECK: @1 = private constant [7 x i8] c"sinBad\00"
 
 ; sin and llvm.sin.* are both defined in GoodFunctionNames
 

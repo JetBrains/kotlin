@@ -1,19 +1,19 @@
 ; OPT: --passes=kotlin-calls-checker
 
-; CHECK: @0 = internal constant [21 x i8] c"callExternalFunction\00"
-; CHECK: @1 = internal constant [17 x i8] c"externalFunction\00"
-; CHECK: @2 = internal constant [18 x i8] c"callLLVMIntrinsic\00"
-; CHECK: @3 = internal constant [15 x i8] c"llvm.donothing\00"
-; CHECK: @4 = internal constant [36 x i8] c"callRetainAutoreleasedLLVMIntrinsic\00"
-; CHECK: @5 = internal constant [40 x i8] c"llvm.objc.retainAutoreleasedReturnValue\00"
-; CHECK: @6 = internal constant [21 x i8] c"callFunctionFromLoad\00"
-; CHECK: @7 = internal constant [20 x i8] c"callFunctionFromArg\00"
-; CHECK: @8 = internal constant [20 x i8] c"callFunctionFromPhi\00"
-; CHECK: @9 = internal constant [23 x i8] c"callFunctionFromSelect\00"
-; CHECK: @10 = internal constant [21 x i8] c"callFunctionFromCall\00"
-; CHECK: @11 = internal constant [20 x i8] c"callFunctionFromVec\00"
-; CHECK: @12 = internal constant [30 x i8] c"callExternalFunctionWithCasts\00"
-; CHECK: @13 = internal constant [29 x i8] c"callFunctionFromArgWithCasts\00"
+; CHECK: @0 = private constant [21 x i8] c"callExternalFunction\00"
+; CHECK: @1 = private constant [17 x i8] c"externalFunction\00"
+; CHECK: @2 = private constant [18 x i8] c"callLLVMIntrinsic\00"
+; CHECK: @3 = private constant [15 x i8] c"llvm.donothing\00"
+; CHECK: @4 = private constant [36 x i8] c"callRetainAutoreleasedLLVMIntrinsic\00"
+; CHECK: @5 = private constant [40 x i8] c"llvm.objc.retainAutoreleasedReturnValue\00"
+; CHECK: @6 = private constant [21 x i8] c"callFunctionFromLoad\00"
+; CHECK: @7 = private constant [20 x i8] c"callFunctionFromArg\00"
+; CHECK: @8 = private constant [20 x i8] c"callFunctionFromPhi\00"
+; CHECK: @9 = private constant [23 x i8] c"callFunctionFromSelect\00"
+; CHECK: @10 = private constant [21 x i8] c"callFunctionFromCall\00"
+; CHECK: @11 = private constant [20 x i8] c"callFunctionFromVec\00"
+; CHECK: @12 = private constant [30 x i8] c"callExternalFunctionWithCasts\00"
+; CHECK: @13 = private constant [29 x i8] c"callFunctionFromArgWithCasts\00"
 
 define void @knownFunction() {
   ret void
