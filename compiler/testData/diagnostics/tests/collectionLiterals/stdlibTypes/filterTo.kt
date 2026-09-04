@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +CollectionLiterals
 
 fun foo() {
     val x = [1, 2, 3].filterTo(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>) { it % 2 == 0 }

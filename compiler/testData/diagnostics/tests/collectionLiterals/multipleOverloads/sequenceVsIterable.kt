@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
-// LANGUAGE: +CollectionLiterals
 
 fun fooInt(x: Sequence<Int>) { }
 fun fooInt(x: Iterable<Int>) { }

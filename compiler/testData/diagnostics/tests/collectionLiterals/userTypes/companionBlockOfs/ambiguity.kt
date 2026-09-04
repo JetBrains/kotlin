@@ -1,4 +1,4 @@
-// LANGUAGE: +CompanionBlocks +CompanionExtensions +CollectionLiterals
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 // RUN_PIPELINE_TILL: FRONTEND
 
 class A {

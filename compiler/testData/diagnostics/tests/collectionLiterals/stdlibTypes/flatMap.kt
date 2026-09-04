@@ -1,4 +1,3 @@
-// LANGUAGE: +CollectionLiterals
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-86060
 // LANGUAGE_FEATURE_TOGGLED: EagerLambdaAnalysis

@@ -1,4 +1,3 @@
-// LANGUAGE: +CollectionLiterals
 // WITH_STDLIB
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-88681

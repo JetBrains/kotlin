@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +CollectionLiterals
 // ISSUE: KT-88976
 
 data class Box<T>(val x: T)

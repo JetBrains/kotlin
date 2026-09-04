@@ -1,4 +1,3 @@
-// LANGUAGE: +CollectionLiterals
 // ISSUE: KT-84145
 // RUN_PIPELINE_TILL: FRONTEND
 

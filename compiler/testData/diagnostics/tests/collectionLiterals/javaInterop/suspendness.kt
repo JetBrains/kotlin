@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +CollectionLiterals
 // WITH_COROUTINES
 
 // FILE: MainIsNotSuspend.java

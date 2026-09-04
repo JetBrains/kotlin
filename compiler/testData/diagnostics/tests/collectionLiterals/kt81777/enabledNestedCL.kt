@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-76150
-// LANGUAGE: +CollectionLiterals
 
 fun test() {
     <!UNRESOLVED_REFERENCE!>[<!UNRESOLVED_REFERENCE!>[]<!>]<!>

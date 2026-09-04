@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
+// LANGUAGE: -CollectionLiterals
+// LANGUAGE_FEATURE_TOGGLED: CollectionLiteralsBasedAnnotationResolution
 
 import kotlin.reflect.KClass
 
@@ -21,10 +22,10 @@ fun test3() {}
 @Foo([<!CLASS_LITERAL_LHS_NOT_A_CLASS!>Gen<Int>::class<!>])
 fun test4() {}
 
-@Foo(<!ARGUMENT_TYPE_MISMATCH!>[""]<!>)
+@Foo([<!ARGUMENT_TYPE_MISMATCH!>""<!>])
 fun test5() {}
 
-@Foo(<!ARGUMENT_TYPE_MISMATCH!>[Int::class, 1]<!>)
+@Foo([Int::class, <!ARGUMENT_TYPE_MISMATCH!>1<!>])
 fun test6() {}
 
 @Bar

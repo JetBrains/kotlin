@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
+// LANGUAGE: -CollectionLiterals
+// LANGUAGE_FEATURE_TOGGLED: CollectionLiteralsBasedAnnotationResolution
 import kotlin.reflect.KClass
 
 annotation class Foo(
@@ -10,9 +11,9 @@ annotation class Foo(
 )
 
 annotation class Bar(
-        val a: Array<String> = <!INITIALIZER_TYPE_MISMATCH!>[' ']<!>,
+        val a: Array<String> = [<!ARGUMENT_TYPE_MISMATCH!>' '<!>],
         val b: Array<String> = ["", <!EMPTY_CHARACTER_LITERAL!>''<!>],
-        val c: Array<String> = <!INITIALIZER_TYPE_MISMATCH!>[1]<!>
+        val c: Array<String> = [<!ARGUMENT_TYPE_MISMATCH!>1<!>]
 )
 
 annotation class Base(
@@ -24,7 +25,7 @@ annotation class Base(
 
 annotation class Err(
         val a: IntArray = [<!ARGUMENT_TYPE_MISMATCH!>1L<!>],
-        val b: Array<String> = <!INITIALIZER_TYPE_MISMATCH!>[1]<!>
+        val b: Array<String> = [<!ARGUMENT_TYPE_MISMATCH!>1<!>]
 )
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classReference, collectionLiteral, integerLiteral, primaryConstructor,

@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-83160
-// LANGUAGE: +CollectionLiterals
 // FIR_DUMP
 
 class Diff {
