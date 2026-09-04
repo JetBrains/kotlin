@@ -532,7 +532,7 @@ internal class SymbolLightAccessorMethod private constructor(
                 isSuspend = false,
                 isOverridable = accessor.isOverridable(),
                 // An accessor may be private while its property is not (e.g. `var p: IC; private set(value) {}`)
-                isEffectivelyPrivate = accessor.visibility == KaSymbolVisibility.PRIVATE || isEffectivelyPrivate(property),
+                isEffectivelyPrivate = accessor.visibility == KaSymbolVisibility.PRIVATE || property.isEffectivelyPrivate(),
             )
 
             if (!generationResult.isAnyMethodRequired) return
