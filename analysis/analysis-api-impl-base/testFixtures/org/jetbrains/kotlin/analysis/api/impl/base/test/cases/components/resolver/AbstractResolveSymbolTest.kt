@@ -65,6 +65,8 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
             if (mainElement is KtSimpleNameExpression) {
                 appendLine("isImplicitReferenceToCompanion: ${mainElement.isImplicitReferenceToCompanion}")
                 appendLine("contextSensitiveResolutionStatus: ${mainElement.contextSensitiveResolutionStatus}")
+            }
+            if (mainElement is KtNameReferenceExpression) {
                 appendLine("lookupLocally: $localLookup")
             }
 
@@ -106,7 +108,7 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
         symbolAttempt: KaSymbolResolutionAttempt?,
         testServices: TestServices,
     ): Boolean {
-        if (mainElement !is KtSimpleNameExpression) return true
+        if (mainElement !is KtNameReferenceExpression) return true
 
         val localLookup = mainElement.lookupLocally()
         val resolved = symbolAttempt?.successfulSymbols?.singleOrNull()?.psi

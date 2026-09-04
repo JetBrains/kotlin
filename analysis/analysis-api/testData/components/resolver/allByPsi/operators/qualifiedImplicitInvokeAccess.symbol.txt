@@ -265,7 +265,6 @@ KtNameReferenceExpression(209,210): 's'
 KtOperationReferenceExpression(210,212): '!!'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtCallExpression(213,224): 'itself("2")'
@@ -415,7 +414,6 @@ KtNameReferenceExpression(274,288): 'nullableItself'
 KtOperationReferenceExpression(288,290): '!!'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtValueArgumentList(290,295): '("5")'

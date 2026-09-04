@@ -121,7 +121,6 @@ KtNameReferenceExpression(142,159): 'ClientTransaction'
 KtOperationReferenceExpression(160,162): '+='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/ClientTransaction.plusAssign(<dispatch receiver>: one.ClientTransaction, a: kotlin.Int): kotlin.Unit
@@ -148,7 +147,6 @@ KtNameReferenceExpression(170,187): 'ClientTransaction'
 KtOperationReferenceExpression(188,190): '-='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/ClientTransaction.minusAssign(<dispatch receiver>: one.ClientTransaction, b: kotlin.String): kotlin.Unit

@@ -34,7 +34,6 @@ KtPrefixExpression(49,53): '-one'
 KtOperationReferenceExpression(49,50): '-'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
@@ -61,7 +60,6 @@ KtPrefixExpression(73,77): '+one'
 KtOperationReferenceExpression(73,74): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
@@ -85,7 +83,6 @@ KtPrefixExpression(83,118): '!(+(-MyClass().unaryMinus().not()))'
 KtOperationReferenceExpression(83,84): '!'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.not(<dispatch receiver>: MyClass): MyClass
@@ -103,7 +100,6 @@ KtPrefixExpression(85,117): '+(-MyClass().unaryMinus().not())'
 KtOperationReferenceExpression(85,86): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.unaryPlus(<dispatch receiver>: MyClass): MyClass
@@ -121,7 +117,6 @@ KtPrefixExpression(87,116): '-MyClass().unaryMinus().not()'
 KtOperationReferenceExpression(87,88): '-'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass

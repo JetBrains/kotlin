@@ -158,7 +158,6 @@ KtNameReferenceExpression(37,41): 'this'
 KtOperationReferenceExpression(42,43): '-'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.minus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -227,7 +226,6 @@ KtNameReferenceExpression(98,107): 'parameter'
 KtOperationReferenceExpression(108,115): 'myMinus'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int
@@ -263,7 +261,6 @@ KtNameReferenceExpression(145,157): 'newParameter'
 KtOperationReferenceExpression(158,159): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -275,7 +272,6 @@ KtConstantExpression(160,161): '1'
 KtOperationReferenceExpression(162,169): 'myMinus'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /myMinus(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Int

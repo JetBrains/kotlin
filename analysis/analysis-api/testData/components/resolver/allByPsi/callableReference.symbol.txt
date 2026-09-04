@@ -1247,7 +1247,6 @@ KtNameReferenceExpression(1251,1252): 't'
 KtOperationReferenceExpression(1252,1254): '!!'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(1256,1272): 'functionWithType'
@@ -1280,7 +1279,6 @@ KtNameReferenceExpression(1276,1277): 't'
 KtOperationReferenceExpression(1277,1279): '!!'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(1281,1297): 'propertyWithType'
