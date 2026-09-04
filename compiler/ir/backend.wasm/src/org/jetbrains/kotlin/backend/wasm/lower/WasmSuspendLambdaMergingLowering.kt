@@ -142,9 +142,9 @@ internal class WasmSuspendLambdaMergingLowering(val context: WasmBackendContext)
     private fun processCoroutineClass(originalClass: IrClass, irFile: IrFile): ClassReplacement? {
         val doResumeMethod = originalClass.simpleFunctions()
             .firstOrNull { it.origin == DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE }
-            ?: return error("No invoke method for CoroutineImpl found")
+            ?: error("No invoke method for CoroutineImpl found")
 
-        val originalConstructor = originalClass.primaryConstructor ?: return error("No constructor for CoroutineImpl found")
+        val originalConstructor = originalClass.primaryConstructor ?: error("No constructor for CoroutineImpl found")
 
         val extraFields = coroutineClassOwnFields(originalClass)
 
@@ -343,9 +343,9 @@ internal class WasmSuspendLambdaMergingLowering(val context: WasmBackendContext)
             }
             parameters = listOf(selfParam)
 
-            val originalDispatch = originalDoResume.dispatchReceiverParameter ?: return@bridgedFunction
+            val originalDispatch = originalDoResume.dispatchReceiverParameter ?: error("dispatchReceiverParameter for CoroutineImpl.doResume not found")
 
-            val originalBody = originalDoResume.body ?: return@bridgedFunction
+            val originalBody = originalDoResume.body ?: error("body for CoroutineImpl.doResume not found")
 
             val originalExtraFields = coroutineClassOwnFields(originalClass)
             check(originalExtraFields.size == sharedInfo.capturedFields.size) {
