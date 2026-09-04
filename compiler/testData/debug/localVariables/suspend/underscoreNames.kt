@@ -44,7 +44,7 @@ suspend fun box() = foo(A()) { (x_param, _, y_param) ->
 // EXPECTATIONS WASM
 // coroutineHelpers.kt:9 $EmptyContinuation.<get-context>: $<this>:(ref $EmptyContinuation)=(ref $EmptyContinuation) (37, 37)
 // test.kt:14 $SuspendLambda_0.doResume: $<this>:(ref $SuspendLambda_0)=(ref $SuspendLambda_0) (1, 1, 1, 1, 1, 1)
-// test.kt:14 $$box__JsExportAdapterCOROUTINE$$doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $suspendResult:(ref null $kotlin.Any)=null, $tmp:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+// test.kt:14 $$box__JsExportAdapterCOROUTINE$.doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $suspendResult:(ref null $kotlin.Any)=null, $tmp:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 // test.kt:12 $box: $$completion:(ref $SuspendLambda_0)=(ref $SuspendLambda_0) (24, 24)
 // test.kt:8 $A.<init>: $<this>:(ref $A)=(ref $A) (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 // test.kt:12 $box: $$completion:(ref $SuspendLambda_0)=(ref $SuspendLambda_0) (29, 29, 20)
@@ -59,5 +59,5 @@ suspend fun box() = foo(A()) { (x_param, _, y_param) ->
 // test.kt:12 $SuspendFunction1.invoke: $<this>:(ref $SuspendFunction1)=(ref $SuspendFunction1), $p0:(ref $A)=(ref $A), $$completion:(ref $SuspendLambda_0)=(ref $SuspendLambda_0) (29)
 // test.kt:10 $foo: $a:(ref $A)=(ref $A), $block:(ref $SuspendFunction1)=(ref $SuspendFunction1), $$completion:(ref $SuspendLambda_0)=(ref $SuspendLambda_0) (70, 70)
 // test.kt:14 $box: $$completion:(ref $SuspendLambda_0)=(ref $SuspendLambda_0) (1, 1)
-// test.kt:14 $$box__JsExportAdapterCOROUTINE$$doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $suspendResult:(ref $kotlin.String)=(ref $kotlin.String), $tmp:i32=1:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+// test.kt:14 $$box__JsExportAdapterCOROUTINE$.doResume: $self:(ref $SuspendLambda_0)=(ref $SuspendLambda_0), $suspendResult:(ref $kotlin.String)=(ref $kotlin.String), $tmp:i32=1:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Throwable)=null (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 // test.kt:14 $SuspendLambda_0.doResume: $<this>:(ref $SuspendLambda_0)=(ref $SuspendLambda_0) (1)
