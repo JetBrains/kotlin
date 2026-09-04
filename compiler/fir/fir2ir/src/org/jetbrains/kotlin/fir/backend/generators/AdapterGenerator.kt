@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.backend.utils.varargElementType
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
@@ -779,7 +780,10 @@ class AdapterGenerator(
                 shouldCalculateReturnTypesOfFakeOverrides = true
             )
         }?.let {
-            declarationStorage.getIrFunctionSymbol(it) as? IrSimpleFunctionSymbol
+            val fakeOverrideOwnerLookupTag = runIf(it.isSubstitutionOrIntersectionOverride) {
+                it.dispatchReceiverType!!.classLikeLookupTagIfAny
+            }
+            declarationStorage.getIrFunctionSymbol(it, fakeOverrideOwnerLookupTag) as? IrSimpleFunctionSymbol
         }
     }
 
