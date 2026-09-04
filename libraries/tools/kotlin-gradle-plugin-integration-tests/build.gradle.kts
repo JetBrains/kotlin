@@ -88,6 +88,8 @@ dependencies {
     testImplementation(project(":kotlin-gradle-plugin-idea"))
     testImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
     testImplementation(project(":kotlin-gradle-plugin-idea-proto"))
+    // the IDE side of the Kotlin/JS browser debug session, used to drive the session in JsBrowserDebugSessionIT
+    testImplementation(project(":kotlin-gradle-plugin-idea-browser-debug"))
     testImplementation(project(":gradle:kotlin-gradle-ecosystem-plugin"))
     testImplementation(project(":kotlin-gradle-statistics"))
 

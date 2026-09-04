@@ -773,6 +773,14 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = property(PropertyNames.KOTLIN_PLAYWRIGHT_BROWSERS_PATH)
 
     /**
+     * Connection URL of the debug session hosted by the IDE, set when the browser tests are being debugged.
+     *
+     * @see org.jetbrains.kotlin.gradle.idea.debugger.IdeaKotlinJsBrowserDebugSession
+     */
+    val jsIdeDebugSessionUrl: Provider<String>
+        get() = property(PropertyNames.KOTLIN_JS_IDE_DEBUG_SESSION_URL)
+
+    /**
      * Temporary untested workaround for Isolated Project support.
      * Absolutely no stability guarantees. It will most likely not work, or ever work.
      * The only intended purpose is to help prototype IP support in kotlin git KT-88136.
@@ -855,6 +863,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION = property("kotlin.mpp.enablePlatformIntegerCommonization")
         val KOTLIN_JS_KARMA_BROWSERS = property("kotlin.js.browser.karma.browsers")
         val KOTLIN_PLAYWRIGHT_BROWSERS_PATH = property("kotlin.gradle.playwright.browsers.path")
+        val KOTLIN_JS_IDE_DEBUG_SESSION_URL = property("kotlin.internal.js.ideDebugSessionUrl")
         val KOTLIN_BUILD_REPORT_SINGLE_FILE = property("kotlin.build.report.single_file")
         val KOTLIN_BUILD_REPORT_HTTP_URL = property("kotlin.build.report.http.url")
         val KOTLIN_BUILD_REPORT_JSON_DIR = property("kotlin.build.report.json.directory")
