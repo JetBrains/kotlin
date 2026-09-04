@@ -436,13 +436,13 @@ abstract class CompileServiceImplBase(
             CompilerMode.INCREMENTAL_COMPILER -> {
                 val gradleIncrementalArgs = compilationOptions as IncrementalCompilationOptions
                 val gradleIncrementalServicesFacade = servicesFacade
+                val lookupTracker = if (ReportCategory.COMPILER_LOOKUP.code in compilationOptions.reportCategories) {
+                    RemoteLookupTracker(servicesFacade)
+                } else null
 
                 when (targetPlatform) {
                     CompileService.TargetPlatform.JVM -> withIncrementalCompilation(k2PlatformArgs) {
                         doCompile(sessionId, daemonReporter, tracer = null, compilationId = compilationId) { _, _, compilationCanceled ->
-                            val lookupTracker = if (ReportCategory.COMPILER_LOOKUP.code in compilationOptions.reportCategories) {
-                                RemoteLookupTracker(servicesFacade)
-                            } else null
                             execIncrementalCompiler(
                                 k2PlatformArgs as K2JVMCompilerArguments,
                                 gradleIncrementalArgs,
@@ -469,6 +469,7 @@ abstract class CompileServiceImplBase(
                                     compilationResults!!,
                                     gradleIncrementalArgs
                                 ),
+                                lookupTracker,
                                 gradleIncrementalArgs.configurationInputs
                             )
                         }
@@ -484,6 +485,7 @@ abstract class CompileServiceImplBase(
                                     compilationResults!!,
                                     gradleIncrementalArgs
                                 ),
+                                lookupTracker,
                                 gradleIncrementalArgs.configurationInputs
                             )
                         }
@@ -685,6 +687,7 @@ abstract class CompileServiceImplBase(
         incrementalCompilationOptions: IncrementalCompilationOptions,
         compilerMessageCollector: MessageCollector,
         reporter: RemoteBuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+        lookupTracker: LookupTracker? = null,
         configurationInputs: ConfigurationInputs? = null,
     ): ExitCode {
         reporter.startMeasureGc()
@@ -713,6 +716,7 @@ abstract class CompileServiceImplBase(
             scopeExpansion = CompileScopeExpansionMode.ALWAYS,
             modulesApiHistory = modulesApiHistory,
             icFeatures = incrementalCompilationOptions.icFeatures,
+            lookupTrackerDelegate = lookupTracker ?: LookupTracker.DO_NOTHING,
         )
         return try {
             compiler.compile(
