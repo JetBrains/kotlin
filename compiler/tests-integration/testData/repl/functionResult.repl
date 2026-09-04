@@ -1,5 +1,0 @@
->>> @JvmSerializableLambda { 1 + 2 }
-() -> kotlin.Int
->>> val x = @JvmSerializableLambda { "abc" }
->>> x
-() -> kotlin.String

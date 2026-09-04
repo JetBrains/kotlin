@@ -278,7 +278,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         destination: MutableList<String?>,
         supportsK2: T.() -> Boolean
     ) {
-        this?.filter { !it.supportsK2() && it::class.java.canonicalName != CLICompiler.SCRIPT_PLUGIN_REGISTRAR_NAME }
+        this?.filter { !it.supportsK2() }
             ?.mapTo(destination) { it::class.qualifiedName }
     }
 

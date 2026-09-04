@@ -117,11 +117,9 @@ Tests that live inside the compiler tree but exercise scripting/REPL. Mixed fron
 
 | Path | Class | Frontend | Disposition |
 |---|---|---|---|
-| `compiler/tests-integration/tests/.../codegen/ScriptGenTest.kt` | `ScriptGenTest` | K1 | REMOVE |
 | `compiler/tests-integration/tests/.../codegen/` | `CustomScriptCodegenTest` (abstract) | both | KEEP (test infra) |
 | `compiler/tests-integration/tests/.../codegen/` | `FirLightTreeCustomScriptCodegenTest` | K2 LT | KEEP, MOVE → `plugins/scripting/scripting-tests` |
 | `compiler/tests-integration/tests/.../codegen/` | `FirPsiCustomScriptCodegenTest` | K2 (PSI variant) | KEEP, MOVE → `plugins/scripting/scripting-tests` |
-| `compiler/tests-integration/tests/.../cli/jvm/repl/GenericReplTest.kt` | `GenericReplTest` | K1 | REMOVE (with `cli-base/repl/*`) |
 | `compiler/tests-integration/tests/.../cli/LauncherScriptTest.kt` | `LauncherScriptTest` | both | KEEP (CLI launcher integration) |
 | `compiler/psi/psi-impl/tests/.../psi/CustomPsiTest.kt` (`testScriptFunctionDeclaration` etc.) | K1 PSI script parse cases | K1 | REMOVE (with K1) |
 | `compiler/daemon/daemon-tests/test/.../CompilerDaemonTest`, `CompilerApiTest` | mixed daemon tests | K1 (mostly) | AUDIT — drop REPL-specific; keep general daemon |
@@ -158,13 +156,12 @@ Tests that live inside the compiler tree but exercise scripting/REPL. Mixed fron
 | `compiler/testData/codegen/boxJvm/script/` (5+ files) | box JVM script | mixed | AUDIT, likely KEEP |
 | `compiler/testData/diagnostics/tests/script/` (30+ files) | FIR diagnostics | K2 | KEEP |
 | `compiler/testData/diagnostics/tests/scripts/` | potential duplicate path | check | VERIFY |
-| `compiler/tests-integration/testData/repl/` (~30 dirs) | K1 REPL fixtures | K1 | REMOVE |
+| `compiler/tests-integration/testData/repl/` | K1 REPL fixtures | K1 | **REMOVED** (50 files) |
 | `compiler/tests-integration/testData/integration/smoke/script*` (scriptException, scriptDashedArgs, scriptFlushBeforeShutdown) | CLI smoke | both | KEEP |
 | `compiler/psi/psi-impl/testData/psi/script/` (~17 files) | K1 PSI parse fixtures | K1 | REMOVE |
 | `compiler/psi/psi-impl/testData/psi/repl/` (1 file) | K1 PSI REPL fixture | K1 | REMOVE |
 
 ### Notes
 
-- **REPL test data tail** (`tests-integration/testData/repl/`, `GenericReplTest`) is the biggest single removal block.
 - **MOVE candidates**: `FirLightTreeCustomScriptCodegenTest`, `FirPsiCustomScriptCodegenTest`, and parts of `testData/codegen/scriptCustom/` exercise the scripting plugin's public surface — natural home is `plugins/scripting/scripting-tests`, not `compiler/tests-integration`.
 - After K1 retires, `psi/psi-impl/testData/psi/script,repl/` can go alongside the `KtScript` parser test cases (if the PSI `KtScript` itself goes — open).
