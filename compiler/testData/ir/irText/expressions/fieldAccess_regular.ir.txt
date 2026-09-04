@@ -126,17 +126,69 @@ FILE fqName:<root> fileName:/main.kt
         receiver: GET_VAR 'o: <root>.OtherImpl declared in <root>.testNonStatic' type=<root>.OtherImpl origin=null
         value: CONST Int type=kotlin.Int value=1
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        PROPERTY_REFERENCE 'public final f: kotlin.Int declared in <root>.Base' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Base' getter=null setter=null type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
-          ARG 1: GET_VAR 'b: <root>.Base declared in <root>.testNonStatic' type=<root>.Base origin=null
+        RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='public final f: kotlin.Int declared in <root>.Base'
+          bound receiver: GET_VAR 'b: <root>.Base declared in <root>.testNonStatic' type=<root>.Base origin=null
+          getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:f visibility:local modality:FINAL returnType:kotlin.Int
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Base
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun f (receiver: <root>.Base): kotlin.Int declared in <root>.testNonStatic'
+                GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Int origin=null
+                  receiver: GET_VAR 'receiver: <root>.Base declared in <root>.testNonStatic.f' type=<root>.Base origin=null
+          setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:f visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Base
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int
+            BLOCK_BODY
+              SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Unit origin=null
+                receiver: GET_VAR 'receiver: <root>.Base declared in <root>.testNonStatic.f' type=<root>.Base origin=null
+                value: GET_VAR 'value: kotlin.Int declared in <root>.testNonStatic.f' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        PROPERTY_REFERENCE 'public final f: kotlin.Int declared in <root>.Derived' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Derived' getter=null setter=null type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
-          ARG 1: GET_VAR 'd: <root>.Derived declared in <root>.testNonStatic' type=<root>.Derived origin=null
+        RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='public final f: kotlin.Int declared in <root>.Derived'
+          bound receiver: GET_VAR 'd: <root>.Derived declared in <root>.testNonStatic' type=<root>.Derived origin=null
+          getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:f visibility:local modality:FINAL returnType:kotlin.Int
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Derived
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun f (receiver: <root>.Derived): kotlin.Int declared in <root>.testNonStatic'
+                GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Derived' type=kotlin.Int origin=null
+                  receiver: GET_VAR 'receiver: <root>.Derived declared in <root>.testNonStatic.f' type=<root>.Derived origin=null
+          setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:f visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Derived
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int
+            BLOCK_BODY
+              SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Derived' type=kotlin.Unit origin=null
+                receiver: GET_VAR 'receiver: <root>.Derived declared in <root>.testNonStatic.f' type=<root>.Derived origin=null
+                value: GET_VAR 'value: kotlin.Int declared in <root>.testNonStatic.f' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        PROPERTY_REFERENCE 'public final f declared in <root>.Impl' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Impl' getter=null setter=null type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
-          ARG 1: GET_VAR 'i: <root>.Impl declared in <root>.testNonStatic' type=<root>.Impl origin=null
+        RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='public final f declared in <root>.Impl'
+          bound receiver: GET_VAR 'i: <root>.Impl declared in <root>.testNonStatic' type=<root>.Impl origin=null
+          getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:f visibility:local modality:FINAL returnType:kotlin.Int
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Impl
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun f (receiver: <root>.Impl): kotlin.Int declared in <root>.testNonStatic'
+                GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Impl' type=kotlin.Int origin=null
+                  receiver: GET_VAR 'receiver: <root>.Impl declared in <root>.testNonStatic.f' type=<root>.Impl origin=null
+          setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:f visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Impl
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int
+            BLOCK_BODY
+              SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Impl' type=kotlin.Unit origin=null
+                receiver: GET_VAR 'receiver: <root>.Impl declared in <root>.testNonStatic.f' type=<root>.Impl origin=null
+                value: GET_VAR 'value: kotlin.Int declared in <root>.testNonStatic.f' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        PROPERTY_REFERENCE 'public final f declared in <root>.OtherImpl' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.OtherImpl' getter=null setter=null type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
-          ARG 1: GET_VAR 'o: <root>.OtherImpl declared in <root>.testNonStatic' type=<root>.OtherImpl origin=null
+        RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='public final f declared in <root>.OtherImpl'
+          bound receiver: GET_VAR 'o: <root>.OtherImpl declared in <root>.testNonStatic' type=<root>.OtherImpl origin=null
+          getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:f visibility:local modality:FINAL returnType:kotlin.Int
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.OtherImpl
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun f (receiver: <root>.OtherImpl): kotlin.Int declared in <root>.testNonStatic'
+                GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.OtherImpl' type=kotlin.Int origin=null
+                  receiver: GET_VAR 'receiver: <root>.OtherImpl declared in <root>.testNonStatic.f' type=<root>.OtherImpl origin=null
+          setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:f visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.OtherImpl
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int
+            BLOCK_BODY
+              SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.OtherImpl' type=kotlin.Unit origin=null
+                receiver: GET_VAR 'receiver: <root>.OtherImpl declared in <root>.testNonStatic.f' type=<root>.OtherImpl origin=null
+                value: GET_VAR 'value: kotlin.Int declared in <root>.testNonStatic.f' type=kotlin.Int origin=null
   FUN name:testStatic visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
@@ -148,6 +200,24 @@ FILE fqName:<root> fileName:/main.kt
       SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:kotlin.Int visibility:public [static] declared in <root>.Base' type=kotlin.Unit superQualifierSymbol=<root>.Derived origin=EQ
         value: CONST Int type=kotlin.Int value=1
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        PROPERTY_REFERENCE 'public final s: kotlin.Int declared in <root>.Base' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:kotlin.Int visibility:public [static] declared in <root>.Base' getter=null setter=null type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+        RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='public final s: kotlin.Int declared in <root>.Base'
+          getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:s visibility:local modality:FINAL returnType:kotlin.Int
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun s (): kotlin.Int declared in <root>.testStatic'
+                GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:kotlin.Int visibility:public [static] declared in <root>.Base' type=kotlin.Int origin=null
+          setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:s visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
+            BLOCK_BODY
+              SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:kotlin.Int visibility:public [static] declared in <root>.Base' type=kotlin.Unit origin=null
+                value: GET_VAR 'value: kotlin.Int declared in <root>.testStatic.s' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        PROPERTY_REFERENCE 'public final s: kotlin.Int declared in <root>.Derived' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:kotlin.Int visibility:public [static] declared in <root>.Derived' getter=null setter=null type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+        RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='public final s: kotlin.Int declared in <root>.Derived'
+          getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:s visibility:local modality:FINAL returnType:kotlin.Int
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun s (): kotlin.Int declared in <root>.testStatic'
+                GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:kotlin.Int visibility:public [static] declared in <root>.Derived' type=kotlin.Int origin=null
+          setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:s visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
+            BLOCK_BODY
+              SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:kotlin.Int visibility:public [static] declared in <root>.Derived' type=kotlin.Unit origin=null
+                value: GET_VAR 'value: kotlin.Int declared in <root>.testStatic.s' type=kotlin.Int origin=null

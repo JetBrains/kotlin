@@ -87,12 +87,6 @@ class CallAndReferenceGenerator(
             )
         }
 
-        // val x by y ->
-        //   val `x$delegate` = y
-        //   val x get() = `x$delegate`.getValue(this, ::x)
-        // The reference here (like the rest of the accessor) has DefaultAccessor source kind.
-        val isForDelegate = callableReferenceAccess.source?.kind is KtFakeSourceElementKind.DelegatedPropertyAccessor
-        val origin = if (isForDelegate) IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE else null
         return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
 
             fun FirCallableSymbol<*>.toSymbolForCall(): IrSymbol? {
@@ -160,16 +154,13 @@ class CallAndReferenceGenerator(
             fun convertReferenceToField(fieldSymbol: FirFieldSymbol): IrExpression {
                 val irPropertySymbol = fieldSymbol.toSymbolForCall() as IrPropertySymbol
                 val irFieldSymbol = declarationStorage.findBackingFieldOfProperty(irPropertySymbol)!!
-                return IrPropertyReferenceImpl(
-                    startOffset, endOffset, type,
+                return adapterGenerator.generateRichPropertyReferenceForField(
+                    callableReferenceAccess,
+                    type,
+                    explicitReceiverExpression,
                     irPropertySymbol,
-                    typeArgumentsCount = 0,
-                    field = irFieldSymbol,
-                    getter = null,
-                    setter = null,
-                    origin
+                    irFieldSymbol,
                 )
-                    .applyReceiversAndArguments(callableReferenceAccess, firSymbol, explicitReceiverExpression)
             }
 
             fun convertReferenceToFunction(functionSymbol: FirFunctionSymbol<*>): IrExpression? {
