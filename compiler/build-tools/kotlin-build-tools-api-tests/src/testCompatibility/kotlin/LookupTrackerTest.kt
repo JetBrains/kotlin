@@ -24,23 +24,19 @@ import java.nio.file.Paths
 
 class LookupTrackerTest : BaseCompilationTest() {
 
-    private fun assumeSupportsLookups(
-        project: Project,
-        kotlinToolchains: KotlinToolchains,
-        executionPolicy: ExecutionPolicy,
+    private fun Project.assumeSupportsLookups(
         incremental: Boolean,
     ) {
-        assumeFalse(project is MetadataProject)
-        val currentKotlinVersion = KotlinToolingVersion(kotlinToolchains.getCompilerVersion())
-        if (project !is JvmProject) {
+        assumeFalse(this is MetadataProject)
+        val currentKotlinVersion = KotlinToolingVersion(kotlinToolchain.getCompilerVersion())
+        if (this !is JvmProject) {
             assumeTrue(
                 currentKotlinVersion >= if (incremental) KotlinToolingVersion(2, 5, 0, "snapshot")
                 else KotlinToolingVersion(2, 4, 20, "snapshot")
-
             )
         } else {
             assumeTrue(
-                currentKotlinVersion >= when (executionPolicy) {
+                currentKotlinVersion >= when (defaultStrategyConfig) {
                     is ExecutionPolicy.InProcess if incremental -> KotlinToolingVersion(2, 3, 0, null)
                     is ExecutionPolicy.InProcess -> KotlinToolingVersion(2, 3, 20, null)
                     is ExecutionPolicy.WithDaemon -> KotlinToolingVersion(2, 3, 20, null)
@@ -53,7 +49,7 @@ class LookupTrackerTest : BaseCompilationTest() {
     @BtaV2StrategyAndPlatformAgnosticCompilationTest
     fun lookupsNonIncremental(project: ProjectCreator) {
         project {
-            assumeSupportsLookups(this, kotlinToolchain, defaultStrategyConfig, incremental = false)
+            assumeSupportsLookups(incremental = false)
             val module1 = module("basic-multimodule-project/module-1")
             var lookupRecorded = false
             val lookupTracker = object : CompilerLookupTracker {
@@ -82,7 +78,7 @@ class LookupTrackerTest : BaseCompilationTest() {
     @BtaV2StrategyAndPlatformAgnosticCompilationTest
     fun lookupsIncremental(project: ProjectCreator) {
         project {
-            assumeSupportsLookups(this, kotlinToolchain, defaultStrategyConfig, incremental = true)
+            assumeSupportsLookups(incremental = true)
             val module1 = module("basic-multimodule-project/module-1")
             var lookupRecorded = false
             val lookupTracker = object : CompilerLookupTracker {
