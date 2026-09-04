@@ -69,9 +69,10 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
         for (function in irClass.functions) {
             when {
                 /**
-                 * 1) They are plain abstract interface functions, in which case we leave them:
+                 * 1) They are plain abstract interface functions or static/companion-block functions, in which case we leave them:
                  */
-                function.modality == Modality.ABSTRACT ->
+                function.modality == Modality.ABSTRACT ||
+                        (function.isStatic && function.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS) ->
                     continue
 
                 /**
