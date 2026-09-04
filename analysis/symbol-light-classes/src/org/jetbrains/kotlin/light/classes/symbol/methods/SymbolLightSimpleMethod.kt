@@ -249,7 +249,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
             if (staticsFromCompanion && !functionSymbol.hasJvmStaticAnnotation()) return
 
             val hasJvmNameAnnotation = functionSymbol.hasJvmNameAnnotation()
-            val exposeBoxedMode = jvmExposeBoxedMode(functionSymbol)
+            val exposeBoxedMode = functionSymbol.jvmExposeBoxedMode()
             val hasValueClassInReturnType = hasValueClassInReturnType(functionSymbol)
 
             val isNonMaterializableValueClassFunction = !suppressValueClass &&

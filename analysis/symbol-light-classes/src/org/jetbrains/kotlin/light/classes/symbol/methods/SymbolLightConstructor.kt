@@ -120,7 +120,7 @@ internal class SymbolLightConstructor private constructor(
 
                 if (isHiddenOrSynthetic(constructor)) continue
 
-                val exposeBoxedMode = jvmExposeBoxedMode(constructor)
+                val exposeBoxedMode = constructor.jvmExposeBoxedMode()
                 createMethodsJvmOverloadsAware(
                     declaration = constructor,
                     methodIndexBase = METHOD_INDEX_BASE,
@@ -161,7 +161,7 @@ internal class SymbolLightConstructor private constructor(
                         )
                     }
 
-                    jvmExposeBoxedMode(primaryConstructor) != JvmExposeBoxedMode.NONE && !isEffectivelyPrivate(primaryConstructor) -> {
+                    primaryConstructor.jvmExposeBoxedMode() != JvmExposeBoxedMode.NONE && !isEffectivelyPrivate(primaryConstructor) -> {
                         result += lightClass.noArgConstructor(
                             primaryConstructor = primaryConstructor,
                             isJvmExposedBoxed = true,

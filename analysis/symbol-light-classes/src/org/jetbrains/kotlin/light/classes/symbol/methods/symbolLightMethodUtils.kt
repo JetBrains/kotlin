@@ -37,7 +37,7 @@ internal enum class JvmExposeBoxedMode {
 }
 
 /**
- * [JvmExposeBoxedMode] mode for a [callableSymbol].
+ * Computes [JvmExposeBoxedMode] for this declaration.
  *
  * Note: it doesn't work properly for property accessors.
  *
@@ -45,17 +45,17 @@ internal enum class JvmExposeBoxedMode {
  * @see hasJvmExposeBoxedAnnotation
  */
 context(_: KaSession)
-internal fun jvmExposeBoxedMode(callableSymbol: KaCallableSymbol): JvmExposeBoxedMode {
-    if (callableSymbol.hasJvmExposeBoxedAnnotation()) {
+internal fun KaCallableSymbol.jvmExposeBoxedMode(): JvmExposeBoxedMode {
+    if (hasJvmExposeBoxedAnnotation()) {
         return JvmExposeBoxedMode.EXPLICIT
     }
 
-    val containingClass = callableSymbol.containingDeclaration as? KaClassSymbol
+    val containingClass = containingDeclaration as? KaClassSymbol
     if (containingClass != null && JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_CLASS_ID in containingClass.annotations) {
         return JvmExposeBoxedMode.IMPLICIT
     }
 
-    val module = containingClass?.containingModule ?: callableSymbol.containingModule
+    val module = containingClass?.containingModule ?: this.containingModule
     val isFeatureEnabled = when (module) {
         is KaSourceModule -> module.languageVersionSettings.getFlag(JvmAnalysisFlags.implicitJvmExposeBoxed)
         is KaScriptModule -> module.languageVersionSettings.getFlag(JvmAnalysisFlags.implicitJvmExposeBoxed)
