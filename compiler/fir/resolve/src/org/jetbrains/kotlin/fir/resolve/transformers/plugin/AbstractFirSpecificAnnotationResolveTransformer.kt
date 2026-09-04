@@ -151,7 +151,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
                 name = calleeReference.name
                 resolvedSymbol = symbol
             }
-            coneTypeOrNull = enumClassLookupTag?.let { ConeClassLikeTypeImpl(it, [], isMarkedNullable = false) }
+            coneTypeOrNull = enumClassLookupTag?.let { ConeClassLikeTypeImpl(it, typeArguments = [], isMarkedNullable = false) }
         }
     }
 
