@@ -88,7 +88,6 @@ projectTests {
         ),
         javaLauncher = JdkMajorVersion.JDK_17_0,
         maxHeapSize = testMaxHeapSizeLarge,
-        garbageCollector = GarbageCollector.G1,
     ) {
         dependsOn(":dist")
         dependsOn(":kotlin-stdlib:compileKotlinWasmJs")
