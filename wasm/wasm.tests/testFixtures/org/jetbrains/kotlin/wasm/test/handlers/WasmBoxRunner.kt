@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.model.WasmFolderBinaryArtifact
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.services.sourceProviders.hasBoxMethod
 import java.io.File
 
 internal fun WasmCompilerResult.writeTo(outputDir: File, outputFilenameBase: String, debugMode: DebugMode, mode: String = "") {
@@ -132,7 +133,7 @@ open class WasmFolderGroupingStageBoxRunner(
     override fun shouldUseBoxExportMode(): Boolean =
         firstNonGroupingTestServices.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true) &&
                 RUN_UNIT_TESTS !in firstNonGroupingTestServices.moduleStructure.allDirectives &&
-                hasBoxMethod(testServices.groupingStageInputs.first())
+                testServices.groupingStageInputs.first().hasBoxMethod()
 
     override fun runTestCode(
         artifact: BinaryArtifacts.Wasm,
