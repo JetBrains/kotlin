@@ -1,4 +1,4 @@
-// COMPILER_PLUGIN: allopen-compiler-plugin.jar annotation=AllOpen
+// COMPILER_PLUGIN: org.jetbrains.kotlin.allopen allopen-compiler-plugin.jar annotation=AllOpen
 
 annotation class AllOpen
 

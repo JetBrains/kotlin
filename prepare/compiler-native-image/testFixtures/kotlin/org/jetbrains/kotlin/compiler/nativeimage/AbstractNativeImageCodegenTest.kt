@@ -200,7 +200,6 @@ abstract class AbstractNativeImageCodegenTest {
 
         private val MULTI_FILE_MARKER = Regex("""(?m)^// FILE:""")
         private val HELPERS_IMPORT = Regex("""(?m)^import helpers\.""")
-        private val LOADED_PLUGINS = Regex("""(?i)loading bundled compiler plugin '([^']+)'""")
 
         private fun prepareSource(source: String): String {
             val transformers = listOf(

@@ -1,4 +1,4 @@
-// COMPILER_PLUGIN: noarg-compiler-plugin.jar annotation=NoArg
+// COMPILER_PLUGIN: org.jetbrains.kotlin.noarg noarg-compiler-plugin.jar annotation=NoArg
 // FULL_JDK
 
 annotation class NoArg

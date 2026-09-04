@@ -1,0 +1,28 @@
+java.*
+# we can't preserve the whole `kotlin.*` because of the bug in GraalVM
+# https://github.com/oracle/graal/issues/13990
+kotlin
+kotlin.collections
+kotlin.jvm.internal
+kotlin.ranges
+kotlin.text
+kotlin.sequences
+# using `org,jetbrains.kotlin.*` significantly increases the size of the image
+# because we're using the embedded Kotlin compiler
+# thus, we're trying to preserve only the 'compiler' packages that are used by
+# plugins
+org.jetbrains.kotlin
+org.jetbrains.kotlin.backend.*
+org.jetbrains.kotlin.cli.*
+org.jetbrains.kotlin.config.*
+org.jetbrains.kotlin.contracts.*
+org.jetbrains.kotlin.compiler.*
+org.jetbrains.kotlin.descriptors.*
+org.jetbrains.kotlin.diagnostics.*
+org.jetbrains.kotlin.fir.*
+org.jetbrains.kotlin.ir.*
+org.jetbrains.kotlin.load.*
+org.jetbrains.kotlin.name.*
+org.jetbrains.kotlin.platform.*
+org.jetbrains.kotlin.types.*
+org.jetbrains.kotlin.util.*
