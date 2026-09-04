@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.targetPlatformProvider
 import org.jetbrains.kotlin.platform.wasm.isWasmWasi
 import org.jetbrains.kotlin.test.isSingleTestBatch
+import org.jetbrains.kotlin.test.services.sourceProviders.hasBoxMethod
 import org.jetbrains.kotlin.wasm.test.converters.WasmBackendFacade
 import org.jetbrains.kotlin.wasm.test.converters.WasmInProcessSecondStageFacade
 
@@ -57,7 +58,7 @@ open class WasmCompilationSetsGroupingStageBoxRunner(
         val isSingleTestBatch = testServices.isSingleTestBatch()
         return isSingleTestBatch &&
                 RUN_UNIT_TESTS !in firstNonGroupingTestServices.moduleStructure.allDirectives &&
-                hasBoxMethod(inputs.first())
+                inputs.first().hasBoxMethod()
     }
 
     override fun runTestCode(

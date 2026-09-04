@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.test.services.AssertionsService
 import org.jetbrains.kotlin.test.services.BatchingPackageInserter.Companion.computePackage
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.KotlinTestInfo
+import org.jetbrains.kotlin.test.services.SourceFilePreprocessor
+import org.jetbrains.kotlin.test.services.SourceFileProvider
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.wasm.test.blackbox.computeProxyLauncherClassName
@@ -981,6 +983,23 @@ class WasmGroupedStageBoxRunnerAttributionTest {
         assertTrue("malformed structured result protocol line" in message, message)
     }
 
+    private class IdentitySourceFileProvider : SourceFileProvider() {
+        override val preprocessors: List<SourceFilePreprocessor> = emptyList()
+
+        override fun getKotlinSourceDirectoryForModule(module: TestModule): File = error("Not used in this test")
+
+        override fun getJavaSourceDirectoryForModule(module: TestModule): File = error("Not used in this test")
+
+        override fun getAdditionalFilesDirectoryForModule(module: TestModule): File = error("Not used in this test")
+
+        override fun getContentOfSourceFile(
+            testFile: TestFile,
+            preprocessorFilter: ((SourceFilePreprocessor) -> Boolean)?,
+        ): String = testFile.originalContent
+
+        override fun getOrCreateRealFileForSourceFile(testFile: TestFile): File = error("Not used in this test")
+    }
+
     private class GroupedTest(
         methodName: String,
         moduleStructure: TestModuleStructure = SingleBoxFileModuleStructure,
@@ -999,6 +1018,7 @@ class WasmGroupedStageBoxRunnerAttributionTest {
             testServices = TestServices().apply {
                 register(KotlinTestInfo::class, testInfo)
                 register(TestModuleStructure::class, moduleStructure)
+                register(SourceFileProvider::class, IdentitySourceFileProvider())
             },
             catchingExecutor = { _, block ->
                 try {
