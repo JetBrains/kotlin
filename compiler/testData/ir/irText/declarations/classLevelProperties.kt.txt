@@ -32,7 +32,10 @@ class C {
     get(): Int {
       return getValue<Int>(/* <this> = <this>.#test7$delegate, */ thisRef = <this>, property = KProperty1<C, Int>(
         /* bound = */ [],
-        /* getter = */        local fun(p0: C): Int      )
+        /* getter = */        local fun(p0: C): Int {
+          return p0.<get-test7>()
+        }
+      )
 )
     }
 
@@ -41,13 +44,25 @@ class C {
     get(): Int {
       return getValue<Int, Int>(/* <this> = <this>.#test8$delegate, */ thisRef = <this>, property = KMutableProperty1<C, Int>(
         /* bound = */ [],
-        /* getter = */        local fun(p0: C): Int        /* setter = */        local fun(p0: C, value: Int)      )
+        /* getter = */        local fun(p0: C): Int {
+          return p0.<get-test8>()
+        }
+        /* setter = */        local fun(p0: C, value: Int) {
+          p0.<set-test8>(<set-?> = value)
+        }
+      )
 )
     }
     set(<set-?>: Int) {
       return setValue<Int>(/* <this> = <this>.#test8$delegate, */ thisRef = <this>, property = KMutableProperty1<C, Int>(
         /* bound = */ [],
-        /* getter = */        local fun(p0: C): Int        /* setter = */        local fun(p0: C, value: Int)      )
+        /* getter = */        local fun(p0: C): Int {
+          return p0.<get-test8>()
+        }
+        /* setter = */        local fun(p0: C, value: Int) {
+          p0.<set-test8>(<set-?> = value)
+        }
+      )
 , value = <set-?>)
     }
 

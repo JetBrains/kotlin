@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -146,7 +147,10 @@ class AdapterGenerator(
         val boundReceiver: IrExpression? get() = boundDispatchReceiver ?: boundExtensionReceiver
         val hasBoundReceiver: Boolean get() = boundDispatchReceiver != null || boundExtensionReceiver != null
 
-        val isForDelegate = callableReferenceAccess.source?.kind is KtFakeSourceElementKind.DelegatedPropertyAccessor
+        val origin = runIf(callableReferenceAccess.source?.kind is KtFakeSourceElementKind.DelegatedPropertyAccessor) {
+            IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE
+        }
+        val isForLocalDelegate = firAdaptee.symbol.let { it is FirLocalPropertySymbol && it.delegate != null }
 
         private fun findBoundReceiver(
             explicitReceiverExpression: IrExpression?,
@@ -219,7 +223,7 @@ class AdapterGenerator(
                         createAdapteeCallForCallableReference(it, adapterFunction, isSetter = true)
                     })
                 },
-                origin = runIf(isForDelegate) { IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE },
+                origin = context.origin,
             ).apply { bindValues() }
         }
     }
@@ -271,7 +275,7 @@ class AdapterGenerator(
     ): IrSimpleFunction {
         val irAdapterFunction = createAdapterFunctionForCallableReference(isSetter)
 
-        if (!isForDelegate) {
+        if (!isForLocalDelegate) {
             irAdapterFunction.body = IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                 val irCall = createCall(irAdapterFunction)
                 if (isSetter || adaptedType.arguments.last().typeOrNull?.isUnit() == true) {

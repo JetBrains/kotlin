@@ -45,6 +45,11 @@ FILE fqName:<root> fileName:/delegateForExtPropertyInClass.kt
                 getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:prop visibility:local modality:FINAL returnType:kotlin.Int
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.F
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p1 index:1 type:<root>.F.A
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun prop (p0: <root>.F, p1: <root>.F.A): kotlin.Int declared in <root>.F.<get-prop>'
+                      CALL 'public final fun <get-prop> (<this>: <root>.F.A): kotlin.Int declared in <root>.F' type=kotlin.Int origin=null
+                        ARG <this>(index:0): GET_VAR 'p0: <root>.F declared in <root>.F.<get-prop>.prop' type=<root>.F origin=null
+                        ARG <this>(index:1): GET_VAR 'p1: <root>.F.A declared in <root>.F.<get-prop>.prop' type=<root>.F.A origin=null
     CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.F.A
       CONSTRUCTOR visibility:public returnType:<root>.F.A [primary]

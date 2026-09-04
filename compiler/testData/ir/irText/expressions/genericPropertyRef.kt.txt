@@ -12,7 +12,10 @@ val <T : Any?> Value<T>.additionalText: Int /* by */
   get(): Int {
     return #additionalText$delegate.getValue(t = <this>, p = KProperty1<Value<T>, Int>(
       /* bound = */ [],
-      /* getter = */      local fun(p0: Value<T>): Int    )
+      /* getter = */      local fun(p0: Value<T>): Int {
+        return <get-additionalText><T>(/* <this> = p0 */)
+      }
+    )
 )
   }
 
@@ -30,7 +33,10 @@ val <T : Any?> Value<T>.additionalValue: Int /* by */
   get(): Int {
     return #additionalValue$delegate.getValue(t = <this>, p = KProperty1<Value<T>, Int>(
       /* bound = */ [],
-      /* getter = */      local fun(p0: Value<T>): Int    )
+      /* getter = */      local fun(p0: Value<T>): Int {
+        return <get-additionalValue><T>(/* <this> = p0 */)
+      }
+    )
 )
   }
 

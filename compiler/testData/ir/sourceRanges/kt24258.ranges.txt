@@ -17,6 +17,9 @@
               @-1:-1..-1 CONST Null type=kotlin.Nothing? value=null
               @3:30..53 RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final lazyNullString: kotlin.String [delegated,val] declared in <root>'
                 @3:30..53 FUN LOCAL_FUNCTION_FOR_LAMBDA name:lazyNullString visibility:local modality:FINAL <> () returnType:kotlin.String
+                  @-1:-1..-1 BLOCK_BODY
+                    @-1:-1..-1 RETURN type=kotlin.Nothing from='local final fun lazyNullString (): kotlin.String declared in <root>.<get-lazyNullString>'
+                      @3:30..53 CALL 'public final fun <get-lazyNullString> (): kotlin.String declared in <root>' type=kotlin.String origin=null
   @5:0..7:1 FUN name:testLazyNullString visibility:public modality:FINAL <> () returnType:kotlin.Unit
     @5:25..7:1 BLOCK_BODY
       @6:4..34 VAR name:s type:kotlin.String [val]
