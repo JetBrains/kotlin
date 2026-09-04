@@ -37,7 +37,7 @@ internal class MapStrategy(val map: SequenceTransformer.Map, builderWithParent: 
                 }
                 irBlock {
                     if (map.isIndexed) {
-                        +builder.increment(mapIndexedVariable, this@MapStrategy.context)
+                        +increment(mapIndexedVariable, this@MapStrategy.context)
                     }
                     if (map.isNotNull) {
                         val mapResultVariable = scope.createTemporaryVariable(mappedFunctionCall, nameHint = "mapResult")

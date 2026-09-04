@@ -13,13 +13,13 @@ import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceData
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceDataGatherer
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceReplacement
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceSource
+import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.containsUnlowerableCalls
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.gatherVarargArgument
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.getBaseTypeFromSequenceScopeFunction
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.getGenericTypeFromExpression
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.isSequenceType
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.sequenceDataOfExpression
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -45,17 +44,11 @@ import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 private class YieldReplacer(
@@ -251,7 +244,7 @@ internal class SequenceConstructorStrategy(
     ): IrContainerExpression? {
         val builder = builderWithParent.first
         val parent = builderWithParent.second
-        if (containsOtherSequenceBuilderCalls(sequenceScope.invokeFunction.body!!)) return null
+        if (containsUnlowerableCalls(sequenceScope.invokeFunction.body!!, allowSequenceYields = true)) return null
 
         val localConsumerFunction = buildLocalConsumerFunction(builder, parent, sequenceReplacement.mainBodyBuilder)
 
@@ -309,36 +302,6 @@ internal class SequenceConstructorStrategy(
         return consumerTarget
     }
 
-    private val sequenceScopeFqName = FqName("kotlin.sequences.SequenceScope")
-
-    private fun IrFunction.isSequenceScopeBuilderCall(): Boolean {
-        val receiverType = parameters.getOrNull(0)?.type as? IrSimpleType ?: return false
-        val receiverClass = receiverType.classOrNull?.owner ?: return false
-        return receiverClass.fqNameWhenAvailable == sequenceScopeFqName
-    }
-
-    fun containsOtherSequenceBuilderCalls(body: IrBody): Boolean {
-        var result = false
-
-        body.acceptVoid(object : IrVisitorVoid() {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitCall(expression: IrCall) {
-                val callee = expression.symbol.owner
-
-                if (callee.isSequenceScopeBuilderCall()) {
-                    val name = callee.name.asString()
-                    if (name != "yield" && name != "yieldAll") {
-                        result = true
-                    }
-                }
-                super.visitCall(expression)
-            }
-        })
-        return result
-    }
 }
 
 private fun createForEachConsumer(

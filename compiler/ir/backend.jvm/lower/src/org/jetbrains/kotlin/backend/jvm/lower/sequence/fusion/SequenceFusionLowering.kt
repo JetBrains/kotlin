@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.builders.irUnit
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -39,15 +40,23 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
+import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrLoop
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 /**
@@ -200,12 +209,80 @@ private fun lookupForLoopVariable(loopBody: IrBlock): IrVariable = loopBody.stat
     .singleOrNull { (it.initializer as? IrCall)?.origin == IrStatementOrigin.FOR_LOOP_NEXT }
     ?: error("No variable with initializer origin FOR_LOOP_NEXT found inside a FOR_LOOP origin while")
 
+private val sequenceScopeFqName = FqName("kotlin.sequences.SequenceScope")
+
+private fun IrFunction.isSequenceScopeBuilderCall(): Boolean {
+    val receiverType = parameters.getOrNull(0)?.type as? IrSimpleType ?: return false
+    val receiverClass = receiverType.classOrNull?.owner ?: return false
+    return receiverClass.fqNameWhenAvailable == sequenceScopeFqName
+}
+
+internal fun containsUnlowerableCalls(
+    body: IrBody,
+    allowSequenceYields: Boolean
+): Boolean {
+    var result = false
+
+    body.acceptVoid(object : IrVisitorVoid() {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitCall(expression: IrCall) {
+            val callee = expression.symbol.owner
+            val isSequenceScopeCall = callee.isSequenceScopeBuilderCall()
+            val name = callee.name.asString()
+
+            val isAllowedSequenceCall =
+                allowSequenceYields &&
+                        isSequenceScopeCall &&
+                        (name == "yield" || name == "yieldAll")
+
+            if (callee.isSuspend && !isAllowedSequenceCall) {
+                result = true
+            }
+
+            if (isSequenceScopeCall && !isAllowedSequenceCall) {
+                result = true
+            }
+
+            super.visitCall(expression)
+        }
+    })
+    return result
+}
+
 internal fun getPredicateArgument(expression: IrCall, argument: Int): IrExpression? {
     val predicate = expression.arguments.getOrNull(argument)
     // we don't want to duplicate calls
     if (predicate is IrCall) return null
+
+    val function = (predicate?.asFunction())
+
+    val body = function?.body
+    val unlowerable = body?.let {
+        containsUnlowerableCalls(it, allowSequenceYields = false)
+    }
+    if (unlowerable == true) {
+        return null
+    }
     return predicate
 }
+
+internal fun IrExpression.asFunction(): IrFunction? =
+    when (this) {
+        is IrFunctionExpression -> function
+        is IrFunctionReference -> symbol.owner
+        is IrTypeOperatorCall -> argument.asFunction()
+        is IrRichFunctionReference -> invokeFunction
+        is IrGetValue -> {
+            val variable = symbol.owner as? IrVariable
+                ?: return null
+            if (variable.isVar) return null
+            variable.initializer?.asFunction()
+        }
+        else -> null
+    }
 
 internal data class LoopData(
     val loop: IrLoop?,
@@ -279,7 +356,7 @@ private fun deployTransformerStrategies(
     context: JvmBackendContext
 ): SequenceReplacement? {
     var sequenceReplacement = consumerStrategy.createSequenceReplacement() ?: return null
-    for (transformer in sequenceData.transformers) {
+    for (transformer in sequenceData.transformers.reversed()) {
         val transformerStrategy = TransformerStrategy.create(transformer, builderWithParent, context)
         sequenceReplacement =
             transformerStrategy.addTransformerToBodyBuilder(sequenceReplacement)
