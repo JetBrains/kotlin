@@ -6,15 +6,62 @@
 package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
+import org.jetbrains.kotlin.ir.inline.InlineFunctionResolver
 import org.jetbrains.kotlin.ir.inline.InlineMode
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrSelf
 
-internal class WasmPrivateFunctionInlining(context: WasmBackendContext) : FunctionInlining(
+abstract class WasmFunctionInlining(
+    override val context: WasmBackendContext,
+    inlineFunctionResolver: InlineFunctionResolver,
+) : FunctionInlining(context, inlineFunctionResolver) {
+    private val deadInlinedParameterTempVars = hashSetOf<IrVariableSymbol>()
+
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration): IrExpression {
+
+        val symbol = expression.symbol
+        if (!symbol.isBound) return super.visitFunctionAccess(expression, data)
+
+        val realOwner = symbol.owner.resolveFakeOverrideOrSelf()
+        if (realOwner == context.symbols.suspendCoroutineUninterceptedOrReturnIntrinsic.owner) {
+            var blockParameter: IrExpression? = expression.arguments[0]
+            while (blockParameter is IrGetValue) {
+                val blockIrTemporary = blockParameter.symbol.owner as? IrVariable
+                if (blockIrTemporary != null) {
+                    blockParameter = blockIrTemporary.initializer
+                    deadInlinedParameterTempVars += blockIrTemporary.symbol
+                } else {
+                    break
+                }
+            }
+            expression.arguments[0] = blockParameter
+        }
+
+        return super.visitFunctionAccess(expression, data)
+    }
+
+    override fun visitContainerExpression(expression: IrContainerExpression, data: IrDeclaration): IrExpression {
+        val result = super.visitContainerExpression(expression, data)
+        if (deadInlinedParameterTempVars.isNotEmpty()) {
+            expression.statements.removeAll { it is IrVariable && it.symbol in deadInlinedParameterTempVars }
+        }
+        return result
+    }
+}
+
+internal class WasmPrivateFunctionInlining(context: WasmBackendContext) : WasmFunctionInlining(
     context,
     WasmInlineFunctionResolver(context, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS),
 )
 
-internal class WasmAllFunctionInlining(context: WasmBackendContext) : FunctionInlining(
+internal class WasmAllFunctionInlining(context: WasmBackendContext) : WasmFunctionInlining(
     context,
     WasmInlineFunctionResolver(context, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS),
 )

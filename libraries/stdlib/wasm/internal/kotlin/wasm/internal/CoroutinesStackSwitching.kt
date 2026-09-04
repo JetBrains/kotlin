@@ -73,7 +73,7 @@ internal fun <T> checkNotPendingSuspend(blockKotlinContinuation: CoroutineImplSt
 
 @UsedFromCompilerGeneratedCode
 @Suppress("UNCHECKED_CAST")
-internal suspend fun <T> suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching(block: (Continuation<T>) -> Any?): T {
+internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching(crossinline block: (Continuation<T>) -> Any?): T {
     val blockKotlinContinuation = getBlockKotlinContinuation<T>()
 
     val blockResult = block(blockKotlinContinuation)

@@ -82,3 +82,12 @@ internal fun <T> interceptedIntrinsic(cont: Continuation<T>): Continuation<T> =
 @UsedFromCompilerGeneratedCode
 internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(noinline block: (Continuation<T>) -> Any?): T =
     suspendCoroutineUninterceptedOrReturnIntrinsic(block)
+
+// Is replaced by State Machine or Stack Switching implementation
+@Suppress("UNUSED_PARAMETER")
+@PublishedApi
+@UsedFromCompilerGeneratedCode
+internal suspend fun <T> suspendCoroutineUninterceptedOrReturnIntrinsic(block: (Continuation<T>) -> Any?): T =
+    returnIfSuspended<T>(block(getContinuation<T>()))
+    // replace after bootstrap
+    //throw NotImplementedError("Implementation of suspendCoroutineUninterceptedOrReturnIntrinsic is intrinsic")
