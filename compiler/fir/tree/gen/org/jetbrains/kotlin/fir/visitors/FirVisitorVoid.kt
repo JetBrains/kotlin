@@ -347,6 +347,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(literalExpression)
     }
 
+    final override fun visitNumericClassConversion(numericClassConversion: FirNumericClassConversion, data: Nothing?) {
+        visitNumericClassConversion(numericClassConversion)
+    }
+
+    open fun visitNumericClassConversion(numericClassConversion: FirNumericClassConversion) {
+        visitElement(numericClassConversion)
+    }
+
     final override fun visitFunctionCall(functionCall: FirFunctionCall, data: Nothing?) {
         visitFunctionCall(functionCall)
     }

@@ -267,7 +267,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
         parent(jump.withArgs("E" to function))
 
-        +field("result", expression, withTransform = true)
+        +field("result", expression, withReplace = true, withTransform = true)
     }
 
     val label: Element by element(Other) {
@@ -365,6 +365,17 @@ object FirTree : AbstractFirTreeBuilder() {
             
             The [value] doesn't describe the type of expression that is stored. It is possible that unsigned number is represented as signed.
             Only the [kind] field describes the type of expression that is stored. For that reason [kind] and [coneTypeOrNull] should be in sync.
+        """.trimIndent()
+    }
+
+    val numericClassConversion: Element by element(Expression) {
+        parent(expression)
+
+        +field("originalExpression", expression)
+
+        kDoc = """
+            Represents a point of implicit conversion between an object of a builtin numeric type and an expect numeric class annotated with
+            `@NumericClass` annotation.
         """.trimIndent()
     }
 
@@ -1457,7 +1468,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(statement)
 
         +field("lValue", expression, withReplace = true, withTransform = true)
-        +field("rValue", expression, withTransform = true)
+        +field("rValue", expression, withReplace = true, withTransform = true)
     }
 
     val whenSubjectExpression: Element by element(Expression) {

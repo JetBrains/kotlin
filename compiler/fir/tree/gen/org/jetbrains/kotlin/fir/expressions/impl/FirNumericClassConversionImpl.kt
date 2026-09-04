@@ -11,65 +11,47 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirTarget
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
-import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
+import org.jetbrains.kotlin.fir.expressions.FirNumericClassConversion
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 
-internal class FirReturnExpressionImpl(
+@OptIn(UnresolvedExpressionTypeAccess::class)
+internal class FirNumericClassConversionImpl(
     override val source: KtSourceElement?,
+    @property:UnresolvedExpressionTypeAccess
+    override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
-    override val target: FirTarget<FirFunction>,
-    override var result: FirExpression,
-) : FirReturnExpression() {
-    @OptIn(UnresolvedExpressionTypeAccess::class)
-    override val coneTypeOrNull: ConeKotlinType? = StandardTypes.Nothing
+    override var originalExpression: FirExpression,
+) : FirNumericClassConversion() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
-        result.accept(visitor, data)
+        originalExpression.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirReturnExpressionImpl {
-        transformResult(transformer, data)
-        transformOtherChildren(transformer, data)
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirNumericClassConversionImpl {
+        transformAnnotations(transformer, data)
+        originalExpression = originalExpression.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirReturnExpressionImpl {
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirNumericClassConversionImpl {
         annotations.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformResult(transformer: FirTransformer<D>, data: D): FirReturnExpressionImpl {
-        result = result.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirReturnExpressionImpl {
-        transformAnnotations(transformer, data)
-        return this
-    }
-
     override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
-        require(newConeTypeOrNull == coneTypeOrNull) { "${javaClass.simpleName}.replaceConeTypeOrNull() called with invalid type '${newConeTypeOrNull}'. Current type is '$coneTypeOrNull'" }
+        coneTypeOrNull = newConeTypeOrNull
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
-    }
-
-    override fun replaceResult(newResult: FirExpression) {
-        result = newResult
     }
 }

@@ -10,39 +10,33 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirTarget
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.returnExpression]
+ * Represents a point of implicit conversion between an object of a builtin numeric type and an expect numeric class annotated with
+ * `@NumericClass` annotation.
+ *
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.numericClassConversion]
  */
-abstract class FirReturnExpression : FirJump<FirFunction>() {
+abstract class FirNumericClassConversion : FirExpression() {
     abstract override val source: KtSourceElement?
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: List<FirAnnotation>
-    abstract override val target: FirTarget<FirFunction>
-    abstract val result: FirExpression
+    abstract val originalExpression: FirExpression
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitReturnExpression(this, data)
+        visitor.visitNumericClassConversion(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
-        transformer.transformReturnExpression(this, data) as E
+        transformer.transformNumericClassConversion(this, data) as E
 
     abstract override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract fun replaceResult(newResult: FirExpression)
-
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirReturnExpression
-
-    abstract fun <D> transformResult(transformer: FirTransformer<D>, data: D): FirReturnExpression
-
-    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirReturnExpression
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirNumericClassConversion
 }

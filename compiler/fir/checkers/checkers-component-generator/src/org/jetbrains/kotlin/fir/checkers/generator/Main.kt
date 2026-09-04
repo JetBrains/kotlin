@@ -125,6 +125,7 @@ fun main(args: Array<String>) {
                 visitAlso<FirCheckedSafeCallSubject>(it)
                 visitAlso<FirErrorExpression>(it)
                 visitAlso<FirQualifiedErrorAccessExpression>(it)
+                visitAlso<FirNumericClassConversion>(it)
             }
             alias<FirQualifiedAccessExpression>("QualifiedAccessExpressionChecker")
             alias<FirCall>("CallChecker", false).let {

@@ -347,6 +347,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformLiteralExpression(literalExpression, data)
     }
 
+    open fun transformNumericClassConversion(numericClassConversion: FirNumericClassConversion, data: D): FirStatement {
+        return transformElement(numericClassConversion, data)
+    }
+
+    final override fun visitNumericClassConversion(numericClassConversion: FirNumericClassConversion, data: D): FirStatement {
+        return transformNumericClassConversion(numericClassConversion, data)
+    }
+
     open fun transformFunctionCall(functionCall: FirFunctionCall, data: D): FirStatement {
         return transformElement(functionCall, data)
     }

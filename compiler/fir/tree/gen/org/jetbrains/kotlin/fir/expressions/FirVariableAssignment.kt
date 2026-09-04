@@ -34,6 +34,8 @@ abstract class FirVariableAssignment : FirPureAbstractElement(), FirStatement {
 
     abstract fun replaceLValue(newLValue: FirExpression)
 
+    abstract fun replaceRValue(newRValue: FirExpression)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirVariableAssignment
 
     abstract fun <D> transformLValue(transformer: FirTransformer<D>, data: D): FirVariableAssignment

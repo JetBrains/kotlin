@@ -14,6 +14,7 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.AbstractMap
 import kotlin.collections.AbstractSet
+import kotlin.collections.ArrayList
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.ExperimentalExtendedContracts
 import kotlin.contracts.InvocationKind
@@ -372,6 +373,14 @@ inline fun <T, K> List<T>.flatAssociateBy(selector: (T) -> Collection<K>): Map<K
                 put(key, value)
             }
         }
+    }
+}
+
+inline fun <reified R> Iterable<*>.eachIsInstanceOrNull(): List<R>? {
+    @Suppress("UNCHECKED_CAST")
+    return when {
+        all { it is R } -> this as List<R>
+        else -> null
     }
 }
 

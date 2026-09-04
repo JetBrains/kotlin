@@ -1663,7 +1663,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 withExpectedType(
                     variableAssignment.lValue.resolvedType.toFirResolvedTypeRef(),
                 ),
-            )
+            ).also {
+                it.replaceRValue(it.rValue.wrapIntoNumericClassConversionIfNeeded(it.lValue.resolvedType, session))
+            }
         }
 
         // for cases like

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.isRestrictSuspensionReceiver
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.ir.util.isSuspendFunction
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
@@ -761,6 +763,44 @@ class AdapterGenerator(
         }?.let {
             declarationStorage.getIrFunctionSymbol(it) as? IrSimpleFunctionSymbol
         }
+    }
+
+    fun IrExpression.applyNumericClassCoercionIfNeeded(conversionNode: FirNumericClassConversion): IrExpression {
+        val expectedType = conversionNode.resolvedType
+        val expectedTypeSymbol = expectedType.toSymbol(session) ?: return this
+
+        return when (expectedTypeSymbol.hasAnnotation(StandardClassIds.Annotations.NumericClass, session)) {
+            true -> applyBuiltinToNumericClassCoercionIfNeeded(conversionNode)
+            false -> applyNumericClassToBuiltinCoercionIfNeeded(conversionNode)
+        }
+    }
+
+    private fun IrExpression.applyBuiltinToNumericClassCoercionIfNeeded(conversionNode: FirNumericClassConversion): IrExpression {
+        val expression = conversionNode.originalExpression
+        val expectedType = conversionNode.resolvedType
+
+        val [firSymbol, irSymbol] = builtins.getCinteropConvertFunctionOver(expression.resolvedType)
+            ?: error("No conversion function found for ${expression.resolvedType}")
+
+        with(callGenerator) {
+            return IrCallImpl(startOffset, endOffset, expectedType.toIrType(), irSymbol)
+                .apply { arguments[0] = this@applyBuiltinToNumericClassCoercionIfNeeded }
+                .applyTypeArguments(
+                    typeArguments = listOf(expectedType),
+                    typeParameters = firSymbol.typeParameterSymbols.map { it.fir },
+                )
+        }
+    }
+
+    private fun IrExpression.applyNumericClassToBuiltinCoercionIfNeeded(conversionNode: FirNumericClassConversion): IrExpression {
+        val expression = conversionNode.originalExpression
+        val expectedType = conversionNode.resolvedType
+
+        val irFunction = builtins.getMemberConversionFunction(expression.resolvedType, expectedType)
+            ?: error("No conversion function found for ${expression.resolvedType}")
+
+        return IrCallImpl(startOffset, endOffset, expectedType.toIrType(), irFunction)
+            .apply { arguments[0] = this@applyNumericClassToBuiltinCoercionIfNeeded }
     }
 
     private fun createAdapterFunctionForArgument(

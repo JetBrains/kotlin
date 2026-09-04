@@ -91,7 +91,12 @@ object CheckExtensionReceiver : ResolutionStage() {
 
         val preparedReceiver = prepareImplicitArgument(candidate.givenExtensionReceiver, expectedType, context.session)
 
-        resolveExtensionReceiver(preparedReceiver, candidate, expectedType)
+        resolveExtensionReceiver(
+            preparedReceiver,
+            candidate,
+            expectedType
+                .let { candidate.getExpectedTypeWithNumericClassConversion(context.session, preparedReceiver.atom.expression, preparedReceiver.type, it) ?: it }
+        )
     }
 
     context(sink: CheckerSink, context: ResolutionContext)
@@ -818,6 +823,9 @@ internal fun Candidate.shouldHaveLowPriorityDueToSAM(bodyResolveComponents: Body
                 coneType.toRegularClassSymbol(bodyResolveComponents.session)?.isJavaOrEnhancement == true
     }
 }
+
+internal fun Candidate.shouldHaveLowPriorityDueToNumericClassConversion(): Boolean =
+    usesNumericClassConversion
 
 private fun Candidate.isJavaApplicableCandidate(): Boolean {
     val symbol = symbol as? FirFunctionSymbol ?: return false
