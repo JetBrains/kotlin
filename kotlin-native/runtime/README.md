@@ -57,7 +57,7 @@ The main module contains:
   * [Default](src/alloc/custom)
   * [Legacy](src/alloc/legacy)
 * Calls Checker: sanitizer-like instrumentation to help catch external function calls in the wrong thread state
-  (usually indicates a bug in the runtime or the code generator)
+  (usually indicates a bug in the runtime or the code generator); [docs](src/externalCallsChecker)
   * [API](src/main/cpp/CallsChecker.hpp)
   * [No-op](src/externalCallsChecker/noop)
   * [Implementation](src/externalCallsChecker/impl): runtime for the Calls Checker instrumentation; the instrumentation lives in [libllvmext](../libllvmext)
