@@ -42,11 +42,13 @@ internal fun generateKotlinTargetContainerWithPresetFunctionsInterface(withPrint
         typeName("org.jetbrains.kotlin.gradle.dsl.DefaultKotlinTargetContainerWithPresetFunctions")
 
     val deprecatedMessageVal = typeName("org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE")
+    val deprecatedAsErrorMessageVal = typeName("org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_AS_ERROR_MESSAGE")
 
     val imports = allPresetEntries
         .flatMap { it.typeNames() }
         .plus(typeName(parentInterface.java.canonicalName))
         .plus(deprecatedMessageVal)
+        .plus(deprecatedAsErrorMessageVal)
         .plus(typeName(Action::class.java.canonicalName))
         .plus(typeName(NamedDomainObjectCollection::class.java.canonicalName))
         .plus(typeName(KotlinTarget::class.java.canonicalName))
