@@ -622,7 +622,7 @@ class FirCallCompletionResultsWriterTransformer(
 
                 expectedArgumentsTypeMapping?.numericClassConversions?.get(key)?.let { expectedType ->
                     check(transformed is FirExpression) { "Numeric class conversions conversion should be applied to expressions only" }
-                    transformed = transformed.wrapIntoNumericClassConversionTo(expectedType, session)
+                    transformed = transformed.wrapIntoNumericClassConversionTo(expectedType)
                 }
 
                 @Suppress("UNCHECKED_CAST")

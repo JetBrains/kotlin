@@ -1,36 +1,37 @@
 FILE: Stdlib.kt
     package kotlin
 
-    public final enum class NumericVariant : R|kotlin/Enum<kotlin/NumericVariant>| {
-        private constructor(): R|kotlin/NumericVariant| {
-            super<R|kotlin/Enum<kotlin/NumericVariant>|>()
-        }
-
-        public final static enum entry Byte: R|kotlin/NumericVariant|
-        public final static enum entry Short: R|kotlin/NumericVariant|
-        public final static enum entry Int: R|kotlin/NumericVariant|
-        public final static enum entry Long: R|kotlin/NumericVariant|
-        public final static enum entry UByte: R|kotlin/NumericVariant|
-        public final static enum entry UShort: R|kotlin/NumericVariant|
-        public final static enum entry UInt: R|kotlin/NumericVariant|
-        public final static enum entry ULong: R|kotlin/NumericVariant|
-        public final static fun values(): R|kotlin/Array<kotlin/NumericVariant>| {
-        }
-
-        public final static fun valueOf(value: R|kotlin/String|): R|kotlin/NumericVariant| {
-        }
-
-        public final static val entries: R|kotlin/enums/EnumEntries<kotlin/NumericVariant>|
-            public static get(): R|kotlin/enums/EnumEntries<kotlin/NumericVariant>|
-
-    }
     @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|)]) @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|]) public final annotation class NumericClass : R|kotlin/Annotation| {
-        public constructor(vararg actualizations: R|kotlin/Array<out kotlin/NumericVariant>|): R|kotlin/NumericClass| {
+        public constructor(vararg actualizations: R|kotlin/Array<out kotlin/NumericClass.Variant>|): R|kotlin/NumericClass| {
             super<R|kotlin/Any|>()
         }
 
-        public final val actualizations: R|kotlin/Array<out kotlin/NumericVariant>| = R|<local>/actualizations|
-            public get(): R|kotlin/Array<out kotlin/NumericVariant>|
+        public final val actualizations: R|kotlin/Array<out kotlin/NumericClass.Variant>| = R|<local>/actualizations|
+            public get(): R|kotlin/Array<out kotlin/NumericClass.Variant>|
+
+        public final enum class Variant : R|kotlin/Enum<kotlin/NumericClass.Variant>| {
+            private constructor(): R|kotlin/NumericClass.Variant| {
+                super<R|kotlin/Enum<kotlin/NumericClass.Variant>|>()
+            }
+
+            public final static enum entry Byte: R|kotlin/NumericClass.Variant|
+            public final static enum entry Short: R|kotlin/NumericClass.Variant|
+            public final static enum entry Int: R|kotlin/NumericClass.Variant|
+            public final static enum entry Long: R|kotlin/NumericClass.Variant|
+            public final static enum entry UByte: R|kotlin/NumericClass.Variant|
+            public final static enum entry UShort: R|kotlin/NumericClass.Variant|
+            public final static enum entry UInt: R|kotlin/NumericClass.Variant|
+            public final static enum entry ULong: R|kotlin/NumericClass.Variant|
+            public final static fun values(): R|kotlin/Array<kotlin/NumericClass.Variant>| {
+            }
+
+            public final static fun valueOf(value: R|kotlin/String|): R|kotlin/NumericClass.Variant| {
+            }
+
+            public final static val entries: R|kotlin/enums/EnumEntries<kotlin/NumericClass.Variant>|
+                public static get(): R|kotlin/enums/EnumEntries<kotlin/NumericClass.Variant>|
+
+        }
 
     }
 FILE: Cinterop.kt
@@ -40,7 +41,7 @@ FILE: Cinterop.kt
         ^convert R|kotlin/TODO|()
     }
 FILE: Main.kt
-    @R|kotlin/NumericClass|(actualizations = vararg(Q|kotlin/NumericVariant|.R|kotlin/NumericVariant.Long|) [evaluated = vararg(Q|kotlin/NumericVariant|.R|kotlin/NumericVariant.Long|)]) public final expect class NSInteger : R|kotlin/Any| {
+    @R|kotlin/NumericClass|(actualizations = vararg(Q|kotlin/NumericClass.Variant|.R|kotlin/NumericClass.Variant.Long|) [evaluated = vararg(Q|kotlin/NumericClass.Variant|.R|kotlin/NumericClass.Variant.Long|)]) public final expect class NSInteger : R|kotlin/Any| {
         public final expect fun toByte(): R|kotlin/Byte|
 
         public final expect fun toShort(): R|kotlin/Short|
@@ -108,7 +109,7 @@ FILE: Main.kt
     }
     public final fun acceptInt(num: R|kotlin/Int|): R|kotlin/Unit| {
     }
-    @R|kotlin/NumericClass|(actualizations = vararg(*<collectionLiteralCall>(Q|kotlin/NumericVariant|.R|kotlin/NumericVariant.UInt|)) [evaluated = vararg(Q|kotlin/NumericVariant|.R|kotlin/NumericVariant.UInt|)]) public final expect value class SizeT : R|kotlin/Any| {
+    @R|kotlin/NumericClass|(actualizations = vararg(*<collectionLiteralCall>(Q|kotlin/NumericClass.Variant|.R|kotlin/NumericClass.Variant.UInt|)) [evaluated = vararg(Q|kotlin/NumericClass.Variant|.R|kotlin/NumericClass.Variant.UInt|)]) public final expect value class SizeT : R|kotlin/Any| {
         public final expect fun toByte(): R|kotlin/Byte|
 
         public final expect fun toShort(): R|kotlin/Short|

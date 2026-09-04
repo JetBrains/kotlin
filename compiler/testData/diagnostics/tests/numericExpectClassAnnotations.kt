@@ -11,16 +11,16 @@ package kotlin
 
 import kotlin.reflect.KClass
 
-enum class NumericVariant {
-    Byte, Short, Int, Long,
-    UByte, UShort, UInt, ULong,
-}
-
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
 annotation class NumericClass(
-	vararg val actualizations: NumericVariant,
-)
+	vararg val actualizations: Variant,
+) {
+    enum class Variant {
+        Byte, Short, Int, Long,
+        UByte, UShort, UInt, ULong,
+    }
+}
 
 // FILE: Cinterop.kt
 package kotlinx.cinterop
@@ -31,7 +31,7 @@ public inline fun <reified R : Any> Int.convert(): R = TODO()
 
 import kotlinx.cinterop.convert
 
-@kotlin.NumericClass(kotlin.NumericVariant.Long)
+@kotlin.NumericClass(kotlin.NumericClass.Variant.Long)
 expect class NSInteger {
     fun toByte(): Byte
     fun toShort(): Short
@@ -63,7 +63,7 @@ fun acceptULong(num: ULong) {}
 fun acceptLong(num: Long) {}
 fun acceptInt(num: Int) {}
 
-@kotlin.NumericClass(actualizations = [kotlin.NumericVariant.UInt])
+@kotlin.NumericClass(actualizations = [kotlin.NumericClass.Variant.UInt])
 expect value class SizeT {
     fun toByte(): Byte
     fun toShort(): Short

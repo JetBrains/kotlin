@@ -6,13 +6,9 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlin.fir.declarations.getTargetType
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.builder.buildNumericClassConversion
@@ -20,7 +16,6 @@ import org.jetbrains.kotlin.fir.expressions.unwrapAndFlattenArgument
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.classId
@@ -28,16 +23,15 @@ import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.isPrimitiveNumberOrNullableType
 import org.jetbrains.kotlin.fir.types.isUnsignedTypeOrNullableUnsignedType
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.eachIsInstanceOrNull
 
 fun FirExpression.wrapIntoNumericClassConversionIfNeeded(expectedType: ConeKotlinType, session: FirSession): FirExpression = when {
     !isNumericConversionPossibleBetween(resolvedType, expectedType, session) -> this
-    else -> wrapIntoNumericClassConversionTo(expectedType, session)
+    else -> wrapIntoNumericClassConversionTo(expectedType)
 }
 
-fun FirExpression.wrapIntoNumericClassConversionTo(expectedType: ConeKotlinType, session: FirSession): FirExpression =
+fun FirExpression.wrapIntoNumericClassConversionTo(expectedType: ConeKotlinType): FirExpression =
     buildNumericClassConversion {
         coneTypeOrNull = expectedType
         originalExpression = this@wrapIntoNumericClassConversionTo
@@ -56,9 +50,8 @@ private fun FirBasedSymbol<*>.supportsNumericClassConversionTo(type: ConeKotlinT
     getSupportedNumericClassConversions(session)?.all { it.fitsInto(type) } ?: false
 
 fun FirBasedSymbol<*>.getSupportedNumericClassConversions(session: FirSession): List<ConeKotlinType>? {
-    lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
-
-    val arguments = (getAnnotationByClassId(StandardClassIds.Annotations.NumericClass, session) as? FirAnnotationCall)
+    val arguments = resolvedCompilerAnnotationsWithClassIds.getAnnotationByClassId(StandardClassIds.Annotations.NumericClass, session)
+        ?.let { it as? FirAnnotationCall }
         ?.arguments?.flatMap { it.unwrapAndFlattenArgument(flattenArrays = true) }
         ?: return null
 
