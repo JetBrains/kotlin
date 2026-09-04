@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.transformers.Binar
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.transformers.UnaryPredicate
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.transformers.MapPredicateCall
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.transformers.SequenceTransformer
+import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.transformers.TakeOrDrop
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.irEquals
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -52,6 +53,10 @@ internal const val MAP_NOT_NULL_INDEXED = KOTLIN_SEQUENCES_PREFIX + "mapIndexedN
 internal const val FILTER = KOTLIN_SEQUENCES_PREFIX + "filter"
 internal const val FILTER_NOT = KOTLIN_SEQUENCES_PREFIX + "filterNot"
 internal const val FILTER_NOT_NULL = KOTLIN_SEQUENCES_PREFIX + "filterNotNull"
+internal const val TAKE = KOTLIN_SEQUENCES_PREFIX + "take"
+internal const val TAKE_WHILE = KOTLIN_SEQUENCES_PREFIX + "takeWhile"
+internal const val DROP = KOTLIN_SEQUENCES_PREFIX + "drop"
+internal const val DROP_WHILE = KOTLIN_SEQUENCES_PREFIX + "dropWhile"
 
 // this is stored for expressions, intended to be passed either to value declarations or to for loops iterated over the expression result
 internal var IrExpression.sequenceDataOfExpression: SequenceData? by irAttribute(true)
@@ -223,6 +228,48 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         expression.sequenceDataOfExpression = SequenceData(receiverData.sequenceSource, transformers)
     }
 
+    private fun matchWithTake(
+        call: IrCall,
+        takeVersion: TakeOrDrop,
+    ) {
+        val receiver = call.arguments.getOrNull(0) ?: return
+        val argumentExpression = call.arguments.getOrNull(1) ?: return
+        val receiverData = receiver.sequenceDataOfExpression ?: return
+        if (!isSafeToLower(argumentExpression)) return
+        val transformers =
+            listOf(
+                SequenceTransformer.Take(argumentExpression, takeVersion)
+            ) + receiverData.transformers
+        call.sequenceDataOfExpression = SequenceData(receiverData.sequenceSource, transformers)
+    }
+
+    private fun matchWithTakeWhile(
+        call: IrCall,
+        takeVersion: TakeOrDrop,
+    ) {
+        val receiver = call.arguments.getOrNull(0) ?: return
+        val predicate = call.arguments.getOrNull(1) ?: return
+        val receiverData = receiver.sequenceDataOfExpression ?: return
+        val predicateCall = { builderWithParent: IrBuilderWithParent ->
+            val builder = builderWithParent.first
+            { sequenceElement: IrValueDeclaration ->
+                builder.callPredicate(
+                    predicate,
+                    builderWithParent.second,
+                    builder.irGet(sequenceElement)
+                )
+            }
+        }
+        val transformers =
+            listOf(
+                SequenceTransformer.TakeWhile(
+                    predicateCall,
+                    takeVersion
+                )
+            ) + receiverData.transformers
+        call.sequenceDataOfExpression = SequenceData(receiverData.sequenceSource, transformers)
+    }
+
     private fun matchWithGenerateSequence(expression: IrCall) {
         val results = when (expression.arguments.size) {
             1 -> {
@@ -332,6 +379,10 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
             FILTER -> matchWithFilter(expression, FilterVersion.Filter)
             FILTER_NOT -> matchWithFilter(expression, FilterVersion.FilterNot)
             FILTER_NOT_NULL -> matchWithFilter(expression, FilterVersion.FilterNotNull)
+            TAKE -> matchWithTake(expression, TakeOrDrop.Take)
+            TAKE_WHILE -> matchWithTakeWhile(expression, TakeOrDrop.Take)
+            DROP -> matchWithTake(expression, TakeOrDrop.Drop)
+            DROP_WHILE -> matchWithTakeWhile(expression, TakeOrDrop.Drop)
             GENERATE_SEQUENCE -> matchWithGenerateSequence(expression)
             SEQUENCE_OF -> matchWithSequenceOf(expression)
             AS_SEQUENCE -> matchWithAsSequence(expression)
