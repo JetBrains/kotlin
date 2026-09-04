@@ -114,10 +114,7 @@ thread_local size_t ignoreGuardsCount = 0;
  * which requires special handling of recursive calls from this check.
  */
 NO_EXTERNAL_CALLS_CHECK void checkStateAtCall(
-        void* calledPtr,
-        const char* calledName,
-        const char* callerName,
-        std::string (*callSiteDescription)(const char*)) noexcept {
+        void* calledPtr, const char* calledName, const char* callerName, const char* callSiteDescription) noexcept {
     if (ignoreGuardsCount != 0) return;
     if (konan::isOnThreadExitNotSetOrAlreadyStarted()) return;
     if (!mm::IsCurrentThreadRegistered()) return;
@@ -147,21 +144,14 @@ NO_EXTERNAL_CALLS_CHECK void checkStateAtCall(
         return;
     }
 
-    std::string descriptionStorage;
-    const char* description = callerName;
-    if (callSiteDescription) {
-        descriptionStorage = callSiteDescription(callerName);
-        description = descriptionStorage.c_str();
-    }
     PrintStackTraceStderr();
-    RuntimeFail("Expected kNative thread state at call of function %s by function %s", calledName, description);
+    RuntimeFail("Expected kNative thread state at call of function %s by function %s%s", calledName, callerName, callSiteDescription);
 }
 
 } // namespace
 
-extern "C" RUNTIME_NOTHROW void Kotlin_callsChecker_check(
-        const char* callerName, const char* calledName, void* calledPtr) noexcept {
-    checkStateAtCall(calledPtr, calledName, callerName, nullptr);
+extern "C" RUNTIME_NOTHROW void Kotlin_callsChecker_check(const char* callerName, const char* calledName, void* calledPtr) noexcept {
+    checkStateAtCall(calledPtr, calledName, callerName, "");
 }
 
 extern "C" RUNTIME_NOTHROW void Kotlin_callsChecker_checkMsgSend(const char* callerName, void* obj, void* selector) {
@@ -172,11 +162,7 @@ extern "C" RUNTIME_NOTHROW void Kotlin_callsChecker_checkMsgSend(const char* cal
     }
     void* calledPtr = reinterpret_cast<void*>(
             class_getMethodImplementation(object_getClass(reinterpret_cast<id>(obj)), reinterpret_cast<SEL>(selector)));
-    checkStateAtCall(calledPtr, nullptr, callerName, [](const char* callerName) noexcept {
-        std::ostringstream os;
-        os << callerName << " (over objc_msgSend)";
-        return os.str();
-    });
+    checkStateAtCall(calledPtr, nullptr, callerName, " (over objc_msgSend)");
 #endif
 }
 
@@ -184,11 +170,7 @@ extern "C" RUNTIME_NOTHROW void Kotlin_callsChecker_checkMsgSendSuper2(const cha
 #if KONAN_APPLE
     void* calledPtr = reinterpret_cast<void*>(class_getMethodImplementation(
             class_getSuperclass(reinterpret_cast<objc_super*>(super)->super_class), reinterpret_cast<SEL>(selector)));
-    checkStateAtCall(calledPtr, nullptr, callerName, [](const char* callerName) noexcept {
-        std::ostringstream os;
-        os << callerName << " (over objc_msgSendSuper2)";
-        return os.str();
-    });
+    checkStateAtCall(calledPtr, nullptr, callerName, " (over objc_msgSendSuper2)");
 #endif
 }
 

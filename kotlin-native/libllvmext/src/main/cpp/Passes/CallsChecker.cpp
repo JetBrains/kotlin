@@ -314,8 +314,8 @@ namespace {
 
 struct ExternalCallInfo {
   std::optional<StringRef> Name; // nullopt when indirect call
-  Value *CalledPtr; // null when llvm intrinsic (in that case `Name` is
-                    // definitely present)
+  Value *CalledPtr; // LLVM intrinsics will return a constant value of null
+                    // pointer (in that case `Name` is definitely present)
 
   ExternalCallInfo(std::optional<StringRef> Name, Value *CalledPtr)
       : Name(Name), CalledPtr(CalledPtr) {}
@@ -333,8 +333,13 @@ getPossiblyExternalCalledFunction(Value *V) {
   if (auto *F = dyn_cast<Function>(V)) {
     if (isAKnownFunction(*F))
       return std::nullopt;
-    // Intrinsics might not have an address, so don't attempt to store it.
-    return ExternalCallInfo(F->getName(), F->isIntrinsic() ? nullptr : F);
+    Value *CalledPtr = F;
+    if (F->isIntrinsic()) {
+      // Intrinsics might not have an address, so don't attempt to store it.
+      CalledPtr =
+          ConstantPointerNull::get(PointerType::getUnqual(F->getContext()));
+    }
+    return ExternalCallInfo(F->getName(), CalledPtr);
   }
   if (auto *Cast = dyn_cast<CastInst>(V)) {
     return getPossiblyExternalCalledFunction(Cast->getOperand(0));
@@ -453,8 +458,7 @@ bool CallsCheckerPass::run(CallBase &C) {
     auto *Obj = C.getArgOperand(0);
     auto *Selector = C.getArgOperand(1);
 
-    Builder.CreateCall(CheckMsgSend,
-                       {CallerName, Obj, Selector});
+    Builder.CreateCall(CheckMsgSend, {CallerName, Obj, Selector});
   } else if (CalleeInfo->Name == "objc_msgSendSuper2") {
     // objc_msgSendSuper2 has wrong declaration in header, so generated wrapper
     // is strange, Let's just skip it
@@ -463,13 +467,9 @@ bool CallsCheckerPass::run(CallBase &C) {
     auto *Super = C.getArgOperand(0);
     auto *Selector = C.getArgOperand(1);
 
-    Builder.CreateCall(CheckMsgSendSuper2,
-                       {CallerName, Super, Selector});
+    Builder.CreateCall(CheckMsgSendSuper2, {CallerName, Super, Selector});
   } else {
     auto *CalledPtr = CalleeInfo->CalledPtr;
-    if (!CalledPtr) {
-      CalledPtr = ConstantPointerNull::get(Builder.getPtrTy());
-    }
     switch (CalledPtr->getType()->getTypeID()) {
     case Type::PointerTyID:
       break;
@@ -481,14 +481,12 @@ bool CallsCheckerPass::run(CallBase &C) {
                                     CalledPtr->getType(), CalledPtr));
     }
 
-    Value *CalledNameV = ConstantPointerNull::get(Builder.getPtrTy());
-    if (auto CalledName = CalleeInfo->Name) {
-      CalledNameV =
-          placeCString(*Builder.GetInsertBlock()->getModule(), *CalledName);
+    Value *CalledName = ConstantPointerNull::get(Builder.getPtrTy());
+    if (auto Name = CalleeInfo->Name) {
+      CalledName = placeCString(*Builder.GetInsertBlock()->getModule(), *Name);
     }
 
-    Builder.CreateCall(Check,
-                       {CallerName, CalledNameV, CalledPtr});
+    Builder.CreateCall(Check, {CallerName, CalledName, CalledPtr});
   }
 
   return true;
