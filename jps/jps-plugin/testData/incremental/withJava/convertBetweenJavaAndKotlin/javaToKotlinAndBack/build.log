@@ -20,8 +20,6 @@ Cleaning output files:
   out/production/module/Foo.class
   out/production/module/META-INF/module.kotlin_module
 End of files
-After chunkBuildStarted. Marked as dirty by Kotlin:
-  src/usage.kt
 Cleaning output files:
   out/production/module/UsageKt.class
 End of files

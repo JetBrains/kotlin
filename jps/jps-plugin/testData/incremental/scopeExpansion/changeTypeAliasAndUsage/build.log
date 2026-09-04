@@ -1,5 +1,11 @@
 ================ Step #1 =================
 
+Cleaning output files:
+  out/production/module/Foo.class
+  out/production/module/FooImpl.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/TypeAliasKt.class
+End of files
 Compiling files:
   src/Foo.kt
   src/FooImpl.kt

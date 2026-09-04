@@ -1,0 +1,3 @@
+fun bar() {
+    JavaClass().foo()
+}

@@ -9,11 +9,7 @@ End of files
 Compiling files:
   module1/src/A.kt
 End of files
-After build round. Marked as dirty by Kotlin:
-  module2/src/AChild.kt
-  module2/src/importA.kt
-  module3/src/importAChild.kt
-Exit code: ADDITIONAL_PASS_REQUIRED
+Exit code: OK
 ------------------------------------------
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -45,11 +41,7 @@ End of files
 Compiling files:
   module1/src/A.kt
 End of files
-After build round. Marked as dirty by Kotlin:
-  module2/src/AChild.kt
-  module2/src/importA.kt
-  module3/src/importAChild.kt
-Exit code: ADDITIONAL_PASS_REQUIRED
+Exit code: OK
 ------------------------------------------
 Exit code: NOTHING_DONE
 ------------------------------------------

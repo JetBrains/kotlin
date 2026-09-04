@@ -4,7 +4,20 @@ Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
   out/production/module/test/A.class
 End of files
+Cleaning output files:
+  out/production/module/test/ClassLiteralKt.class
+End of files
 Compiling files:
+  src/classLiteral.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+
+================ Step #2 =================
+
+Compiling files:
+  src/classLiteral.kt
 End of files
 Exit code: OK
 ------------------------------------------

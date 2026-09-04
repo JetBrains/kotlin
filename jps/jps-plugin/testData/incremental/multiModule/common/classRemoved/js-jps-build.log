@@ -4,12 +4,6 @@ Building module1
 Exit code: NOTHING_DONE
 ------------------------------------------
 Building module2
-After chunkBuildStarted. Marked as dirty by Kotlin:
-  module2/src/B.kt
-  module2/src/createA.kt
-  module2/src/createB.kt
-  module2/src/useAfoo.kt
-  module2/src/useBbar.kt
 Cleaning output files:
   out/production/module2/module2.js
   out/production/module2/module2.meta.js

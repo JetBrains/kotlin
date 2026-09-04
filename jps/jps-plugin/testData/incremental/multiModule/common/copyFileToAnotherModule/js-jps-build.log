@@ -4,11 +4,7 @@ Building module1
 Compiling files:
   module1/src/b.kt
 End of files
-After build round. Marked as dirty by Kotlin:
-  module2/src/b.kt
-  module2/src/useClassB.kt
-  module2/src/useFunB.kt
-Exit code: ADDITIONAL_PASS_REQUIRED
+Exit code: OK
 ------------------------------------------
 Exit code: NOTHING_DONE
 ------------------------------------------

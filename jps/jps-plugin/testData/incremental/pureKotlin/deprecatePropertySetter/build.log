@@ -1,0 +1,12 @@
+================ Step #1 =================
+
+Compiling files:
+  src/clientGet.kt
+  src/clientSet.kt
+  src/util.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+'var foo: Int' is deprecated. message.
+
