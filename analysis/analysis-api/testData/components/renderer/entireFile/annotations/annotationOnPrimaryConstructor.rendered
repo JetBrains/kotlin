@@ -1,0 +1,11 @@
+@Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CONSTRUCTOR])
+annotation class Ctor
+
+class WithAnnotatedConstructor @Ctor constructor(x: Int) {
+  val x: Int
+}
+
+class WithAnnotatedPrivateConstructor @Ctor
+private constructor
+
+class NoParameters @Ctor constructor

@@ -1,0 +1,23 @@
+const val INT: Int
+
+const val NEGATIVE: Int
+
+const val LONG: Long
+
+const val BOOLEAN: Boolean
+
+const val CHAR: Char
+
+const val STRING: String
+
+const val DOUBLE: Double
+
+const val FLOAT: Float
+
+const val COMPUTED: Int
+
+const val CONCATENATED: String
+
+object Constants {
+  const val NESTED: String
+}

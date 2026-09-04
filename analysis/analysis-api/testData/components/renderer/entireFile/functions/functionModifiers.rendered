@@ -1,0 +1,7 @@
+tailrec fun countDown(x: Int): Int
+
+external fun nativeCall()
+
+internal fun internalFunction()
+
+private fun privateFunction()
