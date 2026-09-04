@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.Name
  * Note: does not work in dangling files.
  */
 @KtExperimentalApi
-fun KtSimpleNameExpression.lookupLocally(): KtNamedDeclaration? {
+fun KtNameReferenceExpression.lookupLocally(): KtNamedDeclaration? {
     containingFile.let { if (it.originalFile != it) return null }
 
     val contextKind = contextKind ?: return null
@@ -38,13 +38,9 @@ private val KtElement.nonContainerParent: KtElement?
         return e as? KtElement
     }
 
-private fun KtSimpleNameExpression.typeIsValidForLocalLookup(): Boolean =
-    this !is KtOperationReferenceExpression
-
-private val KtSimpleNameExpression.contextKind: LocalReferenceTargetLookupVisitor.ContextKind?
+private val KtNameReferenceExpression.contextKind: LocalReferenceTargetLookupVisitor.ContextKind?
     get() =
-        if (!typeIsValidForLocalLookup()) null
-        else when (val p = nonContainerParent) {
+        when (val p = nonContainerParent) {
             is KtCallExpression,
             is KtImportDirective,
             is KtPackageDirective,
@@ -97,7 +93,7 @@ private val KtSimpleNameExpression.contextKind: LocalReferenceTargetLookupVisito
             else -> null
         }
 
-private class LocalReferenceTargetLookupVisitor(val element: KtSimpleNameExpression, val contextKind: ContextKind) : KtVisitorVoid() {
+private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpression, val contextKind: ContextKind) : KtVisitorVoid() {
     enum class ContextKind {
         VALUE,
         TYPE,

@@ -367,7 +367,6 @@ KtNameReferenceExpression(337,346): 'instance1'
 KtOperationReferenceExpression(347,349): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(350,367): 'SGOption1<String>'
@@ -475,7 +474,6 @@ KtNameReferenceExpression(416,425): 'instance1'
 KtOperationReferenceExpression(426,428): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(429,441): 'SGOption1<*>'
@@ -562,7 +560,6 @@ KtNameReferenceExpression(490,499): 'instance2'
 KtOperationReferenceExpression(500,502): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(503,526): 'SGOption2<CharSequence>'
@@ -670,7 +667,6 @@ KtNameReferenceExpression(575,584): 'instance2'
 KtOperationReferenceExpression(585,587): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(588,614): 'SGOption2<in CharSequence>'
@@ -781,7 +777,6 @@ KtNameReferenceExpression(663,672): 'instance2'
 KtOperationReferenceExpression(673,675): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(676,703): 'SGOption2<out CharSequence>'
@@ -1354,7 +1349,6 @@ KtNameReferenceExpression(1124,1125): 'b'
 KtOperationReferenceExpression(1126,1128): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(1129,1138): 'SGOption1'
@@ -1462,7 +1456,6 @@ KtNameReferenceExpression(1210,1211): 'a'
 KtOperationReferenceExpression(1212,1214): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(1215,1232): 'SGOption1<String>'
@@ -1534,7 +1527,6 @@ KtNameReferenceExpression(1241,1242): 'b'
 KtOperationReferenceExpression(1243,1245): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(1246,1263): 'SGOption1<String>'

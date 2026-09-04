@@ -244,7 +244,6 @@ KtPrefixExpression(215,217): '+A'
 KtOperationReferenceExpression(215,216): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A.unaryPlus(<dispatch receiver>: A): A
@@ -268,7 +267,6 @@ KtPrefixExpression(222,224): '-A'
 KtOperationReferenceExpression(222,223): '-'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A.unaryMinus(<dispatch receiver>: A): A
@@ -292,7 +290,6 @@ KtPrefixExpression(229,231): '!A'
 KtOperationReferenceExpression(229,230): '!'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A.not(<dispatch receiver>: A): kotlin.Boolean
@@ -316,7 +313,6 @@ KtPrefixExpression(236,239): '++A'
 KtOperationReferenceExpression(236,238): '++'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A.inc(<dispatch receiver>: A): A
@@ -340,7 +336,6 @@ KtPrefixExpression(244,247): '--A'
 KtOperationReferenceExpression(244,246): '--'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A.dec(<dispatch receiver>: A): A
@@ -373,7 +368,6 @@ KtNameReferenceExpression(252,253): 'A'
 KtOperationReferenceExpression(253,255): '++'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A.inc(<dispatch receiver>: A): A
@@ -397,7 +391,6 @@ KtNameReferenceExpression(260,261): 'A'
 KtOperationReferenceExpression(261,263): '--'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A.dec(<dispatch receiver>: A): A

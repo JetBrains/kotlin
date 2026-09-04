@@ -385,7 +385,6 @@ KtContainerNode(330,346): '@myRunWithMyEnum'
 KtLabelReferenceExpression(330,346): '@myRunWithMyEnum'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): MyEnum
@@ -466,7 +465,6 @@ KtContainerNode(409,425): '@myRunWithMyEnum'
 KtLabelReferenceExpression(409,425): '@myRunWithMyEnum'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): MyEnum
@@ -616,7 +614,6 @@ KtContainerNode(494,500): '@myRun'
 KtLabelReferenceExpression(494,500): '@myRun'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): MyEnum
@@ -718,7 +715,6 @@ KtContainerNode(569,575): '@myRun'
 KtLabelReferenceExpression(569,575): '@myRun'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): MyEnum
@@ -823,7 +819,6 @@ KtContainerNode(658,664): '@myRun'
 KtLabelReferenceExpression(658,664): '@myRun'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): MyEnum
@@ -906,7 +901,6 @@ KtContainerNode(717,723): '@myRun'
 KtLabelReferenceExpression(717,723): '@myRun'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): ERROR CLASS: CST(ERROR CLASS: Unresolved name: X, ERROR CLASS: Unresolved name: Y
@@ -985,7 +979,6 @@ KtContainerNode(775,781): '@myRun'
 KtLabelReferenceExpression(775,781): '@myRun'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): MyEnum

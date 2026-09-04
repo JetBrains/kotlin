@@ -490,7 +490,6 @@ KtConstantExpression(288,289): '5'
 KtOperationReferenceExpression(292,294): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(295,298): 'Int'
