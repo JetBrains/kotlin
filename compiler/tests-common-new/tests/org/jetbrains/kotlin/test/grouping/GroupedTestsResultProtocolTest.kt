@@ -27,6 +27,7 @@ class GroupedTestsResultProtocolTest {
         val output = buildString {
             appendLine(resultLine("outside", FAILED, "msg", "details"))
             appendLine(BEGIN)
+            appendLine(resultLine("inside", STARTED))
             appendLine(resultLine("inside", PASSED))
             appendLine(END)
             appendLine(resultLine("outside2", FAILED, "msg", "details"))
@@ -36,14 +37,30 @@ class GroupedTestsResultProtocolTest {
     }
 
     @Test
-    fun `given details containing separators when parse then they stay in one field`() {
-        val output = block(resultLine("id", FAILED, "message", "details|with|extra|separators"))
+    fun `given escaped details containing separators when parse then they stay in one field`() {
+        val details = "details|with|extra|separators"
+        val output = block(
+            resultLine("id", STARTED),
+            resultLine("id", FAILED, "message", GroupedTestsResultProtocol.escape(details)),
+        )
 
         val outcome = parse(output).getValue("id").single()
 
         assertEquals(Status.FAILED, outcome.status)
         assertEquals("message", outcome.message)
-        assertEquals("details|with|extra|separators", outcome.details)
+        assertEquals(details, outcome.details)
+    }
+
+    @Test
+    fun `given a record with an extra raw field when parse then it is rejected`() {
+        val extraField = resultLine("id", FAILED, "message", "details") + "${SEP}unexpected"
+        val output = "$BEGIN\n${resultLine("id", STARTED)}\n$extraField\n"
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
+
+        assertEquals(listOf(extraField), result.malformedLines)
+        assertEquals(listOf(Status.CRASHED), result.outcomes.getValue("id").map { it.status })
+        assertFalse(GroupedTestsResultProtocol.hasCompleteStructuredBlock(output))
     }
 
     @Test
@@ -53,6 +70,7 @@ class GroupedTestsResultProtocolTest {
         val output = block(
             tooFewFields,
             unknownStatus,
+            resultLine("wellFormed", STARTED),
             resultLine("wellFormed", PASSED),
         )
 
@@ -79,10 +97,14 @@ class GroupedTestsResultProtocolTest {
 
     @Test
     fun `given an id reported by several VMs when parseMerged then a failure is retained alongside a pass`() {
-        val passedOnOneVm = block(resultLine("id", PASSED), resultLine("other", PASSED))
+        val passedOnOneVm = block(
+            resultLine("id", STARTED), resultLine("id", PASSED),
+            resultLine("other", STARTED), resultLine("other", PASSED),
+        )
         val failedOnAnotherVm = buildString {
             appendLine("noise before the block")
             appendLine(BEGIN)
+            appendLine(resultLine("id", STARTED))
             appendLine(resultLine("id", FAILED, "msg", "details"))
             appendLine("no END sentinel, the VM died here")
         }
@@ -99,8 +121,8 @@ class GroupedTestsResultProtocolTest {
 
     @Test
     fun `given outcome data reported by several VMs when parseMerged then every outcome is retained`() {
-        val first = block(resultLine("id", PASSED, "pass message", "pass details"))
-        val second = block(resultLine("id", FAILED, "failure message", "failure details"))
+        val first = block(resultLine("id", STARTED), resultLine("id", PASSED, "pass message", "pass details"))
+        val second = block(resultLine("id", STARTED), resultLine("id", FAILED, "failure message", "failure details"))
 
         val result = GroupedTestsResultProtocol.parseMerged(listOf(first, second))
         val outcomes = result.outcomes.getValue("id")
@@ -113,7 +135,10 @@ class GroupedTestsResultProtocolTest {
 
     @Test
     fun `given named executions when parseMerged then failures and crashes retain their execution names`() {
-        val failingOutput = block(resultLine("id", FAILED, "failure message", "failure details"))
+        val failingOutput = block(
+            resultLine("id", STARTED),
+            resultLine("id", FAILED, "failure message", "failure details"),
+        )
         val crashingOutput = "$BEGIN\n${resultLine("id", STARTED)}\n"
 
         val result = GroupedTestsResultProtocol.parseMergedWithExecutionNames(
@@ -155,7 +180,10 @@ class GroupedTestsResultProtocolTest {
 
     @Test
     fun `given a parsed batch result when toTestReport then passed and failed ids are split`() {
-        val output = block(resultLine("passed", PASSED), resultLine("failed", FAILED, "msg", "details"))
+        val output = block(
+            resultLine("passed", STARTED), resultLine("passed", PASSED),
+            resultLine("failed", STARTED), resultLine("failed", FAILED, "msg", "details"),
+        )
 
         val testReport = GroupedTestsResultProtocol.parseMerged(listOf(output)).toTestReport()
 
@@ -193,7 +221,10 @@ class GroupedTestsResultProtocolTest {
             assertFalse('\r' in escaped, "Escaped value still holds a raw carriage return: <$value>")
 
             val details = "stack trace of: $value"
-            val output = block(resultLine("id", FAILED, escaped, GroupedTestsResultProtocol.escape(details)))
+            val output = block(
+                resultLine("id", STARTED),
+                resultLine("id", FAILED, escaped, GroupedTestsResultProtocol.escape(details)),
+            )
             val parsed = parse(output)
 
             // A fake result line inside a message must not spoof another test's status.
@@ -230,7 +261,8 @@ class GroupedTestsResultProtocolTest {
         val prefixedByNewline = buildString {
             appendLine(BEGIN)
             append("leftover output with no trailing newline")
-            appendLine("\n${resultLine("id", PASSED)}")
+            appendLine("\n${resultLine("id", STARTED)}")
+            appendLine(resultLine("id", PASSED))
             appendLine(END)
         }
         val glued = block("glued${resultLine("id", PASSED)}")
@@ -360,6 +392,25 @@ class GroupedTestsResultProtocolTest {
     }
 
     @Test
+    fun `given an invalid started record when parseMerged then it cannot authenticate a VM crash`() {
+        val output = "$BEGIN\n${resultLine("first", STARTED)}\n${resultLine("second", STARTED)}\n"
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
+
+        // Keep the last-start heuristic available to rejected-block diagnostics, but never use it to account for
+        // an unexplained VM exception when the parser has already rejected the state transition.
+        assertEquals(setOf("second"), result.crashedIds)
+        assertEquals(emptySet<String>(), result.crashAttributedIds)
+        assertFalse(
+            result.analyze(listOf("first", "second"))
+                .testResults
+                .getValue("second")
+                .crashEvidence
+                ?.isAuthenticated == true,
+        )
+    }
+
+    @Test
     fun `given a start whose result line is lost but a later test reported when parseMerged then no crash is inferred`() {
         // `later` ran after `garbled`, which proves the VM survived it. `garbled` is still failed, as a missing result.
         val output = block(
@@ -430,7 +481,10 @@ class GroupedTestsResultProtocolTest {
 
     @Test
     fun `given a result for a test outside the batch when analyze then it is excessive and not a failure`() {
-        val output = block(resultLine("expected", PASSED), resultLine("foreign", FAILED, "msg", "details"))
+        val output = block(
+            resultLine("expected", STARTED), resultLine("expected", PASSED),
+            resultLine("foreign", STARTED), resultLine("foreign", FAILED, "msg", "details"),
+        )
 
         val analysis = GroupedTestsResultProtocol.parseMerged(listOf(output)).analyze(listOf("expected"))
 
@@ -456,12 +510,69 @@ class GroupedTestsResultProtocolTest {
         val withoutSeparator = "${LINE_PREFIX}NoSeparatorHere"
         val emptyId = resultLine("", PASSED)
         val startedCarryingPayload = resultLine("id", STARTED, "message", "")
-        val output = block(withoutSeparator, emptyId, startedCarryingPayload, resultLine("wellFormed", PASSED))
+        val output = block(
+            withoutSeparator,
+            emptyId,
+            startedCarryingPayload,
+            resultLine("wellFormed", STARTED),
+            resultLine("wellFormed", PASSED),
+        )
 
         val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
 
         assertEquals(listOf(withoutSeparator, emptyId, startedCarryingPayload), result.malformedLines)
         assertEquals(setOf("wellFormed"), result.outcomes.keys)
+    }
+
+    @Test
+    fun `given a terminal record without its start when parse then the block is malformed`() {
+        val terminalBeforeStart = resultLine("id", PASSED)
+        val output = block(terminalBeforeStart)
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
+
+        assertEquals(listOf(terminalBeforeStart), result.malformedLines)
+        assertTrue(result.outcomes.isEmpty())
+        assertFalse(GroupedTestsResultProtocol.hasCompleteStructuredBlock(output))
+    }
+
+    @Test
+    fun `given duplicate starts or terminals when parse then the block is malformed`() {
+        val duplicateStart = resultLine("id", STARTED)
+        val duplicateTerminal = resultLine("id", PASSED)
+        val output = block(
+            duplicateStart,
+            duplicateStart,
+            duplicateTerminal,
+            duplicateTerminal,
+        )
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
+
+        assertEquals(listOf(duplicateStart, duplicateTerminal), result.malformedLines)
+        assertEquals(listOf(Status.PASSED), result.outcomes.getValue("id").map { it.status })
+        assertFalse(GroupedTestsResultProtocol.hasCompleteStructuredBlock(output))
+    }
+
+    @Test
+    fun `given an active test when end is printed then the block is malformed`() {
+        val output = "$BEGIN\n${resultLine("id", STARTED)}\n$END\n"
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
+
+        assertEquals(listOf(END), result.malformedLines)
+        assertTrue(result.outcomes.isEmpty())
+        assertFalse(GroupedTestsResultProtocol.hasCompleteStructuredBlock(output))
+    }
+
+    @Test
+    fun `given a second structured block when parse then both extra sentinels are malformed`() {
+        val output = listOf(BEGIN, END, BEGIN, END).joinToString("\n", postfix = "\n")
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
+
+        assertEquals(listOf(BEGIN, END), result.malformedLines)
+        assertFalse(GroupedTestsResultProtocol.hasCompleteStructuredBlock(output))
     }
 
     private companion object {
