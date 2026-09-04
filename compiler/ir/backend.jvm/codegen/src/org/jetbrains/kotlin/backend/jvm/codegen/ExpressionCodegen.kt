@@ -803,10 +803,8 @@ class ExpressionCodegen(
 
     override fun visitFieldAccess(expression: IrFieldAccessExpression, data: BlockInfo): PromisedValue {
         val callee = expression.symbol.owner
-        if (context.config.shouldInlineConstVals) {
-            // Const fields should only have reads, and those should have been transformed by ConstLowering.
-            assert(callee.constantValue() == null) { "access of const val: ${expression.dump()}" }
-        }
+        // Const fields should only have reads, and those should have been transformed by ConstLowering.
+        assert(callee.constantValue() == null) { "access of const val: ${expression.dump()}" }
 
         val isStatic = expression.receiver == null
         expression.markLineNumber(startOffset = true)
