@@ -5,7 +5,9 @@
 
 @kotlin.wasm.WasmExport
 fun runBoxTest(): Boolean {
-    val boxResult = box()
+    // The source provider can only identify the `box()` declaration syntactically before analysis is available. Keep
+    // inferred-String expression bodies supported, but make an inferred non-String return an explicit compile error.
+    val boxResult: String = box()
     val isOk = boxResult == "OK"
     if (!isOk) {
         println("Wrong box result '${boxResult}'; Expected 'OK'")

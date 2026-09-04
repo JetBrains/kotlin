@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.test.report.TestReportChecks
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
+import org.jetbrains.kotlin.test.services.sourceProviders.hasBoxMethod
 import org.jetbrains.kotlin.test.services.testInfo
 import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.wasm.test.blackbox.computeProxyLauncherClassName
@@ -359,7 +359,7 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         )
 
         // Checked before anything is attributed, since a test that cannot report a result invalidates the whole batch.
-        testServices.groupingStageInputs.firstOrNull { !hasBoxMethod(it) }?.let { input ->
+        testServices.groupingStageInputs.firstOrNull { !it.hasBoxMethod() }?.let { input ->
             testInfraError(
                 "Test ${input.testInfo} does not have a box() method, so its execution status cannot be reported " +
                         "via the grouped result protocol. Please isolate this test using either existing ways in " +
@@ -716,23 +716,7 @@ abstract class AbstractWasmGroupingStageBoxRunner(
      */
     protected open fun allowsDriverlessSingleTest(): Boolean {
         val input = testServices.groupingStageInputs.singleOrNull() ?: return false
-        return RUN_UNIT_TESTS in input.testServices.moduleStructure.allDirectives || !hasBoxMethod(input)
-    }
-
-    /**
-     * A test without a `box()` (e.g. a `// FILE: entry.mjs` driven size test) runs through a custom JS entry point
-     * rather than through its `ProxyLauncher_<encoded-package>`, so it cannot report a per-test result line.
-     */
-    protected fun hasBoxMethod(input: NonGroupingStageOutput): Boolean {
-        val moduleStructure = input.testServices.moduleStructure
-        for (module in moduleStructure.modules) {
-            for (file in module.files) {
-                if (MainFunctionForBlackBoxTestsSourceProvider.containsBoxMethod(file.originalContent)) {
-                    return true
-                }
-            }
-        }
-        return false
+        return RUN_UNIT_TESTS in input.testServices.moduleStructure.allDirectives || !input.hasBoxMethod()
     }
 }
 
