@@ -37,7 +37,7 @@ internal class MapStrategy(val map: SequenceTransformer.Map, builderWithParent: 
                 }
                 irBlock {
                     if (map.isIndexed) {
-                        +builder.increment(mapIndexedVariable, this@MapStrategy.context)
+                        +increment(mapIndexedVariable, this@MapStrategy.context)
                     }
                     if (map.isNotNull) {
                         val mapResultVariable = scope.createTemporaryVariable(mappedFunctionCall, nameHint = "mapResult")
@@ -62,6 +62,7 @@ internal class MapStrategy(val map: SequenceTransformer.Map, builderWithParent: 
             if (map.isIndexed) sequenceReplacement.initialDeclarations + mapIndexedVariable
             else sequenceReplacement.initialDeclarations
         val finalExpression = sequenceReplacement.finalExpression
-        return SequenceReplacement(initialDeclarations, mainBodyBuilder, finalExpression)
+        val checkBeforeNextElement = sequenceReplacement.checkBeforeNextElement
+        return SequenceReplacement(initialDeclarations, checkBeforeNextElement, mainBodyBuilder, finalExpression)
     }
 }

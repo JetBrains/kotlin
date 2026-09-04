@@ -45,6 +45,8 @@ internal class ForLoopStrategy(
         }
     }
 
+    override fun getCheckBeforeNextElement(): IrExpression? = null
+
     override fun createResult(): IrExpression = data.builder.irUnit()
 
     override val canBeRemovedOnEmptySequence: Boolean = true

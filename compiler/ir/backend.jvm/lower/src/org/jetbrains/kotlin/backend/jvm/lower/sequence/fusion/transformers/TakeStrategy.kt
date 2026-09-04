@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.transformers
 
+import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.IrBuilderWithParent
@@ -12,7 +13,6 @@ import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceReplacemen
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.increment
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irFalse
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irIfThen
 import org.jetbrains.kotlin.ir.builders.irIfThenElse
@@ -65,36 +65,45 @@ internal class TakeStrategy(val take: SequenceTransformer.Take, builderWithParen
                     builder.irBlock {
                         +increment(takeVariable, this@TakeStrategy.context)
                         when (take.takeOrDrop) {
-                            TakeOrDrop.Take -> {
-                                val condition = irCall(lessOrEqualSymbol).apply {
-                                    arguments[0] = irGet(takeVariable)
-                                    arguments[1] = irGet(takeArgumentVariable)
-                                }
+                            TakeOrDrop.Drop -> {
                                 +irIfThenElse(
                                     context.irBuiltIns.booleanType,
-                                    condition,
+                                    irNot(irCall(lessOrEqualSymbol).apply {
+                                        arguments[0] = irGet(takeVariable)
+                                        arguments[1] = irGet(takeArgumentVariable)
+                                    }),
                                     sequenceReplacement.mainBodyBuilder(sequenceVariable),
-                                    irFalse()
+                                    irTrue()
                                 )
                             }
-                            TakeOrDrop.Drop -> {
-                                val condition = irCall(lessOrEqualSymbol).apply {
-                                    arguments[0] = irGet(takeVariable)
-                                    arguments[1] = irGet(takeArgumentVariable)
-                                }
-                                +irIfThenElse(
-                                    context.irBuiltIns.booleanType,
-                                    condition,
-                                    irTrue(),
-                                    sequenceReplacement.mainBodyBuilder(sequenceVariable),
-                                )
+                            TakeOrDrop.Take -> {
+                                +sequenceReplacement.mainBodyBuilder(sequenceVariable)
                             }
                         }
                     }
                 }
             val initialDeclarations = sequenceReplacement.initialDeclarations + takeVariable + takeArgumentVariable + checkIfNegative
+            val condition = when (take.takeOrDrop) {
+                TakeOrDrop.Take -> {
+                    irCall(lessOrEqualSymbol).apply {
+                        arguments[0] = irGet(takeArgumentVariable)
+                        arguments[1] = irGet(takeVariable)
+                    }
+                }
+                TakeOrDrop.Drop -> null
+            }
+            val checkBeforeNextElement = if (condition == null)
+                sequenceReplacement.checkBeforeNextElement
+            else
+                sequenceReplacement.checkBeforeNextElement?.let {
+                    // previous checks || condition
+                    builder.irCall(context.irBuiltIns.ororSymbol).apply {
+                        arguments[0] = it
+                        arguments[1] = condition
+                    }
+                } ?: condition
             val finalExpression = sequenceReplacement.finalExpression
-            return SequenceReplacement(initialDeclarations, mainBodyBuilder, finalExpression)
+            return SequenceReplacement(initialDeclarations, checkBeforeNextElement, mainBodyBuilder, finalExpression)
         }
     }
 }

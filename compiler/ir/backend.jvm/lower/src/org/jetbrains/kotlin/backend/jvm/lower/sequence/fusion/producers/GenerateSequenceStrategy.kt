@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers
 
+import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.GenerateSequenceInitialValue
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.IrBuilderWithParent
@@ -81,6 +82,7 @@ internal class GenerateSequenceStrategy(
 
                 body = irBlock {
                     +irBlock {
+                        sequenceReplacement.checkBeforeNextElement?.let { +irIfThen(it, irBreak(loop)) }
                         val shouldContinueExpression = sequenceReplacement.mainBodyBuilder(stateVariable)
                         +irIfThen(context.irBuiltIns.unitType, irNot(shouldContinueExpression), irBreak(loop))
                     }

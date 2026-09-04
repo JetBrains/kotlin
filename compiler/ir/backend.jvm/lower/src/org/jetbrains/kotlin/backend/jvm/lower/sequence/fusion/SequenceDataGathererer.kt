@@ -59,6 +59,7 @@ internal const val TAKE = KOTLIN_SEQUENCES_PREFIX + "take"
 internal const val TAKE_WHILE = KOTLIN_SEQUENCES_PREFIX + "takeWhile"
 internal const val DROP = KOTLIN_SEQUENCES_PREFIX + "drop"
 internal const val DROP_WHILE = KOTLIN_SEQUENCES_PREFIX + "dropWhile"
+internal const val WITH_INDEX = KOTLIN_SEQUENCES_PREFIX + "withIndex"
 
 // this is stored for expressions, intended to be passed either to value declarations or to for loops iterated over the expression result
 internal var IrExpression.sequenceDataOfExpression: SequenceData? by irAttribute(true)
@@ -78,6 +79,18 @@ private fun isSafeToLowerFromSequenceOf(expression: IrExpression): Boolean {
     if (containsMutable(expression)) return false
     if (!expression.isSafeToMove()) return false // skip lowering if an expression contains something that has to be evaluated only once
     return true
+}
+
+private fun isSafeToLowerGenerateSequence(
+    expression: IrExpression
+): Boolean {
+    val function = expression.asFunction() ?: return false
+    val body = function.body ?: return false
+
+    return !containsUnlowerableCalls(
+        body,
+        allowSequenceYields = true
+    )
 }
 
 internal fun gatherVarargArgument(argument: IrExpression): List<IrExpression>? {
@@ -197,13 +210,13 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
     private fun IrCall.receiverSequenceData(): SequenceData? =
         arguments.firstOrNull()?.sequenceDataOfExpression
 
-    private fun IrCall.prependTransformer(
+    private fun IrCall.appendTransformer(
         receiverData: SequenceData,
         transformer: SequenceTransformer,
     ) {
         sequenceDataOfExpression = SequenceData(
             receiverData.sequenceSource,
-            listOf(transformer) + receiverData.transformers
+            receiverData.transformers + transformer
         )
     }
 
@@ -250,7 +263,7 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
             MapPredicateCall.NonIndexed(createUnaryPredicate(fnArg))
         }
 
-        expression.prependTransformer(
+        expression.appendTransformer(
             receiverData,
             SequenceTransformer.Map(
                 predicateCall,
@@ -267,7 +280,7 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         val argumentExpression = call.arguments.getOrNull(1) ?: return
         val receiverData = call.receiverSequenceData() ?: return
         if (!isSafeToLower(argumentExpression)) return
-        call.prependTransformer(receiverData, SequenceTransformer.Take(argumentExpression, takeVersion))
+        call.appendTransformer(receiverData, SequenceTransformer.Take(argumentExpression, takeVersion))
     }
 
     private fun matchWithTakeWhile(
@@ -277,7 +290,7 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         val predicate = call.arguments.getOrNull(1) ?: return
         val receiverData = call.receiverSequenceData() ?: return
         val predicateCall = createUnaryPredicate(predicate)
-        call.prependTransformer(
+        call.appendTransformer(
             receiverData,
             SequenceTransformer.TakeWhile(
                 predicateCall,
@@ -291,22 +304,24 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
             1 -> {
                 // generateSequence(() -> T?)
                 val func = expression.arguments.getOrNull(0) ?: return
+                if (!isSafeToLowerGenerateSequence(func)) return
                 GenerateSequenceInitialValue.NoInitialValue to func
             }
             2 -> {
-                val initialValueOrFunction = expression.arguments.getOrNull(0) ?: return
+                val seed = expression.arguments.getOrNull(0) ?: return
                 val func = expression.arguments.getOrNull(1) ?: return
                 val fn = expression.symbol.owner
                 val initialValueOrFunctionName = fn.parameters.getOrNull(0)?.name?.asString()
+                if (!isSafeToLowerGenerateSequence(func)) return
                 when (initialValueOrFunctionName) {
                     "seedFunction" -> {
                         // generateSequence(() -> T?, (T) -> T?)
-                        GenerateSequenceInitialValue.InitialFunction(initialValueOrFunction) to func
+                        GenerateSequenceInitialValue.InitialFunction(seed) to func
                     }
                     "seed" -> {
                         // generateSequence(T?, (T) -> T?)
-                        if (!isSafeToLower(initialValueOrFunction)) return
-                        GenerateSequenceInitialValue.InitialValue(initialValueOrFunction) to func
+                        if (!isSafeToLower(seed)) return
+                        GenerateSequenceInitialValue.InitialValue(seed) to func
                     }
                     else -> return
                 }
@@ -331,6 +346,7 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
 
             FilterVersion.FilterNotNull -> null
         }
+        predicate?.let { if (!isSafeToLower(it)) return }
 
         val filterFunction: (IrBuilderWithParent) -> (IrValueDeclaration) -> IrExpression =
             { builderWithParent ->
@@ -352,9 +368,17 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
                 }
             }
 
-        call.prependTransformer(
+        call.appendTransformer(
             receiverData,
             SequenceTransformer.Filter(filterFunction)
+        )
+    }
+
+    private fun matchWithWithIndex(expression: IrCall) {
+        val receiverData = expression.receiverSequenceData() ?: return
+        expression.appendTransformer(
+            receiverData,
+            SequenceTransformer.WithIndex(expression)
         )
     }
 
@@ -411,6 +435,7 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
             TAKE_WHILE -> matchWithTakeWhile(expression, TakeOrDrop.Take)
             DROP -> matchWithTake(expression, TakeOrDrop.Drop)
             DROP_WHILE -> matchWithTakeWhile(expression, TakeOrDrop.Drop)
+            WITH_INDEX -> matchWithWithIndex(expression)
             GENERATE_SEQUENCE -> matchWithGenerateSequence(expression)
             SEQUENCE_OF -> matchWithSequenceOf(expression)
             AS_SEQUENCE -> matchWithAsSequence(expression)

@@ -13,13 +13,13 @@ import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceData
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceDataGatherer
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceReplacement
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceSource
+import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.containsUnlowerableCalls
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.gatherVarargArgument
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.getBaseTypeFromSequenceScopeFunction
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.getGenericTypeFromExpression
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.isSequenceType
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.sequenceDataOfExpression
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -28,16 +28,17 @@ import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irIfThen
+import org.jetbrains.kotlin.ir.builders.irIfThenElse
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.builders.irReturnUnit
 import org.jetbrains.kotlin.ir.builders.irReturnableBlock
+import org.jetbrains.kotlin.ir.builders.irTrue
 import org.jetbrains.kotlin.ir.builders.irUnit
 import org.jetbrains.kotlin.ir.builders.irWhile
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -45,17 +46,11 @@ import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 private class YieldReplacer(
@@ -152,7 +147,7 @@ private class YieldReplacer(
             val sequenceData =
                 sequenceProducer.sequenceDataOfExpression ?: return null
             val producerStrategy = sequenceData.sequenceSource.createProducerStrategy(this, this@YieldReplacer.context)
-            val sequenceReplacement = SequenceReplacement(initialDeclarations, consumerBodyBuilder, finalExpression)
+            val sequenceReplacement = SequenceReplacement(initialDeclarations, null, consumerBodyBuilder, finalExpression)
             producerStrategy.fuseConsumer(builderWithParent, sequenceData, sequenceReplacement)
                 ?: return null
         }
@@ -198,7 +193,7 @@ private class YieldReplacer(
                     val baseType = getGenericTypeFromExpression(iterable, context) ?: return null
                     val source = SequenceSource.SequenceOf(elements, baseType)
                     val producerStrategy = SequenceOfStrategy(source, context)
-                    val sequenceReplacement = SequenceReplacement(initialDeclarations, consumerBodyBuilder, finalExpression)
+                    val sequenceReplacement = SequenceReplacement(initialDeclarations, null, consumerBodyBuilder, finalExpression)
                     val sequenceData = SequenceData(source, emptyList())
                     return producerStrategy.fuseConsumer(builderWithParent, sequenceData, sequenceReplacement)
                 }
@@ -251,7 +246,7 @@ internal class SequenceConstructorStrategy(
     ): IrContainerExpression? {
         val builder = builderWithParent.first
         val parent = builderWithParent.second
-        if (containsOtherSequenceBuilderCalls(sequenceScope.invokeFunction.body!!)) return null
+        if (containsUnlowerableCalls(sequenceScope.invokeFunction.body!!, allowSequenceYields = true)) return null
 
         val localConsumerFunction = buildLocalConsumerFunction(builder, parent, sequenceReplacement.mainBodyBuilder)
 
@@ -261,10 +256,19 @@ internal class SequenceConstructorStrategy(
             +sequenceScope.invokeFunction.body!!.deepCopyWithSymbols(parent).statements
         }
         innerBlock.statements.add(builder.irReturnUnit().apply { this.returnTargetSymbol = innerBlock.symbol })
+        val innerBlockWithCheck =
+            sequenceReplacement.checkBeforeNextElement?.let {
+                builder.irIfThenElse(
+                    context.irBuiltIns.booleanType,
+                    builder.irNot(it),
+                    innerBlock,
+                    builder.irTrue(),
+                )
+            } ?: innerBlock
         val outerBlock = builder.irBlock(resultType = baseType) {
             +sequenceReplacement.initialDeclarations
             +localConsumerFunction
-            +innerBlock
+            +innerBlockWithCheck
             +sequenceReplacement.finalExpression
         }
         val oldLambdaSymbol = sequenceScope.invokeFunction.symbol
@@ -309,36 +313,6 @@ internal class SequenceConstructorStrategy(
         return consumerTarget
     }
 
-    private val sequenceScopeFqName = FqName("kotlin.sequences.SequenceScope")
-
-    private fun IrFunction.isSequenceScopeBuilderCall(): Boolean {
-        val receiverType = parameters.getOrNull(0)?.type as? IrSimpleType ?: return false
-        val receiverClass = receiverType.classOrNull?.owner ?: return false
-        return receiverClass.fqNameWhenAvailable == sequenceScopeFqName
-    }
-
-    fun containsOtherSequenceBuilderCalls(body: IrBody): Boolean {
-        var result = false
-
-        body.acceptVoid(object : IrVisitorVoid() {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitCall(expression: IrCall) {
-                val callee = expression.symbol.owner
-
-                if (callee.isSequenceScopeBuilderCall()) {
-                    val name = callee.name.asString()
-                    if (name != "yield" && name != "yieldAll") {
-                        result = true
-                    }
-                }
-                super.visitCall(expression)
-            }
-        })
-        return result
-    }
 }
 
 private fun createForEachConsumer(

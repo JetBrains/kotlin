@@ -56,13 +56,15 @@ internal abstract class ConsumerStrategy(val data: ConsumerData, val expression:
 
     abstract fun getConsumerBuilder(): ConsumerBodyBuilder?
 
+    abstract fun getCheckBeforeNextElement(): IrExpression?
+
     abstract fun createResult(): IrExpression
 
     abstract val canBeRemovedOnEmptySequence: Boolean
 }
 
 internal fun ConsumerStrategy.createSequenceReplacement(): SequenceReplacement? =
-    getConsumerBuilder()?.let { SequenceReplacement(getInitialDeclarations(), it, createResult()) }
+    getConsumerBuilder()?.let { SequenceReplacement(getInitialDeclarations(), getCheckBeforeNextElement(), it, createResult()) }
 
 internal data class ConsumerData(
     val context: JvmBackendContext,

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.consumers
 
+import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.ConsumerBodyBuilder
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.callPredicate
@@ -68,6 +69,13 @@ internal class IndexOfStrategy(data: ConsumerData, expression: IrCall, val index
             }
         }
     }
+
+    override fun getCheckBeforeNextElement(): IrExpression? = if (indexOfVersion is IndexOfVersion.IndexOfLast) null else builder.irNot(
+        builder.irEquals(
+            builder.irGet(resultVariable),
+            builder.irInt(-1)
+        )
+    )
 
     override fun createResult(): IrExpression = builder.irGet(resultVariable)
 

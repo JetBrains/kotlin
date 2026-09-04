@@ -48,9 +48,9 @@ internal open class FirstLastStrategy(
     )
 
     // this is needed for all the versions of first/last which throw an exception on empty sequence
-    val skippedVariable: IrVariable = data.builder.scope.createTemporaryVariable(data.builder.irTrue(), "skipped", isMutable = true)
+    val foundVariable: IrVariable = data.builder.scope.createTemporaryVariable(data.builder.irFalse(), "found", isMutable = true)
 
-    override fun getInitialDeclarations(): List<IrVariable> = listOf(skippedVariable, resultVariable)
+    override fun getInitialDeclarations(): List<IrVariable> = listOf(foundVariable, resultVariable)
 
     override fun getConsumerBuilder(): ConsumerBodyBuilder? {
         val call = expression as IrCall
@@ -69,14 +69,14 @@ internal open class FirstLastStrategy(
                     +predicateResult
                     +irIfThen(irGet(predicateResult), irBlock {
                         +irSet(resultVariable, irGet(sequenceElement))
-                        +irSet(skippedVariable, irFalse())
+                        +irSet(foundVariable, irTrue())
                     })
                     val shouldContinueSearching = if (isFirst) irNot(irGet(predicateResult)) else irTrue()
                     +shouldContinueSearching
                 } else {
                     // this is the non-predicate overload of first or last
                     +irSet(resultVariable, irGet(sequenceElement))
-                    +irSet(skippedVariable, irFalse())
+                    +irSet(foundVariable, irTrue())
                     val shouldContinueSearching = if (isFirst) irFalse() else irTrue()
                     +shouldContinueSearching
                 }
@@ -84,12 +84,14 @@ internal open class FirstLastStrategy(
         }
     }
 
+    override fun getCheckBeforeNextElement(): IrExpression? = if (isFirst) data.builder.irGet(foundVariable) else null
+
     override fun createResult(): IrExpression = data.builder.irBlock {
         if (isOrNull || isFind) {
             +irGet(resultVariable)
         } else {
             // throw the exception on first or last
-            val wasSkipped = irGet(skippedVariable)
+            val wasSkipped = irNot(irGet(foundVariable))
             val throwException = irThrow(
                 irCallConstructor(data.context.symbols.noSuchElementExceptionCtorString, emptyList()).apply {
                     arguments[0] = irString("Sequence is empty.")

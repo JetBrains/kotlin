@@ -11,11 +11,11 @@ import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.ConsumerBodyBuilde
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.callPredicate
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.getPredicateArgument
 import org.jetbrains.kotlin.ir.builders.irBlock
-import org.jetbrains.kotlin.ir.builders.irFalse
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irNotEquals
 import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.builders.irSet
+import org.jetbrains.kotlin.ir.builders.irTrue
 import org.jetbrains.kotlin.ir.expressions.IrCall
 
 internal class FirstNotNullOfStrategy(data: ConsumerData, expression: IrCall, isOrNull: Boolean) :
@@ -33,9 +33,9 @@ internal class FirstNotNullOfStrategy(data: ConsumerData, expression: IrCall, is
                     val isTransformNotNull = irNotEquals(irGet(transformResultVariable), irNull())
                     val thenPart = irBlock {
                         +irSet(resultVariable, irGet(transformResultVariable))
-                        +irSet(skippedVariable, irFalse())
+                        +irSet(foundVariable, irTrue())
                     }
-                    val isFoundVariable = scope.createTemporaryVariable(isTransformNotNull, "isFound")
+                    val isFoundVariable = scope.createTemporaryVariable(isTransformNotNull, "found")
                     +isFoundVariable
                     +irIfThen(irGet(isFoundVariable), thenPart)
                     // if didn't find anything, continue searching

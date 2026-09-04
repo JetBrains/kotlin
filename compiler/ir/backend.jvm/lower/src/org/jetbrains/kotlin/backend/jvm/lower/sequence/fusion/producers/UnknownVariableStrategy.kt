@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers
 
+import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.IrBuilderWithParent
@@ -66,6 +67,7 @@ internal class UnknownVariableStrategy(
                 condition = loopCondition
 
                 body = irBlock {
+                    sequenceReplacement.checkBeforeNextElement?.let { +irIfThen(it, irBreak(loop)) }
                     +outerLoopVariable
                     +irBlock {
                         val shouldContinueVar =

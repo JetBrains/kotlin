@@ -63,6 +63,8 @@ internal class ToCollectionStrategy(
         }
     }
 
+    override fun getCheckBeforeNextElement(): IrExpression? = null
+
     override fun createResult(): IrExpression = data.builder.irGet(destinationVariable!!)
 
     override val canBeRemovedOnEmptySequence: Boolean = false

@@ -83,5 +83,7 @@ internal class FilterToStrategy(data: ConsumerData, expression: IrCall, val vers
 
     override fun createResult(): IrExpression = data.builder.irGet(destinationVariable!!)
 
+    override fun getCheckBeforeNextElement(): IrExpression? = null
+
     override val canBeRemovedOnEmptySequence: Boolean = true
 }

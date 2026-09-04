@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.producers
 
+import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.IrBuilderWithParent
@@ -56,7 +57,7 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 
 internal class SequenceOfStrategy(
     val source: SequenceSource.SequenceOf,
-    val context: JvmBackendContext
+    val context: JvmBackendContext,
 ) : ProducerStrategy() {
 
     override fun fuseConsumer(
@@ -89,6 +90,7 @@ internal class SequenceOfStrategy(
                 condition = loopCondition
 
                 body = irBlock {
+                    sequenceReplacement.checkBeforeNextElement?.let { +irIfThen(it, irBreak(loop)) }
                     val currentElementVar = irTemporary(currentElementExpr, nameHint = "currentElement")
                     +irBlock {
                         val shouldContinueVar =

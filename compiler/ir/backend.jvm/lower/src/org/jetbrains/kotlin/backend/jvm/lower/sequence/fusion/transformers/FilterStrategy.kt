@@ -32,6 +32,7 @@ internal class FilterStrategy(val filter: SequenceTransformer.Filter, builderWit
         }
         val initialDeclarations = sequenceReplacement.initialDeclarations
         val finalExpression = sequenceReplacement.finalExpression
-        return SequenceReplacement(initialDeclarations, mainBodyBuilder, finalExpression)
+        val checkBeforeNextElement = sequenceReplacement.checkBeforeNextElement
+        return SequenceReplacement(initialDeclarations, checkBeforeNextElement, mainBodyBuilder, finalExpression)
     }
 }

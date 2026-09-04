@@ -45,5 +45,7 @@ internal class ForEachStrategy(data: ConsumerData, expression: IrCall, val isInd
 
     override fun createResult(): IrExpression = builder.irUnit()
 
+    override fun getCheckBeforeNextElement(): IrExpression? = null
+
     override val canBeRemovedOnEmptySequence: Boolean = true
 }
