@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.SKIP
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirCliFacade
+import org.jetbrains.kotlin.test.klib.clearFrontendProviderCaches
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
@@ -60,6 +61,8 @@ class KlibSerializerNativeCliFacade(
         val input = cliArtifact.withNewDiagnosticCollector(diagnosticsCollector)
         val serializedOutput = NativeIrSerializationPipelinePhase.executePhase(input) ?: return null
         val output = NativeKlibWritingPipelinePhase.executePhase(serializedOutput)
+
+        testServices.clearFrontendProviderCaches(module)
 
         return BinaryArtifacts.KLib(File(output.outputKlibPath), input.configuration.diagnosticsCollector)
     }
