@@ -61,7 +61,7 @@ KtUserType(166,173): 'MyClass'
 KtNameReferenceExpression(166,173): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
