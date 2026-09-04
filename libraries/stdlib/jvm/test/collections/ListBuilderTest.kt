@@ -66,7 +66,7 @@ class ListBuilderTest {
             override fun get(index: Int): String = "element"
         }
 
-        buildList {
+        val _ = buildList {
             repeat(builderSize) { add("element") }
 
             assertFails { addAll(giantList) }

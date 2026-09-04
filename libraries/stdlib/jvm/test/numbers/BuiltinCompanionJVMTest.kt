@@ -67,6 +67,6 @@ class BuiltinCompanionJVMTest {
 
     @Test fun stringTest() {
         val s = String
-        s.CASE_INSENSITIVE_ORDER
+        val _ = s.CASE_INSENSITIVE_ORDER
     }
 }

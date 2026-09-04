@@ -584,11 +584,11 @@ class ArrayDequeTest {
 
             repeat(times = 2) {
                 if (expectedIterator.hasNext()) {
-                    expectedIterator.next()
-                    actualIterator.next()
+                    val _ = expectedIterator.next()
+                    val _ = actualIterator.next()
                 } else if (expectedIterator.hasPrevious()) {
-                    expectedIterator.previous()
-                    actualIterator.previous()
+                    val _ = expectedIterator.previous()
+                    val _ = actualIterator.previous()
                 }
                 if (dequeSize > it) {
                     expectedIterator.remove()

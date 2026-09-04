@@ -27,11 +27,11 @@ public class CompareContext<out T>(public val expected: T, public val actual: T)
         assertEquals(expected.getter(), actual.getter(), message)
     }
 
-    public fun propertyFails(getter: T.() -> Unit) {
+    public fun propertyFails(getter: T.() -> Any?) {
         assertFailEquals({ expected.getter() }, { actual.getter() })
     }
 
-    public inline fun <reified E : Throwable> propertyFailsWith(crossinline getter: T.() -> Unit) {
+    public inline fun <reified E : Throwable> propertyFailsWith(crossinline getter: T.() -> Any?) {
         assertFailsWith<E> { expected.getter() }
         assertFailsWith<E> { actual.getter() }
     }
@@ -40,7 +40,7 @@ public class CompareContext<out T>(public val expected: T, public val actual: T)
         compare(expected.getter(), actual.getter(), block)
     }
 
-    private fun assertFailEquals(expected: () -> Unit, actual: () -> Unit) {
+    private fun assertFailEquals(expected: () -> Any?, actual: () -> Any?) {
         val expectedFail = assertFails(expected)
         val actualFail = assertFails(actual)
         //assertEquals(expectedFail != null, actualFail != null)

@@ -221,7 +221,7 @@ class CoroutineContextTest {
             assertSame(e, context[key])
         }
         val set = mutableSetOf<CoroutineContext.Element>()
-        context.fold(set) { s, e -> s.apply { add(e) } }
+        val _ = context.fold(set) { s, e -> s.apply { add(e) } }
         assertEquals(set, es.toSet())
         when (es.size) {
             0 -> assertSame(context, EmptyCoroutineContext)

@@ -253,7 +253,8 @@ public class URangeTest {
         (10UL downTo 1UL).let { checkHashCode(it, it.first, it.last, it.step) }
     }
 
-    private fun assertFailsWithIllegalArgument(f: () -> Unit) = assertFailsWith<IllegalArgumentException> { f() }
+    @IgnorableReturnValue
+    private fun assertFailsWithIllegalArgument(f: () -> Any?) = assertFailsWith<IllegalArgumentException> { f() }
 
     @Test
     fun illegalProgressionCreation() {

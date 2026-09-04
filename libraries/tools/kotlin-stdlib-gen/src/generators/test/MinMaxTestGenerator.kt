@@ -228,17 +228,17 @@ $assertions
         assertNull(empty.minByOrNull { it.toString() })
         assertNull(empty.maxByOrNull { it.toString() })
         assertFailsWith<NoSuchElementException> { empty.minBy { it.toString() } }
-        assertFailsWith<NoSuchElementException> { empty.maxBy { it.toString() } }                       
+        assertFailsWith<NoSuchElementException> { empty.maxBy { it.toString() } }
     }
 
     @Test 
     fun minBySelectorEvaluateOnce() {
         val source = ${containerOf(defaultElements)}
         var c = 0
-        source.minBy { c++ }
+        val _ = source.minBy { c++ }
         assertEquals(${defaultElements.size}, c)
         c = 0
-        source.minByOrNull { c++ }
+        val _ = source.minByOrNull { c++ }
         assertEquals(${defaultElements.size}, c)
     }
 
@@ -246,10 +246,10 @@ $assertions
     fun maxBySelectorEvaluateOnce() {
         val source = ${containerOf(defaultElements)}
         var c = 0
-        source.maxBy { c++ }
+        val _ = source.maxBy { c++ }
         assertEquals(${defaultElements.size}, c)
         c = 0
-        source.maxByOrNull { c++ }
+        val _ = source.maxByOrNull { c++ }
         assertEquals(${defaultElements.size}, c)
     }
     
@@ -314,7 +314,7 @@ $assertions
         assertNull(empty.minOfOrNull { $selector })
         assertNull(empty.maxOfOrNull { $selector })
         assertFailsWith<NoSuchElementException> { empty.minOf { $selector } }
-        assertFailsWith<NoSuchElementException> { empty.maxOf { $selector } }                       
+        assertFailsWith<NoSuchElementException> { empty.maxOf { $selector } }
 """)
             }
             writer.appendLine("""

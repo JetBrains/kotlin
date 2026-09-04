@@ -33,7 +33,7 @@ class MapBuilderTest {
             }
         }
 
-        buildMap {
+        val _ = buildMap {
             repeat(builderSize) { put(-it, "value") }
 
             assertFails { putAll(giantMap) }

@@ -90,7 +90,7 @@ class HashMapCompactTest {
 
     @Test
     fun kt68298() {
-        buildMap { performOperations() }
+        val _ = buildMap { performOperations() }
         HashMap<IntWrapper, String?>().performOperations()
         LinkedHashMap<IntWrapper, String?>().performOperations()
     }

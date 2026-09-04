@@ -28,7 +28,7 @@ class KotlinVersionTest {
             for (place in 0..2) {
                 val [major, minor, patch] = IntArray(3) { index -> if (index == place) component else 0 }
                 if (component in 0..KotlinVersion.MAX_COMPONENT_VALUE) {
-                    KotlinVersion(major, minor, patch)
+                    val _ = KotlinVersion(major, minor, patch) // should not throw
                 } else {
                     assertFailsWith<IllegalArgumentException>("Expected $major.$minor.$patch to be invalid version") {
                         KotlinVersion(major, minor, patch)
@@ -71,4 +71,3 @@ class KotlinVersionTest {
         }
     }
 }
-

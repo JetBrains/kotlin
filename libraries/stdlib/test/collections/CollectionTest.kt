@@ -1231,7 +1231,7 @@ class CollectionTest {
 
     @Test fun toStringContainingThis() = testExceptOn(TestPlatform.Js) {
         // resulting string is platform-dependent, but shouldn't throw
-        arrayOf<Any>("a", "b", "c").apply { this[1] = this }.toString()
+        val _ = arrayOf<Any>("a", "b", "c").apply { this[1] = this }.toString()
 
         assertEquals(
             "[a, (this Collection), c]",
