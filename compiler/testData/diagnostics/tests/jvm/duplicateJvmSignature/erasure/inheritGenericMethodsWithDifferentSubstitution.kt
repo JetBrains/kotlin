@@ -15,18 +15,18 @@ class GenericDerivedClass<T> : GenericBaseClass<T>(), GenericBaseInterface<T> {
     override fun ambiguous(x: T): T = foo(x)
 }
 
-<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>class SpecializedDerivedClass : GenericBaseClass<Int>(), GenericBaseInterface<String> {
+class <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>SpecializedDerivedClass<!> : GenericBaseClass<Int>(), GenericBaseInterface<String> {
     override fun foo(x: Int): Int = super.foo(x)
     override fun bar(x: String): String = super.bar(x)
     override fun ambiguous(x: String): String = bar(x)
     override fun ambiguous(x: Int): Int = foo(x)
-}<!>
+}
 
 class MixedDerivedClass<T> : GenericBaseClass<Int>(), GenericBaseInterface<T> {
     override fun foo(x: Int): Int = super.foo(x)
     override fun bar(x: T): T = super.bar(x)
     override fun ambiguous(x: Int): Int = foo(x)
-    override <!ACCIDENTAL_OVERRIDE!>fun ambiguous(x: T): T = bar(x)<!>
+    <!ACCIDENTAL_OVERRIDE!>override fun ambiguous(x: T): T<!> = bar(x)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, override,

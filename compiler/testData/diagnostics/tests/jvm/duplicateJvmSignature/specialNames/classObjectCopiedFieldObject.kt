@@ -15,10 +15,10 @@ class C {
     }
 }
 
-<!CONFLICTING_JVM_DECLARATIONS!>class D {
+class <!CONFLICTING_JVM_DECLARATIONS!>D<!> {
     companion object A {
-        lateinit <!CONFLICTING_JVM_DECLARATIONS!>var A: A<!>
+        <!CONFLICTING_JVM_DECLARATIONS!>lateinit var A: A<!>
     }
-}<!>
+}
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, lateinit, objectDeclaration, propertyDeclaration */

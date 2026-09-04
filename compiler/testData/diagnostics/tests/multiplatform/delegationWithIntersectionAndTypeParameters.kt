@@ -28,14 +28,14 @@ class Test2(val x : Base1<Int>, val y : Base2<Int>): Base1<Int> by x, Base2<Int>
         get() = 1
 }
 
-<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>class Test3(val x : Base1<Int>, val y : Base2<Number>): Base1<Int> by x, Base2<Number> by y {
+class <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>Test3(val x : Base1<Int>, val y : Base2<Number>)<!>: Base1<Int> by x, Base2<Number> by y {
     override val a: Int
         get() = 1
 
     override fun foo(t: Number): Number {
         return 1
     }
-}<!>
+}
 
 // MODULE: platform()()(common)
 // FILE: platform.kt
