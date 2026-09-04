@@ -19,13 +19,13 @@
 
 package org.jetbrains.kotlin.powerassert.diagram
 
-import org.jetbrains.kotlin.backend.common.implicitInvoke
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.implicitInvoke
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
