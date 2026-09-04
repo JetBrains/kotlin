@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.checkers
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.at
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock

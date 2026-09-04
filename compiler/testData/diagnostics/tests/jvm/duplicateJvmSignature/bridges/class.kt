@@ -8,7 +8,7 @@ open class B<T> {
 class C : B<String>() {
     override fun foo(t: String) {}
 
-    <!ACCIDENTAL_OVERRIDE!>fun foo(o: Any) {}<!>
+    <!ACCIDENTAL_OVERRIDE!>fun foo(o: Any)<!> {}
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, override, typeParameter */

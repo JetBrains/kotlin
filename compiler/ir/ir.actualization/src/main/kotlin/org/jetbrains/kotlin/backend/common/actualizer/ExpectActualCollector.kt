@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.actualizer
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.hmppProvidersEnabled
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
@@ -500,11 +499,6 @@ internal class ExpectActualLinkCollector {
             for ([incompatibility, actualMemberSymbols] in actualSymbolsByIncompatibility) {
                 for (actualSymbol in actualMemberSymbols) {
                     require(actualSymbol is IrSymbol)
-
-                    if (languageVersionSettings.hmppProvidersEnabled && (expectSymbol.owner as IrDeclaration).fileOrNull == null) {
-                        throw IllegalStateException("Actualization of common dependencies failed on '$expectSymbol'.")
-                    }
-
                     diagnosticsReporter.reportExpectActualIrMismatch(expectSymbol, actualSymbol, incompatibility)
                 }
             }

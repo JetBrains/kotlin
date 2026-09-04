@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ir
 
-import org.jetbrains.kotlin.backend.common.defaultArgumentsDispatchFunction
-import org.jetbrains.kotlin.backend.common.suspendFunction
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -16,13 +14,15 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering.Companion.promisifiedWrapperFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isPromisifiedMemberWrapper
-import org.jetbrains.kotlin.ir.backend.js.staticInitFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.hasDefaultArgumentBridge
+import org.jetbrains.kotlin.ir.backend.js.staticInitFunction
 import org.jetbrains.kotlin.ir.backend.js.tsexport.Exportability
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedVisibility
 import org.jetbrains.kotlin.ir.backend.js.tsexport.toExportedVisibility
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.defaultArgumentsDispatchFunction
+import org.jetbrains.kotlin.ir.suspendFunction
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf

@@ -65,7 +65,7 @@ abstract class SignatureClashDetector<Signature : Any, Declaration : IrDeclarati
             // Declarations that come from other modules may not have a file, so we don't show diagnostics on them.
             val containingFile = declaration.fileOrNull ?: return@mapNotNullTo null
             val reportOn = declaration.takeUnless { it.startOffset < 0 } ?: reportOnIfSynthetic(declaration) ?: return@mapNotNullTo null
-            diagnosticReporter.at(reportOn.sourceElement(), reportOn, containingFile)
+            diagnosticReporter.at(reportOn, containingFile)
         }
 
         assert(diagnostics.isEmpty() == declarations.isEmpty()) {

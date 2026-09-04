@@ -5,7 +5,7 @@ open class B {
 }
 
 class C : B() {
-    <!ACCIDENTAL_OVERRIDE!>fun getX() = 1<!>
+    <!ACCIDENTAL_OVERRIDE!>fun getX()<!> = 1
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, propertyDeclaration */

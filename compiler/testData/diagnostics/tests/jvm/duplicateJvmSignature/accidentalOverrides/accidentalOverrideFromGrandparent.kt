@@ -10,8 +10,8 @@ open class FooImpl : Foo<String> {
 }
 
 open class FooImpl2 : FooImpl() {
-    <!ACCIDENTAL_OVERRIDE!>fun foo(x: Any) {
-    }<!>
+    <!ACCIDENTAL_OVERRIDE!>fun foo(x: Any)<!> {
+    }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, override,

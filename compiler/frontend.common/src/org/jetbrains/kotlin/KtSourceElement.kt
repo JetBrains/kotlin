@@ -1004,6 +1004,13 @@ class KtOffsetsOnlySourceElement(
     override val endOffset: Int,
 ) : AbstractKtSourceElement()
 
+object KtMissingSourceElement : AbstractKtSourceElement() {
+    override val startOffset: Int
+        get() = -1
+    override val endOffset: Int
+        get() = -1
+}
+
 /**
  * [KtSourceElement] represents the AST element associated with a specific location in the source code. It allows the compiler to map back
  * to the source file.

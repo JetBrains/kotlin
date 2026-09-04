@@ -31,7 +31,7 @@ class B : A() {
         val prop2: String = ""
 
         fun memberFoo(x: List<Int>) {}
-        <!ACCIDENTAL_OVERRIDE!>fun memberBar(x: List<String>) {}<!>
+        <!ACCIDENTAL_OVERRIDE!>fun memberBar(x: List<String>)<!> {}
         @JvmOverloads
         <!ACCIDENTAL_OVERRIDE!>fun memberBaz(x: List<Int>, y: Int = 0) {}<!>
         @JvmOverloads
@@ -40,7 +40,7 @@ class B : A() {
         <!ACCIDENTAL_OVERRIDE!>fun memberBaz4(x: List<String>, @IntroducedAt("1.1") y: Int = 0) {}<!>
 
         fun compFoo(x: List<Int>) {}
-        <!ACCIDENTAL_OVERRIDE!>fun compBar(x: List<String>) {}<!>
+        <!ACCIDENTAL_OVERRIDE!>fun compBar(x: List<String>)<!> {}
         @JvmOverloads
         <!ACCIDENTAL_OVERRIDE!>fun compBaz(x: List<Int>, y: Int = 0) {}<!>
         @JvmOverloads

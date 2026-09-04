@@ -6,7 +6,7 @@ open class Base {
 }
 
 class Derived : Base() {
-    <!ACCIDENTAL_OVERRIDE!>fun foo(i: Int = 0) {}<!>
+    <!ACCIDENTAL_OVERRIDE!>fun foo(i: Int = 0)<!> {}
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral */

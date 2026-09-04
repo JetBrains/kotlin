@@ -7,15 +7,14 @@ package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtIoFileSourceFile
-import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.isAnnotationWithEqualFqName
 import org.jetbrains.kotlin.ir.util.sourceElement
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
@@ -38,30 +37,26 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
 
     private val suppressCache = IrBasedSuppressCache()
 
-    private fun IrElement.toSourceElement(containingIrFile: IrFile): AbstractKtSourceElement? {
-        return PsiSourceManager.findPsiElement(this, containingIrFile)?.let(::KtRealPsiSourceElement)
-            ?: (this as? IrMetadataSourceOwner)?.metadata?.source
-            ?: sourceElement()
-    }
-
-    override fun at(irElement: IrElement, containingIrDeclaration: IrDeclaration): IrDiagnosticReporter.IrDiagnosticContext {
-        return at(irElement, containingIrDeclaration.file)
-    }
-
-    override fun at(irDeclaration: IrDeclaration): IrDiagnosticReporter.IrDiagnosticContext {
-        return at(irDeclaration, irDeclaration.file)
+    private fun IrElement.toSourceElement(): AbstractKtSourceElement? {
+        (this as? IrMetadataSourceOwner)?.metadata?.source?.let { return it }
+        (this as? IrFunction)?.defaultArgumentsOriginalFunction?.metadata?.source?.let { return it }
+        return sourceElement()
     }
 
     override fun at(irElement: IrElement, containingIrFile: IrFile): IrDiagnosticReporter.IrDiagnosticContext {
-        return at(irElement.toSourceElement(containingIrFile), irElement, containingIrFile)
+        return DiagnosticContextWithSuppressionImpl(
+            irElement.toSourceElement(),
+            irElement,
+            containingIrFile
+        )
     }
 
-    override fun at(
-        sourceElement: AbstractKtSourceElement?,
-        irElement: IrElement,
-        containingFile: IrFile
-    ): IrDiagnosticReporter.IrDiagnosticContext {
-        return DiagnosticContextWithSuppressionImpl(sourceElement, irElement, containingFile)
+    override fun atPotentiallyNonSource(irElement: IrElement, containingIrFile: IrFile?): IrDiagnosticReporter.IrDiagnosticContext {
+        return DiagnosticContextWithSuppressionImpl(
+            irElement.toSourceElement() ?: KtMissingSourceElement,
+            irElement,
+            containingIrFile
+        )
     }
 
     override fun report(factory: KtSourcelessDiagnosticFactory, message: String, location: CompilerMessageSourceLocation?) {
@@ -80,19 +75,22 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
     internal inner class DiagnosticContextWithSuppressionImpl(
         override val sourceElement: AbstractKtSourceElement?,
         private val irElement: IrElement,
-        private val containingIrFile: IrFile
+        private val containingIrFile: IrFile?
     ) : IrDiagnosticReporter.IrDiagnosticContext {
-        override val containingFile: KtSourceFile =
-            KtIoFileSourceFile(File(containingIrFile.path)) // TODO: (KT-85141) consider implementing IrFile-based "source" file, if needed
+        override val containingFile: KtSourceFile? = containingIrFile?.let {
+            KtIoFileSourceFile(File(it.path)) // TODO: (KT-85141) consider implementing IrFile-based "source" file, if needed
+        }
 
         override val languageVersionSettings: LanguageVersionSettings
             get() = this@KtDiagnosticReporterWithImplicitIrBasedContext.languageVersionSettings
 
 
-        override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean =
-            suppressCache.isSuppressed(
+        override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean {
+            if (containingIrFile == null) return false
+            return suppressCache.isSuppressed(
                 irElement, containingIrFile, diagnostic.factory.name.lowercase(), diagnostic.severity
             )
+        }
 
         override fun report(factory: KtDiagnosticFactory0) {
             sourceElement?.let {
@@ -136,7 +134,7 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
         }
 
         override fun hashCode(): Int {
-            var result = sourceElement?.hashCode() ?: 0
+            var result = sourceElement.hashCode()
             result = 31 * result + containingFile.hashCode()
             result = 31 * result + languageVersionSettings.hashCode()
             return result

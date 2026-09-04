@@ -1,6 +1,7 @@
 // LL_FIR_DIVERGENCE
 // KT-85026: no multi-snippet support yet
 // LL_FIR_DIVERGENCE
+// DIAGNOSTICS: -CONFLICTING_JVM_DECLARATIONS
 
 // SNIPPET
 
@@ -30,8 +31,9 @@ var <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>A<!>.x b
 
 // SNIPPET
 
-// The CONFLICTING_JVM_DECLARATIONS should be reported here, but it is not happening due to KT-77362
-// NOTE: after fixing it, some changes in AbstractReplWithTestExtensionsDiagnosticsTest needed to report it too
+// The CONFLICTING_JVM_DECLARATIONS is reported there by the backend, but it is invoked only in `AbstractReplViaApiDiagnosticsTest`.
+// `AbstractReplWithTestExtensionsDiagnosticsTest` invokes only frontend, so the error is not reported.
+// To avoid the discrepancy between tests, this specific diagnostic is disabled on the test level.
 val <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>B<!><Int>.x by <!UNRESOLVED_REFERENCE!>CustomDelegate<!>()
 
 var <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>B<!><String>.x by <!UNRESOLVED_REFERENCE!>CustomDelegate<!>()

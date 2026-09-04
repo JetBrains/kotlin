@@ -267,13 +267,13 @@ class ReplTest {
                     errorMessage.asErrorDiagnostics(
                         location = SourceCode.Location(
                             SourceCode.Position(2, 1),
-                            SourceCode.Position(2, 10)
+                            SourceCode.Position(2, 6)
                         )
                     ),
                     errorMessage.asErrorDiagnostics(
                         location = SourceCode.Location(
                             SourceCode.Position(3, 1),
-                            SourceCode.Position(3, 20)
+                            SourceCode.Position(3, 6)
                         )
                     )
                 ),

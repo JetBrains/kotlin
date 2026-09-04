@@ -38,8 +38,8 @@ class C : Java3()
 
 class D : Java3() {
     val a = 10
-    <!ACCIDENTAL_OVERRIDE!>fun foo(t: Int) {}<!>
-    <!ACCIDENTAL_OVERRIDE!>fun bar(): Int { return 10 }<!>
+    <!ACCIDENTAL_OVERRIDE!>fun foo(t: Int)<!> {}
+    <!ACCIDENTAL_OVERRIDE!>fun bar(): Int<!> { return 10 }
 }
 
 fun test(b: B, d: D){

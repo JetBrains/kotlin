@@ -17,15 +17,15 @@ interface KotlinContextInterface {
 }
 
 // FILE: test.kt
-<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>interface Intersection : KotlinContextInterface, JavaInterface<!>
+interface <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>Intersection<!> : KotlinContextInterface, JavaInterface
 
 interface IntersectionWithOverride : KotlinContextInterface, JavaInterface {
-    context(a: String)
-    override <!ACCIDENTAL_OVERRIDE!>fun foo(b: String): String<!>
+    <!ACCIDENTAL_OVERRIDE!>context(a: String)
+    override fun foo(b: String): String<!>
 
     context(a: String)
     override val b: String
-        <!ACCIDENTAL_OVERRIDE!>get() = ""<!>
+        <!ACCIDENTAL_OVERRIDE!>get()<!> = ""
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionDeclarationWithContext, getter, interfaceDeclaration, javaType,

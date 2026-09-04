@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.CompilerTestUtil
@@ -90,6 +91,11 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
 
     private fun kotlincInProcess(vararg args: String) {
         val [output, exitCode] = AbstractCliTest.executeCompilerGrabOutput(K2JVMCompiler(), args.toList())
+        if (exitCode != ExitCode.OK) error("Failed to compile: ${args.joinToString(" ")}\nOutput:\n$output")
+    }
+
+    private fun metadataCompilerInProcess(vararg args: String) {
+        val [output, exitCode] = AbstractCliTest.executeCompilerGrabOutput(KotlinMetadataCompiler(), args.toList())
         if (exitCode != ExitCode.OK) error("Failed to compile: ${args.joinToString(" ")}\nOutput:\n$output")
     }
 
@@ -620,5 +626,88 @@ Caused by: java.lang.AssertionError: assert
             K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
             launcherFile = symlink,
         )
+    }
+
+    @Test
+    fun testSeparateCompilationWithMismatchedDependencies() {
+        val libCommonSource = tmpdir.resolve("libCommon.kt").apply {
+            writeText(
+                """
+                    expect class Some {
+                        fun foo(x: Any)
+                    }
+                """.trimIndent()
+            )
+        }
+        val libCommonKlib = tmpdir.resolve("libCommon.klib")
+        metadataCompilerInProcess(
+            libCommonSource.path,
+            CommonCompilerArguments::multiPlatform.cliArgument,
+            K2MetadataCompilerArguments::classpath.cliArgument, ForTestCompileRuntime.stdlibCommonForTests().path,
+            K2MetadataCompilerArguments::destination.cliArgument, libCommonKlib.path,
+        )
+
+        val libCommonForPlatformSource = tmpdir.resolve("libCommonForPlatform.kt").apply {
+            writeText(
+                """
+                    expect class Some {
+                        fun foo(x: String)
+                    }
+                """.trimIndent()
+            )
+        }
+        val libPlatformSource = tmpdir.resolve("libPlatform.kt").apply {
+            writeText(
+                """
+                    actual class Some {
+                        actual fun foo(x: String) {}
+                    }
+                """.trimIndent()
+            )
+        }
+        val libPlatformJar = tmpdir.resolve("libPlatform.jar")
+        kotlincInProcess(
+            libCommonForPlatformSource.path,
+            libPlatformSource.path,
+            CommonCompilerArguments::multiPlatform.cliArgument,
+            CommonCompilerArguments::commonSources.cliArgument(libCommonForPlatformSource.path),
+            K2JVMCompilerArguments::destination.cliArgument, libPlatformJar.path,
+        )
+
+        val commonSource = tmpdir.resolve("common.kt").apply {
+            writeText(
+                """
+                    fun test(s: Some) {
+                        s.foo("hello")
+                    }
+                """.trimIndent()
+            )
+        }
+
+        val [output, exitCode] = AbstractCliTest.executeCompilerGrabOutput(
+            K2JVMCompiler(),
+            listOf(
+                commonSource.path,
+                CommonCompilerArguments::multiPlatform.cliArgument,
+                CommonCompilerArguments::separateKmpCompilationScheme.cliArgument,
+                CommonCompilerArguments::fragments.cliArgument("common"),
+                CommonCompilerArguments::fragments.cliArgument("platform"),
+                CommonCompilerArguments::fragmentSources.cliArgument("common:${commonSource.path}"),
+                CommonCompilerArguments::fragmentRefines.cliArgument("platform:common"),
+                CommonCompilerArguments::fragmentDependencies.cliArgument("common:${libCommonKlib.path}"),
+                CommonCompilerArguments::fragmentDependencies.cliArgument("common:${ForTestCompileRuntime.stdlibCommonForTests().path}"),
+                K2JVMCompilerArguments::classpath.cliArgument, libPlatformJar.path,
+                K2JVMCompilerArguments::destination.cliArgument, File(tmpdir, "out").path,
+            )
+        )
+
+        assertTrue(exitCode != ExitCode.OK) {
+            "Expected compilation to fail due to mismatched common/platform dependencies, but it succeeded.\nOutput:\n$output"
+        }
+
+        val exceptionMessage = "exception: java.lang.IllegalStateException: Actualization of common dependencies failed on"
+        assertFalse(exceptionMessage in output) { "Output:\n$output" }
+        val errorMessage = "error: the 'expect' declaration 'Some.foo' doesn't match the 'actual' declaration 'Some.foo' because parameter types are different."
+        assertTrue(errorMessage in output) { "Output:\n$output" }
     }
 }

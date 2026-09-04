@@ -2,7 +2,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_PARAMETER -PLATFORM_CLASS_MAPPED_TO_KOTLIN
 
-<!CONFLICTING_JVM_DECLARATIONS!>fun foo(s: java.lang.String) {}<!>
-<!CONFLICTING_JVM_DECLARATIONS!>fun foo(s: String) {}<!>
+<!CONFLICTING_JVM_DECLARATIONS!>fun foo(s: java.lang.String)<!> {}
+<!CONFLICTING_JVM_DECLARATIONS!>fun foo(s: String)<!> {}
 
 /* GENERATED_FIR_TAGS: functionDeclaration */
