@@ -176,7 +176,6 @@ KtNameReferenceExpression(66,67): 'n'
 KtOperationReferenceExpression(68,71): 'bar'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       kotlin/Function2.invoke(<dispatch receiver>: (P1, P2) -> R, p1: P1, p2: P2): R
@@ -204,7 +203,6 @@ KtNameReferenceExpression(73,74): 'n'
 KtOperationReferenceExpression(75,76): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
