@@ -1,17 +1,20 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // WITH_STDLIB
-// LANGUAGE: +IntrinsicConstEvaluation
+// LANGUAGE_FEATURE_TOGGLED: IntrinsicConstEvaluation
 
 const val blank = " "
 const val notBlank = "|"
 
 const val c1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin(" ")<!>
-const val c2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"".trimMargin(blank)<!>
+const val c2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin(blank)<!>
 const val c3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin(
     """
 
     """)<!>
+const val c4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin("\t\n")<!>
+const val c5 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin(blank.trim())<!>
+const val c6 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin("" + " ")<!>
 
 const val c1b = "".trimMargin("|")
 const val c2b = "".trimMargin(notBlank)
@@ -22,6 +25,9 @@ val s3 = <!TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin(
     """
 
     """)<!>
+val s4 = <!TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin("\t\n")<!>
+val s5 = "".trimMargin(blank.trim())
+val s6 = "".trimMargin("" + " ")
 
 val s1b = "".trimMargin("|")
 val s2b = "".trimMargin(notBlank)
@@ -31,6 +37,9 @@ val s2b = "".trimMargin(notBlank)
 @Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin("""
 
     """)<!>) val a3 = 1
+@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin("\t\n")<!>) val a4 = 1
+@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"".trimMargin(blank.trim())<!>) val a5 = 1
+@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"".trimMargin("" + " ")<!>) val a6 = 1
 
 @Ann("".trimMargin("|")) val a1b = 1
 @Ann("".trimMargin(notBlank)) val a2b = 1
