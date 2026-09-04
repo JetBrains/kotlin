@@ -1,118 +1,222 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 // NOTE: THIS FILE IS AUTO-GENERATED, DO NOT EDIT!
 // See github.com/kotlin/dukat for details
 
-@file:Suppress("NO_EXPLICIT_VISIBILITY_IN_API_MODE", "NO_EXPLICIT_RETURN_TYPE_IN_API_MODE") // TODO: Fix in dukat: https://github.com/Kotlin/dukat/issues/124
+@file:Suppress(
+    "NO_EXPLICIT_VISIBILITY_IN_API_MODE",
+    "NO_EXPLICIT_RETURN_TYPE_IN_API_MODE",
+    "DEPRECATION"
+) // TODO: Fix in dukat: https://github.com/Kotlin/dukat/issues/124
 
 package org.w3c.dom.mediacapture
 
+import kotlinx.browser.PLEASE_USE_KOTLINX_BROWSER_INSTEAD
 import kotlin.js.*
 import org.khronos.webgl.*
 import org.w3c.dom.*
 import org.w3c.dom.events.*
+import kotlin.internal.InlineOnly
 
-/**
- * Exposes the JavaScript [MediaStream](https://developer.mozilla.org/en/docs/Web/API/MediaStream) to Kotlin
- */
-public external open class MediaStream() : EventTarget, MediaProvider {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public open external class MediaStream() : EventTarget, MediaProvider {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     constructor(stream: MediaStream)
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     constructor(tracks: Array<MediaStreamTrack>)
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val id: String
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val active: Boolean
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var onaddtrack: ((MediaStreamTrackEvent) -> dynamic)?
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var onremovetrack: ((MediaStreamTrackEvent) -> dynamic)?
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getAudioTracks(): Array<MediaStreamTrack>
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getVideoTracks(): Array<MediaStreamTrack>
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getTracks(): Array<MediaStreamTrack>
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getTrackById(trackId: String): MediaStreamTrack?
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun addTrack(track: MediaStreamTrack)
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun removeTrack(track: MediaStreamTrack)
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun clone(): MediaStream
 }
 
-/**
- * Exposes the JavaScript [MediaStreamTrack](https://developer.mozilla.org/en/docs/Web/API/MediaStreamTrack) to Kotlin
- */
-public external abstract class MediaStreamTrack : EventTarget {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class MediaStreamTrack : EventTarget {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val kind: String
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val id: String
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val label: String
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var enabled: Boolean
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val muted: Boolean
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var onmute: ((Event) -> dynamic)?
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var onunmute: ((Event) -> dynamic)?
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val readyState: MediaStreamTrackState
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var onended: ((Event) -> dynamic)?
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var onoverconstrained: ((Event) -> dynamic)?
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun clone(): MediaStreamTrack
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun stop()
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getCapabilities(): MediaTrackCapabilities
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getConstraints(): MediaTrackConstraints
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getSettings(): MediaTrackSettings
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun applyConstraints(constraints: MediaTrackConstraints = definedExternally): Promise<Unit>
 }
 
-/**
- * Exposes the JavaScript [MediaTrackSupportedConstraints](https://developer.mozilla.org/en/docs/Web/API/MediaTrackSupportedConstraints) to Kotlin
- */
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface MediaTrackSupportedConstraints {
-    var width: Boolean? /* = true */
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var width: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var height: Boolean? /* = true */
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var height: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var aspectRatio: Boolean? /* = true */
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var aspectRatio: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var frameRate: Boolean? /* = true */
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var frameRate: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var facingMode: Boolean? /* = true */
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var facingMode: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var resizeMode: Boolean? /* = true */
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var resizeMode: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var volume: Boolean? /* = true */
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var volume: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var sampleRate: Boolean? /* = true */
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var sampleRate: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var sampleSize: Boolean? /* = true */
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var sampleSize: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var echoCancellation: Boolean? /* = true */
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var echoCancellation: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var autoGainControl: Boolean? /* = true */
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var autoGainControl: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var noiseSuppression: Boolean? /* = true */
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var noiseSuppression: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var latency: Boolean? /* = true */
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var latency: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var channelCount: Boolean? /* = true */
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var channelCount: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var deviceId: Boolean? /* = true */
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var deviceId: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var groupId: Boolean? /* = true */
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var groupId: Boolean?
         get() = definedExternally
         set(value) = definedExternally
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun MediaTrackSupportedConstraints(width: Boolean? = true, height: Boolean? = true, aspectRatio: Boolean? = true, frameRate: Boolean? = true, facingMode: Boolean? = true, resizeMode: Boolean? = true, volume: Boolean? = true, sampleRate: Boolean? = true, sampleSize: Boolean? = true, echoCancellation: Boolean? = true, autoGainControl: Boolean? = true, noiseSuppression: Boolean? = true, latency: Boolean? = true, channelCount: Boolean? = true, deviceId: Boolean? = true, groupId: Boolean? = true): MediaTrackSupportedConstraints {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public inline fun MediaTrackSupportedConstraints(
+    width: Boolean? = true,
+    height: Boolean? = true,
+    aspectRatio: Boolean? = true,
+    frameRate: Boolean? = true,
+    facingMode: Boolean? = true,
+    resizeMode: Boolean? = true,
+    volume: Boolean? = true,
+    sampleRate: Boolean? = true,
+    sampleSize: Boolean? = true,
+    echoCancellation: Boolean? = true,
+    autoGainControl: Boolean? = true,
+    noiseSuppression: Boolean? = true,
+    latency: Boolean? = true,
+    channelCount: Boolean? = true,
+    deviceId: Boolean? = true,
+    groupId: Boolean? = true
+): MediaTrackSupportedConstraints {
     val o = js("({})")
     o["width"] = width
     o["height"] = height
@@ -133,60 +237,110 @@ public inline fun MediaTrackSupportedConstraints(width: Boolean? = true, height:
     return o
 }
 
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface MediaTrackCapabilities {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var width: ULongRange?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var height: ULongRange?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var aspectRatio: DoubleRange?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var frameRate: DoubleRange?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var facingMode: Array<String>?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var resizeMode: Array<String>?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var volume: DoubleRange?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var sampleRate: ULongRange?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var sampleSize: ULongRange?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var echoCancellation: Array<Boolean>?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var autoGainControl: Array<Boolean>?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var noiseSuppression: Array<Boolean>?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var latency: DoubleRange?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var channelCount: ULongRange?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var deviceId: String?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var groupId: String?
         get() = definedExternally
         set(value) = definedExternally
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun MediaTrackCapabilities(width: ULongRange? = undefined, height: ULongRange? = undefined, aspectRatio: DoubleRange? = undefined, frameRate: DoubleRange? = undefined, facingMode: Array<String>? = undefined, resizeMode: Array<String>? = undefined, volume: DoubleRange? = undefined, sampleRate: ULongRange? = undefined, sampleSize: ULongRange? = undefined, echoCancellation: Array<Boolean>? = undefined, autoGainControl: Array<Boolean>? = undefined, noiseSuppression: Array<Boolean>? = undefined, latency: DoubleRange? = undefined, channelCount: ULongRange? = undefined, deviceId: String? = undefined, groupId: String? = undefined): MediaTrackCapabilities {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public inline fun MediaTrackCapabilities(
+    width: ULongRange? = undefined,
+    height: ULongRange? = undefined,
+    aspectRatio: DoubleRange? = undefined,
+    frameRate: DoubleRange? = undefined,
+    facingMode: Array<String>? = undefined,
+    resizeMode: Array<String>? = undefined,
+    volume: DoubleRange? = undefined,
+    sampleRate: ULongRange? = undefined,
+    sampleSize: ULongRange? = undefined,
+    echoCancellation: Array<Boolean>? = undefined,
+    autoGainControl: Array<Boolean>? = undefined,
+    noiseSuppression: Array<Boolean>? = undefined,
+    latency: DoubleRange? = undefined,
+    channelCount: ULongRange? = undefined,
+    deviceId: String? = undefined,
+    groupId: String? = undefined
+): MediaTrackCapabilities {
     val o = js("({})")
     o["width"] = width
     o["height"] = height
@@ -207,18 +361,36 @@ public inline fun MediaTrackCapabilities(width: ULongRange? = undefined, height:
     return o
 }
 
-/**
- * Exposes the JavaScript [MediaTrackConstraints](https://developer.mozilla.org/en/docs/Web/API/MediaTrackConstraints) to Kotlin
- */
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface MediaTrackConstraints : MediaTrackConstraintSet {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var advanced: Array<MediaTrackConstraintSet>?
         get() = definedExternally
         set(value) = definedExternally
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun MediaTrackConstraints(advanced: Array<MediaTrackConstraintSet>? = undefined, width: dynamic = undefined, height: dynamic = undefined, aspectRatio: dynamic = undefined, frameRate: dynamic = undefined, facingMode: dynamic = undefined, resizeMode: dynamic = undefined, volume: dynamic = undefined, sampleRate: dynamic = undefined, sampleSize: dynamic = undefined, echoCancellation: dynamic = undefined, autoGainControl: dynamic = undefined, noiseSuppression: dynamic = undefined, latency: dynamic = undefined, channelCount: dynamic = undefined, deviceId: dynamic = undefined, groupId: dynamic = undefined): MediaTrackConstraints {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public inline fun MediaTrackConstraints(
+    advanced: Array<MediaTrackConstraintSet>? = undefined,
+    width: dynamic = undefined,
+    height: dynamic = undefined,
+    aspectRatio: dynamic = undefined,
+    frameRate: dynamic = undefined,
+    facingMode: dynamic = undefined,
+    resizeMode: dynamic = undefined,
+    volume: dynamic = undefined,
+    sampleRate: dynamic = undefined,
+    sampleSize: dynamic = undefined,
+    echoCancellation: dynamic = undefined,
+    autoGainControl: dynamic = undefined,
+    noiseSuppression: dynamic = undefined,
+    latency: dynamic = undefined,
+    channelCount: dynamic = undefined,
+    deviceId: dynamic = undefined,
+    groupId: dynamic = undefined
+): MediaTrackConstraints {
     val o = js("({})")
     o["advanced"] = advanced
     o["width"] = width
@@ -240,60 +412,110 @@ public inline fun MediaTrackConstraints(advanced: Array<MediaTrackConstraintSet>
     return o
 }
 
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface MediaTrackConstraintSet {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var width: dynamic
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var height: dynamic
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var aspectRatio: dynamic
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var frameRate: dynamic
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var facingMode: dynamic
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var resizeMode: dynamic
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var volume: dynamic
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var sampleRate: dynamic
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var sampleSize: dynamic
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var echoCancellation: dynamic
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var autoGainControl: dynamic
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var noiseSuppression: dynamic
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var latency: dynamic
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var channelCount: dynamic
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var deviceId: dynamic
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var groupId: dynamic
         get() = definedExternally
         set(value) = definedExternally
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun MediaTrackConstraintSet(width: dynamic = undefined, height: dynamic = undefined, aspectRatio: dynamic = undefined, frameRate: dynamic = undefined, facingMode: dynamic = undefined, resizeMode: dynamic = undefined, volume: dynamic = undefined, sampleRate: dynamic = undefined, sampleSize: dynamic = undefined, echoCancellation: dynamic = undefined, autoGainControl: dynamic = undefined, noiseSuppression: dynamic = undefined, latency: dynamic = undefined, channelCount: dynamic = undefined, deviceId: dynamic = undefined, groupId: dynamic = undefined): MediaTrackConstraintSet {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public inline fun MediaTrackConstraintSet(
+    width: dynamic = undefined,
+    height: dynamic = undefined,
+    aspectRatio: dynamic = undefined,
+    frameRate: dynamic = undefined,
+    facingMode: dynamic = undefined,
+    resizeMode: dynamic = undefined,
+    volume: dynamic = undefined,
+    sampleRate: dynamic = undefined,
+    sampleSize: dynamic = undefined,
+    echoCancellation: dynamic = undefined,
+    autoGainControl: dynamic = undefined,
+    noiseSuppression: dynamic = undefined,
+    latency: dynamic = undefined,
+    channelCount: dynamic = undefined,
+    deviceId: dynamic = undefined,
+    groupId: dynamic = undefined
+): MediaTrackConstraintSet {
     val o = js("({})")
     o["width"] = width
     o["height"] = height
@@ -314,63 +536,110 @@ public inline fun MediaTrackConstraintSet(width: dynamic = undefined, height: dy
     return o
 }
 
-/**
- * Exposes the JavaScript [MediaTrackSettings](https://developer.mozilla.org/en/docs/Web/API/MediaTrackSettings) to Kotlin
- */
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface MediaTrackSettings {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var width: Int?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var height: Int?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var aspectRatio: Double?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var frameRate: Double?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var facingMode: String?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var resizeMode: String?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var volume: Double?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var sampleRate: Int?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var sampleSize: Int?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var echoCancellation: Boolean?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var autoGainControl: Boolean?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var noiseSuppression: Boolean?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var latency: Double?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var channelCount: Int?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var deviceId: String?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var groupId: String?
         get() = definedExternally
         set(value) = definedExternally
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun MediaTrackSettings(width: Int? = undefined, height: Int? = undefined, aspectRatio: Double? = undefined, frameRate: Double? = undefined, facingMode: String? = undefined, resizeMode: String? = undefined, volume: Double? = undefined, sampleRate: Int? = undefined, sampleSize: Int? = undefined, echoCancellation: Boolean? = undefined, autoGainControl: Boolean? = undefined, noiseSuppression: Boolean? = undefined, latency: Double? = undefined, channelCount: Int? = undefined, deviceId: String? = undefined, groupId: String? = undefined): MediaTrackSettings {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public inline fun MediaTrackSettings(
+    width: Int? = undefined,
+    height: Int? = undefined,
+    aspectRatio: Double? = undefined,
+    frameRate: Double? = undefined,
+    facingMode: String? = undefined,
+    resizeMode: String? = undefined,
+    volume: Double? = undefined,
+    sampleRate: Int? = undefined,
+    sampleSize: Int? = undefined,
+    echoCancellation: Boolean? = undefined,
+    autoGainControl: Boolean? = undefined,
+    noiseSuppression: Boolean? = undefined,
+    latency: Double? = undefined,
+    channelCount: Int? = undefined,
+    deviceId: String? = undefined,
+    groupId: String? = undefined
+): MediaTrackSettings {
     val o = js("({})")
     o["width"] = width
     o["height"] = height
@@ -391,27 +660,42 @@ public inline fun MediaTrackSettings(width: Int? = undefined, height: Int? = und
     return o
 }
 
-/**
- * Exposes the JavaScript [MediaStreamTrackEvent](https://developer.mozilla.org/en/docs/Web/API/MediaStreamTrackEvent) to Kotlin
- */
-public external open class MediaStreamTrackEvent(type: String, eventInitDict: MediaStreamTrackEventInit) : Event {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public open external class MediaStreamTrackEvent(type: String, eventInitDict: MediaStreamTrackEventInit) : Event {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val track: MediaStreamTrack
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NONE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CAPTURING_PHASE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val AT_TARGET: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val BUBBLING_PHASE: Short
     }
 }
 
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface MediaStreamTrackEventInit : EventInit {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var track: MediaStreamTrack?
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun MediaStreamTrackEventInit(track: MediaStreamTrack?, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): MediaStreamTrackEventInit {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public inline fun MediaStreamTrackEventInit(
+    track: MediaStreamTrack?,
+    bubbles: Boolean? = false,
+    cancelable: Boolean? = false,
+    composed: Boolean? = false
+): MediaStreamTrackEventInit {
     val o = js("({})")
     o["track"] = track
     o["bubbles"] = bubbles
@@ -420,26 +704,44 @@ public inline fun MediaStreamTrackEventInit(track: MediaStreamTrack?, bubbles: B
     return o
 }
 
-public external open class OverconstrainedErrorEvent(type: String, eventInitDict: OverconstrainedErrorEventInit) : Event {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public open external class OverconstrainedErrorEvent(type: String, eventInitDict: OverconstrainedErrorEventInit) : Event {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val error: dynamic
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NONE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CAPTURING_PHASE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val AT_TARGET: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val BUBBLING_PHASE: Short
     }
 }
 
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface OverconstrainedErrorEventInit : EventInit {
-    var error: dynamic /* = null */
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var error: dynamic
         get() = definedExternally
         set(value) = definedExternally
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun OverconstrainedErrorEventInit(error: dynamic = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): OverconstrainedErrorEventInit {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public inline fun OverconstrainedErrorEventInit(
+    error: dynamic = null,
+    bubbles: Boolean? = false,
+    cancelable: Boolean? = false,
+    composed: Boolean? = false
+): OverconstrainedErrorEventInit {
     val o = js("({})")
     o["error"] = error
     o["bubbles"] = bubbles
@@ -448,45 +750,61 @@ public inline fun OverconstrainedErrorEventInit(error: dynamic = null, bubbles: 
     return o
 }
 
-/**
- * Exposes the JavaScript [MediaDevices](https://developer.mozilla.org/en/docs/Web/API/MediaDevices) to Kotlin
- */
-public external abstract class MediaDevices : EventTarget {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class MediaDevices : EventTarget {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var ondevicechange: ((Event) -> dynamic)?
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun enumerateDevices(): Promise<Array<MediaDeviceInfo>>
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getSupportedConstraints(): MediaTrackSupportedConstraints
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getUserMedia(constraints: MediaStreamConstraints = definedExternally): Promise<MediaStream>
 }
 
-/**
- * Exposes the JavaScript [MediaDeviceInfo](https://developer.mozilla.org/en/docs/Web/API/MediaDeviceInfo) to Kotlin
- */
-public external abstract class MediaDeviceInfo {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class MediaDeviceInfo {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val deviceId: String
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val kind: MediaDeviceKind
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val label: String
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val groupId: String
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun toJSON(): dynamic
 }
 
-public external abstract class InputDeviceInfo : MediaDeviceInfo {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class InputDeviceInfo : MediaDeviceInfo {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getCapabilities(): MediaTrackCapabilities
 }
 
-/**
- * Exposes the JavaScript [MediaStreamConstraints](https://developer.mozilla.org/en/docs/Web/API/MediaStreamConstraints) to Kotlin
- */
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface MediaStreamConstraints {
-    var video: dynamic /* = false */
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var video: dynamic
         get() = definedExternally
         set(value) = definedExternally
-    var audio: dynamic /* = false */
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var audio: dynamic
         get() = definedExternally
         set(value) = definedExternally
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public inline fun MediaStreamConstraints(video: dynamic = false, audio: dynamic = false): MediaStreamConstraints {
     val o = js("({})")
     o["video"] = video
@@ -494,30 +812,42 @@ public inline fun MediaStreamConstraints(video: dynamic = false, audio: dynamic 
     return o
 }
 
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface ConstrainablePattern {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var onoverconstrained: ((Event) -> dynamic)?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getCapabilities(): Capabilities
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getConstraints(): Constraints
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getSettings(): Settings
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun applyConstraints(constraints: Constraints = definedExternally): Promise<Unit>
 }
 
-/**
- * Exposes the JavaScript [DoubleRange](https://developer.mozilla.org/en/docs/Web/API/DoubleRange) to Kotlin
- */
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface DoubleRange {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var max: Double?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var min: Double?
         get() = definedExternally
         set(value) = definedExternally
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public inline fun DoubleRange(max: Double? = undefined, min: Double? = undefined): DoubleRange {
     val o = js("({})")
     o["max"] = max
@@ -525,18 +855,28 @@ public inline fun DoubleRange(max: Double? = undefined, min: Double? = undefined
     return o
 }
 
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface ConstrainDoubleRange : DoubleRange {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var exact: Double?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var ideal: Double?
         get() = definedExternally
         set(value) = definedExternally
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun ConstrainDoubleRange(exact: Double? = undefined, ideal: Double? = undefined, max: Double? = undefined, min: Double? = undefined): ConstrainDoubleRange {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public inline fun ConstrainDoubleRange(
+    exact: Double? = undefined,
+    ideal: Double? = undefined,
+    max: Double? = undefined,
+    min: Double? = undefined
+): ConstrainDoubleRange {
     val o = js("({})")
     o["exact"] = exact
     o["ideal"] = ideal
@@ -545,17 +885,22 @@ public inline fun ConstrainDoubleRange(exact: Double? = undefined, ideal: Double
     return o
 }
 
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface ULongRange {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var max: Int?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var min: Int?
         get() = definedExternally
         set(value) = definedExternally
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public inline fun ULongRange(max: Int? = undefined, min: Int? = undefined): ULongRange {
     val o = js("({})")
     o["max"] = max
@@ -563,18 +908,28 @@ public inline fun ULongRange(max: Int? = undefined, min: Int? = undefined): ULon
     return o
 }
 
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface ConstrainULongRange : ULongRange {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var exact: Int?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var ideal: Int?
         get() = definedExternally
         set(value) = definedExternally
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun ConstrainULongRange(exact: Int? = undefined, ideal: Int? = undefined, max: Int? = undefined, min: Int? = undefined): ConstrainULongRange {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public inline fun ConstrainULongRange(
+    exact: Int? = undefined,
+    ideal: Int? = undefined,
+    max: Int? = undefined,
+    min: Int? = undefined
+): ConstrainULongRange {
     val o = js("({})")
     o["exact"] = exact
     o["ideal"] = ideal
@@ -583,20 +938,22 @@ public inline fun ConstrainULongRange(exact: Int? = undefined, ideal: Int? = und
     return o
 }
 
-/**
- * Exposes the JavaScript [ConstrainBooleanParameters](https://developer.mozilla.org/en/docs/Web/API/ConstrainBooleanParameters) to Kotlin
- */
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface ConstrainBooleanParameters {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var exact: Boolean?
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var ideal: Boolean?
         get() = definedExternally
         set(value) = definedExternally
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public inline fun ConstrainBooleanParameters(exact: Boolean? = undefined, ideal: Boolean? = undefined): ConstrainBooleanParameters {
     val o = js("({})")
     o["exact"] = exact
@@ -604,20 +961,22 @@ public inline fun ConstrainBooleanParameters(exact: Boolean? = undefined, ideal:
     return o
 }
 
-/**
- * Exposes the JavaScript [ConstrainDOMStringParameters](https://developer.mozilla.org/en/docs/Web/API/ConstrainDOMStringParameters) to Kotlin
- */
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface ConstrainDOMStringParameters {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var exact: dynamic
         get() = definedExternally
         set(value) = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var ideal: dynamic
         get() = definedExternally
         set(value) = definedExternally
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public inline fun ConstrainDOMStringParameters(exact: dynamic = undefined, ideal: dynamic = undefined): ConstrainDOMStringParameters {
     val o = js("({})")
     o["exact"] = exact
@@ -625,93 +984,120 @@ public inline fun ConstrainDOMStringParameters(exact: dynamic = undefined, ideal
     return o
 }
 
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface Capabilities
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public inline fun Capabilities(): Capabilities {
     val o = js("({})")
     return o
 }
 
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface Settings
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public inline fun Settings(): Settings {
     val o = js("({})")
     return o
 }
 
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface ConstraintSet
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public inline fun ConstraintSet(): ConstraintSet {
     val o = js("({})")
     return o
 }
 
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface Constraints : ConstraintSet {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var advanced: Array<ConstraintSet>?
         get() = definedExternally
         set(value) = definedExternally
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public inline fun Constraints(advanced: Array<ConstraintSet>? = undefined): Constraints {
     val o = js("({})")
     o["advanced"] = advanced
     return o
 }
 
-/* please, don't implement this interface! */
-@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
+@JsName("null")
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface MediaStreamTrackState {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object
 }
 
-public inline val MediaStreamTrackState.Companion.LIVE: MediaStreamTrackState get() = "live".asDynamic().unsafeCast<MediaStreamTrackState>()
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public val MediaStreamTrackState.Companion.LIVE: MediaStreamTrackState get() = "live".asDynamic().unsafeCast<MediaStreamTrackState>()
 
-public inline val MediaStreamTrackState.Companion.ENDED: MediaStreamTrackState get() = "ended".asDynamic().unsafeCast<MediaStreamTrackState>()
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public val MediaStreamTrackState.Companion.ENDED: MediaStreamTrackState
+    get() = "ended".asDynamic().unsafeCast<MediaStreamTrackState>()
 
-/* please, don't implement this interface! */
-@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
+@JsName("null")
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface VideoFacingModeEnum {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object
 }
 
-public inline val VideoFacingModeEnum.Companion.USER: VideoFacingModeEnum get() = "user".asDynamic().unsafeCast<VideoFacingModeEnum>()
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public val VideoFacingModeEnum.Companion.USER: VideoFacingModeEnum get() = "user".asDynamic().unsafeCast<VideoFacingModeEnum>()
 
-public inline val VideoFacingModeEnum.Companion.ENVIRONMENT: VideoFacingModeEnum get() = "environment".asDynamic().unsafeCast<VideoFacingModeEnum>()
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public val VideoFacingModeEnum.Companion.ENVIRONMENT: VideoFacingModeEnum
+    get() = "environment".asDynamic().unsafeCast<VideoFacingModeEnum>()
 
-public inline val VideoFacingModeEnum.Companion.LEFT: VideoFacingModeEnum get() = "left".asDynamic().unsafeCast<VideoFacingModeEnum>()
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public val VideoFacingModeEnum.Companion.LEFT: VideoFacingModeEnum get() = "left".asDynamic().unsafeCast<VideoFacingModeEnum>()
 
-public inline val VideoFacingModeEnum.Companion.RIGHT: VideoFacingModeEnum get() = "right".asDynamic().unsafeCast<VideoFacingModeEnum>()
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public val VideoFacingModeEnum.Companion.RIGHT: VideoFacingModeEnum get() = "right".asDynamic().unsafeCast<VideoFacingModeEnum>()
 
-/* please, don't implement this interface! */
-@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
+@JsName("null")
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface VideoResizeModeEnum {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object
 }
 
-public inline val VideoResizeModeEnum.Companion.NONE: VideoResizeModeEnum get() = "none".asDynamic().unsafeCast<VideoResizeModeEnum>()
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public val VideoResizeModeEnum.Companion.NONE: VideoResizeModeEnum get() = "none".asDynamic().unsafeCast<VideoResizeModeEnum>()
 
-public inline val VideoResizeModeEnum.Companion.CROP_AND_SCALE: VideoResizeModeEnum get() = "crop-and-scale".asDynamic().unsafeCast<VideoResizeModeEnum>()
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public val VideoResizeModeEnum.Companion.CROP_AND_SCALE: VideoResizeModeEnum
+    get() = "crop-and-scale".asDynamic().unsafeCast<VideoResizeModeEnum>()
 
-/* please, don't implement this interface! */
-@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
+@JsName("null")
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface MediaDeviceKind {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object
 }
 
-public inline val MediaDeviceKind.Companion.AUDIOINPUT: MediaDeviceKind get() = "audioinput".asDynamic().unsafeCast<MediaDeviceKind>()
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public val MediaDeviceKind.Companion.AUDIOINPUT: MediaDeviceKind get() = "audioinput".asDynamic().unsafeCast<MediaDeviceKind>()
 
-public inline val MediaDeviceKind.Companion.AUDIOOUTPUT: MediaDeviceKind get() = "audiooutput".asDynamic().unsafeCast<MediaDeviceKind>()
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public val MediaDeviceKind.Companion.AUDIOOUTPUT: MediaDeviceKind get() = "audiooutput".asDynamic().unsafeCast<MediaDeviceKind>()
 
-public inline val MediaDeviceKind.Companion.VIDEOINPUT: MediaDeviceKind get() = "videoinput".asDynamic().unsafeCast<MediaDeviceKind>()
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public val MediaDeviceKind.Companion.VIDEOINPUT: MediaDeviceKind get() = "videoinput".asDynamic().unsafeCast<MediaDeviceKind>()
