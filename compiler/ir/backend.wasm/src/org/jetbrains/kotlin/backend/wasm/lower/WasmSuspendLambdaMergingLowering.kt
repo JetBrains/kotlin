@@ -142,9 +142,9 @@ internal class WasmSuspendLambdaMergingLowering(val context: WasmBackendContext)
     private fun processCoroutineClass(originalClass: IrClass, irFile: IrFile): ClassReplacement? {
         val doResumeMethod = originalClass.simpleFunctions()
             .firstOrNull { it.origin == DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE }
-            ?: return error("No invoke method for coroutine found??")
+            ?: return error("No invoke method for CoroutineImpl found")
 
-        val originalConstructor = originalClass.primaryConstructor ?: return null
+        val originalConstructor = originalClass.primaryConstructor ?: return error("No constructor for CoroutineImpl found")
 
         val extraFields = coroutineClassOwnFields(originalClass)
 
