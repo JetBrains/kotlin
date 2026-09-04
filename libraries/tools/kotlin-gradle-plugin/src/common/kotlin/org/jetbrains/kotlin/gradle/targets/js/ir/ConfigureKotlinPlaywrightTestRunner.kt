@@ -140,4 +140,5 @@ private fun KotlinPlaywrightJsTestFramework.BrowserRunnerInput.populateFrom(
             executable
         }
     )
+    browserDataDir.convention(runner.browserDataDir)
 }

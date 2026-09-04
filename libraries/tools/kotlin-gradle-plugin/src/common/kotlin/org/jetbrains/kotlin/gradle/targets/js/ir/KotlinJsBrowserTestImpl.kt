@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.*
@@ -16,6 +18,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinDefaultJsTestLocatio
 import org.jetbrains.kotlin.gradle.targets.js.testing.locateOrRegisterBrowserTestBundleTask
 import org.jetbrains.kotlin.gradle.targets.js.testing.locateOrRegisterEsmBundleKotlinJsTestsTask
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
+import org.jetbrains.kotlin.gradle.utils.directoryProperty
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
@@ -35,6 +38,7 @@ internal abstract class KotlinBrowserTestRunner(
     override val launchArgs: ListProperty<String> = objects.listProperty()
     override val customBrowserExecutable: RegularFileProperty = objects.fileProperty()
     override val launchEnvironmentVariables: MapProperty<String, String> = objects.mapProperty(String::class.java, String::class.java)
+    override val browserDataDir: DirectoryProperty = objects.directoryProperty()
 }
 
 internal class KotlinChromiumTestRunner(

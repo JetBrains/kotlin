@@ -22,7 +22,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing.playwright
 
-import com.microsoft.playwright.Browser
+import com.microsoft.playwright.BrowserContext
 import com.microsoft.playwright.BrowserType
 import com.microsoft.playwright.Playwright
 import com.microsoft.playwright.impl.Connection
@@ -59,6 +59,7 @@ internal class PwRunnerSpec(
     val launchArgs: List<String>,
     val launchEnvironmentVariables: Map<String, String>,
     val customBrowserExecutable: Path?,
+    val browserDataDir: Path,
 )
 
 /**
@@ -220,7 +221,8 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
             PwBrowserKind.FIREFOX -> playwright.firefox()
             PwBrowserKind.WEBKIT -> playwright.webkit()
         }
-        val launchOptions = BrowserType.LaunchOptions()
+
+        val launchOptions = BrowserType.LaunchPersistentContextOptions()
             .setHeadless(runner.headless)
             .apply {
                 if (runner.launchArgs.isNotEmpty()) setArgs(runner.launchArgs)
@@ -229,10 +231,10 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
             }
 
         log.info("Launching playwright runner '${runner.name}' (${runner.browserKind})")
-        val browser: Browser = browserType.launch(launchOptions)
+        val browserContext: BrowserContext = browserType.launchPersistentContext(runner.browserDataDir, launchOptions)
         val testLocationUrl = runner.testsLocation.url.get()
-        browser.use {
-            val page = browser.newPage()
+        browserContext.use {
+            val page = browserContext.pages().firstOrNull() ?: browserContext.newPage()
             page.use {
                 page.setDefaultTimeout(runner.timeout.inWholeMilliseconds.toDouble())
                 var finished = false

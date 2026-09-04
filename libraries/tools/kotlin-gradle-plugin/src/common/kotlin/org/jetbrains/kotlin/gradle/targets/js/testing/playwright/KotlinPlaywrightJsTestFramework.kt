@@ -12,8 +12,8 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 import org.jetbrains.kotlin.gradle.utils.property
 import java.net.URI
+import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Duration
 import javax.inject.Inject
@@ -43,7 +44,7 @@ import kotlin.time.toKotlinDuration
 internal class KotlinPlaywrightJsTestFramework(
     @Transient override val compilation: KotlinJsIrCompilation,
     override val frameworkTaskInputs: Inputs,
-    private val objects: ObjectFactory,
+    objects: ObjectFactory,
 ) : KotlinJsTestFramework {
 
     abstract class Inputs @Inject constructor(objects: ObjectFactory) {
@@ -89,6 +90,13 @@ internal class KotlinPlaywrightJsTestFramework(
 
         @get:Input
         val finishMarker: Property<String> = objects.property<String>().convention("KOTLIN_TEST_FINISHED")
+
+        @get:Internal // the content of the browser data dir must not be tracked as a task input
+        val browserDataDir: DirectoryProperty = objects.directoryProperty()
+
+        @get:Input // but its location matters: switching to another data dir should re-run the tests
+        @get:Optional
+        val browserDataDirPath: Provider<String> get() = browserDataDir.map { it.asFile.path }
     }
 
     abstract class ChromiumRunnerInput @Inject constructor(objects: ObjectFactory) : BrowserRunnerInput(objects)
@@ -170,7 +178,8 @@ internal class KotlinPlaywrightJsTestFramework(
         headless = headless.get(),
         launchArgs = launchArgs.get(),
         launchEnvironmentVariables = launchEnvironmentVariables.get(),
-        customBrowserExecutable = customBrowserExecutable.asPathOrNull
+        customBrowserExecutable = customBrowserExecutable.asPathOrNull,
+        browserDataDir = browserDataDir.orNull?.asFile?.toPath() ?: Files.createTempDirectory("kotlin-browser-context"),
     )
 
     private fun BrowserRunnerInput.buildRunnerUrl(baseUrl: URI, cliArgs: List<String>): URI {
