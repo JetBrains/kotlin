@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.computePackageName
 import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.native.executors.Executor
-import org.jetbrains.kotlin.test.TestInfrastructureException
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.backend.handlers.NativeBinaryArtifactHandler
@@ -226,7 +225,7 @@ class PrettyResultsHandler(
         //   in grouped mode: `<long_test_name>.__launcher__Kt.runTest`
         @Suppress("RegExpRepeatedSpace")
         val failedRegexWithoutTCLogger = """\[  FAILED  ] (.*)__launcher__Kt.runTest""".toRegex()
-        val failedRegexWithTCLogger = """-\s+(.*)__launcher__Kt.runTest""".toRegex()
+        val failedRegexWithTCLogger = """-\s+(.*)__launcher(.*)__Kt.runTest""".toRegex()
     }
 
     override fun handle() {
