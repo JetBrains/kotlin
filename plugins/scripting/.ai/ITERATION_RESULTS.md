@@ -97,7 +97,7 @@ Scratch files under `.ai/tmp/` are not git-tracked beyond the current iteration.
 
 - See [`target/90-open-questions.md`](target/90-open-questions.md) for Q* with triage fields (Status / Owner / YT / Target doc / Last touched).
 - See [`current/90-legacy-inventory.md`](current/90-legacy-inventory.md) for the full disposition list of legacy artifacts (REMOVE / MIGRATE / KEEP-FOR-NOW / KEEP).
-- ~~KT-83498 (LightTree path for `K2ReplCompiler`)~~ — landed 2026-09-04. Carried forward: G15 (`isReplSnippetSource` narrowing so REPL imports compile as scripts), and moving REPL annotation refinement off `CliScriptConfigurationsProvider` (PSI) onto `refineAllForK2`.
+- ~~KT-83498 (LightTree path for `K2ReplCompiler`)~~ — landed 2026-09-04. Carried forward: G15 (`isReplSnippetSource` narrowing so REPL imports compile as scripts), ~~moving REPL annotation refinement off `CliScriptConfigurationsProvider` (PSI) onto `refineAllForK2`~~ (done 2026-09-04 follow-up).
 
 
 ## Addendum (2026-07-02d)

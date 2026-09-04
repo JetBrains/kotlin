@@ -41,14 +41,12 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.scripting.compiler.plugin.ReplCompilerPluginRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
-import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
+import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependenciesRecursively
 import org.jetbrains.kotlin.scripting.compiler.plugin.fir.FirScriptCompilationComponent
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.isReplSnippetSource
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
-import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
-import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
@@ -214,7 +212,6 @@ class K2ReplCompiler(
                 compilerContext,
                 sharedLibrarySession,
                 sessionFactoryContext,
-                compilerContext.environment.configuration.getCompilerExtensions(ScriptConfigurationsProvider).firstOrNull(),
             )
         }
     }
@@ -229,9 +226,11 @@ class K2ReplCompilationState(
     internal val compilerContext: SharedScriptCompilationContext,
     internal val sharedLibrarySession: FirSession,
     internal val sessionFactoryContext: FirJvmSessionFactory.Context,
-    internal val scriptConfigurationsProvider: ScriptConfigurationsProvider?,
 ) {
     var lastCompiledSnippet: LinkedSnippetImpl<CompiledSnippet>? = null
+
+    // Session used for the K2 configuration refinement (file annotations collection), see `getOrCreateSessionForAnnotationResolution`
+    internal var dummySessionForAnnotationResolution: FirSession? = null
 
     val project get() = projectEnvironment.project
 }
@@ -277,17 +276,21 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
         return newDependenciesModuleData to newLibraryPaths
     }
 
-    fun addNewSnippetModuleData(name: Name): FirModuleData =
+    /**
+     * When [isDummy] is true, the module data is excluded from the history (for example the session used
+     * for annotation resolution).
+     */
+    fun addNewSnippetModuleData(name: Name, isDummy: Boolean = false): FirModuleData =
         FirSourceModuleData(
             name,
             dependencies = moduleDataHistory.filter { it.dependencies.isEmpty() },
             dependsOnDependencies = emptyList(),
             friendDependencies = moduleDataHistory.filter { it.dependencies.isNotEmpty() },
             JvmPlatforms.defaultJvmPlatform,
-        ).also { moduleDataHistory.add(it) }
+        ).also { if (!isDummy) moduleDataHistory.add(it) }
 }
 
-@OptIn(LegacyK2CliPipeline::class, K1SpecificScriptingServiceAccessor::class, SessionConfiguration::class, DirectDeclarationsAccess::class)
+@OptIn(LegacyK2CliPipeline::class, SessionConfiguration::class, DirectDeclarationsAccess::class)
 private fun compileImpl(
     state: K2ReplCompilationState,
     snippet: SourceCode,
@@ -300,12 +303,9 @@ private fun compileImpl(
 
     // The snippet id travels to the FIR configurators via the refined configuration (`repl.currentLineId`),
     // so the result field naming does not depend on the parser used to build the snippet
-    val initialScriptCompilationConfiguration = scriptCompilationConfiguration.refineBeforeParsing(snippet).valueOr {
-        return it
-    }.let { refined ->
-        if (priority == null) refined
-        else refined.with { repl.currentLineId(LineId(priority, 0, snippet.text.hashCode())) }
-    }
+    val initialScriptCompilationConfiguration =
+        if (priority == null) scriptCompilationConfiguration
+        else scriptCompilationConfiguration.with { repl.currentLineId(LineId(priority, 0, snippet.text.hashCode())) }
     val project = state.projectEnvironment.project
     val messageCollector = state.messageCollector
     val compilerConfiguration = state.compilerContext.environment.configuration.copy().apply {
@@ -316,43 +316,45 @@ private fun compileImpl(
     val compilerEnvironment = ModuleCompilerEnvironment(state.projectEnvironment, diagnosticsReporter)
     val targetId = TargetId(snippet.name!!, "java-production")
 
-    fun getRefinedConfiguration(source: SourceCode): ScriptCompilationConfiguration? =
-        state.scriptConfigurationsProvider?.let {
-            it.project = state.project
-            it.getScriptCompilationConfiguration(source, initialScriptCompilationConfiguration)?.valueOrNull()?.configuration
+    // K2 (FIR-based) configuration refinement, the same as in ScriptJvmK2CompilerImpl: the file annotations are collected
+    // from the raw FIR built by `convertToFir` in a dedicated session, without the legacy PSI-based ScriptConfigurationsProvider
+    fun ScriptCompilationConfiguration.refineAll(source: SourceCode): ResultWithDiagnostics<ScriptCompilationConfiguration> =
+        refineAllForK2(source, state.hostConfiguration) { script, configuration ->
+            collectAndResolveScriptAnnotationsViaFir(
+                script, configuration, state.hostConfiguration,
+                { _, _ -> state.getOrCreateSessionForAnnotationResolution() },
+                convertToFir
+            )
         }
+
+    val refinedSnippetConfiguration = initialScriptCompilationConfiguration.refineAll(snippet).valueOr { return it }
+
+    // The refined configurations cache is used by the FIR scripting services (see FirScriptDefinitionProviderService),
+    // so the snippet configurators see the per-snippet configuration (incl. `repl.currentLineId`)
+    val refinedConfigurationsCache = state.hostConfiguration[ScriptingHostConfiguration.scriptRefinedCompilationConfigurationsCache]
+        ?: error("ScriptRefinedCompilationConfigurationCache is not configured in the REPL host configuration")
+    refinedConfigurationsCache.storeRefinedCompilationConfiguration(snippet, refinedSnippetConfiguration.asSuccess())
+
+    fun getRefinedConfiguration(source: SourceCode): ScriptCompilationConfiguration =
+        refinedConfigurationsCache.getRefinedCompilationConfiguration(source)?.valueOrNull() ?: refinedSnippetConfiguration
 
     // configuration refinement with the additional sources collection
     val allSourceFiles = mutableListOf(snippet)
     (
         val classpath, val newSources = sources, val sourceDependencies
     ) =
-        @Suppress("DEPRECATION")
-        collectScriptsCompilationDependencies(allSourceFiles) { source ->
-            state.scriptConfigurationsProvider?.let {
-                it.project = state.project
-                it.getScriptCompilationConfiguration(source, initialScriptCompilationConfiguration)
+        collectScriptsCompilationDependenciesRecursively(allSourceFiles) { source ->
+            state.hostConfiguration.getOrStoreRefinedCompilationConfiguration(source) { importedScript, baseConfiguration ->
+                baseConfiguration.refineAll(importedScript)
             }
-        }
-    allSourceFiles.addAll(newSources)
-
-    // Pre-seed the refined configurations cache used by the FIR scripting services (see FirScriptDefinitionProviderService),
-    // so that the snippet configurators see the per-snippet configuration (incl. `repl.currentLineId`)
-    state.hostConfiguration[ScriptingHostConfiguration.scriptRefinedCompilationConfigurationsCache]
-        ?.storeRefinedCompilationConfiguration(
-            snippet,
-            (getRefinedConfiguration(snippet) ?: initialScriptCompilationConfiguration).asSuccess()
-        )
+        }.valueOr { return it }
+    // The imported scripts should be analyzed before the snippet
+    allSourceFiles.addAll(0, newSources)
 
     // Updating compiler options
     val baseCompilerOptions = state.scriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]
     val updatedCompilerOptions = allSourceFiles.flatMapTo(mutableListOf()) { file ->
-        state.scriptConfigurationsProvider?.let { provider ->
-            provider.project = state.project
-            provider.getScriptCompilationConfiguration(file)?.valueOrNull()?.configuration?.get(
-                ScriptCompilationConfiguration.compilerOptions
-            )?.takeIf { it != baseCompilerOptions }
-        } ?: emptyList()
+        getRefinedConfiguration(file)[ScriptCompilationConfiguration.compilerOptions]?.takeIf { it != baseCompilerOptions } ?: emptyList()
     }
     if (updatedCompilerOptions.isNotEmpty()) {
         compilerConfiguration.updateWithCompilerOptions(
@@ -406,7 +408,10 @@ private fun compileImpl(
 
     session.register(
         FirScriptCompilationComponent::class,
-        FirScriptCompilationComponent(state.hostConfiguration)
+        FirScriptCompilationComponent(
+            state.hostConfiguration,
+            getSessionForAnnotationResolution = { _, _ -> state.getOrCreateSessionForAnnotationResolution() }
+        )
     )
 
     val sourcesToFir = allSourceFiles.associateWith { it.convertToFir(session, diagnosticsReporter) }
@@ -449,12 +454,39 @@ private fun compileImpl(
             sourcesToFir[source]?.declarations?.firstIsInstanceOrNull<FirReplSnippet>()?.snippetClass?.symbol?.classId?.asSingleFqName()
         },
         sourceDependencies,
-        { script -> getRefinedConfiguration(script) ?: initialScriptCompilationConfiguration },
+        ::getRefinedConfiguration,
         extractResultFields(irInput.irModuleFragment)
     ).onSuccess { compiledScript ->
         ResultWithDiagnostics.Success(compiledScript, messageCollector.diagnostics)
     }
 }
+
+/**
+ * The session used for the K2 configuration refinement (see [collectAndResolveScriptAnnotationsViaFir]): the snippet is
+ * built into raw FIR there only to collect and evaluate its file annotations, so the module data is not added to the REPL history.
+ */
+@OptIn(SessionConfiguration::class)
+private fun K2ReplCompilationState.getOrCreateSessionForAnnotationResolution(): FirSession =
+    dummySessionForAnnotationResolution ?: run {
+        val compilerConfiguration = compilerContext.environment.configuration
+        FirJvmSessionFactory.createSourceSession(
+            moduleDataProvider.addNewSnippetModuleData(Name.special("<raw-snippet>"), isDummy = true),
+            AbstractProjectFileSearchScope.EMPTY,
+            createIncrementalCompilationSymbolProviders = { null },
+            compilerConfiguration.getCompilerExtensions(FirExtensionRegistrar),
+            compilerConfiguration,
+            context = sessionFactoryContext,
+            needRegisterJavaElementFinder = true,
+            kmpModuleKind = KmpModuleKind.SingleModule,
+            init = {},
+        ).apply {
+            register(
+                FirScriptCompilationComponent::class,
+                FirScriptCompilationComponent(hostConfiguration, getSessionForAnnotationResolution = { _, _ -> this })
+            )
+            dummySessionForAnnotationResolution = this
+        }
+    }
 
 /**
  * The LightTree counterpart of the PSI "all syntax errors are at EOF" heuristic used to signal to REPL hosts

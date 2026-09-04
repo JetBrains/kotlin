@@ -62,7 +62,7 @@ No structural changes expected. Possibly remove the `accepts()` extension method
 | `ScriptJvmK2CompilerIsolated` (host wrapper) | KEEP |
 | `ScriptJvmK2CompilerFromEnvironment` (CLI wrapper) | KEEP — sole K2 CLI entry |
 | `convertToFirViaLightTree` | KEEP — only converter wired today |
-| `K2ReplCompiler` + `K2ReplCompilationState` | KEEP. Aligned with `ScriptJvmK2CompilerImpl` (`convertToFir` seam, LT default) since KT-83498. Next: route annotation refinement through `refineAllForK2` instead of `CliScriptConfigurationsProvider` (PSI inside), and narrow `isReplSnippetSource` (G15). |
+| `K2ReplCompiler` + `K2ReplCompilationState` | KEEP. Aligned with `ScriptJvmK2CompilerImpl` (`convertToFir` seam, LT default) since KT-83498. Annotation refinement routed through `refineAllForK2` (2026-09-04 follow-up; `CliScriptConfigurationsProvider` no longer consumed). Next: narrow `isReplSnippetSource` (G15). |
 | `GenericReplCompiler` | REMOVE |
 | `ScriptJvmCompilerIsolated` (K1) | REMOVE |
 
@@ -86,4 +86,4 @@ No structural changes expected. Possibly remove the `accepts()` extension method
 - No K1 descriptors in scripting modules
 - No PSI dependency in API/host modules (already true today)
 - Scripts: zero PSI on K2 path (already true today)
-- Snippets: zero PSI in `K2ReplCompiler` / FIR configurators (KT-83498 landed); residual PSI only in the `CliScriptConfigurationsProvider` refinement path shared with K1 (goes with step 8)
+- Snippets: zero PSI in `K2ReplCompiler` / FIR configurators (KT-83498 landed); snippet/imports refinement via `refineAllForK2` since the 2026-09-04 follow-up — no `CliScriptConfigurationsProvider` in the REPL path anymore
