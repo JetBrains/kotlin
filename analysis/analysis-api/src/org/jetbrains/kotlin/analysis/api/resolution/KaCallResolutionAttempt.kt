@@ -432,10 +432,15 @@ public val KaCallResolutionAttempt.errors: List<KaSimpleCallResolutionError>
  */
 @KaExperimentalApi
 public val KaCallResolutionAttempt.successful: KaSimpleOrMultiCall?
-    get() = when (this) {
-        is KaSimpleCallResolutionSuccess -> call
-        is KaSimpleCallResolutionError -> null
-        is KaMultiCallResolutionAttempt -> call
+    get() {
+        @OptIn(ExperimentalContracts::class)
+        contract { returnsNotNull() implies (this@successful !is KaSimpleCallResolutionError) }
+
+        return when (this) {
+            is KaSimpleCallResolutionSuccess -> call
+            is KaSimpleCallResolutionError -> null
+            is KaMultiCallResolutionAttempt -> call
+        }
     }
 
 /**
@@ -451,7 +456,12 @@ public val KaCallResolutionAttempt.successful: KaSimpleOrMultiCall?
  */
 @KaExperimentalApi
 public val KaCallResolutionAttempt.isSuccessful: Boolean
-    get() = successful != null
+    get() {
+        @OptIn(ExperimentalContracts::class)
+        contract { returns(true) implies (this@isSuccessful !is KaSimpleCallResolutionError) }
+
+        return successful != null
+    }
 
 /**
  * The former name of [successful].

@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.resolution.KtResolvableCall
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 /**
  * Represents a resolved call that can be either a simple call or a multi call.
@@ -213,7 +215,12 @@ public val KaSimpleOrMultiCall.symbols: List<KaSymbol>
  */
 @KaExperimentalApi
 public val KaSimpleOrMultiCall.simple: KaSimpleCall<*, *>?
-    get() = this as? KaSimpleCall<*, *>
+    get() {
+        @OptIn(ExperimentalContracts::class)
+        contract { returnsNotNull() implies (this@simple is KaSimpleCall<*, *>) }
+
+        return this as? KaSimpleCall<*, *>
+    }
 
 /**
  * [this] call as a [KaFunctionCall], or `null` if it is not a call to a function.
@@ -238,7 +245,12 @@ public val KaSimpleOrMultiCall.simple: KaSimpleCall<*, *>?
  */
 @KaExperimentalApi
 public val KaSimpleOrMultiCall.function: KaFunctionCall<*>?
-    get() = this as? KaFunctionCall<*>
+    get() {
+        @OptIn(ExperimentalContracts::class)
+        contract { returnsNotNull() implies (this@function is KaFunctionCall<*>) }
+
+        return this as? KaFunctionCall<*>
+    }
 
 /**
  * [this] call as a [KaVariableAccessCall], or `null` if it is not an access to a variable.
@@ -263,7 +275,12 @@ public val KaSimpleOrMultiCall.function: KaFunctionCall<*>?
  */
 @KaExperimentalApi
 public val KaSimpleOrMultiCall.variable: KaVariableAccessCall?
-    get() = this as? KaVariableAccessCall
+    get() {
+        @OptIn(ExperimentalContracts::class)
+        contract { returnsNotNull() implies (this@variable is KaVariableAccessCall) }
+
+        return this as? KaVariableAccessCall
+    }
 
 /**
  * [this] call as a call to a [constructor][KaConstructorSymbol], or `null` if it is not a constructor call.
@@ -288,6 +305,9 @@ public val KaSimpleOrMultiCall.variable: KaVariableAccessCall?
 @KaExperimentalApi
 public val KaSimpleOrMultiCall.constructor: KaFunctionCall<KaConstructorSymbol>?
     get() {
+        @OptIn(ExperimentalContracts::class)
+        contract { returnsNotNull() implies (this@constructor is KaFunctionCall<KaConstructorSymbol>) }
+
         val call = function ?: return null
         if (call.symbol !is KaConstructorSymbol) return null
 
