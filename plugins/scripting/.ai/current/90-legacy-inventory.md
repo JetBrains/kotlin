@@ -20,7 +20,7 @@ Itemized list of every K1 / PSI-tied / IDE-coupled / duplicated piece with dispo
 | `LazyScriptDescriptor` | `plugins/scripting/scripting-compiler-impl/src/.../resolve/LazyScriptDescriptor.kt` | K1 descriptor | REMOVE (with K1 frontend) |
 | `LazyScriptClassMemberScope` | same dir | K1 scope | REMOVE |
 | `ScriptProvidedPropertyDescriptor` | same dir | K1 synthetic prop | REMOVE |
-| `ReplResultPropertyDescriptor` | same dir | K1 REPL result | REMOVE |
+| `ReplResultPropertyDescriptor` | same dir | K1 result field descriptor — despite the name it serves plain scripts too, and is live via `LazyScriptClassMemberScope.getNonDeclaredProperties` / `ScriptDescriptor.getResultValue()` | REMOVE (with K1 frontend) |
 | `ScriptingResolveExtension` | scripting-compiler | K1 `SyntheticResolveExtension` | REMOVE |
 | `ScriptExtraImportsProviderExtension` | scripting-compiler | K1 imports injection | REMOVE |
 | `ScriptingCollectAdditionalSourcesExtension` | scripting-compiler | K1 source discovery | REMOVE |
@@ -41,6 +41,10 @@ Itemized list of every K1 / PSI-tied / IDE-coupled / duplicated piece with dispo
 | `JvmCliReplShellExtension` | scripting-compiler | **REMOVED** |
 | `JvmStandardReplFactoryExtension` | scripting-compiler | **REMOVED** |
 | `ReplFactoryExtension` EP | scripting-compiler | **REMOVED** |
+| `K1JvmIrCodegenFactory` + `repl/JvmGeneratorExtensionsImpl` (K1 script codegen) | `plugins/scripting/scripting-compiler/src/.../impl/`, `.../repl/` | **REMOVED** |
+| `ReplState` (K1 REPL line scopes) + the `FileScopesCustomizer` hook it needed | `compiler/frontend/src/.../resolve/repl/ReplState.kt`, `.../resolve/lazy/FileScopeProvider.kt` | **REMOVED** |
+| `ReplEscapeType` (IDE-mode terminal protocol) | `compiler/util/src/.../utils/repl/ReplEscapeType.kt` | **REMOVED** |
+| `CLICompiler.SCRIPT_PLUGIN_REGISTRAR_NAME` + its `JvmFrontendPipelinePhase` filter | `compiler/cli/` | **REMOVED** |
 
 ## CLI
 
@@ -108,9 +112,8 @@ See [70-tests.md](70-tests.md#compiler-side-scripting-tests-under-compiler) for 
 
 | Artifact | Path | Disposition |
 |---|---|---|
-| `ScriptGenTest` (K1) | `compiler/tests-integration/tests/.../codegen/ScriptGenTest.kt` | REMOVE |
-| `GenericReplTest` (K1 REPL) | `compiler/tests-integration/tests/.../cli/jvm/repl/GenericReplTest.kt` | REMOVE |
-| K1 REPL test data | `compiler/tests-integration/testData/repl/*` (~30 dirs) | REMOVE |
+| K1 REPL test data | `compiler/tests-integration/testData/repl/*` | **REMOVED** (50 files) |
+| `ScriptGenTest`, `GenericReplTest` | `compiler/tests-integration/tests/` | **REMOVED** (already absent upstream) |
 | K1 PSI script parse tests + fixtures | `compiler/psi/psi-impl/tests/.../CustomPsiTest` (script cases) + `compiler/psi/psi-impl/testData/psi/{script,repl}/` | REMOVE (with K1 PSI retirement) |
 | Custom-script codegen tests | `compiler/tests-integration/tests/.../codegen/Fir{LightTree,Psi}CustomScriptCodegenTest` | MOVE → `plugins/scripting/scripting-tests` |
 | `compiler/testData/codegen/scriptCustom/` | mixed K1/K2 fixtures | AUDIT — segregate, MOVE K2 ones |

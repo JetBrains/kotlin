@@ -147,9 +147,9 @@ Full deletion is blocked by the decision in step 4 to keep the daemon REPL metho
 
 ### 8. ~~Delete K1 `GenericReplCompiler` + Scripting K1 registrar~~ — landed 2026-09-04
 
-`GenericReplCompiler.kt`, `GenericReplChecker.kt`, `GenericCompilerState.kt`, `KJvmReplCompilerBase.kt`, `ReplCodeAnalyzer.kt`, `jvmReplCompilation.kt`, `ReplFromTerminal.kt`, `ReplInterpreter.kt` and the terminal `configuration/` / `reader/` / `writer/` / `messages/` cluster are deleted; `repl/` retains only `JvmGeneratorExtensionsImpl.kt`, used by the live `impl/K1JvmIrCodegenFactory.kt`.
+`GenericReplCompiler.kt`, `GenericReplChecker.kt`, `GenericCompilerState.kt`, `KJvmReplCompilerBase.kt`, `ReplCodeAnalyzer.kt`, `jvmReplCompilation.kt`, `ReplFromTerminal.kt`, `ReplInterpreter.kt` and the terminal `configuration/` / `reader/` / `writer/` / `messages/` cluster are deleted. The whole `repl/` package is gone, together with `impl/K1JvmIrCodegenFactory.kt` and its `JvmGeneratorExtensionsImpl.kt` — nothing referenced the K1 script codegen factory once the K1 REPL compiler went away, so there is no live K1 script codegen in the scripting plugin anymore.
 
-`ScriptingCompilerConfigurationComponentRegistrar`, `JvmScriptCompiler.createLegacy()` and `ScriptJvmCompilerIsolated` are gone too. `CLICompiler.SCRIPT_PLUGIN_REGISTRAR_NAME` still names the removed registrar and is still used as a filter in `JvmFrontendPipelinePhase` — dead, and cheap to drop with the K1 frontend bindings (step 11).
+`ScriptingCompilerConfigurationComponentRegistrar`, `JvmScriptCompiler.createLegacy()` and `ScriptJvmCompilerIsolated` are gone too. `CLICompiler.SCRIPT_PLUGIN_REGISTRAR_NAME` and its filter use in `JvmFrontendPipelinePhase.collectIncompatiblePluginNamesTo` are deleted too.
 
 ### 9. ~~Delete `scripting-ide-services` + companions~~ — landed 2026-09-04
 
@@ -176,14 +176,13 @@ Once K1 frontend is removed compiler-wide:
 - `IrScript` schema: regenerate without `providedProperties`, `providedPropertiesParameters`
 - `BasicJvmScriptEvaluator` — remove `isCompiledWithK2` branches
 
-### 12. Compiler-side scripting test cleanup
+### 12. Compiler-side scripting test cleanup — K1 REPL test data landed 2026-09-04
 
 **Goal**: drop K1 test data; relocate K2 custom-script tests next to the scripting plugin.
 
 **Touch**:
-- Delete `compiler/tests-integration/testData/repl/` (~30 fixture dirs).
-- Delete `compiler/tests-integration/tests/.../cli/jvm/repl/GenericReplTest.kt`.
-- Delete `compiler/tests-integration/tests/.../codegen/ScriptGenTest.kt` (K1).
+- ~~Delete `compiler/tests-integration/testData/repl/`~~ — done, 50 fixtures deleted.
+- `GenericReplTest.kt` and `ScriptGenTest.kt` no longer exist in the tree — nothing to delete.
 - Delete K1 PSI script parse cases in `compiler/psi/psi-impl/tests/.../psi/CustomPsiTest.kt` + fixtures under `compiler/psi/psi-impl/testData/psi/script/` and `testData/psi/repl/`.
 - Move `compiler/tests-integration/tests/.../codegen/FirLightTreeCustomScriptCodegenTest.kt` and `FirPsiCustomScriptCodegenTest.kt` → `plugins/scripting/scripting-tests` (alongside corresponding fixture moves from `compiler/testData/codegen/scriptCustom/` after audit).
 - Audit `compiler/testData/codegen/scriptCustom/` per file: K1-only → delete; K2 → move with the tests.

@@ -1,8 +1,0 @@
->>> (listOf(1) as List<String>).unresolved()
-error: unresolved reference: unresolved
-(listOf(1) as List<String>).unresolved()
-                            ^
->>> listOf<String>(1!!)
-error: type mismatch: inferred type is IntegerLiteralType[Int,Long,Byte,Short] but String was expected
-listOf<String>(1!!)
-               ^

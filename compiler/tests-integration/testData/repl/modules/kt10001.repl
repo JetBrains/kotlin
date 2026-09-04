@@ -1,6 +1,0 @@
->>> val x: Pair<Any?, Any?> = null to null
->>> fun Any.string() = this as String
->>> if (x.first != null) x.first.string()
-error: smart cast to 'Any' is impossible, because 'x.first' is a public API property declared in different module
-if (x.first != null) x.first.string()
-                     ^

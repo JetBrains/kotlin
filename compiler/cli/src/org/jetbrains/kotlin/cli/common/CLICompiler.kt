@@ -177,8 +177,6 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
     abstract fun executableScriptFileName(): String
 
     companion object {
-        const val SCRIPT_PLUGIN_REGISTRAR_NAME =
-            "org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar"
         const val SCRIPT_PLUGIN_COMMANDLINE_PROCESSOR_NAME = "org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCommandLineProcessor"
         const val SCRIPT_PLUGIN_K2_REGISTRAR_NAME =
             "org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar"
