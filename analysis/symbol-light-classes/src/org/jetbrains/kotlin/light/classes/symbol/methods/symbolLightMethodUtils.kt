@@ -115,7 +115,7 @@ internal fun methodGeneration(
             !isEffectivelyPrivate &&
             (hasValueClassInParameterType || hasValueClassInReturnType || isAffectedByValueClass)
 
-    val isRegularAccessorRequired = if (isAffectedByValueClass) {
+    val isRegularMethodRequired = if (isAffectedByValueClass) {
         // JvmName -> unmangled method can be generated
         hasJvmNameAnnotation
     } else {
@@ -123,7 +123,7 @@ internal fun methodGeneration(
         true
     }
 
-    val isBoxedAccessorRequired = when {
+    val isBoxedMethodRequired = when {
         // The check already performed by the explicit mode
         isBoxedAccessorRequestedExplicitly -> true
 
@@ -147,8 +147,8 @@ internal fun methodGeneration(
     }
 
     return MethodGenerationResult(
-        isRegularMethodRequired = isRegularAccessorRequired,
-        isBoxedMethodRequired = isBoxedAccessorRequired,
+        isRegularMethodRequired = isRegularMethodRequired,
+        isBoxedMethodRequired = isBoxedMethodRequired,
     )
 }
 
