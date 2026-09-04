@@ -481,7 +481,6 @@ KtConstantExpression(403,407): 'null'
 KtOperationReferenceExpression(408,410): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(411,412): 'T'

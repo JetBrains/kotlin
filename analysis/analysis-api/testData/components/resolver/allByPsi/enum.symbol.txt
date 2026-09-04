@@ -79,7 +79,6 @@ KtUserType(54,54): ''
 KtEnumEntrySuperclassReferenceExpression(54,54): ''
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /EnumWithConstructor
@@ -127,7 +126,6 @@ KtUserType(76,76): ''
 KtEnumEntrySuperclassReferenceExpression(76,76): ''
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /EnumWithConstructor

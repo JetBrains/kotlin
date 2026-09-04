@@ -646,7 +646,6 @@ KtNameReferenceExpression(583,585): 'mg'
 KtOperationReferenceExpression(586,588): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(589,612): 'MyGenericSealed<String>'
@@ -826,7 +825,6 @@ KtNameReferenceExpression(804,806): 'cs'
 KtOperationReferenceExpression(807,809): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(810,833): 'MyGenericSealed<String>'

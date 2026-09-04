@@ -367,7 +367,6 @@ KtConstantExpression(254,255): '5'
 KtOperationReferenceExpression(256,258): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(259,262): 'Int'
@@ -442,7 +441,6 @@ KtConstantExpression(282,283): '5'
 KtOperationReferenceExpression(284,286): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(287,290): 'Int'
@@ -575,7 +573,6 @@ KtPrefixExpression(382,389): '++value'
 KtOperationReferenceExpression(382,384): '++'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
@@ -632,7 +629,6 @@ KtConstantExpression(416,417): '5'
 KtOperationReferenceExpression(418,420): 'as'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(421,424): 'Int'

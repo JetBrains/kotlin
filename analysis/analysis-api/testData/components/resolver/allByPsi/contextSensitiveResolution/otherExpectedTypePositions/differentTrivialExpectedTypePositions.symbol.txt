@@ -367,7 +367,6 @@ KtNameReferenceExpression(350,351): 'm'
 KtOperationReferenceExpression(352,353): '='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(354,355): 'Y'
@@ -397,7 +396,6 @@ KtNameReferenceExpression(360,361): 'm'
 KtOperationReferenceExpression(362,363): '='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(364,365): 'L'

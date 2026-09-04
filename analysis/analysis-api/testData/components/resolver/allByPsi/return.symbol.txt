@@ -373,7 +373,6 @@ KtContainerNode(295,300): '@foo3'
 KtLabelReferenceExpression(295,300): '@foo3'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(it: kotlin.Boolean): kotlin.Unit
@@ -391,7 +390,6 @@ KtContainerNode(331,336): '@foo2'
 KtLabelReferenceExpression(331,336): '@foo2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(it: kotlin.String): kotlin.Unit
@@ -409,7 +407,6 @@ KtContainerNode(367,372): '@foo1'
 KtLabelReferenceExpression(367,372): '@foo1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(it: kotlin.Int): kotlin.Unit
@@ -445,7 +442,6 @@ KtContainerNode(436,442): 'label@'
 KtLabelReferenceExpression(436,442): 'label@'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNamedFunction(443,633): 'fun(s: String) {'
@@ -499,7 +495,6 @@ KtContainerNode(513,519): '@label'
 KtLabelReferenceExpression(513,519): '@label'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(s: kotlin.String): kotlin.Unit
@@ -517,7 +512,6 @@ KtContainerNode(546,551): '@foo3'
 KtLabelReferenceExpression(546,551): '@foo3'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(it: kotlin.Boolean): kotlin.Unit
@@ -535,7 +529,6 @@ KtContainerNode(578,583): '@foo2'
 KtLabelReferenceExpression(578,583): '@foo2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(it: kotlin.String): kotlin.Unit
@@ -553,7 +546,6 @@ KtContainerNode(610,615): '@foo1'
 KtLabelReferenceExpression(610,615): '@foo1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(it: kotlin.Int): kotlin.Unit
@@ -571,7 +563,6 @@ KtContainerNode(658,663): '@foo3'
 KtLabelReferenceExpression(658,663): '@foo3'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(it: kotlin.Boolean): kotlin.Unit
@@ -589,7 +580,6 @@ KtContainerNode(686,691): '@foo2'
 KtLabelReferenceExpression(686,691): '@foo2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(it: kotlin.String): kotlin.Unit
@@ -607,7 +597,6 @@ KtContainerNode(714,719): '@foo1'
 KtLabelReferenceExpression(714,719): '@foo1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(it: kotlin.Int): kotlin.Unit
