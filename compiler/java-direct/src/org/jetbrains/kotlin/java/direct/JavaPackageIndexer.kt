@@ -84,7 +84,7 @@ internal class JavaPackageIndexer(
                 packageInfoIndexer.indexPackageInfo(fileRoot, expectedPackage = null)
                 continue
             }
-            val entry = tryBuildFileEntry(fileRoot, isSingleFileRoot = true) ?: continue
+            val entry = tryBuildFileEntry(fileRoot, expectedPackage = null, isSingleFileRoot = true) ?: continue
             val classesByName = fileRootIndexBuilder.getOrPut(entry.packageFqName) { HashMap() }
             for (className in entry.topLevelClassNames) {
                 classesByName.getOrPut(className) { mutableListOf() }.add(entry)
@@ -166,7 +166,7 @@ internal class JavaPackageIndexer(
                     continue
                 }
 
-                val entry = tryBuildFileEntry(file, packageFqName) ?: continue
+                val entry = tryBuildFileEntry(file, packageFqName, isSingleFileRoot = false) ?: continue
                 for (className in entry.topLevelClassNames) {
                     classesByName.getOrPut(className) { mutableListOf() }.add(entry)
                 }
@@ -320,7 +320,7 @@ internal class JavaPackageIndexer(
      * [JavaClassCache]. When [expectedPackage] is non-null, files whose declared package does not
      * match are skipped (matching javac's directory-mirrors-package rule).
      */
-    private fun tryBuildFileEntry(file: File, expectedPackage: FqName? = null, isSingleFileRoot: Boolean = false): FileEntry? {
+    private fun tryBuildFileEntry(file: File, expectedPackage: FqName?, isSingleFileRoot: Boolean): FileEntry? {
         val info = extractFileInfoLightweight(file) ?: return null
         val packageFqName = if (info.packageName != null) FqName(info.packageName) else FqName.ROOT
 
