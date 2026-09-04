@@ -30,13 +30,11 @@ import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildPlaceholderProjection
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
@@ -607,10 +605,8 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     inline fun <T> withFileScopesAndImports(file: FirFile, f: () -> T): T {
         scopes = createImportingScopes(file, session, scopeSession, useCaching = computationSession.useCacheForImportScope)
         aliasedImports = buildMap {
-            file.lazyResolveToPhase(FirResolvePhase.IMPORTS)
             for (import in file.imports) {
-                if (import !is FirResolvedImport) continue
-                val importedName = import.importedName ?: continue
+                val importedName = import.importedFqName?.shortName() ?: continue
                 val aliasName = import.aliasName ?: continue
                 put(aliasName, importedName)
             }
