@@ -66,6 +66,7 @@ class JvmSymbols(
     private val javaLangPackage: IrPackageFragment = createPackage(FqName("java.lang"))
     private val javaLangInvokePackage: IrPackageFragment = createPackage(FqName("java.lang.invoke"))
     private val javaUtilPackage: IrPackageFragment = createPackage(FqName("java.util"))
+    private val kotlinCollectionsPackage: IrPackageFragment = createPackage(FqName("kotlin.collections"))
 
 
     private val kotlinInternalPackage: IrPackageFragment = createPackage(FqName("kotlin.internal"))
@@ -114,6 +115,7 @@ class JvmSymbols(
                 "java.lang" -> javaLangPackage
                 "java.lang.invoke" -> javaLangInvokePackage
                 "java.util" -> javaUtilPackage
+                "kotlin.collections" -> kotlinCollectionsPackage
                 "kotlin.internal" -> kotlinInternalPackage
                 else -> error("Other packages are not supported yet: $fqName")
             }
@@ -972,6 +974,45 @@ class JvmSymbols(
         else
             throw AssertionError("Array type expected: ${arrayType.render()}")
     }
+
+    val arrayList: IrClassSymbol = createClass(FqName("java.util.ArrayList"))
+    val arrayListConstructor: IrConstructorSymbol = irFactory.buildConstructor {
+        name = Name.special("<init>")
+        returnType = arrayList.owner.defaultType
+        visibility = DescriptorVisibilities.PUBLIC
+    }.apply {
+        parent = arrayList.owner
+    }.symbol
+
+    val linkedHashSet: IrClassSymbol = createClass(FqName("java.util.LinkedHashSet"))
+
+    val linkedHashSetConstructor: IrConstructorSymbol = irFactory.buildConstructor {
+        name = Name.special("<init>")
+        returnType = linkedHashSet.owner.defaultType
+        visibility = DescriptorVisibilities.PUBLIC
+    }.apply {
+        parent = linkedHashSet.owner
+    }.symbol
+
+    private fun createReadOnlyCollectionFacade(fqName: FqName, collectionType: IrType, emptyName: String, singletonName: String) =
+        createClass(fqName) { klass ->
+            klass.addFunction(emptyName, collectionType, isStatic = true)
+            klass.addFunction(singletonName, collectionType, isStatic = true).apply {
+                addValueParameter("element", irBuiltIns.anyNType)
+            }
+        }
+
+    private val collectionsKt: IrClassSymbol = createReadOnlyCollectionFacade(
+        FqName("kotlin.collections.CollectionsKt"), irBuiltIns.listClass.typeWith(irBuiltIns.anyNType), "emptyList", "listOf"
+    )
+    val emptyList: IrSimpleFunctionSymbol = collectionsKt.functionByName("emptyList")
+    val listOfElement: IrSimpleFunctionSymbol = collectionsKt.functionByName("listOf")
+
+    private val setsKt: IrClassSymbol = createReadOnlyCollectionFacade(
+        FqName("kotlin.collections.SetsKt"), irBuiltIns.setClass.typeWith(irBuiltIns.anyNType), "emptySet", "setOf"
+    )
+    val emptySet: IrSimpleFunctionSymbol = setsKt.functionByName("emptySet")
+    val setOfElement: IrSimpleFunctionSymbol = setsKt.functionByName("setOf")
 
     private val javaLangInteger: IrClassSymbol = createJavaPrimitiveClassWithUnsignedUtils(FqName("java.lang.Integer"), irBuiltIns.intType)
 

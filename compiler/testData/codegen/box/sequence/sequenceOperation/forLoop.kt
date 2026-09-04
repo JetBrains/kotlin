@@ -1,5 +1,9 @@
 // WITH_STDLIB
 
+// CHECK_BYTECODE_TEXT
+// 1 kotlin/sequences/SequencesKt.sequence \(
+// 0 kotlin/sequences/SequencesKt.toList
+
 fun box(): String {
     var result = ""
     var shouldCapitalise = true

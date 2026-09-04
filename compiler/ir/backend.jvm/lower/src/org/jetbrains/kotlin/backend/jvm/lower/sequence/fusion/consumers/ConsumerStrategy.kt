@@ -36,10 +36,16 @@ private const val INDEX_OF_LAST = KOTLIN_SEQUENCES_PREFIX + "indexOfLast"
 private const val FILTER_TO = KOTLIN_SEQUENCES_PREFIX + "filterTo"
 private const val FILTER_NOT_TO = KOTLIN_SEQUENCES_PREFIX + "filterNotTo"
 private const val FILTER_NOT_NULL_TO = KOTLIN_SEQUENCES_PREFIX + "filterNotNullTo"
+private const val TO_LIST = KOTLIN_SEQUENCES_PREFIX + "toList"
+private const val TO_MUTABLE_LIST = KOTLIN_SEQUENCES_PREFIX + "toMutableList"
+private const val TO_SET = KOTLIN_SEQUENCES_PREFIX + "toSet"
+private const val TO_MUTABLE_SET = KOTLIN_SEQUENCES_PREFIX + "toMutableSet"
+private const val TO_COLLECTION = KOTLIN_SEQUENCES_PREFIX + "toCollection"
 
 private val consumerFqNames = setOf(
     FOR_EACH, FOR_EACH_INDEXED, FIND, FIND_LAST, FIRST, FIRST_NOT_NULL_OF, FIRST_NOT_NULL_OF_OR_NULL, FIRST_OR_NULL, LAST, LAST_OR_NULL,
     INDEX_OF, INDEX_OF_FIRST, INDEX_OF_LAST, FILTER_TO, FILTER_NOT_TO, FILTER_NOT_NULL_TO,
+    TO_LIST, TO_MUTABLE_LIST, TO_SET, TO_MUTABLE_SET, TO_COLLECTION,
 )
 
 internal fun isConsumerFqName(fqName: String): Boolean = fqName in consumerFqNames
@@ -76,6 +82,12 @@ internal data class ConsumerData(
     val sequenceData: SequenceData,
 )
 
+internal sealed class CollectionVersion {
+    object List : CollectionVersion()
+    object Set : CollectionVersion()
+    object Collection : CollectionVersion()
+}
+
 internal fun createConsumerStrategy(
     expression: IrCall,
     functionFQName: String,
@@ -95,6 +107,11 @@ internal fun createConsumerStrategy(
         FILTER_TO -> FilterToStrategy(data, expression, FilterVersion.Filter)
         FILTER_NOT_TO -> FilterToStrategy(data, expression, FilterVersion.FilterNot)
         FILTER_NOT_NULL_TO -> FilterToStrategy(data, expression, FilterVersion.FilterNotNull)
+        TO_LIST -> ToCollectionStrategy(data, expression, CollectionVersion.List, isReadOnly = true)
+        TO_MUTABLE_LIST -> ToCollectionStrategy(data, expression, CollectionVersion.List, isReadOnly = false)
+        TO_SET -> ToCollectionStrategy(data, expression, CollectionVersion.Set, isReadOnly = true)
+        TO_MUTABLE_SET -> ToCollectionStrategy(data, expression, CollectionVersion.Set, isReadOnly = false)
+        TO_COLLECTION -> ToCollectionStrategy(data, expression, CollectionVersion.Collection, isReadOnly = false)
         INDEX_OF -> IndexOfStrategy(data, expression, IndexOfVersion.IndexOf, context)
         INDEX_OF_FIRST -> IndexOfStrategy(data, expression, IndexOfVersion.IndexOfFirst, context)
         INDEX_OF_LAST -> IndexOfStrategy(data, expression, IndexOfVersion.IndexOfLast, context)
