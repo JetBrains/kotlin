@@ -5,7 +5,10 @@ fun test1() {
     }
 )
     local get(): Int {
-      return getValue<Int>(/* <this> = x$delegate, */ thisRef = null, property = ::x)
+      return getValue<Int>(/* <this> = x$delegate, */ thisRef = null, property = KProperty0<Int>(
+        /* bound = */ [],
+        /* getter = */        local fun(): Int      )
+)
     }
 
   println(message = <get-x>())
@@ -15,10 +18,16 @@ fun test2() {
   var x: Int
     val x$delegate: HashMap<String, Int> = hashMapOf<String, Int>()
     local get(): Int {
-      return getValue<Int, Int>(/* <this> = x$delegate, */ thisRef = null, property = ::x)
+      return getValue<Int, Int>(/* <this> = x$delegate, */ thisRef = null, property = KMutableProperty0<Int>(
+        /* bound = */ [],
+        /* getter = */        local fun(): Int        /* setter = */        local fun(value: Int)      )
+)
     }
     local set(<set-?>: Int) {
-      return setValue<Int>(/* <this> = x$delegate, */ thisRef = null, property = ::x, value = <set-?>)
+      return setValue<Int>(/* <this> = x$delegate, */ thisRef = null, property = KMutableProperty0<Int>(
+        /* bound = */ [],
+        /* getter = */        local fun(): Int        /* setter = */        local fun(value: Int)      )
+, value = <set-?>)
     }
 
   <set-x>(<set-?> = 0)
