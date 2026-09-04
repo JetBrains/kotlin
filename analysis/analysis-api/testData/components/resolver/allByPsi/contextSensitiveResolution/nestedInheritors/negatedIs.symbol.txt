@@ -43,7 +43,7 @@ KtUserType(120,126): 'Simple'
 KtNameReferenceExpression(120,126): 'Simple'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Simple
@@ -76,7 +76,7 @@ KtUserType(144,150): 'Simple'
 KtNameReferenceExpression(144,150): 'Simple'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Simple
