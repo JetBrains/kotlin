@@ -55,6 +55,8 @@ import KotlinImplementsNestedI = JS_TESTS.foo.KotlinImplementsNestedI;
 import NestedObject = JS_TESTS.foo.NonClassNestedDeclarations.NestedObject;
 import NestedEnum = JS_TESTS.foo.NonClassNestedDeclarations.NestedEnum;
 import NestedAnnotation = JS_TESTS.foo.NonClassNestedDeclarations.NestedAnnotation;
+import SealedNestedObject = JS_TESTS.foo.SealedInterfaceWithNestedObject.Only;
+import consumeSealedInterfaceWithNestedObject = JS_TESTS.foo.consumeSealedInterfaceWithNestedObject;
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -224,6 +226,8 @@ async function box(): Promise<string> {
             new NestedAnnotation("NestedAnnotation")
         ) == "KotlinImplementsNestedI NestedObject NestedEnum.A NestedAnnotation"
     )
+
+    assert(consumeSealedInterfaceWithNestedObject(SealedNestedObject) === "OK")
 
     return "OK";
 }
