@@ -7,8 +7,9 @@ FILE fqName:<root> fileName:/genericMember.kt
           invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.A<kotlin.String>
             BLOCK_BODY
-              CALL 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
-                ARG <this>: GET_VAR 'p0: <root>.A<kotlin.String> declared in <root>.test1.foo' type=<root>.A<kotlin.String> origin=null
+              RETURN type=kotlin.Nothing from='local final fun foo (p0: <root>.A<kotlin.String>): kotlin.Unit declared in <root>.test1'
+                CALL 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+                  ARG <this>: GET_VAR 'p0: <root>.A<kotlin.String> declared in <root>.test1.foo' type=<root>.A<kotlin.String> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL returnType:kotlin.reflect.KFunction1<<root>.A<kotlin.String>, kotlin.Unit>
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY

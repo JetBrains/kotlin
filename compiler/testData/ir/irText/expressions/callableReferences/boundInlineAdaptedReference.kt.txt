@@ -11,7 +11,7 @@ fun test() {
   foo(x = Function0<Unit>(
     /* bound = */ ["Fail"],
     /* invoke = */    local fun(receiver: String) {
-      id(/* <this> = receiver */) /*~> Unit */
+      return id(/* <this> = receiver */) /*~> Unit */
     }
   )
 )

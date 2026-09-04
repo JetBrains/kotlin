@@ -176,9 +176,10 @@ FILE fqName:kotlin.collections fileName:/common.kt
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:kotlin.collections.AbstractMyMutableList
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int
                 BLOCK_BODY
-                  SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in bar.JavaAbstractMutableList' type=kotlin.Unit origin=null
-                    receiver: GET_VAR 'receiver: kotlin.collections.AbstractMyMutableList declared in kotlin.collections.AbstractMyMutableList.getModCountViaReferenceAtAbstractMyMutableList.modCount' type=kotlin.collections.AbstractMyMutableList origin=ADAPTED_FUNCTION_REFERENCE
-                    value: GET_VAR 'value: kotlin.Int declared in kotlin.collections.AbstractMyMutableList.getModCountViaReferenceAtAbstractMyMutableList.modCount' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
+                  RETURN type=kotlin.Nothing from='local final fun modCount (receiver: kotlin.collections.AbstractMyMutableList, value: kotlin.Int): kotlin.Unit declared in kotlin.collections.AbstractMyMutableList.getModCountViaReferenceAtAbstractMyMutableList'
+                    SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in bar.JavaAbstractMutableList' type=kotlin.Unit origin=null
+                      receiver: GET_VAR 'receiver: kotlin.collections.AbstractMyMutableList declared in kotlin.collections.AbstractMyMutableList.getModCountViaReferenceAtAbstractMyMutableList.modCount' type=kotlin.collections.AbstractMyMutableList origin=ADAPTED_FUNCTION_REFERENCE
+                      value: GET_VAR 'value: kotlin.Int declared in kotlin.collections.AbstractMyMutableList.getModCountViaReferenceAtAbstractMyMutableList.modCount' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
     FUN name:incrementModCountAtAbstractMyMutableList visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.AbstractMyMutableList
       BLOCK_BODY
@@ -210,9 +211,10 @@ FILE fqName:kotlin.collections fileName:/common.kt
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:kotlin.collections.AbstractMyMutableList
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int
               BLOCK_BODY
-                SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in bar.JavaAbstractMutableList' type=kotlin.Unit origin=null
-                  receiver: GET_VAR 'receiver: kotlin.collections.AbstractMyMutableList declared in kotlin.collections.AbstractMyMutableList.setModCountViaReferenceAtAbstractMyMutableList.modCount' type=kotlin.collections.AbstractMyMutableList origin=ADAPTED_FUNCTION_REFERENCE
-                  value: GET_VAR 'value: kotlin.Int declared in kotlin.collections.AbstractMyMutableList.setModCountViaReferenceAtAbstractMyMutableList.modCount' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
+                RETURN type=kotlin.Nothing from='local final fun modCount (receiver: kotlin.collections.AbstractMyMutableList, value: kotlin.Int): kotlin.Unit declared in kotlin.collections.AbstractMyMutableList.setModCountViaReferenceAtAbstractMyMutableList'
+                  SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in bar.JavaAbstractMutableList' type=kotlin.Unit origin=null
+                    receiver: GET_VAR 'receiver: kotlin.collections.AbstractMyMutableList declared in kotlin.collections.AbstractMyMutableList.setModCountViaReferenceAtAbstractMyMutableList.modCount' type=kotlin.collections.AbstractMyMutableList origin=ADAPTED_FUNCTION_REFERENCE
+                    value: GET_VAR 'value: kotlin.Int declared in kotlin.collections.AbstractMyMutableList.setModCountViaReferenceAtAbstractMyMutableList.modCount' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
           ARG value: GET_VAR 'newModCount: kotlin.Int declared in kotlin.collections.AbstractMyMutableList.setModCountViaReferenceAtAbstractMyMutableList' type=kotlin.Int origin=null
     PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
@@ -285,9 +287,10 @@ FILE fqName:kotlin.collections fileName:/common.kt
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:kotlin.collections.MyMutableList
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int
                 BLOCK_BODY
-                  SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in bar.JavaAbstractMutableList' type=kotlin.Unit origin=null
-                    receiver: GET_VAR 'receiver: kotlin.collections.MyMutableList declared in kotlin.collections.MyMutableList.getModCountViaReferenceAtMyMutableList.modCount' type=kotlin.collections.MyMutableList origin=ADAPTED_FUNCTION_REFERENCE
-                    value: GET_VAR 'value: kotlin.Int declared in kotlin.collections.MyMutableList.getModCountViaReferenceAtMyMutableList.modCount' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
+                  RETURN type=kotlin.Nothing from='local final fun modCount (receiver: kotlin.collections.MyMutableList, value: kotlin.Int): kotlin.Unit declared in kotlin.collections.MyMutableList.getModCountViaReferenceAtMyMutableList'
+                    SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in bar.JavaAbstractMutableList' type=kotlin.Unit origin=null
+                      receiver: GET_VAR 'receiver: kotlin.collections.MyMutableList declared in kotlin.collections.MyMutableList.getModCountViaReferenceAtMyMutableList.modCount' type=kotlin.collections.MyMutableList origin=ADAPTED_FUNCTION_REFERENCE
+                      value: GET_VAR 'value: kotlin.Int declared in kotlin.collections.MyMutableList.getModCountViaReferenceAtMyMutableList.modCount' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
     FUN name:incrementModCountAtMyMutableList visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MyMutableList
       BLOCK_BODY
@@ -319,9 +322,10 @@ FILE fqName:kotlin.collections fileName:/common.kt
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:kotlin.collections.MyMutableList
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int
               BLOCK_BODY
-                SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in bar.JavaAbstractMutableList' type=kotlin.Unit origin=null
-                  receiver: GET_VAR 'receiver: kotlin.collections.MyMutableList declared in kotlin.collections.MyMutableList.setModCountViaReferenceAtMyMutableList.modCount' type=kotlin.collections.MyMutableList origin=ADAPTED_FUNCTION_REFERENCE
-                  value: GET_VAR 'value: kotlin.Int declared in kotlin.collections.MyMutableList.setModCountViaReferenceAtMyMutableList.modCount' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
+                RETURN type=kotlin.Nothing from='local final fun modCount (receiver: kotlin.collections.MyMutableList, value: kotlin.Int): kotlin.Unit declared in kotlin.collections.MyMutableList.setModCountViaReferenceAtMyMutableList'
+                  SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in bar.JavaAbstractMutableList' type=kotlin.Unit origin=null
+                    receiver: GET_VAR 'receiver: kotlin.collections.MyMutableList declared in kotlin.collections.MyMutableList.setModCountViaReferenceAtMyMutableList.modCount' type=kotlin.collections.MyMutableList origin=ADAPTED_FUNCTION_REFERENCE
+                    value: GET_VAR 'value: kotlin.Int declared in kotlin.collections.MyMutableList.setModCountViaReferenceAtMyMutableList.modCount' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
           ARG value: GET_VAR 'newModCount: kotlin.Int declared in kotlin.collections.MyMutableList.setModCountViaReferenceAtMyMutableList' type=kotlin.Int origin=null
     PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:

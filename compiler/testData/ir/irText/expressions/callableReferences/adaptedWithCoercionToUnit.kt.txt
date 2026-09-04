@@ -14,7 +14,7 @@ fun test0() {
   return useUnit0(fn = Function0<Unit>(
     /* bound = */ [],
     /* invoke = */    local fun() {
-      fn0() /*~> Unit */
+      return fn0() /*~> Unit */
     }
   )
 )
@@ -24,7 +24,7 @@ fun test1() {
   return useUnit1(fn = Function1<Int, Unit>(
     /* bound = */ [],
     /* invoke = */    local fun(p0: Int) {
-      fn1(x = p0) /*~> Unit */
+      return fn1(x = p0) /*~> Unit */
     }
   )
 )
@@ -34,7 +34,7 @@ fun testV0() {
   return useUnit0(fn = Function0<Unit>(
     /* bound = */ [],
     /* invoke = */    local fun() {
-      fnv() /*~> Unit */
+      return fnv() /*~> Unit */
     }
   )
 )
@@ -44,7 +44,7 @@ fun testV1() {
   return useUnit1(fn = Function1<Int, Unit>(
     /* bound = */ [],
     /* invoke = */    local fun(p0: Int) {
-      fnv(xs = [p0]) /*~> Unit */
+      return fnv(xs = [p0]) /*~> Unit */
     }
   )
 )

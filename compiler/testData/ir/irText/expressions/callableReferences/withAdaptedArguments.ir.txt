@@ -59,9 +59,10 @@ FILE fqName:<root> fileName:/withAdaptedArguments.kt
             invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:fnWithDefault visibility:local modality:FINAL returnType:kotlin.Unit
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:kotlin.Int
               BLOCK_BODY
-                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                  CALL 'public final fun fnWithDefault (a: kotlin.Int, b: kotlin.Int): kotlin.String declared in <root>' type=kotlin.String origin=null
-                    ARG a: GET_VAR 'p0: kotlin.Int declared in <root>.testCoercionToUnit.fnWithDefault' type=kotlin.Int origin=null
+                RETURN type=kotlin.Nothing from='local final fun fnWithDefault (p0: kotlin.Int): kotlin.Unit declared in <root>.testCoercionToUnit'
+                  TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                    CALL 'public final fun fnWithDefault (a: kotlin.Int, b: kotlin.Int): kotlin.String declared in <root>' type=kotlin.String origin=null
+                      ARG a: GET_VAR 'p0: kotlin.Int declared in <root>.testCoercionToUnit.fnWithDefault' type=kotlin.Int origin=null
   FUN name:testDefault visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testDefault (): kotlin.String declared in <root>'

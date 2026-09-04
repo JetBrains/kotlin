@@ -65,9 +65,10 @@
                   @10:34..12:5 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.MyClass
                   @10:34..12:5 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.String
                   @-1:-1..-1 BLOCK_BODY
-                    @10:34..12:5 CALL 'public final fun <set-observableProp> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.MyClass' type=kotlin.Unit origin=null
-                      @10:34..12:5 GET_VAR 'p0: <root>.MyClass declared in <root>.MyClass.<get-observableProp>.observableProp' type=<root>.MyClass origin=null
-                      @10:34..12:5 GET_VAR 'value: kotlin.String declared in <root>.MyClass.<get-observableProp>.observableProp' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
+                    @-1:-1..-1 RETURN type=kotlin.Nothing from='local final fun observableProp (p0: <root>.MyClass, value: kotlin.String): kotlin.Unit declared in <root>.MyClass.<get-observableProp>'
+                      @10:34..12:5 CALL 'public final fun <set-observableProp> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.MyClass' type=kotlin.Unit origin=null
+                        @10:34..12:5 GET_VAR 'p0: <root>.MyClass declared in <root>.MyClass.<get-observableProp>.observableProp' type=<root>.MyClass origin=null
+                        @10:34..12:5 GET_VAR 'value: kotlin.String declared in <root>.MyClass.<get-observableProp>.observableProp' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
       @10:4..12:5 FUN DELEGATED_PROPERTY_ACCESSOR name:<set-observableProp> visibility:public modality:FINAL <> (<this>:<root>.MyClass, <set-?>:kotlin.String) returnType:kotlin.Unit
         @10:4..12:5 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MyClass
         @10:4..12:5 VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.String
@@ -88,9 +89,10 @@
                   @10:34..12:5 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.MyClass
                   @10:34..12:5 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.String
                   @-1:-1..-1 BLOCK_BODY
-                    @10:34..12:5 CALL 'public final fun <set-observableProp> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.MyClass' type=kotlin.Unit origin=null
-                      @10:34..12:5 GET_VAR 'p0: <root>.MyClass declared in <root>.MyClass.<set-observableProp>.observableProp' type=<root>.MyClass origin=null
-                      @10:34..12:5 GET_VAR 'value: kotlin.String declared in <root>.MyClass.<set-observableProp>.observableProp' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
+                    @-1:-1..-1 RETURN type=kotlin.Nothing from='local final fun observableProp (p0: <root>.MyClass, value: kotlin.String): kotlin.Unit declared in <root>.MyClass.<set-observableProp>'
+                      @10:34..12:5 CALL 'public final fun <set-observableProp> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.MyClass' type=kotlin.Unit origin=null
+                        @10:34..12:5 GET_VAR 'p0: <root>.MyClass declared in <root>.MyClass.<set-observableProp>.observableProp' type=<root>.MyClass origin=null
+                        @10:34..12:5 GET_VAR 'value: kotlin.String declared in <root>.MyClass.<set-observableProp>.observableProp' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
               @10:34..12:5 GET_VAR '<set-?>: kotlin.String declared in <root>.MyClass.<set-observableProp>' type=kotlin.String origin=null
     @-1:-1..-1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> (<this>:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any

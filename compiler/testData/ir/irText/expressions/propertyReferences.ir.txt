@@ -47,8 +47,9 @@ FILE fqName:<root> fileName:/propertyReferences.kt
           setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:varWithBackingField visibility:local modality:FINAL returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
             BLOCK_BODY
-              CALL 'public final fun <set-varWithBackingField> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.test_varWithBackingField.varWithBackingField' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
+              RETURN type=kotlin.Nothing from='local final fun varWithBackingField (value: kotlin.Int): kotlin.Unit declared in <root>.test_varWithBackingField'
+                CALL 'public final fun <set-varWithBackingField> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.test_varWithBackingField.varWithBackingField' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_varWithBackingField> visibility:public modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int>
       correspondingProperty: PROPERTY name:test_varWithBackingField visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -80,8 +81,9 @@ FILE fqName:<root> fileName:/propertyReferences.kt
           setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:varWithBackingFieldAndAccessors visibility:local modality:FINAL returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
             BLOCK_BODY
-              CALL 'public final fun <set-varWithBackingFieldAndAccessors> (value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                ARG value: GET_VAR 'value: kotlin.Int declared in <root>.test_varWithBackingFieldAndAccessors.varWithBackingFieldAndAccessors' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
+              RETURN type=kotlin.Nothing from='local final fun varWithBackingFieldAndAccessors (value: kotlin.Int): kotlin.Unit declared in <root>.test_varWithBackingFieldAndAccessors'
+                CALL 'public final fun <set-varWithBackingFieldAndAccessors> (value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  ARG value: GET_VAR 'value: kotlin.Int declared in <root>.test_varWithBackingFieldAndAccessors.varWithBackingFieldAndAccessors' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_varWithBackingFieldAndAccessors> visibility:public modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int>
       correspondingProperty: PROPERTY name:test_varWithBackingFieldAndAccessors visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -111,8 +113,9 @@ FILE fqName:<root> fileName:/propertyReferences.kt
           setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:varWithAccessors visibility:local modality:FINAL returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
             BLOCK_BODY
-              CALL 'public final fun <set-varWithAccessors> (value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                ARG value: GET_VAR 'value: kotlin.Int declared in <root>.test_varWithAccessors.varWithAccessors' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
+              RETURN type=kotlin.Nothing from='local final fun varWithAccessors (value: kotlin.Int): kotlin.Unit declared in <root>.test_varWithAccessors'
+                CALL 'public final fun <set-varWithAccessors> (value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  ARG value: GET_VAR 'value: kotlin.Int declared in <root>.test_varWithAccessors.varWithAccessors' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_varWithAccessors> visibility:public modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int>
       correspondingProperty: PROPERTY name:test_varWithAccessors visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -166,8 +169,9 @@ FILE fqName:<root> fileName:/propertyReferences.kt
               setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:delegatedVar visibility:local modality:FINAL returnType:kotlin.Unit
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
                 BLOCK_BODY
-                  CALL 'public final fun <set-delegatedVar> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                    ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.<get-delegatedVar>.delegatedVar' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
+                  RETURN type=kotlin.Nothing from='local final fun delegatedVar (value: kotlin.Int): kotlin.Unit declared in <root>.<get-delegatedVar>'
+                    CALL 'public final fun <set-delegatedVar> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                      ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.<get-delegatedVar>.delegatedVar' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-delegatedVar> visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:Regular name:<set-?> index:0 type:kotlin.Int
       correspondingProperty: PROPERTY name:delegatedVar visibility:public modality:FINAL [delegated,var]
@@ -184,8 +188,9 @@ FILE fqName:<root> fileName:/propertyReferences.kt
               setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:delegatedVar visibility:local modality:FINAL returnType:kotlin.Unit
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
                 BLOCK_BODY
-                  CALL 'public final fun <set-delegatedVar> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                    ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.<set-delegatedVar>.delegatedVar' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
+                  RETURN type=kotlin.Nothing from='local final fun delegatedVar (value: kotlin.Int): kotlin.Unit declared in <root>.<set-delegatedVar>'
+                    CALL 'public final fun <set-delegatedVar> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                      ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.<set-delegatedVar>.delegatedVar' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
             ARG value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-delegatedVar>' type=kotlin.Int origin=null
   PROPERTY name:test_delegatedVar visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test_delegatedVar type:kotlin.reflect.KMutableProperty0<kotlin.Int> visibility:private [final,static]
@@ -198,8 +203,9 @@ FILE fqName:<root> fileName:/propertyReferences.kt
           setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:delegatedVar visibility:local modality:FINAL returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
             BLOCK_BODY
-              CALL 'public final fun <set-delegatedVar> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.test_delegatedVar.delegatedVar' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
+              RETURN type=kotlin.Nothing from='local final fun delegatedVar (value: kotlin.Int): kotlin.Unit declared in <root>.test_delegatedVar'
+                CALL 'public final fun <set-delegatedVar> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.test_delegatedVar.delegatedVar' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_delegatedVar> visibility:public modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int>
       correspondingProperty: PROPERTY name:test_delegatedVar visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -251,8 +257,9 @@ FILE fqName:<root> fileName:/propertyReferences.kt
           setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:nonConst visibility:local modality:FINAL returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
             BLOCK_BODY
-              SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nonConst type:kotlin.Int visibility:public [static] declared in <root>.J' type=kotlin.Unit origin=null
-                value: GET_VAR 'value: kotlin.Int declared in <root>.test_J_nonConst.nonConst' type=kotlin.Int origin=null
+              RETURN type=kotlin.Nothing from='local final fun nonConst (value: kotlin.Int): kotlin.Unit declared in <root>.test_J_nonConst'
+                SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nonConst type:kotlin.Int visibility:public [static] declared in <root>.J' type=kotlin.Unit origin=null
+                  value: GET_VAR 'value: kotlin.Int declared in <root>.test_J_nonConst.nonConst' type=kotlin.Int origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_J_nonConst> visibility:public modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int>
       correspondingProperty: PROPERTY name:test_J_nonConst visibility:public modality:FINAL [val]
       BLOCK_BODY

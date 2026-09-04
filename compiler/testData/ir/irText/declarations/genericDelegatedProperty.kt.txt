@@ -7,7 +7,7 @@ var <T : Any?> C<T>.genericDelegatedProperty: Int /* by */
         return <get-genericDelegatedProperty><T>(/* <this> = p0 */)
       }
       /* setter = */      local fun(p0: C<T>, value: Int) {
-        <set-genericDelegatedProperty><T>(/* <this> = p0, */ <set-?> = value)
+        return <set-genericDelegatedProperty><T>(/* <this> = p0, */ <set-?> = value)
       }
     )
 )
@@ -19,7 +19,7 @@ var <T : Any?> C<T>.genericDelegatedProperty: Int /* by */
         return <get-genericDelegatedProperty><T>(/* <this> = p0 */)
       }
       /* setter = */      local fun(p0: C<T>, value: Int) {
-        <set-genericDelegatedProperty><T>(/* <this> = p0, */ <set-?> = value)
+        return <set-genericDelegatedProperty><T>(/* <this> = p0, */ <set-?> = value)
       }
     )
 , newValue = <set-?>)

@@ -27,8 +27,9 @@ FILE fqName:<root> fileName:/delegatedSetterShouldBeSpecialized.kt
             setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:topLevelInt visibility:local modality:FINAL returnType:kotlin.Unit
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
               BLOCK_BODY
-                CALL 'public final fun <set-topLevelInt> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                  ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.MyClass.delegatedToTopLevel$delegate.topLevelInt' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
+                RETURN type=kotlin.Nothing from='local final fun topLevelInt (value: kotlin.Int): kotlin.Unit declared in <root>.MyClass.delegatedToTopLevel$delegate'
+                  CALL 'public final fun <set-topLevelInt> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                    ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.MyClass.delegatedToTopLevel$delegate.topLevelInt' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-delegatedToTopLevel> visibility:public modality:FINAL returnType:kotlin.Int
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MyClass
         correspondingProperty: PROPERTY name:delegatedToTopLevel visibility:public modality:FINAL [delegated,var]
@@ -50,9 +51,10 @@ FILE fqName:<root> fileName:/delegatedSetterShouldBeSpecialized.kt
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.MyClass
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int
                   BLOCK_BODY
-                    CALL 'public final fun <set-delegatedToTopLevel> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.MyClass' type=kotlin.Unit origin=null
-                      ARG <this>: GET_VAR 'p0: <root>.MyClass declared in <root>.MyClass.<get-delegatedToTopLevel>.delegatedToTopLevel' type=<root>.MyClass origin=null
-                      ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.MyClass.<get-delegatedToTopLevel>.delegatedToTopLevel' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
+                    RETURN type=kotlin.Nothing from='local final fun delegatedToTopLevel (p0: <root>.MyClass, value: kotlin.Int): kotlin.Unit declared in <root>.MyClass.<get-delegatedToTopLevel>'
+                      CALL 'public final fun <set-delegatedToTopLevel> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.MyClass' type=kotlin.Unit origin=null
+                        ARG <this>: GET_VAR 'p0: <root>.MyClass declared in <root>.MyClass.<get-delegatedToTopLevel>.delegatedToTopLevel' type=<root>.MyClass origin=null
+                        ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.MyClass.<get-delegatedToTopLevel>.delegatedToTopLevel' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
       FUN DELEGATED_PROPERTY_ACCESSOR name:<set-delegatedToTopLevel> visibility:public modality:FINAL returnType:kotlin.Unit
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MyClass
         VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
@@ -75,9 +77,10 @@ FILE fqName:<root> fileName:/delegatedSetterShouldBeSpecialized.kt
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.MyClass
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int
                   BLOCK_BODY
-                    CALL 'public final fun <set-delegatedToTopLevel> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.MyClass' type=kotlin.Unit origin=null
-                      ARG <this>: GET_VAR 'p0: <root>.MyClass declared in <root>.MyClass.<set-delegatedToTopLevel>.delegatedToTopLevel' type=<root>.MyClass origin=null
-                      ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.MyClass.<set-delegatedToTopLevel>.delegatedToTopLevel' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
+                    RETURN type=kotlin.Nothing from='local final fun delegatedToTopLevel (p0: <root>.MyClass, value: kotlin.Int): kotlin.Unit declared in <root>.MyClass.<set-delegatedToTopLevel>'
+                      CALL 'public final fun <set-delegatedToTopLevel> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.MyClass' type=kotlin.Unit origin=null
+                        ARG <this>: GET_VAR 'p0: <root>.MyClass declared in <root>.MyClass.<set-delegatedToTopLevel>.delegatedToTopLevel' type=<root>.MyClass origin=null
+                        ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.MyClass.<set-delegatedToTopLevel>.delegatedToTopLevel' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
               ARG value: GET_VAR '<set-?>: kotlin.Int declared in <root>.MyClass.<set-delegatedToTopLevel>' type=kotlin.Int origin=null
     CONSTRUCTOR visibility:public returnType:<root>.MyClass [primary]
       BLOCK_BODY

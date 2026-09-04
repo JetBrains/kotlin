@@ -20,7 +20,7 @@ fun testExtensionBoth() {
   use(f = @ExtensionFunctionType Function2<C, Int, Unit>(
     /* bound = */ [],
     /* invoke = */    local fun(p0: C, p1: Int) {
-      extensionBoth(/* <this> = p0, */ i = p1)
+      return extensionBoth(/* <this> = p0, */ i = p1)
     }
   )
 )
@@ -30,7 +30,7 @@ fun testExtensionDefault() {
   use(f = @ExtensionFunctionType Function2<C, Int, Unit>(
     /* bound = */ [],
     /* invoke = */    local fun(p0: C, p1: Int) {
-      extensionDefault(/* <this> = p0, */ i = p1)
+      return extensionDefault(/* <this> = p0, */ i = p1)
     }
   )
 )
@@ -40,7 +40,7 @@ fun testExtensionVararg() {
   use(f = @ExtensionFunctionType Function2<C, Int, Unit>(
     /* bound = */ [],
     /* invoke = */    local fun(p0: C, p1: Int) {
-      extensionVararg(/* <this> = p0, */ i = p1)
+      return extensionVararg(/* <this> = p0, */ i = p1)
     }
   )
 )

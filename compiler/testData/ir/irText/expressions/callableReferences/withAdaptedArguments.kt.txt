@@ -30,7 +30,7 @@ fun testCoercionToUnit() {
   return coerceToUnit(fn = Function1<Int, Unit>(
     /* bound = */ [],
     /* invoke = */    local fun(p0: Int) {
-      fnWithDefault(a = p0) /*~> Unit */
+      return fnWithDefault(a = p0) /*~> Unit */
     }
   )
 )

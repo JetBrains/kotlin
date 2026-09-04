@@ -35,8 +35,9 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
           invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.A
             BLOCK_BODY
-              CALL 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
-                ARG <this>: GET_VAR 'p0: <root>.A declared in <root>.test3.foo' type=<root>.A origin=null
+              RETURN type=kotlin.Nothing from='local final fun foo (p0: <root>.A): kotlin.Unit declared in <root>.test3'
+                CALL 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+                  ARG <this>: GET_VAR 'p0: <root>.A declared in <root>.test3.foo' type=<root>.A origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL returnType:kotlin.reflect.KFunction1<<root>.A, kotlin.Unit>
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -65,8 +66,9 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
           invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.A
             BLOCK_BODY
-              CALL 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
-                ARG <this>: GET_VAR 'receiver: <root>.A declared in <root>.test5.foo' type=<root>.A origin=ADAPTED_FUNCTION_REFERENCE
+              RETURN type=kotlin.Nothing from='local final fun foo (receiver: <root>.A): kotlin.Unit declared in <root>.test5'
+                CALL 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+                  ARG <this>: GET_VAR 'receiver: <root>.A declared in <root>.test5.foo' type=<root>.A origin=ADAPTED_FUNCTION_REFERENCE
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL returnType:kotlin.reflect.KFunction0<kotlin.Unit>
       correspondingProperty: PROPERTY name:test5 visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -79,7 +81,8 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
           overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.reflect.KFunction0 declared in kotlin.reflect.KFunction0
           invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.Unit
             BLOCK_BODY
-              CALL 'public final fun bar (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+              RETURN type=kotlin.Nothing from='local final fun bar (): kotlin.Unit declared in <root>.test6'
+                CALL 'public final fun bar (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test6> visibility:public modality:FINAL returnType:kotlin.reflect.KFunction0<kotlin.Unit>
       correspondingProperty: PROPERTY name:test6 visibility:public modality:FINAL [val]
       BLOCK_BODY

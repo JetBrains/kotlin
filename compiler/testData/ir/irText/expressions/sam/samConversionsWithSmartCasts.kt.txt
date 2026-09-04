@@ -65,7 +65,7 @@ fun test9() {
   J().run1(r = KFunction0<Unit>(
     /* bound = */ [],
     /* invoke = */    local fun() {
-      test9()
+      return test9()
     }
   )
  /*-> Runnable */)

@@ -7,7 +7,7 @@ fun testAdaptedCR() {
   useVararg(foos = [Function1<Int, Unit>(
     /* bound = */ [],
     /* invoke = */    local fun(p0: Int) {
-      withVarargOfInt(xs = [p0]) /*~> Unit */
+      return withVarargOfInt(xs = [p0]) /*~> Unit */
     }
   )
  /*-> IFoo */])

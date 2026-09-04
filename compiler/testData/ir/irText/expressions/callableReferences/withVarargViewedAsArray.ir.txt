@@ -48,21 +48,23 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
           invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:zap visibility:local modality:FINAL returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:kotlin.Array<out kotlin.String>
             BLOCK_BODY
-              CALL 'public final fun zap (vararg b: kotlin.String, k: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                ARG b: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-                  SPREAD_ELEMENT
-                    GET_VAR 'p0: kotlin.Array<out kotlin.String> declared in <root>.testArrayAndDefaults.zap' type=kotlin.Array<out kotlin.String> origin=null
+              RETURN type=kotlin.Nothing from='local final fun zap (p0: kotlin.Array<out kotlin.String>): kotlin.Unit declared in <root>.testArrayAndDefaults'
+                CALL 'public final fun zap (vararg b: kotlin.String, k: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  ARG b: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+                    SPREAD_ELEMENT
+                      GET_VAR 'p0: kotlin.Array<out kotlin.String> declared in <root>.testArrayAndDefaults.zap' type=kotlin.Array<out kotlin.String> origin=null
       CALL 'public final fun useStringArray (fn: kotlin.Function1<kotlin.Array<kotlin.String>, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.Function1<kotlin.Array<out kotlin.String>, kotlin.Unit> origin=null reflectionTarget='public final fun zapGeneric <T> (vararg b: T of <root>.zapGeneric, k: kotlin.Int): kotlin.Unit declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1
           invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:zapGeneric visibility:local modality:FINAL returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:kotlin.Array<out kotlin.String>
             BLOCK_BODY
-              CALL 'public final fun zapGeneric <T> (vararg b: T of <root>.zapGeneric, k: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                TYPE_ARG T: kotlin.String
-                ARG b: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-                  SPREAD_ELEMENT
-                    GET_VAR 'p0: kotlin.Array<out kotlin.String> declared in <root>.testArrayAndDefaults.zapGeneric' type=kotlin.Array<out kotlin.String> origin=null
+              RETURN type=kotlin.Nothing from='local final fun zapGeneric (p0: kotlin.Array<out kotlin.String>): kotlin.Unit declared in <root>.testArrayAndDefaults'
+                CALL 'public final fun zapGeneric <T> (vararg b: T of <root>.zapGeneric, k: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  TYPE_ARG T: kotlin.String
+                  ARG b: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+                    SPREAD_ELEMENT
+                      GET_VAR 'p0: kotlin.Array<out kotlin.String> declared in <root>.testArrayAndDefaults.zapGeneric' type=kotlin.Array<out kotlin.String> origin=null
   FUN name:testArrayAsVararg visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useArray (fn: kotlin.Function1<kotlin.Array<kotlin.Int>, kotlin.Int>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null

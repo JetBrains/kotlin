@@ -14,7 +14,7 @@ val test3: KFunction1<A, Unit>
   field = KFunction1<A, Unit>(
     /* bound = */ [],
     /* invoke = */    local fun(p0: A) {
-      p0.foo()
+      return p0.foo()
     }
   )
 
@@ -34,7 +34,7 @@ val test5: KFunction0<Unit>
   field = KFunction0<Unit>(
     /* bound = */ [A()],
     /* invoke = */    local fun(receiver: A) {
-      receiver.foo()
+      return receiver.foo()
     }
   )
 
@@ -44,7 +44,7 @@ val test6: KFunction0<Unit>
   field = KFunction0<Unit>(
     /* bound = */ [],
     /* invoke = */    local fun() {
-      bar()
+      return bar()
     }
   )
 

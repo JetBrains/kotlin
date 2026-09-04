@@ -45,8 +45,9 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
               setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:test4 visibility:local modality:FINAL returnType:kotlin.Unit
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Any
                 BLOCK_BODY
-                  CALL 'public final fun <set-test4> (<set-?>: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                    ARG <set-?>: GET_VAR 'value: kotlin.Any declared in <root>.<get-test4>.test4' type=kotlin.Any origin=ADAPTED_FUNCTION_REFERENCE
+                  RETURN type=kotlin.Nothing from='local final fun test4 (value: kotlin.Any): kotlin.Unit declared in <root>.<get-test4>'
+                    CALL 'public final fun <set-test4> (<set-?>: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                      ARG <set-?>: GET_VAR 'value: kotlin.Any declared in <root>.<get-test4>.test4' type=kotlin.Any origin=ADAPTED_FUNCTION_REFERENCE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test4> visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:Regular name:<set-?> index:0 type:kotlin.Any
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [delegated,var]
@@ -64,8 +65,9 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
               setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:test4 visibility:local modality:FINAL returnType:kotlin.Unit
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Any
                 BLOCK_BODY
-                  CALL 'public final fun <set-test4> (<set-?>: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                    ARG <set-?>: GET_VAR 'value: kotlin.Any declared in <root>.<set-test4>.test4' type=kotlin.Any origin=ADAPTED_FUNCTION_REFERENCE
+                  RETURN type=kotlin.Nothing from='local final fun test4 (value: kotlin.Any): kotlin.Unit declared in <root>.<set-test4>'
+                    CALL 'public final fun <set-test4> (<set-?>: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                      ARG <set-?>: GET_VAR 'value: kotlin.Any declared in <root>.<set-test4>.test4' type=kotlin.Any origin=ADAPTED_FUNCTION_REFERENCE
             ARG value: GET_VAR '<set-?>: kotlin.Any declared in <root>.<set-test4>' type=kotlin.Any origin=null
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C
@@ -134,9 +136,10 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.C
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Any
                   BLOCK_BODY
-                    CALL 'public final fun <set-test3> (<set-?>: kotlin.Any): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
-                      ARG <this>: GET_VAR 'p0: <root>.C declared in <root>.C.<get-test3>.test3' type=<root>.C origin=null
-                      ARG <set-?>: GET_VAR 'value: kotlin.Any declared in <root>.C.<get-test3>.test3' type=kotlin.Any origin=ADAPTED_FUNCTION_REFERENCE
+                    RETURN type=kotlin.Nothing from='local final fun test3 (p0: <root>.C, value: kotlin.Any): kotlin.Unit declared in <root>.C.<get-test3>'
+                      CALL 'public final fun <set-test3> (<set-?>: kotlin.Any): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+                        ARG <this>: GET_VAR 'p0: <root>.C declared in <root>.C.<get-test3>.test3' type=<root>.C origin=null
+                        ARG <set-?>: GET_VAR 'value: kotlin.Any declared in <root>.C.<get-test3>.test3' type=kotlin.Any origin=ADAPTED_FUNCTION_REFERENCE
       FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test3> visibility:public modality:FINAL returnType:kotlin.Unit
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
         VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Any
@@ -159,9 +162,10 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.C
                   VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Any
                   BLOCK_BODY
-                    CALL 'public final fun <set-test3> (<set-?>: kotlin.Any): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
-                      ARG <this>: GET_VAR 'p0: <root>.C declared in <root>.C.<set-test3>.test3' type=<root>.C origin=null
-                      ARG <set-?>: GET_VAR 'value: kotlin.Any declared in <root>.C.<set-test3>.test3' type=kotlin.Any origin=ADAPTED_FUNCTION_REFERENCE
+                    RETURN type=kotlin.Nothing from='local final fun test3 (p0: <root>.C, value: kotlin.Any): kotlin.Unit declared in <root>.C.<set-test3>'
+                      CALL 'public final fun <set-test3> (<set-?>: kotlin.Any): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+                        ARG <this>: GET_VAR 'p0: <root>.C declared in <root>.C.<set-test3>.test3' type=<root>.C origin=null
+                        ARG <set-?>: GET_VAR 'value: kotlin.Any declared in <root>.C.<set-test3>.test3' type=kotlin.Any origin=ADAPTED_FUNCTION_REFERENCE
               ARG value: GET_VAR '<set-?>: kotlin.Any declared in <root>.C.<set-test3>' type=kotlin.Any origin=null
     CONSTRUCTOR visibility:public returnType:<root>.C [primary]
       VALUE_PARAMETER kind:Regular name:map index:0 type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any>

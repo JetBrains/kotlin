@@ -48,7 +48,7 @@ class C {
           return p0.<get-test8>()
         }
         /* setter = */        local fun(p0: C, value: Int) {
-          p0.<set-test8>(<set-?> = value)
+          return p0.<set-test8>(<set-?> = value)
         }
       )
 )
@@ -60,7 +60,7 @@ class C {
           return p0.<get-test8>()
         }
         /* setter = */        local fun(p0: C, value: Int) {
-          p0.<set-test8>(<set-?> = value)
+          return p0.<set-test8>(<set-?> = value)
         }
       )
 , value = <set-?>)
