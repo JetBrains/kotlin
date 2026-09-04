@@ -8,14 +8,12 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClass
-import org.jetbrains.kotlin.backend.jvm.ir.isSmartcastFromHigherThanNullable
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.NumberComparisonUtils
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -213,14 +211,7 @@ class Ieee754Equals(val operandType: Type) : CallBasedIntrinsicMethod() {
         val arg0isNullable = arg0.type.isNullable()
         val arg1isNullable = arg1.type.isNullable()
 
-        val useNonIEEE754Comparison =
-            !classCodegen.context.config.languageVersionSettings.supportsFeature(LanguageFeature.ProperIeee754Comparisons)
-                    && (arg0.isSmartcastFromHigherThanNullable(classCodegen.context) || arg1.isSmartcastFromHigherThanNullable(classCodegen.context))
-
         return when {
-            useNonIEEE754Comparison ->
-                Ieee754AreEqual(AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE)
-
             !arg0isNullable && !arg1isNullable ->
                 Ieee754Primitives()
 

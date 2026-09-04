@@ -35,12 +35,10 @@ import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.getArrayElementType
 import org.jetbrains.kotlin.ir.util.isBoxedArray
-import org.jetbrains.kotlin.ir.util.isSubtypeOf
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -94,24 +92,6 @@ fun IrFunction.getJvmVisibilityOfDefaultArgumentStub() =
 
 fun IrDeclaration.isInCurrentModule(): Boolean =
     getPackageFragment() is IrFile
-
-// Determine if the IrExpression is smartcast, and if so, if it is cast from higher than nullable target types.
-// This is needed to pinpoint exceptional treatment of IEEE754 floating point comparisons, where proper IEEE
-// comparisons are used "if values are statically known to be of primitive numeric types", taken to mean as
-// "not learned through smartcasting".
-fun IrExpression.isSmartcastFromHigherThanNullable(context: JvmBackendContext): Boolean {
-    return when (this) {
-        is IrTypeOperatorCall ->
-            operator == IrTypeOperator.IMPLICIT_CAST && !argument.type.isSubtypeOf(type.makeNullable(), context.typeSystem)
-        is IrGetValue -> {
-            // Check if the variable initializer is smartcast. In FIR, if the subject of a `when` is smartcast,
-            // the IMPLICIT_CAST is in the initializer of the variable for the subject.
-            val variable = (symbol as? IrVariableSymbol)?.owner ?: return false
-            !variable.isVar && variable.initializer?.isSmartcastFromHigherThanNullable(context) == true
-        }
-        else -> false
-    }
-}
 
 fun IrElement.replaceThisByStaticReference(
     cachedFields: CachedFieldsForObjectInstances,
