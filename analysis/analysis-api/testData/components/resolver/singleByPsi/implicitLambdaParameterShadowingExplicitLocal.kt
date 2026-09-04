@@ -8,5 +8,3 @@ fun f2() {
         <expr>it</expr> + 1
     }
 }
-
-// IGNORE_LOOKUP_LOCALLY
