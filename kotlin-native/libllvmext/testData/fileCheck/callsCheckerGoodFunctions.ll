@@ -13,7 +13,7 @@ define void @f(double %0) {
 ; sin is a good function, call uninstrumented
 ; CHECK-NEXT: call double @sin(double %0)
   call double @sin(double %0)
-; CHECK-NEXT: call void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr @0, ptr @1, ptr @sinBad)
+; CHECK-NEXT: call void @Kotlin_callsChecker_check(ptr @0, ptr @1, ptr @sinBad)
 ; CHECK-NEXT: call double @sinBad(double %0)
   call double @sinBad(double %0)
 ; llvm.sin.* is a good intrinsics family, call uninstrumented
@@ -24,4 +24,4 @@ define void @f(double %0) {
 ; CHECK-NEXT: }{{$}}
 }
 
-; CHECK: declare void @Kotlin_mm_checkStateAtExternalFunctionCall(ptr, ptr, ptr)
+; CHECK: declare void @Kotlin_callsChecker_check(ptr, ptr, ptr)
