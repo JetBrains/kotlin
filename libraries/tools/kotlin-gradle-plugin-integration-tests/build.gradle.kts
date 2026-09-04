@@ -12,6 +12,7 @@ plugins {
     id("android-sdk-provisioner")
     id("gradle-plugin-published-compiler-dependency-configuration") // the test compilation's output is injected into test project's build classpath for the buildscript injection
     id("kotlin-git.gradle-build-conventions.file-leak-detector-downloader")
+    id("kgp-jacoco-offline")
 }
 
 testsJar()
@@ -559,3 +560,10 @@ tasks.withType<Test>().configureEach {
 }
 
 excludeGradleEmbeddedStdlibFromTestTasksRuntimeClasspath()
+
+registerKgpTestCoverageDataVariant(
+    configurationName = "integrationTestCoverageDataElements",
+    suiteName = "integrationTest",
+    execFile = layout.buildDirectory.file("jacoco/coverage.exec"),
+    testTask = tasks.named("kgpAllParallelTests"),
+)

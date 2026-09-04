@@ -792,6 +792,25 @@ private fun collectGradleJvmOptions(
     if (addHeapDumpOptions) {
         addAll(heapDumpJvmOptions())
     }
+
+    addJacocoRuntimeIfEnabled()
+}
+
+private fun MutableList<String>.addJacocoRuntimeIfEnabled() {
+    val testCoverageEnabled = System.getProperty("kgp.jacoco.enabled").toBoolean()
+    if (!testCoverageEnabled) return
+
+    val jacocoRuntimeJar = System.getProperty("jacocoRuntimeJar") ?: return
+    val jacocoDestFile = System.getProperty("jacocoDestFile") ?: return
+
+    // Offline instrumentation: probes are already embedded in bytecode.
+    // Add JaCoCo runtime to boot classpath so probes can reach it from any classloader.
+    add("-Xbootclasspath/a:$jacocoRuntimeJar")
+    // configure jacoco output instead of default task name files
+    add("-Djacoco-agent.destfile=${jacocoDestFile}")
+    // explicitly configure file strategy, it matches the defaults
+    add("-Djacoco-agent.append=true")
+    add("-Djacoco-agent.output=file")
 }
 
 private fun collectKotlinJvmArgs(
