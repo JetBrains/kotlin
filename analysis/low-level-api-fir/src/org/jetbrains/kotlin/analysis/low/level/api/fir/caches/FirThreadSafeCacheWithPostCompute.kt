@@ -30,4 +30,9 @@ internal class FirThreadSafeCacheWithPostCompute<K : Any, V, CONTEXT, DATA>(
     @FirCacheInternals
     override val cachedValues: Collection<V>
         get() = map.values.mapNotNull { it.getValueIfComputed() }
+
+    @FirCacheInternals
+    override fun clear() {
+        map.clear()
+    }
 }

@@ -64,6 +64,14 @@ abstract class FirSymbolProvider(val session: FirSession) : FirSessionComponent 
     abstract fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name)
 
     abstract fun hasPackage(fqName: FqName): Boolean
+
+    /**
+     * Clears caches which are needed only for performance and not required for proper resolution.
+     * This method should be used only in tests to reduce the memory footprint of providers after
+     * frontend phase is over.
+     */
+    @FirSymbolProviderInternals
+    open fun clearInsignificantCaches() {}
 }
 
 private fun FirSession.getClassDeclaredMemberScope(classId: ClassId): FirScope? {

@@ -128,4 +128,10 @@ class FirCommonDeclarationsMappingCollectingSymbolProvider(
             argumentMappingIsEqual = null
         )
     }
+
+    @FirSymbolProviderInternals
+    override fun clearInsignificantCaches() {
+        commonSymbolProvider.clearInsignificantCaches()
+        platformSymbolProvider.clearInsignificantCaches()
+    }
 }

@@ -107,4 +107,9 @@ private class FirCaffeineCache<K : Any, V, CONTEXT>(
     @FirCacheInternals
     override val cachedValues: Collection<V>
         get() = cache.asMap().values.mapNotNull { it.nullValueToNull() }
+
+    @FirCacheInternals
+    override fun clear() {
+        cache.invalidateAll()
+    }
 }

@@ -105,6 +105,11 @@ open class FirSwitchableExtensionDeclarationsSymbolProvider protected constructo
 
     @FirSymbolProviderInternals
     internal fun isDisabled(): Boolean = disabled
+
+    @FirSymbolProviderInternals
+    override fun clearInsignificantCaches() {
+        delegate.clearInsignificantCaches()
+    }
 }
 
 val FirSession.generatedDeclarationsSymbolProvider: FirSwitchableExtensionDeclarationsSymbolProvider? by FirSession.nullableSessionComponentAccessor()
