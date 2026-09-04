@@ -73,7 +73,7 @@ KtUserType(84,92): 'MySealed'
 KtNameReferenceExpression(84,92): 'MySealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -136,7 +136,7 @@ KtUserType(125,133): 'MySealed'
 KtNameReferenceExpression(125,133): 'MySealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MySealed
@@ -217,7 +217,7 @@ KtUserType(214,216): 'E2'
 KtNameReferenceExpression(214,216): 'E2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       E2
@@ -283,7 +283,7 @@ KtUserType(251,274): 'MyGenericSealed<String>'
 KtNameReferenceExpression(251,266): 'MyGenericSealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyGenericSealed
@@ -373,7 +373,7 @@ KtUserType(307,330): 'MyGenericSealed<String>'
 KtNameReferenceExpression(307,322): 'MyGenericSealed'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyGenericSealed

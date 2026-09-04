@@ -70,7 +70,7 @@ KtUserType(157,158): 'E'
 KtNameReferenceExpression(157,158): 'E'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       E
@@ -100,7 +100,7 @@ KtUserType(161,179): 'Either<E, Nothing>'
 KtNameReferenceExpression(161,167): 'Either'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Either
@@ -127,7 +127,7 @@ KtUserType(168,169): 'E'
 KtNameReferenceExpression(168,169): 'E'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       E
@@ -196,7 +196,7 @@ KtUserType(219,220): 'A'
 KtNameReferenceExpression(219,220): 'A'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       A
@@ -226,7 +226,7 @@ KtUserType(223,241): 'Either<Nothing, A>'
 KtNameReferenceExpression(223,229): 'Either'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Either
@@ -277,7 +277,7 @@ KtUserType(239,240): 'A'
 KtNameReferenceExpression(239,240): 'A'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       A

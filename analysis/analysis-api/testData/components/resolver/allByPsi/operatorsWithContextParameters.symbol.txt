@@ -1055,7 +1055,7 @@ KtUserType(728,743): 'SimpleOperators'
 KtNameReferenceExpression(728,743): 'SimpleOperators'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: true
+  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /SimpleOperators

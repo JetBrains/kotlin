@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolv
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.endOffset
 import com.intellij.psi.util.startOffset
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.expressions.contextSensitiveResolutionStatus
