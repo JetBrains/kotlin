@@ -128,6 +128,7 @@ fun FirDeclarationStatus.copy(
     isFromSealedClass: Boolean = this.isFromSealedClass,
     isFromEnumClass: Boolean = this.isFromEnumClass,
     isFun: Boolean = this.isFun,
+    isRichError: Boolean = this.isRichError,
     hasStableParameterNames: Boolean = this.hasStableParameterNames,
     returnValueStatus: ReturnValueStatus = this.returnValueStatus
 ): FirDeclarationStatus {
@@ -160,6 +161,7 @@ fun FirDeclarationStatus.copy(
         isFromSealedClass = isFromSealedClass,
         isFromEnumClass = isFromEnumClass,
         isFun = isFun,
+        isRichError = isRichError,
         hasStableParameterNames = hasStableParameterNames,
         returnValueStatus = returnValueStatus,
     )
@@ -211,6 +213,7 @@ private fun copyStatusAttributes(
     isFromSealedClass: Boolean = from.isFromSealedClass,
     isFromEnumClass: Boolean = from.isFromEnumClass,
     isFun: Boolean = from.isFun,
+    isRichError: Boolean = from.isRichError,
     hasStableParameterNames: Boolean = from.hasStableParameterNames,
     returnValueStatus: ReturnValueStatus = from.returnValueStatus,
 ) {
@@ -235,6 +238,7 @@ private fun copyStatusAttributes(
     to.isFun = isFun
     to.hasStableParameterNames = hasStableParameterNames
     to.returnValueStatus = returnValueStatus
+    to.isRichError = isRichError
 }
 
 inline fun <R> whileAnalysing(session: FirSession, element: FirElement, block: () -> R): R {

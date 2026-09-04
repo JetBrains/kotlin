@@ -803,11 +803,13 @@ object FirTree : AbstractFirTreeBuilder() {
         generateBooleanFields(
             "expect", "actual", "override", "operator", "infix", "inline", "value", "tailRec",
             "external", "const", "lateInit", "inner", "companion", "data", "suspend", "static",
-            "fromSealedClass", "fromEnumClass", "fun", "hasStableParameterNames"
+            "fromSealedClass", "fromEnumClass", "fun", "richError", "hasStableParameterNames"
         )
         +field("returnValueStatus", returnValueStatusType, nullable = false)
         +field("defaultVisibility", visibilityType, nullable = false)
         +field("defaultModality", modalityType, nullable = false)
+
+        fields.find { it.name == "isRichError" }!!.kDoc = "A class or object with the `error` modifier."
     }
 
     val resolvedDeclarationStatus: Element by element(Declaration) {
