@@ -8,6 +8,8 @@ export declare class WithIgnoredCompanion {
     static get mutable(): string;
     static set mutable(value: string);
     static staticSuspend(): Promise<string>;
+    static staticUnit(): Promise<void>;
+    static staticFailure(): Promise<string>;
     static staticSuspendWithDefault(value?: string): Promise<string>;
     static staticSuspendWithSeveralDefaults(prefix?: string, count?: number, suffix?: string): Promise<string>;
     static staticSuspendWithRequiredAndDefault(required: string, optional?: string): Promise<string>;

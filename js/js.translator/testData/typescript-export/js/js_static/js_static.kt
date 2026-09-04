@@ -34,6 +34,12 @@ class WithIgnoredCompanion {
         @JsStatic
         suspend fun staticSuspend(): String = "STATIC SUSPEND"
 
+        @JsStatic
+        suspend fun staticUnit() {}
+
+        @JsStatic
+        suspend fun staticFailure(): String = error("STATIC FAILURE")
+
         suspend fun companionSuspend(): String = "SUSPEND"
 
         // KT-85990
