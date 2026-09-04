@@ -9,5 +9,4 @@ fun f2() {
     }
 }
 
-// IGNORE_LOOKUP_LOCALLY
 // ISSUE: KT-89166
