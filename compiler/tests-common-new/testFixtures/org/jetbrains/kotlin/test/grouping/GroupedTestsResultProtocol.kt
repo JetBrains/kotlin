@@ -66,7 +66,7 @@ object GroupedTestsResultProtocol {
     class ParsedExecution internal constructor(
         val executionName: String?,
         val outcomes: List<Outcome>,
-        private val startedIds: LinkedHashSet<String>,
+        private val activeId: String?,
         val sawStructuredBlock: Boolean,
         val blockLeftOpen: Boolean,
         val malformedLines: List<String>,
@@ -75,8 +75,11 @@ object GroupedTestsResultProtocol {
         val crashedIds: Set<String>
             get() {
                 if (!blockLeftOpen) return emptySet()
-                return setOfNotNull(startedIds.lastOrNull()?.takeIf { id -> outcomes.none { it.id == id } })
+                return setOfNotNull(activeId)
             }
+
+        val crashAttributedIds: Set<String>
+            get() = crashedIds.takeIf { malformedLines.isEmpty() }.orEmpty()
 
         val hasCompleteStructuredBlock: Boolean
             get() = sawStructuredBlock && !blockLeftOpen && malformedLines.isEmpty()
@@ -136,6 +139,9 @@ object GroupedTestsResultProtocol {
                     outcomes = outcomes[id].orEmpty(),
                     crashEvidence = if (id in crashedIds) {
                         Analysis.CrashEvidence(
+                            isAuthenticated = executions.any { execution ->
+                                id in execution.crashAttributedIds
+                            },
                             isInMalformedOutput = id in crashedIdsInMalformedOutputs,
                             executionNames = outcomes[id].orEmpty()
                                 .asSequence()
@@ -206,6 +212,7 @@ object GroupedTestsResultProtocol {
             )
 
             data class CrashEvidence(
+                val isAuthenticated: Boolean,
                 val isInMalformedOutput: Boolean,
                 val executionNames: List<String> = emptyList(),
             )
@@ -315,22 +322,42 @@ object GroupedTestsResultProtocol {
         val linePrefix = "$LINE_PREFIX$SEP"
         var insideBlock = false
         var sawStructuredBlock = false
+        var hasClosedBlock = false
+        var activeId: String? = null
+        var canRecoverActiveTest = false
 
         fun recordMalformedLine(line: String) {
             malformedLines += line
-            malformedLineId(line)?.let { malformedLineIds += it }
+            val malformedId = malformedLineId(line)
+            malformedId?.let { malformedLineIds += it }
+            if (malformedId == activeId) {
+                canRecoverActiveTest = true
+            }
         }
 
         for (rawLine in output.lines()) {
             when {
                 rawLine.isSentinelLine(BEGIN) -> {
+                    if (insideBlock || hasClosedBlock) {
+                        recordMalformedLine(rawLine)
+                        continue
+                    }
                     insideBlock = true
                     sawStructuredBlock = true
                     continue
                 }
 
                 rawLine.isSentinelLine(END) -> {
-                    insideBlock = false
+                    if (!insideBlock || hasClosedBlock || activeId != null) {
+                        recordMalformedLine(rawLine)
+                        if (insideBlock && !hasClosedBlock) {
+                            insideBlock = false
+                            hasClosedBlock = true
+                        }
+                    } else {
+                        insideBlock = false
+                        hasClosedBlock = true
+                    }
                     continue
                 }
             }
@@ -340,22 +367,30 @@ object GroupedTestsResultProtocol {
                 recordMalformedLine(rawLine)
                 continue
             }
-            val parts = rawLine.removePrefix(linePrefix).split(SEP, limit = 4)
-            if (parts.size < 4) {
+            val parts = rawLine.removePrefix(linePrefix).split(SEP, limit = 5)
+            if (parts.size != 4) {
                 recordMalformedLine(rawLine)
                 continue
             }
             val id = parts[0]
             when (val status = parts[1]) {
                 STARTED -> {
-                    if (id.isEmpty() || parts[2].isNotEmpty() || parts[3].isNotEmpty()) {
+                    val hasValidFields = id.isNotEmpty() && parts[2].isEmpty() && parts[3].isEmpty()
+                    if (!hasValidFields) {
                         recordMalformedLine(rawLine)
+                    } else if (activeId == null && startedIds.add(id)) {
+                        activeId = id
+                        canRecoverActiveTest = false
+                    } else if (canRecoverActiveTest && id != activeId && startedIds.add(id)) {
+                        activeId = id
+                        canRecoverActiveTest = false
                     } else {
-                        startedIds += id
+                        recordMalformedLine(rawLine)
+                        if (activeId != null) activeId = id
                     }
                 }
                 PASSED, FAILED -> {
-                    if (id.isEmpty()) {
+                    if (id.isEmpty() || activeId != id) {
                         recordMalformedLine(rawLine)
                     } else {
                         outcomes += Outcome(
@@ -365,6 +400,8 @@ object GroupedTestsResultProtocol {
                             details = unescape(parts[3]).ifEmpty { null },
                             executionName = executionName,
                         )
+                        activeId = null
+                        canRecoverActiveTest = false
                     }
                 }
                 else -> {
@@ -374,7 +411,7 @@ object GroupedTestsResultProtocol {
         }
         return ParsedExecution(
             outcomes = outcomes,
-            startedIds = startedIds,
+            activeId = activeId,
             executionName = executionName,
             sawStructuredBlock = sawStructuredBlock,
             blockLeftOpen = insideBlock,

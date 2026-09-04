@@ -396,6 +396,7 @@ class WasmGroupedStageBoxRunnerAttributionTest {
         val secondDetails = "details from VM-2"
         val firstVmOutput = buildString {
             appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(test.id, GroupedTestsResultProtocol.STARTED)
             appendProtocolLine(
                 test.id,
                 GroupedTestsResultProtocol.FAILED,
@@ -406,6 +407,7 @@ class WasmGroupedStageBoxRunnerAttributionTest {
         }
         val secondVmOutput = buildString {
             appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(test.id, GroupedTestsResultProtocol.STARTED)
             appendProtocolLine(
                 test.id,
                 GroupedTestsResultProtocol.FAILED,
@@ -728,7 +730,9 @@ class WasmGroupedStageBoxRunnerAttributionTest {
 
         val vmStdout = buildString {
             appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(inBatch.id, GroupedTestsResultProtocol.STARTED)
             appendProtocolLine(inBatch.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolLine(foreign.id, GroupedTestsResultProtocol.STARTED)
             appendProtocolLine(foreign.id, GroupedTestsResultProtocol.PASSED)
             appendProtocolSentinel(GroupedTestsResultProtocol.END)
         }
@@ -793,6 +797,57 @@ class WasmGroupedStageBoxRunnerAttributionTest {
     }
 
     @Test
+    fun `given the same crashed test on malformed and clean VMs then the malformed VM failure is not hidden`() {
+        val crasher = GroupedTest("testCrashing")
+        val malformedLine = "${GroupedTestsResultProtocol.LINE_PREFIX}${GroupedTestsResultProtocol.SEP}" +
+                "${crasher.id}${GroupedTestsResultProtocol.SEP}BROKEN${GroupedTestsResultProtocol.SEP}message${GroupedTestsResultProtocol.SEP}details"
+        val malformedVmOutput = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(crasher.id, GroupedTestsResultProtocol.STARTED)
+            appendLine(malformedLine)
+        }
+        val cleanVmOutput = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(crasher.id, GroupedTestsResultProtocol.STARTED)
+        }
+        val malformedVmFailure = vmCrash(malformedVmOutput, vmName = "VM-1")
+        val cleanVmFailure = vmCrash(cleanVmOutput, vmName = "VM-2")
+
+        val thrown = assertThrows(Throwable::class.java) {
+            runner(
+                listOf(crasher),
+                vmStdout = emptyList(),
+                vmFailures = listOf(malformedVmFailure, cleanVmFailure),
+            ).processArtifact(DriverLinkedBatchArtifact)
+        }
+
+        assertEquals(malformedVmFailure, thrown)
+        assertTrue("VM-2" in crasher.reportedFailure?.message.orEmpty())
+    }
+
+    @Test
+    fun `given an invalid started record and a VM failure then the failure is not hidden by provisional attribution`() {
+        val first = GroupedTest("testFirst")
+        val second = GroupedTest("testSecond")
+        val output = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(first.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(second.id, GroupedTestsResultProtocol.STARTED)
+        }
+        val vmFailure = vmCrash(output, vmName = "VM-1")
+
+        val thrown = assertThrows(WasmVMException::class.java) {
+            runner(
+                listOf(first, second),
+                vmStdout = emptyList(),
+                vmFailures = listOf(vmFailure),
+            ).processArtifact(DriverLinkedBatchArtifact)
+        }
+
+        assertEquals(vmFailure, thrown)
+    }
+
+    @Test
     fun `given a large malformed line and several tests then diagnostics stay bounded`() {
         val tests = listOf(
             GroupedTest("testFirst"),
@@ -854,6 +909,7 @@ class WasmGroupedStageBoxRunnerAttributionTest {
 
         val vmStdout = buildString {
             appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(withBox.id, GroupedTestsResultProtocol.STARTED)
             appendProtocolLine(withBox.id, GroupedTestsResultProtocol.PASSED)
             appendProtocolSentinel(GroupedTestsResultProtocol.END)
         }
