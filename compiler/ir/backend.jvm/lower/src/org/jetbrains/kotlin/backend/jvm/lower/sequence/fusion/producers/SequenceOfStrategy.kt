@@ -56,7 +56,7 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 
 internal class SequenceOfStrategy(
     val source: SequenceSource.SequenceOf,
-    val context: JvmBackendContext
+    val context: JvmBackendContext,
 ) : ProducerStrategy() {
 
     override fun fuseConsumer(
