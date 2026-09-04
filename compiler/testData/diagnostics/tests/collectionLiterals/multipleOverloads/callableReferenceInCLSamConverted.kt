@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +CollectionLiterals, +CompanionBlocks +CompanionExtensions
+// LANGUAGE: +CompanionBlocks +CompanionExtensions
 // WITH_STDLIB
 
 class A {

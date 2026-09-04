@@ -1,4 +1,3 @@
-// LANGUAGE: +CollectionLiterals
 // RUN_PIPELINE_TILL: FRONTEND
 
 // models following system

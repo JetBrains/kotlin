@@ -1,4 +1,7 @@
+// LANGUAGE_FEATURE_TOGGLED_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -CollectionLiterals
+// LANGUAGE_FEATURE_TOGGLED: CollectionLiteralsBasedAnnotationResolution
 const val ONE = 1
 
 annotation class Foo(

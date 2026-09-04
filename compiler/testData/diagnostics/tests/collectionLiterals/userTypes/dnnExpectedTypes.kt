@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +CollectionLiterals
 
 class C<T> {
     companion object {

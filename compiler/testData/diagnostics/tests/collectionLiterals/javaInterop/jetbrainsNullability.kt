@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +CollectionLiterals
 
 // FILE: VarargIsFlexible1.java
 import org.jetbrains.annotations.NotNull;

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +CollectionLiterals
 // FIR_DUMP
 
 fun <T> assertEquals(a: T, b: T) = Unit

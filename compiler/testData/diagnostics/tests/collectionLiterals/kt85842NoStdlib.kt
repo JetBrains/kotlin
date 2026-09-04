@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +CollectionLiterals
 
 fun <T> id(t: T): T = t
 

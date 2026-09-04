@@ -1,4 +1,3 @@
-// LANGUAGE: +CollectionLiterals
 // RUN_PIPELINE_TILL: BACKEND
 
 fun <K> select(vararg k: K): K = k[0]

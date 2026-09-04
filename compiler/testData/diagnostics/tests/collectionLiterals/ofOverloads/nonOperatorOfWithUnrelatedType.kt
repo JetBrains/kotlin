@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +CollectionLiterals
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 class P

@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
-// LANGUAGE: +CollectionLiterals
 
 class Matrix<out T>(private vararg val rows: Matrix.Row<T>) {
     class Row<out T>(private vararg val values: T) {

@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-79330
-// LANGUAGE: +CollectionLiterals
 
 class MyList<out T> {
     companion object {

@@ -1,4 +1,4 @@
-// LANGUAGE: +CollectionLiterals +EagerLambdaAnalysis
+// LANGUAGE: +EagerLambdaAnalysis
 // RUN_PIPELINE_TILL: FRONTEND
 
 class A {

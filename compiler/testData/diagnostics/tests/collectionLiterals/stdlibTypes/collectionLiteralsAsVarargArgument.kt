@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-82638
-// LANGUAGE: +CollectionLiterals
 
 @file:OptIn(ExperimentalUnsignedTypes::class)
 

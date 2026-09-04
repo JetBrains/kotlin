@@ -1,4 +1,4 @@
-// LANGUAGE: +CollectionLiterals, +ContextSensitiveResolutionUsingExpectedType
+// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 

@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-81722
-// LANGUAGE: +CollectionLiterals
 
 fun <T> takeTs(vararg ts: T) { }
 

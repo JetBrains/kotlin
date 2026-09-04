@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-80492
-// LANGUAGE: +CollectionLiterals
 // RENDER_DIAGNOSTIC_ARGUMENTS
 // SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE
 //  ^ difference in diagnostic renderer output
