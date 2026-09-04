@@ -51,6 +51,7 @@ inline val FirClassLikeSymbol<*>.isActual: Boolean get() = rawStatus.isActual
 inline val FirClassLikeSymbol<*>.isExpect: Boolean get() = rawStatus.isExpect
 inline val FirClassLikeSymbol<*>.isInner: Boolean get() = rawStatus.isInner
 inline val FirClassLikeSymbol<*>.isStatic: Boolean get() = rawStatus.isStatic
+inline val FirClassLikeSymbol<*>.isRichError: Boolean get() = rawStatus.isRichError
 
 @SuspiciousValueClassCheck
 inline val FirClassLikeSymbol<*>.isInline: Boolean get() = rawStatus.isInline

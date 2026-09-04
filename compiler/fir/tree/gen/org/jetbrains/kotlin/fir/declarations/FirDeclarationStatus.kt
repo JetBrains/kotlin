@@ -42,6 +42,7 @@ interface FirDeclarationStatus : FirElement {
     val isFromSealedClass: Boolean
     val isFromEnumClass: Boolean
     val isFun: Boolean
+    val isRichError: Boolean
     val hasStableParameterNames: Boolean
     val returnValueStatus: ReturnValueStatus
     val defaultVisibility: Visibility
