@@ -2480,6 +2480,21 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object JsBrowserTestDebugUsesFirstChromiumRunner : ToolingDiagnosticFactory(
+        predefinedSeverity = WARNING,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(taskPath: String, chromiumRunnerNames: List<String>) = build {
+            title { "Only the first Chromium browser runner is debugged" }
+                .description {
+                    "The '$taskPath' task was launched with debugger. But multiple Chromium runners $chromiumRunnerNames are configured. " +
+                            "Only the first one '${chromiumRunnerNames.first()}' is launched."
+                }
+                .solution { "To debug another runner, declare it as the first chromium() runner in the DSL block" }
+                .documentationLink(URI("https://kotl.in/new-js-browser-test-dsl"))
+        }
+    }
+
     internal object NoBrowserSpecifiedForJsBrowserTestFramework : ToolingDiagnosticFactory(
         predefinedSeverity = WARNING,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,

@@ -182,6 +182,14 @@ internal class KotlinPlaywrightJsTestFramework(
                     )
                 )
             },
+            onMultipleChromiumRunnersWhenDebugIsRequested = { chromiumRunnersNames ->
+                task.reportDiagnostic(
+                    KotlinToolingDiagnostics.JsBrowserTestDebugUsesFirstChromiumRunner(
+                        taskPath = task.path,
+                        chromiumRunnerNames = chromiumRunnersNames,
+                    )
+                )
+            },
         )
     }
 
