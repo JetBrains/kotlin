@@ -107,6 +107,12 @@ public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedEleme
     public val isEnumClass: Boolean
 
     /**
+     * `true` if this is an enum entry's anonymous class.
+     */
+    @SinceKotlin("2.5")
+    public val isEnumEntry: Boolean
+
+    /**
      * `true` if this class is `final`.
      */
     @SinceKotlin("1.1")
