@@ -28,7 +28,7 @@ Each Q (and sub-question, where present) carries:
 
 ## Q2. ~~LightTree path for `FirReplSnippet` — KT-83498~~ — resolved
 
-- Status: **resolved — landed 2026-09-04** (canonical record: [`50-migration-plan.md`](50-migration-plan.md) step 2; [iteration](../iterations/2026-09-04_kt83498-lighttree-repl-snippets.md)). Remaining follow-up is G15 (predicate narrowing), tracked in [`../current/80-known-gotchas.md`](../current/80-known-gotchas.md#g15-k2replcompilers-session-wide-isreplsnippetsource---true--misclassifies-light-tree-compiled-repl-imports-as-snippets--deferred-2026-07-02f-re-characterised-2026-09-04-test-muted-not-fixed), not as a Q*.
+- Status: **resolved — landed 2026-09-04** (canonical record: [`50-migration-plan.md`](50-migration-plan.md) step 2; [iteration](../iterations/2026-09-04_kt83498-lighttree-repl-snippets.md)). The former follow-up G15 was **resolved 2026-09-04** the other way round (imports compiled as *non-isolated preceding snippets*, predicate deliberately kept; `MainKtsJsr223Test.testWithImport` un-muted) — see [`../current/80-known-gotchas.md`](../current/80-known-gotchas.md#g15-k2replcompilers-session-wide-isreplsnippetsource---true--misclassifies-light-tree-compiled-repl-imports-as-snippets--deferred-2026-07-02f-re-characterised-2026-09-04-test-muted-not-fixed), not as a Q*.
 - Owner: unassigned
 - YT: KT-83498 (+ KT-77583 for the LT builder)
 - Target doc: [`50-migration-plan.md`](50-migration-plan.md#2-land-kt-83498--full-lighttree-path-for-k2replcompiler)

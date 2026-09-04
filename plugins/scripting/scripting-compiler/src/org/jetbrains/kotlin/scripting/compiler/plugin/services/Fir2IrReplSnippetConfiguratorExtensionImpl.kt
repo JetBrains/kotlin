@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.DelicateDeclarationStorageApi
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
@@ -40,6 +42,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrReplSnippet
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.symbols.IrReplSnippetSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.name.ClassId
@@ -47,9 +50,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactSidecarProtoCodec
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.buildReplSidecarFromFir
+import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.importedSnippetsAttr
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.replSidecarMetadataAttr
+import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
 import kotlin.script.experimental.api.ReplScriptingHostConfigurationKeys
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.repl
+import kotlin.script.experimental.api.valueOrNull
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.util.PropertiesCollection
 
@@ -85,7 +92,17 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             usedOtherSnippets
         ).visitReplSnippet(firReplSnippet)
 
+        // The declarations of the snippets compiled in the same batch (e.g. the imported scripts, see K2ReplCompiler) are converted
+        // to IR as regular same-module declarations, so no lazy copies are needed for them; only their dispatch receivers are
+        // patched by ReplSnippetToClassTransformer
+        @OptIn(SymbolInternals::class)
+        fun FirReplSnippetSymbol.isFromSameBatch(): Boolean = declarationStorage.getCachedIrReplSnippet(fir) != null
+
         usedOtherSnippets.remove(firReplSnippet.symbol)
+        usedOtherSnippets.removeAll { it.isFromSameBatch() }
+        propertiesFromState.values.removeAll { it.isFromSameBatch() }
+        functionsFromState.values.removeAll { it.isFromSameBatch() }
+        classesFromState.values.removeAll { it.isFromSameBatch() }
         usedOtherSnippets.forEach {
             val packageFragment = declarationStorage.getIrExternalPackageFragment(it.packageFqName(), it.moduleData)
             classifierStorage.createAndCacheEarlierSnippetClass(it, packageFragment)
@@ -144,7 +161,53 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
 
         irSnippet.stateObject = stateObject.symbol
 
+        irSnippet.importedSnippetsAttr = collectImportedSameBatchSnippets(firReplSnippet).takeIf { it.isNotEmpty() }
+
         stashReplSidecarMetadataIfStateless(firReplSnippet, irSnippet)
+    }
+
+    /**
+     * The `@file:Import`-ed scripts are compiled together with the importing snippet as the preceding snippets (see K2ReplCompiler),
+     * so they are found among the same-batch snippets by the source path from the refined configuration.
+     *
+     * Only the top-level snippet (the one not imported by any other snippet in the batch) evaluates the imports, and it evaluates
+     * the whole transitive closure in the dependency order, each imported snippet once. Otherwise, a script imported both directly
+     * and via another import would be evaluated several times.
+     */
+    @OptIn(SymbolInternals::class)
+    private fun Fir2IrComponents.collectImportedSameBatchSnippets(firReplSnippet: FirReplSnippet): List<IrReplSnippetSymbol> {
+        val currentSourceFile = session.firProvider.getFirReplSnippetContainerFile(firReplSnippet.symbol)?.sourceFile ?: return emptyList()
+        val currentPath = currentSourceFile.path ?: return emptyList()
+        val historyProvider = hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider] ?: return emptyList()
+
+        class SameBatchSnippet(val irSymbol: IrReplSnippetSymbol, val importedPaths: List<String>)
+
+        fun KtSourceFile.getImportedPaths(): List<String> =
+            getOrLoadConfiguration(session, this)?.valueOrNull()
+                ?.get(ScriptCompilationConfiguration.resolvedImportScripts)?.mapNotNull { it.locationId }.orEmpty()
+
+        val sameBatchSnippetsByPath = historyProvider.getSnippets().mapNotNull { snippetSymbol ->
+            val irSnippet = declarationStorage.getCachedIrReplSnippet(snippetSymbol.fir) ?: return@mapNotNull null
+            val sourceFile = session.firProvider.getFirReplSnippetContainerFile(snippetSymbol)?.sourceFile ?: return@mapNotNull null
+            val path = sourceFile.path ?: return@mapNotNull null
+            path to SameBatchSnippet(irSnippet.symbol, sourceFile.getImportedPaths())
+        }.toMap()
+
+        // The imported snippets are evaluated by the importing one
+        if (sameBatchSnippetsByPath.values.any { currentPath in it.importedPaths }) return emptyList()
+
+        val visited = HashSet<String>().apply { add(currentPath) }
+        val result = ArrayList<IrReplSnippetSymbol>()
+        fun collect(importedPaths: List<String>) {
+            for (path in importedPaths) {
+                if (!visited.add(path)) continue
+                val imported = sameBatchSnippetsByPath[path] ?: continue
+                collect(imported.importedPaths)
+                result.add(imported.irSymbol)
+            }
+        }
+        collect(currentSourceFile.getImportedPaths())
+        return result
     }
 
     private fun stashReplSidecarMetadataIfStateless(firReplSnippet: FirReplSnippet, irSnippet: IrReplSnippet) {

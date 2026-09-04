@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.fir.FirScriptCompilationCo
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.isReplSnippetSource
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.putImportedSnippetOrSnippet
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -424,6 +425,17 @@ private fun compileImpl(
         }
         diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
         return failure(messageCollector)
+    }
+
+    // The imported scripts are compiled as snippets preceding the current one (see `isReplSnippetSource` above): they are registered
+    // in the history before the resolution, in the dependency order, so their declarations are visible to the snippets that follow
+    // (the history is only updated after the body resolution otherwise, which is too late for the same-session snippets).
+    // They do not consume the snippet numbers (see FirReplHistoryProviderWithImports).
+    state.hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]?.let { historyProvider ->
+        for (importedSource in newSources) {
+            val importedSnippet = sourcesToFir[importedSource]?.declarations?.firstIsInstanceOrNull<FirReplSnippet>() ?: continue
+            historyProvider.putImportedSnippetOrSnippet(importedSnippet.symbol)
+        }
     }
 
     val [scopeSession, fir] = session.runResolution(rawFir)

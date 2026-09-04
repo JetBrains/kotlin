@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.mainKts.test
 
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import javax.script.ScriptEngineManager
 
@@ -32,15 +31,6 @@ class MainKtsJsr223Test {
     }
 
     @Test
-    @Disabled(
-        """ BLOCKED-DESIGN-G15: K2ReplCompiler's isReplSnippetSource predicate is session-wide 'true', so the @file:Import(...)ed scripts
-            are compiled as REPL snippets (FirReplSnippet) instead of scripts (FirScript) since the light-tree snippet builder landed (KT-83498).
-            Several snippets in one FIR session are not supported by the REPL resolution: the imports are collected correctly (K2 refinement),
-            but the declarations of the imported "snippets" are not visible to each other nor to the root snippet, so it fails with
-            "Unresolved reference 'sharedVar'" in import-middle.main.kts and in the root snippet.
-            Fix: narrow the predicate to the root snippet source (see current/80-known-gotchas.md G15 / target/90-open-questions.md Q2).
-            """
-    )
     fun testWithImport() {
         val engine = ScriptEngineManager().getEngineByExtension("main.kts")!!
         val out = captureOut {
