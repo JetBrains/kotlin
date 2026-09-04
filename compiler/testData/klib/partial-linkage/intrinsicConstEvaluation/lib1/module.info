@@ -1,0 +1,8 @@
+STEP 0:
+    dependencies: stdlib
+    arguments: -Xcompanion-blocks-and-extensions
+STEP 1:
+    dependencies: stdlib
+    arguments: -Xcompanion-blocks-and-extensions
+    modifications:
+        U : l1.kt.1 -> l1.kt
