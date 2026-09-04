@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.createDelegatingCallWithPlaceholderTypeArguments
 import org.jetbrains.kotlin.backend.jvm.ir.isSimpleFunctionCompiledToJvmDefault
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.hasInterfaceParent
+import org.jetbrains.kotlin.ir.util.isStatic
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
@@ -30,7 +32,8 @@ internal class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : I
         val callee = expression.symbol.owner
 
         if (!callee.hasInterfaceParent() ||
-            callee.origin != IrDeclarationOrigin.Companion.FUNCTION_FOR_DEFAULT_PARAMETER ||
+            (callee.isStatic && callee.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS) ||
+            callee.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
             callee.isSimpleFunctionCompiledToJvmDefault(context.config.jvmDefaultMode)
         ) {
             return super.visitCall(expression)
