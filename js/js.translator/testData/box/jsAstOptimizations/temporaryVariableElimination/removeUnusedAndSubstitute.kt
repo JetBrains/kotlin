@@ -1,16 +1,26 @@
-var log = "";
+// TARGET_BACKEND: JS_IR
+// CHECK_OPTIMIZED_JS
+// EXPECT_GENERATED_JS: function=test;box expect=removeUnusedAndSubstitute.optimized.js TARGET_BACKENDS=JS_IR_ES6
 
-function test(a) {
-    var $tmp1;
-    log += $tmp1 = 1;
-    var $tmp2 = $tmp1;
-    var $tmp3;
-    var $tmp4 = $tmp2;
-    return a;
+var log = 0
+
+fun test(a: Int): Int {
+    val tmp1: Int
+    log += if (true) {
+        tmp1 = 1
+        tmp1
+    } else {
+        tmp1 = -100
+        tmp1
+    }
+    val tmp2 = tmp1
+    val tmp3: Int
+    val tmp4 = tmp2
+    return a
 }
 
-function box() {
-    if (test(3) != 3) return "fail1";
-    if (log != 1) return "fail2";
+fun box(): String {
+    if (test(3) != 3) return "fail1"
+    if (log != 1) return "fail2"
     return "OK"
 }

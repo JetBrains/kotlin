@@ -1,10 +1,10 @@
 function test(a, b, c) {
-    return a + b + c;
+  var tmp = a + b | 0;
+  return tmp + c | 0;
 }
-
 function box() {
-    var result = test(2, 3, 4);
-    if (result != 9) return "fail: " + result;
-
-    return "OK"
+  var result = test(2, 3, 4);
+  if (!(result === 9))
+    return 'fail: ' + result;
+  return 'OK';
 }

@@ -1,11 +1,15 @@
-var value = "OK";
+// TARGET_BACKEND: JS_IR
+// CHECK_OPTIMIZED_JS
+// EXPECT_GENERATED_JS: function=foo;box expect=assignmentToOuterVar.optimized.js TARGET_BACKENDS=JS_IR_ES6
 
-function foo(newValue) {
-    var $tmp = value;
-    value = newValue;
-    return $tmp;
+var value = "OK"
+
+fun foo(newValue: String): String {
+    var tmp = value
+    value = newValue
+    return tmp
 }
 
-function box() {
-    return foo("fail");
+fun box(): String {
+    return foo("fail")
 }
