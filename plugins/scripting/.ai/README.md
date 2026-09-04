@@ -144,11 +144,12 @@ Model selection and per-task loadout matrix: `AGENT_INSTRUCTIONS.md` → Per-Tas
 
 ---
 
-## Non-negotiables (top 3)
+## Non-negotiables (top 4)
 
 1. **Never** run `-Pkotlin.test.update.test.data=true` (self-enforced under Junie; `PreToolUse` hook blocks it under Claude Code).
 2. **Never** create a git commit without explicit user review (self-enforced under Junie; `PreToolUse` hook blocks `git add/commit/push` under Claude Code).
 3. **Never** skip the Resources & Cost section in iteration entries — it blinds the periodic audit. Under Junie, record `n/a — Junie session, no JSONL` or substitute metrics per [`JUNIE_NOTES.md`](JUNIE_NOTES.md).
+4. **Never** report a source change without the comment pass: every added comment needs a named justification, and the diff's comment lines get reread before reporting. `AGENT_INSTRUCTIONS.md` → Source Comment Conventions.
 
 Full list: `AGENT_INSTRUCTIONS.md` → Non-Negotiable Rules.  
 Subagent dispatch rules: `AGENT_INSTRUCTIONS.md` → Agent Dispatch section.

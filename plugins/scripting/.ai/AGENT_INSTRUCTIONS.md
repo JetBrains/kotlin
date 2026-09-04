@@ -33,7 +33,17 @@
 6. **No `intellij-community` plugin dependencies in `plugins/scripting/*`.** `scripting-ide-common` (copied from IntelliJ monorepo) is REMOVE.
 7. **`libraries/scripting/intellij` is public surface.** It's used by IntelliJ plugin authors wiring custom-scripts support. Don't break compatibility; don't move/rename.
 8. **NEVER initiate any git commit workflow.** No `git add`, `git commit`, `git push`, or staging of any kind. When a step is complete, list the changed files and write "Ready for commit review." Stop there. The user commits. Under Claude Code the PreToolUse hook blocks `git add/commit/push`; under Junie there is no hook backstop — this rule is self-enforced (see [`JUNIE_NOTES.md`](JUNIE_NOTES.md)).
-9. **Test data**: NEVER run `-Pkotlin.test.update.test.data=true` unless the user explicitly asks. Test data is shared across runners; bulk updates corrupt the dataset. After adding new test data fixtures: `./gradlew generateTests`. (Canonical statement — Repo Conventions section refers here.)
+9. **Test data**: NEVER run `-Pkotlin.test.update.test.data=true` unless the user explicitly asks. Test data is shared across runners; bulk updates corrupt the dataset. After adding new test data fixtures: `./gradlew generateTests`. (Canonical statement — Repo Conventions section refers here.) **Never hand-edit shared test data to make a scripting test pass either** — a diverging result usually means the scripting-side implementation is wrong; fix it, or record the divergence with investigation evidence in the iteration entry.
+
+10. **Only the main agent runs Gradle.** Subagents MUST NOT invoke `./gradlew` — parallel builds corrupt each other's test results and saturate CPU and disk. A subagent that needs a test run reports what to run; the main agent runs it.
+
+11. **Comments are opt-in, not opt-out.** When an edit would add a comment or KDoc, first write the edit without it. Add the comment back only if you can name which of the three justifications from the Source Comment Conventions section (why / API contract / real trap) it satisfies, in one clause, in the edit's rationale. No named justification = no comment.
+
+12. **Before reporting any change that touched source files, reread the diff's comment lines alone** against the Source Comment Conventions below, and delete everything that fails rule 11:
+    ```bash
+    git diff -U0 | grep '^+' | grep -E '//|\*'
+    ```
+    This is a step of the change, not a review afterthought: unlike code, comments have no red/green signal, so nothing else catches them. Rule 11 is the cheap one (not writing something); rule 12 asks you to delete text you have already justified, so don't rely on it alone.
 
 ---
 
@@ -58,7 +68,7 @@ The permission system matches the **first token only**. With `cmd1 && cmd2`, onl
 
 ### Gradle runs: save output, run once
 
-Every Gradle invocation MUST `tee` to `$SCRIPTING_TMP`. After a run, grep the saved file — never rerun Gradle just to see a different slice. Don't use `--info`/`--debug` unless needed.
+Every Gradle invocation MUST `tee` to `$SCRIPTING_TMP`. If you forgot `tee`: do NOT rerun Gradle — grep whatever output you have, or ask the user. After a run, grep the saved file — never rerun Gradle just to see a different slice. Include `--stacktrace` for suite and single-test runs. Don't use `--info`/`--debug` unless needed, and don't pass `--rerun-tasks` / `--no-build-cache` on routine runs; use `--rerun` (test-task-only) to re-execute tests whose inputs did not change.
 
 ---
 
@@ -180,6 +190,8 @@ Available subagent types and when to use them. (Hard rule: tasks crossing `plugi
 
 If `core docs > 8k tokens` for your task, summarise into scratch context (`$SCRIPTING_TMP/notes.md`) before invoking the subagent — pass the summary, not the raw docs.
 
+Subagents never run Gradle (Non-Negotiable Rule 10) and are bound by the Source Comment Conventions like the main agent — pass the relevant rules into the task text, and run the Rule 12 comment pass over the subagent's diff yourself.
+
 ## Per-Task Agent Loadout
 
 Use the minimal core-doc set for your task. Skip the rest unless explicitly needed. **Budget column = expected session cost order-of-magnitude (input tokens for context + reasonable interaction).** When closing the iteration, compare actual cost from `iter-metrics.sh` against this row's budget — record over/under in the Loadout-vs-actual block. Repeated overruns surface in `PROCESS_AUDIT.md` and trigger a matrix revision.
@@ -218,7 +230,17 @@ When `target/40-jsr223-target.md` or `target/90-open-questions.md` is rewritten 
 
 ## Source Comment Conventions
 
-These rules apply to **every** source comment or KDoc you add or edit — in `plugins/scripting/*` and `libraries/scripting/*`, and with extra strictness in the scripting-related parts of `compiler/fir/`, `compiler/ir/`, `compiler/cli/` shared with non-scripting code. Comments are reviewed alongside the code; write them for a future reader of the **merged** module (an experienced compiler developer), not as a development journal.
+These rules apply to **every** source comment or KDoc you add or edit — in `plugins/scripting/*` and `libraries/scripting/*`, and with extra strictness in the scripting-related parts of `compiler/fir/`, `compiler/ir/`, `compiler/cli/` shared with non-scripting code. Comments are reviewed alongside the code; write them for a future reader of the **merged** module (an experienced compiler developer), not as a development journal. Enforcement is Non-Negotiable Rules 11 (name the justification at edit time) and 12 (reread the diff's comment lines before reporting).
+
+### At edit time (the whole rule in five lines)
+
+- Default: no comment. Deleting beats shortening.
+- Allowed: why (non-obvious decision) / API contract / real trap + KT-issue or gotcha-ID reference.
+- Banned: counterfactuals and filler comparisons, restatement of the code, peer/phase-order justification, caller lists, migration history, `.ai/` doc references.
+- Form: plain declarative sentences, 1–3 lines. No "so that" / "because otherwise" / "note that".
+- Same fact twice = delete the copy at the use site.
+
+### The gate
 
 **The default is no comment.** Human-maintained compiler code averages ~3% comment lines — treat an LLM-authored diff that lands noticeably above that as needing a cleanup pass before review. Before writing a comment, pass this gate — a comment is justified only when it:
 
@@ -226,7 +248,34 @@ These rules apply to **every** source comment or KDoc you add or edit — in `pl
 2. briefly states an **API contract** that saves the reader a detour into the implementation (e.g. refinement-callback ordering in `ScriptCompilationConfiguration`, what a `FirReplHistoryProvider` implementation must guarantee); or
 3. records a **real trap** (the K2 REPL inliner gap, a cycle hazard, a parser-agnostic seam that must stay generic), ideally with a KT-issue (e.g. `KT-83498`) or gotcha ID (e.g. `G9`) reference into [`current/80-known-gotchas.md`](current/80-known-gotchas.md).
 
-Everything else — delete. When in doubt, delete. Specific prohibitions:
+Everything else — delete. When in doubt, delete.
+
+### Write facts, not narratives
+
+The most repeated review complaint on LLM-authored diffs is narrative, justificatory tone. Human comments in this codebase state facts; match them.
+
+- State what a thing **is**, not the story of why it ended up that way: `// Fixed name; the lowering and the evaluator agree on it.` — not `// We use a fixed name here because the lowering needs to find this function later, so it cannot be mangled.`
+- Drop justification clauses (`so that`, `because otherwise`, `required because`, `note that`, `it is worth mentioning`) unless the justification *is* the real trap being recorded.
+- Reference specs, issues and gotchas briefly: `// Snippet inliner gap, KT-83498.` — not a prose retelling of the issue.
+- Prefer minimal punctuation: few em-dashes, few parenthetical asides.
+- **After writing an analysis, a design doc, an iteration entry or a reply to the user, do not carry that register into code comments.** Explanatory prose, justification and comparison with the rejected option are correct there and a violation here; this transition is the most reliable predictor of a failed comment pass. Concrete rule: a sentence that appears in your analysis, iteration entry or reply MUST NOT be pasted or paraphrased into a source comment. If the comment says the same thing as the iteration entry, the comment is the redundant copy — delete it.
+
+This is about *content*, not about writing in fragments: see "Compact for clarity, not for brevity" below — a comment that survives the gate is still written as readable sentences.
+
+### Rejected comments and their replacements
+
+Recurring shapes:
+
+| Shape | Rejected | Replacement |
+|---|---|---|
+| Narrative | `// The converter is passed in rather than constructed here, because we want the K2 entry point to stay usable from tests that have no LightTree available, and because a future PSI converter could be plugged in the same way.` | `// Parser-agnostic seam: the caller supplies the converter.` |
+| Counterfactual | `// …so the snippet keeps its own scope, instead of degrading to the script shape like the old K1 REPL did.` | *(deleted)* |
+| Restatement | `// Returns null for snippets that carry no result property.` above `return snippet.resultProperty ?: return null` | *(deleted)* |
+| Fact in two places | the `FirReplHistoryProvider` storage contract repeated at each call site | *(deleted at the call sites; kept on the interface)* |
+| Peer/phase-order justification | `// Resolved here, as the script configurator does — snippet configuration runs before body resolution, so the symbol is already available.` | *(deleted; the phase-order finding belongs in the iteration entry)* |
+| KDoc on a trivial accessor | `/** The compilation configuration this snippet was compiled with. */` above a one-line delegating property | *(deleted)* |
+
+### Specific prohibitions
 
 - **Don't comment the obvious.** If the code says it, or an experienced compiler developer sees it at a glance, no comment. This includes restating a function's body in prose, `@param`/`@property` entries that paraphrase the parameter or field name/type (document only non-obvious contracts, or none), and spelling out a default value that's already visible right there in the signature.
 - **No counterfactuals or filler comparisons.** Don't describe rejected designs, an earlier or alternative implementation, or how the current code relates to some other component ("unlike X", "just like Y", "behaves exactly as Z would") — unless the comparison reveals a real trap a maintainer is likely to fall into, in which case state it in one terse sentence, not a paragraph. A comparison whose conclusion is already obvious from the surrounding design is filler, not a trap, and should be cut.
@@ -238,9 +287,53 @@ Everything else — delete. When in doubt, delete. Specific prohibitions:
 - **Don't blur scripts and snippets.** A comment on `FirScript`-side code shouldn't describe `FirReplSnippet` behavior or vice versa — they're different shapes; cross-reference instead of merging the explanation.
 - **Use the codebase's own vocabulary.** Reuse the term a concept already has elsewhere — a property name, a neighboring KDoc in the same subsystem, established compiler terminology — instead of coining a fresh synonym for it. A comment that introduces new wording for something that already has a name forces the reader to mentally translate between two vocabularies for no benefit.
 - **Compact for clarity, not for brevity.** The gate above decides *what* survives; it isn't license to squeeze whatever survives into the fewest possible characters. Once a comment has earned its place, write it as natural, complete sentences — the way an experienced compiler developer would actually phrase it out loud — rather than a telegraphic run of noun-phrase fragments strung together with dashes or semicolons. A short, plainly readable sentence beats a denser one that has to be decoded; a little redundancy in service of readability is fine.
-- **Keep it short.** 1–3 lines is the norm. A short paragraph of full sentences is fine — and preferable to a cramped one-liner — for a genuinely tricky invariant that can't be compressed further (e.g. the K2 REPL inliner gap's list of unsafe constructs); even then, cut filler ("Note that", "It is worth mentioning").
+- **No peer or phase-order justification.** Don't explain a line by what a neighbouring implementation does or by where the code sits in the pipeline ("the script configurator does the same", "snippet configuration runs before body resolution") — that belongs in the iteration entry or a `current/*` doc, not in the source.
+- **Keep it short.** 1–3 lines is the norm. A short paragraph of full sentences is fine — and preferable to a cramped one-liner — for a genuinely tricky invariant that can't be compressed further (e.g. the K2 REPL inliner gap's list of unsafe constructs); even then, cut filler ("Note that", "It is worth mentioning"). KDoc on internal declarations is the exception, not the rule — human-maintained compiler modules leave most internal functions undocumented. No numbered algorithm walkthroughs or "Scenario A/B/C" breakdowns in KDoc; if the algorithm needs that, it belongs in a `current/*` doc.
 
-Self-check before finishing any change: reread the diff's comment lines alone and ask (a) does each one survive the gate above, or a reviewer asking "what does this tell me that the code doesn't?"; (b) does each use the terms this codebase already uses for the concept, rather than a new synonym; (c) does each read as natural, complete sentences rather than compressed fragments. If a comment fails any of these, fix or remove it.
+### Keep comments in sync with the code
+
+Stale comments are a recurring review find. Whenever you delete or rename a symbol, or change behavior, **grep for comments mentioning it** — across the whole subsystem, not just the edited file — and fix or delete them in the same change. This matters more here than in most modules: the K1 cleanup chain deletes symbols that live comments still name. A comment that justifies complexity must be re-verified against the *current* code, not carried forward from an earlier round.
+
+### Self-check
+
+Non-Negotiable Rule 12 is the self-check: reread the diff's comment lines alone and ask (a) does each one survive the gate above, or a reviewer asking "what does this tell me that the code doesn't?"; (b) does each use the terms this codebase already uses for the concept, rather than a new synonym; (c) does each state a fact rather than narrate a rationale; (d) does each read as natural, complete sentences rather than compressed fragments. If a comment fails any of these, fix or remove it.
+
+---
+
+## Explanation & Writing Style (iteration entries, docs, review replies)
+
+The opposite register from source comments: here, explanation is the point. Reviewers repeatedly had to ask "what does this mean / when is this reached?" about explanations that were formally correct but too compressed or too abstract.
+
+- **Lead with the current behavior** in one plain sentence; put the rationale after it, not interleaved with it.
+- **Ground every guard, fallback or special case in a concrete trigger**: name the input, code path or test that reaches it (`a snippet whose previous cell declared an @InlineOnly extension`), not just the abstract condition. If you cannot name one, that is a signal the code may be unnecessary — see Simplification & Review Discipline.
+- **Prefer short declarative sentences** over long noun phrases and nested subordinate clauses. One idea per sentence.
+- **No contrast with the unimplemented**: describe what the code does, not what it does instead of some alternative. Rejected options live in [`target/40-jsr223-options-archive.md`](target/40-jsr223-options-archive.md) and the [`target/90-open-questions.md`](target/90-open-questions.md) triage fields, not in running prose.
+
+---
+
+## Simplification & Review Discipline
+
+The goal is to reach the simplified end state in one pass, and to catch small gaps before review does.
+
+- **Default to one generic path.** When the same operation is implemented separately per representation or host (script vs snippet, LT vs PSI, CLI vs host embedding), treat the split as a hypothesis to disprove: look for the one existing generic mechanism the specialized arms could route through. (Scripts and snippets stay distinct *in FIR* — see Critical Patterns — but their surrounding plumbing usually shouldn't fork.)
+- **Search for an existing helper before writing one.** Grep for the operation's key ingredient first; `libraries/scripting/*` already has utilities for most classpath, configuration-merge and evaluation plumbing.
+- **Check the peer implementation at every decision point.** When a reference implementation of the same behavior exists (the script path for a snippet question, the K2 CLI path for a host question, an upstream file), compare before designing — most "missed small details" found in review were places where a peer already handled the case.
+- **"A unit test injects a fake here" is not a production justification.** If a parameter, overload or lambda exists only for a test's convenience, change the test: write an end-to-end test against the real wiring, or add a narrow test double at the correct architectural boundary. (The `convertToFir` seam is a design decision, not a test hook — don't cite it as precedent.)
+- **Parallel caches, lists or maps need a demonstrated distinct answer.** Two structures that differ only in a filter are one structure until a test shows the answers diverge.
+- **Re-derive, don't recite.** Any claim that complexity is "necessary" must be re-verified against the current code on every review pass — trace the actual call sites and data flow again; earlier reasoning goes stale fast in a branch that is deleting modules.
+- **Answer capability questions with evidence, not assumption.** "Is this tested?", "is this reachable?", "is this parameter used?" are answered by grepping call sites or running the scenario, not by recalling a doc.
+- **Treat a repeated "are we sure?" from the user as a cue to re-investigate from scratch**, with a concrete test or reachable call path as the outcome — not to restate the previous answer. Healthy resistance is still expected, but only backed by a failing regression test or a specific reachable call path produced in the same pass; otherwise implement the simplification.
+
+---
+
+## Docs Maintenance
+
+Keep the working doc set small — this file and the iteration index are read into context every session.
+
+- **One fact, one doc.** When the same information (status, rule, file map) is needed in two documents, one owns it and the other links to it. The canonical homes are listed in Reference Documents.
+- **[`ITERATION_RESULTS.md`](ITERATION_RESULTS.md) is an append-only index**: one line per iteration, newest on top. Detail, traces and measurement tables go in the `iterations/YYYY-MM-DD_slug.md` entry — never inlined into the index, and never pasted logs or diffs.
+- **Archive a doc once its work has fully landed or been superseded** (as [`target/40-jsr223-options-archive.md`](target/40-jsr223-options-archive.md) already is): move it, add a banner with the archive date and a staleness warning, and repoint references. Keep only living docs for *active* work outside the archive.
+- **Bump "Last verified"** in any doc whose body text materially changed — see the Post-iteration checklist.
 
 ---
 
@@ -281,7 +374,23 @@ See repo `CLAUDE.md` for commit guidelines, code-review conventions, and Build T
 
 ---
 
-*Last updated: 2026-08-05 (refined the Source Comment Conventions section with two more general
+*Last updated: 2026-09-04 (synchronised the general working rules with
+`compiler/java-direct/AGENT_INSTRUCTIONS_COMMON.md`, which had grown the module-independent
+half of the rule set. Comment discipline is now enforced rather than advisory: new
+Non-Negotiable Rules 11–12 make comments opt-in (name the why / API-contract / trap
+justification at edit time) and make the comment-lines-only diff reread
+(`git diff -U0 | grep '^+' | grep -E '//|\*'`) a step of the change rather than a review
+afterthought. Source Comment Conventions gained an "at edit time" five-line summary, a
+"write facts, not narratives" section — including the ban on carrying analysis / iteration-entry
+prose into source comments, which is the strongest predictor of a failed comment pass — a
+rejected-comment/replacement table, prohibitions on peer/phase-order justification and on
+KDoc algorithm walkthroughs, and a comment-staleness rule (grep for comments naming a symbol
+you delete or rename — acute here because of the K1 cleanup chain). Added the sibling file's
+Explanation & Writing Style, Simplification & Review Discipline and Docs Maintenance sections,
+plus Rule 10 (only the main agent runs Gradle), the no-hand-editing-shared-test-data half of
+Rule 9, and the `--stacktrace` / no-`--rerun-tasks` / forgot-`tee` Gradle rules.)*
+
+*Previously: 2026-08-05 (refined the Source Comment Conventions section with two more general
 rules found while dogfooding it: match the codebase's existing terminology for a concept instead
 of coining a new synonym, and compact for clarity rather than raw brevity, so a kept comment reads
 as natural sentences rather than a telegraphic, dash-chained fragment; also broadened the
