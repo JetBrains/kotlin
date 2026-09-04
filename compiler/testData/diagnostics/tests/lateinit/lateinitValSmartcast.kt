@@ -8,3 +8,5 @@ fun test() {
         <!SMARTCAST_IMPOSSIBLE!>x<!>.length
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, isExpression, lateinit, propertyDeclaration, smartcast */

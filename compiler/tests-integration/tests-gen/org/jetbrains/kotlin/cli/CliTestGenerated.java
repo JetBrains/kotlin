@@ -484,6 +484,7 @@ public class CliTestGenerated extends AbstractCliTest {
       run("fullyQualifiedDeepJavaWholeRoot.args");
     }
 
+    @Test
     @TestMetadata("inlineCycle.args")
     public void testInlineCycle() {
       run("inlineCycle.args");
