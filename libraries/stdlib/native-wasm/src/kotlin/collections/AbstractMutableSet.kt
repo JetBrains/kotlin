@@ -10,9 +10,9 @@ public actual abstract class AbstractMutableSet<E> protected actual constructor(
     /**
      * Adds the specified element to the set.
      *
-     * If the set already contains [element], the element instance stored in the set is retained.
-     *
-     * @return `true` if the element has been added, `false` if the element is already contained in the set.
+     * If the set doesn't contain [element], it is added to the set and the function returns `true`.
+     * If the set already contains [element], the element instance stored in the set is kept, [element] is not
+     * added, and the function returns `false`.
      */
     @IgnorableReturnValue
     actual abstract override fun add(element: E): Boolean

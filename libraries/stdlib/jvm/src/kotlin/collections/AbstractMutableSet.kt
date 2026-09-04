@@ -17,12 +17,12 @@ public actual abstract class AbstractMutableSet<E> protected actual constructor(
     /**
      * Adds the specified element to the set.
      *
-     * If the set already contains [element], the element instance stored in the set is retained.
+     * If the set doesn't contain [element], it is added to the set and the function returns `true`.
+     * If the set already contains [element], the element instance stored in the set is kept, [element] is not
+     * added, and the function returns `false`.
      *
      * This method is redeclared as abstract, because it's not implemented in the base class,
      * so it must be always overridden in the concrete mutable collection implementation.
-     *
-     * @return `true` if the element has been added, `false` if the element is already contained in the set.
      */
     @IgnorableReturnValue
     actual abstract override fun add(element: E): Boolean

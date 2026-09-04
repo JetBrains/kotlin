@@ -162,9 +162,9 @@ public actual interface MutableMap<K, V> : Map<K, V> {
     /**
      * Associates the specified [value] with the specified [key] in the map.
      *
-     * If the map already contains a mapping for [key], the value for that key is replaced with the specified [value].
-     *
-     * @return the previous value associated with the key, or `null` if the key was not present in the map.
+     * If the map doesn't contain a mapping for [key], the mapping is added and the function returns `null`.
+     * If the map already contains a mapping for [key], the value for that key is replaced with the specified
+     * [value] and the function returns the previous value.
      *
      * @sample samples.collections.Maps.CoreApi.put
      */
