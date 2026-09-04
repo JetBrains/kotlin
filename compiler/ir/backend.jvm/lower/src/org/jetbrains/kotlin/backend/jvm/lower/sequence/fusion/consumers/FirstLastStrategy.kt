@@ -24,11 +24,21 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.makeNullable
 
+/**
+ * Consumer strategy for lowering `first`/`firstOrNull`/`find`/`last`/`lastOrNull`/`findLast`.
+ *
+ * `isFirst` differentiates between `first`/`last`, `find`/`findLast` and `firstOrNull`/`lastOrNull`.
+ *
+ * `isFind` differentiates between `first`/`last` and `find`/`findLast`.
+ *
+ * `isOrNull` differentiates between `first`/`last` and `firstOrNull`/`lastOrNull`.
+ */
 internal open class FirstLastStrategy(
     data: ConsumerData,
     expression: IrCall,
     val isFirst: Boolean,
     val isOrNull: Boolean,
+    val isFind: Boolean,
 ) : ConsumerStrategy(data, expression) {
     val resultVariable: IrVariable = data.builder.scope.createTemporaryVariable(
         data.builder.irNull(),
@@ -36,6 +46,8 @@ internal open class FirstLastStrategy(
         isMutable = true,
         irType = expression.type.makeNullable()
     )
+
+    // this is needed for all the versions of first/last which throw an exception on empty sequence
     val skippedVariable: IrVariable = data.builder.scope.createTemporaryVariable(data.builder.irTrue(), "skipped", isMutable = true)
 
     override fun getInitialDeclarations(): List<IrVariable> = listOf(skippedVariable, resultVariable)
@@ -52,6 +64,7 @@ internal open class FirstLastStrategy(
                 } else null
 
                 if (predicateCall != null) {
+                    // in the case of this being first or last, this is the predicate overload
                     val predicateResult = scope.createTemporaryVariable(predicateCall, nameHint = "predicateResult")
                     +predicateResult
                     +irIfThen(irGet(predicateResult), irBlock {
@@ -61,6 +74,7 @@ internal open class FirstLastStrategy(
                     val shouldContinueSearching = if (isFirst) irNot(irGet(predicateResult)) else irTrue()
                     +shouldContinueSearching
                 } else {
+                    // this is the non-predicate overload of first or last
                     +irSet(resultVariable, irGet(sequenceElement))
                     +irSet(skippedVariable, irFalse())
                     val shouldContinueSearching = if (isFirst) irFalse() else irTrue()
@@ -71,9 +85,10 @@ internal open class FirstLastStrategy(
     }
 
     override fun createResult(): IrExpression = data.builder.irBlock {
-        if (isOrNull) {
+        if (isOrNull || isFind) {
             +irGet(resultVariable)
         } else {
+            // throw the exception on first or last
             val wasSkipped = irGet(skippedVariable)
             val throwException = irThrow(
                 irCallConstructor(data.context.symbols.noSuchElementExceptionCtorString, emptyList()).apply {

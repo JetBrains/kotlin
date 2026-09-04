@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.builders.irIfThen
 import org.jetbrains.kotlin.ir.builders.irNotEquals
 import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.builders.irSet
-import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.builders.irWhile
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -38,8 +37,7 @@ internal class GenerateSequenceStrategy(
         sequenceData: SequenceData,
         sequenceReplacement: SequenceReplacement,
     ): IrContainerExpression {
-        val builder = builderWithParent.first
-        val parent = builderWithParent.second
+        val [builder, parent] = builderWithParent
         val generatingFunction = source.generatingFunction
 
         val oneArgumentIteratingFunction: (IrVariable) -> IrExpression = { variable ->
@@ -83,8 +81,8 @@ internal class GenerateSequenceStrategy(
 
                 body = irBlock {
                     +irBlock {
-                        val shouldContinueVar = irTemporary(sequenceReplacement.mainBodyBuilder(stateVariable), nameHint = "shouldContinue")
-                        +irIfThen(context.irBuiltIns.unitType, irNot(irGet(shouldContinueVar)), irBreak(loop))
+                        val shouldContinueExpression = sequenceReplacement.mainBodyBuilder(stateVariable)
+                        +irIfThen(context.irBuiltIns.unitType, irNot(shouldContinueExpression), irBreak(loop))
                     }
                     +irSet(stateVariable, evaluateNext(stateVariable))
                 }

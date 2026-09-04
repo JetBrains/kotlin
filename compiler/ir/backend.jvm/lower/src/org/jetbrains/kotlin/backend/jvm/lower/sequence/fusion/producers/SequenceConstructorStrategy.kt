@@ -121,9 +121,10 @@ private class YieldReplacer(
         argument: IrExpression,
         consumeFunction: IrFunction,
     ): IrExpression {
-        return with(builderWithParent.first) {
+        val [builder, parent] = builderWithParent
+        return with(builder) {
             val consumeCall = irCall(consumeFunction.symbol, type = context.irBuiltIns.booleanType).apply {
-                arguments[0] = argument.deepCopyWithSymbols(builderWithParent.second)
+                arguments[0] = argument.deepCopyWithSymbols(parent)
             }
             val notConsumed = irNot(consumeCall)
             val returnStatement = irReturnUnit().apply {
@@ -168,8 +169,7 @@ private class YieldReplacer(
         //     val shouldContinue = consume(iterator.next())
         //     if (!shouldContinue) return Unit
         // }
-        val builder = builderWithParent.first
-        val parent = builderWithParent.second
+        val [builder, parent] = builderWithParent
         return buildLoopFromIterator(builder, iterator, consumeFunction, parent)
     }
 
@@ -178,8 +178,7 @@ private class YieldReplacer(
         iterable: IrExpression,
         consumeFunction: IrFunction,
     ): IrExpression? {
-        val builder = builderWithParent.first
-        val parent = builderWithParent.second
+        val [builder, parent] = builderWithParent
         // listOf, mutableListOf, setOf, mutableSetOf, arrayListOf,
         if (iterable is IrCall) {
             val fqName = iterable.symbol.owner.fqNameWhenAvailable?.asString()
