@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.KaptConfiguration
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import java.nio.file.Path
 import kotlin.contracts.ExperimentalContracts
@@ -241,6 +242,18 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
         )
         @JvmField
         public val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX", KotlinReleaseVersion(2, 3, 20))
+
+        /**
+         * Represents an option for configuring the KAPT (Kotlin Annotation Processing Tool) behavior
+         * in a [JvmCompilationOperation].
+         *
+         * Obtain a builder for [KaptConfiguration] from [JvmPlatformToolchain.kaptCompilerPluginBuilder].
+         *
+         * @since 2.5.0
+         */
+        @JvmField
+        public val KAPT_CONFIGURATION: Option<KaptConfiguration?> = Option("KAPT_CONFIGURATION", KotlinReleaseVersion(2, 5, 0))
+
     }
 
     // KT-86102 [BTA] Move CompilerArgumentsLogLevel to BaseCompilationOperation
