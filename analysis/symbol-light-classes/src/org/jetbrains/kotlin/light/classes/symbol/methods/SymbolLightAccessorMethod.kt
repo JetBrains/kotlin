@@ -436,7 +436,7 @@ internal class SymbolLightAccessorMethod private constructor(
                         hasValueClassInReturnType = hasValueClassInPropertyType,
                         hasManglingValueClassInParameterType = hasManglingValueClassInParameterPosition(property),
                         hasManglingValueClassInPropertyType = hasValueClassInPropertyType && parameterTypeRequiresMangling(property.returnType),
-                        jvmExposeBoxedMode = jvmExposeBoxedMode(property),
+                        jvmExposeBoxedMode = property.jvmExposeBoxedMode(),
                     )
                 }
             }
