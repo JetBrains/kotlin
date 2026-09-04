@@ -147,7 +147,7 @@ object KtNodeTypes : SyntaxElementTypesWithIds() {
     // Start of stub element types
 
     val CLASS: SyntaxElementType = register(CLASS_ID, "CLASS")
-    val FUNCTION: SyntaxElementType = register(FUNCTION_ID, "FUNCTION")
+    val FUN: SyntaxElementType = register(FUNCTION_ID, "FUNCTION")
     val PROPERTY: SyntaxElementType = register(PROPERTY_ID, "PROPERTY")
     val PROPERTY_ACCESSOR: SyntaxElementType = register(PROPERTY_ACCESSOR_ID, "PROPERTY_ACCESSOR")
     val BACKING_FIELD: SyntaxElementType = register(BACKING_FIELD_ID, "BACKING_FIELD")
