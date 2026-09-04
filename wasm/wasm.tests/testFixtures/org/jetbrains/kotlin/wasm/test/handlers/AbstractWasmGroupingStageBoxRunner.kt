@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
+import org.jetbrains.kotlin.test.services.sourceProviders.SourceContentView
+import org.jetbrains.kotlin.test.services.sourceProviders.hasBoxMethod
 import org.jetbrains.kotlin.test.services.testInfo
 import org.jetbrains.kotlin.wasm.test.blackbox.computeProxyLauncherClassName
 import org.jetbrains.kotlin.wasm.test.providers.WasmJsLauncherAdditionalSourceProvider
@@ -187,7 +189,7 @@ abstract class AbstractWasmGroupingStageBoxRunner(
             // Otherwise, tests must be driven by a custom JS entry point (e.g. `entry.mjs`) rather than by the unit-test runner, so must be isolated,
             // since they do not produce `##teamcity[testSuiteFinished` lines and their pass / fail status is determined entirely
             // by whether the VM throws when executing the custom entry script.
-            checkTestInfrastructure(hasBoxMethod(input)) {
+            checkTestInfrastructure(input.hasBoxMethod()) {
                 "Test ${input.testInfo} does not have box() method, so its execution status cannot be verified via '##teamcity' output lines. " +
                         "Please isolate this test using either existing ways in WasmGroupingTestIsolator or add a new rule there."
             }
@@ -205,26 +207,6 @@ abstract class AbstractWasmGroupingStageBoxRunner(
                 )
             }
         }
-    }
-
-    /**
-     * Returns `true` if any module of [input] contains a file with a top-level `box()` function.
-     *
-     * Tests without a `box()` (e.g. `// FILE: entry.mjs` driven Wasm/JS size tests) are
-     * executed via a custom JS entry point — not via the synthetic `ProxyLauncher_<encoded-package>` /
-     * `Launcher_<encoded-relative-path>` unit-test classes — so they cannot be sanity-checked against
-     * `##teamcity[testSuiteFinished` markers.
-     */
-    protected fun hasBoxMethod(input: NonGroupingStageOutput): Boolean {
-        val moduleStructure = input.testServices.moduleStructure
-        for (module in moduleStructure.modules) {
-            for (file in module.files) {
-                if (MainFunctionForBlackBoxTestsSourceProvider.containsBoxMethod(file.originalContent)) {
-                    return true
-                }
-            }
-        }
-        return false
     }
 
     /**
@@ -249,7 +231,7 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         val moduleStructure = input.testServices.moduleStructure
         for (module in moduleStructure.modules) {
             for (file in module.files) {
-                if (MainFunctionForBlackBoxTestsSourceProvider.containsBoxMethod(file.originalContent)) {
+                if (MainFunctionForBlackBoxTestsSourceProvider.containsBoxMethod(file, SourceContentView.ORIGINAL)) {
                     result += WasmJsLauncherAdditionalSourceProvider.computeLauncherClassName(file)
                 }
             }
