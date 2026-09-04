@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
@@ -77,6 +78,8 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
             // All install tasks write to the same global browsers directory; any one is sufficient to derive the path.
             inputs.playwrightBrowsersDirectory.set(browserInstallTasks.first().flatMap { it.outputDir })
 
+            inputs.ideDebugSessionUrl.set(project.kotlinPropertiesProvider.jsIdeDebugSessionUrl)
+
             inputs.chromiumRunners.set(
                 browserTestDsl.chromiumRunners.values.map { runner ->
                     KotlinPlaywrightJsTestFramework.createChromiumInputs(objects)
@@ -140,4 +143,5 @@ private fun KotlinPlaywrightJsTestFramework.BrowserRunnerInput.populateFrom(
             executable
         }
     )
+    browserDataDir.convention(runner.browserDataDir)
 }

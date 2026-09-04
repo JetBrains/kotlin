@@ -1,0 +1,36 @@
+public final class org/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinDebuggableBrowser {
+	public fun <init> (Ljava/lang/String;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCdpUrl ()Ljava/lang/String;
+	public fun hashCode ()I
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$Companion;
+	public abstract fun abort (Ljava/lang/String;)V
+	public abstract fun getConnectionUrl ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$BuildSystemSession : org/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession {
+	public abstract fun awaitDebuggerReady-HG0u8IE (Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinDebuggableBrowser;J)V
+	public abstract fun sendBrowserReady (Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinDebuggableBrowser;)V
+	public abstract fun sendFinished (Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinDebuggableBrowser;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$Companion {
+	public final fun connectWithBuildSystem (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$BuildSystemSession;
+	public final fun startForIde (Lcom/sun/net/httpserver/HttpServer;)Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$IdeSession;
+	public static synthetic fun startForIde$default (Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$Companion;Lcom/sun/net/httpserver/HttpServer;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$IdeSession;
+}
+
+public final class org/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$ConnectionAborted : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$IdeSession : java/lang/AutoCloseable, org/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession {
+	public abstract fun awaitBrowser-LRDsOJo (J)Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinDebuggableBrowser;
+	public abstract fun awaitFinished-LRDsOJo (J)V
+	public abstract fun sendDebuggerReady (Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinDebuggableBrowser;)V
+}
+

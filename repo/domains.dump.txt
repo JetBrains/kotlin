@@ -222,6 +222,7 @@ Gradle:
  - libraries/tools/kotlin-gradle-plugin-api
  - libraries/tools/kotlin-gradle-plugin-dsl-codegen
  - libraries/tools/kotlin-gradle-plugin-idea
+ - libraries/tools/kotlin-gradle-plugin-idea-browser-debug
  - libraries/tools/kotlin-gradle-plugin-idea-for-compatibility-tests
  - libraries/tools/kotlin-gradle-plugin-idea-proto
  - libraries/tools/kotlin-gradle-plugin-integration-tests

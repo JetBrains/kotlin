@@ -22,7 +22,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing.playwright
 
-import com.microsoft.playwright.Browser
+import com.microsoft.playwright.BrowserContext
 import com.microsoft.playwright.BrowserType
 import com.microsoft.playwright.Playwright
 import com.microsoft.playwright.impl.Connection
@@ -59,6 +59,7 @@ internal class PwRunnerSpec(
     val launchArgs: List<String>,
     val launchEnvironmentVariables: Map<String, String>,
     val customBrowserExecutable: Path?,
+    val browserDataDir: Path,
 )
 
 /**
@@ -70,12 +71,36 @@ internal class PwExecutionSpec(
     val runners: List<PwRunnerSpec>,
     val nodeExecutable: String,
     val playwrightCli: String,
+    val ideDebugSessionUrl: String?,
+    val onNoChromiumRunnerWhenDebugIsRequested: (declaredRunnersNames: List<String>) -> Unit,
+    val onMultipleChromiumRunnersWhenDebugIsRequested: (chromiumRunnersNames: List<String>) -> Unit,
 ) : TestExecutionSpec
 
 internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
 
     override fun execute(spec: PwExecutionSpec, testResultProcessor: TestResultProcessor) {
         if (spec.runners.isEmpty()) return
+
+        val ideDebugSession = spec.ideDebugSessionUrl?.let { PlaywrightDebugSession.connect(it) }
+
+        val runners = if (ideDebugSession != null) {
+            // debugging via IDE only supports Chromium,
+            // so we limit debug execution to only first Chromium runner.
+            // this is not good approach, and with TODO(KT-86706) this should be limited only to chrome runners.
+            val chromiumRunners = spec.runners.filter { it.browserKind == PwBrowserKind.CHROMIUM }
+            val chromiumRunner = chromiumRunners.firstOrNull()
+            if (chromiumRunner == null) {
+                ideDebugSession.abort("Debugging Kotlin/JS browser tests requires a Chromium runner, but none is configured")
+                spec.onNoChromiumRunnerWhenDebugIsRequested(spec.runners.map { it.name })
+                return
+            }
+            if (chromiumRunners.size > 1) {
+                spec.onMultipleChromiumRunnersWhenDebugIsRequested(chromiumRunners.map { it.name })
+            }
+            listOf(chromiumRunner)
+        } else {
+            spec.runners
+        }
 
         val client = spec.createClient(testResultProcessor, log)
         val handler = TCServiceMessageOutputStreamHandler(
@@ -102,13 +127,13 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
                     // Gradle's test reporting API, which only supports one test report per root and overwrites previously created reports.
                     // This will get easier once we split each runner into its own Gradle task.
                     root {
-                        for (runner in spec.runners) {
+                        for (runner in runners) {
                             suite(id = runner.name) {
                                 try {
                                     // TODO(KT-86706): It would be better to eventually make currentRunnerName the ID of the Root node when we have
                                     // one root per runner - see comment above.
                                     client.currentRunnerName = runner.name
-                                    executeRunner(playwright, runner, handler)
+                                    executeRunner(playwright, runner, handler, ideDebugSession)
                                 } catch (t: Throwable) {
                                     val tsEnd = System.currentTimeMillis()
                                     closeSuiteWithFailingTestCause(suiteNode = this, tsEnd, failingTestCause = t)
@@ -214,41 +239,54 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
         playwright: Playwright,
         runner: PwRunnerSpec,
         handler: TCServiceMessageOutputStreamHandler,
+        ideDebugSession: PlaywrightDebugSession?,
     ) {
         val browserType: BrowserType = when (runner.browserKind) {
             PwBrowserKind.CHROMIUM -> playwright.chromium()
             PwBrowserKind.FIREFOX -> playwright.firefox()
             PwBrowserKind.WEBKIT -> playwright.webkit()
         }
-        val launchOptions = BrowserType.LaunchOptions()
+
+        val launchOptions = BrowserType.LaunchPersistentContextOptions()
             .setHeadless(runner.headless)
             .apply {
-                if (runner.launchArgs.isNotEmpty()) setArgs(runner.launchArgs)
+                setArgs(ideDebugSession?.launchArgs(runner) ?: runner.launchArgs)
+
                 if (runner.launchEnvironmentVariables.isNotEmpty()) setEnv(runner.launchEnvironmentVariables)
                 if (runner.customBrowserExecutable != null) setExecutablePath(runner.customBrowserExecutable)
             }
 
         log.info("Launching playwright runner '${runner.name}' (${runner.browserKind})")
-        val browser: Browser = browserType.launch(launchOptions)
+        val browserContext: BrowserContext = browserType.launchPersistentContext(runner.browserDataDir, launchOptions)
         val testLocationUrl = runner.testsLocation.url.get()
-        browser.use {
-            val page = browser.newPage()
-            page.use {
-                page.setDefaultTimeout(runner.timeout.inWholeMilliseconds.toDouble())
-                var finished = false
-                page.onConsoleMessage {
-                    if (it.text().startsWith(runner.finishMarker)) {
-                        finished = true
-                    } else {
-                        handler.write(it.text().toByteArray())
-                        handler.writeEndLine()
+        try {
+            browserContext.use {
+                // attach debugger to the current page
+                ideDebugSession?.attachDebugger(runner)
+
+                val page = browserContext.pages().firstOrNull() ?: browserContext.newPage()
+                page.use {
+                    page.setDefaultTimeout(runner.timeout.inWholeMilliseconds.toDouble())
+                    var finished = false
+                    page.onConsoleMessage {
+                        if (it.text().startsWith(runner.finishMarker)) {
+                            finished = true
+                        } else {
+                            handler.write(it.text().toByteArray())
+                            handler.writeEndLine()
+                        }
                     }
+                    val url = runner.buildTestsExecutionerUrl(testLocationUrl)
+                    log.info("Execute JS tests with ${runner.name} runner at URL: $url")
+                    page.navigate(url.toString())
+                    page.waitForCondition({ finished })
                 }
-                val url = runner.buildTestsExecutionerUrl(testLocationUrl)
-                log.info("Execute JS tests with ${runner.name} runner at URL: $url")
-                page.navigate(url.toString())
-                page.waitForCondition({ finished })
+                ideDebugSession?.reportFinished()
             }
+        } catch (throwable: Throwable) {
+            // release the IDE instead of leaving it waiting for a browser that is already gone
+            ideDebugSession?.abort(throwable.message ?: throwable.toString())
+            throw throwable
         }
     }
 

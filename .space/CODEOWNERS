@@ -363,6 +363,7 @@
 /libraries/tools/kotlin-gradle-plugin-dsl-codegen/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-idea/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-idea-for-compatibility-tests/ "Kotlin Build Tools"
+/libraries/tools/kotlin-gradle-plugin-idea-browser-debug/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-idea-proto/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-integration-tests/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/KotlinWasmGradlePluginIT.kt "Kotlin Build Tools" "Kotlin Wasm"
