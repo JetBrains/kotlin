@@ -177,10 +177,11 @@ object KtTokens : SyntaxElementTypesWithIds() {
     const val ALL_KEYWORD_ID: Int = INTERPOLATION_PREFIX_ID + 1
     const val ERROR_MODIFIER_ID: Int = ALL_KEYWORD_ID + 1
     const val OR_ID: Int = ERROR_MODIFIER_ID + 1
+    const val ERROR_SAFE_ACCESS_ID: Int = OR_ID + 1
 
     // Remember to update DOC_COMMENT_ID below after adding new tokens here ^^^
 
-    const val DOC_COMMENT_ID: Int = OR_ID + 1
+    const val DOC_COMMENT_ID: Int = ERROR_SAFE_ACCESS_ID + 1
     const val WHITE_SPACE_ID: Int = DOC_COMMENT_ID + 1
 
     private val softKeywordsAndModifiers: MutableSet<SyntaxElementType> = mutableSetOf()
@@ -284,6 +285,7 @@ object KtTokens : SyntaxElementTypesWithIds() {
     val OROR: SyntaxElementType = register(OROR_ID, "OROR")
     val OR: SyntaxElementType = register(OR_ID, "OR")
     val SAFE_ACCESS: SyntaxElementType = register(SAFE_ACCESS_ID, "SAFE_ACCESS")
+    val ERROR_SAFE_ACCESS: SyntaxElementType = register(ERROR_SAFE_ACCESS_ID, "ERROR_SAFE_ACCESS")
     val ELVIS: SyntaxElementType = register(ELVIS_ID, "ELVIS")
     val QUEST: SyntaxElementType = register(QUEST_ID, "QUEST")
     val COLONCOLON: SyntaxElementType = register(COLONCOLON_ID, "COLONCOLON")

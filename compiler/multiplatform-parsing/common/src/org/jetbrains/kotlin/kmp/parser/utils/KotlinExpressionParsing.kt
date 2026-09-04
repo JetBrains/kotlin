@@ -138,6 +138,7 @@ internal open class KotlinExpressionParsing(
             KtTokens.ANDAND,
             KtTokens.OROR,
             KtTokens.SAFE_ACCESS,
+            KtTokens.ERROR_SAFE_ACCESS,
             KtTokens.ELVIS,
             KtTokens.SEMICOLON,
             KtTokens.RANGE,
@@ -169,7 +170,7 @@ internal open class KotlinExpressionParsing(
             STATEMENT_FIRST.intersect(KtTokens.HARD_KEYWORDS_AND_MODIFIERS - IN_MODIFIER) + KtTokens.EOL_OR_SEMICOLON
 
         private val ALLOW_NEWLINE_OPERATIONS = syntaxElementTypeSetOf(
-            KtTokens.DOT, KtTokens.SAFE_ACCESS,
+            KtTokens.DOT, KtTokens.SAFE_ACCESS, KtTokens.ERROR_SAFE_ACCESS,
             KtTokens.COLON,
             AS_KEYWORD,
             AS_SAFE,
@@ -192,7 +193,14 @@ internal open class KotlinExpressionParsing(
 
         // typeArguments? valueArguments : typeArguments : arrayAccess
         val POSTFIX_OPERATIONS =
-            syntaxElementTypeSetOf(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS, KtTokens.EXCLEXCL, KtTokens.DOT, KtTokens.SAFE_ACCESS)
+            syntaxElementTypeSetOf(
+                KtTokens.PLUSPLUS,
+                KtTokens.MINUSMINUS,
+                KtTokens.EXCLEXCL,
+                KtTokens.DOT,
+                KtTokens.SAFE_ACCESS,
+                KtTokens.ERROR_SAFE_ACCESS
+            )
         val PREFIX_OPERATIONS = syntaxElementTypeSetOf(KtTokens.MINUS, KtTokens.PLUS, KtTokens.MINUSMINUS, KtTokens.PLUSPLUS, KtTokens.EXCL)
 
         val MIN_BINARY_OPERATION_PRECEDENCE: BinaryOperationPrecedence = BinaryOperationPrecedence.entries.first()
@@ -425,8 +433,12 @@ internal open class KotlinExpressionParsing(
                 expression.done(KtNodeTypes.ARRAY_ACCESS_EXPRESSION)
             } else if (parseCallSuffix()) {
                 expression.done(KtNodeTypes.CALL_EXPRESSION)
-            } else if (at(KtTokens.DOT) || at(KtTokens.SAFE_ACCESS)) {
-                val expressionType = if (at(KtTokens.DOT)) KtNodeTypes.DOT_QUALIFIED_EXPRESSION else KtNodeTypes.SAFE_ACCESS_EXPRESSION
+            } else if (at(KtTokens.DOT) || at(KtTokens.SAFE_ACCESS) || at(KtTokens.ERROR_SAFE_ACCESS)) {
+                val expressionType = when {
+                    at(KtTokens.DOT) -> KtNodeTypes.DOT_QUALIFIED_EXPRESSION
+                    at(KtTokens.ERROR_SAFE_ACCESS) -> KtNodeTypes.ERROR_SAFE_ACCESS_EXPRESSION
+                    else -> KtNodeTypes.SAFE_ACCESS_EXPRESSION
+                }
                 advance() // DOT or SAFE_ACCESS
 
                 if (!firstExpressionParsed) {

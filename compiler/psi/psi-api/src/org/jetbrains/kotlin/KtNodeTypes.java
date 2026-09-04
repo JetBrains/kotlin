@@ -151,6 +151,7 @@ public interface KtNodeTypes {
     @NotNull IElementType CALLABLE_REFERENCE_EXPRESSION = new KtNodeType("CALLABLE_REFERENCE_EXPRESSION", KtCallableReferenceExpression::new);
     @NotNull IElementType CLASS_LITERAL_EXPRESSION  = KtStubBasedElementTypes.CLASS_LITERAL_EXPRESSION;
     @NotNull IElementType SAFE_ACCESS_EXPRESSION    = new KtNodeType("SAFE_ACCESS_EXPRESSION", KtSafeQualifiedExpression::new);
+    @NotNull IElementType ERROR_SAFE_ACCESS_EXPRESSION    = new KtNodeType("ERROR_SAFE_ACCESS_EXPRESSION", KtErrorSafeQualifiedExpression::new);
 
     @NotNull IElementType OBJECT_LITERAL            = KtStubBasedElementTypes.OBJECT_LITERAL;
 

@@ -361,8 +361,9 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             else if (parseCallSuffix()) {
                 expression.done(CALL_EXPRESSION);
             }
-            else if (at(DOT) || at(SAFE_ACCESS)) {
-                IElementType expressionType = at(DOT) ? DOT_QUALIFIED_EXPRESSION : SAFE_ACCESS_EXPRESSION;
+            else if (at(DOT) || at(SAFE_ACCESS) || at(ERROR_SAFE_ACCESS)) {
+                IElementType expressionType =
+                        at(DOT) ? DOT_QUALIFIED_EXPRESSION : (at(SAFE_ACCESS) ? SAFE_ACCESS_EXPRESSION : ERROR_SAFE_ACCESS_EXPRESSION);
                 advance(); // DOT or SAFE_ACCESS
 
                 if (!firstExpressionParsed) {

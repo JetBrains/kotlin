@@ -284,6 +284,10 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
         super.visitSafeQualifiedExpression(expression, data);
     }
 
+    public void visitErrorSafeQualifiedExpressionVoid(@NotNull KtErrorSafeQualifiedExpression expression, P data) {
+        super.visitErrorSafeQualifiedExpression(expression, data);
+    }
+
     public void visitObjectLiteralExpressionVoid(@NotNull KtObjectLiteralExpression expression, P data) {
         super.visitObjectLiteralExpression(expression, data);
     }
@@ -817,6 +821,12 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
     public final Void visitSafeQualifiedExpression(@NotNull KtSafeQualifiedExpression expression, P data) {
         visitSafeQualifiedExpressionVoid(expression, data);
     	return null;
+    }
+
+    @Override
+    public final Void visitErrorSafeQualifiedExpression(@NotNull KtErrorSafeQualifiedExpression expression, P data) {
+        visitErrorSafeQualifiedExpressionVoid(expression, data);
+        return null;
     }
 
     @Override

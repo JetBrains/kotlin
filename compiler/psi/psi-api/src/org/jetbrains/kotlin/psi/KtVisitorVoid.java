@@ -316,6 +316,10 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitSafeQualifiedExpression(expression, null);
     }
 
+    public void visitErrorSafeQualifiedExpression(@NotNull KtErrorSafeQualifiedExpression expression) {
+        super.visitErrorSafeQualifiedExpression(expression, null);
+    }
+
     public void visitObjectLiteralExpression(@NotNull KtObjectLiteralExpression expression) {
         super.visitObjectLiteralExpression(expression, null);
     }
@@ -912,6 +916,12 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     @Override
     public final Void visitSafeQualifiedExpression(@NotNull KtSafeQualifiedExpression expression, Void data) {
         visitSafeQualifiedExpression(expression);
+        return null;
+    }
+
+    @Override
+    public Void visitErrorSafeQualifiedExpression(@NotNull KtErrorSafeQualifiedExpression expression, Void data) {
+        visitErrorSafeQualifiedExpression(expression);
         return null;
     }
 

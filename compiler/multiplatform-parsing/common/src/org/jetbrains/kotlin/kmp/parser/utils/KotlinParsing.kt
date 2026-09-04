@@ -66,7 +66,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                 TYPE_REF_FIRST
         private val COLON_COMMA_LBRACE_RBRACE_TYPE_REF_FIRST_SET =
             syntaxElementTypeSetOf(KtTokens.COLON, KtTokens.COMMA, KtTokens.LBRACE, KtTokens.RBRACE) + TYPE_REF_FIRST
-        private val RECEIVER_TYPE_TERMINATORS = syntaxElementTypeSetOf(KtTokens.DOT, KtTokens.SAFE_ACCESS)
+        private val RECEIVER_TYPE_TERMINATORS = syntaxElementTypeSetOf(KtTokens.DOT, KtTokens.SAFE_ACCESS, KtTokens.ERROR_SAFE_ACCESS)
 
         private val MODIFIER_WITHOUT_FUN = KtTokens.MODIFIERS - KtTokens.FUN_MODIFIER
         private val VALUE_PARAMETER_FIRST =
@@ -227,7 +227,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         private val LAST_DOT_AFTER_RECEIVER_LPAR_PATTERN_SET = syntaxElementTypeSetOf(KtTokens.QUEST, KtTokens.LPAR, KtTokens.RPAR)
 
         private val LAST_DOT_AFTER_RECEIVER_NOT_LPAR_PATTERN_SET =
-            syntaxElementTypeSetOf(KtTokens.LT, KtTokens.DOT, KtTokens.SAFE_ACCESS, KtTokens.QUEST)
+            syntaxElementTypeSetOf(KtTokens.LT, KtTokens.DOT, KtTokens.SAFE_ACCESS, KtTokens.QUEST, KtTokens.ERROR_SAFE_ACCESS)
 
         private val ACCESSOR_BODY_EXPECTED_RECOVERY_SET by lazy(LazyThreadSafetyMode.PUBLICATION) {
             ACCESSOR_FIRST_OR_PROPERTY_END + syntaxElementTypeSetOf(KtTokens.LBRACE, KtTokens.LPAR, KtTokens.EQ)

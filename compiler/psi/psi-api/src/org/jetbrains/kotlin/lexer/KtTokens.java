@@ -167,6 +167,7 @@ public interface KtTokens {
     int ALL_KEYWORD_Id = INTERPOLATION_PREFIX_Id + 1;
     int ERROR_KEYWORD_Id = ALL_KEYWORD_Id + 1;
     int OR_Id = ERROR_KEYWORD_Id + 1;
+    int ERROR_SAFE_ACCESS_Id = OR_Id + 1;
 
     @NotNull KtToken EOF   = new KtToken("EOF", EOF_Id);
 
@@ -261,6 +262,7 @@ public interface KtTokens {
     @NotNull KtSingleValueToken OROR        = new KtSingleValueToken("OROR", "||", OROR_Id);
     @NotNull KtSingleValueToken OR          = new KtSingleValueToken("OR", "|", OR_Id);
     @NotNull KtSingleValueToken SAFE_ACCESS = new KtSingleValueToken("SAFE_ACCESS", "?.", SAFE_ACCESS_Id);
+    @NotNull KtSingleValueToken ERROR_SAFE_ACCESS = new KtSingleValueToken("ERROR_SAFE_ACCESS", "|.", ERROR_SAFE_ACCESS_Id);
     @NotNull KtSingleValueToken ELVIS       = new KtSingleValueToken("ELVIS", "?:", ELVIS_Id);
     @NotNull KtSingleValueToken QUEST       = new KtSingleValueToken("QUEST", "?", QUEST_Id);
     @NotNull KtSingleValueToken COLONCOLON  = new KtSingleValueToken("COLONCOLON", "::", COLONCOLON_Id);
@@ -435,7 +437,7 @@ public interface KtTokens {
     @NotNull
     TokenSet OPERATIONS = TokenSet.create(AS_KEYWORD, AS_SAFE, IS_KEYWORD, IN_KEYWORD, DOT, PLUSPLUS, MINUSMINUS, EXCLEXCL, MUL, PLUS,
                                           MINUS, EXCL, DIV, PERC, LT, GT, LTEQ, GTEQ, EQEQEQ, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR,
-                                          SAFE_ACCESS, ELVIS,
+                                          SAFE_ACCESS, ERROR_SAFE_ACCESS, ELVIS,
                                           RANGE, RANGE_UNTIL, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ,
                                           NOT_IN, NOT_IS,
                                           IDENTIFIER);
