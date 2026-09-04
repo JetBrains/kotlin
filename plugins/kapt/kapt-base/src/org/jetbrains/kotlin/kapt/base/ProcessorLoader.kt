@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.kapt.base
 
 import org.jetbrains.kotlin.kapt.base.incremental.DeclaredProcType
-import org.jetbrains.kotlin.kapt.base.incremental.INCREMENTAL_ANNOTATION_MARKERS_FLAG
+import org.jetbrains.kotlin.kapt.base.incremental.INCREMENTAL_ANNOTATION_MARKERS_FILE
 import org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor
 import org.jetbrains.kotlin.kapt.base.incremental.parseIncrementalProcessorDeclarations
 import org.jetbrains.kotlin.kapt.base.util.KaptLogger
@@ -116,7 +116,7 @@ class ProcessorLoaderImpl(private val options: KaptOptions, private val logger: 
                     file.resolve(SERVICE_FILE).takeIf { it.isFile }?.let { serviceFileInDir ->
                         serviceFileInDir.inputStream().use { addServiceNames(it.bufferedReader().lineSequence()) }
                     }
-                    file.resolve(INCREMENTAL_ANNOTATION_MARKERS_FLAG).takeIf { it.isFile }?.let { markerFile ->
+                    file.resolve(INCREMENTAL_ANNOTATION_MARKERS_FILE).takeIf { it.isFile }?.let { markerFile ->
                         incrementalMarkers += parseIncrementalProcessorDeclarations(markerFile.bufferedReader().readLines())
                     }
                 }
@@ -125,7 +125,7 @@ class ProcessorLoaderImpl(private val options: KaptOptions, private val logger: 
                         zipFile.getEntry(SERVICE_FILE)?.let { zipEntry ->
                             zipFile.getInputStream(zipEntry).use { addServiceNames(it.bufferedReader().lineSequence()) }
                         }
-                        zipFile.getEntry(INCREMENTAL_ANNOTATION_MARKERS_FLAG)?.let { zipEntry ->
+                        zipFile.getEntry(INCREMENTAL_ANNOTATION_MARKERS_FILE)?.let { zipEntry ->
                             zipFile.getInputStream(zipEntry).use {
                                 incrementalMarkers += parseIncrementalProcessorDeclarations(it.bufferedReader().readLines())
                             }

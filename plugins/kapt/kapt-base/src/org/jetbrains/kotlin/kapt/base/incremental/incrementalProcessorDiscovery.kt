@@ -13,7 +13,7 @@ import java.util.zip.ZipFile
 private val INCREMENTAL_DECLARED_TYPES: Set<String> =
     DeclaredProcType.entries.filter { it.canRunIncrementally }.map { it.name }.toSet()
 
-const val INCREMENTAL_ANNOTATION_MARKERS_FLAG = "META-INF/gradle/incremental.annotation.processors"
+const val INCREMENTAL_ANNOTATION_MARKERS_FILE = "META-INF/gradle/incremental.annotation.processors"
 
 // Return name -> declared type map.
 fun parseIncrementalProcessorDeclarations(text: List<String>): Map<String, DeclaredProcType> {
@@ -49,7 +49,7 @@ fun getIncrementalProcessorsFromClasspath(
 private fun processSingleClasspathEntry(rootFile: File): Map<String, DeclaredProcType> {
     val text: List<String> = when {
         rootFile.isDirectory -> {
-            val markerFile = rootFile.resolve(INCREMENTAL_ANNOTATION_MARKERS_FLAG)
+            val markerFile = rootFile.resolve(INCREMENTAL_ANNOTATION_MARKERS_FILE)
             if (markerFile.exists()) {
                 markerFile.bufferedReader().readLines()
             } else {
@@ -57,7 +57,7 @@ private fun processSingleClasspathEntry(rootFile: File): Map<String, DeclaredPro
             }
         }
         rootFile.extension == "jar" -> ZipFile(rootFile).use { zipFile ->
-            val content: InputStream? = zipFile.getInputStream(ZipEntry(INCREMENTAL_ANNOTATION_MARKERS_FLAG))
+            val content: InputStream? = zipFile.getInputStream(ZipEntry(INCREMENTAL_ANNOTATION_MARKERS_FILE))
 
             content?.bufferedReader()?.readLines() ?: emptyList()
         }
