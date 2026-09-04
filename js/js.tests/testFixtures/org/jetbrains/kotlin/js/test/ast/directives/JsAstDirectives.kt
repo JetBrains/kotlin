@@ -148,4 +148,9 @@ internal object JsAstDirectives : HomogenousValueDirectivesContainer<JsAstDirect
         "Checks that the specified function doesn't capture any variables",
         ::CheckNoCapturedVarsDirective,
     )
+
+    val FUNCTION_HAS_EFFECTS by directiveWithArguments(
+        "Checks that the specified function (or class constructor) has the specified Effects",
+        ::FunctionHasEffectsDirective
+    )
 }

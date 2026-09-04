@@ -76,6 +76,16 @@ public interface CommonJsAndWasmCompilerLinkingArguments : CommonJsAndWasmArgume
         CommonJsAndWasmCompilerLinkingArgument("X_CACHE_DIRECTORY", KotlinReleaseVersion(1, 8, 20))
 
     /**
+     * Enable experimental advanced optimization passes (e.g. effect analysis).
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_ENABLE_ADVANCED_OPTIMIZATIONS: CommonJsAndWasmCompilerLinkingArgument<Boolean> =
+        CommonJsAndWasmCompilerLinkingArgument("X_ENABLE_ADVANCED_OPTIMIZATIONS", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Generate a TypeScript declaration .d.ts file alongside the JS file.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
