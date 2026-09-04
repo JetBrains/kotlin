@@ -22,6 +22,8 @@ import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.gradle.plugin.konan.*
+import org.jetbrains.kotlin.isAppleTargetName
+import org.jetbrains.kotlin.isWholeXcodeProvisioningEnabled
 import org.jetbrains.kotlin.konan.target.AbstractToolConfig
 import org.jetbrains.kotlin.nativeDistribution.asNativeDistribution
 import javax.inject.Inject
@@ -111,6 +113,12 @@ open class KonanInteropTask @Inject constructor(
     @get:Input
     val extraOpts: ListProperty<String> = objectFactory.listProperty(String::class.java)
 
+    @get:Input
+    val useProvisionedXcode: Property<Boolean> = objectFactory.property(Boolean::class.java)
+            .convention(project.isWholeXcodeProvisioningEnabled()
+                    .let { wholeXcodeProvisioningEnabled -> target.map { wholeXcodeProvisioningEnabled && isAppleTargetName(it) } }
+            )
+
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val defFile: RegularFileProperty = objectFactory.fileProperty()
@@ -164,6 +172,10 @@ open class KonanInteropTask @Inject constructor(
             }
 
             addAll(extraOpts.get())
+
+            if (useProvisionedXcode.get()) {
+                add("-Xoverride-konan-properties=useProvisionedXcode=true")
+            }
 
             add("-Xproject-dir")
             add(layout.projectDirectory.asFile.absolutePath)

@@ -525,6 +525,8 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
 
         private val project by owner::project
 
+        private val nativeDependencies = project.extensions.getByType<NativeDependenciesExtension>()
+
         // A shared service used to limit parallel execution of test binaries.
         private val runGTestSemaphore = project.gradle.sharedServices.registerIfAbsent("runGTestSemaphore", RunGTestSemaphore::class.java) {
             // Probably can be made configurable if test reporting moves away from simple gtest stdout dumping.
@@ -617,6 +619,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 group = VERIFICATION_BUILD_TASK_GROUP
                 this.target.set(target)
                 this.sanitizer.set(sanitizer)
+                dependsOn(nativeDependencies.targetDependency(_target))
                 this.outputFile.set(project.layout.buildDirectory.file("bin/test/${target}/$testName.${target.family.exeSuffix}"))
                 this.llvmLinkFirstStageOutputFile.set(project.layout.buildDirectory.file("bitcode/test/$target/$testName-firstStage.bc"))
                 this.llvmLinkOutputFile.set(project.layout.buildDirectory.file("bitcode/test/$target/$testName.bc"))

@@ -51,7 +51,12 @@ open class PlatformManagerProvider @Inject constructor(
         }.getOrDefault(false)
         if (isNativeProtoDistribution) {
             // For proto distribution, we must patch the llvm distribution.
-            project.llvmDistributionSource.asProperties
+            val llvmOverride = project.llvmDistributionSource.asProperties
+            if (project.isWholeXcodeProvisioningEnabled()) {
+                llvmOverride + ("useProvisionedXcode" to "true")
+            } else {
+                llvmOverride
+            }
         } else {
             // For any other distribution, we shouldn't change anything.
             emptyMap()
