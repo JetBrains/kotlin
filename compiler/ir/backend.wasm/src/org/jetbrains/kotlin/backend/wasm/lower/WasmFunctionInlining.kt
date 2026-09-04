@@ -22,7 +22,7 @@ abstract class WasmFunctionInlining(
     override val context: WasmBackendContext,
     inlineFunctionResolver: InlineFunctionResolver,
 ) : FunctionInlining(context, inlineFunctionResolver) {
-    private val deadInlinedParameterTempVars = hashSetOf<IrVariableSymbol>()
+    private val deadTempBlockVars = hashSetOf<IrVariableSymbol>()
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration): IrExpression {
 
@@ -36,7 +36,7 @@ abstract class WasmFunctionInlining(
                 val blockIrTemporary = blockParameter.symbol.owner as? IrVariable
                 if (blockIrTemporary != null) {
                     blockParameter = blockIrTemporary.initializer
-                    deadInlinedParameterTempVars += blockIrTemporary.symbol
+                    deadTempBlockVars += blockIrTemporary.symbol
                 } else {
                     break
                 }
@@ -48,11 +48,11 @@ abstract class WasmFunctionInlining(
     }
 
     override fun visitContainerExpression(expression: IrContainerExpression, data: IrDeclaration): IrExpression {
-        val result = super.visitContainerExpression(expression, data)
-        if (deadInlinedParameterTempVars.isNotEmpty()) {
-            expression.statements.removeAll { it is IrVariable && it.symbol in deadInlinedParameterTempVars }
+        super.visitContainerExpression(expression, data)
+        if (deadTempBlockVars.isNotEmpty()) {
+            expression.statements.removeAll { it is IrVariable && it.symbol in deadTempBlockVars }
         }
-        return result
+        return expression
     }
 }
 
