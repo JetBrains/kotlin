@@ -1,30 +1,35 @@
-var global = 0;
+// TARGET_BACKEND: JS_IR
+// CHECK_OPTIMIZED_JS
+// EXPECT_GENERATED_JS: function=test1;test2;test3;box expect=removeUnused.optimized.js TARGET_BACKENDS=JS_IR_ES6
 
-function test1() {
-    var $tmp = global++;
-    return global;
+var global = 0
+
+fun test1(): Int {
+    val tmp = global++
+    return global
 }
 
-function test2() {
-    var $tmp;
-    $tmp = global++;
-    return global;
+fun test2(): Int {
+    val tmp: Int
+    tmp = global++
+    return global
 }
 
-function test3() {
-    var $a = global++, $b = global--;
-    return $b + $b;
+fun test3(): Int {
+    val a = global++
+    val b = global--
+    return b + b
 }
 
-function box() {
-    var result = test1();
-    if (result != 1) return "fail1: " + result;
+fun box(): String {
+    var result = test1()
+    if (result != 1) return "fail1: $result"
 
-    result = test2();
-    if (result != 2) return "fail2: " + result;
+    result = test2()
+    if (result != 2) return "fail2: $result"
 
-    result = test3();
-    if (result != 6) return "fail3: " + result;
+    result = test3()
+    if (result != 6) return "fail3: $result"
 
     return "OK"
 }

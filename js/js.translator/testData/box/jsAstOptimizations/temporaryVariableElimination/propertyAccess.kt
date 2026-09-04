@@ -1,24 +1,28 @@
+// TARGET_BACKEND: JS_IR
+// CHECK_OPTIMIZED_JS
+// EXPECT_GENERATED_JS: function=b;box expect=propertyAccess.optimized.js TARGET_BACKENDS=JS_IR_ES6
+
 var log = "";
 
-A = {};
-Object.defineProperty(A, "x", {
-    get: function() {
-        log += "A.x;";
-        return 23;
-    }
-});
-
-function b() {
-    log += "b();";
-    return 42;
+object A {
+    val x: Int
+        get() {
+            log += "A.x;"
+            return 23
+        }
 }
 
-function box() {
-    var $tmp = A.x;
-    var result = b() + ";" + $tmp;
+fun b(): Int {
+    log += "b();"
+    return 42
+}
 
-    if (result != "42;23") return "fail1: " + result;
-    if (log != "A.x;b();") return "fail2: " + log;
+fun box(): String {
+    val tmp = A.x
+    val result = "${b()};$tmp"
+
+    if (result != "42;23") return "fail1: $result"
+    if (log != "A.x;b();") return "fail2: $log"
 
     return "OK";
 }
