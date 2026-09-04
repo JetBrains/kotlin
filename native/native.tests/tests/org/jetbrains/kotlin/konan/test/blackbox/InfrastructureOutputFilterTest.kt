@@ -132,6 +132,24 @@ class InfrastructureOutputFilterTest {
     }
 
     @Test
+    fun repeatedTCOutcomeRetainsItsCountSeparatelyFromDistinctTestNames() {
+        val testOutput = """
+            ##teamcity[testSuiteStarted name='sample.test.Foo']
+            ##teamcity[testStarted name='repeated']
+            ##teamcity[testFinished name='repeated']
+            ##teamcity[testStarted name='repeated']
+            ##teamcity[testFinished name='repeated']
+            ##teamcity[testSuiteFinished name='sample.test.Foo']
+        """.trimIndent()
+
+        val filteredOutput = TCTestOutputFilter.filter(testOutput)
+        val testReport = filteredOutput.testReport ?: throw AssertionError("Test report expected")
+
+        assertEquals(2, filteredOutput.reportedTestCount)
+        assertEquals(listOf("sample.test.Foo.repeated"), testReport.passedTests.map(TestName::toString))
+    }
+
+    @Test
     fun interruptedTestTCMessage() {
         val testOutput = """
             1
