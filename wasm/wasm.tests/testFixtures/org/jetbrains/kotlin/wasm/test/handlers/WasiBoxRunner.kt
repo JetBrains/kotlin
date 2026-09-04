@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.WasmCompilationSet
 import org.jetbrains.kotlin.test.model.WasmCompilationSetsBinaryArtifact
 import org.jetbrains.kotlin.test.model.WasmFolderBinaryArtifact
 import org.jetbrains.kotlin.test.services.TestServices
@@ -304,6 +305,15 @@ internal fun checkUnitTestRunnerSupport(
     )
 }
 
+/** Runs the common output-size checks for a WASI compilation mode before the mode's failures are returned. */
+internal fun checkExpectedWasiOutputSize(
+    mode: String,
+    debugMode: DebugMode,
+    testFileText: String,
+    outputDir: File,
+    filesToIgnore: Set<File> = emptySet(),
+): List<Throwable> = checkExpectedOutputSize(mode, debugMode, testFileText, outputDir, filesToIgnore)
+
 // TODO reduce amount of duplicated code between this class and WasmBoxRunner
 class WasiBoxRunner(
     testServices: TestServices,
@@ -376,11 +386,11 @@ class WasiBoxRunner(
 
         val testWasi = if (debugMode >= DebugMode.DEBUG) testWasiVerbose else testWasiQuiet
 
-        fun writeToFilesAndRunTest(mode: String, res: WasmCompilerResult): List<Throwable> {
+        fun writeToFilesAndRunTest(mode: String, set: WasmCompilationSet): List<Throwable> {
             val dir = File(outputDirBase, mode)
             dir.mkdirs()
 
-            res.writeTo(dir, WASM_BASE_FILE_NAME, debugMode)
+            set.compilerResult.writeTo(dir, WASM_BASE_FILE_NAME, debugMode)
 
             if (callGroupedTestsDriver) assertDriverOwnsStartTestExport(dir)
 
@@ -407,22 +417,23 @@ class WasiBoxRunner(
                 )
             }
 
-            // TODO KT-71504: support size tests for WASI target and ignoring utility files
+            // TODO KT-71504: support ignoring utility files for WASI target size tests
             val filesToIgnoreInSizeChecks = emptySet<File>()
-            when (mode) {
-                "dce" -> checkExpectedDceOutputSize(debugMode, testFileText, dir, filesToIgnoreInSizeChecks)
-                "optimized" -> checkExpectedOptimizedOutputSize(debugMode, testFileText, dir, filesToIgnoreInSizeChecks)
-            }
-            return exceptions
+            return exceptions + checkExpectedWasiOutputSize(
+                mode = mode,
+                debugMode = debugMode,
+                testFileText = testFileText,
+                outputDir = dir,
+                filesToIgnore = filesToIgnoreInSizeChecks,
+            )
         }
 
-        val allExceptions = mutableListOf<Throwable>()
-        allExceptions += writeToFilesAndRunTest("dev", artifacts.compilation.compilerResult)
-        artifacts.dceCompilation?.let {
-            allExceptions += writeToFilesAndRunTest("dce", it.compilerResult)
-        }
-        artifacts.optimisedCompilation?.let {
-            allExceptions += writeToFilesAndRunTest("optimized", it.compilerResult)
+        val allExceptions = wasmCompilationModes(
+            compilation = artifacts.compilation,
+            dceCompilation = artifacts.dceCompilation,
+            optimisedCompilation = artifacts.optimisedCompilation,
+        ).flatMap { mode ->
+            writeToFilesAndRunTest(mode.directoryName, mode.compilation)
         }
 
         if (throwOnExceptions) {

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.test.model.WasmFolderBinaryArtifact
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 
 internal fun WasmCompilerResult.writeTo(outputDir: File, outputFilenameBase: String, debugMode: DebugMode, mode: String = "") {
@@ -78,24 +77,21 @@ open class WasmBoxRunner(
                 outputCollector = outputCollector,
             )
 
-            return exceptions + when (mode) {
-                "dce" -> checkExpectedDceOutputSize(debugMode, testFileText, outputDir, filesToIgnoreInSizeChecks)
-                "optimized" -> checkExpectedOptimizedOutputSize(debugMode, testFileText, outputDir, filesToIgnoreInSizeChecks)
-                "dev" -> emptyList() // no additional checks required
-                else -> testInfraError("Unknown mode: $mode")
-            }
+            return exceptions + checkExpectedOutputSize(
+                mode = mode,
+                debugMode = debugMode,
+                testFileText = testFileText,
+                outputDir = outputDir,
+                filesToIgnoreInSizeChecks = filesToIgnoreInSizeChecks,
+            )
         }
 
-        val allExceptions = mutableListOf<Throwable>()
-
-        allExceptions.addAll(writeToFilesAndRunTest("dev", artifacts.compilation))
-
-        artifacts.dceCompilation?.let {
-            allExceptions.addAll(writeToFilesAndRunTest("dce", it))
-        }
-
-        artifacts.optimisedCompilation?.let {
-            allExceptions.addAll(writeToFilesAndRunTest("optimized", it))
+        val allExceptions = wasmCompilationModes(
+            compilation = artifacts.compilation,
+            dceCompilation = artifacts.dceCompilation,
+            optimisedCompilation = artifacts.optimisedCompilation,
+        ).flatMap { mode ->
+            writeToFilesAndRunTest(mode.directoryName, mode.compilation)
         }
 
         if (throwOnExceptions) {
