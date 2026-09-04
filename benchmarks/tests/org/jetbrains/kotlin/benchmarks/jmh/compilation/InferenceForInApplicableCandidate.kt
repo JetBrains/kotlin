@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.benchmarks.jmh
+package org.jetbrains.kotlin.benchmarks.jmh.compilation
 
 import org.openjdk.jmh.annotations.*
 import org.openjdk.jmh.infra.Blackhole
@@ -12,10 +12,10 @@ import java.util.concurrent.TimeUnit
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
-open class InferenceFromReturnTypeCallsBenchmark : AbstractSimpleFileBenchmark() {
+open class InferenceForInApplicableCandidate : AbstractSimpleFileBenchmark() {
 
     @Param("1", "10", "100", "1000", "5000", "10000")
-    private var size: Int = 0
+    private var size: Int = 1
 
     @Benchmark
     fun benchmark(bh: Blackhole) {
@@ -24,10 +24,10 @@ open class InferenceFromReturnTypeCallsBenchmark : AbstractSimpleFileBenchmark()
 
     override fun buildText() =
             """
-            |fun <T> foo(x: Int): T = null!!
-            |fun expectsInt(x: Int) {}
-            |fun bar(v: Int) {
-            |${(1..size).map { "    expectsInt(foo(v))" }.joinToString("\n")}
+            |fun <T : Comparable<T>> foo(x: MutableList<T>) {}
+            |fun <T> foo(x: MutableList<T>, y: (T, T) -> Int) {}
+            |fun bar(x: MutableList<Any>) {
+            |${(1..size).joinToString("\n") { "    foo(x) { a, b -> 1 }" }}
             |}
             """.trimMargin()
 }
