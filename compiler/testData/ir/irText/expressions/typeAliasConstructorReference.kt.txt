@@ -1,9 +1,21 @@
 val test1: Function1<Int, C>
-  field = ::C
+  field = KFunction1<@ParameterName(name = "x") Int, C>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: @ParameterName(name = "x") Int): C {
+      return C(x = p0)
+    }
+  )
+
   get
 
 val test2: Function1<Int, Nested>
-  field = ::Nested
+  field = KFunction1<@ParameterName(name = "x") Int, Nested>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: @ParameterName(name = "x") Int): Nested {
+      return Nested(x = p0)
+    }
+  )
+
   get
 
 class C {

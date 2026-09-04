@@ -20,19 +20,43 @@ fun regularAndDefaults(x1: String, x2: String = ""): Int {
 }
 
 fun testCtorStar() {
-  useKCallableStar(fn = ::C)
+  useKCallableStar(fn = KFunction1<@ParameterName(name = "x") String, C>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: @ParameterName(name = "x") String): C {
+      return C(x = p0)
+    }
+  )
+)
 }
 
 fun testDefaultsOnlyStar() {
-  useKCallableStar(fn = ::defaultsOnly)
+  useKCallableStar(fn = KFunction1<@ParameterName(name = "x") String, Int>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: @ParameterName(name = "x") String): Int {
+      return defaultsOnly(x = p0)
+    }
+  )
+)
 }
 
 fun testRegularAndDefaultsStar() {
-  useKCallableStar(fn = ::regularAndDefaults)
+  useKCallableStar(fn = KFunction2<@ParameterName(name = "x1") String, @ParameterName(name = "x2") String, Int>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: @ParameterName(name = "x1") String, p1: @ParameterName(name = "x2") String): Int {
+      return regularAndDefaults(x1 = p0, x2 = p1)
+    }
+  )
+)
 }
 
 fun testVarargsStar() {
-  useKCallableStar(fn = ::varargs)
+  useKCallableStar(fn = KFunction1<@ParameterName(name = "xs") Array<out String>, Int>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: @ParameterName(name = "xs") Array<out String>): Int {
+      return varargs(xs = [*p0])
+    }
+  )
+)
 }
 
 fun useKCallableStar(fn: KCallable<*>) {

@@ -2,8 +2,14 @@ FILE fqName:<root> fileName:/typeArguments.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function1<kotlin.Int, kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public final fun topLevel1 <T> (x: T of <root>.topLevel1): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.Int, kotlin.Unit> origin=null reflectionTarget=<same>
-          TYPE_ARG T: kotlin.Int
+        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.Int, kotlin.Unit> origin=null reflectionTarget='public final fun topLevel1 <T> (x: T of <root>.topLevel1): kotlin.Unit declared in <root>'
+          overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction1): R of kotlin.reflect.KFunction1 declared in kotlin.reflect.KFunction1
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:topLevel1 visibility:local modality:FINAL returnType:kotlin.Unit [inline]
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:@[ParameterName(name = "x")] kotlin.Int
+            BLOCK_BODY
+              CALL 'public final fun topLevel1 <T> (x: T of <root>.topLevel1): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                TYPE_ARG T: kotlin.Int
+                ARG x: GET_VAR 'p0: @[ParameterName(name = "x")] kotlin.Int declared in <root>.test1.topLevel1' type=@[ParameterName(name = "x")] kotlin.Int origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL returnType:kotlin.Function1<kotlin.Int, kotlin.Unit>
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -12,8 +18,14 @@ FILE fqName:<root> fileName:/typeArguments.kt
   PROPERTY name:test2 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function1<kotlin.collections.List<kotlin.String>, kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public final fun topLevel2 <T> (x: kotlin.collections.List<T of <root>.topLevel2>): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.collections.List<kotlin.String>, kotlin.Unit> origin=null reflectionTarget=<same>
-          TYPE_ARG T: kotlin.String
+        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.collections.List<kotlin.String>, kotlin.Unit> origin=null reflectionTarget='public final fun topLevel2 <T> (x: kotlin.collections.List<T of <root>.topLevel2>): kotlin.Unit declared in <root>'
+          overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction1): R of kotlin.reflect.KFunction1 declared in kotlin.reflect.KFunction1
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:topLevel2 visibility:local modality:FINAL returnType:kotlin.Unit [inline]
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:@[ParameterName(name = "x")] kotlin.collections.List<kotlin.String>
+            BLOCK_BODY
+              CALL 'public final fun topLevel2 <T> (x: kotlin.collections.List<T of <root>.topLevel2>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                TYPE_ARG T: kotlin.String
+                ARG x: GET_VAR 'p0: @[ParameterName(name = "x")] kotlin.collections.List<kotlin.String> declared in <root>.test2.topLevel2' type=@[ParameterName(name = "x")] kotlin.collections.List<kotlin.String> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL returnType:kotlin.Function1<kotlin.collections.List<kotlin.String>, kotlin.Unit>
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -22,9 +34,17 @@ FILE fqName:<root> fileName:/typeArguments.kt
   PROPERTY name:test3 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Function1<kotlin.Int, kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public final fun objectMember <T> (x: T of <root>.Host.objectMember): kotlin.Unit declared in <root>.Host' type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.Int, kotlin.Unit> origin=null reflectionTarget=<same>
-          TYPE_ARG T: kotlin.Int
-          ARG <this>: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
+        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.Int, kotlin.Unit> origin=null reflectionTarget='public final fun objectMember <T> (x: T of <root>.Host.objectMember): kotlin.Unit declared in <root>.Host'
+          overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction1): R of kotlin.reflect.KFunction1 declared in kotlin.reflect.KFunction1
+          bound receiver: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:objectMember visibility:local modality:FINAL returnType:kotlin.Unit [inline]
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Host
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:1 type:@[ParameterName(name = "x")] kotlin.Int
+            BLOCK_BODY
+              CALL 'public final fun objectMember <T> (x: T of <root>.Host.objectMember): kotlin.Unit declared in <root>.Host' type=kotlin.Unit origin=null
+                TYPE_ARG T: kotlin.Int
+                ARG <this>: GET_VAR 'receiver: <root>.Host declared in <root>.test3.objectMember' type=<root>.Host origin=ADAPTED_FUNCTION_REFERENCE
+                ARG x: GET_VAR 'p0: @[ParameterName(name = "x")] kotlin.Int declared in <root>.test3.objectMember' type=@[ParameterName(name = "x")] kotlin.Int origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL returnType:kotlin.Function1<kotlin.Int, kotlin.Unit>
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val]
       BLOCK_BODY

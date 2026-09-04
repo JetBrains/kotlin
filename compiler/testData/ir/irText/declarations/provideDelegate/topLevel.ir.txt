@@ -6,7 +6,8 @@ FILE fqName:<root> fileName:/topLevel.kt
           ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) declared in <root>.DelegateProvider' type=<root>.DelegateProvider origin=null
             ARG value: CONST String type=kotlin.String value="OK"
           ARG thisRef: CONST Null type=kotlin.Nothing? value=null
-          ARG property: PROPERTY_REFERENCE 'public final testTopLevel: kotlin.String declared in <root>' field=null getter='public final fun <get-testTopLevel> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+          ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final testTopLevel: kotlin.String declared in <root>'
+            getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:testTopLevel visibility:local modality:FINAL returnType:kotlin.String
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testTopLevel> visibility:public modality:FINAL returnType:kotlin.String
       correspondingProperty: PROPERTY name:testTopLevel visibility:public modality:FINAL [delegated,val]
       BLOCK_BODY
@@ -14,7 +15,8 @@ FILE fqName:<root> fileName:/topLevel.kt
           CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.Any?): kotlin.String declared in <root>.Delegate' type=kotlin.String origin=null
             ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:testTopLevel$delegate type:<root>.Delegate visibility:private [final,static] declared in <root>' type=<root>.Delegate origin=null
             ARG thisRef: CONST Null type=kotlin.Nothing? value=null
-            ARG property: PROPERTY_REFERENCE 'public final testTopLevel: kotlin.String declared in <root>' field=null getter='public final fun <get-testTopLevel> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final testTopLevel: kotlin.String declared in <root>'
+              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:testTopLevel visibility:local modality:FINAL returnType:kotlin.String
   CLASS CLASS name:Delegate modality:FINAL visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Delegate
     PROPERTY name:value visibility:public modality:FINAL [val]

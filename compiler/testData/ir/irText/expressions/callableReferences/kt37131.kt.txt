@@ -16,23 +16,23 @@ fun foo(x: String = ""): String {
 }
 
 fun testCtor(): Any {
-  return use(fn = { // BLOCK
-    local fun <init>(): C {
+  return use(fn = Function0<C>(
+    /* bound = */ [],
+    /* invoke = */    local fun(): C {
       return C()
     }
-
-    ::<init>
-  })
+  )
+)
 }
 
 fun testFn(): Any {
-  return use(fn = { // BLOCK
-    local fun foo(): String {
+  return use(fn = Function0<String>(
+    /* bound = */ [],
+    /* invoke = */    local fun(): String {
       return foo()
     }
-
-    ::foo
-  })
+  )
+)
 }
 
 fun use(fn: Function0<Any>): Any {

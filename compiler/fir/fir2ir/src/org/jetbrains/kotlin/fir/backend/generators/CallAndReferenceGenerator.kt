@@ -110,30 +110,16 @@ class CallAndReferenceGenerator(
                     declarationStorage.findSetterOfProperty(irPropertySymbol)
                 }
 
-                // TODO(KT-86453) drop else branch and always generate rich reference
-                return if (propertySymbol.hasContextParameters) {
-                    adapterGenerator.generateRichPropertyReference(
-                        callableReferenceAccess,
-                        type,
-                        explicitReceiverExpression,
-                        irPropertySymbol,
-                        referencedPropertyGetterSymbol,
-                        referencedPropertySetterSymbol,
-                        callableReferenceAccess.contextArguments.map { visitor.convertToIrExpression(it) },
-                        isForDelegate,
-                    )
-                } else {
-                    IrPropertyReferenceImpl(
-                        startOffset, endOffset, type, irPropertySymbol,
-                        typeArgumentsCount = callableReferenceAccess.toResolvedCallableSymbol()?.fir?.typeParameters?.size ?: 0,
-                        field = null,
-                        getter = referencedPropertyGetterSymbol,
-                        setter = referencedPropertySetterSymbol,
-                        origin = origin
-                    )
-                        .applyTypeArguments(callableReferenceAccess)
-                        .applyReceiversAndArguments(callableReferenceAccess, firSymbol, explicitReceiverExpression)
-                }
+                return adapterGenerator.generateRichPropertyReference(
+                    callableReferenceAccess,
+                    type,
+                    explicitReceiverExpression,
+                    irPropertySymbol,
+                    referencedPropertyGetterSymbol,
+                    referencedPropertySetterSymbol,
+                    callableReferenceAccess.contextArguments.map { visitor.convertToIrExpression(it) },
+                    isForDelegate,
+                )
             }
 
             fun convertReferenceToSyntheticProperty(propertySymbol: FirSimpleSyntheticPropertySymbol): IrExpression? {
@@ -193,43 +179,14 @@ class CallAndReferenceGenerator(
                 val irFunctionSymbol = functionSymbol.toSymbolForCall() as? IrFunctionSymbol ?: return null
 
                 require(type is IrSimpleType)
-                var function = callableReferenceAccess.calleeReference.toResolvedFunctionSymbol()!!.fir
-                if (function is FirConstructor) {
-                    // The number of type parameters of typealias constructor may mismatch with that number in the original constructor.
-                    // And for IR, we need to use the original constructor as a source of truth
-                    function = function.typeAliasConstructorInfo?.originalConstructor ?: function
-                }
 
-                // TODO(KT-86453) drop else branches and always generate rich reference
-                return if (callableReferenceAccess.contextArguments.isNotEmpty()) {
-                    adapterGenerator.generateRichFunctionReference(
-                        callableReferenceAccess,
-                        type,
-                        explicitReceiverExpression,
-                        irFunctionSymbol,
-                        callableReferenceAccess.contextArguments.map { visitor.convertToIrExpression(it) }
-                    )
-                } else if (adapterGenerator.needToGenerateAdaptedCallableReference(callableReferenceAccess, type, function)) {
-                    // Receivers are being applied inside
-                    adapterGenerator.generateAdaptedCallableReference(
-                        callableReferenceAccess,
-                        explicitReceiverExpression,
-                        irFunctionSymbol,
-                        type
-                    )
-                } else {
-                    IrFunctionReferenceImplWithShape(
-                        startOffset, endOffset, type, irFunctionSymbol,
-                        typeArgumentsCount = function.typeParameters.size,
-                        valueArgumentsCount = function.valueParameters.size + function.contextParameters.size,
-                        contextParameterCount = function.contextParameters.size,
-                        hasDispatchReceiver = function.dispatchReceiverType != null,
-                        hasExtensionReceiver = function.isInstanceExtension,
-                        reflectionTarget = irFunctionSymbol
-                    )
-                        .applyTypeArguments(callableReferenceAccess)
-                        .applyReceiversAndArguments(callableReferenceAccess, firSymbol, explicitReceiverExpression)
-                }
+                return adapterGenerator.generateRichFunctionReference(
+                    callableReferenceAccess,
+                    type,
+                    explicitReceiverExpression,
+                    irFunctionSymbol,
+                    callableReferenceAccess.contextArguments.map { visitor.convertToIrExpression(it) }
+                )
             }
 
             when (firSymbol) {

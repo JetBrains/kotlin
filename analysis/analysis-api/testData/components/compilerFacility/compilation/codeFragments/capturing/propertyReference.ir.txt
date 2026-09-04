@@ -9,5 +9,11 @@ MODULE_FRAGMENT
         VALUE_PARAMETER kind:Regular name:p0 index:0 type:<root>.Clazz
         EXPRESSION_BODY
           BLOCK type=kotlin.reflect.KProperty0<kotlin.String> origin=null
-            PROPERTY_REFERENCE 'private final lateinitStr: kotlin.String [lateinit,var] declared in <root>.Clazz' field=null getter='private final fun <get-lateinitStr> (): kotlin.String declared in <root>.Clazz' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=null
-              ARG 1: GET_VAR 'p0: <root>.Clazz declared in <root>.CodeFragment.run' type=<root>.Clazz origin=null
+            RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty0<kotlin.String> origin=null reflectionTarget='private final lateinitStr: kotlin.String [lateinit,var] declared in <root>.Clazz'
+              bound receiver: GET_VAR 'p0: <root>.Clazz declared in <root>.CodeFragment.run' type=<root>.Clazz origin=null
+              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:lateinitStr visibility:local modality:FINAL returnType:kotlin.String
+                VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Clazz
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun lateinitStr (receiver: <root>.Clazz): kotlin.String declared in <root>.CodeFragment.run'
+                    CALL 'private final fun <get-lateinitStr> (): kotlin.String declared in <root>.Clazz' type=kotlin.String origin=null
+                      ARG <this>: GET_VAR 'receiver: <root>.Clazz declared in <root>.CodeFragment.run.lateinitStr' type=<root>.Clazz origin=ADAPTED_FUNCTION_REFERENCE
