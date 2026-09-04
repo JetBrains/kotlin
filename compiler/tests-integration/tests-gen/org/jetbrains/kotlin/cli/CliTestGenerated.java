@@ -485,12 +485,6 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
-    @TestMetadata("inapplicableLateinitModifier.args")
-    public void testInapplicableLateinitModifier() {
-      run("inapplicableLateinitModifier.args");
-    }
-
-    @Test
     @TestMetadata("inlineCycle.args")
     public void testInlineCycle() {
       run("inlineCycle.args");

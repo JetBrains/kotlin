@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// RENDER_DIAGNOSTICS_FULL_TEXT
 object Delegate {
     operator fun getValue(instance: Any?, property: Any) : String = ""
     operator fun setValue(instance: Any?, property: Any, value: String) {}
@@ -30,6 +31,24 @@ class B<T> {
 class C<K : Any> {
     lateinit var pest: K
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var vest: K?
+}
+
+abstract class Abstract {
+    abstract <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var foo: String
+}
+
+open class Base {
+    open lateinit var foo: String
+    open lateinit var bar: String
+    open var baz: String
+        get() = ""
+        set(value) {}
+}
+
+class Derived : Base() {
+    override lateinit var foo: String
+    override var bar: String = ""
+    override lateinit var baz: String
 }
 
 fun rest() {
