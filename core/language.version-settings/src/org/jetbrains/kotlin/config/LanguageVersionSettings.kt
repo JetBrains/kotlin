@@ -516,7 +516,6 @@ enum class LanguageFeature(
 
     // 2.5
 
-    ErrorAboutDataClassCopyVisibilityChange(KOTLIN_2_5, enabledInProgressiveMode = true, "KT-11914"), // KT-11914. Deprecation phase 2
     KlibAnnotationsInMetadata(sinceVersion = KOTLIN_2_5, "KT-81466"),
     ReportDeprecationsOfClassifiersInImplicitInvokes(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KT-82456"),
     ForbidArrayOfNothingInLhsOfClassLiteral(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KT-84589"),
@@ -648,6 +647,7 @@ enum class LanguageFeature(
     DeprecateNameMismatchInShortDestructuringWithParentheses(sinceVersion = null, issue = "KT-19627", enabledInLatestLVTests = true),
     EnableNameBasedDestructuringShortForm(sinceVersion = null, issue = "KT-19627", enabledInLatestLVTests = true),
     LocalTypeAliases(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-81404", enabledInLatestLVTests = false),
+    ErrorAboutDataClassCopyVisibilityChange(sinceVersion = null, enabledInProgressiveMode = true, issue = "KT-11914", enabledInLatestLVTests = false), // Was postponed in KT-89123
 
     // We don't want to turn it on by default (so to show an error instead of a warning) until there will be a possibility to export declarations from libraries
     JsExposedNotExportedSuperInterfaceApiByExportedOne(sinceVersion = null, issue = "KT-83009", enabledInLatestLVTests = false),
