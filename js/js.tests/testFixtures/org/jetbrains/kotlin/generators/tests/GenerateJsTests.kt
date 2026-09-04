@@ -149,6 +149,9 @@ fun main(args: Array<String>) {
 
             testClass<AbstractJsCodegenBoxTest> {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+            }
+
+            testClass<AbstractJsCodegenBoxInlineTest> {
                 model("boxInline")
             }
 

@@ -119,8 +119,18 @@ abstract class AbstractJsCodegenBoxTestBase(
 }
 
 abstract class AbstractJsCodegenBoxTest : AbstractJsCodegenBoxTestBase(
-    pathToTestDir = "compiler/testData/codegen/",
+    pathToTestDir = "compiler/testData/codegen/box",
     testGroupOutputDirPrefix = "codegen/box/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureLoweredIrDumpHandlers()
+    }
+}
+
+abstract class AbstractJsCodegenBoxInlineTest : AbstractJsCodegenBoxTestBase(
+    pathToTestDir = "compiler/testData/codegen/boxInline",
+    testGroupOutputDirPrefix = "codegen/boxInline/"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
