@@ -17,7 +17,8 @@ fun main(args: Array<String>) {
             testClass<AbstractIncrementalJvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
                     folderToExcludePatternMap = mapOf(
-                        PURE_KOTLIN to ExcludePattern.forK2
+                        PURE_KOTLIN to ExcludePattern.forK2,
+                        ALL to ExcludePattern.JPS_ONLY
                     )
                 )
             )
@@ -26,14 +27,17 @@ fun main(args: Array<String>) {
                 init = incrementalJvmTestData(
                     folderToExcludePatternMap = mapOf(
                         PURE_KOTLIN to ExcludePattern.forK2,
-                        WITH_JAVA to "^classToPackageFacade" // KT-56698
+                        WITH_JAVA to "^classToPackageFacade", // KT-56698
+                        CLASS_HIERARCHY_AFFECTED to "^supertypesListChanged",
+                        ALL to ExcludePattern.JPS_ONLY
                     )
                 )
             )
             testClass<AbstractIncrementalPsiJvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
                     folderToExcludePatternMap = mapOf(
-                        PURE_KOTLIN to ExcludePattern.forK2
+                        PURE_KOTLIN to ExcludePattern.forK2,
+                        ALL to ExcludePattern.JPS_ONLY
                     )
                 )
             )
@@ -48,13 +52,19 @@ fun main(args: Array<String>) {
                 modelForDirectoryBasedTest(
                     "incremental", "pureKotlin", extension = null, recursive = false,
                     // TODO: 'fileWithConstantRemoved' should be fixed in https://youtrack.jetbrains.com/issue/KT-58824
-                    excludedPattern = "^(sealed.*|fileWithConstantRemoved|propertyRedeclaration|funRedeclaration|funVsConstructorOverloadConflict)"
+                    excludedPattern = listOf(
+                        "^(sealed.*|fileWithConstantRemoved|propertyRedeclaration|funRedeclaration|funVsConstructorOverloadConflict)",
+                        ExcludePattern.JPS_ONLY,
+                    ).joinToString("|")
                 )
                 modelForDirectoryBasedTest(
                     "incremental", "classHierarchyAffected", extension = null, recursive = false,
-                    excludedPattern = "secondaryConstructorAdded"
+                    excludedPattern = listOf("secondaryConstructorAdded", ExcludePattern.JPS_ONLY).joinToString("|")
                 )
-                modelForDirectoryBasedTest("incremental", "js", extension = null, excludeParentDirs = true)
+                modelForDirectoryBasedTest(
+                    "incremental", "js", extension = null, excludeParentDirs = true,
+                    excludedPattern = ExcludePattern.JPS_ONLY
+                )
             }
             //TODO: write a proper k2 multiplatform test runner KT-63183
         }
@@ -130,6 +140,17 @@ private object ExcludePattern {
     private const val MEMBER_ALIAS = "(^removeMemberTypeAlias)|(^addMemberTypeAlias)"
 
     private const val ALL_EXPECT = "(^.*Expect.*)"
+
+    val JPS_ONLY = listOf(
+        "(^multifileClassFileMovedToAnotherMultifileClass$)",
+        "(^addNullableAnnotation$)",
+        "(^changeTypeWithHierarchyDependency$)",
+        "(^changeTopLevelTypeAlias$)",
+        "(^renameFileWithFunctionOverloadAndCreateConflict$)",
+        "(^unwrapJvmFieldInJvmNameFromObject$)",
+        "(^changeTypealiasTypeWithHierarchy$)",
+        "(^changeMethodToPropertyInInheritance$)"
+    ).joinToString("|")
 
     val forK2 = listOf(
         ALL_EXPECT, // KT-63125 - Partially related to single-module expect-actual tests, but regexp is really wide
