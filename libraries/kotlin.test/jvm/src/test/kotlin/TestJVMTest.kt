@@ -65,8 +65,8 @@ class TestJVMTest {
         expectAssertion({ msg -> assertNotNull(msg) }, { assertTrue(false) })
         expectAssertion({ msg -> assertNotNull(msg) }, { assertTrue { false } })
         expectAssertion({ msg -> assertNotNull(msg) }, { assertTrue(null) { false } })
-        expectAssertion({ msg -> msg!!.contains(message) }, { assertTrue(false, message) })
-        expectAssertion({ msg -> msg!!.contains(message) }, { assertTrue(message) { false } })
+        expectAssertion({ msg -> assertTrue(msg!!.contains(message)) }, { assertTrue(false, message) })
+        expectAssertion({ msg -> assertTrue(msg!!.contains(message)) }, { assertTrue(message) { false } })
     }
 
     @Test

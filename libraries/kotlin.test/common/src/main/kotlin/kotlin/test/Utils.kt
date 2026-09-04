@@ -11,6 +11,7 @@ internal fun messagePrefix(message: String?) = if (message == null) "" else "$me
 internal expect fun lookupAsserter(): Asserter
 
 @PublishedApi // required to get stable name as it's called from box tests
+@IgnorableReturnValue
 internal fun overrideAsserter(value: Asserter?): Asserter? = _asserter.also { _asserter = value }
 
 internal fun formatResultMessage(value: Any?) = when (value) {
