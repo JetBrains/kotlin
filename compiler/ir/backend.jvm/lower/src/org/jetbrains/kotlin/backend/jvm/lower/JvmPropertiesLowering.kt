@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.getRequiresMangling
 import org.jetbrains.kotlin.backend.jvm.hasMangledReturnType
 import org.jetbrains.kotlin.backend.jvm.ir.needsAccessor
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
@@ -218,19 +217,14 @@ internal class JvmPropertiesLowering(
             )
 
         private fun JvmBackendContext.computeSyntheticMethodName(property: IrProperty, suffix: String): String {
-            val baseName =
-                if (config.languageVersionSettings.supportsFeature(LanguageFeature.UseGetterNameForPropertyAnnotationsMethodOnJvm)) {
-                    val getter = property.getter
-                    if (getter != null) {
-                        val needsMangling =
-                            getter.nonDispatchParameters.any { it.type.getRequiresMangling() } ||
-                                    (config.functionsWithInlineClassReturnTypesMangled && getter.hasMangledReturnType)
-                        val mangled = if (needsMangling) inlineClassReplacements.getReplacementFunction(getter) else null
-                        defaultMethodSignatureMapper.mapFunctionName(mangled ?: getter)
-                    } else JvmAbi.getterName(property.name.asString())
-                } else {
-                    property.name.asString()
-                }
+            val getter = property.getter
+            val baseName = if (getter != null) {
+                val needsMangling =
+                    getter.nonDispatchParameters.any { it.type.getRequiresMangling() } ||
+                            (config.functionsWithInlineClassReturnTypesMangled && getter.hasMangledReturnType)
+                val mangled = if (needsMangling) inlineClassReplacements.getReplacementFunction(getter) else null
+                defaultMethodSignatureMapper.mapFunctionName(mangled ?: getter)
+            } else JvmAbi.getterName(property.name.asString())
             return baseName + suffix
         }
     }
