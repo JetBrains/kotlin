@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.wasm.test.handlers
 
 import org.jetbrains.kotlin.test.TestInfrastructureException
+import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.wasm.test.blackbox.WasmWasiGroupedTestsExportedEntryPointGenerator
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -55,6 +56,21 @@ class WasiLauncherScriptTest {
 
         assertTrue("jsModule.startUnitTests();" in script, script)
         assertFalse("startTest" in script, script)
+    }
+
+    @Test
+    fun `given a DCE size mismatch then the size failure is returned`(@TempDir dir: File) {
+        dir.resolve("index.wasm").writeBytes(ByteArray(100))
+
+        val failures = checkExpectedOutputSize(
+            mode = "dce",
+            debugMode = DebugMode.NONE,
+            testFileText = "// WASM_DCE_EXPECTED_OUTPUT_SIZE: wasm 1",
+            outputDir = dir,
+        )
+
+        assertEquals(1, failures.size)
+        assertTrue("expected" in failures.single().message.orEmpty(), failures.single().message.orEmpty())
     }
 
     @Test

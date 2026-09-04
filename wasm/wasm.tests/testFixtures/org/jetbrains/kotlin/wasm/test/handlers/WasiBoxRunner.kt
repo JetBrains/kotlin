@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.WasmCompilationSet
 import org.jetbrains.kotlin.test.model.WasmCompilationSetsBinaryArtifact
 import org.jetbrains.kotlin.test.model.WasmFolderBinaryArtifact
 import org.jetbrains.kotlin.test.services.TestServices
@@ -359,11 +360,11 @@ class WasiBoxRunner(
 
         val testWasi = if (debugMode >= DebugMode.DEBUG) testWasiVerbose else testWasiQuiet
 
-        fun writeToFilesAndRunTest(mode: String, res: WasmCompilerResult): List<Throwable> {
+        fun writeToFilesAndRunTest(mode: String, set: WasmCompilationSet): List<Throwable> {
             val dir = File(outputDirBase, mode)
             dir.mkdirs()
 
-            res.writeTo(dir, WASM_BASE_FILE_NAME, debugMode)
+            set.compilerResult.writeTo(dir, WASM_BASE_FILE_NAME, debugMode)
 
             if (callGroupedTestsDriver) assertDriverOwnsStartTestExport(dir)
 
@@ -374,7 +375,6 @@ class WasiBoxRunner(
                 println(" ------ $mode Test file://${dir.absolutePath}/test.mjs")
             }
 
-            val testFileText = originalFile.readText()
             val useNewExceptionProposal = testServices.useNewExceptionHandling(WasmTarget.WASI)
 
             val exceptions = vmsToCheck.mapNotNull { vm ->
@@ -390,22 +390,19 @@ class WasiBoxRunner(
                 )
             }
 
-            // TODO KT-71504: support size tests for WASI target and ignoring utility files
-            val filesToIgnoreInSizeChecks = emptySet<File>()
-            when (mode) {
-                "dce" -> checkExpectedDceOutputSize(debugMode, testFileText, dir, filesToIgnoreInSizeChecks)
-                "optimized" -> checkExpectedOptimizedOutputSize(debugMode, testFileText, dir, filesToIgnoreInSizeChecks)
-            }
+            // TODO KT-71504: support ignoring utility files for WASI target size tests
+            // The `WASM_*_EXPECTED_OUTPUT_SIZE` expectations of a test describe its wasm-js artifacts;
+            // WASI has no expectations of its own yet, so its sizes are not checked.
+            // TODO: support size tests for the WASI target.
             return exceptions
         }
 
-        val allExceptions = mutableListOf<Throwable>()
-        allExceptions += writeToFilesAndRunTest("dev", artifacts.compilation.compilerResult)
-        artifacts.dceCompilation?.let {
-            allExceptions += writeToFilesAndRunTest("dce", it.compilerResult)
-        }
-        artifacts.optimisedCompilation?.let {
-            allExceptions += writeToFilesAndRunTest("optimized", it.compilerResult)
+        val allExceptions = wasmCompilationModes(
+            compilation = artifacts.compilation,
+            dceCompilation = artifacts.dceCompilation,
+            optimisedCompilation = artifacts.optimisedCompilation,
+        ).flatMap { mode ->
+            writeToFilesAndRunTest(mode.directoryName, mode.compilation)
         }
 
         if (throwOnExceptions) {

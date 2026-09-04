@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
@@ -282,6 +283,19 @@ fun checkExpectedOptimizedOutputSize(debugMode: DebugMode, testFileContent: Stri
         ?.toInt() ?: return emptyList()
 
     return assertExpectedSizesMatchActual(debugMode, testDir, listOf("wasm" to expectedOptimizeSizes), filesToIgnore)
+}
+
+fun checkExpectedOutputSize(
+    mode: String,
+    debugMode: DebugMode,
+    testFileText: String,
+    outputDir: File,
+    filesToIgnoreInSizeChecks: Set<File> = emptySet(),
+): List<Throwable> = when (mode) {
+    "dce" -> checkExpectedDceOutputSize(debugMode, testFileText, outputDir, filesToIgnoreInSizeChecks)
+    "optimized" -> checkExpectedOptimizedOutputSize(debugMode, testFileText, outputDir, filesToIgnoreInSizeChecks)
+    "dev" -> emptyList()
+    else -> testInfraError("Unknown mode: $mode")
 }
 
 private fun assertExpectedSizesMatchActual(
