@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.wasm.test
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -14,6 +13,15 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import java.io.File
 
+/**
+ * Attaches `wasiBoxTestRun.kt` — the `runBoxTest`/`startTest` glue an isolated WASI box run is driven through — to
+ * every module with a `box()`.
+ *
+ * Unconditionally, batched tests included, and that must stay so: this provider runs at file-generation time, while
+ * whether a test's KLIB ends up as the `-Xinclude` main module (needing the glue) is only decided at the grouping
+ * stage, and a non-isolated test that merely ends up alone in its batch does need it. The `startTest` export the glue
+ * carries does not collide with the grouped driver's own, see `WasmWasiGroupedTestsExportedEntryPointGenerator`.
+ */
 class WasmWasiBoxTestHelperSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     override fun produceAdditionalFiles(
         globalDirectives: RegisteredDirectives,

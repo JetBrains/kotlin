@@ -97,6 +97,8 @@ internal sealed class WasmVM(
             tool.run(
                 *toolArgs.toTypedArray(),
                 entryFile,
+                // Either the grouped result-collecting driver or `wasiBoxTestRun.kt`'s box glue, never both — see
+                // `assertDriverOwnsStartTestExport`.
                 "startTest",
                 workingDirectory = workingDirectory,
             )

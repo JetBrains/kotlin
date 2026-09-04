@@ -68,7 +68,12 @@ open class WasmCompilationSetsGroupingStageBoxRunner(
             "Unexpected artifact type: ${artifact::class}"
         }
         return if (isWasiTarget) {
-            wasiBoxRunner.runWasmCode(artifact, useUnitTestRunnerOnly, outputCollector, throwOnExceptions = false)
+            wasiBoxRunner.runWasmCode(
+                artifact,
+                useUnitTestRunnerOnly,
+                outputCollector,
+                throwOnExceptions = false,
+            )
         } else {
             wasmBoxRunner.runWasmCode(artifact, useUnitTestRunnerOnly, outputCollector, throwOnExceptions = false)
         }
