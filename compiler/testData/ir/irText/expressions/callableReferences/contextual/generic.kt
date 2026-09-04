@@ -1,6 +1,4 @@
 // LANGUAGE: +ContextParameters +CallableReferencesToContextual
-// IGNORE_BACKEND: JVM_IR
-// ^KT-86452
 import kotlin.reflect.*
 
 context(t: A)

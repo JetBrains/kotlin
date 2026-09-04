@@ -59,6 +59,10 @@ internal class PropertyReferenceDelegationLowering(val context: JvmBackendContex
     }
 }
 
+// For now, the lowering does nothing with contextual references
+private val IrRichPropertyReference.isContextual: Boolean
+    get() = contextParametersCount > 0
+
 private class PropertyReferenceDelegationTransformer(val context: JvmBackendContext) : IrElementTransformerVoid() {
 
     // A stable bound receiver doesn't need to be stored in a field and can be reevaluated every time an accessor is called.
@@ -183,9 +187,9 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
     }
 
     private fun IrProperty.transform(): List<IrDeclaration>? {
-        val delegate = getRichPropertyReferenceForOptimizableDelegatedProperty() ?: return null
+        val delegate = getRichPropertyReferenceForOptimizableDelegatedProperty()?.takeUnless { it.isContextual } ?: return null
         val oldField = backingField ?: return null
-        val boundValueOrNull = delegate.singleBoundValueOrNull?.transform(this@PropertyReferenceDelegationTransformer, null)
+        val boundValueOrNull = delegate.boundValues.singleOrNull()?.transform(this@PropertyReferenceDelegationTransformer, null)
         backingField = boundValueOrNull?.takeIf { !it.canInline(parents.toSet()) }?.let {
             context.irFactory.buildField {
                 updateFrom(oldField)
@@ -266,10 +270,11 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
         val delegate = declaration.delegate
         val delegateInitializer = delegate?.initializer
         if (delegateInitializer !is IrRichPropertyReference ||
+            delegateInitializer.isContextual ||
             !declaration.getter.returnsResultOfStdlibCall ||
             declaration.setter?.returnsResultOfStdlibCall == false
         ) return super.visitLocalDelegatedProperty(declaration)
-        val receiver = delegateInitializer.singleBoundValueOrNull?.let { receiver ->
+        val receiver = delegateInitializer.boundValues.singleOrNull()?.let { receiver ->
             with(delegate) {
                 buildVariable(parent, startOffset, endOffset, origin, name, receiver.type)
             }.apply {

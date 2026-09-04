@@ -395,29 +395,51 @@ class JvmSymbols(
     val functionReferenceImpl: IrClassSymbol =
         createClass(FqName("kotlin.jvm.internal.FunctionReferenceImpl"), classModality = Modality.OPEN) { klass ->
             klass.superTypes = listOf(functionReference.defaultType)
-            klass.generateCallableReferenceSuperclassConstructors(withArity = true)
+            klass.addFunctionReferenceSuperclassMembers()
         }
 
     val adaptedFunctionReference: IrClassSymbol =
         createClass(FqName("kotlin.jvm.internal.AdaptedFunctionReference"), classModality = Modality.OPEN) { klass ->
             klass.superTypes = listOf(irBuiltIns.anyType)
-            klass.generateCallableReferenceSuperclassConstructors(withArity = true)
+            klass.addFunctionReferenceSuperclassMembers()
         }
 
-    private fun IrClass.generateCallableReferenceSuperclassConstructors(withArity: Boolean) {
-        for (hasBoundReceiver in listOf(false, true)) {
-            addConstructor().apply {
-                if (withArity) {
-                    addValueParameter("arity", irBuiltIns.intType)
-                }
-                if (hasBoundReceiver) {
-                    addValueParameter("receiver", irBuiltIns.anyNType)
-                }
-                addValueParameter("owner", javaLangClass.starProjectedType)
-                addValueParameter("name", irBuiltIns.stringType)
-                addValueParameter("signature", irBuiltIns.stringType)
-                addValueParameter("flags", irBuiltIns.intType)
+    private fun IrClass.addFunctionReferenceSuperclassMembers() {
+        addBoundContextArgumentsField()
+        for (withContextArguments in listOf(false, true)) {
+            for (withReceiver in listOf(false, true)) {
+                addCallableReferenceConstructor(withArity = true, withContextArguments = withContextArguments, withReceiver = withReceiver)
             }
+        }
+    }
+
+    private fun IrClass.addBoundContextArgumentsField() {
+        addField {
+            name = BOUND_CONTEXT_ARGUMENTS_FIELD_NAME
+            type = irBuiltIns.arrayClass.typeWith(irBuiltIns.anyNType)
+            visibility = DescriptorVisibilities.PROTECTED
+        }
+    }
+
+    private fun IrClass.addCallableReferenceConstructor(
+        withArity: Boolean,
+        withContextArguments: Boolean,
+        withReceiver: Boolean,
+    ) {
+        addConstructor().apply {
+            if (withArity) {
+                addValueParameter("arity", irBuiltIns.intType)
+            }
+            if (withContextArguments) {
+                addValueParameter(CONTEXT_ARGUMENTS_PARAMETER_NAME, irBuiltIns.arrayClass.typeWith(irBuiltIns.anyNType))
+            }
+            if (withReceiver) {
+                addValueParameter(RECEIVER_PARAMETER_NAME, irBuiltIns.anyNType)
+            }
+            addValueParameter("owner", javaLangClass.starProjectedType)
+            addValueParameter("name", irBuiltIns.stringType)
+            addValueParameter("signature", irBuiltIns.stringType)
+            addValueParameter("flags", irBuiltIns.intType)
         }
     }
 
@@ -513,7 +535,15 @@ class JvmSymbols(
                 classModality = if (impl) Modality.FINAL else Modality.ABSTRACT
             ) { klass ->
                 if (impl) {
-                    klass.generateCallableReferenceSuperclassConstructors(withArity = false)
+                    klass.addBoundContextArgumentsField()
+                    klass.addCallableReferenceConstructor(withArity = false, withContextArguments = false, withReceiver = false)
+                    if (parameterCount <= 1) {
+                        klass.addCallableReferenceConstructor(withArity = false, withContextArguments = false, withReceiver = true)
+                        klass.addCallableReferenceConstructor(withArity = false, withContextArguments = true, withReceiver = false)
+                    }
+                    if (parameterCount == 0) {
+                        klass.addCallableReferenceConstructor(withArity = false, withContextArguments = true, withReceiver = true)
+                    }
 
                     klass.superTypes += getPropertyReferenceClass(mutable, parameterCount, false).defaultType
                 } else {
@@ -1153,6 +1183,12 @@ class JvmSymbols(
     companion object {
         const val INTRINSICS_CLASS_NAME = "kotlin/jvm/internal/Intrinsics"
 
+        val CONTEXT_ARGUMENTS_PARAMETER_NAME: Name = Name.identifier("contextArguments")
+
+        val RECEIVER_PARAMETER_NAME: Name = Name.identifier("receiver")
+
+        val BOUND_CONTEXT_ARGUMENTS_FIELD_NAME: Name = Name.identifier("boundContextArguments")
+
         val FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME: FqName =
             StandardClassIds.Annotations.FlexibleNullability.asSingleFqName()
 
@@ -1166,6 +1202,17 @@ class JvmSymbols(
             StandardClassIds.Annotations.FlexibleArrayElementVariance.asSingleFqName()
     }
 }
+
+/**
+ * Selects the constructor of a callable reference superclass ([JvmSymbols.functionReferenceImpl],
+ * [JvmSymbols.adaptedFunctionReference], or a `(Mutable)PropertyReferenceNImpl` class) matching the given reference shape:
+ * `[arity,] [contextArguments,] [receiver,] owner, name, signature, flags`.
+ */
+fun IrClass.callableReferenceSuperConstructor(hasBoundContextArguments: Boolean, hasBoundReceiver: Boolean): IrConstructor =
+    constructors.single { constructor ->
+        constructor.parameters.any { it.name == JvmSymbols.CONTEXT_ARGUMENTS_PARAMETER_NAME } == hasBoundContextArguments &&
+                constructor.parameters.any { it.name == JvmSymbols.RECEIVER_PARAMETER_NAME } == hasBoundReceiver
+    }
 
 fun IrClassSymbol.functionByName(name: String): IrSimpleFunctionSymbol =
     functions.single { it.owner.name.asString() == name }

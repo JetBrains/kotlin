@@ -126,12 +126,11 @@ class SingletonObjectJvmStaticTransformer(
         expression.transformChildrenVoid(this)
         val property = expression.reflectionTargetSymbol?.owner
         if (property is IrDeclaration && property.isJvmStaticInObject()) {
-            val bound = expression.singleBoundValueOrNull ?: return expression
+            val boundReceiver = expression.boundReceiverOrNull ?: return expression
             val objectClass = property.parentAsClass
             val objectValue = IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, objectClass.defaultType, objectClass.symbol)
-            expression.boundValues.clear()
-            expression.boundValues += objectValue
-            return expression.addEvaluationOfArgIfSideEffects(bound, irBuiltIns)
+            expression.boundValues[expression.boundValues.lastIndex] = objectValue
+            return expression.addEvaluationOfArgIfSideEffects(boundReceiver, irBuiltIns)
         }
         return expression
     }

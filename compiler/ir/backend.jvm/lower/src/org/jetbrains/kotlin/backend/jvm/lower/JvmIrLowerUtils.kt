@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
+import org.jetbrains.kotlin.backend.jvm.ir.irArrayOf
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -21,6 +23,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
 import org.jetbrains.kotlin.ir.util.isSuspendFunctionOrKFunction
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.util.shallowCopyOrNull
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.org.objectweb.asm.Handle
@@ -50,6 +54,36 @@ fun IrProperty.getRichPropertyReferenceForOptimizableDelegatedProperty(): IrRich
     ) return null
 
     return delegate
+}
+
+internal val IrRichPropertyReference.contextParametersCount: Int
+    get() {
+        val getter = when (val target = reflectionTargetSymbol?.owner) {
+            is IrProperty -> target.getter?.let { it.resolveFakeOverride() ?: it } ?: return 0
+            is IrLocalDelegatedProperty -> target.getter
+            else -> error("Unexpected reflection target of a property reference: ${target?.render()}")
+        }
+        return getter.parameters.count { it.kind == IrParameterKind.Context }
+    }
+
+// If the receiver is bound, then everything is bound
+internal val IrRichPropertyReference.hasBoundReceiver: Boolean
+    get() = boundValues.size > contextParametersCount
+
+internal val IrRichPropertyReference.boundReceiverOrNull: IrExpression?
+    get() = if (hasBoundReceiver) boundValues.last() else null
+
+internal fun JvmIrBuilder.packBoundValues(
+    values: List<IrExpression>,
+    contextArgumentCount: Int,
+    hasReceiver: Boolean,
+): List<IrExpression> = buildList {
+    if (contextArgumentCount > 0) {
+        add(irArrayOf(backendContext.symbols.arrayOfAnyNType, values.take(contextArgumentCount)))
+    }
+    if (hasReceiver) {
+        add(values[contextArgumentCount])
+    }
 }
 
 fun IrProperty.getSingletonOrConstantForOptimizableDelegatedProperty(): IrExpression? {
@@ -88,13 +122,6 @@ internal fun JvmIrBuilder.jvmMethodHandle(handle: Handle): IrCall =
         arguments[2] = irString(handle.name)
         arguments[3] = irString(handle.desc)
         arguments[4] = irBoolean(handle.isInterface)
-    }
-
-internal val IrRichPropertyReference.singleBoundValueOrNull: IrExpression?
-    get() = when (boundValues.size) {
-        0 -> return null
-        1 -> boundValues.first()
-        else -> error("Property reference can not have more than one bound value, but got: ${boundValues.size}")
     }
 
 internal fun IrRichFunctionReference.isSamConversion(): Boolean =
