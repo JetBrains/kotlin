@@ -11,5 +11,4 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 internal class JvmUpgradeCallableReferences(context: JvmBackendContext) : UpgradeCallableReferences(
     context = context,
     upgradeSamConversions = true,
-    castDispatchReceiver = false,
 )
