@@ -7,25 +7,29 @@ package test.utils
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class BooleanTest {
     @Test
     fun onTrueIfTrue() {
         var value = 0
-        true.onTrue {
+        val result = true.onTrue {
             ++value
         }
         assertEquals(1, value)
+        assertTrue(result)
     }
 
     @Test
     fun onTrueIfFalse() {
         var value = 0
-        false.onTrue {
+        val result = false.onTrue {
             ++value
         }
         assertEquals(0, value)
+        assertFalse(result)
     }
 
     @Test
@@ -41,19 +45,21 @@ class BooleanTest {
     @Test
     fun onFalseIfTrue() {
         var value = 0
-        true.onFalse {
+        val result = true.onFalse {
             ++value
         }
         assertEquals(0, value)
+        assertTrue(result)
     }
 
     @Test
     fun onFalseIfFalse() {
         var value = 0
-        false.onFalse {
+        val result = false.onFalse {
             ++value
         }
         assertEquals(1, value)
+        assertFalse(result)
     }
 
     @Test
