@@ -32,6 +32,9 @@ import org.junit.jupiter.api.BeforeEach
 abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
     @BeforeEach
     open fun setUp() {
+        check(KotlinBuilder.useDependencyGraph) {
+            "JPS tests must be run with -Djps.use.dependency.graph=true, see jps/jps-plugin/build.gradle.kts"
+        }
         System.setProperty("kotlin.jps.tests", "true")
     }
 
