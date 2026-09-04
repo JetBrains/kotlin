@@ -23,10 +23,21 @@ import java.lang.Short as JavaLangShort
 /**
  * Returns a Java [Class] instance corresponding to the given [KClass] instance.
  */
-@Suppress("UPPER_BOUND_VIOLATED")
-public val <T> KClass<T>.java: Class<T>
+@SinceKotlin("2.5")
+public val <T> KClass<T & Any>.java: Class<T>
     @JvmName("getJavaClass")
     get() = (this as ClassBasedDeclarationContainer).jClass as Class<T>
+
+/**
+ * Returns a Java [Class] instance corresponding to the given [KClass] instance.
+ */
+@Suppress("UPPER_BOUND_VIOLATED")
+@DeprecatedSinceKotlin(warningSince = "2.5", errorSince = "2.5", hiddenSince = "2.5")
+@Deprecated("Kept to generate compatible bytecode when targeting language versions below 2.5")
+@InlineOnly
+public inline val <T> KClass<T>.java: Class<T>
+    @JvmName("getJavaClassDeprecated")
+    get() = (this as KClass<T & Any>).java as Class<T>
 
 /**
  * Returns a Java [Class] instance representing the primitive type corresponding to the given [KClass] if it exists.

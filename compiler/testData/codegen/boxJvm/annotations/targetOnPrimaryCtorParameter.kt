@@ -3,6 +3,7 @@
 // TARGET_BACKEND: JVM_IR
 // FIR_DUMP
 // DUMP_IR
+// LANGUAGE: +DnnTypeForUnboundedReifiedTypeParameters
 
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.annotation.AnnotationTarget.*

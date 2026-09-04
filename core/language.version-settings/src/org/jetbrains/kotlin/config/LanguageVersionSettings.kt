@@ -547,6 +547,7 @@ enum class LanguageFeature(
     NoWhenBranchMatchedExceptionWithMessage(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_5, issue = "KT-86518"),
     NameBasedDestructuring(sinceVersion = KOTLIN_2_5, "KT-19627"),
     JsAllowExportingAnnotationClasses(sinceVersion = KOTLIN_2_5, "KT-85599"),
+    DnnTypeForUnboundedReifiedTypeParameters(KOTLIN_2_5, "KTLC-360", sinceApiVersion = ApiVersion.KOTLIN_2_5),
     JsAllowExportingStarProjection(sinceVersion = KOTLIN_2_5, "KT-83462"),
     AllowReturnsResultOfContract(sinceVersion = KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_4, issue = "KT-85948", forcesPreReleaseBinaries = true),
     UnnamedLocalVariables(sinceVersion = KOTLIN_2_5, issue = "KT-74809"),
