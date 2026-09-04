@@ -12,6 +12,7 @@
         <list>
           <option value=":kotlin-gradle-plugin:check" />
           <option value=":kotlin-gradle-plugin-idea:check" />
+          <option value=":kotlin-gradle-plugin-idea-browser-debug:check" />
           <option value=":kotlin-gradle-plugin-idea-proto:check" />
         </list>
       </option>

@@ -381,6 +381,7 @@ include(
     ":kotlin-gradle-plugin-api",
     ":kotlin-gradle-plugin-annotations",
     ":kotlin-gradle-plugin-idea",
+    ":kotlin-gradle-plugin-idea-browser-debug",
     ":kotlin-gradle-plugin-idea-proto",
     ":kotlin-gradle-plugin-idea-for-compatibility-tests",
     ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generator",
@@ -911,6 +912,8 @@ project(":kotlin-gradle-compiler-types").projectDir = File("$rootDir/libraries/t
 project(":kotlin-gradle-plugin-api").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin-api")
 project(":kotlin-gradle-plugin-annotations").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin-annotations")
 project(":kotlin-gradle-plugin-idea").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin-idea")
+project(":kotlin-gradle-plugin-idea-browser-debug").projectDir =
+    File("$rootDir/libraries/tools/kotlin-gradle-plugin-idea-browser-debug")
 project(":kotlin-gradle-plugin-idea-proto").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin-idea-proto")
 project(":kotlin-gradle-plugin-idea-for-compatibility-tests").projectDir =
     File("$rootDir/libraries/tools/kotlin-gradle-plugin-idea-for-compatibility-tests")
