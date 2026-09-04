@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
-import org.jetbrains.kotlin.ir.backend.js.getInstanceFun
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.staticInitFunction
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -109,9 +108,9 @@ abstract class WebStaticInitializersUsageLowering(
             when (declaration) {
                 // Do not insert call to a static_init into static_init itself
                 is IrSimpleFunction if declaration == staticInitFunction -> continue
-                // Do not insert a call to a static_init into an enum constructor, since it would be only accessible from static_init.
+                // Do not insert a call to a static_init into an enum or object constructor, since it would be only accessible from static_init.
                 // Redundant re-entrance into static_init pollutes stepping.
-                is IrConstructor if (container.isEnumClass || container.isEnumEntry) -> continue
+                is IrConstructor if (container.isEnumClass || container.isEnumEntry || container.isObject) -> continue
                 is IrFunction -> {
                     if (declaration.dispatchReceiverParameter != null) continue // already initialized when instance was created
                     builder.insertCall(declaration, staticInitFunction)

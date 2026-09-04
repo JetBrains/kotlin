@@ -9,26 +9,18 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.js.correspondingField
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.util.companionObject
-import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.isReal
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -125,7 +117,7 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
             processDeclarationContainer(it)
             if (it.staticInitFunction != null) hasSuperTypeWithStaticInitializer = true
         }
-        val needsStaticInitFunction = container.declarations.any {
+        val needsStaticInitFunction = container.isNonCompanionObject || container.declarations.any {
             when (it) {
                 is IrEnumEntry -> it.correspondingField?.isStatic == true
                 is IrField -> it.isStatic && it.origin != IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE &&
@@ -141,22 +133,30 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
 
         if (!needsStaticInitFunction && !hasSuperTypeWithStaticInitializer) return
 
+        // Special handling of objects - if the static_init function is introduced, the $getInstance
+        // body should be moved to the static_init body to preserve the correct order of initialization.
+        // $getInstance then calls static_init instead.
+        fun MutableList<IrStatement>.fixObjectGetInstanceFunction(declaration: IrClass) {
+            declaration.objectGetInstanceFunction?.let { getInstance ->
+                val body = getInstance.body as? IrBlockBody ?: return@let
+                body.statements.let { statements ->
+                    // Relying on the fact that $getInstance always ends with IrReturn
+                    addAll(statements.dropLast(1))
+                    val irReturn = statements.last()
+                    statements.clear()
+                    statements.add(irReturn)
+                }
+            }
+        }
+
         val initializers = buildList {
+            if (container.isNonCompanionObject) {
+                fixObjectGetInstanceFunction(container)
+                return@buildList
+            }
             for (declaration in container.declarations) {
-                // Special handling of companion objects - if the static_init function is introduced, the Companion$getInstance
-                // body should be moved to the static_init body to preserve the correct order of initialization.
-                // $getInstance then calls static_init instead.
                 if (declaration is IrClass && declaration.isCompanion) {
-                    declaration.objectGetInstanceFunction?.let { getInstance ->
-                        val body = getInstance.body as? IrBlockBody ?: return@let
-                        body.statements.let { statements ->
-                            // Relying on the fact that $getInstance always ends with IrReturn
-                            addAll(statements.dropLast(1))
-                            val irReturn = statements.last()
-                            statements.clear()
-                            statements.add(irReturn)
-                        }
-                    }
+                    fixObjectGetInstanceFunction(declaration)
                     continue
                 }
 
