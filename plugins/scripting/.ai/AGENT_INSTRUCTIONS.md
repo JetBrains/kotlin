@@ -1,6 +1,6 @@
 # Scripting/REPL — Agent Instructions
 
-**Current status**: Pre-cleanup snapshot. K2 path is the active path for scripts (LightTree-based, parser-agnostic core). K1 frontend retirement in progress. Multiple parallel impls still live for back-compat. Three open workstreams: **KT-83498** (LightTree for REPL snippets), **JSR-223 K2 bindings** (Option D recommended), **stateless remote REPL compilation** prototype.
+**Current status**: Pre-cleanup snapshot. K2 path is the active path for scripts (LightTree-based, parser-agnostic core). K1 frontend retirement in progress. Multiple parallel impls still live for back-compat. K2 REPL is parser-agnostic too (**KT-83498** landed 2026-09-04 — LightTree for REPL snippets). Two open workstreams: **JSR-223 K2 bindings** (Option D recommended), **stateless remote REPL compilation** prototype.
 
 **Scope**: `plugins/scripting/*`, `libraries/scripting/*`, `libraries/tools/kotlin-main-kts*`, the scripting-related parts of `compiler/cli/`, `compiler/daemon/`, `compiler/fir/`, `compiler/ir/`, `compiler/build-tools/`, and `libraries/tools/kotlin-gradle-plugin/.../scripting/`.
 
@@ -29,7 +29,7 @@
 2. **No new public extension points without ratification.** Compiler-internal EPs are documented in [`current/10-compiler-representation.md`](current/10-compiler-representation.md). User customizations go through the `ScriptCompilationConfiguration` refinement DSL — see [`current/20-customization.md`](current/20-customization.md).
 3. **No reviving daemon REPL / `-Xrepl` / `cli-base/repl/*`.** Goal is to delete these entirely (see [`target/30-embedding-target.md`](target/30-embedding-target.md)).
 4. **Don't add a PSI-only K2 path.** `ScriptJvmK2CompilerImpl`'s `convertToFir` lambda is the seam. LT is the only wired converter today. If you need a non-LT path for a real reason, discuss before coding.
-5. **Don't tighten `K2ReplCompiler`'s PSI special-casing.** **KT-83498** removes the split — help unify, don't add new PSI-only branches. Line anchors in [`current/10-compiler-representation.md`](current/10-compiler-representation.md); design in [`target/50-migration-plan.md`](target/50-migration-plan.md) step 2.
+5. **Don't re-introduce PSI into `K2ReplCompiler`.** **KT-83498** landed (2026-09-04): every `SourceCode` goes through the `convertToFir` lambda (LT default) and the snippet id travels via `repl.currentLineId` in the refined configuration. Need PSI? Inject a converter, don't add branches. Line anchors in [`current/10-compiler-representation.md`](current/10-compiler-representation.md); design record in [`target/50-migration-plan.md`](target/50-migration-plan.md) step 2.
 6. **No `intellij-community` plugin dependencies in `plugins/scripting/*`.** `scripting-ide-common` (copied from IntelliJ monorepo) is REMOVE.
 7. **`libraries/scripting/intellij` is public surface.** It's used by IntelliJ plugin authors wiring custom-scripts support. Don't break compatibility; don't move/rename.
 8. **NEVER initiate any git commit workflow.** No `git add`, `git commit`, `git push`, or staging of any kind. When a step is complete, list the changed files and write "Ready for commit review." Stop there. The user commits. Under Claude Code the PreToolUse hook blocks `git add/commit/push`; under Junie there is no hook backstop — this rule is self-enforced (see [`JUNIE_NOTES.md`](JUNIE_NOTES.md)).
@@ -140,7 +140,7 @@ Full per-module test placement, plus compiler-side test inventory (with disposit
 - **Parser-agnostic seam.** `ScriptJvmK2CompilerImpl` takes a `convertToFir` lambda; only `convertToFirViaLightTree` is wired. New K2 entry points should mirror this shape — pass the converter in, don't bind it inside.
 - **REPL history is storage-defined by impl.** `FirReplHistoryProvider` has 4 abstract methods. Current impl is in-memory; a class-file-backed impl is the seam for the stateless remote-compilation work (migration step 3). Don't bind in-memory assumptions into callers.
 - **`$$eval` / `$$result` constants** live in `ReplSnippetsToClassesLowering` (`REPL_SNIPPET_EVAL_FUN_NAME = "$$eval"`, `REPL_SNIPPET_RESULT_PROP_NAME = "$$result"`). Don't shadow or rename.
-- **Configurator EPs are PSI-agnostic by contract.** They take abstract `KtSourceFile` / `KtSourceElement`. Don't add `as? KtScript` casts. The residual one is being removed by KT-83498 — don't extend that pattern.
+- **Configurator EPs are PSI-agnostic by contract.** They take abstract `KtSourceFile` / `KtSourceElement`. Don't add `as? KtScript` casts (the last one was removed by KT-83498; snippet-specific data reaches the EP impls through the refined `ScriptCompilationConfiguration`, e.g. `repl.currentLineId`).
 - **`KtScript.isReplSnippet`** is the snippet marker for PSI sources. K2 + PSI path relies on this.
 - **Scripts vs snippets in FIR.** Different shape, different EPs. Don't unify them at the FIR level.
 - **K2 REPL inliner gap on `@InlineOnly` / `[fake_override]`.** Until migration step **1b** ([`target/50-migration-plan.md`](target/50-migration-plan.md#1b-fix-k2-repl-ir_external_declaration_stub)) lands, code emitted into synthetic snippets must avoid `?.let`, `?.also`, `?.apply`, `?.takeIf`, `bindings[k] = v` (the `MutableMap.set` `@InlineOnly`), and `joinToString$default` — they hit `IR_EXTERNAL_DECLARATION_STUB`. Use `bindings.put(k, v)` and explicit null-checks instead. See [`current/80-known-gotchas.md`](current/80-known-gotchas.md) G1 / G2.
@@ -152,7 +152,7 @@ Full per-module test placement, plus compiler-side test inventory (with disposit
 
 Priority TBD — the list below is unordered.
 
-- **KT-83498** — Full LightTree path in `K2ReplCompiler`. See [`target/50-migration-plan.md`](target/50-migration-plan.md) step 2 (canonical home).
+- ~~**KT-83498** — Full LightTree path in `K2ReplCompiler`~~ — **landed 2026-09-04**. Follow-up only: G15 predicate narrowing. See [`target/50-migration-plan.md`](target/50-migration-plan.md) step 2.
 - **JSR-223 K2 bindings** — Option D — synthetic-snippets refinement-DSL callback (`prependSyntheticSnippets`). Partial landing 2026-05-17. See [`target/40-jsr223-target.md`](target/40-jsr223-target.md) and [`target/50-migration-plan.md`](target/50-migration-plan.md) step 1.
 - **Stateless remote REPL compilation** prototype — See [`target/40-jsr223-target.md`](target/40-jsr223-target.md) and [`target/50-migration-plan.md`](target/50-migration-plan.md) step 3.
 - **K1 cleanup chain** — Daemon REPL → `-Xrepl` → `cli-base/repl/*` → `legacyRepl*.kt` → `GenericReplCompiler` → K1 frontend bindings. Sequenced in [`target/50-migration-plan.md`](target/50-migration-plan.md) steps 4–11.

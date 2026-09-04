@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.scripting.test.SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.convertToFirViaLightTree
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.withMessageCollectorAndDisposable
 import org.jetbrains.kotlin.scripting.compiler.test.ReplReceiver1
 import org.junit.jupiter.api.Assumptions.abort
@@ -24,6 +25,7 @@ import kotlin.script.experimental.dependencies.maven.MavenDependenciesResolver
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.*
+import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -386,6 +388,34 @@ class CustomK2ReplTest {
 
         val layer3 = dClass.nestedClasses.toList()
         assertEquals(listOf("E"), layer3.map { it.simpleName })
+    }
+
+    /**
+     * The parser seam of the K2 REPL (KT-83498): every source is converted through the injected `convertToFir` lambda
+     * (LightTree by default, the PSI path is not special-cased anymore), and the result field numbering
+     * (`res<N>` from `repl.currentLineId` carried by the refined configuration) does not depend on the parser.
+     */
+    @Test
+    fun testConvertToFirSeamAndResultFieldNumbering() {
+        val convertedSources = mutableListOf<String>()
+        val compiledSnippets = withMessageCollectorAndDisposable { messageCollector, disposable ->
+            val compiler = K2ReplCompiler(
+                K2ReplCompiler.createCompilationState(messageCollector, disposable, baseCompilationConfiguration),
+                convertToFir = { session, diagnosticsReporter ->
+                    convertedSources.add(name!!)
+                    convertToFirViaLightTree(session, diagnosticsReporter)
+                }
+            )
+            @Suppress("DEPRECATION_ERROR")
+            internalScriptingRunSuspend {
+                listOf("val x = 3", "x + 4", "fun f() = x", "f()").mapIndexed { i, text ->
+                    compiler.compile(text.toScriptSource("s$i.repl.kts")).valueOr { return@internalScriptingRunSuspend it }.get()
+                }.asSuccess()
+            }
+        }.valueOrThrow()
+
+        assertEquals(listOf("s0.repl.kts", "s1.repl.kts", "s2.repl.kts", "s3.repl.kts"), convertedSources)
+        assertEquals(listOf(null, "res1", null, "res3"), compiledSnippets.map { (it as KJvmCompiledScript).resultField?.first })
     }
 
     @Test

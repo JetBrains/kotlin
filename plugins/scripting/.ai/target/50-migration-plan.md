@@ -47,22 +47,50 @@ Ordered, each step independently mergeable. Each step is a small set of commits,
 
 **Sequencing**: was independent of step 1 acceptance; now landed, so step 1's `BLOCKED-CODEGEN` carve-out can be tightened on the next pass through step 1 (5 of 6 `@Disabled` removed; 1 remains pending Q17).
 
-### 2. Land KT-83498 — full LightTree path for `K2ReplCompiler`
+### 2. ~~Land KT-83498 — full LightTree path for `K2ReplCompiler`~~ — landed 2026-09-04
 
-**Goal**: drop the PSI branch from snippet parsing; align `K2ReplCompiler` with `ScriptJvmK2CompilerImpl`'s parser-agnostic seam.
+> **Status: LANDED 2026-09-04** ([iteration entry](../iterations/2026-09-04_kt83498-lighttree-repl-snippets.md)). All stages done: design docs ✓ · LT `convertReplSnippet` ✓ · LT raw-builder fixtures ✓ (10/10 `*.repl.kts`, no `.lt.txt`) · parser-agnostic `K2ReplCompiler` + PSI-free configurator ✓ · final docs ✓.
+>
+> **Landed shape**: `AbstractRawFirBuilder.convertReplSnippetImpl` holds the parser-independent snippet construction (plus the `bindFunctionTarget` / `replSnippetDeclarationSymbol` AA hooks, moved from `PsiRawFirBuilder`); PSI and LT builders supply only `extractReplElements`. `K2ReplCompiler(state, convertToFir = SourceCode::convertToFirViaLightTree)` converts snippet + imports through the lambda, derives the snippet class FQ name from the `FirReplSnippet`, and pre-seeds `scriptRefinedCompilationConfigurationsCache` with the per-snippet refined configuration carrying `repl.currentLineId`; `FirReplSnippetConfiguratorExtensionImpl` reads the id from there. `currentLineId` key lives in `impl/replConfigurationKeys.kt`. One enabling fix outside the plan: `FirDiagnosticsCompilerResultsReporter.reportByFile` now positions non-PSI diagnostics for `KtPsiSourceFile`s (a `KtFileScriptSource` parsed by LT previously lost all diagnostic locations).
+>
+> **Verification**: `LightTree2FirConverterTestCaseGenerated` 198/198 (incl. 10 REPL) · `RawFirBuilderTestCaseGenerated` 198/198 · `TreesCompareTest` 2/2 · `:plugins:scripting:scripting-tests` REPL suites 140/140 (`ReplViaApiDiagnostics` 24/24, `ReplWithTestExtensionsDiagnostics` 24/24, `ReplViaApiEvaluation` 36, `ReplWithTestExtensionsCodegen` 36, `CustomK2ReplTest` 20 incl. new `testConvertToFirSeamAndResultFieldNumbering`) · `ReplSnippetRegularPipelineTest` 5/5 · `KotlinJsr223ScriptEngineIT` 23/23 · jvm-host `ReplTest` 18/18 · `MainKtsJsr223Test` 2/2 + 1 muted · AA `low-level-api-fir` lazy-resolve/getOrBuildFir/context-collector suites 1243 (one Java-interop test flaked in the parallel run, green in isolation).
+>
+> **Not done (by decision / follow-ups)**: G15 predicate narrowing — `MainKtsJsr223Test.testWithImport` now fails differently (imports compiled as snippets in one session → `Unexpected status ... FirDeclarationStatusImpl` in `FirPrivateToThisAccessChecker`), `@Disabled` reason refreshed; annotation refinement of snippets/imports still goes through `CliScriptConfigurationsProvider` (PSI inside `scripting-compiler-impl`) — switch to `refineAllForK2` when the K1 provider goes (step 8); `KtScript` re-audit trigger from KT-83498 satisfied, K1-retirement one pending (step 14).
 
-**Touch** (line anchors authoritative in [`../current/10-compiler-representation.md`](../current/10-compiler-representation.md)):
-- `plugins/scripting/scripting-compiler/src/.../impl/K2ReplCompiler.kt` — replace the `partition { it is KtFileScriptSource }` split with `session.buildFirViaLightTree` over all sources. Either accept all `SourceCode` via LT or accept a `convertToFir` lambda (mirroring `ScriptJvmK2CompilerImpl`).
-- `compiler/fir/raw-fir/light-tree2fir/src/.../LightTreeRawFirDeclarationBuilder.kt` — if a REPL-snippet marker analogous to `markAsReplSnippet()` is needed in the LT path, add it.
-- `plugins/scripting/scripting-compiler/src/.../services/FirReplSnippetConfiguratorExtensionImpl.kt` — drop the residual `scriptSource.psi as? KtScript` touch; rely on `KtSourceElement` abstractions.
+**Goal**: drop the PSI branch from snippet parsing; align `K2ReplCompiler` with `ScriptJvmK2CompilerImpl`'s parser-agnostic seam. Covers the compiler-side ticket **KT-77583** (LT `FirReplSnippet` builder) as its prerequisite.
 
-**Done when**: snippets compile through LT regardless of `SourceCode` subtype; `KtFileScriptSource` no longer special-cased.
+**Current state (pre-landing)**:
 
-**Design notes** (absorbed from former Q2):
+| Piece | PSI | LightTree |
+|---|---|---|
+| script-vs-snippet decision | `PsiRawFirBuilder.isReplSnippet` → `KtScript.isReplSnippet` (set by `markAsReplSnippet()`; ignores the EP — KT-84387) | `AbstractRawFirBuilder.isReplSnippet` → `replSnippetConfigurators.any { isReplSnippetsSource(...) }` — works |
+| `convertScriptOrSnippets` | shared (`AbstractRawFirBuilder`, raw-fir.common) | shared |
+| `convertReplSnippet` | `PsiRawFirBuilder.Visitor.convertReplSnippet` (+ `createEvalFunction`, `convertReplElement`, `extractReplElements`) | `LightTreeRawFirDeclarationBuilder.convertReplSnippet` = `TODO("KT-77583")` |
+| `convertScript` | done | done |
+| compiler entry | `K2ReplCompiler.compileImpl`: `getScriptKtFile` → `markAsReplSnippet()` → `putUserData(PRIORITY_KEY)` → `buildFirFromKtFiles(ktSources)`; other sources via `buildFirViaLightTree` | `ScriptJvmK2CompilerImpl(state, convertToFir = SourceCode::convertToFirViaLightTree)` |
+| snippet id → `res<N>` | `FirReplSnippetConfiguratorExtensionImpl.configure`: `scriptSource.psi as? KtScript` → `PRIORITY_KEY` | n/a — `psi == null`, so the `resultField` (script) branch would be taken wrongly |
+| raw-builder golden tests | `RawFirBuilderTestCaseGenerated` runs `*.repl.kts` | `TestGeneratorForLightTree2Fir` excludes `REPL_KTS` |
 
-- Priority: blocks the "fully PSI-free K2 scripting" claim and unblocks PSI-free JSR-223 embedding.
-- Owner / scope: estimate medium. Touches `K2ReplCompiler`, LT builder (if a `markAsReplSnippet`-equivalent is needed), and the residual PSI touch in `FirReplSnippetConfiguratorExtensionImpl`.
-- Shape decision: align with `ScriptJvmK2CompilerImpl` (`convertToFir` lambda) for symmetry, or keep `K2ReplCompiler` simpler with hardwired LT? Recommend lambda for parser-agnostic seam reuse.
+**Key decisions (user-confirmed 2026-09-04)**:
+
+1. **Parser seam = `convertToFir` lambda.** `K2ReplCompiler` (constructor + `create*` factories) takes `convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile = SourceCode::convertToFirViaLightTree`, exactly like `ScriptJvmK2CompilerImpl`. The `partition { it is KtFileScriptSource }` split, `getScriptKtFile`, `markAsReplSnippet()`, `PRIORITY_KEY` and `AnalyzerWithCompilerReport.reportSyntaxErrors` are deleted. PSI remains reachable only by injecting a converter (tests/AA). `K2ReplStatelessCompiler` forwards the same optional parameter.
+2. **Snippet id travels in the refined `ScriptCompilationConfiguration`.** `K2ReplCompiler` computes `priority` as today (`repl.currentLineId?.no ?: firReplHistoryProvider.getSnippetCount()`) and, unless the host already set it (JSR-223 does), puts `repl.currentLineId = LineId(priority, 0, snippet.text.hashCode())` into the *initial* configuration before refinement, so the cached refined configuration returned by `getOrLoadConfiguration(session, sourceFile)` carries it. `FirReplSnippetConfiguratorExtensionImpl.configure` reads `configuration[repl.currentLineId]?.no`; the `as? KtScript` branch goes away. `ReplScriptCompilationConfigurationKeys.currentLineId` moves out of the K1 file `KJvmReplCompilerBase.kt` into a K2-side `impl/replConfigurationKeys.kt` (same package, import path unchanged) so step 8 can delete the K1 file.
+3. **`isReplSnippetSource { _, _ -> true }` stays as is.** Consequence: `@file:Import`ed scripts inside REPL compile as `FirReplSnippet`s under LT. G15 stays open by decision; the recorded future fix is a per-compile predicate matching the root snippet's `locationId`/`name`.
+4. **LT snippet builder is a 1:1 structural port of the PSI one.** Same fake source kinds (`ReplBaseClass`, `ReplEvalFunction`, `ImplicitConstructor`, `DelegatingConstructorCall`), origins (`Synthetic.ReplContainerClass`, `Synthetic.ReplEvalFunction`) and attributes (`isReplSnippetDeclaration`, `isCopiedDelegatedProperty`, `replSnippetDelegatedPropertyCopies`), so `FirReplSnippetResolveExtensionImpl`, `ReplSnippetsToClassesLowering` and the stateless metadata embedding need no change. Parser-neutral pieces (`convertReplElement`, member collection) are lifted into `AbstractRawFirBuilder`; `replSnippetDeclarationSymbol` stays an open hook (AA overrides it in PSI).
+
+**Files**:
+- `compiler/fir/raw-fir/raw-fir.common/src/.../AbstractRawFirBuilder.kt` — shared REPL helpers.
+- `compiler/fir/raw-fir/light-tree2fir/src/.../LightTreeRawFirDeclarationBuilder.kt` — `convertReplSnippet` implementation.
+- `compiler/fir/raw-fir/psi2fir/src/.../PsiRawFirBuilder.kt` — delegate to shared helpers (behaviour-neutral).
+- `compiler/fir/raw-fir/light-tree2fir/testFixtures/.../TestGeneratorForLightTree2Fir.kt`, `AbstractLightTree2FirConverterTestCase.kt` (+ regenerated `LightTree2FirConverterTestCaseGenerated.java`) — run `*.repl.kts` fixtures under LT with a test `FirReplSnippetConfiguratorExtension` registered.
+- `plugins/scripting/scripting-compiler/src/.../impl/K2ReplCompiler.kt`, `impl/K2ReplStatelessCompiler.kt`, `impl/KJvmReplCompilerBase.kt` → new `impl/replConfigurationKeys.kt`.
+- `plugins/scripting/scripting-compiler/src/.../services/FirReplSnippetConfiguratorExtensionImpl.kt`.
+
+**Test matrix**: `LightTree2FirConverterTestCaseGenerated` + `RawFirBuilderTestCaseGenerated` (golden parity, no new `.lt.txt` unless justified in the iteration entry) · `:kotlin-scripting-compiler:test` (`K2ReplCompilerTest`, `K2ReplStatelessCompilerTest`) · `:plugins:scripting:scripting-tests:test` REPL/diagnostics guards (24/24 + 24/24) · `:kotlin-scripting-jsr223-test:test` · `:kotlin-main-kts-test:test` (observe `testWithImport` under decision 3) · BTA `ReplSnippetCompilationTest`. Static check: no `KtFile`/`KtScript`/`KtFileScriptSource`/`ScriptPriorities`/`psi` left in `K2ReplCompiler.kt` / `FirReplSnippetConfiguratorExtensionImpl.kt`.
+
+**Done when**: snippets compile through LT regardless of `SourceCode` subtype; `KtFileScriptSource` no longer special-cased; `res<N>` numbering unchanged on stateful, stateless and JSR-223 paths.
+
+**Explicitly not done in this step**: G15 predicate narrowing (decision 3); K1 REPL deletion (step 8); AA `LLFirSession` stays PSI. (Pre-landing design text above kept as the record; see the status block for the landed state.)
 
 ### 3. Design + prototype stateless remote REPL compilation
 

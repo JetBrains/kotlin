@@ -30,8 +30,8 @@ Guiding rules for the cleanup. Each principle has a "why" and a "how to apply".
 
 **How to apply**:
 - Scripts: **already PSI-free on K2 path.** `ScriptJvmK2CompilerImpl` uses `convertToFirViaLightTree`. CLI route hardwires LT (`JvmCliScriptEvaluationExtension`). Nothing to do for scripts in this principle's scope.
-- REPL snippets: still partly PSI-bound. `K2ReplCompiler` routes `KtFileScriptSource` through PSI; `FirReplSnippetConfiguratorExtensionImpl` still has one PSI touch. Tracked under **KT-83498** — see [`50-migration-plan.md`](50-migration-plan.md#2-land-kt-83498--full-lighttree-path-for-k2replcompiler) and [`../current/10-compiler-representation.md`](../current/10-compiler-representation.md) for exact line anchors.
-- After K1 frontend retirement: PSI-side `KtScript` stays only as long as embedders still pass `KtFileScriptSource`. Possibly drop after that audit.
+- REPL snippets: PSI-free on the K2 path since **KT-83498** landed (2026-09-04): `K2ReplCompiler` takes a `convertToFir` lambda (default LightTree) and `FirReplSnippetConfiguratorExtensionImpl` reads the snippet id from the refined configuration (`repl.currentLineId`). Remaining REPL PSI touches are outside the compiler core: `CliScriptConfigurationsProvider`-based annotation refinement of snippets/imports (PSI-parsed inside `scripting-compiler-impl`), and the PSI-only `isReplSnippetSource` predicate of the whole-compiler registrar (`FirScriptingCompilerExtensionRegistrar`). See [`50-migration-plan.md`](50-migration-plan.md#2-land-kt-83498--full-lighttree-path-for-k2replcompiler).
+- After K1 frontend retirement: PSI-side `KtScript` stays only as long as embedders still pass `KtFileScriptSource` (the K2 REPL no longer needs it — KT-83498 re-audit trigger satisfied; the K1 frontend one is not). Possibly drop after that audit.
 
 ## P4. No first-party REPL — provide REPL API for external REPLs
 

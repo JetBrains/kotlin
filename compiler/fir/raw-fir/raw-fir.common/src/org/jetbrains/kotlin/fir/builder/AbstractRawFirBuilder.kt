@@ -24,14 +24,20 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isConst
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
+import org.jetbrains.kotlin.fir.declarations.utils.replSnippetDelegatedPropertyCopies
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
+import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -39,6 +45,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
+import org.jetbrains.kotlin.fir.types.impl.ResolvedImplicitTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.parsing.*
@@ -1447,6 +1454,249 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
 
     protected fun configureScriptDestructuringDeclarationEntry(declaration: FirVariable, container: FirVariable) {
         (declaration as FirProperty).destructuringDeclarationContainerVariable = container.symbol
+    }
+
+    protected open fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) {
+        target.bind(function)
+    }
+
+    protected open fun <D : FirDeclaration, R : FirBasedSymbol<D>> replSnippetDeclarationSymbol(declaration: D): R {
+        @Suppress("UNCHECKED_CAST")
+        return declaration.symbol as R
+    }
+
+    /**
+     * Parser-independent part of [convertReplSnippet]: builds the snippet container class (`object`),
+     * the synthetic `$$eval` function, and the primary constructor around the REPL elements extracted by
+     * the parser-specific [extractReplElements].
+     *
+     * The layout must stay identical for PSI and LightTree, since the REPL resolution extension and the
+     * `ReplSnippetsToClassesLowering` rely on the fake source kinds, origins, and attributes set here.
+     *
+     * @param extractReplElements converts the script declarations into FIR elements; it receives the class symbol to use as the
+     * owner of the extracted members and a map to fill with delegated-property copies (see [replSnippetDelegatedPropertyCopies]).
+     * @param buildEvalBody wraps the construction of the `$$eval` body; PSI uses it to switch to a lazy block when needed.
+     */
+    protected fun convertReplSnippetImpl(
+        script: T,
+        scriptSource: KtSourceElement,
+        fileName: String,
+        scopeProvider: FirScopeProvider,
+        snippetSetup: FirReplSnippetBuilder.() -> Unit,
+        functionBodySetup: FirBlockBuilder.() -> Unit,
+        statementsSetup: MutableList<FirElement>.() -> Unit,
+        extractReplElements: (
+            containingDeclarationSymbol: FirRegularClassSymbol,
+            copiedDelegatedProperties: MutableMap<FirPropertySymbol, FirProperty>,
+        ) -> List<FirElement>,
+        buildEvalBody: (build: () -> FirBlock) -> FirBlock = { it() },
+    ): FirReplSnippet {
+        val snippetName = firSnippetName(fileName)
+        val snippetClassName = NameUtils.getSnippetTargetClassName(snippetName)
+        val classSymbol = FirRegularClassSymbol(ClassId(context.packageFqName, snippetClassName))
+
+        val snippetSymbol = FirReplSnippetSymbol(classSymbol)
+
+        val evalName = Name.identifier($$$"$$eval")
+        val [klass, evalSymbol] = withContainerReplSymbol(snippetSymbol) {
+            withChildClassName(snippetClassName, isExpect = false) {
+                withContainerSymbol(classSymbol) {
+                    val evalSymbol = FirNamedFunctionSymbol(callableIdForName(evalName))
+                    val klass = buildRegularClass {
+                        source = script.toFirSourceElement(KtFakeSourceElementKind.ReplBaseClass)
+                        moduleData = baseModuleData
+                        origin = FirDeclarationOrigin.Synthetic.ReplContainerClass
+                        name = snippetClassName
+                        status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+                        classKind = ClassKind.OBJECT
+                        this.scopeProvider = scopeProvider
+                        symbol = classSymbol
+                        superTypeRefs += implicitAnyType
+
+                        context.appendOuterTypeParameters(ignoreLastLevel = true, typeParameters)
+
+                        val delegatedSelfType = script.toDelegatedSelfType(this)
+                        registerSelfType(delegatedSelfType)
+
+                        val replClassMembers = mutableListOf<FirDeclaration>()
+
+                        val evalFunction = withContainerSymbol(evalSymbol) {
+                            val copiedDelegatedProperties = mutableMapOf<FirPropertySymbol, FirProperty>()
+
+                            // Extraction of REPL elements needs to happen within the eval function.
+                            // Temporary variables for property-destructing statements need to be
+                            // located within the eval function and not class members.
+                            val replElements = extractReplElements(classSymbol, copiedDelegatedProperties)
+                                .let { it.toMutableList().apply { statementsSetup() } }
+                                .map { convertReplElement(it) }
+
+                            // Gather what elements need to be extracted as class member declarations.
+                            for (element in replElements) {
+                                val member = when (element) {
+                                    is FirReplDeclarationReference -> element.symbol.fir
+                                    is FirReplPropertyInitializer -> element.propertySymbol.fir
+                                    is FirReplPropertyDelegate -> element.propertySymbol.fir
+                                    else -> continue
+                                }
+
+                                member.isReplSnippetDeclaration = true
+                                replClassMembers.add(member)
+                            }
+
+                            createReplEvalFunction(script, evalSymbol, replElements, functionBodySetup, buildEvalBody).also { function ->
+                                if (copiedDelegatedProperties.isNotEmpty()) {
+                                    // See documentation on `replSnippetDelegatedPropertyCopies` attribute for why this is needed.
+                                    @OptIn(FirImplementationDetail::class)
+                                    function.replSnippetDelegatedPropertyCopies = copiedDelegatedProperties
+                                }
+                            }
+                        }
+
+                        val constructorSymbol = FirConstructorSymbol(callableIdForClassConstructor())
+                        val constructorSource = script.toFirSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
+                        val constructor = buildPrimaryConstructor {
+                            source = constructorSource
+                            moduleData = baseModuleData
+                            origin = FirDeclarationOrigin.Source
+                            returnTypeRef = delegatedSelfType
+                            status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+                            dispatchReceiverType = currentDispatchReceiverType()
+                            isLocal = false
+                            symbol = constructorSymbol
+                            delegatedConstructor = buildDelegatedConstructorCall {
+                                source = constructorSource.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                                constructedTypeRef = implicitAnyType
+                                isThis = false
+                                calleeReference = buildExplicitSuperReference {
+                                    source = constructorSource.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                                    superTypeRef = implicitAnyType
+                                }
+                            }
+                        }
+
+                        declarations += listOf(constructor, evalFunction) + replClassMembers
+                    }
+
+                    klass to evalSymbol
+                }
+            }
+        }
+
+        return buildReplSnippet {
+            source = scriptSource
+            moduleData = baseModuleData
+            origin = FirDeclarationOrigin.Source
+            name = snippetName
+            symbol = snippetSymbol
+
+            snippetClass = klass
+            evalFunctionSymbol = evalSymbol
+
+            snippetSetup()
+        }
+    }
+
+    private fun createReplEvalFunction(
+        script: T,
+        evalSymbol: FirNamedFunctionSymbol,
+        replElements: List<FirElement>,
+        functionBodySetup: FirBlockBuilder.() -> Unit,
+        buildEvalBody: (build: () -> FirBlock) -> FirBlock,
+    ): FirNamedFunction {
+        val evalTarget = FirFunctionTarget(labelName = null, isLambda = false)
+        return buildNamedFunction {
+            source = script.toFirSourceElement(KtFakeSourceElementKind.ReplEvalFunction)
+            moduleData = baseModuleData
+            origin = FirDeclarationOrigin.Synthetic.ReplEvalFunction
+            name = evalSymbol.name
+            symbol = evalSymbol
+            dispatchReceiverType = currentDispatchReceiverType()
+            status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+            returnTypeRef = ResolvedImplicitTypeRef(implicitUnitType)
+            isLocal = false
+
+            context.firFunctionTargets += evalTarget
+
+            body = buildEvalBody {
+                buildBlock {
+                    for (element in replElements) {
+                        when (element) {
+                            is FirAnonymousInitializer -> this.statements += element.body!!.statements
+                            is FirStatement -> this.statements += element
+                            else -> error("unexpected element type in REPL snippet: ${element::class}")
+                        }
+                    }
+                    functionBodySetup()
+                }
+            }
+
+            context.firFunctionTargets.removeLast()
+        }.also {
+            bindFunctionTarget(evalTarget, it)
+        }
+    }
+
+    private fun convertReplElement(
+        element: FirElement,
+    ): FirElement = when (element) {
+        is FirProperty -> {
+            val statementInitializer = element.initializer
+            val statementDelegate = element.delegate
+
+            @OptIn(FirContractViolation::class)
+            when {
+                element.isLocal -> element
+                element.isConst -> {
+                    // Constant properties are just properties
+                    buildReplDeclarationReference {
+                        source = element.source?.fakeElement(KtFakeSourceElementKind.ReplEvalFunction)
+                        symbol = replSnippetDeclarationSymbol(element)
+                    }
+                }
+                statementDelegate != null -> {
+                    element.replaceDelegate(buildReplExpressionReference {
+                        source = statementDelegate.source?.fakeElement(KtFakeSourceElementKind.ReplEvalFunction)
+                        expressionRef = FirExpressionRef<FirExpression>().apply { bind(statementDelegate) }
+                    })
+
+                    buildReplPropertyDelegate {
+                        source = statementDelegate.source?.fakeElement(KtFakeSourceElementKind.ReplEvalFunction)
+                        propertySymbol = replSnippetDeclarationSymbol(element)
+                        delegate = statementDelegate
+                    }
+                }
+                statementInitializer != null -> {
+                    element.replaceInitializer(buildReplExpressionReference {
+                        source = statementInitializer.source?.fakeElement(KtFakeSourceElementKind.ReplEvalFunction)
+                        expressionRef = FirExpressionRef<FirExpression>().apply { bind(statementInitializer) }
+                    })
+
+                    buildReplPropertyInitializer {
+                        source = statementInitializer.source?.fakeElement(KtFakeSourceElementKind.ReplEvalFunction)
+                        propertySymbol = replSnippetDeclarationSymbol(element)
+                        initializer = statementInitializer
+                    }
+                }
+                else -> {
+                    buildReplDeclarationReference {
+                        source = element.source?.fakeElement(KtFakeSourceElementKind.ReplEvalFunction)
+                        symbol = replSnippetDeclarationSymbol(element)
+                    }
+                }
+            }
+        }
+
+        is FirNamedFunction,
+        is FirRegularClass,
+        is FirTypeAlias,
+            -> {
+            buildReplDeclarationReference {
+                source = element.source?.fakeElement(KtFakeSourceElementKind.ReplEvalFunction)
+                symbol = replSnippetDeclarationSymbol(element)
+            }
+        }
+
+        else -> element
     }
 }
 

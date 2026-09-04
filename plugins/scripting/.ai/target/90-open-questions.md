@@ -26,15 +26,17 @@ Each Q (and sub-question, where present) carries:
 
 **Resolved**: scripts already use LT exclusively on the K2 path. See `ScriptJvmK2CompilerImpl` + `convertToFirViaLightTree` + `LightTreeRawFirDeclarationBuilder.buildScript()`. No work needed.
 
-## Q2. LightTree path for `FirReplSnippet` — KT-83498
+## Q2. ~~LightTree path for `FirReplSnippet` — KT-83498~~ — resolved
 
-- Status: in-design (canonical home moved to [`50-migration-plan.md`](50-migration-plan.md) step 2)
+- Status: **resolved — landed 2026-09-04** (canonical record: [`50-migration-plan.md`](50-migration-plan.md) step 2; [iteration](../iterations/2026-09-04_kt83498-lighttree-repl-snippets.md)). Remaining follow-up is G15 (predicate narrowing), tracked in [`../current/80-known-gotchas.md`](../current/80-known-gotchas.md#g15-k2replcompilers-session-wide-isreplsnippetsource---true--misclassifies-light-tree-compiled-repl-imports-as-snippets--deferred-2026-07-02f-re-characterised-2026-09-04-test-muted-not-fixed), not as a Q*.
 - Owner: unassigned
-- YT: KT-83498
+- YT: KT-83498 (+ KT-77583 for the LT builder)
 - Target doc: [`50-migration-plan.md`](50-migration-plan.md#2-land-kt-83498--full-lighttree-path-for-k2replcompiler)
-- Last touched: 2026-07-02f
+- Last touched: 2026-09-04
 
-Tracked as migration-plan step 2. Sub-questions (priority, shape — `convertToFir` lambda vs hardwired LT) are recorded inline in step 2 "Design notes".
+Tracked as migration-plan step 2. The former sub-questions are now decided (see step 2 "Key decisions"): **(1)** shape = `convertToFir` lambda on `K2ReplCompiler`, default `convertToFirViaLightTree`, PSI only by injection; **(2)** snippet id reaches `FirReplSnippetConfiguratorExtensionImpl` through `repl.currentLineId` in the refined `ScriptCompilationConfiguration` (no `KtScript` user data); **(3)** the `isReplSnippetSource { _, _ -> true }` predicate is deliberately **not** narrowed in this step (G15 stays open — imports inside REPL compile as snippets once LT supports them); **(4)** the LT `convertReplSnippet` is a 1:1 structural port of the PSI one with shared helpers in `AbstractRawFirBuilder`.
+
+**2026-09-04 note on the paragraph below**: with the LT `convertReplSnippet` landed, `testWithImport` no longer hits the `TODO` — the imports are compiled as *snippets* in the root snippet's session (decision 3) and fail in resolution (`Unexpected status ... FirDeclarationStatusImpl`, see G15); the `@Disabled` reason was refreshed accordingly. The predicate narrowing stays a separate follow-up (G15).
 
 **`MainKtsJsr223Test.testWithImport` — deferred, not fixed (2026-07-02f)**: this test fails on exactly the `TODO("KT-77583")` gap in `LightTreeRawFirDeclarationBuilder.convertReplSnippet` as soon as a REPL snippet does `@file:Import(...)`. A prior investigation ([session, see `current/80-known-gotchas.md` **G15**](../current/80-known-gotchas.md#g15-k2replcompilers-session-wide-isreplsnippetsource---true--misclassifies-light-tree-compiled-repl-imports-as-snippets--deferred-2026-07-02f-test-muted-not-fixed)) found the failure is triggered for the *wrong* reason: the imported `.main.kts` files are ordinary scripts (not REPL snippets) and are light-tree-compiled (the root snippet is PSI-compiled), but `K2ReplCompiler.createCompilationState` registers `isReplSnippetSource { _, _ -> true }` **session-wide**, so the light-tree builder misclassifies the import as a snippet and routes it into the unimplemented `convertReplSnippet` branch instead of the already-working `convertScript` branch. This means the test could plausibly be fixed **without** waiting for `KT-83498` in full, by narrowing that predicate to the actual root/main snippet source. **Decision: explicitly deferred/ignored for now** — `testWithImport` is `@Ignore`d in `mainKtsJsr223Test.kt` with a reference to this note and to G15, rather than left as an unexplained failure. Revisit either as part of landing `KT-83498` proper, or as a smaller standalone `isReplSnippetSource`-narrowing fix if prioritized before then.
 
