@@ -245,6 +245,18 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("classNamedItInClassLiteralPositionInsideLambda.kt")
+  public void testClassNamedItInClassLiteralPositionInsideLambda() {
+    run("classNamedItInClassLiteralPositionInsideLambda.kt");
+  }
+
+  @Test
+  @TestMetadata("classNamedItInTypePositionInsideLambda.kt")
+  public void testClassNamedItInTypePositionInsideLambda() {
+    run("classNamedItInTypePositionInsideLambda.kt");
+  }
+
+  @Test
   @TestMetadata("ClassObjectClassLiteralReference.kt")
   public void testClassObjectClassLiteralReference() {
     run("ClassObjectClassLiteralReference.kt");
@@ -509,6 +521,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("explicitItLocalShadowingImplicitLambdaParameter.kt")
+  public void testExplicitItLocalShadowingImplicitLambdaParameter() {
+    run("explicitItLocalShadowingImplicitLambdaParameter.kt");
+  }
+
+  @Test
   @TestMetadata("explicitLambdaParameter.kt")
   public void testExplicitLambdaParameter() {
     run("explicitLambdaParameter.kt");
@@ -716,6 +734,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
   @TestMetadata("implicitLambdaParameter.kt")
   public void testImplicitLambdaParameter() {
     run("implicitLambdaParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("implicitLambdaParameterShadowingExplicitLocal.kt")
+  public void testImplicitLambdaParameterShadowingExplicitLocal() {
+    run("implicitLambdaParameterShadowingExplicitLocal.kt");
   }
 
   @Test
