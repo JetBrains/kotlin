@@ -29,70 +29,72 @@ internal class TakeStrategy(val take: SequenceTransformer.Take, builderWithParen
     override fun addTransformerToBodyBuilder(
         sequenceReplacement: SequenceReplacement,
     ): SequenceReplacement {
-        val builder = builderWithParent.first
-        val takeVariable = builder.scope.createTemporaryVariable(
-            builder.irInt(0),
-            isMutable = true,
-            nameHint = "takeVar"
-        )
-        val takeArgumentVariable = builder.scope.createTemporaryVariable(
-            take.argument.deepCopyWithSymbols(builderWithParent.second),
-            nameHint = "takeArgument",
-        )
-        val classifier = takeVariable.type.classifierOrNull
-        val lessThanSymbol = builder.context.irBuiltIns.lessFunByOperandType[classifier]
-            ?: error("No lessThan function found for type ${takeVariable.type}")
-        val lessOrEqualSymbol = builder.context.irBuiltIns.lessOrEqualFunByOperandType[classifier]
-            ?: error("No lessOrEqual function found for type ${takeVariable.type}")
-        val exceptionClass = builder.context.irBuiltIns.illegalArgumentExceptionSymbol.owner
+        val [builder, parent] = builderWithParent
+        with(builder) {
+            val takeVariable = scope.createTemporaryVariable(
+                irInt(0),
+                isMutable = true,
+                nameHint = "takeVar"
+            )
+            val takeArgumentVariable = scope.createTemporaryVariable(
+                take.argument.deepCopyWithSymbols(parent),
+                nameHint = "takeArgument",
+            )
+            val classifier = takeVariable.type.classifierOrNull
+            val lessThanSymbol = context.irBuiltIns.lessFunByOperandType[classifier]
+                ?: error("No lessThan function found for type ${takeVariable.type}")
+            val lessOrEqualSymbol = context.irBuiltIns.lessOrEqualFunByOperandType[classifier]
+                ?: error("No lessOrEqual function found for type ${takeVariable.type}")
+            val exceptionClass = context.irBuiltIns.illegalArgumentExceptionSymbol.owner
 
-        val throwExpression = builder.irThrow(
-            builder.irCall(exceptionClass).apply {
-                arguments[0] = builder.irString("Requested element count is less than zero.")
-            }
-        )
-        val checkIfNegative = builder.irIfThen(
-            type = builder.context.irBuiltIns.unitType,
-            builder.irCall(lessThanSymbol).apply {
-                arguments[0] = builder.irGet(takeArgumentVariable)
-                arguments[1] = builder.irInt(0)
-            },
-            throwExpression
-        )
-        val mainBodyBuilder =
-            { sequenceVariable: IrValueDeclaration ->
-                builder.irBlock {
-                    +increment(takeVariable, this@TakeStrategy.context)
-                    when (take.takeOrDrop) {
-                        TakeOrDrop.Take -> {
-                            val condition = irCall(lessOrEqualSymbol).apply {
-                                arguments[0] = irGet(takeVariable)
-                                arguments[1] = irGet(takeArgumentVariable)
+            val throwExpression = builder.irThrow(
+                builder.irCall(exceptionClass).apply {
+                    arguments[0] = builder.irString("Requested element count is less than zero.")
+                }
+            )
+            val checkIfNegative = builder.irIfThen(
+                type = builder.context.irBuiltIns.unitType,
+                builder.irCall(lessThanSymbol).apply {
+                    arguments[0] = builder.irGet(takeArgumentVariable)
+                    arguments[1] = builder.irInt(0)
+                },
+                throwExpression
+            )
+            val mainBodyBuilder =
+                { sequenceVariable: IrValueDeclaration ->
+                    builder.irBlock {
+                        +increment(takeVariable, this@TakeStrategy.context)
+                        when (take.takeOrDrop) {
+                            TakeOrDrop.Take -> {
+                                val condition = irCall(lessOrEqualSymbol).apply {
+                                    arguments[0] = irGet(takeVariable)
+                                    arguments[1] = irGet(takeArgumentVariable)
+                                }
+                                +irIfThenElse(
+                                    context.irBuiltIns.booleanType,
+                                    condition,
+                                    sequenceReplacement.mainBodyBuilder(sequenceVariable),
+                                    irFalse()
+                                )
                             }
-                            +irIfThenElse(
-                                context.irBuiltIns.booleanType,
-                                condition,
-                                sequenceReplacement.mainBodyBuilder(sequenceVariable),
-                                irFalse()
-                            )
-                        }
-                        TakeOrDrop.Drop -> {
-                            val condition = irCall(lessOrEqualSymbol).apply {
-                                arguments[0] = irGet(takeVariable)
-                                arguments[1] = irGet(takeArgumentVariable)
+                            TakeOrDrop.Drop -> {
+                                val condition = irCall(lessOrEqualSymbol).apply {
+                                    arguments[0] = irGet(takeVariable)
+                                    arguments[1] = irGet(takeArgumentVariable)
+                                }
+                                +irIfThenElse(
+                                    context.irBuiltIns.booleanType,
+                                    condition,
+                                    irTrue(),
+                                    sequenceReplacement.mainBodyBuilder(sequenceVariable),
+                                )
                             }
-                            +irIfThenElse(
-                                context.irBuiltIns.booleanType,
-                                condition,
-                                irTrue(),
-                                sequenceReplacement.mainBodyBuilder(sequenceVariable),
-                            )
                         }
                     }
                 }
-            }
-        val initialDeclarations = sequenceReplacement.initialDeclarations + takeVariable + takeArgumentVariable + checkIfNegative
-        val finalExpression = sequenceReplacement.finalExpression
-        return SequenceReplacement(initialDeclarations, mainBodyBuilder, finalExpression)
+            val initialDeclarations = sequenceReplacement.initialDeclarations + takeVariable + takeArgumentVariable + checkIfNegative
+            val finalExpression = sequenceReplacement.finalExpression
+            return SequenceReplacement(initialDeclarations, mainBodyBuilder, finalExpression)
+        }
     }
 }
