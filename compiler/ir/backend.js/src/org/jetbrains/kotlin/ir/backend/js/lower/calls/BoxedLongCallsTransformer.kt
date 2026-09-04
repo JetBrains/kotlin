@@ -35,9 +35,20 @@ internal class BoxedLongCallsTransformer(context: JsIrBackendContext) : CallsTra
     private val longHighField = irBuiltIns.longClass.fields.single { it.owner.name.asString() == "high" }
 
     override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression {
-        if (call.symbol == symbols.jsLongToString) {
-            return irCall(call, symbols.longToStringImpl)
+        val newSymbol = when (call.symbol) {
+            symbols.ulongDivide -> symbols.ulongDivideImpl
+            symbols.ulongRemainder -> symbols.ulongRemainderImpl
+            symbols.ulongToStringWithBase -> symbols.ulongToStringWithBaseImpl
+            symbols.ulongToDouble -> symbols.ulongToDoubleImpl
+            symbols.ulongFromUnsignedSafeDouble -> symbols.ulongFromUnsignedSafeDoubleImpl
+            symbols.jsLongToString -> symbols.longToStringImpl
+            else -> null
         }
+
+        if (newSymbol != null) {
+            return irCall(call, newSymbol)
+        }
+
         if (longAsBigInt && call.symbol == irBuiltIns.longClass.owner.primaryConstructorReplacement?.symbol) {
             return irCall(call, symbols.longFromTwoInts!!).apply {
                 // The first parameter of the primary constructor replacement function is actually `this`.
