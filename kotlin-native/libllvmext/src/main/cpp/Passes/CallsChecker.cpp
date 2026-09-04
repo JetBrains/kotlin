@@ -310,9 +310,6 @@ static bool isAKnownFunction(Function &F) {
   return !F.isDeclaration();
 }
 
-static constexpr int MSG_SEND_TO_NULL = -1;
-static constexpr int CALLED_LLVM_BUILTIN = -2;
-
 namespace {
 
 struct ExternalCallInfo {
@@ -445,64 +442,33 @@ bool CallsCheckerPass::run(CallBase &C) {
     Builder.SetInsertPoint(InsertPoint);
   }
 
+  auto *CallerName = placeCString(*Builder.GetInsertBlock()->getModule(),
+                                  C.getFunction()->getName());
+
   if (CalleeInfo->Name == "objc_msgSend") {
     // objc_msgSend has wrong declaration in header, so generated wrapper is
     // strange, Let's just skip it
     if (C.getNumOperands() < 2)
       return false;
     auto *Obj = C.getArgOperand(0);
-    auto *ObjClass = Builder.CreateCall(GetClass, {Obj});
-    auto *IsNil =
-        Builder.CreateICmpEQ(Obj, ConstantPointerNull::get(Builder.getPtrTy()));
     auto *Selector = C.getArgOperand(1);
-    auto *CalledPtrIfNotNil =
-        Builder.CreateCall(GetMethodImpl, {ObjClass, Selector});
-    auto *CalledPtrIfNil = ConstantExpr::getIntToPtr(
-        Builder.getInt64(MSG_SEND_TO_NULL), Builder.getPtrTy());
-    auto *CalledPtr =
-        Builder.CreateSelect(IsNil, CalledPtrIfNil, CalledPtrIfNotNil);
 
-    auto *CallSiteDescriptionGlobal = placeCString(
-        *Builder.GetInsertBlock()->getModule(),
-        formatv("{0} (over objc_msgSend)", C.getFunction()->getName()).str());
-
-    Builder.CreateCall(CheckStateAtExternalCall,
-                       {CallSiteDescriptionGlobal,
-                        ConstantPointerNull::get(Builder.getPtrTy()),
-                        CalledPtr});
+    Builder.CreateCall(CheckMsgSend,
+                       {CallerName, Obj, Selector});
   } else if (CalleeInfo->Name == "objc_msgSendSuper2") {
     // objc_msgSendSuper2 has wrong declaration in header, so generated wrapper
     // is strange, Let's just skip it
     if (C.getNumOperands() < 2)
       return false;
-    // This is
-    // https://developer.apple.com/documentation/objectivec/objc_super?language=objc
-    // We don't want to look this type up, so let's just use our own struct.
-    auto *SuperStructType =
-        StructType::get(Builder.getPtrTy(), Builder.getPtrTy());
-    auto *SuperStruct = C.getArgOperand(0);
-    auto *SuperClassPtrPtr =
-        Builder.CreateStructGEP(SuperStructType, SuperStruct, 1);
-    auto *SuperClassPtr =
-        Builder.CreateLoad(Builder.getPtrTy(), SuperClassPtrPtr);
-    auto *ClassPtr = Builder.CreateCall(GetSuperClass, {SuperClassPtr});
+    auto *Super = C.getArgOperand(0);
     auto *Selector = C.getArgOperand(1);
-    auto *CalledPtr = Builder.CreateCall(GetMethodImpl, {ClassPtr, Selector});
 
-    auto *CallSiteDescriptionGlobal = placeCString(
-        *Builder.GetInsertBlock()->getModule(),
-        formatv("{0} (over objc_msgSendSuper2)", C.getFunction()->getName())
-            .str());
-
-    Builder.CreateCall(CheckStateAtExternalCall,
-                       {CallSiteDescriptionGlobal,
-                        ConstantPointerNull::get(Builder.getPtrTy()),
-                        CalledPtr});
+    Builder.CreateCall(CheckMsgSendSuper2,
+                       {CallerName, Super, Selector});
   } else {
     auto *CalledPtr = CalleeInfo->CalledPtr;
     if (!CalledPtr) {
-      auto *Value = ConstantInt::get(Builder.getInt64Ty(), CALLED_LLVM_BUILTIN);
-      CalledPtr = ConstantExpr::getIntToPtr(Value, Builder.getPtrTy());
+      CalledPtr = ConstantPointerNull::get(Builder.getPtrTy());
     }
     switch (CalledPtr->getType()->getTypeID()) {
     case Type::PointerTyID:
@@ -515,17 +481,14 @@ bool CallsCheckerPass::run(CallBase &C) {
                                     CalledPtr->getType(), CalledPtr));
     }
 
-    auto *CallSiteDescriptionGlobal = placeCString(
-        *Builder.GetInsertBlock()->getModule(), C.getFunction()->getName());
-
     Value *CalledNameV = ConstantPointerNull::get(Builder.getPtrTy());
     if (auto CalledName = CalleeInfo->Name) {
       CalledNameV =
           placeCString(*Builder.GetInsertBlock()->getModule(), *CalledName);
     }
 
-    Builder.CreateCall(CheckStateAtExternalCall,
-                       {CallSiteDescriptionGlobal, CalledNameV, CalledPtr});
+    Builder.CreateCall(Check,
+                       {CallerName, CalledNameV, CalledPtr});
   }
 
   return true;
@@ -540,21 +503,22 @@ bool CallsCheckerPass::load(Module &M) {
   loadIgnoredFunctions(M);
   GoodFunctions = goodFunctionNamesSorted();
 
-  CheckStateAtExternalCall = M.getOrInsertFunction(
-      "Kotlin_mm_checkStateAtExternalFunctionCall", Type::getVoidTy(Ctx),
+  Check = M.getOrInsertFunction(
+      "Kotlin_callsChecker_check", Type::getVoidTy(Ctx),
       PointerType::getUnqual(Ctx), PointerType::getUnqual(Ctx),
       PointerType::getUnqual(Ctx));
-  // Always ignore the checker function itself.
-  IgnoredFunctions.insert(cast<Function>(CheckStateAtExternalCall.getCallee()));
-  GetMethodImpl = M.getOrInsertFunction(
-      "class_getMethodImplementation", PointerType::getUnqual(Ctx),
-      PointerType::getUnqual(Ctx), PointerType::getUnqual(Ctx));
-  GetClass =
-      M.getOrInsertFunction("object_getClass", PointerType::getUnqual(Ctx),
-                            PointerType::getUnqual(Ctx));
-  GetSuperClass =
-      M.getOrInsertFunction("class_getSuperclass", PointerType::getUnqual(Ctx),
-                            PointerType::getUnqual(Ctx));
+  CheckMsgSend = M.getOrInsertFunction(
+      "Kotlin_callsChecker_checkMsgSend", Type::getVoidTy(Ctx),
+      PointerType::getUnqual(Ctx), PointerType::getUnqual(Ctx),
+      PointerType::getUnqual(Ctx));
+  CheckMsgSendSuper2 = M.getOrInsertFunction(
+      "Kotlin_callsChecker_checkMsgSendSuper2", Type::getVoidTy(Ctx),
+      PointerType::getUnqual(Ctx), PointerType::getUnqual(Ctx),
+      PointerType::getUnqual(Ctx));
+  // Always ignore checker functions themselves.
+  IgnoredFunctions.insert(cast<Function>(Check.getCallee()));
+  IgnoredFunctions.insert(cast<Function>(CheckMsgSend.getCallee()));
+  IgnoredFunctions.insert(cast<Function>(CheckMsgSendSuper2.getCallee()));
 
   Loaded = true;
   return true;

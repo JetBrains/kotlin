@@ -46,10 +46,9 @@ private:
   bool Loaded = false; // Assumes there's a single module and no paralellism.
   SmallPtrSet<Function *, 32> IgnoredFunctions;
   SmallVector<StringRef> GoodFunctions;
-  FunctionCallee CheckStateAtExternalCall;
-  FunctionCallee GetMethodImpl;
-  FunctionCallee GetClass;
-  FunctionCallee GetSuperClass;
+  FunctionCallee Check;
+  FunctionCallee CheckMsgSend;
+  FunctionCallee CheckMsgSendSuper2;
 
   StringMap<Value *> Strings;
 };

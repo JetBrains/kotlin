@@ -10,6 +10,11 @@
 #include <cstring>
 #include <unordered_set>
 
+#if KONAN_APPLE
+#include <objc/message.h>
+#include <objc/runtime.h>
+#endif
+
 #include "KAssert.h"
 #include "Memory.h"
 #include "Porting.h"
@@ -96,12 +101,7 @@ static KnownFunctionChecker& knownFunctionChecker() noexcept {
     return instance;
 }
 
-constexpr int MSG_SEND_TO_NULL = -1;
-constexpr int CALLED_LLVM_BUILTIN = -2;
-
 thread_local size_t ignoreGuardsCount = 0;
-
-} // namespace
 
 /**
  * This function calls is inserted to llvm bitcode automatically, so it can be called almost anywhre.
@@ -113,9 +113,11 @@ thread_local size_t ignoreGuardsCount = 0;
  * should not be accessed. So before guard checking we need to check is thread destructor is running,
  * which requires special handling of recursive calls from this check.
  */
-extern "C" RUNTIME_NOTHROW RUNTIME_NODEBUG void Kotlin_mm_checkStateAtExternalFunctionCall(
-        const char* caller, const char* callee, const void* calleePtr) noexcept {
-    if (reinterpret_cast<int64_t>(calleePtr) == MSG_SEND_TO_NULL) return; // objc_sendMsg called on nil, it does nothing, so it's ok
+NO_EXTERNAL_CALLS_CHECK void checkStateAtCall(
+        void* calledPtr,
+        const char* calledName,
+        const char* callerName,
+        std::string (*callSiteDescription)(const char*)) noexcept {
     if (ignoreGuardsCount != 0) return;
     if (konan::isOnThreadExitNotSetOrAlreadyStarted()) return;
     if (!mm::IsCurrentThreadRegistered()) return;
@@ -127,26 +129,67 @@ extern "C" RUNTIME_NOTHROW RUNTIME_NODEBUG void Kotlin_mm_checkStateAtExternalFu
     }
 
     auto& checker = knownFunctionChecker();
-    if (reinterpret_cast<int64_t>(calleePtr) != CALLED_LLVM_BUILTIN && checker.isKnown(calleePtr)) {
+    if (calledPtr && checker.isKnown(calledPtr)) {
         return;
     }
 
     char buf[200];
-    if (callee == nullptr) {
+    if (!calledName) {
         ptrdiff_t unused;
-        if (AddressToSymbol(calleePtr, buf, sizeof(buf), unused)) {
-            callee = buf;
+        if (AddressToSymbol(calledPtr, buf, sizeof(buf), unused)) {
+            calledName = buf;
         } else {
-            callee = "unknown function";
+            calledName = "unknown function";
         }
     }
 
-    if (checker.isSafeByName(callee)) {
+    if (checker.isSafeByName(calledName)) {
         return;
     }
 
+    std::string descriptionStorage;
+    const char* description = callerName;
+    if (callSiteDescription) {
+        descriptionStorage = callSiteDescription(callerName);
+        description = descriptionStorage.c_str();
+    }
     PrintStackTraceStderr();
-    RuntimeFail("Expected kNative thread state at call of function %s by function %s", callee, caller);
+    RuntimeFail("Expected kNative thread state at call of function %s by function %s", calledName, description);
+}
+
+} // namespace
+
+extern "C" RUNTIME_NOTHROW void Kotlin_callsChecker_check(
+        const char* callerName, const char* calledName, void* calledPtr) noexcept {
+    checkStateAtCall(calledPtr, calledName, callerName, nullptr);
+}
+
+extern "C" RUNTIME_NOTHROW void Kotlin_callsChecker_checkMsgSend(const char* callerName, void* obj, void* selector) {
+#if KONAN_APPLE
+    if (obj == nullptr) {
+        // objc_sendMsg called on nil, it does nothing, so it's ok
+        return;
+    }
+    void* calledPtr = reinterpret_cast<void*>(
+            class_getMethodImplementation(object_getClass(reinterpret_cast<id>(obj)), reinterpret_cast<SEL>(selector)));
+    checkStateAtCall(calledPtr, nullptr, callerName, [](const char* callerName) noexcept {
+        std::ostringstream os;
+        os << callerName << " (over objc_msgSend)";
+        return os.str();
+    });
+#endif
+}
+
+extern "C" RUNTIME_NOTHROW void Kotlin_callsChecker_checkMsgSendSuper2(const char* callerName, void* super, void* selector) {
+#if KONAN_APPLE
+    void* calledPtr = reinterpret_cast<void*>(class_getMethodImplementation(
+            class_getSuperclass(reinterpret_cast<objc_super*>(super)->super_class), reinterpret_cast<SEL>(selector)));
+    checkStateAtCall(calledPtr, nullptr, callerName, [](const char* callerName) noexcept {
+        std::ostringstream os;
+        os << callerName << " (over objc_msgSendSuper2)";
+        return os.str();
+    });
+#endif
 }
 
 // Called from global constructors.
