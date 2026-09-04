@@ -102,3 +102,16 @@ fun test() {
 class BuilderWithNestedCompanionClass(val id: Int) {
     class <!COMPANION_OBJECT_IS_NOT_GENERATED!>Companion<!>
 }
+
+// A declaration the parser cannot read a name off gets the special name `<no name provided>`,
+// which no builder member can be named after. Nothing is generated for it, and nothing crashes.
+@Builder
+class IncompleteProperty(val<!SYNTAX!><!> )
+
+@Builder(setterPrefix = "with")
+class IncompletePrefixedProperty(val<!SYNTAX!><!> )
+
+fun useIncomplete() {
+    IncompleteProperty.builder().build()
+    IncompletePrefixedProperty.builder().build()
+}
