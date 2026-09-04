@@ -47,9 +47,9 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
         for (superTypeRef in getClassSuperTypeReferencesWithInitializers(declaration)) {
             reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS)
         }
-        for (propertyParameter in getConstructorProhibitedPropertyParameters(declaration, lastClass)) {
-            reporter.reportOn(propertyParameter.source, FirErrors.EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER)
-        }
+        // for (propertyParameter in getConstructorProhibitedPropertyParameters(declaration, lastClass)) {
+        //     reporter.reportOn(propertyParameter.source, FirErrors.EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER)
+        // }
         if (isProhibitedEnumConstructor(declaration, lastClass)) {
             reporter.reportOn(source, FirErrors.EXPECTED_ENUM_CONSTRUCTOR)
         }
@@ -64,9 +64,9 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
             reporter.reportOn(source, FirErrors.EXPECTED_PRIVATE_DECLARATION)
         }
 
-        if (isProhibitedDeclarationWithBody(declaration)) {
-            reporter.reportOn(source, FirErrors.EXPECTED_DECLARATION_WITH_BODY)
-        }
+        // if (isProhibitedDeclarationWithBody(declaration)) {
+        //     reporter.reportOn(source, FirErrors.EXPECTED_DECLARATION_WITH_BODY)
+        // }
     }
 
     private fun getConstructorProhibitedPropertyParameters(

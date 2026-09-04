@@ -34,6 +34,7 @@ class IrConstructorImpl @IrImplementationDetail constructor(
     override val containerSource: DeserializedContainerSource?,
     override var isInline: Boolean,
     override var isExpect: Boolean,
+    override var isExpectWithDefault: Boolean,
     override val symbol: IrConstructorSymbol,
     override var isPrimary: Boolean,
 ) : IrConstructor() {

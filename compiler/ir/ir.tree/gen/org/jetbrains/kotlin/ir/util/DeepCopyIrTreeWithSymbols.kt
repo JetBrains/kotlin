@@ -93,6 +93,7 @@ open class DeepCopyIrTreeWithSymbols(
             isData = declaration.isData
             isValue = declaration.isValue
             isExpect = declaration.isExpect
+            isExpectWithDefault = declaration.isExpectWithDefault
             isFun = declaration.isFun
             hasEnumEntries = declaration.hasEnumEntries
             superTypes = declaration.superTypes.memoryOptimizedMap { it.remapType() }
@@ -147,6 +148,7 @@ open class DeepCopyIrTreeWithSymbols(
             containerSource = declaration.containerSource,
             isInline = declaration.isInline,
             isExpect = declaration.isExpect,
+            isExpectWithDefault = declaration.isExpectWithDefault,
             symbol = symbolRemapper.getDeclaredConstructor(declaration.symbol),
             isPrimary = declaration.isPrimary,
         ).apply {
@@ -243,6 +245,7 @@ open class DeepCopyIrTreeWithSymbols(
             isLateinit = declaration.isLateinit,
             isDelegated = declaration.isDelegated,
             isExpect = declaration.isExpect,
+            isExpectWithDefault = declaration.isExpectWithDefault,
         ).apply {
             with(factory) { declarationCreated() }
             annotations = declaration.annotations.memoryOptimizedMap { it.transform() }
@@ -306,6 +309,7 @@ open class DeepCopyIrTreeWithSymbols(
             containerSource = declaration.containerSource,
             isInline = declaration.isInline,
             isExpect = declaration.isExpect,
+            isExpectWithDefault = declaration.isExpectWithDefault,
             modality = declaration.modality,
             isFakeOverride = declaration.isFakeOverride,
             symbol = symbolRemapper.getDeclaredSimpleFunction(declaration.symbol),

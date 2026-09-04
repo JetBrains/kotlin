@@ -29,6 +29,8 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
 
     abstract var isExpect: Boolean
 
+    abstract var isExpectWithDefault: Boolean
+
     abstract var returnType: IrType
 
     // Even though [parameters] is an immutable list, the backing list is a mutable list to avoid creating a copy

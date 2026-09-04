@@ -90,6 +90,10 @@ class Fir2IrLazyProperty(
         get() = fir.isExpect
         set(_) = mutationNotSupported()
 
+    override var isExpectWithDefault: Boolean
+        get() = fir.isExpect && fir.mayBeDefaultForExpect()
+        set(_) = mutationNotSupported()
+
     override var name: Name
         get() = fir.name
         set(_) = mutationNotSupported()

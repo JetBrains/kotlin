@@ -34,6 +34,7 @@ class IrConstructorWithLateBindingImpl @IrImplementationDetail constructor(
     override var visibility: DescriptorVisibility,
     override var isInline: Boolean,
     override var isExpect: Boolean,
+    override var isExpectWithDefault: Boolean,
     override var isPrimary: Boolean,
 ) : IrConstructorWithLateBinding() {
     override var attributeOwnerId: IrElement = this

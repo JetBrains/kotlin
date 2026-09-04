@@ -101,6 +101,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
                 isData = regularClass.isData,
                 isValue = regularClass.isInlineOrValue,
                 isExpect = regularClass.isExpect,
+                isExpectWithDefault = regularClass.isExpect && regularClass.mayBeDefaultForExpect(),
                 isFun = regularClass.isFun,
                 hasEnumEntries = regularClass.hasEnumEntries,
             ).apply {

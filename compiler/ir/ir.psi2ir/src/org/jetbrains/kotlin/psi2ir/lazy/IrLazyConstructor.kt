@@ -37,6 +37,7 @@ class IrLazyConstructor(
     override var isExternal: Boolean,
     override var isPrimary: Boolean,
     override var isExpect: Boolean,
+    override var isExpectWithDefault: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
 ) : IrConstructor(), Psi2IrLazyFunctionBase {

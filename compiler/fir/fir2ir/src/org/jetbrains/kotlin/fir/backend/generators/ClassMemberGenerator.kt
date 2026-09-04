@@ -137,7 +137,7 @@ internal class ClassMemberGenerator(
                 }
                 annotationGenerator.generate(irFunction, firFunction)
             }
-            if (firFunction is FirConstructor && irFunction is IrConstructor && !firFunction.isExpect && !irFunction.isExternal) {
+            if (firFunction is FirConstructor && irFunction is IrConstructor && (!firFunction.isExpect || containingClass.mayBeDefaultForExpect()) && !irFunction.isExternal) {
                 if (!configuration.skipBodies) {
                     val body = factory.createBlockBody(startOffset, endOffset)
                     val delegatedConstructor = firFunction.delegatedConstructor
@@ -171,7 +171,7 @@ internal class ClassMemberGenerator(
                         irFunction.body = body
                     }
                 }
-            } else if (irFunction !is IrConstructor && !irFunction.isExpect) {
+            } else if (irFunction !is IrConstructor) {
                 when {
                     // Create fake bodies for Enum.values/Enum.valueOf
                     irFunction.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> {

@@ -86,3 +86,14 @@ val FirCallableDeclaration.isCompanionBlockMember: Boolean
 
 val FirCallableDeclaration.isCompanionExtension: Boolean
     get() = isStatic && containingClassForStaticMemberAttr == null && receiverParameter != null
+
+@JvmName("hasBodyIfNotNull")
+fun FirDeclaration?.mayBeDefaultForExpect(): Boolean =
+    this != null && this.mayBeDefaultForExpect()
+
+fun FirDeclaration.mayBeDefaultForExpect(): Boolean = when (this) {
+    is FirFunction -> body != null || this.isAbstract
+    is FirProperty -> this.isAbstract || initializer != null || getter.mayBeDefaultForExpect() || setter.mayBeDefaultForExpect()
+    is FirClass -> declarations.any { it.mayBeDefaultForExpect() }
+    else -> false
+}

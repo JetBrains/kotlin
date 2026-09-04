@@ -136,7 +136,7 @@ internal fun checkPropertyInitializer(
                         reporter.reportOn(it, FirErrors.PROPERTY_INITIALIZER_IN_INTERFACE)
                     }
                     isExpect -> {
-                        reporter.reportOn(it, FirErrors.EXPECTED_PROPERTY_INITIALIZER)
+                        // reporter.reportOn(it, FirErrors.EXPECTED_PROPERTY_INITIALIZER)
                     }
                     !backingFieldRequired -> {
                         reporter.reportOn(it, FirErrors.PROPERTY_INITIALIZER_NO_BACKING_FIELD)

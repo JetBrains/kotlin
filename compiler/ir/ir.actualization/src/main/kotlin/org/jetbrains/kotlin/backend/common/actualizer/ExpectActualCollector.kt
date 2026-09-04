@@ -51,7 +51,7 @@ internal class ExpectActualCollector(
     private val diagnosticsReporter: IrDiagnosticReporter,
     private val expectActualTracker: ExpectActualTracker?,
     private val extraActualDeclarationExtractors: List<IrExtraActualDeclarationExtractor>,
-    private val missingActualProvider: IrMissingActualDeclarationProvider?,
+    private val missingActualProviders: List<IrMissingActualDeclarationProvider>,
     private val actualizerMapContributor: IrActualizerMapContributor?,
 ) {
     fun collectClassActualizationInfo(): ClassActualizationInfo {
@@ -70,7 +70,7 @@ internal class ExpectActualCollector(
             diagnosticsReporter,
             expectActualTracker,
             classActualizationInfo,
-            missingActualProvider
+            missingActualProviders
         )
         dependentFragments.forEach { linkCollector.collectAndCheckMapping(it, linkCollectorContext) }
         // It doesn't make sense to link expects from the last module because actuals always should be located in another module
@@ -79,7 +79,7 @@ internal class ExpectActualCollector(
         linkCollector.collectAndCheckMapping(mainFragment, linkCollectorContext)
 
         // We can't add generated actuals to their parents' list of declarations during visiting because it would lead to CME.
-        if (missingActualProvider != null) {
+        if (missingActualProviders.isNotEmpty()) {
             for (symbol in linkCollectorContext.expectActualMap.symbolMap.values) {
                 val declaration = symbol.owner as IrDeclaration
                 if (declaration.origin == IrDeclarationOrigin.STUB_FOR_LENIENT && !declaration.isPropertyAccessor) {
@@ -419,7 +419,7 @@ internal class ExpectActualLinkCollector {
         private val diagnosticsReporter: IrDiagnosticReporter,
         private val expectActualTracker: ExpectActualTracker?,
         val classActualizationInfo: ClassActualizationInfo,
-        private val missingActualProvider: IrMissingActualDeclarationProvider?,
+        private val missingActualProviders: List<IrMissingActualDeclarationProvider>,
         val expectActualMap: IrExpectActualMap,
         private val currentExpectFile: IrFile?,
     ) : IrExpectActualMatchingContext(typeSystemContext, classActualizationInfo.actualClasses) {
@@ -430,14 +430,14 @@ internal class ExpectActualLinkCollector {
             diagnosticsReporter: IrDiagnosticReporter,
             expectActualTracker: ExpectActualTracker?,
             classActualizationInfo: ClassActualizationInfo,
-            missingActualProvider: IrMissingActualDeclarationProvider?,
+            missingActualProviders: List<IrMissingActualDeclarationProvider>,
         ) : this(
             typeSystemContext = typeSystemContext,
             languageVersionSettings = languageVersionSettings,
             diagnosticsReporter = diagnosticsReporter,
             expectActualTracker = expectActualTracker,
             classActualizationInfo = classActualizationInfo,
-            missingActualProvider = missingActualProvider,
+            missingActualProviders = missingActualProviders,
             expectActualMap = IrExpectActualMap(),
             currentExpectFile = null,
         )
@@ -451,7 +451,7 @@ internal class ExpectActualLinkCollector {
                 diagnosticsReporter,
                 expectActualTracker,
                 classActualizationInfo,
-                missingActualProvider,
+                missingActualProviders,
                 expectActualMap,
                 newCurrentFile
             )
@@ -483,14 +483,16 @@ internal class ExpectActualLinkCollector {
             val isActualMissing = actualSymbolsByIncompatibility.isEmpty() && !expectSymbol.owner.containsOptionalExpectation()
 
             if (isActualMissing || actualSymbolsByIncompatibility.isNotEmpty()) {
-                val actualSymbolForMissingActual = missingActualProvider?.provideSymbolForMissingActual(
-                    expectSymbol = expectSymbol,
-                    containingExpectClassSymbol = containingExpectClassSymbol as IrClassSymbol?,
-                    containingActualClassSymbol = containingActualClassSymbol as IrClassSymbol?
-                )
-                if (actualSymbolForMissingActual != null) {
-                    onMatchedMembers(expectSymbol, actualSymbolForMissingActual, containingActualClassSymbol, containingActualClassSymbol)
-                    return
+                for (missingActualProvider in missingActualProviders) {
+                    val actualSymbolForMissingActual = missingActualProvider.provideSymbolForMissingActual(
+                        expectSymbol = expectSymbol,
+                        containingExpectClassSymbol = containingExpectClassSymbol as IrClassSymbol?,
+                        containingActualClassSymbol = containingActualClassSymbol as IrClassSymbol?
+                    )
+                    if (actualSymbolForMissingActual != null) {
+                        onMatchedMembers(expectSymbol, actualSymbolForMissingActual, containingActualClassSymbol, containingActualClassSymbol)
+                        return
+                    }
                 }
             }
 

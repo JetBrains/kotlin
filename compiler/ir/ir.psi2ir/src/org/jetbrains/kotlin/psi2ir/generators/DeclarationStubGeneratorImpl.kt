@@ -142,7 +142,7 @@ class DeclarationStubGeneratorImpl(
                 it, descriptor,
                 descriptor.name, descriptor.visibility, descriptor.modality,
                 descriptor.isVar, descriptor.isConst, descriptor.isLateInit,
-                descriptor.isDelegated, descriptor.isEffectivelyExternal(), descriptor.isExpect,
+                descriptor.isDelegated, descriptor.isEffectivelyExternal(), descriptor.isExpect, isExpectWithDefault = false,
                 isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE)
                         || descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
                 stubGenerator = this, typeTranslator,
@@ -195,7 +195,7 @@ class DeclarationStubGeneratorImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
                 it, descriptor,
                 descriptor.name, descriptor.visibility, descriptor.modality,
-                descriptor.isInline, descriptor.isExternal, descriptor.isTailrec, descriptor.isSuspend, descriptor.isExpect,
+                descriptor.isInline, descriptor.isExternal, descriptor.isTailrec, descriptor.isSuspend, descriptor.isExpect, isExpectWithDefault = false,
                 isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE),
                 isOperator = descriptor.isOperator, isInfix = descriptor.isInfix,
                 stubGenerator = this, typeTranslator = typeTranslator
@@ -219,7 +219,7 @@ class DeclarationStubGeneratorImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
                 it, descriptor,
                 descriptor.name, descriptor.visibility,
-                descriptor.isInline, descriptor.isEffectivelyExternal(), descriptor.isPrimary, descriptor.isExpect,
+                descriptor.isInline, descriptor.isEffectivelyExternal(), descriptor.isPrimary, descriptor.isExpect, isExpectWithDefault = false,
                 this, typeTranslator
             ).generateParentDeclaration().also {
                 it.parameters = it.createValueParameters()
@@ -315,6 +315,7 @@ class DeclarationStubGeneratorImpl(
                     isExternal = isEffectivelyExternal(),
                     isValue = isValueClass(),
                     isExpect = isExpect,
+                    isExpectWithDefault = false,
                     isFun = isFun,
                     hasEnumEntries = descriptor is DeserializedClassDescriptor && descriptor.hasEnumEntriesMetadataFlag,
                     stubGenerator = this@DeclarationStubGeneratorImpl,

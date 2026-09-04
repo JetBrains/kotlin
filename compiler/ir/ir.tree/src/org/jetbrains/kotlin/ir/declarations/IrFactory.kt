@@ -62,6 +62,7 @@ open class IrFactory(
         isFun: Boolean = false,
         hasEnumEntries: Boolean = false,
         source: SourceElement = SourceElement.NO_SOURCE,
+        isExpectWithDefault: Boolean = false,
     ): IrClass =
         IrClassImpl(
             startOffset = startOffset,
@@ -83,6 +84,7 @@ open class IrFactory(
             this.isExpect = isExpect
             this.isFun = isFun
             this.hasEnumEntries = hasEnumEntries
+            this.isExpectWithDefault = isExpectWithDefault
         }
 
     fun createConstructorWithLateBinding(
@@ -96,6 +98,7 @@ open class IrFactory(
         returnType: IrType?,
         isPrimary: Boolean,
         isExternal: Boolean = false,
+        isExpectWithDefault: Boolean = false,
     ): IrConstructor =
         IrConstructorWithLateBindingImpl(
             startOffset = startOffset,
@@ -107,6 +110,7 @@ open class IrFactory(
             isExternal = isExternal,
             isPrimary = isPrimary,
             isExpect = isExpect,
+            isExpectWithDefault = isExpectWithDefault,
             factory = this
         ).declarationCreated().apply {
             if (returnType != null) {
@@ -127,6 +131,7 @@ open class IrFactory(
         isPrimary: Boolean,
         isExternal: Boolean = false,
         containerSource: DeserializedContainerSource? = null,
+        isExpectWithDefault: Boolean = false,
     ): IrConstructor =
         IrConstructorImpl(
             startOffset = startOffset,
@@ -139,6 +144,7 @@ open class IrFactory(
             isExternal = isExternal,
             isPrimary = isPrimary,
             isExpect = isExpect,
+            isExpectWithDefault = isExpectWithDefault,
             containerSource = containerSource,
             factory = this
         ).declarationCreated().apply {
@@ -208,6 +214,7 @@ open class IrFactory(
         containerSource: DeserializedContainerSource? = null,
         isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
         companionExtensionClass: IrClassSymbol? = null,
+        isExpectWithDefault: Boolean = false,
     ): IrSimpleFunction =
         IrFunctionImpl(
             startOffset = startOffset,
@@ -224,6 +231,7 @@ open class IrFactory(
             isOperator = isOperator,
             isInfix = isInfix,
             isExpect = isExpect,
+            isExpectWithDefault = isExpectWithDefault,
             isFakeOverride = isFakeOverride,
             containerSource = containerSource,
             factory = this,
@@ -251,6 +259,7 @@ open class IrFactory(
         isExternal: Boolean = false,
         isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
         companionExtensionClass: IrClassSymbol? = null,
+        isExpectWithDefault: Boolean = false,
     ): IrFunctionWithLateBinding =
         IrFunctionWithLateBindingImpl(
             startOffset = startOffset,
@@ -266,6 +275,7 @@ open class IrFactory(
             isOperator = isOperator,
             isInfix = isInfix,
             isExpect = isExpect,
+            isExpectWithDefault = isExpectWithDefault,
             isFakeOverride = isFakeOverride,
             factory = this,
             companionExtensionClass = companionExtensionClass,
@@ -311,6 +321,7 @@ open class IrFactory(
         containerSource: DeserializedContainerSource? = null,
         isExpect: Boolean = false,
         isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+        isExpectWithDefault: Boolean = false,
     ): IrProperty =
         IrPropertyImpl(
             startOffset = startOffset,
@@ -326,6 +337,7 @@ open class IrFactory(
             isDelegated = isDelegated,
             isExternal = isExternal,
             isExpect = isExpect,
+            isExpectWithDefault = isExpectWithDefault,
             isFakeOverride = isFakeOverride,
             containerSource = containerSource,
             factory = this
@@ -345,6 +357,7 @@ open class IrFactory(
         isExternal: Boolean = false,
         isExpect: Boolean = false,
         isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+        isExpectWithDefault: Boolean = false,
     ): IrPropertyWithLateBinding =
         IrPropertyWithLateBindingImpl(
             startOffset = startOffset,
@@ -359,6 +372,7 @@ open class IrFactory(
             isDelegated = isDelegated,
             isExternal = isExternal,
             isExpect = isExpect,
+            isExpectWithDefault = isExpectWithDefault,
             isFakeOverride = isFakeOverride,
             factory = this
         ).declarationCreated()

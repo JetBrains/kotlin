@@ -87,6 +87,10 @@ class Fir2IrLazyPropertyForPureField(
         get() = false
         set(_) = mutationNotSupported()
 
+    override var isExpectWithDefault: Boolean
+        get() = false
+        set(_) = mutationNotSupported()
+
     override var name: Name
         get() = this.field.name
         set(_) = mutationNotSupported()

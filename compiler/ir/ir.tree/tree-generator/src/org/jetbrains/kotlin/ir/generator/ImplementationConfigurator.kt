@@ -118,7 +118,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             additionalImports(ArbitraryImportable("org.jetbrains.kotlin.ir.declarations", "IrParameterKind"))
             defaultNull("valueClassRepresentation")
             defaultEmptyList("superTypes", "sealedSubclasses")
-            defaultFalse("isExternal", "isCompanion", "isInner", "isData", "isValue", "isExpect", "isFun", "hasEnumEntries")
+            defaultFalse("isExternal", "isCompanion", "isInner", "isData", "isValue", "isExpect", "isExpectWithDefault", "isFun", "hasEnumEntries")
             default("thisReceiver") {
                 value = "null"
                 customSetter = """

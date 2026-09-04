@@ -38,6 +38,7 @@ class IrLazyProperty(
     override var isDelegated: Boolean,
     override var isExternal: Boolean,
     override var isExpect: Boolean,
+    override var isExpectWithDefault: Boolean,
     override var isFakeOverride: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,

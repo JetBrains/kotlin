@@ -61,6 +61,8 @@ class IrClassImpl @IrImplementationDetail constructor(
 
     override var isExpect: Boolean = false
 
+    override var isExpectWithDefault: Boolean = false
+
     override var isFun: Boolean = false
 
     override var hasEnumEntries: Boolean = false

@@ -71,6 +71,10 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
         get() = fir.isExpect
         set(_) = mutationNotSupported()
 
+    override var isExpectWithDefault: Boolean
+        get() = fir.isExpect && fir.mayBeDefaultForExpect()
+        set(_) = mutationNotSupported()
+
     override var body: IrBody?
         get() = null
         set(value) = check(value == null, ::mutationNotSupported)

@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.mayBeDefaultForExpect
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -63,6 +65,10 @@ class Fir2IrLazyConstructor(
 
     override var isExpect: Boolean
         get() = fir.isExpect
+        set(_) = mutationNotSupported()
+
+    override var isExpectWithDefault: Boolean
+        get() = fir.isExpect && fir.mayBeDefaultForExpect()
         set(_) = mutationNotSupported()
 
     override var body: IrBody? = null

@@ -300,6 +300,7 @@ object IrTree : AbstractTreeBuilder() {
         +field("isData", boolean)
         +field("isValue", boolean)
         +field("isExpect", boolean)
+        +field("isExpectWithDefault", boolean)
         +field("isFun", boolean)
         +field("hasEnumEntries", boolean) {
             kDoc = """
@@ -402,6 +403,7 @@ object IrTree : AbstractTreeBuilder() {
         // NB: there's an inline constructor for Array and each primitive array class.
         +field("isInline", boolean)
         +field("isExpect", boolean)
+        +field("isExpectWithDefault", boolean)
         +field("returnType", irTypeType)
         +field("body", body, nullable = true)
     }
@@ -510,6 +512,7 @@ object IrTree : AbstractTreeBuilder() {
         +field("isLateinit", boolean)
         +field("isDelegated", boolean)
         +field("isExpect", boolean)
+        +field("isExpectWithDefault", boolean)
         +field("backingField", field, nullable = true)
         +field("getter", simpleFunction, nullable = true)
         +field("setter", simpleFunction, nullable = true)

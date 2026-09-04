@@ -41,6 +41,8 @@ abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrD
 
     abstract var isExpect: Boolean
 
+    abstract var isExpectWithDefault: Boolean
+
     abstract var isFun: Boolean
 
     /**

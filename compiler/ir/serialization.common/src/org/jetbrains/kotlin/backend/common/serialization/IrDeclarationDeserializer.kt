@@ -614,7 +614,8 @@ class IrDeclarationDeserializer(
                         isExternal = flags.isExternal || isEffectivelyExternal,
                         isFakeOverride = flags.isFakeOverride,
                         companionExtensionClass = proto.base.companionExtensionClass.takeIf { proto.base.hasCompanionExtensionClass() }
-                            ?.let { symbol -> deserializeIrSymbol(symbol).checkSymbolType(CLASS_SYMBOL) }
+                            ?.let { symbol -> deserializeIrSymbol(symbol).checkSymbolType(CLASS_SYMBOL) },
+                        isExpectWithDefault = flags.isExpect && proto.base.hasBody()
                     )
                 }
             }.apply {

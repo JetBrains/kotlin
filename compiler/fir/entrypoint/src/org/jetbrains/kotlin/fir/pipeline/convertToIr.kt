@@ -299,7 +299,10 @@ private class Fir2IrPipeline(
                 mainIrFragment,
                 dependentIrFragments,
                 extraActualDeclarationExtractorsInitializer(componentsStorage),
-                missingActualProvider = LenientModeMissingActualDeclarationProvider.initializeIfNeeded(componentsStorage),
+                missingActualProviders = listOfNotNull(
+                    IrExpectWithDefaultDeclarationProvider(),
+                    LenientModeMissingActualDeclarationProvider.initializeIfNeeded(componentsStorage)
+                ),
                 actualizerMapContributor = IrCommonToPlatformDependencyActualizerMapContributor.create(
                     outputs.last().session,
                     componentsStoragePerSourceSession,

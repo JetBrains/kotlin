@@ -114,6 +114,10 @@ class Fir2IrLazyClass(
         get() = fir.isExpect
         set(_) = mutationNotSupported()
 
+    override var isExpectWithDefault: Boolean
+        get() = fir.isExpect && fir.mayBeDefaultForExpect()
+        set(_) = mutationNotSupported()
+
     override var isFun: Boolean
         get() = fir.isFun
         set(_) = mutationNotSupported()

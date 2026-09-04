@@ -37,6 +37,7 @@ class IrFunctionWithLateBindingImpl @IrImplementationDetail constructor(
     override var visibility: DescriptorVisibility,
     override var isInline: Boolean,
     override var isExpect: Boolean,
+    override var isExpectWithDefault: Boolean,
     override var modality: Modality,
     override var isFakeOverride: Boolean,
     override var isTailrec: Boolean,

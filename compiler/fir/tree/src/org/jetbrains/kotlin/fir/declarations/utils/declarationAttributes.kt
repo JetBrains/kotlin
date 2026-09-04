@@ -200,7 +200,7 @@ val FirProperty.hasBackingField: Boolean
         @OptIn(FirImplementationDetail::class)
         hasBackingFieldAttr?.let { return it }
 
-        if (isAbstract || isExpect) return false
+        if (isAbstract || (isExpect && !mayBeDefaultForExpect())) return false
         if (delegate != null) return false
         if (hasExplicitBackingField) return true
         if (symbol is FirSyntheticPropertySymbol) return false

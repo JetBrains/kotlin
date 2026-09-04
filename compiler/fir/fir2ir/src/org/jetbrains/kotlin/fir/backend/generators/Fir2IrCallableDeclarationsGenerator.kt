@@ -135,7 +135,8 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 isInfix = namedFunction?.isInfix == true,
                 isExternal = isEffectivelyExternal(namedFunction, irParent),
                 containerSource = namedFunction?.containerSource,
-                companionExtensionClass = function.receiverParameter?.takeIf { function.isCompanionExtension }?.typeRef?.toIrType()?.classOrFail
+                companionExtensionClass = function.receiverParameter?.takeIf { function.isCompanionExtension }?.typeRef?.toIrType()?.classOrFail,
+                isExpectWithDefault = namedFunction?.isExpect == true && namedFunction.mayBeDefaultForExpect()
             ).apply {
                 metadata = FirMetadataSource.Function(function)
                 declarationStorage.withScope(symbol) {
@@ -204,6 +205,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 symbol = symbol,
                 isPrimary = isPrimary,
                 isExternal = isEffectivelyExternal(constructor, irParent),
+                isExpectWithDefault = constructor.isExpect && irParent.isExpectWithDefault
             ).apply {
                 metadata = FirMetadataSource.Function(constructor)
                 annotationGenerator.generate(this, constructor)
@@ -264,6 +266,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 isExternal = isEffectivelyExternal(property, irParent),
                 containerSource = property.containerSource,
                 isExpect = property.isExpect,
+                isExpectWithDefault = property.isExpect && property.mayBeDefaultForExpect()
             ).apply {
                 metadata = FirMetadataSource.Property(property)
                 convertAnnotationsForNonDeclaredMembers(property, origin)
