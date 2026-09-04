@@ -22,7 +22,17 @@ FILE fqName:<root> fileName:/DelegatedCompanionProperties.kt
           CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=null
             ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:tdA$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final,static] declared in <root>' type=kotlinx.atomicfu.AtomicInt origin=null
             ARG thisRef: CONST Null type=kotlin.Nothing? value=null
-            ARG property: PROPERTY_REFERENCE 'private final tdA: kotlin.Int declared in <root>' field=null getter='private final fun <get-tdA> (): kotlin.Int declared in <root>' setter='private final fun <set-tdA> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='private final tdA: kotlin.Int declared in <root>'
+              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:tdA visibility:local modality:FINAL returnType:kotlin.Int
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun tdA (): kotlin.Int declared in <root>.<get-tdA>'
+                    CALL 'private final fun <get-tdA> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+              setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:tdA visibility:local modality:FINAL returnType:kotlin.Unit
+                VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun tdA (value: kotlin.Int): kotlin.Unit declared in <root>.<get-tdA>'
+                    CALL 'private final fun <set-tdA> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                      ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.<get-tdA>.tdA' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-tdA> visibility:private modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:Regular name:<set-?> index:0 type:kotlin.Int
       correspondingProperty: PROPERTY name:tdA visibility:private modality:FINAL [delegated,var]
@@ -32,7 +42,17 @@ FILE fqName:<root> fileName:/DelegatedCompanionProperties.kt
           CALL 'public final fun setValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.Int): kotlin.Unit declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Unit origin=null
             ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:tdA$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final,static] declared in <root>' type=kotlinx.atomicfu.AtomicInt origin=null
             ARG thisRef: CONST Null type=kotlin.Nothing? value=null
-            ARG property: PROPERTY_REFERENCE 'private final tdA: kotlin.Int declared in <root>' field=null getter='private final fun <get-tdA> (): kotlin.Int declared in <root>' setter='private final fun <set-tdA> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='private final tdA: kotlin.Int declared in <root>'
+              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:tdA visibility:local modality:FINAL returnType:kotlin.Int
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun tdA (): kotlin.Int declared in <root>.<set-tdA>'
+                    CALL 'private final fun <get-tdA> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+              setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:tdA visibility:local modality:FINAL returnType:kotlin.Unit
+                VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun tdA (value: kotlin.Int): kotlin.Unit declared in <root>.<set-tdA>'
+                    CALL 'private final fun <set-tdA> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                      ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.<set-tdA>.tdA' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
             ARG value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-tdA>' type=kotlin.Int origin=null
   PROPERTY name:tD visibility:private modality:FINAL [delegated,var]
     FIELD PROPERTY_DELEGATE name:tD$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final,static]
@@ -47,7 +67,17 @@ FILE fqName:<root> fileName:/DelegatedCompanionProperties.kt
           CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=null
             ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:tD$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final,static] declared in <root>' type=kotlinx.atomicfu.AtomicInt origin=null
             ARG thisRef: CONST Null type=kotlin.Nothing? value=null
-            ARG property: PROPERTY_REFERENCE 'private final tD: kotlin.Int declared in <root>' field=null getter='private final fun <get-tD> (): kotlin.Int declared in <root>' setter='private final fun <set-tD> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='private final tD: kotlin.Int declared in <root>'
+              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:tD visibility:local modality:FINAL returnType:kotlin.Int
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun tD (): kotlin.Int declared in <root>.<get-tD>'
+                    CALL 'private final fun <get-tD> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+              setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:tD visibility:local modality:FINAL returnType:kotlin.Unit
+                VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun tD (value: kotlin.Int): kotlin.Unit declared in <root>.<get-tD>'
+                    CALL 'private final fun <set-tD> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                      ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.<get-tD>.tD' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-tD> visibility:private modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:Regular name:<set-?> index:0 type:kotlin.Int
       correspondingProperty: PROPERTY name:tD visibility:private modality:FINAL [delegated,var]
@@ -57,7 +87,17 @@ FILE fqName:<root> fileName:/DelegatedCompanionProperties.kt
           CALL 'public final fun setValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.Int): kotlin.Unit declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Unit origin=null
             ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:tD$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final,static] declared in <root>' type=kotlinx.atomicfu.AtomicInt origin=null
             ARG thisRef: CONST Null type=kotlin.Nothing? value=null
-            ARG property: PROPERTY_REFERENCE 'private final tD: kotlin.Int declared in <root>' field=null getter='private final fun <get-tD> (): kotlin.Int declared in <root>' setter='private final fun <set-tD> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='private final tD: kotlin.Int declared in <root>'
+              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:tD visibility:local modality:FINAL returnType:kotlin.Int
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun tD (): kotlin.Int declared in <root>.<set-tD>'
+                    CALL 'private final fun <get-tD> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+              setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:tD visibility:local modality:FINAL returnType:kotlin.Unit
+                VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun tD (value: kotlin.Int): kotlin.Unit declared in <root>.<set-tD>'
+                    CALL 'private final fun <set-tD> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                      ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.<set-tD>.tD' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
             ARG value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-tD>' type=kotlin.Int origin=null
   CLASS CLASS name:DelegatedProperties modality:FINAL visibility:private superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.DelegatedProperties
@@ -82,7 +122,17 @@ FILE fqName:<root> fileName:/DelegatedCompanionProperties.kt
             CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=null
               ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:dA$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final,static] declared in <root>.DelegatedProperties' type=kotlinx.atomicfu.AtomicInt origin=null
               ARG thisRef: CONST Null type=kotlin.Nothing? value=null
-              ARG property: PROPERTY_REFERENCE 'public final dA: kotlin.Int declared in <root>.DelegatedProperties' field=null getter='public final fun <get-dA> (): kotlin.Int declared in <root>.DelegatedProperties' setter='public final fun <set-dA> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProperties' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final dA: kotlin.Int declared in <root>.DelegatedProperties'
+                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:dA visibility:local modality:FINAL returnType:kotlin.Int
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun dA (): kotlin.Int declared in <root>.DelegatedProperties.<get-dA>'
+                      CALL 'public final fun <get-dA> (): kotlin.Int declared in <root>.DelegatedProperties' type=kotlin.Int origin=null
+                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:dA visibility:local modality:FINAL returnType:kotlin.Unit
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun dA (value: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProperties.<get-dA>'
+                      CALL 'public final fun <set-dA> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProperties' type=kotlin.Unit origin=null
+                        ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.DelegatedProperties.<get-dA>.dA' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
       FUN DELEGATED_PROPERTY_ACCESSOR name:<set-dA> visibility:public modality:FINAL returnType:kotlin.Unit [companion]
         VALUE_PARAMETER kind:Regular name:<set-?> index:0 type:kotlin.Int
         correspondingProperty: PROPERTY name:dA visibility:public modality:FINAL [delegated,var]
@@ -91,7 +141,17 @@ FILE fqName:<root> fileName:/DelegatedCompanionProperties.kt
             CALL 'public final fun setValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.Int): kotlin.Unit declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Unit origin=null
               ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:dA$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final,static] declared in <root>.DelegatedProperties' type=kotlinx.atomicfu.AtomicInt origin=null
               ARG thisRef: CONST Null type=kotlin.Nothing? value=null
-              ARG property: PROPERTY_REFERENCE 'public final dA: kotlin.Int declared in <root>.DelegatedProperties' field=null getter='public final fun <get-dA> (): kotlin.Int declared in <root>.DelegatedProperties' setter='public final fun <set-dA> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProperties' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final dA: kotlin.Int declared in <root>.DelegatedProperties'
+                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:dA visibility:local modality:FINAL returnType:kotlin.Int
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun dA (): kotlin.Int declared in <root>.DelegatedProperties.<set-dA>'
+                      CALL 'public final fun <get-dA> (): kotlin.Int declared in <root>.DelegatedProperties' type=kotlin.Int origin=null
+                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:dA visibility:local modality:FINAL returnType:kotlin.Unit
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun dA (value: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProperties.<set-dA>'
+                      CALL 'public final fun <set-dA> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProperties' type=kotlin.Unit origin=null
+                        ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.DelegatedProperties.<set-dA>.dA' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
               ARG value: GET_VAR '<set-?>: kotlin.Int declared in <root>.DelegatedProperties.<set-dA>' type=kotlin.Int origin=null
     PROPERTY name:d visibility:public modality:FINAL [delegated,var]
       FIELD PROPERTY_DELEGATE name:d$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final,static]
@@ -105,7 +165,17 @@ FILE fqName:<root> fileName:/DelegatedCompanionProperties.kt
             CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=null
               ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:d$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final,static] declared in <root>.DelegatedProperties' type=kotlinx.atomicfu.AtomicInt origin=null
               ARG thisRef: CONST Null type=kotlin.Nothing? value=null
-              ARG property: PROPERTY_REFERENCE 'public final d: kotlin.Int declared in <root>.DelegatedProperties' field=null getter='public final fun <get-d> (): kotlin.Int declared in <root>.DelegatedProperties' setter='public final fun <set-d> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProperties' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final d: kotlin.Int declared in <root>.DelegatedProperties'
+                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:d visibility:local modality:FINAL returnType:kotlin.Int
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun d (): kotlin.Int declared in <root>.DelegatedProperties.<get-d>'
+                      CALL 'public final fun <get-d> (): kotlin.Int declared in <root>.DelegatedProperties' type=kotlin.Int origin=null
+                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:d visibility:local modality:FINAL returnType:kotlin.Unit
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun d (value: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProperties.<get-d>'
+                      CALL 'public final fun <set-d> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProperties' type=kotlin.Unit origin=null
+                        ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.DelegatedProperties.<get-d>.d' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
       FUN DELEGATED_PROPERTY_ACCESSOR name:<set-d> visibility:public modality:FINAL returnType:kotlin.Unit [companion]
         VALUE_PARAMETER kind:Regular name:<set-?> index:0 type:kotlin.Int
         correspondingProperty: PROPERTY name:d visibility:public modality:FINAL [delegated,var]
@@ -114,7 +184,17 @@ FILE fqName:<root> fileName:/DelegatedCompanionProperties.kt
             CALL 'public final fun setValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.Int): kotlin.Unit declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Unit origin=null
               ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:d$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final,static] declared in <root>.DelegatedProperties' type=kotlinx.atomicfu.AtomicInt origin=null
               ARG thisRef: CONST Null type=kotlin.Nothing? value=null
-              ARG property: PROPERTY_REFERENCE 'public final d: kotlin.Int declared in <root>.DelegatedProperties' field=null getter='public final fun <get-d> (): kotlin.Int declared in <root>.DelegatedProperties' setter='public final fun <set-d> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProperties' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final d: kotlin.Int declared in <root>.DelegatedProperties'
+                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:d visibility:local modality:FINAL returnType:kotlin.Int
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun d (): kotlin.Int declared in <root>.DelegatedProperties.<set-d>'
+                      CALL 'public final fun <get-d> (): kotlin.Int declared in <root>.DelegatedProperties' type=kotlin.Int origin=null
+                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:d visibility:local modality:FINAL returnType:kotlin.Unit
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:0 type:kotlin.Int
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun d (value: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProperties.<set-d>'
+                      CALL 'public final fun <set-d> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProperties' type=kotlin.Unit origin=null
+                        ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.DelegatedProperties.<set-d>.d' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
               ARG value: GET_VAR '<set-?>: kotlin.Int declared in <root>.DelegatedProperties.<set-d>' type=kotlin.Int origin=null
     CONSTRUCTOR visibility:public returnType:<root>.DelegatedProperties [primary]
       BLOCK_BODY

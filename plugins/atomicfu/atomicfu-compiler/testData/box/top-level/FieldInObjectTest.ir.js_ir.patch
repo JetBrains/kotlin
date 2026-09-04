@@ -1,6 +1,6 @@
 --- a/FieldInObjectTest.ir.txt
 +++ b/FieldInObjectTest.ir.js_ir.txt
-@@ -1,217 +1,181 @@
+@@ -1,217 +1,237 @@
  FILE fqName:<root> fileName:/FieldInObjectTest.kt
    CLASS OBJECT name:DelegatedProvider modality:FINAL visibility:private superTypes:[kotlin.Any]
      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.DelegatedProvider
@@ -74,7 +74,21 @@
 +              ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:a$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final] declared in <root>.DelegatedProvider' type=kotlinx.atomicfu.AtomicInt origin=null
 +                receiver: GET_VAR '<this>: <root>.DelegatedProvider declared in <root>.DelegatedProvider.<get-a>' type=<root>.DelegatedProvider origin=IMPLICIT_ARGUMENT
 +              ARG thisRef: GET_VAR '<this>: <root>.DelegatedProvider declared in <root>.DelegatedProvider.<get-a>' type=<root>.DelegatedProvider origin=null
-+              ARG property: PROPERTY_REFERENCE 'public final a: kotlin.Int declared in <root>.DelegatedProvider' field=null getter='public final fun <get-a> (): kotlin.Int declared in <root>.DelegatedProvider' setter='public final fun <set-a> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProvider' type=kotlin.reflect.KMutableProperty1<<root>.DelegatedProvider, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
++              ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<<root>.DelegatedProvider, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final a: kotlin.Int declared in <root>.DelegatedProvider'
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:a visibility:local modality:FINAL returnType:kotlin.Int
++                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.DelegatedProvider
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun a (p0: <root>.DelegatedProvider): kotlin.Int declared in <root>.DelegatedProvider.<get-a>'
++                      CALL 'public final fun <get-a> (): kotlin.Int declared in <root>.DelegatedProvider' type=kotlin.Int origin=null
++                        ARG <this>: GET_VAR 'p0: <root>.DelegatedProvider declared in <root>.DelegatedProvider.<get-a>.a' type=<root>.DelegatedProvider origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:a visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.DelegatedProvider
++                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun a (p0: <root>.DelegatedProvider, value: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProvider.<get-a>'
++                      CALL 'public final fun <set-a> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProvider' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR 'p0: <root>.DelegatedProvider declared in <root>.DelegatedProvider.<get-a>.a' type=<root>.DelegatedProvider origin=null
++                        ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.DelegatedProvider.<get-a>.a' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
        FUN DELEGATED_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:FINAL returnType:kotlin.Unit
          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.DelegatedProvider
          VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
@@ -88,7 +102,21 @@
 +              ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:a$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final] declared in <root>.DelegatedProvider' type=kotlinx.atomicfu.AtomicInt origin=null
 +                receiver: GET_VAR '<this>: <root>.DelegatedProvider declared in <root>.DelegatedProvider.<set-a>' type=<root>.DelegatedProvider origin=IMPLICIT_ARGUMENT
 +              ARG thisRef: GET_VAR '<this>: <root>.DelegatedProvider declared in <root>.DelegatedProvider.<set-a>' type=<root>.DelegatedProvider origin=null
-+              ARG property: PROPERTY_REFERENCE 'public final a: kotlin.Int declared in <root>.DelegatedProvider' field=null getter='public final fun <get-a> (): kotlin.Int declared in <root>.DelegatedProvider' setter='public final fun <set-a> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProvider' type=kotlin.reflect.KMutableProperty1<<root>.DelegatedProvider, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
++              ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<<root>.DelegatedProvider, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final a: kotlin.Int declared in <root>.DelegatedProvider'
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:a visibility:local modality:FINAL returnType:kotlin.Int
++                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.DelegatedProvider
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun a (p0: <root>.DelegatedProvider): kotlin.Int declared in <root>.DelegatedProvider.<set-a>'
++                      CALL 'public final fun <get-a> (): kotlin.Int declared in <root>.DelegatedProvider' type=kotlin.Int origin=null
++                        ARG <this>: GET_VAR 'p0: <root>.DelegatedProvider declared in <root>.DelegatedProvider.<set-a>.a' type=<root>.DelegatedProvider origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:a visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.DelegatedProvider
++                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun a (p0: <root>.DelegatedProvider, value: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProvider.<set-a>'
++                      CALL 'public final fun <set-a> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProvider' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR 'p0: <root>.DelegatedProvider declared in <root>.DelegatedProvider.<set-a>.a' type=<root>.DelegatedProvider origin=null
++                        ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.DelegatedProvider.<set-a>.a' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
 +              ARG value: GET_VAR '<set-?>: kotlin.Int declared in <root>.DelegatedProvider.<set-a>' type=kotlin.Int origin=null
      PROPERTY name:vInt visibility:public modality:FINAL [delegated,var]
 +      FIELD PROPERTY_DELEGATE name:vInt$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final]
@@ -106,7 +134,21 @@
 +              ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:vInt$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final] declared in <root>.DelegatedProvider' type=kotlinx.atomicfu.AtomicInt origin=null
 +                receiver: GET_VAR '<this>: <root>.DelegatedProvider declared in <root>.DelegatedProvider.<get-vInt>' type=<root>.DelegatedProvider origin=IMPLICIT_ARGUMENT
 +              ARG thisRef: GET_VAR '<this>: <root>.DelegatedProvider declared in <root>.DelegatedProvider.<get-vInt>' type=<root>.DelegatedProvider origin=null
-+              ARG property: PROPERTY_REFERENCE 'public final vInt: kotlin.Int declared in <root>.DelegatedProvider' field=null getter='public final fun <get-vInt> (): kotlin.Int declared in <root>.DelegatedProvider' setter='public final fun <set-vInt> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProvider' type=kotlin.reflect.KMutableProperty1<<root>.DelegatedProvider, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
++              ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<<root>.DelegatedProvider, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final vInt: kotlin.Int declared in <root>.DelegatedProvider'
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:vInt visibility:local modality:FINAL returnType:kotlin.Int
++                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.DelegatedProvider
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun vInt (p0: <root>.DelegatedProvider): kotlin.Int declared in <root>.DelegatedProvider.<get-vInt>'
++                      CALL 'public final fun <get-vInt> (): kotlin.Int declared in <root>.DelegatedProvider' type=kotlin.Int origin=null
++                        ARG <this>: GET_VAR 'p0: <root>.DelegatedProvider declared in <root>.DelegatedProvider.<get-vInt>.vInt' type=<root>.DelegatedProvider origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:vInt visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.DelegatedProvider
++                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun vInt (p0: <root>.DelegatedProvider, value: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProvider.<get-vInt>'
++                      CALL 'public final fun <set-vInt> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProvider' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR 'p0: <root>.DelegatedProvider declared in <root>.DelegatedProvider.<get-vInt>.vInt' type=<root>.DelegatedProvider origin=null
++                        ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.DelegatedProvider.<get-vInt>.vInt' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
        FUN DELEGATED_PROPERTY_ACCESSOR name:<set-vInt> visibility:public modality:FINAL returnType:kotlin.Unit
          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.DelegatedProvider
          VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
@@ -120,7 +162,21 @@
 +              ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:vInt$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final] declared in <root>.DelegatedProvider' type=kotlinx.atomicfu.AtomicInt origin=null
 +                receiver: GET_VAR '<this>: <root>.DelegatedProvider declared in <root>.DelegatedProvider.<set-vInt>' type=<root>.DelegatedProvider origin=IMPLICIT_ARGUMENT
 +              ARG thisRef: GET_VAR '<this>: <root>.DelegatedProvider declared in <root>.DelegatedProvider.<set-vInt>' type=<root>.DelegatedProvider origin=null
-+              ARG property: PROPERTY_REFERENCE 'public final vInt: kotlin.Int declared in <root>.DelegatedProvider' field=null getter='public final fun <get-vInt> (): kotlin.Int declared in <root>.DelegatedProvider' setter='public final fun <set-vInt> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProvider' type=kotlin.reflect.KMutableProperty1<<root>.DelegatedProvider, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
++              ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<<root>.DelegatedProvider, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final vInt: kotlin.Int declared in <root>.DelegatedProvider'
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:vInt visibility:local modality:FINAL returnType:kotlin.Int
++                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.DelegatedProvider
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun vInt (p0: <root>.DelegatedProvider): kotlin.Int declared in <root>.DelegatedProvider.<set-vInt>'
++                      CALL 'public final fun <get-vInt> (): kotlin.Int declared in <root>.DelegatedProvider' type=kotlin.Int origin=null
++                        ARG <this>: GET_VAR 'p0: <root>.DelegatedProvider declared in <root>.DelegatedProvider.<set-vInt>.vInt' type=<root>.DelegatedProvider origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:vInt visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.DelegatedProvider
++                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun vInt (p0: <root>.DelegatedProvider, value: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProvider.<set-vInt>'
++                      CALL 'public final fun <set-vInt> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProvider' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR 'p0: <root>.DelegatedProvider declared in <root>.DelegatedProvider.<set-vInt>.vInt' type=<root>.DelegatedProvider origin=null
++                        ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.DelegatedProvider.<set-vInt>.vInt' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
 +              ARG value: GET_VAR '<set-?>: kotlin.Int declared in <root>.DelegatedProvider.<set-vInt>' type=kotlin.Int origin=null
 +    CONSTRUCTOR visibility:private returnType:<root>.DelegatedProvider [primary]
 +      BLOCK_BODY
@@ -347,7 +403,7 @@
                receiver: GET_VAR '<this>: <root>.Provider declared in <root>.Provider.<get-refArr>' type=<root>.Provider origin=null
      CONSTRUCTOR visibility:private returnType:<root>.Provider [primary]
        BLOCK_BODY
-@@ -234,23 +198,16 @@
+@@ -234,23 +254,16 @@
        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Provider
        BLOCK_BODY
          RETURN type=kotlin.Nothing from='public final fun getL (): kotlin.Long declared in <root>.Provider'
@@ -377,7 +433,7 @@
    FUN name:box visibility:public modality:FINAL returnType:kotlin.String
      BLOCK_BODY
        CALL 'private final fun testFieldInObject (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-@@ -259,58 +216,54 @@
+@@ -259,58 +272,54 @@
          CONST String type=kotlin.String value="OK"
    FUN name:testDelegatedPropertiesInObject visibility:private modality:FINAL returnType:kotlin.Unit
      BLOCK_BODY
@@ -466,7 +522,7 @@
            ARG <this>: CALL 'public final fun <get-vInt> (): kotlin.Int declared in <root>.DelegatedProvider' type=kotlin.Int origin=GET_PROPERTY
              ARG <this>: GET_OBJECT 'CLASS OBJECT name:DelegatedProvider modality:FINAL visibility:private superTypes:[kotlin.Any]' type=<root>.DelegatedProvider
            ARG other: CONST Int type=kotlin.Int value=2
-@@ -319,79 +272,77 @@
+@@ -319,79 +328,77 @@
        VAR name:port type:kotlin.Int [val]
          CALL 'public final fun next (): kotlin.Int declared in <root>.Provider' type=kotlin.Int origin=null
            ARG <this>: GET_OBJECT 'CLASS OBJECT name:Provider modality:FINAL visibility:private superTypes:[kotlin.Any]' type=<root>.Provider
