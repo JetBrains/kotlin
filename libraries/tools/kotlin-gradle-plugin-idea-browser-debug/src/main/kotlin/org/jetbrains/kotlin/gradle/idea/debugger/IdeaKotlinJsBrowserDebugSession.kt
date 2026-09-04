@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.idea.debugger
 
+import com.sun.net.httpserver.HttpServer
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import java.net.InetSocketAddress
+import java.util.concurrent.Executor
 import kotlin.time.Duration
 
 /**
@@ -143,8 +146,19 @@ sealed interface IdeaKotlinJsBrowserDebugSession {
     companion object {
         /**
          * Starts a new session on a free port of the loopback interface.
+         * Pass prepared [httpServer] to configure host, port and other transport options.
+         * By default, uses random port on the loopback interface.
          */
-        fun startForIde(): IdeSession = IdeaKotlinJsBrowserDebugSessionServer().also { it.start() }
+        fun startForIde(httpServer: HttpServer? = null): IdeSession {
+            val server = if (httpServer != null) {
+                IdeaKotlinJsBrowserDebugSessionServer(httpServer)
+            } else {
+                IdeaKotlinJsBrowserDebugSessionServer()
+            }
+
+            server.start()
+            return server
+        }
 
         /**
          * Connects to the session hosted by the IDE at [connectionUrl].
