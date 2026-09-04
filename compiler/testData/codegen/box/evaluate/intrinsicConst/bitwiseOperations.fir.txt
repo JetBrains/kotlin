@@ -18,6 +18,8 @@ FILE: bitwiseOperations.kt
         public get(): R|kotlin/Byte|
     public final const [EvaluatedValue=Byte(8)] val andByte4: R|kotlin/Byte| = Int(12).R|kotlin/Int.toByte|().R|kotlin/experimental/and|(Int(10).R|kotlin/Int.toByte|())
         public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(0)] val andByte5: R|kotlin/Byte| = R|/oneValByte|.R|kotlin/experimental/and|(R|/twoValByte|)
+        public get(): R|kotlin/Byte|
     public final const [EvaluatedValue=Byte(3)] val orByte1: R|kotlin/Byte| = R|/oneValByte|.R|kotlin/experimental/or|(R|/twoValByte|)
         public get(): R|kotlin/Byte|
     public final const [EvaluatedValue=Byte(2)] val orByte2: R|kotlin/Byte| = R|/twoValByte|.R|kotlin/experimental/or|(R|/twoValByte|)
@@ -25,6 +27,8 @@ FILE: bitwiseOperations.kt
     public final const [EvaluatedValue=Byte(3)] val orByte3: R|kotlin/Byte| = R|/threeValByte|.R|kotlin/experimental/or|(R|/twoValByte|)
         public get(): R|kotlin/Byte|
     public final const [EvaluatedValue=Byte(14)] val orByte4: R|kotlin/Byte| = Int(12).R|kotlin/Int.toByte|().R|kotlin/experimental/or|(Int(10).R|kotlin/Int.toByte|())
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(3)] val orByte5: R|kotlin/Byte| = R|/oneValByte|.R|kotlin/experimental/or|(R|/twoValByte|)
         public get(): R|kotlin/Byte|
     public final const [EvaluatedValue=Byte(3)] val xorByte1: R|kotlin/Byte| = R|/oneValByte|.R|kotlin/experimental/xor|(R|/twoValByte|)
         public get(): R|kotlin/Byte|
@@ -34,11 +38,15 @@ FILE: bitwiseOperations.kt
         public get(): R|kotlin/Byte|
     public final const [EvaluatedValue=Byte(6)] val xorByte4: R|kotlin/Byte| = Int(12).R|kotlin/Int.toByte|().R|kotlin/experimental/xor|(Int(10).R|kotlin/Int.toByte|())
         public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(3)] val xorByte5: R|kotlin/Byte| = R|/oneValByte|.R|kotlin/experimental/xor|(R|/twoValByte|)
+        public get(): R|kotlin/Byte|
     public final const [EvaluatedValue=Byte(-1)] val invByte1: R|kotlin/Byte| = R|/zeroValByte|.R|kotlin/experimental/inv|()
         public get(): R|kotlin/Byte|
     public final const [EvaluatedValue=Byte(-2)] val invByte2: R|kotlin/Byte| = R|/oneValByte|.R|kotlin/experimental/inv|()
         public get(): R|kotlin/Byte|
     public final const [EvaluatedValue=Byte(1)] val andOrChainedByte: R|kotlin/Byte| = R|/oneValByte|.R|kotlin/experimental/or|(R|/twoValByte|).R|kotlin/experimental/and|(R|/threeValByte|).R|kotlin/experimental/and|(R|/oneValByte|)
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(1)] val andOrChainedByte2: R|kotlin/Byte| = R|/oneValByte|.R|kotlin/experimental/or|(R|/twoValByte|).R|kotlin/experimental/and|(R|/threeValByte|).R|kotlin/experimental/and|(R|/oneValByte|)
         public get(): R|kotlin/Byte|
     public final const [EvaluatedValue=Short(0)] val zeroValShort: R|kotlin/Short| = Int(0).R|kotlin/Int.toShort|()
         public get(): R|kotlin/Short|
@@ -56,6 +64,8 @@ FILE: bitwiseOperations.kt
         public get(): R|kotlin/Short|
     public final const [EvaluatedValue=Short(8)] val andShort4: R|kotlin/Short| = Int(12).R|kotlin/Int.toShort|().R|kotlin/experimental/and|(Int(10).R|kotlin/Int.toShort|())
         public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(0)] val andShort5: R|kotlin/Short| = R|/oneValShort|.R|kotlin/experimental/and|(R|/twoValShort|)
+        public get(): R|kotlin/Short|
     public final const [EvaluatedValue=Short(3)] val orShort1: R|kotlin/Short| = R|/oneValShort|.R|kotlin/experimental/or|(R|/twoValShort|)
         public get(): R|kotlin/Short|
     public final const [EvaluatedValue=Short(2)] val orShort2: R|kotlin/Short| = R|/twoValShort|.R|kotlin/experimental/or|(R|/twoValShort|)
@@ -63,6 +73,8 @@ FILE: bitwiseOperations.kt
     public final const [EvaluatedValue=Short(3)] val orShort3: R|kotlin/Short| = R|/threeValShort|.R|kotlin/experimental/or|(R|/twoValShort|)
         public get(): R|kotlin/Short|
     public final const [EvaluatedValue=Short(14)] val orShort4: R|kotlin/Short| = Int(12).R|kotlin/Int.toShort|().R|kotlin/experimental/or|(Int(10).R|kotlin/Int.toShort|())
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(3)] val orShort5: R|kotlin/Short| = R|/oneValShort|.R|kotlin/experimental/or|(R|/twoValShort|)
         public get(): R|kotlin/Short|
     public final const [EvaluatedValue=Short(3)] val xorShort1: R|kotlin/Short| = R|/oneValShort|.R|kotlin/experimental/xor|(R|/twoValShort|)
         public get(): R|kotlin/Short|
@@ -72,11 +84,15 @@ FILE: bitwiseOperations.kt
         public get(): R|kotlin/Short|
     public final const [EvaluatedValue=Short(6)] val xorShort4: R|kotlin/Short| = Int(12).R|kotlin/Int.toShort|().R|kotlin/experimental/xor|(Int(10).R|kotlin/Int.toShort|())
         public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(3)] val xorShort5: R|kotlin/Short| = R|/oneValShort|.R|kotlin/experimental/xor|(R|/twoValShort|)
+        public get(): R|kotlin/Short|
     public final const [EvaluatedValue=Short(-1)] val invShort1: R|kotlin/Short| = R|/zeroValShort|.R|kotlin/experimental/inv|()
         public get(): R|kotlin/Short|
     public final const [EvaluatedValue=Short(-2)] val invShort2: R|kotlin/Short| = R|/oneValShort|.R|kotlin/experimental/inv|()
         public get(): R|kotlin/Short|
     public final const [EvaluatedValue=Short(1)] val andOrChainedShort: R|kotlin/Short| = R|/oneValShort|.R|kotlin/experimental/or|(R|/twoValShort|).R|kotlin/experimental/and|(R|/threeValShort|).R|kotlin/experimental/and|(R|/oneValShort|)
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(1)] val andOrChainedShort2: R|kotlin/Short| = R|/oneValShort|.R|kotlin/experimental/or|(R|/twoValShort|).R|kotlin/experimental/and|(R|/threeValShort|).R|kotlin/experimental/and|(R|/oneValShort|)
         public get(): R|kotlin/Short|
     public final fun box(): R|kotlin/String| {
         when () {
@@ -100,6 +116,12 @@ FILE: bitwiseOperations.kt
         when () {
             !=(R|/andByte4|.R|/id|<R|kotlin/Byte|>(), Int(8).R|kotlin/Int.toByte|()) ->  {
                 ^box String(Fail andByte4)
+            }
+        }
+
+        when () {
+            !=(R|/andByte5|.R|/id|<R|kotlin/Byte|>(), R|/zeroValByte|) ->  {
+                ^box String(Fail andByte5)
             }
         }
 
@@ -128,6 +150,12 @@ FILE: bitwiseOperations.kt
         }
 
         when () {
+            !=(R|/orByte5|.R|/id|<R|kotlin/Byte|>(), R|/threeValByte|) ->  {
+                ^box String(Fail orByte5)
+            }
+        }
+
+        when () {
             !=(R|/xorByte1|.R|/id|<R|kotlin/Byte|>(), R|/threeValByte|) ->  {
                 ^box String(Fail xorByte1)
             }
@@ -152,6 +180,12 @@ FILE: bitwiseOperations.kt
         }
 
         when () {
+            !=(R|/xorByte5|.R|/id|<R|kotlin/Byte|>(), R|/threeValByte|) ->  {
+                ^box String(Fail xorByte5)
+            }
+        }
+
+        when () {
             !=(R|/invByte1|.R|/id|<R|kotlin/Byte|>(), Int(-1).R|kotlin/Int.toByte|()) ->  {
                 ^box String(Fail invByte1)
             }
@@ -166,6 +200,12 @@ FILE: bitwiseOperations.kt
         when () {
             !=(R|/andOrChainedByte|.R|/id|<R|kotlin/Byte|>(), Int(1).R|kotlin/Int.toByte|()) ->  {
                 ^box String(Fail andOrChainedByte)
+            }
+        }
+
+        when () {
+            !=(R|/andOrChainedByte2|.R|/id|<R|kotlin/Byte|>(), Int(1).R|kotlin/Int.toByte|()) ->  {
+                ^box String(Fail andOrChainedByte2)
             }
         }
 
@@ -194,6 +234,12 @@ FILE: bitwiseOperations.kt
         }
 
         when () {
+            !=(R|/andShort5|.R|/id|<R|kotlin/Short|>(), R|/zeroValShort|) ->  {
+                ^box String(Fail andShort5)
+            }
+        }
+
+        when () {
             !=(R|/orShort1|.R|/id|<R|kotlin/Short|>(), R|/threeValShort|) ->  {
                 ^box String(Fail orShort1)
             }
@@ -214,6 +260,12 @@ FILE: bitwiseOperations.kt
         when () {
             !=(R|/orShort4|.R|/id|<R|kotlin/Short|>(), Int(14).R|kotlin/Int.toShort|()) ->  {
                 ^box String(Fail orShort4)
+            }
+        }
+
+        when () {
+            !=(R|/orShort5|.R|/id|<R|kotlin/Short|>(), R|/threeValShort|) ->  {
+                ^box String(Fail orShort5)
             }
         }
 
@@ -242,6 +294,12 @@ FILE: bitwiseOperations.kt
         }
 
         when () {
+            !=(R|/xorShort5|.R|/id|<R|kotlin/Short|>(), R|/threeValShort|) ->  {
+                ^box String(Fail xorShort5)
+            }
+        }
+
+        when () {
             !=(R|/invShort1|.R|/id|<R|kotlin/Short|>(), Int(-1).R|kotlin/Int.toShort|()) ->  {
                 ^box String(Fail invShort1)
             }
@@ -256,6 +314,12 @@ FILE: bitwiseOperations.kt
         when () {
             !=(R|/andOrChainedShort|.R|/id|<R|kotlin/Short|>(), Int(1).R|kotlin/Int.toShort|()) ->  {
                 ^box String(Fail andOrChainedShort)
+            }
+        }
+
+        when () {
+            !=(R|/andOrChainedShort2|.R|/id|<R|kotlin/Short|>(), Int(1).R|kotlin/Int.toShort|()) ->  {
+                ^box String(Fail andOrChainedShort2)
             }
         }
 
