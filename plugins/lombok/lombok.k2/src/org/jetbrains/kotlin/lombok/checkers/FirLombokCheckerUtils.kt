@@ -56,6 +56,11 @@ private class ImplementedAnnotationsInfo(
      * upon one has to say so separately.
      */
     val isSupportedOnValueClass: Boolean = true,
+    /**
+     * An inner class is a plain `CLASS` as far as [KotlinTarget] is concerned, so an annotation that cannot act
+     * upon one has to say so separately.
+     */
+    val isSupportedOnInnerClass: Boolean = true,
 )
 
 private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo> = buildMap {
@@ -115,6 +120,12 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
         // fail outright on its instance initializer with "Unexpected IR element found during code generation"
         // (KT-88705).
         isSupportedOnValueClass = false,
+        // An inner class's generated constructor has to keep its delegating call in FIR - `InnerClassesLowering`
+        // takes a super-delegating constructor without an `IrInstanceInitializerCall` for a `this(...)` delegation
+        // - and that call is what makes fir2ir inline the class's property initializers into it. An initializer
+        // referencing a primary constructor parameter then crashed the JVM backend with "No mapping for symbol"
+        // (KT-88659). The noarg plugin doesn't support an inner class either, for the same reason.
+        isSupportedOnInnerClass = false,
     )
     this[LombokNames.EQUALS_AND_HASH_CODE_ID] = ImplementedAnnotationsInfo(
         allowedTargetsMap = setOf(
@@ -171,20 +182,28 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
  * [defaultTargets] is what the annotated element is, expressed in the terms an annotation's `@Target` speaks:
  * [getActualTargetList] for a declaration, plain [KotlinTarget.EXPRESSION] for an expression.
  *
- * [isValueClass] tells whether the annotated declaration is a value class, which [defaultTargets] cannot express:
- * [KotlinTarget] knows it only as a plain `CLASS`.
+ * [isValueClass] and [isInnerClass] tell whether the annotated declaration is a value class or an inner class,
+ * neither of which [defaultTargets] can express: [KotlinTarget] knows both only as a plain `CLASS`.
  */
 context(context: CheckerContext, reporter: DiagnosticReporter)
-fun checkLombokAnnotations(annotations: List<FirAnnotation>, defaultTargets: List<KotlinTarget>, isValueClass: Boolean = false) {
+fun checkLombokAnnotations(
+    annotations: List<FirAnnotation>,
+    defaultTargets: List<KotlinTarget>,
+    isValueClass: Boolean = false,
+    isInnerClass: Boolean = false,
+) {
     for (annotation in annotations) {
         val classId = annotation.toAnnotationClassId(context.session) ?: continue
         val implementedAnnotationInfo = implementedAnnotationInfos[classId]
 
         if (implementedAnnotationInfo != null) {
-            val (narrowedAllowedTargets = allowedTargetsMap, unsupportedArguments, isSupportedOnValueClass) = implementedAnnotationInfo
+            val (
+                narrowedAllowedTargets = allowedTargetsMap, unsupportedArguments, isSupportedOnValueClass, isSupportedOnInnerClass,
+            ) = implementedAnnotationInfo
 
             val ineffectiveTarget = when {
                 isValueClass && !isSupportedOnValueClass -> "value class"
+                isInnerClass && !isSupportedOnInnerClass -> "inner class"
                 defaultTargets.none { narrowedAllowedTargets.contains(it) } -> {
                     // Only warn where the platform itself accepts the annotation, otherwise
                     // `WRONG_ANNOTATION_TARGET` says it already.

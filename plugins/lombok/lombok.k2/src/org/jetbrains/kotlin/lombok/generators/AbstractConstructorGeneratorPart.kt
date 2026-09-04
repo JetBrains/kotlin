@@ -80,7 +80,9 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         if (constructorInfo.accessLevel.toVisibility(classSymbol) == null) return false
         val staticName = constructorInfo.staticName?.let { Name.identifier(it) } ?: return false
 
-        return !staticFactoryNameIsTaken(classSymbol, staticName, getFieldsForParameters(classSymbol).size)
+        // Never where no constructor is generated in the first place - a factory exists only to call one.
+        return classSymbol.supportsGeneratedConstructor &&
+                !staticFactoryNameIsTaken(classSymbol, staticName, getFieldsForParameters(classSymbol).size)
     }
 
     /**
@@ -161,6 +163,11 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         // superclass one, and the JVM backend failed on its instance initializer with "Unexpected IR element
         // found during code generation" (KT-88705). Reported as `ANNOTATION_HAS_NO_EFFECT`.
         if (targetClassSymbol.isInlineOrValue) return
+
+        // A Kotlin inner or local class gets nothing: see `supportsGeneratedConstructor` for why the inner one
+        // cannot be generated without hitting the KT-88659 crash, and why the local one only ever contradicted
+        // the `ANNOTATION_HAS_NO_EFFECT` already reported for it. Both are reported as `ANNOTATION_HAS_NO_EFFECT`.
+        if (!targetClassSymbol.supportsGeneratedConstructor) return
 
         val visibility = constructorInfo.accessLevel.toVisibility(classSymbol) ?: return
         val fields = getFieldsForParameters(targetClassSymbol)

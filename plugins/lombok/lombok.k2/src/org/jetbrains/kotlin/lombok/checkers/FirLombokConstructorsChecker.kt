@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.hasReceiverOrContextParameters
 import org.jetbrains.kotlin.lombok.generators.isGeneratedConstructor
+import org.jetbrains.kotlin.lombok.generators.supportsGeneratedConstructor
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 
@@ -37,6 +38,13 @@ object FirLombokConstructorsChecker : FirRegularClassChecker(MppCheckerKind.Plat
         val noArgsConstructor = context.session.lombokService.getNoArgsConstructor(declaration.symbol) ?: return
 
         val source = noArgsConstructor.annotation.source ?: declaration.source ?: return
+
+        val staticName = noArgsConstructor.staticName?.let { Name.identifier(it) }
+
+        // Nothing at all is generated for an inner or a local class (see `supportsGeneratedConstructor`), and every
+        // check below concerns a declaration that would have been generated. `ANNOTATION_HAS_NO_EFFECT` says the
+        // annotation does nothing here; piling the others on top would describe members that never appear.
+        if (!declaration.symbol.supportsGeneratedConstructor) return
 
         if (!noArgsConstructor.force) {
             val declaredMemberScope = context.session.declaredMemberScope(declaration.symbol, memberRequiredPhase = null)
@@ -52,8 +60,6 @@ object FirLombokConstructorsChecker : FirRegularClassChecker(MppCheckerKind.Plat
                 reporter.reportOn(source, LombokFirDiagnostics.NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED)
             }
         }
-
-        val staticName = noArgsConstructor.staticName?.let { Name.identifier(it) }
 
         if (staticName != null) {
             // If `staticName` is provided, we generate a companion object with a constructor function marked with `@JvmStatic`.
