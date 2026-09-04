@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.classFileContainsMethod
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
-import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.ValhallaSupportMode.*
 import org.jetbrains.kotlin.config.isKotlinValhallaValueClass
@@ -474,11 +472,7 @@ fun classFileContainsMethod(classId: ClassId, function: IrFunction, context: Jvm
     return classFileContainsMethod(classId, context.state, Method(originalSignature.name, descriptor))
 }
 
-fun IrFunction.extensionReceiverName(config: JvmBackendConfig): String {
-    if (!config.languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
-        return AsmUtil.RECEIVER_PARAMETER_NAME
-    }
-
+fun IrFunction.extensionReceiverName(): String {
     parameters.singleOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.let {
         if (it.name.asString().startsWith(AsmUtil.LABELED_THIS_PARAMETER)) {
             return it.name.asString()
