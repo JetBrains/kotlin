@@ -28,9 +28,12 @@ class WasmInlineFunctionResolver(
                     realOwner.symbol == context.symbols.suspendCoroutineUninterceptedOrReturn ||
                     realOwner.symbol == context.symbols.suspendCoroutineUninterceptedOrReturnIntrinsic
 
+        val isGetCoroutineContext =
+            realOwner.symbol == context.symbols.coroutineContextGetter || realOwner.symbol == context.symbols.coroutineGetContext
+
         val result = when {
             substituteSuspendCoroutineIntrinsic -> context.suspendCoroutineUninterceptedOrReturnIntrinsicByMode.owner
-            realOwner.symbol == context.symbols.coroutineContextGetter -> context.symbols.coroutineGetContext.owner
+            isGetCoroutineContext -> context.symbols.getCoroutineContextImpl.owner
             realOwner.isInline -> realOwner
             else -> return null
         }
