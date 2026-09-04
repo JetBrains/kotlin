@@ -187,7 +187,7 @@ class JvmAbiOutputExtension(
                                 }
 
                                 val sourceMapText = sourceMap?.parent?.takeIf { !it.isTrivial }
-                                    ?.let { SMAPBuilder.build(it.resultMappings, backwardsCompatibleSyntax = false, validate = false) }
+                                    ?.let { SMAPBuilder.build(it.resultMappings, validate = false) }
                                 // This is technically not the right way to use `ClassVisitor` (`visitSource` should be called before
                                 // `visitMethod` and such), but `ClassWriter` doesn't care, and we're a bit constrained here (see above).
                                 cv.visitSource(sourceFile, sourceMapText)
