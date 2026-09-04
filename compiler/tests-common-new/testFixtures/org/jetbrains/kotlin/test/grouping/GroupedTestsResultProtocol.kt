@@ -72,18 +72,29 @@ object GroupedTestsResultProtocol {
     class ParsedExecution internal constructor(
         val executionName: String?,
         val outcomes: List<Outcome>,
-        private val startedIds: LinkedHashSet<String>,
+        private val activeId: String?,
         val sawStructuredBlock: Boolean,
         val blockLeftOpen: Boolean,
         val malformedLines: List<String>,
         val malformedLineIds: Set<String>,
     ) {
-        /** The test this execution was running when its structured block was left open, if any. */
+        /**
+         * Best-effort candidates for the test this execution was running when its structured block was left open.
+         * This may retain a last syntactically valid but state-invalid STARTED record so rejected output can still
+         * provide a useful diagnostic; use [crashAttributedIds] when accounting for a VM exception.
+         */
         val crashedIds: Set<String>
             get() {
                 if (!blockLeftOpen) return emptySet()
-                return setOfNotNull(startedIds.lastOrNull()?.takeIf { id -> outcomes.none { it.id == id } })
+                return setOfNotNull(activeId)
             }
+
+        /**
+         * Crash candidates authenticated by the parser state strongly enough to account for a VM exception.
+         * Any malformed record makes the execution untrusted, including a state-invalid STARTED record.
+         */
+        val crashAttributedIds: Set<String>
+            get() = crashedIds.takeIf { malformedLines.isEmpty() }.orEmpty()
 
         val hasCompleteStructuredBlock: Boolean
             get() = sawStructuredBlock && !blockLeftOpen && malformedLines.isEmpty()
@@ -102,11 +113,15 @@ object GroupedTestsResultProtocol {
      * in-progress crash and a malformed line carrying that same ID. This per-test correlation prevents a malformed
      * line for one test from being associated with another test's crash in the same VM output. The
      * per-test [Analysis.testResults] exposes these facts to callers without requiring them to repeat the correlation.
+     * [crashAttributedIds] contains the union of crash candidates from executions whose blocks had no malformed
+     * records. It is useful as an aggregate fact, but callers deciding whether a particular VM exception has already
+     * been accounted for must use the corresponding [ParsedExecution.crashAttributedIds] instead.
      */
     data class ParsedBatchResult(
         val outcomes: Map<String, List<Outcome>>,
         val sawStructuredBlock: Boolean,
         val crashedIds: Set<String>,
+        val crashAttributedIds: Set<String>,
         val crashedIdsInMalformedOutputs: Set<String>,
         val malformedLineIdsInCrashedOutputs: Set<String>,
         val malformedLines: List<String>,
@@ -169,6 +184,9 @@ object GroupedTestsResultProtocol {
                     outcomes = outcomes[id].orEmpty(),
                     crashEvidence = if (id in crashedIds) {
                         Analysis.CrashEvidence(
+                            isAuthenticated = executions.any { execution ->
+                                id in execution.crashAttributedIds
+                            },
                             isInMalformedOutput = id in crashedIdsInMalformedOutputs,
                             executionNames = outcomes[id].orEmpty()
                                 .asSequence()
@@ -257,6 +275,8 @@ object GroupedTestsResultProtocol {
 
             /** Evidence that one execution likely ended while [TestResult] was in progress. */
             data class CrashEvidence(
+                /** Whether the parser saw this test as active in an open block with no malformed records. */
+                val isAuthenticated: Boolean,
                 /** Whether the same execution output that supplied the crash evidence also contained a malformed line. */
                 val isInMalformedOutput: Boolean,
                 /** Execution names that ended while this test was in progress. */
@@ -304,6 +324,9 @@ object GroupedTestsResultProtocol {
      * Parses the [BEGIN]/[END] block of each output the batch ran on and groups every valid result by test ID.
      * Non-protocol output is ignored, but malformed protocol-looking lines are returned in
      * [ParsedBatchResult.malformedLines] so the caller can reject the batch instead of silently losing a result.
+     * Within a block, records must follow the same single-active-test state machine as the generated driver:
+     * [STARTED] precedes exactly one terminal record, and [END] is allowed only after that record. A second block,
+     * nested sentinel, or record for a different state is malformed even when its individual fields are valid.
      */
     fun parseMerged(outputs: Iterable<String>): ParsedBatchResult {
         return parseMergedNamedOutputs(outputs.map { NamedOutput(executionName = null, output = it) })
@@ -325,6 +348,7 @@ object GroupedTestsResultProtocol {
         var sawStructuredBlock = false
         val merged = LinkedHashMap<String, MutableList<Outcome>>()
         val crashedIds = LinkedHashSet<String>()
+        val crashAttributedIds = LinkedHashSet<String>()
         val crashedIdsInMalformedOutputs = LinkedHashSet<String>()
         val malformedLineIdsInCrashedOutputs = LinkedHashSet<String>()
         val parsedExecutions = outputs.map { (executionName, output) ->
@@ -334,6 +358,7 @@ object GroupedTestsResultProtocol {
         for (parsed in parsedExecutions) {
             sawStructuredBlock = sawStructuredBlock || parsed.sawStructuredBlock
             crashedIds += parsed.crashedIds
+            crashAttributedIds += parsed.crashAttributedIds
             malformedLines += parsed.malformedLines
             // Both facts read off one VM's text, so they stay correlated once every output has been merged.
             if (parsed.malformedLines.isNotEmpty()) {
@@ -357,6 +382,7 @@ object GroupedTestsResultProtocol {
             outcomes = merged.mapValues { entry -> entry.value.toList() },
             sawStructuredBlock = sawStructuredBlock,
             crashedIds = crashedIds,
+            crashAttributedIds = crashAttributedIds,
             crashedIdsInMalformedOutputs = crashedIdsInMalformedOutputs,
             malformedLineIdsInCrashedOutputs = malformedLineIdsInCrashedOutputs,
             malformedLines = malformedLines,
@@ -380,22 +406,42 @@ object GroupedTestsResultProtocol {
         val linePrefix = "$LINE_PREFIX$SEP"
         var insideBlock = false
         var sawStructuredBlock = false
+        var hasClosedBlock = false
+        var activeId: String? = null
+        var canRecoverActiveTest = false
 
         fun recordMalformedLine(line: String) {
             malformedLines += line
-            malformedLineId(line)?.let { malformedLineIds += it }
+            val malformedId = malformedLineId(line)
+            malformedId?.let { malformedLineIds += it }
+            if (malformedId == activeId) {
+                canRecoverActiveTest = true
+            }
         }
 
         for (rawLine in output.lines()) {
             when {
                 rawLine.isSentinelLine(BEGIN) -> {
+                    if (insideBlock || hasClosedBlock) {
+                        recordMalformedLine(rawLine)
+                        continue
+                    }
                     insideBlock = true
                     sawStructuredBlock = true
                     continue
                 }
 
                 rawLine.isSentinelLine(END) -> {
-                    insideBlock = false
+                    if (!insideBlock || hasClosedBlock || activeId != null) {
+                        recordMalformedLine(rawLine)
+                        if (insideBlock && !hasClosedBlock) {
+                            insideBlock = false
+                            hasClosedBlock = true
+                        }
+                    } else {
+                        insideBlock = false
+                        hasClosedBlock = true
+                    }
                     continue
                 }
             }
@@ -405,22 +451,35 @@ object GroupedTestsResultProtocol {
                 recordMalformedLine(rawLine)
                 continue
             }
-            val parts = rawLine.removePrefix(linePrefix).split(SEP, limit = 4)
-            if (parts.size < 4) {
+            val parts = rawLine.removePrefix(linePrefix).split(SEP, limit = 5)
+            if (parts.size != 4) {
                 recordMalformedLine(rawLine)
                 continue
             }
             val id = parts[0]
             when (val status = parts[1]) {
                 STARTED -> {
-                    if (id.isEmpty() || parts[2].isNotEmpty() || parts[3].isNotEmpty()) {
+                    val hasValidFields = id.isNotEmpty() && parts[2].isEmpty() && parts[3].isEmpty()
+                    if (!hasValidFields) {
                         recordMalformedLine(rawLine)
+                    } else if (activeId == null && startedIds.add(id)) {
+                        activeId = id
+                        canRecoverActiveTest = false
+                    } else if (canRecoverActiveTest && id != activeId && startedIds.add(id)) {
+                        // A malformed line carrying the active ID may be a truncated terminal record. A later
+                        // syntactically valid start proves that the VM progressed, so keep that later test as crash
+                        // evidence while retaining the malformed block status.
+                        activeId = id
+                        canRecoverActiveTest = false
                     } else {
-                        startedIds += id
+                        // Keep the most recent syntactically valid start as best-effort diagnostic evidence after a
+                        // malformed previous record. The block remains untrusted, so crashAttributedIds excludes it.
+                        recordMalformedLine(rawLine)
+                        if (activeId != null) activeId = id
                     }
                 }
                 PASSED, FAILED -> {
-                    if (id.isEmpty()) {
+                    if (id.isEmpty() || activeId != id) {
                         recordMalformedLine(rawLine)
                     } else {
                         outcomes += Outcome(
@@ -430,6 +489,8 @@ object GroupedTestsResultProtocol {
                             details = unescape(parts[3]).ifEmpty { null },
                             executionName = executionName,
                         )
+                        activeId = null
+                        canRecoverActiveTest = false
                     }
                 }
                 else -> {
@@ -439,7 +500,7 @@ object GroupedTestsResultProtocol {
         }
         return ParsedExecution(
             outcomes = outcomes,
-            startedIds = startedIds,
+            activeId = activeId,
             executionName = executionName,
             sawStructuredBlock = sawStructuredBlock,
             blockLeftOpen = insideBlock,
