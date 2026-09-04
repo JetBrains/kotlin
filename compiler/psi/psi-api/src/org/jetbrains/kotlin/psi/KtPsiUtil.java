@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
+import org.jetbrains.kotlin.name.StandardClassIds;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.StatementFilterKt;
@@ -197,8 +198,8 @@ public class KtPsiUtil {
         if (modifierList != null) {
             List<KtAnnotationEntry> annotationEntries = modifierList.getAnnotationEntries();
             for (KtAnnotationEntry annotation : annotationEntries) {
-                Name shortName = annotation.getShortName();
-                if (DEPRECATED_ANNOTATION_SHORT_NAME.equals(shortName)) {
+                Name deprecatedShortName = StandardClassIds.Annotations.INSTANCE.getDeprecated().getShortClassName();
+                if (deprecatedShortName.equals(annotation.getShortName())) {
                     return true;
                 }
             }
