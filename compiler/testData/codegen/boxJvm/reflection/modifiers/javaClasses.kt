@@ -15,6 +15,11 @@ public @interface Annotation {
 public class J {
     public class Inner {}
     public static class Nested {}
+    public enum Enum {
+        ENTRY {
+
+        }
+    }
     public static final Object anonymousClass = new Object() {};
 }
 
@@ -59,6 +64,24 @@ fun box(): String {
     assertFalse(J.Inner::class.isCompanion)
     assertFalse(J.Inner::class.isFun)
     assertFalse(J.Inner::class.isValue)
+
+    assertFalse(J.Enum::class.isRegularClass)
+    assertFalse(J.Enum::class.isInterface)
+    assertTrue(J.Enum::class.isEnumClass)
+    assertFalse(J.Enum::class.isData)
+    assertFalse(J.Enum::class.isInner)
+    assertFalse(J.Enum::class.isCompanion)
+    assertFalse(J.Enum::class.isFun)
+    assertFalse(J.Enum::class.isValue)
+
+    assertFalse(J.Enum.ENTRY::class.isRegularClass)
+    assertFalse(J.Enum.ENTRY::class.isInterface)
+    assertFalse(J.Enum.ENTRY::class.isEnumClass)
+    assertFalse(J.Enum.ENTRY::class.isData)
+    assertFalse(J.Enum.ENTRY::class.isInner)
+    assertFalse(J.Enum.ENTRY::class.isCompanion)
+    assertFalse(J.Enum.ENTRY::class.isFun)
+    assertFalse(J.Enum.ENTRY::class.isValue)
 
     assertFalse(J.anonymousClass::class.isRegularClass)
     assertFalse(J.anonymousClass::class.isInterface)

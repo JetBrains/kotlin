@@ -15,6 +15,12 @@ sealed class S {
     object RegularObject
     fun interface FunInterface { fun invoke() }
     annotation class Annotation
+    enum class Enum {
+        ENTRY {
+            // A declaration is required for the enum entry to not be mistaken for an enum class
+            val x = 1
+        }
+    }
 }
 
 @JvmInline
@@ -107,12 +113,33 @@ fun box(): String {
     assertFalse(S.Annotation::class.isRegularClass)
     assertFalse(S.Annotation::class.isInterface)
     assertFalse(S.Annotation::class.isEnumClass)
+    assertFalse(S.Annotation::class.isEnumEntry)
+    assertTrue(S.Annotation::class.isAnnotation)
+    assertFalse(S.Annotation::class.isObject)
     assertFalse(S.Annotation::class.isSealed)
     assertFalse(S.Annotation::class.isData)
     assertFalse(S.Annotation::class.isInner)
     assertFalse(S.Annotation::class.isCompanion)
     assertFalse(S.Annotation::class.isFun)
     assertFalse(S.Annotation::class.isValue)
+
+    assertFalse(S.Enum::class.isRegularClass)
+    assertFalse(S.Enum::class.isInterface)
+    assertTrue(S.Enum::class.isEnumClass)
+    assertFalse(S.Enum::class.isData)
+    assertFalse(S.Enum::class.isInner)
+    assertFalse(S.Enum::class.isCompanion)
+    assertFalse(S.Enum::class.isFun)
+    assertFalse(S.Enum::class.isValue)
+
+    assertFalse(S.Enum.ENTRY::class.isRegularClass)
+    assertFalse(S.Enum.ENTRY::class.isInterface)
+    assertFalse(S.Enum.ENTRY::class.isEnumClass)
+    assertFalse(S.Enum.ENTRY::class.isData)
+    assertFalse(S.Enum.ENTRY::class.isInner)
+    assertFalse(S.Enum.ENTRY::class.isCompanion)
+    assertFalse(S.Enum.ENTRY::class.isFun)
+    assertFalse(S.Enum.ENTRY::class.isValue)
 
     assertFalse(S.anonymousObject::class.isRegularClass)
     assertFalse(S.anonymousObject::class.isInterface)
