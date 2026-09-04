@@ -46,13 +46,13 @@ class StoredKeyIdentityTest {
     private inline fun testOnMaps(operations: MutableMap<Key, String>.() -> Unit) {
         HashMap<Key, String>().apply { operations() }
         LinkedHashMap<Key, String>().apply { operations() }
-        buildMap { operations() }
+        val _ = buildMap { operations() }
     }
 
     private inline fun testOnSets(operations: MutableSet<Key>.() -> Unit) {
         HashSet<Key>().apply { operations() }
         LinkedHashSet<Key>().apply { operations() }
-        buildSet { operations() }
+        val _ = buildSet { operations() }
     }
 
     // 12 keys sharing a hash are enough for java.util.HashMap to treeify the bin, 3 stay in a short
