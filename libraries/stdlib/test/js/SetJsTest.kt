@@ -12,9 +12,9 @@ import test.collections.behaviors.*
 class ComplexSetJsTest : SetJsTest() {
     // Helper function with generic parameter to force to use ComlpexHashMap
     fun <T> doTest() {
-        HashSet<T>()
-        HashSet<T>(3)
-        HashSet<T>(3, 0.5f)
+        val _ = HashSet<T>()
+        val _ = HashSet<T>(3)
+        val _ = HashSet<T>(3, 0.5f)
 
         @Suppress("UNCHECKED_CAST")
         val set = HashSet<T>(data as HashSet<T>)
@@ -40,9 +40,9 @@ class PrimitiveSetJsTest : SetJsTest() {
     override fun createEmptyMutableSetWithNullableValues(): MutableSet<String?> = HashSet()
     @Test
     override fun constructors() {
-        HashSet<String>()
-        HashSet<String>(3)
-        HashSet<String>(3, 0.5f)
+        val _ = HashSet<String>()
+        val _ = HashSet<String>(3)
+        val _ = HashSet<String>(3, 0.5f)
 
         val set = HashSet<String>(data)
 
@@ -67,9 +67,9 @@ class LinkedHashSetJsTest : SetJsTest() {
     override fun createEmptyMutableSetWithNullableValues(): MutableSet<String?> = LinkedHashSet()
     @Test
     override fun constructors() {
-        LinkedHashSet<String>()
-        LinkedHashSet<String>(3)
-        LinkedHashSet<String>(3, 0.5f)
+        val _ = LinkedHashSet<String>()
+        val _ = LinkedHashSet<String>(3)
+        val _ = LinkedHashSet<String>(3, 0.5f)
 
         val set = LinkedHashSet<String>(data)
 

@@ -68,9 +68,9 @@ class FilesTest {
     @Test fun listFilesWithFilter() {
         val dir = createTempDirectory("temp")
 
-        createTempFile(prefix = "temp1", suffix = ".kt", directory = dir)
-        createTempFile(prefix = "temp2", suffix = ".java", directory = dir)
-        createTempFile(prefix = "temp3", suffix = ".kt", directory = dir)
+        val _ = createTempFile(prefix = "temp1", suffix = ".kt", directory = dir)
+        val _ = createTempFile(prefix = "temp2", suffix = ".java", directory = dir)
+        val _ = createTempFile(prefix = "temp3", suffix = ".kt", directory = dir)
 
         // This line works only with Kotlin File.listFiles(filter)
         val result = dir.toFile().listFiles { it -> it.name.endsWith(".kt") } // todo ambiguity on SAM
@@ -577,12 +577,12 @@ class FilesTest {
         try {
             val subDir1 = createTempDirectory(prefix = "d1_", directory = srcPath)
             val subDir2 = createTempDirectory(prefix = "d2_", directory = srcPath)
-            createTempDirectory(prefix = "d1_", directory = subDir1)
+            val _ = createTempDirectory(prefix = "d1_", directory = subDir1)
             val file1 = createTempFile(prefix = "f1_", directory = srcPath).toFile()
             val file2 = createTempFile(prefix = "f2_", directory = subDir1).toFile()
             file1.writeText("hello")
             file2.writeText("wazzup")
-            createTempDirectory(prefix = "d1_", directory = subDir2)
+            val _ = createTempDirectory(prefix = "d1_", directory = subDir2)
 
             assertTrue(src.copyRecursively(dst))
             check()

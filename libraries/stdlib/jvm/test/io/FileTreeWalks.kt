@@ -446,9 +446,9 @@ class FileTreeWalkTest {
         try {
             val subDir1 = createTempDirectory(prefix = "d1_", directory = dir)
             val subDir2 = createTempDirectory(prefix = "d2_", directory = dir)
-            createTempDirectory(prefix = "d1_", directory = subDir1)
-            createTempFile(prefix = "f1_", directory = subDir1)
-            createTempDirectory(prefix = "d1_", directory = subDir2)
+            val _ = createTempDirectory(prefix = "d1_", directory = subDir1)
+            val _ = createTempFile(prefix = "f1_", directory = subDir1)
+            val _ = createTempDirectory(prefix = "d1_", directory = subDir2)
             assertEquals(6, dirAsFile.walkTopDown().count())
         } finally {
             dirAsFile.deleteRecursively()
@@ -456,7 +456,7 @@ class FileTreeWalkTest {
         dirAsFile.mkdir()
         try {
             val it = dirAsFile.walkTopDown().iterator()
-            it.next()
+            val _ = it.next()
             assertFailsWith<NoSuchElementException>("Second call to next() should fail.") { it.next() }
         } finally {
             dirAsFile.delete()

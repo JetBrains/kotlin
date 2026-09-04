@@ -43,7 +43,7 @@ class MutableCollectionTest {
     private fun <T> forAllStandardMutableLists(data: List<T>, block: (MutableList<T>) -> Unit) {
         block(data.toMutableList())
         block(ArrayDeque(data))
-        buildList {
+        val _ = buildList {
             addAll(data)
             block(this)
         }
