@@ -87,6 +87,7 @@ class IncrementalJsCompilerRunner(
     private val scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER,
     icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
     pluginsLoader: PluginsLoader? = null,
+    override val lookupTrackerDelegate: LookupTracker = LookupTracker.DO_NOTHING,
 ) : IncrementalCompilerRunner<CommonJsAndWasmCompilerArguments, IncrementalJsCachesManager>(
     workingDir,
     "caches-js",

@@ -11,37 +11,49 @@ import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Paths
 
 class LookupTrackerTest : BaseCompilationTest() {
 
-    private fun assumeSupportsLookups(strategyConfig: CompilerExecutionStrategyConfiguration, incremental: Boolean) {
-        val currentKotlinVersion = KotlinToolingVersion(strategyConfig.first.getCompilerVersion())
-        assumeTrue(
-            currentKotlinVersion >=
-                    when (strategyConfig.second) {
-                        is ExecutionPolicy.InProcess if incremental -> KotlinToolingVersion(2, 3, 0, null)
-                        is ExecutionPolicy.InProcess -> KotlinToolingVersion(2, 3, 20, null)
-                        is ExecutionPolicy.WithDaemon -> KotlinToolingVersion(2, 3, 20, null)
-                    }
-        )
+    private fun assumeSupportsLookups(
+        project: Project,
+        kotlinToolchains: KotlinToolchains,
+        executionPolicy: ExecutionPolicy,
+        incremental: Boolean,
+    ) {
+        assumeFalse(project is MetadataProject)
+        val currentKotlinVersion = KotlinToolingVersion(kotlinToolchains.getCompilerVersion())
+        if (project !is JvmProject) {
+            assumeTrue(
+                currentKotlinVersion >= if (incremental) KotlinToolingVersion(2, 5, 0, "snapshot")
+                else KotlinToolingVersion(2, 4, 20, "snapshot")
+
+            )
+        } else {
+            assumeTrue(
+                currentKotlinVersion >= when (executionPolicy) {
+                    is ExecutionPolicy.InProcess if incremental -> KotlinToolingVersion(2, 3, 0, null)
+                    is ExecutionPolicy.InProcess -> KotlinToolingVersion(2, 3, 20, null)
+                    is ExecutionPolicy.WithDaemon -> KotlinToolingVersion(2, 3, 20, null)
+                }
+            )
+        }
     }
 
     @DisplayName("Lookup tracker produces output in non-incremental mode")
-    @BtaV2StrategyAgnosticCompilationTest
-    fun lookupsNonIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        assumeSupportsLookups(strategyConfig, incremental = false)
-        jvmProject(strategyConfig) {
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
+    fun lookupsNonIncremental(project: ProjectCreator) {
+        project {
+            assumeSupportsLookups(this, kotlinToolchain, defaultStrategyConfig, incremental = false)
             val module1 = module("basic-multimodule-project/module-1")
             var lookupRecorded = false
             val lookupTracker = object : CompilerLookupTracker {
@@ -58,7 +70,7 @@ class LookupTrackerTest : BaseCompilationTest() {
                 }
 
             }
-            module1.compile(compilationConfigAction = { builder: JvmCompilationOperation.Builder ->
+            module1.compile(compilationConfigAction = { builder: BaseCompilationOperation.Builder ->
                 builder[BaseCompilationOperation.LOOKUP_TRACKER] = lookupTracker
             }) {
                 assertTrue(lookupRecorded) { "Lookup tracker didn't produce any output" }
@@ -67,10 +79,10 @@ class LookupTrackerTest : BaseCompilationTest() {
     }
 
     @DisplayName("Lookup tracker produces output in incremental mode")
-    @BtaV2StrategyAgnosticCompilationTest
-    fun lookupsIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        assumeSupportsLookups(strategyConfig, incremental = true)
-        jvmProject(strategyConfig) {
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
+    fun lookupsIncremental(project: ProjectCreator) {
+        project {
+            assumeSupportsLookups(this, kotlinToolchain, defaultStrategyConfig, incremental = true)
             val module1 = module("basic-multimodule-project/module-1")
             var lookupRecorded = false
             val lookupTracker = object : CompilerLookupTracker {
@@ -87,7 +99,7 @@ class LookupTrackerTest : BaseCompilationTest() {
                 }
 
             }
-            module1.compileIncrementally(SourcesChanges.Unknown, compilationConfigAction = { builder: JvmCompilationOperation.Builder ->
+            module1.compileIncrementally(SourcesChanges.Unknown, compilationConfigAction = { builder: BaseCompilationOperation.Builder ->
                 builder[BaseCompilationOperation.LOOKUP_TRACKER] = lookupTracker
             }) {
                 assertTrue(lookupRecorded) { "Lookup tracker didn't produce any output" }

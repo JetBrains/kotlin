@@ -150,7 +150,7 @@ internal class WasmKlibCompilationOperationImpl private constructor(
                     icFeatures = aggregatedIcConfiguration.extractIncrementalCompilationFeatures(),
                     useJvmFirRunner = false,
                     generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
-                    configurationInputs = makeConfigurationInputs(aggregatedIcConfiguration)
+                    configurationInputs = makeConfigurationInputs(aggregatedIcConfiguration),
                 )
             }
             null -> null
@@ -255,6 +255,7 @@ internal class WasmKlibCompilationOperationImpl private constructor(
             CompileScopeExpansionMode.ALWAYS,
             icFeatures,
             executionContext.classloadersCache?.asPluginsLoader(),
+            getLookupTrackerAdapter()
         )
 
         arguments.incrementalCompilation = true
