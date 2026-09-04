@@ -25,5 +25,23 @@ declare namespace JS_TESTS {
         }
         function consumeImplicitlyExported(value: NonNullable<unknown>/* foo.ImplicitlyExported */): void;
         function produceImplicitlyExported(): NonNullable<unknown>/* foo.ImplicitlyExported */;
+        function transformUntyped(block: (p0: NonNullable<unknown>) => unknown): (p0: NonNullable<unknown>) => unknown;
+        interface ExportedBound {
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.ExportedBound": unique symbol;
+            };
+        }
+        class BoundedBox<T extends foo.ExportedBound, U, V> {
+            constructor(value: T, payload: U);
+            get value(): T;
+            get payload(): U;
+        }
+        namespace BoundedBox {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new <T extends foo.ExportedBound, U, V>() => BoundedBox<T, U, V>;
+            }
+        }
+        function produceStarProjectedBox(): foo.BoundedBox<any, NonNullable<unknown>, unknown>;
     }
 }
