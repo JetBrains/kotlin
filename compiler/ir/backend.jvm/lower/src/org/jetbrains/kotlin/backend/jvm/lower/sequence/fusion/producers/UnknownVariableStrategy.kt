@@ -32,8 +32,7 @@ internal class UnknownVariableStrategy(
         sequenceData: SequenceData,
         sequenceReplacement: SequenceReplacement,
     ): IrContainerExpression? {
-        val builder = builderWithParent.first
-        val parent = builderWithParent.second
+        val [builder, parent] = builderWithParent
 
         val baseType = getGenericTypeFromExpression(newIteratorTarget, context) ?: return null
         val iteratorType = builder.context.irBuiltIns.iteratorClass.typeWith(baseType)

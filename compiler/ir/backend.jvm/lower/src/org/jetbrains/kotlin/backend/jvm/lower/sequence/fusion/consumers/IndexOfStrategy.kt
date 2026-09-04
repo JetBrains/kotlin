@@ -45,7 +45,7 @@ internal class IndexOfStrategy(data: ConsumerData, expression: IrCall, val index
         val predicateOrElementArgument = (expression as IrCall).arguments.getOrNull(1)
             ?: error("Didn't find second argument for function $functionName: ${expression.dump()}")
         return { sequenceElement ->
-            val results = when (indexOfVersion) {
+            val [shouldContinue, condition] = when (indexOfVersion) {
                 is IndexOfVersion.IndexOf -> builder.irFalse() to
                         builder.irEquals(builder.irGet(sequenceElement), predicateOrElementArgument)
                 is IndexOfVersion.IndexOfFirst -> builder.irFalse() to
@@ -53,8 +53,6 @@ internal class IndexOfStrategy(data: ConsumerData, expression: IrCall, val index
                 is IndexOfVersion.IndexOfLast -> builder.irTrue() to
                         builder.callPredicate(predicateOrElementArgument, data.parent, builder.irGet(sequenceElement))
             }
-            val shouldContinue = results.first
-            val condition = results.second
             builder.irBlock {
                 +increment(indexVariable, this@IndexOfStrategy.context)
                 val thenPart = irBlock {

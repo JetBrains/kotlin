@@ -17,6 +17,23 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.functions
 
+/**
+ * This pseudocode illustrates how filterTo is lowered:
+ * ```
+ * producer().transformerChain().filterTo(destinationArg, predicateArgument)
+ * ```
+ * becomes
+ * ```
+ * val destination = destinationArgument
+ * for (sequenceElement in loweredProducer().loweredTransformerChain()) { // the precise form of iteration depends on the producer
+ *     if (predicateArgument(sequenceElement)) {
+ *         destination.add(sequenceElement)
+ *     }
+ *     true // the boolean at the end of the block tells if the iteration should continue
+ * }
+ * ```
+ *
+ */
 internal class FilterToStrategy(data: ConsumerData, expression: IrCall, val version: FilterVersion) :
     ConsumerStrategy(data, expression) {
     private var destinationVariable: IrVariable? = null
@@ -52,12 +69,6 @@ internal class FilterToStrategy(data: ConsumerData, expression: IrCall, val vers
                         arguments[1] = irGet(sequenceElement)
                     }
                 }
-                /*
-                if (filterCondition) {
-                    destination.add(sequenceElement)
-                }
-                false
-                 */
                 irBlock {
                     +irIfThen(
                         context.irBuiltIns.unitType,

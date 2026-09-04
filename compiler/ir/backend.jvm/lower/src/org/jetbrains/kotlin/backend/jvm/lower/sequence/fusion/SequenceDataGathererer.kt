@@ -194,86 +194,100 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         )
     }
 
+    private fun IrCall.receiverSequenceData(): SequenceData? =
+        arguments.firstOrNull()?.sequenceDataOfExpression
+
+    private fun IrCall.prependTransformer(
+        receiverData: SequenceData,
+        transformer: SequenceTransformer,
+    ) {
+        sequenceDataOfExpression = SequenceData(
+            receiverData.sequenceSource,
+            listOf(transformer) + receiverData.transformers
+        )
+    }
+
+    private fun createUnaryPredicate(
+        predicate: IrExpression,
+    ): UnaryPredicate = { builderWithParent ->
+        val [builder, parent] = builderWithParent
+
+        { element ->
+            builder.callPredicate(
+                predicate,
+                parent,
+                builder.irGet(element)
+            )
+        }
+    }
+
+    private fun createIndexedPredicate(
+        predicate: IrExpression,
+    ): BinaryPredicate = { builderWithParent ->
+        val [builder, parent] = builderWithParent
+
+        { index, element ->
+            builder.callPredicate(
+                predicate,
+                parent,
+                builder.irGet(index),
+                builder.irGet(element)
+            )
+        }
+    }
+
     private fun matchWithMap(
         expression: IrCall,
         isIndexed: Boolean,
         isNotNull: Boolean,
     ) {
-        val receiver = expression.arguments.getOrNull(0) ?: return
-        val receiverData = receiver.sequenceDataOfExpression ?: return
+        val receiverData = expression.receiverSequenceData() ?: return
         val fnArg = getPredicateArgument(expression, 1) ?: return
         if (fnArg is IrCall) return
-        val nonIndexedPredicateCall: UnaryPredicate = { builderWithParent ->
-            val builder = builderWithParent.first
-            val parent = builderWithParent.second
-            { sequenceElement: IrValueDeclaration -> builder.callPredicate(fnArg, parent, builder.irGet(sequenceElement)) }
-        }
-        val indexedPredicateCall: BinaryPredicate = { builderWithParent ->
-            val builder = builderWithParent.first
-            val parent = builderWithParent.second
-            { index: IrValueDeclaration, sequenceElement: IrValueDeclaration ->
-                builder.callPredicate(fnArg, parent, builder.irGet(index), builder.irGet(sequenceElement))
-            }
-        }
         val predicateCall = if (isIndexed) {
-            MapPredicateCall.Indexed(indexedPredicateCall)
+            MapPredicateCall.Indexed(createIndexedPredicate(fnArg))
         } else {
-            MapPredicateCall.NonIndexed(nonIndexedPredicateCall)
+            MapPredicateCall.NonIndexed(createUnaryPredicate(fnArg))
         }
-        val transformers = listOf(
+
+        expression.prependTransformer(
+            receiverData,
             SequenceTransformer.Map(
                 predicateCall,
                 isIndexed,
                 isNotNull,
             )
-        ) + receiverData.transformers
-        expression.sequenceDataOfExpression = SequenceData(receiverData.sequenceSource, transformers)
+        )
     }
 
     private fun matchWithTake(
         call: IrCall,
         takeVersion: TakeOrDrop,
     ) {
-        val receiver = call.arguments.getOrNull(0) ?: return
         val argumentExpression = call.arguments.getOrNull(1) ?: return
-        val receiverData = receiver.sequenceDataOfExpression ?: return
+        val receiverData = call.receiverSequenceData() ?: return
         if (!isSafeToLower(argumentExpression)) return
-        val transformers =
-            listOf(
-                SequenceTransformer.Take(argumentExpression, takeVersion)
-            ) + receiverData.transformers
-        call.sequenceDataOfExpression = SequenceData(receiverData.sequenceSource, transformers)
+        call.prependTransformer(receiverData, SequenceTransformer.Take(argumentExpression, takeVersion))
     }
 
     private fun matchWithTakeWhile(
         call: IrCall,
         takeVersion: TakeOrDrop,
     ) {
-        val receiver = call.arguments.getOrNull(0) ?: return
         val predicate = call.arguments.getOrNull(1) ?: return
-        val receiverData = receiver.sequenceDataOfExpression ?: return
-        val predicateCall = { builderWithParent: IrBuilderWithParent ->
-            val builder = builderWithParent.first
-            { sequenceElement: IrValueDeclaration ->
-                builder.callPredicate(
-                    predicate,
-                    builderWithParent.second,
-                    builder.irGet(sequenceElement)
-                )
-            }
-        }
-        val transformers =
-            listOf(
-                SequenceTransformer.TakeWhile(
-                    predicateCall,
-                    takeVersion
-                )
-            ) + receiverData.transformers
-        call.sequenceDataOfExpression = SequenceData(receiverData.sequenceSource, transformers)
+        val receiverData = call.receiverSequenceData() ?: return
+        val predicateCall = createUnaryPredicate(predicate)
+        call.prependTransformer(
+            receiverData,
+            SequenceTransformer.TakeWhile(
+                predicateCall,
+                takeVersion
+            )
+        )
     }
 
     private fun matchWithGenerateSequence(expression: IrCall) {
-        val results = when (expression.arguments.size) {
+        val [initialValue, func] = when (expression.arguments.size) {
             1 -> {
                 // generateSequence(() -> T?)
                 val func = expression.arguments.getOrNull(0) ?: return
@@ -299,44 +313,49 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
             }
             else -> return
         }
-        val initialValue = results.first
-        val func = results.second
         val elementType = extractSequenceArgumentType(expression.type) ?: return
-        expression.sequenceDataOfExpression = SequenceData(
-            SequenceSource.GenerateSequence(
-                initialValue,
-                func,
-                elementType
-            ),
-        )
+        val sequenceSource = SequenceSource.GenerateSequence(initialValue, func, elementType)
+        expression.sequenceDataOfExpression = SequenceData(sequenceSource)
     }
 
     private fun extractSequenceArgumentType(sequenceType: IrType): IrType? =
-        (sequenceType as? IrSimpleType)?.arguments?.singleOrNull()?.let { return it.typeOrNull }
+        (sequenceType as? IrSimpleType)?.arguments?.singleOrNull()?.typeOrNull
 
     private fun matchWithFilter(call: IrCall, version: FilterVersion) {
-        val receiver = call.arguments.getOrNull(0) ?: return
-        val receiverData = receiver.sequenceDataOfExpression ?: return
-        val filterFunction: (IrBuilderWithParent) -> (IrValueDeclaration) -> IrExpression = { builderWithParent: IrBuilderWithParent ->
-            val parent = builderWithParent.second
-            with(builderWithParent.first) {
-                when (version) {
-                    FilterVersion.Filter -> {
-                        { sequenceElement ->
-                            val predicate = call.arguments.getOrNull(1) ?: error("Filter didn't have a predicate argument: ${call.dump()}")
-                            callPredicate(predicate, parent, irGet(sequenceElement))
+        val receiverData = call.receiverSequenceData() ?: return
+
+        val predicate = when (version) {
+            FilterVersion.Filter, FilterVersion.FilterNot ->
+                call.arguments.getOrNull(1)
+                    ?: error("Filter predicate is missing: ${call.dump()}")
+
+            FilterVersion.FilterNotNull -> null
+        }
+
+        val filterFunction: (IrBuilderWithParent) -> (IrValueDeclaration) -> IrExpression =
+            { builderWithParent ->
+                val [builder, parent] = builderWithParent
+
+                { element ->
+                    with(builder) {
+                        when (version) {
+                            FilterVersion.Filter ->
+                                callPredicate(predicate!!, parent, irGet(element))
+
+                            FilterVersion.FilterNot ->
+                                irNot(callPredicate(predicate!!, parent, irGet(element)))
+
+                            FilterVersion.FilterNotNull ->
+                                irNot(irEquals(irGet(element), irNull()))
                         }
                     }
-                    FilterVersion.FilterNot -> { sequenceElement ->
-                        val predicate = call.arguments.getOrNull(1) ?: error("FilterNot didn't have a predicate argument: ${call.dump()}")
-                        irNot(callPredicate(predicate, parent, irGet(sequenceElement)))
-                    }
-                    FilterVersion.FilterNotNull -> { sequenceElement -> irNot(irEquals(irGet(sequenceElement), irNull())) }
                 }
             }
-        }
-        val transformers = listOf(SequenceTransformer.Filter(filterFunction)) + receiverData.transformers
-        call.sequenceDataOfExpression = SequenceData(receiverData.sequenceSource, transformers)
+
+        call.prependTransformer(
+            receiverData,
+            SequenceTransformer.Filter(filterFunction)
+        )
     }
 
     private fun matchWithSequenceOf(expression: IrCall) {
@@ -352,9 +371,8 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
         val argument = expression.arguments.getOrNull(0) ?: return
         require(expression.arguments.size == 1) { "SequenceOf should have exactly one argument in the IR: ${expression.dump()}" }
         val sequenceOfArguments = gatherVarargArgument(argument) ?: return
-        expression.sequenceDataOfExpression = SequenceData(
-            SequenceSource.SequenceOf(sequenceOfArguments, elementType),
-        )
+        val sequenceSource = SequenceSource.SequenceOf(sequenceOfArguments, elementType)
+        expression.sequenceDataOfExpression = SequenceData(sequenceSource)
     }
 
 
@@ -364,22 +382,17 @@ internal class SequenceDataGatherer(val context: JvmBackendContext) : IrVisitorV
             if (!isSafeToLower(receiver)) return
             if (!receiver.type.isSubtypeOfClass(context.irBuiltIns.iterableClass)) return
         }
-        expression.sequenceDataOfExpression = SequenceData(
-            SequenceSource.AsSequence(receiver),
-        )
+        val sequenceSource = SequenceSource.AsSequence(receiver)
+        expression.sequenceDataOfExpression = SequenceData(sequenceSource)
     }
 
     private fun matchWithSequence(expression: IrCall) {
         val sequenceScope = expression.arguments.getOrNull(0) as? IrRichFunctionReference ?: return
-        expression.sequenceDataOfExpression = SequenceData(
-            SequenceSource.Sequence(sequenceScope),
-        )
+        expression.sequenceDataOfExpression = SequenceData(SequenceSource.Sequence(sequenceScope))
     }
 
     private fun matchWithEmptySequence(expression: IrCall) {
-        expression.sequenceDataOfExpression = SequenceData(
-            SequenceSource.Empty,
-        )
+        expression.sequenceDataOfExpression = SequenceData(SequenceSource.Empty)
     }
 
     override fun visitCall(expression: IrCall) {
