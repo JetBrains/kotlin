@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import java.util.concurrent.ConcurrentHashMap
 
@@ -85,13 +86,13 @@ class JavaClassOverAst(
     override val supertypes: Collection<JavaClassifierType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val result = mutableListOf<JavaClassifierType>()
 
-            if (isEnum) {
-                result.add(EnumSupertypeForJavaDirect(this, memberResolutionContext))
-            } else if (isAnnotationType) {
-                result.add(SimpleClassifierType("java.lang.annotation.Annotation", memberResolutionContext))
-            } else if (isRecord) {
-                result.add(SimpleClassifierType("java.lang.Record", memberResolutionContext))
-            }
+        if (isEnum) {
+            result.add(EnumSupertypeForJavaDirect(this, memberResolutionContext))
+        } else if (isAnnotationType) {
+            result.add(ImplicitSupertypeForJavaDirect(JvmStandardClassIds.Annotations.Java.Annotation, memberResolutionContext))
+        } else if (isRecord) {
+            result.add(ImplicitSupertypeForJavaDirect(JvmStandardClassIds.Java.Record, memberResolutionContext))
+        }
 
         tree.findChildByType(node, JavaSyntaxElementType.EXTENDS_LIST)?.let { extList ->
             tree.getChildrenByType(extList, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach {
@@ -100,7 +101,7 @@ class JavaClassOverAst(
         }
 
         if (result.isEmpty() && !isInterface) {
-            result.add(SimpleClassifierType("java.lang.Object", memberResolutionContext))
+            result.add(ImplicitSupertypeForJavaDirect(JvmStandardClassIds.Java.Object, memberResolutionContext))
         }
 
         tree.findChildByType(node, JavaSyntaxElementType.IMPLEMENTS_LIST)?.let { implList ->
