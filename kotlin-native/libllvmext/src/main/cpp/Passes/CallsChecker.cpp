@@ -317,7 +317,8 @@ namespace {
 
 struct ExternalCallInfo {
   std::optional<StringRef> Name; // nullopt when indirect call
-  Value *CalledPtr; // null when llvm intrinsic (in that case `Name` is definitely present)
+  Value *CalledPtr; // null when llvm intrinsic (in that case `Name` is
+                    // definitely present)
 
   ExternalCallInfo(std::optional<StringRef> Name, Value *CalledPtr)
       : Name(Name), CalledPtr(CalledPtr) {}
@@ -444,17 +445,11 @@ bool CallsCheckerPass::run(CallBase &C) {
     Builder.SetInsertPoint(InsertPoint);
   }
 
-  SmallString<64> CallSiteDescription;
-  std::optional<StringRef> CalledName;
-  Value *CalledPtr = nullptr;
   if (CalleeInfo->Name == "objc_msgSend") {
     // objc_msgSend has wrong declaration in header, so generated wrapper is
     // strange, Let's just skip it
     if (C.getNumOperands() < 2)
       return false;
-    CallSiteDescription =
-        formatv("{0} (over objc_msgSend)", C.getFunction()->getName());
-    CalledName = std::nullopt;
     auto *Obj = C.getArgOperand(0);
     auto *ObjClass = Builder.CreateCall(GetClass, {Obj});
     auto *IsNil =
@@ -464,15 +459,22 @@ bool CallsCheckerPass::run(CallBase &C) {
         Builder.CreateCall(GetMethodImpl, {ObjClass, Selector});
     auto *CalledPtrIfNil = ConstantExpr::getIntToPtr(
         Builder.getInt64(MSG_SEND_TO_NULL), Builder.getPtrTy());
-    CalledPtr = Builder.CreateSelect(IsNil, CalledPtrIfNil, CalledPtrIfNotNil);
+    auto *CalledPtr =
+        Builder.CreateSelect(IsNil, CalledPtrIfNil, CalledPtrIfNotNil);
+
+    auto *CallSiteDescriptionGlobal = placeCString(
+        *Builder.GetInsertBlock()->getModule(),
+        formatv("{0} (over objc_msgSend)", C.getFunction()->getName()).str());
+
+    Builder.CreateCall(CheckStateAtExternalCall,
+                       {CallSiteDescriptionGlobal,
+                        ConstantPointerNull::get(Builder.getPtrTy()),
+                        CalledPtr});
   } else if (CalleeInfo->Name == "objc_msgSendSuper2") {
     // objc_msgSendSuper2 has wrong declaration in header, so generated wrapper
     // is strange, Let's just skip it
     if (C.getNumOperands() < 2)
       return false;
-    CallSiteDescription =
-        formatv("{0} (over objc_msgSendSuper2)", C.getFunction()->getName());
-    CalledName = std::nullopt;
     // This is
     // https://developer.apple.com/documentation/objectivec/objc_super?language=objc
     // We don't want to look this type up, so let's just use our own struct.
@@ -485,41 +487,46 @@ bool CallsCheckerPass::run(CallBase &C) {
         Builder.CreateLoad(Builder.getPtrTy(), SuperClassPtrPtr);
     auto *ClassPtr = Builder.CreateCall(GetSuperClass, {SuperClassPtr});
     auto *Selector = C.getArgOperand(1);
-    CalledPtr = Builder.CreateCall(GetMethodImpl, {ClassPtr, Selector});
+    auto *CalledPtr = Builder.CreateCall(GetMethodImpl, {ClassPtr, Selector});
+
+    auto *CallSiteDescriptionGlobal = placeCString(
+        *Builder.GetInsertBlock()->getModule(),
+        formatv("{0} (over objc_msgSendSuper2)", C.getFunction()->getName())
+            .str());
+
+    Builder.CreateCall(CheckStateAtExternalCall,
+                       {CallSiteDescriptionGlobal,
+                        ConstantPointerNull::get(Builder.getPtrTy()),
+                        CalledPtr});
   } else {
-    CallSiteDescription = C.getFunction()->getName();
-    CalledName = CalleeInfo->Name;
-    CalledPtr = CalleeInfo->CalledPtr;
+    auto *CalledPtr = CalleeInfo->CalledPtr;
     if (!CalledPtr) {
-      auto *Value =
-          ConstantInt::get(Builder.getInt64Ty(), CALLED_LLVM_BUILTIN);
+      auto *Value = ConstantInt::get(Builder.getInt64Ty(), CALLED_LLVM_BUILTIN);
       CalledPtr = ConstantExpr::getIntToPtr(Value, Builder.getPtrTy());
     }
     switch (CalledPtr->getType()->getTypeID()) {
     case Type::PointerTyID:
       break;
     case Type::IntegerTyID:
-      CalledPtr =
-          Builder.CreateIntToPtr(CalledPtr, Builder.getPtrTy());
+      CalledPtr = Builder.CreateIntToPtr(CalledPtr, Builder.getPtrTy());
       break;
     default:
       reportFatalUsageError(formatv("Unsupported type {0} of {1}",
-                                    CalledPtr->getType(),
-                                    CalledPtr));
+                                    CalledPtr->getType(), CalledPtr));
     }
+
+    auto *CallSiteDescriptionGlobal = placeCString(
+        *Builder.GetInsertBlock()->getModule(), C.getFunction()->getName());
+
+    Value *CalledNameV = ConstantPointerNull::get(Builder.getPtrTy());
+    if (auto CalledName = CalleeInfo->Name) {
+      CalledNameV =
+          placeCString(*Builder.GetInsertBlock()->getModule(), *CalledName);
+    }
+
+    Builder.CreateCall(CheckStateAtExternalCall,
+                       {CallSiteDescriptionGlobal, CalledNameV, CalledPtr});
   }
-
-  auto *CallSiteDescriptionGlobal =
-      placeCString(*Builder.GetInsertBlock()->getModule(), CallSiteDescription);
-
-  Value *CalledNameV = ConstantPointerNull::get(Builder.getPtrTy());
-  if (CalledName) {
-    CalledNameV =
-        placeCString(*Builder.GetInsertBlock()->getModule(), *CalledName);
-  }
-
-  Builder.CreateCall(CheckStateAtExternalCall,
-                     {CallSiteDescriptionGlobal, CalledNameV, CalledPtr});
 
   return true;
 }
