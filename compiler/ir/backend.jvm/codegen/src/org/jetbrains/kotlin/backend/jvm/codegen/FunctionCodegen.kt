@@ -274,9 +274,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
     }
 
     private fun getThrownExceptions(function: IrFunction): List<String>? {
-        if (context.config.languageVersionSettings.supportsFeature(LanguageFeature.DoNotGenerateThrowsForDelegatedKotlinMembers) &&
-            function.origin == IrDeclarationOrigin.DELEGATED_MEMBER
-        ) return null
+        if (function.origin == IrDeclarationOrigin.DELEGATED_MEMBER) return null
 
         // @Throws(vararg exceptionClasses: KClass<out Throwable>)
         val exceptionClasses = function.getAnnotation(JVM_THROWS_ANNOTATION_FQ_NAME)?.argumentMapping[Name.identifier("exceptionClasses")] ?: return null
