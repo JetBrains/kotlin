@@ -13,5 +13,6 @@ internal fun Project.configureTestInventory() {
         val testInventoryListener = TestInventoryListener(name, project.layout.buildDirectory.asFile)
         addTestListener(testInventoryListener)
         outputs.file(testInventoryListener.inventoryFile)
+        outputs.file(testInventoryListener.hierarchicalInventoryFile)
     }
 }

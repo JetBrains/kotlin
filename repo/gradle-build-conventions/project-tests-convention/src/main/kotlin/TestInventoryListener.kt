@@ -8,6 +8,7 @@ import org.gradle.api.tasks.testing.TestDescriptor
 import org.gradle.api.tasks.testing.TestListener
 import org.gradle.api.tasks.testing.TestResult
 import java.io.File
+import java.io.Writer
 
 /**
  * Writes an inventory of executed tests to a headerless, tab-separated `test-inventory.tsv` file.
@@ -24,7 +25,25 @@ import java.io.File
  */
 class TestInventoryListener(private val taskName: String, buildDir: Provider<File>) : TestListener {
     val inventoryFile = buildDir.map { it.resolve("test-inventory").resolve(taskName).resolve("test-inventory.tsv") }
+    val hierarchicalInventoryFile = buildDir.map { it.resolve("test-inventory").resolve("test-inventory-hierarchical.txt") }
     private val records = mutableListOf<String>()
+
+    data class TestRecord(val suites: List<String>, val leaf: String, val status: String, val duration: Long)
+    private val structuredRecords = mutableListOf<TestRecord>()
+
+    private class Node {
+        val children = mutableMapOf<String, Node>()
+        var record: TestRecord? = null
+
+        fun addChild(path: List<String>, record: TestRecord) {
+            if (path.isEmpty()) {
+                this.record = record
+            } else {
+                val head = path.first()
+                children.getOrPut(head) { Node() }.addChild(path.drop(1), record)
+            }
+        }
+    }
 
     private companion object {
         val WHITESPACE = Regex("[\t\r\n]")
@@ -68,15 +87,41 @@ class TestInventoryListener(private val taskName: String, buildDir: Provider<Fil
 
         val fullName = (suites + leaf).joinToString(": ").replace(WHITESPACE, " ")
         records += "$fullName\t$status\t$duration"
+        structuredRecords += TestRecord(suites = suites, leaf = leaf, status = status, duration = duration)
     }
 
     override fun afterSuite(suite: TestDescriptor, result: TestResult) {
         if (suite.parent == null) {
             val outputFile = inventoryFile.get()
+            val hierarchicalOutputFile = hierarchicalInventoryFile.get()
             outputFile.parentFile.mkdirs()
             outputFile.bufferedWriter(Charsets.UTF_8).use { writer ->
                 records.forEach { writer.appendLine(it) }
             }
+
+            val root = Node()
+            for (record in structuredRecords) {
+                root.addChild(record.suites + record.leaf, record)
+            }
+
+            hierarchicalOutputFile.bufferedWriter(Charsets.UTF_8).use { writer ->
+                writeNode(writer, "", root, 0)
+            }
+        }
+    }
+
+    private fun writeNode(writer: Writer, name: String, node: Node, depth: Int) {
+        val indent = "    ".repeat(depth)
+        if (name.isNotEmpty()) {
+            writer.write("$indent$name:")
+            if (node.record != null) {
+                writer.write(" ${node.record!!.status} ${node.record!!.duration}ms")
+            }
+            writer.write("\n")
+        }
+
+        for ((childName, childNode) in node.children.toSortedMap()) {
+            writeNode(writer, childName, childNode, if (name.isEmpty()) depth else depth + 1)
         }
     }
 }
