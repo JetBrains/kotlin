@@ -33,10 +33,13 @@ private const val LAST_OR_NULL = KOTLIN_SEQUENCES_PREFIX + "lastOrNull"
 private const val INDEX_OF = KOTLIN_SEQUENCES_PREFIX + "indexOf"
 private const val INDEX_OF_FIRST = KOTLIN_SEQUENCES_PREFIX + "indexOfFirst"
 private const val INDEX_OF_LAST = KOTLIN_SEQUENCES_PREFIX + "indexOfLast"
+private const val FILTER_TO = KOTLIN_SEQUENCES_PREFIX + "filterTo"
+private const val FILTER_NOT_TO = KOTLIN_SEQUENCES_PREFIX + "filterNotTo"
+private const val FILTER_NOT_NULL_TO = KOTLIN_SEQUENCES_PREFIX + "filterNotNullTo"
 
 private val consumerFqNames = setOf(
     FOR_EACH, FOR_EACH_INDEXED, FIND, FIND_LAST, FIRST, FIRST_NOT_NULL_OF, FIRST_NOT_NULL_OF_OR_NULL, FIRST_OR_NULL, LAST, LAST_OR_NULL,
-    INDEX_OF, INDEX_OF_FIRST, INDEX_OF_LAST,
+    INDEX_OF, INDEX_OF_FIRST, INDEX_OF_LAST, FILTER_TO, FILTER_NOT_TO, FILTER_NOT_NULL_TO,
 )
 
 internal fun isConsumerFqName(fqName: String): Boolean = fqName in consumerFqNames
@@ -89,6 +92,9 @@ internal fun createConsumerStrategy(
         FIRST_NOT_NULL_OF_OR_NULL -> FirstNotNullOfStrategy(data, expression, isOrNull = true)
         LAST -> FirstLastStrategy(data, expression, isOrNull = false, isFirst = false, isFind = false)
         LAST_OR_NULL -> FirstLastStrategy(data, expression, isOrNull = true, isFirst = false, isFind = false)
+        FILTER_TO -> FilterToStrategy(data, expression, FilterVersion.Filter)
+        FILTER_NOT_TO -> FilterToStrategy(data, expression, FilterVersion.FilterNot)
+        FILTER_NOT_NULL_TO -> FilterToStrategy(data, expression, FilterVersion.FilterNotNull)
         INDEX_OF -> IndexOfStrategy(data, expression, IndexOfVersion.IndexOf, context)
         INDEX_OF_FIRST -> IndexOfStrategy(data, expression, IndexOfVersion.IndexOfFirst, context)
         INDEX_OF_LAST -> IndexOfStrategy(data, expression, IndexOfVersion.IndexOfLast, context)
