@@ -1,6 +1,6 @@
 # Current — Compiler Representation
 
-> **When to consult**: any compiler-side edit (PSI/LT/FIR/IR/lowerings/EPs). Canonical home for KT-83498 line anchors (`K2ReplCompiler.kt:351-359`, `FirReplSnippetConfiguratorExtensionImpl.kt:173`) and the 6 configurator EPs enumeration.
+> **When to consult**: any compiler-side edit (PSI/LT/FIR/IR/lowerings/EPs). Canonical home for the (landed) KT-83498 line anchors (`K2ReplCompiler.kt:71-73` seam, `:412` conversion, `:341-345` refined-config pre-seeding; `FirReplSnippetConfiguratorExtensionImpl.kt:173` `currentLineId`; `LightTreeRawFirDeclarationBuilder.kt:2978` / `:3001`; `AbstractRawFirBuilder.kt:1480` shared impl) and the 6 configurator EPs enumeration.
 > **Cache lifetime**: stable
 > **Last verified**: 2026-05-16
 
@@ -26,7 +26,7 @@ How a script (or REPL snippet) flows from source text to bytecode.
 | `LightTreeRawFirDeclarationBuilder.buildScript()` | `compiler/fir/raw-fir/light-tree2fir/src/.../converter/LightTreeRawFirDeclarationBuilder.kt:2884-2920` | Detects `SCRIPT` token at file level (line 108: `SCRIPT -> scriptNodes += child`), collects script declarations (`SCRIPT_DECLARATION_TOKENS`: `CLASS`, `FUN`, `PROPERTY`, `TYPEALIAS`, `OBJECT_DECLARATION`, `CLASS_INITIALIZER`, `MODIFIER_LIST`, `SCRIPT_INITIALIZER`, `DESTRUCTURING_DECLARATION`), converts `SCRIPT_INITIALIZER` → `FirAnonymousInitializer`, builds `FirScript` with `FirScriptSymbol(packageFqName.child(scriptName))`. |
 | `convertToFirViaLightTree` (extension) | `plugins/scripting/scripting-compiler/src/.../impl/ScriptJvmK2CompilerImpl.kt:317-327` | `SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile`. Wraps `LightTree2Fir` for `SourceCode`. Used by every K2 script entry. |
 
-**Note on `FirReplSnippet`**: LightTree builder has no dedicated REPL snippet path. `K2ReplCompiler` routes `KtFileScriptSource` through PSI and other `SourceCode` through `buildFirViaLightTree`. Tracked: **KT-83498**.
+**Note on `FirReplSnippet`** (KT-83498 / KT-77583 landed 2026-09-04): both builders produce it. The parser-independent part (snippet `object`, `$$eval`, primary constructor, `FirReplDeclarationReference` / `FirReplPropertyInitializer` / `FirReplPropertyDelegate` rewriting, `replSnippetDelegatedPropertyCopies`) lives in `AbstractRawFirBuilder.convertReplSnippetImpl` (`raw-fir.common/.../AbstractRawFirBuilder.kt:1480`); `PsiRawFirBuilder.Visitor.convertReplSnippet` (`:1480`) and `LightTreeRawFirDeclarationBuilder.convertReplSnippet` (`:2978`) only supply the parser-specific `extractReplElements`. The `bindFunctionTarget` / `replSnippetDeclarationSymbol` hooks overridden by the Analysis API (`RawFirNonLocalDeclarationBuilder`) moved to the common base class. Script-vs-snippet decision: LT — `FirReplSnippetConfiguratorExtension.isReplSnippetsSource` (EP); PSI — `KtScript.isReplSnippet` marker (KT-84387). `*.repl.kts` raw-builder fixtures run under both builders (`LightTree2FirConverterTestCaseGenerated`, no `.lt.txt` overrides).
 
 ## 2. K1 frontend (legacy)
 
@@ -72,7 +72,7 @@ All K1, all PSI-tied, all going away with K1 frontend retirement.
 | `FirReplSnippetBuilder` | generated | |
 | `FirReplSnippetSymbol` | generated | Wraps `FirRegularClassSymbol`. |
 | `FirReplSnippetConfiguratorExtension` | `compiler/fir/raw-fir/raw-fir.common/src/.../builder/FirReplSnippetConfiguratorExtension.kt` | EP. Methods include `configureEvalBody` and `MutableList<FirElement>.configure` for the eval body. |
-| `FirReplSnippetConfiguratorExtensionImpl` | `plugins/scripting/scripting-compiler/src/.../services/FirReplSnippetConfiguratorExtensionImpl.kt` | Builds snippet class, eval fn signature, last-expression → result property. |
+| `FirReplSnippetConfiguratorExtensionImpl` | `plugins/scripting/scripting-compiler/src/.../services/FirReplSnippetConfiguratorExtensionImpl.kt` | Builds snippet class, eval fn signature, last-expression → result property. PSI-free since KT-83498: the result field name is `repl.resultFieldPrefix` + `configuration[repl.currentLineId].no` (line 173), read from the refined configuration pre-seeded by `K2ReplCompiler`; `resultField` is used when no line id is present (non-REPL / test-infra sessions). |
 | `FirReplSnippetResolveExtension` | `compiler/fir/providers/src/.../extensions/FirReplSnippetResolveExtension.kt` | EP. `getSnippetDefaultImports`, `getSnippetScope`, `updateResolved`. |
 | `FirReplSnippetResolveExtensionImpl` | `plugins/scripting/scripting-compiler/src/.../services/FirReplSnippetResolveExtensionImpl.kt` | Owns history provider + scope. |
 | `FirReplHistoryProvider` | scripting-compiler-impl | Tracks snippet symbols in order. |
@@ -101,7 +101,7 @@ All K1, all PSI-tied, all going away with K1 frontend retirement.
 
 | Class | File | Frontend / parsing |
 |---|---|---|
-| `K2ReplCompiler` (+ `K2ReplCompilationState`) | `plugins/scripting/scripting-compiler/src/.../impl/K2ReplCompiler.kt` | K2. **Hybrid parsing** (lines 351-359): partitions `allSourceFiles` by `KtFileScriptSource` → `session.buildFirFromKtFiles` (PSI); other `SourceCode` → `session.buildFirViaLightTree`. Snippet PSI is acquired via `getScriptKtFile` (lines 259-264) and tagged with `markAsReplSnippet()`. TODO at line 352: "implement LT support, similarly as for the scripting (KT-83498)". |
+| `K2ReplCompiler` (+ `K2ReplCompilationState`) | `plugins/scripting/scripting-compiler/src/.../impl/K2ReplCompiler.kt` | K2. **Parser-agnostic** (KT-83498): constructor takes `convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile = SourceCode::convertToFirViaLightTree` (lines 71-73, same seam as `ScriptJvmK2CompilerImpl`); every `SourceCode` (snippet + imports) goes through it (line 412). No `KtFile`/`KtScript`/`KtFileScriptSource` handling; snippet class FQ name comes from the produced `FirReplSnippet.snippetClass`. The per-snippet refined configuration (with `repl.currentLineId`) is pre-seeded into `scriptRefinedCompilationConfigurationsCache` (lines 341-345) so FIR configurators see it. Incomplete-code detection (`ScriptDiagnostic.incompleteCode`) = all errors are `SYNTAX` at the end of the snippet text (`isIncompleteSnippet`). |
 | `GenericReplCompiler` | `plugins/scripting/scripting-compiler/src/.../repl/GenericReplCompiler.kt` | K1 (legacy) |
 
 ## 8. Compilation orchestrators (non-REPL)
@@ -124,7 +124,7 @@ All K1, all PSI-tied, all going away with K1 frontend retirement.
 | Layer | Script | Snippet |
 |---|---|---|
 | Source repr (K1) | `KtScript` (PSI) | `KtScript` (PSI, marked as snippet) |
-| Source repr (K2) | `SourceCode` → LightTree | `SourceCode` → hybrid (PSI for `KtFileScriptSource`, LT otherwise — KT-83498) |
+| Source repr (K2) | `SourceCode` → LightTree | `SourceCode` → LightTree (via injectable `convertToFir`; PSI only if a PSI converter is injected) |
 | FIR | `FirScript` (statements + params + receivers) | `FirReplSnippet` (embedded `FirRegularClass` + `$$eval`) |
 | FIR scope | `FirScriptDeclarationsScope` | `FirReplHistoryScope` |
 | IR | `IrScript` | `IrReplSnippet` |

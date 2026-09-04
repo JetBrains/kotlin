@@ -8,20 +8,27 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 import com.intellij.openapi.Disposable
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.common.repl.LineId
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
+import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
@@ -31,8 +38,6 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchSco
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.psi.KtNonPublicApi
-import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.scripting.compiler.plugin.ReplCompilerPluginRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
@@ -45,10 +50,7 @@ import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
-import org.jetbrains.kotlin.scripting.definitions.ScriptPriorities
-import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
-import org.jetbrains.kotlin.scripting.resolve.getKtFile
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.nio.file.Path
 import kotlin.script.experimental.api.*
@@ -61,8 +63,14 @@ import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.experimental.util.LinkedSnippetImpl
 import kotlin.script.experimental.util.add
 
+/**
+ * @param convertToFir the parser seam: builds raw FIR for every [SourceCode] taking part in a snippet compilation
+ * (the snippet itself and its imports). LightTree by default; a PSI-based converter can be injected by embedders that
+ * need PSI-backed sources, mirroring [ScriptJvmK2CompilerImpl].
+ */
 class K2ReplCompiler(
     private val state: K2ReplCompilationState,
+    private val convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile = SourceCode::convertToFirViaLightTree,
 ) : ReplCompiler<CompiledSnippet> {
 
     override val lastCompiledSnippet: LinkedSnippet<CompiledSnippet>?
@@ -86,7 +94,8 @@ class K2ReplCompiler(
                             resultField("")
                             repl.resultFieldPrefix("")
                             repl._isSyntheticSnippet(true)
-                        }
+                        },
+                        convertToFir,
                     )
                 when (res) {
                     is ResultWithDiagnostics.Success -> {
@@ -278,21 +287,24 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
         ).also { moduleDataHistory.add(it) }
 }
 
-@OptIn(LegacyK2CliPipeline::class, K1SpecificScriptingServiceAccessor::class, KtNonPublicApi::class, SessionConfiguration::class)
+@OptIn(LegacyK2CliPipeline::class, K1SpecificScriptingServiceAccessor::class, SessionConfiguration::class, DirectDeclarationsAccess::class)
 private fun compileImpl(
     state: K2ReplCompilationState,
     snippet: SourceCode,
-    scriptCompilationConfiguration: ScriptCompilationConfiguration
+    scriptCompilationConfiguration: ScriptCompilationConfiguration,
+    convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile,
 ): ResultWithDiagnostics<CompiledSnippet> {
-    val definition =
-        ScriptDefinition.FromConfigurations(
-            scriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration,
-            scriptCompilationConfiguration,
-            null
-        )
+    // TODO: ensure that currentLineId passing is only used for single snippet compilation
+    val priority = state.scriptCompilationConfiguration[ScriptCompilationConfiguration.repl.currentLineId]?.no
+        ?: state.hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]?.getSnippetCount()
 
+    // The snippet id travels to the FIR configurators via the refined configuration (`repl.currentLineId`),
+    // so the result field naming does not depend on the parser used to build the snippet
     val initialScriptCompilationConfiguration = scriptCompilationConfiguration.refineBeforeParsing(snippet).valueOr {
         return it
+    }.let { refined ->
+        if (priority == null) refined
+        else refined.with { repl.currentLineId(LineId(priority, 0, snippet.text.hashCode())) }
     }
     val project = state.projectEnvironment.project
     val messageCollector = state.messageCollector
@@ -304,23 +316,14 @@ private fun compileImpl(
     val compilerEnvironment = ModuleCompilerEnvironment(state.projectEnvironment, diagnosticsReporter)
     val targetId = TargetId(snippet.name!!, "java-production")
 
-    // PSI files
-    val snippetKtFile =
-        getScriptKtFile(snippet, initialScriptCompilationConfiguration, project, messageCollector).valueOr {
-            return it
+    fun getRefinedConfiguration(source: SourceCode): ScriptCompilationConfiguration? =
+        state.scriptConfigurationsProvider?.let {
+            it.project = state.project
+            it.getScriptCompilationConfiguration(source, initialScriptCompilationConfiguration)?.valueOrNull()?.configuration
         }
-    snippetKtFile.script?.markAsReplSnippet()
-
-    // TODO: ensure that currentLineId passing is only used for single snippet compilation
-    val priority = state.scriptCompilationConfiguration[ScriptCompilationConfiguration.repl.currentLineId]?.no
-        ?: state.hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]?.getSnippetCount()
-    if (priority != null) {
-        val script = snippetKtFile.script!!
-        script.putUserData(ScriptPriorities.PRIORITY_KEY, priority)
-    }
 
     // configuration refinement with the additional sources collection
-    val allSourceFiles = mutableListOf<SourceCode>(KtFileScriptSource(snippetKtFile))
+    val allSourceFiles = mutableListOf(snippet)
     (
         val classpath, val newSources = sources, val sourceDependencies
     ) =
@@ -333,17 +336,13 @@ private fun compileImpl(
         }
     allSourceFiles.addAll(newSources)
 
-    var hasSyntaxErrors = false
-    // PSI syntax errors reporting
-    allSourceFiles.forEach {
-        if (it is KtFileScriptSource) {
-            val syntaxErrorReport = AnalyzerWithCompilerReport.reportSyntaxErrors(it.ktFile, messageCollector)
-            if (syntaxErrorReport.isHasErrors && it.ktFile == snippetKtFile && syntaxErrorReport.isAllErrorsAtEof) {
-                messageCollector.report(ScriptDiagnostic(ScriptDiagnostic.incompleteCode, "Incomplete code"))
-            }
-            hasSyntaxErrors = hasSyntaxErrors || syntaxErrorReport.isHasErrors
-        }
-    }
+    // Pre-seed the refined configurations cache used by the FIR scripting services (see FirScriptDefinitionProviderService),
+    // so that the snippet configurators see the per-snippet configuration (incl. `repl.currentLineId`)
+    state.hostConfiguration[ScriptingHostConfiguration.scriptRefinedCompilationConfigurationsCache]
+        ?.storeRefinedCompilationConfiguration(
+            snippet,
+            (getRefinedConfiguration(snippet) ?: initialScriptCompilationConfiguration).asSuccess()
+        )
 
     // Updating compiler options
     val baseCompilerOptions = state.scriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]
@@ -410,14 +409,16 @@ private fun compileImpl(
         FirScriptCompilationComponent(state.hostConfiguration)
     )
 
-    val rawFir = allSourceFiles.partition { it is KtFileScriptSource }.let { [ktSources, otherSources] ->
-        // TODO: implement LT support, similarly as for the scripting (KT-83498)
-        session.buildFirFromKtFiles(ktSources.map { it.getKtFile(definition, project) }) +
-                session.buildFirViaLightTree(
-                    otherSources.map { it.toKtSourceFile() },
-                    diagnosticsReporter,
-                    reportFilesAndLines = null
-                )
+    val sourcesToFir = allSourceFiles.associateWith { it.convertToFir(session, diagnosticsReporter) }
+    val rawFir = sourcesToFir.values.toList()
+
+    // syntax errors reporting
+    if (diagnosticsReporter.hasErrors) {
+        if (diagnosticsReporter.isIncompleteSnippet(snippet)) {
+            messageCollector.report(ScriptDiagnostic(ScriptDiagnostic.incompleteCode, "Incomplete code"))
+        }
+        diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
+        return failure(messageCollector)
     }
 
     val [scopeSession, fir] = session.runResolution(rawFir)
@@ -444,18 +445,32 @@ private fun compileImpl(
     return makeCompiledScript(
         generationState,
         snippet,
-        { it.getKtFile(definition, state.projectEnvironment.project).declarations.firstIsInstance<KtScript>().fqName },
-        sourceDependencies,
-        { script ->
-            state.scriptConfigurationsProvider?.let {
-                it.project = state.project
-                it.getScriptCompilationConfiguration(script, initialScriptCompilationConfiguration)
-                    ?.valueOrNull()?.configuration
-            } ?: initialScriptCompilationConfiguration
+        { source ->
+            sourcesToFir[source]?.declarations?.firstIsInstanceOrNull<FirReplSnippet>()?.snippetClass?.symbol?.classId?.asSingleFqName()
         },
+        sourceDependencies,
+        { script -> getRefinedConfiguration(script) ?: initialScriptCompilationConfiguration },
         extractResultFields(irInput.irModuleFragment)
     ).onSuccess { compiledScript ->
         ResultWithDiagnostics.Success(compiledScript, messageCollector.diagnostics)
+    }
+}
+
+/**
+ * The LightTree counterpart of the PSI "all syntax errors are at EOF" heuristic used to signal to REPL hosts
+ * that the snippet is incomplete rather than wrong: all errors reported for the [snippet] are syntax errors
+ * located at the end of its text.
+ */
+private fun BaseDiagnosticsCollector.isIncompleteSnippet(snippet: SourceCode): Boolean {
+    val snippetDiagnostics = diagnosticsByFile.entries
+        .filter { entry -> entry.key?.let { it.path == snippet.locationId || it.name == snippet.name } == true }
+        .flatMap { it.value }
+        .filter { it.severity == Severity.ERROR }
+    if (snippetDiagnostics.isEmpty()) return false
+    val textEnd = snippet.text.trimEnd().length
+    return snippetDiagnostics.all { diagnostic ->
+        diagnostic.factory == FirSyntaxErrors.SYNTAX &&
+                diagnostic is KtDiagnosticWithSource && diagnostic.textRanges.all { range -> range.endOffset >= textEnd }
     }
 }
 

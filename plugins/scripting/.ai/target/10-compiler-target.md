@@ -12,9 +12,9 @@ What stays, what dies, what gets refactored. Read alongside [current/10-compiler
 
 | Element | Target |
 |---|---|
-| `KtScript`, `KotlinScriptStubImpl`, `KtScriptElementType` (PSI) | KEEP while K1 still alive + REPL `KtFileScriptSource` branch exists. Re-audit after KT-83498 lands and K1 frontend retires. |
+| `KtScript`, `KotlinScriptStubImpl`, `KtScriptElementType` (PSI) | KEEP while K1 still alive (the REPL `KtFileScriptSource` branch is gone — KT-83498 landed 2026-09-04). Re-audit when the K1 frontend retires. |
 | `LightTreeRawFirDeclarationBuilder.buildScript()` (LT) | KEEP — **sole K2 script parsing path** in production |
-| LightTree for `FirReplSnippet` | Land **KT-83498** — extend LT path to snippets so `K2ReplCompiler` can drop the `KtFileScriptSource → buildFirFromKtFiles` branch |
+| LightTree for `FirReplSnippet` | **Landed 2026-09-04 (KT-83498 / KT-77583)** — `LightTreeRawFirDeclarationBuilder.convertReplSnippet` over the shared `AbstractRawFirBuilder.convertReplSnippetImpl`; `K2ReplCompiler` has no PSI branch |
 
 ### K1 frontend
 
@@ -62,7 +62,7 @@ No structural changes expected. Possibly remove the `accepts()` extension method
 | `ScriptJvmK2CompilerIsolated` (host wrapper) | KEEP |
 | `ScriptJvmK2CompilerFromEnvironment` (CLI wrapper) | KEEP — sole K2 CLI entry |
 | `convertToFirViaLightTree` | KEEP — only converter wired today |
-| `K2ReplCompiler` + `K2ReplCompilationState` | KEEP. **Refactor**: align with `ScriptJvmK2CompilerImpl` shape (parser-agnostic seam); land KT-83498 to drop PSI branch. |
+| `K2ReplCompiler` + `K2ReplCompilationState` | KEEP. Aligned with `ScriptJvmK2CompilerImpl` (`convertToFir` seam, LT default) since KT-83498. Next: route annotation refinement through `refineAllForK2` instead of `CliScriptConfigurationsProvider` (PSI inside), and narrow `isReplSnippetSource` (G15). |
 | `GenericReplCompiler` | REMOVE |
 | `ScriptJvmCompilerIsolated` (K1) | REMOVE |
 
@@ -78,7 +78,7 @@ No structural changes expected. Possibly remove the `accepts()` extension method
 
 `FirScript`: **done** — `LightTreeRawFirDeclarationBuilder.buildScript()` produces `FirScript`; `ScriptJvmK2CompilerImpl` wires it via `convertToFirViaLightTree`; CLI uses LT exclusively.
 
-`FirReplSnippet`: **partial** — `K2ReplCompiler` uses LT for non-`KtFileScriptSource` sources, PSI for `KtFileScriptSource`. Completing this is **KT-83498** — see [`50-migration-plan.md`](50-migration-plan.md#2-land-kt-83498--full-lighttree-path-for-k2replcompiler) for the work breakdown and [`../current/10-compiler-representation.md`](../current/10-compiler-representation.md) for line anchors.
+`FirReplSnippet`: **done (KT-83498, 2026-09-04)** — `LightTreeRawFirDeclarationBuilder.convertReplSnippet` produces it (golden parity with PSI on all `*.repl.kts` raw-builder fixtures); `K2ReplCompiler` converts every `SourceCode` through `convertToFir` (LT default). See [`50-migration-plan.md`](50-migration-plan.md#2-land-kt-83498--full-lighttree-path-for-k2replcompiler) for the design record and [`../current/10-compiler-representation.md`](../current/10-compiler-representation.md) for line anchors.
 
 ## Net effect after cleanup
 
@@ -86,4 +86,4 @@ No structural changes expected. Possibly remove the `accepts()` extension method
 - No K1 descriptors in scripting modules
 - No PSI dependency in API/host modules (already true today)
 - Scripts: zero PSI on K2 path (already true today)
-- Snippets: zero PSI after KT-83498
+- Snippets: zero PSI in `K2ReplCompiler` / FIR configurators (KT-83498 landed); residual PSI only in the `CliScriptConfigurationsProvider` refinement path shared with K1 (goes with step 8)

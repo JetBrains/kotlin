@@ -33,9 +33,11 @@ class MainKtsJsr223Test {
 
     @Test
     @Disabled(
-        """ BLOCKED-COMPILER-KT-77583/KT-83498: light-tree REPL-snippet support is unimplemented (LightTreeRawFirDeclarationBuilder.convertReplSnippet TODO). 
-            K2ReplCompiler's own isReplSnippetSource predicate is session-wide/argument-independent 'true', so the light-tree-converted 
-            @file:Import(...) scripts get misclassified as REPL snippets and hit the TODO instead of the working convertScript path. 
+        """ BLOCKED-DESIGN-G15: K2ReplCompiler's isReplSnippetSource predicate is session-wide 'true', so the @file:Import(...)ed scripts
+            are compiled as REPL snippets (FirReplSnippet) instead of scripts (FirScript) since the light-tree snippet builder landed (KT-83498).
+            Several snippets in one FIR session are not supported by the REPL resolution: fails with
+            "Unexpected status. Expected is FirResolvedDeclarationStatus" in FirPrivateToThisAccessChecker on `SharedObject.greeting`.
+            Fix: narrow the predicate to the root snippet source (see current/80-known-gotchas.md G15 / target/90-open-questions.md Q2).
             """
     )
     fun testWithImport() {

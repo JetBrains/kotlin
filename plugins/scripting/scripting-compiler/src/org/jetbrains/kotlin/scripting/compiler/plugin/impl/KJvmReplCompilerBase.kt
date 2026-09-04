@@ -47,7 +47,6 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.experimental.util.LinkedSnippetImpl
-import kotlin.script.experimental.util.PropertiesCollection
 import kotlin.script.experimental.util.add
 
 // NOTE: this implementation, as it is used in the REPL infrastructure, may be created for every snippet and provided with the state
@@ -381,8 +380,3 @@ class ReplCompilationState<AnalyzerT : ReplCodeAnalyzerBase>(
     val mangler: K1JvmDescriptorMangler get() = manglerAndSymbolTable.first
     val symbolTable: SymbolTable get() = manglerAndSymbolTable.second
 }
-
-/**
- * Internal property for transferring line id information when using new repl infrastructure with legacy one
- */
-val ReplScriptCompilationConfigurationKeys.currentLineId by PropertiesCollection.key<LineId>(isTransient = true)
