@@ -10,10 +10,9 @@ package org.jetbrains.kotlin.java.direct.resolution
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.platform.syntax.element.SyntaxTokenTypes
-import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
-import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
+import org.jetbrains.kotlin.kmp.tree.LightNode
+import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 
 /**
  * Five-bucket holder for the imports of a Java compilation unit, mirroring the JLS 7.5
@@ -49,7 +48,7 @@ internal class JavaImports(
  */
 internal object JavaImportResolver {
 
-    fun extractPackageName(tree: JavaLightTree, root: JavaLightNode): FqName {
+    fun extractPackageName(tree: LightSyntaxTree, root: LightNode): FqName {
         val packageStmt = tree.findChildByType(root, JavaSyntaxElementType.PACKAGE_STATEMENT)
         val packageName = packageStmt?.let {
             tree.findChildByType(it, JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.let { ref -> tree.getText(ref).toString() }
@@ -61,7 +60,7 @@ internal object JavaImportResolver {
      * Extracts all import declarations into a [JavaImports] holder, covering the well-formed
      * case plus two parser-recovery shapes (ERROR_ELEMENT inside / outside IMPORT_LIST).
      */
-    fun extractImports(tree: JavaLightTree, root: JavaLightNode): JavaImports {
+    fun extractImports(tree: LightSyntaxTree, root: LightNode): JavaImports {
         val simpleTypeImports = mutableMapOf<String, FqName>()
         val staticSingleImports = mutableMapOf<String, FqName>()
         val typeStarImports = mutableListOf<FqName>()
@@ -92,8 +91,8 @@ internal object JavaImportResolver {
 
     /** `import module M;` (JLS 7.5.5): the module name lives in a `MODULE_REFERENCE` child. */
     private fun extractModuleImports(
-        tree: JavaLightTree,
-        importList: JavaLightNode,
+        tree: LightSyntaxTree,
+        importList: LightNode,
         moduleImports: MutableList<String>,
     ) {
         for (importNode in tree.getChildrenByType(importList, JavaSyntaxElementType.IMPORT_MODULE_STATEMENT)) {
@@ -104,8 +103,8 @@ internal object JavaImportResolver {
     }
 
     private fun extractNormalImports(
-        tree: JavaLightTree,
-        importList: JavaLightNode,
+        tree: LightSyntaxTree,
+        importList: LightNode,
         simpleImports: MutableMap<String, FqName>,
         starImports: MutableList<FqName>,
     ) {
@@ -135,8 +134,8 @@ internal object JavaImportResolver {
      *   [staticStarImports] with the *outer class* FqName as the value (not a package).
      */
     private fun extractStaticImports(
-        tree: JavaLightTree,
-        importList: JavaLightNode,
+        tree: LightSyntaxTree,
+        importList: LightNode,
         staticSingleImports: MutableMap<String, FqName>,
         staticStarImports: MutableList<FqName>,
     ) {
@@ -163,8 +162,8 @@ internal object JavaImportResolver {
      * preserve a `static` keyword distinction).
      */
     private fun extractErrorElementImports(
-        tree: JavaLightTree,
-        importList: JavaLightNode,
+        tree: LightSyntaxTree,
+        importList: LightNode,
         simpleImports: MutableMap<String, FqName>,
         starImports: MutableList<FqName>,
     ) {
@@ -198,8 +197,8 @@ internal object JavaImportResolver {
      * Always treated as *type* imports — see [extractErrorElementImports].
      */
     private fun extractFragmentedImports(
-        tree: JavaLightTree,
-        root: JavaLightNode,
+        tree: LightSyntaxTree,
+        root: LightNode,
         simpleImports: MutableMap<String, FqName>,
         starImports: MutableList<FqName>,
     ) {
@@ -240,7 +239,7 @@ internal object JavaImportResolver {
         }
     }
 
-    private data class FragmentedImportTarget(val typeNode: JavaLightNode, val hasStar: Boolean)
+    private data class FragmentedImportTarget(val typeNode: LightNode, val hasStar: Boolean)
 
     /**
      * Starting at the `import`-shaped ERROR_ELEMENT at `allChildren[startIdx]`, finds the TYPE /
@@ -248,8 +247,8 @@ internal object JavaImportResolver {
      * Returns `null` if a CLASS boundary is hit first (unrelated parser error).
      */
     private fun findTypeNodeAndStar(
-        tree: JavaLightTree,
-        allChildren: List<JavaLightNode>,
+        tree: LightSyntaxTree,
+        allChildren: List<LightNode>,
         startIdx: Int,
     ): FragmentedImportTarget? {
         var hasStar = false

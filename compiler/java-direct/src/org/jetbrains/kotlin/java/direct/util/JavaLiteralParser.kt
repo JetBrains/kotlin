@@ -10,8 +10,8 @@ package org.jetbrains.kotlin.java.direct.util
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.platform.syntax.SyntaxElementType
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
-import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
+import org.jetbrains.kotlin.kmp.tree.LightNode
+import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 
 /**
  * Shared Java literal parsing and constant-expression helpers used by [ConstantEvaluator], for both
@@ -164,7 +164,7 @@ internal object JavaLiteralParser {
      * is not a recognised literal kind; callers that need to distinguish those two cases must
      * inspect the node structure directly.
      */
-    fun evaluateLiteral(node: JavaLightNode, tree: JavaLightTree): Any? {
+    fun evaluateLiteral(node: LightNode, tree: LightSyntaxTree): Any? {
         val literalChild = tree.getChildren(node).firstOrNull() ?: return null
         val text = tree.getText(literalChild).toString()
 
