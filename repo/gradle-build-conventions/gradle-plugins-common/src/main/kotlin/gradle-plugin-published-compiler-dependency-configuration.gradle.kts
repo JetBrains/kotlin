@@ -18,4 +18,4 @@ plugins {
 }
 
 @Suppress("DEPRECATION")
-limitLanguageAndApiVersions(KotlinVersion.KOTLIN_2_0)
+limitLanguageAndApiVersions(KotlinVersion.KOTLIN_2_2)
