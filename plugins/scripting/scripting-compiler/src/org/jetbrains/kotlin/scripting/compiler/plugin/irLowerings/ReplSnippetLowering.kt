@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -52,10 +53,17 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
         }
 
         val symbolRemapper = ReplSnippetsToClassesSymbolRemapper()
+        val sameBatchSnippetClasses = snippets.mapNotNullTo(HashSet()) { it.targetClass?.owner }
 
         snippets.sortBy { it.name }
         for (irSnippet in snippets) {
-            finalizeReplSnippetClass(irSnippet, symbolRemapper)
+            finalizeReplSnippetClass(irSnippet, symbolRemapper, sameBatchSnippetClasses)
+        }
+
+        // The imported same-batch snippets are evaluated from the importing snippet's `$$eval` (all the `$$eval` signatures
+        // should be final at this point, see finalizeReplSnippetClass)
+        for (irSnippet in snippets) {
+            chainImportedSnippetsEvaluation(irSnippet)
         }
 
         // Patch IrExternalPackageFragment parents on external Kotlin top-level callees referenced from
@@ -70,7 +78,43 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
         }
     }
 
-    private fun finalizeReplSnippetClass(irSnippet: IrReplSnippet, symbolRemapper: ReplSnippetsToClassesSymbolRemapper) {
+    private fun IrReplSnippet.getEvalFunction(): IrSimpleFunction =
+        targetClass!!.owner.declarations
+            .filterIsInstance<IrSimpleFunction>()
+            .single { it.origin == IrDeclarationOrigin.REPL_EVAL_FUNCTION }
+
+    /**
+     * Inserts the calls to the `$$eval` functions of the imported snippets (see [importedSnippetsAttr]) at the beginning of the
+     * [irSnippet]'s `$$eval`, so the imported scripts are evaluated before the importing one, as the preceding REPL snippets would be.
+     * The implicit receivers of the importing snippet are passed through, since the imported scripts are compiled with the same ones.
+     */
+    private fun chainImportedSnippetsEvaluation(irSnippet: IrReplSnippet) {
+        val importedSnippets = irSnippet.importedSnippetsAttr ?: return
+        val evalFun = irSnippet.getEvalFunction()
+        val evalBody = evalFun.body as? IrBlockBody ?: return
+        importedSnippets.asReversed().forEach { importedSnippetSymbol ->
+            val importedSnippet = importedSnippetSymbol.owner
+            val importedClass = importedSnippet.targetClass?.owner ?: return@forEach
+            val importedEvalFun = importedSnippet.getEvalFunction()
+            require(importedEvalFun.parameters.size == evalFun.parameters.size) {
+                "The imported snippet ${importedClass.name} has different implicit receivers than the importing one (${irSnippet.name})"
+            }
+            val call = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, importedEvalFun.returnType, importedEvalFun.symbol).apply {
+                arguments[0] = IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, importedClass.typeWith(), importedClass.symbol)
+                for (index in 1 until evalFun.parameters.size) {
+                    val parameter = evalFun.parameters[index]
+                    arguments[index] = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.type, parameter.symbol)
+                }
+            }
+            evalBody.statements.add(index = 0, element = call)
+        }
+    }
+
+    private fun finalizeReplSnippetClass(
+        irSnippet: IrReplSnippet,
+        symbolRemapper: ReplSnippetsToClassesSymbolRemapper,
+        sameBatchSnippetClasses: Set<IrClass>,
+    ) {
         val irSnippetClass = irSnippet.targetClass!!.owner
         val typeRemapper = SimpleTypeRemapper(symbolRemapper)
 
@@ -86,9 +130,7 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
             context, irSnippetClassThisReceiver, implicitReceiversFieldsWithParameters, irSnippetClass, irSnippet.stateObject!!
         )
 
-        val evalFun = irSnippetClass.declarations
-            .filterIsInstance<IrFunction>()
-            .single { it.origin == IrDeclarationOrigin.REPL_EVAL_FUNCTION }
+        val evalFun = irSnippet.getEvalFunction()
         evalFun.parameters = buildList {
             add(
                 evalFun.buildReceiverParameter {
@@ -139,6 +181,7 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
             irSnippetClassThisReceiver,
             typeRemapper,
             snippetAccessCallsGenerator,
+            sameBatchSnippetClasses,
         )
         val lambdaPatcher = ScriptFixLambdasTransformer(irSnippetClass)
 
@@ -240,6 +283,7 @@ private class ReplSnippetToClassTransformer(
     snippetClassReceiver: IrValueParameter,
     typeRemapper: TypeRemapper,
     override val accessCallsGenerator: ReplSnippetAccessCallsGenerator,
+    private val sameBatchSnippetClasses: Set<IrClass>,
 ) : ScriptLikeToClassTransformer(
     context,
     irSnippet,
@@ -267,6 +311,19 @@ private class ReplSnippetToClassTransformer(
         if (declaration != null && declaration.parent === irSnippet.targetClass?.owner && expression.dispatchReceiver is IrErrorCallExpression) {
             expression.dispatchReceiver =
                 accessCallsGenerator.getAccessCallForSelf(data, expression.startOffset, expression.endOffset, null, null)
+        }
+        // A declaration of another snippet compiled in the same batch (e.g. an imported script, see K2ReplCompiler) is a regular
+        // member of that snippet's object class, so the placeholder receiver is replaced with the direct access to the object
+        // instance instead of the REPL state lookup.
+        val declarationParent = declaration?.parent
+        if (declaration != null && declarationParent is IrClass && declarationParent in sameBatchSnippetClasses &&
+            declarationParent !== irSnippet.targetClass?.owner && expression.dispatchReceiver is IrErrorCallExpression
+        ) {
+            expression.dispatchReceiver = IrGetObjectValueImpl(
+                expression.startOffset, expression.endOffset, declarationParent.typeWith(), declarationParent.symbol
+            )
+            expression.transformChildren(this, data)
+            return expression
         }
         return super.visitMemberAccess(expression, data)
     }

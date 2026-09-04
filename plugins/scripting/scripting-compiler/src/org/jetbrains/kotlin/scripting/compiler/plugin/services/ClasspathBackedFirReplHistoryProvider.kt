@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.replMemberOverloadSig
  * A [FirReplHistoryProvider] for a compiler that keeps no state between snippets: history is
  * reconstructed from the compiled wrapper classes of [priorClassIds] on the classpath plus their
  * embedded `.kotlin_metadata` sidecars, and combined with the live same-batch siblings reported
- * through [putSnippet], which have no bytecode yet.
+ * through [putSnippet] and [putImportedSnippet], which have no bytecode yet.
  *
  * [getSnippets] must return the reconstructed snippets before the live siblings: that is history order.
  *
@@ -43,12 +43,15 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.replMemberOverloadSig
 internal class ClasspathBackedFirReplHistoryProvider(
     private val priorClassIds: List<ClassId>,
     private val sourceSessionProvider: () -> FirSession?,
-) : FirReplHistoryProvider() {
+) : FirReplHistoryProvider(), FirReplHistoryProviderWithImports {
 
     @Volatile
     private var classpathSnippets: List<FirReplSnippetSymbol>? = null
 
     private val liveBatchSnippets = mutableListOf<FirReplSnippetSymbol>()
+
+    /** The subset of [liveBatchSnippets] registered via [putImportedSnippet]: they do not consume the snippet numbers. */
+    private val liveImportedSnippets = HashSet<FirReplSnippetSymbol>()
 
     private val symbolToEmbeddedSidecar: MutableMap<FirReplSnippetSymbol, SnippetArtifactSidecar?> = HashMap()
 
@@ -64,7 +67,14 @@ internal class ClasspathBackedFirReplHistoryProvider(
     }
 
     override fun putSnippet(symbol: FirReplSnippetSymbol) {
-        liveBatchSnippets += symbol
+        if (symbol !in liveBatchSnippets) liveBatchSnippets += symbol
+    }
+
+    override fun putImportedSnippet(symbol: FirReplSnippetSymbol) {
+        if (symbol !in liveBatchSnippets) {
+            liveBatchSnippets += symbol
+            liveImportedSnippets += symbol
+        }
     }
 
     override fun isFirstSnippet(symbol: FirReplSnippetSymbol): Boolean {
@@ -73,7 +83,7 @@ internal class ClasspathBackedFirReplHistoryProvider(
         return list.firstOrNull() === symbol
     }
 
-    override fun getSnippetCount(): Int = priorClassIds.size + liveBatchSnippets.size
+    override fun getSnippetCount(): Int = priorClassIds.size + liveBatchSnippets.size - liveImportedSnippets.size
 
     override fun getSnippetImports(symbol: FirReplSnippetSymbol): List<FirImport>? {
         classpathSnippets ?: getSnippets()

@@ -152,7 +152,7 @@ Full per-module test placement, plus compiler-side test inventory (with disposit
 
 Priority TBD — the list below is unordered.
 
-- ~~**KT-83498** — Full LightTree path in `K2ReplCompiler`~~ — **landed 2026-09-04**. Follow-up only: G15 predicate narrowing. See [`target/50-migration-plan.md`](target/50-migration-plan.md) step 2.
+- ~~**KT-83498** — Full LightTree path in `K2ReplCompiler`~~ — **landed 2026-09-04**. G15 resolved 2026-09-04 (imports as preceding snippets). See [`target/50-migration-plan.md`](target/50-migration-plan.md) step 2.
 - **JSR-223 K2 bindings** — Option D — synthetic-snippets refinement-DSL callback (`prependSyntheticSnippets`). Partial landing 2026-05-17. See [`target/40-jsr223-target.md`](target/40-jsr223-target.md) and [`target/50-migration-plan.md`](target/50-migration-plan.md) step 1.
 - **Stateless remote REPL compilation** prototype — See [`target/40-jsr223-target.md`](target/40-jsr223-target.md) and [`target/50-migration-plan.md`](target/50-migration-plan.md) step 3.
 - **K1 cleanup chain** — Daemon REPL → `-Xrepl` → `cli-base/repl/*` → `legacyRepl*.kt` → `GenericReplCompiler` → K1 frontend bindings. Sequenced in [`target/50-migration-plan.md`](target/50-migration-plan.md) steps 4–11.

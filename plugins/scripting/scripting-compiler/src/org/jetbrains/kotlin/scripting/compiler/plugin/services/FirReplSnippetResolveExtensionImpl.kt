@@ -35,8 +35,23 @@ import kotlin.script.experimental.util.PropertiesCollection
  */
 val ReplScriptingHostConfigurationKeys.firReplHistoryProvider by PropertiesCollection.key<FirReplHistoryProvider>(isTransient = true)
 
-class FirReplHistoryProviderImpl : FirReplHistoryProvider() {
+/**
+ * A [FirReplHistoryProvider] that supports registering the snippets compiled together with (and before) the main snippet
+ * of the current compilation, e.g., the `@file:Import`-ed scripts. Such snippets are added to the history before the resolution
+ * starts (see [putImportedSnippet]), so their declarations are visible to the snippets that follow them, but they do not participate
+ * in the snippet numbering ([FirReplHistoryProvider.getSnippetCount]).
+ */
+interface FirReplHistoryProviderWithImports {
+    fun putImportedSnippet(symbol: FirReplSnippetSymbol)
+}
+
+fun FirReplHistoryProvider.putImportedSnippetOrSnippet(symbol: FirReplSnippetSymbol) {
+    if (this is FirReplHistoryProviderWithImports) putImportedSnippet(symbol) else putSnippet(symbol)
+}
+
+class FirReplHistoryProviderImpl : FirReplHistoryProvider(), FirReplHistoryProviderWithImports {
     private val history = LinkedHashSet<FirReplSnippetSymbol>()
+    private val importedSnippets = HashSet<FirReplSnippetSymbol>()
 
     override fun getSnippets(): Iterable<FirReplSnippetSymbol> = history.asIterable()
 
@@ -44,9 +59,13 @@ class FirReplHistoryProviderImpl : FirReplHistoryProvider() {
         history.add(symbol)
     }
 
+    override fun putImportedSnippet(symbol: FirReplSnippetSymbol) {
+        if (history.add(symbol)) importedSnippets.add(symbol)
+    }
+
     override fun isFirstSnippet(symbol: FirReplSnippetSymbol): Boolean = history.firstOrNull() == symbol
 
-    override fun getSnippetCount(): Int = history.size
+    override fun getSnippetCount(): Int = history.size - importedSnippets.size
 }
 
 class FirReplSnippetResolveExtensionImpl(
@@ -57,12 +76,19 @@ class FirReplSnippetResolveExtensionImpl(
     private val replHistoryProvider: FirReplHistoryProvider =
         hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider] ?: FirReplHistoryProviderImpl()
 
+    /**
+     * The history snippets preceding the [currentSnippet]: the snippets compiled together with the current one
+     * (see [FirReplHistoryProviderWithImports]) are registered in the history before the resolution, so the snippets
+     * following the current one in the history should not be visible to it.
+     */
+    private fun getPrecedingSnippets(currentSnippet: FirReplSnippet): Sequence<FirReplSnippetSymbol> =
+        replHistoryProvider.getSnippets().asSequence().takeWhile { it != currentSnippet.symbol }
+
     private fun getImportsFromHistory(currentSnippet: FirReplSnippet): List<FirImport> =
-        replHistoryProvider.getSnippets().flatMap { snippet ->
-            if (currentSnippet == snippet) emptyList()
-            else replHistoryProvider.getSnippetImports(snippet)
+        getPrecedingSnippets(currentSnippet).flatMap { snippet ->
+            replHistoryProvider.getSnippetImports(snippet)
                 ?: snippet.moduleData.session.firProvider.getFirReplSnippetContainerFile(snippet)?.imports.orEmpty()
-        }
+        }.toList()
 
     override fun getSnippetDefaultImports(sourceFile: KtSourceFile, snippet: FirReplSnippet): List<FirImport>? =
         getOrLoadConfiguration(snippet.moduleData.session, sourceFile)?.valueOrNull()?.let {
@@ -77,8 +103,7 @@ class FirReplSnippetResolveExtensionImpl(
         val properties = HashMap<Name, ArrayList<FirVariableSymbol<*>>>()
         val functions = HashMap<Name, ArrayList<FirNamedFunctionSymbol>>() // TODO: find out how overloads should work
         val classLikes = HashMap<Name, FirClassLikeSymbol<*>>()
-        replHistoryProvider.getSnippets().forEach { snippet ->
-            if (currentSnippet == snippet) return@forEach
+        getPrecedingSnippets(currentSnippet).forEach { snippet ->
             snippet.snippetClassSymbol.declarationSymbols.filter { it.isReplSnippetDeclaration == true }.forEach { symbol ->
                 val it = symbol.fir
                 it.originalReplSnippetSymbol = snippet

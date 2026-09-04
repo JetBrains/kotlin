@@ -62,7 +62,7 @@ No structural changes expected. Possibly remove the `accepts()` extension method
 | `ScriptJvmK2CompilerIsolated` (host wrapper) | KEEP |
 | `ScriptJvmK2CompilerFromEnvironment` (CLI wrapper) | KEEP — sole K2 CLI entry |
 | `convertToFirViaLightTree` | KEEP — only converter wired today |
-| `K2ReplCompiler` + `K2ReplCompilationState` | KEEP. Aligned with `ScriptJvmK2CompilerImpl` (`convertToFir` seam, LT default) since KT-83498. Annotation refinement routed through `refineAllForK2` (2026-09-04 follow-up; `CliScriptConfigurationsProvider` no longer consumed). Next: narrow `isReplSnippetSource` (G15). |
+| `K2ReplCompiler` + `K2ReplCompilationState` | KEEP. Aligned with `ScriptJvmK2CompilerImpl` (`convertToFir` seam, LT default) since KT-83498. Annotation refinement routed through `refineAllForK2` (2026-09-04 follow-up; `CliScriptConfigurationsProvider` no longer consumed). Imports inside REPL are non-isolated preceding snippets (G15 resolved 2026-09-04; `isReplSnippetSource` intentionally session-wide). |
 | `GenericReplCompiler` | REMOVE |
 | `ScriptJvmCompilerIsolated` (K1) | REMOVE |
 
