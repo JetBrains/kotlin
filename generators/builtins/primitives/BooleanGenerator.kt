@@ -242,14 +242,17 @@ class WasmBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
     }
 
     override fun MethodBuilder.modifyGeneratedAnd() {
+        annotations += "kotlin.wasm.internal.AssociativeOp"
         implementAsIntrinsic(PrimitiveType.BOOLEAN, methodName)
     }
 
     override fun MethodBuilder.modifyGeneratedOr() {
+        annotations += "kotlin.wasm.internal.AssociativeOp"
         implementAsIntrinsic(PrimitiveType.BOOLEAN, methodName)
     }
 
     override fun MethodBuilder.modifyGeneratedXor() {
+        annotations += "kotlin.wasm.internal.AssociativeOp"
         implementAsIntrinsic(PrimitiveType.BOOLEAN, methodName)
     }
 

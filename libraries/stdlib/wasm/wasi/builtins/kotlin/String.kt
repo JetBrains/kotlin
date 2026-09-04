@@ -25,6 +25,7 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
      * @sample samples.text.Strings.stringPlus
      */
     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.wasm.internal.AssociativeOp
     public actual operator fun plus(other: Any?): String {
         val right = other.toString()
         return String(this, this.length + right.length, right.chars)
