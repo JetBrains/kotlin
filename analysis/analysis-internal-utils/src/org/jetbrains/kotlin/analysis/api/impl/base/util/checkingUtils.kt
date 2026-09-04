@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
-import kotlin.reflect.KClass
 
 @KaImplementationDetail
 public fun unexpectedElementError(elementName: String, element: Any?): Nothing {
@@ -20,8 +19,7 @@ public fun unexpectedElementError(elementName: String, element: Any?): Nothing {
 
 @KaImplementationDetail
 public inline fun <reified ELEMENT> unexpectedElementError(element: Any?): Nothing {
-    @Suppress("UNCHECKED_CAST", "USELESS_CAST") // TODO: KT-89157: Remove cast
-    unexpectedElementError(ELEMENT::class.simpleName ?: (ELEMENT::class as KClass<ELEMENT & Any>).java.name, element)
+    unexpectedElementError(ELEMENT::class.simpleName ?: ELEMENT::class.java.name, element)
 }
 
 @KaImplementationDetail
