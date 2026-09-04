@@ -70,11 +70,15 @@ internal class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCo
         } else {
             // Anonymous initializers must also be moved and their ordering relative to the fields
             // must be preserved, as the fields can have expression initializers themselves.
+            //
+            // Insert declarations right after the companion object class, to preserve initialization order
+            // relative to other declarations (companion blocks).
+            var indexInNewParent = newParent.declarations.indexOf(this).also { require(it != -1) } + 1
             for ([i, newField] in newDeclarations.withIndex()) {
                 if (newField != null)
-                    newParent.declarations += newField
+                    newParent.declarations.add(indexInNewParent++, newField)
                 if (declarations[i] is IrAnonymousInitializer)
-                    newParent.declarations += makeAnonymousInitializerStatic(declarations[i] as IrAnonymousInitializer, newParent)
+                    newParent.declarations.add(indexInNewParent++, makeAnonymousInitializerStatic(declarations[i] as IrAnonymousInitializer, newParent))
             }
             declarations.removeAll { it is IrAnonymousInitializer }
         }

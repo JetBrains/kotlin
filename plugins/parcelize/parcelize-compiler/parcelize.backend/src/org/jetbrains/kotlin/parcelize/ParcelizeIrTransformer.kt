@@ -279,12 +279,15 @@ class ParcelizeIrTransformer(
         val declarationType = declaration.symbol.starProjectedType
         val creatorType = androidSymbols.androidOsParcelableCreator.typeWith(declarationType)
 
-        declaration.addField {
+        declaration.factory.buildField {
             name = CREATOR_NAME
             type = creatorType
             isStatic = true
             isFinal = true
         }.apply {
+            parent = declaration
+            declaration.declarations.add(0, this) // Initialize `CREATOR` field before other members (such as companion objects and blocks)
+
             val irField = this
             val creatorClass = irFactory.buildClass {
                 name = Name.identifier("Creator")
