@@ -221,6 +221,6 @@ object Classpath {
     fun composeFoundationTextJar() = jarFor<androidx.compose.foundation.text.KeyboardActions>()
     fun composeFoundationLayoutJar() = jarFor<androidx.compose.foundation.layout.RowScope>()
 
-    inline fun <reified T : Any> jarFor() = File(PathUtil.getJarPathForClass(T::class.java))
+    inline fun <reified T> jarFor() = File(PathUtil.getJarPathForClass(T::class.java))
     fun jarFor(className: String) = File(PathUtil.getJarPathForClass(Class.forName(className)))
 }

@@ -53,5 +53,5 @@ class TypeWithEntries<T>(
     val values: Set<T>,
 )
 
-private inline fun <reified S : Any, reified T> TypeWithEntries() where T : Enum<T>, T : WithStringRepresentation =
+private inline fun <reified S, reified T> TypeWithEntries() where T : Enum<T>, T : WithStringRepresentation =
     TypeWithEntries<@Contextual T>(S::class.java.name, T::class.java.enumConstants.toSet())
