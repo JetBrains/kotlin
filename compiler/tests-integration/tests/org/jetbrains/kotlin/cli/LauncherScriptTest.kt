@@ -706,6 +706,8 @@ Caused by: java.lang.AssertionError: assert
         }
 
         val exceptionMessage = "exception: java.lang.IllegalStateException: Actualization of common dependencies failed on"
-        assertTrue(exceptionMessage in output) { "Output:\n$output" }
+        assertFalse(exceptionMessage in output) { "Output:\n$output" }
+        val errorMessage = "error: the 'expect' declaration 'foo' doesn't match the 'actual' declaration 'foo' because parameter types are different."
+        assertTrue(errorMessage in output) { "Output:\n$output" }
     }
 }
