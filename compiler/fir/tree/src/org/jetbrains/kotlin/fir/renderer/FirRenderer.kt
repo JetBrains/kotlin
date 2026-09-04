@@ -954,6 +954,22 @@ class FirRenderer(
             visitUnresolvedTypeRef(functionTypeRef)
         }
 
+        override fun visitUnionTypeRef(unionTypeRef: FirUnionTypeRef) {
+            val markedNullable = unionTypeRef.isMarkedNullable
+
+            if (markedNullable) print("(")
+
+            var isFirst = true
+            for (typeRef in unionTypeRef.types) {
+                if (!isFirst) print(" | ")
+                isFirst = false
+
+                typeRef.accept(this)
+            }
+
+            if (markedNullable) print(")?")
+        }
+
         @OptIn(AllowedToUsedOnlyInK1::class)
         override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
             typeRenderer.renderAsPossibleFunctionType(
