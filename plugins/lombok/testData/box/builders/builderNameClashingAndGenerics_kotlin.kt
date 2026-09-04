@@ -1,4 +1,5 @@
 import lombok.Builder
+import kotlin.test.assertEquals
 
 @Builder(builderClassName = "NameClashingBuilder")
 class NameClashing<T>(val field: T) {

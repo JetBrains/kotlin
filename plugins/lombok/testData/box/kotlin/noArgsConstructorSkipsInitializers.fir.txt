@@ -35,10 +35,10 @@ FILE: noArgsConstructorSkipsInitializers.kt
     }
     public final fun box(): R|kotlin/String| {
         lval withReferencedParameter: R|WithReferencedParameter| = R|/WithReferencedParameter|()
-        R|/assertEquals|<R|kotlin/Int?|>(Null(null), R|<local>/withReferencedParameter|.R|/WithReferencedParameter.inputValue|)
+        R|kotlin/test/assertNull|(R|<local>/withReferencedParameter|.R|/WithReferencedParameter.inputValue|)
         lval withInitializers: R|WithInitializers| = R|/WithInitializers|()
-        R|/assertEquals|<R|kotlin/String?|>(Null(null), R|<local>/withInitializers|.R|/WithInitializers.text|)
-        R|/assertEquals|<R|kotlin/Int|>(Int(0), R|<local>/withInitializers|.R|/WithInitializers.initialized|)
-        R|/assertEquals|<R|kotlin/String?|>(Null(null), R|<local>/withInitializers|.R|/WithInitializers.fromInitBlock|)
+        R|kotlin/test/assertNull|(R|<local>/withInitializers|.R|/WithInitializers.text|)
+        R|kotlin/test/assertEquals|<R|kotlin/Int|>(Int(0), R|<local>/withInitializers|.R|/WithInitializers.initialized|)
+        R|kotlin/test/assertNull|(R|<local>/withInitializers|.R|/WithInitializers.fromInitBlock|)
         ^box String(OK)
     }

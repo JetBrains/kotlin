@@ -18,9 +18,11 @@ public class WithExample {
 
 // FILE: test.kt
 
+import kotlin.test.assertEquals
+
 fun box(): String {
     val obj: WithExample = WithExample().withAge(16).withName("fooo")
-    assertEquals(obj.getName(), "fooo")
-    assertEquals(obj.age, 16)
+    assertEquals("fooo", obj.getName())
+    assertEquals(16, obj.age)
     return "OK"
 }

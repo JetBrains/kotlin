@@ -25,6 +25,9 @@ public class UserData {
 }
 
 // FILE: main.kt
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+
 fun box(): String {
     val user = UserData("Bob", false, false, false)
     val modifiedUser = user
@@ -33,9 +36,10 @@ fun box(): String {
         .withHasFlag(true)
         .withJustAnother(true)
 
-    return if (modifiedUser.name == "Alex" && modifiedUser.isSome && modifiedUser.isHasFlag && modifiedUser.isJustAnother) {
-        "OK"
-    } else {
-        "Error"
-    }
+    assertEquals("Alex", modifiedUser.name)
+    assertTrue(modifiedUser.isSome)
+    assertTrue(modifiedUser.isHasFlag)
+    assertTrue(modifiedUser.isJustAnother)
+
+    return "OK"
 }

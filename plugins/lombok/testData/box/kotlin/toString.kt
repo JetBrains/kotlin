@@ -1,6 +1,8 @@
 // DUMP_KT_IR
 
 import lombok.ToString
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @ToString
 class Simple(val name: String, val age: Int)
@@ -180,11 +182,8 @@ fun box(): String {
     // `Object.toString` renders - "pretty much meaningless", as `@ToString`'s own javadoc puts it, but asked
     // for, and Lombok has no error for it the way `@EqualsAndHashCode` does. The hash rules out `assertEquals`.
     val onlyAnyParent = CallSuperWithOnlyAnyParent(5).toString()
-    if (!onlyAnyParent.startsWith("CallSuperWithOnlyAnyParent(super=CallSuperWithOnlyAnyParent@") ||
-        !onlyAnyParent.endsWith(", x=5)")
-    ) {
-        return "FAIL: $onlyAnyParent"
-    }
+    assertTrue(onlyAnyParent.startsWith("CallSuperWithOnlyAnyParent(super=CallSuperWithOnlyAnyParent@"), onlyAnyParent)
+    assertTrue(onlyAnyParent.endsWith(", x=5)"), onlyAnyParent)
 
     assertEquals(
         "WithArrays(objectArray=[a, b], nestedArray=[[a], [b]], intArray=[1, 2], charArray=[x, y], nullArray=null)",

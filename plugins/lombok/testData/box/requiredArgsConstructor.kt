@@ -36,9 +36,11 @@ public class ConstructorExample {
 
 // FILE: test.kt
 
+import kotlin.test.assertEquals
+
 fun box(): String {
     val generated = ConstructorExample("foo", true)
-    assertEquals(generated.foo, "foo")
+    assertEquals("foo", generated.foo)
     return "OK"
 }
 

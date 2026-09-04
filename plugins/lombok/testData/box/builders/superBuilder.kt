@@ -23,6 +23,8 @@ public class Car extends Vehicle {
 
 // FILE: test.kt
 
+import kotlin.test.assertEquals
+
 fun box(): String {
     val carBuilder = Car.builder()
         .numberOfDoors(4)
@@ -30,9 +32,9 @@ fun box(): String {
         .model("Ford")
 
     val car = carBuilder.build()
-    return if (car.numberOfDoors == 4 && car.make == "Fiesta" && car.model == "Ford") {
-        "OK"
-    } else {
-        "Error: $car"
-    }
+    assertEquals(4, car.numberOfDoors)
+    assertEquals("Fiesta", car.make)
+    assertEquals("Ford", car.model)
+
+    return "OK"
 }
