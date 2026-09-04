@@ -48,6 +48,7 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoNumberAnnotationClassId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoOneOfAnnotationClassId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoUnknownFieldHolderClassId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds
 
 object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Common) {
@@ -73,6 +74,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             val properties = buildSerializableProperties(classSymbol, reporter) ?: return
             checkCorrectTransientAnnotationIsUsed(classSymbol, properties.serializableProperties, reporter)
             checkProtobufProperties(properties.serializableProperties, reporter)
+            checkProtoUnknownFields(classSymbol, properties.serializableProperties, reporter)
             checkTransients(classSymbol, reporter)
             analyzePropertiesSerializers(classSymbol, properties.serializableProperties, reporter)
             checkInheritedAnnotations(classSymbol, reporter)
@@ -405,6 +407,38 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
                 b = duplicateFieldsNames
             )
 
+        }
+    }
+
+    private fun CheckerContext.checkProtoUnknownFields(
+        classSymbol: FirClassSymbol<*>,
+        properties: List<FirSerializableProperty>,
+        reporter: DiagnosticReporter,
+    ) {
+        val unknownHolderProps = properties.map { it.propertySymbol }.filter { prop ->
+            prop.resolvedReturnTypeRef.coneType.fullyExpandedType().classId == protoUnknownFieldHolderClassId
+        }
+
+        if (unknownHolderProps.size > 1) {
+            val firstProp = unknownHolderProps.first()
+            val allNames = unknownHolderProps.joinToString(", ") { it.name.asString() }
+            reporter.reportOn(
+                firstProp.source,
+                FirSerializationErrors.PROTO_UNKNOWN_FIELDS_MULTIPLE_HOLDERS,
+                classSymbol.name.asString(),
+                allNames,
+            )
+        }
+
+        val prop = unknownHolderProps.firstOrNull() ?: return
+
+        if (!prop.resolvedReturnTypeRef.coneType.isMarkedNullable && !declarationHasInitializer(prop)) {
+            reporter.reportOn(
+                prop.source,
+                FirSerializationErrors.PROTO_UNKNOWN_FIELDS_MISSING_DEFAULT,
+                classSymbol.name.asString(),
+                prop.name.asString(),
+            )
         }
     }
 
