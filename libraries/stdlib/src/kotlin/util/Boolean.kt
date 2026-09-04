@@ -135,7 +135,7 @@ public inline fun Boolean.onFalse(action: () -> Unit): Boolean {
  * This function is useful when a condition determines whether an action needs to be performed, with its result returned.
  *
  * ```
- * // If `shouldSendPopup` is `false`, `createPopup` will not get called
+ * // If `shouldSendPopup` is `false`, `sendPopup` will not get called
  * val popup: Popup? = ifOrNull(shouldSendPopup) {
  *     sendPopup()
  * }
