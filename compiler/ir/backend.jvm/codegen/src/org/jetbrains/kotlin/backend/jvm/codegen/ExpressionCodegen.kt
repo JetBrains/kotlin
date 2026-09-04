@@ -393,7 +393,7 @@ class ExpressionCodegen(
         // If the parameter is an extension receiver parameter or a captured extension receiver from enclosing,
         // then generate name accordingly.
         val name = if (param.origin == BOUND_RECEIVER_PARAMETER || param.origin == IrDeclarationOrigin.LAMBDA_EXTENSION_RECEIVER || isReceiver) {
-            getNameForReceiverParameter(irFunction, context.config.languageVersionSettings)
+            getNameForReceiverParameter(irFunction)
         } else {
             param.name.asString()
         }
@@ -405,11 +405,7 @@ class ExpressionCodegen(
         )
     }
 
-    private fun getNameForReceiverParameter(function: IrFunction, languageVersionSettings: LanguageVersionSettings): String {
-        if (!languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
-            return RECEIVER_PARAMETER_NAME
-        }
-
+    private fun getNameForReceiverParameter(function: IrFunction): String {
         val callableName = function.propertyIfAccessor.name
         if (callableName.isSpecial) {
             return RECEIVER_PARAMETER_NAME
