@@ -1,0 +1,1060 @@
+import jetbrains.buildServer.*
+import jetbrains.buildServer.gradle.agent.propertySplit.GradleBuildPropertiesContainer
+import jetbrains.buildServer.messages.serviceMessages.*
+
+import org.gradle.api.services.*
+import org.gradle.api.tasks.testing.*
+import org.gradle.tooling.events.*
+
+import java.util.concurrent.*
+import java.util.concurrent.atomic.*
+import java.util.regex.Pattern
+import jetbrains.buildServer.gradle.runtime.output.TestOutputParser
+
+import static jetbrains.buildServer.gradle.agent.propertySplit.InitScriptParametersConstants.*;
+
+if (!JavaVersion.current().isJava8Compatible()) return
+
+initscript {
+  dependencies {
+    def teamCityInitLib = System.getenv("TEAMCITY_INIT_SCRIPT_CLASSPATH")
+    logger.info "Init lib: ${teamCityInitLib}"
+    def classPathFiles = teamCityInitLib.split(File.pathSeparator)
+    classpath files(classPathFiles)
+  }
+}
+
+public class DependencyBasedTestRun {
+
+  def logger
+
+  public DependencyBasedTestRun(Logger logger) {
+    this.logger = logger
+  }
+
+  public def configureGradle(Gradle gradle) {
+    def rootProject = gradle.rootProject
+    def incrementalOption = System.getenv("TEAMCITY_GRADLE_INCREMENTAL_MODE")
+    logger.debug("Received following incremental setting: ${incrementalOption}")
+
+    switch (incrementalOption) {
+      case "skip_incremental":
+        logger.debug("Incremental building is enabled, but full rebuild is forced")
+        gradle.startParameter.taskNames = ["build"]
+        break
+
+      case "do_incremental":
+        logger.debug("Will look for affected projects")
+        def modifiedProjects = findAffectedProjects(rootProject)
+        if (modifiedProjects.empty) {
+          logger.debug("No affected projects found. Running full build.")
+          gradle.startParameter.taskNames = ["build"]
+        } else {
+          gradle.startParameter.taskNames = modifiedProjects.collect {
+            def taskName = it as String
+            if (!taskName.endsWith(":")) taskName += ":"
+            return taskName + "buildDependents"
+          }
+          logger.debug("Will start with following tasks: ${gradle.startParameter.taskNames}")
+        }
+        break
+
+      default:
+        logger.debug("Incremental building is not enabled")
+    }
+  }
+
+
+  private def findAffectedProjects(Project project) {
+    String changedFilesFile = Util.getPropertyFromProjectOrSystemProperties(project, TEAMCITY_BUILD_CHANGED_FILES_KEY)
+
+    if (changedFilesFile != null && !changedFilesFile.equals("")) {
+      def changedFiles = readChangedFiles(changedFilesFile)
+      def sourceSetsToProject = readSourceSets(project)
+
+      logger.debug("Modified Files: ${changedFiles}")
+      logger.debug("SourceSets to Project: ${sourceSetsToProject}")
+
+      def changedProjects = []
+      changedFiles.each { path ->
+        sourceSetsToProject.findAll({
+          path.startsWith(it.key)
+        }).collect(changedProjects) { it.value }
+      }
+
+      logger.debug("Changes detected in following projects:")
+      logger.debug("${changedProjects}")
+
+      return changedProjects
+    }
+  }
+
+  private def readSourceSets(Project proj) {
+    def result = [:]
+    proj.allprojects {
+      def collectRelativePath = { File file ->
+        def path = proj.relativePath(file.absolutePath).replace('\\', '/')
+        result[path] = project.path
+      }
+      if (delegate.hasProperty("sourceSets")) {
+        sourceSets*.allSource.srcDirs*.each collectRelativePath
+        sourceSets*.resources.srcDirs*.each collectRelativePath
+      }
+    }
+    return result
+  }
+
+  private def readChangedFiles(String changedFilesFile) {
+    def lines = new File(changedFilesFile).readLines()
+    def personalMatch = /(.*):(.*):<personal>/
+    def allMatch = /(.*):(.*):(.*)/
+
+    if (lines.any { it ==~ personalMatch }) {
+      return lines.grep(~personalMatch).collect { (it =~ personalMatch)[0][1] }
+    } else {
+      return lines.collect { (it =~ allMatch)[0][1] }
+    }
+  }
+}
+
+public class TeamcityPropertiesListener implements ProjectEvaluationListener {
+
+  Logger logger
+  Closure doAfterEvaluate
+  Map propertyReader
+
+  public TeamcityPropertiesListener(Logger log, Map propertyReader, Closure doAfterEvaluate) {
+    logger = log
+    this.propertyReader = propertyReader
+    this.doAfterEvaluate = doAfterEvaluate
+  }
+
+  public void beforeEvaluate(Project project) {
+    addCustomProperties(project, propertyReader)
+  }
+
+  public void afterEvaluate(Project project, ProjectState projectState) {
+    if (project.hasProperty("teamcity") && doAfterEvaluate != null) doAfterEvaluate(project)
+  }
+
+  private void addCustomProperties(Project p, Map props) {
+    if (p.hasProperty("ext")) {
+      props.each { k, v -> p.ext.set(k, v) }
+      p.ext.teamcity = props
+    } else {
+      p.setProperty("teamcity", props)
+    }
+  }
+}
+
+public class TeamcityTestListener implements TestListener, TestOutputListener {
+  private static final String DEFAULT_FLOW_ID_PREFIX = "%%teamcity%%-"
+  private static final int MAX_TEST_NAME_LENGTH = Integer.getInteger("teamcity.gradle.testName.maxLength", 100)
+  private final Logger logger
+  private final ConcurrentMap<TestDescriptorWrapper, List> testOutputs = new ConcurrentHashMap()
+  private final FlowWrapper flow
+
+  private final boolean skipStdErr
+  private final boolean skipStdOut
+  private final TestNameDescriptor testNameDescriptor
+  private final ProjectPropertyStorage project
+  private final AtomicLong testCounter
+  private final Pattern ignoredSuiteFormat
+
+  public TeamcityTestListener(Logger log, TestTaskWrapper task, Project project, AtomicLong testCounter,
+                              TestNameDescriptor testNameDescriptor, String ignoredSuiteFormat, Map<String, Boolean> skip) {
+    this.project = new ProjectPropertyStorage(project)
+    this.logger = log
+    this.flow = new FlowWrapper(DEFAULT_FLOW_ID_PREFIX + String.valueOf(task.project.path.hashCode()))
+    this.testCounter = testCounter
+    this.testNameDescriptor = testNameDescriptor
+    this.ignoredSuiteFormat = ignoredSuiteFormat == null || ignoredSuiteFormat.equals("")
+            ? null
+            : Pattern.compile(ignoredSuiteFormat.trim())
+    this.skipStdOut = skip["out"]
+    this.skipStdErr = skip["err"]
+  }
+
+  /**
+   * Called before a test suite is started.
+   * @param suite The suite whose tests are about to be executed.
+   */
+  public void beforeSuite(SuiteDescriptorWrapper suite) {
+    suite.start { flow, msg ->
+      if (flow != null) this.logger.lifecycle(flow.asString())
+      this.logger.lifecycle(msg.asString())
+    }
+  }
+
+  /**
+   * Called after a test suite is finished.
+   * @param suite The suite whose tests have finished being executed.
+   * @param result The aggregate result for the suite.
+   */
+  public void afterSuite(SuiteDescriptorWrapper suite, TestResult result) {
+    suite.finish { flow, msg ->
+      this.logger.lifecycle(msg.asString())
+      if (flow != null) this.logger.lifecycle(flow.asString())
+    }
+  }
+
+  /**
+   * Called before a test is started.
+   * @param test The test which is about to be executed.
+   */
+  public void beforeTest(TestDescriptorWrapper test) {
+    test.start { flow, msg ->
+      if (flow != null) this.logger.lifecycle(flow.asString())
+      this.logger.lifecycle(msg.asString())
+    }
+  }
+
+  /**
+   * Called after a test is finished.
+   * @param test The test which has finished executing.
+   * @param result The test result.
+   */
+  public void afterTest(TestDescriptorWrapper test, TestResult result) {
+    test.finish(result) { flow, msg ->
+      test.flush(testOutputs.remove(test)) { out -> this.logger.lifecycle(out.asString()) }
+      test.result(result, testCounter) { messages -> messages.each { message -> this.logger.lifecycle(message.asString()) } }
+
+      this.logger.lifecycle(msg.asString())
+      if (flow != null) this.logger.lifecycle(flow.asString())
+    }
+  }
+
+  public void onOutput(TestDescriptorWrapper test, def event) {
+    if (test.ignored) return // this is not a real test output
+
+    switch (event.destination) {
+      case TestOutputEvent.Destination.StdErr:
+        if (skipStdErr) return
+        break
+      case TestOutputEvent.Destination.StdOut:
+        if (skipStdOut) return
+        break
+      default: return
+    }
+
+    List outputs = testOutputs[test]
+    if (outputs == null) {
+      outputs = []
+      def prev = testOutputs.putIfAbsent(test, outputs)
+      if (prev != null) {
+        outputs = prev
+      }
+    }
+
+    synchronized (outputs) {
+      outputs.add(event)
+
+      if (outputs.size > 100) {
+        test.flush(outputs) { msg -> this.logger.lifecycle(msg.asString()) }
+        outputs.clear()
+      }
+    }
+  }
+
+  void onOutput(TestDescriptor test, TestOutputEvent event) {
+    this.onOutput(new TestDescriptorWrapper(test, testNameDescriptor, flow, this.project, ignoredSuiteFormat), event)
+  }
+
+  void beforeSuite(TestDescriptor suite) {
+    this.beforeSuite(new SuiteDescriptorWrapper(suite, flow, ignoredSuiteFormat))
+  }
+
+  void afterSuite(TestDescriptor suite, TestResult result) {
+    this.afterSuite(new SuiteDescriptorWrapper(suite, flow, ignoredSuiteFormat), result)
+  }
+
+  void beforeTest(TestDescriptor test) {
+    this.beforeTest(new TestDescriptorWrapper(test, testNameDescriptor, flow, this.project, ignoredSuiteFormat))
+  }
+
+  void afterTest(TestDescriptor test, TestResult result) {
+    this.afterTest(new TestDescriptorWrapper(test, testNameDescriptor, flow, this.project, ignoredSuiteFormat), result)
+  }
+}
+
+class ProjectPropertyStorage {
+  private String buildStacktraceLogDir
+  private final String buildTempDir
+  private final File buildDir
+
+  ProjectPropertyStorage(Project project) {
+    this.buildStacktraceLogDir = Util.getPropertyFromProjectOrSystemProperties(project, TEAMCITY_BUILD_STACKTRACE_LOG_DIR_KEY)
+    this.buildTempDir = Util.getPropertyFromProjectOrSystemProperties(project, TEAMCITY_BUILD_TEMP_DIR_KEY)
+    this.buildDir = project.buildDir
+  }
+
+  String getBuildStacktraceLogDir() {
+    return buildStacktraceLogDir
+  }
+
+  void setBuildStacktraceLogDir(String buildStacktraceLogDir) {
+    this.buildStacktraceLogDir = buildStacktraceLogDir
+  }
+
+  String getBuildTempDir() {
+    return buildTempDir
+  }
+
+  File getBuildDir() {
+    buildDir
+  }
+}
+
+public enum TestNameDescriptor {
+  DEFAULT {
+    String getTestName(TestDescriptorWrapper descriptor) {
+      return DISPLAY_NAME.getTestName(descriptor)
+    }
+  },
+  NAME {
+    String getTestName(TestDescriptorWrapper descriptor) {
+      return super.getTestName(descriptor)
+    }
+  },
+  DISPLAY_NAME {
+    String getTestName(TestDescriptorWrapper descriptor) {
+      String methodName = getMethodName(descriptor.name)
+      if (descriptor.displayName.startsWith(methodName)) {
+        methodName = descriptor.displayName
+      } else {
+        methodName = "$methodName(${descriptor.displayName})"
+      }
+      if (methodName == "${descriptor.name}()") {
+        methodName = descriptor.name
+      }
+      return "${descriptor.className}.$methodName"
+    }
+
+    private final List<Character> BRACKETS = [(char)'(', (char)'[', (char)'{', (char)'<']
+
+    private String getMethodName(String name) {
+      for (int i = 0; i < name.length(); i++) {
+        if (name.charAt(i) in BRACKETS) return name.substring(0, i)
+      }
+      return name
+    }
+  }
+
+  public String getTestName(TestDescriptorWrapper descriptor) {
+    "${descriptor.className}.${descriptor.name}"
+  }
+
+  static TestNameDescriptor of(String param) {
+    if (param == null) return DEFAULT
+    switch (param) {
+      case "name": return NAME
+      case "displayName": return DISPLAY_NAME
+      default: return DEFAULT
+    }
+  }
+}
+
+public class FlowWrapper {
+  private final String project
+  private Set<String> started = Collections.newSetFromMap(new ConcurrentHashMap())
+
+  FlowWrapper(String projectFlowId) { this.project = projectFlowId }
+  String getId() { project }
+
+  ServiceMessage start(DescriptorWrapper descriptor, SuiteDescriptorWrapper suite) {
+    return started.add(descriptor.flowId) ? new ServiceMessage("flowStarted", [flowId: descriptor.flowId, parent: suite?.flowId ?: id]) {}
+                                          : null
+  }
+
+  def finish(DescriptorWrapper descriptor) {
+    return started.remove(descriptor.flowId) ? new ServiceMessage("flowFinished", [flowId: descriptor.flowId]) {}
+                                             : null
+  }
+}
+
+public class SuiteDescriptorWrapper extends DescriptorWrapper {
+  private static final Pattern partition = ~/^Partition \d+ .*/
+
+  SuiteDescriptorWrapper(TestDescriptor descriptor, FlowWrapper flow, Pattern ignore) { super(descriptor, flow, ignore) }
+
+  void start(Closure action) {
+    if (ignored) return
+    ServiceMessage msg = new TestSuiteStarted(descriptor.name)
+    msg.flowId = flowId
+
+    action(flow.start(this, parent), msg)
+  }
+
+  void finish(Closure action) {
+    if (ignored) return
+    ServiceMessage msg = new TestSuiteFinished(descriptor.name)
+    msg.flowId = flowId
+
+    action(flow.finish(this), msg)
+  }
+
+  boolean isIgnored() {
+    if (descriptor.parent == null) return true
+    if (descriptor.name.startsWith("Gradle Test Executor")) return true
+    if (descriptor.name.startsWith("Gradle Test Run")) return true
+    return ignoreSuite != null
+            ? ignoreSuite.matcher(descriptor.name)
+            : descriptor.name.startsWith("Partition ") && partition.matcher(descriptor.name).matches()
+  }
+}
+
+public class TestDescriptorWrapper extends DescriptorWrapper {
+  private final TestNameDescriptor testNameDescriptor
+  private final ProjectPropertyStorage project
+  private static final int MAX_MESSAGE_SIZE = Integer.getInteger("teamcity.gradle.message.maxLength", 18 * 1024)
+  private static final String OUTPUT_PARSER = System.getProperty("teamcity.gradle.message.parser.type", "ServiceMessage")
+
+  TestDescriptorWrapper(TestDescriptor descriptor, TestNameDescriptor testNameDescriptor, FlowWrapper flow, ProjectPropertyStorage project, Pattern ignoreSuite) {
+    super(descriptor, flow, ignoreSuite)
+    this.testNameDescriptor = testNameDescriptor
+    this.project = project
+  }
+
+  void start(Closure action) {
+    ServiceMessage msg = new TestStarted(testName, false, null)
+    msg.flowId = flowId
+
+    action(flow.start(this, parent), msg)
+  }
+
+  void finish(TestResult result, Closure action) {
+    ServiceMessage msg = new TestFinished(testName, (int)(result.endTime - result.startTime))
+    msg.flowId = flowId
+
+    action(flow.finish(this), msg)
+  }
+
+  boolean isIgnored() { className == null }
+
+  void result(TestResult result, AtomicLong testCounter, Closure action) {
+    switch (result?.resultType ?: org.gradle.api.tasks.testing.TestResult.ResultType.SUCCESS) {
+      case org.gradle.api.tasks.testing.TestResult.ResultType.FAILURE:
+        WrappedException exception = new WrappedException(result.exception)
+        List messages = attacheBigFailTestMessage(exception, testCounter)
+        def failure = exception.getServiceMessage(testName)
+        failure.flowId = flowId
+        action([*messages, failure])
+        break
+      case org.gradle.api.tasks.testing.TestResult.ResultType.SKIPPED:
+        ServiceMessage skipped = new TestIgnored(testName, "")
+        skipped.flowId = flowId
+        action([skipped])
+        break
+    }
+  }
+
+  void flush(List outputs, Closure action) {
+    if (outputs == null) return
+    StringBuilder stdout = new StringBuilder()
+    StringBuilder stderr = new StringBuilder()
+
+    synchronized (outputs) {
+      for (oe in outputs) {
+        switch (oe.destination) {
+          case TestOutputEvent.Destination.StdErr:
+            stderr.append(oe.message)
+            break
+          case TestOutputEvent.Destination.StdOut:
+            stdout.append(oe.message)
+            break
+        }
+      }
+
+      flushOutputMessage(ServiceMessageTypes.TEST_STD_OUT, stdout.toString() - ~/\r?\n\z/, action)
+      flushOutputMessage(ServiceMessageTypes.TEST_STD_ERR, stderr.toString() - ~/\r?\n\z/, action)
+    }
+  }
+
+  private void flushOutputMessage(String type, String message, Closure action) {
+    while (!message.isEmpty()) {
+      switch (OUTPUT_PARSER) {
+        case "disabled":
+          final String msg = TestOutputParser.getMessageWithoutParsing(message, MAX_MESSAGE_SIZE)
+          message = message.substring(msg.length())
+          action(buildServiceMessage(type, msg, null))
+          break
+
+        case "ServiceMessage":
+        default:
+          final String msg = TestOutputParser.getMessageWithParsing(message, MAX_MESSAGE_SIZE)
+          message = message.substring(msg.length())
+          action(buildServiceMessage(type, msg, ServiceMessage.PARSE_SERVICE_MESSAGES_INSIDE_TAG))
+          break
+      }
+    }
+  }
+
+  private ServiceMessage buildServiceMessage(String type, String message, String tcTag) {
+    def msg
+
+    switch (type) {
+      case ServiceMessageTypes.TEST_STD_OUT:
+        msg = new TestStdOut(testName, message)
+        break
+      case ServiceMessageTypes.TEST_STD_ERR:
+        msg = new TestStdErr(testName, message)
+        break
+      default: throw new IllegalArgumentException("Unsupported service message type: " + type)
+    }
+
+    msg.flowId = flowId
+    if (tcTag != null) {
+      msg.addTag(tcTag)
+    }
+
+    return msg
+  }
+
+  private String getTestName() { testNameDescriptor?.getTestName(this) ?: TestNameDescriptor.DEFAULT.getTestName(this) }
+  String getClassName() { descriptor.className }
+  String getName() { descriptor.name }
+  String getClassDisplayName() { descriptor.classDisplayName ?: descriptor.className }
+  String getDisplayName() { descriptor.displayName ?: descriptor.name }
+
+  private List<ServiceMessage> attacheBigFailTestMessage(WrappedException exception, AtomicLong testCounter) {
+    if (exception.small) return []
+
+    File artifactDir = createBigStacktracesDir()
+    if (artifactDir == null) return []
+    String fileName = "${testCounter.incrementAndGet()}.log"
+    File artifactPath = new File(artifactDir, fileName)
+
+    PrintStream logFilePrint
+    try {
+      artifactPath.delete()
+      logFilePrint = new PrintStream(new FileOutputStream(artifactPath))
+      exception.th.printStackTrace(logFilePrint)
+    } finally {
+      logFilePrint?.close()
+    }
+
+    String artifactName = ".teamcity/gradle/${artifactDir.name}"
+    ServiceMessage artifact = new PublishArtifacts("${artifactPath.canonicalPath} => ${artifactName}")
+    artifact.flowId = flowId
+
+    ServiceMessage metadata = new ServiceMessage(ServiceMessageTypes.TEST_METADATA, [testName: testName,
+                                                                                     type    : 'artifact',
+                                                                                     value   : "${artifactName}/${fileName}" as String,
+                                                                                     name    : 'teamcity.test.output']) {}
+    metadata.flowId = flowId
+    return [artifact, metadata]
+  }
+
+  synchronized private File createBigStacktracesDir() {
+    final String path = project.getBuildStacktraceLogDir()
+    if (path != null && !path.equals("")) return new File(path)
+
+    final String rootTmpDirectory = project.getBuildTempDir() ?: project.getBuildDir().path
+    final File resultDir = new File("${rootTmpDirectory}${File.separator}.teamcity${File.separator}testFailMessages${File.separator}${System.nanoTime()}")
+    if (resultDir.mkdirs()) {
+      project.setBuildStacktraceLogDir(resultDir.path)
+      return resultDir
+    }
+    return null
+  }
+
+  @Override
+  boolean equals(Object obj) {
+    return obj != null &&
+           obj.class == TestDescriptorWrapper.class &&
+           descriptor.equals(((TestDescriptorWrapper)obj).descriptor)
+  }
+
+  @Override
+  int hashCode() { descriptor.hashCode() }
+}
+
+class DescriptorWrapper {
+  protected final TestDescriptor descriptor
+  protected final FlowWrapper flow
+  protected final Pattern ignoreSuite
+
+  DescriptorWrapper(TestDescriptor descriptor, FlowWrapper flow, Pattern ignoreSuite) {
+    this.descriptor = descriptor
+    this.flow = flow
+    this.ignoreSuite = ignoreSuite
+  }
+
+  protected SuiteDescriptorWrapper getParent() {
+    def parent = descriptor.parent
+    if (parent != null) return new SuiteDescriptorWrapper(parent, flow, ignoreSuite).with { suite -> suite.ignored ? null : suite }
+    return null
+  }
+
+  protected String getFlowId() { "${flow.id}-${System.identityHashCode(descriptor)}" }
+}
+
+public class TeamcityRerunTestsService implements BuildService<BuildServiceParameters.None>, OperationCompletionListener, AutoCloseable {
+  static String newOption = "false"
+
+  @Override
+  void close() throws Exception {
+    def defaultOption = System.getenv("TEAMCITY_SUPPORT_TEST_RETRY")
+    if (!newOption.equals(defaultOption)) {
+      println(ServiceMessage.asString("testRetrySupport", [enabled: defaultOption]))
+    }
+  }
+
+  @Override
+  void onFinish(FinishEvent event) {}
+
+  @Override
+  BuildServiceParameters.None getParameters() { null }
+}
+
+public class TeamcityRerunTestsListener implements ProjectEvaluationListener {
+  Map propertyReader
+
+  public TeamcityRerunTestsListener(Map propertyReader) {
+    this.propertyReader = propertyReader
+  }
+
+  @Override
+  void beforeEvaluate(Project project) {}
+
+  @Override
+  void afterEvaluate(Project project, ProjectState state) {
+    if (TeamcityRerunTestsService.newOption == "true") return
+    TeamcityRerunTestsService.newOption = System.getenv("TEAMCITY_SUPPORT_TEST_RETRY")
+    if ("true".equals(TeamcityRerunTestsService.newOption)) return
+    def useTestRetryPlugin = Util.getPropertyFromPropertyReaderOrSystemProperties(propertyReader, TEAMCITY_CONFIGURATION_USE_TEST_RETRY_PLUGIN_KEY)
+    if (useTestRetryPlugin == "false") return
+
+    project.gradle.taskGraph.whenReady { graph ->
+      for (Task task : graph.allTasks) {
+        if (!(task instanceof AbstractTestTask)) continue
+        def retryPlugin = task.extensions.findByName("retry")
+        def develocityPlugin = task.extensions.findByName("develocity")
+        def retries = getMaxRetries(retryPlugin, develocityPlugin)
+        if (retries == null) continue
+        if (!retries.metaClass.respondsTo(retries, "getOrNull")) continue
+        if (retries.orNull ?: 0 > 0 && TeamcityRerunTestsService.newOption != "true") {
+          TeamcityRerunTestsService.newOption = "true"
+          project.logger.lifecycle(ServiceMessage.asString("testRetrySupport", [enabled: "true"]))
+          return
+        }
+      }
+    }
+  }
+
+  def getMaxRetries(def retryPlugin, def develocityPlugin) {
+    def maxRetries = null
+
+    if (develocityPlugin != null && develocityPlugin.metaClass.respondsTo(develocityPlugin, "testRetry")) {
+      def develocityTestRetry = develocityPlugin.getTestRetry()
+      if (develocityTestRetry != null && develocityTestRetry.metaClass.respondsTo(develocityTestRetry, "getMaxRetries")) {
+        maxRetries = develocityTestRetry.getMaxRetries()
+      }
+    }
+
+    if (maxRetries == null && retryPlugin != null && retryPlugin.metaClass.respondsTo(retryPlugin, "getMaxRetries")) {
+      maxRetries = retryPlugin.getMaxRetries()
+    }
+
+    return maxRetries
+  }
+}
+
+public class TeamcityExceptionsListener implements ProjectEvaluationListener {
+  @Override
+  void beforeEvaluate(Project project) {}
+
+  @Override
+  void afterEvaluate(Project project, ProjectState state) {
+    def failure = state.failure
+    if (failure != null) {
+      while (failure != failure.cause && failure.cause != null) {
+        failure = failure.cause
+      }
+      final String message = (failure instanceof org.gradle.api.tasks.TaskExecutionException && failure.cause != null)
+              ? "${failure.message} ${failure.cause.class.name}: ${failure.cause.message}"
+              : "${failure.class.name}: ${failure.message}"
+      if (message.contains("There were failing tests") || message.contains("Compilation failed") || message.contains("Compilation error")) {
+        // do not report tests and compilation failures as build problems, as they are logged separately
+        return
+      }
+
+      project.logger.warn(ServiceMessage.asString("buildProblem", [type       : "gradleBuildProblem",
+                                                                   identity   : String.valueOf(("gradleBuildProblem " + message).hashCode()),
+                                                                   description: message]))
+    }
+  }
+}
+
+public class TeamcityExceptionsService implements BuildService<BuildServiceParameters.None>, OperationCompletionListener {
+  @Override
+  void onFinish(FinishEvent event) {
+    if (FailureResult.isAssignableFrom(event.result.class)) {
+      def failure = event.result.failures[0]
+      if (failure != null) {
+        while (!(failure instanceof org.gradle.api.tasks.TaskExecutionException) && failure != failure.causes[0] && failure.causes[0] != null) {
+          failure = failure.causes[0]
+        }
+        final String message = (failure instanceof org.gradle.api.tasks.TaskExecutionException && failure.causes[0] != null)
+                ? "${failure.message} ${failure.causes[0].class.name}: ${failure.causes[0].message}"
+                : "${failure.class.name}: ${failure.message}"
+        if (message.contains("There were failing tests") || message.contains("Compilation failed") || message.contains("Compilation error")) {
+          // do not report tests and compilation failures as build problems, as they are logged separately
+          return
+        }
+        println(ServiceMessage.asString("buildProblem", [type       : "gradleBuildProblem",
+                                                         identity   : String.valueOf(("gradleBuildProblem " + message).hashCode()),
+                                                         description: message
+        ]))
+      }
+    }
+  }
+
+  @Override
+  BuildServiceParameters.None getParameters() { null }
+}
+
+/**
+ * Use WrappedException if you need to make a error message shorter
+ */
+class WrappedException extends Exception {
+  private static final int MAX_MESSAGE_SIZE = Integer.getInteger("teamcity.gradle.stacktrace.maxLength", 18 * 1024)
+  private static final int MIN_ATTACHED_MESSAGE_SIZE = Integer.getInteger("teamcity.gradle.minAttachedTestException", MAX_MESSAGE_SIZE)
+
+  final Throwable th
+  private final int maxLength
+  private final String DELIMITER
+  private final String message
+  private final String thMessage
+
+  /**
+   * @param th original exception
+   */
+  WrappedException(Throwable th) { this(th, MAX_MESSAGE_SIZE) }
+
+  /**
+   * @param th original exception
+   * @param length max message length
+   */
+  WrappedException(Throwable th, int maxLength) {
+    this.th = th ?: new Exception() {
+      @Override void printStackTrace(PrintWriter printWriter) {}
+      @Override void printStackTrace(PrintStream ps) {}
+      @Override void printStackTrace() {}
+      @Override Throwable fillInStackTrace() { this }
+      @Override StackTraceElement[] getStackTrace() { new StackTraceElement[0] }
+      @Override String toString() { "" }
+    }
+
+    this.maxLength = maxLength
+    int size = maxLength / 1024
+    DELIMITER = "***** A part of the stacktrace was cut by TeamCity build agent because the stacktrace size exceeded ${size} KB *****"
+    thMessage = this.th.toString()
+    message = trim(thMessage, maxLength)
+  }
+
+  private int getSize() { thMessage.length() }
+  public String toString() { message }
+
+  public boolean isSmall() {
+    if (MIN_ATTACHED_MESSAGE_SIZE == -1) return true
+    if (MIN_ATTACHED_MESSAGE_SIZE > size) return true
+    if (size <= maxLength) return true
+    return false
+  }
+
+  public ServiceMessage getServiceMessage(String testName) {
+    if (thMessage == "") return new TestFailed(testName, this)
+    ComparisonFailureData cfd = ComparisonFailureUtil.extractComparisonFailure(th)
+    return cfd != null
+            ? new TestFailed(testName, this, trim(cfd.actual, maxLength), trim(cfd.expected, maxLength))
+            : new TestFailed(testName, this)
+  }
+
+  /**
+   * Print StackTrace from the delegate object but a message from current current
+   */
+  @Override
+  void printStackTrace(final PrintStream s) {
+    Throwable exc = this
+    PrintStream stream = new PrintStream(s) {
+      @Override
+      void println(final Object obj) {
+        super.println(th.is(obj) ? exc : obj)
+      }
+    }
+    th.printStackTrace(stream)
+  }
+
+  /**
+   * Split the message into 2 parts, if its size is large
+   * @param str original message
+   * @param length max length
+   * @return original message if str.length < length or split message with delimiter
+   */
+  private String trim(String str, int maxLength) {
+    if (str == null || str.length() <= maxLength) return str
+
+    return """${str[0..<(int)(maxLength / 2)]} ...
+
+${DELIMITER}
+
+... ${str[str.length() - (int)(maxLength / 2)..-1]}"""
+  }
+}
+
+class TestTaskWrapper {
+  private final def testTask
+
+  private TestTaskWrapper(def testTask) { this.testTask = testTask }
+  void addTestListener(def listener) { testTask.addTestListener(listener) }
+  void addTestOutputListener(def listener) { testTask.addTestOutputListener(listener) }
+  Project getProject() { testTask.project }
+
+  TestTaskWrapper jvmArgs(String[] arguments) {
+    Boolean jvmArgsProviderDisabled = Boolean.valueOf(System.getenv("TEST_TASK_JVM_ARG_PROVIDER_DISABLED"))
+    if (testTask instanceof Test) {
+      if (jvmArgsProviderDisabled) {
+        testTask.jvmArgs(arguments)
+      } else {
+        testTask.jvmArgumentProviders.add(new TestTaskJvmArgumentsProvider(arguments))
+      }
+    }
+    return this
+  }
+
+  TestTaskWrapper setTmpDirectory(String path) {
+    if (testTask instanceof Test && path?.trim()) testTask.systemProperty("java.io.tmpdir", path)
+    return this
+  }
+
+  def getExtensions() { testTask.extensions }
+  TestFilterWrapper getFilter() { new TestFilterWrapper(filter: testTask.filter) }
+}
+
+class TestFilterWrapper {
+  def filter
+
+  void setFailOnNoMatchingTests(boolean failOnNoMatchingTests) {
+    filter.failOnNoMatchingTests = failOnNoMatchingTests
+  }
+
+  void excludeTest(String className, String methodName) {
+    if (className != null && !className.trim().isEmpty()) {
+      filter.excludeTest(className, methodName)
+    }
+  }
+
+  void updateFilters(String fileName, Logger logger) {
+    if (fileName == null || fileName.trim().isEmpty() || !new File(fileName).exists()) return // log
+
+    failOnNoMatchingTests = false
+    new File(fileName).eachLine { line ->
+      if (!line.startsWith("#")) excludeTest(line, null)
+    }
+  }
+}
+
+class TestTaskJvmArgumentsProvider implements CommandLineArgumentProvider {
+  private final List<String> arguments
+
+  TestTaskJvmArgumentsProvider(String[] arguments) {
+    this.arguments = Arrays.asList(arguments)
+  }
+
+  @Override
+  Iterable<String> asArguments() {
+    return arguments
+  }
+}
+
+class GradleDaemonClasspathEnhancer implements Action<Test> {
+
+  private final Logger logger
+  private final List<String> classNames
+
+  GradleDaemonClasspathEnhancer(Logger logger, List<String> classNames) {
+    this.logger = logger
+    this.classNames = classNames
+  }
+
+  @Override
+  void execute(Test task) {
+    enhanceGradleDaemonClasspath(logger, task, classNames)
+  }
+
+  private static void enhanceGradleDaemonClasspath(Logger logger, Test task, List<String> classNames) {
+    try {
+      def testClasspath = getTestClasspath(task)
+      def classpath = findJarsForClasses(testClasspath, classNames)
+      logger.debug("Test classpath:")
+      for (def url : testClasspath) {
+        logger.debug(url.toString())
+      }
+      logger.debug("Reduced classpath:")
+      for (def url : classpath) {
+        logger.debug(url.toString())
+      }
+      logger.debug("End of classpath")
+      if (!classpath.isEmpty()) {
+        def classLoader = getDaemonClassLoader()
+        addClasspath(classLoader, classpath)
+      }
+    } catch (Throwable t) {
+      logger.error("Unable to enhance Gradle Daemon by $classNames", t)
+    }
+  }
+
+  private static URLClassLoader getDaemonClassLoader() {
+    try {
+      def daemonMainClass = Class.forName("org.gradle.launcher.daemon.bootstrap.DaemonMain")
+      def classLoader = daemonMainClass.getClassLoader()
+      if (classLoader instanceof URLClassLoader) {
+        return classLoader
+      }
+      throw new IllegalStateException("Unsupported Gradle daemon class loader: $classLoader")
+    }
+    catch (ClassNotFoundException exception) {
+      throw new IllegalStateException("Daemon class loader not found.", exception)
+    }
+  }
+
+  private static List<URL> getTestClasspath(Test task) {
+    return task.classpath.files.collect { it.toURI().toURL() }
+  }
+
+  private static List<URL> findJarsForClasses(List<URL> classpath, List<String> classNames) {
+    def foundClassNames = new HashSet<String>()
+    def reducedClasspath = new ArrayList<URL>()
+    for (def url : classpath) {
+      new URLClassLoader([url] as URL[]).withCloseable { classLoader ->
+        for (def className : classNames) {
+          if (hasClass(classLoader, className)) {
+            foundClassNames.add(className)
+            reducedClasspath.add(url)
+            break
+          }
+        }
+      }
+    }
+    if (foundClassNames.size() != classNames.size()) {
+      return []
+    }
+    return reducedClasspath
+  }
+
+  private static boolean hasClass(URLClassLoader classLoader, String className) {
+    def classFile = className.replace(".", "/") + ".class"
+    return classLoader.findResource(classFile) != null
+  }
+
+  private static void addClasspath(URLClassLoader classLoader, Iterable<URL> classpath) {
+    for (def url : classpath) {
+      classLoader.addURL(url)
+    }
+  }
+}
+
+public class Util {
+  static String getPropertyFromProjectOrSystemProperties(Project project, String propertyName) {
+    boolean gradlePropertiesNotPopulated = Boolean.valueOf(System.getProperty(GRADLE_RUNNER_DO_NOT_POPULATE_GRADLE_PROPERTIES))
+    if (gradlePropertiesNotPopulated) {
+      return System.getProperty(propertyName)
+    } else {
+      return project.teamcity[propertyName]
+    }
+  }
+
+  static String getPropertyFromPropertyReaderOrSystemProperties(Map propertyReader, String propertyName) {
+    boolean gradlePropertiesNotPopulated = Boolean.valueOf(System.getProperty(GRADLE_RUNNER_DO_NOT_POPULATE_GRADLE_PROPERTIES))
+    if (gradlePropertiesNotPopulated) {
+      return System.getProperty(propertyName)
+    } else {
+      return propertyReader[propertyName]
+    }
+  }
+}
+
+List<String> gradleDaemonEnhancementClassNames = initGradleDaemonEnhancementClassNames()
+
+List<String> initGradleDaemonEnhancementClassNames() {
+  try {
+    def classNames = System.getenv(GRADLE_DAEMON_ENHANCEMENT_CLASSES_ENV_KEY)
+    if (classNames == null) {
+      return []
+    } else {
+      return classNames.split(File.pathSeparator).toList()
+    }
+  } catch (Throwable t) {
+    logger.debug("Error while trying to initialize class names for Gradle daemon classpath enhancing", t)
+    return []
+  }
+}
+
+final AtomicLong testCounter = new AtomicLong(0)
+
+String propsFilePath = System.getProperty(TC_BUILD_PROPERTIES_SYSTEM_PROPERTY_KEY)
+if (null == propsFilePath) propsFilePath = System.getenv(TC_BUILD_PROPERTIES_SYSTEM_ENV_KEY)
+boolean doNotPopulateGradleProperties = Boolean.valueOf(System.getProperty(GRADLE_RUNNER_DO_NOT_POPULATE_GRADLE_PROPERTIES))
+boolean shouldReadAllParameters = Boolean.valueOf(System.getProperty(GRADLE_RUNNER_READ_ALL_CONFIG_PARAM))
+final Map propertyReader = !doNotPopulateGradleProperties && propsFilePath != null ?
+        new GradleBuildPropertiesContainer(propsFilePath, shouldReadAllParameters) :
+        [:]
+
+gradle.addListener(new TeamcityPropertiesListener(logger, propertyReader, { project ->
+  // init jvm args
+  final String jvmargs = Util.getPropertyFromProjectOrSystemProperties(project, TEAMCITY_BUILD_GRADLE_TEST_JVM_ARGS_KEY)
+  final String[] arguments = jvmargs == null || jvmargs.equals("") ? new String[0] : jvmargs.split("\n")
+  project.tasks.withType(AbstractTestTask).configureEach { task ->
+    def buildTempDirectory = Util.getPropertyFromProjectOrSystemProperties(project, TEAMCITY_BUILD_TEMP_DIR_KEY)
+    new TestTaskWrapper(task).setTmpDirectory(buildTempDirectory).jvmArgs(arguments)
+  }
+}))
+
+if (gradle.parent == null) {
+  def registry = services.get(org.gradle.build.event.BuildEventsListenerRegistry)
+  registry.onTaskCompletion(gradle.sharedServices.registerIfAbsent("teamcityRerunTestsService", TeamcityRerunTestsService) {})
+  registry.onTaskCompletion(gradle.sharedServices.registerIfAbsent("teamcityExceptionsService", TeamcityExceptionsService) {})
+}
+gradle.addListener(new TeamcityRerunTestsListener(propertyReader))
+gradle.addListener(new TeamcityExceptionsListener())
+gradle.projectsEvaluated { Gradle gradle ->
+  new DependencyBasedTestRun(logger).configureGradle(gradle)
+  gradle.rootProject.allprojects { Project project ->
+    project.tasks.withType(AbstractTestTask).configureEach { task ->
+      TestTaskWrapper testTask = new TestTaskWrapper(task)
+      def testNameFormat = Util.getPropertyFromPropertyReaderOrSystemProperties(propertyReader, TEAMCITY_CONFIGURATION_TEST_NAME_FORMAT_KEY)
+      def descriptor = TestNameDescriptor.of(testNameFormat)
+
+      def ignoredSuiteFormat = Util.getPropertyFromPropertyReaderOrSystemProperties(propertyReader, TEAMCITY_CONFIGURATION_IGNORE_SUITE_FORMAT_KEY)
+      def skip = [
+              out: Boolean.valueOf(System.properties["teamcity.ignoreTestStdOut"]),
+              err: Boolean.valueOf(System.properties["teamcity.ignoreTestStdErr"])
+      ]
+      def testListener = new TeamcityTestListener(logger, testTask, project, testCounter, descriptor, ignoredSuiteFormat, skip)
+      testTask.addTestListener(testListener)
+      testTask.addTestOutputListener(testListener)
+
+      // add executable tests
+      testTask.filter.updateFilters(System.getenv("TEAMCITY_PARALLEL_TESTS_ARTIFACT_PATH"), logger)
+      // will be empty if parallel tests enabled
+      testTask.filter.updateFilters(System.getenv("TEAMCITY_RISK_TESTS_ARTIFACT_PATH"), logger)
+
+      if (!gradleDaemonEnhancementClassNames.isEmpty() && task instanceof Test) {
+        task.doFirst(new GradleDaemonClasspathEnhancer(logger, gradleDaemonEnhancementClassNames))
+      }
+    }
+  }
+}
+
+gradle.taskGraph.whenReady { taskGraph ->
+  taskGraph.getAllTasks().each { Task task ->
+    if (task.name.equals("junitPlatformTest")) {
+      task.doFirst {
+        task.outputs?.files?.each { file ->
+          task.logger.lifecycle(ServiceMessage.asString("importData", ["type": "junit", "path": "$file.absolutePath/*.xml".toString()]))
+        }
+      }
+    }
+  }
+}
