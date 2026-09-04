@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.endOffset
-import com.intellij.psi.util.startOffset
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolver
@@ -203,23 +201,10 @@ internal fun assertSpecificResolutionApi(
 }
 
 private fun areEquivalent(e1: PsiElement?, e2: PsiElement?): Boolean {
-    // work around default impl of PsiElementBase#isEquivalentTo, which currently has only a === check.
-    // that is problematic because in our tests we create copies of the source file of the test, and sometimes we
-    // can get different instances of the same logical element.
-    //
-    // This is just a workaround, we compare the position of the elements, and we check that the files they belong to match.
     if (e1 == null) return e2 == null
     if (e2 == null) return false
 
-    if (e1.startOffset != e2.startOffset || e1.endOffset != e2.endOffset) return false
-
-    val containingFile1 = e1.containingFile
-    val containingFile2 = e2.containingFile
-
-    if (containingFile1.isEquivalentTo(containingFile2)) return true
-    if (containingFile1.originalFile.isEquivalentTo(containingFile2)) return true
-    if (containingFile2.originalFile.isEquivalentTo(containingFile1)) return true
-    return false
+    return e1.isEquivalentTo(e2)
 }
 
 
