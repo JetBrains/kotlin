@@ -17,6 +17,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.ArrayLiteralResolution
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.getElementTextWithContext
 import java.util.Objects
@@ -938,6 +939,7 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
      * To store diagnostic for erroneously resolved `arrayOf` which is being transformed to array literal.
      * Note that this may happen both with original `arrayOf` and with synthetic `arrayOf` itself created to resolve array literal.
      */
+    @ArrayLiteralResolution
     object ErrorExpressionForTransformedArrayOf : KtFakeSourceElementKind()
 
     /**

@@ -3,7 +3,7 @@
 // LATEST_LV_DIFFERENCE
 
 annotation class LamInt(val e: Int = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT, UNRESOLVED_COLLECTION_LITERAL!>[{}]<!>)
-annotation class LamIntArray(val e: IntArray = [<!ARGUMENT_TYPE_MISMATCH!>{}<!>])
+annotation class LamIntArray(val e: IntArray = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[<!ARGUMENT_TYPE_MISMATCH!>{}<!>]<!>)
 annotation class LamArrayString(val e: Array<String> = [<!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>{}<!>])
 annotation class LamCorrect(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<() -> Unit><!> = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[{}]<!>)
 annotation class LamCorrectWithParam(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<(Int) -> Unit><!> = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[{}]<!>)
@@ -11,7 +11,7 @@ annotation class LamCorrectWithReturn(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER
 annotation class LamCorrectWithReturnAndParam(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<(Int) -> Int><!> = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[{ it -> it }]<!>)
 
 annotation class AnonInt(val e: Int = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT, UNRESOLVED_COLLECTION_LITERAL!>[fun() {}]<!>)
-annotation class AnonIntArray(val e: IntArray = [<!ARGUMENT_TYPE_MISMATCH!>fun() {}<!>])
+annotation class AnonIntArray(val e: IntArray = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[<!ARGUMENT_TYPE_MISMATCH!>fun() {}<!>]<!>)
 annotation class AnonArrayString(val e: Array<String> = [<!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>fun() {}<!>])
 annotation class AnonCorrect(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<() -> Unit><!> = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[fun() {}]<!>)
 annotation class AnonCorrectWithParam(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<(Int) -> Unit><!> = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[fun(x: Int) {}]<!>)
@@ -24,8 +24,8 @@ fun const42() = 42
 fun <T> consume(it: T) {}
 
 annotation class RefInt(val e: Int = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT, UNRESOLVED_COLLECTION_LITERAL!>[::skip]<!>)
-annotation class RefIntArray(val e: IntArray = [::<!INAPPLICABLE_CANDIDATE!>skip<!>])
-annotation class RefArrayString(val e: Array<String> = [::<!INAPPLICABLE_CANDIDATE!>skip<!>])
+annotation class RefIntArray(val e: IntArray = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[::<!INAPPLICABLE_CANDIDATE!>skip<!>]<!>)
+annotation class RefArrayString(val e: Array<String> = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[::<!INAPPLICABLE_CANDIDATE!>skip<!>]<!>)
 annotation class RefCorrect(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<() -> Unit><!> = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[::skip]<!>)
 annotation class RefCorrectWithParam(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<(Int) -> Unit><!> = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[::consume]<!>)
 annotation class RefCorrectWithReturn(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<() -> Int><!> = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[::const42]<!>)

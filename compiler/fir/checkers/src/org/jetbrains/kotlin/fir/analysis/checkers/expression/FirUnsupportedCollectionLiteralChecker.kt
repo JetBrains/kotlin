@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.ArrayLiteralResolution
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
@@ -31,6 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.useArrayLiteralResolution
+import org.jetbrains.kotlin.util.ArrayLiteralResolution
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 @ArrayLiteralResolution
@@ -119,31 +119,41 @@ object FirUnsupportedCollectionLiteralWithArrayLiteralResolutionChecker : FirCol
             else -> containingBlock !is FirSingleExpressionBlock
         }
     }
-
-    context(context: CheckerContext)
-    private fun isInsideAnnotationConstructor(): Boolean {
-        return context.findClosest<FirConstructorSymbol>()?.resolvedReturnType.isAnnotationClass()
-    }
-
-    context(context: CheckerContext)
-    private fun ConeKotlinType?.isAnnotationClass(): Boolean {
-        return this?.toRegularClassSymbol()?.classKind == ClassKind.ANNOTATION_CLASS
-    }
 }
 
 object FirUnsupportedCollectionLiteralWithCollectionLiteralResolutionChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         if (LanguageFeature.CollectionLiterals.isDisabled() && LanguageFeature.CollectionLiteralsBasedAnnotationResolution.isEnabled()) {
-            if ((expression.calleeReference.name == OperatorNameConventions.OF && expression.origin == FirFunctionCallOrigin.Operator)
-                || expression.origin == FirFunctionCallOrigin.StdlibCollectionLiteral
-            ) {
-                reporter.reportOn(
-                    expression.source,
-                    FirErrors.UNSUPPORTED_FEATURE,
-                    LanguageFeature.CollectionLiterals to context.languageVersionSettings,
-                )
-            }
+
+            if (!expression.isCollectionLiteralCall()) return
+            if (isInsideAnnotationCall() || isInsideAnnotationConstructor()) return
+
+            reporter.reportOn(
+                expression.source,
+                FirErrors.UNSUPPORTED_FEATURE,
+                LanguageFeature.CollectionLiterals to context.languageVersionSettings,
+            )
         }
     }
+
+    private fun FirFunctionCall.isCollectionLiteralCall(): Boolean {
+        return (calleeReference.name == OperatorNameConventions.OF && origin == FirFunctionCallOrigin.Operator)
+                || origin == FirFunctionCallOrigin.StdlibCollectionLiteral
+    }
+}
+
+context(context: CheckerContext)
+private fun isInsideAnnotationCall(): Boolean {
+    return context.callsOrAssignments.any { it is FirAnnotationCall }
+}
+
+context(context: CheckerContext)
+private fun isInsideAnnotationConstructor(): Boolean {
+    return context.findClosest<FirConstructorSymbol>()?.resolvedReturnType.isAnnotationClass()
+}
+
+context(context: CheckerContext)
+private fun ConeKotlinType?.isAnnotationClass(): Boolean {
+    return this?.toRegularClassSymbol()?.classKind == ClassKind.ANNOTATION_CLASS
 }

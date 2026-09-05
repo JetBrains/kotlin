@@ -393,9 +393,12 @@ object FirTree : AbstractFirTreeBuilder() {
                 |  
                 |### After body resolution phase / deserialized
                 |
-                |Represents array literals in annotation arguments or default parameter values.
-                |Both original collection literals and explicit `arrayOf` (`intArrayOf`, `doubleArrayOf`, etc.) calls in annotations are
-                |represented as [${collectionLiteral.render()}] nodes.
+                |Represents array literals in _evaluated_ annotation argument mappings or _evaluated_ default initializers of annotation
+                |parameters. Both original collection literals and explicit `arrayOf` (`intArrayOf`, `doubleArrayOf`, etc.) calls are
+                |represented as [${collectionLiteral.render()}] nodes in these cases.
+                |
+                |When [org.jetbrains.kotlin.util.ArrayLiteralResolution] is used, also represents array literals in
+                |annotation arguments and default initializers of annotation parameters.
                 |
                 |The structure of its [argumentList] is the same as for [${varargArgumentsExpression.render()}] - both regular expressions
                 |and [${spreadArgumentExpression.render()}]s are possible (consider `intArrayOf(0, *[1, 2, 3], 4)`).

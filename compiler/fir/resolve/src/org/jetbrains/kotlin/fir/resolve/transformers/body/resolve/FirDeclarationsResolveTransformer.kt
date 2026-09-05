@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.buildCurrentSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.ProvideDelegateFixationPosition
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.util.ArrayLiteralResolution
 import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -1274,10 +1275,15 @@ open class FirDeclarationsResolveTransformer(
         val result = context.withValueParameter(valueParameter, session) {
             transformDeclarationContent(
                 valueParameter,
-                withExpectedType(
-                    valueParameter.returnTypeRef,
-                    arrayLiteralPosition = if (insideAnnotationConstructorDeclaration) ArrayLiteralPosition.AnnotationParameter else null
-                )
+                if (useArrayLiteralResolution()) {
+                    @OptIn(ArrayLiteralResolution::class)
+                    withExpectedType(
+                        valueParameter.returnTypeRef,
+                        arrayLiteralPosition = runIf(insideAnnotationConstructorDeclaration) { ArrayLiteralPosition.AnnotationParameter },
+                    )
+                } else {
+                    withExpectedType(valueParameter.returnTypeRef)
+                }
             ) as FirValueParameter
         }
 

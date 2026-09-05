@@ -16,7 +16,7 @@ annotation class Anno2Inv(val x: Array<String>)
 @Repeatable
 annotation class Anno1Vararg(vararg val x: Anno2Inv)
 
-@Anno1In(x = [Anno2In(x = [1])])
+@Anno1In(x = [Anno2In(x = <!TYPE_INTERSECTION_AS_REIFIED_ERROR!>[1]<!>)])
 @Anno1Out(x = [Anno2Out(x = [<!ARGUMENT_TYPE_MISMATCH!>1<!>])])
 @Anno1Inv(x = [Anno2Inv(x = [<!ARGUMENT_TYPE_MISMATCH!>1<!>])])
 @Anno1Inv(x = arrayOf(Anno2Inv(x = [<!ARGUMENT_TYPE_MISMATCH!>1<!>])))

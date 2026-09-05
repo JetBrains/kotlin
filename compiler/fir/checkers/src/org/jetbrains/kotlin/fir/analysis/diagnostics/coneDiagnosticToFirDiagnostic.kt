@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
 import org.jetbrains.kotlin.types.model.K2Only
+import org.jetbrains.kotlin.util.ArrayLiteralResolution
 import org.jetbrains.kotlin.util.getPreviousSibling
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -913,7 +914,7 @@ private fun ConstraintSystemError.mapConstraintSystemError(
     //  see KT-82684)
     fun isUnreportedNotEnoughInformationForTypeParameter(): Boolean {
         return candidate.symbol is FirConstructorSymbol && candidate.callInfo.callSite is FirDelegatedConstructorCall
-                || source?.kind == KtFakeSourceElementKind.ErrorExpressionForTransformedArrayOf
+                || source?.kind == @OptIn(ArrayLiteralResolution::class) KtFakeSourceElementKind.ErrorExpressionForTransformedArrayOf
     }
 
     val typeContext = session.typeContext

@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.anySuperTypeConstructor
+import org.jetbrains.kotlin.util.ArrayLiteralResolution
 import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -72,7 +73,10 @@ import kotlin.contracts.contract
 open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveTransformerDispatcher) :
     FirPartialBodyResolveTransformer(transformer) {
     private inline val builtinTypes: BuiltinTypes get() = session.builtinTypes
+
+    @ArrayLiteralResolution
     private val arrayOfCallTransformer = FirArrayOfCallTransformer()
+
     var containingSafeCallExpression: FirSafeCallExpression? = null
 
     private val assignAltererExtensions = session.extensionService.assignAltererExtensions.takeIf { it.isNotEmpty() }
@@ -829,18 +833,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
             context.addReceiversFromExtensions(result, components)
 
-            val arrayOfCallsNeedToBeTransformed = when {
-                useArrayLiteralResolution() -> {
-                    @OptIn(ArrayLiteralResolution::class)
-                    context.isInsideAnnotationContext
+            if (useArrayLiteralResolution()) {
+                @OptIn(ArrayLiteralResolution::class)
+                if (context.isInsideAnnotationContext) {
+                    return arrayOfCallTransformer.transformFunctionCall(result, session)
                 }
-                else -> {
-                    data is ResolutionMode.WithExpectedType && data.arrayLiteralPosition == ArrayLiteralPosition.AnnotationParameter
-                }
-            }
-
-            if (arrayOfCallsNeedToBeTransformed) {
-                return arrayOfCallTransformer.transformFunctionCall(result, session)
             }
             return result.addSmartcastIfNeeded(data)
         }
@@ -1889,7 +1886,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val result = callResolver.resolveAnnotationCall(annotationCall)
 
         callCompleter.completeCall(result, ContextIndependent)
-        result.transformSingle(arrayOfCallTransformer, session)
         (result.argumentList as FirResolvedArgumentList).let {
             annotationCall.replaceArgumentMapping(it.toAnnotationArgumentMapping())
             evaluateAndReplaceArgumentMapping(annotationCall)
@@ -2397,9 +2393,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                         is ResolutionMode.WithExpectedType -> {
                             components.syntheticCallGenerator.resolveCollectionLiteralExpressionWithSyntheticOuterCall(
                                 collectionLiteral, data, resolutionContext,
-                            ).applyIf(data.arrayLiteralPosition == ArrayLiteralPosition.AnnotationParameter) {
-                                transformSingle<FirExpression, _>(arrayOfCallTransformer, session)
-                            }
+                            )
                         }
                         is ResolutionMode.ContextDependent -> {
                             collectionLiteral.also {

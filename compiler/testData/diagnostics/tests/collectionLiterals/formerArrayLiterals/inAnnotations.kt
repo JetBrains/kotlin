@@ -31,7 +31,7 @@ annotation class BadDefaultParametert(val arg: Array<String> = [<!UNRESOLVED_COL
 @StringArrayAnno([<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>])
 @StringArrayAnno(arrayOf())
 @StringArrayAnno(arrayOf("1", "2", "3"))
-@StringArrayAnno(<!ARGUMENT_TYPE_MISMATCH!>arrayOf(arrayOf())<!>)
+@StringArrayAnno(<!ARGUMENT_TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>arrayOf<!>(<!CANNOT_INFER_PARAMETER_TYPE!>arrayOf<!>())<!>)
 @FooArrayAnno(<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>Foo()<!>]<!>)
 @ArrayArrayAnno([[""]])
 @ArrayArrayAnno([])

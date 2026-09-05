@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.isArrayOfCall
+import org.jetbrains.kotlin.fir.declarations.isArrayOfCall
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
@@ -221,7 +221,7 @@ private object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSession
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: FirSession): Boolean {
-        if (functionCall.isArrayOfCall(data)) return functionCall.arguments.all { it.accept(this, data) }
+        if (functionCall.isArrayOfCall()) return functionCall.arguments.all { it.accept(this, data) }
         return visitQualifiedAccessExpression(functionCall, data)
     }
 

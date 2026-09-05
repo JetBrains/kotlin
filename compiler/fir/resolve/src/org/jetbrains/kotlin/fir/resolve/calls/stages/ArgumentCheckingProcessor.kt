@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.fastCorrespondingSupertypes
 import org.jetbrains.kotlin.types.model.isUnit
 import org.jetbrains.kotlin.types.model.typeConstructor
+import org.jetbrains.kotlin.util.ArrayLiteralResolution
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
