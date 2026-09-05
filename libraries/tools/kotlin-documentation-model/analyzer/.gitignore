@@ -1,0 +1,41 @@
+
+### Java
+*.class
+
+# new Kotlin 2.0 state dir
+.kotlin/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see https://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+### IntelliJ
+.idea/*
+!.idea/copyright
+!.idea/codeStyles
+**/.idea
+/out/
+
+## File-based project format:
+*.iws
+*.iml
+*.ipr
+
+### Gradle
+.gradle
+build/
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+
+local.properties
+android.local.properties
+
+core/out/
+runners/**/out/
+.DS_Store

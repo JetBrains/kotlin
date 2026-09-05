@@ -32,6 +32,7 @@
 # SPACE_OWNER: "Kotlin Language Evolution"
 # SPACE_OWNER: "Kotlin for Data Science"
 # SPACE_OWNER: "Kotlin Technical Writing"
+# SPACE_OWNER: "Dokka"
 
 # USER_OWNER: dmitriy.novozhilov@jetbrains.com demiurg906
 # USER_OWNER: kirill.rakhman@jetbrains.com cypressious
@@ -338,6 +339,7 @@
 /libraries/tools/binary-compatibility-validator/reference-public-api/kotlin-reflect.txt vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com leonid.startsev@jetbrains.com
 /libraries/tools/abi-validation/ vsevolod.tolstopyatov@jetbrains.com sergey.shanshin@jetbrains.com filipp.zhinkin@jetbrains.com
 /libraries/tools/dukat/ "Kotlin Wasm" "Kotlin JS"
+/libraries/tools/kotlin-documentation-model/ "Dokka"
 /libraries/tools/ide-plugin-dependencies-validator "Kotlin Analysis API"
 /libraries/kotlin-dom-api-compat/ ilya.goncharov@jetbrains.com stanislav.erokhin@jetbrains.com
 /libraries/tools/kotlin-build-tools-enum-compat/ "Kotlin Build Tools"
