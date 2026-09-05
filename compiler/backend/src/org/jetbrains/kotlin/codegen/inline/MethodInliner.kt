@@ -66,6 +66,16 @@ class MethodInliner(
     private val result = InlineResult.create()
     private var lambdasFinallyBlocks: Int = 0
 
+    // TODO: This data class can be extended to include more info,
+    // TODO: which is currently being stored in the inlining context or
+    // TODO: in the bytecode.
+    private data class PreparedInlineNode(
+        val node: MethodNode,
+        // The renamed marker variable of the node being inlined or null otherwise.
+        // Used by the shared InlineScopesGenerator and will be reused by nested lambda inlining.
+        val inlinedFunctionMarkerVariableName: String?,
+    )
+
     fun doInline(
         adapter: MethodVisitor,
         remapper: LocalVarRemapper,
@@ -93,12 +103,12 @@ class MethodInliner(
         finallyDeepShift: Int
     ): InlineResult {
         //analyze body
-        var transformedNode = markPlacesForInlineAndRemoveInlinable(node, returnLabels, finallyDeepShift)
+        val preparedNode = markPlacesForInlineAndRemoveInlinable(node, returnLabels, finallyDeepShift)
 
         //substitute returns with "goto end" instruction to keep non local returns in lambdas
         val end = linkedLabel()
         val isTransformingAnonymousObject = nodeRemapper is RegeneratedLambdaFieldRemapper
-        transformedNode = doInline(transformedNode)
+        val transformedNode = doInline(preparedNode.node, preparedNode.inlinedFunctionMarkerVariableName)
         if (!isTransformingAnonymousObject) {
             //don't remove assertion in transformed anonymous object
             removeClosureAssertions(transformedNode)
@@ -141,7 +151,7 @@ class MethodInliner(
         return result
     }
 
-    private fun doInline(node: MethodNode): MethodNode {
+    private fun doInline(node: MethodNode, inlinedFunctionMarkerVariableName: String?): MethodNode {
         val currentInvokes = LinkedList(invokeCalls)
 
         val resultNode = MethodNode(node.access, node.name, node.desc, node.signature, null)
@@ -441,13 +451,17 @@ class MethodInliner(
         surroundInvokesWithSuspendMarkersIfNeeded(resultNode)
 
         if (inliningContext.inlineScopesGenerator != null && GENERATE_SMAP) {
-            updateCallSiteLineNumbers(resultNode, node)
+            updateCallSiteLineNumbers(resultNode, node, inlinedFunctionMarkerVariableName)
         }
 
         return resultNode
     }
 
-    private fun updateCallSiteLineNumbers(resultNode: MethodNode, inlinedNode: MethodNode) {
+    private fun updateCallSiteLineNumbers(
+        resultNode: MethodNode,
+        inlinedNode: MethodNode,
+        inlinedFunctionMarkerVariableName: String?,
+    ) {
         val inlinedNodeLocalVariables = inlinedNode.localVariables ?: return
         val resultNodeLocalVariables = resultNode.localVariables ?: return
         if (inlinedNodeLocalVariables.isEmpty() || resultNodeLocalVariables.isEmpty()) {
@@ -466,9 +480,15 @@ class MethodInliner(
         // the inliner copies the bodies of the regenerated methods and no marker variables are introduced during this process.
         // So in case with anonymous object regeneration we don't have to skip anything.
         if (!isRegeneratingAnonymousObject()) {
-            val labelToIndex = inlinedNode.getLabelToIndexMap()
-            val markerVariableOfInlinedNode = markerVariablesFromInlinedNode.sortedBy { labelToIndex[it.start.label] }.first()
-            markerVariableNamesFromInlinedNode.remove(markerVariableOfInlinedNode.name)
+            if (inlinedFunctionMarkerVariableName != null) {
+                markerVariableNamesFromInlinedNode.remove(inlinedFunctionMarkerVariableName)
+            } else {
+                // Inlining code produced by old compiler versions, where the marker variable of an
+                // inlined method was always the bytecode-first one.
+                val labelToIndex = inlinedNode.getLabelToIndexMap()
+                val markerVariableOfInlinedNode = markerVariablesFromInlinedNode.sortedBy { labelToIndex[it.start.label] }.first()
+                markerVariableNamesFromInlinedNode.remove(markerVariableOfInlinedNode.name)
+            }
         }
 
         for (variable in resultNodeLocalVariables) {
@@ -479,7 +499,7 @@ class MethodInliner(
         }
     }
 
-    private fun prepareNode(node: MethodNode, finallyDeepShift: Int): MethodNode {
+    private fun prepareNode(node: MethodNode, finallyDeepShift: Int): PreparedInlineNode {
         node.instructions.resetLabels()
 
         val capturedParamsSize = parameters.capturedParametersSizeOnStack
@@ -504,7 +524,8 @@ class MethodInliner(
             node.signature, node.exceptions?.toTypedArray()
         )
 
-        inliningContext.inlineScopesGenerator?.addInlineScopesInfo(node, isRegeneratingAnonymousObject())
+        val inlinedFunctionMarkerVariableName =
+            inliningContext.inlineScopesGenerator?.addInlineScopesInfo(node, isRegeneratingAnonymousObject())
 
         val transformationVisitor = object : InlineMethodInstructionAdapter(transformedNode) {
             private val GENERATE_DEBUG_INFO = GENERATE_SMAP && !isInlineOnlyMethod
@@ -606,13 +627,14 @@ class MethodInliner(
 
         transformFinallyDeepIndex(transformedNode, finallyDeepShift)
 
-        return transformedNode
+        return PreparedInlineNode(transformedNode, inlinedFunctionMarkerVariableName)
     }
 
     private fun markPlacesForInlineAndRemoveInlinable(
         node: MethodNode, returnLabels: Map<String, Label?>, finallyDeepShift: Int
-    ): MethodNode {
-        val processingNode = prepareNode(node, finallyDeepShift)
+    ): PreparedInlineNode {
+        val preparedNode = prepareNode(node, finallyDeepShift)
+        val processingNode = preparedNode.node
 
         preprocessNodeBeforeInline(processingNode, returnLabels)
 
@@ -772,7 +794,7 @@ class MethodInliner(
         //clean dead try/catch blocks
         processingNode.tryCatchBlocks.removeIf { it.isMeaningless() }
 
-        return processingNode
+        return preparedNode
     }
 
     private fun markObsoleteInstruction(instructions: InsnList, sources: Array<out Frame<BasicValue>?>): Pair<SmartSet<AbstractInsnNode>, SmartSet<AbstractInsnNode>> {
