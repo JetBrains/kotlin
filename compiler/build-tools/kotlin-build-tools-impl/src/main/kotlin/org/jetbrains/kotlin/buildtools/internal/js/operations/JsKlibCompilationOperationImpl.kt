@@ -257,7 +257,8 @@ internal class JsKlibCompilationOperationImpl private constructor(
             ),
             CompileScopeExpansionMode.ALWAYS,
             icFeatures,
-            executionContext.classloadersCache?.asPluginsLoader()
+            executionContext.classloadersCache?.asPluginsLoader(),
+            getLookupTrackerAdapter()
         )
 
         arguments.incrementalCompilation = true
