@@ -171,8 +171,8 @@ fun box(): String {
     assertFalse(S.Enum.ENTRY::class.isFun)
     assertFalse(S.Enum.ENTRY::class.isValue)
 
-    // Java Reflection is broken because this gets compiled with a non-empty simple name
-    // Somehow this only affects tests but not real projects
+    // Broken assertion since tests run on Java 8 and Kotlin generates non-compliant names for anonymous classes
+    // resulting in a class with a non-empty simple name. See KT-23072.
 //    assertFalse(S.anonymousObject::class.isRegularClass)
     assertFalse(S.anonymousObject::class.isInterface)
     assertFalse(S.anonymousObject::class.isEnumClass)
