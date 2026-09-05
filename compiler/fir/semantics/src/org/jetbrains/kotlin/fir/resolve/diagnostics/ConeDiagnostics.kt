@@ -434,6 +434,17 @@ object ConeForbiddenIntersection : ConeDiagnostic {
     override val reason: String get() = "Such an intersection type is not allowed"
 }
 
+/**
+ * Imagine`@Deprecated(level = ABRACADABRA)`. During [org.jetbrains.kotlin.fir.declarations.FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS]
+ * we can't resolve ABRACADABRA. On the other hand, we need to store some resolved value in the argument mapping of the annotation.
+ *
+ * This diagnostic should only appear in the argument mappings, never in the tree itself.
+ */
+object ConeUnresolvedArgumentDuringCompilerRequiredAnnotations : ConeDiagnostic {
+    override val reason: String
+        get() = "Unresolved argument during compiler required annotations resolution"
+}
+
 class ConeAmbiguouslyResolvedAnnotationFromPlugin(
     val typeFromCompilerPhase: ConeKotlinType,
     val typeFromTypesPhase: ConeKotlinType
@@ -447,8 +458,8 @@ class ConeAmbiguouslyResolvedAnnotationFromPlugin(
 }
 
 class ConeAmbiguouslyResolvedAnnotationArgument(
-    val symbolFromCompilerPhase: FirBasedSymbol<*>,
-    val symbolFromAnnotationArgumentsPhase: FirBasedSymbol<*>?
+    val symbolFromCompilerPhase: FirBasedSymbol<*>?,
+    val symbolFromAnnotationArgumentsPhase: FirBasedSymbol<*>,
 ) : ConeDiagnostic {
     override val reason: String
         get() = """

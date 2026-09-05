@@ -7,26 +7,22 @@ package org.jetbrains.kotlin.fir.resolve.transformers.plugin
 
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirAnnotationArgumentMappingImpl
 import org.jetbrains.kotlin.fir.extensions.*
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedArgumentDuringCompilerRequiredAnnotations
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSpecificTypeResolverTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.withClassDeclarationCleanup
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
-import org.jetbrains.kotlin.fir.scopes.getProperties
-import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -39,8 +35,8 @@ import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.PrivateForInline
 
 @OptIn(PrivateForInline::class)
@@ -49,251 +45,140 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     @property:PrivateForInline override val scopeSession: ScopeSession,
     @property:PrivateForInline val computationSession: CompilerRequiredAnnotationsComputationSession,
     containingDeclarations: List<FirDeclaration> = emptyList(),
-    private val outerBodyResolveContext: BodyResolveContext? = null,
 ) : FirDefaultTransformer<Nothing?>(), SessionAndScopeSessionHolder {
-    inner class FirEnumAnnotationArgumentsTransformerDispatcher : FirAbstractBodyResolveTransformerDispatcher(
-        session,
-        FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS,
-        scopeSession = scopeSession,
-        implicitTypeOnly = false,
-        // This transformer is only used for COMPILER_REQUIRED_ANNOTATIONS, which is <=SUPER_TYPES,
-        // so we can't yet expand typealiases.
-        expandTypeAliases = false,
-        outerBodyResolveContext = outerBodyResolveContext
+
+    private fun resolveCompilerRequiredArguments(
+        annotationCall: FirAnnotationCall,
+        parameters: List<FirCompilerRequiredParameterDescription>,
     ) {
-        override val expressionsTransformer: FirExpressionsResolveTransformer = FirEnumAnnotationArgumentsTransformer(this)
-        override val declarationsTransformer: FirDeclarationsResolveTransformer? = null
-    }
+        val mapping = mutableMapOf<Name, FirExpression>()
 
-    /**
-     * Special transformer that resolves qualified expressions exclusively to enums from import scope. This doesn't
-     * trigger body resolve.
-     */
-    private inner class FirEnumAnnotationArgumentsTransformer(transformer: FirAbstractBodyResolveTransformerDispatcher) :
-        FirExpressionsResolveTransformer(transformer) {
-        override fun transformAnnotation(annotation: FirAnnotation, data: ResolutionMode): FirStatement {
-            dataFlowAnalyzer.enterAnnotation()
-            annotation.transformChildren(transformer, ResolutionMode.ContextDependent)
-            dataFlowAnalyzer.exitAnnotation()
-            return annotation
-        }
-
-        override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): FirStatement {
-            return transformAnnotation(annotationCall, data)
-        }
-
-        override fun transformErrorAnnotationCall(errorAnnotationCall: FirErrorAnnotationCall, data: ResolutionMode): FirStatement {
-            return transformAnnotation(errorAnnotationCall, data)
-        }
-
-        override fun transformExpression(expression: FirExpression, data: ResolutionMode): FirStatement {
-            return expression.transformChildren(transformer, data) as FirStatement
-        }
-
-        override fun FirQualifiedAccessExpression.isAcceptableResolvedQualifiedAccess(): Boolean {
-            return calleeReference !is FirErrorNamedReference
-        }
-
-        override fun transformBlock(block: FirBlock, data: ResolutionMode): FirStatement {
-            return block
-        }
-
-        override fun transformThisReceiverExpression(
-            thisReceiverExpression: FirThisReceiverExpression,
-            data: ResolutionMode,
-        ): FirStatement {
-            return thisReceiverExpression
-        }
-
-        override fun transformComparisonExpression(
-            comparisonExpression: FirComparisonExpression,
-            data: ResolutionMode,
-        ): FirStatement {
-            return comparisonExpression
-        }
-
-        override fun transformTypeOperatorCall(
-            typeOperatorCall: FirTypeOperatorCall,
-            data: ResolutionMode,
-        ): FirStatement {
-            return typeOperatorCall
-        }
-
-        override fun transformCheckNotNullCall(
-            checkNotNullCall: FirCheckNotNullCall,
-            data: ResolutionMode,
-        ): FirStatement {
-            return checkNotNullCall
-        }
-
-        override fun transformBooleanOperatorExpression(
-            booleanOperatorExpression: FirBooleanOperatorExpression,
-            data: ResolutionMode,
-        ): FirStatement {
-            return booleanOperatorExpression
-        }
-
-        override fun transformVariableAssignment(
-            variableAssignment: FirVariableAssignment,
-            data: ResolutionMode,
-        ): FirStatement {
-            return variableAssignment
-        }
-
-        override fun transformCallableReferenceAccess(
-            callableReferenceAccess: FirCallableReferenceAccess,
-            data: ResolutionMode,
-        ): FirStatement {
-            return callableReferenceAccess
-        }
-
-        override fun transformDelegatedConstructorCall(
-            delegatedConstructorCall: FirDelegatedConstructorCall,
-            data: ResolutionMode,
-        ): FirStatement {
-            return delegatedConstructorCall
-        }
-
-        override fun transformIndexedAccessAugmentedAssignment(
-            indexedAccessAugmentedAssignment: FirIndexedAccessAugmentedAssignment,
-            data: ResolutionMode,
-        ): FirStatement {
-            return indexedAccessAugmentedAssignment
-        }
-
-        override fun transformCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: ResolutionMode): FirStatement {
-            collectionLiteral.transformChildren(transformer, data)
-            return collectionLiteral
-        }
-
-        override fun transformAnonymousObjectExpression(
-            anonymousObjectExpression: FirAnonymousObjectExpression,
-            data: ResolutionMode,
-        ): FirStatement {
-            return anonymousObjectExpression
-        }
-
-        override fun transformAnonymousFunctionExpression(
-            anonymousFunctionExpression: FirAnonymousFunctionExpression,
-            data: ResolutionMode,
-        ): FirStatement {
-            return anonymousFunctionExpression
-        }
-
-        override fun shouldComputeTypeOfGetClassCallWithNotQualifierInLhs(getClassCall: FirGetClassCall): Boolean {
-            return false
-        }
-
-        override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement {
-            // transform arrayOf arguments to handle `@Foo(bar = arrayOf(X))`
-            functionCall.transformChildren(transformer, data)
-            return functionCall
-        }
-
-        override fun resolveQualifiedAccessAndSelectCandidate(
-            qualifiedAccessExpression: FirQualifiedAccessExpression,
-            isUsedAsReceiver: Boolean,
-            isUsedAsGetClassReceiver: Boolean,
-            callSite: FirElement,
-            data: ResolutionMode,
-        ): FirQualifiedAccessExpression {
-            qualifiedAccessExpression.resolveFromImportScope()
-            return qualifiedAccessExpression
-        }
-
-        private fun FirQualifiedAccessExpression.resolveFromImportScope() {
-            val calleeReference = calleeReference as? FirSimpleNamedReference ?: return
-            val calleeName = calleeReference.name
-            val receiver = explicitReceiver as? FirQualifiedAccessExpression
-
-            if (receiver != null) {
-                // Simple case X.Y or fully qualified case a.b.X.Y
-                // Resolve receiver from import scope.
-
-                val receiverCalleeReference = receiver.calleeReference as? FirSimpleNamedReference ?: return
-                val receiverName = receiverCalleeReference.name.takeIf { !it.isSpecial } ?: return
-
-                // Segments of the receiver's qualifier: empty for a simple `X.Y`,
-                // package parts for a fully qualified `a.b.X.Y`.
-                val segments = generateSequence(receiver.explicitReceiver) { (it as? FirQualifiedAccessExpression)?.explicitReceiver }
-                    .mapNotNull { (it.toReference(session) as? FirSimpleNamedReference)?.name?.identifier }
-                    .toList()
-
-                val symbol = if (segments.isEmpty()) {
-                    // Simple case `X.Y`: the class must be reachable through an import scope.
-                    scopes.firstNotNullOfOrNull { it.getSingleClassifier(receiverName) as? FirRegularClassSymbol }
-                } else {
-                    // Fully qualified case `a.b.X.Y`: resolve the class directly by its class id, because it may
-                    // not be present in any import scope (e.g. `java.lang.annotation.ElementType.TYPE`).
-                    val classId = ClassId(FqName.fromSegments(segments.asReversed()), receiverName)
-                    session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
-                } ?: return
-
-                val resolvedReceiver = buildResolvedQualifier {
-                    source = receiver.source
-                    packageFqName = symbol.classId.packageFqName
-                    relativeClassFqName = symbol.classId.relativeClassName
-                    coneTypeOrNull = session.builtinTypes.unitType.coneType
-                    this.qualifierSymbol = symbol
-                    if (segments.isNotEmpty()) {
-                        explicitParent = buildResolvedQualifier {
-                            packageFqName = symbol.classId.packageFqName
-                            resolvedToCompanionObject = false
-                            coneTypeOrNull = session.builtinTypes.unitType.coneType
-                        }
-                    }
-
-                    resolvedToCompanionObject = false
-                }
-
-                // Resolve enum entry by name from the declarations of the receiver.
-                val calleeSymbol = symbol.fir.declarations.firstOrNull {
-                    it is FirEnumEntry && it.name == calleeName
-                }?.symbol as? FirEnumEntrySymbol ?: return
-
-                updateCallee(calleeReference, calleeSymbol)
-
-                replaceExplicitReceiver(resolvedReceiver)
-                replaceDispatchReceiver(resolvedReceiver)
-            } else {
-                // Case where enum entry is explicitly imported.
-                val calleeSymbol = scopes.firstNotNullOfOrNull { scope ->
-                    if (scope is FirAbstractImportingScope) {
-                        @OptIn(FirImplementationDetail::class)
-                        scope.findEnumEntryWithoutResolution(calleeName)
-                    } else {
-                        scope.getProperties(calleeName).firstOrNull()
-                    }
-                } as? FirEnumEntrySymbol ?: return
-
-                updateCallee(calleeReference, calleeSymbol)
+        for (parameter in parameters) {
+            val arguments = annotationCall.findArgumentsForCompilerRequiredParameter(parameter)
+            val value = when (val type = parameter.kind) {
+                is FirCraParameterKind.EnumParameter -> resolveEnumArguments(arguments, type)
+                is FirCraParameterKind.LiteralParameter -> resolveLiteralArgument(arguments, type.constKind)
+            }
+            if (value != null) {
+                mapping[parameter.name] = value
             }
         }
 
-        private fun FirQualifiedAccessExpression.updateCallee(
-            calleeReference: FirSimpleNamedReference,
-            calleeSymbol: FirEnumEntrySymbol
-        ) {
-            @Suppress("SENSELESS_COMPARISON")
-            assert(context.file != null) { "File should be initialized in the context" }
-            session.lookupTracker?.recordNameLookup(
-                calleeReference.name,
-                calleeSymbol.dispatchReceiverType?.classId?.asFqNameString() ?: calleeSymbol.callableId.packageName.asString(),
-                this.source,
-                context.file.source,
+        annotationCall.replaceArgumentMapping(
+            FirAnnotationArgumentMappingImpl(
+                annotationCall.argumentMapping.source,
+                mapping,
             )
+        )
+    }
 
-            replaceCalleeReference(buildResolvedNamedReference {
-                source = calleeReference.source
-                name = calleeReference.name
-                resolvedSymbol = calleeSymbol
-            })
+    private fun FirAnnotationCall.findArgumentsForCompilerRequiredParameter(
+        parameter: FirCompilerRequiredParameterDescription,
+    ): List<FirExpression> {
+        val namedArgument = arguments.firstNotNullOfOrNull { argument ->
+            (argument as? FirNamedArgumentExpression)?.takeIf { it.name == parameter.name }?.expression
+        }
 
-            calleeSymbol.containingClassLookupTag()
-                ?.let { ConeClassLikeTypeImpl(it, emptyArray(), false) }
-                ?.let { replaceConeTypeOrNull(it) }
+        if (namedArgument != null) return [namedArgument]
+
+        val kind = parameter.kind
+        // We rely here on the fact that currently vararg compiler-required parameters are always the only ones
+        if (kind is FirCraParameterKind.EnumParameter && kind.isVararg) {
+            return arguments
+        }
+
+        return parameter.position?.let(arguments::getOrNull)?.takeIf { it !is FirNamedArgumentExpression }.let(::listOfNotNull)
+    }
+
+    private fun resolveEnumArguments(
+        arguments: List<FirExpression>,
+        parameter: FirCraParameterKind.EnumParameter,
+    ): FirExpression? {
+        if (arguments.isEmpty()) return null
+
+        val entries = arguments.flatMap { it.unwrapAndFlattenArgument(flattenArrays = true) }.map { argument ->
+            val symbol = (argument as? FirPropertyAccessExpression)?.let {
+                resolvePropertyAccessExpressionFromImports(it, it.calleeReference.name, parameter.enumClassId)
+            }
+
+            when (symbol) {
+                null -> buildUnresolvedArgumentDuringCompilerRequiredAnnotations(argument.source)
+                else -> buildResolvedEnumEntryAccess(argument, symbol)
+            }
+        }
+
+        if (!parameter.isVararg) {
+            return entries.firstOrNull() ?: buildUnresolvedArgumentDuringCompilerRequiredAnnotations(arguments.first().source)
+        }
+
+        val elementType = ConeClassLikeTypeImpl(parameter.enumClassId.toLookupTag(), typeArguments = [], isMarkedNullable = false)
+        return buildVarargArgumentsExpression {
+            this.arguments += entries
+            coneElementTypeOrNull = elementType
+            coneTypeOrNull = elementType.createOutArrayType()
+            source = arguments.first().source
         }
     }
+
+    private fun resolveLiteralArgument(arguments: List<FirExpression>, kind: ConstantValueKind): FirExpression? {
+        require(kind is ConstantValueKind.String) {
+            "Currently, only string literals can be compiler-required arguments. " +
+                    "If you added a new compiler-required parameter with other ${ConstantValueKind::class.simpleName}, " +
+                    "this function needs to be updated."
+        }
+        if (arguments.isEmpty()) return null
+        val literal = (arguments.firstOrNull()?.unwrapArgument() as? FirLiteralExpression)?.takeIf { it.kind == ConstantValueKind.String }
+            ?: return buildUnresolvedArgumentDuringCompilerRequiredAnnotations(arguments.firstOrNull()?.source)
+
+        return buildLiteralExpression(literal.source, literal.kind, literal.value, setType = true)
+    }
+
+    private fun buildResolvedEnumEntryAccess(
+        propertyAccess: FirPropertyAccessExpression,
+        symbol: FirEnumEntrySymbol,
+    ): FirExpression {
+        val calleeReference = propertyAccess.calleeReference
+        val enumClassLookupTag = symbol.containingClassLookupTag()
+
+        // We deliberately omit receivers here; our goal is just to put some
+        // resolved value to the mapping. Expressions from argument mappings should
+        // never be asked for their structure, but rather for values they represent.
+        return buildPropertyAccessExpression {
+            source = propertyAccess.source
+            this.calleeReference = buildResolvedNamedReference {
+                source = calleeReference.source
+                name = calleeReference.name
+                resolvedSymbol = symbol
+            }
+            coneTypeOrNull = enumClassLookupTag?.let { ConeClassLikeTypeImpl(it, typeArguments = [], isMarkedNullable = false) }
+        }
+    }
+
+    private fun resolvePropertyAccessExpressionFromImports(
+        propertyAccess: FirPropertyAccessExpression,
+        name: Name,
+        expectedEnumClassId: ClassId,
+    ): FirEnumEntrySymbol? {
+        fun guessEnumEntryByName(): FirEnumEntrySymbol? {
+            return (expectedEnumClassId.toSymbol() as? FirRegularClassSymbol)?.declarationSymbols?.firstNotNullOfOrNull { declaration ->
+                (declaration as? FirEnumEntrySymbol)?.takeIf { it.name == name }
+            }
+        }
+
+        // with explicit receiver, it is impossible that enum entry was renamed through import
+        if (propertyAccess.explicitReceiver != null) return guessEnumEntryByName()
+
+        @OptIn(FirImplementationDetail::class)
+        val fromImports = scopes.firstNotNullOfOrNull { scope ->
+            (scope as? FirAbstractImportingScope)?.findEnumEntryWithoutResolution(name)
+                ?.takeIf { it.containingClassLookupTag()?.classId == expectedEnumClassId }
+        }
+
+        return fromImports ?: guessEnumEntryByName()
+    }
+
+    private fun buildUnresolvedArgumentDuringCompilerRequiredAnnotations(source: KtSourceElement?): FirErrorExpression =
+        buildErrorExpression(source, ConeUnresolvedArgumentDuringCompilerRequiredAnnotations)
 
     private val predicateBasedProvider = session.predicateBasedProvider
 
@@ -312,9 +197,6 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         // so we can't yet expand typealiases.
         expandTypeAliases = false,
     )
-
-    @PrivateForInline
-    val argumentsTransformer: FirEnumAnnotationArgumentsTransformerDispatcher = FirEnumAnnotationArgumentsTransformerDispatcher()
 
     @PrivateForInline
     var owners: PersistentList<FirDeclaration> = persistentListOf()
@@ -350,9 +232,10 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.CompilerRequiredAnnotations)
         computationSession.annotationResolved(annotationCall)
 
-        val requiredAnnotationsWithArguments = session.annotationPlatformSupport.requiredAnnotationsWithArguments
-        if (transformedAnnotationType.coneType.classLikeLookupTagIfAny?.classId in requiredAnnotationsWithArguments) {
-            argumentsTransformer.transformAnnotation(annotationCall, ResolutionMode.ContextDependent)
+        val annotationClassId = transformedAnnotationType.coneType.classLikeLookupTagIfAny?.classId
+        val compilerRequiredParameters = annotationClassId?.let { session.annotationPlatformSupport.requiredAnnotationsWithArguments[it] }
+        if (compilerRequiredParameters != null) {
+            resolveCompilerRequiredArguments(annotationCall, compilerRequiredParameters)
         }
     }
 
@@ -562,9 +445,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         val oldValue = currentFile
         currentFile = file
         return try {
-            argumentsTransformer.context.withFile(file) {
-                withFileAnalysisExceptionWrapping(file, f)
-            }
+            withFileAnalysisExceptionWrapping(file, f)
         } finally {
             currentFile = oldValue
         }

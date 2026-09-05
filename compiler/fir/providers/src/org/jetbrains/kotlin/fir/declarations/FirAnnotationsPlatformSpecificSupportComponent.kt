@@ -21,11 +21,6 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 abstract class FirAnnotationsPlatformSpecificSupportComponent :
     FirComposableSessionComponent<FirAnnotationsPlatformSpecificSupportComponent> {
     abstract val requiredAnnotationsWithArguments: CompilerRequiredParametersMap
-
-    val requiredArguments: Set<ClassId>
-        get() = requiredAnnotationsWithArguments.flatMap { it.value }.mapNotNullTo(mutableSetOf()) {
-            (it.kind as? FirCraParameterKind.EnumParameter)?.enumClassId
-        }
     abstract val requiredAnnotations: Set<ClassId>
     abstract val volatileAnnotations: Set<ClassId>
     protected abstract val repeatableAnnotations: Set<ClassId>

@@ -4,7 +4,7 @@ package p
 
 enum class MyLevel { ERROR }
 
-@Deprecated("", level = <!ARGUMENT_TYPE_MISMATCH!>MyLevel.ERROR<!>)
+@Deprecated("", level = <!ARGUMENT_TYPE_MISMATCH!>MyLevel.<!AMBIGUOUS_ANNOTATION_ARGUMENT!>ERROR<!><!>)
 fun wrongEnum() {}
 
 enum class DeprecationLevel { ERROR }
@@ -12,7 +12,7 @@ enum class DeprecationLevel { ERROR }
 @Deprecated("", level = <!ARGUMENT_TYPE_MISMATCH!>DeprecationLevel.<!AMBIGUOUS_ANNOTATION_ARGUMENT!>ERROR<!><!>)
 fun wrongDeprecationLevel() {}
 
-@Deprecated("", ReplaceWith(""), <!ARGUMENT_TYPE_MISMATCH!>p.DeprecationLevel.ERROR<!>)
+@Deprecated("", ReplaceWith(""), <!ARGUMENT_TYPE_MISMATCH!>p.DeprecationLevel.<!AMBIGUOUS_ANNOTATION_ARGUMENT!>ERROR<!><!>)
 fun wrongDeprecationLevel2() {}
 
 @Deprecated("", ReplaceWith(""), kotlin.DeprecationLevel.ERROR)

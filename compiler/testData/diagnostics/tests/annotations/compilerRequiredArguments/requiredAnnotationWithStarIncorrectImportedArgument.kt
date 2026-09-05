@@ -8,7 +8,7 @@ enum class MyTarget {
     ANNOTATION_CLASS;
 }
 
-@Target(<!ARGUMENT_TYPE_MISMATCH!>ANNOTATION_CLASS<!>)
+@Target(<!AMBIGUOUS_ANNOTATION_ARGUMENT, ARGUMENT_TYPE_MISMATCH!>ANNOTATION_CLASS<!>)
 annotation class MyAnnotation
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, enumDeclaration, enumEntry */

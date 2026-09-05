@@ -10,7 +10,7 @@ FILE: contextSensitiveResolution.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|ViaContextSensitiveResolution|() public final val b: <ERROR TYPE REF: Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]> = R|/c|.<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(<HIDDEN: /d is deprecated with DeprecationLevel.HIDDEN>#)
+        field:@R|ViaContextSensitiveResolution|() public final val b: <ERROR TYPE REF: Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]> = R|/c|.<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(<HIDDEN: /d is deprecated with DeprecationLevel.HIDDEN>#)
             public get(): <ERROR TYPE REF: Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>
 
     }
