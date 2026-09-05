@@ -23,7 +23,11 @@ internal abstract class ReflectKParameter : KParameter {
     abstract val declaresDefaultValue: Boolean
 
     override val annotations: List<Annotation> by lazy(PUBLICATION) {
-        if (callable.isAnnotationConstructor) return@lazy loadAnnotationsOnAnnotationParameter()
+        // In Kotlin, parameters of annotation constructors have no annotations in JVM bytecode, so we load them from metadata.
+        if (callable.isAnnotationConstructor) return@lazy loadAnnotationsFromMetadata()
+
+        // Workaround for KT-13077: members of built-in classes don't have caller, so we load parameter annotations from metadata.
+        if (callable.isMappedBuiltinMember) return@lazy loadAnnotationsFromMetadata()
 
         val java = javaParameter
         when (val callable = java?.callable) {
@@ -60,11 +64,12 @@ internal class InstanceParameter(override val callable: ReflectKCallable<*>, kla
     override val declaresDefaultValue: Boolean get() = false
 }
 
-private fun ReflectKParameter.loadAnnotationsOnAnnotationParameter(): List<Annotation> {
-    // In Java, there's no notion of annotation constructors.
+private val ReflectKCallable<*>.isMappedBuiltinMember: Boolean
+    get() = this is KotlinKCallable<*> && (container as? KClassImpl<*>)?.isMappedBuiltin == true
+
+private fun ReflectKParameter.loadAnnotationsFromMetadata(): List<Annotation> {
     if (this !is KotlinKParameter) return emptyList()
 
-    // In Kotlin, parameters of annotation constructors have no annotations in JVM bytecode, so we load them from metadata.
     return kmParameter.annotations.map { it.toAnnotation(callable.container.jClass.safeClassLoader) }
 }
 
