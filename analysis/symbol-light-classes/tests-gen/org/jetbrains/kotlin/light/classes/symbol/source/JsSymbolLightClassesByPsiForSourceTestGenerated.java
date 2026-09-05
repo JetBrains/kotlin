@@ -1452,6 +1452,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
     }
 
     @Test
+    @TestMetadata("bigArity.kt")
+    public void testBigArity() {
+      run("bigArity.kt");
+    }
+
+    @Test
     @TestMetadata("companionObject.kt")
     public void testCompanionObject() {
       run("companionObject.kt");
@@ -1485,6 +1491,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
     @TestMetadata("contexts.kt")
     public void testContexts() {
       run("contexts.kt");
+    }
+
+    @Test
+    @TestMetadata("exposedWithoutValueClass.kt")
+    public void testExposedWithoutValueClass() {
+      run("exposedWithoutValueClass.kt");
     }
 
     @Test
@@ -1638,9 +1650,21 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
     }
 
     @Test
+    @TestMetadata("resultNullable.kt")
+    public void testResultNullable() {
+      run("resultNullable.kt");
+    }
+
+    @Test
     @TestMetadata("script.kts")
     public void testScript() {
       run("script.kts");
+    }
+
+    @Test
+    @TestMetadata("secondaryConstructor.kt")
+    public void testSecondaryConstructor() {
+      run("secondaryConstructor.kt");
     }
 
     @Test
@@ -1693,6 +1717,18 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       }
 
       @Test
+      @TestMetadata("bigArity.kt")
+      public void testBigArity() {
+        run("bigArity.kt");
+      }
+
+      @Test
+      @TestMetadata("bigArityLambda.kt")
+      public void testBigArityLambda() {
+        run("bigArityLambda.kt");
+      }
+
+      @Test
       @TestMetadata("companionObject.kt")
       public void testCompanionObject() {
         run("companionObject.kt");
@@ -1726,6 +1762,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       @TestMetadata("dataClassWithValueClass.kt")
       public void testDataClassWithValueClass() {
         run("dataClassWithValueClass.kt");
+      }
+
+      @Test
+      @TestMetadata("defaultConstructors.kt")
+      public void testDefaultConstructors() {
+        run("defaultConstructors.kt");
       }
 
       @Test
@@ -1807,6 +1849,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       }
 
       @Test
+      @TestMetadata("introducedAtConstructor.kt")
+      public void testIntroducedAtConstructor() {
+        run("introducedAtConstructor.kt");
+      }
+
+      @Test
       @TestMetadata("lambda.kt")
       public void testLambda() {
         run("lambda.kt");
@@ -1876,6 +1924,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       @TestMetadata("result.kt")
       public void testResult() {
         run("result.kt");
+      }
+
+      @Test
+      @TestMetadata("resultNullable.kt")
+      public void testResultNullable() {
+        run("resultNullable.kt");
       }
 
       @Test
@@ -1995,9 +2049,21 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       }
 
       @Test
+      @TestMetadata("companionExtensions.kt")
+      public void testCompanionExtensions() {
+        run("companionExtensions.kt");
+      }
+
+      @Test
       @TestMetadata("globalLateinit.kt")
       public void testGlobalLateinit() {
         run("globalLateinit.kt");
+      }
+
+      @Test
+      @TestMetadata("introducedAtConstructor.kt")
+      public void testIntroducedAtConstructor() {
+        run("introducedAtConstructor.kt");
       }
 
       @Test
@@ -2079,6 +2145,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       }
 
       @Test
+      @TestMetadata("jvmOverloadsJvmName.kt")
+      public void testJvmOverloadsJvmName() {
+        run("jvmOverloadsJvmName.kt");
+      }
+
+      @Test
       @TestMetadata("jvmOverloadsRegularReceiver.kt")
       public void testJvmOverloadsRegularReceiver() {
         run("jvmOverloadsRegularReceiver.kt");
@@ -2151,6 +2223,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       }
 
       @Test
+      @TestMetadata("jvmOverloadsValueParameterDirective.kt")
+      public void testJvmOverloadsValueParameterDirective() {
+        run("jvmOverloadsValueParameterDirective.kt");
+      }
+
+      @Test
       @TestMetadata("jvmStatic.kt")
       public void testJvmStatic() {
         run("jvmStatic.kt");
@@ -2214,6 +2292,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       @TestMetadata("vararg.kt")
       public void testVararg() {
         run("vararg.kt");
+      }
+
+      @Test
+      @TestMetadata("versionOverloads.kt")
+      public void testVersionOverloads() {
+        run("versionOverloads.kt");
       }
     }
 
