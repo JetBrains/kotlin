@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.deserialization
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.FirCacheInternals
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
@@ -171,7 +172,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
             getPackageParts(fqName).flatMapTo(mutableSetOf()) { it.typeAliasNameIndex.keys }
         }
 
-    private val packagePartsCache = session.firCachesFactory.createCache(::tryComputePackagePartInfos)
+    private val packagePartsCache: FirCache<FqName, List<PackagePartsCacheData>, Nothing?> = session.firCachesFactory.createCache(::tryComputePackagePartInfos)
 
     private val typeAliasCache: FirCache<ClassId, FirTypeAliasSymbol?, FirNestedTypeAliasDeserializationContext?> =
         session.firCachesFactory.createCacheWithPostCompute(
@@ -193,8 +194,8 @@ abstract class AbstractFirDeserializedSymbolProvider(
             }
         )
 
-    private val functionCache = session.firCachesFactory.createCache(::loadFunctionsByCallableId)
-    private val propertyCache = session.firCachesFactory.createCache(::loadPropertiesByCallableId)
+    private val functionCache: FirCache<CallableId, List<FirNamedFunctionSymbol>, Nothing?> = session.firCachesFactory.createCache(::loadFunctionsByCallableId)
+    private val propertyCache: FirCache<CallableId, List<FirPropertySymbol>, Nothing?> = session.firCachesFactory.createCache(::loadPropertiesByCallableId)
 
     // ------------------------ Abstract members ------------------------
 
@@ -465,5 +466,11 @@ abstract class AbstractFirDeserializedSymbolProvider(
             return clazz
         }
         return getTypeAlias(classId, nestedTypeAliasContext = null) ?: clazz
+    }
+
+    @FirSymbolProviderInternals
+    override fun clearInsignificantCaches() {
+        @OptIn(FirCacheInternals::class)
+        packagePartsCache.clear()
     }
 }

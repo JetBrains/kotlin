@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
+import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
@@ -41,7 +42,7 @@ class MetadataSymbolProvider(
 
     private val constDeserializer = FirConstDeserializer(BuiltInSerializerProtocol)
 
-    private val metadataTopLevelClassesInPackageCache = session.firCachesFactory.createCache(::findMetadataTopLevelClassesInPackage)
+    private val metadataTopLevelClassesInPackageCache: FirCache<FqName, Set<String>?, Nothing?> = session.firCachesFactory.createCache(::findMetadataTopLevelClassesInPackage)
 
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {
         return packageAndMetadataPartProvider.findMetadataPackageParts(packageFqName.asString()).mapNotNull { partName ->
