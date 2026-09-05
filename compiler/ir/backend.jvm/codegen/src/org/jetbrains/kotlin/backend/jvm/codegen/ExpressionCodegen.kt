@@ -392,7 +392,7 @@ class ExpressionCodegen(
         // If the parameter is an extension receiver parameter or a captured extension receiver from enclosing,
         // then generate name accordingly.
         val name = if (param.origin == BOUND_RECEIVER_PARAMETER || param.origin == IrDeclarationOrigin.LAMBDA_EXTENSION_RECEIVER || isReceiver) {
-            getNameForReceiverParameter(irFunction, context.config.languageVersionSettings)
+            getNameForReceiverParameter(irFunction)
         } else {
             param.name.asString()
         }
@@ -404,11 +404,7 @@ class ExpressionCodegen(
         )
     }
 
-    private fun getNameForReceiverParameter(function: IrFunction, languageVersionSettings: LanguageVersionSettings): String {
-        if (!languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
-            return RECEIVER_PARAMETER_NAME
-        }
-
+    private fun getNameForReceiverParameter(function: IrFunction): String {
         val callableName = function.propertyIfAccessor.name
         if (callableName.isSpecial) {
             return RECEIVER_PARAMETER_NAME
@@ -807,10 +803,8 @@ class ExpressionCodegen(
 
     override fun visitFieldAccess(expression: IrFieldAccessExpression, data: BlockInfo): PromisedValue {
         val callee = expression.symbol.owner
-        if (context.config.shouldInlineConstVals) {
-            // Const fields should only have reads, and those should have been transformed by ConstLowering.
-            assert(callee.constantValue() == null) { "access of const val: ${expression.dump()}" }
-        }
+        // Const fields should only have reads, and those should have been transformed by ConstLowering.
+        assert(callee.constantValue() == null) { "access of const val: ${expression.dump()}" }
 
         val isStatic = expression.receiver == null
         expression.markLineNumber(startOffset = true)
@@ -1430,10 +1424,8 @@ class ExpressionCodegen(
 
         val gapEnd = afterJumpLabel ?: endOfFinallyCode
         tryWithFinallyInfo.gaps.add(gapStart to gapEnd)
-        if (config.languageVersionSettings.supportsFeature(LanguageFeature.ProperFinally)) {
-            for (it in nestedTryWithoutFinally) {
-                it.gaps.add(gapStart to gapEnd)
-            }
+        for (it in nestedTryWithoutFinally) {
+            it.gaps.add(gapStart to gapEnd)
         }
     }
 

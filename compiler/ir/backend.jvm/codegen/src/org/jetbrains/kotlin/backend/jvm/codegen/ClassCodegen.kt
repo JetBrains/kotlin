@@ -152,10 +152,7 @@ class ClassCodegen private constructor(
         if (shouldSkipCodeGenerationAccordingToGenerationFilter()) return
 
         // Generate PermittedSubclasses attribute for sealed class.
-        if (config.languageVersionSettings.supportsFeature(LanguageFeature.JvmPermittedSubclassesAttributeForSealed) &&
-            irClass.modality == Modality.SEALED &&
-            config.target >= JvmTarget.JVM_17
-        ) {
+        if (irClass.modality == Modality.SEALED && config.target >= JvmTarget.JVM_17) {
             generatePermittedSubclasses()
         }
 
@@ -190,7 +187,6 @@ class ClassCodegen private constructor(
 
         visitor.visitSMAP(
             smap,
-            !config.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax),
             parentFunction != null && parentFunction.isInline,
             config.shouldValidateBytecode
         )
@@ -658,7 +654,7 @@ private fun IrClass.getFlags(languageVersionSettings: LanguageVersionSettings): 
     origin.flags or
             getVisibilityAccessFlagForClass() or
             (if (isAnnotatedWithDeprecated) Opcodes.ACC_DEPRECATED else 0) or
-            getSynthAccessFlag(languageVersionSettings) or
+            getSynthAccessFlag() or
             when {
                 isAnnotationClass -> Opcodes.ACC_ANNOTATION or Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
                 isInterface -> Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
@@ -667,12 +663,10 @@ private fun IrClass.getFlags(languageVersionSettings: LanguageVersionSettings): 
                 else -> Opcodes.ACC_SUPER or modality.flags
             }.let { if (isKotlinValhallaValueClass(languageVersionSettings)) it and ACC_IDENTITY.inv() else it }
 
-private fun IrClass.getSynthAccessFlag(languageVersionSettings: LanguageVersionSettings): Int {
+private fun IrClass.getSynthAccessFlag(): Int {
     if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME))
         return Opcodes.ACC_SYNTHETIC
-    if (origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION &&
-        languageVersionSettings.supportsFeature(LanguageFeature.SamWrapperClassesAreSynthetic)
-    )
+    if (origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION)
         return Opcodes.ACC_SYNTHETIC
     return 0
 }
@@ -689,12 +683,11 @@ private fun IrField.computeFieldFlags(context: JvmBackendContext, languageVersio
             (if (hasAnnotation(VOLATILE_ANNOTATION_FQ_NAME)) Opcodes.ACC_VOLATILE else 0) or
             (if (hasAnnotation(TRANSIENT_ANNOTATION_FQ_NAME)) Opcodes.ACC_TRANSIENT else 0) or
             (if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||
-                isPrivateCompanionFieldInInterface(languageVersionSettings)
+                isPrivateCompanionFieldInInterface()
             ) Opcodes.ACC_SYNTHETIC else 0)
 
-private fun IrField.isPrivateCompanionFieldInInterface(languageVersionSettings: LanguageVersionSettings): Boolean =
+private fun IrField.isPrivateCompanionFieldInInterface(): Boolean =
     origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE &&
-            languageVersionSettings.supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField) &&
             parentAsClass.isJvmInterface &&
             DescriptorVisibilities.isPrivate(parentAsClass.companionObject()!!.visibility)
 

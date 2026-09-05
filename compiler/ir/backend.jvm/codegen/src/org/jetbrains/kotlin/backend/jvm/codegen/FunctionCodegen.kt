@@ -274,9 +274,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
     }
 
     private fun getThrownExceptions(function: IrFunction): List<String>? {
-        if (context.config.languageVersionSettings.supportsFeature(LanguageFeature.DoNotGenerateThrowsForDelegatedKotlinMembers) &&
-            function.origin == IrDeclarationOrigin.DELEGATED_MEMBER
-        ) return null
+        if (function.origin == IrDeclarationOrigin.DELEGATED_MEMBER) return null
 
         // @Throws(vararg exceptionClasses: KClass<out Throwable>)
         val exceptionClasses = function.getAnnotation(JVM_THROWS_ANNOTATION_FQ_NAME)?.argumentMapping[Name.identifier("exceptionClasses")] ?: return null
@@ -404,7 +402,7 @@ private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, co
         val name = when (parameter.kind) {
             IrParameterKind.DispatchReceiver -> continue
             IrParameterKind.Regular, IrParameterKind.Context -> parameter.name.asString()
-            IrParameterKind.ExtensionReceiver -> irFunction.extensionReceiverName(config)
+            IrParameterKind.ExtensionReceiver -> irFunction.extensionReceiverName()
         }
         val origin = parameter.origin
         // A construct emitted by a Java compiler must be marked as synthetic if it does not correspond to a construct declared

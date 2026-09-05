@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.isInlineClass
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -35,9 +34,6 @@ internal fun MethodNode.acceptWithStateMachine(
     obtainContinuationClassBuilder: () -> ClassBuilder,
 ) {
     val context = classCodegen.context
-    val languageVersionSettings = context.config.languageVersionSettings
-    assert(languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)) { "Experimental coroutines are unsupported in JVM_IR backend" }
-
     val lineNumber = if (irFunction.startOffset >= 0) {
         // if it suspend function like `suspend fun foo(...)`
         irFunction.file.fileEntry.getLineNumber(irFunction.startOffset) + 1

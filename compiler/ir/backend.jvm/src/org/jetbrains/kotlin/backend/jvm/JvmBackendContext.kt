@@ -88,7 +88,7 @@ class JvmBackendContext(
 
     override val configuration get() = state.configuration
 
-    val inlineClassReplacements = MemoizedInlineClassReplacements(config.functionsWithInlineClassReturnTypesMangled, irFactory, this)
+    val inlineClassReplacements = MemoizedInlineClassReplacements(irFactory = irFactory, context = this)
 
     val inlineMethodGenerationLock = Any()
 
