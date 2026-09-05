@@ -11,6 +11,12 @@ package kotlin
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+/**
+ * Java types implementing [java.lang.AutoCloseable] can be used as Kotlin [AutoCloseable] resources, and Kotlin
+ * implementations can be used in Java's try-with-resources statement.
+ *
+ * @see [java.lang.AutoCloseable]
+ */
 @SinceKotlin("2.0")
 public actual typealias AutoCloseable = java.lang.AutoCloseable
 
