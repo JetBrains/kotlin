@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -49,6 +50,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.checkers.OptInInheritanceDiagnosticMessageProvider
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
@@ -425,6 +427,9 @@ object FirOptInUsageBaseChecker {
         if (fqNameAsString in languageVersionSettings.getFlag(AnalysisFlags.optIn)) {
             return true
         }
+        if (annotationClassId == ExperimentalCollectionLiteralsApi && LanguageFeature.CollectionLiterals.isEnabled()) {
+            return true
+        }
         for (annotationContainer in context.annotationContainers) {
             if (annotationContainer is FirDeclaration &&
                 annotationContainer.symbol.isExperimentalityAcceptable(annotationClassId, fromSupertype)
@@ -530,4 +535,6 @@ object FirOptInUsageBaseChecker {
 
     private val LEVEL = Name.identifier("level")
     private val MESSAGE = Name.identifier("message")
+    private val ExperimentalCollectionLiteralsApi =
+        ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, topLevelName = Name.identifier("ExperimentalCollectionLiteralsApi"))
 }
