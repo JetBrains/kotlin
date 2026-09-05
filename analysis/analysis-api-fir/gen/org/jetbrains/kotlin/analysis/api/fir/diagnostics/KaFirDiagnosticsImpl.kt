@@ -1311,6 +1311,18 @@ internal class AmbiguousAnnotationArgumentImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.AmbiguousAnnotationArgument
 
+internal class CompilerRequiredAnnotationArgumentMustBeLiteralErrorImpl(
+    override val name: Name,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.CompilerRequiredAnnotationArgumentMustBeLiteralError
+
+internal class CompilerRequiredAnnotationArgumentMustBeLiteralWarningImpl(
+    override val name: Name,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.CompilerRequiredAnnotationArgumentMustBeLiteralWarning
+
 internal class VolatileOnValueImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,

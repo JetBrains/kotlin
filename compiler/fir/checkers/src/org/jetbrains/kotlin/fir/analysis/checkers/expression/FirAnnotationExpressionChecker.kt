@@ -22,9 +22,12 @@ import org.jetbrains.kotlin.fir.analysis.checkers.unwrapVarargValue
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FIR_NON_SUPPRESSIBLE_ERROR_NAMES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.FirCraParameterKind
+import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -65,6 +68,28 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         checkNotAClass(expression)
         checkErrorSuppression(annotationClassId, expression.argumentMapping.mapping)
         checkContextFunctionTypeParams(expression.source, annotationClassId)
+        checkCompilerRequiredLiteralArguments(expression, annotationClassId)
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkCompilerRequiredLiteralArguments(
+        expression: FirAnnotationCall,
+        annotationClassId: ClassId?,
+    ) {
+        if (annotationClassId == null) return
+        val parameters = context.session.annotationPlatformSupport.requiredAnnotationsWithArguments[annotationClassId] ?: return
+
+        val argumentList = expression.argumentList as? FirResolvedArgumentList ?: return
+
+        for ((name, kind) in parameters) {
+            if (kind !is FirCraParameterKind.LiteralParameter) continue
+            val argument = argumentList.mapping.entries.firstOrNull { it.value.name == name }?.key ?: continue
+
+            val unwrapped = argument.unwrapArgument()
+            if (unwrapped is FirErrorExpression || unwrapped is FirLiteralExpression) continue
+
+            reporter.reportOn(unwrapped.source, FirErrors.COMPILER_REQUIRED_ANNOTATION_ARGUMENT_MUST_BE_LITERAL, name)
+        }
     }
 
     context(reporter: DiagnosticReporter, context: CheckerContext)
