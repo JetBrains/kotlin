@@ -876,6 +876,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("targetWithContextSensitive.kt")
+    public void testTargetWithContextSensitive() {
+      run("targetWithContextSensitive.kt");
+    }
+
+    @Test
     @TestMetadata("variable_all.kt")
     public void testVariable_all() {
       run("variable_all.kt");
