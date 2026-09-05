@@ -264,6 +264,8 @@ class GradleProjectBuildScriptInjectionContext(
     val kotlinMultiplatform get() = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
     val kotlinJvm get() = project.extensions.getByName("kotlin") as KotlinJvmProjectExtension
     val cocoapods get() = kotlinMultiplatform.extensions.getByName("cocoapods") as CocoapodsExtension
+
+    @Suppress("DEPRECATION") // Tests of the deprecated legacy Swift Export DSL reach it through this accessor.
     val swiftExport get() = kotlinMultiplatform.swiftExport
     val export get() = kotlinMultiplatform.extensions.getByName("export") as ExportExtension
     val swiftImport get() = kotlinMultiplatform.extensions.getByName(SwiftPMImportExtension.EXTENSION_NAME) as SwiftPMImportExtension

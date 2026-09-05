@@ -1971,6 +1971,32 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object DeprecatedSwiftExportDsl : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
+        operator fun invoke() = build {
+            title("Deprecated 'swiftExport { }' DSL")
+                .description("The 'swiftExport { }' DSL is deprecated and will be removed in Kotlin 2.7.")
+                .solution(
+                    "Move the configuration to 'export { swift { } }'. Rename 'flattenPackage' to 'rootPackage' " +
+                            "and call 'xcodeIntegration()' to register the task that embeds Swift Export's " +
+                            "output into your Xcode project."
+                )
+                .documentationLink(URI("https://kotl.in/swift-export-dsl-migration"))
+        }
+    }
+
+    internal object ConflictingSwiftExportDsls : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(projectPath: String) = build {
+            title("Both Swift Export DSLs are configured")
+                .description(
+                    "Project '$projectPath' configures both the deprecated 'swiftExport { }' DSL and the " +
+                            "'export { swift { } }' DSL. Only one of them is applied, so part of the " +
+                            "configuration is silently ignored."
+                )
+                .solution("Remove the 'swiftExport { }' block and keep the configuration in 'export { swift { } }'.")
+                .documentationLink(URI("https://kotl.in/swift-export-dsl-migration"))
+        }
+    }
+
     object SwiftPMLocalPackageDirectoryNotFound : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(resolvedPath: String, originalPath: String) = build {
             title("Local SwiftPM Package Directory Not Found")
