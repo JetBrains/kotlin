@@ -128,13 +128,13 @@ class Grouping {
         // grouping by first char and collect only max of contains vowels
         val compareByVowelCount = compareBy { s: String -> s.count { it in "aeiou" } }
 
-        animals.groupingBy { it.first() }.reduceTo(maxVowels) { _, a, b -> maxOf(a, b, compareByVowelCount) }
+        val reduced = animals.groupingBy { it.first() }.reduceTo(maxVowels) { _, a, b -> maxOf(a, b, compareByVowelCount) }
 
-        assertPrints(maxVowels, "{r=reindeer, c=camel, g=giraffe}")
+        assertPrints(reduced, "{r=reindeer, c=camel, g=giraffe}")
 
         val moreAnimals = listOf("capybara", "rat")
-        moreAnimals.groupingBy { it.first() }.reduceTo(maxVowels) { _, a, b -> maxOf(a, b, compareByVowelCount) }
+        val moreReduced = moreAnimals.groupingBy { it.first() }.reduceTo(maxVowels) { _, a, b -> maxOf(a, b, compareByVowelCount) }
 
-        assertPrints(maxVowels, "{r=reindeer, c=capybara, g=giraffe}")
+        assertPrints(moreReduced, "{r=reindeer, c=capybara, g=giraffe}")
     }
 }

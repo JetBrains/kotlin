@@ -280,7 +280,7 @@ class Uuids {
         val timestamp = Instant.fromEpochMilliseconds(1757440583000L)
 
         // Generate 5 uuids for the same timestamp, and them explicitly sort them to ensure monotonicity
-        val uuids = sequence<Uuid> { Uuid.generateV7NonMonotonicAt(timestamp) }.take(5).sorted().toList()
+        val uuids = List(5) { Uuid.generateV7NonMonotonicAt(timestamp) }.sorted()
 
         for (idx in 1..<uuids.size) {
             assertTrue(uuids[idx - 1] < uuids[idx])
