@@ -1,0 +1,42 @@
+FILE: materializedSchemaWithBackticksOnCast.kt
+    public final fun box(): R|kotlin/String| {
+        lval cities: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_29>| = R|kotlin/run|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_29>|>(<L> = fun <anonymous>(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_29>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class DataFrameOf_29I : R|kotlin/Any| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val city: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public constructor(): R|<local>/DataFrameOf_29I|
+
+            }
+
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_29I>|.city: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_29I>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public constructor(): R|<local>/DataFramePropertiesScope0|
+
+            }
+
+            local abstract class DataFrameOf_29 : R|<local>/DataFrameOf_29I| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
+
+                public constructor(): R|<local>/DataFrameOf_29|
+
+            }
+
+            ^ R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(city).R|kotlin/to|<R|kotlin/String|, R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|>(R|org/jetbrains/kotlinx/dataframe/api/columnOf|<R|kotlin/String|>(vararg(String(London), String(Seoul))))))
+        }
+        )
+        R|<local>/cities|.R|org/jetbrains/kotlinx/dataframe/api/cast|<R|My Unusual name|>()
+        ^box String(OK)
+    }
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final class My Unusual name : R|kotlin/Any|, R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
+        public constructor(): R|My Unusual name| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
