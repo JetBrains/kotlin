@@ -189,7 +189,7 @@ struct alignas(8) FixedCellRange {
 
 Consecutive unallocated cells are represented by a `FixedCellRange`, with
 `.first` and `.last` being the inclusive end points of the range of unallocated
-cells. The `FixedBlockCell` at the the `.last` index contains a
+cells. The `FixedBlockCell` at the `.last` index contains a
 `FixedCellRange` with the next range of unallocated cells. The `FixedCellRange`
 of unallocated ranges thus form a linked list.
 

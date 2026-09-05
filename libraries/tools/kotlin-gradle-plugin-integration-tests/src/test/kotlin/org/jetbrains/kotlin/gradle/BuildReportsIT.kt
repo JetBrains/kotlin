@@ -1030,7 +1030,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Verify metrics for for 2nd phase native in-process compilation")
+    @DisplayName("Verify metrics for 2nd phase native in-process compilation")
     @NativeGradlePluginTests
     @GradleTest
     fun testMetricFor2ndPhaseNativeProjectInProcess(gradleVersion: GradleVersion) {
