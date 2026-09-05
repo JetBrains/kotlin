@@ -246,17 +246,6 @@ to force diagnostics to be reported.""".asReleaseDependent()
     }
 
     compilerArgument {
-        name = "Xir-do-not-clear-binding-context"
-        compilerName = "doNotClearBindingContext"
-        description = "When using the IR backend, do not clear BindingContext between 'psi2ir' and lowerings.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_4_30,
-        )
-    }
-
-    compilerArgument {
         name = "Xbackend-threads"
         description = """Run codegen phase in N parallel threads.
 0 means use one thread per processor core.
@@ -821,20 +810,6 @@ This works like '--enable-preview' in Java. All class files are marked as compil
         )
     }
 
-    compilerArgument {
-        name = "Xtype-enhancement-improvements-strict-mode"
-        compilerName = "typeEnhancementImprovementsInStrictMode"
-        description = """Enable strict mode for improvements to type enhancement for loaded Java types based on nullability annotations,
-including the ability to read type-use annotations from class files.
-See KT-45671 for more details.""".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(Enables(LanguageFeature.TypeEnhancementImprovementsInStrictMode))
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_0,
-        )
-    }
 
     compilerArgument {
         name = "Xvalidate-bytecode"
@@ -846,18 +821,6 @@ See KT-45671 for more details.""".asReleaseDependent()
         )
     }
 
-    compilerArgument {
-        name = "Xenhance-type-parameter-types-to-def-not-null"
-        description =
-            "Enhance not-null-annotated type parameter types to definitely-non-nullable types ('@NotNull T' => 'T & Any').".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(Enables(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated))
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_6_0,
-        )
-    }
 
     compilerArgument {
         name = "Xdebug"
@@ -986,6 +949,18 @@ The default value is 'inline'.""",
         name = "Xjava-direct"
         description = "Experimental direct java support.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xdirect-java-actualization"
+        description = "Enable experimental direct Java actualization support.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.DirectJavaActualization))
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_5_0,

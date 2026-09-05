@@ -241,9 +241,12 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Enhance not-null-annotated type parameter types to definitely-non-nullable types ('@NotNull T' => 'T & Any').
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL", KotlinReleaseVersion(1, 6, 0))
 
@@ -302,9 +305,12 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * When using the IR backend, do not clear BindingContext between 'psi2ir' and lowerings.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_IR_DO_NOT_CLEAR_BINDING_CONTEXT: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_IR_DO_NOT_CLEAR_BINDING_CONTEXT", KotlinReleaseVersion(1, 4, 30))
 
@@ -671,9 +677,12 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * See KT-45671 for more details.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE", KotlinReleaseVersion(1, 5, 0))
 

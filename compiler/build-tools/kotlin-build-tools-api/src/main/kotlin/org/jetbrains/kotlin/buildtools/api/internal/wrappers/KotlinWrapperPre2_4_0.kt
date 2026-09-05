@@ -261,7 +261,7 @@ internal class KotlinWrapperPre2_4_0(
                 CommonCompilerArguments.X_PHASES_TO_VALIDATE_AFTER,
                 CommonCompilerArguments.X_DISABLE_PHASES,
                 CommonCompilerArguments.X_VERBOSE_PHASES,
-                @OptIn(DeprecatedCompilerArgument::class)
+                @OptIn(RemovedCompilerArgument::class)
                 CommonCompilerArguments.X_SUPPRESS_WARNING,
                 CommonCompilerArguments.OPT_IN,
                     -> {
@@ -340,7 +340,7 @@ internal class KotlinWrapperPre2_4_0(
                 CommonCompilerArguments.X_PHASES_TO_VALIDATE_AFTER,
                 CommonCompilerArguments.X_DISABLE_PHASES,
                 CommonCompilerArguments.X_VERBOSE_PHASES,
-                @OptIn(DeprecatedCompilerArgument::class)
+                @OptIn(RemovedCompilerArgument::class)
                 CommonCompilerArguments.X_SUPPRESS_WARNING,
                 CommonCompilerArguments.OPT_IN,
                     -> {

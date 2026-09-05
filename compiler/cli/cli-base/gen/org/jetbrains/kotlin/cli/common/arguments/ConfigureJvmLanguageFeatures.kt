@@ -11,12 +11,8 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureJvmLang
         put(LanguageFeature.AnnotationsInMetadata, LanguageFeature.State.ENABLED)
     }
 
-    if (arguments.enhanceTypeParameterTypesToDefNotNull) {
-        put(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated, LanguageFeature.State.ENABLED)
-    }
-
-    if (arguments.typeEnhancementImprovementsInStrictMode) {
-        put(LanguageFeature.TypeEnhancementImprovementsInStrictMode, LanguageFeature.State.ENABLED)
+    if (arguments.directJavaActualization) {
+        put(LanguageFeature.DirectJavaActualization, LanguageFeature.State.ENABLED)
     }
 
     if (arguments.useInlineScopesNumbers) {

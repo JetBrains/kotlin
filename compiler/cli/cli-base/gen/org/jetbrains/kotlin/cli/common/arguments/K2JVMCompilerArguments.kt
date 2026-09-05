@@ -133,6 +133,17 @@ If API Level >= 2.2 -- no-op.""",
         }
 
     @Argument(
+        value = "-Xdirect-java-actualization",
+        description = "Enable experimental direct Java actualization support.",
+    )
+    @Enables(LanguageFeature.DirectJavaActualization)
+    var directJavaActualization: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xdisable-standard-script",
         description = "Disable standard Kotlin scripting support.",
     )
@@ -147,17 +158,6 @@ If API Level >= 2.2 -- no-op.""",
         description = "Emit JVM type annotations in bytecode.",
     )
     var emitJvmTypeAnnotations: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xenhance-type-parameter-types-to-def-not-null",
-        description = "Enhance not-null-annotated type parameter types to definitely-non-nullable types ('@NotNull T' => 'T & Any').",
-    )
-    @Enables(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated)
-    var enhanceTypeParameterTypesToDefNotNull: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -211,16 +211,6 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         description = "Allow using 'invokedynamic' for lambda expressions with annotations",
     )
     var indyAllowAnnotatedLambdas: Boolean? = null
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xir-do-not-clear-binding-context",
-        description = "When using the IR backend, do not clear BindingContext between 'psi2ir' and lowerings.",
-    )
-    var doNotClearBindingContext: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -565,19 +555,6 @@ The default value is 'enable'.""",
         description = "Suppress the \"cannot access built-in declaration\" error (useful with '-no-stdlib').",
     )
     var suppressMissingBuiltinsError: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xtype-enhancement-improvements-strict-mode",
-        description = """Enable strict mode for improvements to type enhancement for loaded Java types based on nullability annotations,
-including the ability to read type-use annotations from class files.
-See KT-45671 for more details.""",
-    )
-    @Enables(LanguageFeature.TypeEnhancementImprovementsInStrictMode)
-    var typeEnhancementImprovementsInStrictMode: Boolean = false
         set(value) {
             checkFrozen()
             field = value

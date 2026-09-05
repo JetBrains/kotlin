@@ -4,6 +4,8 @@
  */
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.kotlin.config.LanguageFeature
+
 // This file was generated automatically. See generator in :compiler:cli:cli-arguments-generator
 // DO NOT MODIFY IT MANUALLY.
 
@@ -24,6 +26,98 @@ class RemovedCompilerArguments {
         }
 
     @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xdirect-java-actualization",
+        description = "Enable experimental direct Java actualization support.",
+        removedVersion = "2.5.0",
+    )
+    @Enables(LanguageFeature.DirectJavaActualization)
+    var directJavaActualization: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xignore-const-optimization-errors",
+        description = "Ignore all compilation exceptions while optimizing some constant expressions.",
+        removedVersion = "2.5.0",
+    )
+    var ignoreConstOptimizationErrors: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xinline-classes",
+        description = "Enable experimental inline classes.",
+        removedVersion = "2.5.0",
+    )
+    @Enables(LanguageFeature.InlineClasses)
+    var inlineClasses: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xintellij-plugin-root",
+        valueDescription = "<path>",
+        description = "Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.",
+        deprecatedVersion = "2.4.20",
+        removedVersion = "2.5.0",
+    )
+    var intellijPluginRoot: String? = null
+        set(value) {
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xnew-inference",
+        description = "Enable the new experimental generic type inference algorithm.",
+        removedVersion = "2.5.0",
+    )
+    @Enables(LanguageFeature.NewInference)
+    @Enables(LanguageFeature.SamConversionPerArgument)
+    @Enables(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType)
+    @Enables(LanguageFeature.DisableCompatibilityModeForNewInference)
+    var newInference: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xno-check-actual",
+        description = "Do not check for the presence of the 'actual' modifier in multiplatform projects.",
+        removedVersion = "2.5.0",
+    )
+    var noCheckActual: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
         message = "This is temporary solution (see KT-63712) intended to be used only for stdlib build.",
         level = DeprecationLevel.ERROR,
     )
@@ -34,6 +128,52 @@ class RemovedCompilerArguments {
         removedVersion = "2.5.0",
     )
     var suppressApiVersionGreaterThanLanguageVersionError: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings).",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xsuppress-warning",
+        valueDescription = "<WARNING_NAME>",
+        description = "Suppress specified warning module-wide.",
+        deprecatedVersion = "2.2.0",
+        removedVersion = "2.5.0",
+    )
+    var suppressedDiagnostics: Array<String> = emptyArray()
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xunrestricted-builder-inference",
+        description = "Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.",
+        removedVersion = "2.5.0",
+    )
+    @Enables(LanguageFeature.UnrestrictedBuilderInference)
+    var unrestrictedBuilderInference: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xuse-fir-experimental-checkers",
+        description = "Enable experimental frontend IR checkers that are not yet ready for production.",
+        deprecatedVersion = "2.2.20",
+        removedVersion = "2.5.0",
+    )
+    var useFirExperimentalCheckers: Boolean = false
         set(value) {
             field = value
         }
@@ -105,6 +245,35 @@ class RemovedCompilerArguments {
         removedVersion = "2.4.0",
     )
     var compileJava: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xenhance-type-parameter-types-to-def-not-null",
+        description = "Enhance not-null-annotated type parameter types to definitely-non-nullable types ('@NotNull T' => 'T & Any').",
+        removedVersion = "2.5.0",
+    )
+    @Enables(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated)
+    var enhanceTypeParameterTypesToDefNotNull: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xir-do-not-clear-binding-context",
+        description = "When using the IR backend, do not clear BindingContext between 'psi2ir' and lowerings.",
+        removedVersion = "2.5.0",
+    )
+    var doNotClearBindingContext: Boolean = false
         set(value) {
             field = value
         }
@@ -198,6 +367,23 @@ It has no effect when -language-version is 2.0 or higher.""",
         removedVersion = "2.5.0",
     )
     var suppressDeprecatedJvmTargetWarning: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xtype-enhancement-improvements-strict-mode",
+        description = """Enable strict mode for improvements to type enhancement for loaded Java types based on nullability annotations,
+including the ability to read type-use annotations from class files.
+See KT-45671 for more details.""",
+        removedVersion = "2.5.0",
+    )
+    @Enables(LanguageFeature.TypeEnhancementImprovementsInStrictMode)
+    var typeEnhancementImprovementsInStrictMode: Boolean = false
         set(value) {
             field = value
         }

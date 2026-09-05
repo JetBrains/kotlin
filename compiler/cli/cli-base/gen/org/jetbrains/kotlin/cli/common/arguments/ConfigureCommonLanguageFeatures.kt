@@ -78,10 +78,6 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.DataFlowBasedExhaustiveness, LanguageFeature.State.ENABLED)
     }
 
-    if (arguments.directJavaActualization) {
-        put(LanguageFeature.DirectJavaActualization, LanguageFeature.State.ENABLED)
-    }
-
     if (arguments.eagerLambdaAnalysis) {
         put(LanguageFeature.EagerLambdaAnalysis, LanguageFeature.State.ENABLED)
         put(LanguageFeature.InferThrowableTypeParameterToUpperBound, LanguageFeature.State.ENABLED)
@@ -98,10 +94,6 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
 
     if (arguments.explicitContextArguments) {
         put(LanguageFeature.ExplicitContextArguments, LanguageFeature.State.ENABLED)
-    }
-
-    if (arguments.inlineClasses) {
-        put(LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED)
     }
 
     if (arguments.intrinsicConstEvaluation) {
@@ -140,19 +132,8 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.NestedTypeAliases, LanguageFeature.State.ENABLED)
     }
 
-    if (arguments.newInference) {
-        put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED)
-        put(LanguageFeature.SamConversionPerArgument, LanguageFeature.State.ENABLED)
-        put(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType, LanguageFeature.State.ENABLED)
-        put(LanguageFeature.DisableCompatibilityModeForNewInference, LanguageFeature.State.ENABLED)
-    }
-
     if (arguments.nonLocalBreakContinue) {
         put(LanguageFeature.BreakContinueInInlineLambdas, LanguageFeature.State.ENABLED)
-    }
-
-    if (arguments.unrestrictedBuilderInference) {
-        put(LanguageFeature.UnrestrictedBuilderInference, LanguageFeature.State.ENABLED)
     }
 
     if (arguments.whenGuards) {

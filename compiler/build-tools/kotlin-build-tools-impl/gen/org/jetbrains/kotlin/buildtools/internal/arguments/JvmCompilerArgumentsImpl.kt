@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_COMPILE_JAVA
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_DEBUG
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_DEFAULT_SCRIPT_EXTENSION
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_DIRECT_JAVA_ACTUALIZATION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_DISABLE_STANDARD_SCRIPT
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_EMIT_JVM_TYPE_ANNOTATIONS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_ENHANCED_COROUTINES_DEBUGGING
@@ -212,15 +213,16 @@ internal class JvmCompilerArgumentsImpl(
     try { if (X_COMPILE_JAVA in this) { arguments.setUsingReflection("compileJava", get(X_COMPILE_JAVA))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_COMPILE_JAVA. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.0""").initCause(e) }
     if (X_DEBUG in this) { arguments.enableDebugMode = get(X_DEBUG)}
     if (X_DEFAULT_SCRIPT_EXTENSION in this) { arguments.defaultScriptExtension = get(X_DEFAULT_SCRIPT_EXTENSION)}
+    if (X_DIRECT_JAVA_ACTUALIZATION in this) { arguments.directJavaActualization = get(X_DIRECT_JAVA_ACTUALIZATION)}
     if (X_DISABLE_STANDARD_SCRIPT in this) { arguments.disableStandardScript = get(X_DISABLE_STANDARD_SCRIPT)}
     if (X_EMIT_JVM_TYPE_ANNOTATIONS in this) { arguments.emitJvmTypeAnnotations = get(X_EMIT_JVM_TYPE_ANNOTATIONS)}
-    if (X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL in this) { arguments.enhanceTypeParameterTypesToDefNotNull = get(X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL)}
+    try { if (X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL in this) { arguments.setUsingReflection("enhanceTypeParameterTypesToDefNotNull", get(X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_ENHANCED_COROUTINES_DEBUGGING in this) { arguments.enhancedCoroutinesDebugging = get(X_ENHANCED_COROUTINES_DEBUGGING)}
     if (X_FRIEND_PATHS in this) { arguments.friendPaths = get(X_FRIEND_PATHS).map { it.absolutePathStringOrThrow() }.also { list -> list.checkNoneContains(",") }.toTypedArray()}
     if (X_GENERATE_STRICT_METADATA_VERSION in this) { arguments.strictMetadataVersionSemantics = get(X_GENERATE_STRICT_METADATA_VERSION)}
     if (X_IGNORED_ANNOTATIONS_FOR_BRIDGES in this) { arguments.ignoredAnnotationsForBridges = get(X_IGNORED_ANNOTATIONS_FOR_BRIDGES).toTypedArray()}
     if (X_INDY_ALLOW_ANNOTATED_LAMBDAS in this) { arguments.indyAllowAnnotatedLambdas = get(X_INDY_ALLOW_ANNOTATED_LAMBDAS)}
-    if (X_IR_DO_NOT_CLEAR_BINDING_CONTEXT in this) { arguments.doNotClearBindingContext = get(X_IR_DO_NOT_CLEAR_BINDING_CONTEXT)}
+    try { if (X_IR_DO_NOT_CLEAR_BINDING_CONTEXT in this) { arguments.setUsingReflection("doNotClearBindingContext", get(X_IR_DO_NOT_CLEAR_BINDING_CONTEXT))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_IR_DO_NOT_CLEAR_BINDING_CONTEXT. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     try { if (X_IR_INLINER in this) { arguments.setUsingReflection("enableIrInliner", get(X_IR_INLINER))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_IR_INLINER. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
     if (X_JAVA_DIRECT in this) { arguments.javaDirect = get(X_JAVA_DIRECT)}
     if (X_JAVA_PACKAGE_PREFIX in this) { arguments.javaPackagePrefix = get(X_JAVA_PACKAGE_PREFIX)}
@@ -253,7 +255,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS in this) { arguments.supportCompatqualCheckerFrameworkAnnotations = get(X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS)?.stringValue}
     try { if (X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING in this) { arguments.setUsingReflection("suppressDeprecatedJvmTargetWarning", get(X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_SUPPRESS_MISSING_BUILTINS_ERROR in this) { arguments.suppressMissingBuiltinsError = get(X_SUPPRESS_MISSING_BUILTINS_ERROR)}
-    if (X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE in this) { arguments.typeEnhancementImprovementsInStrictMode = get(X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE)}
+    try { if (X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE in this) { arguments.setUsingReflection("typeEnhancementImprovementsInStrictMode", get(X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_USE_14_INLINE_CLASSES_MANGLING_SCHEME in this) { arguments.useOldInlineClassesManglingScheme = get(X_USE_14_INLINE_CLASSES_MANGLING_SCHEME)}
     if (X_USE_FAST_JAR_FILE_SYSTEM in this) { arguments.useFastJarFileSystem = get(X_USE_FAST_JAR_FILE_SYSTEM)}
     if (X_USE_INLINE_SCOPES_NUMBERS in this) { arguments.useInlineScopesNumbers = get(X_USE_INLINE_SCOPES_NUMBERS)}
@@ -302,15 +304,16 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_COMPILE_JAVA] = arguments.getUsingReflection<Boolean>("compileJava") } catch (_: NoSuchMethodError) {  }
     try { this[X_DEBUG] = arguments.enableDebugMode } catch (_: NoSuchMethodError) {  }
     try { this[X_DEFAULT_SCRIPT_EXTENSION] = arguments.defaultScriptExtension } catch (_: NoSuchMethodError) {  }
+    try { this[X_DIRECT_JAVA_ACTUALIZATION] = arguments.directJavaActualization } catch (_: NoSuchMethodError) {  }
     try { this[X_DISABLE_STANDARD_SCRIPT] = arguments.disableStandardScript } catch (_: NoSuchMethodError) {  }
     try { this[X_EMIT_JVM_TYPE_ANNOTATIONS] = arguments.emitJvmTypeAnnotations } catch (_: NoSuchMethodError) {  }
-    try { this[X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL] = arguments.enhanceTypeParameterTypesToDefNotNull } catch (_: NoSuchMethodError) {  }
+    try { this[X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL] = arguments.getUsingReflection<Boolean>("enhanceTypeParameterTypesToDefNotNull") } catch (_: NoSuchMethodError) {  }
     try { this[X_ENHANCED_COROUTINES_DEBUGGING] = arguments.enhancedCoroutinesDebugging } catch (_: NoSuchMethodError) {  }
     try { this[X_FRIEND_PATHS] = arguments.friendPaths.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_GENERATE_STRICT_METADATA_VERSION] = arguments.strictMetadataVersionSemantics } catch (_: NoSuchMethodError) {  }
     try { this[X_IGNORED_ANNOTATIONS_FOR_BRIDGES] = arguments.ignoredAnnotationsForBridges.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
     try { this[X_INDY_ALLOW_ANNOTATED_LAMBDAS] = arguments.indyAllowAnnotatedLambdas } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_DO_NOT_CLEAR_BINDING_CONTEXT] = arguments.doNotClearBindingContext } catch (_: NoSuchMethodError) {  }
+    try { this[X_IR_DO_NOT_CLEAR_BINDING_CONTEXT] = arguments.getUsingReflection<Boolean>("doNotClearBindingContext") } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_INLINER] = arguments.getUsingReflection<Boolean>("enableIrInliner") } catch (_: NoSuchMethodError) {  }
     try { this[X_JAVA_DIRECT] = arguments.javaDirect } catch (_: NoSuchMethodError) {  }
     try { this[X_JAVA_PACKAGE_PREFIX] = arguments.javaPackagePrefix } catch (_: NoSuchMethodError) {  }
@@ -343,7 +346,7 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS] = arguments.supportCompatqualCheckerFrameworkAnnotations?.let { CompatqualAnnotationsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::supportCompatqualCheckerFrameworkAnnotations, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xsupport-compatqual-checker-framework-annotations value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING] = arguments.getUsingReflection<Boolean>("suppressDeprecatedJvmTargetWarning") } catch (_: NoSuchMethodError) {  }
     try { this[X_SUPPRESS_MISSING_BUILTINS_ERROR] = arguments.suppressMissingBuiltinsError } catch (_: NoSuchMethodError) {  }
-    try { this[X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE] = arguments.typeEnhancementImprovementsInStrictMode } catch (_: NoSuchMethodError) {  }
+    try { this[X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE] = arguments.getUsingReflection<Boolean>("typeEnhancementImprovementsInStrictMode") } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_14_INLINE_CLASSES_MANGLING_SCHEME] = arguments.useOldInlineClassesManglingScheme } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_FAST_JAR_FILE_SYSTEM] = arguments.useFastJarFileSystem } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_INLINE_SCOPES_NUMBERS] = arguments.useInlineScopesNumbers } catch (_: NoSuchMethodError) {  }
@@ -389,15 +392,16 @@ internal class JvmCompilerArgumentsImpl(
     try { if (X_COMPILE_JAVA in this) { arguments.setUsingReflection("compileJava", get(X_COMPILE_JAVA))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_COMPILE_JAVA. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.0""").initCause(e) }
     if (X_DEBUG in this) { arguments.enableDebugMode = get(X_DEBUG)}
     if (X_DEFAULT_SCRIPT_EXTENSION in this) { arguments.defaultScriptExtension = get(X_DEFAULT_SCRIPT_EXTENSION)}
+    if (X_DIRECT_JAVA_ACTUALIZATION in this) { arguments.directJavaActualization = get(X_DIRECT_JAVA_ACTUALIZATION)}
     if (X_DISABLE_STANDARD_SCRIPT in this) { arguments.disableStandardScript = get(X_DISABLE_STANDARD_SCRIPT)}
     if (X_EMIT_JVM_TYPE_ANNOTATIONS in this) { arguments.emitJvmTypeAnnotations = get(X_EMIT_JVM_TYPE_ANNOTATIONS)}
-    if (X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL in this) { arguments.enhanceTypeParameterTypesToDefNotNull = get(X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL)}
+    try { if (X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL in this) { arguments.setUsingReflection("enhanceTypeParameterTypesToDefNotNull", get(X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_ENHANCED_COROUTINES_DEBUGGING in this) { arguments.enhancedCoroutinesDebugging = get(X_ENHANCED_COROUTINES_DEBUGGING)}
     if (X_FRIEND_PATHS in this) { arguments.friendPaths = get(X_FRIEND_PATHS).map { it.absolutePathStringOrThrow() }.also { list -> list.checkNoneContains(",") }.toTypedArray()}
     if (X_GENERATE_STRICT_METADATA_VERSION in this) { arguments.strictMetadataVersionSemantics = get(X_GENERATE_STRICT_METADATA_VERSION)}
     if (X_IGNORED_ANNOTATIONS_FOR_BRIDGES in this) { arguments.ignoredAnnotationsForBridges = get(X_IGNORED_ANNOTATIONS_FOR_BRIDGES).toTypedArray()}
     if (X_INDY_ALLOW_ANNOTATED_LAMBDAS in this) { arguments.indyAllowAnnotatedLambdas = get(X_INDY_ALLOW_ANNOTATED_LAMBDAS)}
-    if (X_IR_DO_NOT_CLEAR_BINDING_CONTEXT in this) { arguments.doNotClearBindingContext = get(X_IR_DO_NOT_CLEAR_BINDING_CONTEXT)}
+    try { if (X_IR_DO_NOT_CLEAR_BINDING_CONTEXT in this) { arguments.setUsingReflection("doNotClearBindingContext", get(X_IR_DO_NOT_CLEAR_BINDING_CONTEXT))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_IR_DO_NOT_CLEAR_BINDING_CONTEXT. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     try { if (X_IR_INLINER in this) { arguments.setUsingReflection("enableIrInliner", get(X_IR_INLINER))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_IR_INLINER. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
     if (X_JAVA_DIRECT in this) { arguments.javaDirect = get(X_JAVA_DIRECT)}
     if (X_JAVA_PACKAGE_PREFIX in this) { arguments.javaPackagePrefix = get(X_JAVA_PACKAGE_PREFIX)}
@@ -430,7 +434,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS in this) { arguments.supportCompatqualCheckerFrameworkAnnotations = get(X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS)?.stringValue}
     try { if (X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING in this) { arguments.setUsingReflection("suppressDeprecatedJvmTargetWarning", get(X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_SUPPRESS_MISSING_BUILTINS_ERROR in this) { arguments.suppressMissingBuiltinsError = get(X_SUPPRESS_MISSING_BUILTINS_ERROR)}
-    if (X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE in this) { arguments.typeEnhancementImprovementsInStrictMode = get(X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE)}
+    try { if (X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE in this) { arguments.setUsingReflection("typeEnhancementImprovementsInStrictMode", get(X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_USE_14_INLINE_CLASSES_MANGLING_SCHEME in this) { arguments.useOldInlineClassesManglingScheme = get(X_USE_14_INLINE_CLASSES_MANGLING_SCHEME)}
     if (X_USE_FAST_JAR_FILE_SYSTEM in this) { arguments.useFastJarFileSystem = get(X_USE_FAST_JAR_FILE_SYSTEM)}
     if (X_USE_INLINE_SCOPES_NUMBERS in this) { arguments.useInlineScopesNumbers = get(X_USE_INLINE_SCOPES_NUMBERS)}
@@ -536,6 +540,9 @@ internal class JvmCompilerArgumentsImpl(
 
     public val X_DEFAULT_SCRIPT_EXTENSION: JvmCompilerArgument<String?> =
         JvmCompilerArgument("X_DEFAULT_SCRIPT_EXTENSION")
+
+    public val X_DIRECT_JAVA_ACTUALIZATION: JvmCompilerArgument<Boolean> =
+        JvmCompilerArgument("X_DIRECT_JAVA_ACTUALIZATION")
 
     public val X_DISABLE_STANDARD_SCRIPT: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_DISABLE_STANDARD_SCRIPT")

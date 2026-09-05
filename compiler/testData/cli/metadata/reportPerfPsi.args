@@ -1,6 +1,0 @@
-$TESTDATA_DIR$/../reportPerf.kt
--d
-$TEMP_DIR$
--Xuse-fir-lt=false
--Xreport-perf=true
--Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native

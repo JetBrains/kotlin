@@ -34,7 +34,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.dataFlowBasedExhaustiveness = from.dataFlowBasedExhaustiveness
     to.debugLevelCompilerChecks = from.debugLevelCompilerChecks
     to.detailedPerf = from.detailedPerf
-    to.directJavaActualization = from.directJavaActualization
     to.disableDefaultScriptingPlugin = from.disableDefaultScriptingPlugin
     to.disableIrCheckers = from.disableIrCheckers.copyOf()
     to.disablePhases = from.disablePhases.copyOf()
@@ -61,11 +60,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.fragments = from.fragments.copyOf()
     to.headerMode = from.headerMode
     to.headerModeType = from.headerModeType
-    to.ignoreConstOptimizationErrors = from.ignoreConstOptimizationErrors
     to.incrementalCompilation = from.incrementalCompilation
-    to.inlineClasses = from.inlineClasses
-    @Suppress("DEPRECATION")
-    to.intellijPluginRoot = from.intellijPluginRoot
     to.intrinsicConstEvaluation = from.intrinsicConstEvaluation
     to.kotlinHome = from.kotlinHome
     to.languageVersion = from.languageVersion
@@ -79,8 +74,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.multiPlatform = from.multiPlatform
     to.nameBasedDestructuring = from.nameBasedDestructuring
     to.nestedTypeAliases = from.nestedTypeAliases
-    to.newInference = from.newInference
-    to.noCheckActual = from.noCheckActual
     to.noInline = from.noInline
     to.nonLocalBreakContinue = from.nonLocalBreakContinue
     to.optIn = from.optIn.copyOf()
@@ -110,11 +103,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.skipPrereleaseCheck = from.skipPrereleaseCheck
     to.stdlibCompilation = from.stdlibCompilation
     to.suppressVersionWarnings = from.suppressVersionWarnings
-    @Suppress("DEPRECATION")
-    to.suppressedDiagnostics = from.suppressedDiagnostics.copyOf()
-    to.unrestrictedBuilderInference = from.unrestrictedBuilderInference
-    @Suppress("DEPRECATION")
-    to.useFirExperimentalCheckers = from.useFirExperimentalCheckers
     @Suppress("DEPRECATION")
     to.useFirIC = from.useFirIC
     @Suppress("DEPRECATION")

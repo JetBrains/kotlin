@@ -266,60 +266,6 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
     }
 
     compilerArgument {
-        name = "Xno-check-actual"
-        description = "Do not check for the presence of the 'actual' modifier in multiplatform projects.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_1_60,
-        )
-    }
-
-    compilerArgument {
-        name = "Xintellij-plugin-root"
-        description =
-            "Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.".asReleaseDependent()
-        valueDescription = "<path>".asReleaseDependent()
-        valueType = StringType.defaultNull
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_1_3,
-            deprecatedVersion = KotlinReleaseVersion.v2_4_20,
-        )
-    }
-
-    compilerArgument {
-        name = "Xnew-inference"
-        description = "Enable the new experimental generic type inference algorithm.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(
-            Enables(LanguageFeature.NewInference),
-            Enables(LanguageFeature.SamConversionPerArgument),
-            Enables(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType),
-            Enables(LanguageFeature.DisableCompatibilityModeForNewInference),
-        )
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_2_20,
-        )
-    }
-
-    compilerArgument {
-        name = "Xinline-classes"
-        description = "Enable experimental inline classes.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(
-            Enables(LanguageFeature.InlineClasses)
-        )
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_3_50,
-        )
-    }
-
-    compilerArgument {
         name = "Xreport-perf"
         description = "Report detailed performance statistics.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
@@ -619,18 +565,6 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
     }
 
     compilerArgument {
-        name = "Xuse-fir-experimental-checkers"
-        description = "Enable experimental frontend IR checkers that are not yet ready for production.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_1_0,
-            deprecatedVersion = KotlinReleaseVersion.v2_2_20,
-        )
-    }
-
-
-    compilerArgument {
         name = "Xuse-fir-ic"
         compilerName = "useFirIC"
         val introducedVersion = KotlinReleaseVersion.v1_7_0
@@ -662,7 +596,6 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         )
         restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
-
 
     compilerArgument {
         name = "Xmetadata-klib"
@@ -795,21 +728,6 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         )
     }
 
-
-    compilerArgument {
-        name = "Xunrestricted-builder-inference"
-        description =
-            "Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(Enables(LanguageFeature.UnrestrictedBuilderInference))
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_30,
-        )
-    }
-
-
     compilerArgument {
         name = "Xcontext-parameters"
         description = "Enable experimental context parameters.".asReleaseDependent()
@@ -930,20 +848,6 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
             introducedVersion = KotlinReleaseVersion.v2_4_0
         )
     }
-
-
-    compilerArgument {
-        name = "Xdirect-java-actualization"
-        description = "Enable experimental direct Java actualization support.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(Enables(LanguageFeature.DirectJavaActualization))
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_1_0,
-        )
-    }
-
 
     compilerArgument {
         name = "Xmulti-dollar-interpolation"
@@ -1101,19 +1005,6 @@ The argument should be used only if the new compilation scheme is enabled with -
         )
     }
 
-
-    compilerArgument {
-        name = "Xignore-const-optimization-errors"
-        description = "Ignore all compilation exceptions while optimizing some constant expressions.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_9_0,
-        )
-        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
-    }
-
-
     compilerArgument {
         name = "Xdont-warn-on-error-suppression"
         description = "Don't report warnings when errors are suppressed. This only affects K2.".asReleaseDependent()
@@ -1165,29 +1056,6 @@ The argument should be used only if the new compilation scheme is enabled with -
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_0,
-        )
-    }
-
-    @OptIn(ExperimentalArgumentApi::class)
-    compilerArgument {
-        val introducedVersion = KotlinReleaseVersion.v2_1_0
-        val deprecatedVersion = KotlinReleaseVersion.v2_2_0 // According to https://github.com/JetBrains/kotlin/commit/533d2f5ba6e6d2759d92d59b6004ee433214e262
-        val commonDescriptionPart = "Suppress specified warning module-wide."
-        name = "Xsuppress-warning"
-        compilerName = "suppressedDiagnostics"
-        description = ReleaseDependent(
-            commonDescriptionPart,
-            deprecatedVersion..KotlinReleaseVersion.v2_4_20 to "$commonDescriptionPart This option is deprecated in favor of \"-Xwarning-level\" flag",
-            introducedVersion..deprecatedVersion.previous!! to commonDescriptionPart,
-        )
-        valueDescription = "<WARNING_NAME>".asReleaseDependent()
-        valueType = StringArrayType.defaultNull
-        argumentType = StringListType.defaultEmpty
-        deprecatedMessage = "Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings)."
-
-        lifecycle(
-            introducedVersion = introducedVersion,
-            deprecatedVersion = deprecatedVersion,
         )
     }
 

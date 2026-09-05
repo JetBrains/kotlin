@@ -172,10 +172,6 @@ public interface KaCompilationOptionsBuilder : org.jetbrains.kotlin.analysis.api
     @KaIdeApi
     override fun disableParameterAssertions(value: Boolean)
 
-    /** Ignores errors from constant expression optimization. */
-    @KaIdeApi
-    override fun ignoreConstOptimizationErrors(value: Boolean)
-
     /**
      * Sets the execution stack for debugger code fragment compilation.
      *

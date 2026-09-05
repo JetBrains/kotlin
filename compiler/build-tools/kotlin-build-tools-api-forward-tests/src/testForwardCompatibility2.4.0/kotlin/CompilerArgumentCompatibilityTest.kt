@@ -69,17 +69,17 @@ internal class CompilerArgumentCompatibilityTest : BaseCompilationTest() {
     @DisplayName("Deprecated argument compiles successfully and emits warning")
     @Test
     fun testDeprecatedArgument() {
-        val deprecatedArgument = CommonCompilerArguments.X_USE_FIR_EXPERIMENTAL_CHECKERS
+        val deprecatedArgument = JvmCompilerArguments.X_JVM_DEFAULT
         val logger = CapturingLogger()
         val jvmOperation = createSimpleJvmOperation()
-        jvmOperation.compilerArguments[deprecatedArgument] = true
+        jvmOperation.compilerArguments[deprecatedArgument] = "all"
 
         val result = toolchain.createBuildSession().use {
             it.executeOperation(jvmOperation.build(), toolchain.createInProcessExecutionPolicy(), logger)
         }
 
         assertEquals(CompilationResult.COMPILATION_SUCCESS, result)
-        assertTrue(logger.warnings.any { it == "The argument '-Xuse-fir-experimental-checkers' is deprecated since Kotlin 2.2.20. It will be removed in one of the future releases." }) {
+        assertTrue(logger.warnings.any { it == "The argument '-Xjvm-default' is deprecated since Kotlin 2.2.0. It will be removed in one of the future releases. Use `-jvm-default` instead." }) {
             "Expected deprecation warning, but warnings were: ${logger.warnings}"
         }
     }

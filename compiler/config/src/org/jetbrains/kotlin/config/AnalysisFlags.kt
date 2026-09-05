@@ -32,9 +32,6 @@ object AnalysisFlags {
     val skipPrereleaseCheck by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val multiPlatformDoNotCheckActual by AnalysisFlag.Delegates.Boolean
-
-    @JvmStatic
     val skipExpectedActualDeclarationChecker by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic

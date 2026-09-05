@@ -46,7 +46,6 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
     val DUMP_MODEL by key<String>()
     val INCREMENTAL_COMPILATION by key<Boolean>()
     val ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS by key<Boolean>()
-    val IGNORE_CONST_OPTIMIZATION_ERRORS by key<Boolean>()
 
     val MESSAGE_COLLECTOR_KEY by key<MessageCollector>(
         defaultValue = "MessageCollector.NONE",

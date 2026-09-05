@@ -6,12 +6,7 @@
 package org.jetbrains.kotlin.arguments.description.removed
 
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
-import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
-import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
-import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
-import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
-import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
-import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.previous
@@ -19,6 +14,8 @@ import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.SearchPathType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
+import org.jetbrains.kotlin.cli.common.arguments.Enables
+import org.jetbrains.kotlin.config.LanguageFeature
 
 val removedJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jvmCompilerArguments) {
     compilerArgument {
@@ -165,6 +162,48 @@ This option has no effect and will be deleted in a future version.""",
             introducedVersion = introducedVersion,
             deprecatedVersion = deprecatedVersion,
             removedVersion = removedVersion,
+        )
+    }
+
+    compilerArgument {
+        name = "Xtype-enhancement-improvements-strict-mode"
+        compilerName = "typeEnhancementImprovementsInStrictMode"
+        description = """Enable strict mode for improvements to type enhancement for loaded Java types based on nullability annotations,
+including the ability to read type-use annotations from class files.
+See KT-45671 for more details.""".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.TypeEnhancementImprovementsInStrictMode))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_0,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xenhance-type-parameter-types-to-def-not-null"
+        description =
+            "Enhance not-null-annotated type parameter types to definitely-non-nullable types ('@NotNull T' => 'T & Any').".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_6_0,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xir-do-not-clear-binding-context"
+        compilerName = "doNotClearBindingContext"
+        description = "When using the IR backend, do not clear BindingContext between 'psi2ir' and lowerings.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_30,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
 }

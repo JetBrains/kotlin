@@ -156,7 +156,6 @@ where advanced options include:
                              For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.
                              Additionally enables measurements for User and CPU time for all targets. Note that this could cause performance degradation on Linux
                                machines, so use this mode with caution.
-  -Xdirect-java-actualization Enable experimental direct Java actualization support.
   -Xdisable-default-scripting-plugin
                              Don't enable the scripting plugin by default.
   -Xdisable-ir-checkers=<checker1>,<checker2>
@@ -211,11 +210,6 @@ where advanced options include:
                              Generates output based on what it is used for:
                              -Xheader-mode-type=compilation: Skips the IR generation for modules that don't have inline functions.
                              -Xheader-mode-type=any: Can be used for any downstream dependency which doesn't require linking.
-  -Xignore-const-optimization-errors
-                             Ignore all compilation exceptions while optimizing some constant expressions.
-  -Xinline-classes           Enable experimental inline classes.
-  -Xintellij-plugin-root=<path> Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.
-                             The option is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases.
   -Xintrinsic-const-evaluation Enables `IntrinsicConstEvaluation` language feature.`
   -Xlist-phases              List backend phases.
   -Xlocal-type-aliases       Enable experimental language support for local type aliases.
@@ -229,8 +223,6 @@ where advanced options include:
                              -Xname-based-destructuring=name-mismatch: Reports warnings when short form positional destructuring of data classes uses names that don't match the property names;
                              -Xname-based-destructuring=complete:      Enables short-form name-based destructuring with parentheses;
   -Xnested-type-aliases      Enable experimental language support for nested type aliases.
-  -Xnew-inference            Enable the new experimental generic type inference algorithm.
-  -Xno-check-actual          Do not check for the presence of the 'actual' modifier in multiplatform projects.
   -Xno-inline                Disable method inlining.
   -Xnon-local-break-continue Enable experimental non-local break and continue.
   -Xphases-to-dump           Dump the backend's state both before and after these phases.
@@ -256,14 +248,6 @@ where advanced options include:
   -Xskip-prerelease-check    Allow loading pre-release classes.
   -Xstdlib-compilation       Enables special features which are relevant only for stdlib compilation.
   -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent, or experimental language or API versions.
-  -Xsuppress-warning=<WARNING_NAME>
-                             Suppress specified warning module-wide.
-                             The option is deprecated since Kotlin 2.2.0. It will be removed in one of the future releases. Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings).
-  -Xunrestricted-builder-inference
-                             Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
-  -Xuse-fir-experimental-checkers
-                             Enable experimental frontend IR checkers that are not yet ready for production.
-                             The option is deprecated since Kotlin 2.2.20. It will be removed in one of the future releases.
   -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.
                              The option is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases.
   -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.
