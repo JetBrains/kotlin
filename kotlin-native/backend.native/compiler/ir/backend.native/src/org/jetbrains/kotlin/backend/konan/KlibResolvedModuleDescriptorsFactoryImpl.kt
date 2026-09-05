@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -37,21 +36,53 @@ import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.Printer
 import java.nio.file.Path
 
-// TODO: eliminate Native specifics.
-class KlibResolvedModuleDescriptorsFactoryImpl(
-    override val moduleDescriptorFactory: KlibMetadataModuleDescriptorFactory
-) : KlibResolvedModuleDescriptorsFactory {
+class KotlinResolvedModuleDescriptors(
+        /**
+         * The list of modules each representing an individual Kotlin/Native library. All modules
+         * in this list have properly installed dependencies, i.e. module has all necessary dependencies
+         * on other modules plus a dependency on the [forwardDeclarationsModule].
+         */
+        val resolvedDescriptors: List<ModuleDescriptorImpl>,
 
-    override fun createResolved2(
-        libraries: List<KotlinLibrary>,
-        storageManager: StorageManager,
-        builtIns: KotlinBuiltIns?,
-        languageVersionSettings: LanguageVersionSettings,
-        friendModuleFiles: Set<Path>,
-        refinesModuleFiles: Set<Path>,
-        includedLibraryFiles: Set<Path>,
-        additionalDependencyModules: Iterable<ModuleDescriptorImpl>,
-        isForMetadataCompilation: Boolean,
+        /**
+         * This is a module which "contains" forward declarations.
+         * Note: this module should be unique per compilation and should always be the last dependency of any module.
+         */
+        val forwardDeclarationsModule: ModuleDescriptorImpl,
+
+        val friendModules: Set<ModuleDescriptorImpl>,
+        val refinesModules: Set<ModuleDescriptorImpl>
+)
+
+@K1Deprecation
+class KlibResolvedModuleDescriptorsFactoryImpl(
+        val moduleDescriptorFactory: KlibMetadataModuleDescriptorFactory
+) {
+
+    /**
+     * Given the [libraries] creates the list of [ModuleDescriptorImpl]s with properly installed
+     * inter-dependencies. The result of this method is returned in a form of [KotlinResolvedModuleDescriptors] instance.
+     *
+     * Please use this method with care: Unless this method accepts `null` for [builtIns], it is not recommended to
+     * invoke it this way. If you are compiling a source module, please supply the non-null [builtIns] from the
+     * source module, so that all modules created in your compilation session will share the same built-ins instance.
+     *
+     * Otherwise (if `null` was supplied), a new instance of [KotlinBuiltIns] will be created. The created built-ins
+     * instance will be shared by all modules created in this method. But this instance will have no connection
+     * with probably existing built-ins instance of your source module(s).
+     *
+     * FYI: No much attention to naming of this function, anyway it's going to be removed soon as a part of K1.
+     */
+    fun createResolved2(
+            libraries: List<KotlinLibrary>,
+            storageManager: StorageManager,
+            builtIns: KotlinBuiltIns?,
+            languageVersionSettings: LanguageVersionSettings,
+            friendModuleFiles: Set<Path>,
+            refinesModuleFiles: Set<Path>,
+            includedLibraryFiles: Set<Path>,
+            additionalDependencyModules: Iterable<ModuleDescriptorImpl>,
+            isForMetadataCompilation: Boolean,
     ): KotlinResolvedModuleDescriptors {
 
         val moduleDescriptors = mutableListOf<ModuleDescriptorImpl>()
@@ -69,7 +100,7 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
 
                 // MutableModuleContext needs ModuleDescriptorImpl, rather than ModuleDescriptor.
                 val moduleDescriptor = createDescriptorOptionalBuiltsIns(
-                    library, languageVersionSettings, storageManager, builtIns,
+                        library, languageVersionSettings, storageManager, builtIns,
                 )
                 builtIns = moduleDescriptor.builtIns
                 moduleDescriptors.add(moduleDescriptor)
@@ -84,18 +115,18 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         }
 
         val forwardDeclarationsModule = createForwardDeclarationsModule(
-            builtIns,
-            storageManager,
-            // If we are compiling metadata, make synthetic forward declarations `expect`,
-            // because otherwise `getFirstClassifierDiscriminateHeaders` would prefer it over a
-            // "real" `expect` declaration from a commonized interop library, which would ruin
-            // the whole idea of using synthetic forward declarations only when no proper definitions
-            // are found.
-            //
-            // If we are compiling for the actual native platform, continue using non-expect
-            // forward declarations (to prevent getting non-actualized expects into the backend,
-            // and to prevent related klib signature changes).
-            isExpect = isForMetadataCompilation,
+                builtIns,
+                storageManager,
+                // If we are compiling metadata, make synthetic forward declarations `expect`,
+                // because otherwise `getFirstClassifierDiscriminateHeaders` would prefer it over a
+                // "real" `expect` declaration from a commonized interop library, which would ruin
+                // the whole idea of using synthetic forward declarations only when no proper definitions
+                // are found.
+                //
+                // If we are compiling for the actual native platform, continue using non-expect
+                // forward declarations (to prevent getting non-actualized expects into the backend,
+                // and to prevent related klib signature changes).
+                isExpect = isForMetadataCompilation,
         )
 
         // Set inter-dependencies between module descriptors, add forwarding declarations module.
@@ -119,35 +150,33 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         }
 
         return KotlinResolvedModuleDescriptors(
-            resolvedDescriptors = moduleDescriptors,
-            forwardDeclarationsModule = forwardDeclarationsModule,
-            friendModules = friendModuleDescriptors,
-            refinesModules = refinesModuleDescriptors
+                resolvedDescriptors = moduleDescriptors,
+                forwardDeclarationsModule = forwardDeclarationsModule,
+                friendModules = friendModuleDescriptors,
+                refinesModules = refinesModuleDescriptors
         )
     }
 
     private fun createForwardDeclarationsModule(
-        builtIns: KotlinBuiltIns?,
-        storageManager: StorageManager,
-        isExpect: Boolean
+            builtIns: KotlinBuiltIns?,
+            storageManager: StorageManager,
+            isExpect: Boolean
     ): ModuleDescriptorImpl {
 
         val module = createDescriptorOptionalBuiltsIns(FORWARD_DECLARATIONS_MODULE_NAME, storageManager, builtIns, SyntheticModulesOrigin)
 
         fun createPackage(forwardDeclarationKind: NativeForwardDeclarationKind) =
-            @OptIn(K1Deprecation::class)
-            ForwardDeclarationsPackageFragmentDescriptor(
-                storageManager,
-                module,
-                forwardDeclarationKind.packageFqName,
-                forwardDeclarationKind.superClassName,
-                forwardDeclarationKind.classKind,
-                isExpect
-            )
+                ForwardDeclarationsPackageFragmentDescriptor(
+                        storageManager,
+                        module,
+                        forwardDeclarationKind.packageFqName,
+                        forwardDeclarationKind.superClassName,
+                        forwardDeclarationKind.classKind,
+                        isExpect
+                )
 
         val packageFragmentProvider = PackageFragmentProviderImpl(
-            @OptIn(K1Deprecation::class)
-            NativeForwardDeclarationKind.entries.map { createPackage(it) }
+                NativeForwardDeclarationKind.entries.map { createPackage(it) }
         )
 
         module.initialize(packageFragmentProvider)
@@ -157,23 +186,22 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
     }
 
     private fun createDescriptorOptionalBuiltsIns(
-        name: Name,
-        storageManager: StorageManager,
-        builtIns: KotlinBuiltIns?,
-        moduleOrigin: KlibModuleOrigin
+            name: Name,
+            storageManager: StorageManager,
+            builtIns: KotlinBuiltIns?,
+            moduleOrigin: KlibModuleOrigin
     ): ModuleDescriptorImpl {
         val builtInsToUse = builtIns ?: moduleDescriptorFactory.createBuiltIns(storageManager)
         val moduleDescriptor = ModuleDescriptorImpl(
-            name,
-            storageManager,
-            builtInsToUse,
-            capabilities = mapOf(
-                KlibModuleOrigin.CAPABILITY to moduleOrigin,
-                @OptIn(K1Deprecation::class)
-                ImplicitIntegerCoercion.MODULE_CAPABILITY to moduleOrigin.isCInteropLibrary()
-            ),
-            // TODO: don't use hardcoded platform; it should be supplied as a parameter
-            platform = NativePlatforms.unspecifiedNativePlatform
+                name,
+                storageManager,
+                builtInsToUse,
+                capabilities = mapOf(
+                        KlibModuleOrigin.CAPABILITY to moduleOrigin,
+                        ImplicitIntegerCoercion.MODULE_CAPABILITY to moduleOrigin.isCInteropLibrary()
+                ),
+                // TODO: don't use hardcoded platform; it should be supplied as a parameter
+                platform = NativePlatforms.unspecifiedNativePlatform
         )
 
         if (builtIns == null) {
@@ -184,18 +212,14 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
     }
 
     private fun createDescriptorOptionalBuiltsIns(
-        library: KotlinLibrary,
-        languageVersionSettings: LanguageVersionSettings,
-        storageManager: StorageManager,
-        builtIns: KotlinBuiltIns?,
+            library: KotlinLibrary,
+            languageVersionSettings: LanguageVersionSettings,
+            storageManager: StorageManager,
+            builtIns: KotlinBuiltIns?,
     ): ModuleDescriptorImpl = if (builtIns != null)
         moduleDescriptorFactory.createDescriptor(library, languageVersionSettings, storageManager, builtIns)
     else
         moduleDescriptorFactory.createDescriptorAndNewBuiltIns(library, languageVersionSettings, storageManager)
-
-    companion object {
-        val FORWARD_DECLARATIONS_MODULE_NAME = Name.special("<forward declarations>")
-    }
 }
 
 /**
@@ -203,12 +227,12 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
  */
 @K1Deprecation
 class ForwardDeclarationsPackageFragmentDescriptor(
-    storageManager: StorageManager,
-    module: ModuleDescriptor,
-    fqName: FqName,
-    supertypeName: Name,
-    classKind: ClassKind,
-    isExpect: Boolean
+        storageManager: StorageManager,
+        module: ModuleDescriptor,
+        fqName: FqName,
+        supertypeName: Name,
+        classKind: ClassKind,
+        isExpect: Boolean
 ) : PackageFragmentDescriptorImpl(module, fqName) {
 
     private val memberScope = object : MemberScopeImpl() {
@@ -235,28 +259,28 @@ class ForwardDeclarationsPackageFragmentDescriptor(
 
         private fun findCinteropClassOrNull(name: Name): ClassDescriptor? {
             return builtIns.builtInsModule.getPackage(NativeStandardInteropNames.cInteropPackage)
-                .memberScope
-                .getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor?
+                    .memberScope
+                    .getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor?
         }
 
         private fun createDeclaration(name: Name): ClassDescriptor {
             val experimentalAnnotation = experimentalAnnotationType?.let {
                 AnnotationDescriptorImpl(
-                    it,
-                    emptyMap(),
-                    SourceElement.NO_SOURCE
+                        it,
+                        emptyMap(),
+                        SourceElement.NO_SOURCE
                 )
             }
 
             return object : ClassDescriptorImpl(
-                this@ForwardDeclarationsPackageFragmentDescriptor,
-                name,
-                Modality.FINAL,
-                classKind,
-                listOf(supertype),
-                SourceElement.NO_SOURCE,
-                false,
-                LockBasedStorageManager.NO_LOCKS
+                    this@ForwardDeclarationsPackageFragmentDescriptor,
+                    name,
+                    Modality.FINAL,
+                    classKind,
+                    listOf(supertype),
+                    SourceElement.NO_SOURCE,
+                    false,
+                    LockBasedStorageManager.NO_LOCKS
             ) {
                 override fun isExpect(): Boolean = isExpect
                 override val annotations: Annotations = Annotations.create(listOfNotNull(experimentalAnnotation))
@@ -274,6 +298,3 @@ class ForwardDeclarationsPackageFragmentDescriptor(
 
     override fun getMemberScope(): MemberScope = memberScope
 }
-
-val ModuleDescriptor.isForwardDeclarationModule: Boolean
-    get() = name == FORWARD_DECLARATIONS_MODULE_NAME

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.CInteropModuleDeserializ
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibs
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -34,17 +35,20 @@ import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
-import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
-import org.jetbrains.kotlin.library.metadata.kotlinLibrary
+import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.pipeline.NativeLoadedIrArtifact
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
+import org.jetbrains.kotlin.util.profile
 import java.io.File
 
 class NativeDeserializerFacade(
@@ -66,29 +70,65 @@ class NativeDeserializerFacade(
         }
 
         val loadedKlibs = loadNativeKlibs(configuration, testServices.nativeEnvironmentConfigurator.getNativeTarget(module))
-        val moduleDescriptors = createModuleDescriptors(configuration, loadedKlibs)
+        val moduleDescriptors = createModuleDescriptors(loadedKlibs)
         val moduleInfo = createIrModuleFragments(configuration, loadedKlibs, moduleDescriptors)
 
         return DeserializedFromKlibBackendInput(NativeLoadedIrArtifact(moduleInfo, configuration), klib = inputArtifact.outputFile)
     }
 
-    private fun createModuleDescriptors(
-        configuration: CompilerConfiguration,
-        loadedKlibs: LoadedNativeKlibs,
-    ): List<ModuleDescriptorImpl> {
-        val result = nativeFactories.DefaultResolvedDescriptorsFactory.createResolved2(
-            // Note: stdlib goes the first in `LoadedNativeKlibs.all`!
-            libraries = loadedKlibs.all,
-            storageManager = LockBasedStorageManager.NO_LOCKS,
-            builtIns = null,
-            languageVersionSettings = configuration.languageVersionSettings,
-            friendModuleFiles = loadedKlibs.friends.map { it.path }.toSet(),
-            refinesModuleFiles = emptySet(),
-            includedLibraryFiles = loadedKlibs.included.map { it.path }.toSet(),
-            additionalDependencyModules = emptyList(),
-            isForMetadataCompilation = false,
+    private fun createDescriptor(moduleName: Name, moduleOrigin: KlibModuleOrigin, builtIns: KotlinBuiltIns): ModuleDescriptorImpl {
+        return ModuleDescriptorImpl(
+            moduleName,
+            LockBasedStorageManager.NO_LOCKS,
+            builtIns,
+            capabilities = mapOf(
+                KlibModuleOrigin.CAPABILITY to moduleOrigin,
+                @OptIn(K1Deprecation::class)
+                ImplicitIntegerCoercion.MODULE_CAPABILITY to moduleOrigin.isCInteropLibrary()
+            ),
+            platform = NativePlatforms.unspecifiedNativePlatform
         )
-        return result.resolvedDescriptors
+    }
+
+    @OptIn(K1Deprecation::class)
+    private fun createModuleDescriptors(loadedKlibs: LoadedNativeKlibs): List<ModuleDescriptorImpl> {
+        val moduleDescriptors = mutableListOf<ModuleDescriptorImpl>()
+
+        val builtIns = KonanBuiltIns(LockBasedStorageManager.NO_LOCKS)
+        val friendModuleDescriptors = mutableSetOf<ModuleDescriptorImpl>()
+        val includedLibraryDescriptors = mutableSetOf<ModuleDescriptorImpl>()
+        // Build module descriptors.
+        // Note: stdlib goes the first in `LoadedNativeKlibs.all`!
+        loadedKlibs.all.forEach { library ->
+            profile("Loading ${library.path}") {
+                val moduleDescriptor = createDescriptor(
+                    Name.special("<${library.uniqueName}>"),
+                    DeserializedKlibModuleOrigin(library),
+                    builtIns,
+                )
+                moduleDescriptors.add(moduleDescriptor)
+
+                if (loadedKlibs.friends.any { it.path == library.path })
+                    friendModuleDescriptors.add(moduleDescriptor)
+                if (loadedKlibs.included.any { it.path == library.path })
+                    includedLibraryDescriptors.add(moduleDescriptor)
+            }
+        }
+        val forwardDeclarationsModule = createDescriptor(
+            FORWARD_DECLARATIONS_MODULE_NAME,
+            SyntheticModulesOrigin,
+            builtIns,
+        )
+        forwardDeclarationsModule.setDependencies(forwardDeclarationsModule)
+
+        // Set inter-dependencies between module descriptors, add forwarding declarations module.
+        val allDependencies = moduleDescriptors + forwardDeclarationsModule
+        for (module in includedLibraryDescriptors) {
+            // Yes, just to all of them.
+            module.setDependencies(allDependencies, friendModuleDescriptors)
+        }
+
+        return moduleDescriptors
     }
 
     private fun createIrModuleFragments(
@@ -160,11 +200,6 @@ class NativeDeserializerFacade(
                 irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.ALL })
         }
     )
-
-    companion object {
-        @OptIn(K1Deprecation::class)
-        private val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
-    }
 }
 
 object CInteropModuleDeserializerFactoryMock : CInteropModuleDeserializerFactory<Nothing> {
