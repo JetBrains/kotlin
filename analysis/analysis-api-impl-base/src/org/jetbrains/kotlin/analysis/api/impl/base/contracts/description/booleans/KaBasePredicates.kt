@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans
 
-import com.google.common.base.Objects
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractParameterValue
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractIsInstancePredicateExpression
@@ -13,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContra
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import java.util.*
 
 @KaImplementationDetail
 class KaBaseContractIsInstancePredicateExpression(
@@ -39,7 +39,7 @@ class KaBaseContractIsInstancePredicateExpression(
                 other.backingIsNegated == backingIsNegated
     }
 
-    override fun hashCode(): Int = Objects.hashCode(backingArgument, backingType, backingIsNegated)
+    override fun hashCode(): Int = Objects.hash(backingArgument, backingType, backingIsNegated)
 }
 
 @KaImplementationDetail
@@ -63,5 +63,5 @@ class KaBaseContractIsNullPredicateExpression(
                 other.backingIsNegated == backingIsNegated
     }
 
-    override fun hashCode(): Int = Objects.hashCode(backingArgument, backingIsNegated)
+    override fun hashCode(): Int = Objects.hash(backingArgument, backingIsNegated)
 }

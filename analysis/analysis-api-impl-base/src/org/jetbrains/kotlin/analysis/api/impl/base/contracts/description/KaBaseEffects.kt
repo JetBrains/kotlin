@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.impl.base.contracts.description
 
-import com.google.common.base.Objects
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.contracts.description.*
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractReturnsContractEffectDeclaration.*
@@ -13,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContra
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import java.util.*
 
 @KaImplementationDetail
 class KaBaseContractCallsInPlaceContractEffectDeclaration(
@@ -27,7 +27,7 @@ class KaBaseContractCallsInPlaceContractEffectDeclaration(
 
     override val invocationKind: KaContractInvocationKind get() = withValidityAssertion { backingInvocationKind }
 
-    override fun hashCode(): Int = Objects.hashCode(backingValueParameterReference, backingInvocationKind)
+    override fun hashCode(): Int = Objects.hash(backingValueParameterReference, backingInvocationKind)
 
     override fun equals(other: Any?): Boolean {
         return this === other ||
@@ -47,7 +47,7 @@ class KaBaseContractConditionalContractEffectDeclaration(
     override val effect: KaContractEffectDeclaration get() = withValidityAssertion { backingEffect }
     override val condition: KaContractBooleanExpression get() = withValidityAssertion { backingCondition }
 
-    override fun hashCode(): Int = Objects.hashCode(backingEffect, backingCondition)
+    override fun hashCode(): Int = Objects.hash(backingEffect, backingCondition)
     override fun equals(other: Any?): Boolean {
         return this === other ||
                 other is KaBaseContractConditionalContractEffectDeclaration &&
@@ -145,7 +145,7 @@ class KaBaseContractHoldsInEffectDeclaration(
             other.backingCondition == backingCondition &&
             other.backingValueParameterReference == backingValueParameterReference
 
-    override fun hashCode(): Int = Objects.hashCode(backingCondition, backingValueParameterReference)
+    override fun hashCode(): Int = Objects.hash(backingCondition, backingValueParameterReference)
 }
 
 @KaImplementationDetail

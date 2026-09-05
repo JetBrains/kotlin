@@ -7,11 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbolBase
-import org.jetbrains.kotlin.analysis.api.fir.types.KaFirEmptySubstitutor
-import org.jetbrains.kotlin.analysis.api.fir.types.KaFirGenericSubstitutor
-import org.jetbrains.kotlin.analysis.api.fir.types.KaFirMapBackedSubstitutor
-import org.jetbrains.kotlin.analysis.api.fir.types.KaFirSubstitutorBuilder
-import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
+import org.jetbrains.kotlin.analysis.api.fir.types.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsSubstitutorProvider
@@ -19,7 +15,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
-import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeSimpleConstraintSystemImpl
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
@@ -27,7 +22,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstrain
 import org.jetbrains.kotlin.fir.resolve.substitution.*
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.substitutorForSuperType
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -293,7 +287,7 @@ internal class KaFirSubstitutorProvider(
         val processingList = collectTypeArgumentsFromTheSignature().toMutableList()
         val result = processingList.toMutableSet()
         while (processingList.isNotEmpty()) {
-            val typeArgument = processingList.pop()
+            val typeArgument = processingList.removeLast()
             val upperBounds = typeArgument.upperBounds.flatMap { it.collectTypeArgumentsFromTheSignature() }.ifEmpty { continue }
             upperBounds.forEach { upperBound ->
                 if (result.add(upperBound)) {
