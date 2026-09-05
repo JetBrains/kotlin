@@ -119,7 +119,6 @@ abstract class AbstractJsCodegenBoxTestBase(
 }
 
 abstract class AbstractJsCodegenBoxTest : AbstractJsCodegenBoxTestBase(
-    pathToTestDir = "compiler/testData/codegen/",
     testGroupOutputDirPrefix = "codegen/box/"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
