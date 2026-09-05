@@ -274,6 +274,9 @@ class BackendWasmSymbols(
 
         val createSimpleCoroutineFromSuspendFunction by
         CallableIds.createSimpleCoroutineFromSuspendFunction.functionSymbol()
+
+        val suspendCoroutineUninterceptedOrReturnIntrinsicStateMachine by
+        CallableIds.suspendCoroutineUninterceptedOrReturnIntrinsicStateMachine.functionSymbol()
     }
 
     val createCoroutineUninterceptedIntrinsic0 by CallableIds.createCoroutineUninterceptedIntrinsic0.functionSymbol()
@@ -281,6 +284,8 @@ class BackendWasmSymbols(
 
     val suspendCoroutineUninterceptedOrReturnIntrinsic by
     CallableIds.suspendCoroutineUninterceptedOrReturnIntrinsic.functionSymbol()
+
+    val getCoroutineContextImpl by CallableIds.getCoroutineContextImpl.functionSymbol()
 
     // KProperty implementations
     val kLocalDelegatedPropertyImpl: IrClassSymbol = ClassIds.KLocalDelegatedPropertyImpl.classSymbol()
@@ -633,6 +638,9 @@ private object CallableIds {
 
     val suspendCoroutineUninterceptedOrReturnIntrinsic = "suspendCoroutineUninterceptedOrReturnIntrinsic".wasmCallableId
     val suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching = "suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching".wasmCallableId
+    val suspendCoroutineUninterceptedOrReturnIntrinsicStateMachine = "suspendCoroutineUninterceptedOrReturnIntrinsicStateMachine".wasmCallableId
+
+    val getCoroutineContextImpl = "getCoroutineContextImpl".wasmCallableId
 
     val suspendFunction0ToContref = "suspendFunction0ToContref".wasmCallableId
     val suspendFunction1ToContref = "suspendFunction1ToContref".wasmCallableId

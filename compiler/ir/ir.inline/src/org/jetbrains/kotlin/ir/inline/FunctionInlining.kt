@@ -41,8 +41,8 @@ import java.util.ArrayDeque
 //    InlineCallCycleCheckerLowering::class // only on the first stage
 )
 abstract class FunctionInlining(
-    val context: LoweringContext,
-    private val inlineFunctionResolver: InlineFunctionResolver,
+    open val context: LoweringContext,
+    protected val inlineFunctionResolver: InlineFunctionResolver,
 ) : IrTransformer<IrDeclaration>(), BodyLoweringPass {
     private val fileEntriesStack = ArrayDeque<IrFileEntry>()
 
