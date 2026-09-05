@@ -11,13 +11,12 @@ plugins {
 }
 
 dependencies {
-    api(project(":core:compiler.common"))
-    api(project(":compiler:util"))
-    api(project(":compiler:frontend.common"))
+    api(project(":core:names"))
+    api(project(":core:language.model"))
+    implementation(project(":core:error.handling"))
 
     compileOnly(intellijCore())
-    compileOnly(libs.guava)
-    compileOnly(libs.intellij.fastutil)
+    compileOnly(libs.org.jetbrains.annotations)
 
     testFixturesApi(platform(libs.junit.bom))
     testFixturesImplementation(libs.junit.jupiter.api)

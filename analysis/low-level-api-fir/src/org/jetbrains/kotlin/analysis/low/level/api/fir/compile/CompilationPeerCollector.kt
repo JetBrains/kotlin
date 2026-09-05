@@ -82,7 +82,7 @@ class CompilationPeerCollector private constructor(private val actualizer: LLPla
             // We cannot compile two or more modules together
             errorWithAttachment("Cyclic dependency between modules") {
                 withEntry("cycle") {
-                    (moduleStack + module).forEach { this@withEntry.println(it) }
+                    (moduleStack + module).forEach { this@withEntry.appendLine(it) }
                 }
             }
 

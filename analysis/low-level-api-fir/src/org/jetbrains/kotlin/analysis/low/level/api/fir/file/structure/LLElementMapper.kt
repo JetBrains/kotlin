@@ -129,7 +129,7 @@ internal class LLPartialBodyElementMapper(
                                     withPsiEntry("declaration", psiDeclaration)
                                     withEntry("statements") {
                                         for ([index, psiStatement] in psiStatements.withIndex()) {
-                                            this@withEntry.println(index, ": ", psiStatement.text)
+                                            this@withEntry.appendLine("$index: ${psiStatement.text}")
                                         }
                                     }
                                 }

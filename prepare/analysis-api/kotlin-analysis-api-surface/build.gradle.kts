@@ -13,6 +13,7 @@ val analysisApiSurfaceModules: Array<String> = CompilerModules.analysisApiSurfac
 
 dependencies {
     api(project(":prepare:analysis-api:kotlin-analysis-api-intellij-api-surface-components"))
+    api(libs.org.jetbrains.annotations)
 }
 
 analysisApiArtifact {

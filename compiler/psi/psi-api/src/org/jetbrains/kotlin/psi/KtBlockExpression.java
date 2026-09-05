@@ -14,7 +14,6 @@ import com.intellij.psi.impl.source.tree.LazyParseablePsiElement;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.IncorrectOperationException;
 import kotlin.SubclassOptInRequired;
-import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
@@ -132,7 +131,6 @@ public class KtBlockExpression extends LazyParseablePsiElement implements KtElem
     }
 
     /** Returns the statements of this block in source order, or an empty list if the block is empty. */
-    @ReadOnly
     @NotNull
     public List<KtExpression> getStatements() {
         return Arrays.asList(findChildrenByClass(KtExpression.class));

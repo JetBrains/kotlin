@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.psi;
 
-import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
@@ -20,17 +19,18 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement;
 import org.jetbrains.kotlin.lang.BinaryOperationPrecedence;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
+import org.jetbrains.kotlin.name.StandardClassIds;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.StatementFilterKt;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -45,6 +45,8 @@ import java.util.function.Predicate;
  * is not instantiable.
  */
 public class KtPsiUtil {
+    private static final Name DEPRECATED_ANNOTATION_SHORT_NAME = Name.identifier("Deprecated");
+
     private KtPsiUtil() {
     }
 
@@ -195,8 +197,8 @@ public class KtPsiUtil {
         if (modifierList != null) {
             List<KtAnnotationEntry> annotationEntries = modifierList.getAnnotationEntries();
             for (KtAnnotationEntry annotation : annotationEntries) {
-                Name shortName = annotation.getShortName();
-                if (StandardNames.FqNames.deprecated.shortName().equals(shortName)) {
+                Name deprecatedShortName = StandardClassIds.Annotations.INSTANCE.getDeprecated().getShortClassName();
+                if (deprecatedShortName.equals(annotation.getShortName())) {
                     return true;
                 }
             }
@@ -846,7 +848,7 @@ public class KtPsiUtil {
     ) {
         if (!(root instanceof KtElement)) return null;
 
-        List<KtElement> results = Lists.newArrayList();
+        List<KtElement> results = new ArrayList<>();
 
         root.accept(
                 new KtVisitorVoid() {

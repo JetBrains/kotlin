@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.psi;
 
-import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,12 +38,10 @@ public interface KtPureClassOrObject extends KtPureElement, KtDeclarationContain
 
     /** Returns the supertype list entries (the types and delegations written after the {@code :}), or an empty list if there are none. */
     @NotNull
-    @ReadOnly
     List<KtSuperTypeListEntry> getSuperTypeListEntries();
 
     /** Returns the companion objects declared in this class or object body, or an empty list if there are none. */
     @NotNull
-    @ReadOnly
     List<KtObjectDeclaration> getCompanionObjects();
 
     /** Returns {@code true} if this class or object has an explicitly written primary constructor. */
@@ -69,12 +66,10 @@ public interface KtPureClassOrObject extends KtPureElement, KtDeclarationContain
 
     /** Returns the value parameters of the primary constructor, or an empty list if there are none. */
     @NotNull
-    @ReadOnly
     List<KtParameter> getPrimaryConstructorParameters();
 
     /** Returns the secondary constructors declared in this class or object body, or an empty list if there are none. */
     @NotNull
-    @ReadOnly
     List<KtSecondaryConstructor> getSecondaryConstructors();
 
     /**
@@ -82,7 +77,6 @@ public interface KtPureClassOrObject extends KtPureElement, KtDeclarationContain
      * context-receiver API; named context parameters are exposed by {@link KtContextParameterList}.
      */
     @NotNull
-    @ReadOnly
     List<KtContextReceiver> getContextReceivers();
 
     /** Returns the body of this class or object (the part enclosed in braces), or {@code null} if it has no body. */
