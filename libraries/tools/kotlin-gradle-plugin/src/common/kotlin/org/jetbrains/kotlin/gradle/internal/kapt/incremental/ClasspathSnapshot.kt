@@ -99,7 +99,8 @@ open class ClasspathSnapshot protected constructor(
             return KaptClasspathChanges.Unknown
         }
 
-        val unchangedBetweenCompilations = dataForFiles.keys.intersect(previousSnapshot.dataForFiles.keys).filter { it !in changedFiles }
+        val unchangedBetweenCompilations =
+            dataForFiles.keys.intersect(previousSnapshot.dataForFiles.keys).filterTo(HashSet()) { it !in changedFiles }
         val currentToLoad = dataForFiles.keys.filter { it !in unchangedBetweenCompilations }.also { loadEntriesFor(it) }
         val previousToLoad = previousSnapshot.dataForFiles.keys.filter { it !in unchangedBetweenCompilations }
 
@@ -190,17 +191,10 @@ open class ClasspathSnapshot protected constructor(
         for (entry in dataForFiles.values) {
             for ((className, classDependency) in entry!!.classDependencies) {
                 for (abiType in classDependency.abiTypes) {
-                    (transitiveDeps[abiType] ?: LinkedList()).let {
-                        it.add(className)
-                        transitiveDeps[abiType] = it
-                    }
+                    transitiveDeps.getOrPut(abiType) { ArrayList() }.add(className)
                 }
                 for (privateType in classDependency.privateTypes) {
-                    (nonTransitiveDeps[privateType] ?: LinkedList()).let {
-                        it.add(className)
-                        nonTransitiveDeps[privateType] = it
-                    }
-
+                    nonTransitiveDeps.getOrPut(privateType) { ArrayList() }.add(className)
                 }
             }
         }

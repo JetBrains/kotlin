@@ -284,8 +284,12 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
     private fun checkProcessorCachingSetup() {
         if (includeCompileClasspath.get() && classLoadersCacheSize > 0) {
             logger.warn(
-                "ClassLoaders cache can't be enabled together with AP discovery in compilation classpath."
-                        + "\nSet 'kapt.include.compile.classpath=false' to disable discovery"
+                "The kapt annotation processor classloaders cache is disabled: it cannot be used together with"
+                        + " annotation processor discovery from the compilation classpath."
+                        + "\n'kapt.classloaders.cache.size=$classLoadersCacheSize' will have no effect until you also set"
+                        + " 'kapt.include.compile.classpath=false'. Both properties have to be set together;"
+                        + " discovery from the compilation classpath is deprecated."
+                        + "\nIf you disable discovery, declare every annotation processor in a 'kapt' configuration."
             )
         }
     }
@@ -312,6 +316,8 @@ private class KaptExecution @Inject constructor(
                 }
             }
 
+        private val classLoaderStateLock = Any()
+
         private var classLoadersCache: ClassLoadersCache? = null
 
         private var cachedKaptClassLoader: ClassLoader? = null
@@ -319,28 +325,44 @@ private class KaptExecution @Inject constructor(
 
     private val logger = LoggerFactory.getLogger(KaptExecution::class.java)
 
-    override fun run(): Unit = with(optionsForWorker) {
-        val kaptClasspathUrls = kaptClasspath.map { it.toURI().toURL() }.toTypedArray()
+    override fun run() {
         val rootClassLoader = findRootClassLoader()
-
-        val kaptClassLoader = cachedKaptClassLoader ?: run {
-            val classLoaderWithToolsJar = if (toolsJarURLSpec.isNotEmpty() && !javacIsAlreadyHere()) {
-                URLClassLoader(arrayOf(URL(toolsJarURLSpec)), rootClassLoader)
-            } else {
-                rootClassLoader
-            }
-            val result = URLClassLoader(kaptClasspathUrls, classLoaderWithToolsJar)
-            cachedKaptClassLoader = result
-            result
-        }
-
-        if (classLoadersCache == null && classloadersCacheSize > 0) {
-            logger.info("Initializing KAPT classloaders cache with size = $classloadersCacheSize")
-            classLoadersCache = ClassLoadersCache(classloadersCacheSize, kaptClassLoader)
-        }
+        val kaptClassLoader = getOrCreateKaptClassLoader(rootClassLoader)
+        val classLoadersCacheForExecution = getOrCreateClassLoadersCache(kaptClassLoader)
 
         val kaptMethod = kaptClassLoader.kaptClass("Kapt").declaredMethods.single { it.name == "kapt" }
-        kaptMethod.invoke(null, createKaptOptions(kaptClassLoader))
+        val executionToken = KaptExecutionToken()
+        try {
+            kaptMethod.invoke(null, createKaptOptions(kaptClassLoader, executionToken, classLoadersCacheForExecution))
+        } finally {
+            classLoadersCacheForExecution?.releaseExecutionLocalLoaders(executionToken)
+        }
+    }
+
+    private fun getOrCreateKaptClassLoader(rootClassLoader: ClassLoader): ClassLoader =
+        synchronized(classLoaderStateLock) {
+            cachedKaptClassLoader ?: createKaptClassLoader(rootClassLoader).also {
+                cachedKaptClassLoader = it
+            }
+        }
+
+    private fun getOrCreateClassLoadersCache(kaptClassLoader: ClassLoader): ClassLoadersCache? {
+        if (classloadersCacheSize <= 0) return null
+
+        return synchronized(classLoaderStateLock) {
+            classLoadersCache ?: ClassLoadersCache(classloadersCacheSize, kaptClassLoader).also {
+                logger.info("Initializing KAPT classloaders cache with size = $classloadersCacheSize")
+                classLoadersCache = it
+            }
+        }
+    }
+
+    private fun createKaptClassLoader(rootClassLoader: ClassLoader): ClassLoader {
+        val classLoaderWithToolsJar = if (toolsJarURLSpec.isNotEmpty() && !javacIsAlreadyHere())
+            URLClassLoader(arrayOf(URL(toolsJarURLSpec)), rootClassLoader)
+        else rootClassLoader
+
+        return URLClassLoader(kaptClasspath.map { it.toURI().toURL() }.toTypedArray(), classLoaderWithToolsJar)
     }
 
     private fun javacIsAlreadyHere(): Boolean {
@@ -351,7 +373,11 @@ private class KaptExecution @Inject constructor(
         }
     }
 
-    private fun createKaptOptions(classLoader: ClassLoader): Any = with(optionsForWorker) {
+    private fun createKaptOptions(
+        classLoader: ClassLoader,
+        executionToken: KaptExecutionToken,
+        classLoadersCacheForExecution: ClassLoadersCache?,
+    ): Any = with(optionsForWorker) {
         val flags = classLoader.kaptClass("Kapt").declaredMethods.single { it.name == "kaptFlags" }.invoke(null, flags)
 
         val mode = classLoader.kaptClass("AptMode")
@@ -365,9 +391,17 @@ private class KaptExecution @Inject constructor(
 
         //in case cache was enabled and then disabled
         //or disabled for some modules
+        val cacheableProcessorClasspath = processingExternalClasspath
+        val cacheableProcessorClasspathSet = cacheableProcessorClasspath.toSet()
         val processingClassLoader =
             if (classloadersCacheSize > 0) {
-                classLoadersCache!!.getForSplitPaths(processingClasspath - processingExternalClasspath, processingExternalClasspath)
+                checkNotNull(classLoadersCacheForExecution) {
+                    "KAPT classloaders cache must be initialized when classloaders cache size is positive"
+                }.getForProcessorClasspath(
+                    executionToken = executionToken,
+                    executionLocalProcessorClasspath = processingClasspath - cacheableProcessorClasspathSet,
+                    cacheableProcessorClasspath = cacheableProcessorClasspath,
+                )
             } else {
                 null
             }
@@ -406,6 +440,13 @@ private class KaptExecution @Inject constructor(
     }
 
     private fun findRootClassLoader(): ClassLoader = KaptExecution::class.java.classLoader.rootOrSelf()
+}
+
+// Distinguishes one KAPT execution from another so execution-local classloaders are released at the
+// correct execution boundary. Otherwise, the daemon can keep the project's own jars open and, on
+// Windows, prevent the project directory from being deleted.
+internal class KaptExecutionToken internal constructor() {
+    internal var closed: Boolean = false
 }
 
 internal data class KaptOptionsForWorker(

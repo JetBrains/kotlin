@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.internal.kapt.classloaders
 
+import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
+import org.jetbrains.kotlin.gradle.internal.KaptExecutionToken
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.net.URL
 import java.net.URLClassLoader
 import java.time.Duration
-import java.util.concurrent.ConcurrentMap
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * LRU cache for [ClassLoader]s by class path.
@@ -19,12 +20,12 @@ import java.util.concurrent.ConcurrentMap
 class ClassLoadersCache(
     size: Int,
     private val parentClassLoader: ClassLoader = ClassLoader.getSystemClassLoader(),
-    ttl: Duration = Duration.ofHours(1)
+    ttl: Duration = Duration.ofHours(1),
 ) : AutoCloseable {
 
     private val logger = LoggerFactory.getLogger(ClassLoadersCache::class.java)
 
-    private val cache: ConcurrentMap<CacheKey, URLClassLoader> =
+    private val cache: Cache<CacheKey, URLClassLoader> =
         CacheBuilder
             .newBuilder()
             .maximumSize(size.toLong())
@@ -34,54 +35,90 @@ class ClassLoadersCache(
                 logger.info("Removing classloader from cache: ${key.entries.map { it.path }}")
                 cl.close()
             }
-            .build<CacheKey, URLClassLoader>()
-            .asMap()
+            .build()
+
+    private val executionLocalLoaders = ConcurrentHashMap<KaptExecutionToken, MutableList<URLClassLoader>>()
 
     fun getForClassPath(files: List<File>): ClassLoader = getForClassPath(files, parentClassLoader)
 
     private fun getForClassPath(files: List<File>, parent: ClassLoader): ClassLoader {
         val key = makeKey(files)
-        return cache.getOrPut(key) {
-            makeClassLoader(key, parent)
+        val classLoader = cache.asMap().computeIfAbsent(key) {
+            makeClassLoader(files, parent)
         }
+        // Guava delivers removal notifications during subsequent cache operations. This cache is
+        // touched about once per kapt task, so without an explicit cleanUp an evicted loader can go
+        // unclosed - and keep its jars open - indefinitely.
+        cache.cleanUp()
+        return classLoader
     }
 
     /**
-     * Gets or creates [ClassLoader] from [bottom] + [top] files.
-     * When creating new [ClassLoader] it tries to get [top] from cache first and then create new ClassLoader from [bottom] files,
-     * providing [top] [ClassLoader] as parent.
-     * Useful when you have internal and external artifacts and internal ones can be references from other internal artefacts only.
-     * So you can safely cache [ClassLoader] from external artifacts and use it for internal ones.
+     * Gets a [ClassLoader] for annotation processor classpath split by its retention lifecycle.
+     *
+     * [cacheableProcessorClasspath] gets a reusable loader. [executionLocalProcessorClasspath] gets
+     * a per-execution loader that must be released with [releaseExecutionLocalLoaders] once annotation
+     * processing has finished.
+     *
+     * This is useful when project-local annotation processors may depend on reusable processor
+     * artifacts, but reusable processors must not depend on project-local artifacts.
      */
-    fun getForSplitPaths(bottom: List<File>, top: List<File>): ClassLoader {
-        return if (bottom.isEmpty() || top.isEmpty()) {
-            getForClassPath(bottom + top)
-        } else {
-            val key = makeKey(bottom + top)
-            cache.getOrPut(key) {
-                val parent = getForClassPath(top)
-                makeClassLoader(makeKey(bottom), parent)
-            }
+    internal fun getForProcessorClasspath(
+        executionToken: KaptExecutionToken,
+        executionLocalProcessorClasspath: List<File>,
+        cacheableProcessorClasspath: List<File>,
+    ): ClassLoader {
+        val executionLoaders = synchronized(executionToken) {
+            check(!executionToken.closed) { "ClassLoadersCache execution is already closed" }
+            executionLocalLoaders.computeIfAbsent(executionToken) { mutableListOf() }
         }
+
+        val parent = if (cacheableProcessorClasspath.isEmpty()) parentClassLoader else getForClassPath(cacheableProcessorClasspath)
+        if (executionLocalProcessorClasspath.isEmpty()) return parent
+
+        val local = makeClassLoader(executionLocalProcessorClasspath, parent)
+        synchronized(executionToken) {
+            if (executionToken.closed) {
+                local.close()
+                error("ClassLoadersCache execution is already closed")
+            }
+            executionLoaders.add(local)
+        }
+        return local
+    }
+
+    internal fun releaseExecutionLocalLoaders(executionToken: KaptExecutionToken) {
+        val executionLoaders = synchronized(executionToken) {
+            if (executionToken.closed) return
+            executionToken.closed = true
+            executionLocalLoaders.remove(executionToken)
+        }
+        executionLoaders?.forEach { it.close() }
+        executionLoaders?.clear()
     }
 
     override fun close() {
-        cache.clear()
+        for (token in executionLocalLoaders.keys) {
+            releaseExecutionLocalLoaders(token)
+        }
+        executionLocalLoaders.clear()
+        cache.cleanUp()
     }
 
-    private fun makeClassLoader(key: CacheKey, parent: ClassLoader): URLClassLoader {
-        val cp = key.entries.map { it.path }
-        logger.info("Creating new classloader for classpath: $cp")
-        return URLClassLoader(cp.toTypedArray(), parent)
+    private fun makeClassLoader(files: List<File>, parent: ClassLoader): URLClassLoader {
+        logger.info("Creating new classloader for classpath: ${files.map { it.path }}")
+        return URLClassLoader(files.map { it.toURI().toURL() }.toTypedArray(), parent)
     }
 
     private fun makeKey(files: List<File>): CacheKey {
         //probably should walk dirs content for actual last modified
-        val entries = files.map { f -> ClasspathEntry(f.toURI().toURL(), f.lastModified()) }
+        val entries = files.map { f -> ClasspathEntry(f, f.lastModified()) }
         return CacheKey(entries)
     }
 
-    private data class ClasspathEntry(val path: URL, val modificationTimestamp: Long)
+    // Keyed by `File`, not `URL`: `URL.equals`/`hashCode` are protocol-handler operations and not plain value comparisons,
+    // so `File` is more stable as a map key.
+    private data class ClasspathEntry(val path: File, val modificationTimestamp: Long)
 
     private data class CacheKey(val entries: List<ClasspathEntry>)
 }
