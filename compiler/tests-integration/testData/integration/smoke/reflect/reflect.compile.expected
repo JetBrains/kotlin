@@ -1,1 +1,6 @@
+ERR:
+reflect.kt:6:19: warning: unused return value of 'annotations'.
+    String::class.annotations
+                  ^^^^^^^^^^^
+
 Return code: 0

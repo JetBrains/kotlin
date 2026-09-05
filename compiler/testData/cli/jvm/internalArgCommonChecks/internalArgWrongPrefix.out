@@ -1,2 +1,5 @@
 warning: flag is not supported by this version of the compiler: -XX:+SoundSmartCastAfterTry
+compiler/testData/cli/jvm/legacySmartCastsAfterTry.kt:8:10: warning: unused return value of 'length'.
+    some.length
+         ^^^^^^
 OK

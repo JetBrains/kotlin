@@ -827,6 +827,15 @@
                         "deprecatedVersion": null,
                         "removedVersion": null
                     }
+                },
+                {
+                    "name": "default",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.5.0",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
                 }
             ]
         },
@@ -5959,8 +5968,14 @@
                         "shortName": null,
                         "deprecatedName": null,
                         "description": {
-                            "current": "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.",
-                            "valueInVersions": []
+                            "current": "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion. 'default' mode is based on the current language version: Since Kotlin 2.5, checker is enabled by default.",
+                            "valueInVersions": [
+                                {
+                                    "minReleaseVersion": "2.2.0",
+                                    "maxReleaseVersion": "2.4.20",
+                                    "value": "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion."
+                                }
+                            ]
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
@@ -5972,13 +5987,25 @@
                                 "valueInVersions": []
                             },
                             "defaultValue": {
-                                "current": "disable",
-                                "valueInVersions": []
+                                "current": "default",
+                                "valueInVersions": [
+                                    {
+                                        "minReleaseVersion": "2.2.0",
+                                        "maxReleaseVersion": "2.4.20",
+                                        "value": "disable"
+                                    }
+                                ]
                             }
                         },
                         "valueDescription": {
-                            "current": "{check|full|disable}",
-                            "valueInVersions": []
+                            "current": "{check|full|disable|default}",
+                            "valueInVersions": [
+                                {
+                                    "minReleaseVersion": "2.2.0",
+                                    "maxReleaseVersion": "2.4.20",
+                                    "value": "{check|full|disable}"
+                                }
+                            ]
                         },
                         "releaseVersionsMetadata": {
                             "introducedVersion": "2.2.0",
@@ -5993,8 +6020,14 @@
                                 "valueInVersions": []
                             },
                             "defaultValue": {
-                                "current": "disable",
-                                "valueInVersions": []
+                                "current": "default",
+                                "valueInVersions": [
+                                    {
+                                        "minReleaseVersion": "2.2.0",
+                                        "maxReleaseVersion": "2.4.20",
+                                        "value": "disable"
+                                    }
+                                ]
                             }
                         },
                         "deprecatedMessage": null
