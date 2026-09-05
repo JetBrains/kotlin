@@ -72,7 +72,8 @@ object KtNodeTypes : SyntaxElementTypesWithIds() {
     const val FUNCTION_TYPE_RECEIVER_ID: Int = FUNCTION_TYPE_ID + 1
     const val NULLABLE_TYPE_ID: Int = FUNCTION_TYPE_RECEIVER_ID + 1
     const val INTERSECTION_TYPE_ID: Int = NULLABLE_TYPE_ID + 1
-    const val TYPE_PROJECTION_ID: Int = INTERSECTION_TYPE_ID + 1
+    const val UNION_TYPE_ID: Int = INTERSECTION_TYPE_ID + 1
+    const val TYPE_PROJECTION_ID: Int = UNION_TYPE_ID + 1
 
     const val PROPERTY_ACCESSOR_ID: Int = TYPE_PROJECTION_ID + 1
     const val BACKING_FIELD_ID: Int = PROPERTY_ACCESSOR_ID + 1
@@ -143,8 +144,9 @@ object KtNodeTypes : SyntaxElementTypesWithIds() {
     const val CALLABLE_REFERENCE_EXPRESSION_ID: Int = DOT_QUALIFIED_EXPRESSION_ID + 1
     const val CLASS_LITERAL_EXPRESSION_ID: Int = CALLABLE_REFERENCE_EXPRESSION_ID + 1
     const val SAFE_ACCESS_EXPRESSION_ID: Int = CLASS_LITERAL_EXPRESSION_ID + 1
+    const val ERROR_SAFE_ACCESS_EXPRESSION_ID: Int = SAFE_ACCESS_EXPRESSION_ID + 1
 
-    const val OBJECT_LITERAL_ID: Int = SAFE_ACCESS_EXPRESSION_ID + 1
+    const val OBJECT_LITERAL_ID: Int = ERROR_SAFE_ACCESS_EXPRESSION_ID + 1
 
     const val WHEN_ID: Int = OBJECT_LITERAL_ID + 1
     const val WHEN_ENTRY_ID: Int = WHEN_ID + 1
@@ -214,6 +216,7 @@ object KtNodeTypes : SyntaxElementTypesWithIds() {
     val NULLABLE_TYPE: SyntaxElementType = register(NULLABLE_TYPE_ID, "NULLABLE_TYPE")
 
     val INTERSECTION_TYPE: SyntaxElementType = register(INTERSECTION_TYPE_ID, "INTERSECTION_TYPE")
+    val UNION_TYPE: SyntaxElementType = register(UNION_TYPE_ID, "UNION_TYPE")
 
     val TYPE_REFERENCE: SyntaxElementType = register(TYPE_REFERENCE_ID, "TYPE_REFERENCE")
 
@@ -334,6 +337,7 @@ object KtNodeTypes : SyntaxElementTypesWithIds() {
     val CALLABLE_REFERENCE_EXPRESSION: SyntaxElementType =
         register(CALLABLE_REFERENCE_EXPRESSION_ID, "CALLABLE_REFERENCE_EXPRESSION")
     val SAFE_ACCESS_EXPRESSION: SyntaxElementType = register(SAFE_ACCESS_EXPRESSION_ID, "SAFE_ACCESS_EXPRESSION")
+    val ERROR_SAFE_ACCESS_EXPRESSION: SyntaxElementType = register(ERROR_SAFE_ACCESS_EXPRESSION_ID, "ERROR_SAFE_ACCESS_EXPRESSION")
 
     val OBJECT_LITERAL: SyntaxElementType = register(OBJECT_LITERAL_ID, "OBJECT_LITERAL")
     val WHEN: SyntaxElementType = register(WHEN_ID, "WHEN")

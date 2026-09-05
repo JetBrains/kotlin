@@ -1718,7 +1718,7 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.selector(node: LighterASTNode)
     for (child in children) {
         if (child == null) continue
         val tokenType = child.tokenType
-        if (tokenType == DOT || tokenType == COLONCOLON || tokenType == SAFE_ACCESS) {
+        if (tokenType == DOT || tokenType == COLONCOLON || tokenType == SAFE_ACCESS || tokenType == ERROR_SAFE_ACCESS) {
             dotOrDoubleColonFound = true
             continue
         }

@@ -206,13 +206,13 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             switch (operation.tokenId) {
                 case AS_KEYWORD_Id:
                 case AS_SAFE_Id:
-                    myKotlinParsing.parseTypeRefWithoutIntersections();
+                    myKotlinParsing.parseTypeRefWithoutIntersectionsOrUnions();
                     minPrecedence = BinaryOperationPrecedence.AS;
                     resultType = KtNodeTypes.BINARY_WITH_TYPE;
                     break;
                 case IS_KEYWORD_Id:
                 case NOT_IS_Id:
-                    myKotlinParsing.parseTypeRefWithoutIntersections();
+                    myKotlinParsing.parseTypeRefWithoutIntersectionsOrUnions();
                     // The handling of `is`, it doesn't parse RHS recursively and greedily.
                     // To prevent parsing of more prioritized operations next to `is` (for instance, INFIX, RANGE, and others),
                     // use the `minPrecedence` in addition to `maxPrecedence`.
@@ -361,8 +361,9 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             else if (parseCallSuffix()) {
                 expression.done(CALL_EXPRESSION);
             }
-            else if (at(DOT) || at(SAFE_ACCESS)) {
-                IElementType expressionType = at(DOT) ? DOT_QUALIFIED_EXPRESSION : SAFE_ACCESS_EXPRESSION;
+            else if (at(DOT) || at(SAFE_ACCESS) || at(ERROR_SAFE_ACCESS)) {
+                IElementType expressionType =
+                        at(DOT) ? DOT_QUALIFIED_EXPRESSION : (at(SAFE_ACCESS) ? SAFE_ACCESS_EXPRESSION : ERROR_SAFE_ACCESS_EXPRESSION);
                 advance(); // DOT or SAFE_ACCESS
 
                 if (!firstExpressionParsed) {

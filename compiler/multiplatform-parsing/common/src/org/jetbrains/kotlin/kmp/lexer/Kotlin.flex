@@ -344,6 +344,7 @@ LONELY_BACKTICK=`
 "&&"         { return KtTokens.ANDAND }
 "&"          { return KtTokens.AND }
 "||"         { return KtTokens.OROR }
+"|"          { return KtTokens.OR }
 "*="         { return KtTokens.MULTEQ }
 "/="         { return KtTokens.DIVEQ }
 "%="         { return KtTokens.PERCEQ }

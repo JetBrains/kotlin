@@ -79,6 +79,7 @@ public interface KtNodeTypes {
     @NotNull IElementType FUNCTION_TYPE_RECEIVER   = KtStubBasedElementTypes.FUNCTION_TYPE_RECEIVER;
     @NotNull IElementType NULLABLE_TYPE            = KtStubBasedElementTypes.NULLABLE_TYPE;
     @NotNull IElementType INTERSECTION_TYPE        = KtStubBasedElementTypes.INTERSECTION_TYPE;
+    @NotNull IElementType UNION_TYPE               = KtStubBasedElementTypes.UNION_TYPE;
     @NotNull IElementType TYPE_PROJECTION          = KtStubBasedElementTypes.TYPE_PROJECTION;
 
     @NotNull IElementType PROPERTY_ACCESSOR       = KtStubBasedElementTypes.PROPERTY_ACCESSOR;
@@ -150,6 +151,7 @@ public interface KtNodeTypes {
     @NotNull IElementType CALLABLE_REFERENCE_EXPRESSION = new KtNodeType("CALLABLE_REFERENCE_EXPRESSION", KtCallableReferenceExpression::new);
     @NotNull IElementType CLASS_LITERAL_EXPRESSION  = KtStubBasedElementTypes.CLASS_LITERAL_EXPRESSION;
     @NotNull IElementType SAFE_ACCESS_EXPRESSION    = new KtNodeType("SAFE_ACCESS_EXPRESSION", KtSafeQualifiedExpression::new);
+    @NotNull IElementType ERROR_SAFE_ACCESS_EXPRESSION    = new KtNodeType("ERROR_SAFE_ACCESS_EXPRESSION", KtErrorSafeQualifiedExpression::new);
 
     @NotNull IElementType OBJECT_LITERAL            = KtStubBasedElementTypes.OBJECT_LITERAL;
 

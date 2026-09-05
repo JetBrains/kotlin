@@ -70,6 +70,8 @@ public interface KtStubElementTypes {
 
     @NotNull KtNodeType INTERSECTION_TYPE = new KtNodeType("INTERSECTION_TYPE", KtIntersectionType::new);
 
+    @NotNull KtNodeType UNION_TYPE = new KtNodeType("UNION_TYPE", KtUnionType::new);
+
     @NotNull KtNodeType TYPE_REFERENCE = new KtNodeType("TYPE_REFERENCE", KtTypeReference::new);
 
     @NotNull KtNodeType USER_TYPE = new KtNodeType("USER_TYPE", KtUserType::new);

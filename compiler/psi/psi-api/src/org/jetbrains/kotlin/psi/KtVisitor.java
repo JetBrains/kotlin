@@ -375,6 +375,10 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitQualifiedExpression(expression, data);
     }
 
+    public R visitErrorSafeQualifiedExpression(@NotNull KtErrorSafeQualifiedExpression expression, D data) {
+        return visitQualifiedExpression(expression, data);
+    }
+
     public R visitObjectLiteralExpression(@NotNull KtObjectLiteralExpression expression, D data) {
         return visitExpression(expression, data);
     }
@@ -489,6 +493,10 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
 
     public R visitIntersectionType(@NotNull KtIntersectionType definitelyNotNullType, D data) {
         return visitTypeElement(definitelyNotNullType, data);
+    }
+
+    public R visitUnionType(@NotNull KtUnionType unionType, D data) {
+        return visitTypeElement(unionType, data);
     }
 
     public R visitTypeProjection(@NotNull KtTypeProjection typeProjection, D data) {
