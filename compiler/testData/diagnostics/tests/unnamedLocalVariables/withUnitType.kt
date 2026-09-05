@@ -3,7 +3,7 @@
 // LANGUAGE: +UnnamedLocalVariables +NameBasedDestructuring
 // LATEST_LV_DIFFERENCE
 
-// FILE: JavaUtils.java
+// FILE: test/JavaUtils.java
 
 package test;
 

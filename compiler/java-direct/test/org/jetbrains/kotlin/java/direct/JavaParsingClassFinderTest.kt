@@ -136,6 +136,48 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
     }
 
     @Test
+    fun testValueRecordInnerClass(@TempDir tempDir: Path) {
+        val pkgDir = tempDir.resolve("test")
+        pkgDir.toFile().mkdirs()
+        pkgDir.resolve("Outer.java").writeText(
+            """
+            package test;
+            public class Outer {
+                public static value record V(int x) {}
+                public static record NV(int x) {}
+            }
+        """.trimIndent()
+        )
+
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
+        val outerClassId = ClassId(FqName("test"), Name.identifier("Outer"))
+        val outerClass = finder.findClass(JavaClassFinder.Request(outerClassId))
+        assertNotNull(outerClass, "Expected to find test.Outer class")
+
+        val innerNames = outerClass.innerClassNames.map { it.asString() }
+        assertTrue("NV" in innerNames, "Expected NV in inner class names, found: $innerNames")
+        assertTrue("V" in innerNames, "Expected V in inner class names, found: $innerNames")
+
+        assertNotNull(outerClass.findInnerClass(Name.identifier("NV")), "Expected to find inner class NV")
+        assertNotNull(outerClass.findInnerClass(Name.identifier("V")), "Expected to find inner class V")
+
+        val vClass = outerClass.findInnerClass(Name.identifier("V")) as? JavaClassOverAst
+        val nvClass = outerClass.findInnerClass(Name.identifier("NV")) as? JavaClassOverAst
+        assertNotNull(vClass, "Expected V to be a JavaClassOverAst")
+        assertNotNull(nvClass, "Expected NV to be a JavaClassOverAst")
+
+        // V is a value record: isValue=true, isRecord=true, isFinal=true (value classes are implicitly final)
+        assertTrue(vClass.isValue, "V should be a value class")
+        assertTrue(vClass.isRecord, "V should be a record")
+        assertTrue(vClass.isFinal, "V should be implicitly final (value class)")
+
+        // NV is a regular record: isValue=false, isRecord=true, isFinal=true (records are implicitly final)
+        assertFalse(nvClass.isValue, "NV should not be a value class")
+        assertTrue(nvClass.isRecord, "NV should be a record")
+        assertTrue(nvClass.isFinal, "NV should be implicitly final (record)")
+    }
+
+    @Test
     fun testMultiFileClassFinder(@TempDir tempDir: Path) {
         // Simulate the test scenario: J.java uses star import for org.jetbrains.annotations.*
         // NotNull.java defines the annotation in that package
@@ -558,5 +600,135 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         val helper = finder.findClass(JavaClassFinder.Request(helperId))
         assertNotNull(helper, "Expected to find pkg.Helper by direct ClassId lookup")
         assertEquals("Helper", helper.name.asString())
+    }
+
+    @Test
+    fun testKnownClassNamesInPackage_singleFileRootIncludesNonBasenameClasses(@TempDir tempDir: Path) {
+        // Mirrors the CLI `singleJavaFileRoots` fixture: SeveralClasses.java declares PackageLocal1
+        // and PackageLocal2, but no type named "SeveralClasses". When passed as a single-file
+        // source root, both names must be advertised in knownClassNamesInPackage and findable.
+        val severalClassesFile = tempDir.resolve("SeveralClasses.java")
+        severalClassesFile.writeText(
+            """
+            package lib.ext;
+            class PackageLocal1 {}
+            class PackageLocal2 {}
+        """.trimIndent()
+        )
+
+        // Pass the .java file itself as the source root (not a directory)
+        val finder = JavaClassFinderOverAstImpl(listOf(severalClassesFile.toFile()))
+
+        // Both non-basename classes should be advertised
+        val knownNames = finder.knownClassNamesInPackage(FqName("lib.ext"))
+        assertTrue(
+            "PackageLocal1" in knownNames,
+            "Expected PackageLocal1 in known names for single-file root, got $knownNames"
+        )
+        assertTrue(
+            "PackageLocal2" in knownNames,
+            "Expected PackageLocal2 in known names for single-file root, got $knownNames"
+        )
+
+        // Both should be findable by ClassId
+        val pl1 = finder.findClass(JavaClassFinder.Request(ClassId(FqName("lib.ext"), Name.identifier("PackageLocal1"))))
+        assertNotNull(pl1, "Expected to find lib.ext.PackageLocal1")
+        assertEquals("PackageLocal1", pl1.name.asString())
+
+        val pl2 = finder.findClass(JavaClassFinder.Request(ClassId(FqName("lib.ext"), Name.identifier("PackageLocal2"))))
+        assertNotNull(pl2, "Expected to find lib.ext.PackageLocal2")
+        assertEquals("PackageLocal2", pl2.name.asString())
+    }
+
+    @Test
+    fun testKnownClassNamesInPackage_directoryRootExcludesNonCanonicalNames(@TempDir tempDir: Path) {
+        // Same file as above, but under a directory root: non-canonical names must NOT be
+        // advertised in knownClassNamesInPackage (KT-4455 / PSI parity).
+        val libExtDir = tempDir.resolve("lib/ext")
+        libExtDir.toFile().mkdirs()
+        libExtDir.resolve("SeveralClasses.java").writeText(
+            """
+            package lib.ext;
+            class PackageLocal1 {}
+            class PackageLocal2 {}
+        """.trimIndent()
+        )
+
+        // Directory root — KT-4455 basename gate applies
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
+
+        val knownNames = finder.knownClassNamesInPackage(FqName("lib.ext"))
+        // Neither PackageLocal1 nor PackageLocal2 should be advertised because the file
+        // basename "SeveralClasses" doesn't match either class name
+        assertFalse(
+            "PackageLocal1" in knownNames,
+            "PackageLocal1 must NOT appear in knownClassNamesInPackage for directory root, got $knownNames"
+        )
+        assertFalse(
+            "PackageLocal2" in knownNames,
+            "PackageLocal2 must NOT appear in knownClassNamesInPackage for directory root, got $knownNames"
+        )
+    }
+
+    @Test
+    fun testWrongPackageFileAtDirectoryRootIsNotFound(@TempDir tempDir: Path) {
+        // A.java declares `package foo;` but lives directly under the directory root (not in a
+        // `foo/` subdirectory). Under a directory root the package is derived from the path, so
+        // neither ClassId resolves — javac and PSI (the CLI `javaSrcWrongPackage` fixture, KT-11474)
+        // report the same.
+        val aFile = tempDir.resolve("A.java")
+        aFile.writeText(
+            """
+            package foo;
+            public class A {
+                public static class Nested {}
+            }
+        """.trimIndent()
+        )
+
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
+
+        val fooAId = ClassId(FqName("foo"), Name.identifier("A"))
+        assertFalse(finder.isClassInIndex(fooAId), "foo.A must NOT be in index for a directory root")
+        assertNull(finder.findClass(JavaClassFinder.Request(fooAId)), "foo.A must NOT be findable for a directory root")
+
+        val rootAId = ClassId(FqName.ROOT, Name.identifier("A"))
+        assertFalse(finder.isClassInIndex(rootAId), "Root-package A must NOT be in index")
+        assertNull(finder.findClass(JavaClassFinder.Request(rootAId)), "Root-package A must NOT be findable")
+
+        val nestedId = ClassId(FqName("foo"), FqName("A.Nested"), isLocal = false)
+        assertNull(finder.findClass(JavaClassFinder.Request(nestedId)), "foo.A.Nested must NOT be findable")
+    }
+
+    @Test
+    fun testWrongPackageFileAsSingleFileRootIsFoundByDeclaredPackage(@TempDir tempDir: Path) {
+        // Same file as above, passed as a single-file source root: there is no path to derive the
+        // package from, so the declared package wins, as in PSI's `SingleJavaFileRootsIndex`.
+        val aFile = tempDir.resolve("A.java")
+        aFile.writeText(
+            """
+            package foo;
+            public class A {
+                public static class Nested {}
+            }
+        """.trimIndent()
+        )
+
+        val finder = JavaClassFinderOverAstImpl(listOf(aFile.toFile()))
+
+        val fooAId = ClassId(FqName("foo"), Name.identifier("A"))
+        assertTrue(finder.isClassInIndex(fooAId), "Expected foo.A to be in index")
+        val fooA = finder.findClass(JavaClassFinder.Request(fooAId))
+        assertNotNull(fooA, "Expected to find foo.A by declared package")
+        assertEquals("A", fooA.name.asString())
+
+        val rootAId = ClassId(FqName.ROOT, Name.identifier("A"))
+        assertFalse(finder.isClassInIndex(rootAId), "Root-package A must NOT be in index")
+        assertNull(finder.findClass(JavaClassFinder.Request(rootAId)), "Root-package A must NOT be findable")
+
+        val nestedId = ClassId(FqName("foo"), FqName("A.Nested"), isLocal = false)
+        val nested = finder.findClass(JavaClassFinder.Request(nestedId))
+        assertNotNull(nested, "Expected to find foo.A.Nested")
+        assertEquals("Nested", nested.name.asString())
     }
 }

@@ -9,6 +9,14 @@ package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
+import org.jetbrains.kotlin.fir.resolve.providers.FirNullSymbolNamesProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
@@ -18,6 +26,8 @@ import org.jetbrains.kotlin.java.direct.resolution.LeanJavaClassFinder
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import java.io.File
 
 /**
@@ -34,16 +44,16 @@ data class ParsedSource(
 
 open class JavaParsingTestBase {
 
-    protected fun parseSource(source: String): ParsedSource {
+    protected fun parseSource(source: String, session: FirSession = createDummyFirSessionForTests()): ParsedSource {
         val tree = parseJavaToLightTree(source, 0)
         lateinit var context: JavaResolutionContext
         val classFinder = SameFileOnlyClassFinder { context }
-        context = JavaResolutionContext.create(tree, session = createDummyFirSessionForTests(), classFinder = classFinder)
+        context = JavaResolutionContext.create(tree, session = session, classFinder = classFinder)
         return ParsedSource(tree.getRoot(), context, tree)
     }
 
-    protected fun parseFirstClass(source: String): JavaClassOverAst {
-        val parsed = parseSource(source)
+    protected fun parseFirstClass(source: String, session: FirSession = createDummyFirSessionForTests()): JavaClassOverAst {
+        val parsed = parseSource(source, session)
         val classNode = parsed.tree.getChildren(parsed.root).first {
             parsed.tree.getType(it).toString() == "CLASS"
         }
@@ -93,4 +103,41 @@ internal fun createDummyFirSessionForTests(): FirSession =
 
 @OptIn(PrivateSessionConstructor::class)
 private class DummyJavaDirectFirSession(kind: Kind) : FirSession(kind)
+
+/**
+ * Minimal [FirSymbolProvider] whose [getClassLikeSymbolByClassId] delegates to [onLookup]. All
+ * other provider responsibilities are stubbed empty.
+ */
+@OptIn(FirSymbolProviderInternals::class)
+internal class StubSymbolProvider(
+    session: FirSession,
+    private val onLookup: (ClassId) -> FirClassLikeSymbol<*>?,
+) : FirSymbolProvider(session) {
+    override val symbolNamesProvider: FirSymbolNamesProvider get() = FirNullSymbolNamesProvider
+
+    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? = onLookup(classId)
+
+    override fun getTopLevelCallableSymbolsTo(
+        destination: MutableList<FirCallableSymbol<*>>,
+        packageFqName: FqName,
+        name: Name,
+    ) {
+    }
+
+    override fun getTopLevelFunctionSymbolsTo(
+        destination: MutableList<FirNamedFunctionSymbol>,
+        packageFqName: FqName,
+        name: Name,
+    ) {
+    }
+
+    override fun getTopLevelPropertySymbolsTo(
+        destination: MutableList<FirPropertySymbol>,
+        packageFqName: FqName,
+        name: Name,
+    ) {
+    }
+
+    override fun hasPackage(fqName: FqName): Boolean = false
+}
 

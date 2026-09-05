@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.*
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -614,7 +615,7 @@ class EnumSupertypeForJavaDirect(
     private val resolutionContext: JavaResolutionContext,
 ) : JavaClassifierType {
     override val classifier: JavaClassifier? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        with(resolutionContext) { resolve(classifierQualifiedName)?.let { classifierAdapterFor(it) } }
+        with(resolutionContext) { resolveCanonicalName(classifierQualifiedName)?.let { classifierAdapterFor(it) } }
     }
     override val classifierQualifiedName: String get() = "java.lang.Enum"
     override val typeArguments: List<JavaType> get() = listOf(EnumSelfTypeArgument())
@@ -637,16 +638,18 @@ class EnumSupertypeForJavaDirect(
 }
 
 /**
- * [JavaClassifierType] for well-known external classes (e.g. `java.lang.Object`).
+ * [JavaClassifierType] for a non-generic implicit supertype given by its [ClassId]
+ * (e.g. `java.lang.Object`); carries no type arguments and no annotations.
  * Lazily resolves [classifier] through the [JavaResolutionContext]'s session so the
  * FIR-side `null ->` branch in `JavaTypeConversion` doesn't have to handle this case.
  */
-class SimpleClassifierType(
-    override val classifierQualifiedName: String,
+class ImplicitSupertypeForJavaDirect(
+    classId: ClassId,
     private val resolutionContext: JavaResolutionContext,
 ) : JavaClassifierType {
+    override val classifierQualifiedName: String = classId.asSingleFqName().asString()
     override val classifier: JavaClassifier? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        with(resolutionContext) { resolve(classifierQualifiedName)?.let { classifierAdapterFor(it) } }
+        with(resolutionContext) { resolveCanonicalName(classifierQualifiedName)?.let { classifierAdapterFor(it) } }
     }
     override val typeArguments: List<JavaType> get() = emptyList()
     override val isRaw: Boolean get() = false
