@@ -6,14 +6,10 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.mapping.IrCallableMethod
-import org.jetbrains.kotlin.codegen.inline.MethodBodyVisitor
-import org.jetbrains.kotlin.codegen.inline.SourceMapCopyingMethodVisitor
-import org.jetbrains.kotlin.codegen.inline.argumentsSize
+import org.jetbrains.kotlin.codegen.inline.*
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -45,12 +41,47 @@ object IrInlineDefaultCodegen : IrInlineCallGenerator {
         val function = expression.symbol.owner
         (val node, val smap = classSMAP) = codegen.classCodegen.generateMethodNode(function)
         val argsSize = argumentsSize(callableMethod.asmMethod.descriptor, function.isStatic)
+        val scopesGenerator = codegen.inlineScopesGenerator
+        val scopeNumberOffset = scopesGenerator?.inlinedScopes ?: 0
+        var copiedScopes = 0
         val mv = object : MethodBodyVisitor(codegen.visitor) {
             override fun visitLocalVariable(name: String, desc: String, signature: String?, start: Label, end: Label, index: Int) {
                 // We only copy LVT entries for local variables, since we already generated entries for the method parameters.
-                if (index >= argsSize) super.visitLocalVariable(name, desc, signature, start, end, index)
+                if (index < argsSize) return
+                if (scopesGenerator == null) {
+                    super.visitLocalVariable(name, desc, signature, start, end, index)
+                    return
+                }
+                val info = name.getInlineScopeInfo()
+                if (info == null) {
+                    // The bare marker of the implementation method is copied as is. It doesn't
+                    // start at the beginning of the stub, so InlineScopesGenerator must recognize
+                    // it by the absence of scope info, not by its position (KT-88995).
+                    super.visitLocalVariable(name, desc, signature, start, end, index)
+                    return
+                }
+                // Scope numbering restarts in every generated method, so the scope numbers copied
+                // from the implementation method would clash with the numbers already given out
+                // while inlining default argument values. Shift them to keep the numbering of the
+                // stub consecutive.
+                if (JvmAbi.isFakeLocalVariableForInline(name)) {
+                    copiedScopes += 1
+                }
+                super.visitLocalVariable(name.shiftScopeNumbers(info, scopeNumberOffset), desc, signature, start, end, index)
             }
         }
         node.accept(SourceMapCopyingMethodVisitor(codegen.smap, smap, mv))
+        scopesGenerator?.apply { inlinedScopes += copiedScopes }
+    }
+
+    private fun String.shiftScopeNumbers(info: InlineScopeInfo, offset: Int): String {
+        if (offset == 0) return this
+        val result = dropInlineScopeInfo().addScopeInfo(info.scopeNumber + offset)
+        val callSiteLineNumber = info.callSiteLineNumber ?: return result
+        val surroundingScopeNumber = info.surroundingScopeNumber
+            ?: return result.addScopeInfo(callSiteLineNumber)
+        // A surrounding scope number of 0 denotes the enclosing function itself, not a numbered scope.
+        val newSurroundingScopeNumber = if (surroundingScopeNumber == 0) 0 else surroundingScopeNumber + offset
+        return result.addScopeInfo(callSiteLineNumber).addScopeInfo(newSurroundingScopeNumber)
     }
 }
