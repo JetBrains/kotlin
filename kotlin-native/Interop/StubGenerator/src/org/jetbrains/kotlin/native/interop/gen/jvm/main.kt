@@ -595,6 +595,7 @@ private fun loadLibraries(cinteropArguments: CInteropArguments, target: KonanTar
                 }
         )
         platformChecker(KlibPlatformChecker.Native(target.name))
+        minPermittedAbiVersion(KotlinAbiVersion.FIRST_SUPPORTED)
         maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
         manifestTransformer(KlibNativeManifestTransformer(target))
     }.load()

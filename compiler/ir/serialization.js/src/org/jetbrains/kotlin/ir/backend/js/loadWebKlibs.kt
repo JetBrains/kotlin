@@ -33,6 +33,7 @@ fun loadWebKlibs(
     val result = KlibLoader {
         libraryPaths(configuration.libraries)
         platformChecker(platformChecker)
+        minPermittedAbiVersion(KotlinAbiVersion.FIRST_SUPPORTED)
         maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
         configuration.zipFileSystemAccessor?.let { zipFileSystemAccessor(it) }
     }.load()
