@@ -1,0 +1,9 @@
+Type has changed on restoration
+
+Before:
+
+MyCollection<Foo>
+
+After:
+
+Type pointer restoration failed

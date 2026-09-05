@@ -1,0 +1,3 @@
+Restored type is the same as the original one
+
+out @Anno1 @AnnoWithArgs1(x = "") kotlin.CharSequence
