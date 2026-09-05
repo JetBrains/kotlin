@@ -32,7 +32,6 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
             logLevel = LogLevel.DEBUG,
-            languageVersion = "2.0",
             isolatedProjects = when (platformType) {
                 KotlinPlatformType.js -> BuildOptions.IsolatedProjectsMode.DISABLED
                 else -> super.defaultBuildOptions.isolatedProjects
