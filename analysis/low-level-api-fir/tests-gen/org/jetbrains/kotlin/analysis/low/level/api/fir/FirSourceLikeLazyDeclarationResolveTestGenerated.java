@@ -1452,6 +1452,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("compilerRequiredAliased.kt")
+    public void testCompilerRequiredAliased() {
+      run("compilerRequiredAliased.kt");
+    }
+
+    @Test
     @TestMetadata("constructorProperty_all.kt")
     public void testConstructorProperty_all() {
       run("constructorProperty_all.kt");

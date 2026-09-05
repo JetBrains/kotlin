@@ -1,0 +1,65 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAliased.kt
+    @MyDeprecated[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun method(): <implicit> { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAliased.kt
+    @MyDeprecated[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun method(): <implicit> { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAliased.kt
+    @MyDeprecated[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun method(): <implicit> { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAliased.kt
+    @MyDeprecated[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] fun method(): <implicit> { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAliased.kt
+    @MyDeprecated[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] fun method(): <implicit> { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAliased.kt
+    @R|kotlin/Deprecated|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] fun method(): <implicit> { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAliased.kt
+    @R|kotlin/Deprecated|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun method(): <implicit> { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAliased.kt
+    @R|kotlin/Deprecated|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun method(): <implicit> { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAliased.kt
+    @R|kotlin/Deprecated|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] fun method(): <implicit> { LAZY_BLOCK }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAliased.kt
+    @R|kotlin/Deprecated|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun method(): R|kotlin/Int| {
+        ^method Int(42)
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAliased.kt
+    @R|kotlin/Deprecated|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] fun method(): R|kotlin/Int| {
+        ^method Int(42)
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAliased.kt
+    @R|kotlin/Deprecated|[Types](message = String() [evaluated = String()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun method(): R|kotlin/Int| {
+        ^method Int(42)
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAliased.kt
+    @R|kotlin/Deprecated|[Types](message = String() [evaluated = String()]) public final [ResolvedTo(BODY_RESOLVE)] fun method(): R|kotlin/Int| {
+        ^method Int(42)
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAliased.kt
+    @R|kotlin/Deprecated|[Types](message = String() [evaluated = String()]) public final [ResolvedTo(BODY_RESOLVE)] fun method(): R|kotlin/Int| {
+        ^method Int(42)
+    }
