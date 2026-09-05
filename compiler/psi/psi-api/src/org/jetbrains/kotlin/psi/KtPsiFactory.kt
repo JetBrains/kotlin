@@ -292,6 +292,34 @@ class KtPsiFactory private constructor(
         return createClass("class A {\n $text\n}").companionObjects.first()
     }
 
+    /** Creates an empty companion block. */
+    @KtExperimentalApi
+    fun createCompanionBlock(): KtCompanionBlock {
+        return createCompanionBlock("companion {\n}")
+    }
+
+    /**
+     * Creates a companion block from the given [text] (for example, `"companion { ... }"`). The text must contain exactly one complete
+     * companion block and no other class-body elements.
+     */
+    @KtExperimentalApi
+    fun createCompanionBlock(@NonNls text: String): KtCompanionBlock {
+        val klass = createClass("class A {\n$text\n}")
+        val companionBlock = klass.companionBlocks.singleOrNull()
+
+        checkWithAttachment(
+            companionBlock != null &&
+                    klass.body?.declarationsAndCompanionBlocks?.singleOrNull() === companionBlock &&
+                    companionBlock.text == text,
+            { "Failed to create a single companion block from text" },
+        ) {
+            it.withAttachment("text.kt", text)
+            it.withPsiAttachment("parsed.kt", klass)
+        }
+
+        return companionBlock
+    }
+
     /** Creates a file-level annotation entry from the given [annotationText] (without the `@file:` prefix). */
     fun createFileAnnotation(@NonNls annotationText: String): KtAnnotationEntry {
         return createFileAnnotationListWithAnnotation(annotationText).annotationEntries.first()
