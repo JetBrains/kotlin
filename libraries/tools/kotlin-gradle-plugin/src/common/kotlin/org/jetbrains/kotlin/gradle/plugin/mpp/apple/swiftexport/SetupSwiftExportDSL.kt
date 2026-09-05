@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedSwiftExportTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.initSwiftExportClasspathConfigurations
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.EXPORT_EXTENSION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.ExportExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationCompat
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.tasks.locateOrRegisterSwiftExportMetadataTaskAndConsumableConfiguration
 
 internal object SwiftExportDSLConstants {
@@ -27,11 +26,11 @@ internal object SwiftExportDSLConstants {
 }
 
 internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
-    val swiftExportExtension = multiplatformExtension.swiftExportInternal
+    val legacySwiftExportExtension = multiplatformExtension.swiftExportInternal
 
     multiplatformExtension.addExtension(
         SwiftExportDSLConstants.SWIFT_EXPORT_EXTENSION_NAME,
-        swiftExportExtension
+        legacySwiftExportExtension
     )
 
     // TODO: Move to a more generic SetUpExportAction.
@@ -58,13 +57,7 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
     if (!multiplatformExtension.isSwiftExportXcodeIntegrationActivated()) return@KotlinProjectSetupCoroutine
 
     initSwiftExportClasspathConfigurations()
-    registerSwiftExportPipeline(
-        if (exportExtension.isSwiftExportConfigured) {
-            SwiftExportConfigurationCompat.from(exportExtension.swiftExportConfiguration, providers, objects)
-        } else {
-            SwiftExportConfigurationCompat.from(swiftExportExtension)
-        }
-    )
+    registerSwiftExportPipeline(legacySwiftExportExtension, exportExtension)
 }
 
 /**
@@ -92,21 +85,14 @@ internal fun KotlinMultiplatformExtension.isSwiftExportXcodeIntegrationActivated
 }
 
 private fun Project.registerSwiftExportPipeline(
-    swiftExportConfiguration: SwiftExportConfigurationCompat,
+    legacySwiftExportExtension: SwiftExportExtension,
+    exportExtension: ExportExtension,
 ) {
     val environment = XcodeEnvironment(project)
 
     multiplatformExtension
         .supportedAppleTargets()
         .configureEach { target ->
-            setupSwiftExport(target, environment, swiftExportConfiguration)
+            registerEmbedSwiftExportTask(target, environment, legacySwiftExportExtension, exportExtension)
         }
-}
-
-private fun Project.setupSwiftExport(
-    target: KotlinNativeTarget,
-    environment: XcodeEnvironment,
-    swiftExportConfiguration: SwiftExportConfigurationCompat,
-) {
-    registerEmbedSwiftExportTask(target, environment, swiftExportConfiguration)
 }

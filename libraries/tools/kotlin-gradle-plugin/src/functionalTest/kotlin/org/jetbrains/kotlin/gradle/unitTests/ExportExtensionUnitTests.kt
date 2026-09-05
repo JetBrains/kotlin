@@ -7,15 +7,25 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.testfixtures.ProjectBuilder
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.EmbedSwiftExportForXcodeTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationDsl
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
+import org.jetbrains.kotlin.gradle.unitTests.utils.applyEmbedAndSignEnvironment
+import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.EMBED_SWIFT_EXPORT_TASK_NAME
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.exportDslProject
 import org.jetbrains.kotlin.gradle.util.exportExtension
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.junit.jupiter.api.Assumptions
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -24,6 +34,7 @@ import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 class ExportExtensionUnitTests {
 
@@ -207,3 +218,564 @@ class ExportExtensionXcodeIntegrationTests {
         assertNull(project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME))
     }
 }
+
+class ExportExtensionSwiftExportTests {
+    @BeforeTest
+    fun runOnMacOSOnly() {
+        Assumptions.assumeTrue(HostManager.hostIsMac, "macOS host required for this test")
+    }
+
+    @Test
+    fun `direct external api dependency exported fully`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            }
+        )
+
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+
+        val expectedModules = setOf(
+            ExportedSwiftModuleForAssertion(
+                moduleName = "OrgJetbrainsKotlinxKotlinxIoBytestring",
+                artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
+                shouldBeFullyExported = true
+            ),
+        )
+
+        assertSetsEqual(
+            expectedModules,
+            actualModules.toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `direct external implementation dependency exported transitively`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+
+                sourceSets.commonMain.dependencies {
+                    implementation("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            }
+        )
+
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+
+        val expectedModules = setOf(
+            ExportedSwiftModuleForAssertion(
+                moduleName = "OrgJetbrainsKotlinxKotlinxIoBytestring",
+                artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
+                shouldBeFullyExported = false
+            ),
+        )
+
+        assertSetsEqual(
+            expectedModules,
+            actualModules.toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `direct project api dependency exported fully`() {
+        val project = buildProject(
+            projectBuilder = {
+                withName("shared")
+            },
+            configureProject = {
+                configureRepositoriesForTests()
+            }
+        )
+        val projectDependency = project.subProject("subproject") {
+            iosSimulatorArm64()
+        }
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api(projectDependency)
+                }
+            }
+        )
+
+        project.evaluate()
+        projectDependency.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+
+        val expectedModules = setOf(
+            ExportedSwiftModuleForAssertion(
+                moduleName = "Subproject",
+                artifactName = "subproject",
+                shouldBeFullyExported = true
+            ),
+        )
+
+        assertSetsEqual(
+            expectedModules,
+            actualModules.toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `direct project implementation dependency exported transitively`() {
+        val project = buildProject(
+            projectBuilder = {
+                withName("shared")
+            },
+            configureProject = {
+                configureRepositoriesForTests()
+            }
+        )
+        val projectDependency = project.subProject("subproject") {
+            iosSimulatorArm64()
+        }
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation(projectDependency)
+                }
+            }
+        )
+
+        project.evaluate()
+        projectDependency.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+
+        val expectedModules = setOf(
+            ExportedSwiftModuleForAssertion(
+                moduleName = "SharedSubproject",
+                artifactName = "subproject",
+                shouldBeFullyExported = false
+            ),
+        )
+
+        assertSetsEqual(
+            expectedModules,
+            actualModules.toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `direct project api dependency exported fully, its dependencies exported transitively`() {
+        val project = buildProject(
+            projectBuilder = {
+                withName("shared")
+            },
+            configureProject = {
+                configureRepositoriesForTests()
+            }
+        )
+        val projectDependency = project.subProject("subproject") {
+            iosSimulatorArm64()
+            sourceSets.commonMain.dependencies {
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+            }
+        }
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api(projectDependency)
+                }
+            }
+        )
+
+        project.evaluate()
+        projectDependency.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+
+        val expectedModules = setOf(
+            ExportedSwiftModuleForAssertion(
+                moduleName = "OrgJetbrainsKotlinxAtomicfu",
+                artifactName = "atomicfu.klib",
+                shouldBeFullyExported = false
+            ),
+            ExportedSwiftModuleForAssertion(
+                moduleName = "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
+                artifactName = "kotlinx-coroutines-core.klib",
+                shouldBeFullyExported = false
+            ),
+            ExportedSwiftModuleForAssertion(
+                moduleName = "OrgJetbrainsKotlinxKotlinxDatetime",
+                artifactName = "kotlinx-datetime.klib",
+                shouldBeFullyExported = false
+            ),
+            ExportedSwiftModuleForAssertion(
+                moduleName = "OrgJetbrainsKotlinxKotlinxSerializationCore",
+                artifactName = "kotlinx-serialization-core.klib",
+                shouldBeFullyExported = false
+            ),
+            ExportedSwiftModuleForAssertion(
+                moduleName = "Subproject",
+                artifactName = "subproject",
+                shouldBeFullyExported = true
+            ),
+        )
+
+        assertSetsEqual(
+            expectedModules,
+            actualModules.toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `jvm dependency is not exported`() {
+        val project = swiftExportProject(
+            projectBuilder = {
+                withName("shared")
+            },
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.glassfish:jakarta.json:2.0.1")
+                }
+            }
+        )
+
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+
+        assertTrue(actualModules.isEmpty(), "No modules should be exported for JVM dependencies")
+    }
+
+    @Test
+    fun `exporting transitive dependencies with different versions (dependency in subproject has greater version)`() {
+        val project = buildProject(
+            projectBuilder = {
+                withName("shared")
+            },
+            configureProject = {
+                configureRepositoriesForTests()
+            }
+        )
+        val projectDependency = project.subProject("subproject") {
+            iosSimulatorArm64()
+            sourceSets.commonMain.dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0")
+            }
+        }
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation(projectDependency)
+                    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+                }
+            }
+        )
+
+        project.evaluate()
+        projectDependency.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+
+        val expectedModules = setOf(
+            ExportedSwiftModuleForAssertion(
+                moduleName = "OrgJetbrainsKotlinxAtomicfu",
+                artifactName = "atomicfu.klib",
+                shouldBeFullyExported = false
+            ),
+            ExportedSwiftModuleForAssertion(
+                moduleName = "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
+                artifactName = "kotlinx-coroutines-core-iosSimulatorArm64Main-1.10.0.klib",
+                shouldBeFullyExported = true
+            ),
+            ExportedSwiftModuleForAssertion(
+                moduleName = "SharedSubproject",
+                artifactName = "subproject",
+                shouldBeFullyExported = false
+            ),
+        )
+
+        assertSetsEqual(
+            expectedModules,
+            actualModules.toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `exporting transitive dependencies with different versions (dependency in subproject has lower version)`() {
+        val project = buildProject(
+            projectBuilder = {
+                withName("shared")
+            },
+            configureProject = {
+                configureRepositoriesForTests()
+            }
+        )
+        val projectDependency = project.subProject("subproject") {
+            iosSimulatorArm64()
+            sourceSets.commonMain.dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+            }
+        }
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation(projectDependency)
+                    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0")
+                }
+            }
+        )
+
+        project.evaluate()
+        projectDependency.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+
+        val expectedModules = setOf(
+            ExportedSwiftModuleForAssertion(
+                moduleName = "OrgJetbrainsKotlinxAtomicfu",
+                artifactName = "atomicfu.klib",
+                shouldBeFullyExported = false
+            ),
+            ExportedSwiftModuleForAssertion(
+                moduleName = "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
+                artifactName = "kotlinx-coroutines-core-iosSimulatorArm64Main-1.10.0.klib",
+                shouldBeFullyExported = true
+            ),
+            ExportedSwiftModuleForAssertion(
+                moduleName = "SharedSubproject",
+                artifactName = "subproject",
+                shouldBeFullyExported = false
+            ),
+        )
+
+        assertSetsEqual(
+            expectedModules,
+            actualModules.toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `exporting two runtime modules`() {
+        val project = buildProject(
+            projectBuilder = {
+                withName("shared")
+            },
+            configureProject = {
+                configureRepositoriesForTests()
+            }
+        )
+
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("app.cash.sqldelight:runtime:2.1.0")
+                    api("org.jetbrains.compose.runtime:runtime:1.8.2")
+                }
+            }
+        )
+
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+
+        val expectedModules = setOf(
+            ExportedSwiftModuleForAssertion(
+                moduleName = "AppCashSqldelightRuntime",
+                artifactName = "runtime.klib",
+                shouldBeFullyExported = true
+            ),
+            ExportedSwiftModuleForAssertion(
+                moduleName = "OrgJetbrainsComposeRuntimeRuntime",
+                artifactName = "runtime-uikitSimArm64Main-1.8.2.klib",
+                shouldBeFullyExported = true
+            ),
+            ExportedSwiftModuleForAssertion(
+                moduleName = "OrgJetbrainsKotlinxAtomicfu",
+                artifactName = "atomicfu.klib",
+                shouldBeFullyExported = false
+            ),
+            ExportedSwiftModuleForAssertion(
+                moduleName = "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
+                artifactName = "kotlinx-coroutines-core.klib",
+                shouldBeFullyExported = false
+            ),
+        )
+
+        assertSetsEqual(
+            expectedModules,
+            actualModules.toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `excluded transitive dependencies not exported`() {
+        val project = buildProject(
+            projectBuilder = {
+                withName("shared")
+            },
+            configureProject = {
+                configureRepositoriesForTests()
+            }
+        )
+        val projectDependency = project.subProject("subproject") {
+            iosSimulatorArm64()
+            sourceSets.commonMain.dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2") {
+                    exclude(mapOf("group" to "org.jetbrains.kotlinx", "module" to "kotlinx-serialization-core"))
+                }
+            }
+        }
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api(projectDependency)
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0") {
+                        exclude(mapOf("group" to "org.jetbrains.kotlinx", "module" to "atomicfu"))
+                    }
+                }
+            }
+        )
+
+        project.evaluate()
+        projectDependency.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+
+        val expectedModules = setOf(
+            ExportedSwiftModuleForAssertion(
+                moduleName = "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
+                artifactName = "kotlinx-coroutines-core.klib",
+                shouldBeFullyExported = false
+            ),
+            ExportedSwiftModuleForAssertion(
+                moduleName = "OrgJetbrainsKotlinxKotlinxDatetime",
+                artifactName = "kotlinx-datetime.klib",
+                shouldBeFullyExported = false
+            ),
+            ExportedSwiftModuleForAssertion(
+                moduleName = "Subproject",
+                artifactName = "subproject",
+                shouldBeFullyExported = true
+            ),
+        )
+
+        assertSetsEqual(
+            expectedModules,
+            actualModules.toModulesForAssertion(),
+        )
+    }
+}
+
+private fun swiftExportProject(
+    configuration: String = "DEBUG",
+    sdk: String = "iphonesimulator",
+    archs: String = "arm64",
+    projectBuilder: ProjectBuilder.() -> Unit = { },
+    multiplatform: KotlinMultiplatformExtension.() -> Unit = {
+        iosSimulatorArm64()
+    },
+    swiftExport: SwiftExportConfigurationDsl.() -> Unit = {},
+): ProjectInternal = buildProjectWithMPP(
+    projectBuilder = projectBuilder,
+    preApplyCode = {
+        applyEmbedAndSignEnvironment(
+            configuration = configuration,
+            sdk = sdk,
+            archs = archs,
+        )
+        configureRepositoriesForTests()
+    },
+    code = {
+        kotlin {
+            multiplatform()
+        }
+        exportExtension.swift {
+            xcodeIntegration()
+            swiftExport()
+        }
+    }
+)
+
+private fun ProjectInternal.setupForSwiftExport(
+    configuration: String = "DEBUG",
+    sdk: String = "iphonesimulator",
+    archs: String = "arm64",
+    multiplatform: KotlinMultiplatformExtension.() -> Unit = {
+        iosSimulatorArm64()
+    },
+    swiftExport: SwiftExportConfigurationDsl.() -> Unit = {},
+) {
+    applyEmbedAndSignEnvironment(
+        configuration = configuration,
+        sdk = sdk,
+        archs = archs,
+    )
+    applyMultiplatformPlugin()
+    kotlin {
+        multiplatform()
+    }
+    exportExtension.swift {
+        xcodeIntegration()
+        swiftExport()
+    }
+}
+
+private fun ProjectInternal.subProject(
+    name: String,
+    multiplatform: KotlinMultiplatformExtension.() -> Unit = { iosSimulatorArm64() },
+): ProjectInternal = buildProjectWithMPP(
+    projectBuilder = {
+        withParent(this@subProject)
+        withName(name)
+    },
+    code = {
+        kotlin {
+            multiplatform()
+        }
+    }
+)
+
+/**
+ * Asserts that two sets are equal, but renders each set as a vertical, alphabetically sorted list of the string
+ * representations of its elements. This makes the failure message much easier to eyeball and diff than the default
+ * [Set.toString], because both sets are presented line-by-line in the same order.
+ */
+private fun <T> assertSetsEqual(expected: Set<T>, actual: Set<T>, message: String? = null) {
+    fun Set<T>.renderAsSortedLines() = map { it.toString() }.sorted().joinToString(separator = "\n")
+    assertEquals(expected.renderAsSortedLines(), actual.renderAsSortedLines(), message)
+}
+
+private fun List<SwiftExportedModule>.toModulesForAssertion() = mapToSetOrEmpty { module ->
+    ExportedSwiftModuleForAssertion(
+        module.moduleName,
+        module.artifact.name,
+        module.shouldBeFullyExported
+    )
+}
+
+private data class ExportedSwiftModuleForAssertion(
+    val moduleName: String,
+    val artifactName: String,
+    val shouldBeFullyExported: Boolean,
+)

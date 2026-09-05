@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleVersionIdentifier
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
@@ -57,16 +59,23 @@ internal fun createTransitiveSwiftExportedModule(
 }
 
 internal fun Project.collectModules(
-    swiftExportConfigurationProvider: Provider<LazyResolvedConfigurationWithArtifacts>,
+    exportConfigurationProvider: Provider<LazyResolvedConfigurationWithArtifacts>,
+    apiConfigurationProvider: Provider<LazyResolvedConfigurationWithArtifacts?>,
     exportedModulesProvider: Provider<Set<SwiftExportedDependency>>,
-): Provider<List<SwiftExportedModule>> = swiftExportConfigurationProvider.zip(exportedModulesProvider) { configuration, modules ->
-    configuration.swiftExportedModules(modules, project)
-}
+): Provider<List<SwiftExportedModule>> = exportConfigurationProvider
+    .map { exportConfiguration ->
+        val apiConfiguration = apiConfigurationProvider.orNull
+        return@map exportConfiguration to apiConfiguration
+    }
+    .zip(exportedModulesProvider) { (exportConfiguration, apiConfiguration), modules ->
+        project.swiftExportedModules(exportConfiguration, apiConfiguration, modules)
+    }
 
 private class ResolvedArtifactWithVersionIdentifier(
     val moduleVersion: ModuleVersionIdentifier,
     val artifact: ResolvedArtifactResult
 ) : Serializable {
+    private val artifactFilePath: String get() = artifact.file.absolutePath
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -74,21 +83,42 @@ private class ResolvedArtifactWithVersionIdentifier(
 
         other as ResolvedArtifactWithVersionIdentifier
 
-        return artifact == other.artifact
+        return artifactFilePath == other.artifactFilePath
     }
 
     override fun hashCode(): Int {
-        return 31 * artifact.hashCode()
+        return 31 * artifactFilePath.hashCode()
+    }
+
+    fun defaultExportedModuleName(): String {
+        return when (val componentId = artifact.id.componentIdentifier) {
+            is ProjectComponentIdentifier -> componentId.projectPath
+            is ModuleComponentIdentifier -> moduleVersion.inheritedName
+            else -> error("Unexpected component identifier type: ${componentId::class}")
+        }
     }
 }
 
-private fun LazyResolvedConfigurationWithArtifacts.swiftExportedModules(
+private fun Project.swiftExportedModules(
+    exportConfiguration: LazyResolvedConfigurationWithArtifacts,
+    apiConfiguration: LazyResolvedConfigurationWithArtifacts?,
     exportedModules: Set<SwiftExportedDependency>,
-    project: Project,
-) = project.findAndCreateSwiftExportedModules(exportedModules, filteredArtifacts())
+) = findAndCreateSwiftExportedModules(
+    exportedModules = exportedModules,
+    resolvedExportArtifacts = exportConfiguration.filteredArtifacts { allResolvedDependencies },
+    resolvedDirectApiArtifacts = apiConfiguration
+        ?.filteredArtifacts {
+            root.dependencies
+                .filterIsInstance<ResolvedDependencyResult>()
+                .filterNot { it.isConstraint }
+        }
+        ?: emptySet(),
+)
 
-private fun LazyResolvedConfigurationWithArtifacts.filteredArtifacts(): Set<ResolvedArtifactWithVersionIdentifier> {
-    return allResolvedDependencies.mapNotNullTo(mutableSetOf()) { dependency ->
+private fun LazyResolvedConfigurationWithArtifacts.filteredArtifacts(
+    dependenciesSelector: LazyResolvedConfigurationWithArtifacts.() -> Iterable<ResolvedDependencyResult>
+): Set<ResolvedArtifactWithVersionIdentifier> {
+    return dependenciesSelector().mapNotNullTo(mutableSetOf()) { dependency ->
         val artifacts = getArtifacts(dependency.selected).filterNot {
             it.file.isCinteropKlib || it.file.isJavaJar
         }
@@ -108,7 +138,8 @@ private val File.isJavaJar get() = extension == "jar"
 
 private fun Project.findAndCreateSwiftExportedModules(
     exportedModules: Set<SwiftExportedDependency>,
-    resolvedArtifacts: Set<ResolvedArtifactWithVersionIdentifier>,
+    resolvedExportArtifacts: Set<ResolvedArtifactWithVersionIdentifier>,
+    resolvedDirectApiArtifacts: Set<ResolvedArtifactWithVersionIdentifier>,
 ): List<SwiftExportedModule> {
     val result = mutableListOf<SwiftExportedModule>()
     val processedComponents = mutableSetOf<ResolvedArtifactWithVersionIdentifier>()
@@ -116,7 +147,7 @@ private fun Project.findAndCreateSwiftExportedModules(
 
     // Process all explicitly exported modules
     for (explicitModule in exportedModules) {
-        val matchingArtifact = resolvedArtifacts.find { artifact ->
+        val matchingArtifact = resolvedExportArtifacts.find { artifact ->
             val componentId = artifact.artifact.id.componentIdentifier
 
             when (explicitModule) {
@@ -163,8 +194,21 @@ private fun Project.findAndCreateSwiftExportedModules(
         )
     }
 
+    for (artifact in resolvedDirectApiArtifacts) {
+        if (artifact in processedComponents) continue
+        result.add(
+            createFullyExportedSwiftExportedModule(
+                moduleName = artifact.defaultExportedModuleName().normalizedSwiftExportModuleName,
+                flattenPackage = null,
+                artifact = artifact.artifact.file,
+            )
+        )
+        // Track which components we've processed
+        processedComponents.add(artifact)
+    }
+
     // Then process remaining components as transitive
-    resolvedArtifacts
+    resolvedExportArtifacts
         .filterNot { artifact -> artifact in processedComponents }
         .forEach { artifact ->
             result.add(
