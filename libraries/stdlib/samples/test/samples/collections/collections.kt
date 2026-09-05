@@ -736,6 +736,15 @@ class Collections {
             // Sets do not support duplicates, so there is no way to add yet another 'c'
             assertFalse(set.add('c'))
             assertPrints(set, "[a, b, c]")
+
+            data class User(val name: String)
+
+            val alice = User("Alice")
+            val users = mutableSetOf(alice)
+            val anotherAlice = User("Alice")
+            assertPrints(users.add(anotherAlice), "false")
+            // the original instance of User("Alice") remains in the set after trying to add a duplicate
+            assertPrints(users.single() === alice, "true")
         }
 
         @Sample
