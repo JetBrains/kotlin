@@ -383,7 +383,10 @@ internal class LambdaMetafactoryArgumentsBuilder(
                 makeLambdaParameterNullable(implFun, implParameter)
             }
             if (!isJdkAdaptableParameter(instantiatedType = methodParameter.type, implType = implParameter.type)) {
-                widenLambdaParameterType(implFun, implParameter, methodParameter.type)
+                // Preserve nullability so codegen retains the implementation parameter's null assertion.
+                val widenedType = if (implParameter.type.isNullable()) methodParameter.type.makeNullable()
+                else methodParameter.type.makeNotNull()
+                widenLambdaParameterType(implFun, implParameter, widenedType)
             }
         }
         if (constraints.returnType.requiresImplLambdaBoxing() ||
