@@ -1,0 +1,52 @@
+FILE: emptySpreadInVarargTarget.kt
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(*<collectionLiteralCall>(), Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class EmptySpreadThenField : R|kotlin/Annotation| {
+        public constructor(): R|EmptySpreadThenField| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, *<collectionLiteralCall>()) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class FieldThenEmptySpread : R|kotlin/Annotation| {
+        public constructor(): R|FieldThenEmptySpread| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(*<collectionLiteralCall>(), Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class EmptyArrayOfThenField : R|kotlin/Annotation| {
+        public constructor(): R|EmptyArrayOfThenField| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|), Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|)]) public final annotation class SpreadAndPlain : R|kotlin/Annotation| {
+        public constructor(): R|SpreadAndPlain| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(*<collectionLiteralCall>()) [evaluated = vararg()]) public final annotation class OnlyEmptySpread : R|kotlin/Annotation| {
+        public constructor(): R|OnlyEmptySpread| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        field:@R|EmptySpreadThenField|() public final val a: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+
+        field:@R|FieldThenEmptySpread|() public final val b: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+
+        field:@R|EmptyArrayOfThenField|() public final val c: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+
+        field:@R|SpreadAndPlain|() public final val d: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+
+        @R|OnlyEmptySpread|() public final val e: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+
+    }

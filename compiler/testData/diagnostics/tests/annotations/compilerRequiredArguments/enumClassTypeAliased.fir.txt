@@ -1,0 +1,17 @@
+FILE: enumClassTypeAliased.kt
+    public final typealias TargetAlias = R|kotlin/annotation/AnnotationTarget|
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|TargetAlias|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(Q|TargetAlias|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class ViaTypeAlias : R|kotlin/Annotation| {
+        public constructor(): R|ViaTypeAlias| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|ViaTypeAlias|() public final val a: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+
+    }

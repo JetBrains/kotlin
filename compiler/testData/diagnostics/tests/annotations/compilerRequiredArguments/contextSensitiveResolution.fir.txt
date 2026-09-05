@@ -1,0 +1,20 @@
+FILE: contextSensitiveResolution.kt
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)]) public final annotation class ViaContextSensitiveResolution : R|kotlin/Annotation| {
+        public constructor(): R|ViaContextSensitiveResolution| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|ViaContextSensitiveResolution|() public final val b: <ERROR TYPE REF: Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]> = R|/c|.<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(<HIDDEN: /d is deprecated with DeprecationLevel.HIDDEN>#)
+            public get(): <ERROR TYPE REF: Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>
+
+    }
+    @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|]) public final val c: R|kotlin/Int| = Int(42)
+        public get(): R|kotlin/Int|
+    @R|kotlin/Deprecated|(message = String() [evaluated = String()], replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(String()) [evaluated = R|kotlin/ReplaceWith.ReplaceWith|(String())], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final val d: R|kotlin/Int| = Int(42)
+        public get(): R|kotlin/Int|
