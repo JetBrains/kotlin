@@ -7,8 +7,8 @@ package kotlin.script.experimental.dependencies
 
 import java.io.File
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.util.filterByAnnotationType
 import kotlin.script.experimental.dependencies.impl.SimpleExternalDependenciesResolverOptionsParser
+import kotlin.script.experimental.dependencies.impl.makeExternalDependenciesResolverOptions
 
 /**
  * A common annotation that could be used in a script to denote a dependency
@@ -35,41 +35,80 @@ annotation class Repository(vararg val repositoriesCoordinates: String, val opti
  */
 suspend fun ExternalDependenciesResolver.resolveFromScriptSourceAnnotations(
     annotations: Iterable<ScriptSourceAnnotation<*>>
-): ResultWithDiagnostics<List<File>> {
-    val reports = mutableListOf<ScriptDiagnostic>()
+): ResultWithDiagnostics<List<File>> =
+    externalArtifactsFromScriptSourceAnnotations(annotations).onSuccess {
+        resolveExternalArtifacts(it.artifactsDependencies, it.artifactsRepositories)
+    }
+
+data class ExternalArtifactsDeclarations(
+    val artifactsDependencies: List<UnresolvedExternalArtifacts>,
+    val artifactsRepositories: List<ExternalArtifactsRepository>,
+)
+
+fun externalArtifactsFromScriptSourceAnnotations(
+    annotations: Iterable<ScriptSourceAnnotation<*>>
+): ResultWithDiagnostics<ExternalArtifactsDeclarations> {
+    val repositories = mutableListOf<ExternalArtifactsRepository>()
+    val dependencies = mutableListOf<UnresolvedExternalArtifacts>()
+
     annotations.forEach { (val annotation, val locationWithId = location) ->
         when (annotation) {
             is Repository -> {
-                val options = SimpleExternalDependenciesResolverOptionsParser(*annotation.options, locationWithId = locationWithId)
+                val options = SimpleExternalDependenciesResolverOptionsParser
+                    .parseToMap(*annotation.options, locationWithId = locationWithId)
                     .valueOr { return it }
 
-                for (coordinates in annotation.repositoriesCoordinates) {
-                    val added = addRepository(coordinates, options, locationWithId)
-                        .also { reports.addAll(it.reports) }
-                        .valueOr { return it }
-
-                    if (!added)
-                        return reports + makeFailureResult(
-                            "Unrecognized repository coordinates: $coordinates",
-                            locationWithId = locationWithId
-                        )
+                annotation.repositoriesCoordinates.mapTo(repositories) {
+                    ExternalArtifactsRepository(it, options, locationWithId)
                 }
             }
-            is DependsOn -> {}
-            else -> return reports + makeFailureResult("Unknown annotation ${annotation.javaClass}", locationWithId = locationWithId)
+            is DependsOn -> {
+                val options = SimpleExternalDependenciesResolverOptionsParser
+                    .parseToMap(*annotation.options, locationWithId = locationWithId)
+                    .valueOr { return it }
+
+                dependencies.add(
+                    UnresolvedExternalArtifacts(annotation.artifactsCoordinates.toList(), options, sourceCodeLocation = locationWithId)
+                )
+            }
+            else -> return makeFailureResult("Unknown annotation ${annotation.javaClass}", locationWithId = locationWithId)
         }
     }
 
-    return reports + annotations.filterByAnnotationType<DependsOn>()
-        .flatMapSuccess { (val annotation, val locationWithId = location) ->
-            SimpleExternalDependenciesResolverOptionsParser(
-                *annotation.options,
-                locationWithId = locationWithId
-            ).onSuccess { options ->
-                annotation.artifactsCoordinates.asIterable().flatMapSuccess { artifactCoordinates ->
-                    resolve(artifactCoordinates, options, locationWithId)
-                }
-            }
+    return ExternalArtifactsDeclarations(dependencies, repositories).asSuccess()
+}
+
+suspend fun ExternalDependenciesResolver.resolveExternalArtifacts(
+    dependencies: Iterable<UnresolvedExternalArtifacts>,
+    repositories: Iterable<ExternalArtifactsRepository>,
+): ResultWithDiagnostics<List<File>> {
+    val reports = mutableListOf<ScriptDiagnostic>()
+
+    for (repository in repositories.distinct()) {
+        val added = addRepository(
+            RepositoryCoordinates(repository.coordinates),
+            makeExternalDependenciesResolverOptions(repository.options),
+            repository.sourceCodeLocation
+        ).also { reports.addAll(it.reports) }.valueOr { return it }
+
+        if (!added)
+            return reports + makeFailureResult(
+                "Unrecognized repository coordinates: ${repository.coordinates}",
+                locationWithId = repository.sourceCodeLocation
+            )
+    }
+
+    return reports + dependencies
+        .filter { it.artifacts.isNotEmpty() }
+        .groupBy { it.options }
+        .entries
+        .flatMapSuccess { (val options = key, val group = value) ->
+            resolve(
+                group.flatMap { dependency ->
+                    dependency.artifacts.map { ArtifactWithLocation(it, dependency.sourceCodeLocation) }
+                },
+                makeExternalDependenciesResolverOptions(options)
+            )
         }
 }
 

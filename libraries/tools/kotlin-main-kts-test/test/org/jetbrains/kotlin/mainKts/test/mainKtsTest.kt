@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.mainKts.test
 
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_PROPERTY
+import org.jetbrains.kotlin.mainKts.MainKtsExternalArtifactsResolver
 import org.jetbrains.kotlin.mainKts.MainKtsScript
 import org.jetbrains.kotlin.mainKts.SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME
 import org.jetbrains.kotlin.mainKts.impl.Directories
@@ -19,28 +20,36 @@ import java.io.PrintStream
 import java.util.*
 import kotlin.io.path.createTempDirectory
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.resolveExternalArtifacts
 import kotlin.script.experimental.host.toScriptSource
+import kotlin.script.experimental.jvm.JvmDependencyFromClassLoader
 import kotlin.script.experimental.jvm.baseClassLoader
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
 
 fun evalFile(
     scriptFile: File,
     cacheDir: File? = null,
+    baseHostConfiguration: ScriptingHostConfiguration? = null,
     compilation: ScriptCompilationConfiguration.Builder.() -> Unit = {},
     evaluation: ScriptEvaluationConfiguration.Builder.() -> Unit = {}
 ): ResultWithDiagnostics<EvaluationResult> =
     withProperty(COMPILED_SCRIPTS_CACHE_DIR_PROPERTY, cacheDir?.absolutePath ?: "") {
-        evalFileWithConfigurations(scriptFile, compilation, evaluation)
+        evalFileWithConfigurations(scriptFile, baseHostConfiguration, compilation, evaluation)
     }
 
 fun evalFileWithConfigurations(
     scriptFile: File,
+    baseHostConfiguration: ScriptingHostConfiguration? = null,
     compilation: ScriptCompilationConfiguration.Builder.() -> Unit = {},
     evaluation: ScriptEvaluationConfiguration.Builder.() -> Unit = {}
 ): ResultWithDiagnostics<EvaluationResult> {
     val scriptDefinition = createJvmScriptDefinitionFromTemplate<MainKtsScript>(
+        baseHostConfiguration = baseHostConfiguration,
         compilation = compilation,
         evaluation = {
             evaluation()
@@ -52,7 +61,7 @@ fun evalFileWithConfigurations(
         }
     )
 
-    val host = BasicJvmScriptingHost()
+    val host = BasicJvmScriptingHost(baseHostConfiguration)
     return host.eval(scriptFile.toScriptSource(), scriptDefinition.compilationConfiguration, scriptDefinition.evaluationConfiguration)
 }
 
@@ -86,6 +95,66 @@ class MainKtsTest {
             resErr is ResultWithDiagnostics.Failure &&
                     resErr.reports.any { it.message.contains("Unresolved reference") && it.message.contains("hamcrest") }
         )
+    }
+
+    @Test
+    fun testExternalArtifactsResolutionLeftToTheHost() {
+        val res = evalFile(
+            File("$TEST_DATA_ROOT/hello-resolve-junit.main.kts"),
+            baseHostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
+                resolveExternalArtifacts(false)
+            }
+        )
+        val reports = res.reports.map { it.message }
+        assertTrue(
+            res is ResultWithDiagnostics.Failure &&
+                    reports.any { it.contains("External artifacts are not resolved: junit:junit:4.11") },
+            "Unexpected result, reports: $reports"
+        )
+    }
+
+    @Test
+    fun testExternalArtifactsResolutionLeftToTheHostInImportedScript() {
+        // Imported scripts get their classpath collected separately, so a root-only check would miss this.
+        val res = evalFile(
+            File("$TEST_DATA_ROOT/import-resolve-junit.main.kts"),
+            baseHostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
+                resolveExternalArtifacts(false)
+            }
+        )
+        val reports = res.reports.map { "${it.sourcePath}: ${it.message}" }
+        assertTrue(
+            res is ResultWithDiagnostics.Failure &&
+                    reports.any {
+                        it.contains("External artifacts are not resolved: junit:junit:4.11") &&
+                                it.contains("import-resolve-junit-helper.main.kts")
+                    },
+            "Unexpected result, reports: $reports"
+        )
+    }
+
+    @Test
+    fun testResolveInImportedScript() {
+        assertSucceeded(evalFile(File("$TEST_DATA_ROOT/import-resolve-junit.main.kts")))
+    }
+
+    @Test
+    fun testResolutionKeepsDependenciesItDidNotResolve() {
+        // JvmDependencyFromClassLoader carries a classloader, not classpath entries, and must survive resolution.
+        val fromClassLoader = JvmDependencyFromClassLoader { MainKtsTest::class.java.classLoader }
+        val artifact = File("$TEST_DATA_ROOT/empty.main.kts")
+
+        val configuration = ScriptCompilationConfiguration {
+            dependencies.append(fromClassLoader, UnresolvedExternalArtifacts(listOf(artifact.path)))
+        }
+
+        val result = MainKtsExternalArtifactsResolver()
+            .invoke(ScriptConfigurationRefinementContext("".toScriptSource(), configuration, null))
+
+        val refined = (result as ResultWithDiagnostics.Success).value[ScriptCompilationConfiguration.dependencies].orEmpty()
+        assertTrue(refined.none { it is UnresolvedExternalArtifacts }, "resolved declarations should be gone: $refined")
+        assertTrue(refined.contains(fromClassLoader), "the classloader dependency should survive: $refined")
+        assertTrue(refined.toClassPathOrEmpty().contains(artifact), "resolved artifact should be on the classpath: $refined")
     }
 
     @Test

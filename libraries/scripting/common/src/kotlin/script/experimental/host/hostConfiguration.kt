@@ -9,6 +9,7 @@ import kotlin.reflect.KClass
 import kotlin.script.experimental.api.KotlinType
 import kotlin.script.experimental.api.ScriptDependency
 import kotlin.script.experimental.api.ScriptEvaluationContextData
+import kotlin.script.experimental.api.UnresolvedExternalArtifacts
 import kotlin.script.experimental.util.PropertiesCollection
 
 interface ScriptingHostConfigurationKeys
@@ -68,6 +69,12 @@ val ScriptingHostConfigurationKeys.getScriptingClass by PropertiesCollection.key
  * Evaluation context getter, allows to provide data to the evaluation configuration refinement functions
  */
 val ScriptingHostConfigurationKeys.getEvaluationContext by PropertiesCollection.key<GetEvaluationContext>(isTransient = true)
+
+/**
+ * Whether script definitions should resolve [UnresolvedExternalArtifacts] entries themselves; if not, the entries
+ * are left in the compilation configuration for the host to resolve
+ */
+val ScriptingHostConfigurationKeys.resolveExternalArtifacts by PropertiesCollection.key(true)
 
 /**
  * The interface to the generic "class loader" for the types used in the script configurations

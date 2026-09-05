@@ -151,6 +151,11 @@ val ScriptCompilationConfigurationKeys.resultField by PropertiesCollection.key<S
 val ScriptCompilationConfigurationKeys.dependencies by PropertiesCollection.key<List<ScriptDependency>>()
 
 /**
+ * The repositories to resolve the [UnresolvedExternalArtifacts] artifacts of the script in
+ */
+val ScriptCompilationConfigurationKeys.externalArtifactsRepositories by PropertiesCollection.key<List<ExternalArtifactsRepository>>()
+
+/**
  * The list of compiler options that will be applied on script compilation, the syntax is the same as for CLI compiler
  */
 val ScriptCompilationConfigurationKeys.compilerOptions by PropertiesCollection.key<List<String>>() // Q: CommonCompilerOptions instead?
@@ -169,6 +174,12 @@ val ScriptCompilationConfigurationKeys.refineConfigurationOnAnnotations by Prope
  * The callback that will be called on the script compilation immediately before starting the compilation
  */
 val ScriptCompilationConfigurationKeys.refineConfigurationBeforeCompiling by PropertiesCollection.key<List<RefineConfigurationUnconditionallyData>>(isTransient = true)
+
+/**
+ * The suspending callback that will be called after the [refineConfigurationBeforeCompiling] ones, only by the hosts
+ * that refine the configuration from a coroutine
+ */
+val ScriptCompilationConfigurationKeys.refineConfigurationBeforeCompilingSuspend by PropertiesCollection.key<List<SuspendRefineConfigurationUnconditionallyData>>(isTransient = true)
 
 /**
  * The list of script fragments that should be compiled instead of the whole text
@@ -256,6 +267,16 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
     fun beforeCompiling(handler: RefineScriptCompilationConfigurationHandler) {
         ScriptCompilationConfiguration.refineConfigurationBeforeCompiling.append(RefineConfigurationUnconditionallyData(handler))
     }
+
+    /**
+     * The suspending callback that will be called after the [beforeCompiling] ones
+     * @param handler the callback that will be called
+     */
+    fun beforeCompilingSuspend(handler: SuspendRefineScriptCompilationConfigurationHandler) {
+        ScriptCompilationConfiguration.refineConfigurationBeforeCompilingSuspend.append(
+            SuspendRefineConfigurationUnconditionallyData(handler)
+        )
+    }
 }
 
 /**
@@ -265,6 +286,15 @@ typealias RefineScriptCompilationConfigurationHandler =
             (ScriptConfigurationRefinementContext) -> ResultWithDiagnostics<ScriptCompilationConfiguration>
 
 /**
+ * The suspending refinement callback function signature
+ */
+fun interface SuspendRefineScriptCompilationConfigurationHandler {
+    suspend operator fun invoke(
+        context: ScriptConfigurationRefinementContext
+    ): ResultWithDiagnostics<ScriptCompilationConfiguration>
+}
+
+/**
  * The refinement callback function signature for simple handlers (without diagnostics or errors)
  */
 typealias SimpleRefineScriptCompilationConfigurationHandler =
@@ -272,6 +302,14 @@ typealias SimpleRefineScriptCompilationConfigurationHandler =
 
 data class RefineConfigurationUnconditionallyData(
     val handler: RefineScriptCompilationConfigurationHandler
+) : Serializable {
+    companion object {
+        private const val serialVersionUID: Long = 1L
+    }
+}
+
+data class SuspendRefineConfigurationUnconditionallyData(
+    val handler: SuspendRefineScriptCompilationConfigurationHandler
 ) : Serializable {
     companion object {
         private const val serialVersionUID: Long = 1L
@@ -309,6 +347,21 @@ fun ScriptCompilationConfiguration.refineBeforeCompiling(
     simpleRefineImpl(ScriptCompilationConfiguration.refineConfigurationBeforeCompiling) { config, refineData ->
         refineData.handler.invoke(ScriptConfigurationRefinementContext(script, config, collectedData))
     }
+
+suspend fun ScriptCompilationConfiguration.refineBeforeCompilingSuspend(
+    script: SourceCode,
+    collectedData: ScriptCollectedData? = null
+): ResultWithDiagnostics<ScriptCompilationConfiguration> {
+    val handlers = get(ScriptCompilationConfiguration.refineConfigurationBeforeCompilingSuspend) ?: return asSuccess()
+    val diagnostics = mutableListOf<ScriptDiagnostic>()
+    var configuration = this
+    for (refineData in handlers) {
+        val result = refineData.handler.invoke(ScriptConfigurationRefinementContext(script, configuration, collectedData))
+        diagnostics.addAll(result.reports)
+        configuration = result.valueOr { return it }
+    }
+    return configuration.asSuccess(diagnostics)
+}
 
 /**
  * The functional interface to the script compiler

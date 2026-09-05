@@ -208,6 +208,28 @@ fun refineScriptCompilationConfiguration(
             ).asSuccess()
         }
 
+// Unlike the non-suspending variant, also runs the `refineConfigurationBeforeCompilingSuspend` handlers.
+suspend fun refineScriptCompilationConfigurationSuspend(
+    compilationConfiguration: ScriptCompilationConfiguration,
+    sourceCode: SourceCode,
+    collectedData: ScriptCollectedData,
+    knownVirtualFileSources: MutableMap<String, VirtualFileScriptSource>?,
+    definition: ScriptDefinition,
+): ResultWithDiagnostics<ScriptCompilationConfigurationWrapper> =
+    compilationConfiguration.refineOnAnnotations(sourceCode, collectedData)
+        .onSuccess {
+            it.refineBeforeCompiling(sourceCode, collectedData)
+        }.onSuccess {
+            it.refineBeforeCompilingSuspend(sourceCode, collectedData)
+        }.onSuccess {
+            it.resolveImportsToVirtualFiles(knownVirtualFileSources)
+        }.onSuccess {
+            ScriptCompilationConfigurationWrapper(
+                sourceCode,
+                it.adjustByDefinition(definition)
+            ).asSuccess()
+        }
+
 fun ScriptCompilationConfiguration.adjustByDefinition(definition: ScriptDefinition): ScriptCompilationConfiguration =
     this.withUpdatedClasspath(additionalClasspath(definition))
 

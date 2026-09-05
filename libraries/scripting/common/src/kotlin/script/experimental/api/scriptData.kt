@@ -97,6 +97,26 @@ data class ScriptSourceNamedFragment(val name: String?, val range: SourceCode.Ra
  */
 interface ScriptDependency : Serializable
 
+data class ExternalArtifactsRepository(
+    val coordinates: String,
+    val options: Map<String, String> = emptyMap(),
+    val sourceCodeLocation: SourceCode.LocationWithId? = null,
+) : Serializable {
+    companion object {
+        private const val serialVersionUID: Long = 1L
+    }
+}
+
+data class UnresolvedExternalArtifacts(
+    val artifacts: List<String>,
+    val options: Map<String, String> = emptyMap(),
+    val sourceCodeLocation: SourceCode.LocationWithId? = null,
+) : ScriptDependency {
+    companion object {
+        private const val serialVersionUID: Long = 1L
+    }
+}
+
 interface ScriptCollectedDataKeys
 
 /**
