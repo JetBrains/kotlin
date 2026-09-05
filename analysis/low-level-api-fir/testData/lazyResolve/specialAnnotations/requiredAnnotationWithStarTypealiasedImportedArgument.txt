@@ -21,7 +21,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgumen
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgument.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = AnnotationTarget
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](ANNOTATION_CLASS#) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|testPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -31,7 +31,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgumen
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgument.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = AnnotationTarget
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](ANNOTATION_CLASS#) public final? [ResolvedTo(COMPANION_GENERATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final? [ResolvedTo(COMPANION_GENERATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|testPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -41,7 +41,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgumen
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgument.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = AnnotationTarget
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](ANNOTATION_CLASS#) public final? [ResolvedTo(SUPER_TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final? [ResolvedTo(SUPER_TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|testPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -51,7 +51,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgumen
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgument.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = AnnotationTarget
-    @R|kotlin/annotation/Target|[Types](ANNOTATION_CLASS#) public final? [ResolvedTo(TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final? [ResolvedTo(TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|testPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -61,7 +61,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgumen
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgument.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = AnnotationTarget
-    @R|kotlin/annotation/Target|[Types](ANNOTATION_CLASS#) public final [ResolvedTo(STATUS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final [ResolvedTo(STATUS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|testPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -71,7 +71,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgumen
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgument.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = AnnotationTarget
-    @R|kotlin/annotation/Target|[Types](ANNOTATION_CLASS#) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|testPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgumen
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgument.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = AnnotationTarget
-    @R|kotlin/annotation/Target|[Types](ANNOTATION_CLASS#) public final [ResolvedTo(CONTRACTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final [ResolvedTo(CONTRACTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|testPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgumen
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgument.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = AnnotationTarget
-    @R|kotlin/annotation/Target|[Types](ANNOTATION_CLASS#) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|testPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -101,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgumen
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithStarTypealiasedImportedArgument.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = AnnotationTarget
-    @R|kotlin/annotation/Target|[Types](ANNOTATION_CLASS#) public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|testPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }

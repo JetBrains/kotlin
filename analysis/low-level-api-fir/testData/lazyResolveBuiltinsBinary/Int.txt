@@ -1943,17 +1943,17 @@ TARGET: public final [ResolvedTo(BODY_RESOLVE)] class Int : R|kotlin/Number|, R|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(STATUS)] fun div([ResolvedTo(STATUS)] other: R|kotlin/Double|): R|kotlin/Double| { LAZY_BLOCK }
 
-    @R|kotlin/SinceKotlin|[Types](version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(STATUS)] fun rem([ResolvedTo(STATUS)] other: R|kotlin/Byte|): R|kotlin/Int| { LAZY_BLOCK }
+    @R|kotlin/SinceKotlin|[Types](version = String(1.1)) [compilerRequired = (version = String(1.1))] @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(STATUS)] fun rem([ResolvedTo(STATUS)] other: R|kotlin/Byte|): R|kotlin/Int| { LAZY_BLOCK }
 
-    @R|kotlin/SinceKotlin|[Types](version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(STATUS)] fun rem([ResolvedTo(STATUS)] other: R|kotlin/Short|): R|kotlin/Int| { LAZY_BLOCK }
+    @R|kotlin/SinceKotlin|[Types](version = String(1.1)) [compilerRequired = (version = String(1.1))] @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(STATUS)] fun rem([ResolvedTo(STATUS)] other: R|kotlin/Short|): R|kotlin/Int| { LAZY_BLOCK }
 
-    @R|kotlin/SinceKotlin|[Types](version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(STATUS)] fun rem([ResolvedTo(STATUS)] other: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+    @R|kotlin/SinceKotlin|[Types](version = String(1.1)) [compilerRequired = (version = String(1.1))] @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(STATUS)] fun rem([ResolvedTo(STATUS)] other: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
 
-    @R|kotlin/SinceKotlin|[Types](version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(STATUS)] fun rem([ResolvedTo(STATUS)] other: R|kotlin/Long|): R|kotlin/Long| { LAZY_BLOCK }
+    @R|kotlin/SinceKotlin|[Types](version = String(1.1)) [compilerRequired = (version = String(1.1))] @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(STATUS)] fun rem([ResolvedTo(STATUS)] other: R|kotlin/Long|): R|kotlin/Long| { LAZY_BLOCK }
 
-    @R|kotlin/SinceKotlin|[Types](version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(STATUS)] fun rem([ResolvedTo(STATUS)] other: R|kotlin/Float|): R|kotlin/Float| { LAZY_BLOCK }
+    @R|kotlin/SinceKotlin|[Types](version = String(1.1)) [compilerRequired = (version = String(1.1))] @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(STATUS)] fun rem([ResolvedTo(STATUS)] other: R|kotlin/Float|): R|kotlin/Float| { LAZY_BLOCK }
 
-    @R|kotlin/SinceKotlin|[Types](version = String(1.1)) @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(STATUS)] fun rem([ResolvedTo(STATUS)] other: R|kotlin/Double|): R|kotlin/Double| { LAZY_BLOCK }
+    @R|kotlin/SinceKotlin|[Types](version = String(1.1)) [compilerRequired = (version = String(1.1))] @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(STATUS)] fun rem([ResolvedTo(STATUS)] other: R|kotlin/Double|): R|kotlin/Double| { LAZY_BLOCK }
 
     public final operator [ResolvedTo(STATUS)] fun inc(): R|kotlin/Int| { LAZY_BLOCK }
 
@@ -1971,13 +1971,13 @@ TARGET: public final [ResolvedTo(BODY_RESOLVE)] class Int : R|kotlin/Number|, R|
 
     public final operator [ResolvedTo(STATUS)] fun rangeTo([ResolvedTo(STATUS)] other: R|kotlin/Long|): R|kotlin/ranges/LongRange| { LAZY_BLOCK }
 
-    @R|kotlin/SinceKotlin|[Types](version = String(1.9)) @R|kotlin/WasExperimental|[Types](markerClass = <collectionLiteralCall>(<getClass>(kotlin#.ExperimentalStdlibApi#))) public final operator [ResolvedTo(STATUS)] fun rangeUntil([ResolvedTo(STATUS)] other: R|kotlin/Byte|): R|kotlin/ranges/IntRange| { LAZY_BLOCK }
+    @R|kotlin/SinceKotlin|[Types](version = String(1.9)) [compilerRequired = (version = String(1.9))] @R|kotlin/WasExperimental|[Types](markerClass = <collectionLiteralCall>(<getClass>(kotlin#.ExperimentalStdlibApi#))) public final operator [ResolvedTo(STATUS)] fun rangeUntil([ResolvedTo(STATUS)] other: R|kotlin/Byte|): R|kotlin/ranges/IntRange| { LAZY_BLOCK }
 
-    @R|kotlin/SinceKotlin|[Types](version = String(1.9)) @R|kotlin/WasExperimental|[Types](markerClass = <collectionLiteralCall>(<getClass>(kotlin#.ExperimentalStdlibApi#))) public final operator [ResolvedTo(STATUS)] fun rangeUntil([ResolvedTo(STATUS)] other: R|kotlin/Short|): R|kotlin/ranges/IntRange| { LAZY_BLOCK }
+    @R|kotlin/SinceKotlin|[Types](version = String(1.9)) [compilerRequired = (version = String(1.9))] @R|kotlin/WasExperimental|[Types](markerClass = <collectionLiteralCall>(<getClass>(kotlin#.ExperimentalStdlibApi#))) public final operator [ResolvedTo(STATUS)] fun rangeUntil([ResolvedTo(STATUS)] other: R|kotlin/Short|): R|kotlin/ranges/IntRange| { LAZY_BLOCK }
 
-    @R|kotlin/SinceKotlin|[Types](version = String(1.9)) @R|kotlin/WasExperimental|[Types](markerClass = <collectionLiteralCall>(<getClass>(kotlin#.ExperimentalStdlibApi#))) public final operator [ResolvedTo(STATUS)] fun rangeUntil([ResolvedTo(STATUS)] other: R|kotlin/Int|): R|kotlin/ranges/IntRange| { LAZY_BLOCK }
+    @R|kotlin/SinceKotlin|[Types](version = String(1.9)) [compilerRequired = (version = String(1.9))] @R|kotlin/WasExperimental|[Types](markerClass = <collectionLiteralCall>(<getClass>(kotlin#.ExperimentalStdlibApi#))) public final operator [ResolvedTo(STATUS)] fun rangeUntil([ResolvedTo(STATUS)] other: R|kotlin/Int|): R|kotlin/ranges/IntRange| { LAZY_BLOCK }
 
-    @R|kotlin/SinceKotlin|[Types](version = String(1.9)) @R|kotlin/WasExperimental|[Types](markerClass = <collectionLiteralCall>(<getClass>(kotlin#.ExperimentalStdlibApi#))) public final operator [ResolvedTo(STATUS)] fun rangeUntil([ResolvedTo(STATUS)] other: R|kotlin/Long|): R|kotlin/ranges/LongRange| { LAZY_BLOCK }
+    @R|kotlin/SinceKotlin|[Types](version = String(1.9)) [compilerRequired = (version = String(1.9))] @R|kotlin/WasExperimental|[Types](markerClass = <collectionLiteralCall>(<getClass>(kotlin#.ExperimentalStdlibApi#))) public final operator [ResolvedTo(STATUS)] fun rangeUntil([ResolvedTo(STATUS)] other: R|kotlin/Long|): R|kotlin/ranges/LongRange| { LAZY_BLOCK }
 
     @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final infix [ResolvedTo(STATUS)] fun shl([ResolvedTo(STATUS)] bitCount: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
 

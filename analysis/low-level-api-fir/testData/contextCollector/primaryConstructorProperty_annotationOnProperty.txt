@@ -33,7 +33,7 @@ Tower Data Context:
                 FirValueParameterSymbol c: R|kotlin/Long| = R|<local>/a|.R|kotlin/String.length|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
 
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty_annotationOnProperty.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.PROPERTY#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.PROPERTY|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] name: String): R|MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }

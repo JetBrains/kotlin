@@ -72,7 +72,7 @@ TYPES:
 FILE: [ResolvedTo(TYPES)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.FILE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.FILE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -86,7 +86,7 @@ STATUS:
 FILE: [ResolvedTo(STATUS)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.FILE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.FILE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -100,7 +100,7 @@ EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.FILE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.FILE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -114,7 +114,7 @@ CONTRACTS:
 FILE: [ResolvedTo(CONTRACTS)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.FILE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.FILE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -128,7 +128,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.FILE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.FILE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -142,7 +142,7 @@ CONSTANT_EVALUATION:
 FILE: [ResolvedTo(CONSTANT_EVALUATION)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[Types](LAZY_EXPRESSION)
     @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.FILE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.FILE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -156,7 +156,7 @@ ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[Types](message = String() [evaluated = String()])
     @FILE:R|one/Anno|[Types](s = String(anno) [evaluated = String(anno)])
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](AnnotationTarget#.FILE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.FILE|))] public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -170,7 +170,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(BODY_RESOLVE)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[Types](message = String() [evaluated = String()])
     @FILE:R|one/Anno|[Types](s = String(anno) [evaluated = String(anno)])
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](AnnotationTarget#.FILE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.FILE|))] public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>
         }

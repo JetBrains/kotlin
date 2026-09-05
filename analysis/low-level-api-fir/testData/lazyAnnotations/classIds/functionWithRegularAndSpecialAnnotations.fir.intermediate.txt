@@ -1,1 +1,1 @@
-@R|pack/MyAnno|[Types](LAZY_EXPRESSION) @R|kotlin/jvm/JvmName|[Types](String(myName)) public? final? [ResolvedTo(TYPES)] fun foo([ResolvedTo(TYPES)] i: R|kotlin/Int|): R|kotlin/String|
+@R|pack/MyAnno|[Types](LAZY_EXPRESSION) @R|kotlin/jvm/JvmName|[Types](String(myName)) [compilerRequired = (name = String(myName))] public? final? [ResolvedTo(TYPES)] fun foo([ResolvedTo(TYPES)] i: R|kotlin/Int|): R|kotlin/String|

@@ -18,7 +18,7 @@ FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](R|/JavaTarget.ANNOTATION_CLASS|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](R|/JavaTarget.ANNOTATION_CLASS|) public final? [ResolvedTo(COMPANION_GENERATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final? [ResolvedTo(COMPANION_GENERATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](R|/JavaTarget.ANNOTATION_CLASS|) public final? [ResolvedTo(SUPER_TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final? [ResolvedTo(SUPER_TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
-    @R|kotlin/annotation/Target|[Types](R|/JavaTarget.ANNOTATION_CLASS|) public final? [ResolvedTo(TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final? [ResolvedTo(TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -54,7 +54,7 @@ FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
-    @R|kotlin/annotation/Target|[Types](R|/JavaTarget.ANNOTATION_CLASS|) public final [ResolvedTo(STATUS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final [ResolvedTo(STATUS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -63,7 +63,7 @@ FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
-    @R|kotlin/annotation/Target|[Types](R|/JavaTarget.ANNOTATION_CLASS|) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -72,7 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
-    @R|kotlin/annotation/Target|[Types](R|/JavaTarget.ANNOTATION_CLASS|) public final [ResolvedTo(CONTRACTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final [ResolvedTo(CONTRACTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
-    @R|kotlin/annotation/Target|[Types](R|/JavaTarget.ANNOTATION_CLASS|) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -90,7 +90,7 @@ FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
-    @R|kotlin/annotation/Target|[Types](R|/JavaTarget.ANNOTATION_CLASS|) public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -99,7 +99,15 @@ FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|/JavaTarget.ANNOTATION_CLASS|) [evaluated = vararg(R|/JavaTarget.ANNOTATION_CLASS|)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|/JavaTarget.ANNOTATION_CLASS<
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS
+              - compiler arguments stage: FirEnumEntrySymbol /JavaTarget.ANNOTATION_CLASS
+        >#|) [evaluated = vararg(R|/JavaTarget.ANNOTATION_CLASS<
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS
+              - compiler arguments stage: FirEnumEntrySymbol /JavaTarget.ANNOTATION_CLASS
+        >#|)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -108,7 +116,15 @@ FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|/JavaTarget.ANNOTATION_CLASS|) [evaluated = vararg(R|/JavaTarget.ANNOTATION_CLASS|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|/JavaTarget.ANNOTATION_CLASS<
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS
+              - compiler arguments stage: FirEnumEntrySymbol /JavaTarget.ANNOTATION_CLASS
+        >#|) [evaluated = vararg(R|/JavaTarget.ANNOTATION_CLASS<
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS
+              - compiler arguments stage: FirEnumEntrySymbol /JavaTarget.ANNOTATION_CLASS
+        >#|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             super<R|kotlin/Any|>()
         }
@@ -117,7 +133,15 @@ FILE: [ResolvedTo(IMPORTS)] MyAnnotation.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] MyAnnotation.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|/JavaTarget.ANNOTATION_CLASS|) [evaluated = vararg(R|/JavaTarget.ANNOTATION_CLASS|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(R|/JavaTarget.ANNOTATION_CLASS<
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS
+              - compiler arguments stage: FirEnumEntrySymbol /JavaTarget.ANNOTATION_CLASS
+        >#|) [evaluated = vararg(R|/JavaTarget.ANNOTATION_CLASS<
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS
+              - compiler arguments stage: FirEnumEntrySymbol /JavaTarget.ANNOTATION_CLASS
+        >#|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             super<R|kotlin/Any|>()
         }

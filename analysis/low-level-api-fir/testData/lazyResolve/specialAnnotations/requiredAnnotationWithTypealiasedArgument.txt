@@ -21,7 +21,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithTypealiasedArgument.kt
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithTypealiasedArgument.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = AnnotationTarget
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](MyTypeAlias#.ANNOTATION_CLASS#) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](MyTypeAlias#.ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|testPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -31,7 +31,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithTypealiasedArgument.kt
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithTypealiasedArgument.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = AnnotationTarget
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](MyTypeAlias#.ANNOTATION_CLASS#) public final? [ResolvedTo(COMPANION_GENERATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](MyTypeAlias#.ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final? [ResolvedTo(COMPANION_GENERATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|testPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -41,7 +41,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithTypealiasedArgument.kt
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithTypealiasedArgument.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = AnnotationTarget
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](MyTypeAlias#.ANNOTATION_CLASS#) public final? [ResolvedTo(SUPER_TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](MyTypeAlias#.ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final? [ResolvedTo(SUPER_TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|testPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -51,7 +51,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithTypealiasedArgument.kt
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithTypealiasedArgument.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = AnnotationTarget
-    @R|kotlin/annotation/Target|[Types](MyTypeAlias#.ANNOTATION_CLASS#) public final? [ResolvedTo(TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](MyTypeAlias#.ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final? [ResolvedTo(TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|testPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -61,7 +61,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithTypealiasedArgument.kt
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithTypealiasedArgument.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = AnnotationTarget
-    @R|kotlin/annotation/Target|[Types](MyTypeAlias#.ANNOTATION_CLASS#) public final [ResolvedTo(STATUS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](MyTypeAlias#.ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final [ResolvedTo(STATUS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|testPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -71,7 +71,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithTypealiasedArgument.kt
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithTypealiasedArgument.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = AnnotationTarget
-    @R|kotlin/annotation/Target|[Types](MyTypeAlias#.ANNOTATION_CLASS#) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](MyTypeAlias#.ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|testPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithTypealiasedArgument.kt
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithTypealiasedArgument.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = AnnotationTarget
-    @R|kotlin/annotation/Target|[Types](MyTypeAlias#.ANNOTATION_CLASS#) public final [ResolvedTo(CONTRACTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](MyTypeAlias#.ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final [ResolvedTo(CONTRACTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|testPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithTypealiasedArgument.kt
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithTypealiasedArgument.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = AnnotationTarget
-    @R|kotlin/annotation/Target|[Types](MyTypeAlias#.ANNOTATION_CLASS#) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](MyTypeAlias#.ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|testPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -101,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithTypealiasedArgument.kt
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithTypealiasedArgument.kt
     public final [ResolvedTo(RAW_FIR)] typealias MyTypeAlias = AnnotationTarget
-    @R|kotlin/annotation/Target|[Types](MyTypeAlias#.ANNOTATION_CLASS#) public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](MyTypeAlias#.ANNOTATION_CLASS#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|))] public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|testPack/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
