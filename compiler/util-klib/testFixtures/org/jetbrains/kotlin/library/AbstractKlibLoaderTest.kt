@@ -542,8 +542,6 @@ abstract class AbstractKlibLoaderTest {
             KotlinAbiVersion(1, 4, 1),
             KotlinAbiVersion(1, 4, 2),
             KotlinAbiVersion(1, 5, 0),
-            KotlinAbiVersion(1, 6, 0),
-            KotlinAbiVersion(1, 7, 0),
         )
 
         // Sanity: Make sure that all are unique.
@@ -560,6 +558,8 @@ abstract class AbstractKlibLoaderTest {
 
     private fun findAllKnownSupportedAbiVersions(): List<KotlinAbiVersion> {
         val knownSupportedAbiVersions = buildList {
+            this += KotlinAbiVersion(1, 6, 0)
+            this += KotlinAbiVersion(1, 7, 0)
             this += KotlinAbiVersion(1, 8, 0)
             this += KotlinAbiVersion(1, 201, 0)
 

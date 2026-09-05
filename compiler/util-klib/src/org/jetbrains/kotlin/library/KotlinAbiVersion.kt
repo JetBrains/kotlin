@@ -91,10 +91,10 @@ data class KotlinAbiVersion(val major: Int, val minor: Int, val patch: Int) {
         val CURRENT = KotlinAbiVersion(2, 5, 0)
 
         /**
-         * The ABI version that matches the Kotlin compiler version (1.9.20), since which we do support
-         * backward compatibility of Klibs.
+         * A preparatory restriction to v1.6.0 before the upcoming restriction to 1.8.0 (The ABI version that matches the Kotlin compiler version 1.9.20),
+         * since which we do support backward compatibility of Klibs.
          */
-        val FIRST_SUPPORTED = KotlinAbiVersion(1, 8, 0)
+        val FIRST_SUPPORTED = KotlinAbiVersion(1, 6, 0)
 
         /**
          * Versions before 1.4.1 were the active development phase.
