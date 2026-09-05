@@ -1,4 +1,5 @@
 // FIR_DUMP
+// DUMP_KT_IR
 // FILE: ConstructorExample.kt
 
 import lombok.NoArgsConstructor

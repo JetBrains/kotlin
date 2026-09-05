@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.lombok.generators
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.*
@@ -19,13 +18,11 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
-import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildReturnExpression
-import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.plugin.tryGeneratingNoArgDelegatingConstructorCall
-import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -36,7 +33,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.buildJavaTypeRef
@@ -54,7 +50,7 @@ import org.jetbrains.kotlin.lombok.java.JavaTypeSubstitutorByMap
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.callableIdForConstructor
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.ConstructorAnnotation>(private val session: FirSession) {
     protected val lombokService: LombokService
@@ -80,7 +76,10 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         if (constructorInfo.accessLevel.toVisibility(classSymbol) == null) return false
         val staticName = constructorInfo.staticName?.let { Name.identifier(it) } ?: return false
 
-        return !staticFactoryNameIsTaken(classSymbol, staticName, getFieldsForParameters(classSymbol).size)
+        // Never where no constructor is generated in the first place - a factory exists only to call one - and
+        // never for an inner class regardless: a static factory has no outer instance to construct with (KT-89169).
+        return classSymbol.supportsGeneratedConstructor && !classSymbol.isInner &&
+                !staticFactoryNameIsTaken(classSymbol, staticName, getFieldsForParameters(classSymbol).size)
     }
 
     /**
@@ -162,6 +161,11 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         // found during code generation" (KT-88705). Reported as `ANNOTATION_HAS_NO_EFFECT`.
         if (targetClassSymbol.isInlineOrValue) return
 
+        // A Kotlin inner or local class gets nothing: see `supportsGeneratedConstructor` for why the inner one
+        // cannot be generated without hitting the KT-88659 crash, and why the local one only ever contradicted
+        // the `ANNOTATION_HAS_NO_EFFECT` already reported for it. Both are reported as `ANNOTATION_HAS_NO_EFFECT`.
+        if (!targetClassSymbol.supportsGeneratedConstructor) return
+
         val visibility = constructorInfo.accessLevel.toVisibility(classSymbol) ?: return
         val fields = getFieldsForParameters(targetClassSymbol)
         val valuesParameterCount = fields.size
@@ -172,9 +176,22 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
             "Kotlin supports only `@NoArgsConstructor` annotations, that's why `fields` expected to be empty."
         }
 
+        // An inner class's constructor takes the outer instance as its dispatch receiver, so a generated one has to
+        // carry it as well: `Fir2IrVisitor` types the receiver of an `outer.Inner()` call from the constructor it
+        // resolves to, and without it fails outright with "Cannot determine expected receiver type" (KT-89169).
+        // Only a Java class reaches this with `isInner`, the check above having returned for a Kotlin one.
+        val outerClassSymbol = runIf(targetClassSymbol.isInner) {
+            targetClassSymbol.getContainingClassSymbol() as? FirClassSymbol<*> ?: return
+        }
+
+        // A static factory cannot exist on an inner class: the `static of()` Lombok generates has no enclosing
+        // instance to pass to `new Inner(...)`, and `javac` rejects the annotated Java class outright with
+        // "non-static variable this cannot be referenced from a static context". Nothing is generated, the same
+        // as when the factory's name is taken.
+        if (staticName != null && outerClassSymbol != null) return
+
         val substitutor: JavaTypeSubstitutor
         val constructorSymbol: FirFunctionSymbol<*>
-        var returnTarget: FirFunctionTarget? = null
 
         val builder = if (staticName == null || (!hasJavaOrigin && !classSymbol.isCompanion)) {
             // Generate a regular constructor in Kotlin classes even if `staticName` is specified
@@ -202,13 +219,35 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                 FirConstructorBuilder().apply {
                     isLocal = false
                     origin = FirDeclarationOrigin.Plugin(ConstructorGeneratorKey)
-                    delegatedConstructor = targetClassSymbol.tryGeneratingNoArgDelegatingConstructorCall(session) ?: return
+
+                    // Only an existence check: a superclass without a no-args constructor leaves the generated one
+                    // nothing to delegate to, so generation is skipped entirely, and that early return is what
+                    // keeps `ConstructorBodyBuilder` from failing on a missing superclass constructor.
+                    //
+                    // The call itself is deliberately not attached - the body is built in the IR backend
+                    // (`ConstructorBodyBuilder`), the way the noarg plugin builds its constructor bodies. A
+                    // delegated call attached in FIR makes fir2ir inline the class's property initializers and
+                    // `init` blocks into this constructor, and an initializer referencing a primary constructor
+                    // parameter crashed the JVM backend with "No mapping for symbol" (KT-88659). A body built after
+                    // fir2ir carries no `IrInstanceInitializerCall`, so the initializers don't run in this
+                    // constructor at all, as in the noarg plugin. Lombok's Java output differs - `javac` inlines
+                    // field initializers into every constructor - but a Java field initializer cannot reference
+                    // constructor parameters, so this shape has no Java ground truth to follow.
+                    if (targetClassSymbol.tryGeneratingNoArgDelegatingConstructorCall(session) == null) {
+                        return
+                    }
                 }
             }
 
             builder.apply {
+                dispatchReceiverType = outerClassSymbol?.defaultType()
                 symbol = FirConstructorSymbol(targetClassSymbol.classId.callableIdForConstructor()).also { constructorSymbol = it }
-                targetClassSymbol.fir.typeParameters.mapTo(typeParameters) {
+                // Only the class's own type parameters: a Java inner class's list carries the outer class's as well,
+                // and those are not the constructed class's to re-declare - the platform's
+                // `constructorTypeParametersFromConstructedClass` drops them the same way. Re-declaring them left
+                // the receiver's and the constructed type's parameters unrelated, and a generic outer class was
+                // rejected with `CANNOT_INFER_PARAMETER_TYPE`.
+                targetClassSymbol.fir.typeParameters.filterIsInstance<FirTypeParameter>().mapTo(typeParameters) {
                     buildConstructedClassTypeParameterRef { this.symbol = it.symbol }
                 }
                 substitutor = JavaTypeSubstitutor.Empty
@@ -291,32 +330,13 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
 
                     annotations.add(methodSymbol.buildJvmStaticAnnotationCallOrError(session))
 
-                    // The regular constructor should be either declared explicitly or generated by this generator (previous branch)
-                    val regularEmptyConstructor =
-                        targetClassSymbol.constructors(session).singleOrNull { it.valueParameterSymbols.isEmpty() }
-                            ?: return
-
-                    body = buildSingleExpressionBlock(
-                        buildReturnExpression {
-                            returnTarget = FirFunctionTarget(labelName = null, isLambda = false)
-                            target = returnTarget
-                            result = buildFunctionCall {
-                                calleeReference = buildResolvedNamedReference {
-                                    name = targetClassSymbol.name
-                                    resolvedSymbol = regularEmptyConstructor
-                                }
-                                functionTypeParameterSymbols.mapTo(typeArguments) { typeParameterSymbol ->
-                                    buildTypeProjectionWithVariance {
-                                        typeRef = buildResolvedTypeRef {
-                                            coneType = typeParameterSymbol.toConeType()
-                                        }
-                                        variance = Variance.INVARIANT
-                                    }
-                                }
-                                coneTypeOrNull = constructedType
-                            }
-                        }
-                    )
+                    // Only an existence check: the factory exists to call that constructor, either declared
+                    // explicitly or generated by the branch above, and without one there is nothing to generate.
+                    // The call itself is built in the IR backend (`ConstructorBodyBuilder`), the way the
+                    // no-args constructor's own body is.
+                    if (targetClassSymbol.constructors(session).singleOrNull { it.valueParameterSymbols.isEmpty() } == null) {
+                        return
+                    }
                 }
             }
         }
@@ -360,7 +380,6 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
 
         add(builder.build().apply {
             containingClassForStaticMemberAttr = targetClassSymbol.toLookupTag()
-            returnTarget?.bind(this)
         })
     }
 

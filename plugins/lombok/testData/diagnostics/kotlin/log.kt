@@ -125,3 +125,14 @@ fun test() {
     Interface.<!UNRESOLVED_REFERENCE!>log<!>.info("Interface") // Nothing is generated, KT-87871
     AnnotationClass.<!UNRESOLVED_REFERENCE!>log<!>.info("AnnotationClass") // Nothing is generated, KT-87871
 }
+
+// A nested classifier takes the name of the companion object the logger would go into, so no companion object
+// is generated and no logger with it, KT-88276.
+@Log
+class WithNestedCompanionClass {
+    class <!COMPANION_OBJECT_IS_NOT_GENERATED!>Companion<!>
+}
+
+fun testNestedCompanion() {
+    WithNestedCompanionClass.<!UNRESOLVED_REFERENCE!>log<!>.info("")
+}

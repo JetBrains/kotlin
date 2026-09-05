@@ -16,6 +16,7 @@ import lombok.ToString
 import lombok.EqualsAndHashCode
 import lombok.Builder
 import lombok.experimental.SuperBuilder
+import lombok.NoArgsConstructor
 
 // Error despite the `lombok.log.javaUtilLogging.flagUsage=warning` because `lombok.log.flagUsage=error` has greater severity
 <!FLAG_USAGE_ERROR!>@Slf4j<!>
@@ -63,6 +64,12 @@ class BuilderExampleError(val x: Int)
 <!ANNOTATION_IS_NOT_SUPPORTED, FLAG_USAGE_ERROR!>@SuperBuilder<!>
 class SuperBuilderExampleError
 
+// `lombok.anyConstructor.flagUsage` covers every `@XArgsConstructor`, and its `error` outranks the `warning` of
+// the annotation's own key: Lombok takes `error` from either key first and only then `warning`, preferring the
+// specific key when the two are equal.
+<!FLAG_USAGE_ERROR!>@NoArgsConstructor<!>
+class NoArgsConstructorExampleError
+
 class NotAnnotated
 
 // FILE: lombok.config
@@ -80,3 +87,5 @@ lombok.toString.flagUsage=error
 lombok.equalsAndHashCode.flagUsage=error
 lombok.builder.flagUsage=error
 lombok.superBuilder.flagUsage=error
+lombok.anyConstructor.flagUsage=error
+lombok.noArgsConstructor.flagUsage=warning
