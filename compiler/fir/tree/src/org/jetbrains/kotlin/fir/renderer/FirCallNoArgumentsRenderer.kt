@@ -25,4 +25,11 @@ class FirCallNoArgumentsRenderer : FirCallArgumentsRenderer() {
         }
         printer.print(")")
     }
+
+    override fun renderArgumentsWithCompilerRequired(
+        arguments: List<FirExpression>,
+        argumentMapping: FirAnnotationArgumentMapping,
+    ) {
+        renderArguments(arguments)
+    }
 }
