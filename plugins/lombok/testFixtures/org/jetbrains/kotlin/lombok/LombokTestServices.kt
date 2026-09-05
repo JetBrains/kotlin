@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.lombok
 import lombok.Getter
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.lombok.LombokDirectives.ENABLE_LOMBOK
@@ -17,33 +16,11 @@ import org.jetbrains.kotlin.lombok.LombokDirectives.WITH_ADVANCED_LOGGERS
 import org.jetbrains.kotlin.lombok.LombokEnvironmentConfigurator.Companion.GUAVA_JAR
 import org.jetbrains.kotlin.lombok.LombokEnvironmentConfigurator.Companion.ADVANCED_LOGGER_JARS
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
-
-class LombokAdditionalSourceFileProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
-    companion object {
-        const val COMMON_SOURCE_PATH = "plugins/lombok/testData/common.kt"
-    }
-
-    override fun produceAdditionalFiles(
-        globalDirectives: RegisteredDirectives,
-        module: TestModule,
-        testModuleStructure: TestModuleStructure
-    ): List<TestFile> {
-        if (ENABLE_LOMBOK !in module.directives ||
-            // Include the common file only in a single module to get rid of errors and exceptions
-            module.allDependencies.any { dependency -> dependency.dependencyModule.files.any { it.originalFile.endsWith(COMMON_SOURCE_PATH) } }
-        ) {
-            return emptyList()
-        }
-        return listOf(ForTestCompileRuntime.transformTestDataPath(COMMON_SOURCE_PATH).toTestFile())
-    }
-}
 
 class LombokEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     companion object {

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.lombok.config
 
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
@@ -13,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.getBooleanArgument
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.declarations.getStringArrayArgument
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ACCESS
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_CLASS_NAME
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_CLASS_NAME_CONFIG
@@ -78,8 +78,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 abstract class ConeAnnotationCompanion<T>(val name: ClassId) {
     abstract fun extract(annotation: FirAnnotation, session: FirSession): T
 
-    fun getOrNull(annotated: FirAnnotationContainer, session: FirSession): T? {
-        return annotated.annotations.getAnnotationByClassId(name, session)?.let { this.extract(it, session) }
+    fun getOrNull(symbol: FirBasedSymbol<*>, session: FirSession): T? {
+        return symbol.resolvedCompilerAnnotationsWithClassIds.getAnnotationByClassId(name, session)
+            ?.let { this.extract(it, session) }
     }
 }
 

@@ -34,6 +34,22 @@ object AnalysisApiTestDirectives : SimpleDirectivesContainer() {
     val STUB_BASED by directive("Run the test against a stub-based main file")
 
     /**
+     * A test module normally holds nothing but sources, and a file that is neither Kotlin nor Java is a mistake
+     * worth failing on. Some compiler plugins are configured by a resource carried in the module instead - the
+     * Lombok tests declare a `lombok.config` that only `LombokEnvironmentConfigurator` reads - and such a file has
+     * no PSI to contribute.
+     *
+     * Opt in per test rather than skipping unknown files everywhere, so that a misspelled source file keeps
+     * failing where no resource is expected.
+     *
+     * @see org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory.createSourcePsiFiles
+     */
+    val ALLOW_NON_SOURCE_FILES by directive(
+        description = "Ignore module files that are neither Kotlin nor Java instead of failing on them",
+        applicability = DirectiveApplicability.Module,
+    )
+
+    /**
      * @see org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest.findMainFile
      */
     val MAIN_FILE_NAME by stringDirective(

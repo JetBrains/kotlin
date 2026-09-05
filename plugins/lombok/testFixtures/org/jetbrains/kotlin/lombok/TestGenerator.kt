@@ -17,6 +17,9 @@ fun main(args: Array<String>) {
             testClass<AbstractFirPsiDiagnosticTestForLombok> {
                 model("diagnostics")
             }
+            testClass<AbstractLLLombokDiagnosticsTest> {
+                model("diagnostics")
+            }
         }
     }
 }

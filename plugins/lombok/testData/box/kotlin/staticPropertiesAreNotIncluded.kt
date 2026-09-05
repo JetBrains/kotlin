@@ -10,6 +10,7 @@
 import lombok.Builder
 import lombok.EqualsAndHashCode
 import lombok.ToString
+import kotlin.test.assertEquals
 
 @ToString
 class ToStringWithStatic(val instance: Int) {

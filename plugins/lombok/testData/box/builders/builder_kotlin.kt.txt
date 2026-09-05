@@ -138,13 +138,14 @@ class User {
 
 fun box(): String {
   val user: User = Companion.builder().name(name = "John").age(age = 42).info(info = null).build()
-  assertEquals<String>(a = "John", b = user.<get-name>())
-  assertEquals<Int>(a = 42, b = user.<get-age>())
+  assertEquals<String>(expected = "John", actual = user.<get-name>())
+  assertEquals<Int>(expected = 42, actual = user.<get-age>())
   val user2: User = User(name = "Sarah", age = 30, info = null)
   val builder2: UserBuilder = user2.toBuilder()
   val user3: User = builder2.build()
-  assertEquals<String>(a = user2.<get-name>(), b = user3.<get-name>())
-  assertEquals<Int>(a = user2.<get-age>(), b = user3.<get-age>())
-  assertEquals<String?>(a = user2.<get-info>(), b = user3.<get-info>())
+  assertEquals<String>(expected = user2.<get-name>(), actual = user3.<get-name>())
+  assertEquals<Int>(expected = user2.<get-age>(), actual = user3.<get-age>())
+  assertEquals<String?>(expected = user2.<get-info>(), actual = user3.<get-info>())
   return "OK"
 }
+

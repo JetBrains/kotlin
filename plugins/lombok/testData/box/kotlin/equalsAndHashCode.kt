@@ -1,6 +1,8 @@
 // DUMP_KT_IR
 
 import lombok.EqualsAndHashCode
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 @EqualsAndHashCode
 class Simple(val name: String, val age: Int) {
@@ -100,109 +102,109 @@ fun box(): String {
     val s1 = Simple("Alice", 30)
     val s2 = Simple("Alice", 30)
     val s3 = Simple("Bob", 30)
-    assertEquals(true, s1 == s2)
-    assertEquals(false, s1 == s3)
-    assertEquals(true, s1.hashCode() == s2.hashCode())
+    assertEquals(s1, s2)
+    assertNotEquals(s1, s3)
+    assertEquals(s1.hashCode(), s2.hashCode())
     // megaName is excluded so two instances with the same name/age are equal
-    assertEquals(true, Simple("Alice", 30) == Simple("Alice", 30))
+    assertEquals(Simple("Alice", 30), Simple("Alice", 30))
 
     val we1 = WithExclude("a", "b1")
     val we2 = WithExclude("a", "b2")
-    assertEquals(true, we1 == we2)
-    assertEquals(true, we1.hashCode() == we2.hashCode())
+    assertEquals(we1, we2)
+    assertEquals(we1.hashCode(), we2.hashCode())
 
-    assertEquals(true, OnlyIncluded("yes", "no") == OnlyIncluded("yes", "different"))
-    assertEquals(false, OnlyIncluded("yes", "no") == OnlyIncluded("no", "no"))
+    assertEquals(OnlyIncluded("yes", "no"), OnlyIncluded("yes", "different"))
+    assertNotEquals(OnlyIncluded("yes", "no"), OnlyIncluded("no", "no"))
 
     // Check that generated `equals` and `hashCode` are used instead of default ones:
     // The last parameter should be excluded because it's marked with `@EqualsAndHashCode.Exclude`
     // If default implementaiton was used, the classes would be different.
     val d1 = DataClassWithExclude("Alice", 30, 'a')
     val d2 = DataClassWithExclude("Alice", 30, 'b')
-    assertEquals(true, d1 == d2)
-    assertEquals(true, d1.hashCode() == d2.hashCode())
+    assertEquals(d1, d2)
+    assertEquals(d1.hashCode(), d2.hashCode())
     val d3 = DataClassWithExclude("Alice", 31, 'a')
-    assertEquals(false, d1 == d3)
+    assertNotEquals(d1, d3)
 
     val p1 = PlainDataClass("x", 1)
     val p2 = PlainDataClass("x", 1)
-    assertEquals(true, p1 == p2)
-    assertEquals(true, p1.hashCode() == p2.hashCode())
+    assertEquals(p1, p2)
+    assertEquals(p1.hashCode(), p2.hashCode())
 
-    assertEquals(true, SingletonObject == SingletonObject)
-    assertEquals(true, ObjectWithProperties == ObjectWithProperties)
+    assertEquals(SingletonObject, SingletonObject)
+    assertEquals(ObjectWithProperties, ObjectWithProperties)
     // Calling hashCode must not throw.
     SingletonObject.hashCode()
     ObjectWithProperties.hashCode()
 
-    assertEquals(true, WithNullable(null, 1) == WithNullable(null, 1))
-    assertEquals(false, WithNullable("a", 1) == WithNullable(null, 1))
+    assertEquals(WithNullable(null, 1), WithNullable(null, 1))
+    assertNotEquals(WithNullable("a", 1), WithNullable(null, 1))
     // hashCode does not NPE on a null property
     WithNullable(null, 1).hashCode()
 
     // KT-88532: `optionalId = 0` and `optionalId = null` are not equal, so they must not share a hash.
-    assertEquals(false, SingleNullableInt(0) == SingleNullableInt(null))
-    assertEquals(true, SingleNullableInt(0).hashCode() != SingleNullableInt(null).hashCode())
+    assertNotEquals(SingleNullableInt(0), SingleNullableInt(null))
+    assertNotEquals(SingleNullableInt(0).hashCode(), SingleNullableInt(null).hashCode())
 
-    assertEquals(false, SingleNullableString("") == SingleNullableString(null))
-    assertEquals(true, SingleNullableString("").hashCode() != SingleNullableString(null).hashCode())
+    assertNotEquals(SingleNullableString(""), SingleNullableString(null))
+    assertNotEquals(SingleNullableString("").hashCode(), SingleNullableString(null).hashCode())
 
-    assertEquals(false, TwoNullableInts(0, 1) == TwoNullableInts(null, 1))
-    assertEquals(true, TwoNullableInts(0, 1).hashCode() != TwoNullableInts(null, 1).hashCode())
+    assertNotEquals(TwoNullableInts(0, 1), TwoNullableInts(null, 1))
+    assertNotEquals(TwoNullableInts(0, 1).hashCode(), TwoNullableInts(null, 1).hashCode())
 
     // Equal instances still agree, null properties included.
-    assertEquals(true, SingleNullableInt(null) == SingleNullableInt(null))
-    assertEquals(true, SingleNullableInt(null).hashCode() == SingleNullableInt(null).hashCode())
-    assertEquals(true, TwoNullableInts(null, null).hashCode() == TwoNullableInts(null, null).hashCode())
+    assertEquals(SingleNullableInt(null), SingleNullableInt(null))
+    assertEquals(SingleNullableInt(null).hashCode(), SingleNullableInt(null).hashCode())
+    assertEquals(TwoNullableInts(null, null).hashCode(), TwoNullableInts(null, null).hashCode())
 
     // KT-88656: equal contents in distinct array instances must compare equal and hash alike.
-    assertEquals(true, WithObjectArray(arrayOf("a", "b")) == WithObjectArray(arrayOf("a", "b")))
-    assertEquals(true, WithObjectArray(arrayOf("a", "b")).hashCode() == WithObjectArray(arrayOf("a", "b")).hashCode())
-    assertEquals(false, WithObjectArray(arrayOf("a", "b")) == WithObjectArray(arrayOf("a", "c")))
+    assertEquals(WithObjectArray(arrayOf("a", "b")), WithObjectArray(arrayOf("a", "b")))
+    assertEquals(WithObjectArray(arrayOf("a", "b")).hashCode(), WithObjectArray(arrayOf("a", "b")).hashCode())
+    assertNotEquals(WithObjectArray(arrayOf("a", "b")), WithObjectArray(arrayOf("a", "c")))
 
-    assertEquals(true, WithPrimitiveArray(intArrayOf(1, 2)) == WithPrimitiveArray(intArrayOf(1, 2)))
-    assertEquals(true, WithPrimitiveArray(intArrayOf(1, 2)).hashCode() == WithPrimitiveArray(intArrayOf(1, 2)).hashCode())
-    assertEquals(false, WithPrimitiveArray(intArrayOf(1, 2)) == WithPrimitiveArray(intArrayOf(1, 3)))
+    assertEquals(WithPrimitiveArray(intArrayOf(1, 2)), WithPrimitiveArray(intArrayOf(1, 2)))
+    assertEquals(WithPrimitiveArray(intArrayOf(1, 2)).hashCode(), WithPrimitiveArray(intArrayOf(1, 2)).hashCode())
+    assertNotEquals(WithPrimitiveArray(intArrayOf(1, 2)), WithPrimitiveArray(intArrayOf(1, 3)))
 
     // A one-dimensional object array is already compared deeply, so a nested one needs nothing extra.
-    assertEquals(true, WithNestedArray(arrayOf(arrayOf("a"))) == WithNestedArray(arrayOf(arrayOf("a"))))
-    assertEquals(true, WithNestedArray(arrayOf(arrayOf("a"))).hashCode() == WithNestedArray(arrayOf(arrayOf("a"))).hashCode())
-    assertEquals(false, WithNestedArray(arrayOf(arrayOf("a"))) == WithNestedArray(arrayOf(arrayOf("b"))))
+    assertEquals(WithNestedArray(arrayOf(arrayOf("a"))), WithNestedArray(arrayOf(arrayOf("a"))))
+    assertEquals(WithNestedArray(arrayOf(arrayOf("a"))).hashCode(), WithNestedArray(arrayOf(arrayOf("a"))).hashCode())
+    assertNotEquals(WithNestedArray(arrayOf(arrayOf("a"))), WithNestedArray(arrayOf(arrayOf("b"))))
 
     // `java.util.Arrays` accepts null itself, so a null array needs no separate guard.
-    assertEquals(true, WithNullableArray(null) == WithNullableArray(null))
-    assertEquals(true, WithNullableArray(null).hashCode() == WithNullableArray(null).hashCode())
-    assertEquals(false, WithNullableArray(null) == WithNullableArray(arrayOf("a")))
+    assertEquals(WithNullableArray(null), WithNullableArray(null))
+    assertEquals(WithNullableArray(null).hashCode(), WithNullableArray(null).hashCode())
+    assertNotEquals(WithNullableArray(null), WithNullableArray(arrayOf("a")))
 
     // KT-88636: only `$excludedByDefault` differs, so the instances stay equal; `$explicitlyIncluded` counts.
-    assertEquals(true, WithDollarPrefixedProperties("r", "a", "i") == WithDollarPrefixedProperties("r", "b", "i"))
+    assertEquals(WithDollarPrefixedProperties("r", "a", "i"), WithDollarPrefixedProperties("r", "b", "i"))
     assertEquals(
-        true,
-        WithDollarPrefixedProperties("r", "a", "i").hashCode() == WithDollarPrefixedProperties("r", "b", "i").hashCode()
+        WithDollarPrefixedProperties("r", "a", "i").hashCode(),
+        WithDollarPrefixedProperties("r", "b", "i").hashCode()
     )
-    assertEquals(false, WithDollarPrefixedProperties("r", "a", "i") == WithDollarPrefixedProperties("r", "a", "j"))
-    assertEquals(false, WithDollarPrefixedProperties("r", "a", "i") == WithDollarPrefixedProperties("s", "a", "i"))
+    assertNotEquals(WithDollarPrefixedProperties("r", "a", "i"), WithDollarPrefixedProperties("r", "a", "j"))
+    assertNotEquals(WithDollarPrefixedProperties("r", "a", "i"), WithDollarPrefixedProperties("s", "a", "i"))
 
-    assertEquals(true, Empty() == Empty())
+    assertEquals(Empty(), Empty())
     // The accumulator Lombok starts every `hashCode` from, with nothing folded into it.
     assertEquals(1, Empty().hashCode())
 
     val cd1 = CallSuperDerived("x")
     val cd2 = CallSuperDerived("x")
-    assertEquals(true, cd1 == cd2)
-    assertEquals(true, cd1.hashCode() == cd2.hashCode())
+    assertEquals(cd1, cd2)
+    assertEquals(cd1.hashCode(), cd2.hashCode())
 
-    assertEquals(true, WithComputedProperties("X") == WithComputedProperties("X"))
+    assertEquals(WithComputedProperties("X"), WithComputedProperties("X"))
 
     @EqualsAndHashCode
     class LocalClass(val x: Int)
-    assertEquals(true, LocalClass(7) == LocalClass(7))
-    assertEquals(false, LocalClass(7) == LocalClass(8))
+    assertEquals(LocalClass(7), LocalClass(7))
+    assertNotEquals(LocalClass(7), LocalClass(8))
 
     // The enum keeps the identity comparison it inherits from `java.lang.Enum`, KT-88507.
-    assertEquals(true, Color.RED == Color.RED)
-    assertEquals(false, Color.RED == Color.GREEN)
-    assertEquals(true, Color.RED.hashCode() == Color.RED.hashCode())
+    assertEquals(Color.RED, Color.RED)
+    assertNotEquals(Color.RED, Color.GREEN)
+    assertEquals(Color.RED.hashCode(), Color.RED.hashCode())
 
     return "OK"
 }

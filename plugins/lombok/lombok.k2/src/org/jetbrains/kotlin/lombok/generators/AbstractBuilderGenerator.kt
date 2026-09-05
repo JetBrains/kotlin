@@ -355,6 +355,13 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 else -> emptyList()
             }
             for (item in items) {
+                // A declaration the parser could not read a name off - `val )` and the like - carries the special
+                // name `<no name provided>`, and every name the builder derives from it (`name$set`, a prefixed
+                // setter, `clearName`) asks that name for an identifier, which a special name refuses with an
+                // `IllegalStateException`. Nothing sensible can be generated for such an item anyway: skip it,
+                // the way `FirLombokBuilderChecker` skips it when reporting.
+                if (item.name.isSpecial) continue
+
                 val singularAnnotation = item.getAnnotationByClassId(LombokNames.SINGULAR_ID, session)
                     ?: (item.symbol as? FirPropertySymbol)?.backingFieldSymbol?.getAnnotationByClassId(LombokNames.SINGULAR_ID, session)
                 val singular: Singular? = singularAnnotation?.let { Singular.extract(it, session) }
@@ -379,6 +386,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                             isVar = false
                             symbol = FirFieldSymbol(CallableId(builderSymbol.classId, it))
                             dispatchReceiverType = builderSymbol.defaultType()
+                            source = item.source
                         }.symbol
                     } else {
                         val substitutedType = substitutor.substituteOrSelf(item.returnTypeRef.coneType)
@@ -399,6 +407,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                         ) {
                             modality = Modality.FINAL
                             visibility = Visibilities.Private
+                            source = item.source
                         }.symbol
                     }
                 }
@@ -734,7 +743,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 modality = Modality.OPEN,
                 createKey = {
                     BuilderGeneratorKey(BuilderDeclarationType.Function.Setter)
-                }
+                },
+                source = item.source,
             )
         }
     }
@@ -857,6 +867,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 visibility = visibility,
                 modality = Modality.OPEN,
                 createKey = { BuilderGeneratorKey(BuilderDeclarationType.SingularFunction.AddSingle(item.name)) },
+                source = item.source,
             )
         }
 
@@ -898,6 +909,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 visibility = visibility,
                 modality = Modality.OPEN,
                 createKey = { BuilderGeneratorKey(BuilderDeclarationType.SingularFunction.AddAll(item.name)) },
+                source = item.source,
             )
         }
 
@@ -910,6 +922,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 visibility = visibility,
                 modality = Modality.OPEN,
                 createKey = { BuilderGeneratorKey(BuilderDeclarationType.SingularFunction.Clear(item.name)) },
+                source = item.source,
             )
         }
     }
@@ -966,6 +979,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
             FirRegularClassBuilder().apply {
                 origin = FirDeclarationOrigin.Plugin(BuilderGeneratorKey(BuilderDeclarationType.Class.Builder))
+                resolvePhase = FirResolvePhase.BODY_RESOLVE
                 scopeProvider = session.kotlinScopeProvider
             }
         }

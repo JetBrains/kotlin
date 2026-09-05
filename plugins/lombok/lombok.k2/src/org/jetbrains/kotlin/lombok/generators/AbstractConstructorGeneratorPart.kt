@@ -203,6 +203,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                     isLocal = false
                     origin = FirDeclarationOrigin.Plugin(ConstructorGeneratorKey)
                     delegatedConstructor = targetClassSymbol.tryGeneratingNoArgDelegatingConstructorCall(session) ?: return
+                    resolvePhase = FirResolvePhase.BODY_RESOLVE
                 }
             }
 
@@ -274,6 +275,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                     symbol = methodSymbol
                     isLocal = false
                     origin = FirDeclarationOrigin.Plugin(ConstructorGeneratorKey)
+                    resolvePhase = FirResolvePhase.BODY_RESOLVE
                     substitutor = JavaTypeSubstitutor.Empty
 
                     val classTypeParameterSymbols = targetClassSymbol.fir.typeParameters.map { it.symbol }

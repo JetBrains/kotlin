@@ -255,7 +255,7 @@ object TestModuleStructureFactory {
         testServices: TestServices,
         project: Project,
     ): List<PsiFile> {
-        return testModule.files.map { testFile ->
+        return testModule.files.mapNotNull { testFile ->
             when {
                 testFile.isKtFile -> {
                     val fileText = testServices.sourceFileProvider.getContentOfSourceFile(testFile)
@@ -270,6 +270,8 @@ object TestModuleStructureFactory {
                     PsiManager.getInstance(project).findFile(virtualFile)
                         ?: error("PsiFile file not found for $filePath")
                 }
+
+                AnalysisApiTestDirectives.ALLOW_NON_SOURCE_FILES in testModule.directives -> null
 
                 else -> error("Unexpected file ${testFile.name}")
             }

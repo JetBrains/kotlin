@@ -39,6 +39,8 @@ public class VarargsConstructor2 {
 
 // FILE: test.kt
 
+import kotlin.test.assertEquals
+
 fun box(): String {
     VarargsConstructor.test()
 

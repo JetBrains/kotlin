@@ -79,12 +79,12 @@ FILE: ConstructorExample.kt
     }
     public final fun box(): R|kotlin/String| {
         lval zeroObject: R|ConstructorExample| = R|/ConstructorExample|()
-        R|/assertEquals|<R|kotlin/Boolean|>(Boolean(false), R|<local>/zeroObject|.R|/ConstructorExample.boolean|)
-        R|/assertEquals|<R|kotlin/Char|>(R|kotlin/Char|(Int(0)), R|<local>/zeroObject|.R|/ConstructorExample.char|)
-        R|/assertEquals|<R|kotlin/Int|>(Int(0), R|<local>/zeroObject|.R|/ConstructorExample.int|)
-        R|/assertEquals|<R|kotlin/String?|>(Null(null), R|<local>/zeroObject|.R|/ConstructorExample.str|)
+        R|kotlin/test/assertFalse|(R|<local>/zeroObject|.R|/ConstructorExample.boolean|)
+        R|kotlin/test/assertEquals|<R|kotlin/Char|>(R|kotlin/Char|(Int(0)), R|<local>/zeroObject|.R|/ConstructorExample.char|)
+        R|kotlin/test/assertEquals|<R|kotlin/Int|>(Int(0), R|<local>/zeroObject|.R|/ConstructorExample.int|)
+        R|kotlin/test/assertNull|(R|<local>/zeroObject|.R|/ConstructorExample.str|)
         lval zeroObjectWithGenerics: R|ConstructorExampleWithGenerics<kotlin/Int>| = R|/ConstructorExampleWithGenerics|<R|kotlin/Int|>()
-        R|/assertEquals|<R|kotlin/Int?|>(Null(null), R|<local>/zeroObjectWithGenerics|.R|SubstitutionOverride</ConstructorExampleWithGenerics.param: R|kotlin/Int|>|)
-        R|/assertEquals|<R|kotlin/Int|>(Int(0), R|/ConstructorExampleWithForce|().R|/ConstructorExampleWithForce.int|)
+        R|kotlin/test/assertNull|(R|<local>/zeroObjectWithGenerics|.R|SubstitutionOverride</ConstructorExampleWithGenerics.param: R|kotlin/Int|>|)
+        R|kotlin/test/assertEquals|<R|kotlin/Int|>(Int(0), R|/ConstructorExampleWithForce|().R|/ConstructorExampleWithForce.int|)
         ^box String(OK)
     }

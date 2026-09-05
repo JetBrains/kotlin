@@ -54,19 +54,21 @@ public class User2 {
 
 // FILE: test.kt
 
+import kotlin.test.assertEquals
+
 fun box(): String {
     // Correct
     User.testBuilder()
     val user = User.builder().name("name").age(42).build()
-    assertEquals(user.age, 42)
-    assertEquals(user.name, "name")
+    assertEquals(42, user.age)
+    assertEquals("name", user.name)
 
     User2.testBuilder()
     // Green code, although the `age` becomes initialized by the first constructor that's looks awkward.
     // It's a way how Lombok works in case of builder clashing
     val user2 = User2.builder().name("name2").age(5).build()
-    assertEquals(user2.age, -1)
-    assertEquals(user2.name, "name2")
+    assertEquals(-1, user2.age)
+    assertEquals("name2", user2.name)
 
     return "OK"
 }
