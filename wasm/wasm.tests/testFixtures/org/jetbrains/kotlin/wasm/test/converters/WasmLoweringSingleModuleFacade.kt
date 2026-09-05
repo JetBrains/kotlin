@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.wasm.test.converters
 
-import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
-import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
-import org.jetbrains.kotlin.backend.wasm.linkIr
-import org.jetbrains.kotlin.backend.wasm.linkWasmIr
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.SingleModuleCompiler
+import org.jetbrains.kotlin.cli.pipeline.executePhaseIsolatedWithActions
+import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmBinaryGenerationPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmIrLinkingPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmIrLoweringPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmSingleModuleBackendIrGenerationPipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.js.config.outputDir
@@ -23,13 +24,9 @@ import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.util.PhaseType
-import org.jetbrains.kotlin.util.tryMeasurePhaseTime
-import org.jetbrains.kotlin.wasm.config.wasmUseStackSwitchingProposal
-import org.jetbrains.kotlin.wasm.config.wasmDependencyResolutionMap
-import org.jetbrains.kotlin.wasm.config.wasmForceDebugFriendlyCompilation
-import org.jetbrains.kotlin.wasm.config.wasmTestBoxFunctionToExport
-import org.jetbrains.kotlin.wasm.config.wasmUseNewExceptionProposal
+import org.jetbrains.kotlin.wasm.config.*
 import org.jetbrains.kotlin.wasm.test.PrecompileSetup
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
 import org.jetbrains.kotlin.wasm.test.precompiledKotlinTestOutputName
@@ -58,6 +55,8 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.Wasm {
         require(inputArtifact is DeserializedFromKlibBackendInput<*>)
+        val cliInputArtifact = inputArtifact.cliArtifact as? WebLoadedIrPipelineArtifact
+            ?: testInfraError("WasmLoweringSingleModuleFacade expects WebLoadedIrPipelineArtifact")
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val moduleInfo = inputArtifact.moduleInfo
@@ -84,26 +83,13 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
             configuration.outputName = WasmEnvironmentConfigurator.WASM_BASE_FILE_NAME
         }
 
-        val irFactory = moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC
-        val compiler = SingleModuleCompiler(configuration, irFactory, isWasmStdlib = false)
-
-        val [allModules, context] = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
-            linkIr(moduleInfo, configuration)
-        }
-
-        val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-            compiler.lowerIr(moduleInfo, allModules, context)
-        }
-
-        val compiledIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
-            compiler.compileIr(loweredIr)
-        }.single()
-
-        val linkedModule = linkWasmIr(compiledIr)
-        val compileResult = compileWasmIrToBinary(compiledIr, linkedModule)
+        val linkedIr = WasmIrLinkingPipelinePhase.executePhaseIsolatedWithActions(cliInputArtifact)!!
+        val loweredIr = WasmIrLoweringPipelinePhase.executePhaseIsolatedWithActions(linkedIr)!!
+        val intermediateArtifact = WasmSingleModuleBackendIrGenerationPipelinePhase.executePhaseIsolatedWithActions(loweredIr)!!
+        val compileResult = WasmBinaryGenerationPipelinePhase.executePhaseIsolatedWithActions(intermediateArtifact)!!.result.single()
 
         return WasmCompilationSetsBinaryArtifact(
-            WasmCompilationSet(linkedModule, compileResult)
+            WasmCompilationSet(compileResult)
         )
     }
 }

@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web.wasm
 
-import org.jetbrains.kotlin.backend.wasm.ic.*
+import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextWholeWorld
+import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragments
+import org.jetbrains.kotlin.backend.wasm.ic.WasmModuleArtifact
+import org.jetbrains.kotlin.backend.wasm.ic.WasmSrcFileArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.web.WasmIntermediatePipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebIncrementalCachePipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebIncrementalCachePreparationPipelinePhase
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 
 object WasmRegularBackendPipelinePhase : WasmBackendPipelinePhase<
         WasmModuleArtifact,
@@ -25,9 +26,6 @@ object WasmRegularBackendPipelinePhase : WasmBackendPipelinePhase<
     override val incrementalBuildingPhase: PipelinePhase<WebIncrementalCachePipelineArtifact<WasmModuleArtifact>, WasmIntermediatePipelineArtifact>
         get() = WasmWholeWorldIncrementalBuildingPhase
 
-    override fun createNonIncrementalCompiler(
-        configuration: CompilerConfiguration,
-        irFactory: IrFactoryImplForWasmIC,
-        module: ModulesStructure,
-    ): WholeWorldCompiler = WholeWorldCompiler(configuration, irFactory)
+    override val backendIrGenerationPhase: WasmBackendIrGenerationPipelinePhase
+        get() = WasmWholeWorldBackendIrGenerationPipelinePhase
 }

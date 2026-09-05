@@ -5,15 +5,10 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web.wasm
 
-import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.wasm.*
-import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
-import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
-import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -22,7 +17,6 @@ import org.jetbrains.kotlin.js.config.dce
 import org.jetbrains.kotlin.js.config.outputName
 import org.jetbrains.kotlin.js.config.sourceMap
 import org.jetbrains.kotlin.js.config.useDebuggerCustomFormatters
-import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.library.jsOutputName
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.wasm.config.*
@@ -38,103 +32,7 @@ fun encodeModuleName(moduleName: String): String = moduleName
 private val IrModuleFragment.outputFileName
     get() = kotlinLibrary?.jsOutputName ?: encodeModuleName(name.asString())
 
-abstract class WasmCompilerBase(val configuration: CompilerConfiguration) {
-    abstract val irFactory: IrFactoryImplForWasmIC
-    abstract fun lowerIr(
-        irModuleInfo: IrModuleInfo,
-        allModules: List<IrModuleFragment>,
-        context: WasmBackendContext,
-    ): LoweredIrWithExtraArtifacts
-
-    abstract fun compileIr(loweredIr: LoweredIrWithExtraArtifacts): List<WasmIrModuleConfiguration>
-}
-
-abstract class WholeWorldCompilerBase(configuration: CompilerConfiguration, private val noCrossFileOptimisations: Boolean) : WasmCompilerBase(configuration) {
-    override fun lowerIr(
-        irModuleInfo: IrModuleInfo,
-        allModules: List<IrModuleFragment>,
-        context: WasmBackendContext,
-    ): LoweredIrWithExtraArtifacts {
-        configuration.wasmDisableCrossFileOptimisations = noCrossFileOptimisations
-        return compileToLoweredIr(
-            configuration = configuration,
-            irLinker = irModuleInfo.deserializer,
-            allModules = allModules,
-            context = context,
-        )
-    }
-}
-
-class WholeWorldCompiler(configuration: CompilerConfiguration, override val irFactory: IrFactoryImplForWasmIC) : WholeWorldCompilerBase(configuration, noCrossFileOptimisations = false) {
-    override fun compileIr(loweredIr: LoweredIrWithExtraArtifacts): List<WasmIrModuleConfiguration> {
-        val dceDumpNameCache = DceDumpNameCache()
-        if (configuration.dce) {
-            eliminateDeadDeclarations(loweredIr.loweredIr, loweredIr.backendContext, dceDumpNameCache)
-        }
-        dumpDeclarationIrSizesIfNeed(configuration.dceDumpDeclarationIrSizesToFile, loweredIr.loweredIr, dceDumpNameCache)
-
-        val configuration = compileWholeProgramModeToWasmIr(
-            configuration = configuration,
-            idSignatureRetriever = irFactory,
-            loweredIr = loweredIr,
-        )
-
-        return listOf(configuration)
-    }
-}
-
-class WholeWorldMultiModuleCompiler(configuration: CompilerConfiguration, override val irFactory: IrFactoryImplForWasmIC) : WholeWorldCompilerBase(configuration, noCrossFileOptimisations = true) {
-    override fun compileIr(loweredIr: LoweredIrWithExtraArtifacts): List<WasmIrModuleConfiguration> {
-        val allModules = loweredIr.loweredIr
-
-        val dceDumpNameCache = DceDumpNameCache()
-        if (configuration.dce) {
-            eliminateDeadDeclarations(loweredIr.loweredIr, loweredIr.backendContext, dceDumpNameCache)
-        }
-        dumpDeclarationIrSizesIfNeed(configuration.dceDumpDeclarationIrSizesToFile, allModules, dceDumpNameCache)
-
-        return allModules.map { currentModule ->
-            compileSingleModuleToWasmIr(
-                configuration = configuration,
-                loweredIr = loweredIr,
-                signatureRetriever = irFactory,
-                stdlibIsMainModule = currentModule.kotlinLibrary?.isWasmStdlib == true,
-                mainModuleFragment = currentModule,
-                typeTracking = true,
-            )
-        }
-    }
-}
-
-class SingleModuleCompiler(configuration: CompilerConfiguration, override val irFactory: IrFactoryImplForWasmIC, val isWasmStdlib: Boolean) : WasmCompilerBase(configuration) {
-    override fun lowerIr(
-        irModuleInfo: IrModuleInfo,
-        allModules: List<IrModuleFragment>,
-        context: WasmBackendContext,
-    ): LoweredIrWithExtraArtifacts {
-        configuration.wasmDisableCrossFileOptimisations = true
-        return compileToLoweredIr(
-            configuration = configuration,
-            irLinker = irModuleInfo.deserializer,
-            allModules = allModules,
-            context = context,
-        )
-    }
-
-    override fun compileIr(loweredIr: LoweredIrWithExtraArtifacts): List<WasmIrModuleConfiguration> {
-        val configuration = compileSingleModuleToWasmIr(
-            configuration = configuration,
-            loweredIr = loweredIr,
-            signatureRetriever = irFactory,
-            stdlibIsMainModule = isWasmStdlib,
-            mainModuleFragment = loweredIr.backendContext.irModuleFragment,
-            typeTracking = false,
-        )
-        return listOf(configuration)
-    }
-}
-
-private fun compileWholeProgramModeToWasmIr(
+fun compileWholeProgramModeToWasmIr(
     configuration: CompilerConfiguration,
     idSignatureRetriever: IdSignatureRetriever,
     loweredIr: LoweredIrWithExtraArtifacts,
@@ -170,7 +68,7 @@ private fun compileWholeProgramModeToWasmIr(
 }
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)
-private fun compileSingleModuleToWasmIr(
+fun compileSingleModuleToWasmIr(
     configuration: CompilerConfiguration,
     loweredIr: LoweredIrWithExtraArtifacts,
     signatureRetriever: IdSignatureRetriever,
