@@ -21,4 +21,10 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 internal class JsInitializersLowering(context: JsIrBackendContext) : InitializersLowering(context)
 
 @PhasePrerequisites(JsInitializersLowering::class)
-internal class JsInitializersCleanupLowering(context: CommonBackendContext) : InitializersCleanupLowering(context)
+internal class JsInitializersCleanupLowering(context: CommonBackendContext) : InitializersCleanupLowering(
+    context,
+    shouldEraseFieldInitializer = {
+        it.correspondingPropertySymbol?.owner?.isConst != true &&
+                it.origin != WebStaticInitializersDeclarationLowering.STATIC_CLASS_INITIALIZER // We need to preserve initializers for `static_init_called` fields (KT-89144).
+    }
+)

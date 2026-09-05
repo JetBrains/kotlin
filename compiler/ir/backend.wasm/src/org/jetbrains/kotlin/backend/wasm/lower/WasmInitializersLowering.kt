@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationPopupLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.WebStaticInitializersDeclarationLowering
 
 @PhasePrerequisites(
     PrimaryConstructorLowering::class,
@@ -22,6 +23,8 @@ internal class WasmInitializersLowering(context: WasmBackendContext) : Initializ
 @PhasePrerequisites(WasmInitializersLowering::class)
 internal class WasmInitializersCleanupLowering(context: CommonBackendContext) : InitializersCleanupLowering(
     context,
-    // TODO: Remove this hack once https://github.com/JetBrains/kotlin/pull/6165 is merged.
-    shouldEraseFieldInitializer = { it.correspondingPropertySymbol?.owner?.isConst != true && !it.isStatic }
+    shouldEraseFieldInitializer = {
+        it.correspondingPropertySymbol?.owner?.isConst != true &&
+                it.origin != WebStaticInitializersDeclarationLowering.STATIC_CLASS_INITIALIZER // We need to preserve initializers for `static_init_called` fields (KT-89144).
+    }
 )
