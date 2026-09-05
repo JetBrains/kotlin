@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_REFLECT
 // ISSUE: KT-84333
-// LANGUAGE: +CollectionLiterals
 
 // FILE: getValue.kt
 

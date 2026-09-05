@@ -1,23 +1,23 @@
-/inDefaultValues.kt:19:26: error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
+/inDefaultValues.kt:18:26: error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
 
-/inDefaultValues.kt:19:29: error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
+/inDefaultValues.kt:18:29: error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
 
-/inDefaultValues.kt:19:32: error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
+/inDefaultValues.kt:18:32: error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
 
-/inDefaultValues.kt:24:21: error: Argument type mismatch: actual type is 'Int', but 'T (of class InGenericConstructor<T>)' was expected.
+/inDefaultValues.kt:23:21: error: Argument type mismatch: actual type is 'Int', but 'T (of class InGenericConstructor<T>)' was expected.
 
-/inDefaultValues.kt:24:24: error: Argument type mismatch: actual type is 'Int', but 'T (of class InGenericConstructor<T>)' was expected.
+/inDefaultValues.kt:23:24: error: Argument type mismatch: actual type is 'Int', but 'T (of class InGenericConstructor<T>)' was expected.
 
-/inDefaultValues.kt:24:27: error: Argument type mismatch: actual type is 'Int', but 'T (of class InGenericConstructor<T>)' was expected.
+/inDefaultValues.kt:23:27: error: Argument type mismatch: actual type is 'Int', but 'T (of class InGenericConstructor<T>)' was expected.
 
-/inDefaultValues.kt:25:30: warning: Unchecked cast of 'Nothing?' to 'T (of class InGenericConstructor<T>)'.
+/inDefaultValues.kt:24:30: warning: Unchecked cast of 'Nothing?' to 'T (of class InGenericConstructor<T>)'.
 
-/inDefaultValues.kt:31:26: error: Null cannot be a value of a non-null type 'uninferred T (of fun <T> of)'.
+/inDefaultValues.kt:30:26: error: Null cannot be a value of a non-null type 'uninferred T (of fun <T> of)'.
 
-/inDefaultValues.kt:33:19: error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
+/inDefaultValues.kt:32:19: error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
 
-/inDefaultValues.kt:33:22: error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
+/inDefaultValues.kt:32:22: error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
 
-/inDefaultValues.kt:33:25: error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
+/inDefaultValues.kt:32:25: error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
 
-/inDefaultValues.kt:35:19: error: Expected type 'String' for collection literal does not define operator 'of' and is not a supertype of 'List'.
+/inDefaultValues.kt:34:19: error: Expected type 'String' for collection literal does not define operator 'of' and is not a supertype of 'List'.

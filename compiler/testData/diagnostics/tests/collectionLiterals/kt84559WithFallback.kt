@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +CollectionLiterals
 // WITH_STDLIB
 
 @RequiresOptIn("", level = RequiresOptIn.Level.ERROR)

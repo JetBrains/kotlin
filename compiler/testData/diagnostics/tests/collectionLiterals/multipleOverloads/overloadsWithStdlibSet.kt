@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-82638
-// LANGUAGE: +CollectionLiterals
 // WITH_STDLIB
 
 fun foo(a: Set<Int>) {

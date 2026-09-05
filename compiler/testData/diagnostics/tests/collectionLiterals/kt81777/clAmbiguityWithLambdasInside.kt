@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
-// LANGUAGE: +CollectionLiterals, +UnnamedLocalVariables
+// LANGUAGE: +UnnamedLocalVariables
 
 fun <T> select(vararg x: T): T = x[0]
 

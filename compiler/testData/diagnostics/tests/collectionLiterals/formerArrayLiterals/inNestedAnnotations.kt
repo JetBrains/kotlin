@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-79330
-// LANGUAGE: +CollectionLiterals
 
 annotation class Foo(val arr: Array<Bar> = [])
 annotation class Bar(val arr: Array<Foo>)

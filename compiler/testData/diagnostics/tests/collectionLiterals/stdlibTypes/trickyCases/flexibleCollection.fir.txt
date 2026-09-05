@@ -1,0 +1,9 @@
+FILE: main.kt
+    package p
+
+    public final fun main(): R|kotlin/Unit| {
+        lvar list: R|ft<kotlin/collections/MutableList<kotlin/String!>, kotlin/collections/List<kotlin/String!>?>| = Q|p/JavaUtils|.R|p/JavaUtils.list*s|
+        R|<local>/list| = Q|kotlin/collections|.R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(1), String(2), String(3)))
+        lvar collection: R|ft<kotlin/collections/MutableCollection<kotlin/String!>, kotlin/collections/Collection<kotlin/String!>?>| = Q|p/JavaUtils|.R|p/JavaUtils.collection*s|
+        R|<local>/collection| = Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>(vararg(String(1), String(2), String(3)))
+    }

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +CollectionLiterals
 // JDK_KIND: FULL_JDK_11
 //  ^ to enable private static of
 

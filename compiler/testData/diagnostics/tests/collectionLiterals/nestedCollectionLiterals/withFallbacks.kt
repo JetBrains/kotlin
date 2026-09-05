@@ -1,4 +1,4 @@
-// LANGUAGE: +CollectionLiterals, +UnnamedLocalVariables
+// LANGUAGE: +UnnamedLocalVariables
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 

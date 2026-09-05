@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-80492
-// LANGUAGE: +CollectionLiterals, +ApproximateLocalTypesInPublicDeclarations
+// LANGUAGE: +ApproximateLocalTypesInPublicDeclarations
 
 open class Outer {
     companion object {

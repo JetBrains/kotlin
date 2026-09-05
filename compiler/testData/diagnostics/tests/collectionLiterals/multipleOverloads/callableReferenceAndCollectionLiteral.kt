@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +CollectionLiterals
 // WITH_STDLIB
 
 fun <T> myForEach(set: Set<T>, action: (T) -> Unit) { }

@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
+// LANGUAGE: -CollectionLiterals
+// LANGUAGE_FEATURE_TOGGLED: CollectionLiteralsBasedAnnotationResolution
 
 annotation class Ann1(vararg val a: String = [])
 annotation class Ann2(vararg val a: Int = [1, 2])
@@ -17,7 +18,7 @@ fun test1_0() {}
 @Ann1(*["a", "b"])
 fun test1_1() {}
 
-@Ann1(*["a", <!ARGUMENT_TYPE_MISMATCH!>1<!>, <!NULL_FOR_NONNULL_TYPE!>null<!>])
+@Ann1(*<!ARGUMENT_TYPE_MISMATCH!>["a", 1, null]<!>)
 fun test1_2() {}
 
 @Ann2(*[])
@@ -40,7 +41,7 @@ annotation class AnnArray(val a: Array<String>)
 @AnnArray(<!NON_VARARG_SPREAD!>*<!>["/"])
 fun testArray() {}
 
-@Ann1(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL!>[""]<!>)
+@Ann1(<!ARGUMENT_TYPE_MISMATCH!>[""]<!>)
 fun testVararg() {}
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, collectionLiteral, functionDeclaration, integerLiteral,

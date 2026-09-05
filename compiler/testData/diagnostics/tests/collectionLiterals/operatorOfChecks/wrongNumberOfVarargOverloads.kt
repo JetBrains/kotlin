@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-80492
-// LANGUAGE: +CollectionLiterals
 
 class C<T> {
     companion object {

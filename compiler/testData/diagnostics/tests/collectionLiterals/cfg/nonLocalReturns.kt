@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +CollectionLiterals +ForbidReturnInExpressionBodyWithoutExplicitTypeEdgeCases
+// LANGUAGE: +ForbidReturnInExpressionBodyWithoutExplicitTypeEdgeCases
 
 class A {
     companion object {

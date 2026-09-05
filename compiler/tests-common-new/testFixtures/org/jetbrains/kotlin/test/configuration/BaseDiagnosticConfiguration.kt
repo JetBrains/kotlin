@@ -321,6 +321,12 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths() {
         }
     }
 
+    forTestsMatching("compiler/testData/diagnostics/tests/collectionLiterals/*") {
+        defaultDirectives {
+            LANGUAGE + "+CollectionLiterals"
+        }
+    }
+
     forTestsMatching("compiler/testData/diagnostics/tests/strictEquals/enabled/*") {
         defaultDirectives {
             LANGUAGE + "+StrictEquals"

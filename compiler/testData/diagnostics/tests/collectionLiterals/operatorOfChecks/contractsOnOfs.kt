@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: 80492
-// LANGUAGE: +CollectionLiterals
 
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract

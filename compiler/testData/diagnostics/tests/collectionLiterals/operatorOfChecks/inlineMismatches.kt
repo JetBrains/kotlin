@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-80492
-// LANGUAGE: +CollectionLiterals
 
 class MyList<T> {
     companion object {
