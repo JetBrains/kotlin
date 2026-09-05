@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isDeserializedAndHasCompan
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isChildOf
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
@@ -26,30 +25,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-
-internal enum class ScopeKind {
-    TOP,
-    CLASS,
-    PACKAGE
-}
-
-internal enum class ElementKind {
-    FUNCTION,
-    PROPERTY,
-    TYPE
-}
-
-internal enum class DefinitionKind {
-    C_HEADER_DECLARATION,
-    C_HEADER_STRUCT,
-    C_SOURCE_DECLARATION,
-    C_SOURCE_STRUCT
-}
-
-private enum class Direction {
-    KOTLIN_TO_C,
-    C_TO_KOTLIN
-}
 
 @OptIn(K1Deprecation::class)
 private fun isExportedFunction(descriptor: FunctionDescriptor): Boolean {
@@ -92,67 +67,45 @@ private fun functionImplName(descriptor: DeclarationDescriptor, default: String,
     return value.takeIf { value != null && value.isNotEmpty() } ?: default
 }
 
-internal data class SignatureElement(val name: String, val type: KotlinType)
+/** Descriptor-backed [ExportedDeclarationKey]; keys [ExportedElementScope]'s name cache by the descriptor. */
+private data class DescriptorNameKey(val descriptor: DeclarationDescriptor) : ExportedDeclarationKey
 
-internal class ExportedElementScope(val kind: ScopeKind, val name: String) {
-    val elements = mutableListOf<ExportedElement>()
-    val scopes = mutableListOf<ExportedElementScope>()
-    private val scopeNames = mutableSetOf<String>()
-    private val scopeNamesMap = mutableMapOf<Pair<DeclarationDescriptor, Boolean>, String>()
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+internal class ExportedElementK1(
+        override val kind: ElementKind,
+        override val scope: ExportedElementScope,
+        val declaration: DeclarationDescriptor,
+        private val generator: CAdapterGenerator,
+        private val typeTranslator: CAdapterTypeTranslator,
+) : ExportedElement {
+    init {
+        scope.elements.add(this)
+    }
+
+    override val owner: CAdapterModelOwner get() = generator
+
+    override val name: String
+        get() = declaration.fqNameSafe.shortName().asString()
+
+    override lateinit var cname: String
 
     override fun toString(): String {
-        return "$kind: $name ${elements.joinToString(", ")} ${scopes.joinToString("\n")}"
+        return "$kind: $name (aliased to ${if (::cname.isInitialized) cname else "<unknown>"})"
     }
 
-    // collects names of inner scopes to make sure function<->scope name clashes would be detected, and functions would be mangled with "_" suffix
-    fun collectInnerScopeName(innerScope: ExportedElementScope) {
-        scopeNames += innerScope.name
-    }
-
-    fun scopeUniqueName(descriptor: DeclarationDescriptor, shortName: Boolean): String {
-        scopeNamesMap[descriptor to shortName]?.apply { return this }
-        var computedName = when (descriptor) {
+    fun uniqueName(descriptor: DeclarationDescriptor, shortName: Boolean): String {
+        val baseName = when (descriptor) {
             is ConstructorDescriptor -> descriptor.constructedClass.fqNameSafe.shortName().asString()
             is PropertyGetterDescriptor -> "get_${descriptor.correspondingProperty.name.asString()}"
             is PropertySetterDescriptor -> "set_${descriptor.correspondingProperty.name.asString()}"
             is FunctionDescriptor -> functionImplName(descriptor, descriptor.fqNameSafe.shortName().asString(), shortName)
             else -> descriptor.fqNameSafe.shortName().asString()
         }
-        while (scopeNames.contains(computedName) || cKeywords.contains(computedName)) {
-            computedName += "_"
-        }
-        scopeNames += computedName
-        scopeNamesMap[descriptor to shortName] = computedName
-        return computedName
-    }
-}
-
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-internal class ExportedElement(
-        val kind: ElementKind,
-        val scope: ExportedElementScope,
-        val declaration: DeclarationDescriptor,
-        val owner: CAdapterGenerator,
-        val typeTranslator: CAdapterTypeTranslator,
-) {
-    init {
-        scope.elements.add(this)
+        return scope.scopeUniqueName(DescriptorNameKey(descriptor), shortName, baseName)
     }
 
-    val name: String
-        get() = declaration.fqNameSafe.shortName().asString()
-
-    lateinit var cname: String
-
-    override fun toString(): String {
-        return "$kind: $name (aliased to ${if (::cname.isInitialized) cname else "<unknown>"})"
-    }
-
-    fun uniqueName(descriptor: DeclarationDescriptor, shortName: Boolean) =
-            scope.scopeUniqueName(descriptor, shortName)
-
-    val isFunction = declaration is FunctionDescriptor
-    val isTopLevelFunction: Boolean
+    override val isFunction = declaration is FunctionDescriptor
+    override val isTopLevelFunction: Boolean
         get() {
             if (declaration !is FunctionDescriptor ||
                     !declaration.annotations.hasAnnotation(RuntimeNames.cnameAnnotation))
@@ -161,20 +114,21 @@ internal class ExportedElement(
             val externName = annotation.properValue("externName")
             return externName != null && externName.isNotEmpty()
         }
-    val isClass = declaration is ClassDescriptor && declaration.kind != ClassKind.ENUM_ENTRY
-    val isEnumEntry = declaration is ClassDescriptor && declaration.kind == ClassKind.ENUM_ENTRY
-    val isSingletonObject = declaration is ClassDescriptor && DescriptorUtils.isObject(declaration)
+    override val isConstructor = declaration is ConstructorDescriptor
+    override val isClass = declaration is ClassDescriptor && declaration.kind != ClassKind.ENUM_ENTRY
+    override val isEnumEntry = declaration is ClassDescriptor && declaration.kind == ClassKind.ENUM_ENTRY
+    override val isSingletonObject = declaration is ClassDescriptor && DescriptorUtils.isObject(declaration)
 
-    val irSymbol = when {
-        isFunction -> owner.symbolTable.referenceFunction(declaration as FunctionDescriptor)
-        isClass -> owner.symbolTable.descriptorExtension.referenceClass(declaration as ClassDescriptor)
-        isEnumEntry -> owner.symbolTable.descriptorExtension.referenceEnumEntry(declaration as ClassDescriptor)
+    override val irSymbol = when {
+        isFunction -> generator.symbolTable.referenceFunction(declaration as FunctionDescriptor)
+        isClass -> generator.symbolTable.descriptorExtension.referenceClass(declaration as ClassDescriptor)
+        isEnumEntry -> generator.symbolTable.descriptorExtension.referenceEnumEntry(declaration as ClassDescriptor)
         else -> error("unexpected $kind element: $declaration")
     }
 
     private fun KotlinType.includeToSignature() = !this.isUnit()
 
-    private fun makeCFunctionSignature(shortName: Boolean): List<SignatureElement> {
+    override fun makeCFunctionSignature(shortName: Boolean): List<SignatureElement> {
         if (!isFunction) {
             throw Error("only for functions")
         }
@@ -182,22 +136,22 @@ internal class ExportedElement(
         val original = descriptor.original as FunctionDescriptor
         val returned = when {
             original is ConstructorDescriptor ->
-                SignatureElement(uniqueName(original, shortName), original.constructedClass.defaultType)
+                SignatureElement(uniqueName(original, shortName), typeTranslator.exportedType(original.constructedClass.defaultType))
             else ->
-                SignatureElement(uniqueName(original, shortName), original.returnType!!)
+                SignatureElement(uniqueName(original, shortName), typeTranslator.exportedType(original.returnType!!))
         }
 
         @OptIn(K1Deprecation::class)
-        val uniqueNames = owner.paramsToUniqueNames(original.explicitParameters)
+        val uniqueNames = generator.paramsToUniqueNames(original.explicitParameters)
 
         @OptIn(K1Deprecation::class)
         val params = ArrayList(original.explicitParameters
                 .filter { it.type.includeToSignature() }
-                .map { SignatureElement(uniqueNames[it]!!, it.type) })
+                .map { SignatureElement(uniqueNames[it]!!, typeTranslator.exportedType(it.type)) })
         return listOf(returned) + params
     }
 
-    fun makeBridgeSignature(): List<String> {
+    override fun makeBridgeSignature(): List<String> {
         if (!isFunction) {
             throw Error("only for functions")
         }
@@ -222,157 +176,28 @@ internal class ExportedElement(
         return listOf(typeTranslator.translateTypeBridge(returnedType)) + params
     }
 
+    override val classType: String
+        get() = typeTranslator.translateType((declaration as ClassDescriptor).defaultType)
 
-    fun makeFunctionPointerString(): String {
-        val signature = makeCFunctionSignature(true)
-        return "${typeTranslator.translateType(signature[0])} (*${signature[0].name})(${signature.drop(1).map { "${typeTranslator.translateType(it)} ${it.name}" }.joinToString(", ")});"
-    }
-
-    fun makeTopLevelFunctionString(): Pair<String, String> {
-        val signature = makeCFunctionSignature(false)
-        val name = signature[0].name
-        return (name to
-                "extern ${typeTranslator.translateType(signature[0])} $name(${signature.drop(1).map { "${typeTranslator.translateType(it)} ${it.name}" }.joinToString(", ")});")
-    }
-
-    fun makeFunctionDeclaration(): String {
-        assert(isFunction)
-        val bridge = makeBridgeSignature()
-
-        val builder = StringBuilder()
-        builder.append("extern \"C\" ${bridge[0]} $cname")
-        builder.append("(${bridge.drop(1).joinToString(", ")});\n")
-
-        // Now the C function body.
-        builder.append(translateBody(makeCFunctionSignature(false)))
-        return builder.toString()
-    }
-
-    fun makeClassDeclaration(): String {
-        assert(isClass)
-        val typeGetter = "extern \"C\" ${owner.prefix}_KType* ${cname}_type(void);"
-        val instanceGetter = if (isSingletonObject) {
-            val objectClassC = typeTranslator.translateType((declaration as ClassDescriptor).defaultType)
-            """
-            |
-            |extern "C" KObjHeader* ${cname}_instance(KObjHeader**);
-            |static $objectClassC ${cname}_instance_impl(void) {
-            |  Kotlin_initRuntimeIfNeeded();
-            |  ScopedRunnableState stateGuard;
-            |  KObjHolder result_holder;
-            |  KObjHeader* result = ${cname}_instance(result_holder.slot());
-            |  return $objectClassC { .pinned = CreateStablePointer(result)};
-            |}
-            """.trimMargin()
-        } else ""
-        return "$typeGetter$instanceGetter"
-    }
-
-    fun makeEnumEntryDeclaration(): String {
-        assert(isEnumEntry)
-        val enumClass = declaration.containingDeclaration as ClassDescriptor
-        val enumClassC = typeTranslator.translateType(enumClass.defaultType)
-
-        return """
-              |extern "C" KObjHeader* $cname(KObjHeader**);
-              |static $enumClassC ${cname}_impl(void) {
-              |  Kotlin_initRuntimeIfNeeded();
-              |  ScopedRunnableState stateGuard;
-              |  KObjHolder result_holder;
-              |  KObjHeader* result = $cname(result_holder.slot());
-              |  return $enumClassC { .pinned = CreateStablePointer(result)};
-              |}
-              """.trimMargin()
-    }
-
-    private fun translateArgument(name: String, signatureElement: SignatureElement,
-                                  direction: Direction, builder: StringBuilder): String {
-        return when {
-            typeTranslator.isMappedToString(signatureElement.type) ->
-                if (direction == Direction.C_TO_KOTLIN) {
-                    builder.append("  KObjHolder ${name}_holder;\n")
-                    "CreateStringFromCString($name, ${name}_holder.slot())"
-                } else {
-                    "CreateCStringFromString($name)"
-                }
-            typeTranslator.isMappedToReference(signatureElement.type) ->
-                if (direction == Direction.C_TO_KOTLIN) {
-                    builder.append("  KObjHolder ${name}_holder2;\n")
-                    "DerefStablePointer(${name}.pinned, ${name}_holder2.slot())"
-                } else {
-                    "((${typeTranslator.translateType(signatureElement.type)}){ .pinned = CreateStablePointer(${name})})"
-                }
-            else -> {
-                assert(!signatureElement.type.binaryTypeIsReference()) {
-                    println(signatureElement.toString())
-                }
-                name
-            }
+    override val enumEntryContainingType: String
+        get() {
+            assert(isEnumEntry)
+            val enumClass = declaration.containingDeclaration as ClassDescriptor
+            return typeTranslator.translateType(enumClass.defaultType)
         }
-    }
 
-    val cnameImpl: String
+    override val cnameImpl: String
         get() = if (isTopLevelFunction)
             functionImplName(declaration, "******" /* Default value must never be used. */, false)
         else
             "${cname}_impl"
 
-    private fun translateBody(cfunction: List<SignatureElement>): String {
-        val visibility = if (isTopLevelFunction) "RUNTIME_EXPORT extern \"C\"" else "static"
-        val builder = StringBuilder()
-        builder.append("$visibility ${typeTranslator.translateType(cfunction[0])} ${cnameImpl}(${cfunction.drop(1).
-                mapIndexed { index, it -> "${typeTranslator.translateType(it)} arg${index}" }.joinToString(", ")}) {\n")
-        // TODO: do we really need that in every function?
-        builder.append("  Kotlin_initRuntimeIfNeeded();\n")
-        builder.append("  ScopedRunnableState stateGuard;\n")
-        builder.append("  FrameOverlay* frame = getCurrentFrame();")
-        val args = ArrayList(cfunction.drop(1).mapIndexed { index, pair ->
-            translateArgument("arg$index", pair, Direction.C_TO_KOTLIN, builder)
-        })
-        val isVoidReturned = typeTranslator.isMappedToVoid(cfunction[0].type)
-        val isConstructor = declaration is ConstructorDescriptor
-        val isObjectReturned = !isConstructor && typeTranslator.isMappedToReference(cfunction[0].type)
-        val isStringReturned = typeTranslator.isMappedToString(cfunction[0].type)
-        builder.append("   try {\n")
-        if (isObjectReturned || isStringReturned) {
-            builder.append("  KObjHolder result_holder;\n")
-            args += "result_holder.slot()"
-        }
-        if (isConstructor) {
-            builder.append("  KObjHolder result_holder;\n")
-            val clazz = scope.elements[0]
-            assert(clazz.kind == ElementKind.TYPE)
-            builder.append("  KObjHeader* result = AllocInstance((const KTypeInfo*)${clazz.cname}_type(), result_holder.slot());\n")
-            args.add(0, "result")
-        }
-        if (!isVoidReturned && !isConstructor) {
-            builder.append("  auto result = ")
-        }
-        builder.append("  $cname(")
-        builder.append(args.joinToString(", "))
-        builder.append(");\n")
-
-        if (!isVoidReturned) {
-            val result = translateArgument(
-                    "result", cfunction[0], Direction.KOTLIN_TO_C, builder)
-            builder.append("  return $result;\n")
-        }
-        builder.append("   } catch (...) {")
-        builder.append("       SetCurrentFrame(reinterpret_cast<KObjHeader**>(frame));\n")
-        builder.append("       HandleCurrentExceptionWhenLeavingKotlinCode();\n")
-        builder.append("   } \n")
-
-        builder.append("}\n")
-
-        return builder.toString()
-    }
-
-    private fun addUsedType(type: KotlinType, set: MutableSet<KotlinType>) {
+    private fun addUsedType(type: KotlinType, set: MutableSet<CExportedType>) {
         if (type.constructor.declarationDescriptor is TypeParameterDescriptor) return
-        set.add(type)
+        set.add(typeTranslator.exportedType(type))
     }
 
-    fun addUsedTypes(set: MutableSet<KotlinType>) {
+    override fun addUsedTypes(set: MutableSet<CExportedType>) {
         val descriptor = declaration
         when (descriptor) {
             is FunctionDescriptor -> {
@@ -386,7 +211,7 @@ internal class ExportedElement(
                 addUsedType(original.correspondingProperty.type, set)
             }
             is ClassDescriptor -> {
-                set += descriptor.defaultType
+                addUsedType(descriptor.defaultType, set)
             }
         }
     }
@@ -398,9 +223,9 @@ internal class ExportedElement(
 internal class CAdapterGenerator(
         private val context: LinkKlibsContext,
         private val typeTranslator: CAdapterTypeTranslator,
-) : DeclarationDescriptorVisitor<Boolean, Void?> {
+) : DeclarationDescriptorVisitor<Boolean, Void?>, CAdapterModelOwner {
     private val scopes = mutableListOf<ExportedElementScope>()
-    internal val prefix = typeTranslator.prefix
+    override val prefix = typeTranslator.prefix
     private val paramNamesRecorded = mutableMapOf<String, Int>()
 
     internal val symbolTable get() = context.symbolTable!!
@@ -431,13 +256,13 @@ internal class CAdapterGenerator(
 
     override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, ignored: Void?): Boolean {
         if (!isExportedFunction(descriptor)) return true
-        ExportedElement(ElementKind.FUNCTION, scopes.last(), descriptor, this, typeTranslator)
+        ExportedElementK1(ElementKind.FUNCTION, scopes.last(), descriptor, this, typeTranslator)
         return true
     }
 
     override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, ignored: Void?): Boolean {
         if (!isExportedFunction(descriptor)) return true
-        ExportedElement(ElementKind.FUNCTION, scopes.last(), descriptor, this, typeTranslator)
+        ExportedElementK1(ElementKind.FUNCTION, scopes.last(), descriptor, this, typeTranslator)
         return true
     }
 
@@ -451,7 +276,7 @@ internal class CAdapterGenerator(
         scopes.last().scopes += classScope
         scopes.push(classScope)
         // Add type getter.
-        ExportedElement(ElementKind.TYPE, scopes.last(), descriptor, this, typeTranslator)
+        ExportedElementK1(ElementKind.TYPE, scopes.last(), descriptor, this, typeTranslator)
         visitChildren(descriptor.getConstructors())
         visitChildren(DescriptorUtils.getAllDescriptors(descriptor.getDefaultType().memberScope))
         scopes.pop()
@@ -467,13 +292,13 @@ internal class CAdapterGenerator(
 
     override fun visitPropertyGetterDescriptor(descriptor: PropertyGetterDescriptor, ignored: Void?): Boolean {
         if (!isExportedFunction(descriptor)) return true
-        ExportedElement(ElementKind.FUNCTION, scopes.last(), descriptor, this, typeTranslator)
+        ExportedElementK1(ElementKind.FUNCTION, scopes.last(), descriptor, this, typeTranslator)
         return true
     }
 
     override fun visitPropertySetterDescriptor(descriptor: PropertySetterDescriptor, ignored: Void?): Boolean {
         if (!isExportedFunction(descriptor)) return true
-        ExportedElement(ElementKind.FUNCTION, scopes.last(), descriptor, this, typeTranslator)
+        ExportedElementK1(ElementKind.FUNCTION, scopes.last(), descriptor, this, typeTranslator)
         return true
     }
 
@@ -560,24 +385,9 @@ internal class CAdapterGenerator(
                 })
 
         moduleDescriptor.getPackage(FqName.ROOT).accept(this, null)
-        return CAdapterExportedElements(typeTranslator, scopes)
-    }
-
-    private val simpleNameMapping = mapOf(
-            "<this>" to "thiz",
-            "<set-?>" to "set"
-    )
-
-    private fun translateName(name: Name): String {
-        val nameString = name.asString()
-        return when {
-            simpleNameMapping.contains(nameString) -> simpleNameMapping[nameString]!!
-            cKeywords.contains(nameString) -> "${nameString}_"
-            name.isSpecial -> nameString.replace("[<> ]".toRegex(), "_")
-            else -> nameString
-        }
+        return CAdapterExportedElements(prefix, scopes)
     }
 
     private var functionIndex = 0
-    fun nextFunctionIndex() = functionIndex++
+    override fun nextFunctionIndex() = functionIndex++
 }

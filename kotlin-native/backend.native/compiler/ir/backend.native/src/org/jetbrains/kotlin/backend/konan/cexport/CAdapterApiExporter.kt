@@ -5,18 +5,10 @@
 
 package org.jetbrains.kotlin.backend.konan.cexport
 
-import org.jetbrains.kotlin.builtins.UnsignedType
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.isNothing
-import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.io.PrintWriter
 import java.io.File
-import org.jetbrains.kotlin.K1Deprecation
 
 /**
  * Third phase of C export:
@@ -35,26 +27,11 @@ internal class CAdapterApiExporter(
         private val cppAdapterFile: File,
         private val target: KonanTarget,
 ) {
-    private val typeTranslator = elements.typeTranslator
-
-    @OptIn(K1Deprecation::class)
-    private val builtIns = elements.typeTranslator.builtIns
-
-    private val prefix = elements.typeTranslator.prefix
+    private val prefix = elements.prefix
     private lateinit var outputStreamWriter: PrintWriter
 
-    // Primitive built-ins and unsigned types
-    @OptIn(K1Deprecation::class)
-    private val predefinedTypes = listOf(
-            builtIns.byteType, builtIns.shortType,
-            builtIns.intType, builtIns.longType,
-            builtIns.floatType, builtIns.doubleType,
-            builtIns.charType, builtIns.booleanType,
-            builtIns.unitType
-    ) + UnsignedType.values().map {
-        // Unfortunately, `context.symbols` and `context.irBuiltins` are not initialized, so `context.symbols.ubyte`, etc, are unreachable.
-        builtIns.builtInsModule.findClassAcrossModuleDependencies(it.classId)!!.defaultType
-    }
+    // The fixed runtime-support surface: primitives + Unit + unsigned types, as a representation-neutral spec.
+    private val predefinedTypes = CAdapterCAbi.predefinedTypes(prefix)
 
     private fun output(string: String, indent: Int = 0) {
         if (indent != 0) outputStreamWriter.print("  " * indent)
@@ -80,12 +57,12 @@ internal class CAdapterApiExporter(
                     element.isClass -> {
                         output("${prefix}_KType* (*_type)(void);", indent)
                         if (element.isSingletonObject) {
-                            output("${typeTranslator.translateType((element.declaration as ClassDescriptor).defaultType)} (*_instance)();", indent)
+                            output("${element.classType} (*_instance)();", indent)
                         }
                     }
                     element.isEnumEntry -> {
-                        val enumClass = element.declaration.containingDeclaration as ClassDescriptor
-                        output("${typeTranslator.translateType(enumClass.defaultType)} (*get)(); /* enum entry for ${element.name}. */", indent)
+                        val enumClassC = element.enumEntryContainingType
+                        output("$enumClassC (*get)(); /* enum entry for ${element.name}. */", indent)
                     }
                     // TODO: handle properties.
                 }
@@ -136,7 +113,7 @@ internal class CAdapterApiExporter(
         if (kind == DefinitionKind.C_SOURCE_STRUCT) output("},", indent)
     }
 
-    private fun defineUsedTypesImpl(scope: ExportedElementScope, set: MutableSet<KotlinType>) {
+    private fun defineUsedTypesImpl(scope: ExportedElementScope, set: MutableSet<CExportedType>) {
         scope.elements.forEach {
             it.addUsedTypes(set)
         }
@@ -146,14 +123,13 @@ internal class CAdapterApiExporter(
     }
 
     private fun defineUsedTypes(scope: ExportedElementScope, indent: Int) {
-        val usedTypes = mutableSetOf<KotlinType>()
+        val usedTypes = mutableSetOf<CExportedType>()
         defineUsedTypesImpl(scope, usedTypes)
-        val usedReferenceTypes = usedTypes.filter { typeTranslator.isMappedToReference(it) }
+        val usedReferenceTypeNames = usedTypes.filter { it.isMappedToReference() }.map { it.translateType() }
         // Add nullable primitives, which are used in prototypes of "(*createNullable<PRIMITIVE_TYPE_NAME>)"
-        val predefinedNullableTypes: List<KotlinType> = predefinedTypes.map { it.makeNullable() }
+        val predefinedNullableTypeNames = predefinedTypes.map { it.nullableCType }
 
-        (predefinedNullableTypes + usedReferenceTypes)
-                .map { typeTranslator.translateType(it) }
+        (predefinedNullableTypeNames + usedReferenceTypeNames)
                 .toSet()
                 .forEach {
                     output("typedef struct {", indent)
@@ -228,11 +204,10 @@ internal class CAdapterApiExporter(
         output("void (*DisposeString)(const char* string);", 1)
         output("${prefix}_KBoolean (*IsInstance)(${prefix}_KNativePtr ref, const ${prefix}_KType* type);", 1)
         predefinedTypes.forEach {
-            val nullableIt = it.makeNullable()
-            val argument = if (!it.isUnit()) typeTranslator.translateType(it) else "void"
-            output("${typeTranslator.translateType(nullableIt)} (*${it.createNullableNameForPredefinedType})($argument);", 1)
-            if (!it.isUnit())
-                output("$argument (*${it.createGetNonNullValueOfPredefinedType})(${typeTranslator.translateType(nullableIt)});", 1)
+            val argument = it.cType
+            output("${it.nullableCType} (*${it.createNullableName})($argument);", 1)
+            if (!it.isUnit)
+                output("$argument (*${it.getNonNullValueOfName})(${it.nullableCType});", 1)
         }
 
         output("")
@@ -348,28 +323,26 @@ internal class CAdapterApiExporter(
     |}
     """.trimMargin())
         predefinedTypes.forEach {
-            assert(!it.isNothing())
-            val nullableIt = it.makeNullable()
-            val needArgument = !it.isUnit()
+            val needArgument = !it.isUnit
             val [parameter, maybeComma] = if (needArgument)
-                ("${typeTranslator.translateType(it)} value" to ",") else ("" to "")
+                ("${it.cType} value" to ",") else ("" to "")
             val argument = if (needArgument) "value, " else ""
-            output("extern \"C\" KObjHeader* Kotlin_box${it.shortNameForPredefinedType}($parameter$maybeComma KObjHeader**);")
-            output("static ${typeTranslator.translateType(nullableIt)} ${it.createNullableNameForPredefinedType}Impl($parameter) {")
+            output("extern \"C\" KObjHeader* Kotlin_box${it.shortName}($parameter$maybeComma KObjHeader**);")
+            output("static ${it.nullableCType} ${it.createNullableName}Impl($parameter) {")
             output("Kotlin_initRuntimeIfNeeded();", 1)
             output("ScopedRunnableState stateGuard;", 1)
             output("KObjHolder result_holder;", 1)
-            output("KObjHeader* result = Kotlin_box${it.shortNameForPredefinedType}($argument result_holder.slot());", 1)
-            output("return ${typeTranslator.translateType(nullableIt)} { .pinned = CreateStablePointer(result) };", 1)
+            output("KObjHeader* result = Kotlin_box${it.shortName}($argument result_holder.slot());", 1)
+            output("return ${it.nullableCType} { .pinned = CreateStablePointer(result) };", 1)
             output("}")
 
-            if (!it.isUnit()) {
-                output("extern \"C\" ${typeTranslator.translateType(it)} Kotlin_unbox${it.shortNameForPredefinedType}(KObjHeader*);")
-                output("static ${typeTranslator.translateType(it)} ${it.createGetNonNullValueOfPredefinedType}Impl(${typeTranslator.translateType(nullableIt)} value) {")
+            if (!it.isUnit) {
+                output("extern \"C\" ${it.cType} Kotlin_unbox${it.shortName}(KObjHeader*);")
+                output("static ${it.cType} ${it.getNonNullValueOfName}Impl(${it.nullableCType} value) {")
                 output("Kotlin_initRuntimeIfNeeded();", 1)
                 output("ScopedRunnableState stateGuard;", 1)
                 output("KObjHolder value_holder;", 1)
-                output("return Kotlin_unbox${it.shortNameForPredefinedType}(DerefStablePointer(value.pinned, value_holder.slot()));", 1)
+                output("return Kotlin_unbox${it.shortName}(DerefStablePointer(value.pinned, value_holder.slot()));", 1)
                 output("}")
             }
         }
@@ -379,9 +352,9 @@ internal class CAdapterApiExporter(
         output(".DisposeString = DisposeStringImpl,", 1)
         output(".IsInstance = IsInstanceImpl,", 1)
         predefinedTypes.forEach {
-            output(".${it.createNullableNameForPredefinedType} = ${it.createNullableNameForPredefinedType}Impl,", 1)
-            if (!it.isUnit()) {
-                output(".${it.createGetNonNullValueOfPredefinedType} = ${it.createGetNonNullValueOfPredefinedType}Impl,", 1)
+            output(".${it.createNullableName} = ${it.createNullableName}Impl,", 1)
+            if (!it.isUnit) {
+                output(".${it.getNonNullValueOfName} = ${it.getNonNullValueOfName}Impl,", 1)
             }
         }
 
@@ -399,17 +372,149 @@ internal class CAdapterApiExporter(
     }
 }
 
-private val KotlinType.createNullableNameForPredefinedType
-    get() = "createNullable${this.shortNameForPredefinedType}"
-
-private val KotlinType.createGetNonNullValueOfPredefinedType
-    get() = "getNonNullValueOf${this.shortNameForPredefinedType}"
-
 private operator fun String.times(count: Int): String {
     val builder = StringBuilder()
     repeat(count, { builder.append(this) })
     return builder.toString()
 }
 
-private val KotlinType.shortNameForPredefinedType
-    get() = this.toString().split('.').last()
+private enum class Direction {
+    KOTLIN_TO_C,
+    C_TO_KOTLIN
+}
+
+private fun ExportedElement.translateArgument(name: String, signatureElement: SignatureElement,
+                                              direction: Direction, builder: StringBuilder): String {
+    return when {
+        signatureElement.type.isMappedToString() ->
+            if (direction == Direction.C_TO_KOTLIN) {
+                builder.append("  KObjHolder ${name}_holder;\n")
+                "CreateStringFromCString($name, ${name}_holder.slot())"
+            } else {
+                "CreateCStringFromString($name)"
+            }
+        signatureElement.type.isMappedToReference() ->
+            if (direction == Direction.C_TO_KOTLIN) {
+                builder.append("  KObjHolder ${name}_holder2;\n")
+                "DerefStablePointer(${name}.pinned, ${name}_holder2.slot())"
+            } else {
+                "((${signatureElement.type.translateType()}){ .pinned = CreateStablePointer(${name})})"
+            }
+        else -> {
+            assert(!signatureElement.type.isMappedToReference()) {
+                println(signatureElement.toString())
+            }
+            name
+        }
+    }
+}
+
+private fun ExportedElement.translateBody(cfunction: List<SignatureElement>): String {
+    val visibility = if (isTopLevelFunction) "RUNTIME_EXPORT extern \"C\"" else "static"
+    val builder = StringBuilder()
+    builder.append("$visibility ${cfunction[0].type.translateType()} ${cnameImpl}(${cfunction.drop(1).
+    mapIndexed { index, it -> "${it.type.translateType()} arg${index}" }.joinToString(", ")}) {\n")
+    // TODO: do we really need that in every function?
+    builder.append("  Kotlin_initRuntimeIfNeeded();\n")
+    builder.append("  ScopedRunnableState stateGuard;\n")
+    builder.append("  FrameOverlay* frame = getCurrentFrame();")
+    val args = ArrayList(cfunction.drop(1).mapIndexed { index, pair ->
+        translateArgument("arg$index", pair, Direction.C_TO_KOTLIN, builder)
+    })
+    val isVoidReturned = cfunction[0].type.isMappedToVoid()
+    val isObjectReturned = !isConstructor && cfunction[0].type.isMappedToReference()
+    val isStringReturned = cfunction[0].type.isMappedToString()
+    builder.append("   try {\n")
+    if (isObjectReturned || isStringReturned) {
+        builder.append("  KObjHolder result_holder;\n")
+        args += "result_holder.slot()"
+    }
+    if (isConstructor) {
+        builder.append("  KObjHolder result_holder;\n")
+        val clazz = scope.elements[0]
+        assert(clazz.kind == ElementKind.TYPE)
+        builder.append("  KObjHeader* result = AllocInstance((const KTypeInfo*)${clazz.cname}_type(), result_holder.slot());\n")
+        args.add(0, "result")
+    }
+    if (!isVoidReturned && !isConstructor) {
+        builder.append("  auto result = ")
+    }
+    builder.append("  $cname(")
+    builder.append(args.joinToString(", "))
+    builder.append(");\n")
+
+    if (!isVoidReturned) {
+        val result = translateArgument(
+                "result", cfunction[0], Direction.KOTLIN_TO_C, builder)
+        builder.append("  return $result;\n")
+    }
+    builder.append("   } catch (...) {")
+    builder.append("       SetCurrentFrame(reinterpret_cast<KObjHeader**>(frame));\n")
+    builder.append("       HandleCurrentExceptionWhenLeavingKotlinCode();\n")
+    builder.append("   } \n")
+
+    builder.append("}\n")
+
+    return builder.toString()
+}
+
+internal fun ExportedElement.makeFunctionPointerString(): String {
+    val signature = makeCFunctionSignature(true)
+    return "${signature[0].type.translateType()} (*${signature[0].name})(${signature.drop(1).map { "${it.type.translateType()} ${it.name}" }.joinToString(", ")});"
+}
+
+internal fun ExportedElement.makeTopLevelFunctionString(): Pair<String, String> {
+    val signature = makeCFunctionSignature(false)
+    val name = signature[0].name
+    return (name to
+            "extern ${signature[0].type.translateType()} $name(${signature.drop(1).map { "${it.type.translateType()} ${it.name}" }.joinToString(", ")});")
+}
+
+internal fun ExportedElement.makeFunctionDeclaration(): String {
+    assert(isFunction)
+    val bridge = makeBridgeSignature()
+
+    val builder = StringBuilder()
+    builder.append("extern \"C\" ${bridge[0]} $cname")
+    builder.append("(${bridge.drop(1).joinToString(", ")});\n")
+
+    // Now the C function body.
+    builder.append(translateBody(makeCFunctionSignature(false)))
+    return builder.toString()
+}
+
+internal fun ExportedElement.makeClassDeclaration(): String {
+    assert(isClass)
+    val typeGetter = "extern \"C\" ${owner.prefix}_KType* ${cname}_type(void);"
+    val instanceGetter = if (isSingletonObject) {
+        val objectClassC = classType
+        """
+            |
+            |extern "C" KObjHeader* ${cname}_instance(KObjHeader**);
+            |static $objectClassC ${cname}_instance_impl(void) {
+            |  Kotlin_initRuntimeIfNeeded();
+            |  ScopedRunnableState stateGuard;
+            |  KObjHolder result_holder;
+            |  KObjHeader* result = ${cname}_instance(result_holder.slot());
+            |  return $objectClassC { .pinned = CreateStablePointer(result)};
+            |}
+            """.trimMargin()
+    } else ""
+    return "$typeGetter$instanceGetter"
+}
+
+internal fun ExportedElement.makeEnumEntryDeclaration(): String {
+    assert(isEnumEntry)
+    val enumClassC = enumEntryContainingType
+
+    return """
+              |extern "C" KObjHeader* $cname(KObjHeader**);
+              |static $enumClassC ${cname}_impl(void) {
+              |  Kotlin_initRuntimeIfNeeded();
+              |  ScopedRunnableState stateGuard;
+              |  KObjHolder result_holder;
+              |  KObjHeader* result = $cname(result_holder.slot());
+              |  return $enumClassC { .pinned = CreateStablePointer(result)};
+              |}
+              """.trimMargin()
+}
