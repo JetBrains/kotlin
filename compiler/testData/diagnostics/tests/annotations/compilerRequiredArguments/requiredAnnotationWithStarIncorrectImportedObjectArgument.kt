@@ -8,7 +8,7 @@ object MyTarget {
     const val ANNOTATION_CLASS = 0
 }
 
-@Target(<!ARGUMENT_TYPE_MISMATCH!>ANNOTATION_CLASS<!>)
+@Target(<!AMBIGUOUS_ANNOTATION_ARGUMENT, ARGUMENT_TYPE_MISMATCH!>ANNOTATION_CLASS<!>)
 annotation class MyAnnotation
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, const, integerLiteral, objectDeclaration, propertyDeclaration */

@@ -8,5 +8,5 @@ FILE: requiredAnnotationWithTypealiasedArgumentAsMetaAnnotation.kt
         }
 
     }
-    @R|testPack/MyAnnotation|() public final val property: R|kotlin/Int| = Int(0)
+    field:@R|testPack/MyAnnotation|() public final val property: R|kotlin/Int| = Int(0)
         public get(): R|kotlin/Int|
