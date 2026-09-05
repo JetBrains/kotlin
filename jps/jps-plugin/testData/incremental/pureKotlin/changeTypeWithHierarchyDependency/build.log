@@ -1,0 +1,16 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/Foo$DefaultImpls.class
+  out/production/module/Foo.class
+  out/production/module/FooImpl.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/Type.class
+End of files
+Compiling files:
+  src/Foo.kt
+  src/FooImpl.kt
+  src/types.kt
+End of files
+Exit code: OK
+------------------------------------------

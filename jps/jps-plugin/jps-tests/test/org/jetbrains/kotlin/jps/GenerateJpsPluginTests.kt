@@ -59,14 +59,7 @@ fun main(args: Array<String>) {
                 )
             }
 
-            // K2
-            testClass<AbstractIncrementalK2JvmJpsTest>(
-                init = incrementalJvmTestData()
-            )
-            testClass<AbstractIncrementalK2LightTreeJvmJpsTest>(
-                init = incrementalJvmTestData()
-            )
-            testClass<AbstractIncrementalK2FirICLightTreeJvmJpsTest>(
+            testClass<AbstractIncrementalJvmJpsTest>(
                 init = incrementalJvmTestData()
             )
 
