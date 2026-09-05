@@ -293,6 +293,21 @@ fun serializeModuleIntoKlib(
                             fileEntries,
                         )
                     }
+                    compiledFile.irInlineData?.apply {
+                        icConsumer.processIrInlineFile(
+                            ioFile,
+                            fileData,
+                            types,
+                            signatures,
+                            strings,
+                            declarations,
+                            bodies,
+                            fqName.toByteArray(),
+                            backendSpecificMetadata ?: byteArrayOf(),
+                            debugInfo,
+                            fileEntries,
+                        )
+                    }
                 }
             },
         )
@@ -366,6 +381,7 @@ private fun List<IrModuleFragment>.getUniqueNameForEachFragment(): Map<IrModuleF
 
 fun IncrementalDataProvider.getSerializedData(nonCompiledSources: Set<File>): List<KotlinFileSerializedData> {
     val compiledIrFiles = serializedIrFiles
+    val compiledIrInlineFiles = serializedIrInlineFiles
     val compiledMetaFiles = compiledPackageParts
 
     assert(compiledIrFiles.size == compiledMetaFiles.size)
@@ -392,7 +408,22 @@ fun IncrementalDataProvider.getSerializedData(nonCompiledSources: Set<File>): Li
                 fileEntries,
             )
         }
-        storage.add(KotlinFileSerializedData(metaFile.metadata, irFile))
+        val irInlineFile = compiledIrInlineFiles[f]?.run {
+            SerializedIrFile(
+                fileData,
+                String(fqn),
+                f.path.replace('\\', '/'),
+                types,
+                signatures,
+                strings,
+                bodies,
+                declarations,
+                debugInfo,
+                fileMetadata,
+                fileEntries,
+            )
+        }
+        storage.add(KotlinFileSerializedData(metaFile.metadata, irFile, irInlineFile))
     }
     return storage
 }

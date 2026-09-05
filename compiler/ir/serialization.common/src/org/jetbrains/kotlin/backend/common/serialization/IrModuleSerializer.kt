@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.packageFragmentDescriptor
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.preparedInlineFunctionCopies
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.SerializedIrModule
@@ -36,8 +37,8 @@ abstract class IrModuleSerializer<Serializer : IrFileSerializer>(
         return fileSerializer.serializeIrFile(file)
     }
 
-    private fun serializePreparedInlinableFunctions(preparedInlineFunctionCopies: List<IrSimpleFunction>): SerializedIrFile {
-        return createFileSerializer().serializeIrFileWithPreparedInlineFunctions(preparedInlineFunctionCopies)
+    private fun serializePreparedInlinableFunctions(file: IrFile, preparedInlineFunctionCopies: List<IrSimpleFunction>): SerializedIrFile {
+        return createFileSerializer().serializeIrFileWithPreparedInlineFunctions(file, preparedInlineFunctionCopies)
     }
 
     fun serializedIrModule(module: IrModuleFragment): SerializedIrModule {
@@ -49,9 +50,9 @@ abstract class IrModuleSerializer<Serializer : IrFileSerializer>(
             globalDeclarationTable.clashDetector.reportErrorsTo(diagnosticReporter)
         }
 
-        val inlinableFunctionsFile = module.preparedInlineFunctionCopies?.let {
-            serializePreparedInlinableFunctions(it)
+        val inlinableFunctionsFile = module.preparedInlineFunctionCopies?.groupBy { it.file }?.map {
+            serializePreparedInlinableFunctions(it.key, it.value)
         }
-        return SerializedIrModule(serializedFiles, inlinableFunctionsFile)
+        return SerializedIrModule(serializedFiles, inlinableFunctionsFile ?: emptyList())
     }
 }
