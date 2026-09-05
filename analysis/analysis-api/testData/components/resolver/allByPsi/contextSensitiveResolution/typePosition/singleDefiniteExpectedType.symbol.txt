@@ -418,7 +418,7 @@ KtUserType(456,457): 'T'
 KtNameReferenceExpression(456,457): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
@@ -523,7 +523,7 @@ KtUserType(515,516): 'T'
 KtNameReferenceExpression(515,516): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
@@ -718,7 +718,6 @@ KtNameReferenceExpression(668,676): 'instance'
 KtOperationReferenceExpression(677,679): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(680,696): 'SealedInheritor2'
@@ -1028,7 +1027,6 @@ KtNameReferenceExpression(932,940): 'instance'
 KtOperationReferenceExpression(941,943): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(944,960): 'SealedInheritor2'
@@ -1911,7 +1909,6 @@ KtNameReferenceExpression(1745,1753): 'instance'
 KtOperationReferenceExpression(1754,1756): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(1757,1772): 'SealedInterface'
@@ -1938,7 +1935,6 @@ KtNameReferenceExpression(1757,1772): 'SealedInterface'
 KtOperationReferenceExpression(1773,1775): '&&'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtIsExpression(1776,1819): 'instance is SealedInterface.NestedInheritor'
@@ -1956,7 +1952,6 @@ KtNameReferenceExpression(1776,1784): 'instance'
 KtOperationReferenceExpression(1785,1787): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(1788,1819): 'SealedInterface.NestedInheritor'
@@ -2213,7 +2208,6 @@ KtNameReferenceExpression(2079,2087): 'instance'
 KtOperationReferenceExpression(2088,2090): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(2091,2106): 'SealedInterface'
@@ -2240,7 +2234,6 @@ KtNameReferenceExpression(2091,2106): 'SealedInterface'
 KtOperationReferenceExpression(2107,2109): '&&'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtIsExpression(2110,2125): 'instance is Any'
@@ -2258,7 +2251,6 @@ KtNameReferenceExpression(2110,2118): 'instance'
 KtOperationReferenceExpression(2119,2121): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(2122,2125): 'Any'
@@ -2907,7 +2899,7 @@ KtUserType(2767,2768): 'T'
 KtNameReferenceExpression(2767,2768): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       T

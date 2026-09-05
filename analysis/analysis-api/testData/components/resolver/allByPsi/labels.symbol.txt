@@ -109,7 +109,6 @@ KtContainerNode(68,74): 'label@'
 KtLabelReferenceExpression(68,74): 'label@'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtLambdaExpression(74,102): '{'
@@ -133,7 +132,6 @@ KtContainerNode(90,96): '@label'
 KtLabelReferenceExpression(90,96): '@label'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(): kotlin.Unit
@@ -148,7 +146,6 @@ KtContainerNode(108,114): 'myFor@'
 KtLabelReferenceExpression(108,114): 'myFor@'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtForExpression(115,161): 'for (i in 0..1) {'
@@ -177,7 +174,6 @@ KtConstantExpression(125,126): '0'
 KtOperationReferenceExpression(126,128): '..'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
@@ -201,5 +197,4 @@ KtContainerNode(149,155): '@myFor'
 KtLabelReferenceExpression(149,155): '@myFor'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null

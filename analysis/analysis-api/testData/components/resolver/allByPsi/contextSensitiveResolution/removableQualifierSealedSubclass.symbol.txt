@@ -121,7 +121,6 @@ KtNameReferenceExpression(161,162): 'b'
 KtOperationReferenceExpression(163,165): 'is'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtTypeReference(166,176): 'Base.Child'

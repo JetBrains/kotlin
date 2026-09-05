@@ -217,7 +217,6 @@ KtNameReferenceExpression(304,312): 'settings'
 KtOperationReferenceExpression(313,315): '=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -286,7 +285,6 @@ KtNameReferenceExpression(354,367): 'basicSettings'
 KtOperationReferenceExpression(368,370): '=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings.BasicSettings.equals(<dispatch receiver>: Settings.BasicSettings, other: kotlin.Any?): kotlin.Boolean
@@ -355,7 +353,6 @@ KtNameReferenceExpression(414,427): 'basicSettings'
 KtOperationReferenceExpression(428,430): '=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings.BasicSettings.equals(<dispatch receiver>: Settings.BasicSettings, other: kotlin.Any?): kotlin.Boolean
@@ -607,7 +604,6 @@ KtNameReferenceExpression(707,715): 'settings'
 KtOperationReferenceExpression(716,718): '=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -676,7 +672,6 @@ KtNameReferenceExpression(761,774): 'basicSettings'
 KtOperationReferenceExpression(775,777): '=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings.OpenBasicSettings.equals(<dispatch receiver>: OpenSettings.OpenBasicSettings, other: kotlin.Any?): kotlin.Boolean
@@ -744,7 +739,6 @@ KtNameReferenceExpression(825,838): 'basicSettings'
 KtOperationReferenceExpression(839,841): '=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings.OpenBasicSettings.equals(<dispatch receiver>: OpenSettings.OpenBasicSettings, other: kotlin.Any?): kotlin.Boolean

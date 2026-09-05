@@ -355,7 +355,6 @@ KtNameReferenceExpression(546,547): 'm'
 KtOperationReferenceExpression(548,549): '='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(550,557): 'Option1'
@@ -385,7 +384,6 @@ KtNameReferenceExpression(562,563): 'm'
 KtOperationReferenceExpression(564,565): '='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(566,577): 'OptionAlias'
@@ -415,7 +413,6 @@ KtNameReferenceExpression(582,583): 'm'
 KtOperationReferenceExpression(584,585): '='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(586,596): 'stringProp'

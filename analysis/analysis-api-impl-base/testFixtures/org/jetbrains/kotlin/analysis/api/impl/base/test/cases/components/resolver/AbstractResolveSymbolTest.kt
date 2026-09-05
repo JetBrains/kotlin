@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver
 
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.expressions.contextSensitiveResolutionStatus
@@ -13,11 +15,13 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertS
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.findSpecializedResolveFunctions
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.resolution.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.isLocal
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExperimentalApi
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.psi.lookupLocally
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -59,27 +63,15 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
             assertSpecificResolutionApi(testServices, symbolAttempt, mainElement)
         }
 
-        @OptIn(KtExperimentalApi::class)
-        val localLookup = (mainElement as? KtSimpleNameExpression)?.lookupLocally()
-
-        if (localLookup != null) {
-            val resolved = symbolAttempt?.successfulSymbols?.singleOrNull()?.psi
-            testServices.assertions.assertNotNull(resolved) {
-                "${stringRepresentation(mainElement)} via lookupLocally resolved to ${stringRepresentation(localLookup)} which is not null, " +
-                        "but symbol attempt is ${stringRepresentation(symbolAttempt)}"
-            }
-            ignoreStabilityIfNeeded {
-                testServices.assertions.assertTrue(resolved!!.isEquivalentTo(localLookup)) {
-                    "${stringRepresentation(resolved)} != ${stringRepresentation(localLookup)}"
-                }
-            }
-        }
+        val localLookup = checkLookupLocally(mainElement, symbolAttempt, testServices)
 
         prettyPrint {
             if (mainElement is KtSimpleNameExpression) {
                 appendLine("isImplicitReferenceToCompanion: ${mainElement.isImplicitReferenceToCompanion}")
                 appendLine("contextSensitiveResolutionStatus: ${mainElement.contextSensitiveResolutionStatus}")
-                appendLine("lookupLocally: ${localLookup != null}")
+            }
+            if (mainElement is KtNameReferenceExpression) {
+                appendLine("lookupLocally: $localLookup")
             }
 
             val representation = stringRepresentation(symbolAttempt)
@@ -113,9 +105,68 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
         null
     }
 
+    @OptIn(KtExperimentalApi::class)
+    context(_: KaSession)
+    private fun checkLookupLocally(
+        mainElement: KtElement,
+        symbolAttempt: KaSymbolResolutionAttempt?,
+        testServices: TestServices,
+    ): Boolean {
+        if (mainElement !is KtNameReferenceExpression) return true
+
+        val localLookup = mainElement.lookupLocally()
+        val resolved = symbolAttempt?.successfulSymbols?.singleOrNull()?.psi
+
+        val isSuppressed = Directives.IGNORE_LOOKUP_LOCALLY in testServices.moduleStructure.allDirectives
+        val isConsistent = areEquivalent(localLookup, resolved)
+
+        if (isSuppressed) {
+            if (isConsistent) {
+                testServices.assertions.fail {
+                    "IGNORE_LOOKUP_LOCALLY was used, but the resolution was consistent. Remove the IGNORE_LOOKUP_LOCALLY directive."
+                }
+            }
+
+            return localLookup != null
+        }
+
+        if (localLookup != null) {
+            testServices.assertions.assertNotNull(resolved) {
+                "${stringRepresentation(mainElement)} via lookupLocally resolved to ${stringRepresentation(localLookup)} which is not null, " +
+                        "but symbol attempt is ${stringRepresentation(symbolAttempt)}"
+            }
+            ignoreStabilityIfNeeded {
+                testServices.assertions.assertTrue(isConsistent) {
+                    "${stringRepresentation(resolved)} != ${stringRepresentation(localLookup)}"
+                }
+            }
+        } else {
+            // completeness: localLookup can resolve any local symbols, except those that are explicitly not resolvable
+            // see `canPerformLocalLookup`
+            val resolved = symbolAttempt?.successfulSymbols?.singleOrNull()
+
+            @OptIn(KtImplementationDetail::class)
+            val localLookupContextKind = mainElement.localLookupContextKind
+            @OptIn(KtImplementationDetail::class)
+            if (resolved != null && resolved.isLocal && localLookupContextKind != null) {
+                testServices.assertions.assertFalse(
+                    resolved.canPerformLocalLookup(localLookupContextKind, mainElement)
+                ) {
+                    "Should be able to resolve ${stringRepresentation(mainElement)} to ${stringRepresentation(resolved)} via lookupLocally"
+                }
+            }
+        }
+
+        return localLookup != null
+    }
+
     private object Directives : SimpleDirectivesContainer() {
         val RENDER_PSI_CLASS_NAME by directive(
             "Render also PSI class name for resolved symbols"
+        )
+
+        val IGNORE_LOOKUP_LOCALLY by directive(
+            "Ignore the local lookup check"
         )
     }
 }
@@ -147,4 +198,77 @@ internal fun assertSpecificResolutionApi(
             }
         }
     }
+}
+
+private fun areEquivalent(e1: PsiElement?, e2: PsiElement?): Boolean {
+    if (e1 == null) return e2 == null
+    if (e2 == null) return false
+
+    return e1.isEquivalentTo(e2)
+}
+
+
+@OptIn(KtImplementationDetail::class)
+context(_: KaSession)
+private fun KaSymbol.canPerformLocalLookup(
+    localLookupContextKind: LocalLookupContextKind,
+    startingReference: KtNameReferenceExpression,
+): Boolean {
+    if (!isLocal) return false
+    if (!startingReference.canPerformLocalLookup()) return false
+
+    fun crossesNonLocalBoundary(): Boolean {
+        val commonParent = PsiTreeUtil.findCommonParent(startingReference, this.psi)
+        return generateSequence<PsiElement>(startingReference) { it.parent }
+            .takeWhile {
+                val p = commonParent?.parent
+                if (p != null) it != p else true
+            }
+            .any {
+                it is KtNamedFunction && !it.isLocal
+                        || it is KtProperty && !it.isLocal
+                        || it is KtClassOrObject
+            }
+    }
+
+    when (this) {
+        is KaValueParameterSymbol -> {
+            if (isImplicitLambdaParameter) {
+                // we need BODY_RESOLVE to resolve implicit lambda parameters
+                return false
+            }
+        }
+        is KaClassSymbol -> {
+            if (localLookupContextKind == LocalLookupContextKind.VALUE) {
+                // object A
+                // fun f() {
+                //     class A
+                //     A
+                //     ^ name in value context, we cannot resolve it to the local class as we
+                //       should pick the `object A` outside of the function.
+                // }
+                return false
+            }
+        }
+        is KaTypeParameterSymbol -> {
+            if (crossesNonLocalBoundary()) {
+                // we cannot resolve type parameters across non-local boundaries
+                //
+                // class X<T> {
+                //     inner class Y: T()
+                //                    ^ we need to let the compiler resolve this T
+                // }
+                //
+                // or
+                //
+                // val <T> T.x: Any get() = object {
+                //     val x: Int get() = emptyList<T>().size
+                //                                  ^ cannot figure out what T refers to here, as it crosses a non-local boundary
+                // }
+                return false
+            }
+        }
+    }
+
+    return true
 }

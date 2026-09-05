@@ -61,5 +61,4 @@ KtNameReferenceExpression(27,28): 'a'
 KtOperationReferenceExpression(28,30): '!!'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null

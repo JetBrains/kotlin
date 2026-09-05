@@ -1,0 +1,8 @@
+KtNameReferenceExpression(76,77): 'x'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: true
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      val x: kotlin.Throwable
+    ]

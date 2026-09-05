@@ -43,7 +43,7 @@ KtUserType(20,21): 'A'
 KtNameReferenceExpression(20,21): 'A'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A
@@ -175,7 +175,6 @@ KtNameReferenceExpression(102,103): 'a'
 KtOperationReferenceExpression(104,106): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtReturnExpression(107,113): 'return'
@@ -214,7 +213,6 @@ KtNameReferenceExpression(133,135): 'a1'
 KtOperationReferenceExpression(136,138): '?:'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtReturnExpression(139,145): 'return'
