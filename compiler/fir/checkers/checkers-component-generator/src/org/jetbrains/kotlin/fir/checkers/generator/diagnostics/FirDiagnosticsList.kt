@@ -515,6 +515,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<List<FirBasedSymbol<*>>>("symbols")
         }
 
+        val COMPILER_REQUIRED_ANNOTATION_ARGUMENT_MUST_BE_LITERAL by deprecationError<KtExpression>(LanguageFeature.ForbidNonLiteralStringArgumentsForCompilerRequiredAnnotationParameters) {
+            parameter<Name>("name")
+        }
+
         val VOLATILE_ON_VALUE by error<KtAnnotationEntry>()
         val VOLATILE_ON_DELEGATE by error<KtAnnotationEntry>()
 

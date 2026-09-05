@@ -7470,6 +7470,13 @@ private fun KaDiagnosticConverterBuilder.addConversions164() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions165() {
+    add(FirErrors.COMPILER_REQUIRED_ANNOTATION_ARGUMENT_MUST_BE_LITERAL.warningFactory) { firDiagnostic ->
+        CompilerRequiredAnnotationArgumentMustBeLiteralWarningImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.EXPOSED_PARAMETER_TYPE) { firDiagnostic ->
         ExposedParameterTypeImpl(
             firDiagnostic.a,
@@ -8535,6 +8542,13 @@ private fun KaDiagnosticConverterBuilder.addConversions190() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions191() {
+    add(FirErrors.COMPILER_REQUIRED_ANNOTATION_ARGUMENT_MUST_BE_LITERAL.errorFactory) { firDiagnostic ->
+        CompilerRequiredAnnotationArgumentMustBeLiteralErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.DATA_CLASS_OVERRIDE_DEFAULT_VALUES) { firDiagnostic ->
         DataClassOverrideDefaultValuesImpl(
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),

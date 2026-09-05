@@ -1,6 +1,7 @@
 // DUMP_CODE
 
 // MODULE: lib
+// LANGUAGE: -ForbidNonLiteralStringArgumentsForCompilerRequiredAnnotationParameters
 // FILE: lib.kt
 const val prefix = "my"
 
