@@ -266,7 +266,12 @@ public val KaSymbolResolutionAttempt.errors: List<KaSimpleSymbolResolutionError>
  */
 @KaExperimentalApi
 public val KaSymbolResolutionAttempt.isSuccessful: Boolean
-    get() = this is KaSimpleSymbolResolutionSuccess
+    get() {
+        @OptIn(ExperimentalContracts::class)
+        contract { returns(true) implies (this@isSuccessful is KaSimpleSymbolResolutionSuccess) }
+
+        return this is KaSimpleSymbolResolutionSuccess
+    }
 
 /**
  * Folds over a [KaSymbolResolutionAttempt] depending on whether the resolution succeeded.
