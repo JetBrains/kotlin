@@ -18,7 +18,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedExplicitJavaArgument.k
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedExplicitJavaArgument.kt
-    @R|java/lang/annotation/Target|[CompilerRequiredAnnotations](Q|java/lang/annotation/ElementType|.R|java/lang/annotation/ElementType.ANNOTATION_TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|java/lang/annotation/Target|[CompilerRequiredAnnotations](ElementType#.ANNOTATION_TYPE#) [compilerRequired = (value = vararg(R|java/lang/annotation/ElementType.ANNOTATION_TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedExplicitJavaArgument.k
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedExplicitJavaArgument.kt
-    @R|java/lang/annotation/Target|[CompilerRequiredAnnotations](Q|java/lang/annotation/ElementType|.R|java/lang/annotation/ElementType.ANNOTATION_TYPE|) public final? [ResolvedTo(COMPANION_GENERATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|java/lang/annotation/Target|[CompilerRequiredAnnotations](ElementType#.ANNOTATION_TYPE#) [compilerRequired = (value = vararg(R|java/lang/annotation/ElementType.ANNOTATION_TYPE|))] public final? [ResolvedTo(COMPANION_GENERATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedExplicitJavaArgument.k
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedExplicitJavaArgument.kt
-    @R|java/lang/annotation/Target|[CompilerRequiredAnnotations](Q|java/lang/annotation/ElementType|.R|java/lang/annotation/ElementType.ANNOTATION_TYPE|) public final? [ResolvedTo(SUPER_TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|java/lang/annotation/Target|[CompilerRequiredAnnotations](ElementType#.ANNOTATION_TYPE#) [compilerRequired = (value = vararg(R|java/lang/annotation/ElementType.ANNOTATION_TYPE|))] public final? [ResolvedTo(SUPER_TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedExplicitJavaArgument.k
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedExplicitJavaArgument.kt
-    @R|java/lang/annotation/Target|[Types](Q|java/lang/annotation/ElementType|.R|java/lang/annotation/ElementType.ANNOTATION_TYPE|) public final? [ResolvedTo(TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|java/lang/annotation/Target|[Types](ElementType#.ANNOTATION_TYPE#) [compilerRequired = (value = vararg(R|java/lang/annotation/ElementType.ANNOTATION_TYPE|))] public final? [ResolvedTo(TYPES)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -54,7 +54,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedExplicitJavaArgument.k
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedExplicitJavaArgument.kt
-    @R|java/lang/annotation/Target|[Types](Q|java/lang/annotation/ElementType|.R|java/lang/annotation/ElementType.ANNOTATION_TYPE|) public final [ResolvedTo(STATUS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|java/lang/annotation/Target|[Types](ElementType#.ANNOTATION_TYPE#) [compilerRequired = (value = vararg(R|java/lang/annotation/ElementType.ANNOTATION_TYPE|))] public final [ResolvedTo(STATUS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -63,7 +63,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedExplicitJavaArgument.k
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedExplicitJavaArgument.kt
-    @R|java/lang/annotation/Target|[Types](Q|java/lang/annotation/ElementType|.R|java/lang/annotation/ElementType.ANNOTATION_TYPE|) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|java/lang/annotation/Target|[Types](ElementType#.ANNOTATION_TYPE#) [compilerRequired = (value = vararg(R|java/lang/annotation/ElementType.ANNOTATION_TYPE|))] public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -72,7 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedExplicitJavaArgument.k
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedExplicitJavaArgument.kt
-    @R|java/lang/annotation/Target|[Types](Q|java/lang/annotation/ElementType|.R|java/lang/annotation/ElementType.ANNOTATION_TYPE|) public final [ResolvedTo(CONTRACTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|java/lang/annotation/Target|[Types](ElementType#.ANNOTATION_TYPE#) [compilerRequired = (value = vararg(R|java/lang/annotation/ElementType.ANNOTATION_TYPE|))] public final [ResolvedTo(CONTRACTS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedExplicitJavaArgument.k
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedExplicitJavaArgument.kt
-    @R|java/lang/annotation/Target|[Types](Q|java/lang/annotation/ElementType|.R|java/lang/annotation/ElementType.ANNOTATION_TYPE|) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|java/lang/annotation/Target|[Types](ElementType#.ANNOTATION_TYPE#) [compilerRequired = (value = vararg(R|java/lang/annotation/ElementType.ANNOTATION_TYPE|))] public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -90,7 +90,7 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedExplicitJavaArgument.k
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithImportedExplicitJavaArgument.kt
-    @R|java/lang/annotation/Target|[Types](Q|java/lang/annotation/ElementType|.R|java/lang/annotation/ElementType.ANNOTATION_TYPE|) public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|java/lang/annotation/Target|[Types](ElementType#.ANNOTATION_TYPE#) [compilerRequired = (value = vararg(R|java/lang/annotation/ElementType.ANNOTATION_TYPE|))] public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnnotation] constructor(): R|MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }

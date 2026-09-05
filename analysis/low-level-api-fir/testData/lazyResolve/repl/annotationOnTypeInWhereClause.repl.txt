@@ -158,7 +158,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnTypeInWhereClause.repl.kts
 
             public final [ResolvedTo(RAW_FIR)] fun $$eval(): <implicit> { LAZY_BLOCK }
 
-            @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTypeInWhereClause_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTypeInWhereClause_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnTypeInWhereClause_repl.Anno.s] s: String): R|AnnotationOnTypeInWhereClause_repl.Anno| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -188,7 +188,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnTypeInWhereClause.repl.kts
 
             public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
 
-            @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTypeInWhereClause_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTypeInWhereClause_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnTypeInWhereClause_repl.Anno.s] s: String): R|AnnotationOnTypeInWhereClause_repl.Anno| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -218,7 +218,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnTypeInWhereClause.repl.kts
 
             public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
 
-            @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTypeInWhereClause_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTypeInWhereClause_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnTypeInWhereClause_repl.Anno.s] s: String): R|AnnotationOnTypeInWhereClause_repl.Anno| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -248,7 +248,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnTypeInWhereClause.repl.kts
 
             public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
 
-            @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTypeInWhereClause_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTypeInWhereClause_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnTypeInWhereClause_repl.Anno.s] s: String): R|AnnotationOnTypeInWhereClause_repl.Anno| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -278,7 +278,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnTypeInWhereClause.repl.kts
 
             public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
 
-            @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTypeInWhereClause_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTypeInWhereClause_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnTypeInWhereClause_repl.Anno.s] s: String): R|AnnotationOnTypeInWhereClause_repl.Anno| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -310,7 +310,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnTypeInWhereClause.repl.kts
 
             public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
 
-            @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTypeInWhereClause_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTypeInWhereClause_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AnnotationOnTypeInWhereClause_repl.Anno.s] s: String): R|AnnotationOnTypeInWhereClause_repl.Anno| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -342,7 +342,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnTypeInWhereClause.repl.kts
 
             public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
 
-            @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTypeInWhereClause_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            @R|kotlin/annotation/Target|[Types](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTypeInWhereClause_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
                 public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationOnTypeInWhereClause_repl.Anno.s] s: R|kotlin/String|): R|AnnotationOnTypeInWhereClause_repl.Anno| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -374,7 +374,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnTypeInWhereClause.repl.kts
 
             public final [ResolvedTo(STATUS)] fun $$eval(): <implicit> { LAZY_BLOCK }
 
-            @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTypeInWhereClause_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            @R|kotlin/annotation/Target|[Types](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final [ResolvedTo(STATUS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationOnTypeInWhereClause_repl, ReplSnippetTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
                 public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/AnnotationOnTypeInWhereClause_repl.Anno.s] s: R|kotlin/String|): R|AnnotationOnTypeInWhereClause_repl.Anno| {
                     LAZY_super<R|kotlin/Any|>
                 }
