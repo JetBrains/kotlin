@@ -20,6 +20,7 @@ class JsProject(
     kotlinToolchain: KotlinToolchains,
     defaultStrategyConfig: ExecutionPolicy,
     projectDirectory: Path,
+    val useRichDtsGenerator: Boolean = false,
 ) : AbstractProject<JsKlibCompilationOperation, JsKlibCompilationOperation.Builder, JsHistoryBasedIncrementalCompilationConfiguration.Builder>(
     kotlinToolchain,
     defaultStrategyConfig,
@@ -49,6 +50,7 @@ class JsProject(
                 currentKotlinJsStdlibKlibLocation
             ),
             registeredModules = registeredModules,
+            useRichDtsGenerator = useRichDtsGenerator,
         )
         registeredModules.add(module)
         initModule(module, moduleName)
@@ -57,14 +59,31 @@ class JsProject(
 }
 
 fun BaseCompilationTest.jsProject(kotlinToolchain: KotlinToolchains, strategyConfig: ExecutionPolicy, action: JsProject.() -> Unit) {
+    jsProject(kotlinToolchain, strategyConfig, useRichDtsGenerator = false, action)
+}
+
+fun BaseCompilationTest.jsProject(
+    kotlinToolchain: KotlinToolchains,
+    strategyConfig: ExecutionPolicy,
+    useRichDtsGenerator: Boolean,
+    action: JsProject.() -> Unit,
+) {
     kotlinToolchain.assumeJsIsSupported()
-    JsProject(kotlinToolchain, strategyConfig, workingDirectory).use { project ->
+    JsProject(kotlinToolchain, strategyConfig, workingDirectory, useRichDtsGenerator).use { project ->
         project.action()
     }
 }
 
 fun BaseCompilationTest.jsProject(executionStrategy: CompilerExecutionStrategyConfiguration, action: JsProject.() -> Unit) {
-    jsProject(executionStrategy.first, executionStrategy.second, action)
+    jsProject(executionStrategy.first, executionStrategy.second, useRichDtsGenerator = false, action)
+}
+
+fun BaseCompilationTest.jsProject(
+    executionStrategy: CompilerExecutionStrategyConfiguration,
+    useRichDtsGenerator: Boolean,
+    action: JsProject.() -> Unit,
+) {
+    jsProject(executionStrategy.first, executionStrategy.second, useRichDtsGenerator, action)
 }
 
 fun KotlinToolchains.assumeJsIsSupported() {

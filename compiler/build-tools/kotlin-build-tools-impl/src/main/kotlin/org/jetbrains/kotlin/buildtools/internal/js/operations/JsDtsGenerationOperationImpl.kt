@@ -5,16 +5,27 @@
 
 package org.jetbrains.kotlin.buildtools.internal.js.operations
 
-import org.jetbrains.kotlin.buildtools.api.*
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsEcmaVersion
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsModuleKind
+import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
+import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.js.JsDtsCompilationStrategy
 import org.jetbrains.kotlin.buildtools.api.js.JsDtsGranularity
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
-import org.jetbrains.kotlin.buildtools.internal.*
+import org.jetbrains.kotlin.buildtools.internal.BaseOptionWithDefault
+import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
+import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
+import org.jetbrains.kotlin.buildtools.internal.ExecutionContext
+import org.jetbrains.kotlin.buildtools.internal.Options
+import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
+import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JsEcmaVersion
+import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JsModuleKind
+import org.jetbrains.kotlin.buildtools.internal.checkOptionIsAvailableForVersion
+import org.jetbrains.kotlin.buildtools.internal.initializeOptions
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
@@ -22,9 +33,11 @@ import org.jetbrains.kotlin.js.config.TsCompilationStrategy
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import org.jetbrains.kotlin.js.tsexport.TypeScriptExportConfig
 import org.jetbrains.kotlin.js.tsexport.TypeScriptModuleConfig
-import org.jetbrains.kotlin.js.tsexport.createTypeScriptExportInputModule
 import org.jetbrains.kotlin.js.tsexport.runTypeScriptExport
+import org.jetbrains.kotlin.library.jsOutputName
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.metadata.KlibInputModule
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import java.nio.file.Path
 
@@ -47,11 +60,12 @@ internal class JsDtsGenerationOperationImpl private constructor(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        executionContext: ExecutionContext,
+        executionContext: ExecutionContext
     ): CompilationResult {
-        val inputModules = transformKlibsIntoKlibInputModule(klibs, logger)
+        val inputModules = transformKlibsIntoKlibInputModule(klibs)
         // The main KLIB is the last one in the list; its manifest drives the merged artifact naming.
-        val mainModule = inputModules.last()
+        // If there is no klib provided, there is nothing to generate
+        val mainModule = inputModules.lastOrNull() ?: return CompilationResult.COMPILATION_SUCCESS
         val typeScriptExportConfig = TypeScriptExportConfig(
             targetPlatform = JsPlatforms.defaultJsPlatform,
             artifactConfiguration = WebArtifactConfiguration(
@@ -77,16 +91,11 @@ internal class JsDtsGenerationOperationImpl private constructor(
     override val usesApplicationEnvironment: Boolean
         get() = true
 
-    private fun transformKlibsIntoKlibInputModule(
-        klibs: List<Path>,
-        logger: KotlinLogger?,
-    ): List<KlibInputModule<TypeScriptModuleConfig>> =
-        klibs.map { path ->
-            createTypeScriptExportInputModule(path) { _, message ->
-                logger?.error(message)
-                error(message)
-            }
-        }
+    private fun transformKlibsIntoKlibInputModule(klibs: List<Path>): List<KlibInputModule<TypeScriptModuleConfig>> =
+        KlibLoader { libraryPaths(klibs.map(Path::toString)) }
+            .load()
+            .librariesStdlibFirst
+            .map { KlibInputModule(it.uniqueName, it.path, TypeScriptModuleConfig(outputName = it.jsOutputName)) }
 
     override fun configureFrom(linkingOperation: JsLinkingOperation) {
         check(linkingOperation is JsLinkingOperationImpl) { "Unexpected linking operation: ${linkingOperation::class}." }
@@ -99,13 +108,12 @@ internal class JsDtsGenerationOperationImpl private constructor(
         this[USE_UNKNOWN_INSTEAD_ANY] =
             linkingOperation.compilerArguments[JsArgumentsImpl.X_DTS_USE_UNKNOWN_INSTEAD_ANY]
 
-        this[MODULE_KIND] =
-            linkingOperation.compilerArguments[JsArgumentsImpl.MODULE_KIND]?.let { from -> JsModuleKind.entries.first { it.name == from.name } }
-                ?: JsModuleKind.ES.takeIf {
-                    val target =
-                        linkingOperation.compilerArguments[JsArgumentsImpl.TARGET]?.let { from -> JsEcmaVersion.entries.first { it.name == from.name } }
-                    target != null && target >= JsEcmaVersion.ES2015
-                } ?: JsModuleKind.UMD
+        this[MODULE_KIND] = linkingOperation.compilerArguments[JsArgumentsImpl.MODULE_KIND]
+            ?: JsModuleKind.ES.takeIf {
+                val target = linkingOperation.compilerArguments[JsArgumentsImpl.TARGET]
+                target != null && target >= JsEcmaVersion.ES2015
+            }
+            ?: JsModuleKind.UMD
 
         this[GRANULARITY] = when {
             linkingOperation.compilerArguments[JsArgumentsImpl.X_IR_PER_FILE] -> JsDtsGranularity.PER_FILE

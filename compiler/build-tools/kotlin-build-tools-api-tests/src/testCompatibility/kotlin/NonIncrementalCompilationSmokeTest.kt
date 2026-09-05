@@ -7,15 +7,19 @@ package org.jetbrains.kotlin.buildtools.tests
 
 import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerArguments.Companion.X_EXPORT_KDOC
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputsContains
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
+import kotlin.io.path.readText
 
 class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DisplayName("Non-incremental compilation produces only expected outputs in multi-module setup")
@@ -122,21 +126,24 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
         }
     }
 
+    @OptIn(ExperimentalCompilerArgument::class)
     @BtaV2StrategyAgnosticCompilationTest
-    fun basicWasmCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmProject(strategyConfig) {
+    @TestMetadata("js-ic-basic-app")
+    fun basicJsRichDtsGeneration(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jsProject(strategyConfig, useRichDtsGenerator = true) {
             val libModule = module("js-ic-basic-lib")
-            val appModule = module("js-ic-basic-app", listOf(libModule))
+            val appModule = module("js-ic-basic-app", listOf(libModule)) {
+                it.compilerArguments[X_EXPORT_KDOC] = true
+            }
             libModule.compile()
             appModule.compile()
-            appModule.link {
-                assertOutputs(
-                    "js-ic-basic-app.wasm",
-                    "js-ic-basic-app.mjs",
-                    "js-ic-basic-app.import-object.mjs",
-                    "js-ic-basic-app.js-builtins.mjs",
-                )
+            appModule.link(destinationDirectory = appModule.outputDirectory.resolve("out")) {
+                assertOutputsContains("js-ic-basic-app.js", "js-ic-basic-app.d.ts")
             }
+
+            val dts = appModule.outputDirectory.resolve("out/js-ic-basic-app.d.ts").readText()
+            assertTrue("function richDts(value: string): string" in dts)
+            assertTrue("* A declaration generated from KLIB metadata." in dts)
         }
     }
 }
