@@ -1,0 +1,43 @@
+fun referencedFunctionBefore() {}
+fun referencedFunctionAfter() {}
+
+const val kCallableName = ::referencedFunctionAfter.name
+
+enum class TestEnum {
+    TopLevelV1,
+    TopLevelV2,
+    ObjectV1,
+    ObjectV2,
+    CompanionV1,
+    CompanionV2,
+    CompanionObjectV1,
+    CompanionObjectV2,
+}
+
+const val toConstTrim = "  top-level-v2  ".trim()
+const val toConstEnumName = TestEnum.TopLevelV2.name
+const val toConstUnsignedOperation = 2u.plus(3u)
+const val toConstCharConstructor = Char(42)
+
+object O {
+    const val toConstTrimEnd = "object-v2  ".trimEnd()
+    const val toConstEnumName = TestEnum.ObjectV2.name
+    const val toConstUnsignedOperation = 3u.times(4u)
+    const val toConstCharConstructor = Char(42)
+}
+
+class C {
+    companion {
+        const val toConstTrimIndent = """    companion-v2""".trimIndent()
+        const val toConstEnumName = TestEnum.CompanionV2.name
+        const val toConstUnsignedOperation = 3u.and(4u)
+        const val toConstCharConstructor = Char(42)
+    }
+
+    companion object {
+        const val companionObjectToConstTrimMargin = """|companion-object-v2""".trimMargin()
+        const val companionObjectToConstEnumName = TestEnum.CompanionObjectV2.name
+        const val companionObjectToConstUnsignedOperation = 4u.or(5u)
+        const val companionObjectToConstCharConstructor = Char(42)
+    }
+}

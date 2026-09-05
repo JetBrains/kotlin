@@ -32,6 +32,7 @@ const val plus3 = threeVal.plus(twoVal)
 const val plus4 = twoVal.plus(ubyteVal)
 const val plus5 = twoVal.plus(ushortVal)
 const val plus6 = twoVal.plus(ulongVal)
+const val plus7 = oneVal + twoVal
 
 const val minus1 = oneVal.minus(twoVal)
 const val minus2 = twoVal.minus(twoVal)
@@ -39,6 +40,7 @@ const val minus3 = threeVal.minus(twoVal)
 const val minus4 = twoVal.minus(ubyteVal)
 const val minus5 = twoVal.minus(ushortVal)
 const val minus6 = twoVal.minus(ulongVal)
+const val minus7 = oneVal - twoVal
 
 const val times1 = oneVal.times(twoVal)
 const val times2 = twoVal.times(twoVal)
@@ -46,6 +48,7 @@ const val times3 = threeVal.times(twoVal)
 const val times4 = twoVal.times(ubyteVal)
 const val times5 = twoVal.times(ushortVal)
 const val times6 = twoVal.times(ulongVal)
+const val times7 = oneVal * twoVal
 
 const val div1 = oneVal.div(twoVal)
 const val div2 = twoVal.div(twoVal)
@@ -53,6 +56,7 @@ const val div3 = threeVal.div(twoVal)
 const val div4 = twoVal.div(ubyteVal)
 const val div5 = twoVal.div(ushortVal)
 const val div6 = twoVal.div(ulongVal)
+const val div7 = oneVal / twoVal
 
 const val floorDiv1 = oneVal.floorDiv(twoVal)
 const val floorDiv2 = twoVal.floorDiv(twoVal)
@@ -67,6 +71,7 @@ const val rem3 = threeVal.rem(twoVal)
 const val rem4 = twoVal.rem(ubyteVal)
 const val rem5 = twoVal.rem(ushortVal)
 const val rem6 = twoVal.rem(ulongVal)
+const val rem7 = oneVal % twoVal
 
 const val mod1 = oneVal.mod(twoVal)
 const val mod2 = twoVal.mod(twoVal)
@@ -79,16 +84,19 @@ const val and1 = oneVal.and(twoVal)
 const val and2 = twoVal.and(twoVal)
 const val and3 = threeVal.and(twoVal)
 const val and4 = 12u.and(10u)
+const val and5 = oneVal and twoVal
 
 const val or1 = oneVal.or(twoVal)
 const val or2 = twoVal.or(twoVal)
 const val or3 = threeVal.or(twoVal)
 const val or4 = 12u.or(10u)
+const val or5 = oneVal or twoVal
 
 const val xor1 = oneVal.xor(twoVal)
 const val xor2 = twoVal.xor(twoVal)
 const val xor3 = threeVal.xor(twoVal)
 const val xor4 = 12u.xor(10u)
+const val xor5 = oneVal xor twoVal
 
 const val inv1 = zeroVal.inv()
 const val inv2 = oneVal.inv()
@@ -99,6 +107,7 @@ const val shl3 = threeVal.shl(2)
 const val shl4 = oneVal.shl(31)
 const val shl5 = oneVal.shl(32)
 const val shl6 = oneVal.shl(63)
+const val shl7 = oneVal shl 1
 
 const val shr1 = oneVal.shr(1)
 const val shr2 = twoVal.shr(1)
@@ -106,6 +115,7 @@ const val shr3 = threeVal.shr(1)
 const val shr4 = oneVal.shr(31)
 const val shr5 = oneVal.shr(32)
 const val shr6 = oneVal.shr(63)
+const val shr7 = oneVal shr 1
 
 const val convert1 = oneVal.toUByte()
 const val convert2 = oneVal.toUShort()
@@ -150,6 +160,7 @@ fun box(): String {
     if (plus4.id() != 4u)     return "Fail plus4"
     if (plus5.id() != 4u)     return "Fail plus5"
     if (plus6.id() != 4UL)    return "Fail plus6"
+    if (plus7.id() != 3u)     return "Fail plus7"
 
     if (minus1.id() != 4294967295u)     return "Fail minus1"
     if (minus2.id() != 0u)              return "Fail minus2"
@@ -157,6 +168,7 @@ fun box(): String {
     if (minus4.id() != 0u)              return "Fail minus4"
     if (minus5.id() != 0u)              return "Fail minus5"
     if (minus6.id() != 0UL)             return "Fail minus6"
+    if (minus7.id() != 4294967295u)     return "Fail minus7"
 
     if (times1.id() != 2u)        return "Fail times1"
     if (times2.id() != 4u)        return "Fail times2"
@@ -164,6 +176,7 @@ fun box(): String {
     if (times4.id() != 4u)        return "Fail times4"
     if (times5.id() != 4u)        return "Fail times5"
     if (times6.id() != 4UL)       return "Fail times6"
+    if (times7.id() != 2u)        return "Fail times7"
 
     if (div1.id() != 0u)          return "Fail div1"
     if (div2.id() != 1u)          return "Fail div2"
@@ -171,6 +184,7 @@ fun box(): String {
     if (div4.id() != 1u)          return "Fail div4"
     if (div5.id() != 1u)          return "Fail div5"
     if (div6.id() != 1uL)         return "Fail div6"
+    if (div7.id() != 0u)          return "Fail div7"
 
     if (floorDiv1.id() != 0u)          return "Fail  floorDiv1"
     if (floorDiv2.id() != 1u)          return "Fail  floorDiv2"
@@ -185,6 +199,7 @@ fun box(): String {
     if (rem4.id() != 0u)      return "Fail rem4"
     if (rem5.id() != 0u)      return "Fail rem5"
     if (rem6.id() != 0UL)     return "Fail rem6"
+    if (rem7.id() != 1u)      return "Fail rem7"
 
     if (mod1.id() != 1u)                return "Fail mod1"
     if (mod2.id() != 0u)                return "Fail mod2"
@@ -197,16 +212,19 @@ fun box(): String {
     if (and2.id() != 2u)      return "Fail and2"
     if (and3.id() != 2u)      return "Fail and3"
     if (and4.id() != 8u)      return "Fail and4"
+    if (and5.id() != 0u)      return "Fail and5"
 
     if (or1.id() != 3u)      return "Fail or1"
     if (or2.id() != 2u)      return "Fail or2"
     if (or3.id() != 3u)      return "Fail or3"
     if (or4.id() != 14u)     return "Fail or4"
+    if (or5.id() != 3u)      return "Fail or5"
 
     if (xor1.id() != 3u)      return "Fail xor1"
     if (xor2.id() != 0u)      return "Fail xor2"
     if (xor3.id() != 1u)      return "Fail xor3"
     if (xor4.id() != 6u)      return "Fail xor4"
+    if (xor5.id() != 3u)      return "Fail xor5"
 
     if (inv1.id() != 4294967295u)      return "Fail inv1"
     if (inv2.id() != 4294967294u)      return "Fail inv2"
@@ -217,6 +235,7 @@ fun box(): String {
     if (shl4.id() != 2147483648u)       return "Fail shl4"
     if (shl5.id() != 1u)                return "Fail shl5"
     if (shl6.id() != 2147483648u)       return "Fail shl6"
+    if (shl7.id() != 2u)                return "Fail shl7"
 
     if (shr1.id() != 0u)                return "Fail shr1"
     if (shr2.id() != 1u)                return "Fail shr2"
@@ -224,6 +243,7 @@ fun box(): String {
     if (shr4.id() != 0u)                return "Fail shr4"
     if (shr5.id() != 1u)                return "Fail shr5"
     if (shr6.id() != 0u)                return "Fail shr6"
+    if (shr7.id() != 0u)                return "Fail shr7"
 
     if (convert1.id() != 1u.toUByte())      return "Fail convert1"
     if (convert2.id() != 1u.toUShort())     return "Fail convert2"
