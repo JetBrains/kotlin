@@ -5,10 +5,10 @@
 
 // CHECK_BYTECODE_TEXT
 // 1 java/lang/invoke/LambdaMetafactory
+// 0 \$sam\$
 
-// ^ Since indy for SAM types with contravariant projections is disabled (see genericWithInProjection.kt), the bytecode in this test is
-//   suboptimal. The lambda is generated via invokedynamic LambdaMetafactory and then wrapped into an instance of Cmp.
-//   The optimal way would be to generate the Cmp instance via invokedynamic LambdaMetafactory directly.
+// ^ The Cmp instance is generated via invokedynamic LambdaMetafactory directly, without an intermediate
+//   function object and a SAM wrapper class over it (KT-57995).
 
 fun interface Cmp<T> {
     fun compare(a: T, b: T): Int

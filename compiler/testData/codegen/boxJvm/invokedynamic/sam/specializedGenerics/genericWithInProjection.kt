@@ -4,8 +4,8 @@
 // LAMBDAS: CLASS
 
 // CHECK_BYTECODE_TEXT
-// 0 java/lang/invoke/LambdaMetafactory
-// TODO: restore indy for SAM types with contravariant projections. See KT-52428 for more info.
+// 1 java/lang/invoke/LambdaMetafactory
+// 0 \$sam\$
 
 fun interface Cmp<T> {
     fun compare(a: T, b: T): Int
