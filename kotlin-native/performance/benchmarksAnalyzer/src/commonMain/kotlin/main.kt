@@ -57,11 +57,25 @@ fun main(args: Array<String>) {
             "Meaningful performance changes").default(1.0)
     val useShortForm by argParser.option(ArgType.Boolean, "short", "s",
             "Show short version of report").default(false)
+    val analyzeStability by argParser.option(ArgType.Boolean, "stability",
+            description = "Analyze measurement stability").default(false)
+    val targetRelativeError by argParser.option(ArgType.Double, "target-relative-error",
+            description = "Target relative error for stability analysis, in percent").default(1.0)
 
     argParser.parse(args)
 
     // Read contents of file.
     val mainBenchsReport = mergeReportsWithDetailedFlags(getBenchmarkReport(mainReport))
+
+    if (analyzeStability) {
+        require(compareToReport == null) { "Stability analysis accepts a single report" }
+        val stabilityReport = renderStabilityReport(
+                analyzeBenchmarkStability(mainBenchsReport.benchmarks, targetRelativeError),
+                targetRelativeError,
+        )
+        output?.let { writeToFile(it, stabilityReport) } ?: println(stabilityReport)
+        return
+    }
 
     val compareToBenchsReport = compareToReport?.let {
         mergeReportsWithDetailedFlags(getBenchmarkReport(it))
