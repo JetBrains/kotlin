@@ -16,12 +16,14 @@ import org.jetbrains.kotlin.test.report.TestReportChecks
  * Line format (`KGTI` = Kotlin Grouping Test Infra):
  * ```
  * ##KGTI_BEGIN##
- * ##KGTI##|<id>|<STARTED|PASSED|FAILED>|<escaped-message>|<escaped-details>
+ * ##KGTI##|<id>|STARTED||
+ * ##KGTI##|<id>|<PASSED|FAILED>|<escaped-message>|<escaped-details>
  * ##KGTI_END##
  * ```
- * `id` is the test's synthetic `ProxyLauncher_<encoded-package>` class name. [STARTED] is printed before a test runs, so a start with no
- * matching PASSED/FAILED line localizes the test that took the VM down, while neither line means the test never ran.
- * [Outcome.Status.CRASHED] is inferred from that unfinished execution and is not a wire-level status.
+ * `id` is the test's synthetic `ProxyLauncher_<encoded-package>` class name. [STARTED] is printed before a test runs with empty message and
+ * details fields (`##KGTI##|<id>|STARTED||`), so a start with no matching PASSED/FAILED line localizes the test that
+ * took the VM down, while neither line means the test never ran. [Outcome.Status.CRASHED] is inferred from that
+ * unfinished execution and is not a wire-level status.
  */
 object GroupedTestsResultProtocol {
     const val BEGIN: String = "##KGTI_BEGIN##"
