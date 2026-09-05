@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
+// FIR_DUMP
 package a
 
 import java.lang.Deprecated as deprecated
@@ -11,7 +12,7 @@ import java.lang.SuppressWarnings as suppresswarnings
     System.out.println("Hello, world!")
 }
 
-class Test(<!DEPRECATED_JAVA_ANNOTATION!>@deprecated<!> val s: String,
+class Test(<!DEPRECATED_JAVA_ANNOTATION, DEPRECATED_JAVA_ANNOTATION!>@deprecated<!> val s: String,
            @suppresswarnings val x : Int) {}
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaProperty,

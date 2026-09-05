@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
  *
  * - this transformer visits all declarations and tries to resolve each annotation that looks like compiler-required by short name
  *   - if there are any meta-annotations registered by plugins, then each annotation is considered as "potentially compiler-required"
+ *   - the short name introduced by an aliased import (`import kotlin.annotation.Target as MyTarget`) is un-aliased first
  * - transformer resolves:
  *   - annotation types
  *   - annotation call arguments, if annotation classId mentioned in FirAnnotationsPlatformSpecificSupportComponent.requiredAnnotationsWithArguments
@@ -305,7 +306,7 @@ fun <F : FirClassLikeDeclaration> F.runCompilerRequiredAnnotationsResolvePhaseFo
         localClassesNavigationInfo,
         bodyResolveContext,
     )
-    return annotationsResolveTransformer.withFileScopes(useSiteFile) {
+    return annotationsResolveTransformer.withFileScopesAndImports(useSiteFile) {
         this.transformSingle(annotationsResolveTransformer, null)
     }
 }
