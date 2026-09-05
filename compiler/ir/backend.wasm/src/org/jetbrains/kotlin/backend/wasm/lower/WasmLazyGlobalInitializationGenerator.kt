@@ -12,14 +12,12 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.builders.kClassReference
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.starProjectedType
 
 class WasmLazyGlobalInitializationGenerator(override val backendContext: WasmBackendContext) : LazyGlobalInitializationGenerator() {
-    override fun IrBuilderWithScope.generateStaticInitializationStateCheck(getStateField: IrGetField, klass: IrClass?): IrCall =
-        irCall(backendContext.symbols.checkStaticInitializationState).apply {
-            arguments[0] = getStateField
-            arguments[1] = klass?.let { kClassReference(it.symbol.starProjectedType) } ?: irNull()
+    override fun IrBuilderWithScope.staticInitializationFailureBranch(klass: IrClass?): IrExpression =
+        irCall(backendContext.symbols.staticInitializationFailureWithClassName).apply {
+            arguments[0] = klass?.let { kClassReference(it.symbol.starProjectedType) } ?: irNull()
         }
 }
