@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.daemon.client
 
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.incremental.components.*
-import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
@@ -24,7 +22,6 @@ open class CompilerCallbackServicesFacadeServer(
     val expectActualTracker: ExpectActualTracker? = null,
     val inlineConstTracker: InlineConstTracker? = null,
     val enumWhenTracker: EnumWhenTracker? = null,
-    val importTracker: ImportTracker? = null,
     port: Int = SOCKET_ANY_FREE_PORT
 ) : @Suppress("DEPRECATION") CompilerCallbackServicesFacade,
     UnicastRemoteObject(
@@ -43,12 +40,6 @@ open class CompilerCallbackServicesFacadeServer(
     override fun hasInlineConstTracker(): Boolean = inlineConstTracker != null
 
     override fun hasEnumWhenTracker(): Boolean = enumWhenTracker != null
-
-    override fun hasImportTracker(): Boolean = importTracker != null
-
-    override fun hasIncrementalResultsConsumer(): Boolean = false
-
-    override fun hasIncrementalDataProvider(): Boolean = false
 
     // TODO: consider replacing NPE with other reporting, although NPE here means most probably incorrect usage
 
@@ -69,10 +60,6 @@ open class CompilerCallbackServicesFacadeServer(
 
     override fun incrementalCache_getMetadata(target: TargetId, fragmentName: String): Map<File, ByteArray> =
         incrementalCompilationComponents!!.getIncrementalCache(target).getMetadata(fragmentName)
-
-    // todo: remove (the method it called was relevant only for old IC)
-    override fun incrementalCache_registerInline(target: TargetId, fromPath: String, jvmSignature: String, toPath: String) {
-    }
 
     override fun incrementalCache_getClassFilePath(target: TargetId, internalClassName: String): String =
         incrementalCompilationComponents!!.getIncrementalCache(target).getClassFilePath(internalClassName)
@@ -123,27 +110,4 @@ open class CompilerCallbackServicesFacadeServer(
     override fun enumWhenTracker_report(whenUsageClassPath: String, enumClassFqName: String) {
         enumWhenTracker?.report(whenUsageClassPath, enumClassFqName) ?: throw NullPointerException("enumWhenTracker was not initialized")
     }
-
-    override fun importTracker_report(filePath: String, importedFqName: String) {
-        importTracker?.report(filePath, importedFqName) ?: throw NullPointerException("importTracker was not initialized")
-    }
-
-    override fun incrementalResultsConsumer_processHeader(headerMetadata: ByteArray) {}
-
-    override fun incrementalResultsConsumer_processPackagePart(
-        sourceFilePath: String,
-        packagePartMetadata: ByteArray,
-        binaryAst: ByteArray,
-        inlineData: ByteArray
-    ) {
-    }
-
-    override fun incrementalResultsConsumer_processPackageMetadata(packageName: String, metadata: ByteArray) {
-    }
-
-    override fun incrementalDataProvider_getHeaderMetadata(): ByteArray = byteArrayOf()
-
-    override fun incrementalDataProvider_getCompiledPackageParts(): Collection<CompiledPackagePart> = emptyList()
-
-    override fun incrementalDataProvider_getPackageMetadata(): Collection<PackageMetadata> = emptyList()
 }
