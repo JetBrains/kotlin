@@ -13,19 +13,19 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.types.ConstantValueKind
 
 /**
  * @see org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox.Companion
  */
 abstract class FirAnnotationsPlatformSpecificSupportComponent :
     FirComposableSessionComponent<FirAnnotationsPlatformSpecificSupportComponent> {
-    abstract val requiredAnnotationsWithArguments: Set<ClassId>
+    abstract val requiredAnnotationsWithArguments: CompilerRequiredParametersMap
 
-    /**
-     * Set of enum [ClassId]s that are resolved as part of [requiredAnnotationsWithArguments].
-     */
-    abstract val requiredArguments: Set<ClassId>
-
+    val requiredArguments: Set<ClassId>
+        get() = requiredAnnotationsWithArguments.flatMap { it.value }.mapNotNullTo(mutableSetOf()) {
+            (it.kind as? FirCraParameterKind.EnumParameter)?.enumClassId
+        }
     abstract val requiredAnnotations: Set<ClassId>
     abstract val volatileAnnotations: Set<ClassId>
     protected abstract val repeatableAnnotations: Set<ClassId>
@@ -65,10 +65,15 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent :
         override val components: List<FirAnnotationsPlatformSpecificSupportComponent>,
     ) : FirAnnotationsPlatformSpecificSupportComponent(),
         FirComposableSessionComponent.Composed<FirAnnotationsPlatformSpecificSupportComponent> {
-        override val requiredAnnotationsWithArguments: Set<ClassId> =
-            components.flatMapTo(mutableSetOf()) { it.requiredAnnotationsWithArguments }
+        override val requiredAnnotationsWithArguments: CompilerRequiredParametersMap = buildMap {
+            components.forEach {
+                it.requiredAnnotationsWithArguments.forEach { [key, value] ->
+                    require(!this.containsKey(key))
+                    this[key] = value
+                }
+            }
+        }
 
-        override val requiredArguments: Set<ClassId> = components.flatMapTo(mutableSetOf()) { it.requiredArguments }
         override val requiredAnnotations: Set<ClassId> = components.flatMapTo(mutableSetOf()) { it.requiredAnnotations }
         override val volatileAnnotations: Set<ClassId> = components.flatMapTo(mutableSetOf()) { it.volatileAnnotations }
         override val repeatableAnnotations: Set<ClassId> = components.flatMapTo(mutableSetOf()) { it.repeatableAnnotations }
@@ -97,19 +102,51 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent :
     }
 
     object Default : FirAnnotationsPlatformSpecificSupportComponent() {
-        override val requiredAnnotationsWithArguments: Set<ClassId> = setOf(
-            StandardClassIds.Annotations.Deprecated,
-            StandardClassIds.Annotations.Target,
-            StandardClassIds.Annotations.DeprecatedSinceKotlin,
-            StandardClassIds.Annotations.SinceKotlin,
-        )
+        override val requiredAnnotationsWithArguments: CompilerRequiredParametersMap = buildMap {
+            this[StandardClassIds.Annotations.Deprecated] = [
+                FirCompilerRequiredParameterDescription(
+                    name = StandardClassIds.Annotations.ParameterNames.deprecatedLevel,
+                    kind = FirCraParameterKind.EnumParameter(StandardClassIds.DeprecationLevel, isVararg = false),
+                    position = 2,
+                )
+            ]
 
-        override val requiredArguments: Set<ClassId> = setOf(
-            StandardClassIds.DeprecationLevel,
-            StandardClassIds.AnnotationTarget,
-        )
+            this[StandardClassIds.Annotations.Target] = [
+                FirCompilerRequiredParameterDescription(
+                    name = StandardClassIds.Annotations.ParameterNames.targetAllowedTargets,
+                    kind = FirCraParameterKind.EnumParameter(StandardClassIds.AnnotationTarget, isVararg = true),
+                    position = null,
+                )
+            ]
 
-        override val requiredAnnotations: Set<ClassId> = requiredAnnotationsWithArguments + setOf(
+            this[StandardClassIds.Annotations.DeprecatedSinceKotlin] = [
+                FirCompilerRequiredParameterDescription(
+                    name = StandardClassIds.Annotations.ParameterNames.deprecatedSinceKotlinWarningSince,
+                    kind = FirCraParameterKind.LiteralParameter(ConstantValueKind.String),
+                    position = 0,
+                ),
+                FirCompilerRequiredParameterDescription(
+                    name = StandardClassIds.Annotations.ParameterNames.deprecatedSinceKotlinErrorSince,
+                    kind = FirCraParameterKind.LiteralParameter(ConstantValueKind.String),
+                    position = 1,
+                ),
+                FirCompilerRequiredParameterDescription(
+                    name = StandardClassIds.Annotations.ParameterNames.deprecatedSinceKotlinHiddenSince,
+                    kind = FirCraParameterKind.LiteralParameter(ConstantValueKind.String),
+                    position = 2,
+                ),
+            ]
+
+            this[StandardClassIds.Annotations.SinceKotlin] = [
+                FirCompilerRequiredParameterDescription(
+                    name = StandardClassIds.Annotations.ParameterNames.sinceKotlinVersion,
+                    kind = FirCraParameterKind.LiteralParameter(ConstantValueKind.String),
+                    position = 0,
+                )
+            ]
+        }
+
+        override val requiredAnnotations: Set<ClassId> = requiredAnnotationsWithArguments.keys + setOf(
             StandardClassIds.Annotations.WasExperimental,
             StandardClassIds.Annotations.EqualityBound,
         )
@@ -139,6 +176,8 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent :
             return null
         }
     }
+
+    protected typealias CompilerRequiredParametersMap = Map<ClassId, List<FirCompilerRequiredParameterDescription>>
 }
 
 val FirSession.annotationPlatformSupport: FirAnnotationsPlatformSpecificSupportComponent by FirSession.sessionComponentAccessor<FirAnnotationsPlatformSpecificSupportComponent>()
