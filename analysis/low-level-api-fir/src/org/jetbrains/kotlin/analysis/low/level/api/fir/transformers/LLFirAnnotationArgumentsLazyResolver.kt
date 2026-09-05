@@ -19,11 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsTransformer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -238,20 +234,8 @@ internal object AnnotationArgumentsStateKeepers {
                 val oldList = annotationCall.argumentList
                 if (oldList is FirResolvedArgumentList || oldList is FirEmptyArgumentList) continue
 
-                val newArguments = FirLazyBodiesCalculator.createArgumentsForAnnotation(annotationCall, session).arguments
-                val newList = buildArgumentList {
-                    source = oldList.source
-                    for ([index, argument] in oldList.arguments.withIndex()) {
-                        val replacement = when {
-                            argument is FirPropertyAccessExpression && argument.calleeReference.let { it.isError() || it is FirResolvedNamedReference } -> argument
-                            else -> newArguments[index]
-                        }
-
-                        arguments.add(replacement)
-                    }
-                }
-
-                annotationCall.replaceArgumentList(newList)
+                val newArgumentList = FirLazyBodiesCalculator.createArgumentsForAnnotation(annotationCall, session)
+                annotationCall.replaceArgumentList(newArgumentList)
             }
         }
     }
