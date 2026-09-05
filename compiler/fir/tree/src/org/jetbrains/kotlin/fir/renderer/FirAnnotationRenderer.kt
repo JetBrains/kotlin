@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.klibFileAnnotations
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -54,7 +55,10 @@ open class FirAnnotationRenderer {
                         callArgumentsRenderer?.renderArgumentMapping(annotation.argumentMapping)
                     }
                 } else {
-                    visitor.visitCall(annotation)
+                    callArgumentsRenderer?.renderArgumentsWithCompilerRequired(
+                        annotation.arguments,
+                        annotation.argumentMapping,
+                    )
                 }
             }
 
