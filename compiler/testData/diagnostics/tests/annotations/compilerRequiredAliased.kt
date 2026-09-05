@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 
 // FILE: q/target.kt
 package q
@@ -14,11 +14,11 @@ annotation class Anno
 
 class C {
     @MyAnno
-    val myField = method()
+    val myField = <!DEPRECATION_ERROR!>method<!>()
 
     // for reference:
     @Anno
-    val field = method()
+    val field = <!DEPRECATION_ERROR!>method<!>()
 }
 
 // FILE: p/deprecation.kt
@@ -33,7 +33,7 @@ fun localClass() {
     @MyDeprecated("", level = DeprecationLevel.ERROR)
     class Local
 
-    Local()
+    <!DEPRECATION_ERROR!>Local<!>()
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral, propertyDeclaration */

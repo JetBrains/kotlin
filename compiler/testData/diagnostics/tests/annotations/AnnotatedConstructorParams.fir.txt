@@ -1,0 +1,20 @@
+FILE: AnnotatedConstructorParams.kt
+    package a
+
+    field:@R|java/lang/Deprecated|() @R|java/lang/SuppressWarnings|() public final val s: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+    @R|java/lang/Deprecated|() @R|java/lang/SuppressWarnings|() public final fun main(): R|kotlin/Unit| {
+        Q|java/lang/System|.R|java/lang/System.out*s|.R|java/io/PrintStream.println|(String(Hello, world!))
+    }
+    public final class Test : R|kotlin/Any| {
+        public constructor(@R|java/lang/Deprecated|() s: R|kotlin/String|, @R|java/lang/SuppressWarnings|() x: R|kotlin/Int|): R|a/Test| {
+            super<R|kotlin/Any|>()
+        }
+
+        field:@R|java/lang/Deprecated|() public final val s: R|kotlin/String| = R|<local>/s|
+            public get(): R|kotlin/String|
+
+        field:@R|java/lang/SuppressWarnings|() public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+    }

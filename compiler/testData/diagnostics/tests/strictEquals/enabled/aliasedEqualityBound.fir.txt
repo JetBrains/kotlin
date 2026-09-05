@@ -16,7 +16,7 @@ FILE: throughImport.kt
             super<R|kotlin/Any|>()
         }
 
-        public open override operator fun equals(@R|kotlin/EqualityBound|(bound = <getClass>(Q|Bar|) [evaluated = <getClass>(Q|Bar|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        public open override operator fun equals([EqualityBoundType=Bar] @R|kotlin/EqualityBound|(bound = <getClass>(Q|Bar|) [evaluated = <getClass>(Q|Bar|)]) other: R|kotlin/Any?|): R|kotlin/Boolean| {
             ^equals Boolean(true)
         }
 

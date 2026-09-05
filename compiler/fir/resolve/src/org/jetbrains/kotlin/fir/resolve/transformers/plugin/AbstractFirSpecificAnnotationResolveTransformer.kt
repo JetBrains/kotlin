@@ -35,12 +35,12 @@ import org.jetbrains.kotlin.fir.types.builder.buildPlaceholderProjection
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.PrivateForInline
 
 @OptIn(PrivateForInline::class)
@@ -366,9 +366,17 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     }
 
     private fun shouldRunAnnotationResolve(typeRef: FirUserTypeRef): Boolean {
-        val name = typeRef.shortName
         if (metaAnnotationsFromPlugins.isNotEmpty()) return true
-        return name in session.annotationPlatformSupport.requiredAnnotationsShortClassNames || annotationsFromPlugins.any { it.shortName() == name }
+        val name = typeRef.shortName
+        if (name.isPotentiallyCompilerRequiredAnnotationName()) return true
+
+        val originalName = aliasedImports[name] ?: return false
+        return originalName.isPotentiallyCompilerRequiredAnnotationName()
+    }
+
+    private fun Name.isPotentiallyCompilerRequiredAnnotationName(): Boolean {
+        return this in session.annotationPlatformSupport.requiredAnnotationsShortClassNames ||
+                annotationsFromPlugins.any { it.shortName() == this }
     }
 
     private fun FirResolvedTypeRef.requiredToSave(): Boolean {
@@ -538,7 +546,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
 
     fun withFileAndFileScopes(file: FirFile, action: () -> Unit) {
         withFile(file) {
-            withFileScopes(file) {
+            withFileScopesAndImports(file) {
                 transformChildren(file) {
                     action()
                 }
@@ -592,9 +600,17 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     }
 
     lateinit var scopes: List<FirScope>
+    lateinit var aliasedImports: Map<Name, Name>
 
-    inline fun <T> withFileScopes(file: FirFile, f: () -> T): T {
+    inline fun <T> withFileScopesAndImports(file: FirFile, f: () -> T): T {
         scopes = createImportingScopes(file, session, scopeSession, useCaching = computationSession.useCacheForImportScope)
+        aliasedImports = buildMap {
+            for (import in file.imports) {
+                val importedName = import.importedFqName?.shortName() ?: continue
+                val aliasName = import.aliasName ?: continue
+                put(aliasName, importedName)
+            }
+        }
         return f()
     }
 
