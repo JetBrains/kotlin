@@ -32,6 +32,7 @@ import java.security.MessageDigest
 private const val MAX_GROUPED_DIAGNOSTIC_LENGTH = 16 * 1024
 private const val MAX_GROUPED_DIAGNOSTIC_LINE_LENGTH = 2 * 1024
 private const val MAX_GROUPED_DIAGNOSTIC_LINE_COUNT = 32
+private const val MAX_GROUPED_EXCEPTION_TEXT_LENGTH = 1 * 1024 * 1024
 
 /**
  * Shared base class for grouping stage handlers in WASM test infrastructure.
@@ -385,7 +386,12 @@ abstract class AbstractWasmGroupingStageBoxRunner(
 
         // The driver is generated from this batch's own launcher names, so an unexpected id is nobody's test failure.
         checkTestInfrastructure(analysis.excessiveIds.isEmpty()) {
-            "Grouped batch reported results for tests that are not part of it: ${analysis.excessiveIds}. Expected: $expectedIds"
+            buildBoundedDiagnostic(
+                listOf(
+                    "Grouped batch reported results for tests that are not part of it: ${analysis.excessiveIds}",
+                    "Expected: $expectedIds",
+                )
+            )
         }
 
         // There is no batch-level failure sink, so an empty report is prepended to every missing test below.
@@ -506,7 +512,7 @@ abstract class AbstractWasmGroupingStageBoxRunner(
             }
         }
         if (unexplainedExceptions.isNotEmpty()) {
-            testServices.assertions.failAll(unexplainedExceptions)
+            testServices.assertions.failAll(unexplainedExceptions.map { it.toBoundedReportException() })
         }
     }
 
@@ -627,7 +633,9 @@ abstract class AbstractWasmGroupingStageBoxRunner(
      */
     private fun NonGroupingStageOutput.failWithAll(exceptions: List<Throwable>) {
         executeWithFailureCatching {
-            this@AbstractWasmGroupingStageBoxRunner.testServices.assertions.failAll(exceptions)
+            this@AbstractWasmGroupingStageBoxRunner.testServices.assertions.failAll(
+                exceptions.map { it.toBoundedReportException() }
+            )
         }
     }
 
@@ -644,13 +652,28 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         var current: Throwable? = throwable
         while (current != null) {
             current.message?.let { message ->
-                if (message !in texts) {
-                    texts += message
+                val boundedMessage = message.toBoundedDiagnostic(MAX_GROUPED_EXCEPTION_TEXT_LENGTH)
+                if (boundedMessage !in texts) {
+                    texts += boundedMessage
                 }
             }
             current = current.cause
         }
         return texts
+    }
+
+    /** Avoids retaining a full untrusted VM failure as a JUnit failure when its message exceeds the diagnostic bound. */
+    private fun Throwable.toBoundedReportException(): Throwable {
+        val hasUnboundedMessage = generateSequence(this) { it.cause }
+            .any { (it.message?.length ?: 0) > MAX_GROUPED_DIAGNOSTIC_LENGTH }
+        if (!hasUnboundedMessage) return this
+
+        val boundedMessage = buildBoundedDiagnostic(collectExceptionTexts(this))
+        return if (this is WasmVMException) {
+            WasmVMException(AssertionError(boundedMessage), vmName, executionName)
+        } else {
+            AssertionError(boundedMessage)
+        }
     }
 
     private fun formatMalformedLines(lines: List<String>): String = buildString {

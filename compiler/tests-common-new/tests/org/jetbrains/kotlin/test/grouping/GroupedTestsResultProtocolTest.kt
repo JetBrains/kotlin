@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.PASSED
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.ParsedBatchResult.Analysis.FailureKind
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.SEP
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.STARTED
+import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.OUTPUT_TRUNCATED
 import org.jetbrains.kotlin.test.report.TestReportChecks
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -93,6 +94,18 @@ class GroupedTestsResultProtocolTest {
 
         assertTrue(result.malformedLines.isEmpty(), result.malformedLines.toString())
         assertEquals(Status.PASSED, result.outcomes.getValue("id").single().status)
+    }
+
+    @Test
+    fun `given an output truncation marker before a structured block when parse then the block is rejected`() {
+        val marker = "$LINE_PREFIX$SEP$OUTPUT_TRUNCATED$SEP" +
+                "original length=5000000 chars; SHA-256=0123456789abcdef"
+        val output = "$marker\n${block(resultLine("id", STARTED), resultLine("id", PASSED))}"
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
+
+        assertFalse(GroupedTestsResultProtocol.hasCompleteStructuredBlock(output))
+        assertTrue(result.malformedLines.any { it.startsWith(marker) }, result.malformedLines.toString())
     }
 
     @Test

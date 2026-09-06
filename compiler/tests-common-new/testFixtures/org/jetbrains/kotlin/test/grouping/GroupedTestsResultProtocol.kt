@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.grouping
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.report.TestReport
 import org.jetbrains.kotlin.test.report.TestReportChecks
+import java.security.MessageDigest
 
 /**
  * Wire protocol carrying the per-test results of a grouped test batch from the VM to the JVM side: it generates the
@@ -33,8 +34,18 @@ object GroupedTestsResultProtocol {
     const val STARTED: String = "STARTED"
     const val PASSED: String = "PASSED"
     const val FAILED: String = "FAILED"
+    /** Marker inserted by a VM-output capture that had to discard part of untrusted process output. */
+    const val OUTPUT_TRUNCATED: String = "OUTPUT_TRUNCATED"
 
     private const val RUN_ALL_FUNCTION_NAME: String = "__kgtiRunAll"
+    private const val MAX_RETAINED_MALFORMED_LINES = 64
+    // The WASM runner renders malformed lines with this same limit; retaining the final diagnostic form here avoids
+    // a second truncation replacing the original-length/hash summary with the length of an already-truncated sample.
+    private const val MAX_RETAINED_MALFORMED_LINE_LENGTH = 2 * 1024
+    // Generated records contain short ids and escaped failure text. Rejecting a much larger protocol-looking line
+    // before split() prevents one hostile line from allocating several large field strings.
+    private const val MAX_PROTOCOL_LINE_LENGTH = 64 * 1024
+    private const val MAX_MALFORMED_LINE_ID_LENGTH = 4 * 1024
 
     /**
      * Two characters (`\` and `n`) on purpose: it lands inside a string literal of the *generated* source. Every
@@ -357,11 +368,18 @@ object GroupedTestsResultProtocol {
             parseExecution(output, executionName)
         }.toList()
         val malformedLines = mutableListOf<String>()
+        var omittedMalformedLineCount = 0
         for (parsed in parsedExecutions) {
             sawStructuredBlock = sawStructuredBlock || parsed.sawStructuredBlock
             crashedIds += parsed.crashedIds
             crashAttributedIds += parsed.crashAttributedIds
-            malformedLines += parsed.malformedLines
+            for (line in parsed.malformedLines) {
+                if (malformedLines.size < MAX_RETAINED_MALFORMED_LINES) {
+                    malformedLines += line
+                } else {
+                    omittedMalformedLineCount++
+                }
+            }
             // Both facts read off one VM's text, so they stay correlated once every output has been merged.
             if (parsed.malformedLines.isNotEmpty()) {
                 crashedIdsInMalformedOutputs += parsed.crashedIds
@@ -379,6 +397,9 @@ object GroupedTestsResultProtocol {
                     executionName = parsed.executionName,
                 )
             }
+        }
+        if (omittedMalformedLineCount != 0) {
+            malformedLines += "... $omittedMalformedLineCount malformed protocol line(s) omitted from parser diagnostics ..."
         }
         return ParsedBatchResult(
             outcomes = merged.mapValues { entry -> entry.value.toList() },
@@ -404,6 +425,7 @@ object GroupedTestsResultProtocol {
         val outcomes = mutableListOf<Outcome>()
         val startedIds = LinkedHashSet<String>()
         val malformedLines = mutableListOf<String>()
+        var omittedMalformedLineCount = 0
         val malformedLineIds = LinkedHashSet<String>()
         val linePrefix = "$LINE_PREFIX$SEP"
         var insideBlock = false
@@ -411,17 +433,28 @@ object GroupedTestsResultProtocol {
         var hasClosedBlock = false
         var activeId: String? = null
         var canRecoverActiveTest = false
+        var outputTruncationMarker: String? = null
+        val outputTruncationMarkerPrefix = "$LINE_PREFIX$SEP$OUTPUT_TRUNCATED$SEP"
 
         fun recordMalformedLine(line: String) {
-            malformedLines += line
             val malformedId = malformedLineId(line)
             malformedId?.let { malformedLineIds += it }
             if (malformedId == activeId) {
                 canRecoverActiveTest = true
             }
+            if (malformedLines.size < MAX_RETAINED_MALFORMED_LINES) {
+                malformedLines += line.toBoundedProtocolDiagnostic(MAX_RETAINED_MALFORMED_LINE_LENGTH)
+            } else {
+                omittedMalformedLineCount++
+            }
         }
 
-        for (rawLine in output.lines()) {
+        for (rawLine in output.lineSequence()) {
+            if (rawLine.startsWith(outputTruncationMarkerPrefix)) {
+                outputTruncationMarker = rawLine
+                if (insideBlock) recordMalformedLine(rawLine)
+                continue
+            }
             when {
                 rawLine.isSentinelLine(BEGIN) -> {
                     if (insideBlock || hasClosedBlock) {
@@ -450,6 +483,10 @@ object GroupedTestsResultProtocol {
 
             if (!insideBlock || !rawLine.startsWith(LINE_PREFIX)) continue
             if (!rawLine.startsWith(linePrefix)) {
+                recordMalformedLine(rawLine)
+                continue
+            }
+            if (rawLine.length > MAX_PROTOCOL_LINE_LENGTH) {
                 recordMalformedLine(rawLine)
                 continue
             }
@@ -500,6 +537,14 @@ object GroupedTestsResultProtocol {
                 }
             }
         }
+        if (outputTruncationMarker != null && sawStructuredBlock &&
+            malformedLines.none { it.startsWith(outputTruncationMarkerPrefix) }
+        ) {
+            recordMalformedLine(outputTruncationMarker!!)
+        }
+        if (omittedMalformedLineCount != 0) {
+            malformedLines += "... $omittedMalformedLineCount malformed protocol line(s) omitted from parser diagnostics ..."
+        }
         return ParsedExecution(
             outcomes = outcomes,
             activeId = activeId,
@@ -519,11 +564,41 @@ object GroupedTestsResultProtocol {
         // No separator at all means the line was cut off inside the id itself — the same shape `malformedLineCarries`
         // deliberately matches nothing for, since a fragment like this cannot be told apart from any other id sharing
         // the same prefix.
-        if (SEP !in rest) return null
-        return rest.substringBefore(SEP).takeIf { it.isNotEmpty() }
+        val separatorIndex = rest.indexOf(SEP)
+        if (separatorIndex <= 0 || separatorIndex > MAX_MALFORMED_LINE_ID_LENGTH) return null
+        return rest.substring(0, separatorIndex)
     }
 
     private fun String.isSentinelLine(sentinel: String): Boolean = this == sentinel
+
+    private fun String.toBoundedProtocolDiagnostic(maxLength: Int): String {
+        if (length <= maxLength) return this
+
+        val suffix = "... [truncated; original length=$length chars; SHA-256=${sha256Hex()}]"
+        val prefixLength = (maxLength - suffix.length).coerceAtLeast(0)
+        return take(prefixLength) + suffix.take(maxLength - prefixLength)
+    }
+
+    private fun String.sha256Hex(): String {
+        val digest = MessageDigest.getInstance("SHA-256")
+        var offset = 0
+        while (offset < length) {
+            var end = minOf(offset + 4096, length)
+            if (end < length && Character.isHighSurrogate(this[end - 1])) end--
+            if (end == offset) end++
+            digest.update(substring(offset, end).toByteArray(Charsets.UTF_8))
+            offset = end
+        }
+
+        val hexDigits = "0123456789abcdef"
+        return buildString(64) {
+            for (byte in digest.digest()) {
+                val value = byte.toInt() and 0xFF
+                append(hexDigits[value ushr 4])
+                append(hexDigits[value and 0x0F])
+            }
+        }
+    }
 
     /**
      * Escaping of the `message`/`details` fields, applied in order — the escape character must come first, so that it
