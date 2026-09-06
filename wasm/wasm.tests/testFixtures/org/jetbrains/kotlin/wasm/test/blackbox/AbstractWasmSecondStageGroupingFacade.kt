@@ -362,19 +362,26 @@ abstract class AbstractWasmSecondStageGroupingFacade(
  * Computes the synthetic per-test `ProxyLauncher` class name used by the WASM grouped test infrastructure.
  * The test infrastructure tracks this name to persistently identify the test from the testInfo
  *
- * The identifier is a collision-free encoding of the per-test additional package (see [computePackage]). It is
- * longer than a hash, but every character is valid in a Kotlin identifier and distinct package strings remain
- * distinct launcher names.
+ * The identifier is a collision-free encoding of the per-test additional package (see [computePackage]): unlike a
+ * hash it cannot collide, and unlike a plain hex dump it keeps the package readable, since letters and digits pass
+ * through unchanged (see [encodeToIdentifier]).
  */
 internal fun computeProxyLauncherClassName(testInfo: KotlinTestInfo): String =
     "ProxyLauncher_${computePackage(testInfo).encodeToIdentifier()}"
 
-private const val HEX_DIGITS = "0123456789abcdef"
-
-private fun String.encodeToIdentifier(): String = buildString(length * 2) {
+/**
+ * Encodes this string into a fragment of a Kotlin identifier, injectively: an ASCII letter or digit is kept as it
+ * is, an underscore is doubled, and every other UTF-8 byte becomes an underscore followed by its two hex digits.
+ * The two escapes cannot be confused, since a hex digit is never an underscore, so distinct strings always encode
+ * to distinct identifiers, and a typical package such as `_codegen_._box_.testFoo` stays close to its own length
+ * instead of doubling into a hex dump.
+ */
+internal fun String.encodeToIdentifier(): String = buildString(length + 16) {
     for (byte in encodeToByteArray()) {
-        val unsignedByte = byte.toInt() and 0xFF
-        append(HEX_DIGITS[unsignedByte ushr 4])
-        append(HEX_DIGITS[unsignedByte and 0x0F])
+        when (val char = (byte.toInt() and 0xFF).toChar()) {
+            in 'A'..'Z', in 'a'..'z', in '0'..'9' -> append(char)
+            '_' -> append("__")
+            else -> append('_').append(byte.toHexString())
+        }
     }
 }
