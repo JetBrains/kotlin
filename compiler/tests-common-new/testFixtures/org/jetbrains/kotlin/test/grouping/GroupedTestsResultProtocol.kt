@@ -33,8 +33,13 @@ object GroupedTestsResultProtocol {
     const val STARTED: String = "STARTED"
     const val PASSED: String = "PASSED"
     const val FAILED: String = "FAILED"
+    const val OUTPUT_TRUNCATED: String = "OUTPUT_TRUNCATED"
 
     private const val RUN_ALL_FUNCTION_NAME: String = "__kgtiRunAll"
+    private const val MAX_RETAINED_MALFORMED_LINES = 64
+    private const val MAX_RETAINED_MALFORMED_LINE_LENGTH = 2 * 1024
+    private const val MAX_PROTOCOL_LINE_LENGTH = 64 * 1024
+    private const val MAX_MALFORMED_LINE_ID_LENGTH = 4 * 1024
 
     /**
      * Two characters (`\` and `n`) on purpose: it lands inside a string literal of the *generated* source. Every
@@ -90,6 +95,7 @@ object GroupedTestsResultProtocol {
         val sawStructuredBlock: Boolean,
         val crashedIds: Set<String>,
         val crashedIdsInMalformedOutputs: Set<String>,
+        val malformedLineIds: Set<String>,
         val malformedLineIdsInCrashedOutputs: Set<String>,
         val malformedLines: List<String>,
         val executions: List<ParsedExecution> = emptyList(),
@@ -169,15 +175,7 @@ object GroupedTestsResultProtocol {
             )
         }
 
-        private fun malformedLineCarries(id: String): Boolean {
-            val separator = SEP
-            val prefix = "$LINE_PREFIX$separator"
-            return malformedLines.any { line ->
-                if (!line.startsWith(prefix)) return@any false
-                val rest = line.removePrefix(prefix)
-                rest == id || rest.startsWith("$id$separator")
-            }
-        }
+        private fun malformedLineCarries(id: String): Boolean = id in malformedLineIds
 
         fun toTestReport(): TestReport<String> {
             val passedTests = LinkedHashSet<String>()
@@ -271,15 +269,24 @@ object GroupedTestsResultProtocol {
         val merged = LinkedHashMap<String, MutableList<Outcome>>()
         val crashedIds = LinkedHashSet<String>()
         val crashedIdsInMalformedOutputs = LinkedHashSet<String>()
+        val malformedLineIds = LinkedHashSet<String>()
         val malformedLineIdsInCrashedOutputs = LinkedHashSet<String>()
         val parsedExecutions = outputs.map { (executionName, output) ->
             parseExecution(output, executionName)
         }.toList()
         val malformedLines = mutableListOf<String>()
+        var omittedMalformedLineCount = 0
         for (parsed in parsedExecutions) {
             sawStructuredBlock = sawStructuredBlock || parsed.sawStructuredBlock
             crashedIds += parsed.crashedIds
-            malformedLines += parsed.malformedLines
+            malformedLineIds += parsed.malformedLineIds
+            for (line in parsed.malformedLines) {
+                if (malformedLines.size < MAX_RETAINED_MALFORMED_LINES) {
+                    malformedLines += line
+                } else {
+                    omittedMalformedLineCount++
+                }
+            }
             if (parsed.malformedLines.isNotEmpty()) {
                 crashedIdsInMalformedOutputs += parsed.crashedIds
                 malformedLineIdsInCrashedOutputs += parsed.crashedIds.intersect(parsed.malformedLineIds)
@@ -297,11 +304,15 @@ object GroupedTestsResultProtocol {
                 )
             }
         }
+        if (omittedMalformedLineCount != 0) {
+            malformedLines += "... $omittedMalformedLineCount malformed protocol line(s) omitted from parser diagnostics ..."
+        }
         return ParsedBatchResult(
             outcomes = merged.mapValues { entry -> entry.value.toList() },
             sawStructuredBlock = sawStructuredBlock,
             crashedIds = crashedIds,
             crashedIdsInMalformedOutputs = crashedIdsInMalformedOutputs,
+            malformedLineIds = malformedLineIds,
             malformedLineIdsInCrashedOutputs = malformedLineIdsInCrashedOutputs,
             malformedLines = malformedLines,
             executions = parsedExecutions,
@@ -318,6 +329,7 @@ object GroupedTestsResultProtocol {
         val outcomes = mutableListOf<Outcome>()
         val startedIds = LinkedHashSet<String>()
         val malformedLines = mutableListOf<String>()
+        var omittedMalformedLineCount = 0
         val malformedLineIds = LinkedHashSet<String>()
         val linePrefix = "$LINE_PREFIX$SEP"
         var insideBlock = false
@@ -325,17 +337,28 @@ object GroupedTestsResultProtocol {
         var hasClosedBlock = false
         var activeId: String? = null
         var canRecoverActiveTest = false
+        var outputTruncationMarker: String? = null
+        val outputTruncationMarkerPrefix = "$LINE_PREFIX$SEP$OUTPUT_TRUNCATED$SEP"
 
         fun recordMalformedLine(line: String) {
-            malformedLines += line
             val malformedId = malformedLineId(line)
             malformedId?.let { malformedLineIds += it }
             if (malformedId == activeId) {
                 canRecoverActiveTest = true
             }
+            if (malformedLines.size < MAX_RETAINED_MALFORMED_LINES) {
+                malformedLines += line.toBoundedDiagnostic(MAX_RETAINED_MALFORMED_LINE_LENGTH)
+            } else {
+                omittedMalformedLineCount++
+            }
         }
 
-        for (rawLine in output.lines()) {
+        for (rawLine in output.lineSequence()) {
+            if (rawLine.startsWith(outputTruncationMarkerPrefix)) {
+                outputTruncationMarker = rawLine
+                if (insideBlock) recordMalformedLine(rawLine)
+                continue
+            }
             when {
                 rawLine.isSentinelLine(BEGIN) -> {
                     if (insideBlock || hasClosedBlock) {
@@ -364,6 +387,10 @@ object GroupedTestsResultProtocol {
 
             if (!insideBlock || !rawLine.startsWith(LINE_PREFIX)) continue
             if (!rawLine.startsWith(linePrefix)) {
+                recordMalformedLine(rawLine)
+                continue
+            }
+            if (rawLine.length > MAX_PROTOCOL_LINE_LENGTH) {
                 recordMalformedLine(rawLine)
                 continue
             }
@@ -409,6 +436,14 @@ object GroupedTestsResultProtocol {
                 }
             }
         }
+        if (outputTruncationMarker != null && sawStructuredBlock &&
+            malformedLines.none { it.startsWith(outputTruncationMarkerPrefix) }
+        ) {
+            recordMalformedLine(outputTruncationMarker)
+        }
+        if (omittedMalformedLineCount != 0) {
+            malformedLines += "... $omittedMalformedLineCount malformed protocol line(s) omitted from parser diagnostics ..."
+        }
         return ParsedExecution(
             outcomes = outcomes,
             activeId = activeId,
@@ -424,8 +459,9 @@ object GroupedTestsResultProtocol {
         val prefix = "$LINE_PREFIX$SEP"
         if (!line.startsWith(prefix)) return null
         val rest = line.removePrefix(prefix)
-        if (SEP !in rest) return null
-        return rest.substringBefore(SEP).takeIf { it.isNotEmpty() }
+        val separatorIndex = rest.indexOf(SEP)
+        if (separatorIndex <= 0 || separatorIndex > MAX_MALFORMED_LINE_ID_LENGTH) return null
+        return rest.substring(0, separatorIndex)
     }
 
     private fun String.isSentinelLine(sentinel: String): Boolean = this == sentinel
