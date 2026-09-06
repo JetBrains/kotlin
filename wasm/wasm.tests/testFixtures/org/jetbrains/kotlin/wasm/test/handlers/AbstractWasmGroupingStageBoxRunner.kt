@@ -22,13 +22,17 @@ import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceProviders.hasBoxMethod
 import org.jetbrains.kotlin.test.services.testInfo
+import org.jetbrains.kotlin.test.grouping.toBoundedDiagnostic
+import org.jetbrains.kotlin.test.grouping.toBoundedDiagnosticKeepingTail
 import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.wasm.test.blackbox.computeProxyLauncherClassName
-import java.security.MessageDigest
 
 private const val MAX_GROUPED_DIAGNOSTIC_LENGTH = 16 * 1024
 private const val MAX_GROUPED_DIAGNOSTIC_LINE_LENGTH = 2 * 1024
 private const val MAX_GROUPED_DIAGNOSTIC_LINE_COUNT = 32
+
+/** Below this much remaining budget a text is omitted rather than reduced to little more than its truncation marker. */
+private const val MIN_GROUPED_DIAGNOSTIC_LINE_LENGTH = 256
 
 /**
  * Shared base class for grouping stage handlers in WASM test infrastructure.
@@ -382,7 +386,12 @@ abstract class AbstractWasmGroupingStageBoxRunner(
 
         // The driver is generated from this batch's own launcher names, so an unexpected id is nobody's test failure.
         checkTestInfrastructure(analysis.excessiveIds.isEmpty()) {
-            "Grouped batch reported results for tests that are not part of it: ${analysis.excessiveIds}. Expected: $expectedIds"
+            buildBoundedDiagnostic(
+                listOf(
+                    "Grouped batch reported results for tests that are not part of it: ${analysis.excessiveIds}",
+                    "Expected: $expectedIds",
+                )
+            )
         }
 
         // There is no batch-level failure sink, so an empty report is prepended to every missing test below.
@@ -503,7 +512,7 @@ abstract class AbstractWasmGroupingStageBoxRunner(
             }
         }
         if (unexplainedExceptions.isNotEmpty()) {
-            testServices.assertions.failAll(unexplainedExceptions)
+            testServices.assertions.failAll(unexplainedExceptions.map { it.toBoundedReportException() })
         }
     }
 
@@ -624,7 +633,9 @@ abstract class AbstractWasmGroupingStageBoxRunner(
      */
     private fun NonGroupingStageOutput.failWithAll(exceptions: List<Throwable>) {
         executeWithFailureCatching {
-            this@AbstractWasmGroupingStageBoxRunner.testServices.assertions.failAll(exceptions)
+            this@AbstractWasmGroupingStageBoxRunner.testServices.assertions.failAll(
+                exceptions.map { it.toBoundedReportException() }
+            )
         }
     }
 
@@ -635,7 +646,12 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         )
     }
 
-    /** The message of [throwable] and of its causes; a VM-failure message embeds the stdout captured before the crash. */
+    /**
+     * The message of [throwable] and of its causes; a VM-failure message embeds the stdout captured before the crash.
+     * The texts are parser input and are returned unbounded: cutting them here would move the crash evidence, and
+     * every verdict printed after the cut, out of the parser's sight. The VM capture already bounds them, and the
+     * diagnostics built from them are bounded by [buildBoundedDiagnostic].
+     */
     private fun collectExceptionTexts(throwable: Throwable): List<String> {
         val texts = mutableListOf<String>()
         var current: Throwable? = throwable
@@ -650,67 +666,74 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         return texts
     }
 
-    private fun formatMalformedLines(lines: List<String>): String = buildString {
-        var displayedLineCount = 0
-        var omittedLineCount = 0
-        var canAppend = true
+    /** Avoids retaining a full untrusted VM failure as a JUnit failure when its message exceeds the diagnostic bound. */
+    private fun Throwable.toBoundedReportException(): Throwable {
+        val hasUnboundedMessage = generateSequence(this) { it.cause }
+            .any { (it.message?.length ?: 0) > MAX_GROUPED_DIAGNOSTIC_LENGTH }
+        if (!hasUnboundedMessage) return this
 
-        for (line in lines) {
-            if (!canAppend || displayedLineCount >= MAX_GROUPED_DIAGNOSTIC_LINE_COUNT) {
-                omittedLineCount++
-                continue
-            }
-
-            val entry = "  <${line.toBoundedDiagnostic(MAX_GROUPED_DIAGNOSTIC_LINE_LENGTH)}>"
-            val separatorLength = if (isEmpty()) 0 else 1
-            if (length + separatorLength + entry.length > MAX_GROUPED_DIAGNOSTIC_LENGTH) {
-                omittedLineCount++
-                canAppend = false
-                continue
-            }
-
-            if (separatorLength != 0) append('\n')
-            append(entry)
-            displayedLineCount++
-        }
-
-        if (omittedLineCount != 0) {
-            val omission = "... $omittedLineCount more malformed line(s) omitted ..."
-            val separatorLength = if (isEmpty()) 0 else 1
-            val contentLimit = (MAX_GROUPED_DIAGNOSTIC_LENGTH - separatorLength - omission.length).coerceAtLeast(0)
-            if (length > contentLimit) delete(contentLimit, length)
-            if (separatorLength != 0 && isNotEmpty()) append('\n')
-            append(omission)
+        val boundedMessage = buildBoundedDiagnostic(collectExceptionTexts(this))
+        return if (this is WasmVMException) {
+            WasmVMException(AssertionError(boundedMessage), vmName, executionName)
+        } else {
+            AssertionError(boundedMessage)
         }
     }
 
-    /** Builds a bounded message while retaining an explicit summary for every discarded text line. */
-    private fun buildBoundedDiagnostic(lines: Iterable<String>): String = buildString {
+    /** Lists malformed protocol lines, each cut to a head sample: its id sits at its start, which is what matters. */
+    private fun formatMalformedLines(lines: List<String>): String =
+        buildBoundedLines(lines, omissionLabel = "malformed line(s)") { line, remainingLength ->
+            "  <${line.toBoundedDiagnostic(MAX_GROUPED_DIAGNOSTIC_LINE_LENGTH)}>".takeIf { it.length <= remainingLength }
+        }
+
+    /**
+     * Builds a bounded message while retaining an explicit summary for every discarded text line. Each text is fitted
+     * into the budget that is left, keeping both of its ends: the reason lines come first and are short, while a VM
+     * output that follows them carries the crash evidence at its tail.
+     */
+    private fun buildBoundedDiagnostic(lines: Iterable<String>): String =
+        buildBoundedLines(lines, omissionLabel = "diagnostic line(s)") { line, remainingLength ->
+            if (line.length > remainingLength && remainingLength < MIN_GROUPED_DIAGNOSTIC_LINE_LENGTH) {
+                null
+            } else {
+                line.toBoundedDiagnosticKeepingTail(remainingLength)
+            }
+        }
+
+    /**
+     * Joins at most [MAX_GROUPED_DIAGNOSTIC_LINE_COUNT] of [lines] into a message of at most
+     * [MAX_GROUPED_DIAGNOSTIC_LENGTH] characters. [renderLine] receives each line with the budget still available
+     * for it and returns its rendering, or `null` when the line cannot be shown; from the first line that is not
+     * shown, every later one is counted rather than shown, so the trailing omission summary always describes a
+     * contiguous tail of the input, and it is always kept within the budget.
+     */
+    private fun buildBoundedLines(
+        lines: Iterable<String>,
+        omissionLabel: String,
+        renderLine: (line: String, remainingLength: Int) -> String?,
+    ): String = buildString {
         var displayedLineCount = 0
         var omittedLineCount = 0
-        var canAppend = true
 
         for (line in lines) {
-            if (!canAppend || displayedLineCount >= MAX_GROUPED_DIAGNOSTIC_LINE_COUNT) {
-                omittedLineCount++
-                continue
-            }
-
-            val boundedLine = line.toBoundedDiagnostic(MAX_GROUPED_DIAGNOSTIC_LENGTH)
             val separatorLength = if (isEmpty()) 0 else 1
-            if (length + separatorLength + boundedLine.length > MAX_GROUPED_DIAGNOSTIC_LENGTH) {
+            val rendered = if (omittedLineCount == 0 && displayedLineCount < MAX_GROUPED_DIAGNOSTIC_LINE_COUNT) {
+                renderLine(line, MAX_GROUPED_DIAGNOSTIC_LENGTH - length - separatorLength)
+            } else {
+                null
+            }
+            if (rendered == null) {
                 omittedLineCount++
-                canAppend = false
                 continue
             }
 
             if (separatorLength != 0) append('\n')
-            append(boundedLine)
+            append(rendered)
             displayedLineCount++
         }
 
         if (omittedLineCount != 0) {
-            val omission = "... $omittedLineCount more diagnostic line(s) omitted ..."
+            val omission = "... $omittedLineCount more $omissionLabel omitted ..."
             val separatorLength = if (isEmpty()) 0 else 1
             val contentLimit = (MAX_GROUPED_DIAGNOSTIC_LENGTH - separatorLength - omission.length).coerceAtLeast(0)
             if (length > contentLimit) delete(contentLimit, length)
@@ -729,34 +752,5 @@ abstract class AbstractWasmGroupingStageBoxRunner(
     protected open fun allowsDriverlessSingleTest(): Boolean {
         val input = testServices.groupingStageInputs.singleOrNull() ?: return false
         return RUN_UNIT_TESTS in input.testServices.moduleStructure.allDirectives || !input.hasBoxMethod()
-    }
-}
-
-private fun String.toBoundedDiagnostic(maxLength: Int): String {
-    if (length <= maxLength) return this
-
-    val suffix = "... [truncated; original length=$length chars; SHA-256=${sha256Hex()}]"
-    val prefixLength = (maxLength - suffix.length).coerceAtLeast(0)
-    return take(prefixLength) + suffix.take(maxLength - prefixLength)
-}
-
-private fun String.sha256Hex(): String {
-    val digest = MessageDigest.getInstance("SHA-256")
-    var offset = 0
-    while (offset < length) {
-        var end = minOf(offset + 4096, length)
-        if (end < length && Character.isHighSurrogate(this[end - 1])) end--
-        if (end == offset) end++
-        digest.update(substring(offset, end).toByteArray(Charsets.UTF_8))
-        offset = end
-    }
-
-    val hexDigits = "0123456789abcdef"
-    return buildString(64) {
-        for (byte in digest.digest()) {
-            val value = byte.toInt() and 0xFF
-            append(hexDigits[value ushr 4])
-            append(hexDigits[value and 0x0F])
-        }
     }
 }

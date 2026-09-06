@@ -786,6 +786,35 @@ class WasmGroupedStageBoxRunnerAttributionTest {
     }
 
     @Test
+    fun `given many results for tests outside the batch then the infrastructure diagnostic stays bounded`() {
+        val inBatch = GroupedTest("testInBatch")
+        val foreignIds = (0 until 2_000).map { "foreign-$it" }
+        val allForeignIds = foreignIds.toString()
+
+        val vmStdout = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(inBatch.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(inBatch.id, GroupedTestsResultProtocol.PASSED)
+            for (foreignId in foreignIds) {
+                appendProtocolLine(foreignId, GroupedTestsResultProtocol.STARTED)
+                appendProtocolLine(foreignId, GroupedTestsResultProtocol.PASSED)
+            }
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+
+        val error = assertThrows(TestInfrastructureException::class.java) {
+            runner(listOf(inBatch), vmStdout = listOf(vmStdout), vmFailures = emptyList())
+                .processArtifact(DriverLinkedBatchArtifact)
+        }
+
+        val message = error.message.orEmpty()
+        assertTrue(message.length <= 16 * 1024, "Diagnostic was not bounded: ${message.length}")
+        assertTrue("truncated; original length=" in message, message)
+        assertTrue("SHA-256=" in message, message)
+        assertFalse(allForeignIds in message, "The complete untrusted ID list was copied into the diagnostic")
+    }
+
+    @Test
     fun `given test infos with colliding package hashes then launcher names remain distinct`() {
         val first = KotlinTestInfo("org.jetbrains.kotlin.wasm.test.Aa", "test", emptySet())
         val second = KotlinTestInfo("org.jetbrains.kotlin.wasm.test.BB", "test", emptySet())
@@ -796,6 +825,66 @@ class WasmGroupedStageBoxRunnerAttributionTest {
             computeProxyLauncherClassName(second),
             "Distinct tests must not generate the same synthetic launcher class",
         )
+    }
+
+    @Test
+    fun `given a crash after more than a megabyte of batch output then the verdicts before it are still parsed`() {
+        val early = GroupedTest("testEarly")
+        val late = GroupedTest("testLate")
+        val crasher = GroupedTest("testCrashing")
+
+        // The VM-failure message embeds the whole captured stdout; the results that matter sit past the first MB.
+        val crashedVmStdout = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(early.id, GroupedTestsResultProtocol.STARTED)
+            repeat(1024 + 64) { append("x".repeat(1023)).append('\n') }
+            appendProtocolLine(early.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolLine(late.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(late.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolLine(crasher.id, GroupedTestsResultProtocol.STARTED)
+            append("RuntimeError: unreachable\n")
+        }
+
+        runner(
+            listOf(early, late, crasher),
+            vmStdout = emptyList(),
+            vmFailures = listOf(vmCrash(crashedVmStdout, vmName = "VM-1")),
+        ).processArtifact(DriverLinkedBatchArtifact)
+
+        assertNull(early.reportedFailure, "A test that passed before the crash was failed: ${early.reportedFailure?.message}")
+        assertNull(late.reportedFailure, "A test that passed before the crash was failed: ${late.reportedFailure?.message}")
+        val crasherMessage = crasher.reportedFailure?.message.orEmpty()
+        assertTrue("it most likely crashed that VM" in crasherMessage, crasherMessage)
+    }
+
+    @Test
+    fun `given a crash after a long output then the attributed failure still shows the trap at its tail`() {
+        val passing = GroupedTest("testPassing")
+        val crasher = GroupedTest("testCrashing")
+        val trap = "RuntimeError: unreachable\n    at box (main.kt:7)"
+
+        val crashedVmStdout = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(passing.id, GroupedTestsResultProtocol.STARTED)
+            repeat(64) { append("noise line ").append(it).append(' ').append("x".repeat(1000)).append('\n') }
+            appendProtocolLine(passing.id, GroupedTestsResultProtocol.PASSED)
+            appendProtocolLine(crasher.id, GroupedTestsResultProtocol.STARTED)
+            append(trap)
+        }
+
+        runner(
+            listOf(passing, crasher),
+            vmStdout = emptyList(),
+            vmFailures = listOf(vmCrash(crashedVmStdout, vmName = "VM-1")),
+        ).processArtifact(DriverLinkedBatchArtifact)
+
+        assertNull(passing.reportedFailure, "A test that passed before the crash was failed: ${passing.reportedFailure?.message}")
+        val crasherMessage = crasher.reportedFailure?.message.orEmpty()
+        assertTrue(crasherMessage.length <= 16 * 1024, "Diagnostic was not bounded: ${crasherMessage.length}")
+        assertTrue("it most likely crashed that VM" in crasherMessage, crasherMessage)
+        assertTrue("Collected outputs:" in crasherMessage, crasherMessage)
+        assertTrue(trap in crasherMessage, "The crash evidence at the tail of the VM output was cut off:\n$crasherMessage")
+        assertTrue("middle omitted" in crasherMessage, crasherMessage)
     }
 
     @Test
@@ -907,6 +996,10 @@ class WasmGroupedStageBoxRunnerAttributionTest {
 
         runner(tests, vmStdout = listOf(vmOutput), vmFailures = emptyList())
             .processArtifact(DriverLinkedBatchArtifact)
+
+        val parsed = GroupedTestsResultProtocol.parseMerged(listOf(vmOutput))
+        assertTrue(parsed.malformedLines.single().length <= 2 * 1024, parsed.malformedLines.single().length.toString())
+        assertTrue("original length=${malformedLine.length} chars" in parsed.malformedLines.single())
 
         for (test in tests) {
             val message = test.reportedFailure?.message.orEmpty()
