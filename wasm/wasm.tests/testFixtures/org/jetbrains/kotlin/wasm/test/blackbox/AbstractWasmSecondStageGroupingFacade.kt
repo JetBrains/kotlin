@@ -371,7 +371,7 @@ internal fun computeProxyLauncherClassName(testInfo: KotlinTestInfo): String =
 
 private const val HEX_DIGITS = "0123456789abcdef"
 
-private fun String.encodeToIdentifier(): String = buildString(length * 2) {
+internal fun String.encodeToIdentifier(): String = buildString(length * 2) {
     for (byte in encodeToByteArray()) {
         val unsignedByte = byte.toInt() and 0xFF
         append(HEX_DIGITS[unsignedByte ushr 4])

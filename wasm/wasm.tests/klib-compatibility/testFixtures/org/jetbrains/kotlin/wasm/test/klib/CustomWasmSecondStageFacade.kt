@@ -127,7 +127,7 @@ class CustomWasmSecondStageFacade internal constructor(
          * `-libraries` (deduplicated against shared `helpers.klib` artifacts from [WasmCoroutineHelpersModuleTransformer],
          * since all helper KLIBs in a batch share `unique_name=helpers`) — everything else is reused as-is from Stage 1.
          *
-         * Since `GenerateWasmTests` only visits the `launcher.klib` main module here, the per-test `Launcher_<hash>`
+         * Since `GenerateWasmTests` only visits the `launcher.klib` main module here, the per-test `Launcher_<encoded-relative-path>`
          * class is unused, so `WasmJsLauncherAdditionalSourceProvider.produceAdditionalFiles()` short-circuits to an empty list for this path.
          * Aggregated batch settings (max `LANGUAGE_VERSION`, union of `OPT_IN`s, `ALLOW_KOTLIN_PACKAGE` if requested by any test)
          * are applied to both the launcher KLIB compilation and the final link, since all tests in the batch share one compiler invocation.
