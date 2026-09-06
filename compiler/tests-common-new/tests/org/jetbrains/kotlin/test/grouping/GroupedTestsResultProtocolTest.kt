@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.PASSED
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.ParsedBatchResult.Analysis.FailureKind
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.SEP
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.STARTED
+import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.OUTPUT_TRUNCATED
 import org.jetbrains.kotlin.test.report.TestReportChecks
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -93,6 +94,18 @@ class GroupedTestsResultProtocolTest {
 
         assertTrue(result.malformedLines.isEmpty(), result.malformedLines.toString())
         assertEquals(Status.PASSED, result.outcomes.getValue("id").single().status)
+    }
+
+    @Test
+    fun `given an output truncation marker before a structured block when parse then the block is rejected`() {
+        val marker = "$LINE_PREFIX$SEP$OUTPUT_TRUNCATED$SEP" +
+                "original length=5000000 chars; SHA-256=0123456789abcdef"
+        val output = "$marker\n${block(resultLine("id", STARTED), resultLine("id", PASSED))}"
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
+
+        assertFalse(GroupedTestsResultProtocol.hasCompleteStructuredBlock(output))
+        assertTrue(result.malformedLines.any { it.startsWith(marker) }, result.malformedLines.toString())
     }
 
     @Test
@@ -360,6 +373,34 @@ class GroupedTestsResultProtocolTest {
         val testResult = result.analyze(listOf("id_l")).testResults.getValue("id_l")
         assertTrue(testResult.crashEvidence != null)
         assertFalse(testResult.malformedLineCarriesIdInCrashOutput)
+    }
+
+    @Test
+    fun `given a malformed line truncated inside a longer id then neither id is blamed`() {
+        // The fragment "id_l" is indistinguishable from "id_l" itself cut off before any separator, and from
+        // "id_long" cut off after only 4 of its characters were written. Neither real id may be blamed for it.
+        val truncatedInsideId = "$LINE_PREFIX${SEP}id_l"
+        val output = block(truncatedInsideId)
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
+        val testResults = result.analyze(listOf("id_l", "id_long")).testResults
+
+        assertFalse(testResults.getValue("id_l").malformedLineCarriesId)
+        assertFalse(testResults.getValue("id_long").malformedLineCarriesId)
+    }
+
+    @Test
+    fun `given a malformed line longer than the retention limit then its id is still recognized`() {
+        // The id alone is longer than MAX_RETAINED_MALFORMED_LINE_LENGTH (2KB), so the copy retained in
+        // malformedLines for diagnostics is truncated mid-id; malformedLineCarries must not re-derive from that
+        // truncated copy, or it would miss an id malformedLineIds already captured whole from the raw line.
+        val longId = "id_" + "x".repeat(2500)
+        val malformed = "$LINE_PREFIX$SEP$longId$SEP"
+        val output = block(malformed)
+
+        val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
+        assertTrue(result.malformedLines.single().length < malformed.length)
+        assertTrue(result.analyze(listOf(longId)).testResults.getValue(longId).malformedLineCarriesId)
     }
 
     @Test

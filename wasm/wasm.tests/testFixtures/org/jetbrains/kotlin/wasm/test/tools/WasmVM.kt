@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.wasm.test.tools
 
+import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
 import java.lang.Boolean.getBoolean
+import java.security.MessageDigest
 import kotlin.test.fail
 
 private val toolLogsEnabled: Boolean = getBoolean("kotlin.js.test.verbose")
@@ -171,21 +173,93 @@ internal class ExternalTool(val path: String) {
             )
         }
 
-        // Print process output
-        val stdout = StringBuilder()
-        val bufferedStdout = BufferedReader(InputStreamReader(process.inputStream))
-
-        while (true) {
-            val line = bufferedStdout.readLine() ?: break
-            stdout.appendLine(line)
+        // Drain process output without allowing an untrusted VM to grow the JVM heap without a bound.
+        val stdout = BoundedOutputCapture()
+        BufferedReader(InputStreamReader(process.inputStream)).use { bufferedStdout ->
+            val buffer = CharArray(8 * 1024)
+            while (true) {
+                val count = bufferedStdout.read(buffer)
+                if (count < 0) break
+                stdout.append(buffer, count)
+            }
         }
 
         val exitValue = process.waitFor()
+        val capturedStdout = stdout.toString()
         if (exitValue != 0) {
-            fail("Command \"$commandString\" terminated with exit code $exitValue in working dir \"$workingDirectory\"\nOUTPUT:\n$stdout\n---")
+            fail("Command \"$commandString\" terminated with exit code $exitValue in working dir \"$workingDirectory\"\nOUTPUT:\n$capturedStdout\n---")
         }
 
-        return stdout.toString()
+        return capturedStdout
+    }
+}
+
+private const val MAX_CAPTURED_PROCESS_OUTPUT_LENGTH = 4 * 1024 * 1024
+private const val CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH = MAX_CAPTURED_PROCESS_OUTPUT_LENGTH / 2
+private const val CAPTURED_PROCESS_OUTPUT_SUFFIX_LENGTH =
+    MAX_CAPTURED_PROCESS_OUTPUT_LENGTH - CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH
+
+/** Keeps enough head and tail context for diagnostics while bounding output retained from an external VM. */
+internal class BoundedOutputCapture {
+    private val digest = MessageDigest.getInstance("SHA-256")
+    private var totalLength = 0L
+    private var fullOutput = StringBuilder()
+    private var prefix: String? = null
+    private var suffix = CharArray(CAPTURED_PROCESS_OUTPUT_SUFFIX_LENGTH)
+    private var suffixStart = 0
+    private var suffixSize = 0
+    private var renderedOutput: String? = null
+
+    fun append(buffer: CharArray, length: Int) {
+        val chunk = String(buffer, 0, length)
+        totalLength += chunk.length
+        digest.update(chunk.toByteArray(Charsets.UTF_8))
+
+        if (prefix == null) {
+            if (fullOutput.length + chunk.length <= MAX_CAPTURED_PROCESS_OUTPUT_LENGTH) {
+                fullOutput.append(chunk)
+                return
+            }
+
+            prefix = fullOutput.substring(0, CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH)
+            appendToSuffix(fullOutput.substring(CAPTURED_PROCESS_OUTPUT_PREFIX_LENGTH))
+            fullOutput = StringBuilder()
+        }
+        appendToSuffix(chunk)
+    }
+
+    private fun appendToSuffix(text: String) {
+        for (character in text) {
+            if (suffixSize < suffix.size) {
+                suffix[(suffixStart + suffixSize) % suffix.size] = character
+                suffixSize++
+            } else {
+                suffix[suffixStart] = character
+                suffixStart = (suffixStart + 1) % suffix.size
+            }
+        }
+    }
+
+    override fun toString(): String {
+        renderedOutput?.let { return it }
+        val output = prefix?.let { outputPrefix ->
+            val hash = digest.digest().joinToString("") { byte -> "%02x".format(byte) }
+            buildString(outputPrefix.length + suffixSize + 128) {
+                append(outputPrefix)
+                append('\n')
+                append(GroupedTestsResultProtocol.LINE_PREFIX)
+                append(GroupedTestsResultProtocol.SEP)
+                append(GroupedTestsResultProtocol.OUTPUT_TRUNCATED)
+                append(GroupedTestsResultProtocol.SEP)
+                append("original length=").append(totalLength).append(" chars; SHA-256=").append(hash)
+                append('\n')
+                for (index in 0 until suffixSize) {
+                    append(suffix[(suffixStart + index) % suffix.size])
+                }
+            }
+        } ?: fullOutput.toString()
+        renderedOutput = output
+        return output
     }
 }
 

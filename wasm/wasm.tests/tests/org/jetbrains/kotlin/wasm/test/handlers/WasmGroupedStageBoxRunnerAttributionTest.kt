@@ -786,6 +786,35 @@ class WasmGroupedStageBoxRunnerAttributionTest {
     }
 
     @Test
+    fun `given many results for tests outside the batch then the infrastructure diagnostic stays bounded`() {
+        val inBatch = GroupedTest("testInBatch")
+        val foreignIds = (0 until 2_000).map { "foreign-$it" }
+        val allForeignIds = foreignIds.toString()
+
+        val vmStdout = buildString {
+            appendProtocolSentinel(GroupedTestsResultProtocol.BEGIN)
+            appendProtocolLine(inBatch.id, GroupedTestsResultProtocol.STARTED)
+            appendProtocolLine(inBatch.id, GroupedTestsResultProtocol.PASSED)
+            for (foreignId in foreignIds) {
+                appendProtocolLine(foreignId, GroupedTestsResultProtocol.STARTED)
+                appendProtocolLine(foreignId, GroupedTestsResultProtocol.PASSED)
+            }
+            appendProtocolSentinel(GroupedTestsResultProtocol.END)
+        }
+
+        val error = assertThrows(TestInfrastructureException::class.java) {
+            runner(listOf(inBatch), vmStdout = listOf(vmStdout), vmFailures = emptyList())
+                .processArtifact(DriverLinkedBatchArtifact)
+        }
+
+        val message = error.message.orEmpty()
+        assertTrue(message.length <= 16 * 1024, "Diagnostic was not bounded: ${message.length}")
+        assertTrue("truncated; original length=" in message, message)
+        assertTrue("SHA-256=" in message, message)
+        assertFalse(allForeignIds in message, "The complete untrusted ID list was copied into the diagnostic")
+    }
+
+    @Test
     fun `given test infos with colliding package hashes then launcher names remain distinct`() {
         val first = KotlinTestInfo("org.jetbrains.kotlin.wasm.test.Aa", "test", emptySet())
         val second = KotlinTestInfo("org.jetbrains.kotlin.wasm.test.BB", "test", emptySet())
@@ -907,6 +936,10 @@ class WasmGroupedStageBoxRunnerAttributionTest {
 
         runner(tests, vmStdout = listOf(vmOutput), vmFailures = emptyList())
             .processArtifact(DriverLinkedBatchArtifact)
+
+        val parsed = GroupedTestsResultProtocol.parseMerged(listOf(vmOutput))
+        assertTrue(parsed.malformedLines.single().length <= 2 * 1024, parsed.malformedLines.single().length.toString())
+        assertTrue("original length=${malformedLine.length} chars" in parsed.malformedLines.single())
 
         for (test in tests) {
             val message = test.reportedFailure?.message.orEmpty()
