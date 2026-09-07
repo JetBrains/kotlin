@@ -133,13 +133,13 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
             paramVersions[param.symbol] = version
 
             var hasDefaultValue = param.defaultValue != null ||
-                    (declaration.symbol.getSingleMatchedExpectForActualOrNull()?.valueParameterSymbols?.getOrNull(i)?.hasDefaultValue == true)
+                    (declaration.symbol.unwrapActualizationInRegardExpectRefinement().valueParameterSymbols.getOrNull(i)?.hasDefaultValue == true)
             if (!hasDefaultValue && classScope != null && declaration is FirNamedFunction) {
                 classScope.processFunctionsByName(declaration.nameOrSpecialName) {}
 
                 @OptIn(ScopeFunctionRequiresPrewarm::class)
                 classScope.processOverriddenFunctions(declaration.symbol) l@{ overridden ->
-                    val overriddenWithDefault = overridden.getSingleMatchedExpectForActualOrNull() ?: overridden
+                    val overriddenWithDefault = overridden.unwrapActualizationInRegardExpectRefinement()
                     val overriddenParam = overriddenWithDefault.valueParameterSymbols.getOrNull(i) ?: return@l ProcessorAction.NEXT
                     if (overriddenParam.hasDefaultValue) {
                         hasDefaultValue = true

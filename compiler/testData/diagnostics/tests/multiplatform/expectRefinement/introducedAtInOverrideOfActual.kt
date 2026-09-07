@@ -1,6 +1,6 @@
 // LANGUAGE: +ExpectRefinement
 // WITH_STDLIB
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-89196
 
 // MODULE: common
@@ -22,7 +22,7 @@ actual open class Foo {
 }
 
 class Bar : Foo() {
-    override fun foo(<!INVALID_VERSIONING_ON_NON_OPTIONAL!>@IntroducedAt("1")<!>param: Int) {}
+    override fun foo(@IntroducedAt("1")param: Int) {}
 }
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, classReference, expect, functionDeclaration */
