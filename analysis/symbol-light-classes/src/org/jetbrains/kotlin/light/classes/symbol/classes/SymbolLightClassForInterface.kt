@@ -9,7 +9,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReferenceList
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
@@ -52,7 +52,7 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
         withClassSymbol { classSymbol ->
             val result = mutableListOf<PsiMethod>()
 
-            val visibleDeclarations = classSymbol.declaredMemberScope.callables.filter { acceptCallableSymbol(it) }
+            val visibleDeclarations = classSymbol.combinedDeclaredMemberScope.callables.filter { acceptCallableSymbol(it) }
 
             createMethods(this@SymbolLightClassForInterface, visibleDeclarations, result)
             addMethodsFromCompanionIfNeeded(result, classSymbol)
