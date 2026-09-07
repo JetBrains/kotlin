@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.TAILREC_MODIFIER
+import org.jetbrains.kotlin.diagnostics.error0
 import org.jetbrains.kotlin.diagnostics.error1
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
@@ -31,6 +32,8 @@ object CommonBackendErrors : KtDiagnosticsContainer() {
     val NO_TAIL_CALLS_FOUND by warning0<PsiElement>(TAILREC_MODIFIER)
 
     val TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED by warning0<PsiElement>(REFERENCED_NAME_BY_QUALIFIED)
+
+    val TAILREC_ON_VIRTUAL_MEMBER_ERROR by error0<PsiElement>(TAILREC_MODIFIER)
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory {
         return KtDefaultCommonBackendErrorMessages
@@ -64,6 +67,10 @@ object KtDefaultCommonBackendErrorMessages : BaseDiagnosticRendererFactory() {
         map.put(
             CommonBackendErrors.TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED,
             "Tail recursion optimization inside try/catch/finally is not supported.",
+        )
+        map.put(
+            CommonBackendErrors.TAILREC_ON_VIRTUAL_MEMBER_ERROR,
+            "Tailrec is prohibited on open members.",
         )
     }
 }
