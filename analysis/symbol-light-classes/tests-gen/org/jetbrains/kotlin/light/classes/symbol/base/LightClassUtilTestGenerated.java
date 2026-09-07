@@ -40,6 +40,18 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   }
 
   @Test
+  @TestMetadata("dataClassProperty.kt")
+  public void testDataClassProperty() {
+    run("dataClassProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("enumElement.kt")
+  public void testEnumElement() {
+    run("enumElement.kt");
+  }
+
+  @Test
   @TestMetadata("mangledName.kt")
   public void testMangledName() {
     run("mangledName.kt");
@@ -97,5 +109,23 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   @TestMetadata("propertyWithImplicitAccessors.kt")
   public void testPropertyWithImplicitAccessors() {
     run("propertyWithImplicitAccessors.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithJvmNameOnGetterAndSetter.kt")
+  public void testPropertyWithJvmNameOnGetterAndSetter() {
+    run("propertyWithJvmNameOnGetterAndSetter.kt");
+  }
+
+  @Test
+  @TestMetadata("typeParameterInFunctionWithJvmOverloads.kt")
+  public void testTypeParameterInFunctionWithJvmOverloads() {
+    run("typeParameterInFunctionWithJvmOverloads.kt");
+  }
+
+  @Test
+  @TestMetadata("typeParameterInProperty.kt")
+  public void testTypeParameterInProperty() {
+    run("typeParameterInProperty.kt");
   }
 }
