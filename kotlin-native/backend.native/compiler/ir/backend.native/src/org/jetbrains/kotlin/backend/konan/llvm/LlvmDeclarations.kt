@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -466,9 +465,9 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
     }
 }
 
-internal sealed class KonanMetadata(override val name: Name?, val konanLibrary: KotlinLibrary?) : MetadataSource {
+internal sealed class KonanMetadata(override val name: Name?) : MetadataSource {
     sealed class Declaration<T>(declaration: T)
-        : KonanMetadata(declaration.metadata?.name, declaration.moduleFragment.kotlinLibrary) where T : IrDeclaration, T : IrMetadataSourceOwner
+        : KonanMetadata(declaration.metadata?.name) where T : IrDeclaration, T : IrMetadataSourceOwner
 
     class Class(irClass: IrClass, val llvm: ClassLlvmDeclarations, val layoutBuilder: ClassLayoutBuilder) : Declaration<IrClass>(irClass)
 
