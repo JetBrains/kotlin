@@ -1,3 +1,6 @@
+// LL_FIR_DIVERGENCE
+// KT-87444: TODO In TailrecCheckerLowering, fix false-positive NO_TAIL_CALLS_FOUND in `foo3a()` having recursive call within elvis operator
+// LL_FIR_DIVERGENCE
 // RUN_PIPELINE_TILL: BACKEND
 
 tailrec fun foo1(x: Int): Int {
@@ -12,8 +15,8 @@ tailrec fun foo2(x: Int): Boolean {
 
 fun condition(x: Int): Boolean = x == 0
 
-<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun Int.foo3a(): Int {
-    return boo()?.<!NON_TAIL_RECURSIVE_CALL!>foo3a<!>() ?: 1
+tailrec fun Int.foo3a(): Int {
+    return boo()?.foo3a() ?: 1
 }
 
 <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun Int.foo3b(): Int {
