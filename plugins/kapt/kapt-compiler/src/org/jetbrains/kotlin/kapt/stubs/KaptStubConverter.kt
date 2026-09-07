@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.PackageResolutionResult
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -91,6 +92,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.util.ArrayLiteralResolution
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -937,8 +939,14 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
     private fun evaluateFirExpression(initialExpression: FirExpression): Any? {
         val session = kaptContext.firSession!!
+        val expression =
+            if (initialExpression is FirFunctionCall && withSession(session) { useArrayLiteralResolution() }) {
+                @OptIn(ArrayLiteralResolution::class)
+                FirArrayOfCallTransformer().transformFunctionCall(initialExpression, session)
+            } else initialExpression
+
         val result = try {
-            initialExpression.evaluateAs<FirElement>(session)
+            expression.evaluateAs<FirElement>(session)
         } catch (_: Exception) {
             null
         } ?: return null

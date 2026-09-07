@@ -500,10 +500,7 @@ object FirExpressionEvaluator {
             if (functionCall.getExpandedType(session).classId == StandardClassIds.KClass) return NotKClassLiteral(functionCall.source)
 
             return when (val symbol = calleeReference.resolvedSymbol) {
-                is FirNamedFunctionSymbol -> when {
-                    symbol.isArrayOfFunction() -> visitArrayOfCall(functionCall)
-                    else -> visitNamedFunction(functionCall, symbol)
-                }
+                is FirNamedFunctionSymbol -> visitNamedFunction(functionCall, symbol)
                 is FirConstructorSymbol -> visitConstructorCall(functionCall)
                 else -> NotConst(functionCall.source)
             }
@@ -514,21 +511,24 @@ object FirExpressionEvaluator {
          * it is a task of constant evaluator to transform `arrayOf` family to collection literals.
          */
         private fun visitArrayOfCall(functionCall: FirFunctionCall): FirEvaluatorResult {
+            withSession(session) {
+                if (useArrayLiteralResolution()) return NotConst(functionCall.source)
+            }
+
+            // vararg argument needs to be flattened
+            val flatArguments = functionCall.arguments.flatMap { (it as? FirVarargArgumentsExpression)?.arguments ?: [] }
             return buildCollectionLiteral {
                 source = functionCall.source
                 coneTypeOrNull = functionCall.resolvedType
                 annotations.addAll(functionCall.annotations)
                 argumentList = buildArgumentList {
-                    arguments.addAll(evaluateVarargOr(functionCall.elementArguments()) { return it })
+                    arguments.addAll(evaluateVarargOr(flatArguments) { return it })
                 }
             }.wrap()
         }
 
-        private fun FirFunctionCall.elementArguments(): List<FirExpression> {
-            return arguments.flatMap { (it as? FirVarargArgumentsExpression)?.arguments ?: [] }
-        }
-
         private fun visitNamedFunction(functionCall: FirFunctionCall, symbol: FirNamedFunctionSymbol): FirEvaluatorResult {
+            if (symbol.isArrayOfFunction()) return visitArrayOfCall(functionCall)
             if (!functionCall.isCompileTimeBuiltinCall(session)) return NotConst(functionCall.source)
 
             val receivers = listOfNotNull(functionCall.dispatchReceiver, functionCall.extensionReceiver)
