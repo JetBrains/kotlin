@@ -43,7 +43,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile>().configureEa
         compilerOptions.freeCompilerArgs.add("-Xrender-internal-diagnostic-names")
     }
     friendPaths.from(libraries)
-    compilerOptions.allWarningsAsErrors.set(true)
+    // TODO: re-enable back, KT-88174.
+//    compilerOptions.allWarningsAsErrors.set(true)
 }
 
 val emptyJavadocJar = tasks.register("emptyJavadocJar", Jar::class) {

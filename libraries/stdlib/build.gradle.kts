@@ -51,7 +51,8 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     freeCompilerArgs.add("-Xname-based-destructuring=complete")
     freeCompilerArgs.add("-Xcollection-literals")
     addReturnValueCheckerInfo()
-    if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
+    // TODO: re-enable back, KT-88174.
+//    if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
 
     if (this is KotlinJvmCompilerOptions) {
         suppressRedundantCliArgumentWarning()

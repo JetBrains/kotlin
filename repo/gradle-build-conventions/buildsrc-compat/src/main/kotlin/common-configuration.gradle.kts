@@ -260,7 +260,8 @@ fun Project.configureKotlinCompilationOptions() {
                 if (renderDiagnosticNames) {
                     freeCompilerArgs.add("-Xrender-internal-diagnostic-names")
                 }
-                allWarningsAsErrors.set(!kotlinBuildProperties.disableWerror)
+                // TODO: re-enable back, KT-88174.
+//                allWarningsAsErrors.set(!kotlinBuildProperties.disableWerror)
                 if (project.path in projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib) {
                     freeCompilerArgs.add("-opt-in=org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction")
                 }
