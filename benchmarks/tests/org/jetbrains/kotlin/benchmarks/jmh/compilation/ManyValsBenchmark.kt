@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.benchmarks.jmh
+package org.jetbrains.kotlin.benchmarks.jmh.compilation
 
 import org.openjdk.jmh.annotations.*
 import org.openjdk.jmh.infra.Blackhole
@@ -12,9 +12,9 @@ import java.util.concurrent.TimeUnit
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
-open class InferenceBaselineCallsBenchmark : AbstractSimpleFileBenchmark() {
+open class ManyValsBenchmark : AbstractSimpleFileBenchmark() {
 
-    @Param("1", "10", "100", "1000", "5000", "10000")
+    @Param("1", "100", "1000", "3000", "5000", "7000", "10000")
     private var size: Int = 0
 
     @Benchmark
@@ -24,10 +24,8 @@ open class InferenceBaselineCallsBenchmark : AbstractSimpleFileBenchmark() {
 
     override fun buildText() =
             """
-            |fun foo(x: Int): Int = 1
-            |fun expectsInt(x: Int) {}
-            |fun bar(v: Int) {
-            |${(1..size).map { "    expectsInt(foo(v))" }.joinToString("\n")}
+            |fun bar() {
+            |${(1..size).joinToString("\n") { "    val x$it: Int = 1" }}
             |}
             """.trimMargin()
 }
