@@ -44,7 +44,7 @@ kotlin {
         }
     }
 
-    macosX64('macos') {
+    macosArm64('macos') {
         // Binary configuration
         binaries {
             // Creating static library with a custom name.
