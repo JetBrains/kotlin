@@ -35,6 +35,7 @@ open class TailrecCheckerLowering<Context : LoweringContext>(val context: Contex
                     declaration,
                     followFunctionReference = ::followFunctionReference,
                     followRichFunctionReference = ::followRichFunctionReference,
+                    collectNonTailCallsInNestedFunctions = true,
                 )
 
                 for (call in tailCalls.nonTailCalls) {

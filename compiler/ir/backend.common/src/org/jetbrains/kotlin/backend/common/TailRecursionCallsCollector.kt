@@ -49,7 +49,8 @@ data class TailCalls(
 fun collectTailRecursionCalls(
     irFunction: IrFunction,
     followFunctionReference: (IrFunctionReference) -> Boolean,
-    followRichFunctionReference: (IrRichFunctionReference) -> Boolean
+    followRichFunctionReference: (IrRichFunctionReference) -> Boolean,
+    collectNonTailCallsInNestedFunctions: Boolean = false,
 ): TailCalls {
     if ((irFunction as? IrSimpleFunction)?.isTailrec != true) {
         return TailCalls(emptySet(), false)
@@ -67,11 +68,21 @@ fun collectTailRecursionCalls(
         }
 
         override fun visitFunction(declaration: IrFunction, data: VisitorState) {
-            // Ignore local functions.
+            if (collectNonTailCallsInNestedFunctions) {
+                // Tailrec lowering cannot transform calls from nested declarations or default values,
+                // but the checker must diagnose them.
+                declaration.parameters.forEach { parameter ->
+                    parameter.defaultValue?.accept(this, VisitorState(isTailExpression = false, inOtherFunction = true))
+                }
+                declaration.body?.accept(this, VisitorState(isTailExpression = false, inOtherFunction = true))
+            }
         }
 
         override fun visitClass(declaration: IrClass, data: VisitorState) {
-            // Ignore local classes.
+            if (collectNonTailCallsInNestedFunctions) {
+                // Tailrec lowering cannot transform calls from local classes, but the checker must diagnose them.
+                declaration.acceptChildren(this, VisitorState(isTailExpression = false, inOtherFunction = true))
+            }
         }
 
         override fun visitTry(aTry: IrTry, data: VisitorState) {
@@ -183,7 +194,7 @@ fun collectTailRecursionCalls(
             //   }
             // Whether crossinline lambdas are matched is unimportant, as they can't contain any returns
             // from `foo` anyway.
-            if (followFunctionReference(expression)) {
+            if (followFunctionReference(expression) || collectNonTailCallsInNestedFunctions) {
                 // If control reaches end of lambda, it will *not* end the current function by default,
                 // so the lambda's body itself is not a tail statement.
                 expression.symbol.owner.body?.accept(this, VisitorState(isTailExpression = false, inOtherFunction = true))
@@ -192,7 +203,7 @@ fun collectTailRecursionCalls(
 
         override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: VisitorState) {
             expression.acceptChildren(this, VisitorState(isTailExpression = false, data.inOtherFunction))
-            if (followRichFunctionReference(expression)) {
+            if (followRichFunctionReference(expression) || collectNonTailCallsInNestedFunctions) {
                 // If control reaches end of lambda, it will *not* end the current function by default,
                 // so the lambda's body itself is not a tail statement.
                 expression.invokeFunction.body?.accept(this, VisitorState(isTailExpression = false, inOtherFunction = true))
@@ -200,6 +211,11 @@ fun collectTailRecursionCalls(
         }
     }
 
+    irFunction.parameters.forEach { parameter ->
+        if (collectNonTailCallsInNestedFunctions) {
+            parameter.defaultValue?.accept(visitor, VisitorState(isTailExpression = false, inOtherFunction = true))
+        }
+    }
     irFunction.body?.accept(visitor, VisitorState(isTailExpression = true, inOtherFunction = false))
     return TailCalls(result, someCallsAreInOtherFunctions, nonTailCalls)
 }
