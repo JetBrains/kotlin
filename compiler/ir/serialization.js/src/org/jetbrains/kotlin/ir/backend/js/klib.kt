@@ -50,9 +50,6 @@ val KotlinLibrary.serializedIrFileFingerprints: List<SerializedIrFileFingerprint
 val KotlinLibrary.serializedKlibFingerprint: SerializedKlibFingerprint?
     get() = manifestProperties.getProperty(KLIB_PROPERTY_SERIALIZED_KLIB_FINGERPRINT)?.let { SerializedKlibFingerprint.fromString(it) }
 
-internal val SerializedIrFile.fileMetadata: ByteArray
-    get() = backendSpecificMetadata ?: error("Expect file caches to have backendSpecificMetadata, but '$path' doesn't")
-
 /**
  * Note: This function returns the list of the deserialized [IrModuleFragment]s that has exactly the same
  * order as the libraries in [klibs].
@@ -286,7 +283,6 @@ fun serializeModuleIntoKlib(
                             declarations,
                             bodies,
                             fqName.toByteArray(),
-                            fileMetadata,
                             debugInfo,
                             fileEntries,
                         )
@@ -386,7 +382,6 @@ fun IncrementalDataProvider.getSerializedData(nonCompiledSources: Set<File>): Li
                 bodies,
                 declarations,
                 debugInfo,
-                fileMetadata,
                 fileEntries,
             )
         }
