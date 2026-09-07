@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.export.internal
 
-import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModuleMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createFullyExportedSwiftExportedModule
@@ -33,13 +32,14 @@ private const val EXPORTED_MODULE_ITSELF = "the module being exported"
  *
  * @param rootModuleName the Swift module name of the module being exported, for collision detection
  */
-internal fun Project.applySwiftExportConsumerOverrides(
+internal fun applySwiftExportConsumerOverrides(
     modules: List<SwiftExportedModule>,
     overrides: Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>,
     metadataByComponent: Map<ComponentIdentifier, SwiftExportMetadata>,
     exportConfiguration: LazyResolvedConfigurationWithArtifacts,
     apiConfiguration: LazyResolvedConfigurationWithArtifacts?,
     rootModuleName: String,
+    reportDiagnostic: (ToolingDiagnostic) -> Unit,
 ): List<SwiftExportedModule> {
     if (overrides.isEmpty() && metadataByComponent.isEmpty()) return modules
 
@@ -52,7 +52,7 @@ internal fun Project.applySwiftExportConsumerOverrides(
     val componentByArtifact = componentByArtifact(exportConfiguration, apiConfiguration)
     val exported = modules.map { module ->
         val component = componentByArtifact[module.artifact] ?: return@map module to null
-        val declaredName = sources.declaredModuleName(component)?.also { validateSwiftExportModuleName(it) }
+        val declaredName = sources.declaredModuleName(component)?.also { validateSwiftExportModuleName(it, reportDiagnostic) }
         val visibility = sources.declaredVisibility(component)
         val mode = when (visibility) {
             SwiftExportVisibility.EXPOSED -> SwiftExportedModuleMode.FULL

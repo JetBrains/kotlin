@@ -5,17 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal
 
-import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
-import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SWIFT_EXPORT_METADATA_SCHEMA_VERSION
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDependencySelector
@@ -96,32 +93,28 @@ internal fun createHiddenSwiftExportedModule(
     )
 }
 
-internal fun Project.collectModules(
-    exportConfigurationProvider: Provider<LazyResolvedConfigurationWithArtifacts>,
-    apiConfigurationProvider: Provider<LazyResolvedConfigurationWithArtifacts?>,
-    metadataConfigurationProvider: Provider<LazyResolvedConfigurationWithArtifacts?>,
-    exportedModulesProvider: Provider<Set<SwiftExportedDependency>>,
-    dependencyOptionsOverridesProvider: Provider<Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>>,
-    rootModuleNameProvider: Provider<String>,
-): Provider<List<SwiftExportedModule>> = provider {
-    val exportConfiguration = exportConfigurationProvider.get()
-    val apiConfiguration = apiConfigurationProvider.orNull
-    val metadataConfiguration = metadataConfigurationProvider.orNull
-    val exportedModules = exportedModulesProvider.get()
-    val dependencyOptionsOverrides = dependencyOptionsOverridesProvider.get()
-    val rootModuleName = rootModuleNameProvider.get()
-
-    project.applySwiftExportConsumerOverrides(
-        modules = project.swiftExportedModules(
+internal fun collectModules(
+    exportConfiguration: LazyResolvedConfigurationWithArtifacts,
+    apiConfiguration: LazyResolvedConfigurationWithArtifacts?,
+    metadataConfiguration: LazyResolvedConfigurationWithArtifacts?,
+    exportedModules: Set<SwiftExportedDependency>,
+    dependencyOptionsOverrides: Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>,
+    rootModuleName: String,
+    reportDiagnostic: (ToolingDiagnostic) -> Unit,
+): List<SwiftExportedModule> {
+    return applySwiftExportConsumerOverrides(
+        modules = swiftExportedModules(
             exportConfiguration = exportConfiguration,
             apiConfiguration = apiConfiguration,
             exportedModules = exportedModules,
+            reportDiagnostic = reportDiagnostic,
         ),
         overrides = dependencyOptionsOverrides,
-        metadataByComponent = metadataConfiguration?.metadataByComponent(project::reportDiagnostic) ?: emptyMap(),
+        metadataByComponent = metadataConfiguration?.metadataByComponent(reportDiagnostic) ?: emptyMap(),
         exportConfiguration = exportConfiguration,
         apiConfiguration = apiConfiguration,
         rootModuleName = rootModuleName,
+        reportDiagnostic = reportDiagnostic,
     )
 }
 
@@ -163,10 +156,11 @@ internal fun defaultSwiftExportModuleName(id: ComponentIdentifier, moduleVersion
         else -> null
     }
 
-private fun Project.swiftExportedModules(
+internal fun swiftExportedModules(
     exportConfiguration: LazyResolvedConfigurationWithArtifacts,
     apiConfiguration: LazyResolvedConfigurationWithArtifacts?,
     exportedModules: Set<SwiftExportedDependency>,
+    reportDiagnostic: (ToolingDiagnostic) -> Unit,
 ) = findAndCreateSwiftExportedModules(
     exportedModules = exportedModules,
     resolvedExportArtifacts = exportConfiguration.filteredArtifacts { allResolvedDependencies },
@@ -177,6 +171,7 @@ private fun Project.swiftExportedModules(
                 .filterNot { it.isConstraint }
         }
         ?: emptySet(),
+    reportDiagnostic = reportDiagnostic,
 )
 
 /**
@@ -240,10 +235,11 @@ private fun LazyResolvedConfigurationWithArtifacts.filteredArtifacts(
 private val File.isCinteropKlib get() = name.contains("-cinterop-") || name.contains("Cinterop-")
 private val File.isJavaJar get() = extension == "jar"
 
-private fun Project.findAndCreateSwiftExportedModules(
+private fun findAndCreateSwiftExportedModules(
     exportedModules: Set<SwiftExportedDependency>,
     resolvedExportArtifacts: Set<ResolvedArtifactWithVersionIdentifier>,
     resolvedDirectApiArtifacts: Set<ResolvedArtifactWithVersionIdentifier>,
+    reportDiagnostic: (ToolingDiagnostic) -> Unit,
 ): List<SwiftExportedModule> {
     val result = mutableListOf<SwiftExportedModule>()
     val processedComponents = mutableSetOf<ResolvedArtifactWithVersionIdentifier>()
@@ -277,7 +273,7 @@ private fun Project.findAndCreateSwiftExportedModules(
             result.add(
                 createFullyExportedSwiftExportedModule(
                     explicitModule.moduleName.orElse(
-                        normalizedAndValidatedModuleName(explicitModule.inheritedName)
+                        normalizedAndValidatedModuleName(explicitModule.inheritedName, reportDiagnostic)
                     ).get(),
                     explicitModule.flattenPackage.orNull,
                     matchingArtifact.artifact.file
@@ -333,5 +329,5 @@ private data class SwiftExportedModuleImp(
     override val exportMode: SwiftExportedModuleMode,
 ) : SwiftExportedModule
 
-private fun Project.normalizedAndValidatedModuleName(moduleName: String) =
-    moduleName.normalizedSwiftExportModuleName.also { validateSwiftExportModuleName(it) }
+private fun normalizedAndValidatedModuleName(moduleName: String, reportDiagnostic: (ToolingDiagnostic) -> Unit) =
+    moduleName.normalizedSwiftExportModuleName.also { validateSwiftExportModuleName(it, reportDiagnostic) }

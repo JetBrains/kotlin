@@ -189,23 +189,18 @@ private fun Project.registerSwiftExportRun(
     val files = outputs.map { it.dir("files") }
     val serializedModules = outputs.map { it.dir("modules").file("${swiftApiModuleName.get()}.json") }
     val exportConfigurationProvider = provider { LazyResolvedConfigurationWithArtifacts(exportConfiguration) }
-    val apiConfigurationProvider = provider { apiConfiguration?.let(::LazyResolvedConfigurationWithArtifacts) }
     val metadataConfigurationProvider = provider {
-        if (shouldResolvePublishedMetadata) {
-            LazyResolvedConfigurationWithArtifacts(
-                exportConfiguration,
-                configureArtifactView = {
-                    withVariantReselection()
-                    componentFilter { it is ModuleComponentIdentifier }
-                },
-                configureArtifactViewAttributes = { attributes ->
-                    attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(SWIFT_EXPORT_METADATA_USAGE))
-                    attributes.attribute(Category.CATEGORY_ATTRIBUTE, categoryByName(Category.LIBRARY))
-                }
-            )
-        } else {
-            null
-        }
+        LazyResolvedConfigurationWithArtifacts(
+            exportConfiguration,
+            configureArtifactView = {
+                withVariantReselection()
+                componentFilter { it is ModuleComponentIdentifier }
+            },
+            configureArtifactViewAttributes = { attributes ->
+                attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(SWIFT_EXPORT_METADATA_USAGE))
+                attributes.attribute(Category.CATEGORY_ATTRIBUTE, categoryByName(Category.LIBRARY))
+            }
+        )
     }
 
     return locateOrRegisterTask<SwiftExportTask>(swiftExportTaskName) { task ->
@@ -223,16 +218,19 @@ private fun Project.registerSwiftExportRun(
         task.parameters.konanTarget.set(target.konanTarget)
         task.parameters.bridgeModuleName.set("SharedBridge")
         task.parameters.swiftExportSettings.set(customSetting)
-        task.parameters.swiftModules.set(
-            collectModules(
-                exportConfigurationProvider = exportConfigurationProvider,
-                apiConfigurationProvider = apiConfigurationProvider,
-                exportedModulesProvider = exportedModules,
-                metadataConfigurationProvider = metadataConfigurationProvider,
-                dependencyOptionsOverridesProvider = dependencyOptionsOverrides,
-                rootModuleNameProvider = swiftApiModuleName,
-            )
-        )
+
+        // The exported modules are resolved from these Configuration-Cache-safe holders at execution time (see
+        // SwiftExportTask.run), not here. Up-to-date checking is provided by the raw configurations wired as task
+        // inputs above.
+        task.exportConfiguration.set(exportConfigurationProvider)
+        if (apiConfiguration != null) {
+            task.apiConfiguration.set(provider { LazyResolvedConfigurationWithArtifacts(apiConfiguration) })
+        }
+        if (shouldResolvePublishedMetadata) {
+            task.metadataConfiguration.set(metadataConfigurationProvider)
+        }
+        task.exportedModules.set(exportedModules)
+        task.dependencyOptionsOverrides.set(dependencyOptionsOverrides)
 
         task.ignoreExperimentalDiagnostic.set(kotlinPropertiesProvider.swiftExportIgnoreExperimental)
         task.mainModuleInput.moduleName.set(swiftApiModuleName)
