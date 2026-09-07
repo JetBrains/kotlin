@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoPointer
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.generateWritableTypeInfoForClass
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
-import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.objcinterop.*
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -429,7 +429,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             if (declaration.isTypedIntrinsic || declaration.isObjCBridgeBased()
                     // All call-sites to external accessors to interop properties
                     // are lowered by InteropLowering.
-                    || (declaration.isAccessor && declaration.isFromCInteropLibrary())
+                    || (declaration.isAccessor && declaration.moduleFragment.kotlinLibrary?.isCInteropLibrary() == true)
                     || declaration.isCFunctionOrGlobalAccessor()) return
 
             val symbolName = declaration.computeSymbolName(context, forImplementation = true)

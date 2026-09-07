@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
-import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -39,6 +38,7 @@ import org.jetbrains.kotlin.ir.util.isSubtypeOf
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
@@ -819,7 +819,7 @@ private class InteropTransformerPart2(
     private fun tryGenerateInteropConstantRead(expression: IrCall): IrExpression? {
         val function = expression.symbol.owner
 
-        if (!function.isFromCInteropLibrary()) return null
+        if (function.moduleFragment.kotlinLibrary?.isCInteropLibrary() != true) return null
         if (!function.isGetter) return null
 
         val constantProperty = function.correspondingPropertySymbol?.owner?.takeIf { it.isConst } ?: return null
