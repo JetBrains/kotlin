@@ -354,17 +354,15 @@ abstract class TypeCheckerStateForConstraintSystem(
                 when (subType) {
                     is RigidTypeMarker ->
                         when {
-                            // TODO: consider dropping this branch in 2.5 timeframe (KT-84664)
-                            usePreciseSimplificationToFlexibleLowerConstraint() ->
-                                // Foo <: T! -- (Foo!! .. Foo) <: T
-                                // Foo? <: T! -- (Foo!! .. Foo?) <: T
-                                createTrivialFlexibleTypeOrSelf(
-                                    subType.makeDefinitelyNotNullOrNotNull(),
-                                )
                             // Foo <: T! -- Foo! <: T
                             !subType.isMarkedNullable() -> createTrivialFlexibleTypeOrSelf(subType)
                             // Foo? <: T! -- Foo? <: T
                             else -> subType
+                            // Both simplifications in this when are unprecise.
+                            // It would be more precise to use the following instead
+                            //     Foo <: T! -- (Foo!! .. Foo) <: T
+                            //     Foo? <: T! -- (Foo!! .. Foo?) <: T
+                            // Unfortunately, this attempt breaks too much, see KT-84664
                         }
 
                     is FlexibleTypeMarker ->
