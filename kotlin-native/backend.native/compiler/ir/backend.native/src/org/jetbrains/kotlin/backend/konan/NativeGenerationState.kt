@@ -76,7 +76,7 @@ internal class NativeGenerationState(
 
     lateinit var fileLowerState: FileLowerState
 
-    val producedLlvmModuleContainsStdlib get() = llvmModuleSpecification.containsModule(context.stdlibModule)
+    val producedLlvmModuleContainsStdlib = llvmModuleSpecification.containsModule(context.irLinker.getBuiltInsModule())
 
     internal val runtimeModulesConfig = RuntimeModulesConfig(config)
 
