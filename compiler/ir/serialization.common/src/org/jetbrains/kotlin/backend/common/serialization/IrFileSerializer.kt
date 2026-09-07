@@ -177,10 +177,6 @@ open class IrFileSerializer(
     private var isInsideInline: Boolean = false
     private var fileContainsInline = false
 
-    interface FileBackendSpecificMetadata {
-        fun toByteArray(): ByteArray
-    }
-
     sealed class XStatementOrExpression {
         abstract fun toByteArray(): ByteArray
 
