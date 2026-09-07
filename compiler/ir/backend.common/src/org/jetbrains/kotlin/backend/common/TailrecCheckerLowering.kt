@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.isOverridable
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
@@ -30,6 +31,12 @@ open class TailrecCheckerLowering<Context : LoweringContext>(val context: Contex
                 declaration.acceptChildrenVoid(this)
 
                 if (!declaration.isTailrec) return
+
+                if (declaration.isOverridable) {
+                    context.diagnosticReporter
+                        .at(declaration, declaration.file)
+                        .report(CommonBackendErrors.TAILREC_ON_VIRTUAL_MEMBER_ERROR)
+                }
 
                 val tailCalls = collectTailRecursionCalls(
                     declaration,
