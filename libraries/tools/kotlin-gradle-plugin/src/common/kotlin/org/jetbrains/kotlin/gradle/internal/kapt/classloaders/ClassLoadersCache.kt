@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.internal.kapt.classloaders
 
+import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.net.URLClassLoader
 import java.time.Duration
-import java.util.concurrent.ConcurrentMap
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * LRU cache for [ClassLoader]s by class path.
@@ -18,12 +19,12 @@ import java.util.concurrent.ConcurrentMap
 class ClassLoadersCache(
     size: Int,
     private val parentClassLoader: ClassLoader = ClassLoader.getSystemClassLoader(),
-    ttl: Duration = Duration.ofHours(1)
+    ttl: Duration = Duration.ofHours(1),
 ) : AutoCloseable {
 
     private val logger = LoggerFactory.getLogger(ClassLoadersCache::class.java)
 
-    private val cache: ConcurrentMap<CacheKey, URLClassLoader> =
+    private val cache: Cache<CacheKey, URLClassLoader> =
         CacheBuilder
             .newBuilder()
             .maximumSize(size.toLong())
@@ -33,45 +34,69 @@ class ClassLoadersCache(
                 logger.info("Removing classloader from cache: ${key.entries.map { it.path }}")
                 cl.close()
             }
-            .build<CacheKey, URLClassLoader>()
-            .asMap()
+            .build()
+
+    /**
+     * Class loaders created for classpath entries that must not be retained (see [getForSplitPaths]),
+     * keyed by the thread that asked for them so that concurrent kapt executions in one daemon do not
+     * close each other's loaders.
+     */
+    private val transientLoaders = ConcurrentHashMap<Thread, MutableList<URLClassLoader>>()
 
     fun getForClassPath(files: List<File>): ClassLoader = getForClassPath(files, parentClassLoader)
 
     private fun getForClassPath(files: List<File>, parent: ClassLoader): ClassLoader {
         val key = makeKey(files)
-        return cache.getOrPut(key) {
-            makeClassLoader(key, parent)
+        val classLoader = cache.asMap().computeIfAbsent(key) {
+            makeClassLoader(files, parent)
         }
+        // Guava delivers removal notifications during subsequent cache operations. This cache is
+        // touched about once per kapt task, so without an explicit cleanUp an evicted loader can go
+        // unclosed - and keep its jars open - indefinitely.
+        cache.cleanUp()
+        return classLoader
     }
 
     /**
-     * Gets or creates [ClassLoader] from [bottom] + [top] files.
-     * When creating new [ClassLoader] it tries to get [top] from cache first and then create new ClassLoader from [bottom] files,
-     * providing [top] [ClassLoader] as parent.
+     * Gets a [ClassLoader] for [bottom] + [top] files.
+     *
+     * Only the [top] loader is cached. [bottom] holds project-local artifacts, so a loader over it is
+     * created fresh for this execution and must be released with [releaseTransientLoader] once
+     * annotation processing has finished - otherwise the cache keeps the project's own jars open for
+     * the lifetime of the daemon, which on Windows prevents the project directory from being deleted.
+     *
      * Useful when you have internal and external artifacts and internal ones can be references from other internal artefacts only.
      * So you can safely cache [ClassLoader] from external artifacts and use it for internal ones.
      */
     fun getForSplitPaths(bottom: List<File>, top: List<File>): ClassLoader {
-        return if (bottom.isEmpty() || top.isEmpty()) {
-            getForClassPath(bottom + top)
-        } else {
-            val key = makeKey(bottom + top)
-            cache.getOrPut(key) {
-                val parent = getForClassPath(top)
-                makeClassLoader(makeKey(bottom), parent)
-            }
-        }
+        // Only external artifacts are cached. Note `top` is empty whenever every annotation processor
+        // is a project dependency - caching `bottom + top` in that case was the file-descriptor leak.
+        val parent = if (top.isEmpty()) parentClassLoader else getForClassPath(top)
+        if (bottom.isEmpty()) return parent
+
+        val local = makeClassLoader(bottom, parent)
+        // Not closed here: loaders handed out earlier in the same execution may still be in use.
+        transientLoaders.computeIfAbsent(Thread.currentThread()) { mutableListOf() }.add(local)
+        return local
+    }
+
+    /**
+     * Closes the loaders [getForSplitPaths] created for project-local artifacts on this thread, if any.
+     * Safe to call when there are none.
+     */
+    fun releaseTransientLoader() {
+        transientLoaders.remove(Thread.currentThread())?.forEach { it.close() }
     }
 
     override fun close() {
-        cache.clear()
+        transientLoaders.values.forEach { loaders -> loaders.forEach { it.close() } }
+        transientLoaders.clear()
+        cache.cleanUp()
     }
 
-    private fun makeClassLoader(key: CacheKey, parent: ClassLoader): URLClassLoader {
-        val cp = key.entries.map { it.path }
-        logger.info("Creating new classloader for classpath: $cp")
-        return URLClassLoader(cp.map { it.toURI().toURL() }.toTypedArray(), parent)
+    private fun makeClassLoader(files: List<File>, parent: ClassLoader): URLClassLoader {
+        logger.info("Creating new classloader for classpath: ${files.map { it.path }}")
+        return URLClassLoader(files.map { it.toURI().toURL() }.toTypedArray(), parent)
     }
 
     private fun makeKey(files: List<File>): CacheKey {

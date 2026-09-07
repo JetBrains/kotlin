@@ -344,7 +344,13 @@ private class KaptExecution @Inject constructor(
         }
 
         val kaptMethod = kaptClassLoader.kaptClass("Kapt").declaredMethods.single { it.name == "kapt" }
-        kaptMethod.invoke(null, createKaptOptions(kaptClassLoader))
+        try {
+            kaptMethod.invoke(null, createKaptOptions(kaptClassLoader))
+        } finally {
+            // The loader over project-local annotation processors is not cached; release it here so the
+            // daemon stops holding the project's own jars open once processing is done.
+            classLoadersCache?.releaseTransientLoader()
+        }
     }
 
     private fun javacIsAlreadyHere(): Boolean {
