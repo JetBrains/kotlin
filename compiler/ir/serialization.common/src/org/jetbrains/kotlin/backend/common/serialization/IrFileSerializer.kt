@@ -1590,7 +1590,6 @@ open class IrFileSerializer(
             bodies = IrArrayWriter(protoBodyArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
             declarations = IrDeclarationWriter(topLevelDeclarations).writeIntoMemory(),
             debugInfo = IrStringWriter(protoDebugInfoArray, useVarIntInDataArrays).writeIntoMemory(),
-            backendSpecificMetadata = null,
             fileEntries = with(protoIrFileEntryArray) {
                 if (isNotEmpty()) {
                     IrArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory()
@@ -1632,7 +1631,6 @@ open class IrFileSerializer(
             bodies = IrArrayWriter(protoBodyArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
             declarations = IrDeclarationWriter(topLevelDeclarations).writeIntoMemory(),
             debugInfo = IrStringWriter(protoDebugInfoArray, useVarIntInDataArrays).writeIntoMemory(),
-            backendSpecificMetadata = null,
             fileEntries = IrArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
         )
     }

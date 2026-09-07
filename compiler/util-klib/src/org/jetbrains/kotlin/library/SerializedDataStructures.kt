@@ -26,7 +26,6 @@ class SerializedIrFile(
     val bodies: ByteArray,
     val declarations: ByteArray,
     val debugInfo: ByteArray?,
-    val backendSpecificMetadata: ByteArray?,
     val fileEntries: ByteArray?,
 )
 

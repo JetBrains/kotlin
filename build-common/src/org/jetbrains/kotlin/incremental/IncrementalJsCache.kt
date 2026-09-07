@@ -95,9 +95,9 @@ open class IncrementalJsCache(
         }
 
         for ([srcFile, irData] in incrementalResults.irFileData) {
-            (val fileData, val types, val signatures, val strings, val declarations, val bodies, val fqn, val fileMetadata, val debugInfos = debugInfo, val fileEntries) = irData
+            (val fileData, val types, val signatures, val strings, val declarations, val bodies, val fqn, val debugInfos = debugInfo, val fileEntries) = irData
             irTranslationResults.put(
-                srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries
+                srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, debugInfos, fileEntries
             )
         }
     }
@@ -195,7 +195,6 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         output.writeArray(value.declarations)
         output.writeArray(value.bodies)
         output.writeArray(value.fqn)
-        output.writeArray(value.fileMetadata)
         output.writeOptionalArray(value.debugInfo)
         output.writeOptionalArray(value.fileEntries)
     }
@@ -239,12 +238,11 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         val declarations = input.readArray()
         val bodies = input.readArray()
         val fqn = input.readArray()
-        val fileMetadata = input.readArray()
         val debugInfos = input.readOptionalArray()
         val fileEntries = input.readOptionalArray()
 
         return IrTranslationResultValue(
-            fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries
+            fileData, types, signatures, strings, declarations, bodies, fqn, debugInfos, fileEntries
         )
     }
 }
@@ -278,13 +276,12 @@ private class IrTranslationResultMap(
         newDeclarations: ByteArray,
         newBodies: ByteArray,
         fqn: ByteArray,
-        newFileMetadata: ByteArray,
         debugInfos: ByteArray?,
         fileEntries: ByteArray?,
     ) {
         this[sourceFile] =
             IrTranslationResultValue(
-                newFiledata, newTypes, newSignatures, newStrings, newDeclarations, newBodies, fqn, newFileMetadata, debugInfos, fileEntries
+                newFiledata, newTypes, newSignatures, newStrings, newDeclarations, newBodies, fqn, debugInfos, fileEntries
             )
     }
 }
