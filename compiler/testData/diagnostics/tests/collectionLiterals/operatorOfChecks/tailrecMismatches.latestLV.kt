@@ -9,8 +9,8 @@ class MyList<T> {
         operator fun of(): MyList<Int> = MyList()
         tailrec operator fun of(vararg lams: Int): MyList<Int> {
             if (lams.size == 1) return []
-            val x: MyList<Int> = <!NON_TAIL_RECURSIVE_CALL!>[1, 2, 3]<!>
-            takeLst(<!NON_TAIL_RECURSIVE_CALL!>[1, 2, 3]<!>)
+            val x: MyList<Int> = [1, 2, 3]
+            takeLst([1, 2, 3])
             return [lams[0]]
         }
     }
