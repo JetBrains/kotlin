@@ -33,40 +33,6 @@ open class ConstructorExample {
 }
 
 @NoArgsConstructor(force = true)
-@JvmInline
-value class ConstructorExampleOnValueClass {
-  val value: Int
-    field = value
-    get
-
-  constructor(value: Int) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  override operator fun equals(other: Any?): Boolean {
-    when {
-      other !is ConstructorExampleOnValueClass -> return false
-    }
-    val tmp_0: ConstructorExampleOnValueClass = other /*as ConstructorExampleOnValueClass */
-    when {
-      EQEQ(arg0 = <this>.#value, arg1 = tmp_0.#value).not() -> return false
-    }
-    return true
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#value.hashCode()
-  }
-
-  override fun toString(): String {
-    return "ConstructorExampleOnValueClass(" + "value=" + <this>.#value + ")"
-  }
-
-}
-
-@NoArgsConstructor(force = true)
 class ConstructorExampleWithForce {
   val int: Int
     field = int

@@ -156,12 +156,13 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         // A value class *is* its underlying value, so there is no instance to initialize field by field and no
         // Java counterpart to model. Generating anyway produced a constructor whose body only calls the
         // superclass one, and the JVM backend failed on its instance initializer with "Unexpected IR element
-        // found during code generation" (KT-88705). Reported as `ANNOTATION_HAS_NO_EFFECT`.
+        // found during code generation" (KT-88705). Reported as `ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS`.
         if (targetClassSymbol.isInlineOrValue) return
 
         // A Kotlin inner or local class gets nothing: see `supportsGeneratedConstructor` for why the inner one
         // cannot be generated without hitting the KT-88659 crash, and why the local one only ever contradicted
-        // the `ANNOTATION_HAS_NO_EFFECT` already reported for it. Both are reported as `ANNOTATION_HAS_NO_EFFECT`.
+        // the `ANNOTATION_HAS_NO_EFFECT` already reported for it. The inner one is reported as
+        // `ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS`, the local one as `ANNOTATION_HAS_NO_EFFECT`.
         if (!targetClassSymbol.supportsGeneratedConstructor) return
 
         val visibility = constructorInfo.accessLevel.toVisibility(classSymbol) ?: return
