@@ -208,6 +208,10 @@ abstract class JvmTestModuleCompiler : CliTestModuleCompiler() {
             addAll(listOf(K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.toString()))
         }
 
+        module.directives.singleOrZeroValue(LanguageSettingsDirectives.JVM_DEFAULT_MODE)?.let { jvmDefaultMode ->
+            add(K2JVMCompilerArguments::jvmDefaultStable.cliArgument(jvmDefaultMode.description))
+        }
+
         if (LanguageSettingsDirectives.JVM_EXPOSE_BOXED in module.directives) {
             add(K2JVMCompilerArguments::jvmExposeBoxed.cliArgument)
         }
