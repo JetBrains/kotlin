@@ -6,7 +6,7 @@
 package test.text
 
 import kotlin.test.*
-import kotlin.text.codepoints.*
+import kotlin.text.unicode.*
 
 
 @OptIn(ExperimentalCodePointApi::class)

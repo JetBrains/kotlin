@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.text.codepoints
+package kotlin.text.unicode
 
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract

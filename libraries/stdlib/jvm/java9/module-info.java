@@ -27,6 +27,7 @@ module kotlin.stdlib {
     exports kotlin.sequences;
     exports kotlin.system;
     exports kotlin.text;
+    exports kotlin.text.unicode;
     exports kotlin.time;
     exports kotlin.uuid;
 
