@@ -473,8 +473,8 @@ open class UpgradeCallableReferences(
                         for ([parameter, forwardParameter] in referencedFunction.parameters.zip(forwardOrder)) {
                             val rawArgument = builder.irGet(forwardParameter)
                             // If referencedFunction is a fake override, its dispatch receiver type is some supertype of the containing class.
-                            // We take the conainting class type instead to prevent a crash in synthetic property lowering.
-                            val castType = if (parameter.kind == IrParameterKind.DispatchReceiver) {
+                            // We take the containing class type instead to prevent a crash in synthetic accessor lowering.
+                            val castType = if (parameter.kind == IrParameterKind.DispatchReceiver && referencedFunction.isFakeOverride) {
                                 referencedFunction.parentAsClass.defaultType
                             } else {
                                 parameter.type
