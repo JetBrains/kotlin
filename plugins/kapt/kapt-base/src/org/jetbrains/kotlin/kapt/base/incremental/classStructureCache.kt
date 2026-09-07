@@ -25,8 +25,22 @@ class JavaClassCache : Serializable {
     @Transient
     private var nonTransitiveCache = mutableMapOf<String, MutableSet<URI>>()
 
+    /**
+     * Reverse index for [getSourceForType], built on demand and dropped whenever [sourceCache] changes.
+     *
+     * Without it every lookup scans the whole cache, and `cache.kt` calls it once per impacted type,
+     * which is quadratic in the size of the module.
+     */
+    @Transient
+    private var typeToSource: Map<String, URI>? = null
+
+    private fun invalidateTypeToSourceIndex() {
+        typeToSource = null
+    }
+
     fun addSourceStructure(sourceStructure: JavaFileStructure) {
         sourceCache[sourceStructure.sourceFile] = sourceStructure
+        invalidateTypeToSourceIndex()
     }
 
     /** Returns all types defined in these files. */
@@ -44,6 +58,7 @@ class JavaClassCache : Serializable {
     private fun readObject(input: ObjectInputStream) {
         @Suppress("UNCHECKED_CAST")
         sourceCache = input.readObject() as MutableMap<URI, JavaFileStructure>
+        invalidateTypeToSourceIndex()
 
         dependencyCache = HashMap(sourceCache.size * 4)
         for (sourceInfo in sourceCache.values) {
@@ -137,15 +152,21 @@ class JavaClassCache : Serializable {
 
     internal fun invalidateAll() {
         sourceCache.clear()
+        invalidateTypeToSourceIndex()
     }
 
     fun getSourceForType(type: String): File {
-        sourceCache.forEach { [fileUri, typeInfo] ->
-            if (type in typeInfo.declaredTypes) {
-                return File(fileUri)
+        val index = typeToSource ?: buildTypeToSourceIndex().also { typeToSource = it }
+        val fileUri = index[type] ?: throw IllegalStateException("Unable to find source file for type $type")
+        return File(fileUri)
+    }
+
+    private fun buildTypeToSourceIndex(): Map<String, URI> = buildMap {
+        for ([uri, file] in sourceCache) {
+            for (declaredType in file.declaredTypes) {
+                putIfAbsent(declaredType, uri)
             }
         }
-        throw IllegalStateException("Unable to find source file for type $type")
     }
 
     fun invalidateDataForTypes(impactedTypes: MutableSet<String>) {
@@ -157,6 +178,7 @@ class JavaClassCache : Serializable {
         }
 
         allSources.forEach { sourceCache.remove(it) }
+        invalidateTypeToSourceIndex()
     }
 
     /** Returns total number of declared types in .java source files that were processed. */
