@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.evalBinaryOp
 import org.jetbrains.kotlin.resolve.constants.evaluate.evalUnaryOp
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
 @RequiresOptIn(
     "Internal FirExpressionEvaluator API. Should be avoided because it can be changed or dropped anytime. " +
@@ -402,7 +403,7 @@ object FirExpressionEvaluator {
                             propertySymbol.callableId?.isStringLength == true || propertySymbol.callableId?.isCharCode == true -> {
                                 val unaryArg = evaluateOr<FirExpression>(propertyAccessExpression.explicitReceiver) { return it }
                                 val argType = propertySymbol.receiverType(session) ?: return NotConst(propertyAccessExpression.source)
-                                evaluateUnary(unaryArg, argType, propertySymbol.callableId!!)
+                                evaluateUnary(unaryArg, argType, propertySymbol.callableId!!, propertyAccessExpression.source)
                                     .adjustTypeAndConvertToResult(propertyAccessExpression)
                             }
 
@@ -519,7 +520,7 @@ object FirExpressionEvaluator {
                     val argType = symbol.receiverType(session)
                         ?: symbol.firstValueParameterType(session)
                         ?: return NotConst(functionCall.source)
-                    evaluateUnary(evaluatedArgs[0], argType, symbol.callableId)
+                    evaluateUnary(evaluatedArgs[0], argType, symbol.callableId, functionCall.source)
                         .adjustTypeAndConvertToResult(functionCall)
                 }
                 2 -> {
@@ -803,16 +804,26 @@ fun ConstantValueKind.toCompileTimeType(): CompileTimeType {
 }
 
 // Unary operators
-private fun evaluateUnary(arg: FirExpression, argType: ConeKotlinType, callableId: CallableId): Any? {
+private fun evaluateUnary(
+    arg: FirExpression,
+    argType: ConeKotlinType,
+    callableId: CallableId,
+    source: AbstractKtSourceElement?
+): Any? {
     if (arg !is FirLiteralExpression || arg.value == null) return null
 
     val compileTimeType = argType.toCompileTimeType() ?: return null
     val opr = argType.toConstantValueKind()?.convertToGivenKind(arg.value) ?: arg.value as Any
-    return evalUnaryOp(
-        callableId.callableName.asString(),
-        compileTimeType,
-        opr
-    )
+    return try {
+        evalUnaryOp(
+            callableId.callableName.asString(),
+            compileTimeType,
+            opr
+        )
+    } catch (e: Exception) {
+        rethrowIntellijPlatformExceptionIfNeeded(e)
+        NotConst(source)
+    }
 }
 
 // Binary operators
@@ -848,13 +859,18 @@ private fun evaluateBinary(
         return TrimMarginBlankPrefix(source)
     }
 
-    return evalBinaryOp(
-        functionName,
-        leftCompileTimeType,
-        opr1,
-        rightCompileTimeType,
-        opr2
-    )
+    return try {
+        evalBinaryOp(
+            functionName,
+            leftCompileTimeType,
+            opr1,
+            rightCompileTimeType,
+            opr2
+        )
+    } catch (e: Exception) {
+        rethrowIntellijPlatformExceptionIfNeeded(e)
+        NotConst(source)
+    }
 }
 
 private fun Any?.adjustTypeAndConvertToResult(original: FirExpression, expectedType: ConeKotlinType = original.resolvedType): FirEvaluatorResult {
