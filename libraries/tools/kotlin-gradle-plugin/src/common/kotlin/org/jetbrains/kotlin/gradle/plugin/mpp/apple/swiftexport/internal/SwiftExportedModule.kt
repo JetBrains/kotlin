@@ -13,6 +13,7 @@ import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SWIFT_EXPORT_METADATA_SCHEMA_VERSION
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDependencySelector
@@ -97,6 +98,7 @@ internal fun collectModules(
     exportConfiguration: LazyResolvedConfigurationWithArtifacts,
     apiConfiguration: LazyResolvedConfigurationWithArtifacts?,
     metadataConfiguration: LazyResolvedConfigurationWithArtifacts?,
+    sharedMetadata: KotlinProjectSharedDataProvider<SwiftExportMetadata>?,
     exportedModules: Set<SwiftExportedDependency>,
     dependencyOptionsOverrides: Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>,
     rootModuleName: String,
@@ -110,7 +112,14 @@ internal fun collectModules(
             reportDiagnostic = reportDiagnostic,
         ),
         overrides = dependencyOptionsOverrides,
-        metadataByComponent = metadataConfiguration?.metadataByComponent(reportDiagnostic) ?: emptyMap(),
+        metadataByComponent = buildMap {
+            if (metadataConfiguration != null) {
+                putAll(metadataConfiguration.metadataByComponent(reportDiagnostic))
+            }
+            if (sharedMetadata != null) {
+                putAll(sharedMetadata.metadataByComponent())
+            }
+        },
         exportConfiguration = exportConfiguration,
         apiConfiguration = apiConfiguration,
         rootModuleName = rootModuleName,
@@ -212,6 +221,22 @@ internal fun LazyResolvedConfigurationWithArtifacts.metadataByComponent(
         }
         artifact.id.componentIdentifier to metadata
     }.toMap()
+}
+
+/**
+ * Reads the Swift Export metadata shared by same-build subproject dependencies as a secondary variant, keyed by the
+ * owning [ProjectComponentIdentifier] so it can be correlated with the klib artifacts the same way the published
+ * metadata is (both use [ResolvedArtifactWithVersionIdentifier.rootComponentId], i.e. `resolvedVariant.owner`).
+ * Entries with an incompatible [SwiftExportMetadata.schemaVersion] are skipped.
+ */
+private fun KotlinProjectSharedDataProvider<SwiftExportMetadata>.metadataByComponent(): Map<ComponentIdentifier, SwiftExportMetadata> {
+    return buildMap {
+        for (dependency in allResolvedDependencies) {
+            val metadata = getProjectDataFromDependencyOrNull(dependency) ?: continue
+            if (metadata.schemaVersion != SWIFT_EXPORT_METADATA_SCHEMA_VERSION) continue
+            put(dependency.resolvedVariant.owner, metadata)
+        }
+    }
 }
 
 private fun LazyResolvedConfigurationWithArtifacts.filteredArtifacts(

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.MapProperty
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportTaskParameters
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedDependency
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createF
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createTransitiveSwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDependencySelector
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportMetadata
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -89,6 +92,23 @@ internal abstract class SwiftExportTask @Inject constructor(
 
     @get:Internal
     abstract val metadataConfiguration: Property<LazyResolvedConfigurationWithArtifacts>
+
+    /**
+     * Swift Export metadata shared by same-build subproject dependencies as a secondary variant. Held as a
+     * Configuration-Cache-safe [KotlinProjectSharedDataProvider] and read at execution time (see [run]); the producer's
+     * JSON is a task output, so it only exists once [sharedMetadataFiles] has forced the producing task to run.
+     */
+    @get:Internal
+    abstract val sharedMetadata: Property<KotlinProjectSharedDataProvider<SwiftExportMetadata>>
+
+    /**
+     * Gradle `InputFiles` view of [sharedMetadata]. Declaring it as a task input provides the `builtBy` edge that makes
+     * the subproject metadata producers run before this task executes, so their JSON exists when [run] reads it.
+     */
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    val sharedMetadataFiles: List<FileCollection>
+        get() = sharedMetadata.orNull?.let { listOf(it.files) } ?: emptyList()
 
     @get:Internal
     abstract val exportedModules: SetProperty<SwiftExportedDependency>
@@ -176,6 +196,7 @@ internal abstract class SwiftExportTask @Inject constructor(
         exportConfiguration = exportConfiguration.get(),
         apiConfiguration = apiConfiguration.orNull,
         metadataConfiguration = metadataConfiguration.orNull,
+        sharedMetadata = sharedMetadata.orNull,
         exportedModules = exportedModules.get(),
         dependencyOptionsOverrides = dependencyOptionsOverrides.get(),
         rootModuleName = mainModuleInput.moduleName.get(),
