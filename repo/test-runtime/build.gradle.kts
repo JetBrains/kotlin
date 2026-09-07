@@ -84,3 +84,30 @@ dependencies {
     testImplementation(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.params)
 }
+
+/* Create synthetic test tasks */
+run {
+    val junit5TestCompilation = kotlin.target.compilations.create("junit5Tests")
+
+    tasks.register<Test>("junit5Tests") {
+        description = "Synthetic Tests: Used by functional tests to create test build behavior (on junit5)"
+        useJUnitPlatform()
+        testClassesDirs = junit5TestCompilation.output.classesDirs
+        classpath = junit5TestCompilation.runtimeDependencyFiles
+
+        providers.gradleProperty("tests.additionalJvmArgument").orNull?.let { args ->
+            jvmArgs(args.split(" "))
+        }
+
+        testLogging {
+            events("passed", "skipped", "failed")
+        }
+    }
+
+    dependencies {
+        junit5TestCompilation.configurations.implementationConfiguration(kotlin("test-junit5"))
+        junit5TestCompilation.configurations.implementationConfiguration(libs.junit.jupiter.api)
+        junit5TestCompilation.configurations.implementationConfiguration(libs.junit.jupiter.engine)
+        junit5TestCompilation.configurations.implementationConfiguration(libs.junit.jupiter.params)
+    }
+}
