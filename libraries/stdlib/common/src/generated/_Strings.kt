@@ -2424,7 +2424,7 @@ public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, S
  * @param partialWindows controls whether or not to keep partial windows in the end if any,
  * by default `false` which means partial windows won't be preserved
  * 
- * @sample samples.collections.Sequences.Transformations.takeWindows
+ * @sample samples.text.Strings.windowed
  */
 @SinceKotlin("1.2")
 public fun CharSequence.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false): List<String> {
@@ -2446,7 +2446,7 @@ public fun CharSequence.windowed(size: Int, step: Int = 1, partialWindows: Boole
  * @param partialWindows controls whether or not to keep partial windows in the end if any,
  * by default `false` which means partial windows won't be preserved
  * 
- * @sample samples.collections.Sequences.Transformations.averageWindows
+ * @sample samples.text.Strings.windowedTransform
  */
 @SinceKotlin("1.2")
 public fun <R> CharSequence.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (CharSequence) -> R): List<R> {
@@ -2477,7 +2477,7 @@ public fun <R> CharSequence.windowed(size: Int, step: Int = 1, partialWindows: B
  * @param partialWindows controls whether or not to keep partial windows in the end if any,
  * by default `false` which means partial windows won't be preserved
  * 
- * @sample samples.collections.Sequences.Transformations.takeWindows
+ * @sample samples.text.Strings.windowedSequence
  */
 @SinceKotlin("1.2")
 public fun CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false): Sequence<String> {
@@ -2499,7 +2499,7 @@ public fun CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindow
  * @param partialWindows controls whether or not to keep partial windows in the end if any,
  * by default `false` which means partial windows won't be preserved
  * 
- * @sample samples.collections.Sequences.Transformations.averageWindows
+ * @sample samples.text.Strings.windowedTransformToSequence
  */
 @SinceKotlin("1.2")
 public fun <R> CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (CharSequence) -> R): Sequence<R> {
