@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.lombok.checkers
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -14,9 +15,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
+import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.getSuperTypes
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -60,6 +63,8 @@ import org.jetbrains.kotlin.name.Name
 enum class ClassModifier(val presentation: String) {
     VALUE("value"),
     INNER("inner"),
+    ABSTRACT("abstract"),
+    SEALED("sealed"),
 }
 
 private class ImplementedAnnotationsInfo(
@@ -71,6 +76,14 @@ private class ImplementedAnnotationsInfo(
 private fun FirRegularClass.classModifiers(): Set<ClassModifier> = buildSet {
     if (isInlineOrValue) add(ClassModifier.VALUE)
     if (isInner) add(ClassModifier.INNER)
+    // Only where these are modifiers the source actually carries. An interface and an annotation class are
+    // abstract by their very kind, and the kind - not a modifier - is what has to be spoken about there, which
+    // is `ANNOTATION_HAS_NO_EFFECT`'s job. The two are mutually exclusive: a sealed class carries
+    // `Modality.SEALED`, never `ABSTRACT`.
+    if (classKind == ClassKind.CLASS) {
+        if (isAbstract) add(ClassModifier.ABSTRACT)
+        if (isSealed) add(ClassModifier.SEALED)
+    }
 }
 
 private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo> = buildMap {
@@ -176,7 +189,12 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
         // JVM backend failed outright with "Null argument in ExpressionCodegen for parameter VALUE_PARAMETER
         // kind:DispatchReceiver" (KT-88852). Lombok refuses the shape as well, with "@Builder is not supported
         // on non-static nested classes"; a nested class is what works, in Kotlin as in Java.
-        unsupportedClassModifiers = setOf(ClassModifier.INNER),
+        //
+        // An abstract or sealed class cannot be instantiated at all, so the `build()` that calls its constructor
+        // failed with `InstantiationError` at run time (KT-88814). Lombok is an error here too: "BuilderExample
+        // is abstract; cannot be instantiated". `@SuperBuilder` is what builds such a hierarchy, and it is not
+        // supported on a Kotlin class at all - `ANNOTATION_IS_NOT_SUPPORTED` covers that.
+        unsupportedClassModifiers = setOf(ClassModifier.INNER, ClassModifier.ABSTRACT, ClassModifier.SEALED),
     )
     this[LombokNames.BUILDER_DEFAULT_ID] = ImplementedAnnotationsInfo(
         allowedTargetsMap = setOf(
