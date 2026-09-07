@@ -174,6 +174,18 @@ enum class BuilderEnum(val id: Int) { A(1) }
 <!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>
 object BuilderObject
 
+// An inner class's constructor takes the outer instance as its dispatch receiver, and the generated `build()`
+// - a member of the builder class, which holds no such instance - has no way to pass one: the JVM backend used
+// to fail on the call outright, KT-88852. Lombok refuses the shape too ("@Builder is not supported on
+// non-static nested classes"); a nested class is what works, in Kotlin as in Java.
+class OuterOfBuilderInner {
+    <!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@Builder<!>
+    inner class BuilderInner(val value: Int)
+
+    @Builder
+    class BuilderNested(val value: Int)
+}
+
 @Builder(access = <!UNSUPPORTED_ACCESS_LEVEL!>AccessLevel.PACKAGE<!>) // Prohibited, KT-88337
 class BuilderAccessLevelPackage(val id: Int)
 
@@ -186,6 +198,8 @@ fun test() {
     BuilderAnnotationClass.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-87871
     BuilderEnum.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated
     BuilderObject.<!UNRESOLVED_REFERENCE!>builder<!>()
+    OuterOfBuilderInner.BuilderInner.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-88852
+    OuterOfBuilderInner.BuilderNested.builder().value(1).build()
 
    // Local classes can't have a companion object to host `builder()`, exactly as for `@NoArgsConstructor`.
     <!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>

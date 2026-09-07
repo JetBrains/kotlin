@@ -170,7 +170,13 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
             KotlinTarget.CLASS_ONLY,
             KotlinTarget.CONSTRUCTOR,
             KotlinTarget.FUNCTION,
-        )
+        ),
+        // An inner class's constructor takes the outer instance as its dispatch receiver, and the generated
+        // `build()` - a member of the builder class, which holds no such instance - has no way to pass one: the
+        // JVM backend failed outright with "Null argument in ExpressionCodegen for parameter VALUE_PARAMETER
+        // kind:DispatchReceiver" (KT-88852). Lombok refuses the shape as well, with "@Builder is not supported
+        // on non-static nested classes"; a nested class is what works, in Kotlin as in Java.
+        unsupportedClassModifiers = setOf(ClassModifier.INNER),
     )
     this[LombokNames.BUILDER_DEFAULT_ID] = ImplementedAnnotationsInfo(
         allowedTargetsMap = setOf(
