@@ -542,7 +542,6 @@ internal abstract class CommonCompilerArgumentsImpl(
     super.collectRestrictedArgViolations(compilerArgs, defaultArgs)
     val args = compilerArgs as CommonCompilerArguments
     val castedDefaults = defaultArgs as CommonCompilerArguments
-    if (args.repl != castedDefaults.repl) _restrictedArgViolations.add(RestrictedArgViolation.Error("Argument '-Xrepl' is not supported in the Build Tools API."))
     if (args.incrementalCompilation != castedDefaults.incrementalCompilation) _restrictedArgViolations.add(RestrictedArgViolation.Error("Argument '-Xenable-incremental-compilation' is not supported in the Build Tools API. Configure it via the JvmCompilationOperation.INCREMENTAL_COMPILATION option instead."))
   }
 

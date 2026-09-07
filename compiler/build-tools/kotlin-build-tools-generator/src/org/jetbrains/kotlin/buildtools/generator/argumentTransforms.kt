@@ -40,7 +40,6 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
     put(actualCommonCompilerArguments.name, buildMap {
         with(actualCommonCompilerArguments) {
             drop("script")
-            restrict("Xrepl", warningSince = KotlinReleaseVersion.v2_4_0, errorSince = KotlinReleaseVersion.v2_5_0)
             drop("Xstdlib-compilation")
             drop("Xallow-kotlin-package")
             drop("P")

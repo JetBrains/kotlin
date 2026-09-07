@@ -727,6 +727,21 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_RENDER_INTERNAL_DIAGNOSTIC_NAMES", KotlinReleaseVersion(1, 7, 0))
 
     /**
+     * Run Kotlin REPL.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.2.0.
+     *
+     * Removed in Kotlin version 2.5.0.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
+    public val X_REPL: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_REPL", KotlinReleaseVersion(2, 2, 0))
+
+    /**
      * Report all warnings even if errors are found.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
