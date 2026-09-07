@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.lombok.config.LombokService
 import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.kotlin.buildJvmStaticAnnotationCallOrError
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
+import org.jetbrains.kotlin.lombok.generators.kotlin.promotedPropertiesByName
 import org.jetbrains.kotlin.lombok.java.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -327,26 +328,27 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
             val items: List<FirVariable> = when (declaration) {
                 is FirRegularClass -> {
-                    val isJavaClass = entityClass is FirJavaClass
-                    if (isJavaClass && entityClass.isRecord) {
-                        entityClass.primaryConstructorIfAny(session)?.valueParameterSymbols?.map { it.fir } ?: emptyList()
-                    } else {
+                    // Only a plain Java class builds from its fields, the way real Lombok does. A record has none
+                    // to speak of, and a Kotlin class is built from its primary constructor's value parameters:
+                    // `build()` has that constructor to call and nothing else (no body vals and vars).
+                    if (entityClass is FirJavaClass && !entityClass.isRecord) {
                         entityClass.declarations.mapNotNull { declaration ->
-                            // A static field is never a builder field in Lombok. On the Kotlin side these are what a
-                            // `companion { }` block declares (KT-88367); on the Java side they are plain `static`
-                            // fields, which real Lombok leaves out of the builder just the same.
-                            if (isJavaClass) {
-                                (declaration as? FirJavaField)?.takeIf { !it.isStatic }
-                            } else {
-                                (declaration as? FirProperty)?.takeIf { it.hasBackingField && !it.isStatic }
-                            }
+                            // A `static` field is never a builder field, which real Lombok leaves out just the same.
+                            (declaration as? FirJavaField)?.takeIf { !it.isStatic }
                         }
+                    } else {
+                        entityClass.primaryConstructorIfAny(session)?.valueParameterSymbols?.map { it.fir } ?: emptyList()
                     }
                 }
                 is FirConstructor -> declaration.valueParameters
                 is FirNamedFunction -> declaration.valueParameters
                 else -> emptyList()
             }
+
+            // We need the promoted properties to make it possible to extract extra annotations (`@Default`, `@Singular`) from properties
+            // declared in primary constructors. Value parameters from primary constructors just don't have such an info.
+            val promotedProperties = runIf(declaration is FirRegularClass) { entityClass.promotedPropertiesByName() }.orEmpty()
+
             for (item in items) {
                 // A declaration the parser could not read a name off - `val )` and the like - carries the special
                 // name `<no name provided>`, and every name the builder derives from it (`name$set`, a prefixed
@@ -355,11 +357,12 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 // the way `FirLombokBuilderChecker` skips it when reporting.
                 if (item.name.isSpecial) continue
 
+                val itemProperty = (item.symbol as? FirPropertySymbol) ?: promotedProperties[item.name]
                 val singularAnnotation = item.getAnnotationByClassId(LombokNames.SINGULAR_ID, session)
-                    ?: (item.symbol as? FirPropertySymbol)?.backingFieldSymbol?.getAnnotationByClassId(LombokNames.SINGULAR_ID, session)
+                    ?: itemProperty?.findAnnotationOnPropertyOrField(LombokNames.SINGULAR_ID, session)
                 val singular: Singular? = singularAnnotation?.let { Singular.extract(it, session) }
-                val hasBuilderDefault = (item.symbol as? FirPropertySymbol)
-                    ?.findAnnotationOnPropertyOrField(LombokNames.BUILDER_DEFAULT_ID, session) != null
+                // `@Builder.Default` is `@Target(FIELD)` alone, so it is never on the parameter itself.
+                val hasBuilderDefault = itemProperty?.findAnnotationOnPropertyOrField(LombokNames.BUILDER_DEFAULT_ID, session) != null
 
                 generatedVariables.addIfNonClashing(item.name, existingVariableNames) {
                     if (builderSymbol.hasJavaOrigin) {

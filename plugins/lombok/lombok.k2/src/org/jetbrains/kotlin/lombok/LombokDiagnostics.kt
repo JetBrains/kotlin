@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_DEFAULT_REQUIRES
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_DEFAULT_AND_SINGULAR_MIXED
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.TO_BUILDER_CANNOT_OBTAIN
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.SINGULAR_REQUIRES_EXPLICIT_NAME
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.CANNOT_SINGULARIZE_NAME
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.UNSUPPORTED_SINGULAR_TYPE
@@ -62,6 +63,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
 import kotlin.getValue
 
 object LombokCliDiagnostics : KtDiagnosticsContainer() {
@@ -104,6 +106,7 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val BUILDER_DEFAULT_AND_SINGULAR_MIXED by error0<KtAnnotationEntry>()
     val BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE by error0<KtAnnotationEntry>()
     val BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS by error0<KtAnnotationEntry>()
+    val TO_BUILDER_CANNOT_OBTAIN by error1<KtParameter, Name>()
     val SINGULAR_REQUIRES_EXPLICIT_NAME by error0<KtAnnotationEntry>()
     val CANNOT_SINGULARIZE_NAME by error0<KtAnnotationEntry>()
     val UNSUPPORTED_SINGULAR_TYPE by error1<KtAnnotationEntry, ConeKotlinType>()
@@ -233,6 +236,12 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
         map.put(
             BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS,
             "'@Builder' is not supported on a declaration with an extension receiver or context parameters."
+        )
+        map.put(
+            TO_BUILDER_CANNOT_OBTAIN,
+            "''toBuilder()'' has no way to obtain a value for ''{0}'': the class declares no property of that name. " +
+                    "Declare the parameter as a property, or drop ''toBuilder = true''.",
+            CommonRenderers.NAME,
         )
         map.put(
             SINGULAR_REQUIRES_EXPLICIT_NAME,

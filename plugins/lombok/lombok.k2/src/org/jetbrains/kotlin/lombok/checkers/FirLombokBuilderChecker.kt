@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.lombok.checkers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -15,8 +14,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChe
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.processAllDeclarations
-import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
-import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
@@ -33,16 +32,20 @@ import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.Singulars
 import org.jetbrains.kotlin.lombok.generators.hasReceiverOrContextParameters
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
+import org.jetbrains.kotlin.lombok.generators.kotlin.promotedPropertiesByName
+import org.jetbrains.kotlin.name.Name
 
 object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
         val lombokService = context.session.lombokService
 
-        val classHasBuilder = lombokService.getBuilder(declaration.symbol) != null ||
-                lombokService.getSuperBuilder(declaration.symbol) != null
-        if (classHasBuilder) {
-            checkClassProperties(declaration, lombokService)
+        val classBuilder = lombokService.getBuilder(declaration.symbol) ?: lombokService.getSuperBuilder(declaration.symbol)
+        if (classBuilder != null) {
+            checkPrimaryConstructorParameters(declaration, lombokService)
+            declaration.primaryConstructorIfAny(context.session)?.let {
+                checkToBuilderCanObtainValues(declaration, classBuilder, it)
+            }
         }
 
         // `@SuperBuilder` only allows `TYPE` as a target, so only plain `@Builder` can land on a constructor
@@ -63,9 +66,40 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
             }
 
             checkFunctionParameters(functionSymbol, lombokService)
+            checkToBuilderCanObtainValues(declaration, builder, functionSymbol)
             if (functionSymbol is FirNamedFunctionSymbol) {
                 checkBuilderClassNameIsInferable(functionSymbol, builder)
             }
+        }
+    }
+
+    /**
+     * `toBuilder()` fills each builder field from the entity's property of that name - see
+     * `BuilderBodyBuilder.buildToBuilder` - and a parameter the class declares no property for leaves it with
+     * nothing to read. Lombok rejects the same shape outright, with "cannot find symbol: variable <name>" on
+     * the annotation: `@Builder(toBuilder = true)` on a method or constructor requires every parameter to be
+     * obtainable, either from a field of that name or through `@Builder.ObtainVia`, which is not implemented
+     * here (KT-89186). Silently generating a `toBuilder()` that drops the field is worse than refusing it, since the
+     * round-trip it exists for quietly returns a different object.
+     *
+     * A class-level `@Builder` on a Java class cannot run into this - every builder field is a field of the
+     * class - but a Kotlin one can, its builder fields being the primary constructor's value parameters,
+     * `val` or not.
+     */
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkToBuilderCanObtainValues(
+        declaration: FirRegularClass,
+        builder: ConeLombokAnnotations.AbstractBuilder,
+        builderDeclaration: FirFunctionSymbol<*>,
+    ) {
+        if (!builder.requiresToBuilder || declaration.symbol.isCompanion) return
+
+        val declaredPropertyNames = declaration.declaredPropertyNames()
+        for (parameter in builderDeclaration.valueParameterSymbols) {
+            // A parameter the parser could not read a name off gets no builder field either, see the generator.
+            if (parameter.name.isSpecial || parameter.name in declaredPropertyNames) continue
+
+            reporter.reportOn(parameter.source, LombokFirDiagnostics.TO_BUILDER_CANNOT_OBTAIN, parameter.name, context)
         }
     }
 
@@ -83,28 +117,40 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
         reporter.reportOn(builder.annotation.source, LombokFirDiagnostics.BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE, context)
     }
 
+    /**
+     * A class-level `@Builder` builds out of the primary constructor's value parameters and nothing else - see
+     * `AbstractBuilderGenerator`, whose `build()` has that constructor to call and no other way to reach a
+     * property. A property declared in the class body is therefore not a builder field, so `@Singular`,
+     * `@Builder.Default` and an initializer on one have nothing to do with the builder and are left alone here.
+     */
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkClassProperties(declaration: FirRegularClass, lombokService: LombokService) {
-        val declaredMemberScope = context.session.declaredMemberScope(declaration.symbol, memberRequiredPhase = null)
-        declaredMemberScope.processAllProperties { variableSymbol ->
-            val property = variableSymbol as? FirPropertySymbol ?: return@processAllProperties
-            if (!property.hasBackingField) return@processAllProperties
+    private fun checkPrimaryConstructorParameters(declaration: FirRegularClass, lombokService: LombokService) {
+        val primaryConstructor = declaration.primaryConstructorIfAny(context.session) ?: return
+        val promotedProperties = declaration.promotedPropertiesByName()
+
+        for (parameter in primaryConstructor.valueParameterSymbols) {
             // `AbstractBuilderGenerator` builds nothing out of a property the parser could not read a name off,
             // so nothing here has anything to report about one either.
-            if (property.name.isSpecial) return@processAllProperties
+            if (parameter.name.isSpecial) continue
 
-            val singularAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.SINGULAR_ID, context.session)
-            val defaultAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.BUILDER_DEFAULT_ID, context.session)
+            // The same lookup the generator does: `@Singular` is on the parameter unless it was written with a
+            // `@field:` target, and `@Builder.Default` (`@Target(FIELD)`) is only ever on the promoted property.
+            val property = promotedProperties[parameter.name]
+            val singularAnnotation = parameter.getAnnotationByClassId(LombokNames.SINGULAR_ID, context.session)
+                ?: property?.findAnnotationOnPropertyOrField(LombokNames.SINGULAR_ID, context.session)
+            val defaultAnnotation = property?.findAnnotationOnPropertyOrField(LombokNames.BUILDER_DEFAULT_ID, context.session)
 
             if (singularAnnotation != null) {
-                checkSingular(property, singularAnnotation, lombokService)
+                checkSingular(parameter, singularAnnotation, lombokService)
 
                 if (defaultAnnotation != null) {
                     reporter.reportOn(defaultAnnotation.source, LombokFirDiagnostics.BUILDER_DEFAULT_AND_SINGULAR_MIXED, context)
                 }
             }
 
-            val explicitInitializerSource = property.explicitInitializerSource()
+            // The parameter's own default value (`= expr`) is what the user wrote: a promoted property always
+            // carries a synthetic initializer reading the parameter, whether or not the parameter defaults.
+            val explicitInitializerSource = parameter.resolvedDefaultValueSource
             if (explicitInitializerSource != null) {
                 if (defaultAnnotation == null) {
                     reporter.reportOn(explicitInitializerSource, LombokFirDiagnostics.BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION, context)
@@ -161,14 +207,14 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
     }
 
     /**
-     * Properties promoted from primary constructor parameters always have a synthetic
-     * initializer that reads the parameter's value, regardless of whether the parameter
-     * itself declares a default value (`= expr`). Only the parameter's own default value
-     * (or, for non-constructor properties, the property's own initializer) reflects what
-     * the user actually wrote.
+     * The names of the properties [this] class itself declares, promoted from the primary constructor or not:
+     * what `BuilderBodyBuilder.buildToBuilder` looks a builder field up among, and so what decides whether it
+     * has a value to copy.
      */
-    private fun FirPropertySymbol.explicitInitializerSource(): KtSourceElement? {
-        val parameter = correspondingValueParameterFromPrimaryConstructor
-        return if (parameter != null) parameter.resolvedDefaultValueSource else initializerSource
+    context(context: CheckerContext)
+    private fun FirRegularClass.declaredPropertyNames(): Set<Name> = buildSet {
+        context.session.declaredMemberScope(symbol, memberRequiredPhase = null).processAllProperties { variableSymbol ->
+            if (variableSymbol is FirPropertySymbol) add(variableSymbol.name)
+        }
     }
 }
