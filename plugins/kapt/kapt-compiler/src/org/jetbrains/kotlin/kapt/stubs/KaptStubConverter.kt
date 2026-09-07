@@ -157,7 +157,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
     private val importsFromRoot by lazy(::collectImportsFromRootPackage)
 
-    private val compiledClassByName = kaptContext.compiledClasses.associateBy { it.name!! }
+    private val compiledClassByName = kaptContext.compiledClassByName
 
     private var done = false
 
