@@ -10,6 +10,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
 import org.jetbrains.kotlin.gradle.targets.native.internal.KotlinInterprocessDirectoryLock
+import org.jetbrains.kotlin.gradle.targets.native.internal.unzipTo
 import org.jetbrains.kotlin.konan.util.ArchiveType
 import org.jetbrains.kotlin.konan.util.DependencyExtractor
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -142,14 +143,6 @@ internal abstract class NativeVersionValueSource :
                     "Kotlin Native bundle dependency was used. " +
                             "Please provide the corresponding version in 'kotlin.native.version' property instead of any other ways."
                 )
-            }
-        }
-
-        private fun unzipTo(archive: File, toDirectory: File) {
-            when {
-                archive.name.endsWith("zip") -> DependencyExtractor().extract(archive, toDirectory, ArchiveType.ZIP)
-                archive.name.endsWith(".tar.gz") -> DependencyExtractor().extract(archive, toDirectory, ArchiveType.TAR_GZ)
-                else -> error("Unsupported format for unzipping $archive")
             }
         }
 
