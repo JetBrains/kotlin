@@ -694,7 +694,12 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         return buildList {
             // Only the class-level `@Builder` is dropped: a `@Builder`-annotated member function of an interface,
             // an enum class or an object still builds whatever that function returns, and is a legitimate case.
-            if (allowedTargets.contains(KotlinTarget.CLASS) && classSymbol.isPlainClass) {
+            //
+            // An inner class is dropped the same way and for the same kind of reason: its constructor takes the
+            // outer instance as a dispatch receiver, which the generated `build()` has no way to pass, and the
+            // JVM backend failed on the call outright (KT-88852). Reported as
+            // `ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS`.
+            if (allowedTargets.contains(KotlinTarget.CLASS) && classSymbol.isPlainClass && !classSymbol.isInner) {
                 getBuilder(classSymbol)?.let { add(BuilderWithDeclaration(it, classSymbol.fir)) }
             }
 
