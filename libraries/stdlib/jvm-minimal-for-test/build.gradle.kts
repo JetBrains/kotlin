@@ -114,6 +114,7 @@ kotlin {
                                 *dogfoodedExperimentalFeatures.toTypedArray(),
                                 redundantCliArgWarningSuppression,
                                 "-Xreturn-value-checker=full",
+                                "-Xcompanion-blocks",
                             )
                         )
                     }
