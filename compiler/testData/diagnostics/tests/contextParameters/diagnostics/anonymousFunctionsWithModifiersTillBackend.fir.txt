@@ -1,0 +1,5 @@
+FILE: anonymousFunctionsWithModifiersTillBackend.kt
+    public final val t2: R|context(kotlin/String) () -> kotlin/Unit| = context(a: R|kotlin/String|) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+    }
+
+        public get(): R|context(kotlin/String) () -> kotlin/Unit|
