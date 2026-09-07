@@ -8,8 +8,6 @@ package kotlin.wasm.unsafe
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.internal.DoNotInlineOnFirstStage
-import kotlin.text.clear
-import kotlin.text.iterator
 import kotlin.wasm.ExperimentalWasmInterop
 import kotlin.wasm.internal.wasm_memory_copy
 import kotlin.wasm.internal.wasm_memory_grow
