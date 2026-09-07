@@ -11,9 +11,9 @@ class A {
         }
     }
 
-    <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun f3(a : A) {
+    <!NO_TAIL_CALLS_FOUND_IN_IR!><!NO_TAIL_CALLS_FOUND!>tailrec<!> fun f3(a : A) {
         a.<!NON_TAIL_RECURSIVE_CALL!>f3<!>(a) // non-tail recursion, could be potentially resolved by condition if (a == this) f3() else a.f3()
-    }
+    }<!>
 }
 
 fun box() : String {

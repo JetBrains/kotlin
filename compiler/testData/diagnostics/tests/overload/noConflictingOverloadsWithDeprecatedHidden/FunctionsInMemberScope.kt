@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // LATEST_LV_DIFFERENCE
 // IGNORE_DEXING
-// DIAGNOSTICS: -MISPLACED_TYPE_PARAMETER_CONSTRAINTS, -NOTHING_TO_INLINE, -NO_TAIL_CALLS_FOUND
+// DIAGNOSTICS: -MISPLACED_TYPE_PARAMETER_CONSTRAINTS, -NOTHING_TO_INLINE
 
 
 class MemberScope {
@@ -438,16 +438,6 @@ class MemberScope {
     @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_JVM_DECLARATIONS!>fun UserKlassB.unaryMinus() {}<!>
 
 
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) tailrec <!CONFLICTING_JVM_DECLARATIONS!>fun testIdenticalPresenceOfTailrecModifier() {}<!>
-    tailrec <!CONFLICTING_JVM_DECLARATIONS!>fun testIdenticalPresenceOfTailrecModifier() {}<!>
-
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) tailrec <!CONFLICTING_JVM_DECLARATIONS!>fun testDifferencesInTailrecModifierPresence() {}<!>
-    <!CONFLICTING_JVM_DECLARATIONS!>fun testDifferencesInTailrecModifierPresence() {}<!>
-
-    tailrec <!CONFLICTING_JVM_DECLARATIONS!>fun testDifferencesInTailrecModifierPresenceReverse() {}<!>
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_JVM_DECLARATIONS!>fun testDifferencesInTailrecModifierPresenceReverse() {}<!>
-
-
     @Deprecated(message = "", level = DeprecationLevel.HIDDEN) private <!CONFLICTING_JVM_DECLARATIONS!>fun testIdenticalPrivateVisibility() {}<!>
     private <!CONFLICTING_JVM_DECLARATIONS!>fun testIdenticalPrivateVisibility() {}<!>
 
@@ -504,4 +494,4 @@ typealias SameUserInterfaceB = UserInterfaceB
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, inProjection, infix, inline,
 interfaceDeclaration, nullableType, operator, outProjection, propertyDeclaration, reified, starProjection, stringLiteral,
-tailrec, typeAliasDeclaration, typeConstraint, typeParameter */
+typeAliasDeclaration, typeConstraint, typeParameter */

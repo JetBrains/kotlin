@@ -7,13 +7,13 @@ open class A {
 }
 
 class B: A() {
-    <!NO_TAIL_CALLS_FOUND!>tailrec<!> override fun foo(x: Int) {
+    <!NO_TAIL_CALLS_FOUND_IN_IR!><!NO_TAIL_CALLS_FOUND!>tailrec<!> override fun foo(x: Int) {
         <!NON_TAIL_RECURSIVE_CALL!>foo<!>()
-    }
+    }<!>
 
-    <!NO_TAIL_CALLS_FOUND!>tailrec<!> override fun gav(y: Int, z: Int) {
+    <!NO_TAIL_CALLS_FOUND_IN_IR!><!NO_TAIL_CALLS_FOUND!>tailrec<!> override fun gav(y: Int, z: Int) {
         <!NON_TAIL_RECURSIVE_CALL!>gav<!>(y)
-    }
+    }<!>
 
     tailrec fun bar(y: Double): Double = bar(y * 2.0)
 }

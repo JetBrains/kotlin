@@ -45,9 +45,9 @@ enum class E {
         }
     },
     C {
-        override <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun rec() {
+        <!NO_TAIL_CALLS_FOUND_IN_IR!>override <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun rec() {
             C.rec() // resolution goes to `E.rec`. Hence the resolved symbol is considered different from `C.rec`.
-        }
+        }<!>
     };
 
     abstract fun rec()
