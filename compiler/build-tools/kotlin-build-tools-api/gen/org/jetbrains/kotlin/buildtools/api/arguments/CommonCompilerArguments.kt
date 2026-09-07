@@ -301,19 +301,6 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_DETAILED_PERF", KotlinReleaseVersion(2, 3, 0))
 
     /**
-     * Enable experimental direct Java actualization support.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     *
-     * Removed in Kotlin version 2.5.0.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    @RemovedCompilerArgument
-    public val X_DIRECT_JAVA_ACTUALIZATION: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_DIRECT_JAVA_ACTUALIZATION", KotlinReleaseVersion(2, 1, 0))
-
-    /**
      * Don't enable the scripting plugin by default.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
@@ -543,21 +530,6 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_INLINE_CLASSES", KotlinReleaseVersion(1, 3, 50))
 
     /**
-     * Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     *
-     * Deprecated in Kotlin version 2.4.20.
-     *
-     * Removed in Kotlin version 2.5.0.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    @RemovedCompilerArgument
-    public val X_INTELLIJ_PLUGIN_ROOT: CommonCompilerArgument<String?> =
-        CommonCompilerArgument("X_INTELLIJ_PLUGIN_ROOT", KotlinReleaseVersion(1, 1, 3))
-
-    /**
      * Enables `IntrinsicConstEvaluation` language feature.`
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
@@ -652,19 +624,6 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @RemovedCompilerArgument
     public val X_NEW_INFERENCE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_NEW_INFERENCE", KotlinReleaseVersion(1, 2, 20))
-
-    /**
-     * Do not check for the presence of the 'actual' modifier in multiplatform projects.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     *
-     * Removed in Kotlin version 2.5.0.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    @RemovedCompilerArgument
-    public val X_NO_CHECK_ACTUAL: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_NO_CHECK_ACTUAL", KotlinReleaseVersion(1, 1, 60))
 
     /**
      * Disable method inlining.

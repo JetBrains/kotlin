@@ -72,6 +72,9 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
         }
         with(removedCommonCompilerArguments) {
             drop("Xuse-k2")
+            drop("Xdirect-java-actualization")
+            drop("Xintellij-plugin-root")
+            drop("Xno-check-actual")
         }
     })
     put(actualCommonToolsArguments.name, buildMap {
