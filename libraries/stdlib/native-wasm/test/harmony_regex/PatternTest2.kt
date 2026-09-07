@@ -23,8 +23,8 @@ package test.text.harmony_regex
 
 import kotlin.text.*
 import kotlin.test.*
-import kotlin.text.codepoints.ExperimentalCodePointApi
-import kotlin.text.codepoints.codePointAt
+import kotlin.text.unicode.ExperimentalCodePointApi
+import kotlin.text.unicode.codePointAt
 
 class PatternTest2 {
 

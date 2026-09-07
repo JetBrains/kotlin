@@ -5,7 +5,7 @@
 
 package kotlin.text
 
-import kotlin.text.codepoints.*
+import kotlin.text.unicode.*
 
 // \p{cased} (\p{case-ignorable})* Sigma !( (\p{case-ignorable})* \p{cased} )
 // The regular-expression operator * is "possessive", consuming as many characters as possible, with no backup.
