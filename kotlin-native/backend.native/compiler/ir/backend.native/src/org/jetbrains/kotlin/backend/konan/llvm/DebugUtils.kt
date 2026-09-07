@@ -338,7 +338,12 @@ internal fun setupBridgeDebugInfo(generationState: NativeGenerationState, functi
             isLocal = 0,
             isDefinition = 1,
             scopeLine = 1,
-            isTransparentStepping = generationState.config.enableDebugTransparentStepping,
+            // KT-87872: since Xcode 27, lldb skips the whole call instead of stepping through
+            // the bridge when the ObjC caller dispatches through an `_objc_msgSend$<selector>` stub.
+            // The stop hook in konan_lldb.py steps through these bridges instead.
+            // Note: other trampolines (virtual calls, `@TransparentForDebugger`) are not reached
+            // through such a stub, so they keep using transparent stepping.
+            isTransparentStepping = false,
     ).reinterpret()
 
     return LocationInfo(scope, 1, 0)
