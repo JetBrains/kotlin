@@ -155,11 +155,18 @@ enum class AptMode(override val stringValue: String) : KaptSelector {
 }
 
 fun KaptOptions.collectJavaSourceFiles(sourcesToReprocess: SourcesToReprocess = SourcesToReprocess.FullRebuild): List<File> {
+    // `sortedBy` re-invokes its selector on every comparison, so sorting by `isSymbolicLink` costs
+    // ~n*log(n) `lstat` syscalls where n would do. A stable partition gives the same order - sorting
+    // by a boolean puts `false` first and keeps the relative order within each group.
+    fun nonSymlinksFirst(files: List<File>): List<File> {
+        val [symlinks, regular] = files.partition { Files.isSymbolicLink(it.toPath()) }
+        return regular + symlinks
+    }
+
     fun allSources(): List<File> {
-        return (javaSourceRoots + stubsOutputDir)
-            .sortedBy { Files.isSymbolicLink(it.toPath()) } // Get non-symbolic paths first
+        return nonSymlinksFirst(javaSourceRoots + stubsOutputDir) // Get non-symbolic paths first
             .flatMap { root -> root.walk().filter { it.isFile && it.extension == "java" }.toList() }
-            .sortedBy { Files.isSymbolicLink(it.toPath()) } // This time is for .java files
+            .let(::nonSymlinksFirst) // This time is for .java files
             .distinctBy { it.normalize().absolutePath }
     }
 
