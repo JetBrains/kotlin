@@ -572,7 +572,7 @@ abstract class AbstractKlibLoaderTest {
                 """
                     KLIB loader: Incompatible ABI version $obsoleteAbiVersion in library: $libraryPath
                     The current Kotlin compiler can consume libraries having ABI version >= ${KotlinAbiVersion.FIRST_SUPPORTED}.
-                    Please upgrade the library to a newer version (ABI version ${KotlinAbiVersion.FIRST_SUPPORTED} or higher).
+                    Please upgrade the library to a newer version (ABI version ${KotlinAbiVersion.FIRST_SUPPORTED} or later).
                 """.trimIndent()
             )
 
@@ -587,7 +587,7 @@ abstract class AbstractKlibLoaderTest {
                 """
                     KLIB loader: Incompatible ABI version $obsoleteAbiVersion in library: $libraryPath
                     The current Kotlin compiler can consume libraries having ABI version in the range [${KotlinAbiVersion.FIRST_SUPPORTED}, ${KotlinAbiVersion.CURRENT}].
-                    Please upgrade the library to a newer version (ABI version ${KotlinAbiVersion.FIRST_SUPPORTED} or higher).
+                    Please upgrade the library to a newer version (ABI version ${KotlinAbiVersion.FIRST_SUPPORTED} or later).
                 """.trimIndent()
             )
 
@@ -600,8 +600,8 @@ abstract class AbstractKlibLoaderTest {
             .assertInvalidAbiMessage(
                 """
                     KLIB loader: Incompatible ABI version $obsoleteAbiVersion in library: $libraryPath
-                    The current Kotlin compiler can consume libraries produced by at least $FIRST_SUPPORTED_COMPILER_VERSION compiler.
-                    Please upgrade the library to a newer version compatible with $FIRST_SUPPORTED_COMPILER_VERSION compiler (ABI version ${KotlinAbiVersion.FIRST_SUPPORTED} or higher).
+                    The current Kotlin compiler can consume libraries produced by compiler >= $FIRST_SUPPORTED_COMPILER_VERSION.
+                    Please upgrade the library to a newer version compatible with compiler version $FIRST_SUPPORTED_COMPILER_VERSION or later (ABI version ${KotlinAbiVersion.FIRST_SUPPORTED} or later).
                 """.trimIndent()
             )
 
@@ -615,8 +615,8 @@ abstract class AbstractKlibLoaderTest {
             .assertInvalidAbiMessage(
                 """
                     KLIB loader: Incompatible ABI version $obsoleteAbiVersion in library: $libraryPath
-                    The current Kotlin compiler can consume libraries produced by at least $FIRST_SUPPORTED_COMPILER_VERSION compiler.
-                    Please upgrade the library to a newer version compatible with $FIRST_SUPPORTED_COMPILER_VERSION compiler (ABI version ${KotlinAbiVersion.FIRST_SUPPORTED} or higher).
+                    The current Kotlin compiler can consume libraries produced by compiler >= $FIRST_SUPPORTED_COMPILER_VERSION.
+                    Please upgrade the library to a newer version compatible with compiler version $FIRST_SUPPORTED_COMPILER_VERSION or later (ABI version ${KotlinAbiVersion.FIRST_SUPPORTED} or later).
                 """.trimIndent()
             )
     }
