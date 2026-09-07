@@ -15,20 +15,15 @@ import kotlin.reflect.KClass
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
 annotation class NumericClass(
-	vararg val actualizations: Variant,
-) {
-    enum class Variant {
-        Byte, Short, Int, Long,
-        UByte, UShort, UInt, ULong,
-    }
-}
+	vararg val actualizations: KClass<*>,
+)
 
 // MODULE: main-common(stdlibextra)()()
 // FILE: Common.kt
 
 import kotlinx.cinterop.convert
 
-@kotlin.NumericClass(kotlin.NumericClass.Variant.Long)
+@kotlin.NumericClass(Long::class)
 expect class NSInteger {
     fun toByte(): Byte
     fun toShort(): Short
@@ -48,7 +43,7 @@ expect fun acceptLong(num: Long)
 
 var sum: Long = 0L
 
-@kotlin.NumericClass(kotlin.NumericClass.Variant.UInt)
+@kotlin.NumericClass(UInt::class)
 expect value class SizeT {
     fun toByte(): Byte
     fun toShort(): Short
