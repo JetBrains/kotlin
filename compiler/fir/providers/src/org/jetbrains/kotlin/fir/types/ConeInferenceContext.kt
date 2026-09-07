@@ -698,10 +698,6 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return (this as? ConeIntersectionType)?.upperBoundForApproximation
     }
 
-    override fun usePreciseSimplificationToFlexibleLowerConstraint(): Boolean = session.languageVersionSettings.supportsFeature(
-        LanguageFeature.PreciseSimplificationToFlexibleLowerConstraint
-    )
-
     override fun KotlinTypeMarker.convertToNonRaw(): ConeKotlinType {
         require(this is ConeKotlinType)
         return this.convertToNonRawVersion()

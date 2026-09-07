@@ -1,4 +1,4 @@
-// LANGUAGE: -DontMakeExplicitNullableJavaTypeArgumentsFlexible -PreciseSimplificationToFlexibleLowerConstraint
+// LANGUAGE: -DontMakeExplicitNullableJavaTypeArgumentsFlexible
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-78621
 

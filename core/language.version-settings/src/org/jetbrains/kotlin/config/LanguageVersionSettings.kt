@@ -613,7 +613,6 @@ enum class LanguageFeature(
     AllowExpectValueClassesWithNoPrimaryConstructor(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-85824", enabledInLatestLVTests = false),
     AllowMultipleExpectsForSingleActual(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-88307", enabledInLatestLVTests = false),
 
-    PreciseSimplificationToFlexibleLowerConstraint(sinceVersion = null, "KT-78621", enabledInLatestLVTests = false), // TODO: consider dropping in 2.5 timeframe (KT-84664)
     DiscriminateSuspendInOverloadResolution(sinceVersion = null, "KT-23610", enabledInLatestLVTests = false), // Postponed because of KT-82869
 
     // Experimental features

@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-78783
-// LANGUAGE: -PreciseSimplificationToFlexibleLowerConstraint
 // JVM_TARGET: 1.8
 // FULL_JDK
 // FIR_DUMP

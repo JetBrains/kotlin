@@ -15,7 +15,7 @@ public class JavaClass {
 fun test(list: MutableList<out String?>) {
     // T is inferred here to CapturedType, but then approximated to String?
     // The test can be made green by precise actions for subType.isCapturedType() in simplifyLowerConstraints
-    // (see the experimental feature PreciseSimplificationToFlexibleLowerConstraint)
+    // (see KT-84664)
     // However, such a change will affect resolve of resImplicit.get(0).toString(), as it's String? VS String! situation
     val res: Collection<String> = JavaClass.<!INITIALIZER_TYPE_MISMATCH!>filter<!>(list)
     // typeof = (Mutable)Collection<String?>!

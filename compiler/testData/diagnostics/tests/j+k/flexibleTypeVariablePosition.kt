@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -PreciseSimplificationToFlexibleLowerConstraint
 // ISSUE: KT-59138
 // FILE: JavaClass.java
 public class JavaClass {

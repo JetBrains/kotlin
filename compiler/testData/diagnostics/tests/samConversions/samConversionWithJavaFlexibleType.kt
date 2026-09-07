@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -PreciseSimplificationToFlexibleLowerConstraint
 // ISSUE: KT-67651
 // FULL_JDK
 
