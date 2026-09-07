@@ -284,8 +284,12 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
     private fun checkProcessorCachingSetup() {
         if (includeCompileClasspath.get() && classLoadersCacheSize > 0) {
             logger.warn(
-                "ClassLoaders cache can't be enabled together with AP discovery in compilation classpath."
-                        + "\nSet 'kapt.include.compile.classpath=false' to disable discovery"
+                "The kapt annotation processor classloaders cache is disabled: it cannot be used together with"
+                        + " annotation processor discovery from the compilation classpath."
+                        + "\n'kapt.classloaders.cache.size=$classLoadersCacheSize' will have no effect until you also set"
+                        + " 'kapt.include.compile.classpath=false'. Both properties have to be set together;"
+                        + " discovery from the compilation classpath is deprecated."
+                        + "\nIf you disable discovery, declare every annotation processor in a 'kapt' configuration."
             )
         }
     }
