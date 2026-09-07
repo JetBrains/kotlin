@@ -17,12 +17,9 @@ import org.gradle.api.attributes.java.TargetJvmEnvironment.STANDARD_JVM
 import org.gradle.api.attributes.java.TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.Directory
-import org.gradle.api.file.FileCollection
-import org.gradle.api.file.RegularFile
 import org.gradle.api.tasks.PathSensitivity.RELATIVE
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskInputFilePropertyBuilder
-import org.gradle.api.tasks.TaskInputPropertyBuilder
 import org.gradle.api.tasks.TaskOutputFilePropertyBuilder
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.findByType
@@ -115,16 +112,12 @@ dependencies {
     testImplementation(libs.junit.jupiter.params)
 }
 
-tasks.test { maxHeapSize = "4G" }
-
 // TODO use sources directly from
 //region Download and unpack the latest kotlin-stdlib JVM sources, needed by tests that verify
 // documentation generated for the standard library.
 val kotlinStdlibSourcesDir = downloadLatestKotlinStdlibJvmSources(project)
 tasks.withType<Test>().configureEach {
     systemProperty.inputDirectory("kotlinStdlibSourcesDir", kotlinStdlibSourcesDir).withPathSensitivity(RELATIVE)
-    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
-
 }
 //endregion
 
@@ -142,6 +135,12 @@ val symbolsTestImplementationResolver: Configuration = configurations.create("sy
     attributes { jvmJar(objects) }
 }
 
+projectTests {
+    // Test code reads these resources directly by file path (not via the classpath), so they must be
+    // declared explicitly or `test-inputs-check` flags them as undeclared inputs.
+    testData(project.isolated, "src/test/resources")
+}
+
 testing {
     suites {
         named<JvmTestSuite>("test").configure {
@@ -152,42 +151,62 @@ testing {
 
             // Create a new target for _only_ running test compatible with symbols-analysis (K2).
             val testSymbolsTarget = targets.register("testSymbols") {
-                testTask.configure {
-                    val excludedTags = onlyJavaSymbolsTags
-                    description = "Runs tests using symbols-analysis (K2) (excluding tags: $excludedTags)"
-                    useJUnitPlatform {
-                        excludeTags.addAll(excludedTags)
+                projectTests {
+                    testTask(
+                        taskName = testTask.name,
+                        javaLauncher = JdkMajorVersion.JDK_1_8,
+                        maxHeapSize = testMaxHeapSizeLarge,
+                        skipInLocalBuild = false,
+                    ) {
+                        val excludedTags = onlyJavaSymbolsTags
+                        description = "Runs tests using symbols-analysis (K2) (excluding tags: $excludedTags)"
+                        useJUnitPlatform {
+                            excludeTags.addAll(excludedTags)
+                        }
+                        // Analysis dependencies from `symbolsTestImplementation` should precede all other dependencies
+                        // in order to use the shadowed stdlib from the analysis dependencies
+                        classpath = symbolsTestImplementationResolver.incoming.files + classpath
                     }
-                    // Analysis dependencies from `symbolsTestImplementation` should precede all other dependencies
-                    // in order to use the shadowed stdlib from the analysis dependencies
-                    classpath = symbolsTestImplementationResolver.incoming.files + classpath
                 }
             }
 
             // Create a new target for running tests with enabled experimental symbols java analysis.
             val testJavaSymbolsTarget = targets.register("testJavaSymbols") {
-                testTask.configure {
-                    val excludedTags = onlyJavaPsiTags
-                    description = "Runs tests using symbols-analysis (K2) for java (excluding tags: $excludedTags)"
-                    useJUnitPlatform {
-                        excludeTags.addAll(excludedTags)
-                    }
-                    // Analysis dependencies from `symbolsTestImplementation` should precede all other dependencies
-                    // in order to use the shadowed stdlib from the analysis dependencies
-                    classpath = symbolsTestImplementationResolver.incoming.files + classpath
+                projectTests {
+                    testTask(
+                        taskName = testTask.name,
+                        javaLauncher = JdkMajorVersion.JDK_1_8,
+                        maxHeapSize = testMaxHeapSizeLarge,
+                        skipInLocalBuild = false,
+                    ) {
+                        val excludedTags = onlyJavaPsiTags
+                        description = "Runs tests using symbols-analysis (K2) for java (excluding tags: $excludedTags)"
+                        useJUnitPlatform {
+                            excludeTags.addAll(excludedTags)
+                        }
+                        // Analysis dependencies from `symbolsTestImplementation` should precede all other dependencies
+                        // in order to use the shadowed stdlib from the analysis dependencies
+                        classpath = symbolsTestImplementationResolver.incoming.files + classpath
 
-                    // Enable experimental symbols java analysis
-                    systemProperty("org.jetbrains.dokka.analysis.enableExperimentalSymbolsJavaAnalysis", "true")
+                        // Enable experimental symbols java analysis
+                        systemProperty("org.jetbrains.dokka.analysis.enableExperimentalSymbolsJavaAnalysis", "true")
+                    }
                 }
             }
 
             // Run all test targets when running :test;
             // don't run the task itself, as it's just an aggregate for the test targets.
             targets.named("test") {
-                testTask.configure {
-                    onlyIf { false }
-                    dependsOn(testSymbolsTarget.map { it.testTask })
-                    dependsOn(testJavaSymbolsTarget.map { it.testTask })
+                projectTests {
+                    testTask(
+                        taskName = testTask.name,
+                        javaLauncher = JdkMajorVersion.JDK_1_8,
+                        skipInLocalBuild = false,
+                    ) {
+                        onlyIf { false }
+                        dependsOn(testSymbolsTarget.map { it.testTask })
+                        dependsOn(testJavaSymbolsTarget.map { it.testTask })
+                    }
                 }
             }
         }
@@ -301,18 +320,6 @@ internal abstract class SystemPropertyAdder @Inject internal constructor(
     ): TaskInputFilePropertyBuilder =
         inputDirectory(key, objects.directoryProperty().fileProvider(value))
 
-    fun inputDirectory(
-        key: String,
-        value: File,
-    ): TaskInputFilePropertyBuilder =
-        inputDirectory(key, objects.directoryProperty().fileValue(value))
-
-    fun inputDirectory(
-        key: String,
-        value: Directory,
-    ): TaskInputFilePropertyBuilder =
-        inputDirectory(key, objects.directoryProperty().apply { set(value) })
-
     @JvmName("outputDirectoryProvider")
     fun outputDirectory(
         key: String,
@@ -345,88 +352,6 @@ internal abstract class SystemPropertyAdder @Inject internal constructor(
         value: Directory,
     ): TaskOutputFilePropertyBuilder =
         outputDirectory(key, objects.directoryProperty().apply { set(value) })
-
-    fun inputFile(
-        key: String,
-        file: RegularFile,
-    ): TaskInputFilePropertyBuilder {
-        task.jvmArgumentProviders.add(
-            SystemPropertyArgumentProvider(key, file) {
-                it.asFile.invariantSeparatorsPath
-            }
-        )
-        return task.inputs.file(file)
-            .withPropertyName("SystemProperty input file $key")
-    }
-
-    fun inputFile(
-        key: String,
-        file: Provider<out RegularFile>,
-    ): TaskInputFilePropertyBuilder {
-        task.jvmArgumentProviders.add(
-            SystemPropertyArgumentProvider(key, file) {
-                it.orNull?.asFile?.invariantSeparatorsPath
-            }
-        )
-        return task.inputs.file(file)
-            .withPropertyName("SystemProperty input file $key")
-    }
-
-    fun inputFiles(
-        key: String,
-        files: Provider<out FileCollection>,
-    ): TaskInputFilePropertyBuilder {
-        task.jvmArgumentProviders.add(
-            SystemPropertyArgumentProvider(key, files) { it.orNull?.asPath }
-        )
-        return task.inputs.files(files)
-            .withPropertyName("SystemProperty input files $key")
-    }
-
-    fun inputProperty(
-        key: String,
-        value: Provider<out String>,
-    ): TaskInputPropertyBuilder {
-        task.jvmArgumentProviders.add(
-            SystemPropertyArgumentProvider(key, value) { it.orNull }
-        )
-        return task.inputs.property("SystemProperty input property $key", value)
-    }
-
-    fun inputProperty(
-        key: String,
-        value: String,
-    ): TaskInputPropertyBuilder {
-        task.jvmArgumentProviders.add(
-            SystemPropertyArgumentProvider(key, value) { it }
-        )
-        return task.inputs.property("SystemProperty input property $key", value)
-    }
-
-    @JvmName("inputBooleanProperty")
-    fun inputProperty(
-        key: String,
-        value: Provider<out Boolean>,
-    ): TaskInputPropertyBuilder = inputProperty(key, value.map { it.toString() })
-
-    /**
-     * Add a System Property (in the format `-D$key=$value`).
-     *
-     * [value] will be treated as if it were annotated with [org.gradle.api.tasks.Internal]
-     * and will _not_ be registered as a Gradle [org.gradle.api.Task] input.
-     */
-    fun internalProperty(
-        key: String,
-        value: Provider<out String>,
-    ) {
-        task.jvmArgumentProviders.add(
-            SystemPropertyArgumentProvider(
-                key = key,
-                value = value,
-                transformer = { it.orNull },
-            )
-        )
-    }
 }
 
 /**
