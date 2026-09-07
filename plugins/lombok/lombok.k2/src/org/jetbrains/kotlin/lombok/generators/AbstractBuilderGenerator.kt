@@ -659,6 +659,20 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     }
 
     /**
+     * Check if a builder annotation (`@Builder`, `@SuperBuilder`) is applicable for the current class.
+     *
+     * Consider `builderModality` because it should be allowed to call an abstract constructor in the case of
+     * `@SuperBuilder` stuff generation (not yet implemented).
+     *
+     * Read off the raw status rather than the resolved one: this runs inside a generation callback, where
+     * asking for a resolved status would violate FIR's lazy-resolve contract.
+     */
+    private val FirClassSymbol<*>.canHostClassLevelBuilder: Boolean
+        get() = isPlainClass &&
+                !isInner &&
+                (builderModality == Modality.ABSTRACT || rawStatus.modality.let { it != Modality.ABSTRACT && it != Modality.SEALED })
+
+    /**
      * All `@Builder`-with-declaration pairs relevant to [classSymbol] as an entity: its own
      * class/constructor/member-function annotations, plus — since a function declared directly inside its
      * companion object is the Kotlin analogue of a Java static factory method — any `@Builder`-annotated
@@ -688,7 +702,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }
 
         return buildList {
-            if (allowedTargets.contains(KotlinTarget.CLASS) && classSymbol.isPlainClass && !classSymbol.isInner) {
+            if (allowedTargets.contains(KotlinTarget.CLASS) && classSymbol.canHostClassLevelBuilder) {
                 getBuilder(classSymbol)?.let { add(BuilderWithDeclaration(it, classSymbol.fir)) }
             }
 
