@@ -3,7 +3,7 @@ plugins {
 }
 
 kotlin {
-    macosX64("opengl") {
+    macosArm64("opengl") {
         binaries {
             executable {
                 entryPoint = "sample.opengl.main"

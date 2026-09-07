@@ -3,7 +3,7 @@ plugins {
 }
 
 kotlin {
-    macosX64("objc") {
+    macosArm64("objc") {
         binaries {
             executable {
                 entryPoint = "sample.objc.main"
