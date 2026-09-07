@@ -14,6 +14,7 @@ import kotlin.wasm.ExperimentalWasmInterop
 import kotlin.wasm.internal.wasm_memory_copy
 import kotlin.wasm.internal.wasm_memory_grow
 import kotlin.wasm.internal.wasm_memory_size
+import kotlin.wasm.internal.wasm_unreachable
 
 /**
  * WebAssembly linear memory allocator.
@@ -275,7 +276,7 @@ private object FreeList {
 
 @UnsafeWasmMemoryApi
 @ExperimentalWasmInterop
-private class ArenaLikeAllocator : MemoryAllocator(){
+private class ArenaLikeAllocator : MemoryAllocator() {
     private val allocationsToFree = mutableListOf<MemorySlot>()
 
     override fun allocate(size: Int): Pointer {
@@ -296,7 +297,7 @@ private class ArenaLikeAllocator : MemoryAllocator(){
                 (endAddressExclusive - firstInvalidAddress) / WASM_PAGE_SIZE_IN_BYTES.toUInt() + 2u
 
             if (wasm_memory_grow(numPagesToGrow.toInt()) == -1) {
-                error("Out of linear memory. memory.grow returned -1")
+                throw OutOfMemoryError("Out of linear memory. memory.grow returned -1")
             }
         }
 
@@ -373,73 +374,78 @@ public fun componentModelRealloc(
     }
     val allocator = reallocAllocator!!
 
-    // to address the correct slot, we must extend the original size to be aligned, as that will be the internal size of the slot
-    val originalAllocationSize = realAllocationSize(originalSize.toUInt())
+    try {
+        // to address the correct slot, we must extend the original size to be aligned, as that will be the internal size of the slot
+        val originalAllocationSize = realAllocationSize(originalSize.toUInt())
 
-    if (newSize == 0) {
-        if (originalPtr == 0 && originalSize == 0) // this is a zero-size allocation request, not a free (freeing 0 and allocating 0 are both no-ops, only need to ensure the correct return value
-            return allocator.allocate(0).address.toInt()
+        if (newSize == 0) {
+            if (originalPtr == 0 && originalSize == 0) // this is a zero-size allocation request, not a free (freeing 0 and allocating 0 are both no-ops, only need to ensure the correct return value)
+                return allocator.allocate(0).address.toInt()
 
-        // TODO(REVIEW) this is an easy way to get the program to throw, if it's misused. Any possible guardrails against this?
+            // TODO(REVIEW) this is an easy way to get the program to throw, if it's misused. Any possible guardrails against this?
+            FreeList.free(MemorySlot(Pointer(originalPtr.toUInt()), originalAllocationSize))
+            return -1 // TODO(REVIEW) better return value? -1 most clearly indicates "not a valid address", because 0 is a valid address.
+        }
+
+        val newAllocationSize = realAllocationSize(newSize.toUInt())
+
+        // cases:
+        // 1. size doesn't change
+        // 2. allocation shrinks
+        // 3. allocation grows
+        //   3a. fresh allocation (original size was 0)
+        //       NOTE: this would technically be handled by case 3b, but it's simpler to handle it separately
+        //   3b. allocation grows in place
+        //   3c. allocation grows elsewhere, needs copy
+
+        if (newAllocationSize == originalAllocationSize) // case 1
+            return originalPtr
+
+        // case 2: shrinking, i.e., the new size is smaller than the old size: nothing to do except free a portion
+        if (newAllocationSize < originalAllocationSize) {
+            // NOTE: because we're only subtracting aligned sizes, the result will still be aligned
+            FreeList.free(MemorySlot(Pointer(originalPtr.toUInt() + newAllocationSize), originalAllocationSize - newAllocationSize))
+            return originalPtr
+        }
+
+        // case 3: growing, i.e., we need to do some actual allocation
+        val newAllocation = allocator.allocate(newSize)
+
+        // case 3a: the original size was 0, we're done
+        if (originalSize == 0)
+            return newAllocation.address.toInt()
+
+        // case 3b: we can grow the allocation in place
+        if (originalAllocationSize <= newAllocationSize && originalPtr.toUInt() + originalAllocationSize == newAllocation.address) {
+            // in that case, don't need to copy data from the old allocation because we just grew at the same point
+            // BUT: Because we grew, we're actually reusing the original allocation with its original aligned size.
+            //      But at this moment, we just have one big allocation with size originalSizeAligned + newSizeAligned.
+            //      So free the difference.
+            val startOfOverallocatedMemory = originalPtr.toUInt() + newAllocationSize
+            val overallocatedSize = originalAllocationSize // we allocated as if we didn't have the original allocation
+            FreeList.free(MemorySlot(Pointer(startOfOverallocatedMemory), overallocatedSize))
+            // TODO(REVIEW) comment too long?
+            // NOTE: allocating and then freeing again might seem overcomplicated; the obvious alternative would be to allocate twice in a row instead. The reason not to allocate twice is as follows:
+            //       if the allocator ever changes, and stops giving out contiguous memory, this code path (overallocating, then freeing) will simply stop being used, and nothing will break.
+            //       While the allocation does occur contiguously, the free is also contiguous and doesn't perform any complex logic, because all that changes is the start address of the free list block that we're allocating from, the list itself is not modified.
+            //
+            //       If we instead allocated twice, in case we can't grow the original allocation in place, we're implicitly relying on being able to perform the second allocation in place. This isn't always true, and would create further complications in these cases, by having to free the "failed" allocation first. Thus, overallocating plus freeing is safer than allocating incrementally.
+            //       Conversely, this implementation suffers from sometimes not being able to grow an allocation in place, when the initial overallocatedSize is too large, even though the real needed size would be small enough to fit. However, this only results in an additional copy, instead of a semantics change.
+
+            return originalPtr
+        }
+
+        // case 3c: we now know the allocation grew (and the original allocation size was non-zero), and couldn't grow in place, so we have to copy the old data
+        // as this is only for useful bytes, we use the sizes that are given out to the application here, not the allocation sizes
+        wasm_memory_copy(newAllocation.address.toInt(), originalPtr, minOf(originalSize, newSize))
+        // also free the old allocation (from which we copied), which is now useless
         FreeList.free(MemorySlot(Pointer(originalPtr.toUInt()), originalAllocationSize))
-        return -1 // TODO(REVIEW) better return value? -1 most clearly indicates "not a valid address", because 0 is a valid address.
-    }
 
-    val newAllocationSize = realAllocationSize(newSize.toUInt())
-
-    // cases:
-    // 1. size doesn't change
-    // 2. allocation shrinks
-    // 3. allocation grows
-    //   3a. fresh allocation (original size was 0)
-    //       NOTE: this would technically be handled by case 3b, but it's simpler to handle it separately
-    //   3b. allocation grows in place
-    //   3c. allocation grows elsewhere, needs copy
-
-    if (newAllocationSize == originalAllocationSize) // case 1
-        return originalPtr
-
-    // case 2: shrinking, i.e., the new size is smaller than the old size: nothing to do except free a portion
-    if (newAllocationSize < originalAllocationSize) {
-        // NOTE: because we're only subtracting aligned sizes, the result will still be aligned
-        FreeList.free(MemorySlot(Pointer(originalPtr.toUInt() + newAllocationSize), originalAllocationSize - newAllocationSize))
-        return originalPtr
-    }
-
-    // case 3: growing, i.e., we need to do some actual allocation
-    val newAllocation = allocator.allocate(newSize)
-
-    // case 3a: the original size was 0, we're done
-    if (originalSize == 0)
         return newAllocation.address.toInt()
-
-    // case 3b: we can grow the allocation in place
-    if (originalAllocationSize <= newAllocationSize && originalPtr.toUInt() + originalAllocationSize == newAllocation.address) {
-        // in that case, don't need to copy data from the old allocation because we just grew at the same point
-        // BUT: Because we grew, we're actually reusing the original allocation with its original aligned size.
-        //      But at this moment, we just have one big allocation with size originalSizeAligned + newSizeAligned.
-        //      So free the difference.
-        val startOfOverallocatedMemory = originalPtr.toUInt() + newAllocationSize
-        val overallocatedSize = originalAllocationSize // we allocated as if we didn't have the original allocation
-        FreeList.free(MemorySlot(Pointer(startOfOverallocatedMemory), overallocatedSize))
-        // TODO(REVIEW) comment too long?
-        // NOTE: allocating and then freeing again might seem overcomplicated; the obvious alternative would be to allocate twice in a row instead. The reason not to allocate twice is as follows:
-        //       if the allocator ever changes, and stops giving out contiguous memory, this code path (overallocating, then freeing) will simply stop being used, and nothing will break.
-        //       While the allocation does occur contiguously, the free is also contiguous and doesn't perform any complex logic, because all that changes is the start address of the free list block that we're allocating from, the list itself is not modified.
-        //
-        //       If we instead allocated twice, in case we can't grow the original allocation in place, we're implicitly relying on being able to perform the second allocation in place. This isn't always true, and would create further complications in these cases, by having to free the "failed" allocation first. Thus, overallocating plus freeing is safer than allocating incrementally.
-        //       Conversely, this implementation suffers from sometimes not being able to grow an allocation in place, when the initial overallocatedSize is too large, even though the real needed size would be small enough to fit. However, this only results in an additional copy, instead of a semantics change.
-
-        return originalPtr
+    } catch (e: OutOfMemoryError) {
+        // the canonical ABI specifies realloc must trap via unreachable in this case
+        wasm_unreachable()
     }
-
-    // case 3c: we now know the allocation grew (and the original allocation size was non-zero), and couldn't grow in place, so we have to copy the old data
-    // as this is only for useful bytes, we use the sizes that are given out to the application here, not the allocation sizes
-    wasm_memory_copy(newAllocation.address.toInt(), originalPtr, minOf(originalSize, newSize))
-    // also free the old allocation (from which we copied), which is now useless
-    FreeList.free(MemorySlot(Pointer(originalPtr.toUInt()), originalAllocationSize))
-
-    return newAllocation.address.toInt()
 }
 
 /**
