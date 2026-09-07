@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.ScriptNames
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
@@ -253,7 +254,7 @@ class LLFirResolveExtensionToolDeclarationProvider internal constructor(
         if (scriptFqName.isRoot) return emptyList()
         val packageFqName = scriptFqName.parent()
         return getDeclarationProvidersByPackage(packageFqName) { file ->
-            scriptFqName.shortName() == NameUtils.getScriptNameForFile(file.getFileName())
+            scriptFqName.shortName() == ScriptNames.getScriptNameForFile(file.getFileName())
         }
             .mapNotNullTo(mutableListOf()) { it.kotlinFile.script }
     }

@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchSco
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.name.ScriptNames
 import org.jetbrains.kotlin.readSourceFileWithMapping
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
 import org.jetbrains.kotlin.scripting.compiler.plugin.configureFirSession
@@ -274,7 +274,7 @@ class ScriptJvmK2CompilerImpl(
             script,
             {
                 sourcesToFir[it]?.declarations?.firstIsInstanceOrNull<FirScript>()
-                    ?.let { it.symbol.packageFqName().child(NameUtils.getScriptTargetClassName(it.name)) }
+                    ?.let { it.symbol.packageFqName().child(ScriptNames.getScriptTargetClassName(it.name)) }
             },
             sourceDependencies,
             ::getRefinedConfiguration,

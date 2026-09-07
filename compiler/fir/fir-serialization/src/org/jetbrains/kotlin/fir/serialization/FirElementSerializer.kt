@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.metadata.serialization.Interner
 import org.jetbrains.kotlin.metadata.serialization.MutableTypeTable
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.ScriptNames
 import org.jetbrains.kotlin.protobuf.ByteString
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.resolve.RequireKotlinConstants
@@ -1532,4 +1533,4 @@ class FirElementSerializer private constructor(
 }
 
 internal fun scriptClassId(script: FirScript): ClassId =
-    ClassId(script.symbol.fqName.parentOrNull() ?: FqName.ROOT, NameUtils.getScriptTargetClassName(script.name))
+    ClassId(script.symbol.fqName.parentOrNull() ?: FqName.ROOT, ScriptNames.getScriptTargetClassName(script.name))

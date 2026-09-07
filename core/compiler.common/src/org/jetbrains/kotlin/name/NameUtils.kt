@@ -36,20 +36,6 @@ object NameUtils {
         else
             "_$str"
 
-    // "pkg/someScript.kts" -> "SomeScript"
-    @JvmStatic
-    fun getScriptNameForFile(filePath: String): Name =
-        ScriptNames.getScriptNameForFile(filePath)
-
-    @JvmStatic
-    fun getScriptTargetClassName(originalName: Name): Name = ScriptNames.getScriptTargetClassName(originalName)
-
-    @JvmStatic
-    fun getSnippetTargetClassName(originalName: Name): Name = ScriptNames.getSnippetTargetClassName(originalName)
-
-    @JvmStatic
-    fun getSnippetTargetClassName(fileName: String): Name = ScriptNames.getSnippetTargetClassName(fileName)
-
     @JvmStatic
     fun hasName(name: Name) = name != SpecialNames.NO_NAME_PROVIDED && name != SpecialNames.ANONYMOUS
 
