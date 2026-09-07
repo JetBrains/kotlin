@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.gradle.targets.jvm.JAVA_TEST_FIXTURES_PLUGIN_ID
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.prettyName
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsVersion
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -2656,7 +2657,44 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    internal object SharedNpmProjectInvalidPackageJson : ToolingDiagnosticFactory(
+    internal object PreInstalledNodeJsVersionMismatch : ToolingDiagnosticFactory(
+        predefinedSeverity = WARNING,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(
+            installedVersion: NodeJsVersion,
+            requestedVersion: NodeJsVersion,
+            command: String = "node",
+        ) = build {
+            title("Pre-installed Node.js version mismatch")
+                .description {
+                    "Node.js $installedVersion found by '$command' does not match the requested " +
+                            "version $requestedVersion. The requested version cannot be provisioned, because " +
+                            "the Node.js toolchain is configured to use a pre-installed Node.js."
+                }
+                .solution {
+                    "Please update the pre-installed Node.js or configure the Kotlin Gradle Plugin to download Node.js by setting kotlin.js.node.toolchain=DOWNLOAD."
+                }
+        }
+    }
+
+    internal object NodeJsVersionIsNotSupported : ToolingDiagnosticFactory(
+        predefinedSeverity = WARNING,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(version: NodeJsVersion, minimalSupportedMajorVersion: Int) = build {
+            title("Node.js $version is not supported")
+                .description {
+                    "Node.js $version is not supported by the Kotlin Gradle Plugin. " +
+                            "The minimal supported version is $minimalSupportedMajorVersion."
+                }
+                .solution {
+                    "Please use Node.js $minimalSupportedMajorVersion or a newer version."
+                }
+        }
+    }
+
+internal object SharedNpmProjectInvalidPackageJson : ToolingDiagnosticFactory(
         WARNING,
         DiagnosticGroup.Kgp.Misconfiguration,
     ) {
