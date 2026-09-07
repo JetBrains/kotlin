@@ -8,7 +8,7 @@ kotlin {
 
     // Create target for the host platform.
     val hostTarget = when {
-        hostOs == "Mac OS X" -> macosX64("globalState")
+        hostOs == "Mac OS X" -> macosArm64("globalState")
         hostOs == "Linux" -> linuxX64("globalState")
         hostOs.startsWith("Windows") -> mingwX64("globalState")
         else -> throw GradleException("Host OS '$hostOs' is not supported in Kotlin/Native $project.")

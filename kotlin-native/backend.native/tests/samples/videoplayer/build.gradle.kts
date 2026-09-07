@@ -12,7 +12,7 @@ kotlin {
 
     // Create target for the host platform.
     val hostTarget = when {
-        hostOs == "Mac OS X" -> macosX64("videoPlayer")
+        hostOs == "Mac OS X" -> macosArm64("videoPlayer")
         hostOs == "Linux" -> linuxX64("videoPlayer")
         hostOs.startsWith("Windows") -> mingwX64("videoPlayer")
         else -> throw GradleException("Host OS '$hostOs' is not supported in Kotlin/Native $project.")
@@ -24,7 +24,7 @@ kotlin {
                 entryPoint = "sample.videoplayer.main"
 
                 when (konanTarget) {
-                    KonanTarget.MACOS_X64 -> linkerOpts("-L/opt/local/lib", "-L/usr/local/lib")
+                    KonanTarget.MACOS_ARM64 -> linkerOpts("-L/opt/local/lib", "-L/usr/local/lib")
                     KonanTarget.LINUX_X64 -> linkerOpts("-L/usr/lib/x86_64-linux-gnu", "-L/usr/lib64")
                     KonanTarget.MINGW_X64 -> linkerOpts("-L${mingwPath.resolve("lib")}")
                     else -> throw GradleException("Target ${konanTarget.name} is not supported in the videoplayer sample.")
@@ -35,7 +35,7 @@ kotlin {
         compilations["main"].cinterops {
             create("ffmpeg") {
                 when (konanTarget) {
-                    KonanTarget.MACOS_X64 -> includeDirs.headerFilterOnly("/opt/local/include", "/usr/local/include")
+                    KonanTarget.MACOS_ARM64 -> includeDirs.headerFilterOnly("/opt/local/include", "/usr/local/include")
                     KonanTarget.LINUX_X64 -> includeDirs.headerFilterOnly("/usr/include", "/usr/include/x86_64-linux-gnu", "/usr/include/ffmpeg")
                     KonanTarget.MINGW_X64 -> includeDirs(mingwPath.resolve("include"))
                     else -> throw GradleException("Target ${konanTarget.name} is not supported in the videoplayer sample.")
@@ -43,7 +43,7 @@ kotlin {
             }
             create("sdl") {
                 when (konanTarget) {
-                    KonanTarget.MACOS_X64 -> includeDirs("/opt/local/include/SDL2", "/usr/local/include/SDL2")
+                    KonanTarget.MACOS_ARM64 -> includeDirs("/opt/local/include/SDL2", "/usr/local/include/SDL2")
                     KonanTarget.LINUX_X64 -> includeDirs("/usr/include", "/usr/include/x86_64-linux-gnu", "/usr/include/SDL2")
                     KonanTarget.MINGW_X64 -> includeDirs(mingwPath.resolve("include/SDL2"))
                     else -> throw GradleException("Target ${konanTarget.name} is not supported in the videoplayer sample.")

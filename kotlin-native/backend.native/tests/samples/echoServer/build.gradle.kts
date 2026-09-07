@@ -5,7 +5,6 @@ plugins {
 }
 
 kotlin {
-    macosX64()
     macosArm64()
     linuxArm64()
     linuxX64()
