@@ -6,27 +6,46 @@
 package kotlin
 
 import kotlin.internal.InlineOnly
-import kotlin.math.abs
 import kotlin.wasm.internal.*
 import kotlin.wasm.internal.WasmOp
 import kotlin.wasm.internal.implementedAsIntrinsic
 import kotlin.wasm.internal.wasm_u32_compareTo
 
-@PublishedApi
 @WasmOp(WasmOp.I32_REM_U)
-internal actual fun uintRemainder(v1: UInt, v2: UInt): UInt = implementedAsIntrinsic
+private fun uintRemainderIntrinsic(v1: UInt, v2: UInt): UInt = implementedAsIntrinsic
 
 @PublishedApi
+internal actual fun uintRemainder(v1: UInt, v2: UInt): UInt = when (v2) {
+    0u -> throw ArithmeticException("Division by zero")
+    else -> uintRemainderIntrinsic(v1, v2)
+}
+
 @WasmOp(WasmOp.I32_DIV_U)
-internal actual fun uintDivide(v1: UInt, v2: UInt): UInt = implementedAsIntrinsic
+private fun uintDivideIntrinsic(v1: UInt, v2: UInt): UInt = implementedAsIntrinsic
 
 @PublishedApi
+internal actual fun uintDivide(v1: UInt, v2: UInt): UInt = when (v2) {
+    0u -> throw ArithmeticException("Division by zero")
+    else -> uintDivideIntrinsic(v1, v2)
+}
+
 @WasmOp(WasmOp.I64_REM_U)
-internal actual fun ulongRemainder(v1: ULong, v2: ULong): ULong = implementedAsIntrinsic
+private fun ulongRemainderIntrinsic(v1: ULong, v2: ULong): ULong = implementedAsIntrinsic
 
 @PublishedApi
+internal actual fun ulongRemainder(v1: ULong, v2: ULong): ULong = when (v2) {
+    0UL -> throw ArithmeticException("Division by zero")
+    else -> ulongRemainderIntrinsic(v1, v2)
+}
+
 @WasmOp(WasmOp.I64_DIV_U)
-internal actual fun ulongDivide(v1: ULong, v2: ULong): ULong = implementedAsIntrinsic
+private fun ulongDivideIntrinsic(v1: ULong, v2: ULong): ULong = implementedAsIntrinsic
+
+@PublishedApi
+internal actual fun ulongDivide(v1: ULong, v2: ULong): ULong = when (v2) {
+    0UL -> throw ArithmeticException("Division by zero")
+    else -> ulongDivideIntrinsic(v1, v2)
+}
 
 @PublishedApi
 @InlineOnly
