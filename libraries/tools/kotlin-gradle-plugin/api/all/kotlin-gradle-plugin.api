@@ -5835,6 +5835,74 @@ public class org/jetbrains/kotlin/gradle/targets/web/nodejs/NpmToolingEnv {
 	public final fun getVersion ()Ljava/lang/String;
 }
 
+public final class org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/BuildPlatform : java/io/Serializable {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/BuildPlatform;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/BuildPlatform;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/BuildPlatform;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getArch ()Ljava/lang/String;
+	public final fun getOs ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/DefaultNodeJsToolchainService : org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainService {
+	public fun request (Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/provider/Provider;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/DefaultNodeJsToolchainService$Parameters : org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainService$Parameters {
+	public fun <init> ()V
+	public abstract fun getDefaultPlatform ()Lorg/gradle/api/provider/Property;
+	public abstract fun getDownloadBaseUrl ()Lorg/gradle/api/provider/Property;
+	public abstract fun getInstallationDir ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getOffline ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsExecutable {
+	public abstract fun getExecutable ()Lorg/gradle/api/provider/Property;
+	public abstract fun getPlatform ()Lorg/gradle/api/provider/Property;
+	public abstract fun getVersion ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsFromSystemPathToolchainService : org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainService {
+	public fun request (Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/provider/Provider;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsFromSystemPathToolchainService$Parameters : org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainService$Parameters {
+	public fun <init> ()V
+	public abstract fun getCommand ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsRequest {
+	public abstract fun getPlatform ()Lorg/gradle/api/provider/Property;
+	public abstract fun getVersion ()Lorg/gradle/api/provider/Property;
+	public final fun version (Ljava/lang/String;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainService : org/gradle/api/services/BuildService {
+	public abstract fun request (Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/provider/Provider;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainService$DefaultImpls {
+	public static synthetic fun request$default (Lorg/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainService;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/gradle/api/provider/Provider;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainService$Parameters : org/gradle/api/services/BuildServiceParameters {
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsVersion : java/io/Serializable {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsVersion;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsVersion;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsVersion;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getVersion ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/targets/web/npm/CommonNpmResolverPlugin : org/gradle/api/Plugin {
 }
 

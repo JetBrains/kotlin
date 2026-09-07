@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrows
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwBrowserKind
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsVersion
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.assertDependsOn
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
@@ -291,9 +292,9 @@ class KotlinPlaywrightTestFrameworkWiringTest {
             )
 
             assertEquals(
-                installTask.nodeExecutable.get(),
-                wasmNodeEnv.executable.get(),
-                "Expected wasm node executable for playwright browsers installer"
+                installTask.nodeJsVersion.get(),
+                NodeJsVersion(wasmNodeEnv.version.get()),
+                "Expected wasm node version for playwright browsers installer"
             )
 
             installTask.assertDependsOn(project.tasks.getByName("kotlinWasmToolingSetup"))

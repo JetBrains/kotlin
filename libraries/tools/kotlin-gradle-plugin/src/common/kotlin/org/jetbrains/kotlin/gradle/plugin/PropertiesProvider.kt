@@ -64,6 +64,8 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode.Companion.toArgument
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainMode
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
@@ -772,6 +774,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val playwrightBrowsersPath: Provider<String>
         get() = property(PropertyNames.KOTLIN_PLAYWRIGHT_BROWSERS_PATH)
 
+    val nodeJsToolchainMode: NodeJsToolchainMode
+        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN).orNull
+            ?.let { NodeJsToolchainMode.valueOf(it) } ?: NodeJsToolchainMode.DISABLE
+
     /**
      * Temporary untested workaround for Isolated Project support.
      * Absolutely no stability guarantees. It will most likely not work, or ever work.
@@ -855,6 +861,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION = property("kotlin.mpp.enablePlatformIntegerCommonization")
         val KOTLIN_JS_KARMA_BROWSERS = property("kotlin.js.browser.karma.browsers")
         val KOTLIN_PLAYWRIGHT_BROWSERS_PATH = property("kotlin.gradle.playwright.browsers.path")
+        val KOTLIN_JS_NODEJS_TOOLCHAIN = property("kotlin.js.nodejs.toolchain")
         val KOTLIN_BUILD_REPORT_SINGLE_FILE = property("kotlin.build.report.single_file")
         val KOTLIN_BUILD_REPORT_HTTP_URL = property("kotlin.build.report.http.url")
         val KOTLIN_BUILD_REPORT_JSON_DIR = property("kotlin.build.report.json.directory")

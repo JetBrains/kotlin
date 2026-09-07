@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.gradle.targets.web.nodejs
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.unameExecResult
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.parsePlatform
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainMode
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.registerNodeJsToolchainServiceIfAbsent
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import kotlin.reflect.KClass
@@ -34,16 +37,21 @@ internal class NodeJsPluginApplier(
 ) {
 
     fun apply(project: Project) {
+        registerNodeJsToolchainServiceIfAbsent(project)
+
         val nodeJs = project.createNodeJsEnvSpec(nodeJsEnvSpecKlass, nodeJsEnvSpecName) {
             nodeJsRootApply(project.rootProject)
         }
 
-        project.registerTask<NodeJsSetupTask>(platformDisambiguate.extensionName(NodeJsSetupTask.BASE_NAME), listOf(nodeJs)) {
-            it.group = NodeJsRootPlugin.TASKS_GROUP_NAME
-            it.description = "Download and install a local node/npm version"
-            it.configuration = it.ivyDependencyProvider.map { ivyDependency ->
-                project.configurations.detachedConfiguration(project.dependencies.create(ivyDependency))
-                    .also { conf -> conf.isTransitive = false }
+        //TODO
+        if (project.kotlinPropertiesProvider.nodeJsToolchainMode == NodeJsToolchainMode.DISABLE) {
+            project.registerTask<NodeJsSetupTask>(platformDisambiguate.extensionName(NodeJsSetupTask.BASE_NAME), listOf(nodeJs)) {
+                it.group = NodeJsRootPlugin.TASKS_GROUP_NAME
+                it.description = "Download and install a local node/npm version"
+                it.configuration = it.ivyDependencyProvider.map { ivyDependency ->
+                    project.configurations.detachedConfiguration(project.dependencies.create(ivyDependency))
+                        .also { conf -> conf.isTransitive = false }
+                }
             }
         }
     }
