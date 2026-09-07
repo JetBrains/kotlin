@@ -73,4 +73,27 @@ tailrec fun foo5(param: Int) {
     }
 }
 
-/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, localProperty, propertyDeclaration, tailrec, tryExpression */
+open class DefaultArgumentBase {
+    open fun recurse(value: Int = 0) {}
+}
+
+class DefaultArgumentOverride : DefaultArgumentBase() {
+    <!NO_TAIL_CALLS_FOUND!>tailrec<!> override fun recurse(value: Int) {
+        try {
+            <!NON_TAIL_RECURSIVE_CALL!>recurse<!>()
+        } finally {
+        }
+    }
+}
+
+class ForeignReceiver {
+    <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun recurse(other: ForeignReceiver) {
+        try {
+            other.<!NON_TAIL_RECURSIVE_CALL!>recurse<!>(other)
+        } finally {
+        }
+    }
+}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, integerLiteral, localProperty, override,
+propertyDeclaration, tailrec, tryExpression */

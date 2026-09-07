@@ -30,6 +30,8 @@ object CommonBackendErrors : KtDiagnosticsContainer() {
 
     val NO_TAIL_CALLS_FOUND by warning0<PsiElement>(TAILREC_MODIFIER)
 
+    val TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED by warning0<PsiElement>(REFERENCED_NAME_BY_QUALIFIED)
+
     override fun getRendererFactory(): BaseDiagnosticRendererFactory {
         return KtDefaultCommonBackendErrorMessages
     }
@@ -58,6 +60,10 @@ object KtDefaultCommonBackendErrorMessages : BaseDiagnosticRendererFactory() {
         map.put(
             CommonBackendErrors.NO_TAIL_CALLS_FOUND,
             "A function is marked as tail-recursive but no tail calls are found.",
+        )
+        map.put(
+            CommonBackendErrors.TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED,
+            "Tail recursion optimization inside try/catch/finally is not supported.",
         )
     }
 }
