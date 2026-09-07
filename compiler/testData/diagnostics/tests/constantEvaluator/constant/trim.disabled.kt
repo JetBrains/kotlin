@@ -24,7 +24,7 @@ const val trimMargin3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"""
     #bar
 """.trimMargin("#")<!>
 
-const val trimMargin4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, TRIM_MARGIN_BLANK_PREFIX!>"""
+const val trimMargin4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"""
     #XYZ
     #foo
     #bar
