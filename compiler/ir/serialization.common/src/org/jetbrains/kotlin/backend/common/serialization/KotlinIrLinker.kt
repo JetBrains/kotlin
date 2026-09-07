@@ -383,6 +383,14 @@ enum class DeserializationStrategy(
     WITH_INLINE_BODIES(false, false, false, false, true)
 }
 
-/** This is an auxiliary attribute that is used to store [KotlinLibrary] instance for deserialized [IrModuleFragment]. */
+/**
+ * This is an auxiliary attribute that is used to store [KotlinLibrary] instance for deserialized [IrModuleFragment].
+ *
+ * It is stamped by [KotlinIrLinker] for every module fragment created during IR linkage. Code that creates a synthetic
+ * module fragment for an already deserialized library module must stamp the new fragment manually.
+ *
+ * The attribute stays `null` for module fragments that the linker did not create: the fragment of the module being
+ * compiled, fragments on backends that have no klibs at all (JVM), and the single fragment that the frontend creates
+ * for all binary dependencies at once, see `DependencyListForCliModule.Builder`.
+ */
 var IrModuleFragment.kotlinLibrary: KotlinLibrary? by irAttribute(copyByDefault = false)
-    private set
