@@ -544,6 +544,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike
             model(it, "equalityBound")
         }
 
+        test<AbstractIsFullValueClassTest> {
+            model(it, "isFullValueClass")
+        }
+
         test<AbstractContainingFileAnnotationProviderTest> {
             model(it, "containingFileAnnotations")
         }

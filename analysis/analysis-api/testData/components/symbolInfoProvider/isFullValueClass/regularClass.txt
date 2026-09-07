@@ -1,0 +1,4 @@
+CLASS:
+  /Regular
+IS_FULL_VALUE_CLASS:
+  false

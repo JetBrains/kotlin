@@ -1,0 +1,4 @@
+CLASS:
+  /Empty
+IS_FULL_VALUE_CLASS:
+  true

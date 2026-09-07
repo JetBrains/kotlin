@@ -1,0 +1,4 @@
+CLASS:
+  /Point
+IS_FULL_VALUE_CLASS:
+  true

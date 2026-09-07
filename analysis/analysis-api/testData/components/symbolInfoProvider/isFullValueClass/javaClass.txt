@@ -1,0 +1,4 @@
+CLASS:
+  /JavaClass
+IS_FULL_VALUE_CLASS:
+  false

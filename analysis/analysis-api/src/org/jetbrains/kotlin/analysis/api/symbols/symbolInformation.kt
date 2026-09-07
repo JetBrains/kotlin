@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationTarget
 import org.jetbrains.kotlin.analysis.api.internals.internals
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -39,6 +40,27 @@ public val KaSymbol.isDeprecated: Boolean
         @OptIn(KaImplementationDetail::class)
         return internals.symbolInformationProvider.isDeprecated(this)
     }
+
+/**
+ * Whether the symbol represents a
+ * [full value class](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md)
+ * or a value object.
+ *
+ * This is a convenience property equivalent to `isValue && !isInline`.
+ *
+ * Full value classes with zero, one, or multiple primary properties, including abstract and sealed value classes, qualify.
+ * Inline value classes and ordinary classes, including ordinary subclasses of full value classes, do not qualify.
+ *
+ * This property describes the declaration itself. It does not predict boxing at a use site or backend optimizations.
+ * The platform and language settings affect the classification as described by [KaNamedClassSymbol.isInline].
+ *
+ * @see KaNamedClassSymbol.isValue
+ * @see KaNamedClassSymbol.isInline
+ */
+@KaExperimentalApi
+context(session: KaSession)
+public val KaNamedClassSymbol.isFullValueClass: Boolean
+    get() = session.withValidityAssertion { isValue && !isInline }
 
 /**
  * Whether the function symbol meets all the requirements to be declared as an [operator function](https://kotlinlang.org/docs/operator-overloading.html).
