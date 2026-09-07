@@ -47,7 +47,7 @@ class KotlinFileSerializedData private constructor(
      * @param irInlineData Serialized IR for preprocessed inline functions that were present in this file.
      */
     constructor(
-        metadata: ByteArray, irData: SerializedIrFile, irInlineData: SerializedIrFile? = null
+        metadata: ByteArray, irData: SerializedIrFile, irInlineData: SerializedIrFile?
     ) : this(metadata, irData, irInlineData, irData.path, irData.fqName) {
         if (irInlineData != null) {
             require(irData.path == irInlineData.path && irData.fqName == irInlineData.fqName)
