@@ -1,0 +1,3 @@
+class Simple {
+    fun foo() {}
+}
