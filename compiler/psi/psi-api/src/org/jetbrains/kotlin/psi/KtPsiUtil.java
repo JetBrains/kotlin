@@ -197,8 +197,8 @@ public class KtPsiUtil {
         KtModifierList modifierList = owner.getModifierList();
         if (modifierList != null) {
             List<KtAnnotationEntry> annotationEntries = modifierList.getAnnotationEntries();
+            Name deprecatedShortName = StandardClassIds.Annotations.INSTANCE.getDeprecated().getShortClassName();
             for (KtAnnotationEntry annotation : annotationEntries) {
-                Name deprecatedShortName = StandardClassIds.Annotations.INSTANCE.getDeprecated().getShortClassName();
                 if (deprecatedShortName.equals(annotation.getShortName())) {
                     return true;
                 }
