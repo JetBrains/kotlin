@@ -118,6 +118,29 @@ class NoToBuilderNeedsNothing(val kept: Int) {
     constructor(other: Long) : this(other.toInt())
 }
 
+// A class-level `@Builder` builds out of the primary constructor and nothing else, so a class that declares
+// none leaves `build()` with nothing to call. Real Lombok never meets this shape - a Java class always has a
+// constructor over all of its fields - and the Kotlin way out is to annotate a constructor instead.
+<!BUILDER_REQUIRES_PRIMARY_CONSTRUCTOR!>@Builder<!>
+class NoPrimaryConstructor {
+    val y: Int
+
+    constructor(x: Int) {
+        y = x
+    }
+}
+
+// The same class written the supported way: a constructor builder has parameters of its own to build from,
+// so the missing primary constructor costs it nothing.
+class NoPrimaryConstructorWithBuilderOnConstructor {
+    val y: Int
+
+    @Builder
+    constructor(x: Int) {
+        y = x
+    }
+}
+
 // `@Builder` on a secondary constructor: only `@Singular` is checkable (`@Builder.Default`
 // is `@Target(FIELD)`, so it can't land on a bare constructor parameter at all).
 class ConstructorSingularCannotSingularize(val id: Int) {

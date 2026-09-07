@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_WILL_IGNORE_INIT
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_DEFAULT_REQUIRES_INITIALIZING_EXPRESSION
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_DEFAULT_AND_SINGULAR_MIXED
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_REQUIRES_PRIMARY_CONSTRUCTOR
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.TO_BUILDER_CANNOT_OBTAIN
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.SINGULAR_REQUIRES_EXPLICIT_NAME
@@ -105,6 +106,7 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val BUILDER_DEFAULT_REQUIRES_INITIALIZING_EXPRESSION by warning0<KtAnnotationEntry>()
     val BUILDER_DEFAULT_AND_SINGULAR_MIXED by error0<KtAnnotationEntry>()
     val BUILDER_REQUIRES_EXPLICIT_RETURN_TYPE by error0<KtAnnotationEntry>()
+    val BUILDER_REQUIRES_PRIMARY_CONSTRUCTOR by error1<KtAnnotationEntry, Name>()
     val BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS by error0<KtAnnotationEntry>()
     val TO_BUILDER_CANNOT_OBTAIN by error1<KtParameter, Name>()
     val SINGULAR_REQUIRES_EXPLICIT_NAME by error0<KtAnnotationEntry>()
@@ -236,6 +238,12 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
         map.put(
             BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS,
             "'@Builder' is not supported on a declaration with an extension receiver or context parameters."
+        )
+        map.put(
+            BUILDER_REQUIRES_PRIMARY_CONSTRUCTOR,
+            "''{0}'' on a Kotlin class builds out of its primary constructor, and this class has none. " +
+                    "Declare a primary constructor, or annotate one of its secondary constructors with ''@Builder'' instead.",
+            CommonRenderers.NAME,
         )
         map.put(
             TO_BUILDER_CANNOT_OBTAIN,
