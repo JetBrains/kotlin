@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.java.direct.model.JavaPackageOverAst
-import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.*
+import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -62,7 +62,7 @@ class JavaClassFinderOverAstImpl internal constructor(
         resolutionContextFactory = { tree -> createResolutionContext(tree) },
     )
 
-    private fun createResolutionContext(tree: JavaLightTree): JavaResolutionContext =
+    private fun createResolutionContext(tree: LightSyntaxTree): JavaResolutionContext =
         JavaResolutionContext.create(tree, session = session, classFinder = this, moduleImportedPackages = moduleImportedPackages)
 
     override fun isClassInIndex(classId: ClassId): Boolean {

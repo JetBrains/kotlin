@@ -11,8 +11,6 @@ import com.intellij.platform.syntax.SyntaxElementType
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
-import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
-import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.getSimpleImport
 import org.jetbrains.kotlin.java.direct.resolution.resolveExternalFieldValue
@@ -20,13 +18,15 @@ import org.jetbrains.kotlin.java.direct.util.ConstantEvaluator
 import org.jetbrains.kotlin.java.direct.util.JavaLiteralParser
 import org.jetbrains.kotlin.java.direct.util.computeTypeParameters
 import org.jetbrains.kotlin.java.direct.util.isDeprecatedInJavaDoc
+import org.jetbrains.kotlin.kmp.tree.LightNode
+import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 abstract class JavaMemberOverAst(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     override val containingClass: JavaClassOverAst,
 ) : JavaElementOverAst(node, tree), JavaMember {
 
@@ -70,8 +70,8 @@ abstract class JavaMemberOverAst(
 }
 
 class JavaFieldOverAst(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     containingClass: JavaClassOverAst,
 ) : JavaMemberOverAst(node, tree, containingClass), JavaField {
     override val isEnumEntry: Boolean
@@ -81,11 +81,11 @@ class JavaFieldOverAst(
      * For multi-field declarations like `public static int A = 1, B = 2, C = 3;`,
      * the parser only attaches MODIFIER_LIST and TYPE to the first FIELD node.
      */
-    private val leadingFieldNode: JavaLightNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val leadingFieldNode: LightNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         computeLeadingFieldNode()
     }
 
-    private fun computeLeadingFieldNode(): JavaLightNode? {
+    private fun computeLeadingFieldNode(): LightNode? {
         if (tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST) != null ||
             tree.findChildByType(node, JavaSyntaxElementType.TYPE) != null
         ) {
@@ -107,7 +107,7 @@ class JavaFieldOverAst(
         return null
     }
 
-    override val modifierList: JavaLightNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    override val modifierList: LightNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
             ?: leadingFieldNode?.let { tree.findChildByType(it, JavaSyntaxElementType.MODIFIER_LIST) }
     }
@@ -140,7 +140,7 @@ class JavaFieldOverAst(
         computeType()
     }
 
-    private fun computeType(): JavaType {
+    internal fun computeType(): JavaType {
         if (isEnumEntry) {
             // The constant's type is its containing enum class, already resolved.
             return ResolvedJavaClassifierType(containingClass)
@@ -155,7 +155,7 @@ class JavaFieldOverAst(
     /**
      * The initializer expression node, if present.
      */
-    private val initializerNode: JavaLightNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val initializerNode: LightNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val children = tree.getChildren(node)
         val eqIndex = children.indexOfFirst { tree.getType(it) == JavaSyntaxTokenType.EQ }
         if (eqIndex < 0) null
@@ -187,7 +187,7 @@ class JavaFieldOverAst(
      * potentially constant even if we cannot evaluate them locally, since they might be resolved
      * via cross-language callback. Unresolvable simple names and method calls return false.
      */
-    private fun isInitializerPotentiallyConstant(n: JavaLightNode): Boolean {
+    private fun isInitializerPotentiallyConstant(n: LightNode): Boolean {
         return when (tree.getType(n)) {
             JavaSyntaxElementType.LITERAL_EXPRESSION -> {
                 val child = tree.getChildren(n).firstOrNull()
@@ -286,8 +286,8 @@ class JavaFieldOverAst(
 }
 
 abstract class JavaMethodBaseOverAst(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     containingClass: JavaClassOverAst,
 ) : JavaMemberOverAst(node, tree, containingClass) {
 
@@ -310,8 +310,8 @@ abstract class JavaMethodBaseOverAst(
 }
 
 class JavaMethodOverAst(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     containingClass: JavaClassOverAst,
 ) : JavaMethodBaseOverAst(node, tree, containingClass), JavaMethod {
 
@@ -363,8 +363,8 @@ class JavaMethodOverAst(
 }
 
 class JavaConstructorOverAst(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     containingClass: JavaClassOverAst,
 ) : JavaMethodBaseOverAst(node, tree, containingClass), JavaConstructor {
     override val isAbstract: Boolean get() = false
@@ -380,8 +380,8 @@ class JavaConstructorOverAst(
 }
 
 class JavaValueParameterOverAst(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     private val resolutionContext: JavaResolutionContext,
 ) : JavaElementOverAst(node, tree), JavaValueParameter {
     override val name: Name?

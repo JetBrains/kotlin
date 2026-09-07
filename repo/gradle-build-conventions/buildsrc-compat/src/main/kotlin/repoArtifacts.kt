@@ -15,7 +15,6 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPlugin.JAVADOC_ELEMENTS_CONFIGURATION_NAME
@@ -491,7 +490,7 @@ fun Project.publishProjectJars(
     sourcesJar {
         from {
             projects.map {
-                project(it).mainSourceSet.allSource
+                project(it).commonMainKotlinSourceSet()?.kotlin ?: project(it).mainSourceSet.allSource
             }
         }
     }

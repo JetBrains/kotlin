@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.java.direct
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
-import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.util.readJavaSourceFileText
+import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -26,12 +26,12 @@ import kotlin.contracts.contract
  *
  * [parseTopLevelClassFromFile] always populates the cache for **all** top-level classes declared
  * in the parsed file, not just the requested one. This ensures FIR sees the same
- * [JavaClassOverAst] (and therefore the same [JavaTypeParameterOverAst] instances) regardless of
+ * [JavaClassOverAst] (and therefore the same [org.jetbrains.kotlin.java.direct.model.JavaTypeParameterOverAst] instances) regardless of
  * whether a class was looked up directly or reached via inner-class navigation — FIR matches
  * Java type parameters by object identity.
  */
 internal class JavaClassCache(
-    private val resolutionContextFactory: (JavaLightTree) -> JavaResolutionContext,
+    private val resolutionContextFactory: (LightSyntaxTree) -> JavaResolutionContext,
 ) {
     private val classCache: MutableMap<ClassId, JavaClass> = ConcurrentHashMap()
 

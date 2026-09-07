@@ -9,8 +9,7 @@ package org.jetbrains.kotlin.java.direct
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
-import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
-import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
+import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -81,7 +80,7 @@ class JavaParsingBasicTest : JavaParsingTestBase() {
         val parsed = parseSource(source)
         val tree = parsed.tree
 
-        fun collectTypes(node: JavaLightNode): List<String> {
+        fun collectTypes(node: LightNode): List<String> {
             val result = mutableListOf(tree.getType(node).toString())
             for (child in tree.getChildren(node)) {
                 result.addAll(collectTypes(child))

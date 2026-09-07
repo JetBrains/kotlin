@@ -382,7 +382,7 @@ val jar = runtimeJar {
 sourcesJar {
     from {
         CompilerModules.compilerModules.map {
-            project(it).mainSourceSet.allSource
+            project(it).run { commonMainKotlinSourceSet()?.kotlin ?: mainSourceSet.allSource }
         }
     }
 
