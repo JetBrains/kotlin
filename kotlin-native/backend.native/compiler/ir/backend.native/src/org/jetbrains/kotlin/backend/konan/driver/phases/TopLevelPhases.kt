@@ -346,7 +346,6 @@ private fun PhaseEngine<out NativeBackendContext>.splitIntoFragments(
             val llvmModuleSpecification = CacheLlvmModuleSpecification(
                     config.cachedLibraries,
                     PartialCacheInfo(config.libraryToCache!!.klib, cacheDeserializationStrategy),
-                    containsStdlib = containsStdlib
             )
             val dependenciesTracker = DependenciesTrackerImpl(llvmModuleSpecification, context.config, context)
             val fragment = IrModuleFragmentImpl(input.descriptor)
@@ -372,8 +371,7 @@ private fun PhaseEngine<out NativeBackendContext>.splitIntoFragments(
         }
     } else {
         val llvmModuleSpecification = if (config.produce.isCache) {
-            val containsStdlib = config.libraryToCache!!.klib == context.stdlibModule.konanLibrary
-            CacheLlvmModuleSpecification(config.cachedLibraries, context.config.libraryToCache!!, containsStdlib = containsStdlib)
+            CacheLlvmModuleSpecification(config.cachedLibraries, context.config.libraryToCache!!)
         } else {
             DefaultLlvmModuleSpecification(config.cachedLibraries)
         }

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.ir.IrBasedFunctionFactory.Companion.isFunctionInterfaceFile
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.isNativeStdlib
 
 internal abstract class LlvmModuleSpecificationBase(protected val cachedLibraries: CachedLibraries) : LlvmModuleSpecification {
     override fun importsKotlinDeclarationsFromOtherObjectFiles(): Boolean =
@@ -55,9 +56,10 @@ internal class DefaultLlvmModuleSpecification(cachedLibraries: CachedLibraries)
 internal class CacheLlvmModuleSpecification(
         cachedLibraries: CachedLibraries,
         private val libraryToCache: PartialCacheInfo,
-        private val containsStdlib: Boolean,
 ) : LlvmModuleSpecificationBase(cachedLibraries) {
     override val isFinal = false
+
+    private val containsStdlib = libraryToCache.klib.isNativeStdlib
 
     override fun containsLibrary(library: KotlinLibrary): Boolean = library == libraryToCache.klib
 
