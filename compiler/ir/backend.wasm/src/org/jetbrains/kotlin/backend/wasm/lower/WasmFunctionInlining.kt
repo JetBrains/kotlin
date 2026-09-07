@@ -28,10 +28,7 @@ abstract class WasmFunctionInlining(
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration): IrExpression {
 
         val symbol = expression.symbol
-        if (!symbol.isBound) return super.visitFunctionAccess(expression, data)
-
-        val realOwner = symbol.owner.resolveFakeOverrideOrSelf()
-        if (realOwner == context.symbols.suspendCoroutineUninterceptedOrReturnIntrinsic.owner) {
+        if (symbol == context.symbols.suspendCoroutineUninterceptedOrReturnIntrinsic) {
             expression.arguments[0] = unwrapTemporaryVariableChain(expression.arguments[0])
         }
 
@@ -64,15 +61,15 @@ abstract class WasmFunctionInlining(
 
     override fun visitContainerExpression(expression: IrContainerExpression, data: IrDeclaration): IrExpression {
         containerStack.addLast(expression to mutableListOf())
-        try {
-            super.visitContainerExpression(expression, data)
-        } finally {
-            containerStack.removeLast().let { [container, vars] ->
-                if (vars.isNotEmpty()) {
-                    container.statements.removeAll(vars)
-                }
+
+        super.visitContainerExpression(expression, data)
+
+        containerStack.removeLast().let { [container, vars] ->
+            if (vars.isNotEmpty()) {
+                container.statements.removeAll(vars)
             }
         }
+
         return expression
     }
 }
