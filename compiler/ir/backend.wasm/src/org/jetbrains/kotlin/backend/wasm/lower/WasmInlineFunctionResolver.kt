@@ -5,11 +5,49 @@
 
 package org.jetbrains.kotlin.backend.wasm.lower
 
-import org.jetbrains.kotlin.backend.common.LoweringContext
-import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
+import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.suspendCoroutineUninterceptedOrReturnIntrinsicByMode
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.inline.InlineFunctionResolver
 import org.jetbrains.kotlin.ir.inline.InlineMode
+import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.util.isBuiltInSuspendCoroutineUninterceptedOrReturn
+import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrSelf
 
 class WasmInlineFunctionResolver(
-    context: LoweringContext,
-    inlineMode: InlineMode,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, inlineMode)
+    private val context: WasmBackendContext,
+    private val inlineMode: InlineMode,
+) : InlineFunctionResolver() {
+    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
+        if (!symbol.isBound) return null
+        val realOwner = symbol.owner.resolveFakeOverrideOrSelf()
+
+        // Older klibs (before 2.5.0) contain `suspendCoroutineUninterceptedOrReturn` and  non-inlined.
+        // In newer klibs for K/Wasm (2.5.0 and after), `suspendCoroutineUninterceptedOrReturn` is inlined
+        // and its usages replaced with usages of `suspendCoroutineUninterceptedOrReturnIntrinsic`.
+        // See: libraries/stdlib/wasm/internal/kotlin/wasm/internal/Coroutines.kt
+
+        val isSuspendCoroutineUninterceptedOrReturn =
+            realOwner.isBuiltInSuspendCoroutineUninterceptedOrReturn() ||
+                    realOwner.symbol == context.symbols.suspendCoroutineUninterceptedOrReturnIntrinsic
+
+        // Older klibs (before 2.5.0) contain `getCoroutineContext` and  non-inlined.
+        // In newer klibs for K/Wasm (2.5.0 and after), `getCoroutineContext` is inlined
+        // and its usages replaced with usages of `getCoroutineContextImpl`.
+        // See: libraries/stdlib/wasm/internal/kotlin/wasm/internal/Coroutines.kt
+
+        val isCoroutineContextGetter =
+            realOwner.symbol == context.symbols.coroutineContextGetter || realOwner.symbol == context.symbols.coroutineGetContext
+
+        val result = when {
+            isSuspendCoroutineUninterceptedOrReturn -> context.suspendCoroutineUninterceptedOrReturnIntrinsicByMode.owner
+            isCoroutineContextGetter -> context.symbols.getCoroutineContextImpl.owner
+            realOwner.isInline -> realOwner
+            else -> return null
+        }
+
+        if (inlineMode == InlineMode.PRIVATE_INLINE_FUNCTIONS && !result.isEffectivelyPrivate()) return null
+        return result
+    }
+}

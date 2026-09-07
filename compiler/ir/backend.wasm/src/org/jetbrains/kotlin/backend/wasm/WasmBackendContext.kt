@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
@@ -188,3 +188,10 @@ class WasmBackendContext(
 
     val wasmUseStackSwitching = configuration.wasmUseStackSwitchingProposal
 }
+
+internal val WasmBackendContext.suspendCoroutineUninterceptedOrReturnIntrinsicByMode: IrSimpleFunctionSymbol
+    get() = if (wasmUseStackSwitching) {
+        symbols.coroutinesStackSwitchingIntrinsics!!.suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching
+    } else {
+        symbols.coroutinesStateMachineIntrinsics!!.suspendCoroutineUninterceptedOrReturnIntrinsicStateMachine
+    }
