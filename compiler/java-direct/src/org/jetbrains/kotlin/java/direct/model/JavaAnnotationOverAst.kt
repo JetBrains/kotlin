@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.java.direct.model
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
-import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
-import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.getSimpleImport
 import org.jetbrains.kotlin.java.direct.resolution.getStaticImport
@@ -17,14 +15,16 @@ import org.jetbrains.kotlin.java.direct.resolution.resolveConstFieldValue
 import org.jetbrains.kotlin.java.direct.resolution.resolveExternalFieldValue
 import org.jetbrains.kotlin.java.direct.util.ConstantEvaluator
 import org.jetbrains.kotlin.java.direct.util.JavaLiteralParser
+import org.jetbrains.kotlin.kmp.tree.LightNode
+import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class JavaAnnotationOverAst(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     private val resolutionContext: JavaResolutionContext,
 ) : JavaElementOverAst(node, tree), JavaAnnotation {
 
@@ -78,8 +78,8 @@ class JavaAnnotationOverAst(
 }
 
 private fun createAnnotationArgument(
-    nameValuePair: JavaLightNode,
-    tree: JavaLightTree,
+    nameValuePair: LightNode,
+    tree: LightSyntaxTree,
     resolutionContext: JavaResolutionContext,
 ): JavaAnnotationArgument {
     val name = tree.findChildByType(nameValuePair, JavaSyntaxTokenType.IDENTIFIER)?.let {
@@ -96,8 +96,8 @@ private fun createAnnotationArgument(
 
 internal fun createAnnotationArgumentFromValue(
     name: Name?,
-    valueNode: JavaLightNode?,
-    tree: JavaLightTree,
+    valueNode: LightNode?,
+    tree: LightSyntaxTree,
     resolutionContext: JavaResolutionContext,
 ): JavaAnnotationArgument {
     if (valueNode == null) {
@@ -155,7 +155,7 @@ internal fun createAnnotationArgumentFromValue(
  * identically in both positions; cross-language `const val` references inside the expression go
  * through the session-backed `resolveExternalFieldValue`, as they do for fields.
  */
-private fun annotationConstantEvaluator(tree: JavaLightTree, resolutionContext: JavaResolutionContext): ConstantEvaluator =
+private fun annotationConstantEvaluator(tree: LightSyntaxTree, resolutionContext: JavaResolutionContext): ConstantEvaluator =
     ConstantEvaluator(tree, resolutionContext) { classQualifier, fieldName ->
         with(resolutionContext) { resolveExternalFieldValue(classQualifier, fieldName) }
     }
@@ -167,8 +167,8 @@ class JavaLiteralAnnotationArgumentOverAst(
 
 class JavaArrayAnnotationArgumentOverAst(
     override val name: Name?,
-    private val arrayNode: JavaLightNode,
-    private val tree: JavaLightTree,
+    private val arrayNode: LightNode,
+    private val tree: LightSyntaxTree,
     private val resolutionContext: JavaResolutionContext,
 ) : JavaArrayAnnotationArgument {
     override fun getElements(): List<JavaAnnotationArgument> {
@@ -184,8 +184,8 @@ class JavaArrayAnnotationArgumentOverAst(
 
 class JavaEnumValueAnnotationArgumentOverAst(
     override val name: Name?,
-    private val refNode: JavaLightNode,
-    private val tree: JavaLightTree,
+    private val refNode: LightNode,
+    private val tree: LightSyntaxTree,
     private val resolutionContext: JavaResolutionContext,
 ) : JavaEnumValueAnnotationArgument {
 
@@ -258,8 +258,8 @@ class JavaEnumValueAnnotationArgumentOverAst(
 
 class JavaClassObjectAnnotationArgumentOverAst(
     override val name: Name?,
-    private val classObjNode: JavaLightNode,
-    private val tree: JavaLightTree,
+    private val classObjNode: LightNode,
+    private val tree: LightSyntaxTree,
     private val resolutionContext: JavaResolutionContext,
 ) : JavaClassObjectAnnotationArgument {
     override fun getReferencedType(): JavaType {
@@ -276,8 +276,8 @@ class JavaClassObjectAnnotationArgumentOverAst(
 
 class JavaAnnotationAsAnnotationArgumentOverAst(
     override val name: Name?,
-    private val annotationNode: JavaLightNode,
-    private val tree: JavaLightTree,
+    private val annotationNode: LightNode,
+    private val tree: LightSyntaxTree,
     private val resolutionContext: JavaResolutionContext,
 ) : JavaAnnotationAsAnnotationArgument {
     override fun getAnnotation(): JavaAnnotation {

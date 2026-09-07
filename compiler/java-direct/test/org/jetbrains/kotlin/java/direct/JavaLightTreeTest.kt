@@ -9,21 +9,20 @@ package org.jetbrains.kotlin.java.direct
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
-import com.intellij.platform.syntax.SyntaxElementType
 import com.intellij.platform.syntax.element.SyntaxTokenTypes
-import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
-import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
-import org.jetbrains.kotlin.java.direct.parse.dump
 import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
+import org.jetbrains.kotlin.kmp.tree.LightNode
+import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
+import org.jetbrains.kotlin.kmp.tree.dump
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 class JavaLightTreeTest {
 
-    private fun parse(source: String): JavaLightTree =
+    private fun parse(source: String): LightSyntaxTree =
         parseJavaToLightTree(source, 0)
 
-    private fun JavaLightTree.findFirstClass(): JavaLightNode {
+    private fun LightSyntaxTree.findFirstClass(): LightNode {
         val classes = getChildrenByType(getRoot(), JavaSyntaxElementType.CLASS)
         check(classes.isNotEmpty()) { "No CLASS node found in tree" }
         return classes.first()
@@ -284,7 +283,7 @@ class JavaLightTreeTest {
         }
         val sourceOrderTypes = fieldOrMethod.map { tree.getType(it) }
         assertEquals(
-            listOf<SyntaxElementType>(
+            listOf(
                 JavaSyntaxElementType.FIELD,
                 JavaSyntaxElementType.METHOD,
                 JavaSyntaxElementType.FIELD,

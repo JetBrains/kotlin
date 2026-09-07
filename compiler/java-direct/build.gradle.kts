@@ -17,6 +17,7 @@ dependencies {
     implementation(project(":compiler:frontend.common.jvm"))
     implementation(project(":compiler:plugin-api"))
     implementation(project(":compiler:cli"))
+    implementation(project(":compiler:multiplatform-parsing"))
 
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))

@@ -65,3 +65,8 @@
 # Other
 -dontwarn java.lang.invoke.MethodHandle
 -dontwarn kotlin.internal.ThrowNoWhenBranchMatchedExceptionKt # Warning: ...: can't find referenced class kotlin.internal.ThrowNoWhenBranchMatchedExceptionKt
+
+# Multiplatform parsing section
+# Is not supposed to be used in AA scenarios, so not important here
+-dontwarn fleet.com.intellij.multiplatform.util.fastutil.ints.**
+-dontwarn org.jetbrains.kotlin.kmp.parser.utils.**
