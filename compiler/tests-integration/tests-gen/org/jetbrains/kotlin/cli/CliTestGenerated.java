@@ -717,6 +717,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("unknownExtraFlagWithWerror.args")
+    public void testUnknownExtraFlagWithWerror() {
+      run("unknownExtraFlagWithWerror.args");
+    }
+
+    @Test
     @TestMetadata("unknownExtraFlags.args")
     public void testUnknownExtraFlags() {
       run("unknownExtraFlags.args");
