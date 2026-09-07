@@ -5,12 +5,13 @@ plugins {
 }
 
 val firCompilerModules: Array<String> = CompilerModules.firCompilerModules
+val jvmCompilerModules: Array<String> = CompilerModules.jvmCompilerModules
 
 val excludedFirModules = listOf(
     ":compiler:fir:raw-fir:light-tree2fir",
     ":compiler:multiplatform-parsing",
 )
 
-val projects = firCompilerModules.asList() - excludedFirModules
+val projects = firCompilerModules.asList() + jvmCompilerModules - excludedFirModules
 
 publishJarsForIde(projects)
