@@ -8,9 +8,9 @@ class B {
             }
         }
 
-        <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun h2(x : Any) {
+        <!NO_TAIL_CALLS_FOUND_IN_IR!><!NO_TAIL_CALLS_FOUND!>tailrec<!> fun h2(x : Any) {
             this@B.h2("no recursion") // keep vigilance
-        }
+        }<!>
 
     }
 

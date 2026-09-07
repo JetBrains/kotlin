@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.inline
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
+import org.jetbrains.kotlin.backend.common.TailrecCheckerLowering
 import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
 import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
@@ -73,6 +74,7 @@ fun loweringsOfTheFirstPhase(
         this += ::AvoidLocalFOsInInlineFunctionsLowering
         this += ::VersionOverloadsLowering
         this += ::InlineCallCycleCheckerLowering
+        this += ::TailrecCheckerLowering
         if (inlineIntraModule) {
             this += ::LateinitLowering
             this += ::createSharedVariablesLoweringPhase
