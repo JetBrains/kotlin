@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
+import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
@@ -53,6 +54,12 @@ fun IrAnnotationContainer.getJsSymbol(): String? =
 
 fun IrAnnotationContainer.getDeprecated(): String? =
     getAnnotation(StandardNames.FqNames.deprecated)?.getConstArgument("message")
+
+fun IrAnnotationContainer.getDeprecatedLevel(): DeprecationLevel? {
+    val deprecated = getAnnotation(StandardNames.FqNames.deprecated) ?: return null
+    val expression = deprecated.argumentMapping[Name.identifier("level")] as? IrGetEnumValue
+    return expression?.let { DeprecationLevel.valueOf(it.symbol.owner.name.asString()) }
+}
 
 fun IrAnnotationContainer.hasJsPolyfill(): Boolean =
     hasAnnotation(JsAnnotations.JsPolyfillFqn)

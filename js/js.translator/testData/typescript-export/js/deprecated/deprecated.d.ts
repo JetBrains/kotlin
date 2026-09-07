@@ -4,6 +4,7 @@ declare namespace JS_TESTS {
     namespace foo {
         /** @deprecated message 2 */
         const bar: string;
+        const hiddenProperty: string;
         /** @deprecated message 1 */
         function funktion(): void;
         /** @deprecated message 3 */
@@ -14,6 +15,16 @@ declare namespace JS_TESTS {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
             namespace $metadata$ {
                 const constructor: abstract new () => TestClass;
+            }
+        }
+        function hiddenFunction(): void;
+        class HiddenClass {
+            constructor();
+        }
+        namespace HiddenClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => HiddenClass;
             }
         }
         class AnotherClass {
