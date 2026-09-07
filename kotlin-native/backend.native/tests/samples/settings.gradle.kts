@@ -28,6 +28,9 @@ if (isMacos || isLinux || isWindows) {
 
 if (isMacos || isLinux) {
     include(":nonBlockingEchoServer")
+}
+
+if (isLinux) {
     include(":tensorflow")
 }
 

@@ -6,7 +6,6 @@ TF_TYPE="cpu" # Change to "gpu" for GPU support
 
 if [ x$TARGET == x ]; then
 case "$OSTYPE" in
-  darwin*)  TARGET=macbook; TF_TARGET=darwin ;;
   linux*)   TARGET=linux; TF_TARGET=linux ;;
   *)        echo "unknown: $OSTYPE" && exit 1;;
 esac
