@@ -83,37 +83,28 @@ internal fun createAllocatorInTheNewScope(): ScopedMemoryAllocator {
 @ExperimentalWasmInterop
 private data class MemorySlot(val ptr: Pointer, val size: UInt) {
     // TODO(REVIEW): in the usages, this is only ever used where we know the direction of the only possible successful one-way merge. So could optimize it based on that, but that would make this code less obvious, I'd vouch for leaving this as a NOTE comment in the code, and not changing it yet
-    fun tryMerge(b: MemorySlot): MemorySlot? {
-        val a = this
-
-        val aAddr = a.ptr.address
-        val bAddr = b.ptr.address
-
-        assert(bAddr != aAddr) { "Slots cannot describe memory starting at the exact same address" }
-
+    fun tryMerge(other: MemorySlot): MemorySlot? {
+        val (first, second) = if (ptr.address < other.ptr.address)
+            this to other
+        else
+            other to this
 
         // basically: check for range overlap, but perfect adjacency counts as overlap
-        // one-sided as in "only check whether one slot extends into/next to the other", not the other way around
-        fun oneSidedMerge(x: MemorySlot, y: MemorySlot): MemorySlot? {
-            val xAddr = x.ptr.address
-            val yAddr = y.ptr.address
+        val firstAddr = first.ptr.address
+        val secondAddr = second.ptr.address
 
-            // x starts before y
-            if (xAddr < yAddr) {
-                // if x extends into (or just next to) y
-                if (xAddr + x.size >= yAddr) {
-                    // the combined allocation end is one of the previous ends, just whichever is larger
-                    val newEndAddr = maxOf(xAddr + x.size, yAddr + y.size)
-                    return MemorySlot(x.ptr, newEndAddr - x.ptr.address)
-                }
-            }
-            return null
+        assert(secondAddr != firstAddr) { "Allocated slots cannot describe memory starting at the exact same address" }
+        assert(firstAddr + first.size <= secondAddr) { "Allocated slots can only overlap by *adjacency*, actual overlap indicates incorrect allocations" }
+
+        // given that first is smaller or equal to second, we only need to check whether first extends into second, not the other way around
+        if (firstAddr + first.size == secondAddr) { // first extends to just next to the second
+            // the combined allocation end is one of the previous ends, just whichever is larger
+            val newEndAddr = maxOf(firstAddr + first.size, secondAddr + second.size)
+            val newSize = newEndAddr - first.ptr.address
+            return MemorySlot(first.ptr, newSize)
         }
 
-        return listOfNotNull(
-            oneSidedMerge(a, b),
-            oneSidedMerge(b, a)
-        ).firstOrNull()
+        return null
     }
 }
 
