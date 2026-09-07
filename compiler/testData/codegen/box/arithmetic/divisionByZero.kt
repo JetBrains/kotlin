@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM_JS, WASM_WASI
-// KT-88291
 // LANGUAGE: +JsIntegerDivisionCheck
 
 fun intDivByZero(a: Int, b: Int): Int = a / b
