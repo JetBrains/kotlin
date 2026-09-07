@@ -1,8 +1,6 @@
 // I
 // LANGUAGE: +CompanionBlocks
-// LIBRARY_PLATFORMS: JVM
 // JVM_DEFAULT_MODE: no-compatibility
-// COMPILER_ARGUMENTS: -jvm-default=no-compatibility
 
 interface I {
     companion {
