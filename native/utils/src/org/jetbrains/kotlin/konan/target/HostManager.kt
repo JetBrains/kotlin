@@ -60,7 +60,6 @@ open class HostManager() {
     )
 
     private val appleTargets = setOf(
-        MACOS_X64,
         MACOS_ARM64,
         IOS_ARM64,
         IOS_X64,
@@ -77,7 +76,6 @@ open class HostManager() {
     val enabledByHost: Map<KonanTarget, Set<KonanTarget>> = mapOf(
         LINUX_X64 to commonTargets,
         MINGW_X64 to commonTargets,
-        MACOS_X64 to commonTargets + appleTargets,
         MACOS_ARM64 to commonTargets + appleTargets
     )
 
@@ -125,7 +123,6 @@ open class HostManager() {
 
         val jniHostPlatformIncludeDir: String
             get() = when (host) {
-                MACOS_X64,
                 MACOS_ARM64 -> "darwin"
                 LINUX_X64 -> "linux"
                 MINGW_X64 -> "win32"
@@ -150,7 +147,6 @@ open class HostManager() {
             }
 
         private val hostMapping: Map<Pair<String, String>, KonanTarget> = mapOf(
-            Pair("osx", "x86_64") to MACOS_X64,
             Pair("osx", "aarch64") to MACOS_ARM64,
             Pair("linux", "x86_64") to LINUX_X64,
             Pair("windows", "x86_64") to MINGW_X64
@@ -198,9 +194,9 @@ open class HostManager() {
 
         private val targetAliasResolutions = mapOf(
             "linux" to "linux_x64",
-            "macbook" to "macos_x64",
-            "macos" to "macos_x64",
-            "imac" to "macos_x64",
+            "macbook" to "macos_arm64",
+            "macos" to "macos_arm64",
+            "imac" to "macos_arm64",
             "raspberrypi" to "linux_arm32_hfp",
             "iphone" to "ios_arm64",
             "ipad" to "ios_arm64",
