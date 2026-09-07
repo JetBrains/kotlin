@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.base.service
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.SyntaxTraverser
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.javaInterop.*
@@ -24,7 +25,7 @@ internal fun getLightClassesFromFile(ktFile: KtFile): List<PsiClass> {
 }
 
 context(_: KaSession)
-internal fun KtElement.getLightElements(): List<PsiElement> {
+internal fun KtElement.getLightElements(): List<PsiNamedElement> {
     return when (this) {
         is KtFile -> if (isScript()) {
             listOfNotNull(script?.symbol?.asFacadePsiClass())
@@ -32,25 +33,25 @@ internal fun KtElement.getLightElements(): List<PsiElement> {
             listOfNotNull(symbol.asFacadePsiClass())
         }
         is KtScript -> listOfNotNull(symbol.asFacadePsiClass())
-        is KtDeclaration -> getLightElementsFromDeclaration()
+        is KtDeclaration -> symbol.getLightElementsFromDeclaration()
         else -> emptyList()
     }
 }
 
 
 context(_: KaSession)
-internal fun KtDeclaration.getLightElementsFromDeclaration(): List<PsiElement> {
-    return when (val symbol = this@getLightElementsFromDeclaration.symbol) {
-        is KaClassSymbol -> listOfNotNull(symbol.asPsiClass(), symbol.asPsiField())
-        is KaEnumEntrySymbol -> listOfNotNull(symbol.initializer?.asPsiClass())
-        is KaFunctionSymbol -> symbol.asPsiMethods()
+internal fun KaSymbol.getLightElementsFromDeclaration(): List<PsiNamedElement> {
+    return when (this) {
+        is KaClassSymbol -> listOfNotNull(asPsiClass(), asPsiField())
+        is KaEnumEntrySymbol -> listOfNotNull(asPsiField(), initializer?.asPsiClass())
+        is KaFunctionSymbol -> asPsiMethods()
         is KaPropertySymbol -> {
-            val accessors = symbol.getter?.asPsiMethods().orEmpty() + symbol.setter?.asPsiMethods().orEmpty()
-            accessors + listOfNotNull(symbol.backingFieldSymbol?.asPsiField())
+            val accessors = getter?.asPsiMethods().orEmpty() + setter?.asPsiMethods().orEmpty()
+            accessors + listOfNotNull(backingFieldSymbol?.asPsiField())
         }
-        is KaTypeParameterSymbol -> symbol.asPsiTypeParameters()
-        is KaParameterSymbol -> symbol.asPsiParameters()
-        is KaBackingFieldSymbol -> listOfNotNull(symbol.asPsiField())
+        is KaTypeParameterSymbol -> asPsiTypeParameters()
+        is KaParameterSymbol -> asPsiParameters()
+        is KaBackingFieldSymbol -> listOfNotNull(asPsiField())
         else -> emptyList()
     }
 }

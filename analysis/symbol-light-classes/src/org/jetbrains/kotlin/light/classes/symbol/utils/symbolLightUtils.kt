@@ -396,39 +396,35 @@ internal fun getParentForLocalDeclaration(classOrObject: KtClassOrObject, useSit
         }
     }
 
+    context(session: KaSession)
     fun map(declaration: KtElement): PsiElement? {
-        when (declaration) {
+        return when (declaration) {
             is KtFunction -> {
-                return analyzeForLightClasses(useSiteModule) {
-                    val psiMethod = (declaration.symbol as? KaFunctionSymbol)?.asPsiMethods()?.firstOrNull()
-                    if (psiMethod != null) {
-                        wrapMethod(psiMethod, declaration.name ?: psiMethod.name, forceWrapping = false)
-                    } else null
-                }
+                val psiMethod = (declaration.symbol as? KaFunctionSymbol)?.asPsiMethods()?.firstOrNull()
+                if (psiMethod != null) {
+                    wrapMethod(psiMethod, declaration.name ?: psiMethod.name, forceWrapping = false)
+                } else null
             }
 
             is KtPropertyAccessor -> {
-                return analyzeForLightClasses(useSiteModule) {
-                    val psiMethod = declaration.symbol.asPsiMethods().firstOrNull()
-                    if (psiMethod != null) {
-                        wrapMethod(psiMethod, forceWrapping = true)
-                    } else null
-                }
+                val psiMethod = declaration.symbol.asPsiMethods().firstOrNull()
+                if (psiMethod != null) {
+                    wrapMethod(psiMethod, forceWrapping = true)
+                } else null
             }
 
             is KtProperty -> {
-                if (!declaration.isLocal) {
-                    return analyzeForLightClasses(useSiteModule) {
-                        val propertySymbol = declaration.symbol as? KaPropertySymbol ?: return@analyzeForLightClasses null
-                        val psiGetter = propertySymbol.getter?.asPsiMethods()?.firstOrNull()
-                        if (psiGetter != null) {
-                            return@analyzeForLightClasses wrapMethod(psiGetter, forceWrapping = true)
-                        }
+                if (declaration.isLocal) {
+                    return null
+                }
+                val propertySymbol = declaration.symbol as? KaPropertySymbol ?: return null
+                val psiGetter = propertySymbol.getter?.asPsiMethods()?.firstOrNull()
+                if (psiGetter != null) {
+                    return wrapMethod(psiGetter, forceWrapping = true)
+                }
 
-                        propertySymbol.backingFieldSymbol?.asPsiField()?.let {
-                            wrapField(it, forceWrapping = false)
-                        }
-                    }
+                propertySymbol.backingFieldSymbol?.asPsiField()?.let {
+                    wrapField(it, forceWrapping = false)
                 }
             }
 
@@ -437,23 +433,22 @@ internal fun getParentForLocalDeclaration(classOrObject: KtClassOrObject, useSit
                 val grandparent = parent.parent
 
                 if (parent is KtClassBody && grandparent is KtClassOrObject) {
-                    return analyzeForLightClasses(useSiteModule) {
-                        grandparent.classSymbol?.asPsiClass()
-                    }
+                    grandparent.classSymbol?.asPsiClass()
+                } else {
+                    null
                 }
             }
 
             is KtClass -> {
-                return analyzeForLightClasses(useSiteModule) {
-                    declaration.classSymbol?.asPsiClass()
-                }
+                declaration.classSymbol?.asPsiClass()
             }
+            else -> null
         }
-
-        return null
     }
 
-    return classOrObject.parents
-        .filterIsInstance<KtElement>()
-        .firstNotNullOfOrNull { map(it) }
+    return analyzeForLightClasses(useSiteModule) {
+        classOrObject.parents
+            .filterIsInstance<KtElement>()
+            .firstNotNullOfOrNull { map(it) }
+    }
 }

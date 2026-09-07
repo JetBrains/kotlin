@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSour
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.renderClass
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightNoArgConstructor
 import org.jetbrains.kotlin.name.ClassId
@@ -158,18 +157,19 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
         val project = file.project
 
         fun lightClassOf(name: String): PsiClass {
-            val declaration = analyze(file) {
+            analyze(file) {
                 val classId = ClassId(FqName("lib"), Name.identifier(name))
                 val classSymbol = findClass(classId) ?: error("'$classId' symbol was not found")
-                classSymbol.realPsi as? KtClassOrObject
+                val declaration = classSymbol.realPsi as? KtClassOrObject
                     ?: error("'$classId' is expected to have a decompiled PSI, but '${classSymbol.realPsi}' was found")
-            }
 
-            // Light classes for non-JVM declarations are only available with the multiplatform support enabled
-            @OptIn(KaNonPublicApi::class)
-            return withMultiplatformLightClassSupport(project) {
-                declaration.toLightClass()
-            } ?: error("Light class for '$name' was not found")
+
+                // Light classes for non-JVM declarations are only available with the multiplatform support enabled
+                @OptIn(KaNonPublicApi::class)
+                return withMultiplatformLightClassSupport(project) {
+                    declaration.classSymbol?.asPsiClass()
+                } ?: error("Light class for '$name' was not found")
+            }
         }
 
         val libraryObjectLightClass = lightClassOf("LibraryObject")
@@ -192,7 +192,9 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
 
         val classesWithDeclaredConstructor = listOf(lightClassOf("LibraryClass")) +
                 file.declarations.filterIsInstance<KtClassOrObject>().map { declaration ->
-                    declaration.toLightClass() ?: error("Light class for '${declaration.name}' was not found")
+                    analyze(declaration) {
+                        declaration.classSymbol?.asPsiClass() ?: error("Light class for '${declaration.name}' was not found")
+                    }
                 }
 
         val declaredConstructors = classesWithDeclaredConstructor.flatMap { it.constructors.asList() }
