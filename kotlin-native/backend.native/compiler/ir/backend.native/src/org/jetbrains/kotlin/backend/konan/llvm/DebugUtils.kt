@@ -333,11 +333,11 @@ internal fun setupBridgeDebugInfo(generationState: NativeGenerationState, functi
             builder = debugInfo.builder,
             scope = file.reinterpret(),
             file = file,
-            lineNo = 0,
+            lineNo = 1,
             type = debugInfo.subroutineType(generationState.runtime.targetData, emptyList()), // TODO: use proper type.
             isLocal = 0,
             isDefinition = 1,
-            scopeLine = 0,
+            scopeLine = 1,
             isTransparentStepping = generationState.config.enableDebugTransparentStepping,
     ).reinterpret()
 
