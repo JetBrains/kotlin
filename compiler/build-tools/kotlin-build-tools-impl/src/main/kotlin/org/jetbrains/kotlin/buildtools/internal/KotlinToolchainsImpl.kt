@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
 import java.util.concurrent.*
 
-private const val DEFAULT_CLASSLOADERS_CACHE_SIZE = 10
-private const val PROPERTY_CLASSLOADERS_CACHE_SIZE = "kotlin.buildtools.classloaders.cache.size"
+internal const val DEFAULT_CLASSLOADERS_CACHE_SIZE = 10
+internal const val PROPERTY_CLASSLOADERS_CACHE_SIZE = "kotlin.buildtools.classloaders.cache.size"
 
 internal class KotlinToolchainsImpl() : KotlinToolchains {
     val toolchains: ConcurrentHashMap<Class<*>, KotlinToolchains.Toolchain> = ConcurrentHashMap()

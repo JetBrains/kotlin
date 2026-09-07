@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.internal.jvm
 
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.jvm.KaptConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.DiscoverScriptExtensionsOperationImpl
@@ -47,5 +48,19 @@ internal class JvmPlatformToolchainImpl(
 
     override fun discoverScriptExtensionsOperationBuilder(classpath: List<Path>): DiscoverScriptExtensionsOperationImpl {
         return DiscoverScriptExtensionsOperationImpl(classpath)
+    }
+
+    override fun kaptCompilerPluginBuilder(
+        kaptClasspath: List<Path>,
+        stubsOutputDir: Path,
+        sourcesOutputDir: Path,
+        annotationProcessorsClasspath: List<Path>
+    ): KaptConfiguration.Builder {
+        return KaptConfigurationImpl(
+            kaptClasspath = kaptClasspath,
+            stubsOutputDir = stubsOutputDir,
+            sourcesOutputDir = sourcesOutputDir,
+            annotationProcessorsClasspath = annotationProcessorsClasspath
+        )
     }
 }

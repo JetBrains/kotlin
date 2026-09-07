@@ -175,6 +175,8 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
                 runFilesPath = executionPolicy[DAEMON_RUN_DIR_PATH].absolutePathStringOrThrow()
                 additionalJvmArguments += "D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=$runFilesPath"
+                classloadersCacheSize =
+                    System.getProperty(PROPERTY_CLASSLOADERS_CACHE_SIZE)?.toIntOrNull() ?: DEFAULT_CLASSLOADERS_CACHE_SIZE
             })
 
         val jvmOptions = configureDaemonJVMOptions(

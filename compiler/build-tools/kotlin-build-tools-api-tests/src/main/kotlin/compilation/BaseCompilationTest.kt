@@ -69,4 +69,16 @@ abstract class BaseCompilationTest {
             Thread.sleep(150)
         } while (tries-- > 0)
     }
+
+    protected fun <T : ExecutionPolicy> T.attemptDaemonDebugSession(): T {
+        if (this is ExecutionPolicy.WithDaemon) {
+            val builder = this.toBuilder()
+            val options = builder[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS]?.toMutableList() ?: mutableListOf()
+            options += "agentlib:jdwp=transport=dt_socket,server=n,address=localhost:5005,suspend=y"
+            builder[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = options
+            @Suppress("UNCHECKED_CAST")
+            return builder.build() as T
+        }
+        return this
+    }
 }
