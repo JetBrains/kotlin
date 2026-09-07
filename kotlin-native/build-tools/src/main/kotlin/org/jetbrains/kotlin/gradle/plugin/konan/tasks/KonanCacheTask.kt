@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliRunnerIsolatedClassLoade
 import org.jetbrains.kotlin.gradle.plugin.konan.prepareAsOutput
 import org.jetbrains.kotlin.gradle.plugin.konan.registerIsolatedClassLoadersServiceIfAbsent
 import org.jetbrains.kotlin.gradle.plugin.konan.runKonanTool
+import org.jetbrains.kotlin.isAppleTargetName
+import org.jetbrains.kotlin.isWholeXcodeProvisioningEnabled
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.nativeDistribution.NativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.asNativeDistribution
@@ -94,6 +96,12 @@ open class KonanCacheTask @Inject constructor(
     @get:Input
     val withOptimizations: Property<Boolean> = objectFactory.property(Boolean::class.java)
 
+    @get:Input
+    val useProvisionedXcode: Property<Boolean> = objectFactory.property(Boolean::class.java)
+            .convention(project.isWholeXcodeProvisioningEnabled()
+                    .let { wholeXcodeProvisioningEnabled -> target.map { wholeXcodeProvisioningEnabled && isAppleTargetName(it) } }
+            )
+
     @get:InputFile
     @get:PathSensitive(PathSensitivity.NONE)
     @Suppress("unused") // used only by Gradle machinery via reflection.
@@ -133,6 +141,9 @@ open class KonanCacheTask @Inject constructor(
             add("-Xdebug-prefix-map=${cacheDirectory.get().asFile.absolutePath}=out")
             if (makePerFileCache.get()) {
                 add("-Xmake-per-file-cache")
+            }
+            if (useProvisionedXcode.get()) {
+                add("-Xoverride-konan-properties=useProvisionedXcode=true")
             }
         }
         val workQueue = workerExecutor.noIsolation()

@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
 import org.jetbrains.kotlin.cacheFlavor
 import org.jetbrains.kotlin.cpp.CppUsage
+import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCompileTask
 import org.jetbrains.kotlin.konan.target.*
@@ -760,6 +761,9 @@ cacheableTargetNames.forEach { targetName ->
             val cacheFlavor = cacheFlavor(targetName, withOptimizations)
             this.cacheDirectory.set(layout.buildDirectory.dir("cache/$targetName/$cacheFlavor"))
             this.cacheName.set(KOTLIN_NATIVE_STDLIB_NAME)
+            dependsOn(
+                    project.extensions.getByType<NativeDependenciesExtension>()
+                            .targetDependency(platformManager.targetByName(targetName)))
         }
     }
 }

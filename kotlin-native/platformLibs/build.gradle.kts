@@ -60,6 +60,7 @@ if (HostManager.host == KonanTarget.MACOS_ARM64) {
 }
 
 val cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
+val nativeDependenciesExtension = project.extensions.getByType<NativeDependenciesExtension>()
 
 val updateDefFileDependenciesTask = tasks.register("updateDefFileDependencies")
 val updateDefFileTasksPerFamily = if (HostManager.hostIsMac) {
@@ -106,7 +107,6 @@ enabledTargets(platformManager).forEach { target ->
                 this.klibFiles.from(tasks.named(interopTaskName(defFileToLibName(targetName, defName), targetName)))
             }
 
-            val nativeDependenciesExtension = project.extensions.getByType<NativeDependenciesExtension>()
             val reproducibilityCompilerFlags = reproducibilityCompilerFlags(project, nativeDependenciesExtension).flatMap {
                 listOf("-compiler-option", it)
             }.toTypedArray()
@@ -124,6 +124,8 @@ enabledTargets(platformManager).forEach { target ->
                 val fmodulesCache = project.layout.buildDirectory.dir("clangModulesCache").get().asFile.toRelativeString(project.layout.projectDirectory.asFile)
                 this.extraOpts.addAll("-compiler-option", "-fmodules-cache-path=$fmodulesCache")
             }
+
+            dependsOn(nativeDependenciesExtension.targetDependency(target))
 
             usesService(compilePlatformLibsSemaphore)
         }
@@ -168,6 +170,7 @@ enabledTargets(platformManager).forEach { target ->
                     this.withOptimizations.set(withOptimizations)
                     this.cacheDirectory.set(dist.map { it.cachesRoot(targetName, withOptimizations) })
                     this.cacheName.set(artifactName)
+                    dependsOn(nativeDependenciesExtension.targetDependency(target))
 
                     usesService(cachePlatformLibsSemaphore)
                 }
