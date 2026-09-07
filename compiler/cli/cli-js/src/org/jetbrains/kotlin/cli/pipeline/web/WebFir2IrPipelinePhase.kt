@@ -25,13 +25,11 @@ import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibCheckers
-import org.jetbrains.kotlin.ir.backend.js.getSerializedData
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.collectJsExportNames
 import org.jetbrains.kotlin.ir.backend.js.wasm.WasmKlibCheckers
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.js.config.incrementalDataProvider
 import org.jetbrains.kotlin.js.config.wasmCompilation
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isJsStdlib
@@ -58,7 +56,7 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, WebFi
             diagnosticsReporter
         )
 
-        runWebKlibCallCheckers(diagnosticsReporter, configuration, firResult.outputs, fir2IrActualizedResult)
+        runWebKlibCallCheckers(diagnosticsReporter, configuration, fir2IrActualizedResult)
 
         return WebFir2IrPipelineArtifact(
             fir2IrActualizedResult,
@@ -127,22 +125,11 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, WebFi
 private fun runWebKlibCallCheckers(
     diagnosticReporter: BaseDiagnosticsCollector,
     configuration: CompilerConfiguration,
-    firOutputs: List<SingleModuleFrontendOutput>,
     fir2IrActualizedResult: Fir2IrActualizedResult,
 ) {
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, configuration.languageVersionSettings)
 
     val irModuleFragment = fir2IrActualizedResult.irModuleFragment
-
-    // collect clean files
-    val fir2KlibMetadataSerializer = Fir2KlibMetadataSerializer(
-        configuration,
-        firOutputs,
-        fir2IrActualizedResult,
-        produceHeaderKlib = false,
-    )
-    val cleanFiles = configuration.incrementalDataProvider?.getSerializedData(fir2KlibMetadataSerializer.sourceFiles).orEmpty()
-    val cleanFilesIrData = cleanFiles.map { it.irData ?: error("Metadata-only KLIBs are not supported in Kotlin/JS or Kotlin/Wasm") }
 
     val checker = if (configuration.wasmCompilation) {
         WasmKlibCheckers.makeChecker(
@@ -155,7 +142,6 @@ private fun runWebKlibCallCheckers(
             configuration,
             doCheckCalls = true,
             doModuleLevelChecks = true,
-            cleanFiles = cleanFilesIrData,
             exportedNames = irModuleFragment.collectJsExportNames(),
         )
     }
