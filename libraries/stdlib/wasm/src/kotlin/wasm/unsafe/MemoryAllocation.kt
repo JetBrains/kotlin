@@ -119,6 +119,8 @@ private data class MemorySlot(val ptr: Pointer, val size: UInt) {
     }
 }
 
+private val alignment = 8u
+
 /**
  * Returns size but possibly lengthened to align to an implementation-defined alignment.
  *
@@ -129,8 +131,6 @@ private data class MemorySlot(val ptr: Pointer, val size: UInt) {
 private fun realAllocationSize(size: UInt): UInt {
     // TODO(REVIEW): if this function is passed 0xfff..fff, it will overflow to 0. Semantically this sort of makes sense, and we don't allow allocations of that size anyway. We could check() this here, I don't feel strongly about this one way or another.
 
-    val alignment = 8u
-
     // round up the size to a multiple of 8, so that all addresses are always guaranteed to be aligned to at least 8
     // by adding 7, we're guaranteed to:
     // - if size mod 8 == 0: NOT cross the divisible-by-8 boundary
@@ -139,6 +139,9 @@ private fun realAllocationSize(size: UInt): UInt {
     return (size + (alignment - 1u)) and (alignment - 1u).inv()
     //     (size + 7u              )  &   0xFFFFFFF8u
 }
+
+/// Reserve 0 and don't give it out as a valid address
+private val firstValidAddress = alignment
 
 
 // NOTES:
@@ -159,7 +162,7 @@ private object FreeList {
 
     // NOTE: this uses an array list. That's not really optimal, because it requires copying around stuff when the number of free slots change, and we can't make use of O(1) element access
     val list = mutableListOf<MemorySlot>(
-        MemorySlot(Pointer(0u), ((1u shl 31) - 1u))
+        MemorySlot(Pointer(firstValidAddress), ((1u shl 31) - 1u))
     )
 
     /**
@@ -247,7 +250,7 @@ private object FreeList {
         isAlreadyOperating = true
         try {
             if (size == 0u)
-                return MemorySlot(Pointer(0u), 0u)
+                return MemorySlot(Pointer(firstValidAddress), 0u)
 
             val alignedSize = realAllocationSize(size)
 

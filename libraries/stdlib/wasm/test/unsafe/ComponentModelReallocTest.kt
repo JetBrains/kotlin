@@ -218,8 +218,8 @@ class ReallocTest {
 
     @Test
     fun reallocZero(){
-        // should just be a noop, and return 0
-        assertEquals(0, componentModelRealloc(0, 0, 0))
+        // should just be a noop, and return 8 (cf. firstValidAddress in MemoryAllocation.kt)
+        assertEquals(8, componentModelRealloc(0, 0, 0))
 
         // should also work if we have valid allocations live
         val alloc = componentModelRealloc(0, 0, 8)
