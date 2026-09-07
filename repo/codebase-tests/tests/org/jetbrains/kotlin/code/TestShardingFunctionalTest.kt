@@ -165,6 +165,90 @@ class TestShardingFunctionalTest {
         checkShardDistribution(allTests, shard1, shard2, shard3)
     }
 
+    @Test
+    fun `junit5 - BeforeAll`() {
+        checkShardingWithStaticAnnotation("BeforeAll")
+    }
+
+    @Test
+    fun `junit5 - AfterAll`() {
+        checkShardingWithStaticAnnotation("AfterAll")
+    }
+
+    @Test
+    fun `junit5 - inherited BeforeAll`() {
+        checkShardingWithStaticAnnotation("BeforeAll", inherited = true)
+    }
+
+    @Test
+    fun `junit5 - inherited AfterAll`() {
+        checkShardingWithStaticAnnotation("AfterAll", inherited = true)
+    }
+
+    private fun checkShardingWithStaticAnnotation(annotation: String, inherited: Boolean = false) {
+        val lifecycle = """
+            companion object {
+                @JvmStatic
+                @$annotation
+                fun lifecycle() = Unit
+            }
+        """.trimIndent()
+
+        if (inherited) {
+            junit5SourcesDirectory.resolve("BaseTest.kt").writeCode(
+                """
+                import org.junit.jupiter.api.$annotation
+
+                open class BaseTest {
+                    $lifecycle
+                }
+                """.trimIndent()
+            )
+        }
+
+        for (index in 1..8) {
+            junit5SourcesDirectory.resolve("MyTest$index.kt").writeCode(
+                """
+                import kotlin.test.Test
+                import org.junit.jupiter.api.$annotation
+
+                class MyTest$index ${if (inherited) ": BaseTest()" else ""} {
+                    ${if (inherited) "" else lifecycle}
+
+                    @Test fun a() = Unit
+                    @Test fun b() = Unit
+                    @Test fun c() = Unit
+                    @Test fun d() = Unit
+                    @Test fun e() = Unit
+                    @Test fun f() = Unit
+                    @Test fun g() = Unit
+                    @Test fun h() = Unit
+                }
+                """.trimIndent()
+            )
+        }
+
+        val runner = createGradleRunner()
+        val allTests = runner.runTests().parseExecutedTests()
+        assertEquals(64, allTests.size)
+        val singleShard = runner.runTests(currentShard = 1, totalShards = 1).parseExecutedTests()
+        checkShardDistribution(allTests, singleShard)
+
+        val shards = (1..3).map { shard ->
+            runner.runTests(currentShard = shard, totalShards = 3).parseExecutedTests()
+        }
+
+        checkShardDistribution(allTests, *shards.toTypedArray())
+        assertEquals(allTests.size, shards.flatten().size)
+        allTests.groupBy { it.containerName }.forEach { entry ->
+            val className = entry.key
+            val tests = entry.value
+            val shardsContainingClass = shards.filter { shard -> shard.any { it.containerName == className } }
+            assertEquals(1, shardsContainingClass.size, "Expected $className to run on exactly one shard")
+            assertEquals(tests.toSet(), shardsContainingClass.single().filter { it.containerName == className }.toSet())
+        }
+    }
+
     /* Test Framework Code */
 
     private val targetProjectPath = ":repo:test-runtime"
