@@ -126,7 +126,7 @@ tailrec fun recursionInDefaultLocalFun(
 }
 
 // No tail calls at all, but has class in default argument
-<!NO_TAIL_CALLS_FOUND_IN_IR!><!NO_TAIL_CALLS_FOUND!>tailrec<!> fun noTailCallWithClassInDefault(
+<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun noTailCallWithClassInDefault(
     x: Int = run {
         class C(val v: Int)
         C(1).v
@@ -134,7 +134,7 @@ tailrec fun recursionInDefaultLocalFun(
 ): Int {
     <!NON_TAIL_RECURSIVE_CALL!>noTailCallWithClassInDefault<!>(x - 1)
     return 0
-}<!>
+}
 
 // Combination: local function + class in default argument + tail call in body
 tailrec fun combinedLocalFunAndDefault(

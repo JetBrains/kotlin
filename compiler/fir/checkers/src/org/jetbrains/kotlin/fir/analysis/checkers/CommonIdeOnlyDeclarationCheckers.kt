@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirActualAnnotationsMatchExpectChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirTailrecFunctionChecker
 
 /**
  * Checkers, which only run in IDE and don't run in CLI mode.
@@ -15,5 +17,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclaratio
 object CommonIdeOnlyDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = setOf(
         FirActualAnnotationsMatchExpectChecker,
+    )
+    override val functionCheckers: Set<FirFunctionChecker> = setOf(
+        FirTailrecFunctionChecker,
     )
 }

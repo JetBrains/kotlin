@@ -9,6 +9,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.EVALUATION_ERROR_EXPLANATION
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
+import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED
+import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.TAILREC_MODIFIER
 import org.jetbrains.kotlin.diagnostics.error1
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
@@ -22,7 +24,9 @@ object CommonBackendErrors : KtDiagnosticsContainer() {
 
     val INLINE_CALL_CYCLE by error1<PsiElement, IrFunction>()
 
-    val NO_TAIL_CALLS_FOUND_IN_IR by warning0<PsiElement>()
+    val NON_TAIL_RECURSIVE_CALL by warning0<PsiElement>(REFERENCED_NAME_BY_QUALIFIED)
+
+    val NO_TAIL_CALLS_FOUND by warning0<PsiElement>(TAILREC_MODIFIER)
 
     val IR_DUMP_WARNING by warningWithoutSource()
 
@@ -44,7 +48,11 @@ object KtDefaultCommonBackendErrorMessages : BaseDiagnosticRendererFactory() {
             IrDiagnosticRenderers.DECLARATION_NAME,
         )
         map.put(
-            CommonBackendErrors.NO_TAIL_CALLS_FOUND_IN_IR,
+            CommonBackendErrors.NON_TAIL_RECURSIVE_CALL,
+            "Recursive call is not a tail call.",
+        )
+        map.put(
+            CommonBackendErrors.NO_TAIL_CALLS_FOUND,
             "KT-87442: A function is marked as tail-recursive but compiler backend fails to perform tail-recursive optimization.",
         )
         map.put(

@@ -2,18 +2,18 @@
 // RUN_PIPELINE_TILL: BACKEND
 // LATEST_LV_DIFFERENCE
 // IGNORE_DEXING
-// DIAGNOSTICS: -MISPLACED_TYPE_PARAMETER_CONSTRAINTS, -NOTHING_TO_INLINE, -NO_TAIL_CALLS_FOUND
+// DIAGNOSTICS: -MISPLACED_TYPE_PARAMETER_CONSTRAINTS, -NOTHING_TO_INLINE
 
 package pkg
 
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) tailrec <!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun testIdenticalPresenceOfTailrecModifier() {}<!><!>
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec <!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun testIdenticalPresenceOfTailrecModifier() {}<!><!>
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!NO_TAIL_CALLS_FOUND!>tailrec<!> <!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun testIdenticalPresenceOfTailrecModifier() {}<!>
+<!NO_TAIL_CALLS_FOUND!>tailrec<!> <!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun testIdenticalPresenceOfTailrecModifier() {}<!>
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) tailrec <!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun testDifferencesInTailrecModifierPresence() {}<!><!>
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!NO_TAIL_CALLS_FOUND!>tailrec<!> <!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun testDifferencesInTailrecModifierPresence() {}<!>
 <!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun testDifferencesInTailrecModifierPresence() {}<!>
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec <!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun testDifferencesInTailrecModifierPresenceReverse() {}<!><!>
+<!NO_TAIL_CALLS_FOUND!>tailrec<!> <!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun testDifferencesInTailrecModifierPresenceReverse() {}<!>
 @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_KLIB_SIGNATURES_ERROR!>fun testDifferencesInTailrecModifierPresenceReverse() {}<!>
 
 

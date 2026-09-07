@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.util.file
@@ -35,12 +37,24 @@ open class TailrecCheckerLowering<Context : LoweringContext>(val context: Contex
                     followRichFunctionReference = ::followRichFunctionReference,
                 )
 
+                for (call in tailCalls.nonTailCalls) {
+                    context.diagnosticReporter
+                        .at(call.nonTailCallSourceElement(), call, declaration.file)
+                        .report(CommonBackendErrors.NON_TAIL_RECURSIVE_CALL)
+                }
+
                 if (tailCalls.ir.isEmpty()) {
                     context.diagnosticReporter
                         .at(declaration, declaration.file)
-                        .report(CommonBackendErrors.NO_TAIL_CALLS_FOUND_IN_IR)
+                        .report(CommonBackendErrors.NO_TAIL_CALLS_FOUND)
                 }
             }
         })
     }
+}
+
+private fun IrCall.nonTailCallSourceElement(): KtOffsetsOnlySourceElement? {
+    if (startOffset < 0) return null
+    val nameLength = symbol.owner.name.asString().length
+    return KtOffsetsOnlySourceElement(startOffset, (startOffset + nameLength).coerceAtMost(endOffset))
 }

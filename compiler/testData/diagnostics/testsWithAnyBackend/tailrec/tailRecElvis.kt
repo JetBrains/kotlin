@@ -7,9 +7,9 @@ tailrec fun elvisRhs(x: Int): Int {
 }
 
 // Elvis on the LHS: the call is NOT in tail position because elvis may evaluate the RHS after it
-<!NO_TAIL_CALLS_FOUND_IN_IR!><!NO_TAIL_CALLS_FOUND!>tailrec<!> fun elvisLhs(x: Int): Int? {
+<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun elvisLhs(x: Int): Int? {
     return <!NON_TAIL_RECURSIVE_CALL!>elvisLhs<!>(x - 1) ?: 0
-}<!>
+}
 
 // Nested elvis: only the very last operand is in tail position
 tailrec fun elvisNested(x: Int): Int {
@@ -17,9 +17,9 @@ tailrec fun elvisNested(x: Int): Int {
 }
 
 // Elvis where the tail call is in the middle (not tail)
-<!NO_TAIL_CALLS_FOUND_IN_IR!><!NO_TAIL_CALLS_FOUND!>tailrec<!> fun elvisMiddle(x: Int): Int? {
+<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun elvisMiddle(x: Int): Int? {
     return maybe(x) ?: <!NON_TAIL_RECURSIVE_CALL!>elvisMiddle<!>(x - 1) ?: 0
-}<!>
+}
 
 fun maybe(x: Int): Int? = x.takeIf { it > 0 }
 

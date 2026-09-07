@@ -4,7 +4,7 @@ tailrec fun badTails(x : Int) : Int {
     }
     else if (x == 10) {
         @Suppress("NON_TAIL_RECURSIVE_CALL")
-        return 1 + badTails(x - 1)
+        return 1 + <!NON_TAIL_RECURSIVE_CALL!>badTails<!>(x - 1)
     } else if (x >= 50) {
         return badTails(x - 1)
     }

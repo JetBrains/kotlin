@@ -69,7 +69,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirSuspendLimitationsChecker,
         FirInfixFunctionDeclarationChecker,
         FirOperatorModifierChecker,
-        FirTailrecFunctionChecker,
         FirVersionOverloadsChecker,
     )
 
