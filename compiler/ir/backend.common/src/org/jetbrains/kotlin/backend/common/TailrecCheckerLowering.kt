@@ -1,0 +1,65 @@
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.backend.common
+
+import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+
+open class TailrecCheckerLowering<Context : LoweringContext>(val context: Context) : FileLoweringPass {
+    open fun followRichFunctionReference(reference: IrRichFunctionReference) = false
+    open fun followFunctionReference(reference: IrFunctionReference) = false
+
+    override fun lower(irFile: IrFile) {
+        irFile.acceptChildrenVoid(object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+                declaration.acceptChildrenVoid(this)
+
+                if (!declaration.isTailrec) return
+
+                val tailCalls = collectTailRecursionCalls(
+                    declaration,
+                    followFunctionReference = ::followFunctionReference,
+                    followRichFunctionReference = ::followRichFunctionReference,
+                    collectNonTailCallsInNestedFunctions = true,
+                )
+
+                for (call in tailCalls.nonTailCalls) {
+                    context.diagnosticReporter
+                        .at(call.referencedNameSourceElement(), call, declaration.file)
+                        .report(CommonBackendErrors.NON_TAIL_RECURSIVE_CALL)
+                }
+
+                if (tailCalls.ir.isEmpty()) {
+                    context.diagnosticReporter
+                        .at(declaration, declaration.file)
+                        .report(CommonBackendErrors.NO_TAIL_CALLS_FOUND)
+                }
+            }
+        })
+    }
+}
+
+/**
+ * Creates a source range for the referenced name, matching FIR's `REFERENCED_NAME_BY_QUALIFIED` positioning.
+ * IR has no PSI callee, so calculate the range from [startOffset] and the referenced name length.
+ */
+private fun IrCall.referencedNameSourceElement(): KtOffsetsOnlySourceElement? {
+    if (startOffset < 0) return null
+    val nameLength = symbol.owner.name.asString().length
+    return KtOffsetsOnlySourceElement(startOffset, (startOffset + nameLength).coerceAtMost(endOffset))
+}
