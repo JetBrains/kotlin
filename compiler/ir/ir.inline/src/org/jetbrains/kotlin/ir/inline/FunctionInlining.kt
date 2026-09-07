@@ -42,7 +42,7 @@ import java.util.ArrayDeque
 )
 abstract class FunctionInlining(
     open val context: LoweringContext,
-    protected val inlineFunctionResolver: InlineFunctionResolver,
+    private val inlineFunctionResolver: InlineFunctionResolver,
 ) : IrTransformer<IrDeclaration>(), BodyLoweringPass {
     private val fileEntriesStack = ArrayDeque<IrFileEntry>()
 
