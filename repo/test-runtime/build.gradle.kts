@@ -80,6 +80,7 @@ dependencies {
     testImplementation(libs.junit.platform.launcher)
     testImplementation(libs.junit.jupiter.api)
 
+    compileOnly(libs.junit.jupiter.engine)
     compileOnly(libs.junit.platform.launcher)
 }
 
