@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameter
 
 internal class SymbolLightRepeatableAnnotationContainerMethod(
     private val annotationClassQualifier: String?,
-    private val containingClass: SymbolLightClassForRepeatableAnnotationContainer,
+    override val backingContainingClass: SymbolLightClassForRepeatableAnnotationContainer,
 ) : SymbolLightMethodBaseImpl<KaNamedClassSymbol>(
     lightMemberOrigin = null,
-    containingClass = containingClass,
+    containingClass = backingContainingClass,
     methodIndex = METHOD_INDEX_BASE,
     isJvmExposedBoxed = false,
 ) {
@@ -61,8 +61,8 @@ internal class SymbolLightRepeatableAnnotationContainerMethod(
         this === other || other is SymbolLightRepeatableAnnotationContainerMethod && other.containingClass == containingClass
 
     override fun hashCode(): Int = containingClass.hashCode()
-    override fun copy(): PsiElement = SymbolLightRepeatableAnnotationContainerMethod(annotationClassQualifier, containingClass)
+    override fun copy(): PsiElement = SymbolLightRepeatableAnnotationContainerMethod(annotationClassQualifier, backingContainingClass)
 
     override val symbolPointer: KaSymbolPointer<KaNamedClassSymbol>
-        get() = containingClass.symbolPointer
+        get() = backingContainingClass.symbolPointer
 }
