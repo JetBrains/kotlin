@@ -44,6 +44,80 @@ class CleanWidget(
     val tags: List<String>,
 )
 
+// A builder field is a primary constructor value parameter, `val` or not, so a parameter declared without one
+// is checked like any other: its own default value is still ignored by the builder, and `@Singular`
+// (`@Target(FIELD, PARAMETER)`) still lands on it. `@Builder.Default` cannot - it is `@Target(FIELD)` and such
+// a parameter has no field - which Kotlin's own annotation-target checker rejects before this checker runs.
+@Builder
+class ParametersWithoutVal(
+    plain: String = <!BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION!>"default"<!>,
+    <!CANNOT_SINGULARIZE_NAME!>@Singular<!> sheep: List<String>,
+    <!UNSUPPORTED_SINGULAR_TYPE!>@Singular("thing")<!> things: Array<String>,
+) {
+    val summary: String = plain + sheep.size + things.size
+}
+
+// A property declared in the class body is not a builder field at all - `build()` has only the primary
+// constructor to call - so nothing on one is reported: not its initializer, which the builder never ignores
+// because it never sets the property, and not a `@Singular` or `@Builder.Default` that cannot reach a builder
+// field in the first place. Every one of these would have been reported when the builder was built out of the
+// class's properties.
+@Builder
+class BodyPropertiesAreNotBuilderFields(val id: Int, extra: String) {
+    val derived: String = extra + id
+
+    @Builder.Default // TODO: KT-89218 should be reported (annotation has no effect)
+    val defaulted: Int = 1
+
+    @Singular // TODO: KT-89218 should be reported (annotation has no effect)
+    val sheep: List<String> = emptyList()
+
+    @Singular("thing") // TODO: KT-89218 should be reported (annotation has no effect)
+    val things: Array<String> = emptyArray()
+}
+
+// `toBuilder()` fills each builder field from the entity's property of that name, so a parameter the class
+// declares no property for leaves it nothing to read. Lombok rejects the same shape - "cannot find symbol:
+// variable <name>" on the annotation - for a method and a constructor builder alike, and offers
+// `@Builder.ObtainVia` to point elsewhere, which isn't implemented here.
+@Builder(toBuilder = true)
+class ToBuilderWithoutProperty(val kept: Int, <!TO_BUILDER_CANNOT_OBTAIN!>lost: Int<!>) {
+    val doubled: Int = lost * 2
+}
+
+// A property declared by hand is enough - it need not be a promoted one.
+@Builder(toBuilder = true)
+class ToBuilderWithBodyProperty(val kept: Int, mirrored: Int) {
+    val mirrored: Int = mirrored
+}
+
+// The parameters of a constructor or a method builder can never be `val`, so the property has to be there
+// already. `SecondaryMatching` has one, the others do not.
+class ToBuilderOnConstructor(val str: String, val int: Int) {
+    @Builder(toBuilder = true)
+    constructor(str: String) : this(str, -1)
+
+    @Builder(toBuilder = true, builderClassName = "OtherBuilder")
+    constructor(<!TO_BUILDER_CANNOT_OBTAIN!>other: Long<!>) : this("empty", other.toInt())
+}
+
+class ToBuilderOnMemberMethod {
+    var name: String = ""
+    var seen: Int = 0
+
+    @Builder(toBuilder = true)
+    fun init(name: String, <!TO_BUILDER_CANNOT_OBTAIN!>extra: Int<!>) {
+        this.name = name
+        this.seen = extra
+    }
+}
+
+// Without `toBuilder` nothing has to be obtainable: the mismatch only matters to the round-trip.
+class NoToBuilderNeedsNothing(val kept: Int) {
+    @Builder
+    constructor(other: Long) : this(other.toInt())
+}
+
 // `@Builder` on a secondary constructor: only `@Singular` is checkable (`@Builder.Default`
 // is `@Target(FIELD)`, so it can't land on a bare constructor parameter at all).
 class ConstructorSingularCannotSingularize(val id: Int) {
