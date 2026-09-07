@@ -79,6 +79,9 @@ internal object LightClassMemberUtils {
         val lightOwners = when (enclosingDeclaration) {
             is KaClassSymbol -> listOf(enclosingDeclaration.asPsiClass())
             is KaFunctionSymbol -> enclosingDeclaration.asPsiMethods()
+            is KaKotlinPropertySymbol -> listOfNotNull(enclosingDeclaration.getter, enclosingDeclaration.setter).flatMap {
+                it.asPsiMethods()
+            }
             else -> emptyList()
         }
 
@@ -134,7 +137,7 @@ internal object LightClassMemberUtils {
                     }
                     functionSymbol is KaConstructorSymbol && functionSymbol.isPrimary && lightMethod.isConstructor -> {
                         // no-arg constructors have the containing class as their origin
-                        lightMethod.kotlinOrigin === functionSymbolPsi?.containingClass()
+                        lightMethod.kotlinOrigin === functionSymbolPsi.value?.containingClass()
                     }
                     else -> false
                 }
@@ -147,7 +150,8 @@ internal object LightClassMemberUtils {
             KaSymbolLocation.TOP_LEVEL -> when (declaration) {
                 is KaFileSymbol -> declaration.asFacadePsiClass()
                 is KaScriptSymbol -> declaration.asFacadePsiClass()
-                else -> (declaration.containingFile ?: (declaration.anchorPsi?.containingFile as? KtFile)?.symbol)?.asFacadePsiClass()
+                // The PSI-based fallback for library declarations should be removed after KT-85997
+                else -> (declaration.containingFile ?: (declaration.realPsi?.containingFile as? KtFile)?.symbol)?.asFacadePsiClass()
             }
             KaSymbolLocation.CLASS -> (declaration.containingDeclaration as? KaClassSymbol)?.asPsiClass()
             KaSymbolLocation.PROPERTY -> declaration.containingDeclaration?.let { property -> getWrappingClass(property) }
@@ -169,7 +173,7 @@ internal object LightClassMemberUtils {
         }
     }
 
-    private fun PsiElement.isCreatedFrom(otherPsi: KtElement?, otherSymbolPointer: KaSymbolPointer<*>): Boolean {
+    private fun PsiElement.isCreatedFrom(otherPsi: Lazy<KtElement?>, otherSymbolPointer: KaSymbolPointer<*>): Boolean {
         if (this !is KaElementJavaView) {
             return false
         }
@@ -179,7 +183,8 @@ internal object LightClassMemberUtils {
             return thisSymbolPointer.pointsToTheSameSymbolAs(otherSymbolPointer)
         }
 
-        return otherPsi != null && kotlinOrigin == otherPsi
+        val computedOtherPsi = otherPsi.value
+        return computedOtherPsi != null && kotlinOrigin == computedOtherPsi
     }
 
     private fun PsiClass.isCreatedFromCompanion(): Boolean {
@@ -204,11 +209,13 @@ internal object LightClassMemberUtils {
      * It's used instead of [KaSymbol.realPsi] to match synthetic declarations.
      */
     context(_: KaSession)
-    private fun KaSymbol.getPsiForMatching(): KtElement? {
-        return when (this) {
-            is KaPropertyAccessorSymbol -> (containingDeclaration as? KaKotlinPropertySymbol)?.anchorPsi ?: anchorPsi
-            else -> anchorPsi
-        }?.originalElement as? KtElement
+    private fun KaSymbol.getPsiForMatching(): Lazy<KtElement?> {
+        return lazy {
+            when (this) {
+                is KaPropertyAccessorSymbol -> (containingDeclaration as? KaKotlinPropertySymbol)?.anchorPsi ?: anchorPsi
+                else -> anchorPsi
+            }?.originalElement as? KtElement
+        }
     }
 }
 
