@@ -96,27 +96,26 @@ class NonLinkingIrInlineFunctionDeserializer(
         unitType: IrType,
         nothingType: IrType,
     ) {
-        private val fileEntryDeserializer = FileEntryDeserializer(irInterner)
-
-        private val fileDeserializers = (0 until inlinableFunctionsIr.irFileCount).map {
-            val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(inlinableFunctionsIr, it))
-            FileDeserializer(
-                fileReader = fileReader,
-                fileEntryDeserializer = fileEntryDeserializer,
-                irInterner = irInterner,
-                detachedSymbolTable = detachedSymbolTable,
-                irFactory = irFactory,
-                anyNType = anyNType,
-                unitType = unitType,
-                nothingType = nothingType
-            )
-        }
-
         /**
          * Deserialize declarations only on demand. Cache top-level declarations to avoid repetitive deserialization
          * if the declaration happens to have multiple inline functions.
          */
         val reversedSignatureIndex: Map<IdSignature, Pair<Int, FileDeserializer>> = buildMap {
+            val fileEntryDeserializer = FileEntryDeserializer(irInterner)
+            val fileDeserializers = List(inlinableFunctionsIr.irFileCount) {
+                val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(inlinableFunctionsIr, it))
+                FileDeserializer(
+                    fileReader = fileReader,
+                    fileEntryDeserializer = fileEntryDeserializer,
+                    irInterner = irInterner,
+                    detachedSymbolTable = detachedSymbolTable,
+                    irFactory = irFactory,
+                    anyNType = anyNType,
+                    unitType = unitType,
+                    nothingType = nothingType
+                )
+            }
+
             for ((index, deserializer = value) in fileDeserializers.withIndex()) {
                 val fileStream = inlinableFunctionsIr.irFile(index).codedInputStream
                 val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.getEmptyRegistry())
