@@ -97,12 +97,19 @@ class KlibLoaderResult(
          *  [KlibLoaderSpec.minPermittedAbiVersion] call.
          * @property maxPermittedAbiVersion The max permitted ABI version set in [KlibLoader] via
          *  [KlibLoaderSpec.maxPermittedAbiVersion] call.
+         * @property minSupportedCompilerVersionHint The oldest known compiler version that can produce KLIB
+         *  artifacts that can be consumed by the current compiler.
          */
         class IncompatibleAbiVersion(
             val libraryVersions: KotlinLibraryVersioning,
             val minPermittedAbiVersion: KotlinAbiVersion?,
             val maxPermittedAbiVersion: KotlinAbiVersion?,
-        ) : ExistingKlibProblem()
+            val minSupportedCompilerVersionHint: String?
+        ) : ExistingKlibProblem() {
+            init {
+                require(minSupportedCompilerVersionHint == null || minPermittedAbiVersion != null)
+            }
+        }
 
         /**
          * The library does not pass some other (custom) check that was not set in [KlibLoaderSpec].
@@ -153,24 +160,41 @@ private fun ProblematicLibrary.computeMessageText(): String {
         is IncompatibleAbiVersion -> with(problemCase) {
             val libraryCompilerLine: String? = libraryVersions.compilerVersion?.let { "The library was produced by $it compiler." }
 
+            val libraryAbiVersion: KotlinAbiVersion? = libraryVersions.abiVersion
+
+            val isLowerBoundaryExceeded = minPermittedAbiVersion != null
+                    && libraryAbiVersion != null
+                    && !libraryAbiVersion.isAtLeast(minPermittedAbiVersion)
+
             val abiVersionCheckExplanation: String = when {
+                isLowerBoundaryExceeded && minSupportedCompilerVersionHint != null ->
+                    "produced by at least $minSupportedCompilerVersionHint compiler"
+
                 minPermittedAbiVersion != null && maxPermittedAbiVersion != null ->
-                    "ABI version in the range [$minPermittedAbiVersion, $maxPermittedAbiVersion]"
+                    "having ABI version in the range [$minPermittedAbiVersion, $maxPermittedAbiVersion]"
 
                 maxPermittedAbiVersion != null ->
-                    "ABI version <= $maxPermittedAbiVersion"
+                    "having ABI version <= $maxPermittedAbiVersion"
 
-                else /*if (minPermittedAbiVersion != null)*/ ->
-                    "ABI version >= $minPermittedAbiVersion"
+                else /* minPermittedAbiVersion != null */ ->
+                    "having ABI version >= $minPermittedAbiVersion"
             }
 
-            val libraryAbiVersion: KotlinAbiVersion? = libraryVersions.abiVersion
             val lines: List<String> = if (libraryAbiVersion != null) {
+                val actionText = when {
+                    isLowerBoundaryExceeded -> buildString {
+                        append("Please upgrade the library to a newer version ")
+                        if (minSupportedCompilerVersionHint != null) append("compatible with $minSupportedCompilerVersionHint compiler ")
+                        append("(ABI version $minPermittedAbiVersion or higher).")
+                    }
+                    else -> "Please upgrade your Kotlin compiler version to consume this library."
+                }
+
                 listOfNotNull(
                     "Incompatible ABI version $libraryAbiVersion in library: $libraryPath",
                     libraryCompilerLine,
-                    "The current Kotlin compiler can consume libraries having $abiVersionCheckExplanation",
-                    "Please upgrade your Kotlin compiler version to consume this library."
+                    "The current Kotlin compiler can consume libraries $abiVersionCheckExplanation.",
+                    actionText,
                 )
             } else {
                 // This message is not very actionable. However, we shouldn't have to worry about it because
@@ -178,7 +202,7 @@ private fun ProblematicLibrary.computeMessageText(): String {
                 listOfNotNull(
                     "Library with unknown ABI version: $libraryPath",
                     libraryCompilerLine,
-                    "The current Kotlin compiler can consume libraries having $abiVersionCheckExplanation, but it's not possible to determine the exact ABI version."
+                    "The current Kotlin compiler can consume libraries $abiVersionCheckExplanation, but it's not possible to determine the exact ABI version."
                 )
             }
 

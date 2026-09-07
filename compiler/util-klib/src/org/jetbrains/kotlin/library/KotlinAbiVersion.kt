@@ -99,6 +99,12 @@ data class KotlinAbiVersion(val major: Int, val minor: Int, val patch: Int) {
         val FIRST_SUPPORTED = KotlinAbiVersion(1, 6, 0)
 
         /**
+         * The oldest version of the compiler that can produce KLIBs consumable by the current compiler version.
+         * See [FIRST_SUPPORTED].
+         */
+        const val FIRST_SUPPORTED_COMPILER_VERSION = "1.6.0"
+
+        /**
          * Versions before 1.4.1 were the active development phase.
          * Starting with 1.4.1 we are trying to maintain experimental backward compatibility.
          */

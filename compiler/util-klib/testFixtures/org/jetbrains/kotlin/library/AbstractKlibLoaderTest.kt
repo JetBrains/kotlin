@@ -9,11 +9,13 @@ import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.io.readProperties
 import org.jetbrains.kotlin.io.writeProperties
 import org.jetbrains.kotlin.io.zipDirAs
+import org.jetbrains.kotlin.library.KotlinAbiVersion.Companion.FIRST_SUPPORTED_COMPILER_VERSION
 import org.jetbrains.kotlin.library.loader.DefaultKlibLibraryProvider
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
+import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -460,7 +462,7 @@ abstract class AbstractKlibLoaderTest {
         for (i in abiVersionsStartingFromCurrent.indices) {
             KlibLoader {
                 libraryPaths(libraryPaths)
-                minPermittedAbiVersion(abiVersionsStartingFromCurrent[i])
+                minPermittedAbiVersion(abiVersionsStartingFromCurrent[i], null)
             }.load()
                 .assertLoadedLibraries(libraryPaths.take(i + 1))
                 .assertProblematicLibraries(incompatibleAbiVersionPaths = libraryPaths.drop(i + 1))
@@ -519,7 +521,7 @@ abstract class AbstractKlibLoaderTest {
             // ... and now with.
             KlibLoader {
                 libraryPaths(libraryPath)
-                minPermittedAbiVersion(KotlinAbiVersion.FIRST_SUPPORTED)
+                minPermittedAbiVersion(KotlinAbiVersion.FIRST_SUPPORTED, FIRST_SUPPORTED_COMPILER_VERSION)
                 maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
             }.load()
                 .assertNoLoadedLibraries()
@@ -531,12 +533,92 @@ abstract class AbstractKlibLoaderTest {
 
             KlibLoader {
                 libraryPaths(libraryPath)
-                minPermittedAbiVersion(KotlinAbiVersion.FIRST_SUPPORTED)
+                minPermittedAbiVersion(KotlinAbiVersion.FIRST_SUPPORTED, FIRST_SUPPORTED_COMPILER_VERSION)
                 maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
             }.load()
                 .assertLoadedLibraries(listOf(libraryPath))
                 .assertNoProblematicLibraries()
         }
+    }
+
+    @Test
+    fun testCompilerVersionHintsForObsoleteAbiVersions() {
+        val obsoleteAbiVersion = KotlinAbiVersion.FIRST_SUPPORTED.prev()
+
+        val libraryPath = generateNewKlib(asFile = false, fileExtension = "", abiVersion = obsoleteAbiVersion)
+
+        fun KlibLoaderResult.assertInvalidAbiMessage(expectedMessage: String) {
+            var errorMessagesReported = 0
+            reportLoadingProblemsIfAny { _, actualMessage ->
+                errorMessagesReported++
+
+                val actualFilteredMessage = actualMessage.lineSequence()
+                    .filterNot { it.startsWith("The library was produced by ") && it.endsWith(" compiler.") } // this line might be absent in the reported message
+                    .joinToString(separator = "\n")
+
+                assertEquals(expectedMessage, actualFilteredMessage)
+            }
+
+            assertEquals(1, errorMessagesReported)
+        }
+
+        KlibLoader {
+            libraryPaths(libraryPath)
+            minPermittedAbiVersion(KotlinAbiVersion.FIRST_SUPPORTED, compilerVersion = null)
+        }.load()
+            .assertNoLoadedLibraries()
+            .assertProblematicLibraries(incompatibleAbiVersionPaths = listOf(libraryPath))
+            .assertInvalidAbiMessage(
+                """
+                    KLIB loader: Incompatible ABI version $obsoleteAbiVersion in library: $libraryPath
+                    The current Kotlin compiler can consume libraries having ABI version >= ${KotlinAbiVersion.FIRST_SUPPORTED}.
+                    Please upgrade the library to a newer version (ABI version ${KotlinAbiVersion.FIRST_SUPPORTED} or higher).
+                """.trimIndent()
+            )
+
+        KlibLoader {
+            libraryPaths(libraryPath)
+            minPermittedAbiVersion(KotlinAbiVersion.FIRST_SUPPORTED, compilerVersion = null)
+            maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
+        }.load()
+            .assertNoLoadedLibraries()
+            .assertProblematicLibraries(incompatibleAbiVersionPaths = listOf(libraryPath))
+            .assertInvalidAbiMessage(
+                """
+                    KLIB loader: Incompatible ABI version $obsoleteAbiVersion in library: $libraryPath
+                    The current Kotlin compiler can consume libraries having ABI version in the range [${KotlinAbiVersion.FIRST_SUPPORTED}, ${KotlinAbiVersion.CURRENT}].
+                    Please upgrade the library to a newer version (ABI version ${KotlinAbiVersion.FIRST_SUPPORTED} or higher).
+                """.trimIndent()
+            )
+
+        KlibLoader {
+            libraryPaths(libraryPath)
+            minPermittedAbiVersion(KotlinAbiVersion.FIRST_SUPPORTED, compilerVersion = FIRST_SUPPORTED_COMPILER_VERSION)
+        }.load()
+            .assertNoLoadedLibraries()
+            .assertProblematicLibraries(incompatibleAbiVersionPaths = listOf(libraryPath))
+            .assertInvalidAbiMessage(
+                """
+                    KLIB loader: Incompatible ABI version $obsoleteAbiVersion in library: $libraryPath
+                    The current Kotlin compiler can consume libraries produced by at least $FIRST_SUPPORTED_COMPILER_VERSION compiler.
+                    Please upgrade the library to a newer version compatible with $FIRST_SUPPORTED_COMPILER_VERSION compiler (ABI version ${KotlinAbiVersion.FIRST_SUPPORTED} or higher).
+                """.trimIndent()
+            )
+
+        KlibLoader {
+            libraryPaths(libraryPath)
+            minPermittedAbiVersion(KotlinAbiVersion.FIRST_SUPPORTED, compilerVersion = FIRST_SUPPORTED_COMPILER_VERSION)
+            maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
+        }.load()
+            .assertNoLoadedLibraries()
+            .assertProblematicLibraries(incompatibleAbiVersionPaths = listOf(libraryPath))
+            .assertInvalidAbiMessage(
+                """
+                    KLIB loader: Incompatible ABI version $obsoleteAbiVersion in library: $libraryPath
+                    The current Kotlin compiler can consume libraries produced by at least $FIRST_SUPPORTED_COMPILER_VERSION compiler.
+                    Please upgrade the library to a newer version compatible with $FIRST_SUPPORTED_COMPILER_VERSION compiler (ABI version ${KotlinAbiVersion.FIRST_SUPPORTED} or higher).
+                """.trimIndent()
+            )
     }
 
     private fun findAllKnownUnsupportedAbiVersions(): List<KotlinAbiVersion> {
