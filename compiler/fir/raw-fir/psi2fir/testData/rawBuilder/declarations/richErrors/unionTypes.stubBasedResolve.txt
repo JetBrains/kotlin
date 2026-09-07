@@ -1,0 +1,8 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] unionTypes.kt
+    public final error [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|kotlin/String|, [ResolvedTo(ANNOTATION_ARGUMENTS)] b: R|kotlin/String?|, [ResolvedTo(ANNOTATION_ARGUMENTS)] c: R|kotlin/String|, [ResolvedTo(ANNOTATION_ARGUMENTS)] d: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| { LAZY_BLOCK }

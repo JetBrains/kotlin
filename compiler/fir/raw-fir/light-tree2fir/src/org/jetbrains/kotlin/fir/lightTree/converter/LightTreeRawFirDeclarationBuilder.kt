@@ -2477,6 +2477,7 @@ class LightTreeRawFirDeclarationBuilder(
                     isMarkedNullable = false
                 }
                 INTERSECTION_TYPE -> firType = convertIntersectionType(typeRefSource, it, false)
+                UNION_TYPE -> firType = convertUnionType(typeRefSource, it, false)
                 CONTEXT_PARAMETER_LIST, TokenType.ERROR_ELEMENT -> firType =
                     buildErrorTypeRef {
                         source = typeRefSource
@@ -2519,6 +2520,21 @@ class LightTreeRawFirDeclarationBuilder(
         }
     }
 
+    private fun convertUnionType(typeRefSource: KtSourceElement, unionType: LighterASTNode, isNullable: Boolean): FirTypeRef {
+        val children = arrayListOf<FirTypeRef>()
+        unionType.forEachChildren {
+            if (it.tokenType != OR) {
+                children.add(convertType(it))
+            }
+        }
+
+        return buildUnionTypeRef {
+            source = typeRefSource
+            isMarkedNullable = isNullable
+            types.addAll(children)
+        }
+    }
+
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeRefContents
      */
@@ -2554,6 +2570,7 @@ class LightTreeRawFirDeclarationBuilder(
                     isMarkedNullable = true
                 }
                 INTERSECTION_TYPE -> firType = convertIntersectionType(typeRefSource, it, isNullable)
+                UNION_TYPE -> firType = convertUnionType(typeRefSource, it, isNullable)
             }
         }
 

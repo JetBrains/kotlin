@@ -953,6 +953,12 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
       public void testErrorClass() {
         run("errorClass.kt");
       }
+
+      @Test
+      @TestMetadata("unionTypes.kt")
+      public void testUnionTypes() {
+        run("unionTypes.kt");
+      }
     }
   }
 

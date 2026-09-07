@@ -2933,9 +2933,10 @@ open class PsiRawFirBuilder(
                     leftType = unwrappedElement.getLeftTypeRef().toFirOrErrorType()
                     rightType = unwrappedElement.getRightTypeRef().toFirOrErrorType()
                 }
-                is KtUnionType -> FirErrorTypeRefBuilder().apply {
+                is KtUnionType -> FirUnionTypeRefBuilder().apply {
                     this.source = source
-                    diagnostic = ConeSyntaxDiagnostic("Union types are not supported")
+                    isMarkedNullable = isNullable
+                    unwrappedElement.types.mapTo(types) { it.toFirOrErrorType() }
                 }
                 null -> FirErrorTypeRefBuilder().apply {
                     this.source = source
