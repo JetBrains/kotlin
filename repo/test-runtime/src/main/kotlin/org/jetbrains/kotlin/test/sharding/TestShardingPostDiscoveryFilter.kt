@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.test.sharding
 
+import org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor
 import org.junit.platform.engine.FilterResult
 import org.junit.platform.engine.FilterResult.excluded
 import org.junit.platform.engine.FilterResult.included
 import org.junit.platform.engine.TestDescriptor
 import org.junit.platform.launcher.PostDiscoveryFilter
 import java.util.zip.CRC32
+import kotlin.jvm.optionals.getOrNull
 import kotlin.math.absoluteValue
 
 class TestShardingPostDiscoveryFilter : PostDiscoveryFilter {
@@ -48,19 +50,42 @@ class TestShardingPostDiscoveryFilter : PostDiscoveryFilter {
         val uniqueId = test.uniqueId
 
         /*
+        If the test is contained within a class, then we can find the class by traversing the parents
+         */
+        val classDescriptor = generateSequence(test) { it.parent.getOrNull() }
+            .filterIsInstance<ClassBasedTestDescriptor>()
+            .firstOrNull()
+
+        /*
         Certain test engines may at least require some thought on how to put tests into shards.
         While the junit-jupiter's behavior of using the uniqueId directly is a reasonable default,
         it was deliberately chosen to fail on unexpected test engines, to ensure them being handled
         and thought about instead of silently behaving undesirably
          */
         return when (uniqueId.engineId.get()) {
-            "junit-jupiter" -> uniqueId.toString()
-
+            "junit-jupiter" -> {
+                /*
+                Any @BeforeAll or @AfterAll methods will use the closest class descriptor as sharding key.
+                While sharding, based upon methods, can still be OK for many of those tests, some tests may
+                contain actual heavy lifting within their @BeforeAll and therefore shall not be sharded.
+                 */
+                if (classDescriptor != null &&
+                    (classDescriptor.testClass.hasBeforeAllAnnotation() || classDescriptor.testClass.hasAfterAllAnnotation())
+                ) {
+                    classDescriptor.uniqueId.toString()
+                }
+                /*
+                Using the test's uniqueId allows sharding test on the actual test-method level.
+                This more fine-granular scope will increase the number of distributable entities within shards
+                which allows this pseudo random approach produce well-balanced shards of test
+                 */
+                else uniqueId.toString()
+            }
             /*
             The compiler grouping test engine tries to group work done within a test class, we therefore select
             the test class (parent) as the uniqueId instead of the full testId (which may be method based)
              */
-            "kotlin-compiler-grouping-engine" -> uniqueId.removeLastSegment().toString()
+            "kotlin-compiler-grouping-engine" -> classDescriptor?.uniqueId?.toString() ?: uniqueId.removeLastSegment().toString()
             else -> error("Unexpected Test Engine ID: ${uniqueId.engineId}")
         }
     }
