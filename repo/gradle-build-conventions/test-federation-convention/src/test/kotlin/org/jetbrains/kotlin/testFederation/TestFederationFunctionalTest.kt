@@ -382,6 +382,60 @@ class TestFederationFunctionalTest {
             "##teamcity[setParameter name='$TEST_FEDERATION_CHANGED_DOMAINS_KEY' value='Js']"
         )
     }
+
+    /**
+     * We test running tests in 'test shards'.
+     * The test will run tests in three shards.
+     * We then make sure that
+     * a) Test shards do not overlap
+     * b) Combining tests from all shards will result in all tests being executed
+     */
+    @Test
+    fun `test - 3 test shards`() {
+        cleanTest()
+        val shard1Result = runTestBuild(
+            mode = TestFederationMode.Full,
+            additionalCliArgs = listOf("-Ptests.currentShard=1", "-Ptests.totalShards=3")
+        )
+
+        val shard2Result = runTestBuild(
+            mode = TestFederationMode.Full,
+            additionalCliArgs = listOf("-Ptests.currentShard=2", "-Ptests.totalShards=3")
+        )
+
+        val shard3Result = runTestBuild(
+            mode = TestFederationMode.Full,
+            additionalCliArgs = listOf("-Ptests.currentShard=3", "-Ptests.totalShards=3")
+        )
+
+        val shard1Tests = shard1Result.executedTests
+        val shard2Tests = shard2Result.executedTests
+        val shard3Tests = shard3Result.executedTests
+
+        shard1Tests.intersect(shard2Tests).takeIf { it.isNotEmpty() }?.also { duplicatedTests ->
+            fail("shard1 and shard2 both executed the same tests: $duplicatedTests")
+        }
+
+        shard1Tests.intersect(shard2Tests).takeIf { it.isNotEmpty() }?.also { duplicatedTests ->
+            fail("shard1 and shard3 both executed the same tests: $duplicatedTests")
+        }
+
+        shard2Tests.intersect(shard3Tests).takeIf { it.isNotEmpty() }?.also { duplicatedTests ->
+            fail("shard2 and shard3 both executed the same tests: $duplicatedTests")
+        }
+
+        assertEquals(
+            setOf(
+                TestResult("PseudoTest", "domain test"),
+                TestResult("PseudoTest", "smoke test"),
+                TestResult("PseudoTest", "js contract test"),
+                TestResult("PseudoTest", "wasm contract test"),
+                TestResult("PseudoTest", "gradle contract test"),
+                TestResult("PseudoTest", "nightly test"),
+            ),
+            shard1Tests + shard2Tests + shard3Tests
+        )
+    }
 }
 
 private val allTests = setOf(
