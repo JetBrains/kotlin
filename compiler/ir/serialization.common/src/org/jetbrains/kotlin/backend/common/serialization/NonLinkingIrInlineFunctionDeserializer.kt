@@ -96,11 +96,13 @@ class NonLinkingIrInlineFunctionDeserializer(
         unitType: IrType,
         nothingType: IrType,
     ) {
+        data class DeserializationInfo(val index: Int, val deserializer: FileDeserializer)
+
         /**
          * Deserialize declarations only on demand. Cache top-level declarations to avoid repetitive deserialization
          * if the declaration happens to have multiple inline functions.
          */
-        val reversedSignatureIndex: Map<IdSignature, Pair<Int, FileDeserializer>> = buildMap {
+        val reversedSignatureIndex: Map<IdSignature, DeserializationInfo> = buildMap {
             val fileEntryDeserializer = FileEntryDeserializer(irInterner)
             val fileDeserializers = List(inlinableFunctionsIr.irFileCount) {
                 val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(inlinableFunctionsIr, it))
@@ -121,7 +123,7 @@ class NonLinkingIrInlineFunctionDeserializer(
                 val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.getEmptyRegistry())
                 for (idSigIndex in fileProto.declarationIdList) {
                     val idSig = deserializer.symbolDeserializer.deserializeIdSignature(idSigIndex)
-                    put(idSig, idSigIndex to deserializer)
+                    put(idSig, DeserializationInfo(idSigIndex, deserializer))
                 }
             }
         }
@@ -134,8 +136,8 @@ class NonLinkingIrInlineFunctionDeserializer(
             originalFunctionModule: IrModuleFragment,
         ): IrSimpleFunction? =
             deserializedFunctionCache.getOrPut(signature) {
-                [val idSigIndex, val deserializer] = reversedSignatureIndex[signature] ?: return@getOrPut null
-                deserializer.deserializeInlineFunction(idSigIndex, originalFunctionPackage, originalFunctionModule)
+                val (index, deserializer) = reversedSignatureIndex[signature] ?: return@getOrPut null
+                deserializer.deserializeInlineFunction(index, originalFunctionPackage, originalFunctionModule)
             }
     }
 
