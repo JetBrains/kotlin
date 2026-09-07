@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.toCValues
 import llvm.*
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.isCFunctionOrGlobalAccessor
 import org.jetbrains.kotlin.backend.konan.ir.*
@@ -467,7 +468,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
 
 internal sealed class KonanMetadata(override val name: Name?, val konanLibrary: KotlinLibrary?) : MetadataSource {
     sealed class Declaration<T>(declaration: T)
-        : KonanMetadata(declaration.metadata?.name, declaration.konanLibrary) where T : IrDeclaration, T : IrMetadataSourceOwner
+        : KonanMetadata(declaration.metadata?.name, declaration.moduleFragment.kotlinLibrary) where T : IrDeclaration, T : IrMetadataSourceOwner
 
     class Class(irClass: IrClass, val llvm: ClassLlvmDeclarations, val layoutBuilder: ClassLayoutBuilder) : Declaration<IrClass>(irClass)
 

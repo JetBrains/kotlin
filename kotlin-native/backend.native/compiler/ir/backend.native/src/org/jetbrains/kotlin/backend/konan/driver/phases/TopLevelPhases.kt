@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.common.phaser.IrValidationBeforeLoweringsKli
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createFilePhases
 import org.jetbrains.kotlin.backend.common.phaser.createModulePhases
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.PerformanceManagerContext
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.backend.konan.driver.phases.runModuleWisePhase
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
-import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.konan.config.nomain
 import org.jetbrains.kotlin.konan.config.verifyBitcode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.util.PhaseType
@@ -339,7 +340,7 @@ private fun PhaseEngine<out NativeBackendContext>.splitIntoFragments(
     val config = context.config
     return if (context.config.producePerFileCache) {
         val files = input.files.toList()
-        val containsStdlib = config.libraryToCache!!.klib == context.stdlibModule.konanLibrary
+        val containsStdlib = config.libraryToCache!!.klib.isNativeStdlib
 
         files.asSequence().filter { !it.isFunctionInterfaceFile }.map { file ->
             val cacheDeserializationStrategy = CacheDeserializationStrategy.SingleFile(file.path, file.packageFqName.asString())
@@ -349,6 +350,7 @@ private fun PhaseEngine<out NativeBackendContext>.splitIntoFragments(
             )
             val dependenciesTracker = DependenciesTrackerImpl(llvmModuleSpecification, context.config, context)
             val fragment = IrModuleFragmentImpl(input.descriptor)
+            fragment.kotlinLibrary = input.kotlinLibrary
             fragment.files += file
             if (containsStdlib && cacheDeserializationStrategy.containsKFunctionImpl)
                 fragment.files += files.filter { it.isFunctionInterfaceFile }

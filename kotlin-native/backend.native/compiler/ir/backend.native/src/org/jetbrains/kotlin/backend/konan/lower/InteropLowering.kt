@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
@@ -134,7 +135,7 @@ private abstract class BaseInteropIrTransformer(
             override val typeSystem: IrTypeSystemContext get() = context.typeSystem
 
             val klib: KotlinLibrary? get() {
-                return (element as? IrCall)?.symbol?.owner?.konanLibrary
+                return (element as? IrCall)?.symbol?.owner?.moduleFragment?.kotlinLibrary
             }
 
             override val language: String
@@ -834,7 +835,7 @@ private class InteropTransformerPart2(
         val function = expression.symbol.owner
 
         val exceptionMode = ForeignExceptionMode.byValue(
-                function.konanLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
+                function.moduleFragment.kotlinLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
         )
         return builder.generateExpressionWithStubs(expression) {
             generateCCall(
@@ -851,7 +852,7 @@ private class InteropTransformerPart2(
         val function = expression.symbol.owner
 
         val exceptionMode = ForeignExceptionMode.byValue(
-                function.konanLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
+                function.moduleFragment.kotlinLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
         )
         return builder.generateExpressionWithStubs(expression) {
             generateCGlobalDirectAccess(expression, builder, exceptionMode)

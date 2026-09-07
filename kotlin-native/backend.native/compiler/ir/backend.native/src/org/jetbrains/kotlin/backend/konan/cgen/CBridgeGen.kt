@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.backend.konan.cgen
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irNot
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.InteropFqNames
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
-import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -230,7 +230,7 @@ internal fun KotlinStubs.generateCCall(
         callBuilder.state.addC(listOf("$signature __asm($symbolNameLiteral);"))
     }
 
-    val libraryName = if (isInvoke) "" else callee.getPackageFragment().konanLibrary.let {
+    val libraryName = if (isInvoke) "" else callee.moduleFragment.kotlinLibrary.let {
         require(it?.isCInteropLibrary() == true) { "Expected a function from a cinterop library: ${callee.render()}" }
         it.uniqueName
     }
@@ -350,7 +350,7 @@ internal fun KotlinStubs.generateCGlobalDirectAccess(
         }
     }
 
-    val libraryName = callee.getPackageFragment().konanLibrary.let {
+    val libraryName = callee.moduleFragment.kotlinLibrary.let {
         require(it?.isCInteropLibrary() == true) { "Expected a function from a cinterop library: ${callee.render()}" }
         it.uniqueName
     }
@@ -503,7 +503,7 @@ internal fun KotlinStubs.generateObjCCall(
     val isDirect = directSymbolName != null
 
     val exceptionMode = ForeignExceptionMode.byValue(
-            resolved.konanLibrary?.manifestProperties
+            resolved.moduleFragment.kotlinLibrary?.manifestProperties
                     ?.getProperty(ForeignExceptionMode.manifestKey)
     )
 
@@ -602,7 +602,7 @@ internal fun KotlinStubs.generateObjCCall(
         // an explicit call must have been executed and no edge would be lost.
         ""
     } else { // Category-provided.
-        method.getPackageFragment().konanLibrary.let {
+        method.moduleFragment.kotlinLibrary.let {
             require(it?.isCInteropLibrary() == true) { "Expected a function from a cinterop library: ${method.render()}" }
             it.uniqueName
         }

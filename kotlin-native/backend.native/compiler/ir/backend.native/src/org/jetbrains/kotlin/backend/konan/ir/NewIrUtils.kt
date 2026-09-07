@@ -6,15 +6,10 @@
 package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
-import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.target
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.klibModuleOriginOrNull
 import org.jetbrains.kotlin.utils.atMostOne
 
 internal fun IrFunction.isBoxOrUnbox(): Boolean =
@@ -40,21 +35,3 @@ internal val IrCall.actualCallee: IrSimpleFunction
 private fun IrClass.getOverridingOf(function: IrFunction) = (function as? IrSimpleFunction)?.let {
     it.allOverriddenFunctions.atMostOne { it.parent == this }
 }
-
-val ModuleDescriptor.konanLibrary get() = (this.klibModuleOriginOrNull as? DeserializedKlibModuleOrigin)?.library
-
-val IrPackageFragment.konanLibrary: KotlinLibrary?
-    get() {
-        return this.moduleDescriptor.konanLibrary
-    }
-// Any changes made to konanLibrary here should be ported to the containsDeclaration
-// function in LlvmModuleSpecificationBase in LlvmModuleSpecificationImpl.kt
-val IrDeclaration.konanLibrary: KotlinLibrary?
-    get() {
-        ((this as? IrMetadataSourceOwner)?.metadata as? KonanMetadata)?.let { return it.konanLibrary }
-        return when (val parent = parent) {
-            is IrPackageFragment -> parent.konanLibrary
-            is IrDeclaration -> parent.konanLibrary
-            else -> TODO("Unexpected declaration parent: $parent")
-        }
-    }

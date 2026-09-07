@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
-import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
@@ -29,14 +28,14 @@ internal abstract class LlvmModuleSpecificationBase(protected val cachedLibrarie
 
     private val containsCache = mutableMapOf<IrDeclaration, Boolean>()
 
-    // This is essentially memoizing the IrDeclaration.konanLibrary property -- so much of the implementation
+    // This is essentially memoizing `declaration.moduleFragment.kotlinLibrary` -- so much of the implementation
     // is inlined here to take greater advantage of the cache.
     override fun containsDeclaration(declaration: IrDeclaration): Boolean = containsCache.getOrPut(declaration) {
         val metadata = ((declaration as? IrMetadataSourceOwner)?.metadata as? KonanMetadata)
         if (metadata != null) {
             (metadata.konanLibrary == null || containsLibrary(metadata.konanLibrary)) && declaration.getPackageFragment() !is IrExternalPackageFragment
         } else when (val parent = declaration.parent) {
-            is IrPackageFragment -> parent.konanLibrary.let { it == null || containsLibrary(it) } && parent !is IrExternalPackageFragment
+            is IrPackageFragment -> parent.module.kotlinLibrary.let { it == null || containsLibrary(it) } && parent !is IrExternalPackageFragment
             is IrDeclaration -> containsDeclaration(parent)
             else -> TODO("Unexpected declaration parent: $parent")
         }
