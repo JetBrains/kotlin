@@ -2,19 +2,21 @@ public final class Baz /* Baz*/ {
   @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
   @kotlin.jvm.JvmExposeBoxed()
   @kotlin.jvm.JvmOverloads()
+  public  Baz();//  .ctor()
+
+  @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
+  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmOverloads()
+  public  Baz(int);//  .ctor(int)
+
+  @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
+  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmOverloads()
   public  Baz(int, @org.jetbrains.annotations.NotNull() IntWrapper);//  .ctor(int, @org.jetbrains.annotations.NotNull() IntWrapper)
 
   @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
   @kotlin.jvm.JvmOverloads()
   private  Baz(int, int);//  .ctor(int, int)
-
-  @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
-  @kotlin.jvm.JvmOverloads()
-  public  Baz();//  .ctor()
-
-  @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
-  @kotlin.jvm.JvmOverloads()
-  public  Baz(int);//  .ctor(int)
 }
 
 @kotlin.jvm.JvmInline()

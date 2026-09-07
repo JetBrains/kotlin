@@ -12,7 +12,6 @@ import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.psi.impl.light.LightReferenceListBuilder
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
-import org.jetbrains.kotlin.analysis.api.javaInterop.javaMethodName
 import org.jetbrains.kotlin.analysis.api.session.useSiteModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -50,12 +49,12 @@ internal class SymbolLightAccessorMethod private constructor(
     private val containingPropertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
     private val isTopLevel: Boolean,
     private val suppressStatic: Boolean,
-    isJvmExposedBoxed: Boolean,
+    jvmExposeBoxedKind: JvmExposeBoxedKind,
 ) : SymbolLightMethodBase(
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     methodIndex = methodIndex,
-    isJvmExposedBoxed = isJvmExposedBoxed,
+    jvmExposeBoxedKind = jvmExposeBoxedKind,
 ) {
     private constructor(
         propertyAccessorSymbol: KaPropertyAccessorSymbol,
@@ -64,7 +63,7 @@ internal class SymbolLightAccessorMethod private constructor(
         containingClass: SymbolLightClassBase,
         isTopLevel: Boolean,
         suppressStatic: Boolean,
-        isJvmExposedBoxed: Boolean,
+        jvmExposeBoxedKind: JvmExposeBoxedKind,
     ) : this(
         lightMemberOrigin,
         containingClass,
@@ -76,7 +75,7 @@ internal class SymbolLightAccessorMethod private constructor(
         containingPropertySymbolPointer = containingPropertySymbol.createPointer(),
         isTopLevel = isTopLevel,
         suppressStatic = suppressStatic,
-        isJvmExposedBoxed = isJvmExposedBoxed,
+        jvmExposeBoxedKind = jvmExposeBoxedKind,
     )
 
     private val KaPropertySymbol.accessorSymbol: KaPropertyAccessorSymbol
@@ -101,11 +100,7 @@ internal class SymbolLightAccessorMethod private constructor(
                     it.abiName()
             }
 
-            if (isJvmExposedBoxed) {
-                computeJvmExposeBoxedMethodName(accessorSymbol, defaultName)
-            } else {
-                accessorSymbol.javaMethodName ?: defaultName
-            }
+            computeMethodName(accessorSymbol, defaultName)
         }
     }
 
@@ -270,7 +265,7 @@ internal class SymbolLightAccessorMethod private constructor(
             other.isGetter != isGetter ||
             other.isTopLevel != isTopLevel ||
             other.suppressStatic != suppressStatic ||
-            other.isJvmExposedBoxed != isJvmExposedBoxed ||
+            other.jvmExposeBoxedKind != jvmExposeBoxedKind ||
             other.ktModule != ktModule
         ) return false
 
@@ -436,7 +431,7 @@ internal class SymbolLightAccessorMethod private constructor(
                         hasValueClassInReturnType = hasValueClassInPropertyType,
                         hasManglingValueClassInParameterType = hasManglingValueClassInParameterPosition(property),
                         hasManglingValueClassInPropertyType = hasValueClassInPropertyType && parameterTypeRequiresMangling(property.returnType),
-                        jvmExposeBoxedMode = jvmExposeBoxedMode(property),
+                        jvmExposeBoxedMode = property.jvmExposeBoxedMode(),
                     )
                 }
             }
@@ -532,7 +527,7 @@ internal class SymbolLightAccessorMethod private constructor(
                 isSuspend = false,
                 isOverridable = accessor.isOverridable(),
                 // An accessor may be private while its property is not (e.g. `var p: IC; private set(value) {}`)
-                isEffectivelyPrivate = accessor.visibility == KaSymbolVisibility.PRIVATE || isEffectivelyPrivate(property),
+                isEffectivelyPrivate = accessor.visibility == KaSymbolVisibility.PRIVATE || property.isEffectivelyPrivate(),
             )
 
             if (!generationResult.isAnyMethodRequired) return
@@ -547,7 +542,7 @@ internal class SymbolLightAccessorMethod private constructor(
                     containingClass = context.destinationLightClass,
                     isTopLevel = context.isTopLevel,
                     suppressStatic = context.suppressStatic,
-                    isJvmExposedBoxed = true,
+                    jvmExposeBoxedKind = JvmExposeBoxedKind.BOXED,
                 )
             }
 
@@ -559,7 +554,7 @@ internal class SymbolLightAccessorMethod private constructor(
                     containingClass = context.destinationLightClass,
                     isTopLevel = context.isTopLevel,
                     suppressStatic = context.suppressStatic,
-                    isJvmExposedBoxed = false,
+                    jvmExposeBoxedKind = generationResult.regularMethodKind,
                 )
             }
         }
