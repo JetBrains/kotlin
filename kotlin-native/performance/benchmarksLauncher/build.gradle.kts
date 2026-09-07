@@ -16,7 +16,7 @@ kotlin {
                 api(project(":benchmarksReports"))
 
                 implementation(kotlin("stdlib"))
-                implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
+                implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.6")
             }
             kotlin.srcDir("src/main/kotlin")
         }
