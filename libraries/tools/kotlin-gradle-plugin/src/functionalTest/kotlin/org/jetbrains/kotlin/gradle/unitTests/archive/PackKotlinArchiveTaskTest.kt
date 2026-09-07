@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.unitTests.archive
 
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream
+import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.FileTree
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExte
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.allowIncompleteKotlinArchivePublication
 import org.jetbrains.kotlin.gradle.util.enableCInteropCommonization
 import org.jetbrains.kotlin.gradle.util.enableMppResourcesPublication
 import org.jetbrains.kotlin.gradle.util.kotlin
@@ -261,6 +263,78 @@ class PackKotlinArchiveTaskTest {
                 "resources/macosArm64/resources.txt",
             ).prettyPrinted,
             task.outputFile.get().asFile.zipXzArchiveEntries().sorted().prettyPrinted,
+        )
+    }
+
+    @Test
+    fun `all targets are publishable in Kotlin Archive on the current host`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                js()
+                wasmJs()
+                macosArm64()
+                iosArm64()
+                linuxX64()
+                mingwX64()
+                jvm()
+                publishing {
+                    publicationFormat.set(KotlinPublicationFormat.KOTLIN_ARCHIVE)
+                }
+            }
+        }.evaluate()
+
+        val assembleTask = project.tasks.getByName("assembleKotlinArchive") as AssembleKotlinArchiveTask
+
+        assertEquals(emptySet(), assembleTask.targetsNotPublishableOnCurrentHost.get())
+    }
+
+    @Test
+    fun `assemble task fails when a target is not publishable on the current host`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                js()
+                publishing {
+                    publicationFormat.set(KotlinPublicationFormat.KOTLIN_ARCHIVE)
+                }
+            }
+        }.evaluate()
+
+        val assembleTask = project.tasks.getByName("assembleKotlinArchive") as AssembleKotlinArchiveTask
+        assembleTask.targetsNotPublishableOnCurrentHost.set(setOf("iosArm64"))
+
+        // The diagnostic is FATAL, so it is reported as the task failure instead of the build log
+        assertFailsWith<InvalidUserCodeException> { assembleTask.execute() }
+    }
+
+    @Test
+    fun `assemble task packs an incomplete Kotlin Archive when it is allowed`() {
+        val project = buildProjectWithMPP(
+            preApplyCode = { allowIncompleteKotlinArchivePublication() }
+        ) {
+            kotlin {
+                js()
+                publishing {
+                    publicationFormat.set(KotlinPublicationFormat.KOTLIN_ARCHIVE)
+                }
+            }
+        }.evaluate()
+
+        val assembleTask = project.tasks.getByName("assembleKotlinArchive") as AssembleKotlinArchiveTask
+        assembleTask.targetsNotPublishableOnCurrentHost.set(setOf("iosArm64"))
+        assembleTask.execute()
+
+        val packTask = project.tasks.getByName("packKotlinArchive") as PackKotlinArchiveTask
+        packTask.execute()
+
+        assertEquals(
+            listOf(
+                "cinterop/",
+                "manifest.json",
+                "metadata/",
+                "platform/",
+                "resources/",
+            ).prettyPrinted,
+            packTask.outputFile.get().asFile.zipXzArchiveEntries().sorted().prettyPrinted,
         )
     }
 

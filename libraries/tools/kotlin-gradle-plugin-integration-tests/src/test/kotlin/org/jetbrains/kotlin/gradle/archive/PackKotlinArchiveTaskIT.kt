@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPublicationFormat
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
 import java.util.zip.ZipInputStream
 import kotlin.io.path.inputStream
@@ -86,12 +88,48 @@ class PackKotlinArchiveTaskIT : KGPBaseTest() {
         assertEquals(producerWithCommonizedCinteropsArchiveEntries.prettyPrinted, archiveEntries.prettyPrinted)
     }
 
+    @GradleTest
+    @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
+    fun testAssemblyFailsWhenTargetIsNotPublishableOnCurrentHost(gradleVersion: GradleVersion) {
+        kotlinArchiveProject(
+            gradleVersion,
+            projectName = "producerWithHostSpecificTarget",
+        ) { setupHostSpecificKarTestTargets() }
+            .buildAndFail("assembleKotlinArchive") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.IncompleteKotlinArchivePublication)
+            }
+    }
+
+    @GradleTest
+    @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
+    fun testIncompleteArchiveIsPackedWhenAllowed(gradleVersion: GradleVersion) {
+        val archiveEntries = packKotlinArchive(
+            gradleVersion,
+            projectName = "producerWithHostSpecificTarget",
+            "-P${PropertyNames.KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION}=true",
+        ) { setupHostSpecificKarTestTargets() }
+
+        assertEquals(producerWithHostSpecificTargetArchiveEntries.prettyPrinted, archiveEntries.prettyPrinted)
+    }
+
     private fun packKotlinArchive(
         gradleVersion: GradleVersion,
         projectName: String,
         vararg buildArguments: String,
         configure: KotlinMultiplatformExtension.() -> Unit,
-    ): List<String> = project("empty", gradleVersion) {
+    ): List<String> = kotlinArchiveProject(gradleVersion, projectName, configure).run {
+        build("packKotlinArchive", *buildArguments) {
+            assertTasksExecuted(":packKotlinArchive")
+        }
+
+        projectPath.resolve("build/kar/$projectName.kar.xz").normalizedArchiveEntries()
+    }
+
+    private fun kotlinArchiveProject(
+        gradleVersion: GradleVersion,
+        projectName: String,
+        configure: KotlinMultiplatformExtension.() -> Unit,
+    ): TestProject = project("empty", gradleVersion) {
         plugins {
             kotlin("multiplatform")
         }
@@ -106,12 +144,6 @@ class PackKotlinArchiveTaskIT : KGPBaseTest() {
                 }
             }
         }
-    }.run {
-        build("packKotlinArchive", *buildArguments) {
-            assertTasksExecuted(":packKotlinArchive")
-        }
-
-        projectPath.resolve("build/kar/$projectName.kar.xz").normalizedArchiveEntries()
     }
 
     private fun Path.normalizedArchiveEntries(): List<String> {
@@ -142,6 +174,21 @@ class PackKotlinArchiveTaskIT : KGPBaseTest() {
             "platform/js/<klib content>",
             "platform/macosArm64/<klib content>",
             "platform/wasmJs/<klib content>",
+            "resources/",
+        )
+
+        /**
+         * 'macosArm64' is not publishable on the hosts this test runs on, so neither its klib
+         * nor its cinterop is in the archive.
+         */
+        val producerWithHostSpecificTargetArchiveEntries = listOf(
+            "cinterop/",
+            "manifest.json",
+            "metadata/",
+            "metadata/commonMain/<klib content>",
+            "metadata/kotlin-project-structure-metadata.json",
+            "platform/",
+            "platform/js/<klib content>",
             "resources/",
         )
 
@@ -194,6 +241,13 @@ private fun KotlinMultiplatformExtension.setupKarTestTargetsAndSourceSets() {
     js()
     wasmJs()
     macosArm64()
+
+    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+}
+
+private fun KotlinMultiplatformExtension.setupHostSpecificKarTestTargets() {
+    js()
+    macosArm64().createCInterop("first")
 
     sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
 }

@@ -9,25 +9,18 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream
 import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileCollection
-import org.gradle.api.file.FileVisitDetails
-import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.file.ReproducibleFileVisitor
+import org.gradle.api.file.*
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.provider.SetProperty
+import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
+import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.io.OutputStream
 import java.util.zip.Deflater
@@ -45,7 +38,7 @@ internal class KotlinArchiveEntry(
 @DisableCachingByDefault(because = "Assembling a Kotlin Archive is not worth caching, as it's only built for publishing, which is a rare operation")
 internal abstract class AssembleKotlinArchiveTask @Inject constructor(
     private val fileOperations: FileOperations,
-) : DefaultTask() {
+) : DefaultTask(), UsesKotlinToolingDiagnostics {
     @get:Nested
     abstract val archiveContents: ListProperty<KotlinArchiveEntry>
 
@@ -74,8 +67,39 @@ internal abstract class AssembleKotlinArchiveTask @Inject constructor(
     @get:OutputDirectory
     abstract val outputDirectory: DirectoryProperty
 
+    /**
+     * Targets that are stored in the archive, but are not publishable on the current host.
+     */
+    @get:Input
+    abstract val targetsNotPublishableOnCurrentHost: SetProperty<String>
+
+    @get:Input
+    abstract val incompleteArchiveAllowed: Property<Boolean>
+
+    private fun checkAllTargetsArePublishable() {
+        val notPublishableTargets = targetsNotPublishableOnCurrentHost.get()
+        if (notPublishableTargets.isEmpty()) return
+
+        val diagnostic = KotlinToolingDiagnostics.IncompleteKotlinArchivePublication(
+            notPublishableTargets,
+            HostManager.platformName(),
+        )
+
+        if (incompleteArchiveAllowed.get()) {
+            logger.info(
+                "Kotlin Archive is built without $notPublishableTargets, " +
+                        "as it is allowed by the '$KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION' property"
+            )
+            return
+        }
+
+        reportDiagnostic(diagnostic)
+    }
+
     @TaskAction
     fun execute() {
+        checkAllTargetsArePublishable()
+
         val targetDir = outputDirectory.get().asFile
 
         val rootDirectories = listOf(

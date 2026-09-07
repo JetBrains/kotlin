@@ -53,6 +53,9 @@ internal fun TaskProvider<AssembleKotlinArchiveTask>.fillKotlinArchiveTargetCont
     val pathInKotlinArchive = target.platformNameInKotlinArchive
     configure { task ->
         task.addPlatformKlib(pathInKotlinArchive, task.project.klibFileCollection(mainCompilation.compileTaskProvider))
+        task.targetsNotPublishableOnCurrentHost.addAll(
+            task.project.provider { if (target.publishable) emptyList() else listOf(target.targetName) }
+        )
     }
     if (mainCompilation is KotlinNativeCompilation) {
         for (cinterop in mainCompilation.cinterops) {
