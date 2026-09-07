@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.diagnostics.SerializationErrors
 import org.jetbrains.kotlin.backend.common.eliminateLibrariesWithDuplicatedUniqueNames
 import org.jetbrains.kotlin.backend.common.selectLibrariesByPaths
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
+import org.jetbrains.kotlin.backend.common.warnAboutSoftDeprecatedAbiVersions
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.testEnvironment
@@ -75,6 +76,7 @@ fun loadNativeKlibs(
         .apply { reportLoadingProblemsIfAny(configuration) }
         // TODO (KT-76785): Handling of duplicated names is a workaround that needs to be removed in the future.
         .eliminateLibrariesWithDuplicatedUniqueNames(configuration)
+        .warnAboutSoftDeprecatedAbiVersions(configuration)
 
     if (!configuration.skipLibrarySpecialCompatibilityChecks) {
         KonanLibrarySpecialCompatibilityChecker.check(
