@@ -631,7 +631,11 @@ private fun FirExpression.checkReceiver(name: String?): Boolean {
 // this = .f(...)
 // receiver = <expr>
 // Returns safe call <expr>?.{ f(...) }
-fun FirQualifiedAccessExpression.createSafeCall(receiver: FirExpression, source: KtSourceElement): FirSafeCallExpression {
+fun FirQualifiedAccessExpression.createSafeCall(
+    receiver: FirExpression,
+    source: KtSourceElement,
+    kind: FirSafeCallKind,
+): FirSafeCallExpression {
     val checkedSafeCallSubject = buildCheckedSafeCallSubject {
         @OptIn(FirContractViolation::class)
         this.originalReceiverRef = FirExpressionRef<FirExpression>().apply {
@@ -659,6 +663,7 @@ fun FirQualifiedAccessExpression.createSafeCall(receiver: FirExpression, source:
             bind(checkedSafeCallSubject)
         }
         this.selector = this@createSafeCall
+        this.kind = kind
         this.source = source
     }
 }
