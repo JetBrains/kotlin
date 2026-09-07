@@ -58,6 +58,7 @@ abstract class BaseNodeJsEnvSpec : EnvSpec<NodeJsEnv>() {
                 return if (downloadValue) File(nodeBinDir, finalCommand).absolutePath else finalCommand
             }
 
+            //TODO deprecate it?
             fun getIvyDependency(): String {
                 val type = if (isWindows) "zip" else "tar.gz"
                 return "org.nodejs:node:$versionValue:$name-$architecture@$type"
@@ -77,6 +78,7 @@ abstract class BaseNodeJsEnvSpec : EnvSpec<NodeJsEnv>() {
         }
     }
 
+    //TODO deprecate it?
     abstract val Project.nodeJsSetupTaskProvider: TaskProvider<out NodeJsSetupTask>
 }
 
