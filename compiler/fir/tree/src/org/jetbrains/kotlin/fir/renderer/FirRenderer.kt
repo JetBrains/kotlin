@@ -585,7 +585,10 @@ class FirRenderer(
 
         override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression) {
             safeCallExpression.receiver.accept(this)
-            print("?.{ ")
+            when (safeCallExpression.kind) {
+                FirSafeCallKind.NullSafe -> print("?.{ ")
+                FirSafeCallKind.ErrorSafe -> print("|.{ ")
+            }
             safeCallExpression.selector.accept(this)
             print(" }")
         }
