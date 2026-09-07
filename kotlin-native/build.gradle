@@ -691,7 +691,9 @@ String platformName(KonanTarget target) {
 }
 
 Map<KonanTarget, File> createConfigurations(List<File> bundles) {
-    def hostTargets = platformManager.enabledByHost.keySet()
+    def hostTargets = platformManager.enabledByHost.keySet().findAll {
+        it.name != 'macos_x64'
+    } as Set
     def result = hostTargets.collectEntries { target ->
         [ (target): bundles.find { it.name.contains(platformName(target)) }]
     }
