@@ -9,25 +9,20 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream
 import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileCollection
-import org.gradle.api.file.FileVisitDetails
-import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.file.ReproducibleFileVisitor
+import org.gradle.api.file.*
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.provider.SetProperty
+import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.CrossCompilationData
+import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.io.OutputStream
 import java.util.zip.Deflater
@@ -42,10 +37,30 @@ internal class KotlinArchiveEntry(
     val files: FileCollection,
 )
 
+internal class KotlinArchiveTargetCrossCompilationCheckData(
+    @get:Input
+    val targetName: String,
+    @get:Internal
+    val crossCompilationData: KotlinProjectSharedDataProvider<CrossCompilationData>,
+) {
+    /**
+     * This is here purely for dependency management purposes.
+     * Task doesn't need it directly, but it's used in implementation of called functions
+     * from [crossCompilationData].
+     */
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NONE)
+    val crossCompilationMetadata: FileCollection = crossCompilationData.files
+}
+
+internal fun KotlinArchiveTargetCrossCompilationCheckData.isSupported(): Boolean {
+    return crossCompilationData.dataForAllDependencies.all { it.crossCompilationSupported }
+}
+
 @DisableCachingByDefault(because = "Assembling a Kotlin Archive is not worth caching, as it's only built for publishing, which is a rare operation")
 internal abstract class AssembleKotlinArchiveTask @Inject constructor(
     private val fileOperations: FileOperations,
-) : DefaultTask() {
+) : DefaultTask(), UsesKotlinToolingDiagnostics {
     @get:Nested
     abstract val archiveContents: ListProperty<KotlinArchiveEntry>
 
@@ -74,8 +89,68 @@ internal abstract class AssembleKotlinArchiveTask @Inject constructor(
     @get:OutputDirectory
     abstract val outputDirectory: DirectoryProperty
 
+    @get:Input
+    abstract val targetsNotPublishableOnCurrentHost: SetProperty<String>
+
+    /**
+     * This check can't be done on configuration phase, as it requires to resolve the dependencies,
+     * and maybe even run the tasks to generate files from them.
+     *
+     * Also, we can't wrap the sharedData to conditionally empty provider and put it into [targetsNotPublishableOnCurrentHost],
+     * but need to store it directly.
+     * Otherwise, when configuration cache is enabled, it would be queried too early (when cache is stored).
+     *
+     * So we just store relevant data to perform check in task runtime.
+     */
+    @get:Nested
+    abstract val targetsCrossCompilationChecks: ListProperty<KotlinArchiveTargetCrossCompilationCheckData>
+
+    fun checkTargetHasNoMissingDependenciesBecauseOfCrossCompilationDisabled(
+        targetName: String,
+        crossCompilationData: KotlinProjectSharedDataProvider<CrossCompilationData>
+    ) {
+        targetsCrossCompilationChecks.add(
+            KotlinArchiveTargetCrossCompilationCheckData(
+                targetName = targetName,
+                crossCompilationData = crossCompilationData
+            )
+        )
+    }
+
+    @get:Input
+    abstract val incompleteArchiveAllowed: Property<Boolean>
+
+    private fun checkAllTargetsArePublishable() {
+        val targetsNonPublishableBecauseOfMissingCrosscompiledDependencies =
+            targetsCrossCompilationChecks.get()
+                .filter { !it.isSupported() }
+                .map { it.targetName }
+        val allNonPublishableTargets =
+            targetsNotPublishableOnCurrentHost.get() +
+            targetsNonPublishableBecauseOfMissingCrosscompiledDependencies
+
+        if (allNonPublishableTargets.isEmpty()) return
+
+        val diagnostic = KotlinToolingDiagnostics.IncompleteKotlinArchivePublication(
+            allNonPublishableTargets,
+            HostManager.platformName(),
+        )
+
+        if (incompleteArchiveAllowed.get()) {
+            logger.info(
+                "Kotlin Archive is built without $allNonPublishableTargets, " +
+                        "as it is allowed by the '$KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION' property"
+            )
+            return
+        }
+
+        reportDiagnostic(diagnostic)
+    }
+
     @TaskAction
     fun execute() {
+        checkAllTargetsArePublishable()
+
         val targetDir = outputDirectory.get().asFile
 
         val rootDirectories = listOf(
