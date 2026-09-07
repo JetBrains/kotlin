@@ -51,6 +51,10 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
 
     override val annotationClassId: ClassId = LombokNames.SUPER_BUILDER_ID
 
+    // `@SuperBuilder` is made for a hierarchy: the base class of one is routinely abstract, and Lombok gives it
+    // an abstract builder rather than refusing it the way plain `@Builder` is refused.
+    override val supportsAbstractEntity: Boolean get() = true
+
     override fun getBuilder(symbol: FirBasedSymbol<*>): SuperBuilder? {
         // There is also a build impl class, but it's private, and it's used only for internal purposes. Not relevant for API.
         if (lombokService.getBuilder(symbol) != null) return null

@@ -51,6 +51,8 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
 
     override val annotationClassId: ClassId = LombokNames.BUILDER_ID
 
+    override val supportsAbstractEntity: Boolean get() = false
+
     override fun getBuilder(symbol: FirBasedSymbol<*>): Builder? {
         return lombokService.getBuilder(symbol)
     }

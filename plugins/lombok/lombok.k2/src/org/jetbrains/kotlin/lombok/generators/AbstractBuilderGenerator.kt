@@ -136,6 +136,13 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     protected abstract val annotationClassId: ClassId
 
+    /**
+     * Whether the annotation builds a class that cannot be instantiated on its own - an abstract or a sealed
+     * one. `@SuperBuilder` exists for exactly that hierarchy, while plain `@Builder` has nothing but a `build()`
+     * that calls the constructor, which fails with `InstantiationError` at run time (KT-88814).
+     */
+    protected abstract val supportsAbstractEntity: Boolean
+
     protected abstract fun getBuilder(symbol: FirBasedSymbol<*>): T?
 
     protected abstract fun getExtraTypeArguments(): List<ConeTypeProjection>
@@ -668,6 +675,31 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      * companion object is the Kotlin analogue of a Java static factory method — any `@Builder`-annotated
      * function declared in that companion.
      */
+    /**
+     * Whether a class-level annotation builds anything out of [this] class: the generated `build()` calls its
+     * constructor, so a class that has no constructor to call - or none that `build()` can reach - gets no
+     * builder at all, and every one of these is reported by `FirLombokDeclarationAnnotationChecker`.
+     *
+     * An inner class's constructor takes the outer instance as a dispatch receiver, which `build()` - a member
+     * of the builder class, holding no such instance - has no way to pass: the JVM backend failed on the call
+     * outright (KT-88852). An abstract or sealed class cannot be instantiated at all, and the call failed with
+     * `InstantiationError` at run time (KT-88814), unless the annotation builds such a hierarchy on purpose.
+     *
+     * Read off the raw status rather than the resolved one: this runs inside a generation callback, where
+     * asking for a resolved status would violate FIR's lazy-resolve contract, and neither modifier is ever
+     * implicit - both are written in the source, or in the Java class file, and are on the raw status already.
+     */
+    private val FirClassSymbol<*>.canHostClassLevelBuilder: Boolean
+        get() = isPlainClass &&
+                !isInner &&
+                (supportsAbstractEntity || rawStatus.modality.let { it != Modality.ABSTRACT && it != Modality.SEALED })
+
+    /**
+     * All `@Builder`-with-declaration pairs relevant to [classSymbol] as an entity: its own
+     * class/constructor/member-function annotations, plus — since a function declared directly inside its
+     * companion object is the Kotlin analogue of a Java static factory method — any `@Builder`-annotated
+     * function declared in that companion.
+     */
     @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
     private fun extractBuilderWithDeclarations(classSymbol: FirClassSymbol<*>): List<BuilderWithDeclaration<T>>? {
         // A companion object is never an entity in its own right: the Builder class always nests under the
@@ -695,11 +727,9 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             // Only the class-level `@Builder` is dropped: a `@Builder`-annotated member function of an interface,
             // an enum class or an object still builds whatever that function returns, and is a legitimate case.
             //
-            // An inner class is dropped the same way and for the same kind of reason: its constructor takes the
-            // outer instance as a dispatch receiver, which the generated `build()` has no way to pass, and the
-            // JVM backend failed on the call outright (KT-88852). Reported as
-            // `ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS`.
-            if (allowedTargets.contains(KotlinTarget.CLASS) && classSymbol.isPlainClass && !classSymbol.isInner) {
+            // A class whose constructor `build()` cannot call is dropped the same way, for the same kind of
+            // reason: see [canHostClassLevelBuilder].
+            if (allowedTargets.contains(KotlinTarget.CLASS) && classSymbol.canHostClassLevelBuilder) {
                 getBuilder(classSymbol)?.let { add(BuilderWithDeclaration(it, classSymbol.fir)) }
             }
 

@@ -186,6 +186,22 @@ class OuterOfBuilderInner {
     class BuilderNested(val value: Int)
 }
 
+// An abstract or sealed class cannot be instantiated, so the `build()` that calls its constructor failed with
+// `InstantiationError` at run time, KT-88814. Lombok reports it too: "BuilderExample is abstract; cannot be
+// instantiated". `@SuperBuilder` is what builds such a hierarchy in Java, and it is not supported on a Kotlin
+// class at all.
+<!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@Builder<!>
+abstract class BuilderAbstract(val id: Int, val name: String) {
+    abstract fun describe(): String
+}
+
+<!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@Builder<!>
+sealed class BuilderSealed(val id: Int)
+
+// An `open` class is instantiable, so it builds like any other.
+@Builder
+open class BuilderOpen(val id: Int)
+
 @Builder(access = <!UNSUPPORTED_ACCESS_LEVEL!>AccessLevel.PACKAGE<!>) // Prohibited, KT-88337
 class BuilderAccessLevelPackage(val id: Int)
 
@@ -200,6 +216,9 @@ fun test() {
     BuilderObject.<!UNRESOLVED_REFERENCE!>builder<!>()
     OuterOfBuilderInner.BuilderInner.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-88852
     OuterOfBuilderInner.BuilderNested.builder().value(1).build()
+    BuilderAbstract.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-88814
+    BuilderSealed.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-88814
+    BuilderOpen.builder().id(1).build()
 
    // Local classes can't have a companion object to host `builder()`, exactly as for `@NoArgsConstructor`.
     <!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>
