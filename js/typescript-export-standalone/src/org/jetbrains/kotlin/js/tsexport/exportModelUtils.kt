@@ -580,14 +580,16 @@ internal fun KaDeclarationSymbol.exportedVisibility(parent: KaDeclarationSymbol?
         else -> ExportedVisibility.DEFAULT
     }
 
+@OptIn(KaExperimentalApi::class)
 context(_: KaSession)
 internal fun <T : ExportedDeclaration> T.withAttributes(source: KaDeclarationSymbol?, ignoreDoc: Boolean = false): T {
     if (source == null) return this
     if (this is ExportedConstructor && visibility == ExportedVisibility.PRIVATE) return this
 
-    source.getSingleAnnotationArgumentString(StandardClassIds.Annotations.Deprecated)?.let {
-        attributes.add(ExportedAttribute.DeprecatedAttribute(it))
-    }
+    source
+        .getSingleAnnotationArgumentString(StandardClassIds.Annotations.Deprecated)
+        ?.takeIf { source.deprecation?.level != KaDeprecationLevel.HIDDEN }
+        ?.let { attributes.add(ExportedAttribute.DeprecatedAttribute(it)) }
 
     if (source.annotations.contains(JsExportDefault)) {
         attributes.add(ExportedAttribute.DefaultExport)
