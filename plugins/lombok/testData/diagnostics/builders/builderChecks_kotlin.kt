@@ -202,6 +202,36 @@ sealed class BuilderSealed(val id: Int)
 @Builder
 open class BuilderOpen(val id: Int)
 
+// A constructor builder instantiates the very class the constructor belongs to, so it is refused wherever the
+// class-level annotation is: an abstract, a sealed and an inner class alike.
+abstract class BuilderOnAbstractConstructor(val id: Int) {
+    <!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@Builder<!>
+    constructor() : this(0)
+}
+
+sealed class BuilderOnSealedConstructor(val id: Int) {
+    <!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@Builder<!>
+    constructor() : this(0)
+}
+
+class OuterOfBuilderInnerConstructor {
+    inner class InnerWithBuilderConstructor(val value: Int) {
+        <!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@Builder<!>
+        constructor() : this(0)
+    }
+}
+
+// A function builder builds whatever the function returns, which need not be the class it is declared in, so
+// an abstract class is no obstacle to one.
+abstract class BuilderOnAbstractClassMethod {
+    @Builder
+    fun make(id: Int): BuilderOpen = BuilderOpen(id)
+}
+
+fun useBuilderOnAbstractClassMethod(receiver: BuilderOnAbstractClassMethod) {
+    receiver.builder().id(1).build()
+}
+
 @Builder(access = <!UNSUPPORTED_ACCESS_LEVEL!>AccessLevel.PACKAGE<!>) // Prohibited, KT-88337
 class BuilderAccessLevelPackage(val id: Int)
 
@@ -219,6 +249,9 @@ fun test() {
     BuilderAbstract.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-88814
     BuilderSealed.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-88814
     BuilderOpen.builder().id(1).build()
+    BuilderOnAbstractConstructor.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-88814
+    BuilderOnSealedConstructor.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-88814
+    OuterOfBuilderInnerConstructor.InnerWithBuilderConstructor.<!UNRESOLVED_REFERENCE!>builder<!>() // KT-88852
 
    // Local classes can't have a companion object to host `builder()`, exactly as for `@NoArgsConstructor`.
     <!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>

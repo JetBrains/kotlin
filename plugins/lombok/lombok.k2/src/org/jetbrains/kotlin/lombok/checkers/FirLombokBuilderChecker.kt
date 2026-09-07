@@ -74,6 +74,17 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
                 return@processAllDeclarations
             }
 
+            // A constructor builder instantiates the very class the constructor belongs to, so a class that
+            // `build()` cannot instantiate refuses one exactly as it refuses the class-level annotation - and,
+            // again, nothing is generated for it, leaving the checks below nothing to say. A function builder
+            // is untouched by this: it builds whatever the function returns, which need not be this class.
+            if (functionSymbol is FirConstructorSymbol) {
+                declaration.uninstantiableClassModifier()?.let { modifier ->
+                    checkClassCanBeInstantiated(builder, modifier)
+                    return@processAllDeclarations
+                }
+            }
+
             checkFunctionParameters(functionSymbol, lombokService)
             checkToBuilderCanObtainValues(declaration, builder, functionSymbol)
             if (functionSymbol is FirNamedFunctionSymbol) {
@@ -121,7 +132,23 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
      * takes synthetic parameters), and saying anything further about its constructors would only pile on.
      */
     private val FirRegularClass.isBuilderCapableClass: Boolean
-        get() = classKind == ClassKind.CLASS && !isLocal
+        get() = classKind == ClassKind.CLASS && !isLocal && uninstantiableClassModifier() == null
+
+    /**
+     * Reports the [modifier] that leaves [builder]'s class with no constructor to call. `AbstractBuilderGenerator`
+     * generates nothing for it, so this is what the annotation gets instead of a builder.
+     */
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkClassCanBeInstantiated(builder: ConeLombokAnnotations.AbstractBuilder, modifier: ClassModifier) {
+        val annotationName = builder.annotationName() ?: return
+        reporter.reportOn(
+            builder.annotation.source,
+            LombokFirDiagnostics.ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS,
+            annotationName,
+            modifier.presentation,
+            context,
+        )
+    }
 
     /**
      * A class-level builder builds out of the primary constructor and nothing else - see
@@ -134,7 +161,7 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
      */
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkClassHasPrimaryConstructor(builder: ConeLombokAnnotations.AbstractBuilder) {
-        val annotationName = builder.annotation.toAnnotationClassId(context.session)?.shortClassName ?: return
+        val annotationName = builder.annotationName() ?: return
         reporter.reportOn(
             builder.annotation.source,
             LombokFirDiagnostics.BUILDER_REQUIRES_PRIMARY_CONSTRUCTOR,
@@ -142,6 +169,14 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
             context,
         )
     }
+
+    /**
+     * The short name of the annotation [this] was read off - `Builder` or `SuperBuilder` - as the diagnostics
+     * naming it need it.
+     */
+    context(context: CheckerContext)
+    private fun ConeLombokAnnotations.AbstractBuilder.annotationName(): Name? =
+        annotation.toAnnotationClassId(context.session)?.shortClassName
 
     /**
      * Unless it is spelled out via `builderClassName`, the builder class name is inferred from the annotated

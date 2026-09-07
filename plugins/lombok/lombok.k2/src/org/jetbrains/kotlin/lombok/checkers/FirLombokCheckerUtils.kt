@@ -93,6 +93,21 @@ private fun FirRegularClass.classModifiers(): Set<ClassModifier> = buildSet {
     }
 }
 
+/**
+ * The [ClassModifier] that leaves [this] class with no constructor a generated `build()` could call, if any.
+ *
+ * An abstract or a sealed class cannot be instantiated at all (KT-88814), and an inner class's constructor
+ * takes the outer instance as a dispatch receiver, which the builder does not hold (KT-88852). A class-level
+ * `@Builder` is refused for all three through [ImplementedAnnotationsInfo.unsupportedClassModifiers]; a
+ * `@Builder` written on a *constructor* of such a class builds it just the same, and `FirLombokBuilderChecker`
+ * refuses it through this, the annotation there sitting on a constructor rather than on the class whose
+ * modifiers are the problem.
+ */
+fun FirRegularClass.uninstantiableClassModifier(): ClassModifier? =
+    classModifiers().firstOrNull { it in UNINSTANTIABLE_CLASS_MODIFIERS }
+
+private val UNINSTANTIABLE_CLASS_MODIFIERS = setOf(ClassModifier.INNER, ClassModifier.ABSTRACT, ClassModifier.SEALED)
+
 private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo> = buildMap {
     val logInfo = ImplementedAnnotationsInfo(
         allowedTargetsMap = setOf(

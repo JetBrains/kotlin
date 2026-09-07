@@ -690,8 +690,15 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      * implicit - both are written in the source, or in the Java class file, and are on the raw status already.
      */
     private val FirClassSymbol<*>.canHostClassLevelBuilder: Boolean
-        get() = isPlainClass &&
-                !isInner &&
+        get() = isPlainClass && canBeInstantiatedByBuilder
+
+    /**
+     * Whether a generated `build()` can instantiate [this] class by calling a constructor of it, which is what
+     * both a class-level annotation and one written on a constructor come down to. See
+     * [canHostClassLevelBuilder] for the two shapes that fail and why.
+     */
+    private val FirClassSymbol<*>.canBeInstantiatedByBuilder: Boolean
+        get() = !isInner &&
                 (supportsAbstractEntity || rawStatus.modality.let { it != Modality.ABSTRACT && it != Modality.SEALED })
 
     /**
@@ -718,6 +725,10 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                     // Left alone; `FirLombokBuilderChecker` reports it as
                     // `BUILDER_WITH_RECEIVER_OR_CONTEXT_PARAMETERS`.
                     if (declarationSymbol.hasReceiverOrContextParameters) continue
+                    // A constructor builder instantiates the very class the constructor belongs to, so it is
+                    // dropped wherever the class-level one is. A function builder is untouched: it builds
+                    // whatever the function returns, which need not be this class.
+                    if (declarationSymbol is FirConstructorSymbol && !owner.canBeInstantiatedByBuilder) continue
                     getBuilder(declarationSymbol)?.let { add(BuilderWithDeclaration(it, declarationSymbol.fir)) }
                 }
             }
