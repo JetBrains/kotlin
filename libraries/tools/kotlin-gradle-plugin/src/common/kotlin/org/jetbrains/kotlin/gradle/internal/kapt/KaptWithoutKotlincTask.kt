@@ -344,12 +344,11 @@ private class KaptExecution @Inject constructor(
         }
 
         val kaptMethod = kaptClassLoader.kaptClass("Kapt").declaredMethods.single { it.name == "kapt" }
+        val executionToken = KaptExecutionToken()
         try {
-            kaptMethod.invoke(null, createKaptOptions(kaptClassLoader))
+            kaptMethod.invoke(null, createKaptOptions(kaptClassLoader, executionToken))
         } finally {
-            // The loader over project-local annotation processors is not cached; release it here so the
-            // daemon stops holding the project's own jars open once processing is done.
-            classLoadersCache?.releaseTransientLoader()
+            classLoadersCache?.releaseExecutionLocalLoaders(executionToken)
         }
     }
 
@@ -361,7 +360,10 @@ private class KaptExecution @Inject constructor(
         }
     }
 
-    private fun createKaptOptions(classLoader: ClassLoader): Any = with(optionsForWorker) {
+    private fun createKaptOptions(
+        classLoader: ClassLoader,
+        executionToken: KaptExecutionToken,
+    ): Any = with(optionsForWorker) {
         val flags = classLoader.kaptClass("Kapt").declaredMethods.single { it.name == "kaptFlags" }.invoke(null, flags)
 
         val mode = classLoader.kaptClass("AptMode")
@@ -375,9 +377,15 @@ private class KaptExecution @Inject constructor(
 
         //in case cache was enabled and then disabled
         //or disabled for some modules
+        val cacheableProcessorClasspath = processingExternalClasspath
+        val cacheableProcessorClasspathSet = cacheableProcessorClasspath.toSet()
         val processingClassLoader =
             if (classloadersCacheSize > 0) {
-                classLoadersCache!!.getForSplitPaths(processingClasspath - processingExternalClasspath, processingExternalClasspath)
+                classLoadersCache!!.getForProcessorClasspath(
+                    executionToken = executionToken,
+                    executionLocalProcessorClasspath = processingClasspath - cacheableProcessorClasspathSet,
+                    cacheableProcessorClasspath = cacheableProcessorClasspath,
+                )
             } else {
                 null
             }
@@ -416,6 +424,13 @@ private class KaptExecution @Inject constructor(
     }
 
     private fun findRootClassLoader(): ClassLoader = KaptExecution::class.java.classLoader.rootOrSelf()
+}
+
+// Distinguishes one KAPT execution from another so execution-local classloaders are released at the
+// correct execution boundary. Otherwise, the daemon can keep the project's own jars open and, on
+// Windows, prevent the project directory from being deleted.
+internal class KaptExecutionToken internal constructor() {
+    internal var closed: Boolean = false
 }
 
 internal data class KaptOptionsForWorker(

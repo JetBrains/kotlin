@@ -6,12 +6,17 @@
 package org.jetbrains.kotlin.gradle.internal.kapt.classloaders
 
 import com.google.gson.Gson
+import org.jetbrains.kotlin.gradle.internal.KaptExecutionToken
 import kotlin.test.Test
 import java.io.File
 import java.net.URLDecoder
+import java.net.URLClassLoader
 import java.nio.charset.Charset
-import kotlin.test.assertNotSame
-import kotlin.test.assertSame
+import java.nio.file.Files
+import java.util.concurrent.Executors
+import java.util.jar.JarEntry
+import java.util.jar.JarOutputStream
+import kotlin.test.*
 
 class ClassLoadersCacheTest {
 
@@ -59,25 +64,86 @@ class ClassLoadersCacheTest {
     }
 
     @Test
-    fun testSplitClassPath() {
+    fun testCacheableProcessorClasspathIsReusedAndExecutionLocalProcessorClasspathIsRecreated() {
         val cache = ClassLoadersCache(10, rootClassLoader)
-        val topCp = listOf(someJar)
-        val bottomCp1 = listOf(otherJar)
-        val bottomCp2 = listOf(otherJar, findJarByClass(JvmField::class.java)!!)
+        val cacheableProcessorClasspath = listOf(someJar)
+        val executionLocalProcessorClasspath1 = listOf(otherJar)
+        val executionLocalProcessorClasspath2 = listOf(otherJar, findJarByClass(JvmField::class.java)!!)
 
-        val cl1 = cache.getForSplitPaths(bottomCp1, topCp)
-        val cl2 = cache.getForSplitPaths(bottomCp2, topCp)
+        val executionToken = KaptExecutionToken()
+        try {
+            val cl1 = cache.getForProcessorClasspath(
+                executionToken = executionToken,
+                executionLocalProcessorClasspath = executionLocalProcessorClasspath1,
+                cacheableProcessorClasspath = cacheableProcessorClasspath,
+            )
+            val cl2 = cache.getForProcessorClasspath(
+                executionToken = executionToken,
+                executionLocalProcessorClasspath = executionLocalProcessorClasspath2,
+                cacheableProcessorClasspath = cacheableProcessorClasspath,
+            )
 
-        assertSame(
-            cl1.loadClass(someClass.name),
-            cl2.loadClass(someClass.name),
-            "Top classpath should be cached separately. ClassLoader shouldn't change if top classpath stays the same"
-        )
-        assertNotSame(
-            cl1.loadClass(otherClass.name),
-            cl2.loadClass(otherClass.name),
-            "Bottom ClassLoader should be recreated as class path changed"
-        )
+            assertSame(
+                cl1.loadClass(someClass.name),
+                cl2.loadClass(someClass.name),
+                "Cacheable processor classpath should be reused across execution-local classpath changes"
+            )
+            assertNotSame(
+                cl1.loadClass(otherClass.name),
+                cl2.loadClass(otherClass.name),
+                "Execution-local processor classpath should get a fresh ClassLoader when it changes"
+            )
+        } finally {
+            cache.releaseExecutionLocalLoaders(executionToken)
+        }
+    }
+
+    @Test
+    fun testExecutionLocalLoadersCanBeCreatedOnDifferentThreadAndReleasedByToken() {
+        val cache = ClassLoadersCache(10, rootClassLoader)
+        val temporaryDirectory = Files.createTempDirectory("kapt-classloaders-cache-test")
+        try {
+            val jar = temporaryDirectory.resolve("resources.jar").toFile()
+            createResourceJar(jar)
+
+            val executionToken = KaptExecutionToken()
+            val classLoader = try {
+                val executor = Executors.newSingleThreadExecutor()
+                val classLoader = try {
+                    executor.submit<ClassLoader> {
+                        cache.getForProcessorClasspath(
+                            executionToken = executionToken,
+                            executionLocalProcessorClasspath = listOf(jar),
+                            cacheableProcessorClasspath = emptyList(),
+                        )
+                    }.get() as URLClassLoader
+                } finally {
+                    executor.shutdownNow()
+                }
+                assertNotNull(classLoader.getResource("available-before-close.txt"))
+                classLoader
+            } finally {
+                cache.releaseExecutionLocalLoaders(executionToken)
+            }
+            assertNull(classLoader.getResource("available-after-close.txt"))
+        } finally {
+            temporaryDirectory.toFile().deleteRecursively()
+        }
+    }
+
+    @Test
+    fun testReleasedExecutionTokenCannotBeReused() {
+        val cache = ClassLoadersCache(10, rootClassLoader)
+        val executionToken = KaptExecutionToken()
+        cache.releaseExecutionLocalLoaders(executionToken)
+
+        assertFailsWith<IllegalStateException> {
+            cache.getForProcessorClasspath(
+                executionToken = executionToken,
+                executionLocalProcessorClasspath = listOf(otherJar),
+                cacheableProcessorClasspath = emptyList(),
+            )
+        }
     }
 
     private fun findJarByClass(klass: Class<*>): File? {
@@ -91,5 +157,15 @@ class ClassLoadersCacheTest {
             Charset.defaultCharset().name()
         )
         return File(fileName)
+    }
+
+    private fun createResourceJar(file: File) {
+        JarOutputStream(file.outputStream()).use { jar ->
+            listOf("available-before-close.txt", "available-after-close.txt").forEach { resourceName ->
+                jar.putNextEntry(JarEntry(resourceName))
+                jar.write(resourceName.toByteArray())
+                jar.closeEntry()
+            }
+        }
     }
 }
