@@ -31,13 +31,20 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.condition.OS
+import org.junit.jupiter.api.io.TempDir
 import java.net.URI
+import java.nio.file.Path
 import javax.inject.Inject
+import kotlin.io.path.exists
 import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.test.assertContains
+import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlin.test.assertEquals
 
@@ -656,6 +663,95 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
             }
         }
     }
+
+    /**
+     * The Playwright browser install is the first consumer of the Node.js toolchain, so the toolchain is
+     * verified end-to-end through the browser tests.
+     *
+     * Every test gets its own `kotlin.user.home`, because the toolchain shares the installations
+     * machine-wide through it - otherwise a distribution provisioned by another test would be reused,
+     * and provisioning itself would never be exercised.
+     */
+    @GradleTest
+    fun `Node js toolchain in download mode provisions Node js and reuses it in the next build`(
+        gradleVersion: GradleVersion,
+        @TempDir kotlinUserHome: Path,
+    ) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(kotlinUserHome = kotlinUserHome)
+        ) {
+            jsProject {
+                chromium()
+            }
+
+            build(":jsBrowserTest", nodeJsToolchain("DOWNLOAD")) {
+                assertTasksExecuted(":kotlinInstallPlaywrightChromium", ":jsBrowserTest")
+                assertOutputContains("dummy test")
+                kotlinUserHome.nodeJsInstallationsDir.assertSingleNodeJsInstallation()
+            }
+
+            // the installation is shared machine-wide, so the next build must not download it again
+            build(":jsBrowserTest", nodeJsToolchain("DOWNLOAD")) {
+                assertOutputDoesNotContain("Downloading Node.js")
+                kotlinUserHome.nodeJsInstallationsDir.assertSingleNodeJsInstallation()
+            }
+        }
+    }
+
+    @GradleTest
+    fun `Node js toolchain in system path mode runs the browser tests without downloading Node js`(
+        gradleVersion: GradleVersion,
+        @TempDir kotlinUserHome: Path,
+    ) {
+        assumeTrue(isNodeJsOnPath(), "Requires a pre-installed Node.js available on the PATH")
+
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(kotlinUserHome = kotlinUserHome)
+        ) {
+            jsProject {
+                chromium()
+            }
+
+            build(":jsBrowserTest", nodeJsToolchain("SYSTEM_PATH")) {
+                assertTasksExecuted(":kotlinInstallPlaywrightChromium", ":jsBrowserTest")
+                assertOutputContains("dummy test")
+                val installationsDir = kotlinUserHome.nodeJsInstallationsDir
+                assertFalse(
+                    installationsDir.exists(),
+                    "Expected the pre-installed Node.js to be used, but '$installationsDir' has been provisioned",
+                )
+            }
+        }
+    }
+
+    @GradleTest
+    fun `Node js toolchain is disabled by default and the legacy Node js setup task is used`(
+        gradleVersion: GradleVersion,
+        @TempDir kotlinUserHome: Path,
+    ) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(kotlinUserHome = kotlinUserHome)
+        ) {
+            jsProject {
+                chromium()
+            }
+
+            build(":jsBrowserTest") {
+                assertNotNull(task(":kotlinNodeJsSetup"), "Expected the legacy Node.js setup task to be used")
+                val installationsDir = kotlinUserHome.nodeJsInstallationsDir
+                assertFalse(
+                    installationsDir.exists(),
+                    "Expected the Node.js toolchain to be disabled, but '$installationsDir' has been provisioned",
+                )
+            }
+        }
+    }
 }
 
 // expected report for gradle >=9.3
@@ -750,3 +846,41 @@ private abstract class PostProcessTestsBundle : DefaultTask() {
 }
 
 private val MOCHA_ASSET_REFERENCE = Regex("""(?:href|src)="([^"]*mocha\.(?:js|css))"""")
+
+
+private fun nodeJsToolchain(mode: String) = "-Pkotlin.js.nodejs.toolchain=$mode"
+
+/**
+ * The directory the Node.js toolchain shares all its installations through.
+ */
+private val Path.nodeJsInstallationsDir: Path get() = resolve("toolchains/nodejs")
+
+/**
+ * Asserts exactly one complete Node.js distribution has been provisioned, and returns its directory.
+ */
+private fun Path.assertSingleNodeJsInstallation(): Path {
+    assertDirectoryExists(this, "Expected a Node.js distribution to be provisioned into '$this'")
+
+    val installations = listDirectoryEntries("node-v*")
+    assertEquals(
+        1,
+        installations.size,
+        "Expected exactly one provisioned Node.js installation in '$this', but got ${installations.map { it.name }}",
+    )
+
+    val installation = installations.single()
+    val nodeExecutable = if (OS.WINDOWS.isCurrentOs) {
+        installation.resolve("node.exe")
+    } else {
+        installation.resolve("bin/node")
+    }
+    assertFileExists(nodeExecutable, "Expected '$installation' to be a complete Node.js installation")
+
+    return installation
+}
+
+private fun isNodeJsOnPath(): Boolean = try {
+    ProcessBuilder("node", "--version").start().waitFor() == 0
+} catch (_: Exception) {
+    false
+}
