@@ -68,6 +68,7 @@ KClass: abstract interface kotlin.CharSequence : Any
     public open operator fun kotlin.CharSequence.equals(kotlin.Any?): kotlin.Boolean
     public abstract operator fun kotlin.CharSequence.get(kotlin.Int): kotlin.Char
     public open fun kotlin.CharSequence.hashCode(): kotlin.Int
+    public open fun kotlin.CharSequence.isEmpty(): kotlin.Boolean
     public abstract fun kotlin.CharSequence.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
     public open fun kotlin.CharSequence.toString(): kotlin.String
     public abstract val kotlin.CharSequence.length: kotlin.Int
@@ -75,6 +76,7 @@ KClass: abstract interface kotlin.CharSequence : Any
     public open fun kotlin.CharSequence.chars(): java.util.stream.IntStream!
     public open fun kotlin.CharSequence.codePoints(): java.util.stream.IntStream!
     public abstract operator fun kotlin.CharSequence.get(kotlin.Int): kotlin.Char
+    public open fun kotlin.CharSequence.isEmpty(): kotlin.Boolean
     public abstract fun kotlin.CharSequence.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
     public abstract val kotlin.CharSequence.length: kotlin.Int
 KClass: abstract interface kotlin.Cloneable : Any
@@ -137,6 +139,7 @@ KClass: class kotlin.DeprecationLevel : Enum
   members:
     protected final fun kotlin.DeprecationLevel.clone(): kotlin.Any
     public final operator fun kotlin.DeprecationLevel.compareTo(kotlin.DeprecationLevel): kotlin.Int
+    public final fun kotlin.DeprecationLevel.describeConstable(): java.util.Optional<java.lang.Enum.EnumDesc<kotlin.DeprecationLevel!>!>!
     public final operator fun kotlin.DeprecationLevel.equals(kotlin.Any?): kotlin.Boolean
     final fun kotlin.DeprecationLevel.finalize(): kotlin.Unit
     public final fun kotlin.DeprecationLevel.getDeclaringClass(): java.lang.Class<kotlin.DeprecationLevel!>!
@@ -195,6 +198,7 @@ KClass: abstract class kotlin.Enum : Comparable, Serializable, Any
   members:
     protected final fun kotlin.Enum<E>.clone(): kotlin.Any
     public final operator fun kotlin.Enum<E>.compareTo(E): kotlin.Int
+    public final fun kotlin.Enum<E>.describeConstable(): java.util.Optional<java.lang.Enum.EnumDesc<E!>!>!
     public final operator fun kotlin.Enum<E>.equals(kotlin.Any?): kotlin.Boolean
     final fun kotlin.Enum<E>.finalize(): kotlin.Unit
     public final fun kotlin.Enum<E>.getDeclaringClass(): java.lang.Class<E!>!
@@ -205,6 +209,7 @@ KClass: abstract class kotlin.Enum : Comparable, Serializable, Any
   declaredMembers:
     protected final fun kotlin.Enum<E>.clone(): kotlin.Any
     public final operator fun kotlin.Enum<E>.compareTo(E): kotlin.Int
+    public final fun kotlin.Enum<E>.describeConstable(): java.util.Optional<java.lang.Enum.EnumDesc<E!>!>!
     public final operator fun kotlin.Enum<E>.equals(kotlin.Any?): kotlin.Boolean
     final fun kotlin.Enum<E>.finalize(): kotlin.Unit
     public final fun kotlin.Enum<E>.getDeclaringClass(): java.lang.Class<E!>!
@@ -396,6 +401,7 @@ KClass: class kotlin.RequiresOptIn.Level : Enum
   members:
     protected final fun kotlin.RequiresOptIn.Level.clone(): kotlin.Any
     public final operator fun kotlin.RequiresOptIn.Level.compareTo(kotlin.RequiresOptIn.Level): kotlin.Int
+    public final fun kotlin.RequiresOptIn.Level.describeConstable(): java.util.Optional<java.lang.Enum.EnumDesc<kotlin.RequiresOptIn.Level!>!>!
     public final operator fun kotlin.RequiresOptIn.Level.equals(kotlin.Any?): kotlin.Boolean
     final fun kotlin.RequiresOptIn.Level.finalize(): kotlin.Unit
     public final fun kotlin.RequiresOptIn.Level.getDeclaringClass(): java.lang.Class<kotlin.RequiresOptIn.Level!>!
@@ -463,20 +469,43 @@ KClass: class kotlin.String : Comparable, CharSequence, Serializable, Any
     public open fun kotlin.String.chars(): java.util.stream.IntStream!
     public open fun kotlin.String.codePoints(): java.util.stream.IntStream!
     public open operator fun kotlin.String.compareTo(kotlin.String): kotlin.Int
+    public open fun kotlin.String.describeConstable(): java.util.Optional<kotlin.String!>!
     public open operator fun kotlin.String.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.String.formatted(kotlin.Array<(out) kotlin.Any!>!): kotlin.String!
     public open operator fun kotlin.String.get(kotlin.Int): kotlin.Char
     public open fun kotlin.String.hashCode(): kotlin.Int
+    public open fun kotlin.String.indent(kotlin.Int): kotlin.String!
+    public open fun kotlin.String.isEmpty(): kotlin.Boolean
     public final operator fun kotlin.String.plus(kotlin.Any?): kotlin.String
+    public open fun kotlin.String.resolveConstantDesc(java.lang.invoke.MethodHandles.Lookup!): kotlin.String!
+    public open fun kotlin.String.strip(): kotlin.String!
+    public open fun kotlin.String.stripIndent(): kotlin.String!
+    public open fun kotlin.String.stripLeading(): kotlin.String!
+    public open fun kotlin.String.stripTrailing(): kotlin.String!
     public open fun kotlin.String.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
     public open fun kotlin.String.toString(): kotlin.String
+    public open <R> fun kotlin.String.transform(java.util.function.Function<in kotlin.String!, out R!>!): R! where R : kotlin.Any!
+    public open fun kotlin.String.translateEscapes(): kotlin.String!
     public open val kotlin.String.length: kotlin.Int
   declaredMembers:
+    public open fun kotlin.String.chars(): java.util.stream.IntStream!
+    public open fun kotlin.String.codePoints(): java.util.stream.IntStream!
     public open operator fun kotlin.String.compareTo(kotlin.String): kotlin.Int
+    public open fun kotlin.String.describeConstable(): java.util.Optional<kotlin.String!>!
     public open operator fun kotlin.String.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.String.formatted(kotlin.Array<(out) kotlin.Any!>!): kotlin.String!
     public open operator fun kotlin.String.get(kotlin.Int): kotlin.Char
+    public open fun kotlin.String.indent(kotlin.Int): kotlin.String!
     public final operator fun kotlin.String.plus(kotlin.Any?): kotlin.String
+    public open fun kotlin.String.resolveConstantDesc(java.lang.invoke.MethodHandles.Lookup!): kotlin.String!
+    public open fun kotlin.String.strip(): kotlin.String!
+    public open fun kotlin.String.stripIndent(): kotlin.String!
+    public open fun kotlin.String.stripLeading(): kotlin.String!
+    public open fun kotlin.String.stripTrailing(): kotlin.String!
     public open fun kotlin.String.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
     public open fun kotlin.String.toString(): kotlin.String
+    public open <R> fun kotlin.String.transform(java.util.function.Function<in kotlin.String!, out R!>!): R! where R : kotlin.Any!
+    public open fun kotlin.String.translateEscapes(): kotlin.String!
     public open val kotlin.String.length: kotlin.Int
 KClass: interface kotlin.SubclassOptInRequired : Annotation, Any
   constructors:
@@ -613,6 +642,7 @@ KClass: abstract interface kotlin.collections.Collection : Iterable, Any
     public open fun kotlin.collections.Collection<E>.parallelStream(): java.util.stream.Stream<E>
     public open fun kotlin.collections.Collection<E>.spliterator(): java.util.Spliterator<E!>
     public open fun kotlin.collections.Collection<E>.stream(): java.util.stream.Stream<E>
+    public open <T> fun kotlin.collections.Collection<E>.toArray(java.util.function.IntFunction<kotlin.Array<(out) T!>!>!): kotlin.Array<(out) T!>! where T : kotlin.Any!
     public open fun kotlin.collections.Collection<E>.toString(): kotlin.String
     public abstract val kotlin.collections.Collection<E>.size: kotlin.Int
   declaredMembers:
@@ -623,6 +653,7 @@ KClass: abstract interface kotlin.collections.Collection : Iterable, Any
     public open fun kotlin.collections.Collection<E>.parallelStream(): java.util.stream.Stream<E>
     public open fun kotlin.collections.Collection<E>.spliterator(): java.util.Spliterator<E!>
     public open fun kotlin.collections.Collection<E>.stream(): java.util.stream.Stream<E>
+    public open <T> fun kotlin.collections.Collection<E>.toArray(java.util.function.IntFunction<kotlin.Array<(out) T!>!>!): kotlin.Array<(out) T!>! where T : kotlin.Any!
     public abstract val kotlin.collections.Collection<E>.size: kotlin.Int
 KClass: abstract class kotlin.collections.DoubleIterator : Iterator, Any
   constructors:
@@ -708,6 +739,7 @@ KClass: abstract interface kotlin.collections.List : Collection, Any
     public open fun kotlin.collections.List<E>.spliterator(): java.util.Spliterator<E!>
     public open fun kotlin.collections.List<E>.stream(): java.util.stream.Stream<E>
     public abstract fun kotlin.collections.List<E>.subList(kotlin.Int, kotlin.Int): kotlin.collections.List<E>
+    public open <T> fun kotlin.collections.List<E>.toArray(java.util.function.IntFunction<kotlin.Array<(out) T!>!>!): kotlin.Array<(out) T!>! where T : kotlin.Any!
     public open fun kotlin.collections.List<E>.toString(): kotlin.String
     public abstract val kotlin.collections.List<E>.size: kotlin.Int
   declaredMembers:
@@ -804,6 +836,7 @@ KClass: abstract interface kotlin.collections.Collection : Iterable, Any
     public open fun kotlin.collections.Collection<E>.parallelStream(): java.util.stream.Stream<E>
     public open fun kotlin.collections.Collection<E>.spliterator(): java.util.Spliterator<E!>
     public open fun kotlin.collections.Collection<E>.stream(): java.util.stream.Stream<E>
+    public open <T> fun kotlin.collections.Collection<E>.toArray(java.util.function.IntFunction<kotlin.Array<(out) T!>!>!): kotlin.Array<(out) T!>! where T : kotlin.Any!
     public open fun kotlin.collections.Collection<E>.toString(): kotlin.String
     public abstract val kotlin.collections.Collection<E>.size: kotlin.Int
   declaredMembers:
@@ -814,6 +847,7 @@ KClass: abstract interface kotlin.collections.Collection : Iterable, Any
     public open fun kotlin.collections.Collection<E>.parallelStream(): java.util.stream.Stream<E>
     public open fun kotlin.collections.Collection<E>.spliterator(): java.util.Spliterator<E!>
     public open fun kotlin.collections.Collection<E>.stream(): java.util.stream.Stream<E>
+    public open <T> fun kotlin.collections.Collection<E>.toArray(java.util.function.IntFunction<kotlin.Array<(out) T!>!>!): kotlin.Array<(out) T!>! where T : kotlin.Any!
     public abstract val kotlin.collections.Collection<E>.size: kotlin.Int
 KClass: abstract interface kotlin.collections.Iterable : Any
   members:
@@ -857,6 +891,7 @@ KClass: abstract interface kotlin.collections.List : Collection, Any
     public open fun kotlin.collections.List<E>.spliterator(): java.util.Spliterator<E!>
     public open fun kotlin.collections.List<E>.stream(): java.util.stream.Stream<E>
     public abstract fun kotlin.collections.List<E>.subList(kotlin.Int, kotlin.Int): kotlin.collections.List<E>
+    public open <T> fun kotlin.collections.List<E>.toArray(java.util.function.IntFunction<kotlin.Array<(out) T!>!>!): kotlin.Array<(out) T!>! where T : kotlin.Any!
     public open fun kotlin.collections.List<E>.toString(): kotlin.String
     public abstract val kotlin.collections.List<E>.size: kotlin.Int
   declaredMembers:
@@ -939,6 +974,7 @@ KClass: abstract interface kotlin.collections.Set : Collection, Any
     public open fun kotlin.collections.Set<E>.parallelStream(): java.util.stream.Stream<E>
     public open fun kotlin.collections.Set<E>.spliterator(): java.util.Spliterator<E!>
     public open fun kotlin.collections.Set<E>.stream(): java.util.stream.Stream<E>
+    public open <T> fun kotlin.collections.Set<E>.toArray(java.util.function.IntFunction<kotlin.Array<(out) T!>!>!): kotlin.Array<(out) T!>! where T : kotlin.Any!
     public open fun kotlin.collections.Set<E>.toString(): kotlin.String
     public abstract val kotlin.collections.Set<E>.size: kotlin.Int
   declaredMembers:
@@ -960,6 +996,7 @@ KClass: abstract interface kotlin.collections.Set : Collection, Any
     public open fun kotlin.collections.Set<E>.parallelStream(): java.util.stream.Stream<E>
     public open fun kotlin.collections.Set<E>.spliterator(): java.util.Spliterator<E!>
     public open fun kotlin.collections.Set<E>.stream(): java.util.stream.Stream<E>
+    public open <T> fun kotlin.collections.Set<E>.toArray(java.util.function.IntFunction<kotlin.Array<(out) T!>!>!): kotlin.Array<(out) T!>! where T : kotlin.Any!
     public open fun kotlin.collections.Set<E>.toString(): kotlin.String
     public abstract val kotlin.collections.Set<E>.size: kotlin.Int
   declaredMembers:
@@ -1281,6 +1318,7 @@ KClass: class kotlin.annotation.AnnotationRetention : Enum
   members:
     protected final fun kotlin.annotation.AnnotationRetention.clone(): kotlin.Any
     public final operator fun kotlin.annotation.AnnotationRetention.compareTo(kotlin.annotation.AnnotationRetention): kotlin.Int
+    public final fun kotlin.annotation.AnnotationRetention.describeConstable(): java.util.Optional<java.lang.Enum.EnumDesc<kotlin.annotation.AnnotationRetention!>!>!
     public final operator fun kotlin.annotation.AnnotationRetention.equals(kotlin.Any?): kotlin.Boolean
     final fun kotlin.annotation.AnnotationRetention.finalize(): kotlin.Unit
     public final fun kotlin.annotation.AnnotationRetention.getDeclaringClass(): java.lang.Class<kotlin.annotation.AnnotationRetention!>!
@@ -1305,6 +1343,7 @@ KClass: class kotlin.annotation.AnnotationTarget : Enum
   members:
     protected final fun kotlin.annotation.AnnotationTarget.clone(): kotlin.Any
     public final operator fun kotlin.annotation.AnnotationTarget.compareTo(kotlin.annotation.AnnotationTarget): kotlin.Int
+    public final fun kotlin.annotation.AnnotationTarget.describeConstable(): java.util.Optional<java.lang.Enum.EnumDesc<kotlin.annotation.AnnotationTarget!>!>!
     public final operator fun kotlin.annotation.AnnotationTarget.equals(kotlin.Any?): kotlin.Boolean
     final fun kotlin.annotation.AnnotationTarget.finalize(): kotlin.Unit
     public final fun kotlin.annotation.AnnotationTarget.getDeclaringClass(): java.lang.Class<kotlin.annotation.AnnotationTarget!>!
@@ -1763,6 +1802,7 @@ KClass: class kotlin.reflect.KVariance : Enum
   members:
     protected final fun kotlin.reflect.KVariance.clone(): kotlin.Any
     public final operator fun kotlin.reflect.KVariance.compareTo(kotlin.reflect.KVariance): kotlin.Int
+    public final fun kotlin.reflect.KVariance.describeConstable(): java.util.Optional<java.lang.Enum.EnumDesc<kotlin.reflect.KVariance!>!>!
     public final operator fun kotlin.reflect.KVariance.equals(kotlin.Any?): kotlin.Boolean
     final fun kotlin.reflect.KVariance.finalize(): kotlin.Unit
     public final fun kotlin.reflect.KVariance.getDeclaringClass(): java.lang.Class<kotlin.reflect.KVariance!>!
@@ -1810,96 +1850,127 @@ KClass: class java.util.concurrent.atomic.AtomicReferenceArray : Serializable, A
     public final <E> fun `<init>`(kotlin.Array<(out) E!>!): java.util.concurrent.atomic.AtomicReferenceArray<E> where E : kotlin.Any!
     public final <E> fun `<init>`(kotlin.Int): java.util.concurrent.atomic.AtomicReferenceArray<E> where E : kotlin.Any!
   members:
-    private open fun byteOffset(kotlin.Int): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.accumulateAndGet(kotlin.Int, E!, java.util.function.BinaryOperator<E!>!): E!
-    private open fun java.util.concurrent.atomic.AtomicReferenceArray<E>.checkedByteOffset(kotlin.Int): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.compareAndExchange(kotlin.Int, E!, E!): E!
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.compareAndExchangeAcquire(kotlin.Int, E!, E!): E!
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.compareAndExchangeRelease(kotlin.Int, E!, E!): E!
     public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.compareAndSet(kotlin.Int, E!, E!): kotlin.Boolean
-    private open fun java.util.concurrent.atomic.AtomicReferenceArray<E>.compareAndSetRaw(kotlin.Long, E!, E!): kotlin.Boolean
     public open operator fun java.util.concurrent.atomic.AtomicReferenceArray<E>.equals(kotlin.Any?): kotlin.Boolean
     public final operator fun java.util.concurrent.atomic.AtomicReferenceArray<E>.get(kotlin.Int): E!
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.getAcquire(kotlin.Int): E!
     public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.getAndAccumulate(kotlin.Int, E!, java.util.function.BinaryOperator<E!>!): E!
     public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.getAndSet(kotlin.Int, E!): E!
     public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.getAndUpdate(kotlin.Int, java.util.function.UnaryOperator<E!>!): E!
-    private open fun java.util.concurrent.atomic.AtomicReferenceArray<E>.getRaw(kotlin.Long): E!
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.getOpaque(kotlin.Int): E!
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.getPlain(kotlin.Int): E!
     public open fun java.util.concurrent.atomic.AtomicReferenceArray<E>.hashCode(): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.lazySet(kotlin.Int, E!): kotlin.Unit
     public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.length(): kotlin.Int
     private open fun java.util.concurrent.atomic.AtomicReferenceArray<E>.readObject(java.io.ObjectInputStream!): kotlin.Unit
     public final operator fun java.util.concurrent.atomic.AtomicReferenceArray<E>.set(kotlin.Int, E!): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.setOpaque(kotlin.Int, E!): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.setPlain(kotlin.Int, E!): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.setRelease(kotlin.Int, E!): kotlin.Unit
     public open fun java.util.concurrent.atomic.AtomicReferenceArray<E>.toString(): kotlin.String
     public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.updateAndGet(kotlin.Int, java.util.function.UnaryOperator<E!>!): E!
     public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.weakCompareAndSet(kotlin.Int, E!, E!): kotlin.Boolean
-    private final val arrayFieldOffset: kotlin.Long
-    private final val base: kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.weakCompareAndSetAcquire(kotlin.Int, E!, E!): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.weakCompareAndSetPlain(kotlin.Int, E!, E!): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.weakCompareAndSetRelease(kotlin.Int, E!, E!): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.weakCompareAndSetVolatile(kotlin.Int, E!, E!): kotlin.Boolean
+    private final val AA: java.lang.invoke.VarHandle!
     private final val java.util.concurrent.atomic.AtomicReferenceArray<E>.array: kotlin.Array<(out) kotlin.Any!>!
     private final val serialVersionUID: kotlin.Long
-    private final val shift: kotlin.Int
-    private final val unsafe: sun.misc.Unsafe!
   declaredMembers:
-    private open fun byteOffset(kotlin.Int): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.accumulateAndGet(kotlin.Int, E!, java.util.function.BinaryOperator<E!>!): E!
-    private open fun java.util.concurrent.atomic.AtomicReferenceArray<E>.checkedByteOffset(kotlin.Int): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.compareAndExchange(kotlin.Int, E!, E!): E!
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.compareAndExchangeAcquire(kotlin.Int, E!, E!): E!
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.compareAndExchangeRelease(kotlin.Int, E!, E!): E!
     public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.compareAndSet(kotlin.Int, E!, E!): kotlin.Boolean
-    private open fun java.util.concurrent.atomic.AtomicReferenceArray<E>.compareAndSetRaw(kotlin.Long, E!, E!): kotlin.Boolean
     public final operator fun java.util.concurrent.atomic.AtomicReferenceArray<E>.get(kotlin.Int): E!
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.getAcquire(kotlin.Int): E!
     public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.getAndAccumulate(kotlin.Int, E!, java.util.function.BinaryOperator<E!>!): E!
     public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.getAndSet(kotlin.Int, E!): E!
     public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.getAndUpdate(kotlin.Int, java.util.function.UnaryOperator<E!>!): E!
-    private open fun java.util.concurrent.atomic.AtomicReferenceArray<E>.getRaw(kotlin.Long): E!
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.getOpaque(kotlin.Int): E!
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.getPlain(kotlin.Int): E!
     public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.lazySet(kotlin.Int, E!): kotlin.Unit
     public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.length(): kotlin.Int
     private open fun java.util.concurrent.atomic.AtomicReferenceArray<E>.readObject(java.io.ObjectInputStream!): kotlin.Unit
     public final operator fun java.util.concurrent.atomic.AtomicReferenceArray<E>.set(kotlin.Int, E!): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.setOpaque(kotlin.Int, E!): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.setPlain(kotlin.Int, E!): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.setRelease(kotlin.Int, E!): kotlin.Unit
     public open fun java.util.concurrent.atomic.AtomicReferenceArray<E>.toString(): kotlin.String
     public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.updateAndGet(kotlin.Int, java.util.function.UnaryOperator<E!>!): E!
     public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.weakCompareAndSet(kotlin.Int, E!, E!): kotlin.Boolean
-    private final val arrayFieldOffset: kotlin.Long
-    private final val base: kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.weakCompareAndSetAcquire(kotlin.Int, E!, E!): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.weakCompareAndSetPlain(kotlin.Int, E!, E!): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.weakCompareAndSetRelease(kotlin.Int, E!, E!): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicReferenceArray<E>.weakCompareAndSetVolatile(kotlin.Int, E!, E!): kotlin.Boolean
+    private final val AA: java.lang.invoke.VarHandle!
     private final val java.util.concurrent.atomic.AtomicReferenceArray<E>.array: kotlin.Array<(out) kotlin.Any!>!
     private final val serialVersionUID: kotlin.Long
-    private final val shift: kotlin.Int
-    private final val unsafe: sun.misc.Unsafe!
   staticMembers:
-    private final val arrayFieldOffset: kotlin.Long
-    private final val base: kotlin.Int
+    private final val AA: java.lang.invoke.VarHandle!
     private final val serialVersionUID: kotlin.Long
-    private final val shift: kotlin.Int
-    private final val unsafe: sun.misc.Unsafe!
-    private open fun byteOffset(kotlin.Int): kotlin.Long
 KClass: class java.util.concurrent.atomic.AtomicBoolean : Serializable, Any
   constructors:
     public final fun `<init>`(): java.util.concurrent.atomic.AtomicBoolean
     public final fun `<init>`(kotlin.Boolean): java.util.concurrent.atomic.AtomicBoolean
   members:
+    public final fun java.util.concurrent.atomic.AtomicBoolean.compareAndExchange(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicBoolean.compareAndExchangeAcquire(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicBoolean.compareAndExchangeRelease(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
     public final fun java.util.concurrent.atomic.AtomicBoolean.compareAndSet(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
     public open operator fun java.util.concurrent.atomic.AtomicBoolean.equals(kotlin.Any?): kotlin.Boolean
     public final fun java.util.concurrent.atomic.AtomicBoolean.get(): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicBoolean.getAcquire(): kotlin.Boolean
     public final fun java.util.concurrent.atomic.AtomicBoolean.getAndSet(kotlin.Boolean): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicBoolean.getOpaque(): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicBoolean.getPlain(): kotlin.Boolean
     public open fun java.util.concurrent.atomic.AtomicBoolean.hashCode(): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicBoolean.lazySet(kotlin.Boolean): kotlin.Unit
     public final fun java.util.concurrent.atomic.AtomicBoolean.set(kotlin.Boolean): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicBoolean.setOpaque(kotlin.Boolean): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicBoolean.setPlain(kotlin.Boolean): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicBoolean.setRelease(kotlin.Boolean): kotlin.Unit
     public open fun java.util.concurrent.atomic.AtomicBoolean.toString(): kotlin.String
     public open fun java.util.concurrent.atomic.AtomicBoolean.weakCompareAndSet(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicBoolean.weakCompareAndSetAcquire(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    public open fun java.util.concurrent.atomic.AtomicBoolean.weakCompareAndSetPlain(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicBoolean.weakCompareAndSetRelease(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicBoolean.weakCompareAndSetVolatile(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    private final val VALUE: java.lang.invoke.VarHandle!
     private final val serialVersionUID: kotlin.Long
-    private final val unsafe: sun.misc.Unsafe!
-    private final val valueOffset: kotlin.Long
     private final var java.util.concurrent.atomic.AtomicBoolean.value: kotlin.Int
   declaredMembers:
+    public final fun java.util.concurrent.atomic.AtomicBoolean.compareAndExchange(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicBoolean.compareAndExchangeAcquire(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicBoolean.compareAndExchangeRelease(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
     public final fun java.util.concurrent.atomic.AtomicBoolean.compareAndSet(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
     public final fun java.util.concurrent.atomic.AtomicBoolean.get(): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicBoolean.getAcquire(): kotlin.Boolean
     public final fun java.util.concurrent.atomic.AtomicBoolean.getAndSet(kotlin.Boolean): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicBoolean.getOpaque(): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicBoolean.getPlain(): kotlin.Boolean
     public final fun java.util.concurrent.atomic.AtomicBoolean.lazySet(kotlin.Boolean): kotlin.Unit
     public final fun java.util.concurrent.atomic.AtomicBoolean.set(kotlin.Boolean): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicBoolean.setOpaque(kotlin.Boolean): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicBoolean.setPlain(kotlin.Boolean): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicBoolean.setRelease(kotlin.Boolean): kotlin.Unit
     public open fun java.util.concurrent.atomic.AtomicBoolean.toString(): kotlin.String
     public open fun java.util.concurrent.atomic.AtomicBoolean.weakCompareAndSet(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicBoolean.weakCompareAndSetAcquire(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    public open fun java.util.concurrent.atomic.AtomicBoolean.weakCompareAndSetPlain(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicBoolean.weakCompareAndSetRelease(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicBoolean.weakCompareAndSetVolatile(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    private final val VALUE: java.lang.invoke.VarHandle!
     private final val serialVersionUID: kotlin.Long
-    private final val unsafe: sun.misc.Unsafe!
-    private final val valueOffset: kotlin.Long
     private final var java.util.concurrent.atomic.AtomicBoolean.value: kotlin.Int
   staticMembers:
+    private final val VALUE: java.lang.invoke.VarHandle!
     private final val serialVersionUID: kotlin.Long
-    private final val unsafe: sun.misc.Unsafe!
-    private final val valueOffset: kotlin.Long
 KClass: class java.util.concurrent.atomic.AtomicInteger : Number, Serializable
   constructors:
     public final fun `<init>`(): java.util.concurrent.atomic.AtomicInteger
@@ -1907,20 +1978,29 @@ KClass: class java.util.concurrent.atomic.AtomicInteger : Number, Serializable
   members:
     public final fun java.util.concurrent.atomic.AtomicInteger.accumulateAndGet(kotlin.Int, java.util.function.IntBinaryOperator!): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.addAndGet(kotlin.Int): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicInteger.compareAndExchange(kotlin.Int, kotlin.Int): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicInteger.compareAndExchangeAcquire(kotlin.Int, kotlin.Int): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicInteger.compareAndExchangeRelease(kotlin.Int, kotlin.Int): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.compareAndSet(kotlin.Int, kotlin.Int): kotlin.Boolean
     public final fun java.util.concurrent.atomic.AtomicInteger.decrementAndGet(): kotlin.Int
     public open operator fun java.util.concurrent.atomic.AtomicInteger.equals(kotlin.Any?): kotlin.Boolean
     public final fun java.util.concurrent.atomic.AtomicInteger.get(): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicInteger.getAcquire(): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.getAndAccumulate(kotlin.Int, java.util.function.IntBinaryOperator!): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.getAndAdd(kotlin.Int): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.getAndDecrement(): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.getAndIncrement(): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.getAndSet(kotlin.Int): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.getAndUpdate(java.util.function.IntUnaryOperator!): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicInteger.getOpaque(): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicInteger.getPlain(): kotlin.Int
     public open fun java.util.concurrent.atomic.AtomicInteger.hashCode(): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.incrementAndGet(): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.lazySet(kotlin.Int): kotlin.Unit
     public final fun java.util.concurrent.atomic.AtomicInteger.set(kotlin.Int): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicInteger.setOpaque(kotlin.Int): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicInteger.setPlain(kotlin.Int): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicInteger.setRelease(kotlin.Int): kotlin.Unit
     public abstract fun java.util.concurrent.atomic.AtomicInteger.toByte(): kotlin.Byte
     public open fun java.util.concurrent.atomic.AtomicInteger.toChar(): kotlin.Char
     public open fun java.util.concurrent.atomic.AtomicInteger.toDouble(): kotlin.Double
@@ -1931,25 +2011,38 @@ KClass: class java.util.concurrent.atomic.AtomicInteger : Number, Serializable
     public open fun java.util.concurrent.atomic.AtomicInteger.toString(): kotlin.String
     public final fun java.util.concurrent.atomic.AtomicInteger.updateAndGet(java.util.function.IntUnaryOperator!): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.weakCompareAndSet(kotlin.Int, kotlin.Int): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicInteger.weakCompareAndSetAcquire(kotlin.Int, kotlin.Int): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicInteger.weakCompareAndSetPlain(kotlin.Int, kotlin.Int): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicInteger.weakCompareAndSetRelease(kotlin.Int, kotlin.Int): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicInteger.weakCompareAndSetVolatile(kotlin.Int, kotlin.Int): kotlin.Boolean
+    private final val U: jdk.internal.misc.Unsafe!
+    private final val VALUE: kotlin.Long
     private final val serialVersionUID: kotlin.Long
-    private final val unsafe: sun.misc.Unsafe!
-    private final val valueOffset: kotlin.Long
     private final var java.util.concurrent.atomic.AtomicInteger.value: kotlin.Int
   declaredMembers:
     public final fun java.util.concurrent.atomic.AtomicInteger.accumulateAndGet(kotlin.Int, java.util.function.IntBinaryOperator!): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.addAndGet(kotlin.Int): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicInteger.compareAndExchange(kotlin.Int, kotlin.Int): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicInteger.compareAndExchangeAcquire(kotlin.Int, kotlin.Int): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicInteger.compareAndExchangeRelease(kotlin.Int, kotlin.Int): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.compareAndSet(kotlin.Int, kotlin.Int): kotlin.Boolean
     public final fun java.util.concurrent.atomic.AtomicInteger.decrementAndGet(): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.get(): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicInteger.getAcquire(): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.getAndAccumulate(kotlin.Int, java.util.function.IntBinaryOperator!): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.getAndAdd(kotlin.Int): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.getAndDecrement(): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.getAndIncrement(): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.getAndSet(kotlin.Int): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.getAndUpdate(java.util.function.IntUnaryOperator!): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicInteger.getOpaque(): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicInteger.getPlain(): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.incrementAndGet(): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.lazySet(kotlin.Int): kotlin.Unit
     public final fun java.util.concurrent.atomic.AtomicInteger.set(kotlin.Int): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicInteger.setOpaque(kotlin.Int): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicInteger.setPlain(kotlin.Int): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicInteger.setRelease(kotlin.Int): kotlin.Unit
     public open fun java.util.concurrent.atomic.AtomicInteger.toDouble(): kotlin.Double
     public open fun java.util.concurrent.atomic.AtomicInteger.toFloat(): kotlin.Float
     public open fun java.util.concurrent.atomic.AtomicInteger.toInt(): kotlin.Int
@@ -1957,82 +2050,97 @@ KClass: class java.util.concurrent.atomic.AtomicInteger : Number, Serializable
     public open fun java.util.concurrent.atomic.AtomicInteger.toString(): kotlin.String
     public final fun java.util.concurrent.atomic.AtomicInteger.updateAndGet(java.util.function.IntUnaryOperator!): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicInteger.weakCompareAndSet(kotlin.Int, kotlin.Int): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicInteger.weakCompareAndSetAcquire(kotlin.Int, kotlin.Int): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicInteger.weakCompareAndSetPlain(kotlin.Int, kotlin.Int): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicInteger.weakCompareAndSetRelease(kotlin.Int, kotlin.Int): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicInteger.weakCompareAndSetVolatile(kotlin.Int, kotlin.Int): kotlin.Boolean
+    private final val U: jdk.internal.misc.Unsafe!
+    private final val VALUE: kotlin.Long
     private final val serialVersionUID: kotlin.Long
-    private final val unsafe: sun.misc.Unsafe!
-    private final val valueOffset: kotlin.Long
     private final var java.util.concurrent.atomic.AtomicInteger.value: kotlin.Int
   staticMembers:
+    private final val U: jdk.internal.misc.Unsafe!
+    private final val VALUE: kotlin.Long
     private final val serialVersionUID: kotlin.Long
-    private final val unsafe: sun.misc.Unsafe!
-    private final val valueOffset: kotlin.Long
 KClass: class java.util.concurrent.atomic.AtomicIntegerArray : Serializable, Any
   constructors:
     public final fun `<init>`(kotlin.Int): java.util.concurrent.atomic.AtomicIntegerArray
     public final fun `<init>`(kotlin.IntArray!): java.util.concurrent.atomic.AtomicIntegerArray
   members:
-    private open fun byteOffset(kotlin.Int): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.accumulateAndGet(kotlin.Int, kotlin.Int, java.util.function.IntBinaryOperator!): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.addAndGet(kotlin.Int, kotlin.Int): kotlin.Int
-    private open fun java.util.concurrent.atomic.AtomicIntegerArray.checkedByteOffset(kotlin.Int): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.compareAndExchange(kotlin.Int, kotlin.Int, kotlin.Int): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.compareAndExchangeAcquire(kotlin.Int, kotlin.Int, kotlin.Int): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.compareAndExchangeRelease(kotlin.Int, kotlin.Int, kotlin.Int): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.compareAndSet(kotlin.Int, kotlin.Int, kotlin.Int): kotlin.Boolean
-    private open fun java.util.concurrent.atomic.AtomicIntegerArray.compareAndSetRaw(kotlin.Long, kotlin.Int, kotlin.Int): kotlin.Boolean
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.decrementAndGet(kotlin.Int): kotlin.Int
     public open operator fun java.util.concurrent.atomic.AtomicIntegerArray.equals(kotlin.Any?): kotlin.Boolean
     public final operator fun java.util.concurrent.atomic.AtomicIntegerArray.get(kotlin.Int): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.getAcquire(kotlin.Int): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.getAndAccumulate(kotlin.Int, kotlin.Int, java.util.function.IntBinaryOperator!): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.getAndAdd(kotlin.Int, kotlin.Int): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.getAndDecrement(kotlin.Int): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.getAndIncrement(kotlin.Int): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.getAndSet(kotlin.Int, kotlin.Int): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.getAndUpdate(kotlin.Int, java.util.function.IntUnaryOperator!): kotlin.Int
-    private open fun java.util.concurrent.atomic.AtomicIntegerArray.getRaw(kotlin.Long): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.getOpaque(kotlin.Int): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.getPlain(kotlin.Int): kotlin.Int
     public open fun java.util.concurrent.atomic.AtomicIntegerArray.hashCode(): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.incrementAndGet(kotlin.Int): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.lazySet(kotlin.Int, kotlin.Int): kotlin.Unit
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.length(): kotlin.Int
     public final operator fun java.util.concurrent.atomic.AtomicIntegerArray.set(kotlin.Int, kotlin.Int): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.setOpaque(kotlin.Int, kotlin.Int): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.setPlain(kotlin.Int, kotlin.Int): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.setRelease(kotlin.Int, kotlin.Int): kotlin.Unit
     public open fun java.util.concurrent.atomic.AtomicIntegerArray.toString(): kotlin.String
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.updateAndGet(kotlin.Int, java.util.function.IntUnaryOperator!): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.weakCompareAndSet(kotlin.Int, kotlin.Int, kotlin.Int): kotlin.Boolean
-    private final val base: kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.weakCompareAndSetAcquire(kotlin.Int, kotlin.Int, kotlin.Int): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.weakCompareAndSetPlain(kotlin.Int, kotlin.Int, kotlin.Int): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.weakCompareAndSetRelease(kotlin.Int, kotlin.Int, kotlin.Int): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.weakCompareAndSetVolatile(kotlin.Int, kotlin.Int, kotlin.Int): kotlin.Boolean
+    private final val AA: java.lang.invoke.VarHandle!
     private final val java.util.concurrent.atomic.AtomicIntegerArray.array: kotlin.IntArray!
     private final val serialVersionUID: kotlin.Long
-    private final val shift: kotlin.Int
-    private final val unsafe: sun.misc.Unsafe!
   declaredMembers:
-    private open fun byteOffset(kotlin.Int): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.accumulateAndGet(kotlin.Int, kotlin.Int, java.util.function.IntBinaryOperator!): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.addAndGet(kotlin.Int, kotlin.Int): kotlin.Int
-    private open fun java.util.concurrent.atomic.AtomicIntegerArray.checkedByteOffset(kotlin.Int): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.compareAndExchange(kotlin.Int, kotlin.Int, kotlin.Int): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.compareAndExchangeAcquire(kotlin.Int, kotlin.Int, kotlin.Int): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.compareAndExchangeRelease(kotlin.Int, kotlin.Int, kotlin.Int): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.compareAndSet(kotlin.Int, kotlin.Int, kotlin.Int): kotlin.Boolean
-    private open fun java.util.concurrent.atomic.AtomicIntegerArray.compareAndSetRaw(kotlin.Long, kotlin.Int, kotlin.Int): kotlin.Boolean
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.decrementAndGet(kotlin.Int): kotlin.Int
     public final operator fun java.util.concurrent.atomic.AtomicIntegerArray.get(kotlin.Int): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.getAcquire(kotlin.Int): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.getAndAccumulate(kotlin.Int, kotlin.Int, java.util.function.IntBinaryOperator!): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.getAndAdd(kotlin.Int, kotlin.Int): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.getAndDecrement(kotlin.Int): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.getAndIncrement(kotlin.Int): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.getAndSet(kotlin.Int, kotlin.Int): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.getAndUpdate(kotlin.Int, java.util.function.IntUnaryOperator!): kotlin.Int
-    private open fun java.util.concurrent.atomic.AtomicIntegerArray.getRaw(kotlin.Long): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.getOpaque(kotlin.Int): kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.getPlain(kotlin.Int): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.incrementAndGet(kotlin.Int): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.lazySet(kotlin.Int, kotlin.Int): kotlin.Unit
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.length(): kotlin.Int
     public final operator fun java.util.concurrent.atomic.AtomicIntegerArray.set(kotlin.Int, kotlin.Int): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.setOpaque(kotlin.Int, kotlin.Int): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.setPlain(kotlin.Int, kotlin.Int): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.setRelease(kotlin.Int, kotlin.Int): kotlin.Unit
     public open fun java.util.concurrent.atomic.AtomicIntegerArray.toString(): kotlin.String
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.updateAndGet(kotlin.Int, java.util.function.IntUnaryOperator!): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicIntegerArray.weakCompareAndSet(kotlin.Int, kotlin.Int, kotlin.Int): kotlin.Boolean
-    private final val base: kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.weakCompareAndSetAcquire(kotlin.Int, kotlin.Int, kotlin.Int): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.weakCompareAndSetPlain(kotlin.Int, kotlin.Int, kotlin.Int): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.weakCompareAndSetRelease(kotlin.Int, kotlin.Int, kotlin.Int): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicIntegerArray.weakCompareAndSetVolatile(kotlin.Int, kotlin.Int, kotlin.Int): kotlin.Boolean
+    private final val AA: java.lang.invoke.VarHandle!
     private final val java.util.concurrent.atomic.AtomicIntegerArray.array: kotlin.IntArray!
     private final val serialVersionUID: kotlin.Long
-    private final val shift: kotlin.Int
-    private final val unsafe: sun.misc.Unsafe!
   staticMembers:
-    private final val base: kotlin.Int
+    private final val AA: java.lang.invoke.VarHandle!
     private final val serialVersionUID: kotlin.Long
-    private final val shift: kotlin.Int
-    private final val unsafe: sun.misc.Unsafe!
-    private open fun byteOffset(kotlin.Int): kotlin.Long
 KClass: class java.util.concurrent.atomic.AtomicLong : Number, Serializable
   constructors:
     public final fun `<init>`(): java.util.concurrent.atomic.AtomicLong
@@ -2041,20 +2149,29 @@ KClass: class java.util.concurrent.atomic.AtomicLong : Number, Serializable
     private open external fun VMSupportsCS8(): kotlin.Boolean
     public final fun java.util.concurrent.atomic.AtomicLong.accumulateAndGet(kotlin.Long, java.util.function.LongBinaryOperator!): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.addAndGet(kotlin.Long): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLong.compareAndExchange(kotlin.Long, kotlin.Long): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLong.compareAndExchangeAcquire(kotlin.Long, kotlin.Long): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLong.compareAndExchangeRelease(kotlin.Long, kotlin.Long): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.compareAndSet(kotlin.Long, kotlin.Long): kotlin.Boolean
     public final fun java.util.concurrent.atomic.AtomicLong.decrementAndGet(): kotlin.Long
     public open operator fun java.util.concurrent.atomic.AtomicLong.equals(kotlin.Any?): kotlin.Boolean
     public final fun java.util.concurrent.atomic.AtomicLong.get(): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLong.getAcquire(): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.getAndAccumulate(kotlin.Long, java.util.function.LongBinaryOperator!): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.getAndAdd(kotlin.Long): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.getAndDecrement(): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.getAndIncrement(): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.getAndSet(kotlin.Long): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.getAndUpdate(java.util.function.LongUnaryOperator!): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLong.getOpaque(): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLong.getPlain(): kotlin.Long
     public open fun java.util.concurrent.atomic.AtomicLong.hashCode(): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicLong.incrementAndGet(): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.lazySet(kotlin.Long): kotlin.Unit
     public final fun java.util.concurrent.atomic.AtomicLong.set(kotlin.Long): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicLong.setOpaque(kotlin.Long): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicLong.setPlain(kotlin.Long): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicLong.setRelease(kotlin.Long): kotlin.Unit
     public abstract fun java.util.concurrent.atomic.AtomicLong.toByte(): kotlin.Byte
     public open fun java.util.concurrent.atomic.AtomicLong.toChar(): kotlin.Char
     public open fun java.util.concurrent.atomic.AtomicLong.toDouble(): kotlin.Double
@@ -2065,27 +2182,40 @@ KClass: class java.util.concurrent.atomic.AtomicLong : Number, Serializable
     public open fun java.util.concurrent.atomic.AtomicLong.toString(): kotlin.String
     public final fun java.util.concurrent.atomic.AtomicLong.updateAndGet(java.util.function.LongUnaryOperator!): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.weakCompareAndSet(kotlin.Long, kotlin.Long): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicLong.weakCompareAndSetAcquire(kotlin.Long, kotlin.Long): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicLong.weakCompareAndSetPlain(kotlin.Long, kotlin.Long): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicLong.weakCompareAndSetRelease(kotlin.Long, kotlin.Long): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicLong.weakCompareAndSetVolatile(kotlin.Long, kotlin.Long): kotlin.Boolean
+    private final val U: jdk.internal.misc.Unsafe!
+    private final val VALUE: kotlin.Long
     final val VM_SUPPORTS_LONG_CAS: kotlin.Boolean
     private final val serialVersionUID: kotlin.Long
-    private final val unsafe: sun.misc.Unsafe!
-    private final val valueOffset: kotlin.Long
     private final var java.util.concurrent.atomic.AtomicLong.value: kotlin.Long
   declaredMembers:
     private open external fun VMSupportsCS8(): kotlin.Boolean
     public final fun java.util.concurrent.atomic.AtomicLong.accumulateAndGet(kotlin.Long, java.util.function.LongBinaryOperator!): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.addAndGet(kotlin.Long): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLong.compareAndExchange(kotlin.Long, kotlin.Long): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLong.compareAndExchangeAcquire(kotlin.Long, kotlin.Long): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLong.compareAndExchangeRelease(kotlin.Long, kotlin.Long): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.compareAndSet(kotlin.Long, kotlin.Long): kotlin.Boolean
     public final fun java.util.concurrent.atomic.AtomicLong.decrementAndGet(): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.get(): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLong.getAcquire(): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.getAndAccumulate(kotlin.Long, java.util.function.LongBinaryOperator!): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.getAndAdd(kotlin.Long): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.getAndDecrement(): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.getAndIncrement(): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.getAndSet(kotlin.Long): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.getAndUpdate(java.util.function.LongUnaryOperator!): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLong.getOpaque(): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLong.getPlain(): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.incrementAndGet(): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.lazySet(kotlin.Long): kotlin.Unit
     public final fun java.util.concurrent.atomic.AtomicLong.set(kotlin.Long): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicLong.setOpaque(kotlin.Long): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicLong.setPlain(kotlin.Long): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicLong.setRelease(kotlin.Long): kotlin.Unit
     public open fun java.util.concurrent.atomic.AtomicLong.toDouble(): kotlin.Double
     public open fun java.util.concurrent.atomic.AtomicLong.toFloat(): kotlin.Float
     public open fun java.util.concurrent.atomic.AtomicLong.toInt(): kotlin.Int
@@ -2093,127 +2223,165 @@ KClass: class java.util.concurrent.atomic.AtomicLong : Number, Serializable
     public open fun java.util.concurrent.atomic.AtomicLong.toString(): kotlin.String
     public final fun java.util.concurrent.atomic.AtomicLong.updateAndGet(java.util.function.LongUnaryOperator!): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLong.weakCompareAndSet(kotlin.Long, kotlin.Long): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicLong.weakCompareAndSetAcquire(kotlin.Long, kotlin.Long): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicLong.weakCompareAndSetPlain(kotlin.Long, kotlin.Long): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicLong.weakCompareAndSetRelease(kotlin.Long, kotlin.Long): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicLong.weakCompareAndSetVolatile(kotlin.Long, kotlin.Long): kotlin.Boolean
+    private final val U: jdk.internal.misc.Unsafe!
+    private final val VALUE: kotlin.Long
     final val VM_SUPPORTS_LONG_CAS: kotlin.Boolean
     private final val serialVersionUID: kotlin.Long
-    private final val unsafe: sun.misc.Unsafe!
-    private final val valueOffset: kotlin.Long
     private final var java.util.concurrent.atomic.AtomicLong.value: kotlin.Long
   staticMembers:
+    private final val U: jdk.internal.misc.Unsafe!
+    private final val VALUE: kotlin.Long
     final val VM_SUPPORTS_LONG_CAS: kotlin.Boolean
     private final val serialVersionUID: kotlin.Long
-    private final val unsafe: sun.misc.Unsafe!
-    private final val valueOffset: kotlin.Long
     private open external fun VMSupportsCS8(): kotlin.Boolean
 KClass: class java.util.concurrent.atomic.AtomicLongArray : Serializable, Any
   constructors:
     public final fun `<init>`(kotlin.Int): java.util.concurrent.atomic.AtomicLongArray
     public final fun `<init>`(kotlin.LongArray!): java.util.concurrent.atomic.AtomicLongArray
   members:
-    private open fun byteOffset(kotlin.Int): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLongArray.accumulateAndGet(kotlin.Int, kotlin.Long, java.util.function.LongBinaryOperator!): kotlin.Long
     public open fun java.util.concurrent.atomic.AtomicLongArray.addAndGet(kotlin.Int, kotlin.Long): kotlin.Long
-    private open fun java.util.concurrent.atomic.AtomicLongArray.checkedByteOffset(kotlin.Int): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLongArray.compareAndExchange(kotlin.Int, kotlin.Long, kotlin.Long): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLongArray.compareAndExchangeAcquire(kotlin.Int, kotlin.Long, kotlin.Long): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLongArray.compareAndExchangeRelease(kotlin.Int, kotlin.Long, kotlin.Long): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLongArray.compareAndSet(kotlin.Int, kotlin.Long, kotlin.Long): kotlin.Boolean
-    private open fun java.util.concurrent.atomic.AtomicLongArray.compareAndSetRaw(kotlin.Long, kotlin.Long, kotlin.Long): kotlin.Boolean
     public final fun java.util.concurrent.atomic.AtomicLongArray.decrementAndGet(kotlin.Int): kotlin.Long
     public open operator fun java.util.concurrent.atomic.AtomicLongArray.equals(kotlin.Any?): kotlin.Boolean
     public final operator fun java.util.concurrent.atomic.AtomicLongArray.get(kotlin.Int): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLongArray.getAcquire(kotlin.Int): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLongArray.getAndAccumulate(kotlin.Int, kotlin.Long, java.util.function.LongBinaryOperator!): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLongArray.getAndAdd(kotlin.Int, kotlin.Long): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLongArray.getAndDecrement(kotlin.Int): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLongArray.getAndIncrement(kotlin.Int): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLongArray.getAndSet(kotlin.Int, kotlin.Long): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLongArray.getAndUpdate(kotlin.Int, java.util.function.LongUnaryOperator!): kotlin.Long
-    private open fun java.util.concurrent.atomic.AtomicLongArray.getRaw(kotlin.Long): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLongArray.getOpaque(kotlin.Int): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLongArray.getPlain(kotlin.Int): kotlin.Long
     public open fun java.util.concurrent.atomic.AtomicLongArray.hashCode(): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicLongArray.incrementAndGet(kotlin.Int): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLongArray.lazySet(kotlin.Int, kotlin.Long): kotlin.Unit
     public final fun java.util.concurrent.atomic.AtomicLongArray.length(): kotlin.Int
     public final operator fun java.util.concurrent.atomic.AtomicLongArray.set(kotlin.Int, kotlin.Long): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicLongArray.setOpaque(kotlin.Int, kotlin.Long): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicLongArray.setPlain(kotlin.Int, kotlin.Long): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicLongArray.setRelease(kotlin.Int, kotlin.Long): kotlin.Unit
     public open fun java.util.concurrent.atomic.AtomicLongArray.toString(): kotlin.String
     public final fun java.util.concurrent.atomic.AtomicLongArray.updateAndGet(kotlin.Int, java.util.function.LongUnaryOperator!): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLongArray.weakCompareAndSet(kotlin.Int, kotlin.Long, kotlin.Long): kotlin.Boolean
-    private final val base: kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicLongArray.weakCompareAndSetAcquire(kotlin.Int, kotlin.Long, kotlin.Long): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicLongArray.weakCompareAndSetPlain(kotlin.Int, kotlin.Long, kotlin.Long): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicLongArray.weakCompareAndSetRelease(kotlin.Int, kotlin.Long, kotlin.Long): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicLongArray.weakCompareAndSetVolatile(kotlin.Int, kotlin.Long, kotlin.Long): kotlin.Boolean
+    private final val AA: java.lang.invoke.VarHandle!
     private final val java.util.concurrent.atomic.AtomicLongArray.array: kotlin.LongArray!
     private final val serialVersionUID: kotlin.Long
-    private final val shift: kotlin.Int
-    private final val unsafe: sun.misc.Unsafe!
   declaredMembers:
-    private open fun byteOffset(kotlin.Int): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLongArray.accumulateAndGet(kotlin.Int, kotlin.Long, java.util.function.LongBinaryOperator!): kotlin.Long
     public open fun java.util.concurrent.atomic.AtomicLongArray.addAndGet(kotlin.Int, kotlin.Long): kotlin.Long
-    private open fun java.util.concurrent.atomic.AtomicLongArray.checkedByteOffset(kotlin.Int): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLongArray.compareAndExchange(kotlin.Int, kotlin.Long, kotlin.Long): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLongArray.compareAndExchangeAcquire(kotlin.Int, kotlin.Long, kotlin.Long): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLongArray.compareAndExchangeRelease(kotlin.Int, kotlin.Long, kotlin.Long): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLongArray.compareAndSet(kotlin.Int, kotlin.Long, kotlin.Long): kotlin.Boolean
-    private open fun java.util.concurrent.atomic.AtomicLongArray.compareAndSetRaw(kotlin.Long, kotlin.Long, kotlin.Long): kotlin.Boolean
     public final fun java.util.concurrent.atomic.AtomicLongArray.decrementAndGet(kotlin.Int): kotlin.Long
     public final operator fun java.util.concurrent.atomic.AtomicLongArray.get(kotlin.Int): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLongArray.getAcquire(kotlin.Int): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLongArray.getAndAccumulate(kotlin.Int, kotlin.Long, java.util.function.LongBinaryOperator!): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLongArray.getAndAdd(kotlin.Int, kotlin.Long): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLongArray.getAndDecrement(kotlin.Int): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLongArray.getAndIncrement(kotlin.Int): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLongArray.getAndSet(kotlin.Int, kotlin.Long): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLongArray.getAndUpdate(kotlin.Int, java.util.function.LongUnaryOperator!): kotlin.Long
-    private open fun java.util.concurrent.atomic.AtomicLongArray.getRaw(kotlin.Long): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLongArray.getOpaque(kotlin.Int): kotlin.Long
+    public final fun java.util.concurrent.atomic.AtomicLongArray.getPlain(kotlin.Int): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLongArray.incrementAndGet(kotlin.Int): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLongArray.lazySet(kotlin.Int, kotlin.Long): kotlin.Unit
     public final fun java.util.concurrent.atomic.AtomicLongArray.length(): kotlin.Int
     public final operator fun java.util.concurrent.atomic.AtomicLongArray.set(kotlin.Int, kotlin.Long): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicLongArray.setOpaque(kotlin.Int, kotlin.Long): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicLongArray.setPlain(kotlin.Int, kotlin.Long): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicLongArray.setRelease(kotlin.Int, kotlin.Long): kotlin.Unit
     public open fun java.util.concurrent.atomic.AtomicLongArray.toString(): kotlin.String
     public final fun java.util.concurrent.atomic.AtomicLongArray.updateAndGet(kotlin.Int, java.util.function.LongUnaryOperator!): kotlin.Long
     public final fun java.util.concurrent.atomic.AtomicLongArray.weakCompareAndSet(kotlin.Int, kotlin.Long, kotlin.Long): kotlin.Boolean
-    private final val base: kotlin.Int
+    public final fun java.util.concurrent.atomic.AtomicLongArray.weakCompareAndSetAcquire(kotlin.Int, kotlin.Long, kotlin.Long): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicLongArray.weakCompareAndSetPlain(kotlin.Int, kotlin.Long, kotlin.Long): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicLongArray.weakCompareAndSetRelease(kotlin.Int, kotlin.Long, kotlin.Long): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicLongArray.weakCompareAndSetVolatile(kotlin.Int, kotlin.Long, kotlin.Long): kotlin.Boolean
+    private final val AA: java.lang.invoke.VarHandle!
     private final val java.util.concurrent.atomic.AtomicLongArray.array: kotlin.LongArray!
     private final val serialVersionUID: kotlin.Long
-    private final val shift: kotlin.Int
-    private final val unsafe: sun.misc.Unsafe!
   staticMembers:
-    private final val base: kotlin.Int
+    private final val AA: java.lang.invoke.VarHandle!
     private final val serialVersionUID: kotlin.Long
-    private final val shift: kotlin.Int
-    private final val unsafe: sun.misc.Unsafe!
-    private open fun byteOffset(kotlin.Int): kotlin.Long
 KClass: class java.util.concurrent.atomic.AtomicReference : Serializable, Any
   constructors:
     public final <V> fun `<init>`(): java.util.concurrent.atomic.AtomicReference<V> where V : kotlin.Any!
     public final <V> fun `<init>`(V!): java.util.concurrent.atomic.AtomicReference<V> where V : kotlin.Any!
   members:
     public final fun java.util.concurrent.atomic.AtomicReference<V>.accumulateAndGet(V!, java.util.function.BinaryOperator<V!>!): V!
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.compareAndExchange(V!, V!): V!
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.compareAndExchangeAcquire(V!, V!): V!
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.compareAndExchangeRelease(V!, V!): V!
     public final fun java.util.concurrent.atomic.AtomicReference<V>.compareAndSet(V!, V!): kotlin.Boolean
     public open operator fun java.util.concurrent.atomic.AtomicReference<V>.equals(kotlin.Any?): kotlin.Boolean
     public final fun java.util.concurrent.atomic.AtomicReference<V>.get(): V!
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.getAcquire(): V!
     public final fun java.util.concurrent.atomic.AtomicReference<V>.getAndAccumulate(V!, java.util.function.BinaryOperator<V!>!): V!
     public final fun java.util.concurrent.atomic.AtomicReference<V>.getAndSet(V!): V!
     public final fun java.util.concurrent.atomic.AtomicReference<V>.getAndUpdate(java.util.function.UnaryOperator<V!>!): V!
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.getOpaque(): V!
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.getPlain(): V!
     public open fun java.util.concurrent.atomic.AtomicReference<V>.hashCode(): kotlin.Int
     public final fun java.util.concurrent.atomic.AtomicReference<V>.lazySet(V!): kotlin.Unit
     public final fun java.util.concurrent.atomic.AtomicReference<V>.set(V!): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.setOpaque(V!): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.setPlain(V!): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.setRelease(V!): kotlin.Unit
     public open fun java.util.concurrent.atomic.AtomicReference<V>.toString(): kotlin.String
     public final fun java.util.concurrent.atomic.AtomicReference<V>.updateAndGet(java.util.function.UnaryOperator<V!>!): V!
     public final fun java.util.concurrent.atomic.AtomicReference<V>.weakCompareAndSet(V!, V!): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.weakCompareAndSetAcquire(V!, V!): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.weakCompareAndSetPlain(V!, V!): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.weakCompareAndSetRelease(V!, V!): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.weakCompareAndSetVolatile(V!, V!): kotlin.Boolean
+    private final val VALUE: java.lang.invoke.VarHandle!
     private final val serialVersionUID: kotlin.Long
-    private final val unsafe: sun.misc.Unsafe!
-    private final val valueOffset: kotlin.Long
     private final var java.util.concurrent.atomic.AtomicReference<V>.value: V!
   declaredMembers:
     public final fun java.util.concurrent.atomic.AtomicReference<V>.accumulateAndGet(V!, java.util.function.BinaryOperator<V!>!): V!
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.compareAndExchange(V!, V!): V!
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.compareAndExchangeAcquire(V!, V!): V!
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.compareAndExchangeRelease(V!, V!): V!
     public final fun java.util.concurrent.atomic.AtomicReference<V>.compareAndSet(V!, V!): kotlin.Boolean
     public final fun java.util.concurrent.atomic.AtomicReference<V>.get(): V!
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.getAcquire(): V!
     public final fun java.util.concurrent.atomic.AtomicReference<V>.getAndAccumulate(V!, java.util.function.BinaryOperator<V!>!): V!
     public final fun java.util.concurrent.atomic.AtomicReference<V>.getAndSet(V!): V!
     public final fun java.util.concurrent.atomic.AtomicReference<V>.getAndUpdate(java.util.function.UnaryOperator<V!>!): V!
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.getOpaque(): V!
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.getPlain(): V!
     public final fun java.util.concurrent.atomic.AtomicReference<V>.lazySet(V!): kotlin.Unit
     public final fun java.util.concurrent.atomic.AtomicReference<V>.set(V!): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.setOpaque(V!): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.setPlain(V!): kotlin.Unit
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.setRelease(V!): kotlin.Unit
     public open fun java.util.concurrent.atomic.AtomicReference<V>.toString(): kotlin.String
     public final fun java.util.concurrent.atomic.AtomicReference<V>.updateAndGet(java.util.function.UnaryOperator<V!>!): V!
     public final fun java.util.concurrent.atomic.AtomicReference<V>.weakCompareAndSet(V!, V!): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.weakCompareAndSetAcquire(V!, V!): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.weakCompareAndSetPlain(V!, V!): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.weakCompareAndSetRelease(V!, V!): kotlin.Boolean
+    public final fun java.util.concurrent.atomic.AtomicReference<V>.weakCompareAndSetVolatile(V!, V!): kotlin.Boolean
+    private final val VALUE: java.lang.invoke.VarHandle!
     private final val serialVersionUID: kotlin.Long
-    private final val unsafe: sun.misc.Unsafe!
-    private final val valueOffset: kotlin.Long
     private final var java.util.concurrent.atomic.AtomicReference<V>.value: V!
   staticMembers:
+    private final val VALUE: java.lang.invoke.VarHandle!
     private final val serialVersionUID: kotlin.Long
-    private final val unsafe: sun.misc.Unsafe!
-    private final val valueOffset: kotlin.Long
 KClass: interface kotlin.concurrent.atomics.ExperimentalAtomicApi : Annotation, Any
   constructors:
     public final fun `<init>`(): kotlin.concurrent.atomics.ExperimentalAtomicApi
