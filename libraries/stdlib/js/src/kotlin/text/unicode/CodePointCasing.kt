@@ -3,21 +3,23 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.text.codepoints
-
+package kotlin.text.unicode
 
 @ExperimentalCodePointApi
 public actual fun CodePoint.lowercase(): String =
-    if (isBasic) code.toChar().lowercaseImpl() else lowercaseCodePoint().toString()
+    toString().lowercase()
 
 @ExperimentalCodePointApi
 public actual fun CodePoint.lowercaseCodePoint(): CodePoint =
-    lowercaseCodePoint(code).toCodePoint()
+    // there's a single multichar expansion
+    lowercase().codePointAt(0)
 
 @ExperimentalCodePointApi
 public actual fun CodePoint.uppercase(): String =
-    if (isBasic) code.toChar().uppercaseImpl() else uppercaseCodePoint().toString()
+    toString().uppercase()
 
 @ExperimentalCodePointApi
-public actual fun CodePoint.uppercaseCodePoint(): CodePoint =
-    uppercaseCodePoint(code).toCodePoint()
+public actual fun CodePoint.uppercaseCodePoint(): CodePoint {
+    val uppercase = uppercase()
+    return if (uppercase.codePointCount() > 1) this else uppercase.codePointAt(0)
+}
