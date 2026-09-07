@@ -10,10 +10,14 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.name.Name
 import kotlin.collections.contains
 
-/**
- * The representation-neutral C export model produced by phase 1 and consumed by phase 2 (LLVM bridges) and
- * phase 3 (C API generation). Nothing here depends on an actual representation (`KotlinType`/descriptors or IR)
- * beyond [IrSymbol], which is the handle phase 2 needs into codegen.
+/*
+ * C export implementation consists of three phases:
+ *  1. discovery — walk the exported declarations and build the representation-neutral model in this file;
+ *  2. LLVM bridges — generate the runtime bridge functions (codegen);
+ *  3. C API generation — emit the C header/source text.
+ *
+ * The model in this file is produced by phase 1 and consumed by phases 2 and 3. Nothing here depends on an actual
+ * representation (`KotlinType`/descriptors or IR) beyond [IrSymbol], which is the handle phase 2 needs into codegen.
  *
  * Each phase-1 mode supplies implementations of the interfaces below: the K1 mode in [CAdapterGenerator]
  * ([ExportedElementK1], [ExportedDeclarationKey] via a descriptor-backed key) and [CAdapterTypeTranslator]
@@ -78,7 +82,7 @@ internal interface CAdapterModelOwner {
 internal sealed interface ExportedElement {
     val kind: ElementKind
     val scope: ExportedElementScope
-    val owner: CAdapterModelOwner
+    val generator: CAdapterModelOwner
     val isFunction: Boolean
     val isTopLevelFunction: Boolean
     val isConstructor: Boolean

@@ -458,19 +458,19 @@ private fun ExportedElement.translateBody(cfunction: List<SignatureElement>): St
     return builder.toString()
 }
 
-internal fun ExportedElement.makeFunctionPointerString(): String {
+private fun ExportedElement.makeFunctionPointerString(): String {
     val signature = makeCFunctionSignature(true)
     return "${signature[0].type.translateType()} (*${signature[0].name})(${signature.drop(1).map { "${it.type.translateType()} ${it.name}" }.joinToString(", ")});"
 }
 
-internal fun ExportedElement.makeTopLevelFunctionString(): Pair<String, String> {
+private fun ExportedElement.makeTopLevelFunctionString(): Pair<String, String> {
     val signature = makeCFunctionSignature(false)
     val name = signature[0].name
     return (name to
             "extern ${signature[0].type.translateType()} $name(${signature.drop(1).map { "${it.type.translateType()} ${it.name}" }.joinToString(", ")});")
 }
 
-internal fun ExportedElement.makeFunctionDeclaration(): String {
+private fun ExportedElement.makeFunctionDeclaration(): String {
     assert(isFunction)
     val bridge = makeBridgeSignature()
 
@@ -483,9 +483,9 @@ internal fun ExportedElement.makeFunctionDeclaration(): String {
     return builder.toString()
 }
 
-internal fun ExportedElement.makeClassDeclaration(): String {
+private fun ExportedElement.makeClassDeclaration(): String {
     assert(isClass)
-    val typeGetter = "extern \"C\" ${owner.prefix}_KType* ${cname}_type(void);"
+    val typeGetter = "extern \"C\" ${generator.prefix}_KType* ${cname}_type(void);"
     val instanceGetter = if (isSingletonObject) {
         val objectClassC = classType
         """
@@ -503,7 +503,7 @@ internal fun ExportedElement.makeClassDeclaration(): String {
     return "$typeGetter$instanceGetter"
 }
 
-internal fun ExportedElement.makeEnumEntryDeclaration(): String {
+private fun ExportedElement.makeEnumEntryDeclaration(): String {
     assert(isEnumEntry)
     val enumClassC = enumEntryContainingType
 

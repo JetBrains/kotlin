@@ -54,9 +54,6 @@ private fun IrDeclaration.isEffectivelyPublicApi(): Boolean {
 
 private fun isExportedFunction(function: IrFunction): Boolean {
     if (!function.isEffectivelyPublicApi()) return false
-    // Synthetic enum members (`values`/`valueOf`) are not part of the exported surface. In the K1 mode they are
-    // absent from the deserialized member scope; in IR they are present, so filter them here.
-    if (function.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER) return false
     if (function is IrSimpleFunction && function.isFakeOverride) return false
     if (function.isExpect) return false
     if (function is IrSimpleFunction && function.isSuspend) return false
@@ -98,20 +95,18 @@ private data class IrDeclarationNameKey(val declaration: IrDeclaration) : Export
 internal class ExportedElementIr(
         override val kind: ElementKind,
         override val scope: ExportedElementScope,
-        private val declaration: IrDeclaration,
-        private val generator: CAdapterIrGenerator,
+        private val declaration: IrDeclarationWithName,
+        override val generator: CAdapterIrGenerator,
         private val typeTranslator: CAdapterIrTypeTranslator,
 ) : ExportedElement {
     init {
         scope.elements.add(this)
     }
 
-    override val owner: CAdapterModelOwner get() = generator
-
     override lateinit var cname: String
 
     override val name: String
-        get() = (declaration as IrDeclarationWithName).name.asString()
+        get() = declaration.name.asString()
 
     override fun toString(): String =
             "$kind: $name (aliased to ${if (::cname.isInitialized) cname else "<unknown>"})"
@@ -125,12 +120,7 @@ internal class ExportedElementIr(
     override val isTopLevelFunction: Boolean
         get() = (declaration as? IrFunction)?.cNameValue("externName") != null
 
-    override val irSymbol: IrSymbol = when (declaration) {
-        is IrFunction -> declaration.symbol
-        is IrClass -> declaration.symbol
-        is IrEnumEntry -> declaration.symbol
-        else -> error("unexpected $kind element: $declaration")
-    }
+    override val irSymbol: IrSymbol = declaration.symbol
 
     override val cnameImpl: String
         get() = if (isTopLevelFunction) {
@@ -148,13 +138,9 @@ internal class ExportedElementIr(
     private fun IrFunction.cNameValue(key: String): String? =
             getAnnotationArgumentValue<String>(RuntimeNames.cnameAnnotation, key)?.takeIf { it.isNotEmpty() }
 
-    // Parameters that participate in the exported ("public") C signature: everything but the context parameters.
-    private fun IrFunction.explicitCParameters(): List<IrValueParameter> =
-            parameters.filter { it.kind != IrParameterKind.Context }
-
     private fun IrFunction.cParameterTypes(): List<IrType> = buildList {
         if (this@cParameterTypes is IrConstructor) add(parentAsClass.defaultType)
-        explicitCParameters().forEach { add(it.type) }
+        parameters.forEach { add(it.type) }
     }
 
     private val IrFunction.cReturnType: IrType
@@ -172,19 +158,19 @@ internal class ExportedElementIr(
     }
 
     override fun makeCFunctionSignature(shortName: Boolean): List<SignatureElement> {
-        val function = declaration as? IrFunction ?: throw Error("only for functions")
+        val function = declaration as? IrFunction ?: error("only for functions")
         val returned = SignatureElement(uniqueName(function, shortName), typeTranslator.exportedType(function.cReturnType))
 
-        val explicitParameters = function.explicitCParameters()
-        val uniqueNames = generator.paramsToUniqueNames(explicitParameters)
-        val params = explicitParameters
+        val functionParameters = function.parameters
+        val uniqueNames = generator.paramsToUniqueNames(functionParameters)
+        val params = functionParameters
                 .filter { !it.type.isUnit() }
                 .map { SignatureElement(uniqueNames.getValue(it), typeTranslator.exportedType(it.type)) }
         return listOf(returned) + params
     }
 
     override fun makeBridgeSignature(): List<String> {
-        val function = declaration as? IrFunction ?: throw Error("only for functions")
+        val function = declaration as? IrFunction ?: error("only for functions")
         // A constructor's bridge returns Unit (the instance is passed in, not returned), so it does not use cReturnType.
         val returnType = if (function is IrConstructor) generator.unitType else function.returnType
 
@@ -198,23 +184,22 @@ internal class ExportedElementIr(
         return listOf(typeTranslator.translateTypeBridge(returnType)) + params
     }
 
-    private fun addUsedType(type: IrType, set: MutableSet<CExportedType>) {
-        if (type.classifierOrNull is IrTypeParameterSymbol) return
-        set.add(typeTranslator.exportedType(type))
-    }
-
     override fun addUsedTypes(set: MutableSet<CExportedType>) {
+        fun addUsedType(type: IrType) {
+            if (type.classifierOrNull is IrTypeParameterSymbol) return
+            set.add(typeTranslator.exportedType(type))
+        }
         when (val decl = declaration) {
             is IrFunction -> {
                 // Accessors are handled here too (not specially): in K1 `PropertyAccessorDescriptor` is a
                 // `FunctionDescriptor`, so it takes the function branch — recording all parameter types (including
                 // the extension receiver) plus the return type.
                 decl.cParameterTypes().forEach {
-                    addUsedType(it, set)
+                    addUsedType(it)
                 }
-                addUsedType(decl.cReturnType, set)
+                addUsedType(decl.cReturnType)
             }
-            is IrClass -> addUsedType(decl.defaultType, set)
+            is IrClass -> addUsedType(decl.defaultType)
             is IrEnumEntry -> {
                 // The entry's own synthetic type has no dedicated IrType, but K1 exposes it as a `kref`.
                 val fqName = decl.parentAsClass.fqNameWhenAvailable!!.child(decl.name).asString()

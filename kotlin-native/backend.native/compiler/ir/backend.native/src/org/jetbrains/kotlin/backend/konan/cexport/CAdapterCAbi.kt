@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.cexport
 import org.jetbrains.kotlin.backend.konan.KonanPrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 
 /**
  * The C-ABI spellings of the C export. It is shared by:
@@ -69,24 +70,30 @@ internal object CAdapterCAbi {
      * emitted them. These back the `createNullable*` / `getNonNullValueOf*` service functions and their typedefs.
      */
     fun predefinedTypes(prefix: String): List<PredefinedType> {
-        fun primitive(type: KonanPrimitiveType, shortName: String) =
-                PredefinedType(shortName, primitiveCType(prefix, type), krefTypeName(prefix, "kotlin.$shortName"), isUnit = false)
-        fun unsigned(type: UnsignedType, shortName: String) =
-                PredefinedType(shortName, unsignedCType(prefix, type), krefTypeName(prefix, "kotlin.$shortName"), isUnit = false)
+        // shortName (e.g. "Byte") and the kref fq-name (e.g. "kotlin.Byte") both come from the type's classId.
+        fun predefined(classId: ClassId, cType: String, isUnit: Boolean) =
+                PredefinedType(
+                        shortName = classId.shortClassName.asString(),
+                        cType = cType,
+                        nullableCType = krefTypeName(prefix, classId.asSingleFqName().asString()),
+                        isUnit = isUnit,
+                )
+        fun primitive(type: KonanPrimitiveType) = predefined(type.classId, primitiveCType(prefix, type), isUnit = false)
+        fun unsigned(type: UnsignedType) = predefined(type.classId, unsignedCType(prefix, type), isUnit = false)
         return listOf(
-                primitive(KonanPrimitiveType.BYTE, "Byte"),
-                primitive(KonanPrimitiveType.SHORT, "Short"),
-                primitive(KonanPrimitiveType.INT, "Int"),
-                primitive(KonanPrimitiveType.LONG, "Long"),
-                primitive(KonanPrimitiveType.FLOAT, "Float"),
-                primitive(KonanPrimitiveType.DOUBLE, "Double"),
-                primitive(KonanPrimitiveType.CHAR, "Char"),
-                primitive(KonanPrimitiveType.BOOLEAN, "Boolean"),
-                PredefinedType("Unit", "void", krefTypeName(prefix, "kotlin.Unit"), isUnit = true),
-                unsigned(UnsignedType.UBYTE, "UByte"),
-                unsigned(UnsignedType.USHORT, "UShort"),
-                unsigned(UnsignedType.UINT, "UInt"),
-                unsigned(UnsignedType.ULONG, "ULong"),
+                primitive(KonanPrimitiveType.BYTE),
+                primitive(KonanPrimitiveType.SHORT),
+                primitive(KonanPrimitiveType.INT),
+                primitive(KonanPrimitiveType.LONG),
+                primitive(KonanPrimitiveType.FLOAT),
+                primitive(KonanPrimitiveType.DOUBLE),
+                primitive(KonanPrimitiveType.CHAR),
+                primitive(KonanPrimitiveType.BOOLEAN),
+                predefined(StandardClassIds.Unit, "void", isUnit = true),
+                unsigned(UnsignedType.UBYTE),
+                unsigned(UnsignedType.USHORT),
+                unsigned(UnsignedType.UINT),
+                unsigned(UnsignedType.ULONG),
         )
     }
 }
