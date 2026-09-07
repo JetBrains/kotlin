@@ -217,6 +217,7 @@ tasks.withType<KotlinCompilationTask<*>>().configureEach {
                 "-opt-in=kotlin.ExperimentalMultiplatform",
                 "-opt-in=kotlin.contracts.ExperimentalContracts",
                 "-Xreturn-value-checker=full",
+                "-Xcompanion-blocks",
             )
         )
     }

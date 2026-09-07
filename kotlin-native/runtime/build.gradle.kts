@@ -689,6 +689,7 @@ val stdlibBuildTask = tasks.register("stdlibBuildTask", KonanCompileTask::class)
 
             // See libraries/stdlib/build.gradle.kts:
             "-Xreturn-value-checker=full",
+            "-Xcompanion-blocks",
 
             "-Xfragment-refines=nativeMain:nativeWasm,nativeMain:nativeWasmWasi,nativeMain:common,nativeWasmWasi:nativeWasm,nativeWasm:common,nativeWasm:commonNonJvm,commonNonJvm:common",
             "-Xmanifest-native-targets=${platformManager.targetValues.joinToString(separator = ",") { it.visibleName }}",
