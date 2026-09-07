@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.name.ScriptNames
 import org.jetbrains.kotlin.scripting.compiler.plugin.KOTLIN_SCRIPTING_PLUGIN_ID
 import org.jetbrains.kotlin.scripting.compiler.plugin.ReplSnippetConfigurationCodec
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
@@ -560,7 +560,7 @@ private class StatelessReplCompiler(
         withSourceFile(source, name) { scriptFile ->
             runWithK2JVMCompiler(buildArguments(scriptFile, outputDir).toTypedArray())
         }
-        val classId = ClassId(FqName.ROOT, NameUtils.getSnippetTargetClassName(name))
+        val classId = ClassId(FqName.ROOT, ScriptNames.getSnippetTargetClassName(name))
         priorOutputDirs += outputDir
         priorClassIds += classId
         lastOutputDir = outputDir
