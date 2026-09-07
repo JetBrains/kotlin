@@ -320,6 +320,18 @@ private abstract class JdkVersionDependentFlagsProvider : CommandLineArgumentPro
 private fun ProviderFactory.testProperty(property: TestProperty) =
     gradleProperty(property.fullName).orElse(gradleProperty(property.shortName))
 
+private fun Project.hostXcodeConfiguration(): Configuration =
+    configurations.findByName(HOST_XCODE_CONFIGURATION) ?: run {
+        val hostXcode = dependencies.project(":kotlin-native:dependencies", "hostXcode")
+        configurations.create(HOST_XCODE_CONFIGURATION) {
+            isCanBeConsumed = false
+            isCanBeResolved = true
+            dependencies.add(hostXcode)
+        }
+    }
+
+private const val HOST_XCODE_CONFIGURATION = "nativeTestHostXcode"
+
 /**
  * @param taskName Name of Gradle task.
  * @param tag Optional JUnit test tag. See https://junit.org/junit5/docs/current/user-guide/#writing-tests-tagging-and-filtering
@@ -425,6 +437,16 @@ fun ProjectTestsExtension.nativeTestTask(
 
         // Pass the current Gradle task name so test can use it in logging.
         environment("GRADLE_TASK_NAME", path)
+
+        if (HostManager.hostIsMac &&
+            kotlinBuildProperties.booleanProperty("kotlin.native.internalServer.wholeXcode", false).get()
+        ) {
+            dependsOn(project.hostXcodeConfiguration())
+            environment(
+                "DEVELOPER_DIR",
+                project.hostXcodeConfiguration().singleFile.resolve("Contents/Developer").absolutePath
+            )
+        }
 
         useJUnitPlatform {
             // Note: arbitrary JUnit tag expressions can be used in this property.

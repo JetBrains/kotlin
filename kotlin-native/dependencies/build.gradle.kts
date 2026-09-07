@@ -42,11 +42,22 @@ val llvmDevBinaryData = configurations.create("llvmDevBinaryData") {
     isCanBeResolved = false
 }
 
+val hostXcode = configurations.create("hostXcode") {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+}
+
 artifacts {
     val llvmHome = nativeDependencies.hostPlatform.llvmHome!!
     val llvmDir = file("${nativeDependencies.nativeDependenciesRoot}/$llvmHome")
     add(llvmDevBinaryData.name, llvmDir) {
         type = "directory"
         builtBy(nativeDependencies.targetDependency())
+    }
+    nativeDependenciesDownloader.hostXcodeApp?.let { xcodeApp ->
+        add(hostXcode.name, xcodeApp) {
+            type = "directory"
+            builtBy(nativeDependencies.targetDependency())
+        }
     }
 }

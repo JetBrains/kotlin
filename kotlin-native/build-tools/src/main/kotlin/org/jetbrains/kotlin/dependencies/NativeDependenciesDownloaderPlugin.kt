@@ -14,12 +14,18 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.PlatformManagerPlugin
+import org.jetbrains.kotlin.XcodeProvisioningSpec
+import org.jetbrains.kotlin.isInternalServerEnabled
+import org.jetbrains.kotlin.isWholeXcodeProvisioningEnabled
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.target.TargetDomainObjectContainer
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import org.jetbrains.kotlin.utils.capitalized
+import java.io.File
 import java.nio.file.Paths
 import javax.inject.Inject
 import kotlin.io.path.name
@@ -81,6 +87,33 @@ abstract class NativeDependenciesDownloaderExtension @Inject constructor(private
      */
     abstract val repositoryURL: Property<String>
 
+    private val platformManager = project.extensions.getByType<PlatformManager>()
+
+    private val expectedXcode: XcodeProvisioningSpec? by lazy {
+        if (!project.isWholeXcodeProvisioningEnabled()) return@lazy null
+        val loader = platformManager.loader(HostManager.host)
+        require(loader is KonanPropertiesLoader) {
+            "loader for ${HostManager.host} must implement ${KonanPropertiesLoader::class}"
+        }
+        fun requiredProperty(name: String) = loader.properties.getProperty(name)
+                ?: error("whole-Xcode provisioning is on but '$name' is missing from konan.properties")
+        XcodeProvisioningSpec(
+                konanDataDir = project.providers.gradleProperty("konan.data.dir").orNull,
+                version = requiredProperty("xcodeVersion"),
+                build = requiredProperty("xcodeBuild"),
+                artifactUrl = requiredProperty("xcodeArtifactUrl"),
+                serverEnabled = project.isInternalServerEnabled(),
+                isTeamCity = project.providers.environmentVariable("TEAMCITY_VERSION").isPresent,
+        )
+    }
+
+    internal fun xcodeProvisioningFor(target: KonanTarget): XcodeProvisioningSpec? =
+            expectedXcode?.takeIf { target.family.isAppleFamily }
+
+    val hostXcodeApp: File? by lazy {
+        expectedXcode?.let { dependenciesDirectory.get().asFile.resolve("xcode_${it.version}_${it.build}") }
+    }
+
     abstract class Target @Inject constructor(
             private val owner: NativeDependenciesDownloaderExtension,
             private val _target: TargetWithSanitizer,
@@ -117,6 +150,7 @@ abstract class NativeDependenciesDownloaderExtension @Inject constructor(private
             target.set(this@Target.target)
             dependenciesDirectory.set(owner.dependenciesDirectory)
             repositoryURL.set(owner.repositoryURL)
+            owner.xcodeProvisioningFor(this@Target.target)?.let { xcodeProvisioning.set(it) }
         }
 
         init {
@@ -144,6 +178,16 @@ abstract class NativeDependenciesDownloaderExtension @Inject constructor(private
                                     name = dependencyPath.name
                                     type = "directory"
                                     extension = ""
+                                }
+                            }
+                        }
+                        if (target.family.isAppleFamily) {
+                            owner.hostXcodeApp?.let { xcodeApp ->
+                                artifact(xcodeApp) {
+                                    name = xcodeApp.name
+                                    type = "directory"
+                                    extension = ""
+                                    builtBy(task)
                                 }
                             }
                         }
