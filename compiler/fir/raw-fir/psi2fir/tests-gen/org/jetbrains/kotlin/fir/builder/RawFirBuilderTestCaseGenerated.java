@@ -1015,6 +1015,12 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
       }
 
       @Test
+      @TestMetadata("errorSafeCall.kt")
+      public void testErrorSafeCall() {
+        run("errorSafeCall.kt");
+      }
+
+      @Test
       @TestMetadata("unionTypes.kt")
       public void testUnionTypes() {
         run("unionTypes.kt");

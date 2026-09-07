@@ -667,14 +667,18 @@ class LightTreeRawFirExpressionBuilder(
      */
     private fun convertQualifiedExpression(dotQualifiedExpression: LighterASTNode): FirExpression {
         var isSelector = false
-        var isSafe = false
+        var kind: FirSafeCallKind? = null
         var firSelector: FirExpression? = null
         var firReceiver: FirExpression? = null //before dot
         dotQualifiedExpression.forEachChildren {
             when (val tokenType = it.tokenType) {
                 DOT -> isSelector = true
                 SAFE_ACCESS -> {
-                    isSafe = true
+                    kind = FirSafeCallKind.NullSafe
+                    isSelector = true
+                }
+                ERROR_SAFE_ACCESS -> {
+                    kind = FirSafeCallKind.ErrorSafe
                     isSelector = true
                 }
                 else -> {
@@ -707,12 +711,13 @@ class LightTreeRawFirExpressionBuilder(
 
         return when (firSelector) {
             is FirQualifiedAccessExpression -> {
-                if (isSafe) {
+                if (kind != null) {
                     @OptIn(FirImplementationDetail::class)
                     firSelector.replaceSource(dotQualifiedExpression.toFirSourceElement(KtFakeSourceElementKind.DesugaredSafeCallExpression))
                     return firSelector.createSafeCall(
                         firReceiver!!,
-                        dotQualifiedExpression.toFirSourceElement()
+                        dotQualifiedExpression.toFirSourceElement(),
+                        kind
                     )
                 }
                 convertFirSelector(firSelector, dotQualifiedExpression.toFirSourceElement(), firReceiver!!)

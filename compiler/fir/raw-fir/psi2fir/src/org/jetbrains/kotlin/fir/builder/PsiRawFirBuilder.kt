@@ -3757,6 +3757,7 @@ open class PsiRawFirBuilder(
             }.pullUpSafeCallIfNecessary()
         }
 
+        @KtExperimentalApi
         override fun visitQualifiedExpression(expression: KtQualifiedExpression, data: FirElement?): FirElement {
             val receiver = expression.receiverExpression.toFirExpression("Incorrect receiver expression")
 
@@ -3772,12 +3773,18 @@ open class PsiRawFirBuilder(
             val firSelector = selector.toFirExpression("Incorrect selector expression")
             return when (firSelector) {
                 is FirQualifiedAccessExpression -> {
-                    if (expression is KtSafeQualifiedExpression) {
+                    val kind = when (expression) {
+                        is KtSafeQualifiedExpression -> FirSafeCallKind.NullSafe
+                        is KtErrorSafeQualifiedExpression -> FirSafeCallKind.ErrorSafe
+                        else -> null
+                    }
+                    if (kind != null) {
                         @OptIn(FirImplementationDetail::class)
                         firSelector.replaceSource(expression.toFirSourceElement(KtFakeSourceElementKind.DesugaredSafeCallExpression))
                         return firSelector.createSafeCall(
                             receiver,
-                            expression.toFirSourceElement()
+                            expression.toFirSourceElement(),
+                            kind,
                         )
                     }
 

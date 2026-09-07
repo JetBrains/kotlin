@@ -26,6 +26,7 @@ abstract class FirSafeCallExpression : FirExpression() {
     abstract val receiver: FirExpression
     abstract val checkedSubjectRef: FirExpressionRef<FirCheckedSafeCallSubject>
     abstract val selector: FirStatement
+    abstract val kind: FirSafeCallKind
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitSafeCallExpression(this, data)

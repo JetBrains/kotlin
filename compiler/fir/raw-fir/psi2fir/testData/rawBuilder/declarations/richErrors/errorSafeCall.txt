@@ -1,0 +1,10 @@
+FILE: errorSafeCall.kt
+    public final? error class Foo : R|kotlin/Any| {
+        public? [ContainingClassKey=Foo] constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public? final? fun test(f: String | Foo): R|kotlin/Unit| {
+        lval x: <implicit> = f#|.{ $subj$.length# }
+    }

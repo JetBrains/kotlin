@@ -164,3 +164,4 @@ val toSymbolUtilityFunction = type("fir.types", "toLookupTag")
 
 val inaccessibleReceiverKindType = type("fir.expressions", "InaccessibleReceiverKind")
 val functionConversionKindType = generatedType("expressions", "FirFunctionConversionKind")
+val safeCallKind = generatedType("expressions", "FirSafeCallKind")

@@ -1226,6 +1226,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("checkedSubjectRef", safeCallCheckedSubjectReferenceType)
         // One that uses checkedReceiver as a receiver
         +field("selector", statement, withReplace = true, withTransform = true)
+        +field("kind", safeCallKind)
     }
 
     val checkedSafeCallSubject: Element by element(Expression) {
