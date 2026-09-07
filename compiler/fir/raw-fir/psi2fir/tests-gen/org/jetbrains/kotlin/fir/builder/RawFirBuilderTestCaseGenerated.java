@@ -1013,6 +1013,12 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
       public void testErrorClass() {
         run("errorClass.kt");
       }
+
+      @Test
+      @TestMetadata("unionTypes.kt")
+      public void testUnionTypes() {
+        run("unionTypes.kt");
+      }
     }
   }
 

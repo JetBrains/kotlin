@@ -642,6 +642,10 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     FirTypeResolutionResult(ConeErrorType(ConeForbiddenIntersection), diagnostic = null)
                 }
             }
+            is FirUnionTypeRef -> {
+                // TODO(KT-89098) proper resolution of union types, don't forget about nullability
+                FirTypeResolutionResult(typeRef.types.first().coneType, diagnostic = null)
+            }
             else -> error(typeRef.render())
         }.also {
             session.lookupTracker?.recordTypeResolveAsLookup(it.type, typeRef.source, configuration.useSiteFile?.source)
