@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.lombok.checkers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -15,10 +16,13 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.processAllDeclarations
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -41,10 +45,15 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
         val lombokService = context.session.lombokService
 
         val classBuilder = lombokService.getBuilder(declaration.symbol) ?: lombokService.getSuperBuilder(declaration.symbol)
-        if (classBuilder != null) {
-            checkPrimaryConstructorParameters(declaration, lombokService)
-            declaration.primaryConstructorIfAny(context.session)?.let {
-                checkToBuilderCanObtainValues(declaration, classBuilder, it)
+        // A Java class builds out of its fields and so is never short of anything to build from; only a Kotlin
+        // class goes through the primary constructor, exactly as `AbstractBuilderGenerator` splits the two.
+        if (classBuilder != null && declaration !is FirJavaClass && declaration.isBuilderCapableClass) {
+            val primaryConstructor = declaration.primaryConstructorIfAny(context.session)
+            if (primaryConstructor == null) {
+                checkClassHasPrimaryConstructor(classBuilder)
+            } else {
+                checkPrimaryConstructorParameters(declaration, primaryConstructor, lombokService)
+                checkToBuilderCanObtainValues(declaration, classBuilder, primaryConstructor)
             }
         }
 
@@ -106,6 +115,35 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
     }
 
     /**
+     * Whether a class-level builder is generated for [this] class at all - the `CLASS_ONLY` target `@Builder`
+     * allows, minus a local class, which has no companion object to host `builder()`. Every other shape is
+     * already `ANNOTATION_HAS_NO_EFFECT` (an interface and an object have no constructor to call, an enum's
+     * takes synthetic parameters), and saying anything further about its constructors would only pile on.
+     */
+    private val FirRegularClass.isBuilderCapableClass: Boolean
+        get() = classKind == ClassKind.CLASS && !isLocal
+
+    /**
+     * A class-level builder builds out of the primary constructor and nothing else - see
+     * [checkPrimaryConstructorParameters] - so a class that declares none leaves `build()` with nothing to call
+     * and every builder field with nothing to reach. Real Lombok has no such shape to reject: a Java class
+     * always has a constructor taking all of its fields for `@Builder` to generate.
+     *
+     * `@Builder` on one of the class's constructors is the supported way to build such a class, and the message
+     * says so.
+     */
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkClassHasPrimaryConstructor(builder: ConeLombokAnnotations.AbstractBuilder) {
+        val annotationName = builder.annotation.toAnnotationClassId(context.session)?.shortClassName ?: return
+        reporter.reportOn(
+            builder.annotation.source,
+            LombokFirDiagnostics.BUILDER_REQUIRES_PRIMARY_CONSTRUCTOR,
+            annotationName,
+            context,
+        )
+    }
+
+    /**
      * Unless it is spelled out via `builderClassName`, the builder class name is inferred from the annotated
      * function's return type. That name is needed as early as the SUPERTYPES stage, so it can only be read off
      * the *syntactic* return type (see `AbstractBuilderGenerator.getBuilderClassShortName`) — an implicitly
@@ -126,8 +164,11 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
      * `@Builder.Default` and an initializer on one have nothing to do with the builder and are left alone here.
      */
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkPrimaryConstructorParameters(declaration: FirRegularClass, lombokService: LombokService) {
-        val primaryConstructor = declaration.primaryConstructorIfAny(context.session) ?: return
+    private fun checkPrimaryConstructorParameters(
+        declaration: FirRegularClass,
+        primaryConstructor: FirConstructorSymbol,
+        lombokService: LombokService,
+    ) {
         val promotedProperties = declaration.promotedPropertiesByName()
 
         for (parameter in primaryConstructor.valueParameterSymbols) {
