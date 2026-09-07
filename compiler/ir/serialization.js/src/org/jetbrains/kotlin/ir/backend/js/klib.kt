@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrFileMetadata
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.collectJsExportNames
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.metadataVersion
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
-import org.jetbrains.kotlin.utils.toSmartList
 import java.io.File
 import java.nio.file.Path
 import java.util.*
@@ -272,7 +270,7 @@ fun serializeModuleIntoKlib(
                     settings = IrSerializationSettings(configuration),
                     irDiagnosticReporter,
                     irBuiltIns,
-                ) { JsIrFileMetadata(moduleJsExportNames[it]?.values?.toSmartList() ?: emptyList()) }
+                )
             },
             metadataSerializer = metadataSerializer,
             processCompiledFileData = incrementalResultsConsumer?.let { icConsumer ->
