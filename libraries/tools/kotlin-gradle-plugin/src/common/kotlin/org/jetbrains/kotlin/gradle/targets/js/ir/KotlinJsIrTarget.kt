@@ -11,27 +11,21 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
-import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
 import org.jetbrains.kotlin.gradle.targets.js.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetConfigurator.Companion.configureJsDefaultOptions
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
-import org.jetbrains.kotlin.gradle.targets.wasm.KotlinWasmtimeSubtarget
-import org.jetbrains.kotlin.gradle.targets.wasm.WasmtimeEnvironmentConfigurator
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
-import org.jetbrains.kotlin.gradle.targets.wasm.dsl.KotlinWasmtimeDsl
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmResolverPlugin
@@ -259,29 +253,6 @@ internal constructor(
 
     override fun nodejs(body: KotlinJsNodeDsl.() -> Unit) {
         body(nodejs)
-    }
-    //endregion
-
-    //region wasmtime
-    @OptIn(ExperimentalWasmDsl::class)
-    private val wasmtimeLazyDelegate = lazy {
-        check(wasmTargetType == KotlinWasmTargetType.WASI) {
-            "Wasmtime execution environment is supported only for the Kotlin/Wasm WASI target."
-        }
-
-        addSubTarget(KotlinWasmtimeSubtarget::class.java) {
-            configureSubTarget()
-            subTargetConfigurators.add(LibraryConfigurator(this))
-            subTargetConfigurators.add(WasmtimeEnvironmentConfigurator(this))
-        }
-    }
-
-    @ExperimentalWasmDsl
-    private val wasmtime: KotlinWasmtimeDsl by wasmtimeLazyDelegate
-
-    @ExperimentalWasmDsl
-    override fun wasmtime(body: KotlinWasmtimeDsl.() -> Unit) {
-        body(wasmtime)
     }
     //endregion
 
