@@ -44,6 +44,8 @@ class KaptContextForStubGeneration(
 ) : KaptContext(options, withJdk, logger) {
     private val treeMaker = TreeMaker.instance(context)
 
+    val compiledClassByName: Map<String, ClassNode> = compiledClasses.associateBy { it.name!! }
+
     // FirSession can be null in case of incremental compilation, e.g. if only Java files need reprocessing,
     // or all affected Kotlin sources are removed.
     val firSession: FirSession? = firFiles.firstOrNull()?.moduleData?.session
