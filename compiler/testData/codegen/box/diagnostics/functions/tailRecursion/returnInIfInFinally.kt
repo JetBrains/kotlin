@@ -1,12 +1,12 @@
 
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec<!> fun test(counter : Int) : Int {
+<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun test(counter : Int) : Int {
     if (counter == 0) return 0
 
     try {
         // do nothing
     } finally {
         if (counter > 0) {
-            return test(counter - 1)
+            return <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>test<!>(counter - 1)
         }
     }
 

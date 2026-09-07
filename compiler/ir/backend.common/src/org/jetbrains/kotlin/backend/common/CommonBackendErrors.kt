@@ -27,6 +27,8 @@ object CommonBackendErrors : KtDiagnosticsContainer() {
 
     val NON_TAIL_RECURSIVE_CALL by warning0<PsiElement>(REFERENCED_NAME_BY_QUALIFIED)
 
+    val TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED by warning0<PsiElement>(REFERENCED_NAME_BY_QUALIFIED)
+
     val NO_TAIL_CALLS_FOUND by warning0<PsiElement>(TAILREC_MODIFIER)
 
     val TAILREC_ON_VIRTUAL_MEMBER_ERROR by error0<PsiElement>(TAILREC_MODIFIER)
@@ -53,6 +55,10 @@ object KtDefaultCommonBackendErrorMessages : BaseDiagnosticRendererFactory() {
         map.put(
             CommonBackendErrors.NON_TAIL_RECURSIVE_CALL,
             "Recursive call is not a tail call.",
+        )
+        map.put(
+            CommonBackendErrors.TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED,
+            "Tail recursion optimization inside try/catch/finally is not supported.",
         )
         map.put(
             CommonBackendErrors.NO_TAIL_CALLS_FOUND,

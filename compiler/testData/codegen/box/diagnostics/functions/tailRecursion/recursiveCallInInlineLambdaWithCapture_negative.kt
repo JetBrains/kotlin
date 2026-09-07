@@ -1,6 +1,6 @@
 // ===== Inline lambda capturing receiver in member function =====
 class Counter(val value: Int) {
-    <!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec<!> fun countTo(target: Int, steps: Int): Int {
+    <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun countTo(target: Int, steps: Int): Int {
         if (value + steps >= target) return steps
         run {
             return <!NON_TAIL_RECURSIVE_CALL!>countTo<!>(target, steps + 1)

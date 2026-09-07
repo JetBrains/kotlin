@@ -1,4 +1,4 @@
-<!NO_TAIL_CALLS_FOUND_IN_IR!>tailrec<!> fun noTails() {
+<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun noTails() {
     // nothing here
 }
 

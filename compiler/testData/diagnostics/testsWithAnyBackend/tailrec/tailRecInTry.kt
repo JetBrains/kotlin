@@ -3,23 +3,23 @@
 
 <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo1() {
     try {
-        foo1()
+        <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo1<!>()
     } catch (e: Exception) {
-        foo1()
+        <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo1<!>()
     } finally {
-        foo1()
+        <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo1<!>()
     }
 }
 
 <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo2() {
     try {
-        foo2()
+        <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo2<!>()
         foo1()
     } catch (e: Exception) {
-        foo2()
+        <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo2<!>()
         foo1()
     } finally {
-        foo2()
+        <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo2<!>()
         foo1()
     }
 }
@@ -27,17 +27,17 @@
 <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo3() {
     try {
         try {
-            foo3()
+            <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo3<!>()
         } finally {
         }
     } catch (e: Exception) {
         try {
-            foo3()
+            <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo3<!>()
         } finally {
         }
     } finally {
         try {
-            foo3()
+            <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo3<!>()
         } finally {
         }
     }
@@ -46,19 +46,19 @@
 <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo4() {
     try {
         if (true) {
-            foo4()
+            <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo4<!>()
         } else {
             foo1()
         }
     } catch (e: Exception) {
         if (true) {
-            foo4()
+            <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo4<!>()
         } else {
             foo1()
         }
     } finally {
         if (true) {
-            foo4()
+            <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo4<!>()
         } else {
             foo1()
         }

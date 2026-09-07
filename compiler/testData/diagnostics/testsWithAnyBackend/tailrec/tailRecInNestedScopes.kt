@@ -183,7 +183,7 @@ inline fun myCrossinlineRun(crossinline f: () -> Unit) = f()
 // Tail call inside try-catch — not supported
 <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun tailCallInTry(x: Int = 0): Int {
     try {
-        return tailCallInTry(x - 1)
+        return <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>tailCallInTry<!>(x - 1)
     } catch (e: Exception) {
         return 0
     }
