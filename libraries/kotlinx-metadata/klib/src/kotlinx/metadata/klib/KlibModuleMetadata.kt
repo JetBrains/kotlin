@@ -63,6 +63,11 @@ interface KlibModuleFragmentWriteStrategy {
  * Represents the parsed metadata of KLIB.
  */
 class KlibModuleMetadata(
+    @Deprecated(
+        "The module name is going to be dropped from KLIB metadata (KT-87197). " +
+                "Use the `unique_name` property from the KLIB manifest instead.",
+        level = DeprecationLevel.WARNING,
+    )
     val name: String,
     val fragments: List<KmModuleFragment>,
     val metadataVersion: KlibMetadataVersion,
@@ -148,6 +153,7 @@ class KlibModuleMetadata(
                 }.let(readStrategy::processModuleParts)
             }
             return KlibModuleMetadata(
+                // TODO(KT-87197): Stop reading the module name once the metadata header is dropped.
                 moduleHeader.moduleName,
                 moduleFragments,
                 library.metadataVersion,
@@ -188,10 +194,12 @@ class KlibModuleMetadata(
                 KlibModuleFragmentWriter(c.strings as ApproximatingStringTable, c.contextExtensions).also { it.writeModuleFragment(mf) }.write()
             }
         }
-        // This context and string table is only required for module-level annotations.
+
+        @Suppress("DEPRECATION") // The name keeps being written to the header until it is dropped (KT-87197).
+        val moduleName = name
         return SerializedKlibMetadata(
             KlibMetadataProtoBuf.Header.newBuilder().also { proto ->
-                proto.moduleName = wrapModuleName(name)
+                proto.moduleName = wrapModuleName(moduleName)
                 proto.addAllPackageFragmentName(packageFragmentNames)
                 proto.addAllEmptyPackage(emptyPackageFragmentNames)
             }.build().toByteArray(),

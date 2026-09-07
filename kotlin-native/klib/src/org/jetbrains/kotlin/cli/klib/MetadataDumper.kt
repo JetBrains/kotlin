@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.kotlinp.klib.*
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadataVersion
+import org.jetbrains.kotlin.library.uniqueName
 import java.util.LinkedList
 import java.util.Queue
 import kotlin.metadata.KmAnnotation
@@ -38,10 +39,12 @@ internal class MetadataDumper(private val output: KlibToolOutput) {
     fun dumpLibrary(library: KotlinLibrary, metadataDumpMode: MetadataDumpMode) {
         val module = loadModuleMetadata(library)
 
+        val moduleName = library.uniqueName
+
         when (metadataDumpMode) {
-            DEFAULT -> dumpMetadataInDefaultMode(module)
-            COMPACT_WITH_STABLE_ORDER -> dumpMetadataInCompactMode(module)
-            ULTRACOMPACT_WITH_STABLE_ORDER -> dumpMetadataInUltracompactMode(module)
+            DEFAULT -> dumpMetadataInDefaultMode(moduleName, module)
+            COMPACT_WITH_STABLE_ORDER -> dumpMetadataInCompactMode(moduleName, module)
+            ULTRACOMPACT_WITH_STABLE_ORDER -> dumpMetadataInUltracompactMode(moduleName, module)
         }
     }
 
@@ -56,8 +59,8 @@ internal class MetadataDumper(private val output: KlibToolOutput) {
             }
     )
 
-    private fun preprocessMetadataForTests(module: KlibModuleMetadata) = KlibModuleMetadata(
-        name = module.name,
+    private fun preprocessMetadataForTests(moduleName: String, module: KlibModuleMetadata) = KlibModuleMetadata(
+        name = moduleName,
         fragments = module.fragments.groupBy { it.fqName }.mapNotNull { [packageFqName, fragments] ->
             val classNames = fragments.flatMap { it.className }.sorted()
             val classes = fragments.flatMap { it.classes }.sortedBy { it.name }
@@ -96,28 +99,28 @@ internal class MetadataDumper(private val output: KlibToolOutput) {
     private fun KmFunction.sortingKey() = functionId("")
     private fun KmProperty.sortingKey() = propertyId("")
 
-    private fun dumpMetadataInDefaultMode(module: KlibModuleMetadata) {
+    private fun dumpMetadataInDefaultMode(moduleName: String, module: KlibModuleMetadata) {
         KlibKotlinp(
                 settings = Settings(
                         isVerbose = true,
                         sortDeclarations = false,
                 ),
                 signatureComputer = null
-        ).renderModule(module, Printer(output))
+        ).renderModule(moduleName, module, Printer(output))
     }
 
-    private fun dumpMetadataInCompactMode(module: KlibModuleMetadata) {
+    private fun dumpMetadataInCompactMode(moduleName: String, module: KlibModuleMetadata) {
         KlibKotlinp(
                 settings = Settings(
                         isVerbose = true,
                         sortDeclarations = true,
                 ),
                 signatureComputer = null
-        ).renderModule(preprocessMetadataForTests(module), Printer(output))
+        ).renderModule(moduleName, preprocessMetadataForTests(moduleName, module), Printer(output))
     }
 
-    private fun dumpMetadataInUltracompactMode(module: KlibModuleMetadata) {
-        buildString { UltracompactKlibKotlinp().renderModule(preprocessMetadataForTests(module), Printer(this)) }.lineSequence()
+    private fun dumpMetadataInUltracompactMode(moduleName: String, module: KlibModuleMetadata) {
+        buildString { UltracompactKlibKotlinp().renderModule(preprocessMetadataForTests(moduleName, module), Printer(this)) }.lineSequence()
                 .dropBlankLines()
                 .removeIndents()
                 .dropSimpleComments()
