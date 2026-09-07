@@ -50,9 +50,9 @@ abstract class IrModuleSerializer<Serializer : IrFileSerializer>(
             globalDeclarationTable.clashDetector.reportErrorsTo(diagnosticReporter)
         }
 
-        val inlinableFunctionsFile = module.preparedInlineFunctionCopies?.groupBy { it.file }?.map {
+        val inlinableFunctionsFiles = module.preparedInlineFunctionCopies?.groupBy { it.file }?.map {
             serializePreparedInlinableFunctions(it.key, it.value)
         }
-        return SerializedIrModule(serializedFiles, inlinableFunctionsFile ?: emptyList())
+        return SerializedIrModule(serializedFiles, inlinableFunctionsFiles ?: emptyList())
     }
 }

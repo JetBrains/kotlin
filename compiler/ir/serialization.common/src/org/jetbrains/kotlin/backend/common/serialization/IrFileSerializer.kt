@@ -1608,14 +1608,12 @@ open class IrFileSerializer(
 
     fun serializeIrFileWithPreparedInlineFunctions(file: IrFile, preparedFunctions: List<IrSimpleFunction>): SerializedIrFile {
         val topLevelDeclarations = preparedFunctions.map { function ->
-            if (function.file != file) {
-                error(
-                    """
-                        |Given function is located in the incorrect file
-                        |FILE: ${file.render()}
-                        |FUNCTION:${function.render()}
-                    """.trimMargin()
-                )
+            require(function.file == file) {
+                """
+                    |Given function is located in the incorrect file
+                    |FILE: ${file.render()}
+                    |FUNCTION:${function.render()}
+                """.trimMargin()
             }
 
             inFile(function.file) {
