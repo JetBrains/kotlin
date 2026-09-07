@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
+import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.getSuperTypes
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -46,22 +48,37 @@ import org.jetbrains.kotlin.lombok.generators.isExcludedByDollarPrefix
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
+
+/**
+ * A modifier that narrows what a class is beyond its [KotlinTarget], which knows every one of these as a plain
+ * `CLASS` alone. An annotation the plugin cannot act upon such a class with therefore has to name the modifier
+ * separately, in [ImplementedAnnotationsInfo.unsupportedClassModifiers], rather than leave it out of a target
+ * list that has no way to express it.
+ *
+ * [presentation] is the modifier as it is written in the source, which is what the diagnostic names.
+ */
+enum class ClassModifier(val presentation: String) {
+    VALUE("value"),
+    INNER("inner"),
+}
 
 private class ImplementedAnnotationsInfo(
     val allowedTargetsMap: Set<KotlinTarget>,
     val unsupportedArguments: Set<Name> = emptySet(),
     /**
-     * A value class is a plain `CLASS` as far as [KotlinTarget] is concerned, so an annotation that cannot act
-     * upon one has to say so separately.
+     * The [ClassModifier]s the annotation cannot act upon, reported as `ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS`.
+     * The first one the annotated class carries is the one named, so the order here is the order of preference.
      */
-    val isSupportedOnValueClass: Boolean = true,
-    /**
-     * An inner class is a plain `CLASS` as far as [KotlinTarget] is concerned, so an annotation that cannot act
-     * upon one has to say so separately.
-     */
-    val isSupportedOnInnerClass: Boolean = true,
+    val unsupportedClassModifiers: Set<ClassModifier> = emptySet(),
 )
+
+/**
+ * The [ClassModifier]s [this] class carries, to be matched against what an annotation cannot act upon.
+ */
+private fun FirRegularClass.classModifiers(): Set<ClassModifier> = buildSet {
+    if (isInlineOrValue) add(ClassModifier.VALUE)
+    if (isInner) add(ClassModifier.INNER)
+}
 
 private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo> = buildMap {
     val logInfo = ImplementedAnnotationsInfo(
@@ -119,13 +136,13 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
         // constructor that only calls the superclass one leaves nothing to return, and the JVM backend used to
         // fail outright on its instance initializer with "Unexpected IR element found during code generation"
         // (KT-88705).
-        isSupportedOnValueClass = false,
+        //
         // An inner class's generated constructor has to keep its delegating call in FIR - `InnerClassesLowering`
         // takes a super-delegating constructor without an `IrInstanceInitializerCall` for a `this(...)` delegation
         // - and that call is what makes fir2ir inline the class's property initializers into it. An initializer
         // referencing a primary constructor parameter then crashed the JVM backend with "No mapping for symbol"
         // (KT-88659). The noarg plugin doesn't support an inner class either, for the same reason.
-        isSupportedOnInnerClass = false,
+        unsupportedClassModifiers = setOf(ClassModifier.VALUE, ClassModifier.INNER),
     )
     this[LombokNames.EQUALS_AND_HASH_CODE_ID] = ImplementedAnnotationsInfo(
         allowedTargetsMap = setOf(
@@ -182,46 +199,47 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
  * [defaultTargets] is what the annotated element is, expressed in the terms an annotation's `@Target` speaks:
  * [getActualTargetList] for a declaration, plain [KotlinTarget.EXPRESSION] for an expression.
  *
- * [isValueClass] and [isInnerClass] tell whether the annotated declaration is a value class or an inner class,
- * neither of which [defaultTargets] can express: [KotlinTarget] knows both only as a plain `CLASS`.
+ * [annotatedClass] is the annotated declaration where it is a class, which [defaultTargets] cannot say enough
+ * about on its own: every [ClassModifier] is a plain `CLASS` as far as [KotlinTarget] is concerned.
  */
 context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkLombokAnnotations(
     annotations: List<FirAnnotation>,
     defaultTargets: List<KotlinTarget>,
-    isValueClass: Boolean = false,
-    isInnerClass: Boolean = false,
+    annotatedClass: FirRegularClass? = null,
 ) {
+    val classModifiers = annotatedClass?.classModifiers().orEmpty()
+
     for (annotation in annotations) {
         val classId = annotation.toAnnotationClassId(context.session) ?: continue
         val implementedAnnotationInfo = implementedAnnotationInfos[classId]
 
         if (implementedAnnotationInfo != null) {
-            val (
-                narrowedAllowedTargets = allowedTargetsMap, unsupportedArguments, isSupportedOnValueClass, isSupportedOnInnerClass,
-            ) = implementedAnnotationInfo
+            val (narrowedAllowedTargets = allowedTargetsMap, unsupportedArguments, unsupportedClassModifiers) =
+                implementedAnnotationInfo
 
-            val ineffectiveTarget = when {
-                isValueClass && !isSupportedOnValueClass -> "value class"
-                isInnerClass && !isSupportedOnInnerClass -> "inner class"
-                defaultTargets.none { narrowedAllowedTargets.contains(it) } -> {
-                    // Only warn where the platform itself accepts the annotation, otherwise
-                    // `WRONG_ANNOTATION_TARGET` says it already.
-                    val allowedAnnotationTargets = annotation.getAllowedAnnotationTargets(context.session)
-                    runIf(defaultTargets.any { allowedAnnotationTargets.contains(it) }) {
-                        defaultTargets.firstOrNull()?.description ?: "unidentified target"
-                    }
-                }
-                else -> null
-            }
-
-            if (ineffectiveTarget != null) {
+            // A modifier the annotation cannot act upon is reported ahead of the target, being the more specific
+            // of the two: the target is a plain `CLASS` and perfectly allowed, the modifier alone is the problem.
+            val unsupportedModifier = unsupportedClassModifiers.firstOrNull { it in classModifiers }
+            if (unsupportedModifier != null) {
                 reporter.reportOn(
                     annotation.source,
-                    LombokFirDiagnostics.ANNOTATION_HAS_NO_EFFECT,
-                    ineffectiveTarget,
-                    narrowedAllowedTargets,
+                    LombokFirDiagnostics.ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS,
+                    classId.shortClassName,
+                    unsupportedModifier.presentation,
                 )
+            } else if (defaultTargets.none { narrowedAllowedTargets.contains(it) }) {
+                // Only warn where the platform itself accepts the annotation, otherwise `WRONG_ANNOTATION_TARGET`
+                // says it already.
+                val allowedAnnotationTargets = annotation.getAllowedAnnotationTargets(context.session)
+                if (defaultTargets.any { allowedAnnotationTargets.contains(it) }) {
+                    reporter.reportOn(
+                        annotation.source,
+                        LombokFirDiagnostics.ANNOTATION_HAS_NO_EFFECT,
+                        defaultTargets.firstOrNull()?.description ?: "unidentified target",
+                        narrowedAllowedTargets,
+                    )
+                }
             }
 
             for ([argumentName, argumentExpression] in annotation.argumentMapping.mapping) {

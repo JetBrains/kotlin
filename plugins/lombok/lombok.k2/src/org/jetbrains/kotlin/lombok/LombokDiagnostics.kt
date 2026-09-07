@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.error0
 import org.jetbrains.kotlin.diagnostics.error1
+import org.jetbrains.kotlin.diagnostics.error2
 import org.jetbrains.kotlin.diagnostics.errorWithoutSource
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.BaseSourcelessDiagnosticRendererFactory
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.ANNOTATION_ARGUMENT_IS_N
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.UNSUPPORTED_ACCESS_LEVEL
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.ANNOTATION_HAS_NO_EFFECT
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.ANNOTATION_IS_NOT_SUPPORTED
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.DO_NOT_USE_GETTERS_IRRELEVANT
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.EQUALS_OR_HASH_CODE_FUNCTIONS_ALREADY_EXIST
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.EQUALS_OR_HASH_CODE_FUNCTIONS_ARE_FINAL_IN_SUPERCLASS
@@ -82,6 +84,15 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val LOG_PROPERTY_ALREADY_EXISTS by strongWarning1<KtAnnotationEntry, Name>()
 
     val UNSUPPORTED_ACCESS_LEVEL by error1<KtExpression, Name>()
+
+    /**
+     * An error, where [ANNOTATION_HAS_NO_EFFECT] next to it is a strong warning. Lombok reports its own
+     * counterparts as errors too - "NoArgsConstructor is only supported on a class or an enum." for a record,
+     * "@Builder is not supported on non-static nested classes." for an inner class - and nothing is generated
+     * for such a class here either, so the code could never have worked: what an error refuses is a build that
+     * was going to fail at run time, or not link at all.
+     */
+    val ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS by error2<KtAnnotationEntry, Name, String>()
     val FLAG_USAGE_WARNING by warning1<KtAnnotationEntry, Name>()
     val FLAG_USAGE_ERROR by error1<KtAnnotationEntry, Name>()
     val EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE by error1<KtAnnotationEntry, Name>()
@@ -143,6 +154,12 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
             "This annotation has no effect on target ''{0}''. Relevant targets: {1}.",
             TO_STRING,
             KOTLIN_TARGETS,
+        )
+        map.put(
+            ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS,
+            "''{0}'' is not supported on {1} classes.",
+            CommonRenderers.NAME,
+            TO_STRING,
         )
         map.put(FLAG_USAGE_WARNING, FLAG_USAGE_MESSAGE, CommonRenderers.NAME)
         map.put(FLAG_USAGE_ERROR, FLAG_USAGE_MESSAGE, CommonRenderers.NAME)
