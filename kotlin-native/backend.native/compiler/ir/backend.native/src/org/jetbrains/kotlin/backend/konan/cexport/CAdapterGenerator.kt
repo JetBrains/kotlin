@@ -75,14 +75,12 @@ internal class ExportedElementK1(
         override val kind: ElementKind,
         override val scope: ExportedElementScope,
         val declaration: DeclarationDescriptor,
-        private val generator: CAdapterGenerator,
+        override val generator: CAdapterGenerator,
         private val typeTranslator: CAdapterTypeTranslator,
 ) : ExportedElement {
     init {
         scope.elements.add(this)
     }
-
-    override val owner: CAdapterModelOwner get() = generator
 
     override val name: String
         get() = declaration.fqNameSafe.shortName().asString()

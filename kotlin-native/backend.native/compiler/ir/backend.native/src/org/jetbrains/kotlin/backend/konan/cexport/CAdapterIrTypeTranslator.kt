@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.backend.konan.computeBinaryType
 import org.jetbrains.kotlin.backend.konan.unwrapToPrimitiveOrReference
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.types.IdSignatureValues
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.name.StandardClassIds
 
 /**
  * IR counterpart of [CAdapterTypeTranslator]: maps an [IrType] to its C export spellings. It mirrors the K1
@@ -72,7 +72,7 @@ internal class CAdapterIrTypeTranslator(val prefix: String) {
             }
     )
 
-    private fun IrClass.isStringClass(): Boolean = classId == StandardClassIds.String
+    private fun IrClass.isStringClass(): Boolean = symbol.signature == IdSignatureValues.string
 }
 
 internal class CExportedTypeIr(
@@ -94,8 +94,10 @@ internal class CExportedTypeIr(
 
 /**
  * An exported reference ("kref") type identified directly by its Kotlin fq-name rather than by a backing [IrType].
- * Used for enum entries, whose own synthetic type has no dedicated [IrType] but is still exposed as a `kref` typedef
- * (matching the K1 mode, where each entry is a distinct class with its own default type).
+ * Used for enum entries: in K1 each entry is a distinct class with its own default type, so the descriptor mode
+ * emits a per-entry `kref` typedef. Nothing in the generated C API actually references these typedefs (entries are
+ * exposed through the enum class's type, not their own) — they are dead declarations that exist solely to keep the
+ * IR mode's output byte-identical to K1's.
  */
 internal class CExportedReferenceTypeByFqName(prefix: String, fqName: String) : CExportedType {
     private val krefName = CAdapterCAbi.krefTypeName(prefix, fqName)

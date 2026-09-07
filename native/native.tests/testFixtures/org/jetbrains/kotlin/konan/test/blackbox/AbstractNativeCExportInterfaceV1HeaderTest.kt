@@ -81,7 +81,6 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
  * The IR mode must produce byte-identical output to the descriptor mode, so both share the same
  * golden `.h` files.
  */
-@Tag("cexport")
 abstract class AbstractNativeCExportInterfaceV1HeaderIrTest : AbstractNativeCExportInterfaceV1HeaderTest() {
     override val additionalCompilerArgs: List<String>
         get() = listOf("-Xbinary=cExportUseIrDiscovery=true")
