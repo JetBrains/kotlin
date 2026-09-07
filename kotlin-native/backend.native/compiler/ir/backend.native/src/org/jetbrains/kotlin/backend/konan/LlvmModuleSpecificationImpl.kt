@@ -29,9 +29,6 @@ internal abstract class LlvmModuleSpecificationBase(protected val cachedLibrarie
     override fun containsModule(module: ModuleDescriptor): Boolean =
             module.konanLibrary.let { it == null || containsLibrary(it) }
 
-    override fun containsPackageFragment(packageFragment: IrPackageFragment): Boolean =
-            packageFragment.konanLibrary.let { it == null || containsLibrary(it) }
-
     private val containsCache = mutableMapOf<IrDeclaration, Boolean>()
 
     // This is essentially memoizing the IrDeclaration.konanLibrary property -- so much of the implementation
