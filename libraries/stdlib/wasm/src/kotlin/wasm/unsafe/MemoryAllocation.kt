@@ -244,7 +244,7 @@ private object FreeList {
 
     @PublishedApi
     internal fun allocate(size: UInt): MemorySlot {
-        check(!isAlreadyOperating) { "Cannot call free from within the allocator" }
+        check(!isAlreadyOperating) { "Cannot call allocate from within the allocator" }
         isAlreadyOperating = true
         try {
             if (size == 0u)
