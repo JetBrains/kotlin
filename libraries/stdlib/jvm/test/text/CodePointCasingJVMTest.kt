@@ -5,9 +5,7 @@
 
 package test.text
 import kotlin.test.*
-import kotlin.text.codepoints.CodePoint
-import kotlin.text.codepoints.ExperimentalCodePointApi
-import kotlin.text.codepoints.codePointCount
+import kotlin.text.unicode.*
 
 @OptIn(ExperimentalCodePointApi::class)
 class CodePointCasingJVMTest {

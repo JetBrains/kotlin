@@ -84,7 +84,7 @@ internal class CharCategoryTestGenerator(private val outputFile: File) {
 
         writer?.appendLine(
             $$"""
-import kotlin.text.codepoints.*
+import kotlin.text.unicode.*
 import kotlin.test.*
 import test.TestPlatform
 import test.current

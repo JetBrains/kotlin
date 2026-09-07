@@ -5,7 +5,7 @@
 
 @file:Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 
-package kotlin.text.codepoints
+package kotlin.text.unicode
 
 import kotlin.internal.InlineOnly
 
