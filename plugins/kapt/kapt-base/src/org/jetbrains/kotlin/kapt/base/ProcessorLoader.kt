@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.kapt.base
 
 import org.jetbrains.kotlin.kapt.base.incremental.DeclaredProcType
+import org.jetbrains.kotlin.kapt.base.incremental.INCREMENTAL_ANNOTATION_MARKERS_FILE
 import org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor
-import org.jetbrains.kotlin.kapt.base.incremental.getIncrementalProcessorsFromClasspath
+import org.jetbrains.kotlin.kapt.base.incremental.parseIncrementalProcessorDeclarations
 import org.jetbrains.kotlin.kapt.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt.base.util.info
 import java.io.Closeable
 import java.io.File
-import java.io.InputStream
 import java.net.URLClassLoader
 import java.util.zip.ZipFile
 import javax.annotation.processing.Processor
@@ -23,7 +23,11 @@ interface ProcessorLoader : Closeable {
     fun loadProcessors(parentClassLoader: ClassLoader = ClassLoader.getSystemClassLoader()): LoadedProcessors
 }
 
-open class ProcessorLoaderImpl(private val options: KaptOptions, private val logger: KaptLogger) : ProcessorLoader {
+class ProcessorLoaderImpl(private val options: KaptOptions, private val logger: KaptLogger) : ProcessorLoader {
+    private companion object {
+        const val SERVICE_FILE = "META-INF/services/javax.annotation.processing.Processor"
+    }
+
     private var annotationProcessingClassLoader: URLClassLoader? = null
 
     override fun loadProcessors(parentClassLoader: ClassLoader): LoadedProcessors {
@@ -37,12 +41,14 @@ open class ProcessorLoaderImpl(private val options: KaptOptions, private val log
         val classLoader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), parentClassLoader)
         this.annotationProcessingClassLoader = classLoader
 
+        val classpathScan = scanClasspath(classpath)
+
         val processors = if (options.processors.isNotEmpty()) {
             logger.info("Annotation processor class names are set, skip AP discovery")
             options.processors.mapNotNull { tryLoadProcessor(it, classLoader) }
         } else {
             logger.info("Need to discovery annotation processors in the AP classpath")
-            doLoadProcessors(classpath, classLoader)
+            doLoadProcessors(classLoader, classpathScan)
         }
 
         if (processors.isEmpty()) {
@@ -51,17 +57,18 @@ open class ProcessorLoaderImpl(private val options: KaptOptions, private val log
             logger.info { "Annotation processors: " + processors.joinToString { it::class.java.canonicalName } }
         }
 
-        return LoadedProcessors(wrapInIncrementalProcessor(processors, classpath), classLoader)
+        return LoadedProcessors(wrapInIncrementalProcessor(processors, classpathScan), classLoader)
     }
 
-    private fun wrapInIncrementalProcessor(processors: List<Processor>, classpath: Iterable<File>): List<IncrementalProcessor> {
+    private fun wrapInIncrementalProcessor(processors: List<Processor>, classpathScan: ClasspathScan): List<IncrementalProcessor> {
         if (options.incrementalCache == null) {
             return processors.map { IncrementalProcessor(it, DeclaredProcType.NON_INCREMENTAL, logger) }
         }
 
         val processorNames = processors.map { it.javaClass.name }.toSet()
 
-        val processorsInfo: Map<String, DeclaredProcType> = getIncrementalProcessorsFromClasspath(processorNames, classpath)
+        val processorsInfo: Map<String, DeclaredProcType> =
+            classpathScan.incrementalMarkers.filterKeys { it in processorNames }
 
         val nonIncremental = processorNames.filter { !processorsInfo.containsKey(it) }
         return processors.map { processor ->
@@ -76,11 +83,25 @@ open class ProcessorLoaderImpl(private val options: KaptOptions, private val log
         }
     }
 
-    open fun doLoadProcessors(classpath: LinkedHashSet<File>, classLoader: ClassLoader): List<Processor> {
-        val processorNames = mutableSetOf<String>()
+    /** Processor service declarations and incremental-processor markers, read in one pass. */
+    class ClasspathScan(
+        val processorNames: Set<String>,
+        val incrementalMarkers: Map<String, DeclaredProcType>,
+    )
 
-        fun processSingleInput(input: InputStream) {
-            val lines = input.bufferedReader().lineSequence()
+    /**
+     * Reads both META-INF descriptors kapt cares about, opening each classpath entry exactly once.
+     *
+     * Do not use `ServiceLoader` here: it uses the `JarFileFactory` cache, which is not cleared
+     * properly and causes issues on Windows. Manually clearing those caches caused race conditions,
+     * as `JarFileFactory` is shared between concurrent runs in the same class loader.
+     * See https://youtrack.jetbrains.com/issue/KT-34604 and https://youtrack.jetbrains.com/issue/KT-22513.
+     */
+    private fun scanClasspath(classpath: Iterable<File>): ClasspathScan {
+        val processorNames = mutableSetOf<String>()
+        val incrementalMarkers = mutableMapOf<String, DeclaredProcType>()
+
+        fun addServiceNames(lines: Sequence<String>) {
             lines.forEach { line ->
                 val processedLine = line.substringBefore("#").trim()
                 if (processedLine.isNotEmpty()) {
@@ -88,38 +109,43 @@ open class ProcessorLoaderImpl(private val options: KaptOptions, private val log
                 }
             }
         }
-        // Do not use ServiceLoader as it uses JarFileFactory cache which is not cleared
-        // properly. This may cause issues on Windows.
-        // Previously, JarFileFactory caches were manually cleaned, but that caused race conditions,
-        // as JarFileFactory was shared between concurrent runs in the same class loader.
-        // See https://youtrack.jetbrains.com/issue/KT-34604 for more details. Similar issue
-        // is also https://youtrack.jetbrains.com/issue/KT-22513.
-        val serviceFile = "META-INF/services/javax.annotation.processing.Processor"
+
         for (file in classpath) {
             when {
                 file.isDirectory -> {
-                    file.resolve(serviceFile).takeIf { it.isFile }?.let { serviceFileInDir ->
-                        serviceFileInDir.inputStream().use {
-                            processSingleInput(it)
-                        }
+                    file.resolve(SERVICE_FILE).takeIf { it.isFile }?.let { serviceFileInDir ->
+                        serviceFileInDir.inputStream().use { addServiceNames(it.bufferedReader().lineSequence()) }
+                    }
+                    file.resolve(INCREMENTAL_ANNOTATION_MARKERS_FILE).takeIf { it.isFile }?.let { markerFile ->
+                        incrementalMarkers += parseIncrementalProcessorDeclarations(markerFile.bufferedReader().readLines())
                     }
                 }
                 file.isFile && file.extension.equals("jar", ignoreCase = true) -> {
                     ZipFile(file).use { zipFile ->
-                        zipFile.getEntry(serviceFile)?.let { zipEntry ->
+                        zipFile.getEntry(SERVICE_FILE)?.let { zipEntry ->
+                            zipFile.getInputStream(zipEntry).use { addServiceNames(it.bufferedReader().lineSequence()) }
+                        }
+                        zipFile.getEntry(INCREMENTAL_ANNOTATION_MARKERS_FILE)?.let { zipEntry ->
                             zipFile.getInputStream(zipEntry).use {
-                                processSingleInput(it)
+                                incrementalMarkers += parseIncrementalProcessorDeclarations(it.bufferedReader().readLines())
                             }
                         }
                     }
                 }
                 else -> {
-                    logger.info("$file cannot be used to locate $serviceFile file.")
+                    logger.info("$file cannot be used to locate $SERVICE_FILE file.")
                 }
             }
         }
 
-        return processorNames.mapNotNull { tryLoadProcessor(it, classLoader) }
+        return ClasspathScan(processorNames, incrementalMarkers)
+    }
+
+    fun doLoadProcessors(
+        classLoader: ClassLoader,
+        classpathScan: ClasspathScan,
+    ): List<Processor> {
+        return classpathScan.processorNames.mapNotNull { tryLoadProcessor(it, classLoader) }
     }
 
     private fun tryLoadProcessor(fqName: String, classLoader: ClassLoader): Processor? {
