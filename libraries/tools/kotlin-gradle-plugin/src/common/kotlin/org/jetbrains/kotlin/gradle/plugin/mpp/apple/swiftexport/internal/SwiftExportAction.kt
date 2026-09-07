@@ -44,7 +44,7 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
             modules.map { module ->
                 module.toInputModule(
                     createModuleConfig(
-                        module.flattenPackage,
+                        module.rootPackage,
                         module.exportMode,
                         settings
                     )

@@ -52,6 +52,11 @@ internal interface SwiftExportConfigurationCompat {
     val exportConfiguration: Provider<Configuration>
 
     /**
+     * Whether Swift Export configuration for this module should be resolved from metadata.
+     */
+    val shouldResolveMetadata: Boolean
+
+    /**
      * Returns a list of exported modules.
      */
     val exportedModules: Provider<Set<SwiftExportedDependency>>
@@ -93,6 +98,8 @@ internal interface SwiftExportConfigurationCompat {
 
                 override val exportConfiguration: Provider<Configuration>
                     get() = providers.provider { kotlinNativeCompilation.internal.configurations.compileDependencyConfiguration }
+
+                override val shouldResolveMetadata: Boolean = true
 
                 override val exportedModules: Provider<Set<SwiftExportedDependency>>
                     // The `export { }` DSL has no `export(...)`. Direct `api` dependencies are exported by the
@@ -137,6 +144,8 @@ internal interface SwiftExportConfigurationCompat {
 
                 override val dependencyOptionsOverrides: Provider<Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>>
                     get() = providers.provider { emptyMap() }
+
+                override val shouldResolveMetadata: Boolean = false
 
                 override val settings: MapProperty<String, String> get() = extension.advancedConfiguration.settings
                 override val freeCompilerArgs: ListProperty<String> get() = extension.advancedConfiguration.freeCompilerArgs

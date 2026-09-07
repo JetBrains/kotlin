@@ -24,7 +24,7 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.io.Serializable
 
-private const val SWIFT_EXPORT_METADATA_USAGE = "swiftExportMetadata"
+internal const val SWIFT_EXPORT_METADATA_USAGE = "swiftExportMetadata"
 
 /**
  * Version of the [SwiftExportMetadata] serialization format. Bump it whenever the serialized shape changes.

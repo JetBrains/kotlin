@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.export.internal
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
@@ -35,14 +36,18 @@ private const val EXPORTED_MODULE_ITSELF = "the module being exported"
 internal fun Project.applySwiftExportConsumerOverrides(
     modules: List<SwiftExportedModule>,
     overrides: Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>,
+    metadataByComponent: Map<ComponentIdentifier, SwiftExportMetadata>,
     exportConfiguration: LazyResolvedConfigurationWithArtifacts,
     apiConfiguration: LazyResolvedConfigurationWithArtifacts?,
     rootModuleName: String,
 ): List<SwiftExportedModule> {
-    if (overrides.isEmpty()) return modules
+    if (overrides.isEmpty() && metadataByComponent.isEmpty()) return modules
 
     // Declared option layers, highest precedence first. KT-87987 adds the producer source here.
-    val sources = listOf(ConsumerOverridesOptionsSource(overrides))
+    val sources = listOf(
+        ConsumerOverridesOptionsSource(overrides),
+        MetadataOptionsSource(metadataByComponent),
+    )
 
     val componentByArtifact = componentByArtifact(exportConfiguration, apiConfiguration)
     val exported = modules.map { module ->
@@ -61,7 +66,7 @@ internal fun Project.applySwiftExportConsumerOverrides(
         val adjusted = when (mode) {
             SwiftExportedModuleMode.FULL -> createFullyExportedSwiftExportedModule(
                 moduleName = declaredName ?: derivedName,
-                flattenPackage = sources.declaredRootPackage(component) ?: module.flattenPackage,
+                rootPackage = sources.declaredRootPackage(component) ?: module.rootPackage,
                 artifact = module.artifact,
             )
             // A transitively exported module has no root package, so a declared one has no effect here.
@@ -117,7 +122,11 @@ private fun componentByArtifact(
             for (artifact in configuration.getArtifacts(dependency.selected)) {
                 result.putIfAbsent(
                     artifact.file,
-                    SwiftExportResolvedComponent(artifact.id.componentIdentifier, dependency.selected.moduleVersion),
+                    SwiftExportResolvedComponent(
+                        id = artifact.id.componentIdentifier,
+                        rootComponentId = dependency.resolvedVariant.owner,
+                        moduleVersion = dependency.selected.moduleVersion,
+                    ),
                 )
             }
         }

@@ -7,10 +7,16 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.Usage
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.categoryByName
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SWIFT_EXPORT_METADATA_USAGE
+import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -74,6 +80,7 @@ internal fun Project.registerSwiftExportTask(
         swiftApiModuleName = swiftApiModuleName,
         exportConfiguration = swiftExportConfiguration.exportConfiguration.get(),
         apiConfiguration = swiftExportConfiguration.apiConfiguration.orNull,
+        shouldResolvePublishedMetadata = swiftExportConfiguration.shouldResolveMetadata,
         mainCompilation = mainCompilation,
         swiftApiFlattenPackage = swiftExportConfiguration.rootPackage,
         exportedModules = swiftExportConfiguration.exportedModules,
@@ -166,6 +173,7 @@ private fun Project.registerSwiftExportRun(
     swiftApiModuleName: Provider<String>,
     exportConfiguration: Configuration,
     apiConfiguration: Configuration?,
+    shouldResolvePublishedMetadata: Boolean,
     mainCompilation: KotlinNativeCompilation,
     swiftApiFlattenPackage: Provider<String>,
     exportedModules: Provider<Set<SwiftExportedDependency>>,
@@ -182,6 +190,23 @@ private fun Project.registerSwiftExportRun(
     val serializedModules = outputs.map { it.dir("modules").file("${swiftApiModuleName.get()}.json") }
     val exportConfigurationProvider = provider { LazyResolvedConfigurationWithArtifacts(exportConfiguration) }
     val apiConfigurationProvider = provider { apiConfiguration?.let(::LazyResolvedConfigurationWithArtifacts) }
+    val metadataConfigurationProvider = provider {
+        if (shouldResolvePublishedMetadata) {
+            LazyResolvedConfigurationWithArtifacts(
+                exportConfiguration,
+                configureArtifactView = {
+                    withVariantReselection()
+                    componentFilter { it is ModuleComponentIdentifier }
+                },
+                configureArtifactViewAttributes = { attributes ->
+                    attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(SWIFT_EXPORT_METADATA_USAGE))
+                    attributes.attribute(Category.CATEGORY_ATTRIBUTE, categoryByName(Category.LIBRARY))
+                }
+            )
+        } else {
+            null
+        }
+    }
 
     return locateOrRegisterTask<SwiftExportTask>(swiftExportTaskName) { task ->
         task.description = "Run $taskNamePrefix Swift Export process"
@@ -203,6 +228,7 @@ private fun Project.registerSwiftExportRun(
                 exportConfigurationProvider = exportConfigurationProvider,
                 apiConfigurationProvider = apiConfigurationProvider,
                 exportedModulesProvider = exportedModules,
+                metadataConfigurationProvider = metadataConfigurationProvider,
                 dependencyOptionsOverridesProvider = dependencyOptionsOverrides,
                 rootModuleNameProvider = swiftApiModuleName,
             )
