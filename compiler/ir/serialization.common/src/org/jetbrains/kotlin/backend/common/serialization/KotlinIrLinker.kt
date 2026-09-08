@@ -32,22 +32,18 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.putToMultiMap
 
 abstract class KotlinIrLinker(
-    private val currentModule: ModuleDescriptor?,
     val symbolTable: SymbolTable,
     val errorCallback: (String) -> Unit,
     val deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
 ) : IrDeserializer, FileLocalAwareLinker {
     constructor(
-        currentModule: ModuleDescriptor?,
         configuration: CompilerConfiguration,
         symbolTable: SymbolTable,
         deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
     ) : this(
-        currentModule,
         symbolTable,
         errorCallback = { configuration.report(PartialLinkageDiagnostics.IR_LINKER_ERROR, it) },
         deserializedSymbolPostProcessor
