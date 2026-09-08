@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
 import java.util.*
+import kotlin.io.path.createTempDirectory
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.baseClassLoader
@@ -181,6 +182,26 @@ class MainKtsTest {
         // TODO: the second error is due to the late cycle detection, see TODO in makeCompiledScript$makeOtherScripts
         // TODO: third error is due to the early IR backend error, consider processing it in makeCompiledScript$makeOtherScripts
         assertFailedAny("Unable to handle recursive script dependencies", "is already bound", "Duplicate JVM class name", res = res)
+    }
+
+    @Test
+    fun testKt89247() {
+        val cacheDir = createTempDirectory("main.kts.test.cache").toFile()
+        try {
+            val script = File("$TEST_DATA_ROOT/kt89247/main.main.kts")
+            // the second run is served from the compilation cache, and the dependencies of the imported script should
+            // be restored from the cached jar as well
+            repeat(2) { run ->
+                var res: ResultWithDiagnostics<EvaluationResult>? = null
+                val out = captureOut {
+                    res = evalFile(script, cacheDir = cacheDir)
+                }.lines()
+                assertSucceeded(res!!)
+                assertEquals(listOf("Ok"), out, "run $run, script result: ${res!!.valueOrNull()?.returnValue}")
+            }
+        } finally {
+            cacheDir.deleteRecursively()
+        }
     }
 
     @Test
