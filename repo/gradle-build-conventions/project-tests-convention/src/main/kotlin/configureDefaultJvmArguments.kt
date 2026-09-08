@@ -12,9 +12,14 @@ internal fun Project.configureDefaultJvmArguments() {
     val extension = extensions.getByType(ProjectTestsExtension::class.java)
     tasks.withType<Test>().configureEach {
         val testTask = this
+        // Snapshot all the testdata of the project unless the task narrowed it down itself.
+        // `convention` doesn't overwrite a value which was already set explicitly, so this doesn't
+        // depend on whether the task has been configured before or after this action runs.
+        val testDataInputs = testDataInputs()
+        testDataInputs.files.convention(extension.testDataFiles)
         val testCompilerRuntimeProvider = objects.newInstance<TestCompilerRuntimeArgumentProvider>().apply {
             testDataMap.set(extension.testDataMap)
-            testDataFiles.set(extension.testDataFiles)
+            testDataFiles.setFrom(testDataInputs.files)
         }
         val javaModuleAddOpensProvider = objects.newInstance<JavaModuleAddOpensArgumentProvider>().apply {
             javaLauncher.set(testTask.javaLauncher)

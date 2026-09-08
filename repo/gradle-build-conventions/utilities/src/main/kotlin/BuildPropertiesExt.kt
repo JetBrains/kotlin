@@ -56,6 +56,18 @@ val KotlinBuildProperties.isApplePrivacyManifestsPluginEnabled: Boolean
 val KotlinBuildProperties.limitTestTasksConcurrency: Boolean
     get() = booleanProperty("kotlin.build.limitTestTasksConcurrency", true).get()
 
+/**
+ * How many test tasks are allowed to run at the same time when [limitTestTasksConcurrency] is on.
+ *
+ * The default of `1` keeps test tasks strictly sequential, which is what a project with a couple of
+ * big test tasks wants. Projects split into many small test tasks (see `testDataShards`) need a
+ * higher value, otherwise they pay for one test JVM fork after another. Bound the value by the
+ * available memory rather than by the number of cores: every test JVM gets its own heap, which is
+ * up to `testMaxHeapSizeLarge` for compiler tests.
+ */
+val KotlinBuildProperties.maxConcurrentTestTasks: Int
+    get() = intProperty("kotlin.build.maxConcurrentTestTasks").orNull?.coerceAtLeast(1) ?: 1
+
 val KotlinBuildProperties.konanDataDir: String?
     get() = stringProperty("konan.data.dir").orNull
 

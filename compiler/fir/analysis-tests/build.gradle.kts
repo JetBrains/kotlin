@@ -71,19 +71,60 @@ kotlin {
     )
 }
 
+// Every per-directory test task registered by `testDataShards` below has the whole test classes
+// directory on its `@Classpath`-annotated runtime classpath, and that directory holds the classes
+// generated for all the testdata directories at once. Adding a testdata file regenerates and
+// recompiles the class of its own directory, which changes the hash of that directory, which would
+// invalidate every single per-directory task.
+//
+// The classpath can't be narrowed instead: a classpath entry has to stay a directory for the test JVM
+// to load classes from it, and `@Classpath` normalization is not configurable per task. Ignoring the
+// generated classes here is safe because they are leaf entry points which nothing else on the
+// classpath references, and because each task still tracks its own class through
+// `Test.candidateClassFiles`, which is derived from its `include` patterns.
+normalization {
+    runtimeClasspath {
+        ignore("org/jetbrains/kotlin/test/runners/generated/**")
+    }
+}
+
 projectTests {
+    val testJdkEnvVariables = listOf(
+        JdkMajorVersion.JDK_1_8,
+        JdkMajorVersion.JDK_11_0,
+        JdkMajorVersion.JDK_17_0,
+        JdkMajorVersion.JDK_21_0,
+        JdkMajorVersion.JDK_25_0,
+    )
+
     testTask(
         javaLauncher = JdkMajorVersion.JDK_1_8,
         maxHeapSize = testMaxHeapSizeLarge,
         // Use Parallel GC because this test runs on JDK 8.
         garbageCollector = GarbageCollector.Parallel,
-        defineJDKEnvVariables = listOf(
-            JdkMajorVersion.JDK_1_8,
-            JdkMajorVersion.JDK_11_0,
-            JdkMajorVersion.JDK_17_0,
-            JdkMajorVersion.JDK_21_0,
-            JdkMajorVersion.JDK_25_0,
-        )
+        defineJDKEnvVariables = testJdkEnvVariables,
+    ) {
+        useJUnitPlatform()
+    }
+
+    // `test` above runs everything in one task, which makes it a single all-or-nothing cache entry:
+    // a change in any testdata file re-runs all of the tests. The tasks below run the very same tests
+    // one testdata directory at a time, so that a change re-runs the tests of that directory only.
+    // `test` is kept as is for IDE runs and for ad hoc `--tests` invocations.
+    testDataShards(
+        generatedPackage = "org.jetbrains.kotlin.test.runners.generated",
+        roots = project(":compiler").isolated.projectDirectory.let { compilerDirectory ->
+            listOf(
+                compilerDirectory.dir("testData/diagnostics/tests"),
+                compilerDirectory.dir("testData/diagnostics/testsWithAnyBackend"),
+                compilerDirectory.dir("testData/diagnostics/testsWithStdLib"),
+            )
+        },
+        javaLauncher = JdkMajorVersion.JDK_1_8,
+        maxHeapSize = testMaxHeapSizeLarge,
+        // Use Parallel GC because this test runs on JDK 8.
+        garbageCollector = GarbageCollector.Parallel,
+        defineJDKEnvVariables = testJdkEnvVariables,
     ) {
         useJUnitPlatform()
     }

@@ -47,10 +47,45 @@ object TestGeneratorUtil {
         return escapeForJavaIdentifier(file.name).replaceFirstChar(Char::uppercaseChar)
     }
 
+    /**
+     * Converts a testdata directory name into a single Java package segment.
+     *
+     * Directory names can't be used as is: some of them are Java keywords (`assert`, `const`, `enum`,
+     * `native`, `return`), and some contain characters which are not valid in an identifier (`j+k`).
+     *
+     * NB: the build reproduces this mapping to compute the class file `include` pattern of a
+     * per-directory test task, see `directoryNameToPackageSegment` in the `project-tests-convention`
+     * Gradle plugin. Keep the two in sync.
+     */
+    @JvmStatic
+    fun directoryNameToPackageSegment(directoryName: String): String {
+        val escaped = escapeForJavaIdentifier(directoryName)
+        return when {
+            escaped in JAVA_KEYWORDS -> "${escaped}_"
+            escaped.first().isDigit() -> "_$escaped"
+            else -> escaped
+        }
+    }
+
     /** Must be called on the main thread, otherwise returns the root class of the worker thread. */
     fun getMainClassName(): String? =
         Throwable().stackTrace.lastOrNull()?.className
 }
+
+/**
+ * Keywords and reserved literals which are not allowed to be used as a Java identifier.
+ *
+ * Note that contextual keywords (`record`, `sealed`, `var`, `yield`, ...) are intentionally absent:
+ * they are valid package segments.
+ */
+private val JAVA_KEYWORDS = setOf(
+    "abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const",
+    "continue", "default", "do", "double", "else", "enum", "extends", "final", "finally", "float",
+    "for", "goto", "if", "implements", "import", "instanceof", "int", "interface", "long", "native",
+    "new", "package", "private", "protected", "public", "return", "short", "static", "strictfp",
+    "super", "switch", "synchronized", "this", "throw", "throws", "transient", "try", "void",
+    "volatile", "while", "true", "false", "null", "_",
+)
 
 private val defaultPackages = listOf(
     "java.lang",
