@@ -678,7 +678,7 @@ fun getActualTargetList(container: FirAnnotationContainer, session: FirSession):
     val annotated =
         if (container is FirBackingField) {
             when {
-                !container.propertySymbol.hasExposedBackingField -> container.propertyIfBackingField
+                !container.propertySymbol.hasAnnotatableBackingField -> container.propertyIfBackingField
                 container.propertySymbol.getContainingClassSymbol()?.classKind == ClassKind.ANNOTATION_CLASS -> {
                     @OptIn(AnnotationTargetListForDeprecation::class)
                     return TargetLists.T_MEMBER_PROPERTY_IN_ANNOTATION
@@ -717,19 +717,19 @@ fun getActualTargetList(container: FirAnnotationContainer, session: FirSession):
                         TargetLists.T_VALUE_PARAMETER_WITH_VAL
                     } else {
                         TargetLists.T_MEMBER_PROPERTY(
-                            backingField = annotated.hasExposedBackingField,
+                            backingField = annotated.hasAnnotatableBackingField,
                             delegate = annotated.delegate != null,
                             isCompanionMember = false,
                         )
                     }
                 annotated.isCompanionBlockMember -> TargetLists.T_MEMBER_PROPERTY(
-                    backingField = annotated.hasExposedBackingField,
+                    backingField = annotated.hasAnnotatableBackingField,
                     delegate = annotated.delegate != null,
                     isCompanionMember = true,
                 )
                 else ->
                     TargetLists.T_TOP_LEVEL_PROPERTY(
-                        backingField = annotated.hasExposedBackingField,
+                        backingField = annotated.hasAnnotatableBackingField,
                         delegate = annotated.delegate != null,
                         isCompanionExtension = annotated.isCompanionExtension,
                     )
