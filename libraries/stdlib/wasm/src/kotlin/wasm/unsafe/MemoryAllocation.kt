@@ -194,10 +194,10 @@ private object FreeList {
             // before we insert, try to merge
             val leftElement = list.getOrNull(insertionPointIndex - 1)
             val rightElement = list.getOrNull(insertionPointIndex)
-            check(
-                leftElement?.ptr?.address?.let { it < allocatedSlot.ptr.address } ?: true &&
-                        rightElement?.ptr?.address?.let { allocatedSlot.ptr.address < it } ?: true
-            ) { "Binary search has gone wrong" }
+            assert(
+                (leftElement == null || (leftElement.ptr.address + leftElement.size <= allocatedSlot.ptr.address)) &&
+                        (rightElement == null || (allocatedSlot.ptr.address + allocatedSlot.size <= rightElement.ptr.address))
+            ) { "Slot to free overlaps with an existing slot" }
 
             // 4 basic cases ("<" meaning "cannot merge", ">=" meaning "can merge"):
             // 1. (end of left) < (start of new)  && (end of new) <  (start of right)
