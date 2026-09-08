@@ -275,7 +275,21 @@ func _kotlinRuntimeSupportLinkAnchor() {}
 
 // MARK: - Collections
 
-public protocol List<Element> : RandomAccessCollection where Index == Int32 {
+public protocol CollectionIterator<Element> : Swift.IteratorProtocol {
+    func hasNext() -> Bool
+    func _next() -> Element
+}
+
+public extension CollectionIterator {
+    func next() -> Element? {
+        guard hasNext() else { return .none }
+        return .some(_next())
+    }
+}
+
+public protocol Collection<Element> : Swift.Sequence { }
+
+public protocol List<Element> : Collection, Swift.RandomAccessCollection where Index == Int32 {
     var size: Int32 { get }
     func _get(index: Int32) -> Element
 }
@@ -289,20 +303,92 @@ public extension List {
     }
 }
 
-public protocol TypedList<Element> : List {
-    var __rawList: KotlinRuntime.KotlinBase { get }
+public protocol MutableList<Element> : List, Swift.MutableCollection {
+    func _set(index: Int32, element: Element) -> Element?
+}
+
+public extension MutableList {
+    subscript(position: Int32) -> Element {
+        get { self._get(index: position) }
+        set { self._set(index: position, element: newValue) }
+    }
+}
+
+public struct CollectionIteratorImpl<Element> : CollectionIterator {
+    private let iterator: KotlinRuntime.KotlinBase
+    private let conformsTo: ((AnyClass?) -> Bool)
+
+    package init(
+        collection: KotlinRuntime.KotlinBase,
+        conformsTo: @escaping ((AnyClass?) -> Bool)
+    ) {
+        let externalRCRef = _kotlin_swift_Collection_iterator(collection.__externalRCRef())
+        self.iterator = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: externalRCRef, conformsTo: nil)!
+        self.conformsTo = conformsTo
+    }
+
+    public func hasNext() -> Bool {
+        _kotlin_swift_Iterator_hasNext(iterator.__externalRCRef())
+    }
+
+    public func _next() -> Element {
+        return _kotlin_swift_Iterator_next(iterator.__externalRCRef()).flatMap {
+            KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: $0, conformsTo: conformsTo)
+        } as! Element
+    }
+}
+
+public protocol TypedCollection<Element> : Collection {
+    var __rawCollection: KotlinRuntime.KotlinBase { get }
     var __conformsTo: ((AnyClass?) -> Bool) { get }
+}
+
+public extension TypedCollection {
+    func makeIterator() -> CollectionIteratorImpl<Element> {
+        return CollectionIteratorImpl(collection: __rawCollection, conformsTo: __conformsTo)
+    }
+}
+
+struct TypedCollectionImpl<Element> : TypedCollection { // TODO: Remove Impl test
+    let __rawCollection: KotlinRuntime.KotlinBase
+    let __conformsTo: ((AnyClass?) -> Bool)
+}
+
+public protocol TypedList<Element> : List, TypedCollection {
+    associatedtype Iterator = IndexingIterator<Self>
 }
 
 public extension TypedList {
     var size: Int32 {
-        _kotlin_swift_List_size_get(__rawList.__externalRCRef())
+        _kotlin_swift_List_size_get(__rawCollection.__externalRCRef())
     }
 
     func _get(index: Int32) -> Element {
-        let element = _kotlin_swift_List_get(__rawList.__externalRCRef(), index)
+        let element = _kotlin_swift_List_get(__rawCollection.__externalRCRef(), index)
         return element.flatMap {
             KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: $0, conformsTo: __conformsTo)
         } as! Element
     }
+}
+
+struct TypedListImpl<Element> : TypedList { // TODO: Remove Impl test
+    let __rawCollection: KotlinRuntime.KotlinBase
+    let __conformsTo: ((AnyClass?) -> Bool)
+}
+
+public protocol TypedMutableList<Element> : TypedList, MutableList { }
+
+public extension TypedMutableList {
+    func _set(index: Int32, element: Element) -> Element? {
+        let element = element as! (any KotlinRuntimeSupport._KotlinBridgeable)?
+        let result = _kotlin_swift_MutableList_set(__rawCollection.__externalRCRef(), index, element?.__externalRCRef())
+        return result.flatMap {
+            KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: $0, conformsTo: __conformsTo)
+        } as! Element?
+    }
+}
+
+struct TypedMutableListImpl<Element> : TypedMutableList { // TODO: Remove Impl test
+    let __rawCollection: KotlinRuntime.KotlinBase
+    let __conformsTo: ((AnyClass?) -> Bool)
 }
