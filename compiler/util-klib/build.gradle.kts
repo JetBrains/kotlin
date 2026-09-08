@@ -21,6 +21,7 @@ dependencies {
 
     testFixturesApi("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
     testFixturesApi(libs.junit.jupiter.api)
+    testFixturesCompileOnly(project(":core:metadata")) { exclude("org.jetbrains.kotlin", "kotlin-stdlib") }
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 
