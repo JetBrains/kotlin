@@ -12,6 +12,7 @@ import java.net.InetAddress
 import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.readLines
+import kotlin.time.Duration.Companion.seconds
 
 private val log = LoggerFactory.getLogger(PlaywrightDebugSession::class.java)
 
@@ -30,7 +31,7 @@ internal class PlaywrightDebugSession(
         log.info("Reporting debuggable browser '{}' of runner '{}' to the IDE", browser.cdpUrl, runner.name)
         session.sendBrowserReady(browser)
         log.info("Waiting for the IDE to attach its debugger to '{}'", browser.cdpUrl)
-        session.awaitDebuggerReady(browser, timeout = runner.timeout)
+        session.awaitDebuggerReady(browser, MAX_WAIT_TIME_FOR_IDE_TO_ATTACH_DEBUGGER)
     }
 
     fun reportFinished() {
@@ -59,6 +60,8 @@ internal class PlaywrightDebugSession(
 
     companion object {
         private const val DEV_TOOLS_ACTIVE_PORT_FILE = "DevToolsActivePort"
+
+        private val MAX_WAIT_TIME_FOR_IDE_TO_ATTACH_DEBUGGER = 30.seconds
 
         fun connect(connectionUrl: String): PlaywrightDebugSession =
             PlaywrightDebugSession(IdeaKotlinJsBrowserDebugSession.connectWithBuildSystem(connectionUrl))
