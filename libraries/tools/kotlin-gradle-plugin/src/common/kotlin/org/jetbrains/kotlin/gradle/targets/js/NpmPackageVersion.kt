@@ -3,6 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+
+@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.targets.js
 
 import org.gradle.api.artifacts.Dependency
@@ -10,7 +13,8 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependencyDeprecated
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependencyScopeDeprecated
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.Serializable
 
@@ -26,8 +30,8 @@ data class NpmPackageVersion(
     @Input
     var version: String,
 ) : RequiredKotlinJsDependency {
-    override fun createDependency(objectFactory: ObjectFactory, scope: NpmDependency.Scope): Dependency =
-        NpmDependency(objectFactory, scope, name, version)
+    override fun createDependency(objectFactory: ObjectFactory, scope: NpmDependencyScopeDeprecated): Dependency =
+        NpmDependencyDeprecated(objectFactory, scope, name, version)
 }
 
 /**

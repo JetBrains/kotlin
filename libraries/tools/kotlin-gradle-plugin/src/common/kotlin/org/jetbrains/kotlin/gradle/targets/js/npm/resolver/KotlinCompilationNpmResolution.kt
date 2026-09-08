@@ -82,6 +82,7 @@ class KotlinCompilationNpmResolution(
         return getResolutionOrPrepare(npmResolutionManager, logger)
     }
 
+    @Suppress("DEPRECATION")
     fun createPreparedResolution(
         npmResolutionManager: KotlinNpmResolutionManager,
         logger: Logger,

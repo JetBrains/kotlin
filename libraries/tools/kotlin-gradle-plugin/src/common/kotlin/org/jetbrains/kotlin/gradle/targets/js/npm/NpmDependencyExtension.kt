@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION") // this whole file is a deprecated API built on top of the deprecated NpmDependency
+
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import groovy.lang.Closure
@@ -30,7 +32,7 @@ interface BaseNpmDependencyExtension {
 
 /** **Deprecated** - see [NpmDependencyExtension] for more information. */
 @Deprecated(NPM_DEPENDENCIES_BLOCK_DEPRECATED)
-interface NpmDirectoryDependencyExtension : @Suppress("DEPRECATION") BaseNpmDependencyExtension {
+interface NpmDirectoryDependencyExtension : BaseNpmDependencyExtension {
     operator fun invoke(name: String, directory: File): NpmDependency
 
     operator fun invoke(directory: File): NpmDependency
@@ -41,14 +43,14 @@ interface NpmDirectoryDependencyExtension : @Suppress("DEPRECATION") BaseNpmDepe
     ReplaceWith("BaseNpmDependencyExtension"),
     level = DeprecationLevel.ERROR,
 )
-interface NpmDependencyWithExternalsExtension : @Suppress("DEPRECATION") BaseNpmDependencyExtension
+interface NpmDependencyWithExternalsExtension : BaseNpmDependencyExtension
 
 @Deprecated(
     "Unused interface. A remnant of Dukat integration. Scheduled for removal in Kotlin 2.6.",
     ReplaceWith("NpmDirectoryDependencyExtension"),
     level = DeprecationLevel.ERROR
 )
-interface NpmDirectoryDependencyWithExternalsExtension : @Suppress("DEPRECATION") NpmDirectoryDependencyExtension
+interface NpmDirectoryDependencyWithExternalsExtension : NpmDirectoryDependencyExtension
 
 /**
  * **Deprecated**
@@ -74,29 +76,26 @@ interface NpmDirectoryDependencyWithExternalsExtension : @Suppress("DEPRECATION"
  */
 @Deprecated(NPM_DEPENDENCIES_BLOCK_DEPRECATED)
 interface NpmDependencyExtension :
-    @Suppress("DEPRECATION")
     BaseNpmDependencyExtension,
     @Suppress("DEPRECATION_ERROR")
     NpmDependencyWithExternalsExtension,
     @Suppress("DEPRECATION_ERROR")
     NpmDirectoryDependencyWithExternalsExtension,
-    @Suppress("DEPRECATION")
     NpmDirectoryDependencyExtension
 
 /** **Deprecated** - see [NpmDependencyExtension] for more information. */
 @Deprecated(NPM_DEPENDENCIES_BLOCK_DEPRECATED)
 interface DevNpmDependencyExtension :
-    @Suppress("DEPRECATION") BaseNpmDependencyExtension,
-    @Suppress("DEPRECATION") NpmDirectoryDependencyExtension
+    BaseNpmDependencyExtension,
+    NpmDirectoryDependencyExtension
 
 /** **Deprecated** - see [NpmDependencyExtension] for more information. */
 @Deprecated(NPM_DEPENDENCIES_BLOCK_DEPRECATED)
 interface PeerNpmDependencyExtension :
-    @Suppress("DEPRECATION") BaseNpmDependencyExtension
+    BaseNpmDependencyExtension
 
 /** **Deprecated** - see [NpmDependencyExtension] for more information. */
 @Deprecated(NPM_DEPENDENCIES_BLOCK_DEPRECATED)
-@Suppress("DEPRECATION")
 internal val AddNpmDependencyExtensionProjectSetupAction = KotlinProjectSetupAction {
     val extensions = (dependencies as ExtensionAware).extensions
     values()
@@ -142,9 +141,9 @@ private fun scopePrefix(scope: NpmDependency.Scope): String {
 private abstract class NpmDependencyExtensionDelegate(
     protected val project: Project,
     protected val scope: NpmDependency.Scope,
-) : @Suppress("DEPRECATION") NpmDependencyExtension,
-    @Suppress("DEPRECATION") DevNpmDependencyExtension,
-    @Suppress("DEPRECATION") PeerNpmDependencyExtension,
+) : NpmDependencyExtension,
+    DevNpmDependencyExtension,
+    PeerNpmDependencyExtension,
     Closure<NpmDependency>(project.dependencies) {
     override operator fun invoke(
         name: String,
@@ -232,7 +231,7 @@ private class DefaultNpmDependencyExtension(
     project: Project,
     scope: NpmDependency.Scope,
 ) : Closure<NpmDependency>(project.dependencies),
-    @Suppress("DEPRECATION") NpmDependencyExtension {
+    NpmDependencyExtension {
     private val delegate = defaultNpmDependencyDelegate(
         project,
         scope,
@@ -254,7 +253,7 @@ private class DefaultNpmDependencyExtension(
 private class DefaultDevNpmDependencyExtension(
     project: Project,
 ) : Closure<NpmDependency>(project.dependencies),
-    @Suppress("DEPRECATION") DevNpmDependencyExtension {
+    DevNpmDependencyExtension {
     private val delegate = defaultNpmDependencyDelegate(
         project,
         DEV,
@@ -329,7 +328,7 @@ private fun defaultNpmDependencyDelegate(
 private class DefaultPeerNpmDependencyExtension(
     project: Project,
 ) : Closure<NpmDependency>(project.dependencies),
-    @Suppress("DEPRECATION") PeerNpmDependencyExtension {
+    PeerNpmDependencyExtension {
     private val delegate: NpmDependencyExtensionDelegate = object : NpmDependencyExtensionDelegate(
         project,
         PEER,
