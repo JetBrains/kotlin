@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/../tailrec.kt
+-ir-output-name
+tailrec
+-ir-output-dir
+$TEMP_DIR$
+-libraries
+$STDLIB_WASM_JS$
