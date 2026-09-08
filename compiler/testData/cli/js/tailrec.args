@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/../tailrec.kt
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+tailrec
+-libraries
+libraries/stdlib/build/classes/kotlin/js/main
