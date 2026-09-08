@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.isOverridable
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -70,9 +71,18 @@ open class TailrecCheckerLowering<Context : LoweringContext>(val context: Contex
 /**
  * Creates a source range for the referenced name, matching FIR's `REFERENCED_NAME_BY_QUALIFIED` positioning.
  * IR has no PSI callee, so calculate the range from [startOffset] and the referenced name length.
+ *
+ * Collection literals are lowered in FIR to calls of the synthetic `of` operator with [IrStatementOrigin.COLLECTION_LITERAL].
+ * FIR's positioning strategy also reports the whole collection literal, so preserve that range here.
  */
 private fun IrCall.referencedNameSourceElement(): KtOffsetsOnlySourceElement? {
     if (startOffset < 0) return null
-    val nameLength = symbol.owner.name.asString().length
-    return KtOffsetsOnlySourceElement(startOffset, (startOffset + nameLength).coerceAtMost(endOffset))
+    val sourceEndOffset = when (origin) {
+        IrStatementOrigin.COLLECTION_LITERAL -> endOffset // mimics `PositioningStrategies.FindReferencePositioningStrategy.mark()`
+        else -> {
+            val nameLength = symbol.owner.name.asString().length
+            (startOffset + nameLength).coerceAtMost(endOffset)
+        }
+    }
+    return KtOffsetsOnlySourceElement(startOffset, sourceEndOffset)
 }

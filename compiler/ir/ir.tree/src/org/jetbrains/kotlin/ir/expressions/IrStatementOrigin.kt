@@ -109,6 +109,7 @@ interface IrStatementOrigin {
         val DEFAULT_VALUE by IrStatementOriginImpl
         val ANONYMOUS_FUNCTION by IrStatementOriginImpl
         val OBJECT_LITERAL by IrStatementOriginImpl
+        val COLLECTION_LITERAL by IrStatementOriginImpl
         val ADAPTED_FUNCTION_REFERENCE by IrStatementOriginImpl
 
         /**
