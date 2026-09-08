@@ -28,20 +28,22 @@ internal object KarLayout {
     const val ASSEMBLE_TASK_NAME = "assembleKotlinArchive"
 
     object Attributes {
-        enum class State {
-            COMPRESSED,
-            DECOMPRESSED,
-            PLATFORM_ARTIFACTS_EXTRACTED,
-            PSM_EXTRACTED,
-            RESOURCES_EXTRACTED,
+        object State {
+            const val COMPRESSED = "compressed"
+            const val DECOMPRESSED = "decompressed"
+            const val PLATFORM_ARTIFACTS_EXTRACTED = "platform-artifacts-extracted"
+            const val PSM_EXTRACTED = "psm-extracted"
+            const val RESOURCES_EXTRACTED = "resources-extracted"
         }
 
-        val state = Attribute.of("org.jetbrains.kotlin.kar.state", State::class.java)
+        val state: Attribute<String> = Attribute.of("org.jetbrains.kotlin.kar.state", String::class.java)
 
-        enum class CompressionMethod {
-            NONE, XZ;
+        object CompressionMethod {
+            const val UNKNOWN = "unknown"
+            const val NONE = "none"
+            const val XZ = "xz"
         }
 
-        val compressionMethod = Attribute.of("org.jetbrains.kotlin.kar.compression.method", CompressionMethod::class.java)
+        val compressionMethod: Attribute<String> = Attribute.of("org.jetbrains.kotlin.kar.compression.method", String::class.java)
     }
 }

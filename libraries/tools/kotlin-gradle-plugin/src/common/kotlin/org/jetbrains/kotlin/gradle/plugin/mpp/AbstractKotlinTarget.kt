@@ -128,7 +128,7 @@ abstract class AbstractKotlinTarget(
             }
         ).mapTo(mutableSetOf()) { (mavenScope, dependenciesConfigurationName) ->
             project.defaultKotlinUsageContextMaybeReplacedWithKar(
-                isStoredInKotlinArchive = if (this is KotlinTargetWithKotlinArchiveSupport) { isStoredInKotlinArchive } else null,
+                isStoredInKotlinArchive = if (this is KotlinTargetWithKotlinArchiveSupport) isStoredInKotlinArchive else null,
                 compilation = producingCompilation,
                 mavenScope = mavenScope,
                 dependencyConfigurationName = dependenciesConfigurationName,
