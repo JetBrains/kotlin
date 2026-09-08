@@ -89,7 +89,7 @@ import kotlin.test.*
 import test.TestPlatform
 import test.current
 
-@OptIn(ExperimentalCodePointApi::class, ExperimentalKotlinTestApi::class)
+@OptIn(ExperimentalUnicodeApi::class, ExperimentalKotlinTestApi::class)
 class CharCategoryTest {
     @Test
     fun category() {

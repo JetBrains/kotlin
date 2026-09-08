@@ -8,7 +8,7 @@ package test.text
 import kotlin.text.unicode.*
 import kotlin.test.*
 
-@OptIn(ExperimentalCodePointApi::class)
+@OptIn(ExperimentalUnicodeApi::class)
 public class CodePointRangeTest {
     @Test
     fun codePointRange() {
