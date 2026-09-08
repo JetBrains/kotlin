@@ -205,6 +205,7 @@ private fun Project.registerSwiftExportRun(
                 ),
                 exportConfigurationProvider,
                 apiConfigurationProvider,
+                swiftApiModuleName,
             )
         )
 

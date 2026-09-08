@@ -60,11 +60,14 @@ internal interface SwiftExportConfigurationCompat {
     /**
      * Applies what this DSL declares on top of the [modules] collected from the export graph. The legacy DSL
      * declares nothing and returns them as they are.
+     *
+     * @param rootModuleName the Swift module name of the module being exported
      */
     fun adjustSwiftModules(
         modules: Provider<List<SwiftExportedModule>>,
         exportConfiguration: Provider<LazyResolvedConfigurationWithArtifacts>,
         apiConfiguration: Provider<LazyResolvedConfigurationWithArtifacts?>,
+        rootModuleName: Provider<String>,
     ): Provider<List<SwiftExportedModule>>
 
     /**
@@ -107,6 +110,7 @@ internal interface SwiftExportConfigurationCompat {
                     modules: Provider<List<SwiftExportedModule>>,
                     exportConfiguration: Provider<LazyResolvedConfigurationWithArtifacts>,
                     apiConfiguration: Provider<LazyResolvedConfigurationWithArtifacts?>,
+                    rootModuleName: Provider<String>,
                 ): Provider<List<SwiftExportedModule>> = kotlinNativeCompilation.project.applySwiftExportConsumerOverrides(
                     modules = modules,
                     overrides = providers.provider {
@@ -114,6 +118,7 @@ internal interface SwiftExportConfigurationCompat {
                     },
                     exportConfiguration = exportConfiguration,
                     apiConfiguration = apiConfiguration,
+                    rootModuleName = rootModuleName,
                 )
 
                 override val settings: MapProperty<String, String>
@@ -153,6 +158,7 @@ internal interface SwiftExportConfigurationCompat {
                     modules: Provider<List<SwiftExportedModule>>,
                     exportConfiguration: Provider<LazyResolvedConfigurationWithArtifacts>,
                     apiConfiguration: Provider<LazyResolvedConfigurationWithArtifacts?>,
+                    rootModuleName: Provider<String>,
                 ): Provider<List<SwiftExportedModule>> = modules
 
                 override val settings: MapProperty<String, String> get() = extension.advancedConfiguration.settings

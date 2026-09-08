@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Project
 import org.gradle.api.provider.ProviderConvertible
@@ -16,6 +17,8 @@ import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositori
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.EmbedSwiftExportForXcodeTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
@@ -42,7 +45,9 @@ import org.junit.jupiter.api.Assumptions
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
+import kotlin.test.fail
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
@@ -1360,10 +1365,127 @@ class ExportExtensionSwiftExportTests {
         project.assertNoDiagnostics(KotlinToolingDiagnostics.SwiftExportModuleResolutionError)
     }
 
+    @Test
+    fun `two overrides producing the same module name fail`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") { moduleName.set("Clash") }
+                    configure("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0") { moduleName.set("Clash") }
+                }
+            }
+        )
+
+        project.evaluate()
+
+        project.assertRealizingSwiftModulesFailsWith(KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames)
+    }
+
+    @Test
+    fun `an override clashing with the exported module name fails`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                moduleName.set("Shared")
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") { moduleName.set("Shared") }
+                }
+            }
+        )
+
+        project.evaluate()
+
+        project.assertRealizingSwiftModulesFailsWith(
+            KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames(
+                mapOf("Shared" to listOf("the module being exported", "org.jetbrains.kotlinx:kotlinx-io-bytestring-iossimulatorarm64:0.7.0"))
+            )
+        )
+    }
+
+    @Test
+    fun `module names differing only in case are duplicates`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                moduleName.set("Shared")
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") { moduleName.set("shared") }
+                }
+            }
+        )
+
+        project.evaluate()
+
+        project.assertRealizingSwiftModulesFailsWith(
+            KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames(
+                mapOf("Shared/shared" to listOf("the module being exported", "org.jetbrains.kotlinx:kotlinx-io-bytestring-iossimulatorarm64:0.7.0"))
+            )
+        )
+    }
+
+    @Test
+    fun `distinct module names are not reported as duplicates`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                moduleName.set("Shared")
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") { moduleName.set("ByteString") }
+                }
+            }
+        )
+
+        project.evaluate()
+
+        val actualModules = project.realizeSwiftModules()
+
+        assertEquals(listOf("ByteString"), actualModules.map { it.moduleName })
+        project.assertNoDiagnostics(KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames)
+    }
+
     /** The export graph diagnostics are reported when the `swiftModules` provider is realized, not during configuration. */
     private fun Project.realizeSwiftModules(): List<SwiftExportedModule> =
         tasks.withType(SwiftExportTask::class.java).single().parameters.swiftModules.get()
 
+    /**
+     * Outside a real build the diagnostics collector turns a FATAL diagnostic into an exception right away, and
+     * Gradle wraps it in a `PropertyQueryException`, hence the walk along the cause chain.
+     */
+    private fun Project.assertRealizingSwiftModulesFailsWith(diagnostic: ToolingDiagnosticFactory) =
+        assertRealizingSwiftModulesFails { assertContainsDiagnostic(diagnostic) }
+
+    private fun Project.assertRealizingSwiftModulesFailsWith(diagnostic: ToolingDiagnostic) =
+        assertRealizingSwiftModulesFails { assertContainsDiagnostic(diagnostic) }
+
+    private fun Project.assertRealizingSwiftModulesFails(assertDiagnostic: Project.() -> Unit) {
+        val thrown = assertFails { realizeSwiftModules() }
+        if (thrown.allCauses.none { it is InvalidUserCodeException }) {
+            fail("Expected an InvalidUserCodeException in the cause chain, but got:\n${thrown.stackTraceToString()}")
+        }
+        assertDiagnostic()
+    }
 }
 
 private fun swiftExportProject(
