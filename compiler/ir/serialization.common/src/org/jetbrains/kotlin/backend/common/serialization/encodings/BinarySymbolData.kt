@@ -19,7 +19,7 @@ value class BinarySymbolData(val code: Long) {
         VARIABLE_SYMBOL,
         ANONYMOUS_INIT_SYMBOL,
         STANDALONE_FIELD_SYMBOL, // For fields without properties. WrappedFieldDescriptor, rather than WrappedPropertyDescriptor.
-        RECEIVER_PARAMETER_SYMBOL, // ReceiverParameterDescriptor rather than ValueParameterDescriptor.
+        RECEIVER_PARAMETER_SYMBOL, // This entry has the same meaning as VALUE_PARAMETER_SYMBOL, but is left for historical reasons
         PROPERTY_SYMBOL,
         LOCAL_DELEGATED_PROPERTY_SYMBOL,
         TYPEALIAS_SYMBOL,
