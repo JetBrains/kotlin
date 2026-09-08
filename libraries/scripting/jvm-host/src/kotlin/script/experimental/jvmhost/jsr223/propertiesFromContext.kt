@@ -6,7 +6,9 @@
 package kotlin.script.experimental.jvmhost.jsr223
 
 import org.jetbrains.kotlin.name.Name
+import java.lang.reflect.Modifier
 import javax.script.ScriptContext
+import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.impl._isSyntheticSnippet
@@ -114,6 +116,26 @@ private fun isParseableKotlinQualifiedName(qualifiedName: String): Boolean {
     if (qualifiedName.isEmpty()) return false
     return qualifiedName.split('.').all { Name.isValidIdentifier(it) }
 }
+
+/**
+ * Renders a binding value's class as a type reference with star-projected type arguments. Returns null
+ * for an inner class of a generic class: such a reference needs type arguments on its outer part, which
+ * a dot-separated qualified name cannot carry.
+ */
+private fun renderBindingTypeName(qualifiedName: String, kclass: KClass<*>): String? {
+    val jClass = kclass.java
+    var outer = jClass.enclosingGenericOwner()
+    while (outer != null) {
+        if (outer.typeParameters.isNotEmpty()) return null
+        outer = outer.enclosingGenericOwner()
+    }
+    val arity = jClass.typeParameters.size
+    return if (arity == 0) qualifiedName
+    else (1..arity).joinToString(", ", "$qualifiedName<", ">") { "*" }
+}
+
+private fun Class<*>.enclosingGenericOwner(): Class<*>? =
+    if (isMemberClass && !Modifier.isStatic(modifiers)) enclosingClass else null
 
 /** Escapes a string for embedding inside a Kotlin regular string literal ("..."). */
 private fun escapeForKotlinStringLiteral(s: String): String = buildString {
@@ -283,10 +305,16 @@ class __Jsr223BindingDelegate<T>(private val bindings: javax.script.Bindings, pr
         for ([k, v] in allBindings) {
             if (k in ENGINE_INTERNAL_BINDING_KEYS) continue
             if (encodeBindingNameToKotlinIdentifier(k) == null) continue
-            val qn = v?.let { it::class.qualifiedName }
-            if (v != null && (qn == null || !isParseableKotlinQualifiedName(qn))) continue
-            // TODO: find out how it's implemented in other jsr223 engines for typed languages, since this approach prevent certain usage scenarios, e.g. assigning back value of a "sibling" type
-            currentBindings[k] = if (v == null) KotlinType(Any::class, isNullable = true) else KotlinType(v::class)
+            if (v == null) {
+                currentBindings[k] = KotlinType(Any::class, isNullable = true)
+                continue
+            }
+            val qn = v::class.qualifiedName
+            if (qn == null || !isParseableKotlinQualifiedName(qn)) continue
+            val renderedTypeName = renderBindingTypeName(qn, v::class) ?: continue
+            // TODO: find out how this is implemented in other JSR-223 engines for typed languages, since
+            //  this approach prevents certain usage scenarios, e.g. assigning back a value of a "sibling" type.
+            currentBindings[k] = KotlinType(renderedTypeName)
         }
 
         // (re)emit a typed accessor for each binding that is new or whose type changed since it
