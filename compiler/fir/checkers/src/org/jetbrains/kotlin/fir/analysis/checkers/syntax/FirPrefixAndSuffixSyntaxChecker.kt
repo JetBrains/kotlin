@@ -16,39 +16,42 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.lexer.KtKeywordToken
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.FLOAT_LITERAL
+import org.jetbrains.kotlin.lexer.KtTokens.IDENTIFIER
+import org.jetbrains.kotlin.lexer.KtTokens.INTEGER_LITERAL
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.util.getChildren
 
 object FirPrefixAndSuffixSyntaxChecker : FirExpressionSyntaxChecker<FirStatement, KtExpression>() {
-
     private val literalConstants = listOf(KtNodeTypes.CHARACTER_CONSTANT, KtNodeTypes.FLOAT_CONSTANT, KtNodeTypes.INTEGER_CONSTANT)
 
     override fun isApplicable(element: FirStatement, source: KtSourceElement): Boolean =
         source.kind !is KtFakeSourceElementKind && (source.elementType == KtNodeTypes.STRING_TEMPLATE || source.elementType in literalConstants)
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun checkPsi(
-        element: FirStatement,
-        source: KtPsiSourceElement,
-        psi: KtExpression,
-    ) {
-        psi.prevLeaf()?.let { checkLiteralPrefixOrSuffix(it) }
-        psi.nextLeaf()?.let { checkLiteralPrefixOrSuffix(it) }
+    override fun checkPsi(element: FirStatement, source: KtPsiSourceElement, psi: KtExpression) {
+        fun check(prefixOrSuffix: PsiElement) {
+            checkLiteralPrefixOrSuffix(prefixOrSuffix.node.elementType) {
+                prefixOrSuffix.toKtPsiSourceElement()
+            }
+        }
+
+        psi.prevLeaf()?.let { check(it) }
+        psi.nextLeaf()?.let { check(it) }
     }
 
-
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun checkLightTree(
-        element: FirStatement,
-        source: KtLightSourceElement,
-    ) {
-        source.lighterASTNode.prevLeaf(source.treeStructure)
-            ?.let { checkLiteralPrefixOrSuffix(it, source) }
-        source.lighterASTNode.nextLeaf(source.treeStructure)
-            ?.let { checkLiteralPrefixOrSuffix(it, source) }
+    override fun checkLightTree(element: FirStatement, source: KtLightSourceElement) {
+        fun check(prefixOrSuffix: LighterASTNode, source: KtSourceElement) {
+            checkLiteralPrefixOrSuffix(prefixOrSuffix.tokenType ?: return) {
+                prefixOrSuffix.toKtLightSourceElement(source.treeStructure)
+            }
+        }
+
+        source.lighterASTNode.adjacentLeaf(source.treeStructure, forward = false)?.let { check(it, source) }
+        source.lighterASTNode.adjacentLeaf(source.treeStructure, forward = true)?.let { check(it, source) }
     }
 
     /**
@@ -86,40 +89,10 @@ object FirPrefixAndSuffixSyntaxChecker : FirExpressionSyntaxChecker<FirStatement
         }
     }
 
-    private fun LighterASTNode.prevLeaf(treeStructure: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode? {
-        return adjacentLeaf(treeStructure, forward = false)
-    }
-
-    private fun LighterASTNode.nextLeaf(treeStructure: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode? {
-        return adjacentLeaf(treeStructure, forward = true)
-    }
-
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkLiteralPrefixOrSuffix(
-        prefixOrSuffix: PsiElement,
-    ) {
-        if (illegalLiteralPrefixOrSuffix(prefixOrSuffix.node.elementType)) {
-            report(prefixOrSuffix.toKtPsiSourceElement())
+    private inline fun checkLiteralPrefixOrSuffix(elementType: IElementType, getKtSourceElement: () -> KtSourceElement) {
+        if (elementType === IDENTIFIER || elementType === INTEGER_LITERAL || elementType === FLOAT_LITERAL || elementType is KtKeywordToken) {
+            reporter.reportOn(getKtSourceElement(), FirErrors.UNSUPPORTED, "Literals must be surrounded by whitespace.")
         }
-    }
-
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkLiteralPrefixOrSuffix(
-        prefixOrSuffix: LighterASTNode,
-        source: KtSourceElement,
-    ) {
-        val elementType = prefixOrSuffix.tokenType ?: return
-        if (illegalLiteralPrefixOrSuffix(elementType)) {
-            report(prefixOrSuffix.toKtLightSourceElement(source.treeStructure))
-        }
-    }
-
-    private fun illegalLiteralPrefixOrSuffix(elementType: IElementType): Boolean =
-        (elementType === KtTokens.IDENTIFIER || elementType === KtTokens.INTEGER_LITERAL || elementType === KtTokens.FLOAT_LITERAL || elementType is KtKeywordToken)
-
-
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun report(source: KtSourceElement) {
-        reporter.reportOn(source, FirErrors.UNSUPPORTED, "Literals must be surrounded by whitespace.")
     }
 }
