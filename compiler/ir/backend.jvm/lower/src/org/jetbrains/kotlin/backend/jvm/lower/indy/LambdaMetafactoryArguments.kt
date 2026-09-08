@@ -469,9 +469,9 @@ internal class LambdaMetafactoryArgumentsBuilder(
             // Two different JVM primitives: don't rely on implicit primitive widening conversions.
             instantiatedIsPrimitive && implIsPrimitive -> false
             // Boxing: the primitive value is boxed to its wrapper class, which must then widen to the impl type.
-            instantiatedIsPrimitive ->
-                implAsmType.sort == Type.OBJECT &&
-                        (implAsmType.internalName == "java/lang/Object" || implAsmType == AsmUtil.boxType(instantiatedAsmType))
+            // Making the type nullable is how the wrapper class is spelled in Kotlin: 'Int' maps to 'I', 'Int?' to
+            // 'Ljava/lang/Integer;'.
+            instantiatedIsPrimitive -> isErasedReferenceWidening(instantiatedType.makeNullable(), implType)
             // Unboxing: only possible from the exact wrapper type.
             implIsPrimitive -> instantiatedAsmType == AsmUtil.boxType(implAsmType)
             // Reference widening: the impl parameter type must be a supertype of the instantiated parameter type.
