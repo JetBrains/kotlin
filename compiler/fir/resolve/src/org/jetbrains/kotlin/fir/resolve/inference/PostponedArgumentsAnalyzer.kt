@@ -87,8 +87,8 @@ class PostponedArgumentsAnalyzer(
         processSimpleNameForContextSensitiveResolutionIdeAlternative(atom, candidate)
     }
 
-    fun analyze(precalculatedBounds: CollectionLiteralBounds, candidate: Candidate) {
-        processCollectionLiteral(precalculatedBounds.atom, candidate, precalculatedBounds)
+    fun analyze(state: StateForAtomWithExpectedTypeAsStaticReceiver<ConeCollectionLiteralAtom>, candidate: Candidate) {
+        processCollectionLiteral(state, candidate)
     }
 
     private fun processCallableReference(atom: ConeResolvedCallableReferenceAtom, candidate: Candidate) {
@@ -238,15 +238,14 @@ class PostponedArgumentsAnalyzer(
     }
 
     private fun processCollectionLiteral(
-        atom: ConeCollectionLiteralAtom,
+        state: StateForAtomWithExpectedTypeAsStaticReceiver<ConeCollectionLiteralAtom>,
         topLevelCandidate: Candidate,
-        precalculatedBounds: CollectionLiteralBounds,
     ) {
-        atom.analyzed = true
+        state.atom.analyzed = true
 
-        val outerCallsContext = CollectionLiteralOuterCandidateContext(topLevelCandidate)
+        val outerCallsContext = OuterCandidateContextForAtomWithExpectedTypeAsStaticReceiver(topLevelCandidate)
 
-        runCollectionLiteralResolution(atom, precalculatedBounds, context = resolutionContext, outerCandidateContext = outerCallsContext)
+        runCollectionLiteralResolution(state, context = resolutionContext, outerCandidateContext = outerCallsContext)
     }
 
     fun analyzeLambda(

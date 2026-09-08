@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.ConeCollectionLiteralAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ConeContextSensitiveAlternativeForQualifierAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ConeFunctionLikeAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ConePostponedResolvedAtom
@@ -190,9 +191,9 @@ class FirDelegatedPropertyInferenceSession(
                         .analyze(atom, getCurrentCandidate(atom))
                 }
 
-                override fun analyze(bounds: CollectionLiteralBounds) {
+                override fun analyze(state: StateForAtomWithExpectedTypeAsStaticReceiver<ConeCollectionLiteralAtom>) {
                     callCompleter.createPostponedArgumentsAnalyzer(resolutionContext)
-                        .analyze(bounds, getCurrentCandidate(bounds.atom))
+                        .analyze(state, getCurrentCandidate(state.atom))
                 }
 
                 private fun getCurrentCandidate(postponedResolvedAtom: ConePostponedResolvedAtom): Candidate {

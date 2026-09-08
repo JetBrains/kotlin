@@ -392,8 +392,8 @@ class FirCallCompleter(
                 analyzer.analyze(atom, candidate)
             }
 
-            override fun analyze(bounds: CollectionLiteralBounds) {
-                analyzer.analyze(bounds, candidate)
+            override fun analyze(state: StateForAtomWithExpectedTypeAsStaticReceiver<ConeCollectionLiteralAtom>) {
+                analyzer.analyze(state, candidate)
             }
         }
         completer.complete(
