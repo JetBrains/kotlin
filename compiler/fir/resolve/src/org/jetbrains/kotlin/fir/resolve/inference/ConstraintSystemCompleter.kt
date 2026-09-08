@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.CollectionLiteralReceiverStrategy
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.processCandidatesAndPostponedAtoms
@@ -59,7 +60,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
 
         fun analyze(atom: ConeContextSensitiveAlternativeForQualifierAtom)
 
-        fun analyze(bounds: CollectionLiteralBounds)
+        fun analyze(state: StateForAtomWithExpectedTypeAsStaticReceiver<ConeCollectionLiteralAtom>)
     }
 
     fun complete(
@@ -96,8 +97,8 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             analyzer.analyze(atom)
         }
 
-        fun analyze(precalculatedBoundsForCL: CollectionLiteralBounds) {
-            analyzer.analyze(precalculatedBoundsForCL)
+        fun analyze(state: StateForAtomWithExpectedTypeAsStaticReceiver<ConeCollectionLiteralAtom>) {
+            analyzer.analyze(state)
         }
     }
 
@@ -186,12 +187,12 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                     languageVersionSettings,
                 )
 
-            val collectionLiteralWithBoundsForFixation =
+            val collectionLiteralStateForFixation =
                 findFirstCollectionLiteralForFixation(postponedArguments, context, dependencyProvider)
 
             // Stage 1 for collection literals: CLs with `Set<Tv>`-like expected type can be analyzed right away
-            if (collectionLiteralWithBoundsForFixation is CollectionLiteralBounds.NonTvExpected) {
-                analyzer.analyze(collectionLiteralWithBoundsForFixation)
+            if (collectionLiteralStateForFixation is StateForAtomWithExpectedTypeAsStaticReceiver.NonTvExpected) {
+                analyzer.analyze(collectionLiteralStateForFixation)
                 continue
             }
 
@@ -257,8 +258,8 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                 continue
 
             // Stage 8: analyze remaining CLs
-            if (completionMode.allLambdasShouldBeAnalyzed && collectionLiteralWithBoundsForFixation != null) {
-                analyzer.analyze(collectionLiteralWithBoundsForFixation)
+            if (completionMode.allLambdasShouldBeAnalyzed && collectionLiteralStateForFixation != null) {
+                analyzer.analyze(collectionLiteralStateForFixation)
                 continue
             }
 
@@ -312,11 +313,11 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         postponedArguments: List<ConePostponedResolvedAtom>,
         context: ResolutionContext,
         dependencyProvider: TypeVariableDependencyInformationProvider,
-    ): CollectionLiteralBounds? = context(context) {
-        val boundsCollector = CollectionLiteralBoundsCollector(dependencyProvider)
+    ): StateForAtomWithExpectedTypeAsStaticReceiver<ConeCollectionLiteralAtom>? = context(context) {
+        val stateProducer = StateProducerForAtomWithExpectedTypeAsStaticReceiver(dependencyProvider, CollectionLiteralReceiverStrategy)
         val postponedCLs = postponedArguments.filterIsInstance<ConeCollectionLiteralAtom>()
         postponedCLs
-            .mapNotNull { boundsCollector.collectBoundsForCollectionLiteral(it) }
+            .mapNotNull { stateProducer.computeState(it) }
             .maxOrNull()
     }
 
