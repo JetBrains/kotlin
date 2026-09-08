@@ -1262,6 +1262,104 @@ class ExportExtensionSwiftExportTests {
         project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
     }
 
+    @Test
+    fun `an override for a dependency absent from the graph is reported`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure("org.example:not-in-the-graph:1.0") { moduleName.set("Absent") }
+                }
+            }
+        )
+
+        project.evaluate()
+
+        project.realizeSwiftModules()
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportModuleResolutionError)
+    }
+
+    @Test
+    fun `an override for a dependency that is never exported is reported`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                    // A JVM-only jar: it is in the graph but nothing is exported for it.
+                    api("org.glassfish:jakarta.json:2.0.1")
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure("org.glassfish:jakarta.json:2.0.1") { moduleName.set("Json") }
+                }
+            }
+        )
+
+        project.evaluate()
+
+        project.realizeSwiftModules()
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportModuleResolutionError)
+    }
+
+    @Test
+    fun `a matched override is not reported as unresolved`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") { moduleName.set("ByteString") }
+                }
+            }
+        )
+
+        project.evaluate()
+
+        val actualModules = project.realizeSwiftModules()
+
+        assertEquals(listOf("ByteString"), actualModules.map { it.moduleName })
+        project.assertNoDiagnostics(KotlinToolingDiagnostics.SwiftExportModuleResolutionError)
+    }
+
+    @Test
+    fun `an override written against an available-at target variant is applied`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            },
+            swiftExport = {
+                xcodeIntegration {
+                    // The klib is published under the target-suffixed module and the root module redirects to it,
+                    // so the override must apply through either name.
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring-iossimulatorarm64:0.7.0") {
+                        moduleName.set("ByteString")
+                    }
+                }
+            }
+        )
+
+        project.evaluate()
+
+        val actualModules = project.realizeSwiftModules()
+
+        assertEquals(listOf("ByteString"), actualModules.map { it.moduleName })
+        project.assertNoDiagnostics(KotlinToolingDiagnostics.SwiftExportModuleResolutionError)
+    }
+
     /** The export graph diagnostics are reported when the `swiftModules` provider is realized, not during configuration. */
     private fun Project.realizeSwiftModules(): List<SwiftExportedModule> =
         tasks.withType(SwiftExportTask::class.java).single().parameters.swiftModules.get()

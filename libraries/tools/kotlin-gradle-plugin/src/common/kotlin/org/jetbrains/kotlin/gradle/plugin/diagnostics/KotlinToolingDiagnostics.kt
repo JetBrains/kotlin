@@ -1915,10 +1915,14 @@ internal object KotlinToolingDiagnostics {
     }
 
     object SwiftExportModuleResolutionError : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(modules: List<String>) = build {
+        /**
+         * @param modules the modules that were requested but not found, rendered for the user
+         * @param dsl the DSL snippet the request came from, so the message points at the right place
+         */
+        operator fun invoke(modules: List<String>, dsl: String = "swiftExport { export() }") = build {
             title("Swift Module Resolution Error")
                 .description {
-                    "The following modules specified in swiftExport { export() } were not found in the resolved components: ${
+                    "The following modules specified in $dsl were not found in the resolved components: ${
                         modules.joinToString(
                             ", "
                         )
