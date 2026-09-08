@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION_ERROR")
-
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
@@ -31,8 +29,7 @@ kotlin {
     listOf(
         watchosArm64(),
         watchosDeviceArm64(),
-        watchosSimulatorArm64(),
-        watchosX64()
+        watchosSimulatorArm64()
     ).forEach { target ->
         target.binaries.framework {
             baseName = "shared"

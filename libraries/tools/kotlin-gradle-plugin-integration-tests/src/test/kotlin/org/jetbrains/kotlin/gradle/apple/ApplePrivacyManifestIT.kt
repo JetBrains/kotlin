@@ -227,15 +227,11 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
                         // Thin
                         iosArm64(),
 
-                        // Universal
+                        // Thin simulator
                         watchosSimulatorArm64(),
-                        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-                        watchosX64(),
 
-                        // Universal macOS
+                        // Thin macOS
                         macosArm64(),
-                        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-                        macosX64(),
                     ).forEach {
                         it.binaries.framework {
                             xcf.add(this)
@@ -260,12 +256,12 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
                 )
                 assertEquals(
                     "initial",
-                    projectDir.resolve("build/XCFrameworks/debug/empty.xcframework/watchos-arm64_x86_64-simulator/empty.framework/PrivacyInfo.xcprivacy")
+                    projectDir.resolve("build/XCFrameworks/debug/empty.xcframework/watchos-arm64-simulator/empty.framework/PrivacyInfo.xcprivacy")
                         .readText(),
                 )
                 assertEquals(
                     "initial",
-                    projectDir.resolve("build/XCFrameworks/debug/empty.xcframework/macos-arm64_x86_64/empty.framework/Resources/PrivacyInfo.xcprivacy")
+                    projectDir.resolve("build/XCFrameworks/debug/empty.xcframework/macos-arm64/empty.framework/Resources/PrivacyInfo.xcprivacy")
                         .readText(),
                 )
             },
@@ -289,10 +285,8 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
                     // Thin
                     iosArm64()
 
-                    // Universal
+                    // Thin simulator
                     watchosSimulatorArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-                    watchosX64()
 
                     // Thin macOS
                     macosArm64()
@@ -319,7 +313,7 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
                 )
                 assertEquals(
                     "initial",
-                    projectDir.resolve("build/cocoapods/publish/debug/empty.xcframework/watchos-arm64_x86_64-simulator/empty.framework/PrivacyInfo.xcprivacy")
+                    projectDir.resolve("build/cocoapods/publish/debug/empty.xcframework/watchos-arm64-simulator/empty.framework/PrivacyInfo.xcprivacy")
                         .readText(),
                 )
                 assertEquals(
