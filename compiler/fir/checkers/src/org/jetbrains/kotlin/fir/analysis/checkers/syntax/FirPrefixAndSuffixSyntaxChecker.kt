@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -25,10 +26,15 @@ import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.util.getChildren
 
 object FirPrefixAndSuffixSyntaxChecker : FirExpressionSyntaxChecker<FirStatement, KtExpression>() {
-    private val literalConstants = listOf(KtNodeTypes.CHARACTER_CONSTANT, KtNodeTypes.FLOAT_CONSTANT, KtNodeTypes.INTEGER_CONSTANT)
+    private val literalElementTypes: TokenSet = TokenSet.create(
+        KtNodeTypes.STRING_TEMPLATE,
+        KtNodeTypes.CHARACTER_CONSTANT,
+        KtNodeTypes.FLOAT_CONSTANT,
+        KtNodeTypes.INTEGER_CONSTANT,
+    )
 
     override fun isApplicable(element: FirStatement, source: KtSourceElement): Boolean =
-        source.kind !is KtFakeSourceElementKind && (source.elementType == KtNodeTypes.STRING_TEMPLATE || source.elementType in literalConstants)
+        source.kind !is KtFakeSourceElementKind && source.elementType in literalElementTypes
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsi(element: FirStatement, source: KtPsiSourceElement, psi: KtExpression) {
