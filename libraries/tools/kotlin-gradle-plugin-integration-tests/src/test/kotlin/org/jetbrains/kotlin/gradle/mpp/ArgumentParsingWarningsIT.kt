@@ -163,12 +163,12 @@ class ArgumentParsingWarningsIT : KGPBaseTest() {
     @DisplayName("A deprecated argument that the compiler reports itself is not duplicated")
     @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
     fun testDeprecatedLifecycleArgumentIsNotDuplicated(gradleVersion: GradleVersion) {
-        multiplatformProject(gradleVersion, freeCompilerArgs = listOf("-Xsuppress-warning=NOTHING_TO_INLINE")) {
+        multiplatformProject(gradleVersion, jvmOnlyFreeCompilerArgs = listOf("-Xjvm-default=all")) {
             buildAllCompileTasks {
-                forEachCompileTask { taskOutput ->
+                forEachCompileTask(listOf(JVM_TASK)) { taskOutput ->
                     assertWarningReportedOnce(
                         taskOutput,
-                        "The argument '-Xsuppress-warning' is deprecated since Kotlin".toRegex(RegexOption.LITERAL),
+                        "The argument '-Xjvm-default' is deprecated since Kotlin".toRegex(RegexOption.LITERAL),
                     )
                 }
             }

@@ -1,8 +1,0 @@
-$TESTDATA_DIR$/experimentalCheckers.kt
--Xuse-fir-experimental-checkers
--libraries
-$STDLIB_JS$
--ir-output-dir
-$TEMP_DIR$
--ir-output-name
-out

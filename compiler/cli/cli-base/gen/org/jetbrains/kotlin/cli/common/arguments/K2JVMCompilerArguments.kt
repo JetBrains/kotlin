@@ -206,16 +206,6 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         }
 
     @Argument(
-        value = "-Xir-do-not-clear-binding-context",
-        description = "When using the IR backend, do not clear BindingContext between 'psi2ir' and lowerings.",
-    )
-    var doNotClearBindingContext: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xjava-direct",
         description = "Experimental direct java support.",
     )

@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
-import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -35,17 +32,7 @@ class CompilerStackOverflowTest : AbstractKotlinCompilerIntegrationTest() {
 
     @Test
     fun testLongStringConcatenationWithLightTree() {
-        assertCompiles(LONG_STRING_CONCATENATION_FILE_NAME, longStringConcatenation(), Parser.LIGHT_TREE)
-    }
-
-    /**
-     * The PSI half of the frontend reaches the leaf adjacent to a literal without recursion, and the PSI parser does
-     * not use `KotlinLightParser.reportErrors`, so this half passed even before KT-88399 was fixed. It is kept as a
-     * guard against either becoming recursive.
-     */
-    @Test
-    fun testLongStringConcatenationWithPsi() {
-        assertCompiles(LONG_STRING_CONCATENATION_FILE_NAME, longStringConcatenation(), Parser.PSI)
+        assertCompiles(LONG_STRING_CONCATENATION_FILE_NAME, longStringConcatenation())
     }
 
     /**
@@ -62,13 +49,12 @@ class CompilerStackOverflowTest : AbstractKotlinCompilerIntegrationTest() {
     }
 
     /**
-     * Writes [source] to [fileName], compiles it with [parser] on a thread that gets exactly [stackSize] bytes of
+     * Writes [source] to [fileName], compiles it on a thread that gets exactly [stackSize] bytes of
      * stack, and asserts that the compiler reports nothing and exits with [ExitCode.OK].
      */
     private fun assertCompiles(
         fileName: String,
         source: String,
-        parser: Parser,
         stackSize: Long = DEFAULT_STACK_SIZE,
     ) {
         testDataDirectory.mkdirs()
@@ -76,8 +62,7 @@ class CompilerStackOverflowTest : AbstractKotlinCompilerIntegrationTest() {
 
         val output = compileKotlin(
             fileName,
-            File(tmpdir, "out-${fileName.removeSuffix(".kt")}-${parser.name.lowercase()}"),
-            additionalOptions = parser.cliOptions,
+            File(tmpdir, "out-${fileName.removeSuffix(".kt")}"),
             expectedFileName = null,
             stackSize = stackSize,
         )
@@ -85,26 +70,8 @@ class CompilerStackOverflowTest : AbstractKotlinCompilerIntegrationTest() {
         assertEquals(
             normalizeOutput("" to ExitCode.OK),
             normalizeOutput(output),
-            "Compiling $fileName with the ${parser.name} parser and a ${stackSize / 1024} KiB stack failed",
+            "Compiling $fileName with a ${stackSize / 1024} KiB stack failed",
         )
-    }
-
-    /**
-     * Which parser the CLI should use. Both are worth covering, because they build different trees and are walked by
-     * different halves of the frontend.
-     */
-    private enum class Parser(val cliOptions: List<String>) {
-        LIGHT_TREE(emptyList()),
-
-        // `-Xuse-fir-lt` is the only way to ask the CLI for the PSI parser, and it is deprecated, so silence the
-        // warning about it rather than letting it fail the comparison against the expected empty output.
-        @Suppress("DEPRECATION")
-        PSI(
-            listOf(
-                "${CommonCompilerArguments::useFirLT.cliArgument}=false",
-                "${CommonCompilerArguments::warningLevels.cliArgument}=${CliDiagnostics.DEPRECATED_CLI_ARG.name}:disabled",
-            )
-        ),
     }
 
     companion object {

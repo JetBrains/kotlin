@@ -66,12 +66,10 @@ class ExpectedActualDeclarationChecker(
         if (declaration !is KtNamedDeclaration) return
         if (descriptor !is MemberDescriptor || DescriptorUtils.isEnumEntry(descriptor)) return
 
-        val checkActualModifier = !context.languageVersionSettings.getFlag(AnalysisFlags.multiPlatformDoNotCheckActual)
-
         if (descriptor.isExpect) {
             checkExpectedDeclarationHasProperActuals(
                 declaration, descriptor, context.trace,
-                checkActualModifier, context
+                checkActualModifier = true, context
             )
             checkOptInAnnotation(declaration, descriptor, descriptor, context)
         }
@@ -80,7 +78,6 @@ class ExpectedActualDeclarationChecker(
             checkActualDeclarationHasExpected(
                 declaration,
                 descriptor,
-                checkActualModifier,
                 context,
                 moduleVisibilityFilter = { it in allDependsOnModules }
             )
@@ -314,7 +311,6 @@ class ExpectedActualDeclarationChecker(
     private fun checkActualDeclarationHasExpected(
         reportOn: KtNamedDeclaration,
         descriptor: MemberDescriptor,
-        checkActualModifier: Boolean,
         context: DeclarationCheckerContext,
         moduleVisibilityFilter: ModuleFilter
     ) {
@@ -326,8 +322,8 @@ class ExpectedActualDeclarationChecker(
         checkAmbiguousExpects(compatibility, trace, reportOn, descriptor)
 
         // For top-level declaration missing actual error reported in Actual checker
-        if (checkActualModifier
-            && descriptor.containingDeclaration !is PackageFragmentDescriptor
+        if (
+            descriptor.containingDeclaration !is PackageFragmentDescriptor
             && compatibility.any { it.key.isCompatibleOrWeaklyIncompatible }
         ) {
             reportMissingActualModifier(descriptor, reportOn, trace)

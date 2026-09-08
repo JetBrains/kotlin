@@ -47,7 +47,6 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             drop("Xplugin")
             drop("Xcompiler-plugin")
             drop("Xcompiler-plugin-order")
-            drop("Xintellij-plugin-root")
             drop("Xcommon-sources")
             restrict(
                 "Xenable-incremental-compilation",
@@ -60,7 +59,6 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
 
             // KMP related
             drop("Xmulti-platform")
-            drop("Xno-check-actual")
             drop("Xfragments")
             drop("Xfragment-sources")
             drop("Xfragment-refines")

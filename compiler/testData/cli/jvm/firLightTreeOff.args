@@ -1,4 +1,0 @@
-$TESTDATA_DIR$/firLightTree.kt
--Xuse-fir-lt=false
--d
-$TEMP_DIR$

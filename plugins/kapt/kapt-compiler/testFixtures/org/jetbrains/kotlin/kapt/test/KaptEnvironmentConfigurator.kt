@@ -79,7 +79,6 @@ class KaptEnvironmentConfigurator(
 
         val runtimeLibrary = PathUtil.getResourcePathForClass(KaptIgnored::class.java)
         configuration.addJvmClasspathRoot(runtimeLibrary)
-        configuration.put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, true)
 
         configuration.put(JVMConfigurationKeys.SKIP_BODIES, true)
         if (testServices.defaultsProvider.frontendKind == FrontendKinds.FIR) {

@@ -70,7 +70,6 @@ org.jetbrains.kotlin.analysis.api.components.KaCompilationOptionsBuilder.disable
 org.jetbrains.kotlin.analysis.api.components.KaCompilationOptionsBuilder.disableInline(Boolean)
 org.jetbrains.kotlin.analysis.api.components.KaCompilationOptionsBuilder.disableOptimization(Boolean)
 org.jetbrains.kotlin.analysis.api.components.KaCompilationOptionsBuilder.disableParameterAssertions(Boolean)
-org.jetbrains.kotlin.analysis.api.components.KaCompilationOptionsBuilder.ignoreConstOptimizationErrors(Boolean)
 org.jetbrains.kotlin.analysis.api.components.KaCompilationOptionsBuilder.jvmCompiledClassHandler(KaCompiledClassHandler)
 org.jetbrains.kotlin.analysis.api.components.KaCompilationOptionsBuilder.jvmExecutionStack(Sequence<PsiElement?>)
 org.jetbrains.kotlin.analysis.api.components.KaCompilationOptionsBuilder.jvmGenerateParameterMetadata(Boolean)
