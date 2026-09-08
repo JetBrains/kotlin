@@ -180,7 +180,7 @@ private object FreeList {
             check(allocatedSlot.size == realAllocationSize(allocatedSlot.size)) { "Slot to free clearly does not originate from allocated slot: alignment is wrong" }
 
             // need to find the slots that this lies in between, in terms of start address
-            // NOTE: we assume the allocatedSlot does not overlap with anything in the free list, that wouldn't make sense, by definition, allocatedSlot is not free
+            // NOTE: we assume (and later assert) the allocatedSlot does not overlap with anything in the free list, that wouldn't make sense, by definition, allocatedSlot is not free
             val minusInsertionPointMinusOne = list.binarySearch {
                 // because we assume it can't overlap, we know that size is irrelevant here: we'll get the index of the insertion point from this function, and inserting there will not lead to overlap
                 (it.ptr.address.toLong() - allocatedSlot.ptr.address.toLong()).toInt()
