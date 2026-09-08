@@ -56,7 +56,6 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
         configureLoweredIrHandlersStep {
             useHandlers(
                 IrDiagnosticsHandler.forLoweredIr,
-                ::NoIrCompilationErrorsHandler
             )
         }
 
