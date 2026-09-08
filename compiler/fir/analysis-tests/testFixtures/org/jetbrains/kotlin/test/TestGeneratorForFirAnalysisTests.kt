@@ -5,11 +5,18 @@
 
 package org.jetbrains.kotlin.test
 
+import org.jetbrains.kotlin.generators.dsl.testClassPerDirectory
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.canFreezeIDE
 import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticLightTreeTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
+
+/**
+ * Package of the generated test classes. Mirrored by the `testDataShards` declaration in
+ * `compiler/fir/analysis-tests/build.gradle.kts`, which derives one test task per generated class.
+ */
+private const val GENERATED_TESTS_PACKAGE = "org.jetbrains.kotlin.test.runners.generated"
 
 fun main(args: Array<String>) {
     val mainClassName = TestGeneratorUtil.getMainClassName()
@@ -17,22 +24,22 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuiteWithJUnit5(args, mainClassName) {
         testGroup(testRoot, "compiler/") {
-            testClass<AbstractPhasedJvmDiagnosticLightTreeTest> {
-                val relativeRootPaths = listOf(
-                    "testData/diagnostics/tests",
-                    "testData/diagnostics/testsWithAnyBackend",
-                    "testData/diagnostics/testsWithStdLib",
-                )
+            val relativeRootPaths = listOf(
+                "testData/diagnostics/tests",
+                "testData/diagnostics/testsWithAnyBackend",
+                "testData/diagnostics/testsWithStdLib",
+            )
 
-                for (path in relativeRootPaths) {
-                    model(
-                        path,
-                        excludeDirs = listOf("declarations/multiplatform/k1"),
-                        skipTestAllFilesCheck = true,
-                        pattern = TestGeneratorUtil.KT.canFreezeIDE,
-                        excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
-                    )
-                }
+            for (path in relativeRootPaths) {
+                testClassPerDirectory(
+                    AbstractPhasedJvmDiagnosticLightTreeTest::class.java,
+                    relativeRootPath = path,
+                    generatedPackage = GENERATED_TESTS_PACKAGE,
+                    excludeDirs = listOf("declarations/multiplatform/k1"),
+                    skipTestAllFilesCheck = true,
+                    pattern = TestGeneratorUtil.KT.canFreezeIDE,
+                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+                )
             }
         }
     }

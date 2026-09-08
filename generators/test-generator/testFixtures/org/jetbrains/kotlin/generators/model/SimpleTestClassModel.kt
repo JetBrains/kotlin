@@ -84,18 +84,6 @@ class SimpleTestClassModel(
         }.sortedWith(BY_NAME)
     }
 
-    private fun excludesStripOneDirectory(excludeDirs: Collection<String>, directoryName: String): Collection<String> {
-        if (excludeDirs.isEmpty()) return excludeDirs
-        val result: MutableSet<String> = LinkedHashSet()
-        for (excludeDir in excludeDirs) {
-            val firstSlash = excludeDir.indexOf('/')
-            if (firstSlash >= 0 && excludeDir.substring(0, firstSlash) == directoryName) {
-                result.add(excludeDir.substring(firstSlash + 1))
-            }
-        }
-        return result
-    }
-
     override val methods: Collection<MethodModel<*>> by lazy {
         if (!rootFile.isDirectory) {
             val methodModel = SimpleTestMethodModel(
@@ -179,4 +167,22 @@ class SimpleTestClassModel(
             return false
         }
     }
+}
+
+/**
+ * Reinterprets [excludeDirs] (which are paths relative to the currently traversed directory) for the
+ * nested [directoryName], dropping the entries which don't apply to it.
+ *
+ * E.g. `["declarations/multiplatform/k1", "foo/bar"]` becomes `["multiplatform/k1"]` for `declarations`.
+ */
+internal fun excludesStripOneDirectory(excludeDirs: Collection<String>, directoryName: String): Collection<String> {
+    if (excludeDirs.isEmpty()) return excludeDirs
+    val result: MutableSet<String> = LinkedHashSet()
+    for (excludeDir in excludeDirs) {
+        val firstSlash = excludeDir.indexOf('/')
+        if (firstSlash >= 0 && excludeDir.substring(0, firstSlash) == directoryName) {
+            result.add(excludeDir.substring(firstSlash + 1))
+        }
+    }
+    return result
 }

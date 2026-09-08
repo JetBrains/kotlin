@@ -390,7 +390,10 @@ tasks {
     testLifecycleTask("compilerFrontendTest") {
         dependsOn(":compiler:fir:raw-fir:psi2fir:test")
         dependsOn(":compiler:fir:raw-fir:light-tree2fir:test")
-        dependsOn(":compiler:fir:analysis-tests:test")
+        // `shardedTest` runs the same tests as `test`, but as one task per testdata directory, so
+        // that a change in a testdata file re-runs the tests of that directory only. `test` itself is
+        // deliberately left out: it stays for IDE runs and ad hoc `--tests` invocations.
+        dependsOn(":compiler:fir:analysis-tests:shardedTest")
         dependsOn(":compiler:fir:analysis-tests:legacy-fir-tests:test")
     }
 

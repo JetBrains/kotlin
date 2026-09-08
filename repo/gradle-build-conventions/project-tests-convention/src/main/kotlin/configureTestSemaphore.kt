@@ -14,11 +14,12 @@ import org.gradle.kotlin.dsl.withType
 internal abstract class TestSemaphoreService : BuildService<BuildServiceParameters.None>
 
 internal fun Project.configureTestSemaphore() {
+    val maxConcurrentTestTasks = kotlinBuildProperties.maxConcurrentTestTasks
     val testSemaphore = gradle.sharedServices.registerIfAbsent(
         "project.tests.convention:testSemaphore",
         TestSemaphoreService::class
     ) {
-        maxParallelUsages.set(1)
+        maxParallelUsages.set(maxConcurrentTestTasks)
     }
 
     tasks.withType<AbstractTestTask>().configureEach {
