@@ -5,24 +5,18 @@
 
 package org.jetbrains.kotlin.buildtools.tests
 
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.daemonExecutionPolicy
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.AbstractProject
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAndPlatformAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.JvmProject
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.MetadataProject
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.ProjectCreator
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.jsProject
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.wasmProject
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
 import org.jetbrains.kotlin.test.TestMetadata
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.readText
 import kotlin.io.path.walk
@@ -170,7 +164,12 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
             val bazKt = module1.sourcesDirectory.resolve("baz.kt")
             bazKt.writeText(bazKt.readText().replace("baz() = 42", "baz() = 99"))
 
-            module1.compileIncrementallyWithMetrics(SourcesChanges.Known(modifiedFiles = listOf(bazKt.toFile()), removedFiles = emptyList())) { metrics ->
+            module1.compileIncrementallyWithMetrics(
+                SourcesChanges.Known(
+                    modifiedFiles = listOf(bazKt.toFile()),
+                    removedFiles = emptyList()
+                )
+            ) { metrics ->
                 assertCompiledSources("baz.kt")
 
                 val expectedNames = Jvm.incrementalCompilationMetricNames
@@ -204,6 +203,20 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
     fun testCrossModuleIncrementalHistoryMetricsOnWasm(strategyConfig: CompilerExecutionStrategyConfiguration) {
         wasmProject(strategyConfig) {
             assertCrossModuleIncrementalHistoryMetricsAreReported()
+        }
+    }
+
+    @DisplayName("Daemon reports memory metrics")
+    @BtaV2PlatformAgnosticCompilationTest
+    fun testDaemonReportsMemoryMetrics(project: ProjectWithPolicyCreator, toolchains: KotlinToolchains) {
+        project(toolchains.daemonExecutionPolicy {}) {
+            module("empty").compileWithMetrics { metrics ->
+                if (this@project !is MetadataProject) {
+                    expectFail()
+                }
+                assertTrue(metrics.all().any { it.name == "Increase memory usage" })
+                assertTrue(metrics.all().any { it.name == "Total memory usage at the end of build" })
+            }
         }
     }
 

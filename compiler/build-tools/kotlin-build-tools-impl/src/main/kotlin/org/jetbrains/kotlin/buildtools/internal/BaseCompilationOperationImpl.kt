@@ -219,16 +219,29 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         loggerAdapter.kotlinLogger.info("Options for KOTLIN DAEMON: $daemonCompileOptions")
 
         val metricsReporter = getMetricsReporter()
-        val exitCode = daemon.compile(
-            sessionId,
-            arguments.toArgumentStrings(allowArgFileInValues = false).toTypedArray(),
-            daemonCompileOptions,
-            BtaCompilerServicesWithResultsFacade(loggerAdapter, get(LOOKUP_TRACKER)),
-            DaemonCompilationResults(
-                loggerAdapter.kotlinLogger, rootProjectDir?.toFile(), metricsReporter
-            ),
-            compilationId
-        ).get()
+        val memoryUsageBeforeBuild = daemon.getUsedMemory(withGC = false).takeIf { it.isGood }?.get()
+
+        val exitCode = try {
+            daemon.compile(
+                sessionId,
+                arguments.toArgumentStrings(allowArgFileInValues = false).toTypedArray(),
+                daemonCompileOptions,
+                BtaCompilerServicesWithResultsFacade(loggerAdapter, get(LOOKUP_TRACKER)),
+                DaemonCompilationResults(
+                    loggerAdapter.kotlinLogger, rootProjectDir?.toFile(), metricsReporter
+                ),
+                compilationId
+            ).get()
+        } finally {
+            val memoryUsageAfterBuild = runCatching { daemon.getUsedMemory(withGC = false).takeIf { it.isGood }?.get() }.getOrNull()
+
+            if (memoryUsageAfterBuild == null || memoryUsageBeforeBuild == null) {
+                loggerAdapter.kotlinLogger.debug("Unable to calculate memory usage")
+            } else {
+                metricsReporter.addMetric(DAEMON_INCREASED_MEMORY, memoryUsageAfterBuild - memoryUsageBeforeBuild)
+                metricsReporter.addMetric(DAEMON_MEMORY_USAGE, memoryUsageAfterBuild)
+            }
+        }
 
         try {
             daemon.releaseCompileSession(sessionId)
