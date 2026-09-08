@@ -1,0 +1,127 @@
+(lldb) target create <path to executable>
+Current executable set to <path to executable>.
+(lldb) settings set stop-disassembly-display never
+(lldb) command script import <path to lldb script>
+(lldb) b main.kt:16
+Breakpoint 1: where = lldb_inspectSet.kexe`kfun:#main(kotlin.Array<kotlin.String>){} + <breakpoint offset> at main.kt:16:11, address = <memory address>
+(lldb) r
+Process <process id> launched: <path to executable>
+Process <process id> stopped
+* thread #<thread id>, stop reason = breakpoint 1.1
+    frame #0: <frame pc> lldb_inspectSet.kexe`kfun:#main(args=[]){} at main.kt:16:11
+   13  	    val simpleHashSet: HashSet<Int> = hashSetOf(13, 14)
+   14  	    val emptySet: Set<Point> = emptySet()
+   15  	    val nestedSet: Set<Set<Point>> = linkedSetOf(linkedSetOf(Point(4, 5), Point(6, 7)), emptySet())
+-> 16  	    return
+    	          ^
+   17  	}
+   18  	
+   19  	data class Point(val x: Int, val y: Int)
+(lldb) fr var set
+(ObjHeader *) set = [Point(x=1, y=2), Point(x=3, y=4)]
+(lldb) fr var -A -P 5 set
+(ObjHeader *) set = [Point(x=1, y=2), Point(x=3, y=4)] {
+  0 = Point(x=1, y=2) {
+    x = 1
+    y = 2
+  }
+  1 = Point(x=3, y=4) {
+    x = 3
+    y = 4
+  }
+}
+(lldb) fr var intSet
+(ObjHeader *) intSet = [1, 2, 3]
+(lldb) fr var -A -P 5 intSet
+(ObjHeader *) intSet = [1, 2, 3] {
+  0 = 1 {
+    value = 1
+  }
+  1 = 2 {
+    value = 2
+  }
+  2 = 3 {
+    value = 3
+  }
+}
+(lldb) fr var simpleSet
+(ObjHeader *) simpleSet = [7, 8]
+(lldb) fr var -A -P 5 simpleSet
+(ObjHeader *) simpleSet = [7, 8] {
+  0 = 7 {
+    value = 7
+  }
+  1 = 8 {
+    value = 8
+  }
+}
+(lldb) fr var simpleMutableSet
+(ObjHeader *) simpleMutableSet = [9, 10]
+(lldb) fr var -A -P 5 simpleMutableSet
+(ObjHeader *) simpleMutableSet = [9, 10] {
+  0 = 9 {
+    value = 9
+  }
+  1 = 10 {
+    value = 10
+  }
+}
+(lldb) fr var simpleLinkedSet
+(ObjHeader *) simpleLinkedSet = [11, 12]
+(lldb) fr var -A -P 5 simpleLinkedSet
+(ObjHeader *) simpleLinkedSet = [11, 12] {
+  0 = 11 {
+    value = 11
+  }
+  1 = 12 {
+    value = 12
+  }
+}
+(lldb) fr var simpleHashSet
+(ObjHeader *) simpleHashSet = [13, 14]
+(lldb) fr var -A -P 5 simpleHashSet
+(ObjHeader *) simpleHashSet = [13, 14] {
+  0 = 13 {
+    value = 13
+  }
+  1 = 14 {
+    value = 14
+  }
+}
+(lldb) fr var emptySet
+(ObjHeader *) emptySet = []
+(lldb) fr var -A -P 5 emptySet
+(ObjHeader *) emptySet = [] {}
+(lldb) fr var nestedSet
+(ObjHeader *) nestedSet = [[Point(x=4, y=5), Point(x=6, y=7)], []]
+(lldb) fr var -A -P 10 nestedSet
+(ObjHeader *) nestedSet = [[Point(x=4, y=5), Point(x=6, y=7)], []] {
+  0 = [Point(x=4, y=5), Point(x=6, y=7)] {
+    0 = Point(x=4, y=5) {
+      x = 4
+      y = 5
+    }
+    1 = Point(x=6, y=7) {
+      x = 6
+      y = 7
+    }
+  }
+  1 = [] {}
+}
+(lldb) field_type nestedSet
+HashSet
+(lldb) field_type nestedSet.0
+HashSet
+(lldb) field_type nestedSet.0.0
+Point
+(lldb) field_type nestedSet.0.0.x
+int
+(lldb) field_type nestedSet.0.0.y
+int
+(lldb) field_type nestedSet.0.1
+Point
+(lldb) field_type nestedSet.0.1.x
+int
+(lldb) field_type nestedSet.0.1.y
+int
+(lldb) q

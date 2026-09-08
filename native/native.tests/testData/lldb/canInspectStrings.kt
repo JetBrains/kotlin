@@ -11,5 +11,6 @@ fun main(args: Array<String>) {
         append("dynamic ")
         append("string")
     }
+    val empty = ""
     return
 }

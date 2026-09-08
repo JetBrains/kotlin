@@ -1,0 +1,77 @@
+(lldb) target create <path to executable>
+Current executable set to <path to executable>.
+(lldb) settings set stop-disassembly-display never
+(lldb) command script import <path to lldb script>
+(lldb) b main.kt:14
+Breakpoint 1: where = lldb_inspectMap.kexe`kfun:#main(kotlin.Array<kotlin.String>){} + <breakpoint offset> at main.kt:14:11, address = <memory address>
+(lldb) r
+Process <process id> launched: <path to executable>
+Process <process id> stopped
+* thread #<thread id>, stop reason = breakpoint 1.1
+    frame #0: <frame pc> lldb_inspectMap.kexe`kfun:#main(args=[]){} at main.kt:14:11
+   11  	    val simpleMutableMap: MutableMap<Int, String> = mutableMapOf(7 to "seven", 8 to "eight")
+   12  	    val emptyMap: Map<Int, Point> = emptyMap()
+   13  	    val nestedMap: Map<Int, List<Point>> = linkedMapOf(1 to listOf(Point(4, 5), Point(6, 7)), 2 to emptyList())
+-> 14  	    return
+    	          ^
+   15  	}
+   16  	
+   17  	data class Point(val x: Int, val y: Int)
+(lldb) fr var map
+(ObjHeader *) map = {10=Point(x=11, y=12), 13=Point(x=14, y=15)}
+(lldb) fr var -A -P 5 map
+(ObjHeader *) map = {10=Point(x=11, y=12), 13=Point(x=14, y=15)} {
+  [0] = 10 = Point(x=11, y=12)
+  [1] = 13 = Point(x=14, y=15)
+}
+(lldb) fr var simpleMap
+(ObjHeader *) simpleMap = {1=one, 2=two}
+(lldb) fr var -A -P 5 simpleMap
+(ObjHeader *) simpleMap = {1=one, 2=two} {
+  [0] = 1 = one
+  [1] = 2 = two
+}
+(lldb) fr var simpleHashMap
+(ObjHeader *) simpleHashMap = {3=three, 4=four}
+(lldb) fr var -A -P 5 simpleHashMap
+(ObjHeader *) simpleHashMap = {3=three, 4=four} {
+  [0] = 3 = three
+  [1] = 4 = four
+}
+(lldb) fr var simpleMutableMap
+(ObjHeader *) simpleMutableMap = {7=seven, 8=eight}
+(lldb) fr var -A -P 5 simpleMutableMap
+(ObjHeader *) simpleMutableMap = {7=seven, 8=eight} {
+  [0] = 7 = seven
+  [1] = 8 = eight
+}
+(lldb) fr var emptyMap
+(ObjHeader *) emptyMap = {}
+(lldb) fr var -A -P 5 emptyMap
+(ObjHeader *) emptyMap = {} {}
+(lldb) fr var nestedMap
+(ObjHeader *) nestedMap = {1=[Point(x=4, y=5), Point(x=6, y=7)], 2=[]}
+(lldb) fr var -A -P 10 nestedMap
+(ObjHeader *) nestedMap = {1=[Point(x=4, y=5), Point(x=6, y=7)], 2=[]} {
+  [0] = 1 = [Point(x=4, y=5), Point(x=6, y=7)]
+  [1] = 2 = []
+}
+(lldb) field_type nestedMap
+HashMap
+(lldb) field_type nestedMap.0
+_KotlinMapEntry
+(lldb) field_type nestedMap.0.value
+asList$1
+(lldb) field_type nestedMap.0.value.0
+Point
+(lldb) field_type nestedMap.0.value.0.x
+int
+(lldb) field_type nestedMap.0.value.0.y
+int
+(lldb) field_type nestedMap.0.value.1
+Point
+(lldb) field_type nestedMap.0.value.1.x
+int
+(lldb) field_type nestedMap.0.value.1.y
+int
+(lldb) q
