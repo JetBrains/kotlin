@@ -153,17 +153,6 @@ If API Level >= 2.2 -- no-op.""",
         }
 
     @Argument(
-        value = "-Xenhance-type-parameter-types-to-def-not-null",
-        description = "Enhance not-null-annotated type parameter types to definitely-non-nullable types ('@NotNull T' => 'T & Any').",
-    )
-    @Enables(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated)
-    var enhanceTypeParameterTypesToDefNotNull: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xenhanced-coroutines-debugging",
         description = """Generate additional linenumber instruction for compiler-generated code
 inside suspend functions and lambdas to distinguish them from user code by debugger.""",
@@ -565,19 +554,6 @@ The default value is 'enable'.""",
         description = "Suppress the \"cannot access built-in declaration\" error (useful with '-no-stdlib').",
     )
     var suppressMissingBuiltinsError: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xtype-enhancement-improvements-strict-mode",
-        description = """Enable strict mode for improvements to type enhancement for loaded Java types based on nullability annotations,
-including the ability to read type-use annotations from class files.
-See KT-45671 for more details.""",
-    )
-    @Enables(LanguageFeature.TypeEnhancementImprovementsInStrictMode)
-    var typeEnhancementImprovementsInStrictMode: Boolean = false
         set(value) {
             checkFrozen()
             field = value

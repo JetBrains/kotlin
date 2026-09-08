@@ -4,6 +4,8 @@
  */
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.kotlin.config.LanguageFeature
+
 // This file was generated automatically. See generator in :compiler:cli:cli-arguments-generator
 // DO NOT MODIFY IT MANUALLY.
 
@@ -24,6 +26,39 @@ class RemovedCompilerArguments {
         }
 
     @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xinline-classes",
+        description = "Enable experimental inline classes.",
+        removedVersion = "2.5.0",
+    )
+    @Enables(LanguageFeature.InlineClasses)
+    var inlineClasses: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xnew-inference",
+        description = "Enable the new experimental generic type inference algorithm.",
+        removedVersion = "2.5.0",
+    )
+    @Enables(LanguageFeature.NewInference)
+    @Enables(LanguageFeature.SamConversionPerArgument)
+    @Enables(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType)
+    @Enables(LanguageFeature.DisableCompatibilityModeForNewInference)
+    var newInference: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
         message = "This is temporary solution (see KT-63712) intended to be used only for stdlib build.",
         level = DeprecationLevel.ERROR,
     )
@@ -34,6 +69,21 @@ class RemovedCompilerArguments {
         removedVersion = "2.5.0",
     )
     var suppressApiVersionGreaterThanLanguageVersionError: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xunrestricted-builder-inference",
+        description = "Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.",
+        removedVersion = "2.5.0",
+    )
+    @Enables(LanguageFeature.UnrestrictedBuilderInference)
+    var unrestrictedBuilderInference: Boolean = false
         set(value) {
             field = value
         }
@@ -105,6 +155,21 @@ class RemovedCompilerArguments {
         removedVersion = "2.4.0",
     )
     var compileJava: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xenhance-type-parameter-types-to-def-not-null",
+        description = "Enhance not-null-annotated type parameter types to definitely-non-nullable types ('@NotNull T' => 'T & Any').",
+        removedVersion = "2.5.0",
+    )
+    @Enables(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated)
+    var enhanceTypeParameterTypesToDefNotNull: Boolean = false
         set(value) {
             field = value
         }
@@ -198,6 +263,23 @@ It has no effect when -language-version is 2.0 or higher.""",
         removedVersion = "2.5.0",
     )
     var suppressDeprecatedJvmTargetWarning: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xtype-enhancement-improvements-strict-mode",
+        description = """Enable strict mode for improvements to type enhancement for loaded Java types based on nullability annotations,
+including the ability to read type-use annotations from class files.
+See KT-45671 for more details.""",
+        removedVersion = "2.5.0",
+    )
+    @Enables(LanguageFeature.TypeEnhancementImprovementsInStrictMode)
+    var typeEnhancementImprovementsInStrictMode: Boolean = false
         set(value) {
             field = value
         }

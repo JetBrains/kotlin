@@ -288,36 +288,6 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         )
     }
 
-    compilerArgument {
-        name = "Xnew-inference"
-        description = "Enable the new experimental generic type inference algorithm.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(
-            Enables(LanguageFeature.NewInference),
-            Enables(LanguageFeature.SamConversionPerArgument),
-            Enables(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType),
-            Enables(LanguageFeature.DisableCompatibilityModeForNewInference),
-        )
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_2_20,
-        )
-    }
-
-    compilerArgument {
-        name = "Xinline-classes"
-        description = "Enable experimental inline classes.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(
-            Enables(LanguageFeature.InlineClasses)
-        )
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_3_50,
-        )
-    }
 
     compilerArgument {
         name = "Xreport-perf"
@@ -794,21 +764,6 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
             introducedVersion = KotlinReleaseVersion.v2_0_20,
         )
     }
-
-
-    compilerArgument {
-        name = "Xunrestricted-builder-inference"
-        description =
-            "Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(Enables(LanguageFeature.UnrestrictedBuilderInference))
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_30,
-        )
-    }
-
 
     compilerArgument {
         name = "Xcontext-parameters"
