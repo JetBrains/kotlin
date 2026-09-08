@@ -22,8 +22,10 @@
 #
 
 import io
+import os
 import re
 import struct
+import sys
 import time
 import logging
 from enum import Enum
@@ -1765,7 +1767,32 @@ def _hex(value):
     return f"0x{value:x}"
 
 
+_LOGGING = False
+
+
+def _init_logger():
+    formatter = logging.Formatter(
+        "%(levelname)s - %(name)s - %(funcName)s: %(message)s"
+    )
+
+    # Same as in LLDBFrontend
+    if os.getenv("GLOG_log_dir") is not None:
+        handler = logging.FileHandler(
+            filename=os.getenv("GLOG_log_dir", "") + "/konan_lldb.log"
+        )
+        handler.setFormatter(formatter)
+        logging.getLogger().addHandler(handler)
+        logging.getLogger().setLevel(logging.DEBUG)
+
+    if _LOGGING:
+        handler = logging.StreamHandler(stream=sys.stderr)
+        handler.setFormatter(formatter)
+        logging.getLogger().addHandler(handler)
+        logging.getLogger().setLevel(logging.DEBUG)
+
+
 def __lldb_init_module(debugger, _):
+    _init_logger()
     _FACTORY["object"] = lambda x, y, z: KonanObjectSyntheticProvider(x, z)
     _FACTORY["array"] = lambda x, y, z: KonanArraySyntheticProvider(x, y, z)
     _FACTORY["string"] = lambda x, y, _: KonanStringSyntheticProvider(x)
