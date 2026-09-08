@@ -53,7 +53,6 @@ internal constructor(
     KotlinJsTargetDsl,
     KotlinWasmTargetDsl,
     KotlinJsSubTargetContainerDsl,
-    KotlinWasmSubTargetContainerDsl,
     KotlinTargetWithKotlinArchiveSupport {
 
     @InternalKotlinGradlePluginApi
