@@ -52,6 +52,8 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
         resourceFiles: List<TestFile>,
         testServices: TestServices,
     ): Path {
+        allowTestsOnlyLanguageFeatures()
+
         val allowedLibraryPlatforms = module.directives[Directives.LIBRARY_PLATFORMS].map { it.targetPlatform }
         val compilationErrorExpected = Directives.COMPILATION_ERRORS in module.directives
                 || (allowedLibraryPlatforms.isNotEmpty() && module.targetPlatform(testServices) !in allowedLibraryPlatforms)
