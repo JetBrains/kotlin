@@ -40,7 +40,7 @@ internal constructor(
 
     override fun KotlinBrowserJsIr.bundleConfigurator() {
         val bundlerValue: KotlinBrowserBundler = bundler.get()
-        when(bundlerValue) {
+        when (bundlerValue) {
             KotlinBrowserBundler.WEBPACK -> {
                 subTargetConfigurators.add(WebpackConfigurator(this))
             }
