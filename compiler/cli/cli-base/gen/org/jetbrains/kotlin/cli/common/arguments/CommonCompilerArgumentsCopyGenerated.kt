@@ -61,10 +61,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.fragments = from.fragments.copyOf()
     to.headerMode = from.headerMode
     to.headerModeType = from.headerModeType
-    to.ignoreConstOptimizationErrors = from.ignoreConstOptimizationErrors
     to.incrementalCompilation = from.incrementalCompilation
-    @Suppress("DEPRECATION")
-    to.intellijPluginRoot = from.intellijPluginRoot
     to.intrinsicConstEvaluation = from.intrinsicConstEvaluation
     to.kotlinHome = from.kotlinHome
     to.languageVersion = from.languageVersion
@@ -78,7 +75,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.multiPlatform = from.multiPlatform
     to.nameBasedDestructuring = from.nameBasedDestructuring
     to.nestedTypeAliases = from.nestedTypeAliases
-    to.noCheckActual = from.noCheckActual
     to.noInline = from.noInline
     to.nonLocalBreakContinue = from.nonLocalBreakContinue
     to.optIn = from.optIn.copyOf()
@@ -109,13 +105,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.stdlibCompilation = from.stdlibCompilation
     to.suppressVersionWarnings = from.suppressVersionWarnings
     @Suppress("DEPRECATION")
-    to.suppressedDiagnostics = from.suppressedDiagnostics.copyOf()
-    @Suppress("DEPRECATION")
-    to.useFirExperimentalCheckers = from.useFirExperimentalCheckers
-    @Suppress("DEPRECATION")
     to.useFirIC = from.useFirIC
-    @Suppress("DEPRECATION")
-    to.useFirLT = from.useFirLT
     to.verbosePhases = from.verbosePhases.copyOf()
     to.verifyIr = from.verifyIr
     to.warningLevels = from.warningLevels.copyOf()

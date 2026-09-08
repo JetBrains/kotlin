@@ -50,7 +50,6 @@ fun CompilerConfiguration.setupCommonArguments(
     put(CommonConfigurationKeys.REPORT_OUTPUT_FILES, arguments.reportOutputFiles)
     put(CommonConfigurationKeys.INCREMENTAL_COMPILATION, incrementalCompilationIsEnabled(arguments))
     put(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS, arguments.allowAnyScriptsInSourceRoots)
-    put(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS, arguments.ignoreConstOptimizationErrors)
     put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderInternalDiagnosticNames)
 
     val irVerificationMode = arguments.verifyIr?.let { verifyIrString ->
@@ -77,8 +76,6 @@ fun CompilerConfiguration.setupCommonArguments(
     }
     put(CommonConfigurationKeys.ADDITIONAL_IR_CHECKERS, arguments.enableAdditionalIrCheckers.toList())
 
-    put(CommonConfigurationKeys.USE_FIR_EXPERIMENTAL_CHECKERS, @Suppress("DEPRECATION") arguments.useFirExperimentalCheckers)
-
     setupMetadataVersion(arguments, createMetadataVersion)
 
     setupLanguageVersionSettings(arguments)
@@ -89,7 +86,7 @@ fun CompilerConfiguration.setupCommonArguments(
     checkRedundantArguments(arguments)
 
     put(CommonConfigurationKeys.USE_FIR, languageVersionSettings.languageVersion.usesK2)
-    put(CommonConfigurationKeys.USE_LIGHT_TREE, @Suppress("DEPRECATION") arguments.useFirLT)
+    put(CommonConfigurationKeys.USE_LIGHT_TREE, true)
 
     buildHmppModuleStructure(arguments)?.let { put(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE, it) }
 

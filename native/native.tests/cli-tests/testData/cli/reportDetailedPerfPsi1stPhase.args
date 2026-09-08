@@ -1,9 +1,0 @@
-$TESTDATA_DIR$/simple.kt
--produce
-library
--o
-$TEMP_DIR$/reportPerfPsi
--Xuse-fir-lt=false
--Xreport-perf=true
--Xdetailed-perf=true
--Xklib-ir-inliner=disabled

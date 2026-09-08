@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.jps.build
 
 import com.intellij.testFramework.RunAll
-import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.build.JvmSourceRoot
@@ -71,11 +70,6 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
         }
     }
 
-    open fun configureAdditionalArgs(args: K2JVMCompilerArguments) {
-        @Suppress("DEPRECATION")
-        args.useFirLT = false
-    }
-
     override fun runCompiler(filesToCompile: Iterable<File>, env: JpsCompilerEnvironment): Any? {
         val moduleFile = makeModuleFile(
             name = "test",
@@ -93,7 +87,6 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
             buildFile = moduleFile.canonicalPath
             reportOutputFiles = true
         }
-        configureAdditionalArgs(args)
         val argsArray = ArgumentUtils.convertArgumentsToStringList(args).toTypedArray()
 
         try {

@@ -305,9 +305,12 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * When using the IR backend, do not clear BindingContext between 'psi2ir' and lowerings.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_IR_DO_NOT_CLEAR_BINDING_CONTEXT: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_IR_DO_NOT_CLEAR_BINDING_CONTEXT", KotlinReleaseVersion(1, 4, 30))
 
