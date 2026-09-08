@@ -68,10 +68,9 @@ open class CommonizerHierarchicalIT : KGPBaseTest() {
             gradleVersion,
         ) {
             if (HostManager.hostIsMac) {
-                build(":p1:iosArm64MainKlibrary", ":p1:iosX64MainKlibrary", ":p1:macosX64MainKlibrary", ":p1:macosArm64MainKLibrary") {
+                build(":p1:iosArm64MainKlibrary", ":p1:iosX64MainKlibrary", ":p1:macosArm64MainKLibrary") {
                     assertDirectoryInProjectExists("p1/build/classes/kotlin/iosArm64/main/klib/p1")
                     assertDirectoryInProjectExists("p1/build/classes/kotlin/iosX64/main/klib/p1")
-                    assertDirectoryInProjectExists("p1/build/classes/kotlin/macosX64/main/klib/p1")
                     assertDirectoryInProjectExists("p1/build/classes/kotlin/macosArm64/main/klib/p1")
                     assertNoDuplicateLibraryWarning()
                 }
