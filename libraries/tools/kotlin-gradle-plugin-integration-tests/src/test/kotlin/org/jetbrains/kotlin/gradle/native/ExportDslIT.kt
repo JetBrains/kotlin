@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -207,6 +208,64 @@ class ExportDslIT : KGPBaseTest() {
             buildAndFail(":compileKotlinIosArm64") {
                 assertHasDiagnostic(KotlinToolingDiagnostics.ConflictingSwiftExportDsls)
                 assertNoDiagnostic(KotlinToolingDiagnostics.DeprecatedSwiftExportDsl)
+            }
+        }
+    }
+
+    @DisplayName("An override colliding with the root module name fails the build with the diagnostic")
+    @GradleTest
+    fun testDuplicateModuleNameFailsTheBuild(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    sourceSets.commonMain {
+                        compileStubSourceWithSourceSetName()
+                        dependencies {
+                            api(project(":sub"))
+                        }
+                    }
+                }
+                export.swift {
+                    moduleName.set("Shared")
+                    xcodeIntegration {
+                        // Collides with the root module's own name, set above.
+                        configure(project.dependencies.project(mapOf("path" to ":sub"))) {
+                            moduleName.set("Shared")
+                        }
+                    }
+                }
+            }
+
+            val subproject = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                    }
+                }
+            }
+
+            include(subproject, "sub")
+
+            // The diagnostic is FATAL because it is reported after checkKotlinGradlePluginConfigurationErrors has
+            // run, so it has to fail the build on its own.
+            buildAndFail(
+                ":$EMBED_SWIFT_EXPORT_TASK_NAME",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                assertHasDiagnostic(KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames)
+                // The build fails before the Swift Export tool is handed the modules.
+                assertTasksAreNotInTaskGraph(":iosArm64DebugSwiftExport")
             }
         }
     }
