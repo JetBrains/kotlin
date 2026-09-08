@@ -42,6 +42,8 @@ open class UpgradeCallableReferences(
         irFunction.transform(UpgradeTransformer(), irFunction)
     }
 
+    protected open fun getSamConversionArgument(argument: IrExpression): IrExpression = argument
+
     private data class AdaptedBlock(
         val function: IrSimpleFunction,
         val reference: IrFunctionReference,
@@ -197,13 +199,7 @@ open class UpgradeCallableReferences(
         override fun visitTypeOperator(expression: IrTypeOperatorCall, data: IrDeclarationParent): IrExpression {
             if (upgradeSamConversions && expression.operator == IrTypeOperator.SAM_CONVERSION) {
                 expression.transformChildren(this, data)
-                val argument = expression.argument.let {
-                    if (it is IrTypeOperatorCall && it.operator == IrTypeOperator.IMPLICIT_CAST) {
-                        it.argument
-                    } else {
-                        it
-                    }
-                }
+                val argument = getSamConversionArgument(expression.argument)
                 if (argument !is IrRichFunctionReference) return expression
                 return argument.apply {
                     startOffset = expression.startOffset
