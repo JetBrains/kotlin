@@ -1909,21 +1909,25 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/compilati
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/export/ExportExtension {
-	public fun <init> (Lorg/gradle/api/model/ObjectFactory;)V
 	public final fun swift (Lkotlin/jvm/functions/Function1;)V
 	public final fun swift (Lorg/gradle/api/Action;)V
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportConfigurationDsl {
-	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
-	public abstract fun getRootPackage ()Lorg/gradle/api/provider/Property;
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportConfigurationDsl : org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportModuleOptionsDsl {
 	public abstract fun xcodeIntegration ()V
 	public abstract fun xcodeIntegration (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun xcodeIntegration (Lorg/gradle/api/Action;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportIntegration {
+	public abstract fun configure (Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)V
+	public abstract fun configure (Ljava/lang/Object;Lorg/gradle/api/Action;)V
 	public abstract fun getSettings ()Lorg/gradle/api/provider/MapProperty;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportModuleOptionsDsl {
+	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
+	public abstract fun getRootPackage ()Lorg/gradle/api/provider/Property;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportXcodeIntegration : org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportIntegration {
