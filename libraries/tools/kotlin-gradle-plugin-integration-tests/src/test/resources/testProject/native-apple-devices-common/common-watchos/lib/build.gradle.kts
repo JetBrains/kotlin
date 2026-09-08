@@ -15,8 +15,6 @@ kotlin {
     watchosDeviceArm64("watchosLibDeviceArm64")
     watchosSimulatorArm64("watchosLibSimulatorArm64")
     watchosArm64("watchosLibArm64")
-    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-    watchosX64("watchosLibX64")
 
     watchosDeviceArm64("watchosLibDeviceArm64") {
         logger.lifecycle("Configuring ${this.name}")
@@ -30,11 +28,6 @@ kotlin {
         logger.lifecycle("Configuring ${this.name}")
     }
 
-    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-    watchosX64("watchosLibX64") {
-        logger.lifecycle("Configuring ${this.name}")
-    }
-
     sourceSets {
         val watchosLibMain = create("watchosLibMain")
         val watchosLibDeviceMain = create("watchosLibDeviceMain")
@@ -42,10 +35,8 @@ kotlin {
         val watchosLibDeviceArm64Main = getByName("watchosLibDeviceArm64Main")
         val watchosLibSimulatorArm64Main = getByName("watchosLibSimulatorArm64Main")
         val watchosLibArm64Main = getByName("watchosLibArm64Main")
-        val watchosLibX64Main = getByName("watchosLibX64Main")
 
         watchosLibDeviceMain.dependsOn(watchosLibMain)
-        watchosLibX64Main.dependsOn(watchosLibMain)
         watchosLibSimulatorArm64Main.dependsOn(watchosLibMain)
 
         watchosLibDeviceArm64Main.dependsOn(watchosLibDeviceMain)
