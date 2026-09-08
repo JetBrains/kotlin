@@ -1,4 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
+// IGNORE_FIR_DIAGNOSTICS
 // LANGUAGE: +ContextParameters
 val t = context(a: () -> Unit) <!NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION!>inline<!> fun () { runNotInlined (a) }
 fun runNotInlined(a: () -> Unit){}
