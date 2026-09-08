@@ -5,39 +5,39 @@
 
 package kotlin.text.unicode
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public actual val CodePoint.category: CharCategory
     get() = CharCategory.valueOf(getCategoryValue(this.code))
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public actual fun CodePoint.isDefined(): Boolean =
     code < 0x80 || getCategoryValue(code) != CharCategory.UNASSIGNED.value
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public actual fun CodePoint.isDigit(): Boolean =
     if (isBasic) code.toChar().isDigit() else isDigitImpl(code)
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public actual fun CodePoint.isLetter(): Boolean =
     if (isBasic) code.toChar().isLetter() else isLetterImpl(code)
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public actual fun CodePoint.isLetterOrDigit(): Boolean =
     if (isBasic) code.toChar().isLetterOrDigit() else (isLetterImpl(code) || isDigitImpl(code))
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public actual fun CodePoint.isISOControl(): Boolean =
     isBasic && code.toChar().isISOControl()
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public actual fun CodePoint.isLowerCase(): Boolean =
     if (isBasic) code.toChar().isLowerCase() else isLowerCaseImpl(code)
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public actual fun CodePoint.isUpperCase(): Boolean =
     if (isBasic) code.toChar().isUpperCase() else isUpperCaseImpl(code)
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public actual fun CodePoint.isTitleCase(): Boolean {
     if (code < 0x80) {
         return false
@@ -45,7 +45,7 @@ public actual fun CodePoint.isTitleCase(): Boolean {
     return getCategoryValue(code) == CharCategory.TITLECASE_LETTER.value
 }
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public actual fun CodePoint.isWhitespace(): Boolean =
     isWhitespaceImpl(code)
 

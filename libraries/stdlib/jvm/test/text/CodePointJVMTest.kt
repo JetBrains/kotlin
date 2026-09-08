@@ -8,7 +8,7 @@ package test.text.codepoints
 import kotlin.text.unicode.*
 import kotlin.test.*
 
-@OptIn(ExperimentalCodePointApi::class)
+@OptIn(ExperimentalUnicodeApi::class)
 class CodePointJVMTest {
     @Test
     fun conversions() {

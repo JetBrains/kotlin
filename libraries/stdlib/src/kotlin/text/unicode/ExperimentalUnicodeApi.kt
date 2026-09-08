@@ -11,8 +11,8 @@ import kotlin.annotation.AnnotationTarget.*
  * Marks the experimental Unicode CodePoint API.
  *
  * Usages of such API will be reported as errors unless an explicit opt-in with
- * the [OptIn] annotation, e.g. `@OptIn(ExperimentalCodePointAPI::class)`,
- * or with the `-opt-in=kotlin.ExperimentalCodePointAPI` compiler option is given.
+ * the [OptIn] annotation, e.g. `@OptIn(ExperimentalUnicodeApi::class)`,
+ * or with the `-opt-in=kotlin.ExperimentalUnicodeApi` compiler option is given.
  *
  * It's recommended to propagate the experimental status to the API that depends on Unicode CodePoint API by annotating it with this annotation.
  */
@@ -20,6 +20,6 @@ import kotlin.annotation.AnnotationTarget.*
 @MustBeDocumented
 @Target(CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS)
 @Retention(AnnotationRetention.BINARY)
-public annotation class ExperimentalCodePointApi
+public annotation class ExperimentalUnicodeApi
 
 
