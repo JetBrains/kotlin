@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.org.objectweb.asm.Type
 import java.lang.annotation.RetentionPolicy
@@ -408,7 +407,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         // The widened parameter still holds values of the original type at run time, and every use site casts it
         // back to the original type. That is only correct if the original type is (possibly after boxing) a plain
         // reference-widening away from the instantiated method parameter type.
-        return isSubtypeOf(implType, methodType.makeNullable())
+        return isErasedReferenceWidening(subType = implType, superType = methodType)
     }
 
     private fun collectParametersWithWrites(function: IrFunction): Set<IrValueParameterSymbol> {
@@ -473,14 +472,22 @@ internal class LambdaMetafactoryArgumentsBuilder(
             // Unboxing: only possible from the exact wrapper type.
             implIsPrimitive -> instantiatedAsmType == AsmUtil.boxType(implAsmType)
             // Reference widening: the impl parameter type must be a supertype of the instantiated parameter type.
-            else -> isSubtypeOf(instantiatedType, implType.makeNullable())
+            else -> isErasedReferenceWidening(subType = instantiatedType, superType = implType)
         }
     }
 
-    private val irTypeCheckerState by lazy(LazyThreadSafetyMode.NONE) { createIrTypeCheckerState(context.typeSystem) }
-
-    private fun isSubtypeOf(subType: IrType, superType: IrType): Boolean =
-        AbstractTypeChecker.isSubtypeOf(irTypeCheckerState, subType, superType)
+    // Check reference widening on erased classes, as LambdaMetafactory does at run time.
+    private fun isErasedReferenceWidening(subType: IrType, superType: IrType): Boolean {
+        val subAsmType = context.defaultTypeMapper.mapType(subType)
+        val superAsmType = context.defaultTypeMapper.mapType(superType)
+        if (subAsmType == superAsmType) return true
+        // Different array types share an erased class; conservatively allow only widening to Object.
+        if (subAsmType.sort == Type.ARRAY || superAsmType.sort == Type.ARRAY)
+            return superAsmType.internalName == "java/lang/Object"
+        if (subType.isInlineClassType() || superType.isInlineClassType()) return false
+        if (subType !is IrSimpleType || superType !is IrSimpleType) return false
+        return getErasedClassForSignatureAdaptation(subType).isSubclassOf(getErasedClassForSignatureAdaptation(superType))
+    }
 
     private fun widenLambdaParameterType(function: IrFunction, parameter: IrValueParameter, methodType: IrType) {
         val originalType = parameter.type
