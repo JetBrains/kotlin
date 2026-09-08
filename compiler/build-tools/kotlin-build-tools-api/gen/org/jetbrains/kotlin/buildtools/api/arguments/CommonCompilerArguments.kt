@@ -517,9 +517,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable experimental inline classes.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_INLINE_CLASSES: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_INLINE_CLASSES", KotlinReleaseVersion(1, 3, 50))
 
@@ -610,9 +613,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable the new experimental generic type inference algorithm.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_NEW_INFERENCE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_NEW_INFERENCE", KotlinReleaseVersion(1, 2, 20))
 
@@ -829,9 +835,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_UNRESTRICTED_BUILDER_INFERENCE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_UNRESTRICTED_BUILDER_INFERENCE", KotlinReleaseVersion(1, 5, 30))
 
