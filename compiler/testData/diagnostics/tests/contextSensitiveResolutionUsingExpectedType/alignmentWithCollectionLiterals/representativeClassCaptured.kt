@@ -7,7 +7,7 @@
 enum class MyEnum { X, Y }
 
 fun addEnum(x: MutableList<in MyEnum>) {
-    x.add(<!UNRESOLVED_REFERENCE!>X<!>)
+    x.add(X)
     x.add(MyEnum.Y)
 }
 
@@ -17,7 +17,7 @@ fun addSet(x: MutableList<in Set<String>>) {
 }
 
 fun <T : MyEnum> addBound(x: MutableList<in T>) {
-    x.add(<!UNRESOLVED_REFERENCE!>X<!>)
+    x.add(<!ARGUMENT_TYPE_MISMATCH!>X<!>)
 }
 
 fun addOut(x: MutableList<out MyEnum>, y: List<<!REDUNDANT_PROJECTION!>out<!> Set<String>>) {

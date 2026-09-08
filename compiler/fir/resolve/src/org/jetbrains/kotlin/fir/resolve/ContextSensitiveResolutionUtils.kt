@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.types.model.safeSubstitute
 object ContextSensitiveResolutionReceiverStrategy : ExpectedTypeAsStaticReceiverStrategy<ConeSimpleNameForContextSensitiveResolution> {
     context(resolutionContext: ResolutionContext)
     override fun getClassRepresentative(type: ConeKotlinType): FirRegularClassSymbol? {
-        return type.getClassRepresentativeForContextSensitiveResolution(resolutionContext.session)
+        return type.getClassRepresentativeForResolutionByExpectedType(resolutionContext.session)
     }
 
     context(resolutionContext: ResolutionContext)
@@ -102,7 +102,7 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
     originalExpression: FirPropertyAccessExpression,
     expectedType: ConeKotlinType,
 ): FirExpression? {
-    val representativeClass = expectedType.getClassRepresentativeForContextSensitiveResolution(session) ?: return null
+    val representativeClass = expectedType.getClassRepresentativeForResolutionByExpectedType(session) ?: return null
     return runContextSensitiveResolutionForPropertyAccess(originalExpression, representativeClass)
 }
 
