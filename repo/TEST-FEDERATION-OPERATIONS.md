@@ -7,101 +7,78 @@ For an overview of Test Federation concepts and configuration, see the [Test Fed
 
 ### Aggregate (master)
 
-https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_KotlinDev_Aggregate
+[Aggregate (master)](https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_KotlinDev_Aggregate) combines domain builds.
+There is no separate active monitoring of this aggregate by the infrastructure team: domain owners monitor their builds as described below.
 
-The infrastructure team monitors the health of the 'main' aggregate.
-
-**The monitoring includes:**
-
-- Health of TeamCity agents in use
-- Overall duration and status of test buckets
-- Global performance issues within our build
-
-**The monitoring excludes:**
-
-- Flaky tests
-- Failing tests within domains
+The infrastructure team monitors TeamCity agent health, build queues, and resource usage across the build infrastructure,
+and responds to infrastructure issues escalated by domain owners or developers.
 
 ### Aggregate (smoke)
 
-https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_KotlinDev_Aggregate_smoke
-
-The 'smoke' aggregate identifies incidents that prevent all commits passing the quality gate before merging to the master branch.
-
-Examples of such problems:
-
-- Network issues / dependency resolution issues (e.g., Cache Redirector being down)
-- A cross-push that breaks compilation
-- A red 'SmokeTest'
-
-This build will be monitored by the infrastructure team.
+[Aggregate (smoke)](https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_KotlinDev_Aggregate_smoke) detects problems that
+block safe-merge for all commits, such as dependency resolution failures, cross-pushes that break compilation, or failing smoke tests.
+The infrastructure team monitors this build and leads the response to failures.
 
 **The monitoring includes:**
-- Health of TeamCity agents
-- Overall duration and status of test buckets
-- Monitoring of flaky/slow tests
-- Monitoring of the status of all tests
 
-### Domain {{name}}
-(e.g., JS)
-https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_KotlinDev_Domain_Js
+- TeamCity agent health
+- Build and test-bucket duration and status
+- All test failures, including flaky and slow tests
 
-Each domain build runs the tests associated with that domain. (*1)
-The corresponding development team owns the build and is primarily responsible for monitoring it.
-Conceptually, these builds are analogous to what the domains' CI builds would be if the domains were maintained in separate repositories.
+### Domain builds
+
+Each domain build, such as [Domain JS](https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_KotlinDev_Domain_Js),
+runs the tests associated with that domain.[^migration] The corresponding development team owns and monitors the build.
 
 **The monitoring includes:**
-- Monitoring of the overall duration of the build
-- Monitoring of test buckets
-- Monitoring of the build status
-- Monitoring of flaky and slow tests
 
-The infrastructure team provides secondary monitoring.
+- Build and test-bucket duration and status
+- All build failures, including stable failures and flaky or slow tests
 
-**The infrastructure team's monitoring includes:**
-- Monitoring of the overall health of the TeamCity agents
-- Monitoring of the overall resource usage of domains to ensure that it stays within reasonable boundaries
+Domain owners should define acceptable build durations for their domains and investigate overruns.
+Escalate agent, queue, or resource problems to the infrastructure team, including safe-merge delays not explained by individual domain durations.
 
 ## Incident Guide
+
+All investigation coordination and communication must take place in the `#kotlin-build` Slack channel.
+
+Any developer can contact the affected domain owners directly; infrastructure duty involvement is not required for domain test failures.
+Escalate infrastructure problems to the infrastructure engineer on duty.
+
 ### Single Red Domain
-If a single domain becomes red or unhealthy (e.g., because it contains failing tests), the corresponding development team is responsible for responding.
-While commits to the 'red' domain cannot be verified, commits to other domains can still pass the Test Federation.
-Broken domains no longer have to be muted by the infrastructure team.
+
+The domain owner investigates and resolves the failure. Commits that require the failing tests cannot pass safe-merge until the failure
+is resolved or the tests are muted. Commits that do not require those tests can still pass safe-merge.
+The infrastructure team does not need to mute the broken domain to unblock unrelated commits.
 
 ### Many Red Domains
-If multiple domains are 'red', or if a broken build prevents commits to multiple domains from being verified, the priority is elevated.
-The infrastructure engineer on duty can assess the situation and may contact the engineers responsible for the 'red' domains.
-Muting the corresponding tests is an option if the development teams cannot react quickly. Reverting commits shall
-be the last resort.
+
+The affected domain owners coordinate the investigation and response. Prioritize failures that newly block safe-merge across domains.
+Multiple red domains alone do not transfer ownership to the infrastructure team; involve infrastructure duty if the problem is
+infrastructure-related or also breaks the smoke aggregate.
+
+For domain failures, the responders choose how to restore safe-merge:
+
+1. Identify the scope and contact the relevant owners or change author.
+2. Mute failing tests only if it is safe to allow further commits while investigating. Otherwise, keep safe-merge blocked for affected changes.
+3. Land a fix promptly if feasible. Otherwise, consider reverting the breaking change, especially if leaving it in place would make recovery harder.
+
+Reverting disrupts the original change, but is appropriate when a timely fix or safe workaround is not available.
 
 ### Red Smoke Aggregate
-If a 'SmokeTest' becomes red, then no further commits can be verified. The priority of the problem is high. The situation shall be
-addressed as quickly as possible. Reverting commits is a reasonable option.
+
+A failing smoke aggregate blocks safe-merge for all commits and requires an urgent response.
+The infrastructure engineer on duty leads the response and involves the relevant domain owners or change author for code or test fixes.
+Reverting the breaking change is a reasonable option to restore safe-merge quickly.
 
 ### Broken 'Contract' / Missing '@AffectedBy'
-If a commit that was safely verified later breaks one or more domains because affected tests were not executed, this indicates a
-'test federation misconfiguration'. One domain relied _implicitly_ on the behavior of another domain, and this
-behavior was changed. There are several ways to adjust the Test Federation configuration:
 
-**The test is a good 'Contract' test candidate**<br>
-If the test is testing exactly this behavior and is therefore a good candidate for a 'Contract' between two domains,
-then adding the corresponding `@AffectedBy` annotation is reasonable. "Contracts between domains will reveal themselves over time."
+If a commit passes safe-merge but later breaks another domain because relevant tests were not run, the domain owners investigate
+the missing dependency together and adjust the Test Federation configuration:
 
-**The test relies only implicitly on the behavior of the other domain**<br>
-In this case, it is clear that we do have a 'dependency' on certain behavior, but we do not have a dedicated test to ensure
-this behavior. A new test to *explicitly* protect this 'Contract' shall be created and checked in with the corresponding
-`@AffectedBy` annotation.
+- If an existing test explicitly checks the required behavior, add the corresponding `@AffectedByXYZ` annotation.
+- If the test relies on that behavior only implicitly, create a dedicated contract test with the corresponding annotation.
 
-While the monitoring of such situations shall primarily be done by development teams, infrastructure engineers are able to spot
-such situations more quickly. In this case, the infrastructure engineer may create an AI-based analysis of the incident and may
-also have an AI agent suggest a solution that can be reviewed by the development team. Automated analysis works well in such
-cases because the domain that was recently changed is considered healthy. The behavior being relied upon is expected to be more isolated
-and easier to fix.
+Both teams must approve the contract; see [Contracts between Domains](./TEST-FEDERATION.md#contracts-between-domains--single-tests--test-suites-affected-by-other-domains).
 
-
-___ 
-
-Footnotes
-
-*1: As part of the migration towards this new System, some builds may contain tests from multiple domains which then can leak
-into those Domain aggregates.
+[^migration]: During migration, some builds contain tests from multiple domains, so a domain aggregate may include tests owned by another domain.
