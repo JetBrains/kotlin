@@ -20,6 +20,7 @@ abstract class AbstractIncrementalK2FirICLightTreeJvmJpsTest(
         }
         additionalCommandLineArguments = additionalCommandLineArguments + listOf(
             @Suppress("DEPRECATION") K2JVMCompilerArguments::useFirIC.cliArgument,
+            @Suppress("DEPRECATION") K2JVMCompilerArguments::useFirLT.cliArgument,
         )
         super.updateCommandLineArguments(arguments)
     }

@@ -240,7 +240,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     try { if (X_UNRESTRICTED_BUILDER_INFERENCE in this) { arguments.setUsingReflection("unrestrictedBuilderInference", get(X_UNRESTRICTED_BUILDER_INFERENCE))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_UNRESTRICTED_BUILDER_INFERENCE. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     try { if (X_USE_FIR_EXPERIMENTAL_CHECKERS in this) { arguments.setUsingReflection("useFirExperimentalCheckers", get(X_USE_FIR_EXPERIMENTAL_CHECKERS))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_FIR_EXPERIMENTAL_CHECKERS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.0 and removed in 2.5.0""").initCause(e) }
     if (X_USE_FIR_IC in this) { arguments.useFirIC = get(X_USE_FIR_IC)}
-    try { if (X_USE_FIR_LT in this) { arguments.setUsingReflection("useFirLT", get(X_USE_FIR_LT))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_FIR_LT. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
+    if (X_USE_FIR_LT in this) { arguments.useFirLT = get(X_USE_FIR_LT)}
     try { if (X_USE_K2 in this) { arguments.setUsingReflection("useK2", get(X_USE_K2))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_USE_K2. Current compiler version is: $KC_VERSION, but the argument was removed in 2.2.0""").initCause(e) }
     if (X_VERBOSE_PHASES in this) { arguments.verbosePhases = get(X_VERBOSE_PHASES).toTypedArray()}
     try { if (X_VERIFY_IR in this) { arguments.verifyIr = get(X_VERIFY_IR)?.stringValue} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_VERIFY_IR. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.0.20""").initCause(e) }
@@ -330,7 +330,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     try { this[X_UNRESTRICTED_BUILDER_INFERENCE] = arguments.getUsingReflection<Boolean>("unrestrictedBuilderInference") } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_FIR_EXPERIMENTAL_CHECKERS] = arguments.getUsingReflection<Boolean>("useFirExperimentalCheckers") } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_FIR_IC] = arguments.useFirIC } catch (_: NoSuchMethodError) {  }
-    try { this[X_USE_FIR_LT] = arguments.getUsingReflection<Boolean>("useFirLT") } catch (_: NoSuchMethodError) {  }
+    try { this[X_USE_FIR_LT] = arguments.useFirLT } catch (_: NoSuchMethodError) {  }
     try { this[X_USE_K2] = arguments.getUsingReflection<Boolean>("useK2") } catch (_: NoSuchMethodError) {  }
     try { this[X_VERBOSE_PHASES] = arguments.verbosePhases.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
     try { this[X_VERIFY_IR] = arguments.verifyIr?.let { VerifyIrMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw CompilerArgumentsParseException("Unknown -Xverify-ir value: $it") } } catch (_: NoSuchMethodError) {  }
