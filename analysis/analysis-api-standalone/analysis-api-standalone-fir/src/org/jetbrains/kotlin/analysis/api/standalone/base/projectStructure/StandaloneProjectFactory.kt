@@ -15,9 +15,11 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.PackageIndex
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiJavaModuleModificationTracker
 import com.intellij.psi.impl.file.impl.JavaFileManager
@@ -84,6 +86,14 @@ object StandaloneProjectFactory {
             compilerConfiguration,
             applicationEnvironmentMode,
         )
+
+        // JAR/klib files used in the Standalone Analysis API session remain open because of a global ZIP cache in IntelliJ.
+        // Unless the cache releases all file descriptors, concurrent sessions may fail to delete archives (esp. on Windows).
+        // Alive sessions aren't affected as the cache opens archives again when needed.
+        Disposer.register(projectDisposable) {
+            @Suppress("UnstableApiUsage")
+            ZipHandler.clearFileAccessorCache()
+        }
 
         registerApplicationExtensionPoints(applicationEnvironment)
 
