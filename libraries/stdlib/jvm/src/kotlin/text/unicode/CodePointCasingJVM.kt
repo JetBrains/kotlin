@@ -3,31 +3,38 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:kotlin.jvm.JvmName("CodePointsKt")
+@file:kotlin.jvm.JvmMultifileClass
 package kotlin.text.unicode
 
 import kotlin.internal.InlineOnly
 
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @InlineOnly
 public actual inline fun CodePoint.lowercase(): String =
     toString().lowercase()
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @InlineOnly
 public actual inline fun CodePoint.lowercaseCodePoint(): CodePoint =
     Character.toLowerCase(code).toCodePoint()
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @InlineOnly
 public actual inline fun CodePoint.uppercase(): String =
     toString().uppercase()
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @InlineOnly
 public actual inline fun CodePoint.uppercaseCodePoint(): CodePoint =
     Character.toUpperCase(code).toCodePoint()
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @InlineOnly
 public actual inline fun CodePoint.titlecaseCodePoint(): CodePoint =

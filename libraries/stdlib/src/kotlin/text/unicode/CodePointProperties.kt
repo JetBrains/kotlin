@@ -2,18 +2,21 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
+@file:kotlin.jvm.JvmName("CodePointsKt")
+@file:kotlin.jvm.JvmMultifileClass
 package kotlin.text.unicode
 
 /**
  * Returns the Unicode general category of the Unicode character corresponding to this code point.
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect val CodePoint.category: CharCategory
 
 /**
  * Returns `true` if the Unicode character corresponding to the specified [codePoint] belongs to this category.
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public operator fun CharCategory.contains(codePoint: CodePoint): Boolean =
     codePoint.category == this
@@ -24,6 +27,7 @@ public operator fun CharCategory.contains(codePoint: CodePoint): Boolean =
  *
  * A character is considered to be defined in Unicode if its [category] is not [CharCategory.UNASSIGNED].
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CodePoint.isDefined(): Boolean
 
@@ -34,6 +38,7 @@ public expect fun CodePoint.isDefined(): Boolean
  *
  * @sample samples.text.CodePoints.isDigit
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CodePoint.isDigit(): Boolean
 
@@ -45,6 +50,7 @@ public expect fun CodePoint.isDigit(): Boolean
  *
  * @sample samples.text.CodePoints.isLetter
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CodePoint.isLetter(): Boolean
 
@@ -56,6 +62,7 @@ public expect fun CodePoint.isLetter(): Boolean
  *
  * @sample samples.text.CodePoints.isLetterOrDigit
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CodePoint.isLetterOrDigit(): Boolean
 
@@ -67,6 +74,7 @@ public expect fun CodePoint.isLetterOrDigit(): Boolean
  *
  * @sample samples.text.CodePoints.isISOControl
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CodePoint.isISOControl(): Boolean
 
@@ -78,6 +86,7 @@ public expect fun CodePoint.isISOControl(): Boolean
  *
  * @sample samples.text.CodePoints.isLowerCase
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CodePoint.isLowerCase(): Boolean
 
@@ -89,6 +98,7 @@ public expect fun CodePoint.isLowerCase(): Boolean
  *
  * @sample samples.text.CodePoints.isUpperCase
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CodePoint.isUpperCase(): Boolean
 
@@ -99,6 +109,7 @@ public expect fun CodePoint.isUpperCase(): Boolean
  *
  * @sample samples.text.CodePoints.isTitleCase
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CodePoint.isTitleCase(): Boolean
 
@@ -113,6 +124,7 @@ public expect fun CodePoint.isTitleCase(): Boolean
  *
  * @sample samples.text.CodePoints.isWhitespace
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CodePoint.isWhitespace(): Boolean
 

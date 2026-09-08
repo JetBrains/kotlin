@@ -5,6 +5,7 @@
 
 package kotlin.text.unicode
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public actual fun CodePoint.titlecaseCodePoint(): CodePoint {
     if (isBasic) {
