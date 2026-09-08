@@ -2,21 +2,21 @@
 Current executable set to <path to executable>.
 (lldb) settings set stop-disassembly-display never
 (lldb) command script import <path to lldb script>
-(lldb) b main.kt:14
-Breakpoint 1: where = lldb_inspectList.kexe`kfun:#main(kotlin.Array<kotlin.String>){} + <breakpoint offset> at main.kt:14:11, address = <memory address>
+(lldb) b main.kt:18
+Breakpoint 1: where = lldb_inspectList.kexe`kfun:#main(kotlin.Array<kotlin.String>){} + <breakpoint offset> at main.kt:18:11, address = <memory address>
 (lldb) r
 Process <process id> launched: <path to executable>
 Process <process id> stopped
 * thread #<thread id>, stop reason = breakpoint 1.1
-    frame #0: <frame pc> lldb_inspectList.kexe`kfun:#main(args=[]){} at main.kt:14:11
-   11  	    val emptyList: List<Point> = emptyList()
-   12  	    val nestedList: List<List<Point>> =
-   13  	        listOf(listOf(Point(4, 5), Point(6, 7)), emptyList())
--> 14  	    return
+    frame #0: <frame pc> lldb_inspectList.kexe`kfun:#main(args=[]){} at main.kt:18:11
+   15  	    val nestedSubList: List<Point> = subList.subList(1, 2)
+   16  	    val nestedList: List<List<Point>> =
+   17  	        listOf(listOf(Point(4, 5), Point(6, 7)), emptyList())
+-> 18  	    return
     	          ^
-   15  	}
-   16
-   17  	data class Point(val x: Int, val y: Int)
+   19  	}
+   20
+   21  	data class Point(val x: Int, val y: Int)
 (lldb) fr var list
 (ObjHeader *) list = [Point(x=1, y=2), Point(x=3, y=4)]
 (lldb) fr var -A -P 5 list
@@ -61,6 +61,32 @@ Process <process id> stopped
 (ObjHeader *) emptyList = []
 (lldb) fr var -A -P 5 emptyList
 (ObjHeader *) emptyList = [] {}
+(lldb) fr var subList
+(ObjHeader *) subList = [Point(x=1, y=1), Point(x=2, y=2)]
+(lldb) fr var -A -P 5 subList
+(ObjHeader *) subList = [Point(x=1, y=1), Point(x=2, y=2)] {
+  0 = Point(x=1, y=1) {
+    x = 1
+    y = 1
+  }
+  1 = Point(x=2, y=2) {
+    x = 2
+    y = 2
+  }
+}
+(lldb) field_type subList.0
+Point
+(lldb) fr var nestedSubList
+(ObjHeader *) nestedSubList = [Point(x=2, y=2)]
+(lldb) fr var -A -P 5 nestedSubList
+(ObjHeader *) nestedSubList = [Point(x=2, y=2)] {
+  0 = Point(x=2, y=2) {
+    x = 2
+    y = 2
+  }
+}
+(lldb) field_type nestedSubList.0
+Point
 (lldb) fr var nestedList
 (ObjHeader *) nestedList = [[Point(x=4, y=5), Point(x=6, y=7)], []]
 (lldb) fr var -A -P 10 nestedList

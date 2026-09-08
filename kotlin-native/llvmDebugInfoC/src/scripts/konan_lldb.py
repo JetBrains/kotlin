@@ -1288,12 +1288,6 @@ def _synthetic_value_or_self(value):
     return value
 
 
-def _synthetic_child_index(value, name):
-    synthetic = _synthetic_value_or_self(value)
-    if synthetic is None:
-        return -1
-    return synthetic.GetIndexOfChildWithName(name)
-
 def _synthetic_child_at_index(value, index):
     synthetic = _synthetic_value_or_self(value)
     if synthetic is None:
@@ -1325,9 +1319,10 @@ def _compute_logical_to_physical_idx_mapping(object_proxy):
 
 
 class KonanListSyntheticProvider:
-    def __init__(self, valobj, backing, children_count):
+    def __init__(self, valobj, backing, children_count, offset=0):
         self._valobj = valobj
         self._backing = backing
+        self._offset = offset
         self._children_count = (
             0 if children_count is None else children_count
         )
@@ -1358,21 +1353,31 @@ class KonanListSyntheticProvider:
             synthetic = _synthetic_value_or_self(backing)
             size = None if synthetic is None else synthetic.GetNumChildren()
 
-        return KonanListSyntheticProvider(valobj, backing, size)
+        # Handle offset field of the ArraySubList
+        offset_value = _object_field_value(object_proxy, "offset")
+        offset = (
+            offset_value.GetValueAsUnsigned()
+            if offset_value is not None and offset_value.IsValid()
+            else 0
+        )
+
+        return KonanListSyntheticProvider(valobj, backing, size, offset)
 
     def num_children(self):
         return self._children_count
 
     def get_child_index(self, name):
-        if self._children_count <= 0 or self._backing is None:
+        try:
+            index = int(name.strip("[]"))
+        except ValueError:
             return -1
-        child_index = _synthetic_child_index(self._backing, name)
-        return child_index if 0 <= child_index < self.num_children() else -1
+        return index if 0 <= index < self.num_children() else -1
 
     def get_child_at_index(self, index):
         if not 0 <= index < self.num_children():
             return None
-        return _synthetic_child_at_index(self._backing, index)
+        child = _synthetic_child_at_index(self._backing, self._offset + index)
+        return child.Clone(str(index)) if child is not None else None
 
     def update(self):
         return False

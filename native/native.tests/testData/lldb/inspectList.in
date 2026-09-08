@@ -1,4 +1,4 @@
-b main.kt:14
+b main.kt:18
 r
 fr var list
 fr var -A -P 5 list
@@ -8,6 +8,12 @@ fr var mutableList
 fr var -A -P 5 mutableList
 fr var emptyList
 fr var -A -P 5 emptyList
+fr var subList
+fr var -A -P 5 subList
+field_type subList.0
+fr var nestedSubList
+fr var -A -P 5 nestedSubList
+field_type nestedSubList.0
 fr var nestedList
 fr var -A -P 10 nestedList
 field_type nestedList
