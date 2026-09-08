@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.gradle.idea.debugger
 
 import com.sun.net.httpserver.HttpServer
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import java.net.InetSocketAddress
-import java.util.concurrent.Executor
 import kotlin.time.Duration
 
 /**
@@ -105,6 +103,32 @@ sealed interface IdeaKotlinJsBrowserDebugSession {
          * @throws ConnectionAborted if the session was aborted or [timeout] has elapsed.
          */
         fun awaitFinished(timeout: Duration)
+
+        /**
+         * Returns how far the handshake has progressed, without waiting for it to progress any further.
+         */
+        fun state(): State
+
+        /**
+         * The progress of the handshake as observed by the IDE side, see [state].
+         */
+        @ExperimentalKotlinGradlePluginApi
+        enum class State {
+            /** The build system has not reported a debuggable browser yet, see [awaitBrowser]. */
+            WAITING_FOR_BROWSER,
+
+            /** The build system has reported a browser, but the debugger is not attached yet, see [sendDebuggerReady]. */
+            BROWSER_READY,
+
+            /** The debugger is attached; the build system may run the tests, see [awaitFinished]. */
+            DEBUGGER_READY,
+
+            /** The build system has reported that the test execution has finished. */
+            FINISHED,
+
+            /** The session was aborted by either side; no further progress is possible. */
+            ABORTED,
+        }
     }
 
     /**
@@ -131,6 +155,36 @@ sealed interface IdeaKotlinJsBrowserDebugSession {
          * Reports that the tests running in [forBrowser] have finished and the browser is about to be closed.
          */
         fun sendFinished(forBrowser: IdeaKotlinDebuggableBrowser)
+
+        /**
+         * Returns how far the handshake has progressed, without waiting for it to progress any further.
+         *
+         * Unless the state is already known locally, this queries the IDE.
+         *
+         * @throws ConnectionAborted if the IDE is not reachable.
+         */
+        fun state(): State
+
+        /**
+         * The progress of the handshake as observed by the build system side, see [state].
+         */
+        @ExperimentalKotlinGradlePluginApi
+        enum class State {
+            /** No browser was reported to the IDE yet, see [sendBrowserReady]. */
+            BROWSER_NOT_REPORTED,
+
+            /** The browser was reported, but the IDE has not attached its debugger yet, see [awaitDebuggerReady]. */
+            WAITING_FOR_DEBUGGER,
+
+            /** The IDE has attached its debugger; the tests may be started. */
+            DEBUGGER_READY,
+
+            /** The test execution was reported as finished, see [sendFinished]. */
+            FINISHED,
+
+            /** The session was aborted by either side; no further progress is possible. */
+            ABORTED,
+        }
     }
 
     /**

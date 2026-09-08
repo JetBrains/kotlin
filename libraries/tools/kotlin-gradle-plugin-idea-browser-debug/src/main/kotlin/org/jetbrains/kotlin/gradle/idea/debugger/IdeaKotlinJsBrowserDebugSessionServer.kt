@@ -10,6 +10,7 @@ import com.sun.net.httpserver.HttpHandler
 import com.sun.net.httpserver.HttpServer
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
+import org.jetbrains.kotlin.gradle.idea.debugger.IdeaKotlinJsBrowserDebugSession.IdeSession.State
 import org.jetbrains.kotlin.gradle.idea.debugger.IdeaKotlinJsBrowserDebugSessionProtocol.CONTENT_TYPE
 import org.jetbrains.kotlin.gradle.idea.debugger.IdeaKotlinJsBrowserDebugSessionProtocol.json
 import java.net.HttpURLConnection
@@ -19,7 +20,6 @@ import java.net.InetSocketAddress
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
 
 internal class IdeaKotlinJsBrowserDebugSessionServer(
     private val httpServer: HttpServer = HttpServer.create(InetSocketAddress(InetAddress.getLoopbackAddress(), 0), 0),
@@ -46,9 +46,9 @@ internal class IdeaKotlinJsBrowserDebugSessionServer(
         }
     }
 
-    /** Same as [withStateLock] */
-    private inline fun <T> withStateLockReturn(action: () -> Pair<Boolean, T>) {
-        lock.withLock {
+    /** Same as [withStateLock], but also returns the value produced by [action]. */
+    private inline fun <T> withStateLockReturn(action: () -> Pair<Boolean, T>): T {
+        return lock.withLock {
             val (changed, result) = action()
             if (changed) stateChanged.signalAll()
             result
@@ -90,6 +90,16 @@ internal class IdeaKotlinJsBrowserDebugSessionServer(
 
     override fun awaitFinished(timeout: Duration) {
         await(timeout, what = "the build system to finish the test execution") { if (finished) Unit else null }
+    }
+
+    override fun state(): State = withStateLockReturn {
+        false to when {
+            abortReason != null -> State.ABORTED
+            finished -> State.FINISHED
+            debuggerReady -> State.DEBUGGER_READY
+            browser != null -> State.BROWSER_READY
+            else -> State.WAITING_FOR_BROWSER
+        }
     }
 
     override fun abort(reason: String) {

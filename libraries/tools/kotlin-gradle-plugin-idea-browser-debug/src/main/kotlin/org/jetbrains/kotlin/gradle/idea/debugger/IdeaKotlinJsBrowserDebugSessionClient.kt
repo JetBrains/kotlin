@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.idea.debugger
 
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationException
+import org.jetbrains.kotlin.gradle.idea.debugger.IdeaKotlinJsBrowserDebugSession.BuildSystemSession.State
 import org.jetbrains.kotlin.gradle.idea.debugger.IdeaKotlinJsBrowserDebugSession.ConnectionAborted
 import org.jetbrains.kotlin.gradle.idea.debugger.IdeaKotlinJsBrowserDebugSessionProtocol.ABORT_PATH
 import org.jetbrains.kotlin.gradle.idea.debugger.IdeaKotlinJsBrowserDebugSessionProtocol.CDP_URL_QUERY_PARAMETER
@@ -34,28 +35,41 @@ internal class IdeaKotlinJsBrowserDebugSessionClient(
 
     private val baseUrl = connectionUrl.trimEnd('/')
 
+    /**
+     * The part of the session's state this side knows without asking the IDE, see [state].
+     */
+    @Volatile
+    private var reportedBrowser: IdeaKotlinDebuggableBrowser? = null
+
+    @Volatile
+    private var finished: Boolean = false
+
+    @Volatile
+    private var aborted: Boolean = false
+
+    /** The reason the IDE reported when it aborted the session, if it did. */
+    @Volatile
+    private var ideAbortReason: String? = null
+
     override fun sendBrowserReady(browser: IdeaKotlinDebuggableBrowser) {
         postBrowser(DEBUGGABLE_BROWSER_READY_PATH, browser, "report the debuggable browser '${browser.cdpUrl}'")
+        reportedBrowser = browser
     }
 
     @OptIn(ExperimentalTime::class)
     override fun awaitDebuggerReady(forBrowser: IdeaKotlinDebuggableBrowser, timeout: Duration) {
         val action = "wait for the debugger to attach to '${forBrowser.cdpUrl}'"
         val waiting = "attach its debugger to '${forBrowser.cdpUrl}'"
-        val path = "$DEBUGGER_STATE_PATH?$CDP_URL_QUERY_PARAMETER=${encodeUrlComponent(forBrowser.cdpUrl)}"
 
         val startTime = TimeSource.Monotonic.markNow()
 
         while (true) {
-            val response = request("GET", path, body = null, action = action)
-            response.requireOk(action)
-            val state = response.decode(IdeaKotlinDebuggerStateMessage.serializer(), action)
-            when (state.state) {
-                IdeaKotlinDebuggerState.DEBUGGER_READY -> return
-                IdeaKotlinDebuggerState.ABORTED -> throw ConnectionAborted(
-                    "Kotlin/JS browser debug session was aborted by the IDE: ${state.reason}"
+            when (requestDebuggerState(forBrowser, action)) {
+                State.DEBUGGER_READY -> return
+                State.ABORTED -> throw ConnectionAborted(
+                    "Kotlin/JS browser debug session was aborted by the IDE: $ideAbortReason"
                 )
-                IdeaKotlinDebuggerState.WAITING_FOR_DEBUGGER -> Unit
+                else -> Unit
             }
             if (startTime.elapsedNow() >= timeout) {
                 throw ConnectionAborted("Timed out after $timeout while waiting for the IDE to $waiting")
@@ -71,13 +85,44 @@ internal class IdeaKotlinJsBrowserDebugSessionClient(
 
     override fun sendFinished(forBrowser: IdeaKotlinDebuggableBrowser) {
         postBrowser(FINISH_PATH, forBrowser, "report that the tests in '${forBrowser.cdpUrl}' have finished")
+        finished = true
+    }
+
+    override fun state(): State {
+        if (aborted) return State.ABORTED
+        if (finished) return State.FINISHED
+        val browser = reportedBrowser ?: return State.BROWSER_NOT_REPORTED
+        return requestDebuggerState(browser, action = "query the state of the debug session")
     }
 
     override fun abort(reason: String) {
+        aborted = true
         val body = json.encodeToString(IdeaKotlinAbortSessionMessage.serializer(), IdeaKotlinAbortSessionMessage(reason))
         try {
             request("POST", ABORT_PATH, body, action = "abort the debug session")
         } catch (_: ConnectionAborted) { // ignore if server or someone else already aborted the session
+        }
+    }
+
+    /**
+     * Asks the IDE whether the debugger is attached to [forBrowser] yet.
+     *
+     * Only ever returns [State.WAITING_FOR_DEBUGGER], [State.DEBUGGER_READY] or [State.ABORTED];
+     * the remaining states are tracked by this side of the session.
+     */
+    private fun requestDebuggerState(forBrowser: IdeaKotlinDebuggableBrowser, action: String): State {
+        val path = "$DEBUGGER_STATE_PATH?$CDP_URL_QUERY_PARAMETER=${encodeUrlComponent(forBrowser.cdpUrl)}"
+        val response = request("GET", path, body = null, action = action)
+        response.requireOk(action)
+        val message = response.decode(IdeaKotlinDebuggerStateMessage.serializer(), action)
+        return when (message.state) {
+            IdeaKotlinDebuggerState.WAITING_FOR_DEBUGGER -> State.WAITING_FOR_DEBUGGER
+            IdeaKotlinDebuggerState.DEBUGGER_READY -> State.DEBUGGER_READY
+            IdeaKotlinDebuggerState.ABORTED -> {
+                aborted = true
+                ideAbortReason = message.reason
+                State.ABORTED
+            }
         }
     }
 
