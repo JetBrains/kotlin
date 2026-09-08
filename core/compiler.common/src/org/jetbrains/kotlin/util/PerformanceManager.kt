@@ -78,7 +78,24 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         private set
     val isPhaseMeasuring: Boolean
         get() = phaseStartTime != null
+
+    /**
+     * The flag is normally set after the construction (from the compiler arguments), but the very first phase
+     * measurement is already started in the constructor, with the zero user/cpu baseline (see [currentTime]).
+     * Without re-capturing the baseline the user/cpu time of that phase would be computed as
+     * `absolute thread cpu time - 0`, i.e. the whole lifetime cpu time of the thread instead of the phase duration.
+     * It is barely visible in the CLI, where the compilation happens on a fresh thread, but it completely breaks
+     * the measurements when the compiler is invoked repeatedly on a reused (e.g. thread pool) thread.
+     */
     var detailedPerf: Boolean = false
+        set(value) {
+            if (field == value) return
+            field = value
+            // Keep the wall time baseline of the current phase and re-capture the user/cpu one
+            val now = currentTime()
+            phaseStartTime = phaseStartTime?.let { Time(it.nanos, now.userNanos, now.cpuNanos) }
+            currentDynamicPhaseTime = currentDynamicPhaseTime?.let { Time(it.nanos, now.userNanos, now.cpuNanos) }
+        }
 
     fun getTargetInfo(): String =
         listOfNotNull(targetDescription, outputKind).joinToString("-") + " $files files ($lines lines)"

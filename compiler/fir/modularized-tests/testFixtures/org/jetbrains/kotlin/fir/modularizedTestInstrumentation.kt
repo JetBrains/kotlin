@@ -44,6 +44,8 @@ import java.util.concurrent.atomic.AtomicLong
  *   fir.bench.instrumentation.label     - human-readable label of the configuration, e.g. `m5max-falcon-on`
  *   fir.bench.instrumentation.detailed  - `false` disables per-thread user/cpu time measurement (default `true`)
  *   fir.bench.instrumentation.probes    - `false` disables the environment probes (default `true`)
+ *   fir.bench.instrumentation.probes.cpu.iterations  - number of the cpu probe repetitions (default `30`)
+ *   fir.bench.instrumentation.probes.exec.iterations - number of the process exec probe repetitions (default `30`)
  */
 object ModularizedTestInstrumentation {
     val enabled: Boolean = System.getProperty("fir.bench.instrumentation", "true").toBooleanLenient()
@@ -63,6 +65,12 @@ object ModularizedTestInstrumentation {
     private val compilationsCount = AtomicInteger()
     private val failedCompilationsCount = AtomicInteger()
     private val totalCompilationWallNanos = AtomicLong()
+
+    /**
+     * The number of the compilations running at the same moment. Two runs are comparable only if this number is the
+     * same, otherwise the difference in the heap pressure and in the scheduling dominates any effect being measured.
+     */
+    private val inFlightCompilations = AtomicInteger()
 
     private val threadMXBean = ManagementFactory.getThreadMXBean().also {
         if (it.isThreadCpuTimeSupported) it.isThreadCpuTimeEnabled = true
@@ -98,6 +106,10 @@ object ModularizedTestInstrumentation {
             startThreadCpuNanos = currentThreadCpuNanos(),
             startThreadUserNanos = currentThreadUserNanos(),
             startProcessCpuNanos = processCpuNanos(),
+            inFlightAtStart = inFlightCompilations.incrementAndGet(),
+            startGcMillis = totalGcMillis(),
+            startGcCount = totalGcCount(),
+            startJitMillis = totalJitMillis(),
         )
     }
 
@@ -115,6 +127,7 @@ object ModularizedTestInstrumentation {
         val threadCpuNanos = currentThreadCpuNanos() - measurement.startThreadCpuNanos
         val threadUserNanos = currentThreadUserNanos() - measurement.startThreadUserNanos
         val processCpuNanos = processCpuNanos() - measurement.startProcessCpuNanos
+        val inFlightAtEnd = inFlightCompilations.getAndDecrement()
 
         compilationsCount.incrementAndGet()
         if (result != ExitCode.OK) failedCompilationsCount.incrementAndGet()
@@ -134,6 +147,14 @@ object ModularizedTestInstrumentation {
             field("threadSystemNanos", threadCpuNanos - threadUserNanos)
             // Whole JVM, so it is polluted by the concurrently running tests, useful only in the sequential mode
             field("processCpuNanos", processCpuNanos)
+            // How many compilations were running in parallel; the runs being compared must agree on these numbers
+            field("inFlightAtStart", measurement.inFlightAtStart)
+            field("inFlightAtEnd", inFlightAtEnd)
+            // Deltas over this compilation. Whole JVM as well, but unlike an absolute snapshot they at least
+            // show where the time of a suspiciously slow compilation went
+            field("gcDeltaMillis", totalGcMillis() - measurement.startGcMillis)
+            field("gcDeltaCount", totalGcCount() - measurement.startGcCount)
+            field("jitDeltaMillis", totalJitMillis() - measurement.startJitMillis)
             if (stats != null) {
                 field("files", stats.filesCount)
                 field("lines", stats.linesCount)
@@ -182,6 +203,13 @@ object ModularizedTestInstrumentation {
             field("javaVendor", System.getProperty("java.vendor"))
             field("javaHome", System.getProperty("java.home"))
             arrayField("jvmArgs") { for (arg in runtimeMXBean.inputArguments) item(arg) }
+            // The parallelism of the test engine and of the harness itself: the most important thing to pin
+            objectField("testConfiguration") {
+                for (name in COMPARED_SYSTEM_PROPERTIES) field(name, System.getProperty(name))
+                for (name in System.getProperties().stringPropertyNames().sorted()) {
+                    if (name.startsWith("fir.bench.")) field(name, System.getProperty(name))
+                }
+            }
             objectField("system") { systemDescription() }
             if (probesEnabled) {
                 objectField("probesBefore") { probes(dir) }
@@ -236,6 +264,7 @@ object ModularizedTestInstrumentation {
             val files = createProbeFiles(probeDir)
             objectField("fileOpenRead") { measurements(fileOpenReadProbe(files)) }
             objectField("fileStat") { measurements(fileStatProbe(files)) }
+            objectField("fileOpenReadUnique") { measurements(fileOpenReadUniqueProbe(probeDir)) }
             objectField("fileCreateDelete") { measurements(fileCreateDeleteProbe(probeDir)) }
             objectField("processExec") { measurements(processExecProbe()) }
         } finally {
@@ -246,10 +275,13 @@ object ModularizedTestInstrumentation {
     private val probeDirCounter = AtomicInteger()
 
     private const val FILE_PROBE_COUNT = 512
-    private const val EXEC_PROBE_COUNT = 20
+
+    private val execProbeCount: Int = System.getProperty("fir.bench.instrumentation.probes.exec.iterations")?.toIntOrNull() ?: 30
+
+    private val cpuProbeCount: Int = System.getProperty("fir.bench.instrumentation.probes.cpu.iterations")?.toIntOrNull() ?: 30
 
     private fun cpuProbe(): LongArray {
-        val result = LongArray(5)
+        val result = LongArray(cpuProbeCount)
         for (i in result.indices) {
             val start = System.nanoTime()
             var acc = 0L
@@ -280,13 +312,32 @@ object ModularizedTestInstrumentation {
         file.canRead()
     }
 
+    /**
+     * Unlike [fileOpenReadProbe], every path here is opened exactly once, and the paths are spread over a deep
+     * directory tree. A monitoring agent that caches its verdict per file cannot amortize such a probe, so this is
+     * the probe that is expected to expose a synchronously hooked `open`.
+     */
+    private fun fileOpenReadUniqueProbe(dir: File): LongArray {
+        val root = File(dir, "unique")
+        val files = ArrayList<File>(FILE_PROBE_COUNT)
+        val leafCount = 64
+        val filesPerLeaf = FILE_PROBE_COUNT / leafCount
+        for (leaf in 0 until leafCount) {
+            val leafDir = File(root, "${leaf / 8}/${leaf % 8}").also { it.mkdirs() }
+            for (index in 0 until filesPerLeaf) {
+                files += File(leafDir, "unique-$leaf-$index.bin").also { it.writeBytes(ByteArray(4096)) }
+            }
+        }
+        return files.measureEach { file -> RandomAccessFile(file, "r").use { it.read(ByteArray(4096)) } }
+    }
+
     private fun fileCreateDeleteProbe(dir: File): LongArray = (0 until FILE_PROBE_COUNT).toList().measureEach { index ->
         val file = File(dir, "created-$index.bin")
         file.writeBytes(ByteArray(64))
         file.delete()
     }
 
-    private fun processExecProbe(): LongArray = (0 until EXEC_PROBE_COUNT).toList().measureEach {
+    private fun processExecProbe(): LongArray = (0 until execProbeCount).toList().measureEach {
         try {
             ProcessBuilder("/usr/bin/true").start().waitFor()
         } catch (e: Exception) {
@@ -351,6 +402,24 @@ object ModularizedTestInstrumentation {
         -1L
     }
 
+    private fun totalGcMillis(): Long {
+        var result = 0L
+        for (bean in ManagementFactory.getGarbageCollectorMXBeans()) {
+            if (bean.collectionTime > 0) result += bean.collectionTime
+        }
+        return result
+    }
+
+    private fun totalGcCount(): Long {
+        var result = 0L
+        for (bean in ManagementFactory.getGarbageCollectorMXBeans()) {
+            if (bean.collectionCount > 0) result += bean.collectionCount
+        }
+        return result
+    }
+
+    private fun totalJitMillis(): Long = ManagementFactory.getCompilationMXBean()?.totalCompilationTime ?: 0L
+
     private fun commandOutput(vararg command: String): String? = try {
         val process = ProcessBuilder(*command).redirectErrorStream(true).start()
         val output = process.inputStream.reader(Charsets.UTF_8).readText().trim()
@@ -371,6 +440,14 @@ object ModularizedTestInstrumentation {
     private fun String.sanitized(): String = replace(Regex("[^A-Za-z0-9._-]"), "_")
 
     private fun String.toBooleanLenient(): Boolean = equals("true", ignoreCase = true) || this == "1" || equals("yes", ignoreCase = true)
+
+    /** The properties that must be identical in the runs being compared, see `scripts/run-bench.sh`. */
+    private val COMPARED_SYSTEM_PROPERTIES = listOf(
+        "junit.jupiter.execution.parallel.enabled",
+        "junit.jupiter.execution.parallel.config.strategy",
+        "junit.jupiter.execution.parallel.config.fixed.parallelism",
+        "junit.jupiter.execution.parallel.config.dynamic.factor",
+    )
 }
 
 class CompilationMeasurement internal constructor(
@@ -381,6 +458,10 @@ class CompilationMeasurement internal constructor(
     val startThreadCpuNanos: Long,
     val startThreadUserNanos: Long,
     val startProcessCpuNanos: Long,
+    val inFlightAtStart: Int,
+    val startGcMillis: Long,
+    val startGcCount: Long,
+    val startJitMillis: Long,
 )
 
 /*
