@@ -15,6 +15,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
@@ -59,6 +60,17 @@ internal class KotlinPlaywrightJsTestFramework(
 
         @get:InputDirectory
         val playwrightBrowsersDirectory: DirectoryProperty = objects.directoryProperty()
+
+        /**
+         * Connection URL of the debug session hosted by the IDE, set when the tests are being debugged,
+         * see [PropertiesProvider.jsIdeDebugSessionUrl].
+         *
+         * It is a task input on purpose: a test task that is up to date from an earlier, non-debugged run
+         * must run again once a debug session is requested (and once it is no longer requested).
+         */
+        @get:Input
+        @get:Optional
+        val ideDebugSessionUrl: Property<String> = objects.property<String>()
     }
 
     /**
@@ -160,6 +172,7 @@ internal class KotlinPlaywrightJsTestFramework(
             runners = pwRunners,
             nodeExecutable = executable.get(),
             playwrightCli = modules.require("playwright-core/cli.js"),
+            ideDebugSessionUrl = frameworkTaskInputs.ideDebugSessionUrl.orNull,
         )
     }
 
