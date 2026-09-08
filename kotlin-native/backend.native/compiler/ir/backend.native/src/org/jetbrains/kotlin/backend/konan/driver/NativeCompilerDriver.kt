@@ -105,9 +105,9 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
 
         val cAdapterElements = if (config.cInterfaceGenerationMode == CInterfaceGenerationMode.V1) {
             if (config.cExportUseIrDiscovery) {
-                buildCExportsFromIr(config, linkKlibsOutput)
+                engine.runAndMeasurePhase(BuildCExportsFromIr, linkKlibsOutput)
             } else {
-                k1CAdapterElements
+                k1CAdapterElements!!
             }
         } else {
             null
