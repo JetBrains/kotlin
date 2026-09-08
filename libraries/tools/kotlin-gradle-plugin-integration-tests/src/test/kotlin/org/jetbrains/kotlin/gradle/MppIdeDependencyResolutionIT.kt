@@ -157,7 +157,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                     }
 
                     val nativeMainTarget = CommonizerTarget(
-                        LINUX_X64, LINUX_ARM64, MACOS_X64, MACOS_ARM64, IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64, MINGW_X64
+                        LINUX_X64, LINUX_ARM64, MACOS_ARM64, IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64, MINGW_X64
                     )
 
                     nativeMainDependencies.forEach { dependency ->
