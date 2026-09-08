@@ -7,7 +7,7 @@ package test.text
 import kotlin.test.*
 import kotlin.text.unicode.*
 
-@OptIn(ExperimentalCodePointApi::class)
+@OptIn(ExperimentalUnicodeApi::class)
 class CodePointCasingJVMTest {
 
     @Test
