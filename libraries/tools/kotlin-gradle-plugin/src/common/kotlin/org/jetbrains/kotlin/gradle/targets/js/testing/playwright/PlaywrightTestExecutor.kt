@@ -24,6 +24,7 @@ package org.jetbrains.kotlin.gradle.targets.js.testing.playwright
 
 import com.microsoft.playwright.BrowserContext
 import com.microsoft.playwright.BrowserType
+import com.microsoft.playwright.Page
 import com.microsoft.playwright.Playwright
 import com.microsoft.playwright.impl.Connection
 import com.microsoft.playwright.impl.driver.Driver
@@ -52,7 +53,7 @@ internal class PwRunnerSpec(
     val browserKind: PwBrowserKind,
     val browsersDirectory: Path,
     val testsLocation: KotlinJsTestsLocation,
-    val buildTestsExecutionerUrl: (baseUrl: URI) -> URI,
+    val buildTestsExecutionerUrl: (baseUrl: URI, debug: Boolean) -> URI,
     val timeout: Duration,
     val finishMarker: String,
     val headless: Boolean,
@@ -266,7 +267,11 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
 
                 val page = browserContext.pages().firstOrNull() ?: browserContext.newPage()
                 page.use {
-                    page.setDefaultTimeout(runner.timeout.inWholeMilliseconds.toDouble())
+                    if (ideDebugSession == null) {
+                        page.setDefaultTimeout(runner.timeout.inWholeMilliseconds.toDouble())
+                    } else {
+                        page.setDefaultTimeout(0.0)
+                    }
                     var finished = false
                     page.onConsoleMessage {
                         if (it.text().startsWith(runner.finishMarker)) {
@@ -276,10 +281,15 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
                             handler.writeEndLine()
                         }
                     }
-                    val url = runner.buildTestsExecutionerUrl(testLocationUrl)
+                    val url = runner.buildTestsExecutionerUrl(testLocationUrl, ideDebugSession != null)
                     log.info("Execute JS tests with ${runner.name} runner at URL: $url")
                     page.navigate(url.toString())
-                    page.waitForCondition({ finished })
+                    val pageWaitForConditionOptions = if (ideDebugSession != null) {
+                        Page.WaitForConditionOptions().setTimeout(0.0)
+                    } else {
+                        null
+                    }
+                    page.waitForCondition({ finished }, pageWaitForConditionOptions)
                 }
                 ideDebugSession?.reportFinished()
             }
