@@ -129,7 +129,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 returnType = function.returnTypeRef.toIrType(),
                 modality = namedFunction?.modality ?: Modality.FINAL,
                 symbol = symbol,
-                isTailrec = namedFunction?.isTailRec == true,
+                isTailrec = function.isTailRec,
                 isSuspend = isSuspend,
                 isOperator = namedFunction?.isOperator == true,
                 isInfix = namedFunction?.isInfix == true,
