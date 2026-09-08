@@ -8,11 +8,11 @@ package kotlin.text.unicode
 import kotlin.text.category
 
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public actual val CodePoint.category: CharCategory
     get() = CharCategory.valueOf(Character.getType(this.code))
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public val CodePoint.directionality: CharDirectionality
     get() = CharDirectionality.valueOf(Character.getDirectionality(this.code).toInt())
 
@@ -21,39 +21,39 @@ public val CodePoint.directionality: CharDirectionality
  *
  * A character is considered to be defined in Unicode if its [category] is not [CharCategory.UNASSIGNED].
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 @kotlin.internal.InlineOnly
 public actual inline fun CodePoint.isDefined(): Boolean = Character.isDefined(this.code)
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 @kotlin.internal.InlineOnly
 public actual inline fun CodePoint.isLetter(): Boolean = Character.isLetter(this.code)
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 @kotlin.internal.InlineOnly
 public actual inline fun CodePoint.isDigit(): Boolean = Character.isDigit(this.code)
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 @kotlin.internal.InlineOnly
 public actual inline fun CodePoint.isLetterOrDigit(): Boolean = Character.isLetterOrDigit(this.code)
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 @kotlin.internal.InlineOnly
 public actual inline fun CodePoint.isISOControl(): Boolean = Character.isISOControl(this.code)
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 @kotlin.internal.InlineOnly
 public actual inline fun CodePoint.isLowerCase(): Boolean = Character.isLowerCase(this.code)
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 @kotlin.internal.InlineOnly
 public actual inline fun CodePoint.isTitleCase(): Boolean = Character.isTitleCase(this.code)
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 @kotlin.internal.InlineOnly
 public actual inline fun CodePoint.isUpperCase(): Boolean = Character.isUpperCase(this.code)
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public actual fun CodePoint.isWhitespace(): Boolean =
     // no whitespace outside BMP
     isBasic && code.toChar().isWhitespace()
