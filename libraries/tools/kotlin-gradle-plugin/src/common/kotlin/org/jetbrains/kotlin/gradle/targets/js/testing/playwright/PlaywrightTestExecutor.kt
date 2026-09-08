@@ -72,12 +72,30 @@ internal class PwExecutionSpec(
     val nodeExecutable: String,
     val playwrightCli: String,
     val ideDebugSessionUrl: String?,
+    val onNoChromiumRunnerWhenDebugIsRequested: (declaredRunnersNames: List<String>) -> Unit,
 ) : TestExecutionSpec
 
 internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
 
     override fun execute(spec: PwExecutionSpec, testResultProcessor: TestResultProcessor) {
         if (spec.runners.isEmpty()) return
+
+        val ideDebugSession = spec.ideDebugSessionUrl?.let { PlaywrightDebugSession.connect(it) }
+
+        val runners = if (ideDebugSession != null) {
+            // debugging via IDE only supports Chromium,
+            // so we limit debug execution to only first Chromium runner.
+            // this is not good approach, and with TODO(KT-86706) this should be limited only to chrome runners.
+            val chromiumRunner = spec.runners.firstOrNull { it.browserKind == PwBrowserKind.CHROMIUM }
+            if (chromiumRunner == null) {
+                ideDebugSession.abort("Debugging Kotlin/JS browser tests requires a Chromium runner, but none is configured")
+                spec.onNoChromiumRunnerWhenDebugIsRequested(spec.runners.map { it.name })
+                return
+            }
+            listOfNotNull(chromiumRunner)
+        } else {
+            spec.runners
+        }
 
         val client = spec.createClient(testResultProcessor, log)
         val handler = TCServiceMessageOutputStreamHandler(
@@ -97,24 +115,6 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
                     )
                 )
             )
-
-            val ideDebugSession = spec.ideDebugSessionUrl?.let { PlaywrightDebugSession.connect(it) }
-
-            val runners = if (ideDebugSession != null) {
-                // debugging via IDE only supports Chromium,
-                // so we limit debug execution to only first Chromium runner.
-                // this is not good approach, and with TODO(KT-86706) this should be limited only to chrome runners.
-                val chromiumRunner = spec.runners.firstOrNull { it.browserKind == PwBrowserKind.CHROMIUM }
-                if (chromiumRunner == null) {
-                    val reason = "Debugging Kotlin/JS browser tests requires a Chromium runner, but none is configured"
-                    log.warn(reason)
-                    // don't leave the IDE waiting for a browser that is never going to be launched
-                    ideDebugSession.abort(reason)
-                }
-                listOfNotNull(chromiumRunner)
-            } else {
-                spec.runners
-            }
 
             playwright.use {
                 with(client) {
