@@ -714,6 +714,15 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         // functions are only ever collected as part of the containing class's view (below).
         if (classSymbol.isCompanion) return null
 
+        // A local class hosts no builder of any kind - class-level, constructor or function alike. It can hold
+        // no companion object for `builder()` to live in (`companion object` inside one is
+        // WRONG_MODIFIER_CONTAINING_DECLARATION), and the builder class nested in it is not itself local, which
+        // failed with "You should use ConeClassLikeLookupTagWithFixedSymbol for local <local>/..." as soon as
+        // its callables were generated (KT-88848). `isCompanionNeeded` used to be the only thing standing in
+        // the way, and it stops the companion alone - the builder class was generated regardless. Java has no
+        // `@Builder` on a local class either, a builder requiring a static class.
+        if (classSymbol.isLocal) return null
+
         val annotationSymbol = annotationClassId.toSymbol(session) as? FirRegularClassSymbol ?: return emptyList()
         val allowedTargets = annotationSymbol.fir.getAllowedAnnotationTargets(session)
 
