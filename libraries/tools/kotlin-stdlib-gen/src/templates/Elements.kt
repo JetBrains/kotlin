@@ -1031,7 +1031,7 @@ object Elements : TemplateGroupBase() {
             """
             Returns a random ${f.element} from this ${f.collection}.
 
-            @throws ${if (f == RangesOfPrimitives) "IllegalArgumentException" else "NoSuchElementException"} if this ${f.collection} is empty.
+            @throws NoSuchElementException if this ${f.collection} is empty.
             """
         }
         body {
@@ -1064,7 +1064,7 @@ object Elements : TemplateGroupBase() {
             """
             Returns a random ${f.element} from this ${f.collection} using the specified source of randomness.
 
-            @throws ${if (f == RangesOfPrimitives) "IllegalArgumentException" else "NoSuchElementException"} if this ${f.collection} is empty.
+            @throws NoSuchElementException if this ${f.collection} is empty.
             """
         }
         body {
