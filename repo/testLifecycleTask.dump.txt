@@ -717,7 +717,6 @@ Not connected to any 'lifecycleTestTask':
   - :kotlin-gradle-plugin-integration-tests:kgpMppTests [Gradle]
   - :kotlin-gradle-plugin-integration-tests:kgpOtherTests [Gradle]
   - :kotlin-gradle-plugin-integration-tests:test [Gradle]
-  - :kotlin-main-kts:test [CompilerPlugins]
   - :kotlin-native:prepare:kotlin-native-compiler-embeddable:test [Native]
   - :kotlin-power-assert-runtime:jsBrowserTest [CompilerPlugins]
   - :kotlin-power-assert-runtime:jsNodeTest [CompilerPlugins]
