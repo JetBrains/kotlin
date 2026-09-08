@@ -1,0 +1,93 @@
+FILE: nestedInCollectionLiteral.kt
+    public final enum class MyEnum : R|kotlin/Enum<MyEnum>| {
+        private constructor(): R|MyEnum| {
+            super<R|kotlin/Enum<MyEnum>|>()
+        }
+
+        public final static enum entry X: R|MyEnum|
+        public final static enum entry Y: R|MyEnum|
+        public final static fun values(): R|kotlin/Array<MyEnum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|MyEnum| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<MyEnum>|
+            public static get(): R|kotlin/enums/EnumEntries<MyEnum>|
+
+    }
+    public final enum class OtherEnum : R|kotlin/Enum<OtherEnum>| {
+        private constructor(): R|OtherEnum| {
+            super<R|kotlin/Enum<OtherEnum>|>()
+        }
+
+        public final static enum entry Z: R|OtherEnum|
+        public final static fun values(): R|kotlin/Array<OtherEnum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|OtherEnum| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<OtherEnum>|
+            public static get(): R|kotlin/enums/EnumEntries<OtherEnum>|
+
+    }
+    public final class Box : R|kotlin/Any| {
+        public constructor(elements: R|kotlin/collections/List<MyEnum>|): R|Box| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val elements: R|kotlin/collections/List<MyEnum>| = R|<local>/elements|
+            public get(): R|kotlin/collections/List<MyEnum>|
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Box.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun of(vararg elements: R|kotlin/Array<out MyEnum>|): R|Box| {
+                ^of R|kotlin/TODO|()
+            }
+
+        }
+
+    }
+    public final class OtherBox : R|kotlin/Any| {
+        public constructor(elements: R|kotlin/collections/List<OtherEnum>|): R|OtherBox| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val elements: R|kotlin/collections/List<OtherEnum>| = R|<local>/elements|
+            public get(): R|kotlin/collections/List<OtherEnum>|
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|OtherBox.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun of(vararg elements: R|kotlin/Array<out OtherEnum>|): R|OtherBox| {
+                ^of R|kotlin/TODO|()
+            }
+
+        }
+
+    }
+    public final fun takeBox(b: R|Box|): R|kotlin/Unit| {
+    }
+    public final fun takeBox(o: R|OtherBox|): R|kotlin/Unit| {
+    }
+    public final fun takeList(l: R|kotlin/collections/List<MyEnum>|): R|kotlin/Unit| {
+    }
+    public final fun takeList(s: R|kotlin/collections/Set<OtherEnum>|): R|kotlin/Unit| {
+    }
+    public final fun main(): R|kotlin/Unit| {
+        lval b: R|Box| = Q|Box.Companion|.R|/Box.Companion.of|(vararg(Q|MyEnum|.R|/MyEnum.X|, Q|MyEnum|.R|/MyEnum.Y|))
+        lval o: R|OtherBox| = Q|OtherBox.Companion|.R|/OtherBox.Companion.of|(vararg(Q|OtherEnum|.R|/OtherEnum.Z|))
+        lval l: R|kotlin/collections/List<MyEnum>| = Q|kotlin/collections|.R|kotlin/collections/listOf|<R|MyEnum|>(vararg(Q|MyEnum|.R|/MyEnum.X|, Q|MyEnum|.R|/MyEnum.Y|))
+        <Ambiguity: takeBox, [/takeBox, /takeBox]>#(Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<Unresolved name: X>#))
+        <Ambiguity: takeBox, [/takeBox, /takeBox]>#(Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<Unresolved name: Z>#))
+        <Ambiguity: takeBox, [/takeBox, /takeBox]>#(Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(vararg(<Unresolved name: X>#, <Unresolved name: Q>#)))
+        <Ambiguity: takeList, [/takeList, /takeList]>#(Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<Unresolved name: Y>#))
+        <Ambiguity: takeList, [/takeList, /takeList]>#(Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<Unresolved name: Z>#))
+        <Ambiguity: takeList, [/takeList, /takeList]>#(Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(vararg(<Unresolved name: Y>#, <Unresolved name: Q>#)))
+    }
