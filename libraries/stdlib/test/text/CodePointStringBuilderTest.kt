@@ -9,7 +9,7 @@ import kotlin.test.*
 import kotlin.text.unicode.*
 
 
-@OptIn(ExperimentalCodePointApi::class)
+@OptIn(ExperimentalUnicodeApi::class)
 class CodePointStringBuilderTest {
     val string = "abc😀def${Char.MIN_HIGH_SURROGATE}-${Char.MIN_LOW_SURROGATE}"
 

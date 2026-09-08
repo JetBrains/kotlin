@@ -6,18 +6,18 @@
 package kotlin.text.unicode
 
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public actual fun CodePoint.lowercase(): String =
     if (isBasic) code.toChar().lowercaseImpl() else lowercaseCodePoint().toString()
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public actual fun CodePoint.lowercaseCodePoint(): CodePoint =
     lowercaseCodePoint(code).toCodePoint()
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public actual fun CodePoint.uppercase(): String =
     if (isBasic) code.toChar().uppercaseImpl() else uppercaseCodePoint().toString()
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public actual fun CodePoint.uppercaseCodePoint(): CodePoint =
     uppercaseCodePoint(code).toCodePoint()

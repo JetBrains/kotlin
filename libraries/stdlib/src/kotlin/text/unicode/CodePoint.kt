@@ -55,7 +55,7 @@ private const val MIN_SUPPLEMENTARY_CODE_POINT_VALUE: Int = 0x10000
  *
  * The value must be in range  `0..0x10FFFF`, otherwise the constructor fails with an [IllegalArgumentException].
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 @kotlin.jvm.JvmInline
 public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
 
@@ -346,7 +346,7 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
  * @return A [CodePoint] with the code equal to this integer value modulo `0x10FFFF + 1`.
  * @see Char.toCodePoint
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public fun Int.toCodePoint(): CodePoint =
     CodePoint(this.mod(MAX_CODE_POINT_VALUE + 1))
 
@@ -359,7 +359,7 @@ public fun Int.toCodePoint(): CodePoint =
  * @see CodePoint.fromChar
  * @see CodePoint.toSingleChar
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public fun Char.toCodePoint(): CodePoint =
     code.toCodePoint()
 
@@ -375,7 +375,7 @@ public fun Char.toCodePoint(): CodePoint =
  * @see CodePoint.toString
  * @see CodePoint.toCharArray
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 @IgnorableReturnValue
 public fun <T : Appendable> T.appendCodePoint(value: CodePoint): T {
     if (value.isBasic) {
@@ -399,7 +399,7 @@ public fun <T : Appendable> T.appendCodePoint(value: CodePoint): T {
  * @see StringBuilder.insert
  * @see appendCodePoint
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 @IgnorableReturnValue
 public fun StringBuilder.insertCodePointAt(index: Int, value: CodePoint): StringBuilder {
     return if (value.isBasic) {
@@ -422,7 +422,7 @@ public fun StringBuilder.insertCodePointAt(index: Int, value: CodePoint): String
  * @see StringBuilder.set
  * @see codePointAt
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 @IgnorableReturnValue
 public fun StringBuilder.setCodePointAt(index: Int, value: CodePoint): StringBuilder {
     val current = codePointAt(index)
@@ -450,7 +450,7 @@ public fun StringBuilder.setCodePointAt(index: Int, value: CodePoint): StringBui
  * @see StringBuilder.deleteAt
  * @see codePointAt
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 @IgnorableReturnValue
 public fun StringBuilder.deleteCodePointAt(index: Int): StringBuilder {
     val current = codePointAt(index)

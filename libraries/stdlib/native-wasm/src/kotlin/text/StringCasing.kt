@@ -10,7 +10,7 @@ import kotlin.text.unicode.*
 // \p{cased} (\p{case-ignorable})* Sigma !( (\p{case-ignorable})* \p{cased} )
 // The regular-expression operator * is "possessive", consuming as many characters as possible, with no backup.
 // This is significant in the case of Final_Sigma, because the sets of case-ignorable and cased characters are not disjoint.
-@OptIn(ExperimentalCodePointApi::class)
+@OptIn(ExperimentalUnicodeApi::class)
 private fun String.isFinalSigmaAt(index: Int): Boolean {
     if (this[index] == '\u03A3' && index > 0) {
         var i = index
@@ -41,7 +41,7 @@ private fun String.isFinalSigmaAt(index: Int): Boolean {
     return false
 }
 
-@OptIn(ExperimentalCodePointApi::class)
+@OptIn(ExperimentalUnicodeApi::class)
 internal fun String.lowercaseImpl(): String {
     var unchangedIndex = 0
     while (unchangedIndex < this.length) {
@@ -80,7 +80,7 @@ internal fun String.lowercaseImpl(): String {
     return sb.toString()
 }
 
-@OptIn(ExperimentalCodePointApi::class)
+@OptIn(ExperimentalUnicodeApi::class)
 internal fun String.uppercaseImpl(): String {
     var unchangedIndex = 0
     while (unchangedIndex < this.length) {
