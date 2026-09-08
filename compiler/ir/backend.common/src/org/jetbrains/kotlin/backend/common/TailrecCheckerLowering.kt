@@ -9,13 +9,16 @@ import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.isOverridable
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 open class TailrecCheckerLowering<Context : LoweringContext>(val context: Context) : FileLoweringPass {
     open fun followRichFunctionReference(reference: IrRichFunctionReference) = false
@@ -70,9 +73,25 @@ open class TailrecCheckerLowering<Context : LoweringContext>(val context: Contex
 /**
  * Creates a source range for the referenced name, matching FIR's `REFERENCED_NAME_BY_QUALIFIED` positioning.
  * IR has no PSI callee, so calculate the range from [startOffset] and the referenced name length.
+ *
+ * Collection literals are lowered to calls to the synthetic `of` operator. The call source range is the
+ * whole collection literal, while its vararg argument is represented either by an [IrVararg] with the
+ * same range or by an [IrBlock] covering the literal contents after vararg lowering. FIR's positioning
+ * strategy also reports the whole collection literal, so preserve that range here.
  */
 private fun IrCall.referencedNameSourceElement(): KtOffsetsOnlySourceElement? {
     if (startOffset < 0) return null
     val nameLength = symbol.owner.name.asString().length
-    return KtOffsetsOnlySourceElement(startOffset, (startOffset + nameLength).coerceAtMost(endOffset))
+    val sourceEndOffset = if (
+        symbol.owner.name == OperatorNameConventions.OF &&
+            arguments.any {
+                (it is IrVararg && it.startOffset == startOffset && it.endOffset == endOffset) ||
+                    (it is IrBlock && it.startOffset == startOffset + 1 && it.endOffset == endOffset - 1)
+            }
+    ) {
+        endOffset
+    } else {
+        (startOffset + nameLength).coerceAtMost(endOffset)
+    }
+    return KtOffsetsOnlySourceElement(startOffset, sourceEndOffset)
 }
