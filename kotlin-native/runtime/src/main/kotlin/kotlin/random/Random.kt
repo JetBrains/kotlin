@@ -9,37 +9,35 @@ package kotlin.random
 
 import kotlin.concurrent.atomics.AtomicLong
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlin.concurrent.atomics.updateAndFetch
+import kotlin.native.concurrent.ThreadLocal
 import kotlin.system.getTimeNanos
 
-/**
- * The default implementation of pseudo-random generator using the linear congruential generator.
- */
-private object NativeRandom : Random() {
-    private const val MULTIPLIER = 0x5deece66dL
-    @Suppress("DEPRECATION_ERROR")
-    private val _seed = AtomicLong(mult(getTimeNanos()))
-
-    /**
-     * Random generator seed value.
-     */
-    private val seed: Long
-        get() = _seed.load()
-
-    private fun mult(value: Long) = (value xor MULTIPLIER) and ((1L shl 48) - 1)
-
-    private fun update(seed: Long): Unit {
-        _seed.store(seed)
-    }
-
-    override fun nextBits(bitCount: Int): Int {
-        update((seed * MULTIPLIER + 0xbL) and ((1L shl 48) - 1))
-        return (seed ushr (48 - bitCount)).toInt()
-    }
-
-    override fun nextInt(): Int = nextBits(32)
-}
-
-internal actual val defaultRandom: Random = NativeRandom
+@ThreadLocal
+internal actual val defaultRandom: Random = XorWowRandom(seed1 = SeedSource.nextInt(), seed2 = SeedSource.nextInt())
 
 internal actual fun doubleFromParts(hi26: Int, low27: Int): Double =
         (hi26.toLong().shl(27) + low27) / (1L shl 53).toDouble()
+
+/**
+ * Implementation of pseudo-random generator using the linear congruential generator.
+ * This only serves to seed instances of [XorWowRandom] that are created per-thread.
+ */
+private object SeedSource {
+    private const val MULTIPLIER = 0x5deece66dL
+
+    @OptIn(ExperimentalAtomicApi::class)
+    @Suppress("DEPRECATION_ERROR")
+    private val seed = AtomicLong(mult(getTimeNanos()))
+
+    private fun mult(value: Long) = (value xor MULTIPLIER) and ((1L shl 48) - 1)
+
+    private fun nextBits(bitCount: Int): Int {
+        val newSeed = seed.updateAndFetch { seed ->
+            (seed * MULTIPLIER + 0xbL) and ((1L shl 48) - 1)
+        }
+        return (newSeed ushr (48 - bitCount)).toInt()
+    }
+
+    fun nextInt(): Int = nextBits(32)
+}
