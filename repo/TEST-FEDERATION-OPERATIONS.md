@@ -68,7 +68,7 @@ Reverting disrupts the original change, but is appropriate when a timely fix or 
 
 A failing smoke aggregate blocks safe-merge for all commits and requires an urgent response.
 The infrastructure engineer on duty leads the response and involves the relevant domain owners or change author for code or test fixes.
-Reverting the breaking change is a reasonable option to restore safe-merge quickly.
+While muting a test is the most desired option, reverting the breaking change is a reasonable as well to restore safe-merge quickly.
 
 ### Broken 'Contract' / Missing '@AffectedBy'
 
