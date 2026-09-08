@@ -88,7 +88,7 @@ internal enum class ElementKind {
 }
 
 private class SignatureNode(val kind: ElementKind, val name: String? = null) {
-    val children: MutableList<SignatureNode> = SmartList<SignatureNode>()
+    val children: MutableList<SignatureNode> = SmartList()
 }
 
 class SignatureParser(private val treeMaker: KaptTreeMaker) {
@@ -184,8 +184,8 @@ class SignatureParser(private val treeMaker: KaptTreeMaker) {
                 append(parsedClassBound.second)
                 append(" & ")
             }
-            for (bound in parsedInterfaceBounds) {
-                append(bound.second)
+            for ([_, parsedInterfaceBound] in parsedInterfaceBounds) {
+                append(parsedInterfaceBound)
                 append(" & ")
             }
             if (allBounds.isNotEmpty()) {

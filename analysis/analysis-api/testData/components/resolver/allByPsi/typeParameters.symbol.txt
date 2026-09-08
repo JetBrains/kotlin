@@ -11,7 +11,7 @@ KtNameReferenceExpression(8,11): 'one'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one
     ]
@@ -20,7 +20,7 @@ KtNameReferenceExpression(12,15): 'two'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one.two
     ]
@@ -44,7 +44,7 @@ KtNameReferenceExpression(24,27): 'one'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one
     ]
@@ -53,7 +53,7 @@ KtNameReferenceExpression(28,31): 'two'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one.two
     ]
@@ -62,7 +62,7 @@ KtNameReferenceExpression(32,36): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base
     ]
@@ -71,7 +71,7 @@ KtNameReferenceExpression(37,48): 'NestedClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.NestedClass
     ]
@@ -89,19 +89,19 @@ KtTypeParameter(66,86): 'B : Base.NestedClass'
   null
 
 KtTypeReference(70,86): 'Base.NestedClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.NestedClass
     ]
 
 KtUserType(70,86): 'Base.NestedClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.NestedClass
     ]
 
 KtUserType(70,74): 'Base'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base
     ]
@@ -110,7 +110,7 @@ KtNameReferenceExpression(70,74): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base
     ]
@@ -119,7 +119,7 @@ KtNameReferenceExpression(75,86): 'NestedClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.NestedClass
     ]
@@ -149,31 +149,31 @@ KtTypeParameter(154,182): 'C : one.two.Base.NestedClass'
   null
 
 KtTypeReference(158,182): 'one.two.Base.NestedClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.NestedClass
     ]
 
 KtUserType(158,182): 'one.two.Base.NestedClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.NestedClass
     ]
 
 KtUserType(158,170): 'one.two.Base'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base
     ]
 
 KtUserType(158,165): 'one.two'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one.two
     ]
 
 KtUserType(158,161): 'one'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one
     ]
@@ -182,7 +182,7 @@ KtNameReferenceExpression(158,161): 'one'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one
     ]
@@ -191,7 +191,7 @@ KtNameReferenceExpression(162,165): 'two'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one.two
     ]
@@ -200,7 +200,7 @@ KtNameReferenceExpression(166,170): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base
     ]
@@ -209,7 +209,7 @@ KtNameReferenceExpression(171,182): 'NestedClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.NestedClass
     ]
@@ -218,25 +218,25 @@ KtSuperTypeList(186,195): 'Base<C>()'
   null
 
 KtSuperTypeCallEntry(186,195): 'Base<C>()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): one.two.Base<B>
     ]
 
 KtConstructorCalleeExpression(186,193): 'Base<C>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): one.two.Base<B>
     ]
 
 KtTypeReference(186,193): 'Base<C>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base
     ]
 
 KtUserType(186,193): 'Base<C>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base
     ]
@@ -245,7 +245,7 @@ KtNameReferenceExpression(186,190): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base
     ]
@@ -257,13 +257,13 @@ KtTypeProjection(191,192): 'C'
   null
 
 KtTypeReference(191,192): 'C'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       C
     ]
 
 KtUserType(191,192): 'C'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       C
     ]
@@ -272,7 +272,7 @@ KtNameReferenceExpression(191,192): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       C
     ]
@@ -290,19 +290,19 @@ KtParameterList(214,216): '()'
   null
 
 KtTypeReference(218,230): 'NestedClass?'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.NestedClass
     ]
 
 KtNullableType(218,230): 'NestedClass?'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.NestedClass
     ]
 
 KtUserType(218,229): 'NestedClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.NestedClass
     ]
@@ -311,7 +311,7 @@ KtNameReferenceExpression(218,229): 'NestedClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.NestedClass
     ]
@@ -326,19 +326,19 @@ KtParameterList(264,266): '()'
   null
 
 KtTypeReference(268,270): 'C?'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       C
     ]
 
 KtNullableType(268,270): 'C?'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       C
     ]
 
 KtUserType(268,269): 'C'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       C
     ]
@@ -347,7 +347,7 @@ KtNameReferenceExpression(268,269): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       C
     ]
@@ -365,13 +365,13 @@ KtParameter(291,313): 'c1: Child<NestedClass>'
   null
 
 KtTypeReference(295,313): 'Child<NestedClass>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Child
     ]
 
 KtUserType(295,313): 'Child<NestedClass>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Child
     ]
@@ -380,7 +380,7 @@ KtNameReferenceExpression(295,300): 'Child'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Child
     ]
@@ -392,13 +392,13 @@ KtTypeProjection(301,312): 'NestedClass'
   null
 
 KtTypeReference(301,312): 'NestedClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.NestedClass
     ]
 
 KtUserType(301,312): 'NestedClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.NestedClass
     ]
@@ -407,7 +407,7 @@ KtNameReferenceExpression(301,312): 'NestedClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.NestedClass
     ]
@@ -416,25 +416,25 @@ KtParameter(315,358): 'c2: one.two.Child<one.two.Base.NestedClass>'
   null
 
 KtTypeReference(319,358): 'one.two.Child<one.two.Base.NestedClass>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Child
     ]
 
 KtUserType(319,358): 'one.two.Child<one.two.Base.NestedClass>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Child
     ]
 
 KtUserType(319,326): 'one.two'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one.two
     ]
 
 KtUserType(319,322): 'one'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one
     ]
@@ -443,7 +443,7 @@ KtNameReferenceExpression(319,322): 'one'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one
     ]
@@ -452,7 +452,7 @@ KtNameReferenceExpression(323,326): 'two'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one.two
     ]
@@ -461,7 +461,7 @@ KtNameReferenceExpression(327,332): 'Child'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Child
     ]
@@ -473,31 +473,31 @@ KtTypeProjection(333,357): 'one.two.Base.NestedClass'
   null
 
 KtTypeReference(333,357): 'one.two.Base.NestedClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.NestedClass
     ]
 
 KtUserType(333,357): 'one.two.Base.NestedClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.NestedClass
     ]
 
 KtUserType(333,345): 'one.two.Base'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base
     ]
 
 KtUserType(333,340): 'one.two'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one.two
     ]
 
 KtUserType(333,336): 'one'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one
     ]
@@ -506,7 +506,7 @@ KtNameReferenceExpression(333,336): 'one'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one
     ]
@@ -515,7 +515,7 @@ KtNameReferenceExpression(337,340): 'two'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one.two
     ]
@@ -524,7 +524,7 @@ KtNameReferenceExpression(341,345): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base
     ]
@@ -533,7 +533,7 @@ KtNameReferenceExpression(346,357): 'NestedClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.NestedClass
     ]
@@ -545,13 +545,13 @@ KtProperty(366,405): 'val nested: NestedClass = NestedClass()'
   null
 
 KtTypeReference(378,389): 'NestedClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.NestedClass
     ]
 
 KtUserType(378,389): 'NestedClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.NestedClass
     ]
@@ -560,13 +560,13 @@ KtNameReferenceExpression(378,389): 'NestedClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.NestedClass
     ]
 
 KtCallExpression(392,405): 'NestedClass()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): one.two.Base.NestedClass
     ]
@@ -575,7 +575,7 @@ KtNameReferenceExpression(392,403): 'NestedClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.NestedClass
     ]
@@ -587,7 +587,7 @@ KtProperty(410,432): 'val inner = c1.Inner()'
   null
 
 KtDotQualifiedExpression(422,432): 'c1.Inner()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
     ]
@@ -596,13 +596,13 @@ KtNameReferenceExpression(422,424): 'c1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       c1: one.two.Child<one.two.Base.NestedClass>
     ]
 
 KtCallExpression(425,432): 'Inner()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
     ]
@@ -611,7 +611,7 @@ KtNameReferenceExpression(425,430): 'Inner'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/two/Base.Inner
     ]

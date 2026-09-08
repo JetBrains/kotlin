@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.resolution.KtResolvableCall;
@@ -21,11 +22,17 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall;
  * }
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtConstructorDelegationReferenceExpression extends KtExpressionImpl implements KtReferenceExpression, KtResolvableCall {
+    @KtImplementationDetail
     public KtConstructorDelegationReferenceExpression(@NotNull ASTNode node) {
         super(node);
     }
 
+    /**
+     * Returns {@code true} if this reference is {@code this} (delegating to a constructor of the same class), or {@code false} if it is
+     * {@code super} (delegating to a superclass constructor).
+     */
     public boolean isThis() {
         return findChildByType(KtTokens.THIS_KEYWORD) != null;
     }

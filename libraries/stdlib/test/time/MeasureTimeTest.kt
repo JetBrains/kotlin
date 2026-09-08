@@ -13,6 +13,7 @@ import kotlin.time.Duration.Companion.nanoseconds
 class MeasureTimeTest {
 
     companion object {
+        @IgnorableReturnValue
         fun longRunningCalc(): String = buildString {
             repeat(10) {
                 while (Random.nextDouble() >= 0.001);

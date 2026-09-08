@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.tree.IElementType;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
@@ -16,16 +17,34 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub;
 
 import java.util.List;
 
+/**
+ * Represents a single entry of a {@link KtStringTemplateExpression}, that is, one segment of a string literal.
+ *
+ * <p>A string is split into consecutive entries: plain literal text ({@link KtLiteralStringTemplateEntry}), escape sequences
+ * ({@link KtEscapeStringTemplateEntry}), and interpolated expressions ({@link KtStringTemplateEntryWithExpression}).
+ *
+ * <h3>Example:</h3>
+ * <pre>{@code
+ *   "Hello, $name!"
+ * // ^^^^^^^       literal entry "Hello, "
+ * //        ^^^^^  simple-name entry "$name"
+ * //             ^ literal entry "!"
+ * }</pre>
+ */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public abstract class KtStringTemplateEntry extends KtElementImplStub<KotlinPlaceHolderWithTextStub<? extends KtStringTemplateEntry>> {
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
     public static final KtStringTemplateEntry[] EMPTY_ARRAY = new KtStringTemplateEntry[0];
 
+    @KtImplementationDetail
     public KtStringTemplateEntry(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtStringTemplateEntry(
             @NotNull KotlinPlaceHolderWithTextStub<? extends KtStringTemplateEntry> stub,
-            @NotNull IStubElementType elementType
+            @NotNull IElementType elementType
     ) {
         super(stub, elementType);
     }

@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.session.analysisScope
 import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
@@ -43,8 +42,7 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.light.classes.symbol.classes.*
-import org.jetbrains.kotlin.light.classes.symbol.classes.hasMangledNameDueToValueClasses as computeHasMangledNameDueToValueClasses
-import org.jetbrains.kotlin.light.classes.symbol.classes.jvmMethodOwner as computeJvmMethodOwner
+import org.jetbrains.kotlin.light.classes.symbol.classes.computeJavaMethodName as computeJavaMethodNameImpl
 import org.jetbrains.kotlin.light.classes.symbol.utils.SafeNestedNullableCaffeineCache
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -637,11 +635,8 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
     //region Bridge
 
     context(_: KaSession)
-    override fun jvmMethodOwner(symbol: KaCallableSymbol): KaDeclarationSymbol? = computeJvmMethodOwner(symbol)
-
-    context(_: KaSession)
-    override fun hasMangledNameDueToValueClasses(symbol: KaCallableSymbol): Boolean =
-        computeHasMangledNameDueToValueClasses(symbol)
+    override fun computeJavaMethodName(symbol: KaCallableSymbol, defaultName: String, ignoreValueClassMangling: Boolean): String? =
+        computeJavaMethodNameImpl(symbol, defaultName, ignoreValueClassMangling)
 
     //endregion
 

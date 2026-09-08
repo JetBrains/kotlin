@@ -10,6 +10,7 @@ import kotlin.jvm.internal.CallableReference
 import kotlin.metadata.Modality
 import kotlin.reflect.KCallable
 import kotlin.reflect.KParameter
+import kotlin.reflect.KProperty
 import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.calls.Caller
 import kotlin.reflect.jvm.internal.calls.getInlineClassUnboxMethod
@@ -226,3 +227,6 @@ internal fun <R> ReflectKCallable<R>.unbindAllReceivers(): ReflectKCallable<R> =
 internal fun ReflectKCallable<*>.substituteType(type: KType): KType =
     overriddenStorage.getTypeSubstitutor(typeParameters, memberNameForDebug = name)
         .substituteTopLevelType(type, containerNameForDebug = name)
+
+internal val ReflectKCallable<*>.propertyIfAccessor: ReflectKCallable<*>
+    get() = if (this is KProperty.Accessor<*>) property as ReflectKCallable<*> else this

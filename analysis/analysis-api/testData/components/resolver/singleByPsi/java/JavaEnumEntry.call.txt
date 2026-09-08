@@ -1,5 +1,5 @@
 KtNameReferenceExpression(69,76): 'RUNTIME'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

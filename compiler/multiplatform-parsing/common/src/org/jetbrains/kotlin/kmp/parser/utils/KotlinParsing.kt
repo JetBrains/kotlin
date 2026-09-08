@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -327,7 +327,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         }
 
         checkUnclosedBlockComment()
-        fileMarker.done(KtNodeTypes.KT_FILE)
+        fileMarker.done(KtNodeTypes.FILE)
     }
 
     private fun checkUnclosedBlockComment() {
@@ -406,7 +406,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         scriptMarker.done(KtNodeTypes.SCRIPT)
         scriptMarker.setCustomEdgeTokenBinders(PRECEDING_ALL_BINDER, TRAILING_ALL_BINDER)
 
-        fileMarker.done(KtNodeTypes.KT_FILE)
+        fileMarker.done(KtNodeTypes.FILE)
     }
 
     private fun checkForUnexpectedSymbols() {

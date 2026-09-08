@@ -1,0 +1,2 @@
+@MyAnnotation
+typealias MyAlias = kotlin.Int

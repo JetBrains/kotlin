@@ -5,34 +5,30 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web
 
-import org.jetbrains.kotlin.cli.CliDiagnostics.JS_IC_ERROR
-import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
-import org.jetbrains.kotlin.cli.js.IcCachesConfigurationData
-import org.jetbrains.kotlin.cli.js.prepareIcCaches
-import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
-import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.executePhaseIsolatedWithActions
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode.Companion.wasmCompilationMode
-import org.jetbrains.kotlin.cli.report
-import org.jetbrains.kotlin.cli.reportInfo
+import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.ir.backend.js.ic.IncrementalCacheGuard
-import org.jetbrains.kotlin.ir.backend.js.ic.acquireAndRelease
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
+import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
+import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
+import org.jetbrains.kotlin.ir.backend.js.ic.SrcFileArtifact
 import org.jetbrains.kotlin.ir.backend.js.ic.tryAcquireAndRelease
-import org.jetbrains.kotlin.js.config.*
+import org.jetbrains.kotlin.js.config.icCacheDirectory
+import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.util.PhaseType
-import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
-abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, IntermediateOutput>(
-    name: String
+abstract class WebBackendPipelinePhase<Output, IntermediateOutput, TModuleArtifact, TFileArtifact, TFragments, TBackendContext>(
+    name: String,
 ) : PipelinePhase<ConfigurationPipelineArtifact, Output>(
     name = name,
-    preActions = emptySet(),
-    postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector)
-) {
+    postActions = setOf(PerformanceNotifications.InitializationFinished),
+) where TFragments : IrICProgramFragments,
+        Output : WebBackendPipelineArtifact,
+        IntermediateOutput : PipelineArtifact,
+        TFileArtifact : SrcFileArtifact,
+        TModuleArtifact : ModuleArtifact,
+        TBackendContext : JsCommonBackendContext {
     override fun executePhase(input: ConfigurationPipelineArtifact): Output? {
         val configuration = input.configuration
 
@@ -43,80 +39,30 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
         configuration.reportLog("Cache directory: $cacheDirectory")
 
         if (cacheDirectory != null) {
-            val cacheGuard = IncrementalCacheGuard(cacheDirectory)
-            val backendIr = compileToBackendIrIncrementally(cacheDirectory, cacheGuard, configuration)
+            val preparedCachesArtifact = icCachePreparationPhase.executePhaseIsolatedWithActions(input) ?: return null
+            val [_, _, cacheGuard, _] = preparedCachesArtifact
+            val backendIr = incrementalBuildingPhase.executePhaseIsolatedWithActions(preparedCachesArtifact)
             return cacheGuard.tryAcquireAndRelease {
                 backendIr?.let { compileIntermediate(it, configuration) }
             }
         } else {
             configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
-            val loadedKlibArtifact = klibLoadingPhase.executePhaseIsolatedWithActions(input) ?: return null
-            val backendIr = compileNonIncrementally(loadedKlibArtifact)
+            val backendIr = compileToBackendIrNonIncrementally(input)
             return backendIr?.let { compileIntermediate(it, configuration) }
         }
     }
 
-    private fun compileToBackendIrIncrementally(
-        cacheDirectory: String,
-        cacheGuard: IncrementalCacheGuard,
-        configuration: CompilerConfiguration,
-    ): IntermediateOutput? {
-        val artifactConfiguration = configuration.artifactConfigurations.singleOrNull()
-            ?: error("Expected exactly one artifact configuration")
-        val icCaches = cacheGuard.acquireAndRelease { status ->
-            when (status) {
-                IncrementalCacheGuard.AcquireStatus.CACHE_CLEARED -> {
-                    configuration.reportInfo("Cache guard file detected, cache directory '$cacheDirectory' cleared")
-                }
-                IncrementalCacheGuard.AcquireStatus.INVALID_CACHE -> {
-                    configuration.report(
-                        JS_IC_ERROR,
-                        "Cache guard file detected in readonly mode, cache directory '$cacheDirectory' should be cleared"
-                    )
-                    return null
-                }
-                IncrementalCacheGuard.AcquireStatus.OK -> {}
-            }
-            prepareIcCaches(
-                cacheDirectory = cacheDirectory,
-                icConfigurationData = when {
-                    configuration.wasmCompilation -> {
-                        IcCachesConfigurationData.Wasm(
-                            wasmDebug = configuration.getBoolean(WasmConfigurationKeys.WASM_DEBUG),
-                            generateWat = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT),
-                            generateDebugInformation =
-                                configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_DWARF) || configuration.sourceMap,
-                            mode = configuration.wasmCompilationMode()
-                        )
-                    }
-                    else -> IcCachesConfigurationData.Js(
-                        granularity = artifactConfiguration.granularity
-                    )
-                },
-                outputDir = configuration.outputDir!!,
-                targetConfiguration = configuration,
-                artifactConfiguration = artifactConfiguration,
-            )
-        }
-        configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
-
-        // We use one cache directory for both caches: JS AST and JS code.
-        // This guard MUST be unlocked after a successful preparing icCaches (see prepareIcCaches()).
-        // Do not use IncrementalCacheGuard::acquire() - it may drop an entire cache here, and
-        // it breaks the logic from JsExecutableProducer(), therefore use IncrementalCacheGuard::tryAcquire() instead
-        // TODO: One day, when we will lower IR and produce JS AST per module,
-        //      think about using different directories for JS AST and JS code.
-        return cacheGuard.tryAcquireAndRelease {
-            compileIncrementally(icCaches, configuration)
-        }
+    // Do not inline this function - make sure that BackendIr may be collected after intermediate output is built
+    private fun compileToBackendIrNonIncrementally(input: ConfigurationPipelineArtifact): IntermediateOutput? {
+        val loadedKlibArtifact = klibLoadingPhase.executePhaseIsolatedWithActions(input) ?: return null
+        return compileNonIncrementally(loadedKlibArtifact)
     }
 
-    protected abstract val klibLoadingPhase: WebIrLoadingPipelinePhase
+    protected abstract val icCachePreparationPhase: WebIncrementalCachePreparationPipelinePhase<TModuleArtifact, *>
 
-    abstract fun compileIncrementally(
-        icCaches: IcCachesArtifacts,
-        configuration: CompilerConfiguration,
-    ): IntermediateOutput?
+    protected abstract val incrementalBuildingPhase: PipelinePhase<WebIncrementalCachePipelineArtifact<TModuleArtifact>, IntermediateOutput>
+
+    protected abstract val klibLoadingPhase: WebIrLoadingPipelinePhase
 
     abstract fun compileNonIncrementally(loadedIrArtifact: WebLoadedIrPipelineArtifact): IntermediateOutput?
 

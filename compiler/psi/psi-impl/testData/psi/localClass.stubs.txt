@@ -4,7 +4,7 @@ FILE[kind=File[packageFqName=test]]
   IMPORT_LIST
   CLASS[classId=test/LocalClass, fqName=test.LocalClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=LocalClass, superNames=[]]
     CLASS_BODY
-      FUN[fqName=test.LocalClass.foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+      FUNCTION[fqName=test.LocalClass.foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         MODIFIER_LIST[private]
         VALUE_PARAMETER_LIST
         CALL_EXPRESSION
@@ -31,6 +31,6 @@ FILE[kind=File[packageFqName=test]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Runnable]
             CLASS_BODY
-              FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=run]
+              FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=run]
                 MODIFIER_LIST[override]
                 VALUE_PARAMETER_LIST

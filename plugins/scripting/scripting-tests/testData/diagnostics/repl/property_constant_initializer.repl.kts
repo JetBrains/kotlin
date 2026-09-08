@@ -1,4 +1,5 @@
-
+// IGNORE_FIR_DIAGNOSTICS_DIFF
+// ^^^ KT-89088 Difference in ReplViaApiDiagnosticsTestGenerated and ReplWithTestExtensionsDiagnosticsTestGenerated
 // SNIPPET
 
 const val x = 1

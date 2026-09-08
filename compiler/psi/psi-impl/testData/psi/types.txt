@@ -434,7 +434,7 @@ KtFile: types.kt
                     PsiElement(GT)('>')
                 PsiElement(QUEST)('?')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(public)('public')
         PsiWhiteSpace(' ')
@@ -655,7 +655,7 @@ KtFile: types.kt
                       PsiElement(IDENTIFIER)('Int')
               PsiElement(GT)('>')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(abstract)('abstract')
         PsiWhiteSpace(' ')

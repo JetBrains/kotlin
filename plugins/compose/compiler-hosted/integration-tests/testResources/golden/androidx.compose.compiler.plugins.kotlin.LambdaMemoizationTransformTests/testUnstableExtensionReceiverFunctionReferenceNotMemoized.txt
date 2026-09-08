@@ -26,7 +26,11 @@ fun Something(%composer: Composer?, %changed: Int) {
       val tmp0 = unstable
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(%composer.changedInstance(tmp0)) {
-        tmp0::method
+        tmp0::method<kotlin.reflect.KFunction1> {
+          fun method(receiver: Unstable, p0: @[ParameterName(name = 'arg1')] Int) {
+            return receiver.method(p0)
+          }
+        }
       }
       sourceInformationMarkerEnd(%composer)
       tmp0_group

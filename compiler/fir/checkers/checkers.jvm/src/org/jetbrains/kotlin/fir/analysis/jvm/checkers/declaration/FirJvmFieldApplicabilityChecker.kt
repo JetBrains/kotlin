@@ -94,7 +94,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
 
     context(context: CheckerContext)
     private fun isInsideJvmMultifileClassFile(): Boolean {
-        return context.containingFileSymbol?.hasAnnotation(JVM_MULTIFILE_CLASS_ID, context.session) == true
+        return context.containingFileSymbol.hasAnnotation(JVM_MULTIFILE_CLASS_ID, context.session)
     }
 }
 

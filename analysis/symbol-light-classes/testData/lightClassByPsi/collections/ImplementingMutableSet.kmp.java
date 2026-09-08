@@ -30,11 +30,9 @@ public final class SmartSet /* SmartSet*/<T>  extends kotlin.collections.Abstrac
 }
 
 public static final class Companion /* SmartSet.Companion*/ {
-  @<error>()
   @org.jetbrains.annotations.NotNull()
   public final <T> @org.jetbrains.annotations.NotNull() SmartSet<T> create();// <T>  create()
 
-  @<error>()
   @org.jetbrains.annotations.NotNull()
   public final <T> @org.jetbrains.annotations.NotNull() SmartSet<T> create(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends T>);// <T>  create(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends T>)
 

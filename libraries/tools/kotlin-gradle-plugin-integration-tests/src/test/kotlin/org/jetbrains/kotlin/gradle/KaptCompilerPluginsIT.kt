@@ -104,6 +104,10 @@ class KaptCompilerPluginsIT : KaptBaseIT() {
                     interfaceStub,
                     "java.util.List<kotlin.jvm.functions.Function0<kotlin.Unit>> testListReturn()",
                 )
+                assertFileInProjectContains(
+                    interfaceStub,
+                    "kotlin.coroutines.Continuation<kotlin.jvm.functions.Function0<kotlin.Unit>>",
+                )
 
                 val classStub = "example/build/tmp/kapt3/stubs/main/repro/TestClass.java"
                 assertFileInProjectDoesNotContain(classStub, "repro.internal.PluginFunction0<kotlin.Unit>")
@@ -230,6 +234,8 @@ class KaptCompilerPluginsIT : KaptBaseIT() {
                 fun testReturn(): @PluginFunction () -> Unit
 
                 fun testListReturn(): List<@PluginFunction () -> Unit>
+
+                suspend fun testSuspendReturn(): @PluginFunction () -> Unit
             }
 
             class TestClass {

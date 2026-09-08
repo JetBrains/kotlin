@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 interface IrModuleDependencyTracker {
     fun addModuleForTracking(module: IrModuleFragment)
@@ -54,9 +53,9 @@ class IrModuleDependencyTrackerImpl : IrModuleDependencyTracker {
     }
 
     override fun reverseTopoOrder(moduleDependencies: IrModuleDependencies): IrModuleDependencies {
-        val modulesToSort = moduleDependencies.all.toSet()
+        val modulesToSort = moduleDependencies.allDependencies.toSet()
 
-        val untrackedModules = trackedModules.keys - modulesToSort
+        val untrackedModules = modulesToSort - trackedModules.keys
         check(untrackedModules.isEmpty()) {
             "The following modules are not being tracked in ${this::class}: ${untrackedModules.joinToString { it.name.asString() }}"
         }
@@ -67,15 +66,7 @@ class IrModuleDependencyTrackerImpl : IrModuleDependencyTracker {
         val sortedModules: List<IrModuleFragment> = DFS.topologicalOrder(modulesToSort) { module -> trackedModules.getValue(module) }
             .filter { it in modulesToSort } // Avoid accidentally adding dependencies that were not in [IrModuleDependencies.all].
             .reversed()
-            .let { sortedModules ->
-                // The stdlib and included libraries are special. They need to be at the fixed places.
-                buildList {
-                    addIfNotNull(moduleDependencies.stdlib)
-                    sortedModules.filterTo(this) { it != moduleDependencies.stdlib && it != moduleDependencies.included }
-                    addIfNotNull(moduleDependencies.included)
-                }
-            }
 
-        return moduleDependencies.copy(all = sortedModules)
+        return moduleDependencies.copy(allDependencies = sortedModules)
     }
 }

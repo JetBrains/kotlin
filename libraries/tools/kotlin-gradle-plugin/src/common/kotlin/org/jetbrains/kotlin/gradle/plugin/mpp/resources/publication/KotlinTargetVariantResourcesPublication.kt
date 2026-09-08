@@ -7,14 +7,16 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication
 
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.tasks.bundling.Zip
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.launch
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.karAssembleTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl.Companion.RESOURCES_CLASSIFIER
@@ -24,7 +26,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExte
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 
 // Use KotlinMultiplatformExtension to make sure this usage context is only creatable in MPP
-@Suppress("UnusedReceiverParameter")
 internal fun AbstractKotlinTarget.setUpResourcesVariant(
     compilation: KotlinCompilation<*>,
 ): DefaultKotlinUsageContext? {
@@ -42,7 +43,7 @@ internal fun AbstractKotlinTarget.setUpResourcesVariant(
 
     project.multiplatformExtension.resourcesPublicationExtension?.subscribeOnPublishResources(this) { resources ->
         targetRegistersResourcesForPublication = true
-        val copyTask = compilation.assembleHierarchicalResources(
+        val copyTaskOutputDirectory = compilation.assembleHierarchicalResources(
             targetName,
             resources,
         )
@@ -57,7 +58,7 @@ internal fun AbstractKotlinTarget.setUpResourcesVariant(
             copy.archiveExtension.set(RESOURCES_ZIP_EXTENSION)
         }
         zipResourcesForPublication.configure {
-            it.from(copyTask)
+            it.from(copyTaskOutputDirectory)
         }
 
         project.artifacts.add(
@@ -67,6 +68,21 @@ internal fun AbstractKotlinTarget.setUpResourcesVariant(
             artifact.extension = RESOURCES_ZIP_EXTENSION
             artifact.classifier = RESOURCES_CLASSIFIER
             artifact.type = "zip"
+        }
+
+        if (this is KotlinTargetWithKotlinArchiveSupport) {
+            // delay is required to read isStoredInKotlinArchive
+            project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseDsl) {
+                if (isStoredInKotlinArchive.get()) {
+                    val fileCollection = project.layout.files(copyTaskOutputDirectory)
+                    project.karAssembleTask.configure { task ->
+                        task.addResources(
+                            platformNameInKotlinArchive,
+                            fileCollection
+                        )
+                    }
+                }
+            }
         }
     }
 

@@ -36,11 +36,23 @@
       @30:4..10 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         @30:4..10 GET_ENUM 'ENUM_ENTRY name:SINGLE' type=<root>.E
       @32:4..33:7 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        @32:4..33:7 FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>.O' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
+        @32:4..33:7 RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget='public final fun foo (): kotlin.Unit declared in <root>.O'
           @32:4..5 GET_OBJECT 'CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.O
+          @32:4..33:7 FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL <> (receiver:<root>.O) returnType:kotlin.Unit
+            @32:4..33:7 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.O
+            @-1:-1..-1 BLOCK_BODY
+              @-1:-1..-1 RETURN type=kotlin.Nothing from='local final fun foo (receiver: <root>.O): kotlin.Unit declared in <root>.baz'
+                @32:4..33:7 CALL 'public final fun foo (): kotlin.Unit declared in <root>.O' type=kotlin.Unit origin=null
+                  @32:4..33:7 GET_VAR 'receiver: <root>.O declared in <root>.baz.foo' type=<root>.O origin=ADAPTED_FUNCTION_REFERENCE
       @35:4..36:8 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        @35:4..36:8 FUNCTION_REFERENCE 'public final fun fail (<this>: kotlin.String): kotlin.String declared in <root>' type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget=<same>
+        @35:4..36:8 RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget='public final fun fail (<this>: kotlin.String): kotlin.String declared in <root>'
           @35:4..6 CONST String type=kotlin.String value=""
+          @35:4..36:8 FUN LOCAL_FUNCTION_FOR_LAMBDA name:fail visibility:local modality:FINAL <> (receiver:kotlin.String) returnType:kotlin.String
+            @35:4..36:8 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:kotlin.String
+            @-1:-1..-1 BLOCK_BODY
+              @-1:-1..-1 RETURN type=kotlin.Nothing from='local final fun fail (receiver: kotlin.String): kotlin.String declared in <root>.baz'
+                @35:4..36:8 CALL 'public final fun fail (<this>: kotlin.String): kotlin.String declared in <root>' type=kotlin.String origin=null
+                  @35:4..36:8 GET_VAR 'receiver: kotlin.String declared in <root>.baz.fail' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
   @39:0..41:1 CLASS ENUM_CLASS name:E modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.E>]
     @39:0..41:1 CONSTRUCTOR visibility:private <> () returnType:<root>.E [primary]
       @39:0..41:1 BLOCK_BODY

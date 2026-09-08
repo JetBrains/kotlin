@@ -5,7 +5,7 @@ KtFile: TypeParametersBeforeName.kt
     <empty list>
   PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_PARAMETER_LIST
@@ -23,7 +23,7 @@ KtFile: TypeParametersBeforeName.kt
       PsiElement(LPAR)('(')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_PARAMETER_LIST
@@ -53,7 +53,7 @@ KtFile: TypeParametersBeforeName.kt
       PsiElement(LPAR)('(')
       PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_PARAMETER_LIST

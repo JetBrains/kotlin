@@ -17,7 +17,7 @@ KtFile: mustUseReturnValueHalfEnabled.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('getStuff')
@@ -96,7 +96,7 @@ KtFile: mustUseReturnValueHalfEnabled.kt
             PsiWhiteSpace('\n        ')
             PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           ANNOTATION_ENTRY
             PsiElement(AT)('@')
@@ -127,7 +127,7 @@ KtFile: mustUseReturnValueHalfEnabled.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiComment(EOL_COMMENT)('// FILE: unmarkedTopLevel.kt')
     PsiWhiteSpace('\n')
     PsiElement(fun)('fun')
@@ -165,7 +165,7 @@ KtFile: mustUseReturnValueHalfEnabled.kt
       INTEGER_CONSTANT
         PsiElement(INTEGER_LITERAL)('25')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -194,7 +194,7 @@ KtFile: mustUseReturnValueHalfEnabled.kt
       PsiElement(OPEN_QUOTE)('"')
       PsiElement(CLOSING_QUOTE)('"')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiComment(EOL_COMMENT)('// FILE: markedTopLevel.kt')
     PsiWhiteSpace('\n')
     MODIFIER_LIST
@@ -263,7 +263,7 @@ KtFile: mustUseReturnValueHalfEnabled.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('alreadyApplied')
@@ -342,7 +342,7 @@ KtFile: mustUseReturnValueHalfEnabled.kt
             PsiWhiteSpace('\n        ')
             PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           ANNOTATION_ENTRY
             PsiElement(AT)('@')
@@ -394,7 +394,7 @@ KtFile: mustUseReturnValueHalfEnabled.kt
         PsiElement(IDENTIFIER)('B')
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')

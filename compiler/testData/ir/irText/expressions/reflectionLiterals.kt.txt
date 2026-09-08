@@ -11,19 +11,43 @@ val test2: KClass<out Int>
   get
 
 val test3: KFunction1<A, Unit>
-  field = A::foo
+  field = KFunction1<A, Unit>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: A) {
+      return p0.foo()
+    }
+  )
+
   get
 
 val test4: KFunction0<A>
-  field = ::A
+  field = KFunction0<A>(
+    /* bound = */ [],
+    /* invoke = */    local fun(): A {
+      return A()
+    }
+  )
+
   get
 
 val test5: KFunction0<Unit>
-  field = A()::foo
+  field = KFunction0<Unit>(
+    /* bound = */ [A()],
+    /* invoke = */    local fun(receiver: A) {
+      return receiver.foo()
+    }
+  )
+
   get
 
 val test6: KFunction0<Unit>
-  field = ::bar
+  field = KFunction0<Unit>(
+    /* bound = */ [],
+    /* invoke = */    local fun() {
+      return bar()
+    }
+  )
+
   get
 
 class A {

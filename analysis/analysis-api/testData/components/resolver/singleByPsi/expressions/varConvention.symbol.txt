@@ -1,5 +1,5 @@
 KtBinaryExpression(31,37): 'i += 1'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var i: kotlin.Int,
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int

@@ -1,14 +1,10 @@
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
-    id("project-tests-convention")
     id("test-inputs-check")
 }
-
-project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
 dependencies {
     implementation(project(":compiler:frontend.java"))
@@ -48,7 +44,12 @@ projectTests {
     withTestJar()
     withAnnotations()
 
-    testTask(javaLauncher = JdkMajorVersion.JDK_1_8)
+    testTask(
+        javaLauncher = JdkMajorVersion.JDK_1_8,
+        maxHeapSize = testMaxHeapSizeLarge,
+        // Use Parallel GC because this test runs on JDK 8.
+        garbageCollector = GarbageCollector.Parallel,
+    )
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateRuntimeDescriptorTestsKt", generateTestsInBuildDirectory = true)
 }
 

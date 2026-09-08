@@ -1,5 +1,6 @@
 // WITH_STDLIB
 
+import lombok.AccessLevel
 import lombok.Builder
 import lombok.Singular
 
@@ -53,4 +54,45 @@ class ConstructorSingularCannotSingularize(val id: Int) {
 class ConstructorParameterDefaultIgnored(val id: Int, val extra: Int) {
     @Builder
     constructor(id: Int = <!BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION!>0<!>) : this(id, -1)
+}
+
+@Builder(access = AccessLevel.PROTECTED)
+class BuilderAccessLevelProtected(val id: Int)
+
+// `@Builder` needs a constructor to call and a companion object to host the `builder()` factory, so it supports
+// nothing but a non-local class. Lombok narrows the annotation the same way and reports "@Builder is only
+// supported on classes, records, constructors, and methods." for the first three.
+<!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>
+interface BuilderInterface
+
+<!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>
+annotation class BuilderAnnotationClass
+
+// An enum constructor takes the synthetic name and ordinal parameters, so a generated `build()` wouldn't find the
+// one it calls: it used to fail with `NoSuchMethodError` at run time, KT-87871.
+<!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>
+enum class BuilderEnum(val id: Int) { A(1) }
+
+// An object has no constructor to call.
+<!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>
+object BuilderObject
+
+@Builder(access = <!UNSUPPORTED_ACCESS_LEVEL!>AccessLevel.PACKAGE<!>) // Prohibited, KT-88337
+class BuilderAccessLevelPackage(val id: Int)
+
+@Builder(access = <!UNSUPPORTED_ACCESS_LEVEL!>AccessLevel.<!DEPRECATION!>MODULE<!><!>) // Prohibited, KT-88337
+class BuilderAccessLevelModule(val id: Int)
+
+fun test() {
+    BuilderAccessLevelProtected.<!INVISIBLE_REFERENCE!>builder<!>()
+    BuilderInterface.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-87871
+    BuilderAnnotationClass.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated, KT-87871
+    BuilderEnum.<!UNRESOLVED_REFERENCE!>builder<!>() // Nothing is generated
+    BuilderObject.<!UNRESOLVED_REFERENCE!>builder<!>()
+
+   // Local classes can't have a companion object to host `builder()`, exactly as for `@NoArgsConstructor`.
+    <!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>
+    class BuilderLocal(val id: Int)
+
+    BuilderLocal.<!UNRESOLVED_REFERENCE!>builder<!>()
 }

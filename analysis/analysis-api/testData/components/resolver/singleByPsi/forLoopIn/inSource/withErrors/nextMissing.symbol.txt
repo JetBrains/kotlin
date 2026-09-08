@@ -1,12 +1,12 @@
 KtForExpression(23,37): 'for(i in f) {}'
   KaCompoundSymbolResolutionError:
-    attempts = [
-      KaSymbolResolutionSuccess:
+    simpleAttempts = [
+      KaSimpleSymbolResolutionSuccess:
         symbols = [
           /Foo.iterator(<dispatch receiver>: Foo): Iterator,
           /Iterator.hasNext(<dispatch receiver>: Iterator): kotlin.Boolean
         ],
-      KaSymbolResolutionError:
+      KaSimpleSymbolResolutionError:
         candidateSymbols = []
         diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next' on receiver of type 'Iterator'.>
     ]

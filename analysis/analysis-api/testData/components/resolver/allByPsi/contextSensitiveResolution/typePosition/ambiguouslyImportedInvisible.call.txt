@@ -140,7 +140,7 @@ KtNameReferenceExpression(212,216): 'Left'
   null
 
 KtNameReferenceExpression(220,221): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -202,7 +202,7 @@ KtNameReferenceExpression(229,234): 'Right'
   null
 
 KtNameReferenceExpression(238,239): 'y'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -288,7 +288,7 @@ KtNameReferenceExpression(287,291): 'Left'
   null
 
 KtNameReferenceExpression(295,296): 'x'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x'.>
 
@@ -308,6 +308,6 @@ KtNameReferenceExpression(304,309): 'Right'
   null
 
 KtNameReferenceExpression(313,314): 'y'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y'.>

@@ -1,0 +1,5 @@
+expression: CHAR
+constant: 65
+constantValueKind: IntValue
+constantValueSource: REFERENCE_EXPRESSION
+constantValueSourceText: CHAR

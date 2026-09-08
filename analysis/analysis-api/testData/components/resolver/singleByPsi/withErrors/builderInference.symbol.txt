@@ -2,7 +2,7 @@ KtNameReferenceExpression(248,251): 'add'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Target.add(<dispatch receiver>: test.Target<T>, t: T): kotlin.Unit
     ]

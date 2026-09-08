@@ -1,6 +1,5 @@
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("gradle-plugin-compiler-dependency-configuration")
@@ -16,6 +15,7 @@ dependencies {
     implementation(project(":core:deserialization"))
     implementation(project(":core:deserialization.common"))
     implementation(project(":kotlin-util-klib-metadata"))
+    implementation(project(":kotlin-tooling-core"))
     api(project(":compiler:util"))
     implementation(project(":compiler:fir:diagnostic-renderers"))
     implementation(project(":compiler:psi:psi-api"))

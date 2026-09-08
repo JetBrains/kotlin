@@ -5,7 +5,7 @@ KtFile: FunctionLiterals_ERR.kt
     <empty list>
   PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
@@ -702,7 +702,7 @@ KtFile: FunctionLiterals_ERR.kt
                 PsiElement(LBRACE)('{')
                 PsiWhiteSpace(' ')
                 BLOCK
-                  FUN
+                  FUNCTION
                     PsiElement(fun)('fun')
                     PsiWhiteSpace(' ')
                     PsiElement(IDENTIFIER)('t')

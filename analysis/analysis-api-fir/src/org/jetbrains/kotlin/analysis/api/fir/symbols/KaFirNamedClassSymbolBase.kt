@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirClassLikeSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirLocalClassFromCompilerPluginSymbolPointer
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirNestedInLocalClassFromCompilerPluginSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createNestedClassLikeSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaUnsupportedSymbolLocation
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
@@ -60,40 +61,7 @@ internal sealed class KaFirNamedClassSymbolBase<P : PsiElement> : KaNamedClassSy
                 }
             }
 
-            KaSymbolLocation.CLASS -> {
-                val classId = classId
-                if (classId == null) {
-                    checkWithAttachment(
-                        origin == KaSymbolOrigin.PLUGIN,
-                        { "A nested in local class without PSI should have the `KaSymbolOrigin.PLUGIN` origin but was $origin" }
-                    ) {
-                        withSymbolAttachment("symbol", analysisSession, this@KaFirNamedClassSymbolBase)
-                    }
-                    val container = with(analysisSession) { containingSymbol }
-                    checkWithAttachment(
-                        container is KaNamedClassSymbol,
-                        { "Container should be `${KaNamedClassSymbol::class.simpleName}` but was `${container?.let { it::class }}`" }
-                    ) {
-                        withSymbolAttachment("symbol", analysisSession, this@KaFirNamedClassSymbolBase)
-                    }
-
-                    val firOrigin = firSymbol.fir.origin
-                    checkWithAttachment(
-                        firOrigin is FirDeclarationOrigin.Plugin,
-                        { "Expected `FirDeclarationOrigin.Plugin` but was $firOrigin" }
-                    ) {
-                        withSymbolAttachment("symbol", analysisSession, this@KaFirNamedClassSymbolBase)
-                    }
-                    KaFirNestedInLocalClassFromCompilerPluginSymbolPointer(
-                        container.createPointer(),
-                        name,
-                        firOrigin.key,
-                        this
-                    )
-                } else {
-                    KaFirClassLikeSymbolPointer(classId, KaNamedClassSymbol::class, this)
-                }
-            }
+            KaSymbolLocation.CLASS -> createNestedClassLikeSymbolPointer(KaNamedClassSymbol::class)
             KaSymbolLocation.TOP_LEVEL ->
                 KaFirClassLikeSymbolPointer(classId!!, KaNamedClassSymbol::class, this)
 

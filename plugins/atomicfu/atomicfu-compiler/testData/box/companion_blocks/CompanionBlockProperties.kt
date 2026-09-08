@@ -1,5 +1,4 @@
 // LANGUAGE: +CompanionBlocks
-// TARGET_BACKEND: JVM_IR
 
 import kotlinx.atomicfu.*
 import kotlin.test.*

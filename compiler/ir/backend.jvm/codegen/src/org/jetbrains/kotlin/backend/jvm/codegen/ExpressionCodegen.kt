@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.at
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
@@ -152,7 +153,7 @@ class ExpressionCodegen(
     val config: JvmBackendConfig = context.config
 
     val inlineScopesGenerator: InlineScopesGenerator? =
-        if (state.configuration.getBoolean(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS))
+        if (config.useInlineScopesNumbers)
             InlineScopesGenerator()
         else null
 

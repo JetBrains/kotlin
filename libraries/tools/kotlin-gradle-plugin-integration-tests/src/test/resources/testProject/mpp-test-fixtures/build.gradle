@@ -10,7 +10,6 @@ repositories {
 
 kotlin {
     jvm() {
-        withJava()
     }
 
     sourceSets {

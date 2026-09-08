@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.mpp.resources
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.api.tasks.Copy
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -34,7 +35,9 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
             "multiplatformResources/consumption",
             gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = androidVersion)
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             addKgpToBuildScriptCompilationClasspath()
             addAgpToBuildScriptCompilationClasspath(androidVersion)
@@ -174,7 +177,10 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
             }.publish(
                 publisherConfiguration = PublisherConfiguration(group = "test"),
                 deriveBuildOptions = {
-                    buildOptions.copy(androidVersion = androidVersion)
+                    buildOptions
+                        .copy(androidVersion = androidVersion)
+                        .suppressAgpWarningIsProperty(gradleVersion)
+                        .copy(warningMode = WarningMode.None)
                 }
             )
             publishedProjects[dependencyProject.name] = published
@@ -193,7 +199,9 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
             "multiplatformResources/consumption/dependency",
             gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = androidVersion)
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             addKgpToBuildScriptCompilationClasspath()
             addAgpToBuildScriptCompilationClasspath(androidVersion)

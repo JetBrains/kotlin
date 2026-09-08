@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.parcelize.test.runners
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.incremental.AbstractIncrementalK2JvmCompilerRunnerTest
+import org.jetbrains.kotlin.incremental.AbstractIncrementalJvmCompilerRunnerTest
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
-abstract class AbstractParcelizeIncrementalTest : AbstractIncrementalK2JvmCompilerRunnerTest() {
+abstract class AbstractParcelizeIncrementalTest : AbstractIncrementalJvmCompilerRunnerTest() {
     companion object {
         private fun getLibrariesPaths(): List<File> {
             val runtimeLibraries = ForTestCompileRuntime.parcelizeRuntimeForTests()

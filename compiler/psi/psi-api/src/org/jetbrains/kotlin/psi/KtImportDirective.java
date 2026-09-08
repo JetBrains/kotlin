@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -26,14 +27,19 @@ import org.jetbrains.kotlin.resolve.ImportPath;
  * // ^____________________________^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveStub> implements KtImportInfo {
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtImportDirective[] EMPTY_ARRAY = new KtImportDirective[0];
 
+    @KtImplementationDetail
     public KtImportDirective(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtImportDirective(@NotNull KotlinImportDirectiveStub stub) {
-        super(stub, KtStubBasedElementTypes.IMPORT_DIRECTIVE);
+        super(stub, KtNodeTypes.IMPORT_DIRECTIVE);
     }
 
     private volatile FqName importedFqName;
@@ -43,9 +49,12 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
         return visitor.visitImportDirective(this, data);
     }
 
+    /**
+     * Returns the reference expression naming the imported declaration (for example, {@code kotlin.collections.List}), or {@code null} if
+     * it is absent in incomplete code.
+     */
     @Nullable
     @IfNotParsed
-    @SuppressWarnings("deprecation") // KT-78356
     public KtExpression getImportedReference() {
         KtExpression[] references = getStubOrPsiChildren(KtTokenSets.INSIDE_DIRECTIVE_EXPRESSIONS, KtExpression.ARRAY_FACTORY);
         if (references.length > 0) {
@@ -54,10 +63,10 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
         return null;
     }
 
+    /** Returns the {@code as} alias of this import, or {@code null} if the import has no alias. */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtImportAlias getAlias() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.IMPORT_ALIAS);
+        return getStubOrPsiChild(KtNodeTypes.IMPORT_ALIAS, KtImportAlias.class);
     }
 
     @Override
@@ -104,6 +113,10 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
         return importedFqName;
     }
 
+    /**
+     * Returns the import as an {@link ImportPath} (fully qualified name, all-under flag, and optional alias), or {@code null} if the
+     * imported reference is absent in incomplete code.
+     */
     @Nullable
     @IfNotParsed
     public ImportPath getImportPath() {
@@ -121,6 +134,7 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
         return new ImportPath(importFqn, isAllUnder(), alias);
     }
 
+    /** Returns {@code true} if this import is syntactically valid, that is, it contains no error elements. */
     public boolean isValidImport() {
         KotlinImportDirectiveStub stub = getGreenStub();
         if (stub != null) {

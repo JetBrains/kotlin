@@ -458,7 +458,7 @@ KtProperty(484,500): 'var foo = Test()'
   null
 
 KtCallExpression(494,500): 'Test()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -475,7 +475,7 @@ KtCallExpression(494,500): 'Test()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(494,498): 'Test'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -495,7 +495,7 @@ KtValueArgumentList(498,500): '()'
   null
 
 KtBinaryExpression(505,513): 'foo += 1'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -569,7 +569,7 @@ KtBinaryExpression(505,513): 'foo += 1'
     fun Test.plusAssign(i: Int): Unit>
 
 KtNameReferenceExpression(505,508): 'foo'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -643,7 +643,7 @@ KtNameReferenceExpression(505,508): 'foo'
     fun Test.plusAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(509,511): '+='
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -720,7 +720,7 @@ KtConstantExpression(512,513): '1'
   null
 
 KtBinaryExpression(518,526): 'foo -= 1'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -794,7 +794,7 @@ KtBinaryExpression(518,526): 'foo -= 1'
     fun Test.minusAssign(i: Int): Unit>
 
 KtNameReferenceExpression(518,521): 'foo'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -868,7 +868,7 @@ KtNameReferenceExpression(518,521): 'foo'
     fun Test.minusAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(522,524): '-='
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -945,7 +945,7 @@ KtConstantExpression(525,526): '1'
   null
 
 KtBinaryExpression(531,539): 'foo /= 1'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1019,7 +1019,7 @@ KtBinaryExpression(531,539): 'foo /= 1'
     fun Test.divAssign(i: Int): Unit>
 
 KtNameReferenceExpression(531,534): 'foo'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1093,7 +1093,7 @@ KtNameReferenceExpression(531,534): 'foo'
     fun Test.divAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(535,537): '/='
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1170,7 +1170,7 @@ KtConstantExpression(538,539): '1'
   null
 
 KtBinaryExpression(544,552): 'foo *= 1'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1244,7 +1244,7 @@ KtBinaryExpression(544,552): 'foo *= 1'
     fun Test.timesAssign(i: Int): Unit>
 
 KtNameReferenceExpression(544,547): 'foo'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1318,7 +1318,7 @@ KtNameReferenceExpression(544,547): 'foo'
     fun Test.timesAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(548,550): '*='
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1395,7 +1395,7 @@ KtConstantExpression(551,552): '1'
   null
 
 KtBinaryExpression(557,565): 'foo %= 1'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1469,7 +1469,7 @@ KtBinaryExpression(557,565): 'foo %= 1'
     fun Test.remAssign(i: Int): Unit>
 
 KtNameReferenceExpression(557,560): 'foo'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1543,7 +1543,7 @@ KtNameReferenceExpression(557,560): 'foo'
     fun Test.remAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(561,563): '%='
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}

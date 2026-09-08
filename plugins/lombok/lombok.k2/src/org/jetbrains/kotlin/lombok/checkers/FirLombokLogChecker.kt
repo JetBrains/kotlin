@@ -26,42 +26,55 @@ import org.jetbrains.kotlin.name.Name
 object FirLombokLogChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
+        // A log annotation on a companion object generates nothing and is reported as `ANNOTATION_HAS_NO_EFFECT` by
+        // `checkLombokAnnotations` instead (KT-88288), so there is no logger of its own here to clash with anything.
+        // The logger a companion object does hold comes from the class around it, and is checked when that class is
+        // visited, `loggerContainer` being its companion object then.
+        if (declaration.isCompanion) return
+
         val lombokService = context.session.lombokService
         val logs = lombokService.getLogs(declaration.symbol).takeIf { it.isNotEmpty() } ?: return
 
-        val container = if (lombokService.config.logFieldIsStatic) {
-            if (declaration.isCompanion) {
-                declaration.symbol
-            } else {
-                declaration.companionObjectSymbol ?: return
-            }
+        val loggerContainer = if (lombokService.config.logFieldIsStatic) {
+            // Absent when the logger is not generated at all: either the class can hold no companion object,
+            // or `LoggerGenerator` refused to create one because the logger would be shadowed anyway.
+            declaration.companionObjectSymbol
         } else {
             declaration.symbol
         }
 
         val fieldName = Name.identifier(lombokService.config.logFieldName)
-        val declaredMemberScope = context.session.declaredMemberScope(container, memberRequiredPhase = null)
+
+        // Java Lombok reports the clash for a field named `log` in the annotated class whether it is static or
+        // not. With `logFieldIsStatic`, though, the logger is generated into the companion object, so a member
+        // property of the same name doesn't collide with it - it shadows it - and the class itself has to be
+        // inspected as well, otherwise the use site is left with a bare `UNRESOLVED_REFERENCE` (KT-88248).
+        val declaredMemberScopes = setOfNotNull(loggerContainer, declaration.symbol).map {
+            context.session.declaredMemberScope(it, memberRequiredPhase = null)
+        }
 
         for (log in logs) {
             var hasConflict = false
-            declaredMemberScope.processPropertiesByName(fieldName) {
-                if (it.origin.isLogger(log.annotation)) {
-                    // Check that the return type and annotations are resolved to prevent crashing on codegen.
-                    if (it.resolvedReturnType.toSymbol(context.session) == null) {
-                        reporter.reportOn(log.annotation.source, FirErrors.MISSING_DEPENDENCY_CLASS, it.resolvedReturnType, context)
-                    }
-                    for (annotation in it.resolvedAnnotationsWithArguments) {
-                        if (annotation.annotationTypeRef.toRegularClassSymbol(context.session) == null) {
-                            reporter.reportOn(
-                                log.annotation.source,
-                                FirErrors.MISSING_DEPENDENCY_CLASS,
-                                annotation.annotationTypeRef.coneType,
-                                context
-                            )
+            for (declaredMemberScope in declaredMemberScopes) {
+                declaredMemberScope.processPropertiesByName(fieldName) {
+                    if (it.origin.isLogger(log.annotation)) {
+                        // Check that the return type and annotations are resolved to prevent crashing on codegen.
+                        if (it.resolvedReturnType.toSymbol(context.session) == null) {
+                            reporter.reportOn(log.annotation.source, FirErrors.MISSING_DEPENDENCY_CLASS, it.resolvedReturnType, context)
                         }
+                        for (annotation in it.resolvedAnnotationsWithArguments) {
+                            if (annotation.annotationTypeRef.toRegularClassSymbol(context.session) == null) {
+                                reporter.reportOn(
+                                    log.annotation.source,
+                                    FirErrors.MISSING_DEPENDENCY_CLASS,
+                                    annotation.annotationTypeRef.coneType,
+                                    context
+                                )
+                            }
+                        }
+                    } else {
+                        hasConflict = hasConflict || !it.hasReceiverOrContextParameters
                     }
-                } else {
-                    hasConflict = hasConflict || !it.hasReceiverOrContextParameters
                 }
             }
             if (!hasConflict) continue

@@ -16,7 +16,7 @@
   "translationToIrStats": {
     "nanos": $UINT$
   },
-  "klibWritingStats": {
+  "klibMetadataWritingStats": {
     "nanos": $UINT$
   },
   "irLoweringStats": {

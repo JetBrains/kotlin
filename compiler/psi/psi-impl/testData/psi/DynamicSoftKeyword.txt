@@ -40,7 +40,7 @@ KtFile: DynamicSoftKeyword.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           ANNOTATION_ENTRY
             PsiElement(AT)('@')

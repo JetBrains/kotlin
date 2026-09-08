@@ -1,0 +1,4 @@
+FUNCTION:
+  /A.equals
+EQUALITY_BOUND:
+  null

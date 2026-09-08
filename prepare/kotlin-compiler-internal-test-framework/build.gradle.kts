@@ -1,6 +1,5 @@
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     java
 }
@@ -18,8 +17,6 @@ val testFixturesModules = listOf(
 
 val mainModules = listOf(
     ":generators",
-    ":compiler:tests-mutes",
-    ":compiler:tests-mutes:mutes-junit5",
 )
 
 dependencies {

@@ -28,7 +28,7 @@ fun Ref(content: @Composable (
 @FunctionKeyMeta(key = 127678361, startOffset = 84, endOffset = 388)
 fun Ref(content: Function13<Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Composer, Int, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Ref)N(content)<::Fn>,<Ref(::...>:Test.kt")
+  sourceInformation(%composer, "C(Ref)N(content)<::Fn>,<::Fn>,<Ref(::...>:Test.kt")
   if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
@@ -36,7 +36,13 @@ fun Ref(content: Function13<Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Co
     Ref(<block>{
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(false) {
-        ::Fn
+        ::Fn<kotlin.reflect.KFunction13> {
+          @Composable
+          @FunctionKeyMeta(key = -1206277634, startOffset = 369, endOffset = 373)
+          fun Fn(p0: @[ParameterName(name = 'int1')] Int, p1: @[ParameterName(name = 'int2')] Int, p2: @[ParameterName(name = 'int3')] Int, p3: @[ParameterName(name = 'int4')] Int, p4: @[ParameterName(name = 'int5')] Int, p5: @[ParameterName(name = 'int6')] Int, p6: @[ParameterName(name = 'int7')] Int, p7: @[ParameterName(name = 'int8')] Int, p8: @[ParameterName(name = 'int9')] Int, p9: @[ParameterName(name = 'int10')] Int, %composer: Composer?, %changed: Int) {
+            return Fn(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, %composer, 0b1110 and %changed or 0b01110000 and %changed or 0b001110000000 and %changed or 0b0001110000000000 and %changed or 0b1110000000000000 and %changed or 0b01110000000000000000 and %changed or 0b001110000000000000000000 and %changed or 0b0001110000000000000000000000 and %changed or 0b1110000000000000000000000000 and %changed or 0b01110000000000000000000000000000 and %changed)
+          }
+        }
       }
       sourceInformationMarkerEnd(%composer)
       tmp0_group

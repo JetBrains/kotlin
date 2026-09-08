@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeModuleData
 import org.jetbrains.kotlin.descriptors.runtime.structure.classId
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil
-import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
@@ -46,8 +45,8 @@ import org.jetbrains.kotlin.test.services.isJavaFile
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.Configuration
-import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.sure
@@ -102,7 +101,7 @@ private class RuntimeDescriptorLoaderHandler(testServices: TestServices) : JvmBi
         )
 
         val expectedFile = testDataFile.withExtension("runtime.txt")
-        RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile(actual, comparatorConfiguration, expectedFile)
+        RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(actual, comparatorConfiguration, expectedFile, assertions)
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
@@ -116,7 +115,7 @@ private class RuntimeDescriptorLoaderHandler(testServices: TestServices) : JvmBi
         val moduleData = RuntimeModuleData.create(classLoader)
         val module = moduleData.module
 
-        val generatedPackageDir = File(outputDir, LoadDescriptorUtil.TEST_PACKAGE_FQNAME.pathSegments().single().asString())
+        val generatedPackageDir = File(outputDir, "test")
         val allClassFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.class"), generatedPackageDir)
 
         val packageScopes = arrayListOf<MemberScope>()
@@ -162,8 +161,7 @@ private class RuntimeDescriptorLoaderHandler(testServices: TestServices) : JvmBi
             scope = ChainedMemberScope.create("synthetic package view for test", list)
         }
 
-        override val fqName: FqName
-            get() = LoadDescriptorUtil.TEST_PACKAGE_FQNAME
+        override val fqName: FqName = FqName("test")
         override val memberScope: MemberScope
             get() = scope
         override val fragments: List<PackageFragmentDescriptor> = listOf(

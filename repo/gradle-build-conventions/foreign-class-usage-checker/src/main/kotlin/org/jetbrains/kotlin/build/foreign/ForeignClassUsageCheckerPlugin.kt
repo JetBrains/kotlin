@@ -14,8 +14,10 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
+import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
@@ -25,6 +27,7 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import java.io.File
 import java.io.InputStream
@@ -41,21 +44,72 @@ class ForeignClassUsageCheckerPlugin : Plugin<Project> {
                 .named(SourceSet.MAIN_SOURCE_SET_NAME)
                 .map { it.output.classesDirs }
 
-            project.tasks.withType<CheckForeignClassUsageTask>().configureEach {
+            project.tasks.withType<ForeignClassUsageTask>().configureEach {
                 classes.from(classesDirsProvider)
-            }
-
-            project.tasks.named("check").configure {
-                dependsOn(project.tasks.withType<CheckForeignClassUsageTask>())
             }
         }
     }
 }
 
-abstract class CheckForeignClassUsageTask : DefaultTask() {
+/**
+ * Registers the pair of tasks comparing the foreign classes used in this project's public API against a committed
+ * dump: `checkForeignClassUsage[nameSuffix]` reports a difference, `updateForeignClassUsage[nameSuffix]` rewrites the
+ * dump. Both fail on a mismatch; only the second one touches the source tree.
+ *
+ * [configure] is applied to both, so a dump and its markers are declared once.
+ *
+ * The dump files are registered here rather than annotated on [ForeignClassUsageTask], because the same property is
+ * an input of the verifying task and an output of the rewriting one. The pair is deliberately left unordered: asking
+ * one build to both rewrite a dump and verify it is contradictory, and Gradle's implicit dependency validation says
+ * so. Ordering them would instead make the verification pass on whatever the rewrite just produced.
+ */
+fun Project.registerForeignClassUsageTasks(
+    nameSuffix: String = "",
+    configure: ForeignClassUsageTask.() -> Unit,
+) {
+    val updateTask = tasks.register<ForeignClassUsageTask>("updateForeignClassUsage$nameSuffix") {
+        description = "Rewrites the dump of the foreign classes used in the public API"
+        overwriteDump.set(true)
+        configure()
+
+        outputs.file(outputFile).withPropertyName("dump").optional(true)
+        outputs.file(missingClasspathEntriesOutputFile).withPropertyName("missingClasspathEntries").optional(true)
+    }
+
+    val checkTask = tasks.register<ForeignClassUsageTask>("checkForeignClassUsage$nameSuffix") {
+        description = "Checks the dump of the foreign classes used in the public API against the sources"
+        overwriteDump.set(false)
+        updateTaskName.set("updateForeignClassUsage$nameSuffix")
+        configure()
+
+        // Declared as collections rather than single files: a dump that does not exist yet is a normal state for a
+        // module that has just started tracking its API, and 'inputs.file' rejects the task before it can say so.
+        inputs.files(outputFile)
+            .withPropertyName("dump")
+            .withPathSensitivity(PathSensitivity.RELATIVE)
+            .optional(true)
+        inputs.files(missingClasspathEntriesOutputFile)
+            .withPropertyName("missingClasspathEntries")
+            .withPathSensitivity(PathSensitivity.RELATIVE)
+            .optional(true)
+
+        reportFile.set(layout.buildDirectory.file("foreign-class-usage/$name.txt"))
+
+        // Opted in per task rather than through '@CacheableTask' on the type: the rewriting half writes into the
+        // source tree, and restoring that from a cache is not something one ever wants.
+        outputs.cacheIf { true }
+    }
+
+    tasks.named("check").configure { dependsOn(checkTask) }
+
+    // The foreign classes a public API leaks are part of the project's API surface.
+    tasks.named("checkApiSurface").configure { dependsOn(checkTask) }
+    tasks.named("updateApiSurface").configure { dependsOn(updateTask) }
+}
+
+abstract class ForeignClassUsageTask : DefaultTask() {
     init {
         group = "verification"
-        description = "Check that only known foreign classes are used in the public API"
     }
 
     /**
@@ -76,9 +130,13 @@ abstract class CheckForeignClassUsageTask : DefaultTask() {
      * Dependencies of [classes] in the same format: directories containing `.class` files, or JAR files with them.
      *
      * If the [classpath] property is set, the task verifies that all foreign API classes are present in it.
+     *
+     * Normalized as a classpath, which is what every caller passes. The task only reads class names, from the entries
+     * of a JAR or from paths relative to a directory, and classpath normalization keeps both while dropping where the
+     * entry itself happens to live. It also brings in the `runtimeClasspath` normalization rules of the build, so
+     * that a stamp such as `META-INF/compiler.version` stops invalidating a result it cannot change.
      */
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Classpath
     abstract val classpath: ConfigurableFileCollection
 
     /**
@@ -123,14 +181,17 @@ abstract class CheckForeignClassUsageTask : DefaultTask() {
      *
      * When [collectUsages] is enabled, each foreign class name is followed by lines showing all locations where that class is used.
      *
-     * If the file doesn't exist, it will be created with the current usage. If the file exists but differs from the current usage,
-     * the task will fail and update the file.
+     * When [overwriteDump] is set, a file that is missing or differs from the current usage is written and the task
+     * fails, so that the change gets reviewed and committed. Otherwise the task only reports the difference.
      *
-     * If the [outputFile] isn't set, the task will not generate an output file.
+     * If the [outputFile] isn't set, the task will not compare against a dump.
      * This is useful for checks of the foreign API against the provided [classpath].
+     *
+     * The file is registered as an input or an output of the task depending on [overwriteDump], which annotations
+     * cannot express, so it is left out of the task's property metadata here. Use [registerForeignClassUsageTasks]
+     * to declare the pair of tasks that share a dump.
      */
-    @get:OutputFile
-    @get:Optional
+    @get:Internal
     abstract val outputFile: RegularFileProperty
 
     /**
@@ -144,8 +205,7 @@ abstract class CheckForeignClassUsageTask : DefaultTask() {
      * However, achieving that at once might be non-trivial for existing "dirty" artifacts. In that case, the
      * [missingClasspathEntriesOutputFile] can at least ensure that there won't be additional API dependency breakages.
      */
-    @get:OutputFile
-    @get:Optional
+    @get:Internal
     abstract val missingClasspathEntriesOutputFile: RegularFileProperty
 
     /**
@@ -164,10 +224,46 @@ abstract class CheckForeignClassUsageTask : DefaultTask() {
     @get:Option(option = "collect-usages", description = "Include detailed usage information in the report")
     abstract val collectUsages: Property<Boolean>
 
+    /**
+     * Whether a dump that is missing or out of date is rewritten from the current usage.
+     *
+     * The task fails either way — a rewritten dump still has to be reviewed and committed — but only a task that
+     * rewrites may touch the source tree. Leave it off for the verifying half of a task pair, so that the check can
+     * run on CI and in `check`.
+     *
+     * Defaults to `false`.
+     */
+    @get:Input
+    abstract val overwriteDump: Property<Boolean>
+
+    /**
+     * File the computed foreign class usage is written to.
+     *
+     * A verifying task produces nothing of its own, and Gradle neither caches nor considers up to date a task with
+     * no declared outputs. This gives it one, in the build directory, holding the very text it compared against the
+     * dump — useful on its own when a failure needs to be inspected.
+     *
+     * Left unset for a rewriting task, whose output is the dump itself.
+     */
+    @get:OutputFile
+    @get:Optional
+    abstract val reportFile: RegularFileProperty
+
+    /**
+     * Name of the task that rewrites this dump.
+     *
+     * A verifying task names it in its failure, so that the fix can be run without looking it up. Unset when the
+     * task has no counterpart, which is the case for one registered outside [registerForeignClassUsageTasks].
+     */
+    @get:Input
+    @get:Optional
+    abstract val updateTaskName: Property<String>
+
     init {
         nonPublicMarkers.convention(setOf())
         ignoredPackages.convention(setOf("java", "javax", "kotlin", "org.jetbrains.annotations"))
         collectUsages.convention(false)
+        overwriteDump.convention(false)
     }
 
     @TaskAction
@@ -200,6 +296,13 @@ abstract class CheckForeignClassUsageTask : DefaultTask() {
             }
 
             filteredClassNames.add(className)
+        }
+
+        // Written before the comparisons rather than after them: a failure is exactly when one wants to see what
+        // was computed, and a report left over from an earlier run would say something else.
+        reportFile.orNull?.asFile?.let { file ->
+            file.parentFile.mkdirs()
+            file.writeText(renderClassNames(filteredClassNames, processor))
         }
 
         checkAgainstClasspath(filteredClassNames, processor)
@@ -255,19 +358,69 @@ abstract class CheckForeignClassUsageTask : DefaultTask() {
     }
 
     private fun assertEqualsToFile(expectedFile: File, actualText: String) {
+        val overwrite = overwriteDump.get()
+
         if (!expectedFile.exists()) {
+            if (!overwrite) {
+                throw GradleException("Expected file '${expectedFile.name}' does not exist. ${updateHint("create")}")
+            }
+
             expectedFile.writeText(actualText)
             throw GradleException("Expected file did not exist and has been created. Please review and commit the changes")
         }
 
-        val expectedText = expectedFile.readText()
-
         val actualLines = actualText.lines()
-        val expectedLines = expectedText.lines()
+        val expectedLines = expectedFile.readText().lines()
 
-        if (actualLines != expectedLines) {
-            expectedFile.writeText(actualText)
-            throw GradleException("Expected file has been modified. Please review and commit the changes")
+        if (actualLines == expectedLines) {
+            return
+        }
+
+        if (!overwrite) {
+            throw GradleException(
+                "Expected file '${expectedFile.name}' does not match the current foreign class usage." +
+                        renderDifference(expectedLines, actualLines) +
+                        System.lineSeparator() +
+                        System.lineSeparator() +
+                        updateHint("rewrite")
+            )
+        }
+
+        expectedFile.writeText(actualText)
+        throw GradleException("Expected file has been modified. Please review and commit the changes")
+    }
+
+    /**
+     * Tells the reader which task rewrites the dump, naming it when it is known.
+     */
+    private fun updateHint(action: String): String {
+        val taskName = updateTaskName.orNull ?: return "Run the corresponding 'update' task to $action it"
+        return "Run '$taskName' to $action it"
+    }
+
+    /**
+     * Renders the entries [actualLines] adds to and removes from [expectedLines].
+     *
+     * Both are sorted lists of class names, so listing the two sets is more readable than a positional diff.
+     */
+    private fun renderDifference(expectedLines: List<String>, actualLines: List<String>): String {
+        val added = actualLines - expectedLines.toSet()
+        val removed = expectedLines - actualLines.toSet()
+
+        return buildString {
+            for ((title, lines) in listOf("No longer expected" to removed, "Newly used" to added)) {
+                if (lines.isEmpty()) continue
+
+                append(System.lineSeparator())
+                append(System.lineSeparator())
+                append(title)
+                append(':')
+                for (line in lines.filter { it.isNotBlank() }) {
+                    append(System.lineSeparator())
+                    append("    ")
+                    append(line)
+                }
+            }
         }
     }
 

@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.lombok.config
 
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
@@ -91,9 +88,14 @@ fun parseFlagUsage(config: LombokConfig, key: String): FlagUsageValue? {
         ?.let { str -> FlagUsageValue.entries.find { it.name.equals(str, ignoreCase = true) } }
 }
 
-fun parseCallSuperMode(config: LombokConfig, configKey: String): CallSuperMode {
-    return CallSuperMode.entries.find { it.name.equals(config.getString(configKey), ignoreCase = true) }
-        ?: CallSuperMode.Skip
+/**
+ * The `lombok.<feature>.callSuper` mode configured under [configKey], falling back to [default] when the key is
+ * absent or holds something unrecognizable, exactly as Lombok falls back. The default differs per feature: `warn`
+ * for `@EqualsAndHashCode`, whose supercall decides whether two instances compare equal at all, and `skip` for
+ * `@ToString`, whose supercall only adds text (KT-88653).
+ */
+fun parseCallSuperMode(config: LombokConfig, configKey: String, default: CallSuperMode): CallSuperMode {
+    return CallSuperMode.entries.find { it.name.equals(config.getString(configKey), ignoreCase = true) } ?: default
 }
 
 class GlobalConfig(
@@ -149,13 +151,14 @@ class GlobalConfig(
                 log4j2LogFlagUsage = parseFlagUsage(config, LOG4J2_LOG_FLAG_USAGE_CONFIG),
                 xslf4jLogFlagUsage = parseFlagUsage(config, XSLF4J_LOG_FLAG_USAGE_CONFIG),
                 toStringIncludeFieldNames = config.getBoolean(TO_STRING_INCLUDE_FIELD_NAMES_CONFIG) ?: true,
-                toStringCallSuper = parseCallSuperMode(config, TO_STRING_CALL_SUPER_CONFIG),
+                toStringCallSuper = parseCallSuperMode(config, TO_STRING_CALL_SUPER_CONFIG, CallSuperMode.Skip),
                 toStringOnlyExplicitlyIncluded = config.getBoolean(TO_STRING_ONLY_EXPLICITLY_INCLUDED_CONFIG) ?: false,
                 toStringFlagUsage = parseFlagUsage(config, TO_STRING_FLAG_USAGE_CONFIG),
                 toStringDoNotUseGetters = config.getBoolean(TO_STRING_DO_NOT_USE_GETTERS_CONFIG) ?: false,
                 equalsAndHashCodeCallSuper = parseCallSuperMode(
                     config,
-                    EQUALS_AND_HASH_CODE_CALL_SUPER_CONFIG
+                    EQUALS_AND_HASH_CODE_CALL_SUPER_CONFIG,
+                    CallSuperMode.Warn,
                 ),
                 equalsAndHashCodeOnlyExplicitlyIncluded = config.getBoolean(EQUALS_AND_HASH_CODE_ONLY_EXPLICITLY_INCLUDED_CONFIG) ?: false,
                 equalsAndHashCodeFlagUsage = parseFlagUsage(
@@ -189,42 +192,42 @@ object ConeLombokAnnotations {
         }
     }
 
-    sealed class AbstractAccessor(val visibility: Visibility?, annotation: FirAnnotation) : ConeLombokAnnotation(annotation)
+    sealed class AbstractAccessor(val accessLevel: AccessLevel, annotation: FirAnnotation) : ConeLombokAnnotation(annotation)
 
-    class Getter(visibility: Visibility? = Visibilities.Public, annotation: FirAnnotation) : AbstractAccessor(visibility, annotation) {
+    class Getter(accessLevel: AccessLevel, annotation: FirAnnotation) : AbstractAccessor(accessLevel, annotation) {
         companion object : ConeAnnotationCompanion<Getter>(LombokNames.GETTER_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): Getter = Getter(
-                visibility = annotation.getVisibility(VALUE),
+                accessLevel = annotation.getAccessLevel(VALUE),
                 annotation = annotation,
             )
         }
     }
 
-    class Setter(visibility: Visibility? = Visibilities.Public, annotation: FirAnnotation) : AbstractAccessor(visibility, annotation) {
+    class Setter(accessLevel: AccessLevel, annotation: FirAnnotation) : AbstractAccessor(accessLevel, annotation) {
         companion object : ConeAnnotationCompanion<Setter>(LombokNames.SETTER_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): Setter = Setter(
-                visibility = annotation.getVisibility(VALUE),
+                accessLevel = annotation.getAccessLevel(VALUE),
                 annotation = annotation,
             )
         }
     }
 
-    class With(val visibility: Visibility?, annotation: FirAnnotation) : ConeLombokAnnotation(annotation) {
+    class With(val accessLevel: AccessLevel, annotation: FirAnnotation) : ConeLombokAnnotation(annotation) {
         companion object : ConeAnnotationCompanion<With>(LombokNames.WITH_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): With = With(
-                visibility = annotation.getVisibility(VALUE),
+                accessLevel = annotation.getAccessLevel(VALUE),
                 annotation = annotation,
             )
         }
     }
 
     interface ConstructorAnnotation {
-        val visibility: Visibility?
+        val accessLevel: AccessLevel
         val staticName: String?
     }
 
     class NoArgsConstructor(
-        override val visibility: Visibility?,
+        override val accessLevel: AccessLevel,
         override val staticName: String?,
         val force: Boolean,
         annotation: FirAnnotation,
@@ -232,7 +235,7 @@ object ConeLombokAnnotations {
         companion object : ConeAnnotationCompanion<NoArgsConstructor>(LombokNames.NO_ARGS_CONSTRUCTOR_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): NoArgsConstructor {
                 return NoArgsConstructor(
-                    visibility = annotation.getVisibility(ACCESS),
+                    accessLevel = annotation.getAccessLevel(ACCESS),
                     staticName = annotation.getNonBlankStringArgument(STATIC_NAME),
                     force = annotation.getBooleanArgument(FORCE) ?: false,
                     annotation = annotation,
@@ -242,14 +245,14 @@ object ConeLombokAnnotations {
     }
 
     class AllArgsConstructor(
-        override val visibility: Visibility? = Visibilities.Public,
+        override val accessLevel: AccessLevel,
         override val staticName: String? = null,
         annotation: FirAnnotation,
     ) : ConstructorAnnotation, ConeLombokAnnotation(annotation) {
         companion object : ConeAnnotationCompanion<AllArgsConstructor>(LombokNames.ALL_ARGS_CONSTRUCTOR_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): AllArgsConstructor {
                 return AllArgsConstructor(
-                    visibility = annotation.getVisibility(ACCESS),
+                    accessLevel = annotation.getAccessLevel(ACCESS),
                     staticName = annotation.getNonBlankStringArgument(STATIC_NAME),
                     annotation = annotation,
                 )
@@ -258,14 +261,14 @@ object ConeLombokAnnotations {
     }
 
     class RequiredArgsConstructor(
-        override val visibility: Visibility? = Visibilities.Public,
+        override val accessLevel: AccessLevel,
         override val staticName: String? = null,
         annotation: FirAnnotation,
     ) : ConstructorAnnotation, ConeLombokAnnotation(annotation) {
         companion object : ConeAnnotationCompanion<RequiredArgsConstructor>(LombokNames.REQUIRED_ARGS_CONSTRUCTOR_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): RequiredArgsConstructor {
                 return RequiredArgsConstructor(
-                    visibility = annotation.getVisibility(ACCESS),
+                    accessLevel = annotation.getAccessLevel(ACCESS),
                     staticName = annotation.getNonBlankStringArgument(STATIC_NAME),
                     annotation = annotation,
                 )
@@ -274,10 +277,11 @@ object ConeLombokAnnotations {
     }
 
     class Data(val staticConstructor: String?, annotation: FirAnnotation) : ConeLombokAnnotation(annotation) {
-        fun asSetter(): Setter = Setter(annotation = annotation)
-        fun asGetter(): Getter = Getter(annotation = annotation)
+        fun asSetter(): Setter = Setter(accessLevel = AccessLevel.PUBLIC, annotation = annotation)
+        fun asGetter(): Getter = Getter(accessLevel = AccessLevel.PUBLIC, annotation = annotation)
 
         fun asRequiredArgsConstructor(): RequiredArgsConstructor = RequiredArgsConstructor(
+            accessLevel = AccessLevel.PUBLIC,
             staticName = staticConstructor,
             annotation = annotation,
         )
@@ -292,9 +296,10 @@ object ConeLombokAnnotations {
     }
 
     class Value(val staticConstructor: String?, annotation: FirAnnotation) : ConeLombokAnnotation(annotation) {
-        fun asGetter(): Getter = Getter(annotation = annotation)
+        fun asGetter(): Getter = Getter(accessLevel = AccessLevel.PUBLIC, annotation = annotation)
 
         fun asAllArgsConstructor(): AllArgsConstructor = AllArgsConstructor(
+            accessLevel = AccessLevel.PUBLIC,
             staticName = staticConstructor,
             annotation = annotation,
         )
@@ -312,7 +317,7 @@ object ConeLombokAnnotations {
         val buildMethodName: String,
         val builderMethodName: String,
         val requiresToBuilder: Boolean,
-        val visibility: Visibility?,
+        val accessLevel: AccessLevel,
         val setterPrefix: String?,
         val hasSpecifiedBuilderClassName: Boolean,
         annotation: FirAnnotation,
@@ -340,8 +345,8 @@ object ConeLombokAnnotations {
          * (access by any source in the same package is allowed, as well as any subclasses *from the outer class, marked with `@Builder`* is not possible,
          * and marking the inner members `public` is as close as we can get.
          */
-        val builderFunctionsVisibility: Visibility?
-            get() = if (visibility == JavaVisibilities.ProtectedAndPackage) Visibilities.Public else visibility
+        val builderFunctionsAccessLevel: AccessLevel
+            get() = if (accessLevel == AccessLevel.PROTECTED) AccessLevel.PUBLIC else accessLevel
     }
 
     class Builder(
@@ -349,7 +354,7 @@ object ConeLombokAnnotations {
         buildMethodName: String,
         builderMethodName: String,
         requiresToBuilder: Boolean,
-        visibility: Visibility?,
+        accessLevel: AccessLevel,
         setterPrefix: String?,
         hasSpecifiedBuilderClassName: Boolean,
         annotation: FirAnnotation,
@@ -358,7 +363,7 @@ object ConeLombokAnnotations {
         buildMethodName,
         builderMethodName,
         requiresToBuilder,
-        visibility,
+        accessLevel,
         setterPrefix,
         hasSpecifiedBuilderClassName,
         annotation,
@@ -371,7 +376,7 @@ object ConeLombokAnnotations {
                     buildMethodName = getBuildMethodName(annotation),
                     builderMethodName = getBuilderMethodName(annotation),
                     requiresToBuilder = getRequiresToBuilder(annotation),
-                    visibility = annotation.getVisibility(ACCESS),
+                    accessLevel = annotation.getAccessLevel(ACCESS),
                     setterPrefix = getSetterPrefix(annotation),
                     hasSpecifiedBuilderClassName = specifiedBuilderClassName != null,
                     annotation = annotation,
@@ -393,7 +398,7 @@ object ConeLombokAnnotations {
         buildMethodName,
         builderMethodName,
         requiresToBuilder,
-        Visibilities.Public,
+        AccessLevel.PUBLIC,
         setterPrefix,
         hasSpecifiedBuilderClassName,
         annotation,
@@ -440,7 +445,7 @@ object ConeLombokAnnotations {
             val DEFAULT_GET_METHOD_NAME = Name.identifier("getLogger")
         }
 
-        val visibility: Visibility? = annotation.getVisibility(ACCESS, defaultAccessLevel = AccessLevel.PRIVATE)
+        val accessLevel: AccessLevel = annotation.getAccessLevel(ACCESS, defaultAccessLevel = AccessLevel.PRIVATE)
         val topic: String = runIf(initializeTopic) { annotation.getStringArgument(TOPIC) } ?: ""
     }
 
@@ -555,12 +560,15 @@ object ConeLombokAnnotations {
         val callSuper: CallSuperMode?
     }
 
+    /**
+     * Drop `doNotUseGetters`, `exclude`, `of` arguments but report diagnostics on them.
+     *   * `doNotUseGetters` isn't relevant in Kotlin;
+     *   * `exclude`, `of` will soon be marked as deprecated in Lombok, so don't support them beforehand.
+     */
     class ToString(
         val includeFieldNames: Boolean?,
         override val callSuper: CallSuperMode?,
-        val doNotUseGetters: Boolean?,
         val onlyExplicitlyIncluded: Boolean?,
-        val excludeFields: Set<String>,
         annotation: FirAnnotation,
     ) : ConeLombokAnnotation(annotation), CallSuper {
         companion object : ConeAnnotationCompanion<ToString>(LombokNames.TO_STRING_ID) {
@@ -568,35 +576,28 @@ object ConeLombokAnnotations {
                 return ToString(
                     includeFieldNames = annotation.getBooleanArgument(INCLUDE_FIELD_NAMES),
                     callSuper = annotation.getBooleanArgument(CALL_SUPER)?.let { if (it) CallSuperMode.Call else CallSuperMode.Skip },
-                    doNotUseGetters = annotation.getBooleanArgument(DO_NOT_USE_GETTERS),
                     onlyExplicitlyIncluded = annotation.getBooleanArgument(ONLY_EXPLICITLY_INCLUDED),
-                    excludeFields = annotation.getStringArrayArgument(EXCLUDE)?.toSet() ?: emptySet(),
                     annotation = annotation,
                 )
             }
         }
     }
 
+    /**
+     * Drop `doNotUseGetters`, `exclude`, `of` arguments but report diagnostics on them.
+     *   * `doNotUseGetters` isn't relevant in Kotlin;
+     *   * `exclude`, `of` will soon be marked as deprecated in Lombok, so don't support them beforehand.
+     */
     class EqualsAndHashCode(
         override val callSuper: CallSuperMode?,
-        val doNotUseGetters: Boolean?,
         val onlyExplicitlyIncluded: Boolean?,
-        val excludeFields: Set<String>,
-        /**
-         * `null` means the `of` argument was not specified at all (i.e. include-all behaviour).
-         * A non-null value (even an empty set) restricts the inclusion of those exact field names.
-         */
-        val ofFields: Set<String>?,
         annotation: FirAnnotation,
     ) : ConeLombokAnnotation(annotation), CallSuper {
         companion object : ConeAnnotationCompanion<EqualsAndHashCode>(LombokNames.EQUALS_AND_HASH_CODE_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): EqualsAndHashCode {
                 return EqualsAndHashCode(
                     callSuper = annotation.getBooleanArgument(CALL_SUPER)?.let { if (it) CallSuperMode.Call else CallSuperMode.Skip },
-                    doNotUseGetters = annotation.getBooleanArgument(DO_NOT_USE_GETTERS),
                     onlyExplicitlyIncluded = annotation.getBooleanArgument(ONLY_EXPLICITLY_INCLUDED),
-                    excludeFields = annotation.getStringArrayArgument(EXCLUDE)?.toSet() ?: emptySet(),
-                    ofFields = annotation.getStringArrayArgument(OF)?.toSet(),
                     annotation = annotation,
                 )
             }

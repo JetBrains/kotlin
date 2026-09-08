@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.Project
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.base64Hash
@@ -15,38 +18,66 @@ import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.ensureMaxFileN
 import org.jetbrains.kotlin.commonizer.identityString
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.utils.changing
-import org.jetbrains.kotlin.gradle.utils.future
-import org.jetbrains.kotlin.gradle.utils.outputFilesProvider
+import org.jetbrains.kotlin.gradle.utils.kotlinMetadataDir
 import java.io.File
 
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 internal abstract class AbstractCInteropCommonizerTask : DefaultTask(), UsesBuildMetricsService {
     @get:OutputDirectory
-    abstract val outputDirectory: File
+    abstract val outputDirectory: DirectoryProperty
 }
 
-internal fun AbstractCInteropCommonizerTask.outputDirectory(group: CInteropCommonizerGroup): File {
+internal const val CINTEROP_COMMONIZER_OUTPUT_PATH = "classes/kotlin/commonizer"
+
+internal val Project.cInteropCommonizerOutputRoot: File
+    get() = layout.buildDirectory.get().asFile.resolve(CINTEROP_COMMONIZER_OUTPUT_PATH)
+
+internal val Project.copyCInteropCommonizerForIdeOutputRoot: File
+    get() = kotlinMetadataDir()
+        .resolve("commonizer")
+        .resolve(path.removePrefix(":").replace(":", "/"))
+
+internal fun AbstractCInteropCommonizerTask.outputDirectory(group: CInteropCommonizerGroup): File =
+    outputDirectory.get().asFile.commonizerGroupDirectory(group)
+
+private fun File.commonizerGroupDirectory(group: CInteropCommonizerGroup): File {
     val interopsDirectoryName = group.interops.map { it.interopName }.toSet().joinToString("_")
     val groupDisambiguation = group.targets.joinToString { it.identityString } +
             group.interops.joinToString { it.uniqueName }
 
-    return outputDirectory
-        .resolve(ensureMaxFileNameLength(interopsDirectoryName))
+    return resolve(ensureMaxFileNameLength(interopsDirectoryName))
         .resolve(base64Hash(groupDisambiguation))
 }
 
-internal fun AbstractCInteropCommonizerTask.commonizedOutputLibraries(dependent: CInteropCommonizerDependent): FileCollection {
-    return outputFilesProvider {
-        val outputDirectory = project.future { commonizedOutputDirectory(dependent) }.getOrThrow()
-            ?: return@outputFilesProvider emptySet<File>()
-        project.providers.changing {
-            outputDirectory.listFiles().orEmpty().toSet()
-        }
-    }
+internal suspend fun Project.commonizedOutputLibraries(dependent: CInteropCommonizerDependent): FileCollection? {
+    val commonizerTask = commonizeCInteropTask() ?: return null
+    return commonizedOutputLibraries(commonizerTask, cInteropCommonizerOutputRoot, dependent)
 }
 
-internal suspend fun AbstractCInteropCommonizerTask.commonizedOutputDirectory(dependent: CInteropCommonizerDependent): File? {
-    val group = project.findCInteropCommonizerGroup(dependent) ?: return null
+internal suspend fun Project.commonizedOutputLibrariesForIde(dependent: CInteropCommonizerDependent): FileCollection? {
+    val commonizerTask = copyCommonizeCInteropForIdeTask() ?: return null
+    return commonizedOutputLibraries(commonizerTask, copyCInteropCommonizerForIdeOutputRoot, dependent)
+}
+
+private suspend fun Project.commonizedOutputLibraries(
+    commonizerTask: TaskProvider<out AbstractCInteropCommonizerTask>,
+    outputRoot: File,
+    dependent: CInteropCommonizerDependent,
+): FileCollection {
+    val commonizedOutputLibraries = objects.fileCollection().builtBy(commonizerTask)
+    val outputDirectory = commonizedOutputDirectory(outputRoot, dependent) ?: return commonizedOutputLibraries
+    return commonizedOutputLibraries.from(
+        providers.changing { outputDirectory.listFiles().orEmpty().toSet() }
+    )
+}
+
+internal suspend fun Project.commonizedOutputDirectory(dependent: CInteropCommonizerDependent): File? {
+    if (commonizeCInteropTask() == null) return null
+    return commonizedOutputDirectory(cInteropCommonizerOutputRoot, dependent)
+}
+
+private suspend fun Project.commonizedOutputDirectory(outputRoot: File, dependent: CInteropCommonizerDependent): File? {
+    val group = findCInteropCommonizerGroup(dependent) ?: return null
     return CommonizerOutputFileLayout
-        .resolveCommonizedDirectory(outputDirectory(group), dependent.target)
+        .resolveCommonizedDirectory(outputRoot.commonizerGroupDirectory(group), dependent.target)
 }

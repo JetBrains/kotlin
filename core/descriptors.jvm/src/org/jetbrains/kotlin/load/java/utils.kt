@@ -38,8 +38,9 @@ class DeprecationCausedByFunctionNInfo(override val target: DeclarationDescripto
 internal fun Visibility.toDescriptorVisibility(): DescriptorVisibility = JavaDescriptorVisibilities.toDescriptorVisibility(this)
 
 @K1Deprecation
-fun isJspecifyEnabledInStrictMode(javaTypeEnhancementState: JavaTypeEnhancementState) =
-    javaTypeEnhancementState.getReportLevelForAnnotation(JSPECIFY_ANNOTATIONS_PACKAGE) == ReportLevel.STRICT
+fun isJspecifyOrChromiumEnabledInStrictMode(javaTypeEnhancementState: JavaTypeEnhancementState) =
+    javaTypeEnhancementState.getReportLevelForAnnotation(JSPECIFY_ANNOTATIONS_PACKAGE) == ReportLevel.STRICT ||
+            javaTypeEnhancementState.getReportLevelForAnnotation(CHROMIUM_ANNOTATIONS_PACKAGE) == ReportLevel.STRICT
 
 @K1Deprecation
 fun hasErasedValueParameters(memberDescriptor: CallableMemberDescriptor) =

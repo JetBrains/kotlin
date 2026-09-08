@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -92,17 +92,17 @@ class MinMaxCharArrayTest {
         assertNull(empty.minByOrNull { it.toString() })
         assertNull(empty.maxByOrNull { it.toString() })
         assertFailsWith<NoSuchElementException> { empty.minBy { it.toString() } }
-        assertFailsWith<NoSuchElementException> { empty.maxBy { it.toString() } }                       
+        assertFailsWith<NoSuchElementException> { empty.maxBy { it.toString() } }
     }
 
     @Test 
     fun minBySelectorEvaluateOnce() {
         val source = charArrayOf('a', 'b', Char.MAX_VALUE)
         var c = 0
-        source.minBy { c++ }
+        val _ = source.minBy { c++ }
         assertEquals(3, c)
         c = 0
-        source.minByOrNull { c++ }
+        val _ = source.minByOrNull { c++ }
         assertEquals(3, c)
     }
 
@@ -110,10 +110,10 @@ class MinMaxCharArrayTest {
     fun maxBySelectorEvaluateOnce() {
         val source = charArrayOf('a', 'b', Char.MAX_VALUE)
         var c = 0
-        source.maxBy { c++ }
+        val _ = source.maxBy { c++ }
         assertEquals(3, c)
         c = 0
-        source.maxByOrNull { c++ }
+        val _ = source.maxByOrNull { c++ }
         assertEquals(3, c)
     }
     
@@ -170,19 +170,19 @@ class MinMaxCharArrayTest {
         assertNull(empty.minOfOrNull { it.toString() })
         assertNull(empty.maxOfOrNull { it.toString() })
         assertFailsWith<NoSuchElementException> { empty.minOf { it.toString() } }
-        assertFailsWith<NoSuchElementException> { empty.maxOf { it.toString() } }                       
+        assertFailsWith<NoSuchElementException> { empty.maxOf { it.toString() } }
 
 
         assertNull(empty.minOfOrNull { 0.0 })
         assertNull(empty.maxOfOrNull { 0.0 })
         assertFailsWith<NoSuchElementException> { empty.minOf { 0.0 } }
-        assertFailsWith<NoSuchElementException> { empty.maxOf { 0.0 } }                       
+        assertFailsWith<NoSuchElementException> { empty.maxOf { 0.0 } }
 
 
         assertNull(empty.minOfOrNull { 0.0F })
         assertNull(empty.maxOfOrNull { 0.0F })
         assertFailsWith<NoSuchElementException> { empty.minOf { 0.0F } }
-        assertFailsWith<NoSuchElementException> { empty.maxOf { 0.0F } }                       
+        assertFailsWith<NoSuchElementException> { empty.maxOf { 0.0F } }
 
 
     }

@@ -27,11 +27,12 @@ for the full annotation guide and placement rules.
 Use `AskUserQuestion` to present a selection of modules. The user must pick one. Only modules that have a per-module
 codebase test are listed here:
 
-| Choice                   | Module path (project-relative)    | Gradle codebase test task                       |
-|--------------------------|-----------------------------------|-------------------------------------------------|
-| `analysis-api-fir`       | `analysis/analysis-api-fir`       | `:analysis:analysis-api-fir:testCodebase`       |
-| `analysis-api-impl-base` | `analysis/analysis-api-impl-base` | `:analysis:analysis-api-impl-base:testCodebase` |
-| `low-level-api-fir`      | `analysis/low-level-api-fir`      | `:analysis:low-level-api-fir:testCodebase`      |
+| Choice                        | Module path (project-relative)                                 | Gradle codebase test task                                                    |
+|-------------------------------|----------------------------------------------------------------|------------------------------------------------------------------------------|
+| `analysis-api-fir`            | `analysis/analysis-api-fir`                                    | `:analysis:analysis-api-fir:testCodebase`                                    |
+| `analysis-api-impl-base`      | `analysis/analysis-api-impl-base`                              | `:analysis:analysis-api-impl-base:testCodebase`                              |
+| `analysis-api-standalone-fir` | `analysis/analysis-api-standalone/analysis-api-standalone-fir` | `:analysis:analysis-api-standalone:analysis-api-standalone-fir:testCodebase` |
+| `low-level-api-fir`           | `analysis/low-level-api-fir`                                   | `:analysis:low-level-api-fir:testCodebase`                                   |
 
 Throughout this skill, `<module>` and `<gradle-task>` refer to the user's selection.
 
@@ -48,7 +49,9 @@ Throughout this skill, `<module>` and `<gradle-task>` refer to the user's select
 The codebase test owns the **initial** choice of marker for each unmarked declaration. The test's per-module logic lives in
 the `suggestedAnnotation` overrides:
 
-- `analysis-api-fir`, `analysis-api-impl-base` → always `@KaImplementationDetail`.
+- `analysis-api-fir`, `analysis-api-impl-base`, `analysis-api-standalone-fir` → always `@KaImplementationDetail`.
+  `analysis-api-standalone-fir` additionally exempts the `org.jetbrains.kotlin.idea.references` package through an
+  `isExempt` override — that package is a public surface so its declarations are never flagged and never reach this skill.
 - `low-level-api-fir` → `@KaImplementationDetail` for declarations in `org.jetbrains.kotlin.analysis.low.level.api.fir.api`
   (and subpackages); `@LLFirInternals` for everything else.
 
@@ -173,7 +176,7 @@ Tools to run the search:
 | `@LLFirInternals`         | Only inside `analysis/low-level-api-fir/` (own tests/testFixtures, no usages outside)   | **Keep.** No change. This is precisely what `@LLFirInternals` is for: making a `src/` declaration accessible to LL FIR's own tests. |
 | `@LLFirInternals`         | Anywhere outside `analysis/low-level-api-fir/`                                          | **Upgrade.** Replace the `@LLFirInternals` line with `@KaImplementationDetail`. Swap imports accordingly.                           |
 
-Apply edits with `mcp__idea__replace_text_in_file`. **Import housekeeping:** when removing or replacing an annotation,
+Apply edits with `mcp__idea__apply_patch`. **Import housekeeping:** when removing or replacing an annotation,
 also remove the corresponding import if no other declaration in the file still uses it. When adding `@KaImplementationDetail`,
 ensure `import org.jetbrains.kotlin.analysis.api.KaImplementationDetail` is present.
 

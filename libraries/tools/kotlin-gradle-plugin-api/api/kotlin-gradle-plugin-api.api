@@ -1170,10 +1170,18 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinPlatformType$Disambi
 	public fun execute (Lorg/gradle/api/attributes/MultipleCandidatesDetails;)V
 }
 
+public final class org/jetbrains/kotlin/gradle/plugin/KotlinPublicationFormat : java/lang/Enum {
+	public static final field KOTLIN_ARCHIVE Lorg/jetbrains/kotlin/gradle/plugin/KotlinPublicationFormat;
+	public static final field LEGACY_MULTIPLE_PUBLICATIONS Lorg/jetbrains/kotlin/gradle/plugin/KotlinPublicationFormat;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinPublicationFormat;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/KotlinPublicationFormat;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinPublishing {
 	public abstract fun adhocSoftwareComponent (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun adhocSoftwareComponent (Lorg/gradle/api/Action;)V
 	public abstract fun getAdhocSoftwareComponent ()Lorg/gradle/api/component/AdhocComponentWithVariants;
+	public abstract fun getPublicationFormat ()Lorg/gradle/api/provider/Property;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinPublishing$DefaultImpls {

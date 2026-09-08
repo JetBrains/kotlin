@@ -21,7 +21,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithOperatorFunctionKt]]
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=contracts]
-  FUN[fqName=invoke, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=invoke]
+  FUNCTION[fqName=invoke, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=invoke]
     MODIFIER_LIST[operator]
     TYPE_REFERENCE
       NULLABLE_TYPE

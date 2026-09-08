@@ -2,7 +2,7 @@ KtOperationReferenceExpression(191,192): '-'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.unaryMinus(<dispatch receiver>: MyClass): MyClass
     ]

@@ -1,13 +1,13 @@
 <caret_1>:
   KDocName(161,165): 'A.BB'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         val BB: kotlin.Int
       ]
 
 <caret_2>:
   KDocName(303,307): 'A.BB'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         val BB: kotlin.Int
       ]

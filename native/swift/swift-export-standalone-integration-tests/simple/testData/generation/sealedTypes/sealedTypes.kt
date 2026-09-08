@@ -25,6 +25,14 @@ internal class ClassF : SealedInterfaceA
 
 internal class ClassG : SealedClassA()
 
+enum class EnumClassA : SealedInterfaceA {
+    ONE, TWO, THREE
+}
+
+enum class EnumClassB : InterfaceC {
+    FOUR, FIVE, SIX
+}
+
 // FILE: deprecation.kt
 package org.kotlin.foo
 

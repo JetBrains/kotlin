@@ -48,14 +48,13 @@ fun rememberFooInline(%composer: Composer?, %changed: Int): Int {
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  val tmp0 = fooInline(<block>{
-    fun ScrollState.test(p0: Int): Int {
+  val tmp0 = fooInline(scrollState()::test<kotlin.Function1> {
+    fun test(receiver: ScrollState, p0: Int): Int {
       val tmp0_return = receiver.test(
         index = p0
       )
-      tmp0_return
+      return tmp0_return
     }
-    scrollState()::test
   }, %composer, 0)
   if (isTraceInProgress()) {
     traceEventEnd()
@@ -74,12 +73,13 @@ fun rememberFoo(%composer: Composer?, %changed: Int): Int {
     val tmp0 = scrollState()
     sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
     val tmp1_group = %composer.cache(%composer.changed(tmp0)) {
-      fun ScrollState.test(p0: Int): Int {
-        receiver.test(
-          index = p0
-        )
+      tmp0::test<kotlin.Function1> {
+        fun test(receiver: ScrollState, p0: Int): Int {
+          return receiver.test(
+            index = p0
+          )
+        }
       }
-      tmp0::test
     }
     sourceInformationMarkerEnd(%composer)
     tmp1_group
@@ -97,7 +97,12 @@ fun rememberFooExactInline(%composer: Composer?, %changed: Int): Int {
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  val tmp0 = fooInline(scrollState()::testExact, %composer, 0)
+  val tmp0 = fooInline(scrollState()::testExact<kotlin.reflect.KFunction1> {
+    fun testExact(receiver: ScrollState, p0: @[ParameterName(name = 'index')] Int): Int {
+      val tmp0_return = receiver.testExact(p0)
+      return tmp0_return
+    }
+  }, %composer, 0)
   if (isTraceInProgress()) {
     traceEventEnd()
   }
@@ -115,7 +120,11 @@ fun rememberFooExact(%composer: Composer?, %changed: Int): Int {
     val tmp0 = scrollState()
     sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
     val tmp1_group = %composer.cache(%composer.changed(tmp0)) {
-      tmp0::testExact
+      tmp0::testExact<kotlin.reflect.KFunction1> {
+        fun testExact(receiver: ScrollState, p0: @[ParameterName(name = 'index')] Int): Int {
+          return receiver.testExact(p0)
+        }
+      }
     }
     sourceInformationMarkerEnd(%composer)
     tmp1_group

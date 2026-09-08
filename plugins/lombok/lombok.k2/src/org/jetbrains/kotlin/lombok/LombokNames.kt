@@ -87,6 +87,7 @@ object LombokNames {
     ).map { FqName(it) }.toSet()
 
     val JAVA_OBJECT_ID = ClassId.fromString("java.lang/Object")
+    val JAVA_ARRAYS_ID = ClassId.fromString("java.util/Arrays")
     val JAVA_ITERABLE_ID = ClassId.fromString("java.lang/Iterable")
     val JAVA_COLLECTION_ID = ClassId.fromString("java.util/Collection")
     val JAVA_MAP_ID = ClassId.fromString("java.util/Map")

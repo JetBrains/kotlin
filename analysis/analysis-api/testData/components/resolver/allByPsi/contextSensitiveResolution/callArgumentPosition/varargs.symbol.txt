@@ -20,13 +20,13 @@ KtProperty(116,142): 'val superProp: String = ""'
   null
 
 KtTypeReference(131,137): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(131,137): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -35,7 +35,7 @@ KtNameReferenceExpression(131,137): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -68,25 +68,25 @@ KtSuperTypeList(218,227): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(218,227): 'MyClass()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): MyClass
     ]
 
 KtConstructorCalleeExpression(218,225): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): MyClass
     ]
 
 KtTypeReference(218,225): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(218,225): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -95,7 +95,7 @@ KtNameReferenceExpression(218,225): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -110,13 +110,13 @@ KtProperty(238,259): 'val prop: String = ""'
   null
 
 KtTypeReference(248,254): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(248,254): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -125,7 +125,7 @@ KtNameReferenceExpression(248,254): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -140,25 +140,25 @@ KtSuperTypeList(293,302): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(293,302): 'MyClass()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): MyClass
     ]
 
 KtConstructorCalleeExpression(293,300): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): MyClass
     ]
 
 KtTypeReference(293,300): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(293,300): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -167,7 +167,7 @@ KtNameReferenceExpression(293,300): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -182,13 +182,13 @@ KtProperty(313,334): 'val prop: String = ""'
   null
 
 KtTypeReference(323,329): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(323,329): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -197,7 +197,7 @@ KtNameReferenceExpression(323,329): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -218,25 +218,25 @@ KtSuperTypeList(389,396): 'Super()'
   null
 
 KtSuperTypeCallEntry(389,396): 'Super()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): Super
     ]
 
 KtConstructorCalleeExpression(389,394): 'Super'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): Super
     ]
 
 KtTypeReference(389,394): 'Super'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Super
     ]
 
 KtUserType(389,394): 'Super'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Super
     ]
@@ -245,7 +245,7 @@ KtNameReferenceExpression(389,394): 'Super'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Super
     ]
@@ -260,13 +260,13 @@ KtProperty(407,440): 'val propMyClass: MyClass = TODO()'
   null
 
 KtTypeReference(424,431): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(424,431): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -275,13 +275,13 @@ KtNameReferenceExpression(424,431): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtCallExpression(434,440): 'TODO()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
     ]
@@ -290,7 +290,7 @@ KtNameReferenceExpression(434,438): 'TODO'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
     ]
@@ -302,13 +302,13 @@ KtProperty(449,506): 'val propInheritorClass: InheritorClass = InheritorClass()'
   null
 
 KtTypeReference(473,487): 'InheritorClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorClass
     ]
 
 KtUserType(473,487): 'InheritorClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorClass
     ]
@@ -317,13 +317,13 @@ KtNameReferenceExpression(473,487): 'InheritorClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorClass
     ]
 
 KtCallExpression(490,506): 'InheritorClass()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): MyClass.InheritorClass
     ]
@@ -332,7 +332,7 @@ KtNameReferenceExpression(490,504): 'InheritorClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorClass
     ]
@@ -344,13 +344,13 @@ KtProperty(515,573): 'val propInheritorObject: InheritorObject = InheritorObject
   null
 
 KtTypeReference(540,555): 'InheritorObject'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorObject
     ]
 
 KtUserType(540,555): 'InheritorObject'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorObject
     ]
@@ -359,7 +359,7 @@ KtNameReferenceExpression(540,555): 'InheritorObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorObject
     ]
@@ -368,7 +368,7 @@ KtNameReferenceExpression(558,573): 'InheritorObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorObject
     ]
@@ -377,13 +377,13 @@ KtProperty(582,603): 'val prop: String = ""'
   null
 
 KtTypeReference(592,598): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(592,598): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -392,7 +392,7 @@ KtNameReferenceExpression(592,598): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -407,13 +407,13 @@ KtDeclarationModifierList(612,617): 'const'
   null
 
 KtTypeReference(633,639): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(633,639): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -422,7 +422,7 @@ KtNameReferenceExpression(633,639): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -434,13 +434,13 @@ KtProperty(653,686): 'val lazyProp: String by lazy {""}'
   null
 
 KtTypeReference(667,673): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(667,673): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -449,19 +449,19 @@ KtNameReferenceExpression(667,673): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtPropertyDelegate(674,686): 'by lazy {""}'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/getValue(<extension receiver>: kotlin.Lazy<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
     ]
 
 KtCallExpression(677,686): 'lazy {""}'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
     ]
@@ -470,7 +470,7 @@ KtNameReferenceExpression(677,681): 'lazy'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
     ]
@@ -497,13 +497,13 @@ KtParameterList(703,705): '()'
   null
 
 KtTypeReference(707,714): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(707,714): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -512,13 +512,13 @@ KtNameReferenceExpression(707,714): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtCallExpression(717,723): 'TODO()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
     ]
@@ -527,7 +527,7 @@ KtNameReferenceExpression(717,721): 'TODO'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
     ]
@@ -551,7 +551,7 @@ KtNameReferenceExpression(750,765): 'InheritorObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorObject
     ]
@@ -575,13 +575,13 @@ KtDeclarationModifierList(798,804): 'vararg'
   null
 
 KtTypeReference(810,811): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
 
 KtUserType(810,811): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -590,7 +590,7 @@ KtNameReferenceExpression(810,811): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -599,7 +599,7 @@ KtNameReferenceExpression(815,818): 'arg'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       vararg arg: T
     ]
@@ -614,19 +614,19 @@ KtParameter(835,860): 'i: MyClass.InheritorClass'
   null
 
 KtTypeReference(838,860): 'MyClass.InheritorClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorClass
     ]
 
 KtUserType(838,860): 'MyClass.InheritorClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorClass
     ]
 
 KtUserType(838,845): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -635,7 +635,7 @@ KtNameReferenceExpression(838,845): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -644,7 +644,7 @@ KtNameReferenceExpression(846,860): 'InheritorClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorClass
     ]
@@ -653,7 +653,7 @@ KtBlockExpression(862,1348): '{'
   null
 
 KtCallExpression(868,908): 'receiverVarArg<MyClass>(InheritorObject)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -662,7 +662,7 @@ KtNameReferenceExpression(868,882): 'receiverVarArg'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -674,13 +674,13 @@ KtTypeProjection(883,890): 'MyClass'
   null
 
 KtTypeReference(883,890): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(883,890): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -689,7 +689,7 @@ KtNameReferenceExpression(883,890): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -704,13 +704,13 @@ KtNameReferenceExpression(892,907): 'InheritorObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorObject
     ]
 
 KtCallExpression(913,939): 'receiverVarArg<MyClass>(i)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -719,7 +719,7 @@ KtNameReferenceExpression(913,927): 'receiverVarArg'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -731,13 +731,13 @@ KtTypeProjection(928,935): 'MyClass'
   null
 
 KtTypeReference(928,935): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(928,935): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -746,7 +746,7 @@ KtNameReferenceExpression(928,935): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -761,13 +761,13 @@ KtNameReferenceExpression(937,938): 'i'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       i: MyClass.InheritorClass
     ]
 
 KtCallExpression(944,980): 'receiverVarArg<MyClass>(propMyClass)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -776,7 +776,7 @@ KtNameReferenceExpression(944,958): 'receiverVarArg'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -788,13 +788,13 @@ KtTypeProjection(959,966): 'MyClass'
   null
 
 KtTypeReference(959,966): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(959,966): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -803,7 +803,7 @@ KtNameReferenceExpression(959,966): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -818,13 +818,13 @@ KtNameReferenceExpression(968,979): 'propMyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val propMyClass: MyClass
     ]
 
 KtCallExpression(985,1028): 'receiverVarArg<MyClass>(propInheritorClass)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -833,7 +833,7 @@ KtNameReferenceExpression(985,999): 'receiverVarArg'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -845,13 +845,13 @@ KtTypeProjection(1000,1007): 'MyClass'
   null
 
 KtTypeReference(1000,1007): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(1000,1007): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -860,7 +860,7 @@ KtNameReferenceExpression(1000,1007): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -875,13 +875,13 @@ KtNameReferenceExpression(1009,1027): 'propInheritorClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val propInheritorClass: MyClass.InheritorClass
     ]
 
 KtCallExpression(1033,1077): 'receiverVarArg<MyClass>(propInheritorObject)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -890,7 +890,7 @@ KtNameReferenceExpression(1033,1047): 'receiverVarArg'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -902,13 +902,13 @@ KtTypeProjection(1048,1055): 'MyClass'
   null
 
 KtTypeReference(1048,1055): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(1048,1055): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -917,7 +917,7 @@ KtNameReferenceExpression(1048,1055): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -932,13 +932,13 @@ KtNameReferenceExpression(1057,1076): 'propInheritorObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val propInheritorObject: MyClass.InheritorObject
     ]
 
 KtCallExpression(1083,1112): 'receiverVarArg<MyClass>(prop)'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -948,7 +948,7 @@ KtNameReferenceExpression(1083,1097): 'receiverVarArg'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -961,13 +961,13 @@ KtTypeProjection(1098,1105): 'MyClass'
   null
 
 KtTypeReference(1098,1105): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(1098,1105): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -976,7 +976,7 @@ KtNameReferenceExpression(1098,1105): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -991,13 +991,13 @@ KtNameReferenceExpression(1107,1111): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
     ]
 
 KtCallExpression(1117,1151): 'receiverVarArg<MyClass>(constProp)'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -1007,7 +1007,7 @@ KtNameReferenceExpression(1117,1131): 'receiverVarArg'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -1020,13 +1020,13 @@ KtTypeProjection(1132,1139): 'MyClass'
   null
 
 KtTypeReference(1132,1139): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(1132,1139): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -1035,7 +1035,7 @@ KtNameReferenceExpression(1132,1139): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -1050,13 +1050,13 @@ KtNameReferenceExpression(1141,1150): 'constProp'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val constProp: kotlin.String
     ]
 
 KtCallExpression(1156,1189): 'receiverVarArg<MyClass>(lazyProp)'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -1066,7 +1066,7 @@ KtNameReferenceExpression(1156,1170): 'receiverVarArg'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -1079,13 +1079,13 @@ KtTypeProjection(1171,1178): 'MyClass'
   null
 
 KtTypeReference(1171,1178): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(1171,1178): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -1094,7 +1094,7 @@ KtNameReferenceExpression(1171,1178): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -1109,13 +1109,13 @@ KtNameReferenceExpression(1180,1188): 'lazyProp'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val lazyProp: kotlin.String
     ]
 
 KtCallExpression(1194,1229): 'receiverVarArg<MyClass>(lambdaProp)'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -1125,7 +1125,7 @@ KtNameReferenceExpression(1194,1208): 'receiverVarArg'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -1138,13 +1138,13 @@ KtTypeProjection(1209,1216): 'MyClass'
   null
 
 KtTypeReference(1209,1216): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(1209,1216): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -1153,7 +1153,7 @@ KtNameReferenceExpression(1209,1216): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -1168,13 +1168,13 @@ KtNameReferenceExpression(1218,1228): 'lambdaProp'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val lambdaProp: () -> MyClass.InheritorObject
     ]
 
 KtCallExpression(1234,1268): 'receiverVarArg<MyClass>(superProp)'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -1184,7 +1184,7 @@ KtNameReferenceExpression(1234,1248): 'receiverVarArg'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -1197,13 +1197,13 @@ KtTypeProjection(1249,1256): 'MyClass'
   null
 
 KtTypeReference(1249,1256): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(1249,1256): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -1212,7 +1212,7 @@ KtNameReferenceExpression(1249,1256): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -1227,13 +1227,13 @@ KtNameReferenceExpression(1258,1267): 'superProp'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val superProp: kotlin.String
     ]
 
 KtCallExpression(1274,1305): 'receiverVarArg<MyClass>(func())'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -1243,7 +1243,7 @@ KtNameReferenceExpression(1274,1288): 'receiverVarArg'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -1256,13 +1256,13 @@ KtTypeProjection(1289,1296): 'MyClass'
   null
 
 KtTypeReference(1289,1296): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(1289,1296): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -1271,7 +1271,7 @@ KtNameReferenceExpression(1289,1296): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -1283,7 +1283,7 @@ KtValueArgument(1298,1304): 'func()'
   null
 
 KtCallExpression(1298,1304): 'func()'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
@@ -1291,7 +1291,7 @@ KtNameReferenceExpression(1298,1302): 'func'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
@@ -1299,7 +1299,7 @@ KtValueArgumentList(1302,1304): '()'
   null
 
 KtCallExpression(1310,1346): 'receiverVarArg<MyClass>(superFunc())'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -1309,7 +1309,7 @@ KtNameReferenceExpression(1310,1324): 'receiverVarArg'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /receiverVarArg(vararg arg: T): kotlin.Array<out T>
     ]
@@ -1322,13 +1322,13 @@ KtTypeProjection(1325,1332): 'MyClass'
   null
 
 KtTypeReference(1325,1332): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(1325,1332): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -1337,7 +1337,7 @@ KtNameReferenceExpression(1325,1332): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -1349,7 +1349,7 @@ KtValueArgument(1334,1345): 'superFunc()'
   null
 
 KtCallExpression(1334,1345): 'superFunc()'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
@@ -1357,7 +1357,7 @@ KtNameReferenceExpression(1334,1343): 'superFunc'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 

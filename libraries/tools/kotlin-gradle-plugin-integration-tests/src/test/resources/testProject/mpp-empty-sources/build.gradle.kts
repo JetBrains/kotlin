@@ -14,7 +14,6 @@ repositories {
 kotlin {
     jvmToolchain(8)
     jvm {
-        withJava()
     }
     js {
         binaries.executable()

@@ -2,7 +2,6 @@
 // CHECK_BYTECODE_LISTING
 // WITH_STDLIB
 // LANGUAGE: +ContextParameters
-@file:OptIn(ExperimentalVersionOverloading::class)
 
 class C {
     fun Int.foo(

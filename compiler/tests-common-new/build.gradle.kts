@@ -3,10 +3,8 @@ import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
-    id("project-tests-convention")
     id("test-inputs-check")
     id("share-foreign-java-nullability-annotations")
     id("java-test-fixtures")
@@ -25,6 +23,7 @@ dependencies {
     testFixturesImplementation(project(":kotlin-util-klib-abi"))
     testFixturesImplementation(project(":kotlin-util-klib-metadata"))
     testFixturesImplementation(project(":wasm:wasm.frontend"))
+    testFixturesImplementation(project(":kotlin-tooling-core"))
     testFixturesImplementation(project(":compiler:ir.backend.native"))
     testFixturesImplementation(intellijCore())
     testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
@@ -41,7 +40,6 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(project(":libraries:tools:abi-comparator"))
-    testFixturesApi(project(":compiler:tests-mutes:mutes-junit5"))
 
     /*
      * Actually those dependencies are needed only at runtime, but they

@@ -141,7 +141,7 @@ KtFile: ShortAnnotations.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(IDENTIFIER)('zoo')
   PsiWhiteSpace(' ')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('a')
@@ -395,7 +395,7 @@ KtFile: ShortAnnotations.kt
       PsiErrorElement:Expecting member declaration
         PsiElement(IDENTIFIER)('zoo')
       PsiWhiteSpace(' ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('a')
@@ -540,7 +540,7 @@ KtFile: ShortAnnotations.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('test')

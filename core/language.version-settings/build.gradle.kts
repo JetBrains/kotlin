@@ -1,18 +1,14 @@
-import org.jetbrains.kotlin.build.foreign.CheckForeignClassUsageTask
+import org.jetbrains.kotlin.build.foreign.registerForeignClassUsageTasks
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("gradle-plugin-compiler-dependency-configuration")
     id("kotlin-git.gradle-build-conventions.foreign-class-usage-checker")
-    id("project-tests-convention")
     id("test-inputs-check")
 }
-
-project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
 dependencies {
     api(kotlinStdlib())
@@ -39,9 +35,14 @@ sourceSets {
 }
 
 projectTests {
-    testTask(javaLauncher = JdkMajorVersion.JDK_1_8)
+    testTask(
+        javaLauncher = JdkMajorVersion.JDK_1_8,
+        maxHeapSize = testMaxHeapSizeLarge,
+        // Use Parallel GC because this test runs on JDK 8.
+        garbageCollector = GarbageCollector.Parallel,
+    )
 }
 
-val checkForeignClassUsage = tasks.register("checkForeignClassUsage", CheckForeignClassUsageTask::class) {
+registerForeignClassUsageTasks {
     outputFile = file("api/language-version-settings-api.foreign")
 }

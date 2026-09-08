@@ -1,0 +1,14 @@
+"abc".test1: ---
+assert(this?.length == 5)
+       |     |      |
+       |     |      false
+       |     3
+       abc
+---
+null.test1: ---
+assert(this?.length == 5)
+       |     |      |
+       |     |      false
+       |     null
+       null
+---

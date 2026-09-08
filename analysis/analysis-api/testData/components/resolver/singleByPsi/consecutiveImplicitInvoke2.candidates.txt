@@ -17,7 +17,7 @@ KtCallExpression(135,140): 'i()()'
         callableId = /invoke
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun Double.invoke(): Unit' is inapplicable because of a receiver type mismatch.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun Double.invoke(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Long'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -38,7 +38,7 @@ KtCallExpression(135,140): 'i()()'
         callableId = /invoke
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun Int.invoke(): Long' is inapplicable because of a receiver type mismatch.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun Int.invoke(): Long' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Long'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:

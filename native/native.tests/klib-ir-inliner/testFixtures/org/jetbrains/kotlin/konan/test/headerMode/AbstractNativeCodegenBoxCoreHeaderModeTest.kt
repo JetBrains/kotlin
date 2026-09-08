@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.HEADER_MO
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.objcinterop.ObjCInteropFacade
-import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
 
@@ -35,7 +34,6 @@ abstract class AbstractNativeCodegenBoxCoreHeaderModeTest : AbstractNativeCoreTe
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
-        useAdditionalService(::LibraryProvider)
         useConfigurators(
             ::CommonEnvironmentConfigurator,
             ::NativeFirstStageEnvironmentConfigurator,

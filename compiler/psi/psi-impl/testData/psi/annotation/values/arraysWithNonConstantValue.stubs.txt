@@ -40,5 +40,5 @@ WithArrays.kt:
                 DOT_QUALIFIED_EXPRESSION
                   REFERENCE_EXPRESSION[referencedName=MyEnum]
                   REFERENCE_EXPRESSION[referencedName=ENTRY]
-                FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=a]
+                FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=a]
                   VALUE_PARAMETER_LIST

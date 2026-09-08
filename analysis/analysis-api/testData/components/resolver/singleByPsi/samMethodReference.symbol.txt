@@ -1,5 +1,5 @@
 KtCallExpression(146,166): 'test(this::uiMethod)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Test.test(<dispatch receiver>: Test, foo: Test.Foo): kotlin.Unit
     ]

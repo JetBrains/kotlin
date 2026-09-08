@@ -14,6 +14,7 @@ FunctionTypesAsArgumentsKt.class:
               REFERENCE_EXPRESSION[referencedName=java]
             REFERENCE_EXPRESSION[referencedName=util]
           REFERENCE_EXPRESSION[referencedName=HashMap]
+            isClassRef: true
           TYPE_ARGUMENT_LIST
             TYPE_PROJECTION[projectionKind=NONE]
               TYPE_REFERENCE
@@ -21,6 +22,7 @@ FunctionTypesAsArgumentsKt.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=String]
+                    isClassRef: true
             TYPE_PROJECTION[projectionKind=NONE]
               TYPE_REFERENCE
                 FUNCTION_TYPE
@@ -30,6 +32,7 @@ FunctionTypesAsArgumentsKt.class:
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
                       REFERENCE_EXPRESSION[referencedName=Unit]
+                        isClassRef: true
 
 
 Lifetime.class:
@@ -52,6 +55,7 @@ Lifetime.class:
                   REFERENCE_EXPRESSION[referencedName=java]
                 REFERENCE_EXPRESSION[referencedName=util]
               REFERENCE_EXPRESSION[referencedName=ArrayList]
+                isClassRef: true
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
@@ -62,3 +66,4 @@ Lifetime.class:
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=kotlin]
                           REFERENCE_EXPRESSION[referencedName=Unit]
+                            isClassRef: true

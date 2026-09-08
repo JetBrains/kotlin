@@ -1,0 +1,21 @@
+KT element: KtAnnotationEntry
+FIR element: FirAnnotationCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+@R|Anno|[Types](i = R|/INT| [evaluated = Char(A)])
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] annotationArgumentWithMismatchedIntConst.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.i] i: R|kotlin/Int|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val INT: R|kotlin/Int| = Char(A)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    @R|Anno|[Types](i = R|/INT| [evaluated = Char(A)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }

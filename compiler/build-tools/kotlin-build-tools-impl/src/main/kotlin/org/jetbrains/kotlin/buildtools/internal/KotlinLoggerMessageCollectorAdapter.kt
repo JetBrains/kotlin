@@ -20,6 +20,8 @@ internal class KotlinLoggerMessageCollectorAdapter(
 
     private val messageRenderer = compilerMessageRenderer.asMessageRenderer()
 
+    private var hasReportedErrors: Boolean = false
+
     override fun clear() {}
 
     override fun report(
@@ -29,6 +31,9 @@ internal class KotlinLoggerMessageCollectorAdapter(
         diagnosticId: String?,
     ) {
         val effectiveSeverity = severity.toEffectiveSeverity(warningsAsErrors)
+        if (effectiveSeverity == CompilerMessageSeverity.ERROR || effectiveSeverity == CompilerMessageSeverity.EXCEPTION) {
+            hasReportedErrors = true
+        }
         val renderedMessage: String = messageRenderer.render(effectiveSeverity, message, location, diagnosticId)
 
         if (renderedMessage.isBlank()) return
@@ -67,5 +72,5 @@ internal class KotlinLoggerMessageCollectorAdapter(
             -> this
     }
 
-    override fun hasErrors() = false
+    override fun hasErrors() = hasReportedErrors
 }

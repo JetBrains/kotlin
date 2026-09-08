@@ -5,11 +5,6 @@
 
 package org.jetbrains.kotlin.test.services.configuration
 
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -38,31 +33,6 @@ interface KlibBasedEnvironmentConfigurator {
 
     fun getKlibOutputDir(testServices: TestServices): File {
         return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(OUTPUT_KLIB_DIR_NAME)
-    }
-
-    fun getDependencyModulesFor(module: TestModule, testServices: TestServices): Set<ModuleDescriptorImpl> {
-        val visited = mutableSetOf<ModuleDescriptorImpl>()
-        fun getRecursive(descriptor: ModuleDescriptor) {
-            descriptor.allDependencyModules.forEach {
-                if (it is ModuleDescriptorImpl && it !in visited) {
-                    visited += it
-                    getRecursive(it)
-                }
-            }
-        }
-
-        getRecursive(testServices.moduleDescriptorProvider.getModuleDescriptor(module))
-        return visited
-    }
-
-    // TODO (KT-65837): Used only in Kotlin/Native. To be removed later.
-    fun getAllDependenciesMappingFor(module: TestModule, testServices: TestServices): Map<KotlinLibrary, List<KotlinLibrary>> {
-        val mapping: Map<ModuleDescriptor, KotlinLibrary> = getDependencyModulesFor(module, testServices)
-            .associateWith { testServices.libraryProvider.getCompiledLibraryByDescriptor(it) }
-
-        return mapping.entries.associate { [descriptor, library] ->
-            library to descriptor.allDependencyModules.filter { it != descriptor }.map { mapping.getValue(it) }
-        }
     }
 
     companion object {

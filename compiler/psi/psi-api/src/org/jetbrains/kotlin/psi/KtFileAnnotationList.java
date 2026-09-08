@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,15 +26,18 @@ import java.util.List;
  * package com.example
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtFileAnnotationList extends KtElementImplStub<KotlinPlaceHolderStub<KtFileAnnotationList>> implements
                                                                                                             KtAnnotationsContainer {
 
+    @KtImplementationDetail
     public KtFileAnnotationList(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtFileAnnotationList(@NotNull KotlinPlaceHolderStub<KtFileAnnotationList> stub) {
-        super(stub, KtStubBasedElementTypes.FILE_ANNOTATION_LIST);
+        super(stub, KtNodeTypes.FILE_ANNOTATION_LIST);
     }
 
     @Override
@@ -43,7 +48,7 @@ public class KtFileAnnotationList extends KtElementImplStub<KotlinPlaceHolderStu
     @Override
     @NotNull
     public List<KtAnnotation> getAnnotations() {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.ANNOTATION);
+        return Arrays.asList(getStubOrPsiChildren(KtNodeTypes.ANNOTATION, KtAnnotation.EMPTY_ARRAY));
     }
 
     @Override

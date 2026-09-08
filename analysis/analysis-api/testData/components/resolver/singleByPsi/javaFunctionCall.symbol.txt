@@ -1,5 +1,5 @@
 KtCallExpression(76,88): 'javaMethod()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JavaClass.javaMethod(<dispatch receiver>: JavaClass): kotlin.Unit
     ]

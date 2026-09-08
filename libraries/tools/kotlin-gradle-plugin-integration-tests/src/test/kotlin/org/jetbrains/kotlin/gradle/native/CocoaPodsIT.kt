@@ -316,7 +316,6 @@ class CocoaPodsIT : KGPBaseTest() {
     fun testUTDPodspecDeploymentTarget(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
         ) {
 
             buildWithCocoapodsWrapper(podspecTaskName)
@@ -539,12 +538,10 @@ class CocoaPodsIT : KGPBaseTest() {
     }
 
     @DisplayName("Xcode style errors when sync framework configuration failed")
-    @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_1])
     @GradleTest
     fun testSyncFrameworkUseXcodeStyleErrorsWhenConfigurationFailed(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
         ) {
             buildGradleKts.appendText(
                 """
@@ -573,7 +570,6 @@ class CocoaPodsIT : KGPBaseTest() {
     fun testSyncFrameworkUseXcodeStyleErrorsWhenCompilationFailed(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
         ) {
             projectPath.resolve("src/commonMain/kotlin/A.kt").appendText("this can't be compiled")
             val buildOptions = this.buildOptions.copy(
@@ -647,7 +643,6 @@ class CocoaPodsIT : KGPBaseTest() {
     fun testOtherTasksUseXcodeStyleErrorsWhenCompilationFailedAndOptionEnabled(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
         ) {
             projectPath.resolve("src/commonMain/kotlin/A.kt").appendText("this can't be compiled")
             val buildOptions = this.buildOptions.copy(
@@ -966,8 +961,6 @@ class CocoaPodsIT : KGPBaseTest() {
     }
 
     @DisplayName("Configuration cache works in a complex scenario")
-    // FIXME: KT-84980 - remove this min version
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
     fun testConfigurationCacheWorksInAComplexScenario(gradleVersion: GradleVersion) {
         val buildOptions = defaultBuildOptions.copy(

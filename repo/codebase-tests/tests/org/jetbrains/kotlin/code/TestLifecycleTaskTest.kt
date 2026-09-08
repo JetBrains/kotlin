@@ -21,8 +21,6 @@ import org.opentest4j.FileInfo
 import java.nio.file.Path
 import kotlin.io.path.*
 import kotlin.test.Test
-import kotlin.test.assertTrue
-import kotlin.time.Duration.Companion.seconds
 
 /**
  * Verifies the dump of test lifecycle tasks, their test task dependencies, and domains.

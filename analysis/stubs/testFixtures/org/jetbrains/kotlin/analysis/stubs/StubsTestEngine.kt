@@ -2,6 +2,7 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(KtImplementationDetail::class)
 
 package org.jetbrains.kotlin.analysis.stubs
 
@@ -12,6 +13,7 @@ import com.intellij.util.io.AbstractStringEnumerator
 import com.intellij.util.io.UnsyncByteArrayOutputStream
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.services.AssertionsService
@@ -92,11 +94,13 @@ private fun <P : PsiElement, S : StubElement<P>> serializeAndDeserializeStub(
 ): S {
     buffer.reset()
 
-    val serializer = if (originalStub is PsiFileStub<*>) {
+    val elementType = if (originalStub is PsiFileStub<*>) {
         originalStub.fileElementType
     } else {
         originalStub.elementType
     }
+
+    val serializer = StubElementRegistryService.getInstance().getStubSerializer(elementType)
 
     @Suppress("UNCHECKED_CAST")
     serializer as ObjectStubSerializer<StubElement<*>, StubElement<*>>
@@ -104,7 +108,7 @@ private fun <P : PsiElement, S : StubElement<P>> serializeAndDeserializeStub(
     serializer.serialize(originalStub, StubOutputStream(buffer, storage))
 
     val stubInputStream = StubInputStream(buffer.toInputStream(), storage)
-    val deserializedStub = serializer.deserialize(stubInputStream, deserializedParentStub)
+    val deserializedStub = serializer.deserialize(stubInputStream, deserializedParentStub) as StubElement<*>
     assertEquals(-1, stubInputStream.read(), "The deserializer has to read the same amount of bytes as the serializer wrote")
     assertEquals(originalStub::class, deserializedStub::class, "The stub class must be the same")
     assertEquals(originalStub.elementType, deserializedStub.elementType, "The stub type must be the same")

@@ -23,7 +23,7 @@ KtParameterList(90,92): '()'
   null
 
 KtConstructorDelegationCall(92,92): ''
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -41,7 +41,7 @@ KtConstructorDelegationCall(92,92): ''
       valueArgumentMapping = {}
 
 KtConstructorDelegationReferenceExpression(92,92): ''
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -65,7 +65,7 @@ KtParameterList(108,110): '()'
   null
 
 KtConstructorDelegationCall(110,110): ''
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -83,7 +83,7 @@ KtConstructorDelegationCall(110,110): ''
       valueArgumentMapping = {}
 
 KtConstructorDelegationReferenceExpression(110,110): ''
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -119,7 +119,7 @@ KtNameReferenceExpression(130,136): 'String'
   null
 
 KtConstructorDelegationCall(137,137): ''
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -137,7 +137,7 @@ KtConstructorDelegationCall(137,137): ''
       valueArgumentMapping = {}
 
 KtConstructorDelegationReferenceExpression(137,137): ''
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -239,7 +239,7 @@ KtBlockExpression(279,305): '{'
   null
 
 KtCallExpression(285,288): 'C()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -275,7 +275,7 @@ KtCallExpression(285,288): 'C()'
     constructor(): C>
 
 KtNameReferenceExpression(285,286): 'C'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -314,7 +314,7 @@ KtValueArgumentList(286,288): '()'
   null
 
 KtDotQualifiedExpression(293,303): 'C.invoke()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -359,7 +359,7 @@ KtNameReferenceExpression(293,294): 'C'
   null
 
 KtCallExpression(295,303): 'invoke()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -401,7 +401,7 @@ KtCallExpression(295,303): 'invoke()'
     companion fun C.invoke(): Unit>
 
 KtNameReferenceExpression(295,301): 'invoke'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}

@@ -64,12 +64,18 @@ val background: ThemeToken<Int> = class <no name provided> : ThemeToken<Int> {
 }
 <no name provided>()
   @Composable @JvmName(name = "getBackground") @FunctionKeyMeta(key = 43948912, startOffset = 493, endOffset = 536)
-  get() {
-    sourceInformationMarkerStart(%composer, <>, "C(<get-background>)<ThemeT...>:Test.kt")
+  get(%composer: Composer?, %changed: Int) {
+    sourceInformationMarkerStart(%composer, <>, "C(<get-background>)<ThemeT...>,<ThemeT...>:Test.kt")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
-    val tmp0 = field.getValue(null, ::background, %composer, 0b0110)
+    val tmp0 = field.getValue(null, ::background {
+      @Composable
+      @FunctionKeyMeta(key = 1755198151, startOffset = 511, endOffset = 536)
+      fun background(%composer: Composer?, %changed: Int): Int {
+        return <get-background>(%composer, 0)
+      }
+    }, %composer, 0b0110)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

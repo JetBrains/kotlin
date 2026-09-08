@@ -17,13 +17,13 @@ KtParameter(8,31): 'action1: Int.() -> Unit'
   null
 
 KtTypeReference(17,31): 'Int.() -> Unit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Function1
     ]
 
 KtFunctionType(17,31): 'Int.() -> Unit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Function1
     ]
@@ -32,13 +32,13 @@ KtFunctionTypeReceiver(17,20): 'Int'
   null
 
 KtTypeReference(17,20): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(17,20): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -47,7 +47,7 @@ KtNameReferenceExpression(17,20): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -56,13 +56,13 @@ KtParameterList(21,23): '()'
   null
 
 KtTypeReference(27,31): 'Unit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Unit
     ]
 
 KtUserType(27,31): 'Unit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Unit
     ]
@@ -71,7 +71,7 @@ KtNameReferenceExpression(27,31): 'Unit'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Unit
     ]
@@ -80,13 +80,13 @@ KtParameter(33,55): 'action2: (Int) -> Unit'
   null
 
 KtTypeReference(42,55): '(Int) -> Unit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Function1
     ]
 
 KtFunctionType(42,55): '(Int) -> Unit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Function1
     ]
@@ -98,13 +98,13 @@ KtParameter(43,46): 'Int'
   null
 
 KtTypeReference(43,46): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(43,46): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -113,19 +113,19 @@ KtNameReferenceExpression(43,46): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtTypeReference(51,55): 'Unit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Unit
     ]
 
 KtUserType(51,55): 'Unit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Unit
     ]
@@ -134,7 +134,7 @@ KtNameReferenceExpression(51,55): 'Unit'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Unit
     ]
@@ -149,7 +149,7 @@ KtConstantExpression(74,75): '1'
   null
 
 KtDotQualifiedExpression(80,94): 'prop.action1()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
     ]
@@ -158,13 +158,13 @@ KtNameReferenceExpression(80,84): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.Int
     ]
 
 KtCallExpression(85,94): 'action1()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
     ]
@@ -173,7 +173,7 @@ KtNameReferenceExpression(85,92): 'action1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       action1: kotlin.Int.() -> kotlin.Unit
     ]
@@ -182,7 +182,7 @@ KtValueArgumentList(92,94): '()'
   null
 
 KtCallExpression(99,112): 'action1(prop)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
     ]
@@ -191,7 +191,7 @@ KtNameReferenceExpression(99,106): 'action1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       action1: kotlin.Int.() -> kotlin.Unit
     ]
@@ -206,13 +206,13 @@ KtNameReferenceExpression(107,111): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.Int
     ]
 
 KtDotQualifiedExpression(118,132): 'prop.action2()'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'action2' on receiver of type 'Int'.>
 
@@ -220,13 +220,13 @@ KtNameReferenceExpression(118,122): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.Int
     ]
 
 KtCallExpression(123,132): 'action2()'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'action2' on receiver of type 'Int'.>
 
@@ -234,7 +234,7 @@ KtNameReferenceExpression(123,130): 'action2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'action2' on receiver of type 'Int'.>
 
@@ -242,7 +242,7 @@ KtValueArgumentList(130,132): '()'
   null
 
 KtCallExpression(151,164): 'action2(prop)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
     ]
@@ -251,7 +251,7 @@ KtNameReferenceExpression(151,158): 'action2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       action2: (kotlin.Int) -> kotlin.Unit
     ]
@@ -266,7 +266,7 @@ KtNameReferenceExpression(159,163): 'prop'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.Int
     ]

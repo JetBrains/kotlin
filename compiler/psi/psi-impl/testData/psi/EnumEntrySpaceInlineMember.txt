@@ -21,7 +21,7 @@ KtFile: EnumEntrySpaceInlineMember.kt
       PsiErrorElement:Expecting ';' after the last enum entry or '}' to close enum class body
         <empty list>
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(inline)('inline')
         PsiWhiteSpace(' ')

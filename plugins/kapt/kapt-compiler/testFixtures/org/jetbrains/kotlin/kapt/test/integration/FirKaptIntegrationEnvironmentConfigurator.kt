@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.kapt.test.kaptOptionsProvider
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.sourceFileProvider
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.TypeElement
@@ -24,24 +23,25 @@ class FirKaptIntegrationEnvironmentConfigurator(
     private val supportedAnnotations: List<String>,
     private val process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, FirKaptExtensionForTests) -> Unit
 ) : EnvironmentConfigurator(testServices) {
+    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+        // `FirKaptAnalysisHandlerExtension` checks the `skipBodies` flag to detect if this is the analysis that is run from within the
+        // extension itself, to prevent endless recursion. If the configuration contains this flag from the beginning, the extension is not
+        // applied at all.
+        configuration.skipBodies = false
+    }
+
     override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
         module: TestModule,
         configuration: CompilerConfiguration,
     ) {
         val kaptOptions = testServices.kaptOptionsProvider[module]
-        val firKaptExtension = testServices.firKaptExtensionProvider.createExtension(
+        val firKaptExtension = testServices.firKaptExtensionProvider.getOrCreateExtension(
             module,
             kaptOptions,
             processorOptions,
             process,
             supportedAnnotations,
-            module.files.map(testServices.sourceFileProvider::getOrCreateRealFileForSourceFile),
         )
         FirAnalysisHandlerExtension.registerExtension(firKaptExtension)
-
-        // `FirKaptAnalysisHandlerExtension` checks the `skipBodies` flag to detect if this is the analysis that is run from within the
-        // extension itself, to prevent endless recursion. If the configuration contains this flag from the beginning, the extension is not
-        // applied at all.
-        configuration.skipBodies = false
     }
 }

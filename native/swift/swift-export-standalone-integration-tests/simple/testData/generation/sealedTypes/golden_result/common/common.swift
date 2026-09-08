@@ -17,6 +17,8 @@ public typealias DeprecatedErrorSubClass_SealedType = ExportedKotlinPackages.org
 public typealias DeprecatedWarningSubClass = ExportedKotlinPackages.org.kotlin.foo.DeprecatedWarningSubClass
 @available(*, deprecated, message: "deprecated")
 public typealias DeprecatedWarningSubClass_SealedType = ExportedKotlinPackages.org.kotlin.foo.DeprecatedWarningSubClass_SealedType
+public typealias EnumClassA = ExportedKotlinPackages.org.kotlin.foo.EnumClassA
+public typealias EnumClassB = ExportedKotlinPackages.org.kotlin.foo.EnumClassB
 public typealias InterfaceC = ExportedKotlinPackages.org.kotlin.foo.InterfaceC
 public typealias InterfaceC_SealedType = ExportedKotlinPackages.org.kotlin.foo.InterfaceC_SealedType
 public typealias MyClassA = ExportedKotlinPackages.org.kotlin.foo.MyClassA
@@ -130,7 +132,13 @@ extension ExportedKotlinPackages.org.kotlin.foo.QueryResult {
 @_documentation(visibility: internal)
 extension ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA where Self : ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA {
     public func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA_SealedType {
-        .unknown(.init(self))
+        switch self {
+        case let value as ExportedKotlinPackages.org.kotlin.foo.ClassE: .classE(.init(value))
+        case let value as ExportedKotlinPackages.org.kotlin.foo.InterfaceC: .interfaceC(.init(value))
+        case let value as ExportedKotlinPackages.org.kotlin.foo.SealedClassA: .sealedClassA(value.sealedType())
+        case let value as ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceB: .sealedInterfaceB(.init(value))
+        default: .unknown(.init(self))
+        }
     }
 }
 extension ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA {
@@ -168,6 +176,126 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.org.kotlin.foo._InterfaceC {
 }
 extension ExportedKotlinPackages.org.kotlin.foo {
+    public enum EnumClassA: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
+        case ONE
+        case TWO
+        case THREE
+        public var description: Swift.String {
+            get {
+                switch self {
+                case .ONE: "ONE"
+                case .TWO: "TWO"
+                case .THREE: "THREE"
+                default: fatalError()
+                }
+            }
+        }
+        public var rawValue: Swift.Int32 {
+            get {
+                switch self {
+                case .ONE: 0
+                case .TWO: 1
+                case .THREE: 2
+                default: fatalError()
+                }
+            }
+        }
+        public init?(
+            _ description: Swift.String
+        ) {
+            switch description {
+            case "ONE": self = .ONE
+            case "TWO": self = .TWO
+            case "THREE": self = .THREE
+            default: return nil
+            }
+        }
+        public init?(
+            rawValue: Swift.Int32
+        ) {
+            guard 0..<3 ~= rawValue else { return nil }
+            self = EnumClassA.allCases[Int(rawValue)]
+        }
+        public init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            switch org_kotlin_foo_EnumClassA_ordinal(__externalRCRefUnsafe) {
+            case 0: self = .ONE
+            case 1: self = .TWO
+            case 2: self = .THREE
+            default: fatalError()
+            }
+        }
+        public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+            return switch self {
+            case .ONE: org_kotlin_foo_EnumClassA_ONE()
+            case .TWO: org_kotlin_foo_EnumClassA_TWO()
+            case .THREE: org_kotlin_foo_EnumClassA_THREE()
+            default: fatalError()
+            }
+        }
+    }
+    public enum EnumClassB: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
+        case FOUR
+        case FIVE
+        case SIX
+        public var description: Swift.String {
+            get {
+                switch self {
+                case .FOUR: "FOUR"
+                case .FIVE: "FIVE"
+                case .SIX: "SIX"
+                default: fatalError()
+                }
+            }
+        }
+        public var rawValue: Swift.Int32 {
+            get {
+                switch self {
+                case .FOUR: 0
+                case .FIVE: 1
+                case .SIX: 2
+                default: fatalError()
+                }
+            }
+        }
+        public init?(
+            _ description: Swift.String
+        ) {
+            switch description {
+            case "FOUR": self = .FOUR
+            case "FIVE": self = .FIVE
+            case "SIX": self = .SIX
+            default: return nil
+            }
+        }
+        public init?(
+            rawValue: Swift.Int32
+        ) {
+            guard 0..<3 ~= rawValue else { return nil }
+            self = EnumClassB.allCases[Int(rawValue)]
+        }
+        public init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            switch org_kotlin_foo_EnumClassB_ordinal(__externalRCRefUnsafe) {
+            case 0: self = .FOUR
+            case 1: self = .FIVE
+            case 2: self = .SIX
+            default: fatalError()
+            }
+        }
+        public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+            return switch self {
+            case .FOUR: org_kotlin_foo_EnumClassB_FOUR()
+            case .FIVE: org_kotlin_foo_EnumClassB_FIVE()
+            case .SIX: org_kotlin_foo_EnumClassB_SIX()
+            default: fatalError()
+            }
+        }
+    }
     public enum MySealedClass_SealedType: KotlinRuntimeSupport.SealedType {
         case myClassAInner(ExportedKotlinPackages.org.kotlin.foo.MyClassA.Inner_SealedType)
         case myClassBInner(ExportedKotlinPackages.org.kotlin.foo.MyClassB.Inner_SealedType)
@@ -503,7 +631,11 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         open func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.MySealedClass_SealedType {
-            fatalError("must implement sealedType in subclass")
+            switch self {
+            case let value as ExportedKotlinPackages.org.kotlin.foo.MyClassA.Inner: .myClassAInner(.init(value))
+            case let value as ExportedKotlinPackages.org.kotlin.foo.MyClassB.Inner: .myClassBInner(.init(value))
+            default: fatalError("missing sealedType for \(self)")
+            }
         }
     }
     @available(*, unavailable, message: "Unavailable type(s): ExportedKotlinPackages.org.kotlin.foo.SealedClassDeprecatedError")
@@ -603,7 +735,11 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         open func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedClassA_SealedType {
-            .unknown(.init(self))
+            switch self {
+            case let value as ExportedKotlinPackages.org.kotlin.foo.ClassC: .classC(.init(value))
+            case let value as ExportedKotlinPackages.org.kotlin.foo.SealedClassB: .sealedClassB(value.sealedType())
+            default: .unknown(.init(self))
+            }
         }
         @_disfavoredOverload
         public final func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA_SealedType {
@@ -618,7 +754,10 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         open func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedClassB_SealedType {
-            fatalError("must implement sealedType in subclass")
+            switch self {
+            case let value as ExportedKotlinPackages.org.kotlin.foo.ClassD: .classD(.init(value))
+            default: fatalError("missing sealedType for \(self)")
+            }
         }
         @_disfavoredOverload
         public final override func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedClassA_SealedType {
@@ -635,7 +774,9 @@ extension ExportedKotlinPackages.org.kotlin.foo {
         }
         @available(*, unavailable, message: "unavailable")
         open func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedClassDeprecatedError_SealedType {
-            .unknown(.init(self))
+            switch self {
+            default: .unknown(.init(self))
+            }
         }
     }
     @available(*, deprecated, message: "deprecated")
@@ -648,7 +789,10 @@ extension ExportedKotlinPackages.org.kotlin.foo {
         }
         @available(*, deprecated, message: "deprecated")
         open func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedClassDeprecatedWarning_SealedType {
-            fatalError("must implement sealedType in subclass")
+            switch self {
+            case let value as ExportedKotlinPackages.org.kotlin.foo.NonDeprecatedSubClassB: .nonDeprecatedSubClassB(.init(value))
+            default: fatalError("missing sealedType for \(self)")
+            }
         }
     }
     open class SealedClassNonDeprecated: KotlinRuntime.KotlinBase {
@@ -659,7 +803,10 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         open func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedClassNonDeprecated_SealedType {
-            .unknown(.init(self))
+            switch self {
+            case let value as ExportedKotlinPackages.org.kotlin.foo.DeprecatedWarningSubClass: .deprecatedWarningSubClass(.init(value))
+            default: .unknown(.init(self))
+            }
         }
     }
     open class SealedNonOptInClass: KotlinRuntime.KotlinBase {
@@ -670,7 +817,11 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         open func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedNonOptInClass_SealedType {
-            fatalError("must implement sealedType in subclass")
+            switch self {
+            case let value as ExportedKotlinPackages.org.kotlin.foo.NonSealedNonOptInClassA: .nonSealedNonOptInClassA(.init(value))
+            case let value as ExportedKotlinPackages.org.kotlin.foo.SealedOptInClass: .sealedOptInClass(value.sealedType())
+            default: fatalError("missing sealedType for \(self)")
+            }
         }
     }
     @_spi(org$kotlin$foo$OptInA)
@@ -683,7 +834,11 @@ extension ExportedKotlinPackages.org.kotlin.foo {
         }
         @_spi(org$kotlin$foo$OptInA)
         open func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedOptInClass_SealedType {
-            fatalError("must implement sealedType in subclass")
+            switch self {
+            case let value as ExportedKotlinPackages.org.kotlin.foo.NonSealedNonOptInClassB: .nonSealedNonOptInClassB(.init(value))
+            case let value as ExportedKotlinPackages.org.kotlin.foo.NonSealedOptInClass: .nonSealedOptInClass(.init(value))
+            default: fatalError("missing sealedType for \(self)")
+            }
         }
         @_disfavoredOverload
         public final override func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedNonOptInClass_SealedType {

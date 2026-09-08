@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.descendantsOfType
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinAnnotationsResolver
+import org.jetbrains.kotlin.analysis.api.platform.declarations.createAnnotationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
@@ -23,10 +26,12 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.registeredPluginAnnotations
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
@@ -109,6 +114,59 @@ class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("testData/generic
                 renderTarget(lastFirElement),
             )
         }
+    }
+
+    /**
+     * A regression test for KT-88945.
+     *
+     * [KotlinAnnotationsResolver] is the only annotation source for [FirPredicateBasedProvider] as long as the FIR annotations
+     * of a declaration are not resolved yet, so a gap between the two makes plugin-generated declarations
+     * depend on the amount of the performed resolution.
+     */
+    @Test
+    fun redeclaredPluginAnnotation(ktFile: KtFile, testServices: TestServices) {
+        assertAnnotationsOnMyClass(ktFile, testServices, "org.jetbrains.kotlin.plugin.sandbox.CompanionWithFoo")
+    }
+
+    /**
+     * A regression test for KT-88945.
+     *
+     * @see redeclaredPluginAnnotation
+     */
+    @Test
+    fun redeclaredAnnotationTypeAlias(ktFile: KtFile, testServices: TestServices) {
+        assertAnnotationsOnMyClass(ktFile, testServices, "test.MyAnnotation")
+    }
+
+    /**
+     * A regression test for KT-88945.
+     *
+     * @see redeclaredPluginAnnotation
+     */
+    @Test
+    fun qualifiedAnnotationTypeAlias(ktFile: KtFile, testServices: TestServices) {
+        assertAnnotationsOnMyClass(ktFile, testServices, "other.MyAnnotation")
+    }
+
+    /**
+     * A regression test for KT-88945.
+     *
+     * @see redeclaredPluginAnnotation
+     */
+    @Test
+    fun cyclicAnnotationTypeAlias(ktFile: KtFile, testServices: TestServices) {
+        assertAnnotationsOnMyClass(ktFile, testServices, "test.MyAnnotation")
+    }
+
+    private fun assertAnnotationsOnMyClass(ktFile: KtFile, testServices: TestServices, vararg expected: String) {
+        val project = ktFile.project
+        val ktClass = ktFile.declarations.single { it.name == "MyClass" } as KtClass
+        val annotationsResolver = project.createAnnotationResolver(GlobalSearchScope.allScope(project))
+
+        testServices.assertions.assertEquals(
+            expected = expected.mapTo(mutableSetOf()) { ClassId.topLevel(FqName(it)) },
+            actual = annotationsResolver.annotationsOnDeclaration(ktClass),
+        )
     }
 
     @Test

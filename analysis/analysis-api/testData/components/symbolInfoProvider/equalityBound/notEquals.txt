@@ -1,0 +1,4 @@
+FUNCTION:
+  /A.something
+EQUALITY_BOUND:
+  null

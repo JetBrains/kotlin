@@ -292,9 +292,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
                     assertOutputContains("Invalid maximum heap size: -Xmxqwerty")
                     assertOutputContains("Using fallback strategy (kotlin.daemon.useFallbackStrategy=true): Compile without Kotlin daemon")
                 } else if (executionStrategy == KotlinCompilerExecutionStrategy.DAEMON) {
-                    // 256m is the default value for Gradle 5.0+
-                    val defaultJvmSettingsForGivenGradleVersion =
-                        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) "256" else "384"
+                    val defaultJvmSettingsForGivenGradleVersion = "384"
                     assertKotlinDaemonJvmOptions(
                         listOf("-XX:MaxMetaspaceSize=${defaultJvmSettingsForGivenGradleVersion}m", "-ea")
                     )
@@ -358,6 +356,7 @@ class NoActiveThreadsAfterCompilerInvocationIT : KGPDaemonsBaseTest() {
                 // model builder below breaks configuration cache in Gradle 9+,
                 // making it configuration cache friendly isn't necessary for this test
                 configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
                 compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS
             )
         ) {

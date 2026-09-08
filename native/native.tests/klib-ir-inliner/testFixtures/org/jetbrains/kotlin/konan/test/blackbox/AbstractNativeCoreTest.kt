@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.TwoStageTestConfigurationBuilder
 import org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerNativeTest
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerNativeTest
+import org.jetbrains.kotlin.test.services.ReflectionPackageNameAnnotation
 import org.jetbrains.kotlin.test.services.TestServices
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -53,6 +54,7 @@ abstract class AbstractTwoStageNativeCoreTest : AbstractTwoStageKotlinCompilerNa
             useAdditionalService { // Register TestRunProvider into TestServices
                 extensionContext.getOrCreateTestRunProvider()
             }
+            useAdditionalService { ReflectionPackageNameAnnotation }
         }
     }
 }

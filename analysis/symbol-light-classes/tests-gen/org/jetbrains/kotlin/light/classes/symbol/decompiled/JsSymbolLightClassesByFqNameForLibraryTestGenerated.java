@@ -1070,6 +1070,18 @@ public class JsSymbolLightClassesByFqNameForLibraryTestGenerated extends Abstrac
     }
 
     @Test
+    @TestMetadata("companionWithFoo.kt")
+    public void testCompanionWithFoo() {
+      run("companionWithFoo.kt");
+    }
+
+    @Test
+    @TestMetadata("companionWithFooInInterface.kt")
+    public void testCompanionWithFooInInterface() {
+      run("companionWithFooInInterface.kt");
+    }
+
+    @Test
     @TestMetadata("companionWithFoo_companionTypeUsedInJava_ReferenceFromKotlin.kt")
     public void testCompanionWithFoo_companionTypeUsedInJava_ReferenceFromKotlin() {
       run("companionWithFoo_companionTypeUsedInJava_ReferenceFromKotlin.kt");

@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.js.tsexport
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
@@ -144,6 +145,11 @@ internal fun KaDeclarationSymbol.isEffectivelyExported(config: TypeScriptExportC
         return false
     }
     if (isExplicitlyExported() || (includingImplicitExport && isJsImplicitExport())) {
+        return true
+    }
+
+    @OptIn(KaIdeApi::class)
+    if (importableFqName in config.additionalExportedDeclarationNames) {
         return true
     }
 
@@ -574,14 +580,16 @@ internal fun KaDeclarationSymbol.exportedVisibility(parent: KaDeclarationSymbol?
         else -> ExportedVisibility.DEFAULT
     }
 
+@OptIn(KaExperimentalApi::class)
 context(_: KaSession)
 internal fun <T : ExportedDeclaration> T.withAttributes(source: KaDeclarationSymbol?, ignoreDoc: Boolean = false): T {
     if (source == null) return this
     if (this is ExportedConstructor && visibility == ExportedVisibility.PRIVATE) return this
 
-    source.getSingleAnnotationArgumentString(StandardClassIds.Annotations.Deprecated)?.let {
-        attributes.add(ExportedAttribute.DeprecatedAttribute(it))
-    }
+    source
+        .getSingleAnnotationArgumentString(StandardClassIds.Annotations.Deprecated)
+        ?.takeIf { source.deprecation?.level != KaDeprecationLevel.HIDDEN }
+        ?.let { attributes.add(ExportedAttribute.DeprecatedAttribute(it)) }
 
     if (source.annotations.contains(JsExportDefault)) {
         attributes.add(ExportedAttribute.DefaultExport)

@@ -281,8 +281,7 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(
     }
 
     configureKlibArtifactsHandlersStep {
-        // TODO KT-87965: Also use KlibAbiDumpAfterInliningVerifyingHandler here to fully turn or IR Inliner checks in all testrunners, inlcluding TS export
-        useHandlers(::KlibBackendDiagnosticsHandler, ::KlibAbiDumpHandler)
+        useHandlers(::KlibBackendDiagnosticsHandler, ::KlibAbiDumpAfterInliningVerifyingHandler, ::KlibAbiDumpHandler)
     }
 
     useFailureSuppressors(

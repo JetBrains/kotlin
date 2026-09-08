@@ -493,7 +493,6 @@ class KotlinGradleIT : KGPBaseTest() {
     }
 
     @DisplayName("KGP dependencies in buildSrc module")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_3)
     @GradleTest
     fun testKotlinPluginDependenciesInBuildSrc(gradleVersion: GradleVersion) {
         project("kotlinPluginDepsInBuildSrc", gradleVersion) {
@@ -658,46 +657,20 @@ class KotlinGradleIT : KGPBaseTest() {
             // Break dependency resolution by providing incompatible custom attributes in the target:
             subProject("projB").buildGradle.appendText("\nkotlin.target.attributes.attribute(targetAttribute, \"bar\")")
             buildAndFail(":projB:compileKotlin") {
-                when {
-                    gradleVersion <= GradleVersion.version(TestVersions.Gradle.G_7_6) -> {
-                        // Attributes may change order in the build output message
-                        val expectedLine = output.lines().find {
-                            it.contains(
-                                "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
-                                        "compatible with Java 17, preferably in the form of class files, " +
-                                        "preferably optimized for standard JVMs, " +
-                                        "and its dependencies declared externally, " +
-                                        "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', "
-                            )
-                        }
-
-                        assertNotNull(expectedLine, "Expected variant failure was not found in the build logs.\n${printBuildOutput()}")
-                        assertTrue(
-                            expectedLine.contains("attribute 'com.example.compilation' with value 'foo'"),
-                            "$expectedLine does not contain expected attribute 'com.example.compilation' with value 'foo'"
-                        )
-                        assertTrue(
-                            expectedLine.contains("attribute 'com.example.target' with value 'bar'"),
-                            "$expectedLine does not contain expected attribute 'com.example.target' with value 'bar'"
-                        )
-                    }
-                    else -> {
-                        // Attributes may come in random order
-                        val projName = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_6)) ":projA" else "':projA'"
-                        val attributeMatchingString = output.lineSequence().find {
-                            it.trimStart().startsWith(
-                                "> No matching variant of project $projName was found. " +
-                                        "The consumer was configured to find a library for use during compile-time, " +
-                                        "compatible with Java 17, preferably in the form of class files, " +
-                                        "preferably optimized for standard JVMs, and its dependencies declared externally, "
-                            )
-                        }
-                        assertNotNull(attributeMatchingString, "Expected variant mismatch string is not found")
-                        assertTrue(attributeMatchingString.contains("attribute 'com.example.compilation' with value 'foo'"))
-                        assertTrue(attributeMatchingString.contains("attribute 'com.example.target' with value 'bar'"))
-                        assertTrue(attributeMatchingString.contains("attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm'"))
-                    }
+                // Attributes may come in random order
+                val projName = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_6)) ":projA" else "':projA'"
+                val attributeMatchingString = output.lineSequence().find {
+                    it.trimStart().startsWith(
+                        "> No matching variant of project $projName was found. " +
+                                "The consumer was configured to find a library for use during compile-time, " +
+                                "compatible with Java 17, preferably in the form of class files, " +
+                                "preferably optimized for standard JVMs, and its dependencies declared externally, "
+                    )
                 }
+                assertNotNull(attributeMatchingString, "Expected variant mismatch string is not found")
+                assertTrue(attributeMatchingString.contains("attribute 'com.example.compilation' with value 'foo'"))
+                assertTrue(attributeMatchingString.contains("attribute 'com.example.target' with value 'bar'"))
+                assertTrue(attributeMatchingString.contains("attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm'"))
             }
 
             // And using the compilation attributes (fix the target attributes first):
@@ -709,46 +682,20 @@ class KotlinGradleIT : KGPBaseTest() {
                 """.trimIndent()
             )
             buildAndFail(":projB:compileKotlin") {
-                when {
-                    gradleVersion <= GradleVersion.version(TestVersions.Gradle.G_7_6) -> {
-                        // Attributes may change order in the build output message
-                        val expectedLine = output.lines().find {
-                            it.contains(
-                                "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
-                                        "compatible with Java 17, preferably in the form of class files, " +
-                                        "preferably optimized for standard JVMs, " +
-                                        "and its dependencies declared externally, " +
-                                        "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', "
-                            )
-                        }
-
-                        assertNotNull(expectedLine, "Expected variant failure was not found in the build logs.\n${printBuildOutput()}")
-                        assertTrue(
-                            expectedLine.contains("attribute 'com.example.compilation' with value 'bar'"),
-                            "$expectedLine does not contain expected attribute 'com.example.compilation' with value 'bar'"
-                        )
-                        assertTrue(
-                            expectedLine.contains("attribute 'com.example.target' with value 'foo'"),
-                            "$expectedLine does not contain expected attribute 'com.example.target' with value 'foo'"
-                        )
-                    }
-                    else -> {
-                        // Attributes may come in random order
-                        val projName = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_6)) ":projA" else "':projA'"
-                        val attributeMatchingString = output.lineSequence().find {
-                            it.contains(
-                                "No matching variant of project $projName was found. " +
-                                        "The consumer was configured to find a library for use during compile-time, " +
-                                        "compatible with Java 17, preferably in the form of class files, " +
-                                        "preferably optimized for standard JVMs, and its dependencies declared externally, "
-                            )
-                        }
-                        assertNotNull(attributeMatchingString, "Expected variant mismatch string is not found")
-                        assertTrue(attributeMatchingString.contains("attribute 'com.example.compilation' with value 'bar'"))
-                        assertTrue(attributeMatchingString.contains("attribute 'com.example.target' with value 'foo'"))
-                        assertTrue(attributeMatchingString.contains("attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm'"))
-                    }
+                // Attributes may come in random order
+                val projName = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_6)) ":projA" else "':projA'"
+                val attributeMatchingString = output.lineSequence().find {
+                    it.contains(
+                        "No matching variant of project $projName was found. " +
+                                "The consumer was configured to find a library for use during compile-time, " +
+                                "compatible with Java 17, preferably in the form of class files, " +
+                                "preferably optimized for standard JVMs, and its dependencies declared externally, "
+                    )
                 }
+                assertNotNull(attributeMatchingString, "Expected variant mismatch string is not found")
+                assertTrue(attributeMatchingString.contains("attribute 'com.example.compilation' with value 'bar'"))
+                assertTrue(attributeMatchingString.contains("attribute 'com.example.target' with value 'foo'"))
+                assertTrue(attributeMatchingString.contains("attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm'"))
             }
         }
     }
@@ -853,7 +800,6 @@ class KotlinGradleIT : KGPBaseTest() {
 
     @DisplayName("KT-73090: BTA does not break Gradle convention plugins compilation")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_3)
     fun testConventionPlugins(gradleVersion: GradleVersion) {
         project("convention-plugin", gradleVersion, buildOptions = defaultBuildOptions.copy(runViaBuildToolsApi = true)) {
             build("help") {

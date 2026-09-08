@@ -429,7 +429,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
                 // BTA does not support -d configured like a regular argument, it's configured on operation creation
                 arguments.setDestination(null); // TODO: KT-85393 refactor setting up arguments to avoid this hack
                 List<String> myArguments = ArgumentUtils.convertArgumentsToStringList(arguments);
-                compilationOperation.getCompilerArguments().applyArgumentStrings(myArguments);
+                compilationOperation.getCompilerArguments().applyCommandLineArguments(myArguments);
                 CompilationResult result = buildSession.executeOperation(compilationOperation.build(), executionPolicy, kotlinMavenLogger);
                 resultHandlers.forEach(handler -> handler.accept(result));
                 switch (result) {

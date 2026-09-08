@@ -14,7 +14,7 @@ KtFile: conditionLogic.kt
       PsiElement(DOT)('.')
       PsiElement(MUL)('*')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -111,7 +111,7 @@ KtFile: conditionLogic.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -204,7 +204,7 @@ KtFile: conditionLogic.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -297,7 +297,7 @@ KtFile: conditionLogic.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -438,7 +438,7 @@ KtFile: conditionLogic.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -555,7 +555,7 @@ KtFile: conditionLogic.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -676,7 +676,7 @@ KtFile: conditionLogic.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -813,7 +813,7 @@ KtFile: conditionLogic.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -950,7 +950,7 @@ KtFile: conditionLogic.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -1099,7 +1099,7 @@ KtFile: conditionLogic.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -1225,7 +1225,7 @@ KtFile: conditionLogic.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -1351,7 +1351,7 @@ KtFile: conditionLogic.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -1512,7 +1512,7 @@ KtFile: conditionLogic.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')

@@ -48,7 +48,7 @@ fun Test(z: Int, x: Int, y: Result<Int>, %composer: Composer?, %changed: Int) {
       } else {
         %composer.skipToGroupEnd()
       }
-    }, %composer, 0b00110110), %composer, 0b0110)
+    }, %composer, 0b00110110) as Function2<Composer, Int, Unit>, %composer, 0b0110)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

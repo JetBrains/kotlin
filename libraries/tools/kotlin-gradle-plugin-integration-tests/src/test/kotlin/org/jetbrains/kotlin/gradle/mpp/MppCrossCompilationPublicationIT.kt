@@ -99,9 +99,6 @@ class MppCrossCompilationPublicationIT : KGPBaseTest() {
 
     @DisplayName("KT-87394: cross compilation enabled in consumer but disabled in a project dependency, publish consumer")
     @GradleTest
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_14],
-    )
     @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
     fun testCrossCompilationDisabledInProjectDependency(
         gradleVersion: GradleVersion,

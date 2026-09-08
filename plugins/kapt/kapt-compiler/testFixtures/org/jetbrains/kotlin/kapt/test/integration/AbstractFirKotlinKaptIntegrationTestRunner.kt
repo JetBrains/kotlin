@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.kapt.test.integration
 
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.kapt.base.util.doOpenInternalPackagesIfRequired
 import org.jetbrains.kotlin.kapt.test.JvmCompilerWithKaptFacade
 import org.jetbrains.kotlin.kapt.test.KaptContextBinaryArtifact
@@ -27,7 +26,6 @@ import javax.lang.model.element.TypeElement
 class AbstractFirKotlinKaptIntegrationTestRunner(
     private val processorOptions: Map<String, String>,
     private val supportedAnnotations: List<String>,
-    private val additionalPluginExtension: IrGenerationExtension?,
     private val process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, FirKaptExtensionForTests) -> Unit
 ) : AbstractKotlinCompilerJvmTest() {
 
@@ -53,7 +51,7 @@ class AbstractFirKotlinKaptIntegrationTestRunner(
             { FirKaptIntegrationEnvironmentConfigurator(it, processorOptions, supportedAnnotations, process) }
         )
 
-        facadeStep { services -> JvmCompilerWithKaptFacade(services, additionalPluginExtension) }
+        facadeStep(::JvmCompilerWithKaptFacade)
         handlersStep(KaptContextBinaryArtifact.Kind, CompilationStage.FIRST) {
             useHandlers(::FirKaptIntegrationStubsDumpHandler, ::FirProcessorWasCalledHandler)
         }

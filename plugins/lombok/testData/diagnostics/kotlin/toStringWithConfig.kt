@@ -22,7 +22,20 @@ class DerivedCallSuperTrue(val ownProp: String) : Base(10)
 @ToString(callSuper = false)
 class DerivedCallSuperFalse(val ownProp: String) : Base(10)
 
+// The `@Exclude` is redundant through the config alone: `lombok.toString.onlyExplicitlyIncluded` is what the
+// annotation argument falls back to, so it leaves a property out whether or not `@Exclude` says so, KT-88655.
+@ToString
+class ExcludedUnderConfiguredOnlyExplicitlyIncluded(
+    <!EXCLUDE_IS_REDUNDANT_FOR_ONLY_EXPLICITLY_INCLUDED!>@ToString.Exclude<!> val excluded: String,
+    @ToString.Include val included: String,
+)
+
+// No warning: the argument outranks the config, and `false` puts every property back in.
+@ToString(onlyExplicitlyIncluded = false)
+class ExcludedWithArgumentOverridingConfig(@ToString.Exclude val excluded: String, val included: String)
+
 // FILE: lombok.config
 
 lombok.toString.callSuper=warn
 lombok.toString.doNotUseGetters=true
+lombok.toString.onlyExplicitlyIncluded=true

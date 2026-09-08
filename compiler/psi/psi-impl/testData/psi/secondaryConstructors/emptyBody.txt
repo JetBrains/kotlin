@@ -22,7 +22,7 @@ KtFile: emptyBody.kt
           CONSTRUCTOR_DELEGATION_REFERENCE
             <empty list>
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')

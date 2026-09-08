@@ -75,7 +75,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
                 val fieldAccessors = lombokService.getAccessors(field.symbol)
 
                 val getterName = getter?.let { computeAccessorName(field, it, fieldAccessors, classAccessors, config) }
-                val getterVisibility = getter?.visibility
+                val getterVisibility = getter?.accessLevel?.toVisibility(classSymbol)
 
                 if (getterName != null &&
                     explicitlyDeclaredFunctions[getterName]?.valueParameterSymbols?.isEmpty() != true &&
@@ -95,7 +95,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
                 }
 
                 val setterName = setter?.let { computeAccessorName(field, it, fieldAccessors, classAccessors, config) }
-                val setterVisibility = setter?.visibility
+                val setterVisibility = setter?.accessLevel?.toVisibility(classSymbol)
 
                 if (setterName != null &&
                     explicitlyDeclaredFunctions[setterName].let { it?.valueParameterSymbols?.size != 1 } &&
@@ -179,7 +179,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
         classAccessors: Accessors?,
         config: GlobalConfig,
     ): Name? {
-        if (accessorInfo.visibility == null) return null
+        if (accessorInfo.accessLevel.toVisibility(field.symbol) == null) return null
 
         val prefixes = fieldAccessors?.prefix ?: classAccessors?.prefix ?: config.accessorsPrefix
         // Don't generate the accessor if the field doesn't match any provided prefix

@@ -46,6 +46,7 @@ internal const val KOTLIN_TEXT = "kotlin.text"
 
 internal val ANNOTATION_EXPERIMENTAL = ClassName(API_ARGUMENTS_PACKAGE, "ExperimentalCompilerArgument")
 internal val ANNOTATION_USE_FROM_IMPL_RESTRICTED = ClassName("org.jetbrains.kotlin.buildtools.internal", "UseFromImplModuleRestricted")
+internal val ANNOTATION_DELICATE_BUILDTOOLS_API = ClassName("org.jetbrains.kotlin.buildtools.api", "DelicateBuildToolsApi")
 
 internal const val KDOC_SINCE = "@since"
 internal const val KDOC_SINCE_2_3_0 = "$KDOC_SINCE 2.3.0"
@@ -104,8 +105,7 @@ internal fun BtaCompilerArgument<*>.extractName(): String = name.uppercase().rep
 }
 
 internal fun KClass<*>.toBtaEnumClassName(): ClassName = ClassName(API_ENUMS_PACKAGE, simpleName!!)
-
-internal val TypeName.isGeneratedEnum: Boolean get() = (this as? ClassName)?.packageName?.startsWith(API_ENUMS_PACKAGE) ?: false
+internal fun KClass<*>.toBtaImplEnumClassName(targetPackage: String): ClassName = ClassName("$targetPackage.enums", simpleName!!)
 
 internal fun createGeneratedFileAppendable(): StringBuilder = StringBuilder(GeneratorsFileUtil.GENERATED_MESSAGE_PREFIX)
     .appendLine("the README.md file").appendLine(GeneratorsFileUtil.GENERATED_MESSAGE_SUFFIX).appendLine()

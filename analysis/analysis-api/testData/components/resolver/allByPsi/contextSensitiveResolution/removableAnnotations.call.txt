@@ -53,7 +53,7 @@ KtDeclarationModifierList(161,175): '@Anno(Foo.BAR)'
   null
 
 KtAnnotationEntry(161,175): '@Anno(Foo.BAR)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -86,7 +86,7 @@ KtAnnotationEntry(161,175): '@Anno(Foo.BAR)'
       }
 
 KtConstructorCalleeExpression(162,166): 'Anno'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -125,7 +125,7 @@ KtUserType(162,166): 'Anno'
   null
 
 KtNameReferenceExpression(162,166): 'Anno'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -164,7 +164,7 @@ KtValueArgument(167,174): 'Foo.BAR'
   null
 
 KtDotQualifiedExpression(167,174): 'Foo.BAR'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -187,7 +187,7 @@ KtNameReferenceExpression(167,170): 'Foo'
   null
 
 KtNameReferenceExpression(171,174): 'BAR'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

@@ -6,6 +6,7 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
+import java.lang.reflect.Method
 import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 import kotlin.LazyThreadSafetyMode.PUBLICATION
@@ -18,7 +19,6 @@ import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
 import kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext
 import kotlin.reflect.jvm.internal.types.areEqualKTypes
 import kotlin.reflect.jvm.javaField
-import kotlin.reflect.jvm.javaMethod
 
 private object CovariantOverrideComparator : Comparator<ReflectKCallable<*>> {
     override fun compare(a: ReflectKCallable<*>, b: ReflectKCallable<*>): Int {
@@ -86,8 +86,8 @@ internal fun computeFakeOverrideMembersForName(kClass: KClassImpl<*>, name: Stri
                         "Supertype '$supertype' appears non-denotable in class '$kClass'"
             )
         val substitutor = KTypeSubstitutor.create(supertype)
-        val supertypeMembers = supertypeKClass.getFakeOverrideMembersByName(name) // Recursive call
-        for ((_, notSubstitutedMember) in supertypeMembers) {
+        val supertypeMembers = getSupertypeMembersByName(supertype, supertypeKClass, name) // Recursive call
+        for (notSubstitutedMember in supertypeMembers) {
             val overriddenStorage = notSubstitutedMember.overriddenStorage
                 .withChainedClassTypeParametersSubstitutor(substitutor)
                 .copy(
@@ -151,7 +151,7 @@ internal fun computeOverriddenFunctions(
     for (supertype in container.supertypes) {
         val supertypeKClass = supertype.classifier as? KClassImpl<*> ?: continue
         val substitutor = KTypeSubstitutor.create(supertype)
-        for ((_, notSubstitutedMember) in supertypeKClass.getFakeOverrideMembersByName(signature.name)) {
+        for (notSubstitutedMember in getSupertypeMembersByName(supertype, supertypeKClass, signature.name)) {
             if (notSubstitutedMember !is ReflectKFunction) continue
             val overriddenStorage = notSubstitutedMember.overriddenStorage
                 .withChainedClassTypeParametersSubstitutor(substitutor)
@@ -168,6 +168,17 @@ internal fun computeOverriddenFunctions(
         }
     }
     return result
+}
+
+private fun getSupertypeMembersByName(supertype: KType, supertypeKClass: KClassImpl<*>, name: String): Collection<ReflectKCallable<*>> {
+    // There are no KClass instances for suspend function types before KT-79225, so we create suspend invoke manually.
+    if (name == "invoke" && (supertype as? AbstractKType)?.isSuspendFunctionType == true) {
+        val functionKmClass = supertypeKClass.kmClass
+            ?: throw KotlinReflectionInternalError("No metadata found for function class '$supertypeKClass'")
+        val invokeKmFunction = createSuspendFunctionInvoke(supertype.arguments.size - 1, functionKmClass)
+        return listOf(createUnboundFunction(invokeKmFunction, supertypeKClass))
+    }
+    return supertypeKClass.getFakeOverrideMembersByName(name).values
 }
 
 private val modalityIntersectionOverrideComparator: Comparator<ReflectKCallable<*>> = compareBy(
@@ -199,13 +210,14 @@ internal fun <T : EqualityMode> ReflectKCallable<*>.toEquatableCallableSignature
         this is KFunction<*> -> SignatureKind.FUNCTION
         else -> error("Unknown kind for ${this::class}")
     }
+    val isSuspend = (this as? KFunction<*>)?.isSuspend == true
     val functionJvmSignature = (this as? ReflectKFunction)?.signature
     val jvmNameIfFunction = functionJvmSignature?.substringBeforeLast('(')
-    val javaParameterTypes = functionJvmSignature?.let {
-        container.jClass.safeClassLoader.parseAndLoadDescriptor(
-            it.substring(jvmNameIfFunction!!.length, it.length),
-            loadReturnType = false,
-        ).parameters
+    val functionJvmDescriptor = functionJvmSignature?.substring(jvmNameIfFunction!!.length)
+    // JVM signature of suspend functions has a continuation parameter, which is absent in `kotlinParameterTypes`, so we drop it to keep
+    // Java and Kotlin parameter lists aligned.
+    val javaParameterTypes = functionJvmDescriptor?.let {
+        container.jClass.safeClassLoader.parseAndLoadDescriptor(it, loadReturnType = false).parameters.dropContinuationIfSuspend(isSuspend)
     }.orEmpty()
     return EquatableCallableSignature(
         kind,
@@ -214,11 +226,35 @@ internal fun <T : EqualityMode> ReflectKCallable<*>.toEquatableCallableSignature
         typeParameters,
         kotlinParameterTypes,
         javaParameterTypes,
-        { (this as? ReflectKFunction)?.javaMethod?.genericParameterTypes.orEmpty().toList() },
+        {
+            // Workaround KT-13077: `javaMethod` doesn't work for builtins, so find the method manually, falling back to erased types.
+            val method = when (this) {
+                is JavaKNamedFunction -> jMethod
+                is ReflectKFunction -> findOriginalJavaMethod(jvmNameIfFunction!!, javaParameterTypes)
+                else -> null
+            }
+            method?.genericParameterTypes?.toList()?.dropContinuationIfSuspend(isSuspend) ?: javaParameterTypes
+        },
+        isSuspend,
         isStatic,
         equalityMode,
     )
 }
+
+// Returns the same method as `javaMethod`, unless the latter is a bridge method, in which case, for a fake override, returns the Java
+// method of the original declaration in the class where the member is really declared. For example, for the fake override `invoke` in
+// a Java class implementing `Function1<String, Integer>`, `javaMethod` returns the synthetic bridge `invoke(Object): Object` declared
+// in the Java class, whose generic parameter types are erased, while this property returns `Function1.invoke(P1)` whose generic
+// parameter type is the type variable `P1`.
+private fun ReflectKFunction.findOriginalJavaMethod(name: String, parameterTypes: List<Class<*>>): Method? {
+    val method = container.findMethodBySignature(name, parameterTypes, returnType = null) ?: return null
+    if (!method.isBridge) return method
+    val originalContainer = overriddenStorage.originalContainerIfFakeOverride ?: return method
+    val jvmName = signature.substringBeforeLast('(')
+    return originalContainer.findMethodBySignature(jvmName, signature.substring(jvmName.length)) ?: method
+}
+
+private fun <T> List<T>.dropContinuationIfSuspend(isSuspend: Boolean): List<T> = if (isSuspend) dropLast(1) else this
 
 internal val Class<*>.isKotlinClassOrPackage: Boolean
     get() = getAnnotation(Metadata::class.java) != null
@@ -263,18 +299,22 @@ internal class EquatableCallableSignature<T : EqualityMode>(
     val kotlinParameterTypes: List<KType>,
     val javaErasedParameterTypes: List<Class<*>>,
     private val computeJavaGenericParameterTypes: () -> List<Type>,
+    val isSuspend: Boolean,
     val isStatic: Boolean,
     val equalityMode: T,
 ) {
     private val javaGenericParameterTypes: List<Type> by lazy(PUBLICATION) {
         computeJavaGenericParameterTypes().also {
-            check(javaErasedParameterTypes.size == it.size) {
-                "javaErasedParameterTypes.size (${javaErasedParameterTypes.size}) and " +
-                        "javaGenericParameterTypes.size (${it.size}) must be equal. " +
+            check(it.size == javaErasedParameterTypes.size && javaErasedParameterTypes.size == kotlinParameterTypes.size) {
+                "javaGenericParameterTypes.size (${it.size}), javaErasedParameterTypes.size (${javaErasedParameterTypes.size}) and " +
+                        "kotlinParameterTypes.size (${kotlinParameterTypes.size}) must be equal. " +
                         "For member: '$name'"
             }
         }
     }
+
+    private val isJavaFunctionSignature: Boolean
+        get() = equalityMode == EqualityMode.JavaSignature && kind == SignatureKind.FUNCTION
 
     init {
         check(
@@ -298,14 +338,14 @@ internal class EquatableCallableSignature<T : EqualityMode>(
             kotlinParameterTypes,
             javaErasedParameterTypes,
             computeJavaGenericParameterTypes,
+            isSuspend,
             isStatic,
             equalityMode
         )
 
-    override fun hashCode(): Int = when (equalityMode == EqualityMode.JavaSignature && kind == SignatureKind.FUNCTION) {
-        true -> arrayOf<Any>(kind, kotlinParameterTypes.size, isStatic, jvmNameIfFunction ?: "").contentHashCode()
-        false -> arrayOf<Any>(kind, kotlinParameterTypes.size, isStatic, name).contentHashCode()
-    }
+    override fun hashCode(): Int =
+        arrayOf<Any>(kind, kotlinParameterTypes.size, isStatic, if (isJavaFunctionSignature) jvmNameIfFunction ?: "" else name)
+            .contentHashCode()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -314,54 +354,55 @@ internal class EquatableCallableSignature<T : EqualityMode>(
             "Equality modes must be the same for member '$name'. Please recreate signatures on inheritance"
         }
         if (kind != other.kind) return false
+        if (isSuspend != other.isSuspend) return false
         if (isStatic != other.isStatic) return false
         if (kotlinParameterTypes.size != other.kotlinParameterTypes.size) return false
-        if (equalityMode == EqualityMode.JavaSignature && kind == SignatureKind.FUNCTION) {
-            if (jvmNameIfFunction != other.jvmNameIfFunction) return false
-            if (javaErasedParameterTypes.size != other.javaErasedParameterTypes.size) return false
-            check(javaErasedParameterTypes.size == kotlinParameterTypes.size) {
-                "javaErasedParameterTypes.size (${javaErasedParameterTypes.size}) and " +
-                        "kotlinParameterTypes.size (${kotlinParameterTypes.size}) must be equal for member '$name'"
-            }
-            for (i in javaErasedParameterTypes.indices) {
-                val javaTypeA = javaGenericParameterTypes[i]
-                val javaClassA = javaErasedParameterTypes[i]
-                val javaTypeB = other.javaGenericParameterTypes[i]
-                val javaClassB = other.javaErasedParameterTypes[i]
-                val isATypeParameterFromClass = (javaTypeA as? TypeVariable<*>)?.genericDeclaration is Class<*>
-                val isBTypeParameterFromClass = (javaTypeB as? TypeVariable<*>)?.genericDeclaration is Class<*>
-                if (isATypeParameterFromClass || isBTypeParameterFromClass) {
-                    if (javaClassA.isPrimitive != javaClassB.isPrimitive) return false
+        return if (isJavaFunctionSignature) equalsByJavaSignature(other) else equalsByKotlinSignature(other)
+    }
 
+    private fun equalsByJavaSignature(other: EquatableCallableSignature<*>): Boolean =
+        jvmNameIfFunction == other.jvmNameIfFunction &&
+                javaErasedParameterTypes.indices.all { i -> areEqualJavaParameterTypes(i, other) }
+
+    private fun areEqualJavaParameterTypes(i: Int, other: EquatableCallableSignature<*>): Boolean =
+        if (javaGenericParameterTypes[i].isClassTypeParameter || other.javaGenericParameterTypes[i].isClassTypeParameter) {
+            javaErasedParameterTypes[i].isPrimitive == other.javaErasedParameterTypes[i].isPrimitive &&
                     // Since we don't have type substitutors for Java types, here we abuse KTypes for this purpose
-                    if (!areEqualKTypes(kotlinParameterTypes[i], other.kotlinParameterTypes[i])) return false
-                } else {
-                    if (javaClassA != javaClassB) return false
-                }
-            }
+                    areEqualKTypes(kotlinParameterTypes[i], other.kotlinParameterTypes[i])
         } else {
-            if (name != other.name) return false
-            val functionTypeParametersEliminator = typeParameters.substitutedWith(other.typeParameters) ?: return false
-            for (i in typeParameters.indices) {
-                val typeParameterA = typeParameters[i]
-                val typeParameterB = other.typeParameters[i]
-                if (typeParameterA.upperBounds.size != typeParameterB.upperBounds.size) return false
-                val equalUpperBounds = typeParameterA.upperBounds
-                    .map { functionTypeParametersEliminator.substituteTopLevelType(it, name) }
-                    .sortedUpperBounds(memberNameForDebug = name)
-                    .zip(typeParameterB.upperBounds.sortedUpperBounds(memberNameForDebug = other.name))
-                    .all { areEqualKTypes(it.first, it.second) }
-                if (!equalUpperBounds) return false
-            }
-            for (i in kotlinParameterTypes.indices) {
-                val a = functionTypeParametersEliminator.substituteTopLevelType(kotlinParameterTypes[i], name)
-                val b = other.kotlinParameterTypes[i]
-                if (!areEqualKTypes(a, b)) return false
-            }
+            javaErasedParameterTypes[i] == other.javaErasedParameterTypes[i]
+        }
+
+    private fun equalsByKotlinSignature(other: EquatableCallableSignature<*>): Boolean {
+        if (name != other.name) return false
+        val functionTypeParametersEliminator = typeParameters.substitutedWith(other.typeParameters) ?: return false
+        if (!areEqualTypeParameterBounds(functionTypeParametersEliminator, other)) return false
+        for (i in kotlinParameterTypes.indices) {
+            val a = functionTypeParametersEliminator.substituteTopLevelType(kotlinParameterTypes[i], name)
+            val b = other.kotlinParameterTypes[i]
+            if (!areEqualKTypes(a, b)) return false
+        }
+        return true
+    }
+
+    private fun areEqualTypeParameterBounds(substitutor: KTypeSubstitutor, other: EquatableCallableSignature<*>): Boolean {
+        for (i in typeParameters.indices) {
+            val typeParameterA = typeParameters[i]
+            val typeParameterB = other.typeParameters[i]
+            if (typeParameterA.upperBounds.size != typeParameterB.upperBounds.size) return false
+            val equalUpperBounds = typeParameterA.upperBounds
+                .map { substitutor.substituteTopLevelType(it, name) }
+                .sortedUpperBounds(memberNameForDebug = name)
+                .zip(typeParameterB.upperBounds.sortedUpperBounds(memberNameForDebug = other.name))
+                .all { areEqualKTypes(it.first, it.second) }
+            if (!equalUpperBounds) return false
         }
         return true
     }
 }
+
+private val Type.isClassTypeParameter: Boolean
+    get() = this is TypeVariable<*> && genericDeclaration is Class<*>
 
 /**
  * Those upper bounds are already substituted, so equal lists of upper bounds must also have equal names.

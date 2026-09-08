@@ -131,7 +131,7 @@ KtDestructuringDeclaration(148,249): 'val (left: @Anno(0 + constant) List<@Anno(
   null
 
 KtDestructuringDeclarationEntry(153,234): 'left: @Anno(0 + constant) List<@Anno(1 + constant) List<@Anno(2 + constant) Int>>'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -157,7 +157,7 @@ KtDeclarationModifierList(159,178): '@Anno(0 + constant)'
   null
 
 KtAnnotationEntry(159,178): '@Anno(0 + constant)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
         contextArgumentMapping = {}
@@ -193,7 +193,7 @@ KtAnnotationEntry(159,178): '@Anno(0 + constant)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
 KtConstructorCalleeExpression(160,164): 'Anno'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
         contextArgumentMapping = {}
@@ -235,7 +235,7 @@ KtUserType(160,164): 'Anno'
   null
 
 KtNameReferenceExpression(160,164): 'Anno'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
         contextArgumentMapping = {}
@@ -277,7 +277,7 @@ KtValueArgument(165,177): '0 + constant'
   null
 
 KtBinaryExpression(165,177): '0 + constant'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -316,7 +316,7 @@ KtConstantExpression(165,166): '0'
   null
 
 KtOperationReferenceExpression(167,168): '+'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -352,7 +352,7 @@ KtOperationReferenceExpression(167,168): '+'
       }
 
 KtNameReferenceExpression(169,177): 'constant'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -387,7 +387,7 @@ KtDeclarationModifierList(184,203): '@Anno(1 + constant)'
   null
 
 KtAnnotationEntry(184,203): '@Anno(1 + constant)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
         contextArgumentMapping = {}
@@ -423,7 +423,7 @@ KtAnnotationEntry(184,203): '@Anno(1 + constant)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
 KtConstructorCalleeExpression(185,189): 'Anno'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
         contextArgumentMapping = {}
@@ -465,7 +465,7 @@ KtUserType(185,189): 'Anno'
   null
 
 KtNameReferenceExpression(185,189): 'Anno'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
         contextArgumentMapping = {}
@@ -507,7 +507,7 @@ KtValueArgument(190,202): '1 + constant'
   null
 
 KtBinaryExpression(190,202): '1 + constant'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -546,7 +546,7 @@ KtConstantExpression(190,191): '1'
   null
 
 KtOperationReferenceExpression(192,193): '+'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -582,7 +582,7 @@ KtOperationReferenceExpression(192,193): '+'
       }
 
 KtNameReferenceExpression(194,202): 'constant'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -617,7 +617,7 @@ KtDeclarationModifierList(209,228): '@Anno(2 + constant)'
   null
 
 KtAnnotationEntry(209,228): '@Anno(2 + constant)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
         contextArgumentMapping = {}
@@ -653,7 +653,7 @@ KtAnnotationEntry(209,228): '@Anno(2 + constant)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
 
 KtConstructorCalleeExpression(210,214): 'Anno'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
         contextArgumentMapping = {}
@@ -695,7 +695,7 @@ KtUserType(210,214): 'Anno'
   null
 
 KtNameReferenceExpression(210,214): 'Anno'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
         contextArgumentMapping = {}
@@ -737,7 +737,7 @@ KtValueArgument(215,227): '2 + constant'
   null
 
 KtBinaryExpression(215,227): '2 + constant'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -776,7 +776,7 @@ KtConstantExpression(215,216): '2'
   null
 
 KtOperationReferenceExpression(217,218): '+'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -812,7 +812,7 @@ KtOperationReferenceExpression(217,218): '+'
       }
 
 KtNameReferenceExpression(219,227): 'constant'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -835,7 +835,7 @@ KtNameReferenceExpression(229,232): 'Int'
   null
 
 KtDestructuringDeclarationEntry(236,241): 'right'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -855,7 +855,7 @@ KtDestructuringDeclarationEntry(236,241): 'right'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(245,249): 'pair'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

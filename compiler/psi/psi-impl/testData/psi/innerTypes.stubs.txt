@@ -18,7 +18,7 @@ FILE[kind=File[packageFqName=test]]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, name=I]
             CLASS_BODY
-              FUN[fqName=test.InnerTypes.Inner.Inner3.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+              FUNCTION[fqName=test.InnerTypes.Inner.Inner3.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
                     TYPE_REFERENCE
@@ -96,7 +96,7 @@ FILE[kind=File[packageFqName=test]]
                           TYPE_PROJECTION[projectionKind=STAR]
       CLASS[classId=test/InnerTypes.Inner2, fqName=test.InnerTypes.Inner2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner2, superNames=[]]
         MODIFIER_LIST[inner]
-      FUN[fqName=test.InnerTypes.bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
+      FUNCTION[fqName=test.InnerTypes.bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
             TYPE_REFERENCE

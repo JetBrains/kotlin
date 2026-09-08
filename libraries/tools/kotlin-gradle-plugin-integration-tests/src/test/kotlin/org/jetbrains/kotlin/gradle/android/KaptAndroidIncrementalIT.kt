@@ -47,7 +47,7 @@ open class KaptAndroidIncrementalIT : KaptBaseIT() {
                 """.trimIndent()
             )
 
-            build(":app:kaptDebugKotlin") {
+            build(":app:kaptDebugKotlin", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
                 assertTasksExecuted(":app:kaptGenerateStubsDebugKotlin")
             }
 
@@ -90,7 +90,7 @@ open class KaptAndroidIncrementalIT : KaptBaseIT() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
-            build("assembleDebug")
+            build("assembleDebug", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion))
 
             val androidModuleKt = subProject("app").javaSourcesDir().resolve("com/example/dagger/kotlin/AndroidModule.kt")
             androidModuleKt.modify {
@@ -140,7 +140,7 @@ open class KaptAndroidIncrementalIT : KaptBaseIT() {
                 """.trimMargin()
             }
 
-            build(":app:testDebugUnitTest")
+            build(":app:testDebugUnitTest", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion))
 
             appProject.kotlinSourcesDir().resolve("com/example/KotlinActivity.kt").appendText(
                 //language=kt
@@ -170,7 +170,7 @@ open class KaptAndroidIncrementalIT : KaptBaseIT() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
-            build("assembleDebug") {
+            build("assembleDebug", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
                 assertKaptSuccessful()
             }
 

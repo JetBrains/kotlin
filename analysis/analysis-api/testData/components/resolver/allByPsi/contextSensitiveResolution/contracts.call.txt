@@ -71,7 +71,7 @@ KtDeclarationModifierList(236,272): '@OptIn(ExperimentalContracts::class)'
   null
 
 KtAnnotationEntry(236,272): '@OptIn(ExperimentalContracts::class)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -104,7 +104,7 @@ KtAnnotationEntry(236,272): '@OptIn(ExperimentalContracts::class)'
       }
 
 KtConstructorCalleeExpression(237,242): 'OptIn'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -143,7 +143,7 @@ KtUserType(237,242): 'OptIn'
   null
 
 KtNameReferenceExpression(237,242): 'OptIn'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -236,7 +236,7 @@ KtBlockExpression(323,507): '{'
   null
 
 KtCallExpression(329,478): 'contract {'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -272,7 +272,7 @@ KtCallExpression(329,478): 'contract {'
       }
 
 KtNameReferenceExpression(329,337): 'contract'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -320,7 +320,7 @@ KtBlockExpression(348,472): 'callsInPlace(block1, InvocationKind.EXACTLY_ONCE)'
   null
 
 KtCallExpression(348,397): 'callsInPlace(block1, InvocationKind.EXACTLY_ONCE)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -397,7 +397,7 @@ KtCallExpression(348,397): 'callsInPlace(block1, InvocationKind.EXACTLY_ONCE)'
       }
 
 KtNameReferenceExpression(348,360): 'callsInPlace'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -480,7 +480,7 @@ KtValueArgument(361,367): 'block1'
   null
 
 KtNameReferenceExpression(361,367): 'block1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -500,7 +500,7 @@ KtValueArgument(369,396): 'InvocationKind.EXACTLY_ONCE'
   null
 
 KtDotQualifiedExpression(369,396): 'InvocationKind.EXACTLY_ONCE'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -523,7 +523,7 @@ KtNameReferenceExpression(369,383): 'InvocationKind'
   null
 
 KtNameReferenceExpression(384,396): 'EXACTLY_ONCE'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -543,7 +543,7 @@ KtNameReferenceExpression(384,396): 'EXACTLY_ONCE'
       typeArgumentsMapping = {}
 
 KtCallExpression(406,472): 'callsInPlace(block2, kotlin.contracts.InvocationKind.EXACTLY_ONCE)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -620,7 +620,7 @@ KtCallExpression(406,472): 'callsInPlace(block2, kotlin.contracts.InvocationKind
       }
 
 KtNameReferenceExpression(406,418): 'callsInPlace'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -703,7 +703,7 @@ KtValueArgument(419,425): 'block2'
   null
 
 KtNameReferenceExpression(419,425): 'block2'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -723,7 +723,7 @@ KtValueArgument(427,471): 'kotlin.contracts.InvocationKind.EXACTLY_ONCE'
   null
 
 KtDotQualifiedExpression(427,471): 'kotlin.contracts.InvocationKind.EXACTLY_ONCE'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -758,7 +758,7 @@ KtNameReferenceExpression(444,458): 'InvocationKind'
   null
 
 KtNameReferenceExpression(459,471): 'EXACTLY_ONCE'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -778,7 +778,7 @@ KtNameReferenceExpression(459,471): 'EXACTLY_ONCE'
       typeArgumentsMapping = {}
 
 KtCallExpression(484,492): 'block1()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -798,7 +798,7 @@ KtCallExpression(484,492): 'block1()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(484,490): 'block1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -818,7 +818,7 @@ KtValueArgumentList(490,492): '()'
   null
 
 KtCallExpression(497,505): 'block2()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -838,7 +838,7 @@ KtCallExpression(497,505): 'block2()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(497,503): 'block2'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

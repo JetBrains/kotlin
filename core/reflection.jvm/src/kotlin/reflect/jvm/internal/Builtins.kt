@@ -18,6 +18,7 @@ import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.metadata.internal.common.KotlinCommonMetadata
 import kotlin.metadata.jvm.JvmMethodSignature
 import kotlin.metadata.jvm.signature
+import kotlin.metadata.jvm.getterSignature
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.internal.types.MutableCollectionKClass
 import kotlin.reflect.jvm.internal.types.MutableCollectionKClassImpl
@@ -58,6 +59,29 @@ internal fun createFunctionKmClass(arity: Int): KmClass = KmClass().apply {
 
         signature = JvmMethodSignature("invoke", "(" + "Ljava/lang/Object;".repeat(arity) + ")Ljava/lang/Object;")
     })
+}
+
+internal fun createSuspendFunctionInvoke(arity: Int, functionKmClass: KmClass): KmFunction = KmFunction("invoke").apply {
+    val typeParameters = functionKmClass.typeParameters
+    check(typeParameters.size == arity + 2) {
+        "Class '${functionKmClass.name}' must have ${arity + 2} type parameters, but has ${typeParameters.size}"
+    }
+    for (i in 1..arity) {
+        valueParameters.add(KmValueParameter("p$i").apply {
+            type = KmType().apply {
+                classifier = KmClassifier.TypeParameter(typeParameters[i].id)
+            }
+        })
+    }
+    returnType = KmType().apply {
+        classifier = KmClassifier.TypeParameter(typeParameters[arity + 1].id)
+    }
+    modality = Modality.ABSTRACT
+    visibility = Visibility.PUBLIC
+    isOperator = true
+    isSuspend = true
+
+    signature = JvmMethodSignature("invoke", "(" + "Ljava/lang/Object;".repeat(arity + 1) + ")Ljava/lang/Object;")
 }
 
 internal fun createCloneableKmClass(): KmClass = KmClass().apply {
@@ -107,6 +131,21 @@ internal fun createEnumValueOfKmFunction(klass: KClassImpl<*>): KmFunction = KmF
     isStatic = true
 
     signature = JvmMethodSignature("valueOf", "(Ljava/lang/String;)L${klass.classId.asString().replace('.', '$')};")
+}
+
+internal fun createEnumEntriesKmProperty(klass: KClassImpl<*>): KmProperty = KmProperty("entries").apply {
+    returnType = KmType().apply {
+        classifier = KmClassifier.Class("kotlin/enums/EnumEntries")
+        arguments += KmTypeProjection(KmVariance.INVARIANT, KmType().apply {
+            classifier = KmClassifier.Class(klass.classId.asString())
+        })
+    }
+    modality = Modality.FINAL
+    visibility = Visibility.PUBLIC
+    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    isStatic = true
+
+    getterSignature = JvmMethodSignature("getEntries", "()Lkotlin/enums/EnumEntries;")
 }
 
 private class BuiltinClassCache(fragment: KmModuleFragment?) {

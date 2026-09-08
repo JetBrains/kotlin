@@ -89,12 +89,18 @@ class FooDelegate {
 class Bar {
   val foo: Foo = Foo()
     @Composable @JvmName(name = "getFoo") @FunctionKeyMeta(key = -231152804, startOffset = 599, endOffset = 615)
-    get() {
-      sourceInformationMarkerStart(%composer, <>, "C(<get-foo>)<Foo()>:Test.kt#2487m")
+    get(%composer: Composer?, %changed: Int) {
+      sourceInformationMarkerStart(%composer, <>, "C(<get-foo>)<Foo()>,<Foo()>:Test.kt#2487m")
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
-      val tmp0 = field.getValue(<this>, ::foo, %composer, 0b01110000 and %changed shl 0b0011)
+      val tmp0 = field.getValue(<this>, ::foo {
+        @Composable
+        @FunctionKeyMeta(key = -767080699, startOffset = 610, endOffset = 615)
+        fun foo(p0: Bar, %composer: Composer?, %changed: Int): Foo {
+          return p0.<get-foo>(%composer, 0b1110 and %changed)
+        }
+      }, %composer, 0b01110000 and %changed shl 0b0011)
       if (isTraceInProgress()) {
         traceEventEnd()
       }
@@ -123,7 +129,10 @@ fun test(%composer: Composer?, %changed: Int) {
         if (isTraceInProgress()) {
           traceEventStart(<>, %changed, -1, <>)
         }
-        val tmp0 = foo%delegate.getValue(null, ::foo%delegate, %composer, 0b00110000)
+        val tmp0 = foo%delegate.getValue(null, ::foo {
+          @Composable
+          @FunctionKeyMeta(key = -276898657, startOffset = 675, endOffset = 680)
+          fun foo(%composer: Composer?, %changed: Int): Foo }, %composer, 0b00110000)
         if (isTraceInProgress()) {
           traceEventEnd()
         }
@@ -139,7 +148,10 @@ fun test(%composer: Composer?, %changed: Int) {
         if (isTraceInProgress()) {
           traceEventStart(<>, %changed, -1, <>)
         }
-        val tmp0 = fooDelegate%delegate.getValue(null, ::fooDelegate%delegate, %composer, 0b0110)
+        val tmp0 = fooDelegate%delegate.getValue(null, ::fooDelegate {
+          @Composable
+          @FunctionKeyMeta(key = -838703499, startOffset = 708, endOffset = 721)
+          fun fooDelegate(%composer: Composer?, %changed: Int): FooDelegate }, %composer, 0b0110)
         if (isTraceInProgress()) {
           traceEventEnd()
         }

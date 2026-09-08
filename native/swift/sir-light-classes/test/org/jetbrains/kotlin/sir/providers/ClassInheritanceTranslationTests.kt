@@ -13,12 +13,13 @@ import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.support.SirTranslationTest
 import org.jetbrains.kotlin.sir.providers.support.classNamed
 import org.jetbrains.kotlin.sir.providers.support.superClassDeclaration
+import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.support.translate
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 class ClassInheritanceTranslationTests : SirTranslationTest() {
     @Test
@@ -70,7 +71,10 @@ class ClassInheritanceTranslationTests : SirTranslationTest() {
     }
 
     @Test
-    fun `abstract class constructors are not public`(inlineSourceCodeAnalysis: InlineSourceCodeAnalysis) {
+    fun `abstract class constructors are public`(inlineSourceCodeAnalysis: InlineSourceCodeAnalysis) {
+        // Abstract class constructors are public so that a Swift class inheriting an abstract Kotlin
+        // class can call `super.init` across modules. Direct instantiation is forbidden at runtime by a
+        // precondition in the generated initializer.
         val file = inlineSourceCodeAnalysis.createKtFile(
             """
                 abstract class Abstract
@@ -78,11 +82,15 @@ class ClassInheritanceTranslationTests : SirTranslationTest() {
         )
         translate(file) { declarations ->
             val abstractClass = declarations.first() as SirClass
-            abstractClass.declarations
+            // Only the constructors that originate from Kotlin source; the synthetic
+            // `init(__externalRCRefUnsafe:)` bridge initializer is intentionally PACKAGE-visible.
+            val constructors = abstractClass.declarations
                 .filterIsInstance<SirInit>()
-                .forEach {
-                    assertNotEquals(SirVisibility.PUBLIC, it.visibility)
-                }
+                .filter { it.origin is KotlinSource }
+            assertTrue(constructors.isNotEmpty(), "Expected at least one exported constructor")
+            constructors.forEach {
+                assertEquals(SirVisibility.PUBLIC, it.visibility)
+            }
         }
     }
 }

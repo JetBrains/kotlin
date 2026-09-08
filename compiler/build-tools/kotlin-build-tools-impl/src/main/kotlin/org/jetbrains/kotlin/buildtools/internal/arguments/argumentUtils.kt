@@ -10,9 +10,17 @@ package org.jetbrains.kotlin.buildtools.internal.arguments
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.cli.common.arguments.Argument
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.ArgumentLifecycleStatus
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.getArgumentsInfo
+import org.jetbrains.kotlin.cli.common.generateLifecycleWarning
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.reportArgumentParseProblems
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import java.nio.file.Path
+import kotlin.enums.enumEntries
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMemberProperties
@@ -37,6 +45,29 @@ internal fun CommonToolArgumentsImpl.reportValidationErrors(logger: KotlinLogger
     }
 }
 
+/**
+ * Replays the warnings that the CLI compiler would produce while parsing its arguments (like, for example,
+ * an argument passed multiple times, an unknown argument, a deprecated argument name, a removed argument) onto [collector].
+ *
+ * The compiler cannot report them itself here: the arguments instance it receives is rebuilt from the Build Tools API
+ * argument model.
+ */
+internal fun CommonToolArgumentsImpl.reportArgumentParseWarnings(
+    collector: MessageCollector,
+    finalArguments: CommonToolArguments,
+) {
+    if (argumentParseDiagnostics.isEmpty()) return
+    val arguments = argumentParseDiagnostics.buildReportableArguments(finalArguments) ?: return
+    collector.reportArgumentParseProblems(arguments)
+    // `REMOVED_CLI_ARG` is reported by the compiler out of `explicitArguments`, but a removed argument has no property
+    // on the arguments class, so it can never reach the compiler through the Build Tools API argument model.
+    for (field in arguments.explicitArguments.keys) {
+        if (field.status != ArgumentLifecycleStatus.REMOVED) continue
+        val message = field.generateLifecycleWarning(forExtraHelp = false)?.first ?: continue
+        collector.report(CompilerMessageSeverity.STRONG_WARNING, message)
+    }
+}
+
 internal fun <T> CommonToolArguments.setUsingReflection(propertyName: String, value: T) {
     this::class.declaredMemberProperties.filterIsInstance<KMutableProperty<T>>().firstOrNull { it.name == propertyName }
         ?.let { property: KMutableProperty<T> ->
@@ -53,6 +84,20 @@ internal fun <T> CommonToolArguments.getUsingReflection(propertyName: String): T
 }
 
 internal fun Path.absolutePathStringOrThrow(): String = toFile().absolutePath
+
+internal inline fun <reified T : Enum<T>> Enum<*>.toApiEnum(): T =
+    enumEntries<T>().firstOrNull { it.name == name }
+        ?: throw CompilerArgumentsParseException(
+            "Value '$name' of ${T::class.simpleName} is not available in the loaded kotlin-build-tools-api; " +
+                    "it exists in kotlin-build-tools-impl ${KotlinCompilerVersion.VERSION}."
+        )
+
+internal inline fun <reified T : Enum<T>> Enum<*>.toImplEnum(): T =
+    enumEntries<T>().firstOrNull { it.name == name }
+        ?: throw CompilerArgumentsParseException(
+            "Value '$name' of ${T::class.simpleName} is not supported by " +
+                    "kotlin-build-tools-impl ${KotlinCompilerVersion.VERSION}."
+        )
 
 internal fun <T> Array<out T>?.toListOrEmpty(): List<T> = this?.toList() ?: emptyList()
 
@@ -77,7 +122,7 @@ internal fun checkCaseMatches(
     restrictedArgViolations: MutableList<RestrictedArgViolation>,
     argument: KProperty<*>,
     stringValue: String,
-    passedValue: String
+    passedValue: String,
 ) {
     if (stringValue == passedValue) return
     else {
@@ -104,5 +149,16 @@ internal fun populateExplicitArguments(arguments: CommonToolArguments) {
                 this[argumentField] = listOf(actualValue)
             }
         }
+    }
+}
+
+internal fun handleCustomPluginArguments(btaArguments: CommonCompilerArgumentsImpl, compilerArgs: CommonCompilerArguments) {
+    val explicitArgumentNames = compilerArgs.explicitArguments.keys.map { it.argument.value }
+    if (setOf("-Xplugin", "-P", "-Xcompiler-plugin-order").any { it in explicitArgumentNames }) {
+        btaArguments[CommonCompilerArgumentsImpl.COMPILER_PLUGINS] = emptyList()
+    } else {
+        compilerArgs.pluginClasspaths = emptyArray()
+        compilerArgs.pluginOptions = emptyArray()
+        compilerArgs.pluginOrderConstraints = emptyArray()
     }
 }

@@ -144,7 +144,7 @@ KtFile: LinkedList.kt
           PsiWhiteSpace(' ')
           PsiElement(set)('set')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -380,7 +380,7 @@ KtFile: LinkedList.kt
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(private)('private')
         PsiWhiteSpace(' ')
@@ -450,7 +450,7 @@ KtFile: LinkedList.kt
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -687,7 +687,7 @@ KtFile: LinkedList.kt
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -791,7 +791,7 @@ KtFile: LinkedList.kt
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(private)('private')
         PsiWhiteSpace(' ')
@@ -871,7 +871,7 @@ KtFile: LinkedList.kt
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')

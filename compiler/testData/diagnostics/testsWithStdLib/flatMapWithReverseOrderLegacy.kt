@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -FixationEnhancementsIn22 -LexicographicVariableReadinessCalculation
+// LANGUAGE: -FixationEnhancementsIn22 -LexicographicVariableReadinessCalculation -EliminateSecondKindIncorporation
 // FULL_JDK
 // STDLIB_JDK8
 // JVM_TARGET: 1.8

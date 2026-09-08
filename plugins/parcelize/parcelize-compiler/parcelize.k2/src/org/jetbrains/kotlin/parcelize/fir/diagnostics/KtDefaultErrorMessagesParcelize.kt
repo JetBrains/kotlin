@@ -30,12 +30,14 @@ import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.INAPPLIC
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.NO_PARCELABLE_SUPERTYPE
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.OVERRIDING_WRITE_TO_PARCEL_IS_NOT_ALLOWED
+import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_CANT_BE_ANNOTATION_CLASS
+import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_CANT_BE_ANONYMOUS_OBJECT
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_CANT_BE_INNER_CLASS
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_CANT_BE_LOCAL_CLASS
+import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_CANT_BE_NON_SEALED_INTERFACE
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_CONSTRUCTOR_PARAMETER_SHOULD_BE_VAL_OR_VAR
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_DELEGATE_IS_NOT_ALLOWED
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_PRIMARY_CONSTRUCTOR_IS_EMPTY
-import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_SHOULD_BE_CLASS
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_SHOULD_BE_INSTANTIABLE
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_SHOULD_HAVE_PRIMARY_CONSTRUCTOR
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_SHOULD_NOT_BE_ENUM_CLASS
@@ -50,8 +52,18 @@ import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.VALUE_PA
 object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
     override val MAP by KtDiagnosticFactoryToRendererMap("Parcelize") { map ->
         map.put(
-            PARCELABLE_SHOULD_BE_CLASS,
-            "'Parcelable' must be a class."
+            PARCELABLE_CANT_BE_NON_SEALED_INTERFACE,
+            "'Parcelable' cannot be a non-sealed interface."
+        )
+
+        map.put(
+            PARCELABLE_CANT_BE_ANNOTATION_CLASS,
+            "'Parcelable' cannot be an 'annotation class'."
+        )
+
+        map.put(
+            PARCELABLE_CANT_BE_ANONYMOUS_OBJECT,
+            "'Parcelable' cannot be an anonymous object."
         )
 
         map.put(
@@ -183,6 +195,56 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
         map.put(
             VALUE_PARAMETER_USED_IN_CLASS_BODY,
             "Parcelized class non-property arguments can only be used as arguments to the super classes constructor."
+        )
+
+        map.put(
+            KtErrorsParcelize.POLYMORPHIC_SEALED_MUST_BE_SEALED,
+            "'@PolymorphicSealed' is only applicable to 'sealed class' or 'sealed interface'."
+        )
+
+        map.put(
+            KtErrorsParcelize.POLYMORPHIC_SEALED_WITHOUT_PARCELIZE,
+            "'@PolymorphicSealed' must be paired with '@Parcelize'."
+        )
+
+        map.put(
+            KtErrorsParcelize.POLYMORPHIC_SEALED_CANNOT_HAVE_OPEN_SUBCLASSES,
+            "Subclasses in a '@PolymorphicSealed' hierarchy cannot be 'open'."
+        )
+
+        map.put(
+            KtErrorsParcelize.POLYMORPHIC_SEALED_CANNOT_HAVE_ABSTRACT_SUBCLASSES,
+            "Subclasses in a '@PolymorphicSealed' hierarchy cannot be 'abstract'."
+        )
+
+        map.put(
+            KtErrorsParcelize.POLYMORPHIC_SEALED_CANNOT_HAVE_SEALED_SUBCLASSES,
+            "Nested sealed classes or interfaces are not supported in a '@PolymorphicSealed' hierarchy."
+        )
+
+        map.put(
+            KtErrorsParcelize.POLYMORPHIC_SEALED_SUBCLASS_MUST_BE_NESTED,
+            "Subclasses of a '@PolymorphicSealed' class or interface must be declared directly inside its body."
+        )
+
+        map.put(
+            KtErrorsParcelize.MULTIPLE_POLYMORPHIC_SEALED_SUPERTYPES,
+            "Implementing multiple '@PolymorphicSealed' classes or interfaces is not supported."
+        )
+
+        map.put(
+            KtErrorsParcelize.DUPLICATE_PARCEL_TAG,
+            "Duplicate '@ParcelTag' value. All tags in a '@PolymorphicSealed' hierarchy must be unique."
+        )
+
+        map.put(
+            KtErrorsParcelize.INCONSISTENT_PARCEL_TAG,
+            "All subclasses in a '@PolymorphicSealed' hierarchy must be annotated with '@ParcelTag' if any subclass is annotated with '@ParcelTag'."
+        )
+
+        map.put(
+            KtErrorsParcelize.INAPPLICABLE_PARCEL_TAG,
+            "'@ParcelTag' is only applicable to concrete subclasses of a '@PolymorphicSealed' hierarchy."
         )
     }
 }

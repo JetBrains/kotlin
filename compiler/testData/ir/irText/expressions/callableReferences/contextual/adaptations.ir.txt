@@ -53,9 +53,10 @@ FILE fqName:<root> fileName:/adaptations.kt
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:c0 index:0 type:kotlin.String
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:1 type:kotlin.Int
             BLOCK_BODY
-              CALL 'public final fun foo (s: kotlin.String, p: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                ARG s: GET_VAR 'c0: kotlin.String declared in <root>.test.foo' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
-                ARG p: GET_VAR 'p0: kotlin.Int declared in <root>.test.foo' type=kotlin.Int origin=null
+              RETURN type=kotlin.Nothing from='local final fun foo (c0: kotlin.String, p0: kotlin.Int): kotlin.Unit declared in <root>.test'
+                CALL 'public final fun foo (s: kotlin.String, p: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  ARG s: GET_VAR 'c0: kotlin.String declared in <root>.test.foo' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG p: GET_VAR 'p0: kotlin.Int declared in <root>.test.foo' type=kotlin.Int origin=null
       VAR name:default type:kotlin.Function0<kotlin.Unit> [val]
         RICH_FUNCTION_REFERENCE type=kotlin.Function0<kotlin.Unit> origin=null reflectionTarget='public final fun foo (s: kotlin.String, p: kotlin.Int): kotlin.Unit declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0
@@ -63,8 +64,9 @@ FILE fqName:<root> fileName:/adaptations.kt
           invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo visibility:local modality:FINAL returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:c0 index:0 type:kotlin.String
             BLOCK_BODY
-              CALL 'public final fun foo (s: kotlin.String, p: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                ARG s: GET_VAR 'c0: kotlin.String declared in <root>.test.foo' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
+              RETURN type=kotlin.Nothing from='local final fun foo (c0: kotlin.String): kotlin.Unit declared in <root>.test'
+                CALL 'public final fun foo (s: kotlin.String, p: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  ARG s: GET_VAR 'c0: kotlin.String declared in <root>.test.foo' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
       VAR name:vararg0 type:kotlin.Function0<kotlin.Unit> [val]
         RICH_FUNCTION_REFERENCE type=kotlin.Function0<kotlin.Unit> origin=null [vararg_conversion] reflectionTarget='public final fun bar (s: kotlin.String, vararg p: kotlin.Int): kotlin.Unit declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0
@@ -72,8 +74,9 @@ FILE fqName:<root> fileName:/adaptations.kt
           invoke: FUN ADAPTER_FOR_CALLABLE_REFERENCE name:bar visibility:local modality:FINAL returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:c0 index:0 type:kotlin.String
             BLOCK_BODY
-              CALL 'public final fun bar (s: kotlin.String, vararg p: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                ARG s: GET_VAR 'c0: kotlin.String declared in <root>.test.bar' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
+              RETURN type=kotlin.Nothing from='local final fun bar (c0: kotlin.String): kotlin.Unit declared in <root>.test'
+                CALL 'public final fun bar (s: kotlin.String, vararg p: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  ARG s: GET_VAR 'c0: kotlin.String declared in <root>.test.bar' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
       VAR name:vararg1 type:kotlin.Function1<kotlin.Int, kotlin.Unit> [val]
         RICH_FUNCTION_REFERENCE type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null [vararg_conversion] reflectionTarget='public final fun bar (s: kotlin.String, vararg p: kotlin.Int): kotlin.Unit declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1
@@ -82,10 +85,11 @@ FILE fqName:<root> fileName:/adaptations.kt
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:c0 index:0 type:kotlin.String
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:1 type:kotlin.Int
             BLOCK_BODY
-              CALL 'public final fun bar (s: kotlin.String, vararg p: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                ARG s: GET_VAR 'c0: kotlin.String declared in <root>.test.bar' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
-                ARG p: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-                  GET_VAR 'p0: kotlin.Int declared in <root>.test.bar' type=kotlin.Int origin=null
+              RETURN type=kotlin.Nothing from='local final fun bar (c0: kotlin.String, p0: kotlin.Int): kotlin.Unit declared in <root>.test'
+                CALL 'public final fun bar (s: kotlin.String, vararg p: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  ARG s: GET_VAR 'c0: kotlin.String declared in <root>.test.bar' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG p: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                    GET_VAR 'p0: kotlin.Int declared in <root>.test.bar' type=kotlin.Int origin=null
       VAR name:vararg2 type:kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> [val]
         RICH_FUNCTION_REFERENCE type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> origin=null [vararg_conversion] reflectionTarget='public final fun bar (s: kotlin.String, vararg p: kotlin.Int): kotlin.Unit declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function2, p2: P2 of kotlin.Function2): R of kotlin.Function2 declared in kotlin.Function2
@@ -95,11 +99,12 @@ FILE fqName:<root> fileName:/adaptations.kt
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:1 type:kotlin.Int
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p1 index:2 type:kotlin.Int
             BLOCK_BODY
-              CALL 'public final fun bar (s: kotlin.String, vararg p: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                ARG s: GET_VAR 'c0: kotlin.String declared in <root>.test.bar' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
-                ARG p: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-                  GET_VAR 'p0: kotlin.Int declared in <root>.test.bar' type=kotlin.Int origin=null
-                  GET_VAR 'p1: kotlin.Int declared in <root>.test.bar' type=kotlin.Int origin=null
+              RETURN type=kotlin.Nothing from='local final fun bar (c0: kotlin.String, p0: kotlin.Int, p1: kotlin.Int): kotlin.Unit declared in <root>.test'
+                CALL 'public final fun bar (s: kotlin.String, vararg p: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  ARG s: GET_VAR 'c0: kotlin.String declared in <root>.test.bar' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG p: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                    GET_VAR 'p0: kotlin.Int declared in <root>.test.bar' type=kotlin.Int origin=null
+                    GET_VAR 'p1: kotlin.Int declared in <root>.test.bar' type=kotlin.Int origin=null
       VAR name:restricted1 type:kotlin.reflect.KSuspendFunction1<<root>.Foo, kotlin.Unit> [val]
         RICH_FUNCTION_REFERENCE type=kotlin.reflect.KSuspendFunction1<<root>.Foo, kotlin.Unit> origin=null [restricted_suspension] reflectionTarget='public final fun foo ($context-String: kotlin.String): kotlin.Unit declared in <root>.Foo'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KSuspendFunction1): R of kotlin.reflect.KSuspendFunction1 declared in kotlin.reflect.KSuspendFunction1
@@ -108,9 +113,10 @@ FILE fqName:<root> fileName:/adaptations.kt
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:c0 index:0 type:kotlin.String
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:1 type:<root>.Foo
             BLOCK_BODY
-              CALL 'public final fun foo ($context-String: kotlin.String): kotlin.Unit declared in <root>.Foo' type=kotlin.Unit origin=null
-                ARG <this>: GET_VAR 'p0: <root>.Foo declared in <root>.test.foo' type=<root>.Foo origin=null
-                ARG $context-String: GET_VAR 'c0: kotlin.String declared in <root>.test.foo' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
+              RETURN type=kotlin.Nothing from='local final fun foo (c0: kotlin.String, p0: <root>.Foo): kotlin.Unit declared in <root>.test'
+                CALL 'public final fun foo ($context-String: kotlin.String): kotlin.Unit declared in <root>.Foo' type=kotlin.Unit origin=null
+                  ARG <this>: GET_VAR 'p0: <root>.Foo declared in <root>.test.foo' type=<root>.Foo origin=null
+                  ARG $context-String: GET_VAR 'c0: kotlin.String declared in <root>.test.foo' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
       VAR name:restricted2 type:@[ExtensionFunctionType] kotlin.reflect.KSuspendFunction1<<root>.Foo, kotlin.Unit> [val]
         RICH_FUNCTION_REFERENCE type=@[ExtensionFunctionType] kotlin.reflect.KSuspendFunction1<<root>.Foo, kotlin.Unit> origin=null [restricted_suspension] reflectionTarget='public final fun baz ($context-String: kotlin.String, <this>: <root>.Foo): kotlin.Unit declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KSuspendFunction1): R of kotlin.reflect.KSuspendFunction1 declared in kotlin.reflect.KSuspendFunction1
@@ -119,9 +125,10 @@ FILE fqName:<root> fileName:/adaptations.kt
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:c0 index:0 type:kotlin.String
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:1 type:<root>.Foo
             BLOCK_BODY
-              CALL 'public final fun baz ($context-String: kotlin.String, <this>: <root>.Foo): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                ARG $context-String: GET_VAR 'c0: kotlin.String declared in <root>.test.baz' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
-                ARG <this>: GET_VAR 'p0: <root>.Foo declared in <root>.test.baz' type=<root>.Foo origin=null
+              RETURN type=kotlin.Nothing from='local final fun baz (c0: kotlin.String, p0: <root>.Foo): kotlin.Unit declared in <root>.test'
+                CALL 'public final fun baz ($context-String: kotlin.String, <this>: <root>.Foo): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  ARG $context-String: GET_VAR 'c0: kotlin.String declared in <root>.test.baz' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG <this>: GET_VAR 'p0: <root>.Foo declared in <root>.test.baz' type=<root>.Foo origin=null
       VAR name:restricted3 type:kotlin.reflect.KSuspendFunction0<kotlin.Unit> [val]
         RICH_FUNCTION_REFERENCE type=kotlin.reflect.KSuspendFunction0<kotlin.Unit> origin=null [restricted_suspension] reflectionTarget='public final fun baz ($context-Foo: <root>.Foo): kotlin.Unit declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.reflect.KSuspendFunction0 declared in kotlin.reflect.KSuspendFunction0
@@ -129,5 +136,6 @@ FILE fqName:<root> fileName:/adaptations.kt
           invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:baz visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:c0 index:0 type:<root>.Foo
             BLOCK_BODY
-              CALL 'public final fun baz ($context-Foo: <root>.Foo): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                ARG $context-Foo: GET_VAR 'c0: <root>.Foo declared in <root>.test.baz' type=<root>.Foo origin=ADAPTED_FUNCTION_REFERENCE
+              RETURN type=kotlin.Nothing from='local final fun baz (c0: <root>.Foo): kotlin.Unit declared in <root>.test'
+                CALL 'public final fun baz ($context-Foo: <root>.Foo): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  ARG $context-Foo: GET_VAR 'c0: <root>.Foo declared in <root>.test.baz' type=<root>.Foo origin=ADAPTED_FUNCTION_REFERENCE

@@ -1,6 +1,5 @@
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     `java-library`
     id("analysis-api-artifact")
@@ -9,6 +8,8 @@ plugins {
 val analysisApiSurfaceDependencies: List<String> = CompilerModules.analysisApiSurfaceDependencies
 val compilerModules: Array<String> = CompilerModules.compilerModules
 val analysisApiSurfaceModules: Array<String> = CompilerModules.analysisApiSurfaceModules
+val analysisApiPlatformInterfaceModules: Array<String> = CompilerModules.analysisApiPlatformInterfaceModules
+val analysisApiStandaloneModules: Array<String> = CompilerModules.analysisApiStandaloneModules
 val analysisApiModules: Array<String> = CompilerModules.analysisApiModules
 
 val additionalCompilerProjects = listOf(
@@ -51,12 +52,19 @@ analysisApiArtifact {
             addAll(compilerModules)
             addAll(additionalCompilerProjects)
             addAll(analysisApiModules)
+            add(":kotlin-tooling-core")
 
             removeAll(excludedCompilerProjects)
 
             // Avoid copying content of 'kotlin-analysis-api-surface'
             removeAll(analysisApiSurfaceDependencies)
             removeAll(analysisApiSurfaceModules)
+
+            // Avoid copying content of 'kotlin-analysis-api-platform-interface'
+            removeAll(analysisApiPlatformInterfaceModules)
+
+            // Standalone modules are shipped by the dedicated standalone artifacts
+            removeAll(analysisApiStandaloneModules)
 
             // Avoid copying content of 'kotlin-analysis-api-fir-diagnostics'
             remove(":analysis:analysis-api-fir-diagnostics")

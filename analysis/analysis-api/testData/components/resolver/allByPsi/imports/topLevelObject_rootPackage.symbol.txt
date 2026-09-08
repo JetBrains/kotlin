@@ -8,7 +8,7 @@ KtNameReferenceExpression(39,43): 'main'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       main
     ]
@@ -26,7 +26,7 @@ KtNameReferenceExpression(52,66): 'TopLevelObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /TopLevelObject
     ]
@@ -35,7 +35,7 @@ KtNameReferenceExpression(67,78): 'NestedClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /TopLevelObject.NestedClass
     ]
@@ -50,7 +50,7 @@ KtNameReferenceExpression(86,100): 'TopLevelObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /TopLevelObject
     ]
@@ -59,7 +59,7 @@ KtNameReferenceExpression(101,113): 'NestedObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /TopLevelObject.NestedObject
     ]
@@ -74,7 +74,7 @@ KtNameReferenceExpression(121,135): 'TopLevelObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /TopLevelObject
     ]
@@ -83,7 +83,7 @@ KtNameReferenceExpression(136,139): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /TopLevelObject.foo(<dispatch receiver>: TopLevelObject): kotlin.Unit
     ]
@@ -98,7 +98,7 @@ KtNameReferenceExpression(147,161): 'TopLevelObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /TopLevelObject
     ]
@@ -107,7 +107,7 @@ KtNameReferenceExpression(162,165): 'bar'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val bar: kotlin.String
     ]
@@ -125,7 +125,7 @@ KtNameReferenceExpression(174,188): 'TopLevelObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /TopLevelObject
     ]
@@ -134,7 +134,7 @@ KtNameReferenceExpression(189,201): 'NestedObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /TopLevelObject.NestedObject
     ]
@@ -143,7 +143,7 @@ KtNameReferenceExpression(202,213): 'NestedClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /TopLevelObject.NestedObject.NestedClass
     ]
@@ -161,7 +161,7 @@ KtNameReferenceExpression(221,235): 'TopLevelObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /TopLevelObject
     ]
@@ -170,7 +170,7 @@ KtNameReferenceExpression(236,248): 'NestedObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /TopLevelObject.NestedObject
     ]
@@ -179,7 +179,7 @@ KtNameReferenceExpression(249,252): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /TopLevelObject.NestedObject.foo(<dispatch receiver>: TopLevelObject.NestedObject): kotlin.Unit
     ]
@@ -197,7 +197,7 @@ KtNameReferenceExpression(260,274): 'TopLevelObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /TopLevelObject
     ]
@@ -206,7 +206,7 @@ KtNameReferenceExpression(275,287): 'NestedObject'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /TopLevelObject.NestedObject
     ]
@@ -215,7 +215,7 @@ KtNameReferenceExpression(288,291): 'bar'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val bar: kotlin.String
     ]

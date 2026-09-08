@@ -7,6 +7,7 @@ package kotlin.reflect.jvm.internal.types
 
 import org.jetbrains.kotlin.types.model.CapturedTypeConstructorMarker
 import org.jetbrains.kotlin.types.model.CapturedTypeMarker
+import kotlin.LazyThreadSafetyMode.NONE
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 
@@ -15,7 +16,7 @@ internal class CapturedKType(
     val lowerType: KType?,
     val typeConstructor: CapturedKTypeConstructor,
     override val isMarkedNullable: Boolean,
-) : AbstractKType(::javaTypeNotSupported), CapturedTypeMarker {
+) : AbstractKType(lazy(NONE, ::javaTypeNotSupported)), CapturedTypeMarker {
     override val classifier: KClassifier? = null
 
     override val arguments: List<KTypeProjection> get() = emptyList()

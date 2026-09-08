@@ -1,5 +1,5 @@
 KtNameReferenceExpression(331,351): 'serializeFirstTarget'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

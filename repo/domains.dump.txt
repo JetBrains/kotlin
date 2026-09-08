@@ -119,6 +119,7 @@ Js:
  - js/js.tests/build.gradle.kts
  - js/js.tests/klib-compatibility
  - js/js.tests/testFixtures/com
+ - js/js.tests/testFixturesResources
  - js/js.tests/tests
  - js/js.translator/ReadMe.md
  - js/js.translator/build.gradle.kts
@@ -173,6 +174,7 @@ BuildToolsApi:
  - compiler/build-tools/CLAUDE.md
  - compiler/build-tools/README.md
  - compiler/build-tools/kotlin-build-tools-api
+ - compiler/build-tools/kotlin-build-tools-api-backports
  - compiler/build-tools/kotlin-build-tools-api-forward-tests
  - compiler/build-tools/kotlin-build-tools-api-tests
  - compiler/build-tools/kotlin-build-tools-compat
@@ -225,6 +227,7 @@ Gradle:
  - libraries/tools/kotlin-gradle-plugin-idea-proto
  - libraries/tools/kotlin-gradle-plugin-integration-tests
  - libraries/tools/kotlin-gradle-plugin-tcs-android
+ - libraries/tools/kotlin-gradle-plugin-test-coverage
  - libraries/tools/kotlin-gradle-plugin-test-utils-embeddable
  - libraries/tools/kotlin-gradle-plugins-bom
  - libraries/tools/kotlin-gradle-statistics
@@ -259,6 +262,7 @@ Unknown:
  - .claude
  - .editorconfig
  - .gitattributes
+ - .github
  - .gitignore
  - .junie
  - AGENTS.md

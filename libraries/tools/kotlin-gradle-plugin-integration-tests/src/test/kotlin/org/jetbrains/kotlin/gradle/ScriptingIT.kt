@@ -122,13 +122,11 @@ abstract class ScriptingIT : KGPBaseTest() {
 
     // Compose only works on JDK 11+
     @DisplayName("Compose compiler plugin should work with scripting")
-    @JdkVersions(versions = [JavaVersion.VERSION_11])
-    @GradleWithJdkTest
-    fun testComposeInterop(gradleVersion: GradleVersion, jdk: JdkVersions.ProvidedJdk) {
+    @GradleTest
+    fun testComposeInterop(gradleVersion: GradleVersion) {
         project(
             projectName = "scriptingComposeInterop",
             gradleVersion = gradleVersion,
-            buildJdk = jdk.location
         ) {
             val appSubProject = subProject("app")
             build(":app:test", buildOptions = defaultBuildOptions.copy(

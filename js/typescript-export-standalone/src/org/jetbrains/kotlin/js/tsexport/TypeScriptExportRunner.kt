@@ -33,6 +33,7 @@ public data class TypeScriptExportConfig(
     public val exportableSuspendLambdas: Boolean,
     public val dataClassCopyRespectsConstructorVisibility: Boolean,
     public val useUnknownInsteadAny: Boolean,
+    public val additionalExportedDeclarationNames: Set<FqName> = emptySet(),
 )
 
 public typealias InputModule = KlibInputModule<TypeScriptModuleConfig>

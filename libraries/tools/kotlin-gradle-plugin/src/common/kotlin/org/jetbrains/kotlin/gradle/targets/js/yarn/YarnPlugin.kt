@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
@@ -37,7 +38,7 @@ open class YarnPlugin : CommonYarnPlugin {
 
     companion object {
         fun apply(project: Project): YarnRootExtension {
-            val rootProject = project.rootProject
+            val rootProject = project.jsToolingProject()
             rootProject.plugins.apply(YarnPlugin::class.java)
             return rootProject.extensions.getByName(YarnRootExtension.YARN) as YarnRootExtension
         }

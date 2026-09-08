@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.resolution.KtResolvableCall;
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments;
-import org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments;
 
 import java.util.Arrays;
 
@@ -27,15 +27,17 @@ import java.util.Arrays;
  * //      ^___^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtBinaryExpression extends KtExpressionImplStub<KotlinPlaceHolderStub<KtBinaryExpression>>
         implements KtOperationExpression, KtResolvableCall {
+    @KtImplementationDetail
     public KtBinaryExpression(@NotNull ASTNode node) {
         super(node);
     }
 
     @KtImplementationDetail
     public KtBinaryExpression(@NotNull KotlinPlaceHolderStub<KtBinaryExpression> stub) {
-        super(stub, KtStubBasedElementTypes.BINARY_EXPRESSION);
+        super(stub, KtNodeTypes.BINARY_EXPRESSION);
     }
 
     @Override
@@ -43,6 +45,7 @@ public class KtBinaryExpression extends KtExpressionImplStub<KotlinPlaceHolderSt
         return visitor.visitBinaryExpression(this, data);
     }
 
+    /** Returns the left operand, or {@code null} if it is absent in incomplete code. */
     @Nullable @IfNotParsed
     public KtExpression getLeft() {
         KtOperationReferenceExpression operationReference = getOperationReference();
@@ -63,6 +66,7 @@ public class KtBinaryExpression extends KtExpressionImplStub<KotlinPlaceHolderSt
         return null;
     }
 
+    /** Returns the right operand, or {@code null} if it is absent in incomplete code. */
     @Nullable @IfNotParsed
     public KtExpression getRight() {
         KtOperationReferenceExpression operationReference = getOperationReference();
@@ -97,6 +101,11 @@ public class KtBinaryExpression extends KtExpressionImplStub<KotlinPlaceHolderSt
         return operationReference;
     }
 
+    /**
+     * Returns the element type of the operator token, or {@code null} if the operation reference is absent in incomplete or inconsistent PSI.
+     *
+     * <p>Unlike {@link #getOperationToken()}, this method does not throw when the operation token is absent.</p>
+     */
     @KtPsiInconsistencyHandling
     @Nullable
     public IElementType getOperationTokenOrNull() {
@@ -105,11 +114,11 @@ public class KtBinaryExpression extends KtExpressionImplStub<KotlinPlaceHolderSt
     }
 
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     private KtOperationReferenceExpression getOperationReferenceOrNull() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.OPERATION_REFERENCE);
+        return getStubOrPsiChild(KtNodeTypes.OPERATION_REFERENCE, KtOperationReferenceExpression.class);
     }
 
+    /** Returns the element type of the operator token (for example, {@code PLUS} for {@code +}). */
     @NotNull
     public IElementType getOperationToken() {
         IElementType tokenOrNull = getOperationTokenOrNull();

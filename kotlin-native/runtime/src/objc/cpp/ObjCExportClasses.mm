@@ -31,7 +31,7 @@
 #include "swiftExportRuntime/SwiftExport.hpp"
 #include "StackTrace.hpp"
 
-extern "C" const TypeInfo* Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclass(Class, const TypeInfo*);
+extern "C" const TypeInfo* Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclass(Class, Class, const TypeInfo*);
 
 @interface NSObject (NSObjectPrivateMethods)
 // Implemented for NSObject in libobjc/NSObject.mm
@@ -273,7 +273,7 @@ using RegularRef = kotlin::mm::ObjCBackRef;
         if (adapter != nullptr && adapter->objCName != nullptr) {
             Class boundClass = objc_getClass(adapter->objCName);
             if (boundClass != nil && [self class] != boundClass && [[self class] isSubclassOfClass:boundClass]) {
-                const TypeInfo* patchedTypeInfo = Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclass([self class], currentTypeInfo);
+                const TypeInfo* patchedTypeInfo = Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclass([self class], boundClass, currentTypeInfo);
                 if (patchedTypeInfo != nullptr && patchedTypeInfo != currentTypeInfo) {
                     auto* typeInfoSlot = clearPointerBits(obj->typeInfoOrMeta_, OBJECT_TAG_MASK);
                     kotlin::std_support::atomic_ref{typeInfoSlot->typeInfo_}.store(

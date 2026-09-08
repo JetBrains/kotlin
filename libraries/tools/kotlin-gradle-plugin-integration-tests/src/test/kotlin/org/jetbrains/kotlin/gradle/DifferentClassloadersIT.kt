@@ -55,7 +55,10 @@ class DifferentClassloadersIT : KGPBaseTest() {
             "differentClassloaders",
             gradleVersion,
             // CC should be explicitly disabled because it hides the warning on subsequent builds
-            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+            ),
         ) {
             setupDifferentClassloadersProject()
 

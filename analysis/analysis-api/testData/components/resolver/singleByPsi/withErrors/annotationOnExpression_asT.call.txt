@@ -1,5 +1,5 @@
 KtAnnotationEntry(69,96): '@Suppress("UNCHECKED_CAST")'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

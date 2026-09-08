@@ -2,6 +2,7 @@
 
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+import kotlin.native.internal.ImportedBridge
 import kotlin.native.internal.ExportedBridge
 import platform.darwin.NSObject
 
@@ -245,4 +246,12 @@ public fun KotlinBridgeable_getTypeTag(ref: kotlin.native.internal.NativePtr): I
 public fun KotlinBridgeable_disposeRef(ref: kotlin.native.internal.NativePtr) {
     kotlin.native.internal.ref.releaseExternalRCRef(ref)
     kotlin.native.internal.ref.disposeExternalRCRef(ref)
+}
+
+@ImportedBridge("KotlinRuntimeSupport_linkAnchor")
+internal external fun KotlinRuntimeSupport_linkAnchor()
+
+@ExportedBridge("KotlinRuntimeSupport_ensureLinked")
+public fun KotlinRuntimeSupport_ensureLinked() {
+    KotlinRuntimeSupport_linkAnchor()
 }

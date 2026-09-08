@@ -37,7 +37,11 @@ fun Example(%composer: Composer?, %changed: Int) {
     val tmp0 = x
     sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
     val tmp1_group = %composer.cache(%composer.changedInstance(tmp0)) {
-      tmp0::foo
+      tmp0::foo<kotlin.reflect.KFunction0> {
+        fun foo(receiver: Unstable): Function0<Unit> {
+          return receiver.foo()
+        }
+      }
     }
     sourceInformationMarkerEnd(%composer)
     tmp1_group

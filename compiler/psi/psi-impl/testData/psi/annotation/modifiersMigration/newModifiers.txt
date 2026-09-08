@@ -5,7 +5,7 @@ KtFile: newModifiers.kt
     <empty list>
   PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       PsiElement(data)('data')
       PsiWhiteSpace(' ')
@@ -50,7 +50,7 @@ KtFile: newModifiers.kt
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('A')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(inline)('inline')
         PsiWhiteSpace(' ')
@@ -137,7 +137,7 @@ KtFile: newModifiers.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo1')
@@ -169,7 +169,7 @@ KtFile: newModifiers.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo2')

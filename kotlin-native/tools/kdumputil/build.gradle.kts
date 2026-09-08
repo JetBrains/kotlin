@@ -1,11 +1,9 @@
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     application
     id("test-inputs-check")
-    id("project-tests-convention")
 }
 
 group = "org.jetbrains.kdumputil"

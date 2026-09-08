@@ -23,25 +23,25 @@ KtSuperTypeList(130,139): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(130,139): 'MyClass()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): MyClass
     ]
 
 KtConstructorCalleeExpression(130,137): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): MyClass
     ]
 
 KtTypeReference(130,137): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(130,137): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -50,7 +50,7 @@ KtNameReferenceExpression(130,137): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -68,13 +68,13 @@ KtParameter(162,172): 'm: MyClass'
   null
 
 KtTypeReference(165,172): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(165,172): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -83,7 +83,7 @@ KtNameReferenceExpression(165,172): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -101,13 +101,13 @@ KtParameter(190,200): 'b: Boolean'
   null
 
 KtTypeReference(193,200): 'Boolean'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
 
 KtUserType(193,200): 'Boolean'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
@@ -116,7 +116,7 @@ KtNameReferenceExpression(193,200): 'Boolean'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
@@ -125,13 +125,13 @@ KtParameter(202,218): 'myClass: MyClass'
   null
 
 KtTypeReference(211,218): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(211,218): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -140,7 +140,7 @@ KtNameReferenceExpression(211,218): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -149,7 +149,7 @@ KtBlockExpression(220,335): '{'
   null
 
 KtCallExpression(226,333): 'receiveMyClass('
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiveMyClass(m: MyClass): kotlin.Unit
     ]
@@ -158,7 +158,7 @@ KtNameReferenceExpression(226,240): 'receiveMyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiveMyClass(m: MyClass): kotlin.Unit
     ]
@@ -182,7 +182,7 @@ KtNameReferenceExpression(269,270): 'b'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b: kotlin.Boolean
     ]
@@ -191,7 +191,7 @@ KtNameReferenceExpression(274,281): 'myClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       myClass: MyClass
     ]
@@ -203,7 +203,7 @@ KtNameReferenceExpression(302,317): 'NestedInheritor'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.NestedInheritor
     ]
@@ -218,13 +218,13 @@ KtParameter(349,359): 'b: Boolean'
   null
 
 KtTypeReference(352,359): 'Boolean'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
 
 KtUserType(352,359): 'Boolean'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
@@ -233,7 +233,7 @@ KtNameReferenceExpression(352,359): 'Boolean'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
@@ -242,19 +242,19 @@ KtParameter(361,394): 'subClass: MyClass.NestedInheritor'
   null
 
 KtTypeReference(371,394): 'MyClass.NestedInheritor'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.NestedInheritor
     ]
 
 KtUserType(371,394): 'MyClass.NestedInheritor'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.NestedInheritor
     ]
 
 KtUserType(371,378): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -263,7 +263,7 @@ KtNameReferenceExpression(371,378): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -272,7 +272,7 @@ KtNameReferenceExpression(379,394): 'NestedInheritor'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.NestedInheritor
     ]
@@ -281,7 +281,7 @@ KtBlockExpression(396,512): '{'
   null
 
 KtCallExpression(402,510): 'receiveMyClass('
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiveMyClass(m: MyClass): kotlin.Unit
     ]
@@ -290,7 +290,7 @@ KtNameReferenceExpression(402,416): 'receiveMyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiveMyClass(m: MyClass): kotlin.Unit
     ]
@@ -314,7 +314,7 @@ KtNameReferenceExpression(445,446): 'b'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b: kotlin.Boolean
     ]
@@ -323,7 +323,7 @@ KtNameReferenceExpression(450,458): 'subClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       subClass: MyClass.NestedInheritor
     ]
@@ -335,7 +335,7 @@ KtNameReferenceExpression(479,494): 'NestedInheritor'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.NestedInheritor
     ]
@@ -350,13 +350,13 @@ KtParameter(526,537): 'b1: Boolean'
   null
 
 KtTypeReference(530,537): 'Boolean'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
 
 KtUserType(530,537): 'Boolean'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
@@ -365,7 +365,7 @@ KtNameReferenceExpression(530,537): 'Boolean'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
@@ -374,13 +374,13 @@ KtParameter(539,550): 'b2: Boolean'
   null
 
 KtTypeReference(543,550): 'Boolean'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
 
 KtUserType(543,550): 'Boolean'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
@@ -389,7 +389,7 @@ KtNameReferenceExpression(543,550): 'Boolean'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
@@ -398,19 +398,19 @@ KtParameter(552,585): 'subClass: MyClass.NestedInheritor'
   null
 
 KtTypeReference(562,585): 'MyClass.NestedInheritor'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.NestedInheritor
     ]
 
 KtUserType(562,585): 'MyClass.NestedInheritor'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.NestedInheritor
     ]
 
 KtUserType(562,569): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -419,7 +419,7 @@ KtNameReferenceExpression(562,569): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -428,7 +428,7 @@ KtNameReferenceExpression(570,585): 'NestedInheritor'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.NestedInheritor
     ]
@@ -437,7 +437,7 @@ KtBlockExpression(587,737): '{'
   null
 
 KtCallExpression(593,735): 'receiveMyClass('
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiveMyClass(m: MyClass): kotlin.Unit
     ]
@@ -446,7 +446,7 @@ KtNameReferenceExpression(593,607): 'receiveMyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiveMyClass(m: MyClass): kotlin.Unit
     ]
@@ -470,7 +470,7 @@ KtNameReferenceExpression(636,638): 'b1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b1: kotlin.Boolean
     ]
@@ -479,7 +479,7 @@ KtNameReferenceExpression(642,650): 'subClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       subClass: MyClass.NestedInheritor
     ]
@@ -494,7 +494,7 @@ KtNameReferenceExpression(663,665): 'b2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b2: kotlin.Boolean
     ]
@@ -503,7 +503,7 @@ KtNameReferenceExpression(669,684): 'NestedInheritor'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.NestedInheritor
     ]
@@ -515,7 +515,7 @@ KtNameReferenceExpression(705,719): 'OtherInheritor'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'OtherInheritor'.>
 
@@ -538,25 +538,25 @@ KtSuperTypeList(791,803): 'OtherClass()'
   null
 
 KtSuperTypeCallEntry(791,803): 'OtherClass()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): OtherClass
     ]
 
 KtConstructorCalleeExpression(791,801): 'OtherClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): OtherClass
     ]
 
 KtTypeReference(791,801): 'OtherClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass
     ]
 
 KtUserType(791,801): 'OtherClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass
     ]
@@ -565,7 +565,7 @@ KtNameReferenceExpression(791,801): 'OtherClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass
     ]
@@ -580,25 +580,25 @@ KtSuperTypeList(819,825): 'Base()'
   null
 
 KtSuperTypeCallEntry(819,825): 'Base()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): OtherClass.Base
     ]
 
 KtConstructorCalleeExpression(819,823): 'Base'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): OtherClass.Base
     ]
 
 KtTypeReference(819,823): 'Base'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass.Base
     ]
 
 KtUserType(819,823): 'Base'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass.Base
     ]
@@ -607,7 +607,7 @@ KtNameReferenceExpression(819,823): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass.Base
     ]
@@ -622,25 +622,25 @@ KtSuperTypeList(840,846): 'Base()'
   null
 
 KtSuperTypeCallEntry(840,846): 'Base()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): OtherClass.Base
     ]
 
 KtConstructorCalleeExpression(840,844): 'Base'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): OtherClass.Base
     ]
 
 KtTypeReference(840,844): 'Base'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass.Base
     ]
 
 KtUserType(840,844): 'Base'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass.Base
     ]
@@ -649,7 +649,7 @@ KtNameReferenceExpression(840,844): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass.Base
     ]
@@ -664,25 +664,25 @@ KtSuperTypeList(863,875): 'OtherClass()'
   null
 
 KtSuperTypeCallEntry(863,875): 'OtherClass()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): OtherClass
     ]
 
 KtConstructorCalleeExpression(863,873): 'OtherClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): OtherClass
     ]
 
 KtTypeReference(863,873): 'OtherClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass
     ]
 
 KtUserType(863,873): 'OtherClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass
     ]
@@ -691,7 +691,7 @@ KtNameReferenceExpression(863,873): 'OtherClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass
     ]
@@ -709,13 +709,13 @@ KtParameter(901,914): 'm: OtherClass'
   null
 
 KtTypeReference(904,914): 'OtherClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass
     ]
 
 KtUserType(904,914): 'OtherClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass
     ]
@@ -724,7 +724,7 @@ KtNameReferenceExpression(904,914): 'OtherClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass
     ]
@@ -742,13 +742,13 @@ KtParameter(930,941): 'b1: Boolean'
   null
 
 KtTypeReference(934,941): 'Boolean'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
 
 KtUserType(934,941): 'Boolean'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
@@ -757,7 +757,7 @@ KtNameReferenceExpression(934,941): 'Boolean'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
@@ -766,13 +766,13 @@ KtParameter(943,954): 'b2: Boolean'
   null
 
 KtTypeReference(947,954): 'Boolean'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
 
 KtUserType(947,954): 'Boolean'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
@@ -781,7 +781,7 @@ KtNameReferenceExpression(947,954): 'Boolean'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
@@ -790,19 +790,19 @@ KtParameter(956,979): 'subClass1: OtherClass.A'
   null
 
 KtTypeReference(967,979): 'OtherClass.A'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass.A
     ]
 
 KtUserType(967,979): 'OtherClass.A'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass.A
     ]
 
 KtUserType(967,977): 'OtherClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass
     ]
@@ -811,7 +811,7 @@ KtNameReferenceExpression(967,977): 'OtherClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass
     ]
@@ -820,7 +820,7 @@ KtNameReferenceExpression(978,979): 'A'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass.A
     ]
@@ -829,19 +829,19 @@ KtParameter(981,1004): 'subClass2: OtherClass.B'
   null
 
 KtTypeReference(992,1004): 'OtherClass.B'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass.B
     ]
 
 KtUserType(992,1004): 'OtherClass.B'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass.B
     ]
 
 KtUserType(992,1002): 'OtherClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass
     ]
@@ -850,7 +850,7 @@ KtNameReferenceExpression(992,1002): 'OtherClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass
     ]
@@ -859,7 +859,7 @@ KtNameReferenceExpression(1003,1004): 'B'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass.B
     ]
@@ -868,7 +868,7 @@ KtBlockExpression(1006,1141): '{'
   null
 
 KtCallExpression(1012,1139): 'receiveOtherClass('
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiveOtherClass(m: OtherClass): kotlin.Unit
     ]
@@ -877,7 +877,7 @@ KtNameReferenceExpression(1012,1029): 'receiveOtherClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiveOtherClass(m: OtherClass): kotlin.Unit
     ]
@@ -901,7 +901,7 @@ KtNameReferenceExpression(1058,1060): 'b1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b1: kotlin.Boolean
     ]
@@ -910,7 +910,7 @@ KtNameReferenceExpression(1064,1073): 'subClass1'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       subClass1: OtherClass.A
     ]
@@ -925,7 +925,7 @@ KtNameReferenceExpression(1086,1088): 'b2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b2: kotlin.Boolean
     ]
@@ -934,7 +934,7 @@ KtNameReferenceExpression(1092,1101): 'subClass2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       subClass2: OtherClass.B
     ]
@@ -946,7 +946,7 @@ KtNameReferenceExpression(1122,1123): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OtherClass.C
     ]
@@ -967,25 +967,25 @@ KtSuperTypeList(1206,1217): 'OpenClass()'
   null
 
 KtSuperTypeCallEntry(1206,1217): 'OpenClass()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): OpenClass
     ]
 
 KtConstructorCalleeExpression(1206,1215): 'OpenClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): OpenClass
     ]
 
 KtTypeReference(1206,1215): 'OpenClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass
     ]
 
 KtUserType(1206,1215): 'OpenClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass
     ]
@@ -994,7 +994,7 @@ KtNameReferenceExpression(1206,1215): 'OpenClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass
     ]
@@ -1012,13 +1012,13 @@ KtParameter(1242,1254): 'm: OpenClass'
   null
 
 KtTypeReference(1245,1254): 'OpenClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass
     ]
 
 KtUserType(1245,1254): 'OpenClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass
     ]
@@ -1027,7 +1027,7 @@ KtNameReferenceExpression(1245,1254): 'OpenClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass
     ]
@@ -1045,13 +1045,13 @@ KtParameter(1270,1280): 'b: Boolean'
   null
 
 KtTypeReference(1273,1280): 'Boolean'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
 
 KtUserType(1273,1280): 'Boolean'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
@@ -1060,7 +1060,7 @@ KtNameReferenceExpression(1273,1280): 'Boolean'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
@@ -1069,13 +1069,13 @@ KtParameter(1282,1302): 'openClass: OpenClass'
   null
 
 KtTypeReference(1293,1302): 'OpenClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass
     ]
 
 KtUserType(1293,1302): 'OpenClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass
     ]
@@ -1084,7 +1084,7 @@ KtNameReferenceExpression(1293,1302): 'OpenClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass
     ]
@@ -1093,7 +1093,7 @@ KtBlockExpression(1304,1434): '{'
   null
 
 KtCallExpression(1310,1432): 'receiveOpenClass('
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiveOpenClass(m: OpenClass): kotlin.Unit
     ]
@@ -1102,7 +1102,7 @@ KtNameReferenceExpression(1310,1326): 'receiveOpenClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiveOpenClass(m: OpenClass): kotlin.Unit
     ]
@@ -1126,7 +1126,7 @@ KtNameReferenceExpression(1355,1356): 'b'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b: kotlin.Boolean
     ]
@@ -1135,7 +1135,7 @@ KtNameReferenceExpression(1360,1369): 'openClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       openClass: OpenClass
     ]
@@ -1147,7 +1147,7 @@ KtNameReferenceExpression(1390,1416): 'NestedInheritorOfOpenClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass.NestedInheritorOfOpenClass
     ]
@@ -1162,13 +1162,13 @@ KtParameter(1446,1456): 'b: Boolean'
   null
 
 KtTypeReference(1449,1456): 'Boolean'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
 
 KtUserType(1449,1456): 'Boolean'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
@@ -1177,7 +1177,7 @@ KtNameReferenceExpression(1449,1456): 'Boolean'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
@@ -1186,19 +1186,19 @@ KtParameter(1458,1504): 'subClass: OpenClass.NestedInheritorOfOpenClass'
   null
 
 KtTypeReference(1468,1504): 'OpenClass.NestedInheritorOfOpenClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass.NestedInheritorOfOpenClass
     ]
 
 KtUserType(1468,1504): 'OpenClass.NestedInheritorOfOpenClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass.NestedInheritorOfOpenClass
     ]
 
 KtUserType(1468,1477): 'OpenClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass
     ]
@@ -1207,7 +1207,7 @@ KtNameReferenceExpression(1468,1477): 'OpenClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass
     ]
@@ -1216,7 +1216,7 @@ KtNameReferenceExpression(1478,1504): 'NestedInheritorOfOpenClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenClass.NestedInheritorOfOpenClass
     ]
@@ -1225,7 +1225,7 @@ KtBlockExpression(1506,1635): '{'
   null
 
 KtCallExpression(1512,1633): 'receiveOpenClass('
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiveOpenClass(m: OpenClass): kotlin.Unit
     ]
@@ -1234,7 +1234,7 @@ KtNameReferenceExpression(1512,1528): 'receiveOpenClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /receiveOpenClass(m: OpenClass): kotlin.Unit
     ]
@@ -1258,7 +1258,7 @@ KtNameReferenceExpression(1557,1558): 'b'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b: kotlin.Boolean
     ]
@@ -1267,7 +1267,7 @@ KtNameReferenceExpression(1562,1570): 'subClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       subClass: OpenClass.NestedInheritorOfOpenClass
     ]
@@ -1279,6 +1279,6 @@ KtNameReferenceExpression(1591,1617): 'NestedInheritorOfOpenClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritorOfOpenClass'.>

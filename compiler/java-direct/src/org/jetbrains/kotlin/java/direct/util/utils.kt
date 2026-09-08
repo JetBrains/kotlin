@@ -11,9 +11,9 @@ import com.intellij.java.syntax.element.JavaDocSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.jetbrains.kotlin.java.direct.model.JavaTypeParameterOverAst
-import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
-import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
+import org.jetbrains.kotlin.kmp.tree.LightNode
+import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.Name
 import java.io.File
@@ -26,14 +26,14 @@ import java.io.File
  * `isDeprecatedInJavaDoc` over the AST — classes, members, value parameters. Packages
  * ([org.jetbrains.kotlin.java.direct.model.JavaPackageOverAst]) return `false` unconditionally and don't use this helper.
  */
-internal fun isDeprecatedInJavaDoc(tree: JavaLightTree, node: JavaLightNode): Boolean =
+internal fun isDeprecatedInJavaDoc(tree: LightSyntaxTree, node: LightNode): Boolean =
     tree.findChildByType(node, JavaDocSyntaxElementType.DOC_COMMENT)?.let {
         tree.getText(it).toString().contains("@deprecated", ignoreCase = true)
     } == true
 
 internal fun computeTypeParameters(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     resolutionContext: JavaResolutionContext,
 ): List<JavaTypeParameter> {
     val typeParamNodes = tree.findChildByType(node, JavaSyntaxElementType.TYPE_PARAMETER_LIST)
@@ -56,7 +56,7 @@ internal fun computeTypeParameters(
 /**
  * Finds a top-level class node by name in the compilation unit root.
  */
-fun findTopLevelClassNode(tree: JavaLightTree, root: JavaLightNode, name: Name): JavaLightNode? {
+fun findTopLevelClassNode(tree: LightSyntaxTree, root: LightNode, name: Name): LightNode? {
     for (child in tree.getChildren(root)) {
         if (tree.getType(child) == JavaSyntaxElementType.CLASS) {
             val idNode = tree.findChildByType(child, JavaSyntaxTokenType.IDENTIFIER) ?: continue

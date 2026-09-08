@@ -26,7 +26,7 @@ KtFile: fileAnnotationInWrongPlace.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('prop')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION
         PsiElement(AT)('@')

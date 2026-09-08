@@ -5,24 +5,16 @@
 
 package org.jetbrains.kotlin.kapt.test
 
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.cli.extensionsStorage
-import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.GenerationUtils
-import org.jetbrains.kotlin.fir.backend.Fir2IrComponentsStorage
-import org.jetbrains.kotlin.fir.backend.Fir2IrSyntheticIrBuiltinsSymbolsContainer
-import org.jetbrains.kotlin.fir.backend.IrBuiltInsOverFir
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
+import org.jetbrains.kotlin.analyzer.CompilationErrorException
+import org.jetbrains.kotlin.cli.pipeline.PipelineStepException
+import org.jetbrains.kotlin.cli.pipeline.SuccessfulPipelineExecutionException
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
-import org.jetbrains.kotlin.kapt.stubs.OriginCollectingClassBuilderFactory
+import org.jetbrains.kotlin.kapt.compileForStubGeneration
 import org.jetbrains.kotlin.kapt.util.CompilerConfigurationBackedKaptLogger
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 
-class JvmCompilerWithKaptFacade(
-    private val testServices: TestServices,
-    private val additionalPluginExtension: IrGenerationExtension? = null,
-) :
+class JvmCompilerWithKaptFacade(private val testServices: TestServices) :
     AbstractTestFacade<ResultingArtifact.Source, KaptContextBinaryArtifact>() {
     override val inputKind: TestArtifactKind<ResultingArtifact.Source>
         get() = SourcesKind
@@ -30,42 +22,29 @@ class JvmCompilerWithKaptFacade(
         get() = KaptContextBinaryArtifact.Kind
 
     override val additionalServices: List<ServiceRegistrationData>
-        get() = emptyList()
+        get() = listOf(cliBasedFacadesMarkerRegistrationData)
 
     override fun transform(module: TestModule, inputArtifact: ResultingArtifact.Source): KaptContextBinaryArtifact {
         val configurationProvider = testServices.compilerConfigurationProvider
-        val project = configurationProvider.getProject(module)
-        val compilerConfiguration = configurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
-        if (additionalPluginExtension != null) {
-            with(compilerConfiguration.extensionsStorage!!) {
-                IrGenerationExtension.registerExtension(additionalPluginExtension)
-            }
+        val configuration = configurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
+        val logger = CompilerConfigurationBackedKaptLogger(isVerbose = true, isInfoAsWarnings = false, configuration)
+        val kaptContext = try {
+            compileForStubGeneration(
+                configurationProvider.testRootDisposable,
+                configuration,
+                testServices.kaptOptionsProvider[module],
+                logger,
+                withJdk = true,
+            )
+        } catch (_: SuccessfulPipelineExecutionException) {
+            // In the integration tests KAPT is registered as a FIR analysis handler extension, which means that it has already
+            // performed the whole stub generation and annotation processing itself, and the frontend phase has stopped the
+            // pipeline. There is nothing left to compile, so there is no KAPT context either.
+            return KaptContextBinaryArtifact(kaptContext = null)
+        } catch (_: PipelineStepException) {
+            throw CompilationErrorException()
         }
-        val ktFiles = testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project, findViaVfs = true).values.toList()
-        val classBuilderFactory = OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3)
-        val generationState = GenerationUtils.compileFiles(
-            ktFiles,
-            compilerConfiguration,
-            classBuilderFactory,
-            configurationProvider.getPackagePartProviderFactory(module)
-        )
-        val logger = CompilerConfigurationBackedKaptLogger(
-            isVerbose = true,
-            isInfoAsWarnings = false,
-            configuration = compilerConfiguration,
-        )
-        val components = (generationState.jvmBackendClassResolver as FirJvmBackendClassResolver).components as Fir2IrComponentsStorage
-        val kaptContext = KaptContextForStubGeneration(
-            testServices.kaptOptionsProvider[module],
-            withJdk = true,
-            logger,
-            classBuilderFactory.compiledClasses,
-            classBuilderFactory.origins,
-            generationState,
-            components.fir,
-            IrBuiltInsOverFir(components, Fir2IrSyntheticIrBuiltinsSymbolsContainer()),
-        )
-        return KaptContextBinaryArtifact(kaptContext)
+        return KaptContextBinaryArtifact(kaptContext ?: throw CompilationErrorException())
     }
 
     override fun shouldTransform(module: TestModule): Boolean {
@@ -73,7 +52,7 @@ class JvmCompilerWithKaptFacade(
     }
 }
 
-class KaptContextBinaryArtifact(val kaptContext: KaptContextForStubGeneration) : ResultingArtifact.Binary<KaptContextBinaryArtifact>() {
+class KaptContextBinaryArtifact(val kaptContext: KaptContextForStubGeneration?) : ResultingArtifact.Binary<KaptContextBinaryArtifact>() {
     object Kind : ArtifactKind<KaptContextBinaryArtifact>("KaptArtifact", CompilationStage.FIRST)
 
     override val kind: ArtifactKind<KaptContextBinaryArtifact>

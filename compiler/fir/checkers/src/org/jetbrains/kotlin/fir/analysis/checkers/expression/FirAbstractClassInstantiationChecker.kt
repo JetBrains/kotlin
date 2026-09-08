@@ -13,18 +13,27 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 object FirAbstractClassInstantiationChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
+    private val INIT_INSTANCE_CALLABLE_ID = CallableId(FqName("kotlin.native.internal"), Name.identifier("initInstance"))
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
         val constructorSymbol = expression.calleeReference.toResolvedConstructorSymbol() ?: return
         val declarationClass = constructorSymbol.resolvedReturnTypeRef.coneType.toRegularClassSymbol() ?: return
 
         if (declarationClass.isAbstract && declarationClass.classKind == ClassKind.CLASS) {
+            if (isDirectArgumentOfInitInstance(expression)) return
+
             val source = when (expression) {
                 is FirCallableReferenceAccess -> expression.calleeReference.source
                 else -> expression.source
@@ -32,5 +41,11 @@ object FirAbstractClassInstantiationChecker : FirQualifiedAccessExpressionChecke
 
             reporter.reportOn(source, FirErrors.CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS)
         }
+    }
+
+    context(context: CheckerContext)
+    private fun isDirectArgumentOfInitInstance(expression: FirQualifiedAccessExpression): Boolean {
+        val enclosingCall = context.callsOrAssignments.lastOrNull { it !== expression } as? FirFunctionCall ?: return false
+        return enclosingCall.calleeReference.toResolvedNamedFunctionSymbol()?.callableId == INIT_INSTANCE_CALLABLE_ID
     }
 }

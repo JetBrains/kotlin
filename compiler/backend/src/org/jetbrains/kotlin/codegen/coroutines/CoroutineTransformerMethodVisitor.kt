@@ -82,6 +82,7 @@ class CoroutineTransformerMethodVisitor(
     private var dataIndex = if (isForNamedFunction) -1 else 1
 
     private var generatedCodeMarkers: GeneratedCodeMarkers? = null
+    private var shouldHoistThrowOnFailure: Boolean = false
 
     override fun performTransformations(methodNode: MethodNode) {
         if (config.enhancedCoroutinesDebugging) {
@@ -141,6 +142,8 @@ class CoroutineTransformerMethodVisitor(
         for (suspensionPoint in suspensionPoints) {
             splitTryCatchBlocksContainingSuspensionPoint(methodNode, suspensionPoint)
         }
+
+        shouldHoistThrowOnFailure = !isForNamedFunction && suspensionPoints.none { it.hasEnclosingTryCatch }
 
         // Actual max stack might be increased during the previous phases
         methodNode.updateMaxStack()
@@ -328,6 +331,11 @@ class CoroutineTransformerMethodVisitor(
                     // Allow debugger to stop on enter into suspend function
                     LineNumberNode(lineNumber, tableSwitchLabel),
                     VarInsnNode(Opcodes.ASTORE, suspendMarkerVarIndex),
+                    *withInstructionAdapter {
+                        if (shouldHoistThrowOnFailure) {
+                            generateResumeWithExceptionCheck(dataIndex)
+                        }
+                    }.toArray(),
                     VarInsnNode(Opcodes.ALOAD, continuationIndex),
                     *withInstructionAdapter { getLabel() }.toArray(),
                     TableSwitchInsnNode(
@@ -340,9 +348,11 @@ class CoroutineTransformerMethodVisitor(
                 )
             )
 
-            insert(firstStateLabel, withInstructionAdapter {
-                generateResumeWithExceptionCheck(dataIndex)
-            })
+            if (!shouldHoistThrowOnFailure) {
+                insert(firstStateLabel, withInstructionAdapter {
+                    generateResumeWithExceptionCheck(dataIndex)
+                })
+            }
 
             // Insert throw of an IllegalStateException if the resumption point is unknown. This code does not correspond to
             // anything in the input code. We give it the entry line number instead of letting it inherit the line number
@@ -1362,7 +1372,9 @@ class CoroutineTransformerMethodVisitor(
 
             insert(possibleTryCatchBlockStart, withInstructionAdapter {
                 nop()
-                generateResumeWithExceptionCheck(dataIndex)
+                if (!shouldHoistThrowOnFailure) {
+                    generateResumeWithExceptionCheck(dataIndex)
+                }
 
                 // Load continuation argument just like suspending function returns it
                 load(dataIndex, AsmTypes.OBJECT_TYPE)
@@ -1463,6 +1475,7 @@ class CoroutineTransformerMethodVisitor(
                     instructions.indexOf(it.start) < beginIndex && beginIndex < instructions.indexOf(it.end)
 
                 if (isContainingSuspensionPoint) {
+                    suspensionPoint.hasEnclosingTryCatch = true
                     assert(instructions.indexOf(it.start) < endIndex && endIndex < instructions.indexOf(it.end)) {
                         "Try catch block ${instructions.indexOf(it.start)}:${instructions.indexOf(it.end)} containing marker before " +
                                 "suspension point $beginIndex should also contain the marker after suspension point $endIndex"
@@ -1606,6 +1619,7 @@ internal class SuspensionPoint(
     // INVOKESTATIC InlineMarker.mark()
     val suspensionCallEnd: AbstractInsnNode
 ) {
+    var hasEnclosingTryCatch: Boolean = false
     lateinit var tryCatchBlocksContinuationLabel: LabelNode
 
     val stateLabel = LabelNode().linkWithLabel()

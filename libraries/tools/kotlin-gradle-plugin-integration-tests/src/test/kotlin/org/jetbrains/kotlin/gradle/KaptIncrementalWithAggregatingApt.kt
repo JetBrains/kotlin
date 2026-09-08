@@ -96,7 +96,11 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
     @JdkVersions(versions = [JavaVersion.VERSION_11])
     @GradleWithJdkTest
     fun testIncrementalChangesWithJdk9(gradleVersion: GradleVersion, jdk: JdkVersions.ProvidedJdk) {
-        kaptProject(gradleVersion, buildJdk = jdk.location) {
+        kaptProject(
+            gradleVersion,
+            buildJdk = jdk.location,
+            buildOptions = defaultBuildOptions.suppressDeprecatedJdkWarningWithGradle814(gradleVersion, jdk)
+        ) {
             build("clean", "assemble")
 
             javaSourcesDir().resolve("bar/useB.kt").modify { current -> "$current\nfun otherFunction() {}" }
@@ -247,6 +251,7 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
             "kaptIncrementalAggregatingProcessorProject",
             gradleVersion,
             buildJdk = jdk.location,
+            buildOptions = defaultBuildOptions.suppressDeprecatedJdkWarningWithGradle814(gradleVersion, jdk)
         ) {
             setupIncrementalAptProject(
                 "ISOLATING" to if (isBinary) IncrementalBinaryIsolatingProcessor::class.java else IncrementalIsolatingProcessor::class.java,

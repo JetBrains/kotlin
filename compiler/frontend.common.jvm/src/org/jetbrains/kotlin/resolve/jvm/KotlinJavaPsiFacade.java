@@ -219,18 +219,19 @@ public class KotlinJavaPsiFacade implements Disposable {
         return javaClasses;
     }
 
+    /**
+     * {@code null} if the class found by fully qualified name is not the requested one: a {@link PsiElementFinder} does not
+     * know where the package ends and the nesting begins, so {@code a.b.A.B} may also mean {@code a.b.A/B}.
+     */
     @Nullable
     private JavaClass tryCreateJavaClass(@NotNull ClassId classId, @NotNull PsiClass psiClass) {
-        JavaClassImpl javaClass = new JavaClassImpl(JavaElementSourceFactory.getInstance(project).createPsiSource(psiClass));
-        FqName fqName = classId.asSingleFqName();
-        if (!fqName.equals(javaClass.getFqName())) {
-            throw new IllegalStateException("Requested " + fqName + ", got " + javaClass.getFqName());
-        }
-
         if (psiClass instanceof KtLightClassMarker) {
-            throw new IllegalStateException("Kotlin light classes should not be found by JavaPsiFacade, resolving: " + fqName);
+            throw new IllegalStateException(
+                    "Kotlin light classes should not be found by JavaPsiFacade, resolving: " + classId.asSingleFqName()
+            );
         }
 
+        JavaClassImpl javaClass = new JavaClassImpl(JavaElementSourceFactory.getInstance(project).createPsiSource(psiClass));
         if (!classId.equals(JavaElementsKt.getClassId(javaClass))) {
             return null;
         }

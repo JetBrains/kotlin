@@ -1,10 +1,8 @@
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
-    id("project-tests-convention")
     id("test-data-manager")
     id("test-inputs-check")
 }
@@ -68,7 +66,6 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
 
     testFixturesApi(libs.opentest4j)
-    testFixturesApi(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
     testFixturesCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
@@ -153,6 +150,7 @@ projectTests {
     withScriptingPlugin()
     withTestScriptDefinition()
     withPluginSandboxAnnotations()
+    withPluginSandboxJar()
 
     @OptIn(KotlinCompilerDistUsage::class)
     withDist()

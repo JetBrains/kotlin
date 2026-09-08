@@ -56,7 +56,7 @@ KtParameterList(163,165): '()'
   null
 
 KtCallExpression(168,177): 'MyClass()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -73,7 +73,7 @@ KtCallExpression(168,177): 'MyClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(168,175): 'MyClass'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -123,7 +123,7 @@ KtBlockExpression(222,259): '{'
   null
 
 KtCallExpression(228,244): 'foo(MyClass.bar)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -159,7 +159,7 @@ KtCallExpression(228,244): 'foo(MyClass.bar)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass2', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(228,231): 'foo'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -201,7 +201,7 @@ KtValueArgument(232,243): 'MyClass.bar'
   null
 
 KtDotQualifiedExpression(232,243): 'MyClass.bar'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleVariableAccessCall:
         contextArguments = []
@@ -221,13 +221,13 @@ KtDotQualifiedExpression(232,243): 'MyClass.bar'
           callableId = /bar
         typeArgumentsMapping = {}
     ]
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'val MyClass2.Companion.bar: MyClass2' is inapplicable because of a receiver type mismatch.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'val MyClass2.Companion.bar: MyClass2' is inapplicable because of a receiver type mismatch. Actual receiver type is 'MyClass.Companion'.>
 
 KtNameReferenceExpression(232,239): 'MyClass'
   null
 
 KtNameReferenceExpression(240,243): 'bar'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleVariableAccessCall:
         contextArguments = []
@@ -247,10 +247,10 @@ KtNameReferenceExpression(240,243): 'bar'
           callableId = /bar
         typeArgumentsMapping = {}
     ]
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'val MyClass2.Companion.bar: MyClass2' is inapplicable because of a receiver type mismatch.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'val MyClass2.Companion.bar: MyClass2' is inapplicable because of a receiver type mismatch. Actual receiver type is 'MyClass.Companion'.>
 
 KtCallExpression(249,257): 'foo(bar)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -283,7 +283,7 @@ KtCallExpression(249,257): 'foo(bar)'
       }
 
 KtNameReferenceExpression(249,252): 'foo'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -322,7 +322,7 @@ KtValueArgument(253,256): 'bar'
   null
 
 KtNameReferenceExpression(253,256): 'bar'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'bar'.>
 
@@ -372,7 +372,7 @@ KtParameterList(342,344): '()'
   null
 
 KtCallExpression(347,357): 'MyClass2()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -389,7 +389,7 @@ KtCallExpression(347,357): 'MyClass2()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(347,355): 'MyClass2'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -439,7 +439,7 @@ KtBlockExpression(397,437): '{'
   null
 
 KtCallExpression(403,421): 'foo2(MyClass2.bar)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -472,7 +472,7 @@ KtCallExpression(403,421): 'foo2(MyClass2.bar)'
       }
 
 KtNameReferenceExpression(403,407): 'foo2'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -511,7 +511,7 @@ KtValueArgument(408,420): 'MyClass2.bar'
   null
 
 KtDotQualifiedExpression(408,420): 'MyClass2.bar'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -534,7 +534,7 @@ KtNameReferenceExpression(408,416): 'MyClass2'
   null
 
 KtNameReferenceExpression(417,420): 'bar'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -554,7 +554,7 @@ KtNameReferenceExpression(417,420): 'bar'
       typeArgumentsMapping = {}
 
 KtCallExpression(426,435): 'foo2(bar)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -587,7 +587,7 @@ KtCallExpression(426,435): 'foo2(bar)'
       }
 
 KtNameReferenceExpression(426,430): 'foo2'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -626,7 +626,7 @@ KtValueArgument(431,434): 'bar'
   null
 
 KtNameReferenceExpression(431,434): 'bar'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

@@ -54,6 +54,25 @@ val JSPECIFY_DEFAULT_ANNOTATIONS = mapOf(
             ),
 )
 
+// Chromium's @NullMarked/@NullUnmarked are exact mirrors of the JSpecify ones, so they share their applicability set
+val CHROMIUM_DEFAULT_ANNOTATIONS = mapOf(
+    CHROMIUM_NULL_MARKED_ANNOTATION_FQ_NAME to
+            JavaDefaultQualifiers(
+                NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL),
+                APPLICABILITY_OF_JSPECIFY_DEFAULTS,
+                definitelyNotNull = false,
+                preferQualifierOverBound = true,
+                preferQualifierOverSupertype = true,
+            ),
+    CHROMIUM_NULL_UNMARKED_ANNOTATION_FQ_NAME to
+            JavaDefaultQualifiers(
+                NullabilityQualifierWithMigrationStatus(NullabilityQualifier.FORCE_FLEXIBILITY),
+                APPLICABILITY_OF_JSPECIFY_DEFAULTS,
+                preferQualifierOverBound = true,
+                preferQualifierOverSupertype = true,
+            ),
+)
+
 val JAVAX_DEFAULT_ANNOTATIONS = mapOf(
     JAVAX_PARAMETERS_ARE_NONNULL_BY_DEFAULT_ANNOTATION_FQ_NAME to
             JavaDefaultQualifiers(
@@ -67,4 +86,4 @@ val JAVAX_DEFAULT_ANNOTATIONS = mapOf(
             ),
 )
 
-val BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS = JSPECIFY_DEFAULT_ANNOTATIONS + JAVAX_DEFAULT_ANNOTATIONS
+val BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS = JSPECIFY_DEFAULT_ANNOTATIONS + CHROMIUM_DEFAULT_ANNOTATIONS + JAVAX_DEFAULT_ANNOTATIONS

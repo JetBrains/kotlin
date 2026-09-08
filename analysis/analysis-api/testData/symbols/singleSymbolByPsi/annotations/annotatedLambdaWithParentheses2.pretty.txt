@@ -1,0 +1,2 @@
+@A(a = 42, c = "42")
+fun(): kotlin.String

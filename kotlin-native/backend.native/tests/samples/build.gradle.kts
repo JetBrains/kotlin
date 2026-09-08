@@ -50,6 +50,9 @@ val buildSamplesWithPlatformLibs = tasks.create("buildSamplesWithPlatformLibs") 
     if (isMacos || isLinux) {
         dependsOn(":echoServer:assemble") //https://youtrack.jetbrains.com/issue/KT-63721/
         dependsOn(":nonBlockingEchoServer:assemble")
+    }
+
+    if (isLinux) {
         dependsOn(":tensorflow:assemble")
     }
 

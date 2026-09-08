@@ -1,5 +1,5 @@
 KtBinaryExpression(31,36): 'i < j'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

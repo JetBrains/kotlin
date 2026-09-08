@@ -48,7 +48,7 @@ KtFile: DocCommentsBinding.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         KDoc
           PsiElement(KDOC_START)('/**')
           PsiWhiteSpace('\n     ')
@@ -68,7 +68,7 @@ KtFile: DocCommentsBinding.kt
         BLOCK
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n        ')
-          FUN
+          FUNCTION
             KDoc
               PsiElement(KDOC_START)('/**')
               PsiWhiteSpace('\n         ')

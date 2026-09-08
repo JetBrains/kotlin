@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLDiagnostic
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.psi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -41,13 +42,12 @@ internal class LLFirDiagnosticReporter : PendingDiagnosticReporter() {
         if (diagnostic.isAboutImplicitImport()) return
 
         val psiDiagnostic = when (diagnostic) {
-            is KtPsiDiagnostic -> diagnostic
-            is KtLightDiagnostic -> diagnostic.toPsiDiagnostic()
+            is KtDiagnosticWithSource -> diagnostic
             else -> error("Unknown diagnostic type ${diagnostic::class.simpleName}")
         }
 
         val pendingDiagnostic = PendingDiagnostic(psiDiagnostic, isSuppressed = context.isDiagnosticSuppressed(diagnostic))
-        pendingDiagnostics.addValueFor(psiDiagnostic.psiElement, pendingDiagnostic)
+        pendingDiagnostics.addValueFor(psiDiagnostic.psi, pendingDiagnostic)
     }
 
     override fun checkAndCommitReportsOn(element: AbstractKtSourceElement, context: DiagnosticContext, commitEverything: Boolean) {
@@ -72,77 +72,24 @@ internal class LLFirDiagnosticReporter : PendingDiagnosticReporter() {
         }
     }
 
-    private class PendingDiagnostic(val diagnostic: KtPsiDiagnostic, var isSuppressed: Boolean)
+    private class PendingDiagnostic(val diagnostic: KtDiagnosticWithSource, var isSuppressed: Boolean)
 }
 
 /**
  * PSI ancestry is checked instead of text range containment, as walking the parent chain is cheaper than computing text ranges:
  * [PsiElement.getTextRange] has to traverse preceding siblings to compute the start offset.
  */
-private fun KtPsiDiagnostic.isInside(element: AbstractKtSourceElement): Boolean {
+private fun KtDiagnosticWithSource.isInside(element: AbstractKtSourceElement): Boolean {
     if (this.element == element) return true
 
     val elementPsi = (element as? KtPsiSourceElement)?.psi
         ?: return this.element.startOffset >= element.startOffset && this.element.endOffset <= element.endOffset
 
-    return elementPsi.isAncestor(psiElement, strict = false)
+    return elementPsi.isAncestor(psi, strict = false)
 }
 
 @OptIn(SuspiciousFakeSourceCheck::class)
 private fun KtDiagnostic.isAboutImplicitImport(): Boolean {
-    if (this !is KtPsiDiagnostic) return false
+    if (this !is KtDiagnosticWithSource) return false
     return (element is KtFakePsiSourceElement && (element as KtFakePsiSourceElement).kind == KtFakeSourceElementKind.ImplicitImport)
-}
-
-
-private fun KtLightDiagnostic.toPsiDiagnostic(): KtPsiDiagnostic {
-    val psiSourceElement = element.unwrapToKtPsiSourceElement()
-        ?: error("Diagnostic should be created from PSI in IDE")
-    @Suppress("UNCHECKED_CAST")
-    return when (this) {
-        is KtLightSimpleDiagnostic -> KtPsiSimpleDiagnostic(
-            psiSourceElement,
-            severity,
-            factory,
-            positioningStrategy,
-            context,
-        )
-
-        is KtLightDiagnosticWithParameters1<*> -> KtPsiDiagnosticWithParameters1(
-            psiSourceElement,
-            a,
-            severity,
-            factory as KtDiagnosticFactory1<Any?>,
-            positioningStrategy,
-            context,
-        )
-
-        is KtLightDiagnosticWithParameters2<*, *> -> KtPsiDiagnosticWithParameters2(
-            psiSourceElement,
-            a, b,
-            severity,
-            factory as KtDiagnosticFactory2<Any?, Any?>,
-            positioningStrategy,
-            context,
-        )
-
-        is KtLightDiagnosticWithParameters3<*, *, *> -> KtPsiDiagnosticWithParameters3(
-            psiSourceElement,
-            a, b, c,
-            severity,
-            factory as KtDiagnosticFactory3<Any?, Any?, Any?>,
-            positioningStrategy,
-            context,
-        )
-
-        is KtLightDiagnosticWithParameters4<*, *, *, *> -> KtPsiDiagnosticWithParameters4(
-            psiSourceElement,
-            a, b, c, d,
-            severity,
-            factory as KtDiagnosticFactory4<Any?, Any?, Any?, Any?>,
-            positioningStrategy,
-            context,
-        )
-        else -> error("Unknown diagnostic type ${this::class.simpleName}")
-    }
 }

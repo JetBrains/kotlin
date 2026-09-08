@@ -59,7 +59,7 @@ KtFile: combinedContractWithCallInPlace.kt
       PsiElement(DOT)('.')
       PsiElement(MUL)('*')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       PsiElement(inline)('inline')
     PsiWhiteSpace(' ')
@@ -155,7 +155,7 @@ KtFile: combinedContractWithCallInPlace.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       PsiElement(inline)('inline')
     PsiWhiteSpace(' ')
@@ -251,7 +251,7 @@ KtFile: combinedContractWithCallInPlace.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       PsiElement(inline)('inline')
     PsiWhiteSpace(' ')

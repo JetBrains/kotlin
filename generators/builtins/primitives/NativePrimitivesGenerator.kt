@@ -163,7 +163,7 @@ class NativePrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(w
             The exact bit pattern of a `NaN` ${thisKind.name.lowercase()} is not guaranteed to be preserved though.
             """.trimIndent().let { appendDoc(it) }
 
-            "NumberConverter.convert(this)".setAsExpressionBody()
+            "kotlin.internal.NumberConverter.convert(this)".setAsExpressionBody()
         } else {
             modifySignature { isExternal = true }
             annotations += "GCUnsafeCall(\"Kotlin_${thisKind.capitalized}_toString\")"

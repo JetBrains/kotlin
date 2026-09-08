@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -22,15 +23,19 @@ import org.jetbrains.kotlin.lexer.KtTokens;
  * }
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtWhenConditionIsPattern extends KtWhenCondition {
+    @KtImplementationDetail
     public KtWhenConditionIsPattern(@NotNull ASTNode node) {
         super(node);
     }
 
+    /** Returns {@code true} if this is a {@code !is} (negated) type check rather than a plain {@code is} check. */
     public boolean isNegated() {
         return getNode().findChildByType(KtTokens.NOT_IS) != null;
     }
 
+    /** Returns the type reference being checked against, or {@code null} if it is absent in incomplete code. */
     @Nullable @IfNotParsed
     public KtTypeReference getTypeReference() {
         return (KtTypeReference) findChildByType(KtNodeTypes.TYPE_REFERENCE);

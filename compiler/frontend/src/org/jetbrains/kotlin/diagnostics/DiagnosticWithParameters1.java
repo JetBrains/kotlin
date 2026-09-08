@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class DiagnosticWithParameters1<E extends PsiElement, A> extends AbstractDiagnostic<E> implements DiagnosticWithParameters1Marker<A> {
+public class DiagnosticWithParameters1<E extends PsiElement, A> extends AbstractDiagnostic<E> {
     private final A a;
 
     public DiagnosticWithParameters1(
@@ -42,7 +42,6 @@ public class DiagnosticWithParameters1<E extends PsiElement, A> extends Abstract
     }
 
     @NotNull
-    @Override
     public A getA() {
         return a;
     }

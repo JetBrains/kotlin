@@ -2771,4 +2771,76 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """
     )
+
+    /**
+     * This is a regression test against a bug that, in certain cases, prevented execution of
+     * non-local `return` statements inside lambdas called from `when` expressions.
+     * For more details, see https://issuetracker.google.com/issues/549552317.
+     */
+    @Test
+    fun testNonLocalReturnFromWhen() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.Composable
+
+            val failed = FakeResult(RuntimeException("error"))
+
+            @Composable
+            fun Test() {
+                Wrapper {
+                    val value: String = failed.fold(
+                        onSuccess = { "Ok" },
+                        onFailure = {
+                            Wrapper {}
+                            return@Wrapper
+                        }
+                    )
+                }
+            }
+        """,
+        extra = """
+            import androidx.compose.runtime.Composable
+
+            @Composable
+            fun Wrapper(content: @Composable () -> Unit) {
+                content()
+            }
+
+            class FakeResult(val value: Exception?) {
+                inline fun fold(
+                    onSuccess: () -> String,
+                    onFailure: (exception: Exception) -> String,
+                ): String {
+                    return when (value) {
+                        null -> onSuccess()
+                        else -> onFailure(value)
+                    }
+                }
+            }
+        """
+    )
+
+    /**
+     * This is a regression test against a bug that caused groups to be generated incorrectly
+     * whenever a `when` expression had a result that was computed by another `when` expression, and
+     * the inner `when` expression had a `@Composable` call in one of its conditions.
+     * For more details, see https://issuetracker.google.com/issues/546101628.
+     */
+    @Test
+    fun testComposableCallInWhenConditionNestedInWhenResult() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            val a = true
+            val c = false
+
+            @Composable fun Test() {
+                val enabled = a && (GetTrue() || c)
+            }
+        """,
+        extra = """
+            import androidx.compose.runtime.Composable
+
+            @Composable fun GetTrue(): Boolean = true
+        """
+    )
 }

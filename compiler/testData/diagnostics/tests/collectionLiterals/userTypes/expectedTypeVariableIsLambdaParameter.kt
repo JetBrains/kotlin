@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-80500
-//LANGUAGE: +CollectionLiterals
 
 fun <T> foo(x: T, y: (T) -> Unit): T = x
 

@@ -1,5 +1,5 @@
 KtConstructorDelegationCall(108,116): 'super(s)'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(p1: kotlin.Int): Base
     ]

@@ -1,31 +1,49 @@
-package test
+library {
+  // module name: <main>
 
-public final annotation class Anno : kotlin.Annotation {
-    public constructor Anno(/*0*/ value: kotlin.String = ..., /*1*/ x: kotlin.Int = ...)
-    public final val value: kotlin.String
-    public final val x: kotlin.Int
-}
+  library fragment {
+    // package name: test
 
-public final annotation class Bnno : kotlin.Annotation {
-    public constructor Bnno()
-}
+    // class name: test/Anno
+    // class name: test/Bnno
+    // class name: test/Eee
 
-public final enum class Eee : kotlin.Enum<test.Eee> {
-    @test.Anno enum entry Entry1
+    public final annotation class test/Anno : kotlin/Annotation {
 
-    enum entry Entry2
+      public constructor(value: kotlin/String = "0", x: kotlin/Int = 0)
 
-    @test.Anno(value = "3") @test.Bnno enum entry Entry3
+      public final val value: kotlin/String
+        public final get
 
-    @test.Anno(value = "4", x = 4) enum entry Entry4
+      public final val x: kotlin/Int
+        public final get
+    }
 
-    private constructor Eee()
-    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
-    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
-    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
-    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Eee): kotlin.Int
+    public final annotation class test/Bnno : kotlin/Annotation {
 
-    // Static members
-    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.Eee
-    public final /*synthesized*/ fun values(): kotlin.Array<test.Eee>
+      public constructor()
+    }
+
+    public final enum class test/Eee : kotlin/Enum<test/Eee> {
+
+      private constructor()
+
+      @test/Anno
+      Entry1,
+
+      Entry2,
+
+      @test/Anno(value = "3")
+      @test/Bnno
+      Entry3,
+
+      @test/Anno(value = "4", x = 4)
+      Entry4,
+
+      // has Enum.entries
+    }
+
+    package {
+    }
+  }
 }

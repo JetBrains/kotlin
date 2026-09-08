@@ -9,7 +9,6 @@ import java.util.*
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     kotlin("plugin.serialization")
@@ -19,7 +18,6 @@ plugins {
     // id("swc-configuration")
     id("nodejs-configuration")
     id("java-test-fixtures")
-    id("project-tests-convention")
     id("test-inputs-check")
 }
 

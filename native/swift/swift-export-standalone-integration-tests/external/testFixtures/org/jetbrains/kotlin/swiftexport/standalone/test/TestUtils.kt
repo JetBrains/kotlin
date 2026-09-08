@@ -17,6 +17,7 @@ internal data class KlibExportSettings(
     val konanTarget: KonanTarget,
     val swiftModuleName: String,
     val rootPackage: String? = null,
+    val dependencies: Set<KlibExportSettings> = emptySet(),
 )
 
 internal fun KlibExportSettings.createConfig(outputPath: Path): SwiftExportConfig {

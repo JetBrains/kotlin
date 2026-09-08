@@ -6,7 +6,11 @@ FILE fqName:<root> fileName:/differentReceivers.kt
           ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) declared in <root>.MyClass' type=<root>.MyClass origin=null
             ARG value: CONST String type=kotlin.String value="O"
           ARG host: CONST Null type=kotlin.Nothing? value=null
-          ARG p: PROPERTY_REFERENCE 'public final testO: kotlin.String declared in <root>' field=null getter='public final fun <get-testO> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+          ARG p: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final testO: kotlin.String declared in <root>'
+            getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:testO visibility:local modality:FINAL returnType:kotlin.String
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun testO (): kotlin.String declared in <root>.testO$delegate'
+                  CALL 'public final fun <get-testO> (): kotlin.String declared in <root>' type=kotlin.String origin=null
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testO> visibility:public modality:FINAL returnType:kotlin.String
       correspondingProperty: PROPERTY name:testO visibility:public modality:FINAL [delegated,val]
       BLOCK_BODY
@@ -14,7 +18,11 @@ FILE fqName:<root> fileName:/differentReceivers.kt
           CALL 'public final fun getValue (<this>: kotlin.String, receiver: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>' type=kotlin.String origin=null
             ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:testO$delegate type:kotlin.String visibility:private [final,static] declared in <root>' type=kotlin.String origin=null
             ARG receiver: CONST Null type=kotlin.Nothing? value=null
-            ARG p: PROPERTY_REFERENCE 'public final testO: kotlin.String declared in <root>' field=null getter='public final fun <get-testO> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            ARG p: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final testO: kotlin.String declared in <root>'
+              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:testO visibility:local modality:FINAL returnType:kotlin.String
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun testO (): kotlin.String declared in <root>.<get-testO>'
+                    CALL 'public final fun <get-testO> (): kotlin.String declared in <root>' type=kotlin.String origin=null
   PROPERTY name:testK visibility:public modality:FINAL [delegated,val]
     FIELD PROPERTY_DELEGATE name:testK$delegate type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
@@ -26,7 +34,11 @@ FILE fqName:<root> fileName:/differentReceivers.kt
           CALL 'public final fun getValue (<this>: kotlin.String, receiver: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>' type=kotlin.String origin=null
             ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:testK$delegate type:kotlin.String visibility:private [final,static] declared in <root>' type=kotlin.String origin=null
             ARG receiver: CONST Null type=kotlin.Nothing? value=null
-            ARG p: PROPERTY_REFERENCE 'public final testK: kotlin.String declared in <root>' field=null getter='public final fun <get-testK> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            ARG p: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final testK: kotlin.String declared in <root>'
+              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:testK visibility:local modality:FINAL returnType:kotlin.String
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun testK (): kotlin.String declared in <root>.<get-testK>'
+                    CALL 'public final fun <get-testK> (): kotlin.String declared in <root>' type=kotlin.String origin=null
   PROPERTY name:testOK visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:testOK type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY

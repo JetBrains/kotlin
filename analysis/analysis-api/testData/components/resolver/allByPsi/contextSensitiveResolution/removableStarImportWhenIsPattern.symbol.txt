@@ -8,7 +8,7 @@ KtNameReferenceExpression(35,39): 'main'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       main
     ]
@@ -26,7 +26,7 @@ KtNameReferenceExpression(48,52): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test
     ]
@@ -35,7 +35,7 @@ KtNameReferenceExpression(53,57): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Base
     ]
@@ -50,7 +50,7 @@ KtNameReferenceExpression(65,69): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test
     ]
@@ -59,7 +59,7 @@ KtNameReferenceExpression(70,74): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Base
     ]
@@ -74,13 +74,13 @@ KtParameter(88,95): 'b: Base'
   null
 
 KtTypeReference(91,95): 'Base'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Base
     ]
 
 KtUserType(91,95): 'Base'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Base
     ]
@@ -89,7 +89,7 @@ KtNameReferenceExpression(91,95): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Base
     ]
@@ -104,7 +104,7 @@ KtNameReferenceExpression(109,110): 'b'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b: test.Base
     ]
@@ -116,13 +116,13 @@ KtWhenConditionIsPattern(122,130): 'is Child'
   null
 
 KtTypeReference(125,130): 'Child'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Base.Child
     ]
 
 KtUserType(125,130): 'Child'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Base.Child
     ]
@@ -131,13 +131,13 @@ KtNameReferenceExpression(125,130): 'Child'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: ImportCanBeRemoved
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Base.Child
     ]
 
 KtDotQualifiedExpression(134,147): '"".hashCode()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
     ]
@@ -146,7 +146,7 @@ KtStringTemplateExpression(134,136): '""'
   null
 
 KtCallExpression(137,147): 'hashCode()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
     ]
@@ -155,7 +155,7 @@ KtNameReferenceExpression(137,145): 'hashCode'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
     ]

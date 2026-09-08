@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -24,15 +25,22 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall;
  * }
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtWhenConditionInRange extends KtWhenCondition implements KtResolvableCall {
+    @KtImplementationDetail
     public KtWhenConditionInRange(@NotNull ASTNode node) {
         super(node);
     }
 
+    /** Returns {@code true} if this is a {@code !in} (not-in) check rather than a plain {@code in} check. */
     public boolean isNegated() {
         return getOperationReference().getNode().findChildByType(KtTokens.NOT_IN) != null;
     }
 
+    /**
+     * Returns the range or container expression tested against (the part after {@code in}), or {@code null} if it is absent in
+     * incomplete code.
+     */
     @Nullable @IfNotParsed
     public KtExpression getRangeExpression() {
         // Copied from KtBinaryExpression
@@ -53,6 +61,7 @@ public class KtWhenConditionInRange extends KtWhenCondition implements KtResolva
         return visitor.visitWhenConditionInRange(this, data);
     }
 
+    /** Returns the {@code in} or {@code !in} operation sign as a reference expression. */
     @NotNull
     public KtOperationReferenceExpression getOperationReference() {
         return (KtOperationReferenceExpression) findChildByType(KtNodeTypes.OPERATION_REFERENCE);

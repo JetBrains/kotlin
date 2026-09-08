@@ -1051,10 +1051,6 @@ open class KaptIT : KaptBaseIT() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
-            if (!isWithJavaSupported) {
-                subProject("dac").buildGradle.replaceText("withJava()", "")
-            }
-
             build(":dac:compileKotlinJvm") {
                 assertTasksExecuted(
                     ":dac:kaptGenerateStubsKotlinJvm",
@@ -1234,6 +1230,7 @@ open class KaptIT : KaptBaseIT() {
                  */
                 warningMode = WarningMode.None,
                 configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
             ),
         ) {
             fun findAnotherRoot() = ('A'..'Z').first { !projectPath.root.startsWith(it.toString()) }

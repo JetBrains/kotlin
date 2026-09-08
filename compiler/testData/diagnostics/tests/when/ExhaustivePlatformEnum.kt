@@ -23,7 +23,7 @@ public enum J {
 
 fun foo(): Int {
     // When is exhaustive (count a platform enum as a special case)
-    return when (J.create()) {
+    return <!WHEN_SUBJECT_CAN_BE_NULL_IN_JAVA!>when<!> (J.create()) {
         J.A -> 1
         J.B -> 2
     }

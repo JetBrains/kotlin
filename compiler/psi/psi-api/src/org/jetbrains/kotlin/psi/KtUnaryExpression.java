@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.tree.IElementType;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
@@ -34,26 +34,30 @@ import java.util.Objects;
  * @see KtPrefixExpression
  * @see KtPostfixExpression
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public abstract class KtUnaryExpression extends KtExpressionImplStub<KotlinPlaceHolderStub<? extends KtUnaryExpression>>
         implements KtOperationExpression, KtResolvableCall {
-    public KtUnaryExpression(ASTNode node) {
+    @KtImplementationDetail
+    public KtUnaryExpression(@NotNull ASTNode node) {
         super(node);
     }
 
-    protected KtUnaryExpression(@NotNull KotlinPlaceHolderStub<? extends KtUnaryExpression> stub, @NotNull IStubElementType nodeType) {
+    @KtImplementationDetail
+    protected KtUnaryExpression(@NotNull KotlinPlaceHolderStub<? extends KtUnaryExpression> stub, @NotNull IElementType nodeType) {
         super(stub, nodeType);
     }
 
+    /** Returns the operand of this unary expression, or {@code null} if it is absent in incomplete code. */
     @Nullable @IfNotParsed
     public abstract KtExpression getBaseExpression();
 
     @Override
     @NotNull
-    @SuppressWarnings("deprecation") // KT-78356
     public KtOperationReferenceExpression getOperationReference() {
-        return Objects.requireNonNull(getStubOrPsiChild(KtStubBasedElementTypes.OPERATION_REFERENCE));
+        return Objects.requireNonNull(getStubOrPsiChild(KtNodeTypes.OPERATION_REFERENCE, KtOperationReferenceExpression.class));
     }
 
+    /** Returns the element type of the operator token (for example, {@code MINUS} for {@code -} or {@code PLUSPLUS} for {@code ++}). */
     public IElementType getOperationToken() {
         return getOperationReference().getReferencedNameElementType();
     }

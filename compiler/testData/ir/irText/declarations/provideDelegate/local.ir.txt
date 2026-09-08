@@ -86,11 +86,13 @@ FILE fqName:<root> fileName:/local.kt
             ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) declared in <root>.DelegateProvider' type=<root>.DelegateProvider origin=null
               ARG value: CONST String type=kotlin.String value="OK"
             ARG thisRef: CONST Null type=kotlin.Nothing? value=null
-            ARG property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val testMember: kotlin.String by (...)' delegate='val testMember$delegate: <root>.Delegate declared in <root>.foo' getter='local final fun <get-testMember> (): kotlin.String declared in <root>.foo' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='val testMember: kotlin.String by (...)'
+              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:testMember visibility:local modality:FINAL returnType:kotlin.String
         FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testMember> visibility:local modality:FINAL returnType:kotlin.String
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='local final fun <get-testMember> (): kotlin.String declared in <root>.foo'
               CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.Any?): kotlin.String declared in <root>.Delegate' type=kotlin.String origin=null
                 ARG <this>: GET_VAR 'val testMember$delegate: <root>.Delegate declared in <root>.foo' type=<root>.Delegate origin=null
                 ARG thisRef: CONST Null type=kotlin.Nothing? value=null
-                ARG property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val testMember: kotlin.String by (...)' delegate='val testMember$delegate: <root>.Delegate declared in <root>.foo' getter='local final fun <get-testMember> (): kotlin.String declared in <root>.foo' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+                ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='val testMember: kotlin.String by (...)'
+                  getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:testMember visibility:local modality:FINAL returnType:kotlin.String

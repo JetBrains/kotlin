@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalVersionOverloading::class)
-
 class SimpleClass {
     fun Int.foo(
         @IntroducedAt("1") b: String = "hello",

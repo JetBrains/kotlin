@@ -14,7 +14,7 @@ KtFile: infiniteLoop.kt
       PsiElement(DOT)('.')
       PsiElement(MUL)('*')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('getCondition')
@@ -33,7 +33,7 @@ KtFile: infiniteLoop.kt
     BOOLEAN_CONSTANT
       PsiElement(true)('true')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -135,7 +135,7 @@ KtFile: infiniteLoop.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')

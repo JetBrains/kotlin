@@ -57,7 +57,7 @@ KtFile: initRecovery.kt
         PsiErrorElement:Expecting '{' after 'init'
           <empty list>
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')

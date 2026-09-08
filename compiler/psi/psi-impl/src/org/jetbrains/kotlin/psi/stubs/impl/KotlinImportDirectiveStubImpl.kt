@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 
 @OptIn(KtImplementationDetail::class)
-class KotlinImportDirectiveStubImpl(
+internal class KotlinImportDirectiveStubImpl(
     parent: StubElement<*>?,
     override val isAllUnder: Boolean,
     private val importedFqNameRef: StringRef?,

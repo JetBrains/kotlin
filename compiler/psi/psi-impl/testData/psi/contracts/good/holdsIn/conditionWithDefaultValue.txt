@@ -47,7 +47,7 @@ KtFile: conditionWithDefaultValue.kt
       PsiElement(DOT)('.')
       PsiElement(MUL)('*')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       PsiElement(inline)('inline')
     PsiWhiteSpace(' ')

@@ -11,7 +11,7 @@ main.kt:
     partSimpleName: "MainKt"
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    FUN[fqName=testBuilder, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=testBuilder]
+    FUNCTION[fqName=testBuilder, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=testBuilder]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=id]
           TYPE_REFERENCE
@@ -32,9 +32,9 @@ main.kt:
       CALL_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=Test]
         VALUE_ARGUMENT_LIST
-    FUN[fqName=test, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test]
+    FUNCTION[fqName=test, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test]
       VALUE_PARAMETER_LIST
-    FUN[fqName=contract, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contract]
+    FUNCTION[fqName=contract, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contract]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=test]
           TYPE_REFERENCE

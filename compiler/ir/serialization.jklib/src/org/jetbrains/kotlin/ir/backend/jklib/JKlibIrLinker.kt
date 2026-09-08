@@ -43,7 +43,7 @@ class JKlibIrLinker(
     val descriptorMangler: JKlibDescriptorMangler,
     private val typeSystemContextFactory: (IrBuiltIns) -> IrTypeSystemContext,
     private val externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
-) : KotlinIrLinker(module, configuration, symbolTable, emptyList()) {
+) : KotlinIrLinker(module, configuration, symbolTable) {
     lateinit var stubGenerator: DeclarationStubGenerator
     override val returnUnboundSymbolsIfSignatureNotFound
         get() = false
@@ -86,8 +86,8 @@ class JKlibIrLinker(
     override fun createTypeSystemContext(irBuiltIns: IrBuiltIns): IrTypeSystemContext =
         typeSystemContextFactory(irBuiltIns)
 
-    override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
-        moduleDescriptor === moduleDescriptor.builtIns.builtInsModule
+    override fun isBuiltInModule(module: IrModuleFragment): Boolean =
+        module.descriptor === module.descriptor.builtIns.builtInsModule
 
     override fun createModuleDeserializer(
         moduleFragment: IrModuleFragment,
@@ -255,8 +255,8 @@ class JKlibIrLinker(
             }
         }
 
-        deserializersForModules.values.forEach { deserializer ->
-            deserializer.moduleFragment.acceptVoid(visitor)
+        allModuleFragments.forEach {
+            it.acceptVoid(visitor)
         }
     }
 }

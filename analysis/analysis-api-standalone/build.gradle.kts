@@ -4,11 +4,9 @@ import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
-    id("project-tests-convention")
     id("test-data-manager")
     id("test-inputs-check")
 }
@@ -26,8 +24,7 @@ dependencies {
     api(project(":analysis:low-level-api-fir"))
     api(project(":analysis:symbol-light-classes"))
     api(project(":analysis:decompiled:light-classes-for-decompiled"))
-    api(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
-    implementation(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
+    api(project(":analysis:analysis-api-standalone:analysis-api-standalone-fir"))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
@@ -95,6 +92,7 @@ projectTests {
     withMockJdkAnnotationsJar()
     withScriptRuntime()
     withPluginSandboxAnnotations()
+    withPluginSandboxJar()
     withWasmRuntime()
 
     @OptIn(KotlinCompilerDistUsage::class)

@@ -70,6 +70,10 @@ object PerformanceNotifications {
     object IrSerializationStarted : AbstractNotification(PhaseType.IrSerialization, start = true)
     object IrSerializationFinished : AbstractNotification(PhaseType.IrSerialization, start = false)
 
+    // klib metadata writing.
+    object KlibMetadataWritingStarted : AbstractNotification(PhaseType.KlibMetadataWriting, start = true)
+    object KlibMetadataWritingFinished : AbstractNotification(PhaseType.KlibMetadataWriting, start = false)
+
     // klib writing
     object KlibWritingStarted : AbstractNotification(PhaseType.KlibWriting, start = true)
     object KlibWritingFinished : AbstractNotification(PhaseType.KlibWriting, start = false)

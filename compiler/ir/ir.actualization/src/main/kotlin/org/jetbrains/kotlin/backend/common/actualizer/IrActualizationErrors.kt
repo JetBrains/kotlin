@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.actualizer
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.ir.IrDiagnosticRenderers
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
@@ -22,12 +21,12 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
 object IrActualizationErrors : KtDiagnosticsContainer() {
-    val NO_ACTUAL_FOR_EXPECT by error2<PsiElement, String, ModuleInfoForDiagnostic>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
-    val AMBIGUOUS_ACTUALS by error2<PsiElement, String, ModuleInfoForDiagnostic>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
-    val EXPECT_ACTUAL_IR_MISMATCH by error3<PsiElement, String, String, ExpectActualMatchingCompatibility.Mismatch>(
+    val NO_ACTUAL_FOR_EXPECT by error2<PsiElement, IrSymbol, ModuleInfoForDiagnostic>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
+    val AMBIGUOUS_ACTUALS by error2<PsiElement, IrSymbol, ModuleInfoForDiagnostic>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
+    val EXPECT_ACTUAL_IR_MISMATCH by error3<PsiElement, IrSymbol, IrSymbol, ExpectActualMatchingCompatibility.Mismatch>(
         SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
     )
-    val EXPECT_ACTUAL_IR_INCOMPATIBILITY by error3<PsiElement, String, String, ExpectActualIncompatibility<*>>(
+    val EXPECT_ACTUAL_IR_INCOMPATIBILITY by error3<PsiElement, IrSymbol, IrSymbol, ExpectActualIncompatibility<*>>(
         SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
     )
     val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning3<PsiElement, IrSymbol, IrSymbol, ExpectActualAnnotationsIncompatibilityType<IrAnnotation>>(
@@ -50,27 +49,27 @@ internal object KtDefaultIrActualizationErrorMessages : BaseDiagnosticRendererFa
         map.put(
             IrActualizationErrors.AMBIGUOUS_ACTUALS,
             "The ''expect'' declaration ''{0}'' has several compatible ''actual'' declarations in module ''{1}''.",
-            CommonRenderers.STRING,
+            IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
             IrActualizationDiagnosticRenderers.MODULE_WITH_PLATFORM,
         )
         map.put(
             IrActualizationErrors.NO_ACTUAL_FOR_EXPECT,
             "The ''expect'' declaration ''{0}'' has no ''actual'' declaration in module ''{1}''.",
-            CommonRenderers.STRING,
+            IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
             IrActualizationDiagnosticRenderers.MODULE_WITH_PLATFORM,
         )
         map.put(
             IrActualizationErrors.EXPECT_ACTUAL_IR_MISMATCH,
             "The ''expect'' declaration ''{0}'' doesn''t match the ''actual'' declaration ''{1}'' because {2}.",
-            CommonRenderers.STRING,
-            CommonRenderers.STRING,
+            IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
+            IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
             IrActualizationDiagnosticRenderers.MISMATCH
         )
         map.put(
             IrActualizationErrors.EXPECT_ACTUAL_IR_INCOMPATIBILITY,
             "The ''expect'' and the ''actual'' declarations are incompatible.\n  expect: {0}\n  actual: {1}\n  reason: {2}",
-            CommonRenderers.STRING,
-            CommonRenderers.STRING,
+            IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
+            IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
             IrActualizationDiagnosticRenderers.INCOMPATIBILITY
         )
         map.put(

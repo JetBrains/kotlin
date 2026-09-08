@@ -17,13 +17,13 @@ KtParameter(34,52): 'javaEnum: JavaEnum'
   null
 
 KtTypeReference(44,52): 'JavaEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JavaEnum
     ]
 
 KtUserType(44,52): 'JavaEnum'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JavaEnum
     ]
@@ -32,7 +32,7 @@ KtNameReferenceExpression(44,52): 'JavaEnum'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JavaEnum
     ]
@@ -44,7 +44,7 @@ KtNameReferenceExpression(62,70): 'javaEnum'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       javaEnum: JavaEnum
     ]
@@ -59,7 +59,7 @@ KtNameReferenceExpression(78,83): 'FIRST'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JavaEnum.FIRST
     ]
@@ -77,7 +77,7 @@ KtNameReferenceExpression(93,99): 'SECOND'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /JavaEnum.SECOND
     ]

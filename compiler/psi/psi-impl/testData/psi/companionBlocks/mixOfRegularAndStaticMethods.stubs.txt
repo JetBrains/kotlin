@@ -3,7 +3,7 @@ FILE[kind=File[packageFqName=<root>]]
   IMPORT_LIST
   CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
     CLASS_BODY
-      FUN[fqName=C.regular1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=regular1]
+      FUNCTION[fqName=C.regular1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=regular1]
         VALUE_PARAMETER_LIST
       COMPANION_BLOCK
         MODIFIER_LIST[companion]
@@ -19,7 +19,7 @@ FILE[kind=File[packageFqName=<root>]]
             REFERENCE_EXPRESSION[referencedName=String]
         STRING_TEMPLATE
           LITERAL_STRING_TEMPLATE_ENTRY[text=r2]
-      FUN[fqName=C.regular3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=regular3]
+      FUNCTION[fqName=C.regular3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=regular3]
         VALUE_PARAMETER_LIST
       COMPANION_BLOCK
         MODIFIER_LIST[companion]
@@ -29,7 +29,7 @@ FILE[kind=File[packageFqName=<root>]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Long]
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2L]
-          FUN[fqName=C.static3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=static3]
+          FUNCTION[fqName=C.static3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=static3]
             VALUE_PARAMETER_LIST
-      FUN[fqName=C.regular4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=regular4]
+      FUNCTION[fqName=C.regular4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=regular4]
         VALUE_PARAMETER_LIST

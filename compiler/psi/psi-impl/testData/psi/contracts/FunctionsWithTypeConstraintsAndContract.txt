@@ -41,7 +41,7 @@ KtFile: FunctionsWithTypeConstraintsAndContract.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('SomeType')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiComment(EOL_COMMENT)('// FILE: main.kt')
     PsiWhiteSpace('\n')
     PsiElement(fun)('fun')
@@ -209,7 +209,7 @@ KtFile: FunctionsWithTypeConstraintsAndContract.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_PARAMETER_LIST

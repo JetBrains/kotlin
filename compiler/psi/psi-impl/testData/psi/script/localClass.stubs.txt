@@ -3,7 +3,7 @@ FILE[kind=Script[packageFqName=<root>]]
   IMPORT_LIST
   SCRIPT[fqName=LocalClass, fqName=LocalClass, isReplSnippet=false, name=LocalClass]
     CLASS[classId=/TopLevelClass, fqName=LocalClass.TopLevelClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=TopLevelClass, superNames=[]]
-    FUN[fqName=LocalClass.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+    FUNCTION[fqName=LocalClass.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=action]
           TYPE_REFERENCE
@@ -13,7 +13,7 @@ FILE[kind=Script[packageFqName=<root>]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Unit]
       CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=LocalClass1, superNames=[]]
-      FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=localFun1]
+      FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=localFun1]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
             TYPE_REFERENCE
@@ -21,13 +21,13 @@ FILE[kind=Script[packageFqName=<root>]]
                 REFERENCE_EXPRESSION[referencedName=Int]
     SCRIPT_INITIALIZER
       CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=LocalClass2, superNames=[]]
-      FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=localFun2]
+      FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=localFun2]
         VALUE_PARAMETER_LIST
     SCRIPT_INITIALIZER
       CALL_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=foo]
         LAMBDA_ARGUMENT[isSpread=false]
           CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=LocalClass3, superNames=[]]
-          FUN[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=localFun3]
+          FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=localFun3]
             VALUE_PARAMETER_LIST
             BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]

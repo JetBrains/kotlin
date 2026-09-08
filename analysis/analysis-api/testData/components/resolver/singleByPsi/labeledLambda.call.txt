@@ -1,5 +1,5 @@
 KtCallExpression(49,62): 'foo label@ {}'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -887,6 +887,12 @@ public class KaptStubConverterJTreeTestGenerated extends AbstractKaptStubConvert
   }
 
   @Test
+  @TestMetadata("suspendErrorTypesWithoutCorrection.kt")
+  public void testSuspendErrorTypesWithoutCorrection() {
+    run("suspendErrorTypesWithoutCorrection.kt");
+  }
+
+  @Test
   @TestMetadata("suspendFunctionSupertype.kt")
   public void testSuspendFunctionSupertype() {
     run("suspendFunctionSupertype.kt");

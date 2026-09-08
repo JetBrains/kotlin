@@ -97,10 +97,16 @@ class MppTestsIT : KGPBaseTest() {
     fun testKt68638KotlinNativeLinkApiFilesResolutionError(gradleVersion: GradleVersion) {
         project("kt-68638-native-link-self-dependency", gradleVersion) {
             val buildOptions = defaultBuildOptions.copy(
-                freeArgs = listOf("--dry-run")
+                freeArgs = listOf("--dry-run"),
+                isolatedProjects = if (gradleVersion == GradleVersion.version(TestVersions.Gradle.G_8_14)) {
+                    // FIXME: KT-88748
+                    BuildOptions.IsolatedProjectsMode.DISABLED
+                } else {
+                    BuildOptions.IsolatedProjectsMode.ENABLED
+                },
             )
             // no build failure is expected
-            build(":p1:linkDebugTestLinuxX64", buildOptions = buildOptions) {}
+            build(":p1:linkDebugTestLinuxX64", buildOptions = buildOptions)
         }
     }
 

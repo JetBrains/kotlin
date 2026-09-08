@@ -39,7 +39,7 @@ KtFile: basic.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           ANNOTATION
             PsiElement(AT)('@')

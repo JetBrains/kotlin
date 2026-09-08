@@ -15,6 +15,7 @@ kotlin {
     val js = js {
         nodejs()
     }
+    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
     val macos64 = macosX64("macos64")
     val macosArm64 = macosArm64("macosArm64")
     val linux64 = linuxX64("linux64")

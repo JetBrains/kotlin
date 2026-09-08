@@ -23,3 +23,5 @@ interface Foo
 
 val testSetFoo: Set<Foo> = emptySet()
 fun testSetFooParam(s: Set<Foo>) = s
+
+fun foo(): MutableSet<String> = TODO()

@@ -1,6 +1,5 @@
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("require-explicit-types")
@@ -17,15 +16,14 @@ dependencies {
     implementation(project(":compiler:fir:fir-jvm"))
     implementation(project(":compiler:fir:tree"))
     implementation(project(":compiler:fir:fir2ir"))
+    implementation(project(":compiler:serialization.common"))
     implementation(project(":compiler:fir:fir-serialization"))
     implementation(project(":compiler:ir.tree"))
     api(project(":compiler:ir.serialization.common"))
     implementation(project(":compiler:util"))
-    implementation(project(":compiler:frontend"))
     implementation(project(":compiler:backend"))
     implementation(project(":compiler:backend.jvm"))
     implementation(project(":compiler:ir.actualization"))
-    implementation(project(":compiler:serialization"))
 
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +CollectionLiterals
 // WITH_STDLIB
 
 fun <T, V> idWithSetUB(t: T): T where T : Set<V> = t

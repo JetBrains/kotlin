@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.deleteRecursively
-import kotlin.io.path.listDirectoryEntries
-import kotlin.io.path.pathString
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
@@ -34,24 +34,20 @@ class FusPluginIT : KGPBaseTest() {
                 """.trimIndent()
             }
 
-            build(
+            validateFusFiles(
                 "test-fus",
-                "-Pkotlin.session.logger.root.path=${projectPath.resolve(reportRelativePath).pathString}",
-            ) {
+                fusFilesType = listOf(FusFileType.KOTLIN_PROFILE_FILES),
+            ) { fusFiles ->
                 assertFilesCombinedContains(
-                    projectPath.resolve("$reportRelativePath/kotlin-profile").listDirectoryEntries(),
+                    fusFiles,
                     "$metricName=$metricValue",
                     "BUILD FINISHED"
                 )
             }
-            projectPath.resolve(reportRelativePath).deleteRecursively()
         }
     }
 
     @DisplayName("with configuration cache and project isolation")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_1],
-    )
     @GradleTest
     fun withConfigurationCacheAndProjectIsolation(gradleVersion: GradleVersion) {
         val executionTimeValue = "EXECUTION_METRIC_VALUE"
@@ -81,13 +77,17 @@ class FusPluginIT : KGPBaseTest() {
                 }
             }
 
-            build(
+            val fusReportRootDirectory = projectPath.resolve(reportRelativePath)
+
+            validateFusFiles(
                 "test-fus",
-                "-Pkotlin.session.logger.root.path=${projectPath.resolve(reportRelativePath).pathString}",
-            ) {
-                assertConfigurationCacheStored()
+                buildAction = BuildActions.build,
+                fusFilesType = listOf(FusFileType.KOTLIN_PROFILE_FILES),
+                fusReportRootDirectory = fusReportRootDirectory,
+                buildAssertions = { assertConfigurationCacheStored() }
+            ) { fusFiles ->
                 assertFilesCombinedContains(
-                    projectPath.resolve("$reportRelativePath/kotlin-profile").listDirectoryEntries(),
+                    fusFiles,
                     "app=$executionTimeValue",
                     "lib=$executionTimeValue",
                     "$configurationTimeMetricName=app",
@@ -96,39 +96,40 @@ class FusPluginIT : KGPBaseTest() {
                 )
             }
 
-            val firstBuildId = checkBuildReportIdInFusReportAndReturn()
+            val firstBuildId = checkBuildReportIdInFusReportAndReturn(fusReportRootDirectory)
 
-            projectPath.resolve(reportRelativePath).deleteRecursively()
+            fusReportRootDirectory.deleteRecursively()
             build("clean")
 
-            build(
+            validateFusFiles(
                 "test-fus",
-                "-Pkotlin.session.logger.root.path=${projectPath.resolve(reportRelativePath).pathString}",
-            ) {
-                assertConfigurationCacheReused()
-
+                buildAction = BuildActions.build,
+                fusFilesType = listOf(FusFileType.KOTLIN_PROFILE_FILES),
+                fusReportRootDirectory = fusReportRootDirectory,
+                buildAssertions = { assertConfigurationCacheReused() }
+            ) { fusFiles ->
                 assertFilesCombinedContains(
-                    projectPath.resolve("$reportRelativePath/kotlin-profile").listDirectoryEntries(),
+                    fusFiles,
                     "$configurationTimeMetricName=app",
                     "$configurationTimeMetricName=lib",
                     "BUILD FINISHED"
                 )
             }
 
-            val secondBuildId = checkBuildReportIdInFusReportAndReturn()
+            val secondBuildId = checkBuildReportIdInFusReportAndReturn(fusReportRootDirectory)
 
             assertNotEquals(firstBuildId, secondBuildId, "Build is should be unique for every build")
 
-            projectPath.resolve(reportRelativePath).deleteRecursively()
+            fusReportRootDirectory.deleteRecursively()
         }
     }
 
-    private fun TestProject.checkBuildReportIdInFusReportAndReturn(): String {
-        val fusReports = projectPath.resolve(reportRelativePath).toFile().resolve("kotlin-profile").listFiles()
+    private fun checkBuildReportIdInFusReportAndReturn(fusReportRootDirectory: Path): String {
+        val fusReports = fusReportRootDirectory.resolve("kotlin-profile").toFile().listFiles()
         val buildIds = fusReports?.filter { !it.name.endsWith(".finish-profile") }?.map { it.readText().lines()[0] }
             ?.distinct() //the first line is build id
         assertEquals(1, buildIds?.size, "Build is in all FUS files should be the same.")
-        return buildIds?.get(0)!! //all checks were made on the assertion above
+        return buildIds!![0] //all checks were made on the assertion above
     }
 
     @DisplayName("test override metrics for fus-statistics-gradle-plugin")
@@ -147,38 +148,18 @@ class FusPluginIT : KGPBaseTest() {
                 """.trimIndent()
             }
 
-            build(
+            validateFusFiles(
                 "test-fus", "test-fus-second",
-                "-Pkotlin.session.logger.root.path=${projectPath.resolve(reportRelativePath).pathString}",
-            ) {
+                fusFilesType = listOf(FusFileType.KOTLIN_PROFILE_FILES),
+            ) { fusFiles ->
                 //Metrics should not be overridden and both metrics should be in the file
                 assertFilesCombinedContains(
-                    projectPath.resolve("$reportRelativePath/kotlin-profile").listDirectoryEntries(),
+                    fusFiles,
                     "Build: ",
                     "$metricName=1",
                     "$metricName=2",
                     "BUILD FINISHED"
                 )
-            }
-            projectPath.resolve(reportRelativePath).deleteRecursively()
-        }
-    }
-
-    @DisplayName("test invalid fus report directory")
-    @GradleTest
-    fun testInvalidFusReportDir(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
-            buildGradle.modify {
-                """
-                ${applyFusPluginAndCreateTestFusTask(it)}
-                
-                ${registerTaskAndReportMetric("test-fus", "metricName", "metricValue")}
-                
-                """.trimIndent()
-            }
-
-            build("test-fus", "-Pkotlin.session.logger.root.path=") {
-                assertOutputContains("Fus metrics wont be collected")
             }
         }
     }
@@ -202,32 +183,30 @@ class FusPluginIT : KGPBaseTest() {
                 }
             }
 
-            build(
+            validateFusFiles(
                 "assemble",
-                "-Pkotlin.session.logger.root.path=${projectPath.resolve(reportRelativePath).pathString}",
-            ) {
+                fusFilesType = listOf(FusFileType.KOTLIN_PROFILE_FILES),
+            ) { fusFiles ->
                 assertFilesCombinedContains(
-                    projectPath.resolve("$reportRelativePath/kotlin-profile").listDirectoryEntries(),
+                    fusFiles,
                     "subProjectA=value",
                     "subProjectB=value",
                     "BUILD FINISHED"
                 )
             }
 
-            projectPath.resolve(reportRelativePath).deleteRecursively()
-
-            build(
+            //the second build reports the same configuration metrics from the configuration cache
+            validateFusFiles(
                 "assemble",
-                "-Pkotlin.session.logger.root.path=${projectPath.resolve(reportRelativePath).pathString}",
-            ) {
+                fusFilesType = listOf(FusFileType.KOTLIN_PROFILE_FILES),
+            ) { fusFiles ->
                 assertFilesCombinedContains(
-                    projectPath.resolve("$reportRelativePath/kotlin-profile").listDirectoryEntries(),
+                    fusFiles,
                     "subProjectA=value",
                     "subProjectB=value",
                     "BUILD FINISHED"
                 )
             }
-            projectPath.resolve(reportRelativePath).deleteRecursively()
         }
     }
 

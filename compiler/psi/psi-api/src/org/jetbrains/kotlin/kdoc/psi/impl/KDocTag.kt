@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.kdoc.psi.impl
@@ -23,8 +12,27 @@ import com.intellij.psi.TokenType
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 
-open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
+/**
+ * A block tag inside a KDoc comment (such as `@param`, `@return`, or `@throws`) together with the content that follows it.
+ *
+ * A tag may document a specific entity named by its [subject][getSubjectName], for example the parameter name after `@param`. The primary
+ * description of a doc comment, which precedes any block tag, is represented by a nameless tag; see [KDocSection].
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ * /**
+ *  * @param value the value to store
+ *  * ^_____________________________^
+ *  */
+ * fun store(value: Int) {}
+ * ```
+ */
+open class KDocTag : KDocElementImpl {
+    @KtImplementationDetail
+    constructor(node: ASTNode) : super(node)
 
     /**
      * Returns the name of this tag, not including the leading @ character.
@@ -46,6 +54,10 @@ open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
      */
     open fun getSubjectName(): String? = getSubjectLink()?.getLinkText()
 
+    /**
+     * Returns the [link][KDocLink] naming the entity documented by this tag (for example, the parameter name after `@param`), or `null` if
+     * this tag has no subject.
+     */
     fun getSubjectLink(): KDocLink? {
         val children = childrenAfterTagName()
         if (hasSubject(children)) {
@@ -54,6 +66,9 @@ open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
         return null
     }
 
+    /**
+     * The [KDocKnownTag] this tag corresponds to, or `null` if the tag name is not recognized or this is the default section.
+     */
     val knownTag: KDocKnownTag?
         get() {
             return name?.let { KDocKnownTag.findByTagName(it) }
@@ -180,6 +195,9 @@ open class KDocTag(node: ASTNode) : KDocElementImpl(node) {
     private fun String.isIndented() = startsWith(indentationWhiteSpaces) || startsWith("\t")
 
     companion object {
+        /**
+         * The indentation (four spaces) prepended to each line of an indented code block when a tag's [content][getContent] is extracted.
+         */
         val indentationWhiteSpaces = " ".repeat(4)
     }
 }

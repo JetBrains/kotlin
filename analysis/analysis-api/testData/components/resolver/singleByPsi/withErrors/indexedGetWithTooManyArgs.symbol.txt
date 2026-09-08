@@ -1,5 +1,5 @@
 KtArrayAccessExpression(100,118): 'c[1, "foo", false]'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /C.get(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String): kotlin.Boolean
     ]

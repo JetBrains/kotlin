@@ -25,7 +25,7 @@ FILE[kind=File[packageFqName=<root>]]
       OBJECT_DECLARATION[classId=/ThreadLocalDelegate.Companion, fqName=ThreadLocalDelegate.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY
-          FUN[fqName=ThreadLocalDelegate.Companion.create, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=create]
+          FUNCTION[fqName=ThreadLocalDelegate.Companion.create, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=create]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, name=T]
             VALUE_PARAMETER_LIST

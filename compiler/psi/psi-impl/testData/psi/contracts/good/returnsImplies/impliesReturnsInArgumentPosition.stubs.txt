@@ -21,7 +21,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ImpliesReturnsInArgumentPosi
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=contracts]
-  FUN[fqName=notNullIfNotNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=notNullIfNotNull]
+  FUNCTION[fqName=notNullIfNotNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=notNullIfNotNull]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=encoded]
         TYPE_REFERENCE
@@ -32,7 +32,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ImpliesReturnsInArgumentPosi
       NULLABLE_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Boolean]
-  FUN[fqName=notNullIfNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=notNullIfNull]
+  FUNCTION[fqName=notNullIfNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=notNullIfNull]
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE

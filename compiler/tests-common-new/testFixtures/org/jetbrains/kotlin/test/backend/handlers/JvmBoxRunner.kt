@@ -15,13 +15,19 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.clientserver.TestProxy
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.ATTACH_DEBUGGER
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RESULT_OUTPUT_EXTENSION
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.LOAD_METADATA_DIRECTLY_IN_REFLECTION
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_K1_REFLECTION_IMPLEMENTATION_FOR_MEMBERS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_LEGACY_REFLECTION_IMPLEMENTATION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.PREFER_IN_TEST_OVER_STDLIB
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.getClassifiedDumpFile
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -35,7 +41,6 @@ import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBo
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.fileContainsBoxMethod
 import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.junit.jupiter.api.Assertions.assertNotSame
@@ -49,8 +54,10 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
     companion object {
         private val BOX_IN_SEPARATE_PROCESS_PORT = System.getProperty("kotlin.test.box.in.separate.process.port")
         private const val DEFAULT_EXPECTED_RESULT = "OK"
-        private const val OUTPUT_EXTENSION = "box.txt"
     }
+
+    override val directiveContainers: List<DirectivesContainer>
+        get() = listOf(TestDumpDirectives, CodegenTestDirectives)
 
     private var boxMethodFound = false
 
@@ -154,9 +161,9 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
         if (unexpectedBehaviour) {
             assertNotSame(DEFAULT_EXPECTED_RESULT, result)
         } else {
-            val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
-            val outputFile = originalFile.withExtension(OUTPUT_EXTENSION)
-            if (outputFile.exists()) {
+            if (RESULT_OUTPUT_EXTENSION in module.directives) {
+                val extension = module.directives[RESULT_OUTPUT_EXTENSION].first()
+                val outputFile = testServices.moduleStructure.getClassifiedDumpFile(extension)
                 assertions.assertEqualsToFile(outputFile, result)
             } else {
                 assertions.assertEquals(DEFAULT_EXPECTED_RESULT, result)
@@ -264,6 +271,9 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
         checkTestInfrastructure(USE_LEGACY_REFLECTION_IMPLEMENTATION !in module.directives) {
             "$USE_LEGACY_REFLECTION_IMPLEMENTATION is not supported when running the box test in a separate JVM process"
         }
+        checkTestInfrastructure(USE_K1_REFLECTION_IMPLEMENTATION_FOR_MEMBERS !in module.directives) {
+            "$USE_K1_REFLECTION_IMPLEMENTATION_FOR_MEMBERS is not supported when running the box test in a separate JVM process"
+        }
         val command = listOfNotNull(
             javaExe.absolutePath,
             runIf(ATTACH_DEBUGGER in module.directives) { "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005" },
@@ -353,6 +363,9 @@ fun generatedTestClassLoader(
         checkTestInfrastructure(USE_LEGACY_REFLECTION_IMPLEMENTATION !in module.directives) {
             "$USE_LEGACY_REFLECTION_IMPLEMENTATION is incompatible with $PREFER_IN_TEST_OVER_STDLIB"
         }
+        checkTestInfrastructure(USE_K1_REFLECTION_IMPLEMENTATION_FOR_MEMBERS !in module.directives) {
+            "$USE_K1_REFLECTION_IMPLEMENTATION_FOR_MEMBERS is incompatible with $PREFER_IN_TEST_OVER_STDLIB"
+        }
         val libPathProvider = testServices.standardLibrariesPathProvider
         classpath += libPathProvider.runtimeJarForTests()
         if (withReflection) {
@@ -368,6 +381,8 @@ fun generatedTestClassLoader(
                 testServices.standardLibrariesPathProvider.getRuntimeAndReflectWithLoadMetadataDirectlyClassLoader()
             USE_LEGACY_REFLECTION_IMPLEMENTATION in module.directives ->
                 testServices.standardLibrariesPathProvider.getRuntimeAndK1ReflectJarClassLoader()
+            USE_K1_REFLECTION_IMPLEMENTATION_FOR_MEMBERS in module.directives ->
+                testServices.standardLibrariesPathProvider.getRuntimeAndK1MembersReflectJarClassLoader()
             else -> testServices.standardLibrariesPathProvider.getRuntimeAndReflectJarClassLoader()
         }
         return GeneratedClassLoader(classFileFactory, parentClassLoader, *classpath.map { it.toURI().toURL() }.toTypedArray())

@@ -71,7 +71,7 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
             val [interopLibs, regularLibs] = config.loadedKlibs.all.partition { it.isCInteropLibrary() }
             defaultDependenciesSet(mainModuleName) {
                 dependencies(regularLibs.map { it.path.absolutePathString() })
-                friendDependencies(config.friendModuleFiles.map { it.absolutePathString() })
+                friendDependencies(config.loadedKlibs.friends.map { it.path.absolutePathString() })
                 dependsOnDependencies(config.refinesModuleFiles.map { it.absolutePathString() })
             }
             if (interopLibs.isNotEmpty()) {

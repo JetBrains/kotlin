@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
@@ -135,10 +134,6 @@ fun Project.applyCocoapodsPlugin() {
 
 fun KotlinMultiplatformExtension.cocoapods(code: CocoapodsExtension.() -> Unit) {
     requireNotNull(getExtension<CocoapodsExtension>("cocoapods")).apply(code)
-}
-
-fun KotlinMultiplatformExtension.swiftExport(code: SwiftExportExtension.() -> Unit) {
-    requireNotNull(getExtension<SwiftExportExtension>("swiftExport")).apply(code)
 }
 
 fun KotlinMultiplatformExtension.swiftPMDependencies(code: SwiftPMImportExtension.() -> Unit) {

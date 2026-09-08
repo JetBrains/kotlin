@@ -25,10 +25,8 @@ internal class GranularAnnotationsBox(
     private fun getOrComputeCachedAnnotations(owner: PsiElement): Collection<PsiAnnotation> {
         cachedAnnotations?.let { return it }
 
-        val annotations = annotationsProvider.annotationInfos().mapNotNullTo(SmartList<PsiAnnotation>()) { applicationInfo ->
-            applicationInfo.annotation.classId?.let { _ ->
-                SymbolLightLazyAnnotation(annotationsProvider, applicationInfo, owner)
-            }
+        val annotations = annotationsProvider.annotationInfos().mapTo(SmartList<PsiAnnotation>()) { applicationInfo ->
+            SymbolLightLazyAnnotation(annotationsProvider, applicationInfo, owner)
         }
 
         val foundQualifiers = annotations.mapNotNullTo(hashSetOf()) { it.qualifiedName }

@@ -40,7 +40,7 @@ object KaDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRen
         for (parameter in diagnostic.parameters) {
             printParameter(parameter, diagnosticList)
         }
-        println("firDiagnostic: KtPsiDiagnostic,")
+        println("firDiagnostic: KtDiagnosticWithSource,")
         println("token: KaLifetimeToken,")
     }
 
@@ -61,7 +61,7 @@ object KaDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRen
     }
 
     override val defaultImports = listOf(
-        "org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic",
+        "org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource",
         "org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken",
     )
 

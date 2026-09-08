@@ -771,4 +771,46 @@ class FunctionReferenceTransformTests : AbstractIrTransformTest() {
             }
         """,
     )
+
+    @Test
+    fun adapted_many_params_and_default() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.* 
+    
+            @Composable
+            fun Fn(content: @Composable (a1: Int, a2: Int, a3: Int, a4: Int) -> Unit) {}
+    
+            @Composable
+            fun Target(a1: Int, a2: Int, a3: Int, a4: Int, a5: Int = 0, a6: Int = 0, a7: Int = 0, a8: Int = 0, a9: Int = 0, a10: Int = 0, a11: Int = 0, a12: Int = 0) {}
+        """,
+        source = """
+            import androidx.compose.runtime.* 
+
+            @Composable
+            fun Test() {
+                Fn(::Target)
+            }
+        """
+    )
+
+    @Test
+    fun adapted_params_partial() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.* 
+    
+            @Composable
+            fun Fn(content: @Composable (a1: Int, a2: Int, a3: Int, a4: Int) -> Unit) {}
+    
+            @Composable
+            fun Target(a1: Int, a2: Int, a3: Int, a4: Int = 0, a5: Int = 0) {}
+        """,
+        source = """
+            import androidx.compose.runtime.* 
+
+            @Composable
+            fun Test() {
+                Fn(::Target)
+            }
+        """
+    )
 }

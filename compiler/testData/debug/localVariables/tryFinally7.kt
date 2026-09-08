@@ -89,7 +89,7 @@ fun box() {
 // test.kt:32 $box: $result:(ref null $kotlin.String)=null, $localX:(ref null $kotlin.String)=null (17)
 // test.kt:14 $compute: $y:i32=0:i32, $i:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Exception)=null, $j:i32=0:i32 (16, 16)
 // test.kt:15 $compute: $y:i32=42:i32, $i:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Exception)=null, $j:i32=0:i32 (18, 8, 26, 8, 8, 18, 18, 18, 18, 18, 18)
-// test.kt:16 $compute: $y:i32=42:i32, $i:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Exception)=null, $j:i32=0:i32 (18, 37, 37, 37, 37, 37, 37, 35, 35, 35, 35, 35, 38, 38, 38, 35, 40, 40, 40, 40, 40, 40, 35, 18, 12)
+// test.kt:16 $compute: $y:i32=42:i32, $i:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Exception)=null, $j:i32=0:i32 (18, 37, 37, 37, 35, 35, 35, 35, 35, 38, 38, 38, 35, 40, 40, 40, 35, 18, 12)
 // test.kt:19 $compute: $y:i32=42:i32, $i:i32=0:i32, $merged_catch_param:(ref $kotlin.RuntimeException)=(ref $kotlin.RuntimeException), $e:(ref $kotlin.RuntimeException)=(ref $kotlin.RuntimeException), $j:i32=0:i32 (16, 16, 16, 16, 16, 16, 16, 16, 16)
 // test.kt:20 $compute: $y:i32=42:i32, $i:i32=0:i32, $merged_catch_param:(ref $kotlin.RuntimeException)=(ref $kotlin.RuntimeException), $e:(ref $kotlin.RuntimeException)=(ref $kotlin.RuntimeException), $j:i32=0:i32 (18, 8, 26, 8, 8, 18, 18, 18, 18, 18, 18)
 // test.kt:21 $compute: $y:i32=42:i32, $i:i32=0:i32, $merged_catch_param:(ref $kotlin.RuntimeException)=(ref $kotlin.RuntimeException), $e:(ref $kotlin.RuntimeException)=(ref $kotlin.RuntimeException), $j:i32=0:i32 (12)

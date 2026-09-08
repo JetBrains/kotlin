@@ -39,6 +39,7 @@ interface NpmApiExecution<out T : PackageManagerEnvironment> : Serializable {
     @Deprecated(
         "Removed unused `services` parameter. Schedule for removal in Kotlin 2.6.",
         ReplaceWith("resolveRootProject(logger, nodeJs, packageManagerEnvironment, cliArgs)"),
+        level = DeprecationLevel.ERROR,
     )
     fun resolveRootProject(
         services: ServiceRegistry,

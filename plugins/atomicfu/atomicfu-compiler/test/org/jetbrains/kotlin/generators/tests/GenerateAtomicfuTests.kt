@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
-import org.jetbrains.kotlinx.atomicfu.incremental.AbstractIncrementalK2JVMWithAtomicfuRunnerTest
+import org.jetbrains.kotlinx.atomicfu.incremental.AbstractIncrementalJVMWithAtomicfuRunnerTest
 import org.jetbrains.kotlinx.atomicfu.runners.*
 import org.junit.jupiter.api.Tag
 
@@ -19,7 +19,7 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("plugins/atomicfu/atomicfu-compiler/tests-gen", "plugins/atomicfu/atomicfu-compiler/testData/") {
-            testClass<AbstractIncrementalK2JVMWithAtomicfuRunnerTest> {
+            testClass<AbstractIncrementalJVMWithAtomicfuRunnerTest> {
                 model("projects/", extension = null, recursive = false)
             }
         }

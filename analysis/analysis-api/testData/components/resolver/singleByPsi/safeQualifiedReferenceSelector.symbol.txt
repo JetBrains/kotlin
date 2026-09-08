@@ -2,7 +2,7 @@ KtNameReferenceExpression(48,49): 'y'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val y: kotlin.Int
     ]

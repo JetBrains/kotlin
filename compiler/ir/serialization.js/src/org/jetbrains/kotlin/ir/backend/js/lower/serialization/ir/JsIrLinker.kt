@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isJsStdlib
 import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.klibModuleOriginOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
@@ -37,7 +37,6 @@ class JsIrLinker(
     currentModule = null,
     configuration = configuration,
     symbolTable = symbolTable,
-    exportedDependencies = emptyList(),
     deserializedSymbolPostProcessor = { symbol, signature, fileSymbol ->
         runIf(signature.isLocal) {
             symbol.privateSignature = IdSignature.CompositeSignature(IdSignature.FileSignature(fileSymbol), signature)
@@ -65,8 +64,8 @@ class JsIrLinker(
 
     override val moduleDependencyTracker: IrModuleDependencyTracker = IrModuleDependencyTrackerImpl()
 
-    override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean {
-        val klib = (moduleDescriptor.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library ?: return false
+    override fun isBuiltInModule(module: IrModuleFragment): Boolean {
+        val klib = module.kotlinLibrary ?: return false
         return klib.isJsStdlib || klib.isWasmStdlib
     }
 
@@ -93,13 +92,8 @@ class JsIrLinker(
         }
     }
 
-    val modules
-        get() = deserializersForModules.values
-            .map { it.moduleFragment }
-
-
-    fun moduleDeserializer(moduleDescriptor: ModuleDescriptor): IrModuleDeserializer {
-        return deserializersForModules[moduleDescriptor.name.asString()] ?: error("Deserializer for $moduleDescriptor not found")
+    fun moduleDeserializer(module: IrModuleFragment): IrModuleDeserializer {
+        return klibDeserializers[module.kotlinLibrary!!] ?: error("Deserializer for ${module.name} not found")
     }
 
     fun getDeserializedFilesInKlibOrder(fragment: IrModuleFragment): List<IrFile> {

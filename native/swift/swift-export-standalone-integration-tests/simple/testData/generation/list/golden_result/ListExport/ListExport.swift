@@ -1,7 +1,11 @@
 @_implementationOnly import KotlinBridges_ListExport
 import KotlinRuntime
 import KotlinRuntimeSupport
+import KotlinStdlib
 
+public func foo() -> any ExportedKotlinPackages.kotlin.collections.MutableList {
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___foo(), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableList.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableList
+}
 public func testListAny(
     l: [any KotlinRuntimeSupport._KotlinBridgeable]
 ) -> [any KotlinRuntimeSupport._KotlinBridgeable] {

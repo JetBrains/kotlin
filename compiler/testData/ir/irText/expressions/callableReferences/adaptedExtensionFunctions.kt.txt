@@ -17,33 +17,33 @@ fun C.extensionVararg(i: Int, vararg s: String) {
 }
 
 fun testExtensionBoth() {
-  use(f = { // BLOCK
-    local fun extensionBoth(p0: C, p1: Int) {
-      extensionBoth(/* <this> = p0, */ i = p1)
+  use(f = @ExtensionFunctionType Function2<C, Int, Unit>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: C, p1: Int) {
+      return extensionBoth(/* <this> = p0, */ i = p1)
     }
-
-    ::extensionBoth
-  })
+  )
+)
 }
 
 fun testExtensionDefault() {
-  use(f = { // BLOCK
-    local fun extensionDefault(p0: C, p1: Int) {
-      extensionDefault(/* <this> = p0, */ i = p1)
+  use(f = @ExtensionFunctionType Function2<C, Int, Unit>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: C, p1: Int) {
+      return extensionDefault(/* <this> = p0, */ i = p1)
     }
-
-    ::extensionDefault
-  })
+  )
+)
 }
 
 fun testExtensionVararg() {
-  use(f = { // BLOCK
-    local fun extensionVararg(p0: C, p1: Int) {
-      extensionVararg(/* <this> = p0, */ i = p1)
+  use(f = @ExtensionFunctionType Function2<C, Int, Unit>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: C, p1: Int) {
+      return extensionVararg(/* <this> = p0, */ i = p1)
     }
-
-    ::extensionVararg
-  })
+  )
+)
 }
 
 fun use(f: @ExtensionFunctionType Function2<C, Int, Unit>) {

@@ -1,5 +1,5 @@
 // ISSUE: KT-85238
-// LANGUAGE: +CollectionLiterals +ContextSensitiveResolutionUsingExpectedType
+// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 // WITH_STDLIB
 // RUN_PIPELINE_TILL: FRONTEND
 

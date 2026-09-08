@@ -1,5 +1,5 @@
 KtDestructuringDeclarationEntry(137,146): 'val prop2'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

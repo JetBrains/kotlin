@@ -8,19 +8,17 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolv
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.components.resolveToCall
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCallResolutionError
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCallResolutionSuccess
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleCallResolutionError
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSimpleCallResolutionSuccess
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertStableResult
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.findSpecializedResolveFunctions
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-@OptIn(KtExperimentalApi::class)
 abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
     override val resolveKind: String get() = "call"
 
@@ -35,9 +33,9 @@ abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
                 val oldAttempt = mainElement.resolveToCall()?.asCallResolutionAttempt()
                 // Old API collapses multi-calls into a single success/error, losing some symbols.
                 // We only check that old API symbols are a subset of new API symbols.
-                val newSymbols = attempt?.calls?.flatMap(KaSingleOrMultiCall::symbols)
+                val newSymbols = attempt?.calls?.flatMap(KaSimpleOrMultiCall::symbols)
                     ?.map { stringRepresentation(it) }?.toSet().orEmpty()
-                val oldSymbols = oldAttempt?.calls?.flatMap(KaSingleOrMultiCall::symbols)
+                val oldSymbols = oldAttempt?.calls?.flatMap(KaSimpleOrMultiCall::symbols)
                     ?.map { stringRepresentation(it) }?.toSet().orEmpty()
 
                 testServices.assertions.assertTrue(newSymbols.containsAll(oldSymbols)) {
@@ -62,14 +60,14 @@ abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
     private fun Any.asCallResolutionAttempt(): KaCallResolutionAttempt = when (this) {
         is KaCallResolutionAttempt -> this
         is KaSuccessCallInfo -> {
-            val singleCall = (call as KaSingleOrMultiCall).calls.first()
-            KaBaseCallResolutionSuccess(singleCall)
+            val simpleCall = (call as KaSimpleOrMultiCall).calls.first()
+            KaBaseSimpleCallResolutionSuccess(simpleCall)
         }
 
-        is KaErrorCallInfo -> KaBaseCallResolutionError(
+        is KaErrorCallInfo -> KaBaseSimpleCallResolutionError(
             backedDiagnostic = diagnostic,
             backingCandidateCalls = candidateCalls.flatMap {
-                (it as KaSingleOrMultiCall).calls
+                (it as KaSimpleOrMultiCall).calls
             },
         )
 
@@ -89,9 +87,9 @@ abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
         val elementClass = element::class
 
         val assertions = testServices.assertions
-        val expectedCall = attempt?.successfulCall
+        val expectedCall = attempt?.successful
         for (kFunction in KaResolver::class.findSpecializedResolveFunctions("resolveCall", elementClass)) {
-            val specificCall = kFunction.call(session, element) as? KaSingleOrMultiCall
+            val specificCall = kFunction.call(session, element) as? KaSimpleOrMultiCall
             if (expectedCall == null || specificCall == null) {
                 assertions.assertEquals(expected = expectedCall, actual = specificCall)
             } else {

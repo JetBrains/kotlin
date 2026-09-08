@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,9 +8,17 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.psi.psiUtil.parentSubstitute
 
-abstract class KtExpressionImpl(node: ASTNode) : KtElementImpl(node), KtExpression {
+/**
+ * Base implementation of [KtExpression] backed directly by the AST tree.
+ *
+ * This is an internal implementation base class of the Kotlin PSI, not intended for direct use or subclassing outside of the PSI
+ * implementation. For expressions that may also be backed by a stub, see [KtExpressionImplStub].
+ */
+@SubclassOptInRequired(KtImplementationDetail::class)
+abstract class KtExpressionImpl : KtElementImpl, KtExpression {
+    @KtImplementationDetail
+    constructor(node: ASTNode) : super(node)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitExpression(this, data)
 
@@ -22,10 +30,6 @@ abstract class KtExpressionImpl(node: ASTNode) : KtElementImpl(node), KtExpressi
     @OptIn(KtNonPublicApi::class)
     override fun replace(newElement: PsiElement): PsiElement =
         KtPsiMutationService.getInstance().replaceExpression(this, newElement, true) { super.replace(it) }
-
-    // HasPlatformType is used to preserve the flexible type to not break source compatibility
-    @Suppress("DEPRECATION", "HasPlatformType")
-    override fun getParent() = parentSubstitute ?: super.getParent()
 
     companion object {
         @Deprecated(

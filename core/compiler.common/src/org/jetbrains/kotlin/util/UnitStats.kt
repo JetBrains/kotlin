@@ -48,6 +48,7 @@ data class UnitStats(
     val irPreLoweringStats: Time?,
     val irSerializationStats: Time?,
     val klibWritingStats: Time?,
+    val klibMetadataWritingStats: Time?,
     val irLinkingStats: Time?,
     val irLoweringStats: Time?,
     val backendStats: Time?,
@@ -76,6 +77,7 @@ data class UnitStats(
                 irPreLoweringStats +
                 irSerializationStats +
                 klibWritingStats +
+                klibMetadataWritingStats +
                 irLinkingStats +
                 irLoweringStats +
                 backendStats +
@@ -119,6 +121,9 @@ enum class PhaseType {
 
     /** Phase: Writing the IR and metadata (as raw byte arrays) to a file system (applicable only to Klib-based compilers). */
     KlibWriting,
+
+    /** Phase: Writing a metadata-only Klib to a file system (applicable only to JVM backend). */
+    KlibMetadataWriting,
 
     /** Phase: Deserialization and linkage of IR, building fake overrides and the partial linkage (applicable only to Klib-based compilers). */
     IrLinking,
@@ -223,6 +228,7 @@ fun UnitStats.forEachPhaseMeasurement(action: (PhaseType, Time?) -> Unit) {
     action(PhaseType.IrPreLowering, irPreLoweringStats)
     action(PhaseType.IrSerialization, irSerializationStats)
     action(PhaseType.KlibWriting, klibWritingStats)
+    action(PhaseType.KlibMetadataWriting, klibMetadataWritingStats)
     action(PhaseType.IrLinking, irLinkingStats)
     action(PhaseType.IrLowering, irLoweringStats)
     action(PhaseType.Backend, backendStats)
@@ -240,10 +246,14 @@ val phaseTypeName = mapOf(
     PhaseType.IrPreLowering to "IR PRE-LOWERING",
     PhaseType.IrSerialization to "IR SERIALIZATION",
     PhaseType.KlibWriting to "KLIB WRITING",
+    PhaseType.KlibMetadataWriting to "KLIB METADATA WRITING",
     PhaseType.IrLinking to "IR LINKING",
     PhaseType.IrLowering to "IR LOWERING",
     PhaseType.Backend to "BACKEND",
 )
+
+private val maxWidth = phaseTypeName.values.maxBy { it.length }.length + 4
+private val phaseNameFormat = "%${maxWidth}s"
 
 val phaseSideTypeName = mapOf(
     PhaseSideType.FindJavaClass to "Find Java class",
@@ -256,7 +266,7 @@ fun PerformanceManager.forEachStringMeasurement(action: (String) -> Unit) {
             if (time == null) return@forEachPhaseMeasurement
 
             action(
-                "%20s%8s ms".format(phaseTypeName.getValue(phaseType), time.millis) +
+                "${phaseNameFormat}%8s ms".format(phaseTypeName.getValue(phaseType), time.millis) +
                         if (phaseType != PhaseType.Initialization && linesCount != 0) {
                             "%12.3f loc/s".format(Locale.ENGLISH, getLinesPerSecond(time))
                         } else {
@@ -268,7 +278,7 @@ fun PerformanceManager.forEachStringMeasurement(action: (String) -> Unit) {
                 if (detailedPerf) {
                     filteredDynamicStats.forEach { (val _ = parentPhaseType, val dynamicName = name, val dynamicTime = time) ->
                         action(
-                            "%20s%8s ms".format("DYNAMIC PHASE", dynamicTime.millis) +
+                            "${phaseNameFormat}%8s ms".format("DYNAMIC PHASE", dynamicTime.millis) +
                                     if (linesCount != 0) {
                                         "%12.3f loc/s ($dynamicName)".format(Locale.ENGLISH, getLinesPerSecond(dynamicTime))
                                     } else {
@@ -283,7 +293,7 @@ fun PerformanceManager.forEachStringMeasurement(action: (String) -> Unit) {
                             totTime += it.time
                         }
                         action(
-                            "%20s%8s ms".format("DYNAMIC PHASES", totTime.millis) +
+                            "${phaseNameFormat}%8s ms".format("DYNAMIC PHASES", totTime.millis) +
                                     if (linesCount != 0) "%12.3f loc/s".format(Locale.ENGLISH, getLinesPerSecond(totTime)) else ""
                         )
                     }

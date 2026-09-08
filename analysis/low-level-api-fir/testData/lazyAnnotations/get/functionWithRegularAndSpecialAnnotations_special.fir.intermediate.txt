@@ -1,1 +1,1 @@
-@MyAnno[Unresolved](LAZY_EXPRESSION) @R|kotlin/jvm/JvmName|[CompilerRequiredAnnotations](String(myName)) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun foo([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] i: Int): String
+@MyAnno[Unresolved](LAZY_EXPRESSION) @R|kotlin/jvm/JvmName|[CompilerRequiredAnnotations](String(myName)) [compilerRequired = (name = String(myName))] public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun foo([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] i: Int): String

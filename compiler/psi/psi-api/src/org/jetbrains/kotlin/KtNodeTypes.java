@@ -151,7 +151,7 @@ public interface KtNodeTypes {
     @NotNull IElementType CLASS_LITERAL_EXPRESSION  = KtStubBasedElementTypes.CLASS_LITERAL_EXPRESSION;
     @NotNull IElementType SAFE_ACCESS_EXPRESSION    = new KtNodeType("SAFE_ACCESS_EXPRESSION", KtSafeQualifiedExpression::new);
 
-    @NotNull IElementType OBJECT_LITERAL            = KtStubBasedElementTypes.OBJECT_LITERAL;;
+    @NotNull IElementType OBJECT_LITERAL            = KtStubBasedElementTypes.OBJECT_LITERAL;
 
     @NotNull IElementType WHEN                      = new KtNodeType("WHEN", KtWhenExpression::new);
     @NotNull IElementType WHEN_ENTRY                = new KtNodeType("WHEN_ENTRY", KtWhenEntry::new);

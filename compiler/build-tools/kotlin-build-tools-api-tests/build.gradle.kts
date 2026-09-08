@@ -2,51 +2,35 @@ import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     kotlin("jvm")
     `jvm-test-suite`
     id("test-symlink-transformation")
-    id("project-tests-convention")
     id("test-inputs-check")
 }
 
-val noArgCompilerPlugin = configurations.dependencyScope("noArgCompilerPlugin")
-val assignmentCompilerPlugin = configurations.dependencyScope("assignmentCompilerPlugin")
-val serializationCompilerPlugin = configurations.dependencyScope("serializationCompilerPlugin")
-val serializationCore = configurations.dependencyScope("serializationCore")
-val pluginSandbox = configurations.dependencyScope("pluginSandbox")
-
-val noArgCompilerPluginResolvable = configurations.resolvable("noArgCompilerPluginResolvable") {
-    extendsFrom(noArgCompilerPlugin.get())
-}
-val assignmentCompilerPluginResolvable = configurations.resolvable("assignmentCompilerPluginResolvable") {
-    extendsFrom(assignmentCompilerPlugin.get())
-}
-val serializationCompilerPluginResolvable = configurations.resolvable("serializationCompilerPluginResolvable") {
-    extendsFrom(serializationCompilerPlugin.get())
-}
-val serializationCoreResolvable = configurations.resolvable("serializationCoreResolvable") {
-    extendsFrom(serializationCore.get())
-}
-val pluginSandboxResolvable = configurations.resolvable("pluginSandboxResolvable") {
-    extendsFrom(pluginSandbox.get())
-}
-
-val buildToolsApiImpl = configurations.dependencyScope("buildToolsApiImpl")
-val buildToolsApiImplResolvable = configurations.resolvable("buildToolsApiImplResolvable") {
-    extendsFrom(buildToolsApiImpl.get())
-}
-
-val scriptingCompilerPlugin = configurations.dependencyScope("scriptingCompilerPlugin")
-val scriptingCompilerPluginResolvable = configurations.resolvable("scriptingCompilerPluginResolvable") {
-    extendsFrom(scriptingCompilerPlugin.get())
-}
-
-val unpackedResources = configurations.dependencyScope("unpackedResources")
-val unpackedResourcesResolvable = configurations.resolvable("unpackedResourcesResolvable") {
-    // Wire the dependency declarations
-    extendsFrom(unpackedResources)
-    // These attributes must be compatible with the producer
+val noArgCompilerPlugin = configurations.detachedConfiguration(
+    dependencies.project(":kotlin-noarg-compiler-plugin.embeddable")
+)
+val assignmentCompilerPlugin = configurations.detachedConfiguration(
+    dependencies.project(":kotlin-assignment-compiler-plugin.embeddable")
+)
+val serializationCompilerPlugin = configurations.detachedConfiguration(
+    dependencies.project(":kotlinx-serialization-compiler-plugin.embeddable")
+)
+val serializationCore = configurations.detachedConfiguration(
+    libs.kotlinx.serialization.core.asProvider().get()
+)
+val pluginSandbox = configurations.detachedConfiguration(
+    dependencies.project(":plugins:plugin-sandbox")
+)
+val scriptingCompilerPlugin = configurations.detachedConfiguration(
+    dependencies.project(":kotlin-scripting-compiler-embeddable")
+)
+val unpackedResources = configurations.detachedConfiguration(
+    dependencies.project(":compiler:build-tools:kotlin-build-tools-api-tests").apply {
+        isTransitive = false
+    }
+).apply {
     attributes {
         attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.RESOURCES))
     }
@@ -57,36 +41,24 @@ class PlatformDefinition(
     val attributesAction: AttributeContainer.() -> Unit,
     val classpathProperty: String,
 ) {
-    fun getOrCreateConfiguration(version: String = ""): Configuration {
-        val baseName = "$name$platformStdLibSuffix$version"
-        val configurationsExist = baseName in configurations.names
-        val resolvableConfiguration = if (configurationsExist) {
-            configurations.named("$baseName$resolvableSuffix")
-        } else {
-            val platformStdlib = configurations.dependencyScope(baseName)
-            val platformStdlibResolvable = configurations.resolvable("$baseName$resolvableSuffix") {
-                extendsFrom(platformStdlib.get())
-                attributes(attributesAction)
+    val configurationsCache = mutableMapOf<String, Configuration>()
+
+    fun getOrCreateConfiguration(version: String = ""): Configuration = configurationsCache.computeIfAbsent(version) {
+        configurations.detachedConfiguration(
+            if (version.isEmpty()) {
+                dependencies.project(":kotlin-stdlib")
+            } else {
+                dependencies.create("org.jetbrains.kotlin:kotlin-stdlib:$version")
             }
-            project.dependencies {
-                if (version.isEmpty()) {
-                    platformStdlib(project(":kotlin-stdlib"))
-                } else {
-                    platformStdlib("org.jetbrains.kotlin:kotlin-stdlib:$version")
-                }
-            }
-            platformStdlibResolvable
+        ).apply {
+            attributes(attributesAction)
         }
-        return resolvableConfiguration.get()
     }
 
-    fun addClasspathProperty(test: Test, version: String = "") {
-        test.addClasspathProperty(getOrCreateConfiguration(version), classpathProperty)
+    fun addClasspathProperty(test: Test, configuration: Configuration) {
+        test.addClasspathProperty(configuration, classpathProperty)
     }
 }
-
-val platformStdLibSuffix = "StdlibImpl"
-val resolvableSuffix = "Resolvable"
 
 val platforms = listOf(
     PlatformDefinition(
@@ -107,6 +79,15 @@ val platforms = listOf(
         "kotlin.build-tools-api.test.wasmStdlibClasspath",
     ),
     PlatformDefinition(
+        "wasmWasi",
+        {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, "kotlin-runtime"))
+            attribute(Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java), "wasm")
+            attribute(Attribute.of("org.jetbrains.kotlin.wasm.target", String::class.java), "wasi")
+        },
+        "kotlin.build-tools-api.test.wasmWasiStdlibClasspath",
+    ),
+    PlatformDefinition(
         "metadata",
         {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, "kotlin-runtime"))
@@ -122,29 +103,18 @@ dependencies {
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-compat"))
     api(testFixtures(project(":compiler:test-infrastructure-utils"))) // for `@TestDataPath`/`@TestMetadata`
-    api(testFederationRuntime)
+    api(project(":repo:test-runtime"))
 
     api(platform(libs.junit.bom))
     compileOnly(libs.junit.jupiter.engine)
     compileOnly(libs.junit.jupiter.params)
     testRuntimeOnly(libs.junit.platform.launcher)
-    noArgCompilerPlugin(project(":kotlin-noarg-compiler-plugin.embeddable"))
-    assignmentCompilerPlugin(project(":kotlin-assignment-compiler-plugin.embeddable"))
-    scriptingCompilerPlugin(project(":kotlin-scripting-compiler-embeddable"))
-    serializationCompilerPlugin(project(":kotlinx-serialization-compiler-plugin.embeddable"))
-    serializationCore(libs.kotlinx.serialization.core)
-    pluginSandbox(project(":plugins:plugin-sandbox"))
-    buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-compat"))
-    buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-impl"))
-    buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
-    unpackedResources(project(":compiler:build-tools:kotlin-build-tools-api-tests")) {
-        isTransitive = false
-    }
 }
 
 kotlin {
     compilerOptions {
         optIn.add("org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi")
+        optIn.add("org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi")
         optIn.add("kotlin.ExperimentalStdlibApi")
         optIn.add("kotlin.io.path.ExperimentalPathApi")
         freeCompilerArgs.add("-Xcontext-parameters")
@@ -232,46 +202,30 @@ val businessLogicTestSuits = setOf(
     "testInternalInputsTracker",
     "testAbiValidation",
     "testRestrictedArguments",
+    "testArgumentParsingWarnings",
     "testClasspathMetadata",
     "testBuildSession",
 )
 
-fun JvmTestSuite.addSnapshotBuildToolsImpl() {
-    targets.all {
-        platforms.forEach { platform -> platform.getOrCreateConfiguration() }
-        testTask.configure {
-            addClasspathProperty(buildToolsApiImplResolvable.get(), COMPILER_CLASSPATH_PROPERTY)
-            platforms.forEach { platform ->
-                platform.addClasspathProperty(this)
+val buildToolsImplConfigurationsCache = mutableMapOf<String, Configuration>()
+fun JvmTestSuite.addSpecificBuildToolsImpl(version: String = "") {
+    val compilerClasspath = buildToolsImplConfigurationsCache.computeIfAbsent(version) {
+        configurations.detachedConfiguration(
+            project.dependencies.project(":compiler:build-tools:kotlin-build-tools-compat"),
+            if (version.isEmpty()) {
+                dependencies.project(":compiler:build-tools:kotlin-build-tools-impl")
+            } else {
+                project.dependencies.create("org.jetbrains.kotlin:kotlin-build-tools-impl:${version}")
             }
-        }
-    }
-}
-
-fun JvmTestSuite.addSpecificBuildToolsImpl(version: String) {
-    val baseName = "buildToolsApiImpl$version"
-    val configurationsExist = baseName in configurations.names
-    val resolvableConfiguration = if (configurationsExist) {
-        configurations.named("$baseName$resolvableSuffix")
-    } else {
-        val buildToolsApiImpl = configurations.dependencyScope(baseName)
-        val buildToolsApiImplResolvable = configurations.resolvable("$baseName$resolvableSuffix") {
-            extendsFrom(buildToolsApiImpl.get())
-        }
-        project.dependencies {
-            buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-api"))
-            buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-compat"))
-            buildToolsApiImpl("org.jetbrains.kotlin:kotlin-build-tools-impl:${version}")
-        }
-        buildToolsApiImplResolvable
+        )
     }
 
     targets.all {
-        platforms.forEach { platform -> platform.getOrCreateConfiguration(version) }
+        val platformConfigurations = platforms.associateWith { platform -> platform.getOrCreateConfiguration(version) }
         testTask.configure {
-            addClasspathProperty(resolvableConfiguration.get(), COMPILER_CLASSPATH_PROPERTY)
-            platforms.forEach { platform ->
-                platform.addClasspathProperty(this, version)
+            addClasspathProperty(compilerClasspath, COMPILER_CLASSPATH_PROPERTY)
+            platformConfigurations.forEach { (platform, configuration) ->
+                platform.addClasspathProperty(this, configuration)
             }
         }
     }
@@ -287,7 +241,7 @@ testing {
             register<JvmTestSuite>("testCompatibility${implVersion}") {
                 sources.configureCompatibilitySourceDirectories("testCompatibility")
                 if (implVersion.isCurrent) {
-                    addSnapshotBuildToolsImpl()
+                    addSpecificBuildToolsImpl()
                 } else {
                     addSpecificBuildToolsImpl(implVersion.toString())
                 }
@@ -296,7 +250,8 @@ testing {
                         testTask(
                             taskName = testTask.name,
                             javaLauncher = JdkMajorVersion.JDK_1_8,
-                            skipInLocalBuild = false
+                            skipInLocalBuild = false,
+                            garbageCollector = GarbageCollector.Parallel
                         ) {
                             ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
@@ -316,7 +271,7 @@ testing {
                 implementation(project(":compiler:build-tools:kotlin-build-tools-api"))
                 implementation(project(":compiler:arguments"))
                 if (isRegular) {
-                    addSnapshotBuildToolsImpl()
+                    addSpecificBuildToolsImpl()
                 }
             }
 
@@ -326,7 +281,8 @@ testing {
                         testTask(
                             taskName = testTask.name,
                             javaLauncher = JdkMajorVersion.JDK_1_8,
-                            skipInLocalBuild = false
+                            skipInLocalBuild = false,
+                            garbageCollector = GarbageCollector.Parallel
                         ) {
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
 
@@ -338,7 +294,7 @@ testing {
                         "kotlin.daemon.custom.run.files.path.for.tests",
                         "build/daemon"
                     )
-                    addClasspathProperty(unpackedResourcesResolvable, "kotlin.test.templates.classpath")
+                    addClasspathProperty(unpackedResources, "kotlin.test.templates.classpath")
                 }
             }
         }
@@ -388,12 +344,12 @@ testing {
             }
             targets.all {
                 testTask.configure {
-                    addClasspathProperty(noArgCompilerPluginResolvable.get(), "NOARG_COMPILER_PLUGIN")
-                    addClasspathProperty(assignmentCompilerPluginResolvable.get(), "ASSIGNMENT_COMPILER_PLUGIN")
-                    addClasspathProperty(scriptingCompilerPluginResolvable.get(), "SCRIPTING_COMPILER_PLUGIN")
-                    addClasspathProperty(serializationCompilerPluginResolvable.get(), "SERIALIZATION_COMPILER_PLUGIN")
-                    addClasspathProperty(serializationCoreResolvable.get(), "SERIALIZATION_CORE")
-                    addClasspathProperty(pluginSandboxResolvable.get(), "PLUGIN_SANDBOX")
+                    addClasspathProperty(noArgCompilerPlugin, "NOARG_COMPILER_PLUGIN")
+                    addClasspathProperty(assignmentCompilerPlugin, "ASSIGNMENT_COMPILER_PLUGIN")
+                    addClasspathProperty(scriptingCompilerPlugin, "SCRIPTING_COMPILER_PLUGIN")
+                    addClasspathProperty(serializationCompilerPlugin, "SERIALIZATION_COMPILER_PLUGIN")
+                    addClasspathProperty(serializationCore, "SERIALIZATION_CORE")
+                    addClasspathProperty(pluginSandbox, "PLUGIN_SANDBOX")
 
                     // those classes use compileOnly dependency on scripting and should not be considered as containing test classes to avoid runtime failures
                     exclude(
@@ -443,5 +399,14 @@ fun Project.checkCompatibilityCoverage(
             compatibilityTestsVersions.joinToString(",") { it.toString() },
             compatibilityTestsExcludedVersions.joinToString(",") { it.toString() },
         )
+    }
+}
+
+tasks.register("resolveDependencies") {
+    description = "Resolves dependencies (for dependency verification or populating caches) in detached configurations."
+    doNotTrackState("The task must always re-run to ensure that all dependencies are downloaded.")
+    doLast {
+        platforms.flatMap { platform -> platform.configurationsCache.values }.forEach { it.resolve() }
+        buildToolsImplConfigurationsCache.values.forEach { it.resolve() }
     }
 }

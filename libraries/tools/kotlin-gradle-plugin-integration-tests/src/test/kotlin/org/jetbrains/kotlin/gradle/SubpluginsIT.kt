@@ -23,7 +23,10 @@ class SubpluginsIT : KGPBaseTest() {
         project(
             "kotlinGradleSubplugin",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+            ),
         ) {
             build("compileKotlin", "build") {
                 assertTasksExecuted(":compileKotlin")
@@ -199,7 +202,7 @@ class SubpluginsIT : KGPBaseTest() {
         project(
             "kapt/android-dagger",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = providedJdk.location
         ) {
             subProject("app").buildGradle.modify {
@@ -232,11 +235,7 @@ class SubpluginsIT : KGPBaseTest() {
                 subProject("withconfig").buildGradle
             ).forEach { buildGradle ->
                 buildGradle.modify {
-                    val freefairLombokVersion = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) {
-                        "5.3.3.3"
-                    } else {
-                        "8.4"
-                    }
+                    val freefairLombokVersion = "8.4"
                     it.replace("<freefair_lombok_version>", freefairLombokVersion)
                 }
             }
@@ -248,14 +247,7 @@ class SubpluginsIT : KGPBaseTest() {
     @DisplayName("KT-51378: Using 'kotlin-dsl' with latest plugin version in buildSrc module")
     @GradleTest
     fun testBuildSrcKotlinDSL(gradleVersion: GradleVersion) {
-        val languageVersionForBuildSrc = if (gradleVersion > GradleVersion.version(TestVersions.Gradle.G_8_2)) {
-            KotlinVersion.firstNonDeprecated.name
-        } else {
-            // Those Gradle versions embed Kotlin compiler <= 1.8.20, so are subject to KT-56526
-            // 2.0 is the highest version that can be used there
-            @Suppress("DEPRECATION")
-            KotlinVersion.KOTLIN_2_0
-        }
+        val languageVersionForBuildSrc = KotlinVersion.firstNonDeprecated.name
         project("buildSrcUsingKotlinCompilationAndKotlinPlugin", gradleVersion) {
             subProject("buildSrc").buildGradleKts.modify {
                 //language=kts

@@ -243,7 +243,7 @@ KtFile: BinaryTree.kt
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(private)('private')
           PsiWhiteSpace(' ')
@@ -304,7 +304,7 @@ KtFile: BinaryTree.kt
                 PsiElement(IDENTIFIER)('other')
             PsiElement(RPAR)(')')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -352,7 +352,7 @@ KtFile: BinaryTree.kt
                     PsiElement(IDENTIFIER)('item')
                 PsiElement(RPAR)(')')
           PsiWhiteSpace('\n\n    ')
-          FUN
+          FUNCTION
             PsiElement(fun)('fun')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('contains')
@@ -506,7 +506,7 @@ KtFile: BinaryTree.kt
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -594,7 +594,7 @@ KtFile: BinaryTree.kt
             BOOLEAN_CONSTANT
               PsiElement(false)('false')
           PsiWhiteSpace('\n\n    ')
-          FUN
+          FUNCTION
             PsiComment(EOL_COMMENT)('// In principle, this has access to item anyway, but then it's unreachable code')
             PsiWhiteSpace('\n    ')
             PsiComment(EOL_COMMENT)('// BAD: the naive implementation of ref will create H(T) ref objects, but can be optimized to create only one')
@@ -824,7 +824,7 @@ KtFile: BinaryTree.kt
               PsiWhiteSpace('\n    ')
               PsiElement(RBRACE)('}')
           PsiWhiteSpace('\n\n    ')
-          FUN
+          FUNCTION
             PsiComment(EOL_COMMENT)('// In principle, this has access to item anyway')
             PsiWhiteSpace('\n    ')
             PsiElement(fun)('fun')
@@ -1118,7 +1118,7 @@ KtFile: BinaryTree.kt
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -1221,7 +1221,7 @@ KtFile: BinaryTree.kt
             BOOLEAN_CONSTANT
               PsiElement(true)('true')
           PsiWhiteSpace('\n\n    ')
-          FUN
+          FUNCTION
             PsiElement(fun)('fun')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('find')
@@ -1355,7 +1355,7 @@ KtFile: BinaryTree.kt
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(private)('private')
         PsiWhiteSpace(' ')
@@ -1406,7 +1406,7 @@ KtFile: BinaryTree.kt
             PsiWhiteSpace('\n    ')
             PsiElement(RBRACE)('}')
           PsiWhiteSpace('\n\n    ')
-          FUN
+          FUNCTION
             PsiElement(fun)('fun')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('replace')
@@ -1588,7 +1588,7 @@ KtFile: BinaryTree.kt
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         PsiComment(EOL_COMMENT)('// Relies on tail-recursion optimization')
         PsiWhiteSpace('\n  ')
         MODIFIER_LIST
@@ -1656,7 +1656,7 @@ KtFile: BinaryTree.kt
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -1691,7 +1691,7 @@ KtFile: BinaryTree.kt
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -1849,7 +1849,7 @@ KtFile: BinaryTree.kt
                   PsiWhiteSpace('    \n    ')
                   PsiElement(RBRACE)('}')
               PsiWhiteSpace('\n\n    ')
-              FUN
+              FUNCTION
                 MODIFIER_LIST
                   PsiElement(override)('override')
                 PsiWhiteSpace(' ')
@@ -1926,7 +1926,7 @@ KtFile: BinaryTree.kt
                   PsiWhiteSpace('\n    ')
                   PsiElement(RBRACE)('}')
               PsiWhiteSpace('\n\n    ')
-              FUN
+              FUNCTION
                 MODIFIER_LIST
                   PsiElement(private)('private')
                 PsiWhiteSpace(' ')
@@ -2244,7 +2244,7 @@ KtFile: BinaryTree.kt
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('isEmpty')
               PsiWhiteSpace('\n\n\n    ')
-              FUN
+              FUNCTION
                 MODIFIER_LIST
                   PsiElement(override)('override')
                 PsiWhiteSpace(' ')
@@ -2335,7 +2335,7 @@ KtFile: BinaryTree.kt
                   PsiWhiteSpace('\n    ')
                   PsiElement(RBRACE)('}')
               PsiWhiteSpace('\n\n    ')
-              FUN
+              FUNCTION
                 MODIFIER_LIST
                   PsiElement(private)('private')
                 PsiWhiteSpace(' ')

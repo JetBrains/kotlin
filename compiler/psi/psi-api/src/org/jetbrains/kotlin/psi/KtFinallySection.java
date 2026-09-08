@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtNodeTypes;
 
@@ -23,7 +24,9 @@ import org.jetbrains.kotlin.KtNodeTypes;
  * // The entire block from 'finally' to the closing curly brace
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtFinallySection extends KtElementImpl implements KtStatementExpression {
+    @KtImplementationDetail
     public KtFinallySection(@NotNull ASTNode node) {
         super(node);
     }
@@ -33,6 +36,7 @@ public class KtFinallySection extends KtElementImpl implements KtStatementExpres
         return visitor.visitFinallySection(this, data);
     }
 
+    /** Returns the block executed in the {@code finally} section. */
     public KtBlockExpression getFinalExpression() {
         return (KtBlockExpression) findChildByType(KtNodeTypes.BLOCK);
     }

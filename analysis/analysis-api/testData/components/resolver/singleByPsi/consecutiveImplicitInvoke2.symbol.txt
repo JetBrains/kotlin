@@ -1,5 +1,5 @@
 KtCallExpression(135,140): 'i()()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /invoke(<extension receiver>: kotlin.Long): kotlin.Double
     ]

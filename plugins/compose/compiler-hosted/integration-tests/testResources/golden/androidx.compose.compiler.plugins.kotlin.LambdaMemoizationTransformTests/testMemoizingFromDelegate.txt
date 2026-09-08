@@ -56,19 +56,33 @@ fun StrongSkippingIssue(data: ClassWithData, %composer: Composer?, %changed: Int
         tmp0_group
       }
       get() {
-        return state%delegate.getValue(null, ::state%delegate)
+        return state%delegate.getValue(null, ::state {
+          fun state(): String }
+        )
       }
     }
     val action by {
-      val action%delegate = data::action
+      val action%delegate = ::action {
+        fun action(receiver: ClassWithData): Int {
+          return receiver.action
+        }
+      }
       get() {
-        return action%delegate.getValue(null, ::action%delegate)
+        return action%delegate.getValue(null, ::action {
+          fun action(): Int }
+        )
       }
     }
     val action1 by {
-      val action1%delegate = getData()::action
+      val action1%delegate = ::action {
+        fun action(receiver: ClassWithData): Int {
+          return receiver.action
+        }
+      }
       get() {
-        return action1%delegate.getValue(null, ::action1%delegate)
+        return action1%delegate.getValue(null, ::action1 {
+          fun action1(): Int }
+        )
       }
     }
     {

@@ -3,7 +3,7 @@
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
     lookupLocally: false
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
       ]
@@ -13,7 +13,7 @@
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
     lookupLocally: false
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
       ]
@@ -23,7 +23,7 @@
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
     lookupLocally: false
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
       ]
@@ -33,7 +33,7 @@
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
     lookupLocally: false
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
       ]
@@ -43,7 +43,7 @@
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
     lookupLocally: false
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
       ]
@@ -53,7 +53,7 @@
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
     lookupLocally: false
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
       ]
@@ -63,7 +63,7 @@
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
     lookupLocally: false
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
       ]
@@ -73,7 +73,7 @@
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
     lookupLocally: false
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
       ]
@@ -83,7 +83,7 @@
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
     lookupLocally: false
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
       ]
@@ -93,7 +93,7 @@
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
     lookupLocally: false
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
       ]
@@ -103,7 +103,7 @@
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
     lookupLocally: false
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         var something: kotlin.Int
       ]

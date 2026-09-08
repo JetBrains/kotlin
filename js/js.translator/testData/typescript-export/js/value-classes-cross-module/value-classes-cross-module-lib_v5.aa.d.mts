@@ -31,6 +31,7 @@ declare namespace DefaultValueClass {
 }
 export declare function echoLibValue(value: LibValue): LibValue;
 export declare function createMainValue(value: number): LibValue;
+export declare function box(): string;
 export declare interface MainExternalInterface {
     echo(value: number): number;
     readonly directValue: number;

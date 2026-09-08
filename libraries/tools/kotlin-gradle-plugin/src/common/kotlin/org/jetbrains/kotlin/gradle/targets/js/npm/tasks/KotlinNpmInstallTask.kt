@@ -13,6 +13,8 @@ import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.targets.js.internal.checkIsJsToolingProject
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironmentTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonFilesTask
@@ -26,7 +28,9 @@ abstract class KotlinNpmInstallTask :
     PackageJsonFilesTask,
     UsesKotlinNpmResolutionManager {
     init {
-        check(project == project.rootProject)
+        checkIsJsToolingProject(project) {
+            "Cannot register ${KotlinNpmInstallTask::class.simpleName} in ${project.displayName}. It can only be registered in ${project.jsToolingProject().displayName}."
+        }
     }
 
     @Input

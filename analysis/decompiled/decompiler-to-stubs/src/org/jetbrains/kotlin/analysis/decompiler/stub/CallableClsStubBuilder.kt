@@ -2,6 +2,7 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(KtImplementationDetail::class)
 
 package org.jetbrains.kotlin.analysis.decompiler.stub
 
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
@@ -101,14 +103,14 @@ fun createDeclarationsStubs(
 @OptIn(KtExperimentalApi::class)
 private fun buildCompanionBlockWithBody(parentStub: StubElement<out PsiElement>): StubElement<out PsiElement> {
     val companionBlockStub = KotlinPlaceHolderStubImpl<KtCompanionBlock>(
-        parentStub,
-        KtNodeTypes.COMPANION_BLOCK,
+        parent = parentStub,
+        elementType = KtNodeTypes.COMPANION_BLOCK,
     )
 
     // Parser treats companion keyword as a modifier, so we need to create a modifier list stub for it
     createModifierListStub(companionBlockStub, listOf(KtTokens.COMPANION_KEYWORD), ProtoBuf.ReturnValueStatus.UNSPECIFIED)
 
-    return KotlinPlaceHolderStubImpl<KtClassBody>(companionBlockStub, KtNodeTypes.CLASS_BODY)
+    return KotlinPlaceHolderStubImpl<KtClassBody>(parent = companionBlockStub, elementType = KtNodeTypes.CLASS_BODY)
 }
 
 fun createTypeAliasesStubs(
@@ -217,8 +219,8 @@ abstract class CallableClsStubBuilder(
         }
 
         val contextReceiverListStub = KotlinPlaceHolderStubImpl<KtContextParameterList>(
-            modifierListStub,
-            KtNodeTypes.CONTEXT_PARAMETER_LIST,
+            parent = modifierListStub,
+            elementType = KtNodeTypes.CONTEXT_PARAMETER_LIST,
         )
 
         typeStubBuilder.createValueParameterStubs(
@@ -441,9 +443,9 @@ private class PropertyClsStubBuilder(
             createValueStub(propertyStub, value, containerClassId = (protoContainer as? ProtoContainer.Class)?.classId)
         } else {
             KotlinNameReferenceExpressionStubImpl(
-                propertyStub,
-                StringRef.fromString(COMPILED_DEFAULT_INITIALIZER),
-                false,
+                parent = propertyStub,
+                referencedNameRef = StringRef.fromString(COMPILED_DEFAULT_INITIALIZER),
+                isClassRef = false,
             )
         }
     }
@@ -486,7 +488,7 @@ private class PropertyClsStubBuilder(
 
         // Getter with a body expect to have a value parameter list
         if (isNotDefault) {
-            KotlinPlaceHolderStubImpl<KtParameterList>(getterStub, KtNodeTypes.VALUE_PARAMETER_LIST)
+            KotlinPlaceHolderStubImpl<KtParameterList>(parent = getterStub, elementType = KtNodeTypes.VALUE_PARAMETER_LIST)
         }
     }
 

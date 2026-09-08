@@ -402,7 +402,7 @@ KtFile: Imports_ERR.kt
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('foo')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')

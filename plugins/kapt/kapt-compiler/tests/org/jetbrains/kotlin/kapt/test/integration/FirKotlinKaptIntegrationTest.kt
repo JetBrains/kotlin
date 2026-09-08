@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.kapt.test.integration
 
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -36,16 +35,10 @@ class FirKotlinKaptIntegrationTest(private val testInfo: TestInfo) {
         vararg supportedAnnotations: String,
         options: Map<String, String> = emptyMap(),
         expectFailure: Boolean = false,
-        additionalPluginExtension: IrGenerationExtension? = null,
-        process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, FirKaptExtensionForTests) -> Unit
+        process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, FirKaptExtensionForTests) -> Unit,
     ) {
         val file = File(TEST_DATA_DIR, "$name.kt")
-        AbstractFirKotlinKaptIntegrationTestRunner(
-            options,
-            supportedAnnotations.toList(),
-            additionalPluginExtension,
-            process
-        ).apply {
+        AbstractFirKotlinKaptIntegrationTestRunner(options, supportedAnnotations.toList(), process).apply {
             initTestInfo(testInfo)
             try {
                 runTest(file.path)

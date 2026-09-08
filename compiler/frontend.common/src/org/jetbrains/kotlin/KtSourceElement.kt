@@ -408,6 +408,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     sealed class DesugaredIncrementOrDecrement(val generatedElementKind: GeneratedElementKind) : KtFakeSourceElementKind() {
         enum class GeneratedElementKind {
             /**
+             * The primary receiver expression.
+             */
+            PrimaryReceiver,
+
+            /**
              * The desugared block, assignment, operator call, or other main expressions.
              */
             DesugaredExpression,
@@ -465,6 +470,12 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
          */
         val isSecondGetReference: Boolean
             get() = generatedElementKind == GeneratedElementKind.SecondGetReference
+
+        /**
+         * @see GeneratedElementKind.PrimaryReceiver
+         */
+        val forPrimaryReceiver: DesugaredIncrementOrDecrement
+            get() = withGeneratedElementKind(GeneratedElementKind.PrimaryReceiver)
 
         /**
          * @see GeneratedElementKind.ReceiverVariable
@@ -738,6 +749,13 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object FromUseSiteTarget : KtFakeSourceElementKind()
 
     /**
+     * for annotation on constructor property when the use site target allows both the parameter and the property,
+     * in that case the annotation on the parameter keeps the real source kind and the copy on the property
+     * gets this fake kind.
+     */
+    object AnnotationCopyFromConstructorParameter : KtFakeSourceElementKind()
+
+    /**
      * for `@ParameterName` annotation call added to function types with names in the notation
      * with a fake source that refers to the value parameter in the function type notation
      * e.g., `(x: Int) -> Unit` becomes `Function1<@ParameterName("x") Int, Unit>`
@@ -986,6 +1004,13 @@ class KtOffsetsOnlySourceElement(
     override val endOffset: Int,
 ) : AbstractKtSourceElement()
 
+object KtMissingSourceElement : AbstractKtSourceElement() {
+    override val startOffset: Int
+        get() = -1
+    override val endOffset: Int
+        get() = -1
+}
+
 /**
  * [KtSourceElement] represents the AST element associated with a specific location in the source code. It allows the compiler to map back
  * to the source file.
@@ -1045,6 +1070,15 @@ sealed class KtSourceElement : AbstractKtSourceElement() {
 
     /** Elements of the same source should be considered equal. */
     abstract override fun equals(other: Any?): Boolean
+
+    abstract fun fakeElement(
+        newKind: KtFakeSourceElementKind,
+        offsetStrategy: KtSourceElementOffsetStrategy = KtSourceElementOffsetStrategy.Default,
+    ): KtSourceElement
+
+    abstract fun realElement(): KtSourceElement
+
+    abstract val text: CharSequence
 }
 
 // NB: in certain situations, psi.node could be null (see e.g. KT-44152)
@@ -1196,6 +1230,21 @@ sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
         append(", ").append(startOffset).append("..").append(endOffset)
         append(')')
     }
+
+    override fun fakeElement(newKind: KtFakeSourceElementKind, offsetStrategy: KtSourceElementOffsetStrategy): KtSourceElement {
+        if (kind == newKind) return this
+        return when (offsetStrategy) {
+            is KtSourceElementOffsetStrategy.Default -> KtFakePsiSourceElement(psi, newKind)
+            is KtSourceElementOffsetStrategy.Custom -> KtFakePsiSourceElementWithCustomOffsetStrategy(psi, newKind, offsetStrategy)
+        }
+    }
+
+    override fun realElement(): KtSourceElement {
+        return KtRealPsiSourceElement(psi)
+    }
+
+    override val text: CharSequence
+        get() = psi.text
 }
 
 class KtRealPsiSourceElement(psi: PsiElement) : KtPsiSourceElement(psi) {
@@ -1298,42 +1347,6 @@ sealed class KtSourceElementOffsetStrategy {
     }
 }
 
-fun KtSourceElement.fakeElement(
-    newKind: KtFakeSourceElementKind,
-    offsetStrategy: KtSourceElementOffsetStrategy = KtSourceElementOffsetStrategy.Default,
-): KtSourceElement {
-    if (kind == newKind) return this
-    return when (this) {
-        is KtLightSourceElement -> {
-            val [startOffset, endOffset] = if (offsetStrategy is KtSourceElementOffsetStrategy.Custom) {
-                offsetStrategy.startOffset to offsetStrategy.endOffset
-            } else {
-                startOffset to endOffset
-            }
-
-            KtLightSourceElement(
-                lighterASTNode,
-                startOffset,
-                endOffset,
-                treeStructure,
-                newKind
-            )
-        }
-
-        is KtPsiSourceElement -> when (offsetStrategy) {
-            is KtSourceElementOffsetStrategy.Default -> KtFakePsiSourceElement(psi, newKind)
-            is KtSourceElementOffsetStrategy.Custom -> KtFakePsiSourceElementWithCustomOffsetStrategy(psi, newKind, offsetStrategy)
-        }
-    }
-}
-
-fun KtSourceElement.realElement(): KtSourceElement = when (this) {
-    is KtRealPsiSourceElement -> this
-    is KtLightSourceElement -> KtLightSourceElement(lighterASTNode, startOffset, endOffset, treeStructure, KtRealSourceElementKind)
-    is KtPsiSourceElement -> KtRealPsiSourceElement(psi)
-}
-
-
 class KtLightSourceElement(
     override val lighterASTNode: LighterASTNode,
     override val startOffset: Int,
@@ -1395,22 +1408,45 @@ class KtLightSourceElement(
         append(", ").append(startOffset).append("..").append(endOffset)
         append(')')
     }
+
+    override fun fakeElement(
+        newKind: KtFakeSourceElementKind,
+        offsetStrategy: KtSourceElementOffsetStrategy,
+    ): KtLightSourceElement {
+        if (kind == newKind) return this
+        val [startOffset, endOffset] = if (offsetStrategy is KtSourceElementOffsetStrategy.Custom) {
+            offsetStrategy.startOffset to offsetStrategy.endOffset
+        } else {
+            startOffset to endOffset
+        }
+
+        return KtLightSourceElement(
+            lighterASTNode,
+            startOffset,
+            endOffset,
+            treeStructure,
+            newKind
+        )
+    }
+
+    override fun realElement(): KtSourceElement {
+        return KtLightSourceElement(lighterASTNode, startOffset, endOffset, treeStructure, KtRealSourceElementKind)
+    }
+
+    override val text: CharSequence
+        get() = treeStructure.toString(lighterASTNode)
 }
 
 val AbstractKtSourceElement?.psi: PsiElement? get() = (this as? KtPsiSourceElement)?.psi
-
-val KtSourceElement?.text: CharSequence?
-    get() = when (this) {
-        is KtPsiSourceElement -> psi.text
-        is KtLightSourceElement -> treeStructure.toString(lighterASTNode)
-        else -> null
-    }
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun PsiElement.toKtPsiSourceElement(kind: KtSourceElementKind = KtRealSourceElementKind): KtPsiSourceElement = when (kind) {
     is KtRealSourceElementKind -> KtRealPsiSourceElement(this)
     is KtFakeSourceElementKind -> KtFakePsiSourceElement(this, kind)
 }
+
+val KtSourceElement?.text: CharSequence?
+    get() = this?.text
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun LighterASTNode.toKtLightSourceElement(

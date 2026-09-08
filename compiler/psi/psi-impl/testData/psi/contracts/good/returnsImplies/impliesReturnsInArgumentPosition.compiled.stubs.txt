@@ -12,17 +12,19 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ImpliesReturnsInArgumentPosi
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Boolean]
+            isClassRef: true
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=true]
       contract: [ effect:param(-1) == null -> Returns(NOT_NULL) ]
       MODIFIER_LIST[public final]
       VALUE_PARAMETER_LIST
-  FUN[fqName=notNullIfNotNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=notNullIfNotNull]
+  FUNCTION[fqName=notNullIfNotNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=notNullIfNotNull]
     contract: [ effect:param(0) != null -> Returns(NOT_NULL) ]
     origin: Facade(className=ImpliesReturnsInArgumentPositionKt, jvmClassName=null)
     MODIFIER_LIST[public]
@@ -34,13 +36,15 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ImpliesReturnsInArgumentPosi
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Boolean]
-  FUN[fqName=notNullIfNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=notNullIfNull]
+            isClassRef: true
+  FUNCTION[fqName=notNullIfNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=notNullIfNull]
     contract: [ effect:param(-1) == null -> Returns(NOT_NULL) ]
     origin: Facade(className=ImpliesReturnsInArgumentPositionKt, jvmClassName=null)
     MODIFIER_LIST[public]
@@ -50,6 +54,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ImpliesReturnsInArgumentPosi
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
+            isClassRef: true
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       NULLABLE_TYPE
@@ -57,3 +62,4 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ImpliesReturnsInArgumentPosi
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Boolean]
+            isClassRef: true

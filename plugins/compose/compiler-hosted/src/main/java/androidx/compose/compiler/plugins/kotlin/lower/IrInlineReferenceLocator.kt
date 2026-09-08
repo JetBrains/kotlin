@@ -108,6 +108,9 @@ fun IrExpression.unwrapLambda(): IrFunctionSymbol? = when {
     this is IrFunctionExpression ->
         function.symbol
 
+    this is IrRichFunctionReference ->
+        invokeFunction.symbol
+
     else ->
         null
 }

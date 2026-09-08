@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.java.direct.resolution
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
-import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.util.findTopLevelClassNode
+import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.FqName
@@ -21,6 +21,7 @@ internal class JavaFileContext(
     val imports: JavaImports,
     val classFinder: LeanJavaClassFinder?,
     val session: FirSession,
+    val moduleImportedPackages: JavaModuleImportedPackages,
 )
 
 /**
@@ -54,9 +55,10 @@ class JavaResolutionContext private constructor(
 
     companion object {
         internal fun create(
-            tree: JavaLightTree,
+            tree: LightSyntaxTree,
             session: FirSession,
             classFinder: LeanJavaClassFinder? = null,
+            moduleImportedPackages: JavaModuleImportedPackages = JavaModuleImportedPackages.EMPTY,
         ): JavaResolutionContext {
             val root = tree.getRoot()
             val packageFqName = JavaImportResolver.extractPackageName(tree, root)
@@ -85,6 +87,7 @@ class JavaResolutionContext private constructor(
                 packageFqName, imports,
                 classFinder,
                 session = session,
+                moduleImportedPackages = moduleImportedPackages,
             )
             return JavaResolutionContext(fileContext, scopeContext).also {
                 contextRef = it

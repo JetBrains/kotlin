@@ -63,7 +63,7 @@ fun Test1(block: Function3<Function2<Composer, Int, Unit>, Composer, Int, Unit>,
     } else {
       %composer.skipToGroupEnd()
     }
-  }, %composer, 0b00110110)
+  }, %composer, 0b00110110) as Function2<Composer, Int, Unit>
   val y = { %composer: Composer?, %changed: Int ->
     %composer.startReplaceGroup(<>)
     if (isTraceInProgress()) {
@@ -102,7 +102,7 @@ fun Test1(block: Function3<Function2<Composer, Int, Unit>, Composer, Int, Unit>,
     } else {
       %composer.skipToGroupEnd()
     }
-  }, %composer, 0b00110110), %composer, 0b0110 or 0b01110000 and %changed shl 0b0011)
+  }, %composer, 0b00110110) as Function2<Composer, Int, Unit>, %composer, 0b0110 or 0b01110000 and %changed shl 0b0011)
   sourceInformationMarkerEnd(%composer)
 }
 @Composable
@@ -157,7 +157,7 @@ internal fun Test3(block: Function3<Function2<Composer, Int, Unit>, Composer, In
     } else {
       %composer.skipToGroupEnd()
     }
-  }, %composer, 0b00110110)
+  }, %composer, 0b00110110) as Function2<Composer, Int, Unit>
   val y = { %composer: Composer?, %changed: Int ->
     %composer.startReplaceGroup(<>)
     if (isTraceInProgress()) {
@@ -196,7 +196,7 @@ internal fun Test3(block: Function3<Function2<Composer, Int, Unit>, Composer, In
     } else {
       %composer.skipToGroupEnd()
     }
-  }, %composer, 0b00110110), %composer, 0b0110 or 0b01110000 and %changed shl 0b0011)
+  }, %composer, 0b00110110) as Function2<Composer, Int, Unit>, %composer, 0b0110 or 0b01110000 and %changed shl 0b0011)
   sourceInformationMarkerEnd(%composer)
 }
 @Composable
@@ -218,7 +218,7 @@ internal fun Test4(block: Function3<Function2<Composer, Int, Unit>, Composer, In
     } else {
       %composer.skipToGroupEnd()
     }
-  }, %composer, 0b00110110)
+  }, %composer, 0b00110110) as Function2<Composer, Int, Unit>
   val y = { %composer: Composer?, %changed: Int ->
     %composer.startReplaceGroup(<>)
     if (isTraceInProgress()) {
@@ -257,7 +257,7 @@ internal fun Test4(block: Function3<Function2<Composer, Int, Unit>, Composer, In
     } else {
       %composer.skipToGroupEnd()
     }
-  }, %composer, 0b00110110), %composer, 0b0110 or 0b01110000 and %changed shl 0b0011)
+  }, %composer, 0b00110110) as Function2<Composer, Int, Unit>, %composer, 0b0110 or 0b01110000 and %changed shl 0b0011)
   sourceInformationMarkerEnd(%composer)
 }
 internal object ComposableSingletons%TestKt {

@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=runIf, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=runIf]
+  FUNCTION[fqName=runIf, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=runIf]
     contract: [ effect:param(0) HoldsIn(param(1)) ]
     MODIFIER_LIST[public inline]
     TYPE_PARAMETER_LIST
@@ -13,6 +13,7 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=block]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -20,11 +21,13 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=R]
+                  isClassRef: true
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=R]
-  FUN[fqName=runIfNot, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=runIfNot]
+            isClassRef: true
+  FUNCTION[fqName=runIfNot, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=runIfNot]
     contract: [ effect:param(0) HoldsIn(param(1)) ]
     MODIFIER_LIST[public inline]
     TYPE_PARAMETER_LIST
@@ -36,6 +39,7 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=block]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -43,11 +47,13 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=R]
+                  isClassRef: true
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=R]
-  FUN[fqName=runIfElse, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=runIfElse]
+            isClassRef: true
+  FUNCTION[fqName=runIfElse, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=runIfElse]
     contract: [
       effect:param(0) HoldsIn(param(1))
       effect:param(0) HoldsIn(param(2))
@@ -65,6 +71,7 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=ifTrue]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -72,6 +79,7 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=R]
+                  isClassRef: true
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=ifFalse]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -79,6 +87,7 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=R]
+                  isClassRef: true
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=unrelated]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -88,7 +97,9 @@ FILE[kind=File[packageFqName=<root>]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Unit]
+                  isClassRef: true
     TYPE_REFERENCE
       NULLABLE_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=R]
+            isClassRef: true

@@ -205,8 +205,11 @@ fun Project.firstFromJavaHomeThatExists(
 
 fun Project.toolsJarApi(): ProjectDependency = dependencies.project(":dependencies:tools-jar-api")
 
+/**
+ * `tools.jar` exists only in JDK 8 and earlier.
+ */
 fun Project.toolsJar(): FileCollection = files(
-    getToolchainLauncherFor(DEFAULT_JVM_TOOLCHAIN)
+    getToolchainLauncherFor(JdkMajorVersion.JDK_1_8)
         .map {
             Jvm.forHome(it.metadata.installationPath.asFile).toolsJar ?: throw GradleException("tools.jar not found!")
         }

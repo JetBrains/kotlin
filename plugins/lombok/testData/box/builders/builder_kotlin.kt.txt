@@ -1,0 +1,150 @@
+@Builder(access = AccessLevel.PRIVATE)
+class AccessLevelPrivate {
+  val x: Int
+    field = x
+    get
+
+  private open class AccessLevelPrivateBuilder {
+    private var x: Int
+      private get
+      private set
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    private open fun build(): AccessLevelPrivate {
+      val tmp_0: Int = <this>.#x
+      return AccessLevelPrivate(x = tmp_0)
+    }
+
+    private open fun x(x: Int): AccessLevelPrivateBuilder {
+      <this>.#x = x
+      return <this>
+    }
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    private fun builder(): AccessLevelPrivateBuilder {
+      return AccessLevelPrivateBuilder()
+    }
+
+  }
+
+  constructor(x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Builder(toBuilder = true)
+class User {
+  val name: String
+    field = name
+    get
+
+  val age: Int
+    field = age
+    get
+
+  val info: String?
+    field = info
+    get
+
+  open class UserBuilder {
+    private var name: String
+      private get
+      private set
+
+    private var age: Int
+      private get
+      private set
+
+    private var info: String?
+      private get
+      private set
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    open fun age(age: Int): UserBuilder {
+      <this>.#age = age
+      return <this>
+    }
+
+    open fun build(): User {
+      val tmp_1: String = <this>.#name
+      val tmp_2: Int = <this>.#age
+      val tmp_3: String? = <this>.#info
+      return User(name = tmp_1, age = tmp_2, info = tmp_3)
+    }
+
+    open fun info(info: String?): UserBuilder {
+      <this>.#info = info
+      return <this>
+    }
+
+    open fun name(name: String): UserBuilder {
+      <this>.#name = name
+      return <this>
+    }
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): UserBuilder {
+      return UserBuilder()
+    }
+
+  }
+
+  constructor(name: String, age: Int, info: String?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  open fun toBuilder(): UserBuilder {
+    val tmp_4: UserBuilder = UserBuilder()
+    tmp_4.#name = <this>.<get-name>()
+    tmp_4.#age = <this>.<get-age>()
+    tmp_4.#info = <this>.<get-info>()
+    return tmp_4
+  }
+
+}
+
+fun box(): String {
+  val user: User = Companion.builder().name(name = "John").age(age = 42).info(info = null).build()
+  assertEquals<String>(a = "John", b = user.<get-name>())
+  assertEquals<Int>(a = 42, b = user.<get-age>())
+  val user2: User = User(name = "Sarah", age = 30, info = null)
+  val builder2: UserBuilder = user2.toBuilder()
+  val user3: User = builder2.build()
+  assertEquals<String>(a = user2.<get-name>(), b = user3.<get-name>())
+  assertEquals<Int>(a = user2.<get-age>(), b = user3.<get-age>())
+  assertEquals<String?>(a = user2.<get-info>(), b = user3.<get-info>())
+  return "OK"
+}

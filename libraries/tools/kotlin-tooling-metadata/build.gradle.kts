@@ -2,7 +2,6 @@ import gradle.enableKotlinSerializationPlugin
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     java
     kotlin("jvm")

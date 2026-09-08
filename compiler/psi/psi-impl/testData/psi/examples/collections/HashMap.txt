@@ -16,7 +16,7 @@ KtFile: HashMap.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('equals')
@@ -190,7 +190,7 @@ KtFile: HashMap.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('get')
@@ -214,7 +214,7 @@ KtFile: HashMap.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('V')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('set')
@@ -249,7 +249,7 @@ KtFile: HashMap.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('V')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('remove')
@@ -273,7 +273,7 @@ KtFile: HashMap.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('V')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('containsKey')
@@ -330,7 +330,7 @@ KtFile: HashMap.kt
   PsiWhiteSpace('\n  ')
   PsiComment(EOL_COMMENT)('// equals and hashCode implementations are inherited')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION
         PsiElement(AT)('@')
@@ -391,7 +391,7 @@ KtFile: HashMap.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('equals')
@@ -426,7 +426,7 @@ KtFile: HashMap.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Boolean')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('hashCode')
@@ -492,7 +492,7 @@ KtFile: HashMap.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -546,7 +546,7 @@ KtFile: HashMap.kt
                   PsiElement(IDENTIFIER)('b')
               PsiElement(RPAR)(')')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -614,7 +614,7 @@ KtFile: HashMap.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -676,7 +676,7 @@ KtFile: HashMap.kt
                   PsiElement(IDENTIFIER)('b')
               PsiElement(RPAR)(')')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -763,7 +763,7 @@ KtFile: HashMap.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(private)('private')
           PsiWhiteSpace(' ')
@@ -811,7 +811,7 @@ KtFile: HashMap.kt
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('hashCode')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(private)('private')
           PsiWhiteSpace(' ')

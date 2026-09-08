@@ -17,7 +17,7 @@ KtFile: withoutPackageWithSimpleAnnotation.kt
   IMPORT_LIST
     <empty list>
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')

@@ -1,13 +1,10 @@
 
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.ideaExt.idea
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
-    id("project-tests-convention")
     id("kotlin-build-helpers")
 }
 
@@ -15,11 +12,9 @@ dependencies {
     compileOnly(project(":jps:jps-platform-api-signatures"))
     testImplementation(testFixtures(project(":generators:test-generator")))
 
-    @Suppress("UNCHECKED_CAST")
     CompilerModules.kotlinJpsPluginEmbeddedDependencies
         .forEach { implementation(project(it)) }
 
-    @Suppress("UNCHECKED_CAST")
     CompilerModules.kotlinJpsPluginMavenDependencies
         .forEach { implementation(project(it)) }
 
@@ -105,19 +100,12 @@ idea {
     this.module.generatedSourceDirs.add(projectDir.resolve("jps-tests").resolve("tests-gen"))
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+jvmToolchains {
+    jdkVersion = JdkMajorVersion.JDK_21_0
+    targetBytecodeVersion = JdkMajorVersion.JDK_21_0
+    configureForSourceSet("main") {
+        targetBytecodeVersion = JdkMajorVersion.JDK_11_0
     }
-}
-
-tasks.compileJava {
-    sourceCompatibility = "11"
-    targetCompatibility = "11"
-}
-
-tasks.compileKotlin {
-    compilerOptions.jvmTarget = JvmTarget.JVM_11
 }
 
 projectTests {

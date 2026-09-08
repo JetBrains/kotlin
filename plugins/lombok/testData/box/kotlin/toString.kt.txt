@@ -1,0 +1,728 @@
+@ToString
+open class CallSuperBase {
+  val baseProp: Int
+    field = baseProp
+    get
+
+  constructor(baseProp: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "CallSuperBase(" + "baseProp=" + <this>.<get-baseProp>() + ')'
+  }
+
+}
+
+@ToString(callSuper = true)
+class CallSuperDerived : CallSuperBase {
+  val ownProp: String
+    field = ownProp
+    get
+
+  constructor(ownProp: String) /* primary */ {
+    super/*CallSuperBase*/(baseProp = 10)
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "CallSuperDerived(" + "super=" + super<CallSuperBase>.toString() + ", ownProp=" + <this>.<get-ownProp>() + ')'
+  }
+
+}
+
+@ToString(callSuper = true)
+class CallSuperWithComputedPropertyFirst : CallSuperBase {
+  val ownProp: Int
+    field = 2
+    get
+
+  constructor() /* primary */ {
+    super/*CallSuperBase*/(baseProp = 10)
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "CallSuperWithComputedPropertyFirst(" + "super=" + super<CallSuperBase>.toString() + ", ownProp=" + <this>.<get-ownProp>() + ')'
+  }
+
+  val computedProp: Int
+    get(): Int {
+      return 1
+    }
+
+}
+
+@ToString(callSuper = true)
+class CallSuperWithOnlyAnyParent {
+  val x: Int
+    field = x
+    get
+
+  constructor(x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "CallSuperWithOnlyAnyParent(" + "super=" + super<Any>.toString() + ", x=" + <this>.<get-x>() + ')'
+  }
+
+}
+
+@ToString
+data class DataClassDefault {
+  val name: String
+    field = name
+    get
+
+  val age: Int
+    field = age
+    get
+
+  constructor(name: String, age: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "DataClassDefault(" + "name=" + <this>.<get-name>() + ", age=" + <this>.<get-age>() + ')'
+  }
+
+  operator fun component1(): String {
+    return <this>.#name
+  }
+
+  operator fun component2(): Int {
+    return <this>.#age
+  }
+
+  fun copy(name: String = <this>.#name, age: Int = <this>.#age): DataClassDefault {
+    return DataClassDefault(name = name, age = age)
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is DataClassDefault -> return false
+    }
+    val tmp_0: DataClassDefault = other /*as DataClassDefault */
+    when {
+      EQEQ(arg0 = <this>.#name, arg1 = tmp_0.#name).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#age, arg1 = tmp_0.#age).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result: Int = <this>.#name.hashCode()
+    result = result.times(other = 31).plus(other = <this>.#age.hashCode())
+    return result
+  }
+
+}
+
+@ToString(includeFieldNames = false)
+data class DataClassNoFieldNames {
+  val x: Int
+    field = x
+    get
+
+  val y: Int
+    field = y
+    get
+
+  constructor(x: Int, y: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "DataClassNoFieldNames(" + "" + <this>.<get-x>() + ", " + <this>.<get-y>() + ')'
+  }
+
+  operator fun component1(): Int {
+    return <this>.#x
+  }
+
+  operator fun component2(): Int {
+    return <this>.#y
+  }
+
+  fun copy(x: Int = <this>.#x, y: Int = <this>.#y): DataClassNoFieldNames {
+    return DataClassNoFieldNames(x = x, y = y)
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is DataClassNoFieldNames -> return false
+    }
+    val tmp_1: DataClassNoFieldNames = other /*as DataClassNoFieldNames */
+    when {
+      EQEQ(arg0 = <this>.#x, arg1 = tmp_1.#x).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#y, arg1 = tmp_1.#y).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result: Int = <this>.#x.hashCode()
+    result = result.times(other = 31).plus(other = <this>.#y.hashCode())
+    return result
+  }
+
+}
+
+@ToString(includeFieldNames = false)
+class NoFieldNames {
+  val x: Int
+    field = x
+    get
+
+  val y: Int
+    field = y
+    get
+
+  constructor(x: Int, y: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "NoFieldNames(" + "" + <this>.<get-x>() + ", " + <this>.<get-y>() + ')'
+  }
+
+}
+
+@ToString(onlyExplicitlyIncluded = true)
+class OnlyIncluded {
+  val included: String
+    field = included
+    get
+
+  val excluded: String
+    field = excluded
+    get
+
+  constructor(included: String, excluded: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "OnlyIncluded(" + "included=" + <this>.<get-included>() + ')'
+  }
+
+}
+
+@ToString
+class Simple {
+  val name: String
+    field = name
+    get
+
+  val age: Int
+    field = age
+    get
+
+  constructor(name: String, age: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "Simple(" + "name=" + <this>.<get-name>() + ", age=" + <this>.<get-age>() + ')'
+  }
+
+}
+
+@ToString
+class WithArrays {
+  val objectArray: Array<String>
+    field = arrayOf<String>(elements = ["a", "b"])
+    get
+
+  val nestedArray: Array<Array<String>>
+    field = arrayOf<Array<String>>(elements = [arrayOf<String>(elements = ["a"]), arrayOf<String>(elements = ["b"])])
+    get
+
+  val intArray: IntArray
+    field = intArrayOf(elements = [1, 2])
+    get
+
+  val charArray: CharArray
+    field = charArrayOf(elements = ['x', 'y'])
+    get
+
+  val nullArray: Array<String>?
+    field = null
+    get
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "WithArrays(" + "objectArray=" + deepToString(p0 = <this>.<get-objectArray>()) + ", nestedArray=" + deepToString(p0 = <this>.<get-nestedArray>()) + ", intArray=" + toString(p0 = <this>.<get-intArray>()) + ", charArray=" + toString(p0 = <this>.<get-charArray>()) + ", nullArray=" + deepToString(p0 = <this>.<get-nullArray>()) + ')'
+  }
+
+}
+
+@ToString
+class WithBackingFieldAndGetter {
+  val x: Int
+    field = 42
+    get(): Int {
+      return <this>.#x
+    }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "WithBackingFieldAndGetter(" + "x=" + <this>.<get-x>() + ')'
+  }
+
+}
+
+@ToString
+class WithComputedProperties {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "WithComputedProperties(" + ')'
+  }
+
+  val computedProp: String
+    get(): String {
+      return "computed"
+    }
+
+}
+
+@ToString
+class WithComputedPropertyFirst {
+  val b: Int
+    field = 2
+    get
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "WithComputedPropertyFirst(" + "b=" + <this>.<get-b>() + ')'
+  }
+
+  val computedProp: Int
+    get(): Int {
+      return 1
+    }
+
+}
+
+@ToString
+class WithComputedPropertyInTheMiddle {
+  val a: Int
+    field = 1
+    get
+
+  val c: Int
+    field = 3
+    get
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "WithComputedPropertyInTheMiddle(" + "a=" + <this>.<get-a>() + ", c=" + <this>.<get-c>() + ')'
+  }
+
+  val computedProp: Int
+    get(): Int {
+      return 2
+    }
+
+}
+
+@ToString
+class WithDollarPrefixedProperties {
+  val regular: String
+    field = regular
+    get
+
+  val $excludedByDefault: String
+    field = $excludedByDefault
+    get
+
+  val $explicitlyIncluded: String
+    field = $explicitlyIncluded
+    get
+
+  constructor(regular: String, $excludedByDefault: String, $explicitlyIncluded: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "WithDollarPrefixedProperties(" + "regular=" + <this>.<get-regular>() + ", $explicitlyIncluded=" + <this>.<get-$explicitlyIncluded>() + ')'
+  }
+
+}
+
+@ToString
+class WithExclude {
+  val a: String
+    field = a
+    get
+
+  val b: String
+    field = b
+    get
+
+  constructor(a: String, b: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "WithExclude(" + "a=" + <this>.<get-a>() + ')'
+  }
+
+}
+
+@ToString
+class WithExistingNonConflictingToString {
+  val x: Int
+    field = x
+    get
+
+  constructor(x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "WithExistingNonConflictingToString(" + "x=" + <this>.<get-x>() + ')'
+  }
+
+  fun toString(p: Boolean): String {
+    return when {
+      p -> <this>.<get-x>().toString()
+      else -> ""
+    }
+  }
+
+}
+
+@ToString
+class WithExistingToString {
+  val x: Int
+    field = x
+    get
+
+  constructor(x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "custom"
+  }
+
+}
+
+@ToString
+class WithImplicitReturnTypeProperty {
+  val implicitReturnTypeProp: String
+    field = "implicit return type"
+    get
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "WithImplicitReturnTypeProperty(" + "implicitReturnTypeProp=" + <this>.<get-implicitReturnTypeProp>() + ')'
+  }
+
+}
+
+@ToString
+class WithIncludeCustomName {
+  val x: String
+    field = x
+    get
+
+  val y: Int
+    field = y
+    get
+
+  constructor(x: String, y: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "WithIncludeCustomName(" + "myName=" + <this>.<get-x>() + ", y=" + <this>.<get-y>() + ')'
+  }
+
+}
+
+@ToString
+class WithNonConflictingContextualFunction {
+  val b: String
+    field = b
+    get
+
+  constructor(b: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "WithNonConflictingContextualFunction(" + "b=" + <this>.<get-b>() + ')'
+  }
+
+  context(p: WithNonConflictingContextualFunction)
+  fun toString(): String {
+    return "Contex"
+  }
+
+}
+
+@ToString
+class WithNonConflictingExtensionFunction {
+  val a: Int
+    field = a
+    get
+
+  constructor(a: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "WithNonConflictingExtensionFunction(" + "a=" + <this>.<get-a>() + ')'
+  }
+
+  fun WithNonConflictingExtensionFunction.toString(): String {
+    return "Ext"
+  }
+
+}
+
+@ToString
+class WithRank {
+  val lowRank: String
+    field = lowRank
+    get
+
+  val defaultRank: String
+    field = defaultRank
+    get
+
+  val highRank: String
+    field = highRank
+    get
+
+  constructor(lowRank: String, defaultRank: String, highRank: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "WithRank(" + "highRank=" + <this>.<get-highRank>() + ", defaultRank=" + <this>.<get-defaultRank>() + ", lowRank=" + <this>.<get-lowRank>() + ')'
+  }
+
+}
+
+@ToString(onlyExplicitlyIncluded = true)
+class WithRankOnlyIncluded {
+  val second: String
+    field = second
+    get
+
+  val first: String
+    field = first
+    get
+
+  val excluded: String
+    field = excluded
+    get
+
+  constructor(second: String, first: String, excluded: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "WithRankOnlyIncluded(" + "first=" + <this>.<get-first>() + ", second=" + <this>.<get-second>() + ')'
+  }
+
+}
+
+@ToString
+class WithSameRank {
+  val a: String
+    field = a
+    get
+
+  val b: String
+    field = b
+    get
+
+  val c: String
+    field = c
+    get
+
+  constructor(a: String, b: String, c: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "WithSameRank(" + "a=" + <this>.<get-a>() + ", b=" + <this>.<get-b>() + ", c=" + <this>.<get-c>() + ')'
+  }
+
+}
+
+@ToString
+object EmptyObject {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "EmptyObject()"
+  }
+
+}
+
+@ToString
+object ObjectWithProperties {
+  val version: String
+    field = "2.0"
+    get
+
+  val label: String
+    field = "release"
+    get
+
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "ObjectWithProperties(" + "version=" + <this>.<get-version>() + ", label=" + <this>.<get-label>() + ')'
+  }
+
+}
+
+fun box(): String {
+  assertEquals<String>(a = "Simple(name=Alice, age=30)", b = Simple(name = "Alice", age = 30).toString())
+  assertEquals<String>(a = "NoFieldNames(1, 2)", b = NoFieldNames(x = 1, y = 2).toString())
+  assertEquals<String>(a = "WithExclude(a=hello)", b = WithExclude(a = "hello", b = "world").toString())
+  assertEquals<String>(a = "WithIncludeCustomName(myName=foo, y=42)", b = WithIncludeCustomName(x = "foo", y = 42).toString())
+  assertEquals<String>(a = "OnlyIncluded(included=yes)", b = OnlyIncluded(included = "yes", excluded = "no").toString())
+  assertEquals<String>(a = "custom", b = WithExistingToString(x = 5).toString())
+  assertEquals<String>(a = "WithExistingNonConflictingToString(x=5)", b = WithExistingNonConflictingToString(x = 5).toString())
+  assertEquals<String>(a = "WithComputedProperties()", b = WithComputedProperties().toString())
+  assertEquals<String>(a = "WithComputedPropertyFirst(b=2)", b = WithComputedPropertyFirst().toString())
+  assertEquals<String>(a = "WithComputedPropertyInTheMiddle(a=1, c=3)", b = WithComputedPropertyInTheMiddle().toString())
+  assertEquals<String>(a = "CallSuperWithComputedPropertyFirst(super=CallSuperBase(baseProp=10), ownProp=2)", b = CallSuperWithComputedPropertyFirst().toString())
+  assertEquals<String>(a = "WithImplicitReturnTypeProperty(implicitReturnTypeProp=implicit return type)", b = WithImplicitReturnTypeProperty().toString())
+  assertEquals<String>(a = "WithBackingFieldAndGetter(x=42)", b = WithBackingFieldAndGetter().toString())
+  assertEquals<String>(a = "WithNonConflictingExtensionFunction(a=6)", b = WithNonConflictingExtensionFunction(a = 6).toString())
+  assertEquals<String>(a = "WithNonConflictingContextualFunction(b=str)", b = WithNonConflictingContextualFunction(b = "str").toString())
+  assertEquals<String>(a = "DataClassDefault(name=Alice, age=30)", b = DataClassDefault(name = "Alice", age = 30).toString())
+  assertEquals<String>(a = "DataClassNoFieldNames(1, 2)", b = DataClassNoFieldNames(x = 1, y = 2).toString())
+  assertEquals<String>(a = "EmptyObject()", b = EmptyObject.toString())
+  assertEquals<String>(a = "ObjectWithProperties(version=2.0, label=release)", b = ObjectWithProperties.toString())
+  @ToString
+  local class LocalClass {
+    val prop: String
+      field = prop
+      get
+
+    constructor(prop: String) /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    override fun toString(): String {
+      return "LocalClass(" + "prop=" + <this>.<get-prop>() + ')'
+    }
+
+  }
+
+  assertEquals<String>(a = "LocalClass(prop=TestLocalClass)", b = LocalClass(prop = "TestLocalClass").toString())
+  assertEquals<String>(a = "WithRank(highRank=hi, defaultRank=mid, lowRank=lo)", b = WithRank(lowRank = "lo", defaultRank = "mid", highRank = "hi").toString())
+  assertEquals<String>(a = "WithSameRank(a=1, b=2, c=3)", b = WithSameRank(a = "1", b = "2", c = "3").toString())
+  assertEquals<String>(a = "WithRankOnlyIncluded(first=x, second=y)", b = WithRankOnlyIncluded(second = "y", first = "x", excluded = "z").toString())
+  assertEquals<String>(a = "CallSuperBase(baseProp=10)", b = CallSuperBase(baseProp = 10).toString())
+  assertEquals<String>(a = "CallSuperDerived(super=CallSuperBase(baseProp=10), ownProp=hello)", b = CallSuperDerived(ownProp = "hello").toString())
+  val onlyAnyParent: String = CallSuperWithOnlyAnyParent(x = 5).toString()
+  when {
+    when {
+      startsWith(/* <this> = onlyAnyParent, */ prefix = "CallSuperWithOnlyAnyParent(super=CallSuperWithOnlyAnyParent@").not() -> true
+      else -> endsWith(/* <this> = onlyAnyParent, */ suffix = ", x=5)").not()
+    } -> { // BLOCK
+      return "FAIL: " + onlyAnyParent
+    }
+  }
+  assertEquals<String>(a = "WithArrays(objectArray=[a, b], nestedArray=[[a], [b]], intArray=[1, 2], charArray=[x, y], nullArray=null)", b = WithArrays().toString())
+  assertEquals<String>(a = "WithDollarPrefixedProperties(regular=r, " + '$' + "explicitlyIncluded=i)", b = WithDollarPrefixedProperties(regular = "r", $excludedByDefault = "e", $explicitlyIncluded = "i").toString())
+  return "OK"
+}
+

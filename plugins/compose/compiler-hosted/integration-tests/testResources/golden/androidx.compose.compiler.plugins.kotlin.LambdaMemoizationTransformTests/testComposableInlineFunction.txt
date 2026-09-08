@@ -53,7 +53,7 @@ fun Inlined(%composer: Composer?, %changed: Int) {
     } else {
       %composer.skipToGroupEnd()
     }
-  }, %composer, 0b00110110)
+  }, %composer, 0b00110110) as Function2<Composer, Int, Unit>
   sourceInformationMarkerEnd(%composer)
 }
 internal object ComposableSingletons%TestKt {

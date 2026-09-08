@@ -1,5 +1,5 @@
 KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -2,21 +2,23 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.IrBuiltInsForLinker
+import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
-import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.serialization.*
+import org.jetbrains.kotlin.backend.konan.util.sortDeclarationsInFunctionInterfaceFile
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.IrBasedFunctionFactory.Companion.isFunctionInterfaceFile
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
@@ -26,8 +28,10 @@ import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isHeader
+import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.library.metadata.impl.isForwardDeclarationModule
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
@@ -86,6 +90,9 @@ internal fun LinkKlibsContext.linkKlibs(
     deserializeDependencies(moduleDescriptor, irLinker)
     ensureCStructsAndEnumsAreLoadedForCaching(irLinker, libraryToCacheModule)
 
+    // Get the list of all dependencies (including potentially unused platform libraries).
+    val originalModuleDependencies = IrModuleDependencies(irLinker.allModuleFragments)
+
     @OptIn(InternalSymbolFinderAPI::class)
     val irBuiltIns = IrBuiltInsForLinker(irLinker, config.configuration.languageVersionSettings)
     val symbols = BackendNativeSymbols(this, irBuiltIns, config.configuration)
@@ -97,13 +104,11 @@ internal fun LinkKlibsContext.linkKlibs(
 
     config.configuration.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
 
-    val modules = irLinker.modules
-
     // IR linker deserializes files in the order they lie on the disk, which might be inconvenient,
     // so to make the pipeline more deterministic, the files are to be sorted.
     // This concerns in the first place global initializers order for the eager initialization strategy,
     // where the files are being initialized in order one by one.
-    modules.values.forEach { module -> module.files.sortBy { it.fileEntry.name } }
+    originalModuleDependencies.sortFilesAndDeclarationsToKeepPipelineDeterministic()
 
     if (stdlibIsBeingCached) {
         val maxArity = 255 // See [BuiltInFictitiousFunctionClassFactory].
@@ -115,14 +120,25 @@ internal fun LinkKlibsContext.linkKlibs(
         }
     }
 
+    val irModulesForLinkKlibsOutput: Map<Path, IrModuleFragment> = originalModuleDependencies.allDependencies
+            .filter { it.name != KlibResolvedModuleDescriptorsFactoryImpl.FORWARD_DECLARATIONS_MODULE_NAME && it.descriptor !== moduleDescriptor }
+            .associateBy { it.kotlinLibrary!!.path }
+
     return if (libraryToCache == null) {
         val mainModule = IrModuleFragmentImpl(moduleDescriptor)
-        LinkKlibsOutput(modules, mainModule, irBuiltIns, symbols, symbolTable, irLinker)
+        LinkKlibsOutput(
+                irModules = irModulesForLinkKlibsOutput,
+                irModule = mainModule,
+                irBuiltIns = irBuiltIns,
+                symbols = symbols,
+                symbolTable = symbolTable,
+                irLinker = irLinker
+        )
     } else {
         val libraryPath: Path = libraryToCache.klib.path
-        val libraryModule = modules[libraryPath] ?: error("No module for the library being cached: $libraryPath")
+        val libraryModule = irModulesForLinkKlibsOutput[libraryPath] ?: error("No module for the library being cached: $libraryPath")
         LinkKlibsOutput(
-                irModules = modules.filterKeys { it != libraryPath },
+                irModules = irModulesForLinkKlibsOutput.filterKeys { it != libraryPath },
                 irModule = libraryModule,
                 irBuiltIns = irBuiltIns,
                 symbols = symbols,
@@ -134,15 +150,13 @@ internal fun LinkKlibsContext.linkKlibs(
 
 private fun LinkKlibsContext.createIrLinker(moduleDescriptor: ModuleDescriptor, libraryToCacheModule: ModuleDescriptor?): KonanIrLinker {
     val symbolTable = symbolTable!!
-    val exportedDependencies = (moduleDescriptor.getExportedDependencies(config) + libraryToCacheModule?.let { listOf(it) }.orEmpty()).distinct()
+    val exportedDependencies = (config.loadedKlibs.exported + config.loadedKlibs.included + listOfNotNull(libraryToCacheModule?.kotlinLibrary)).toSet()
 
     val deserializationConfiguration = CommonCompilerDeserializationConfiguration(config.configuration.languageVersionSettings)
     val cInteropModuleDeserializerFactory = KonanCInteropModuleDeserializerFactory(
             deserializationConfiguration = deserializationConfiguration,
             cachedLibraries = config.cachedLibraries,
     )
-
-    val forwardDeclarationsModuleDescriptor = moduleDescriptor.allDependencyModules.firstOrNull { it.isForwardDeclarationModule }
 
     val friendModuleUniqueNames = config.loadedKlibs.friends.map { it.uniqueName }
     val includedModuleUniqueNames = config.loadedKlibs.included.map { it.uniqueName }
@@ -160,7 +174,6 @@ private fun LinkKlibsContext.createIrLinker(moduleDescriptor: ModuleDescriptor, 
             configuration = config.configuration,
             symbolTable = symbolTable,
             friendModules = friendModulesMap,
-            forwardModuleDescriptor = forwardDeclarationsModuleDescriptor,
             cInteropModuleDeserializerFactory = cInteropModuleDeserializerFactory,
             exportedDependencies = exportedDependencies,
             partialLinkageConfig = config.configuration.partialLinkageConfig,
@@ -171,34 +184,24 @@ private fun LinkKlibsContext.createIrLinker(moduleDescriptor: ModuleDescriptor, 
 }
 
 private fun LinkKlibsContext.deserializeDependencies(moduleDescriptor: ModuleDescriptor, linker: KonanIrLinker) {
-    // context.config.librariesWithDependencies could change at each iteration.
-    var dependenciesCount = 0
-    while (true) {
-        // context.config.librariesWithDependencies could change at each iteration.
-        val libsWithDeps = config.librariesWithDependencies().toSet()
-        val dependencies = moduleDescriptor.allDependencyModules.filter {
-            libsWithDeps.contains(it.konanLibrary)
-        }
+    val directDependencies: List<ModuleDescriptor> = moduleDescriptor.allDependencyModules
+    val allDependenciesTopoSorted: List<ModuleDescriptor> = DFS.topologicalOrder(directDependencies) { it.allDependencyModules }.reversed()
 
-        fun sortDependencies(dependencies: List<ModuleDescriptor>): Collection<ModuleDescriptor> {
-            return DFS.topologicalOrder(dependencies) {
-                it.allDependencyModules
-            }.reversed()
-        }
+    for (dependency in allDependenciesTopoSorted.filterNot { it == moduleDescriptor }) {
+        val kotlinLibrary: KotlinLibrary? = (dependency.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin)?.library
 
-        for (dependency in sortDependencies(dependencies).filter { it != moduleDescriptor }) {
-            val kotlinLibrary = (dependency.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin)?.library
-            val isFullyCachedLibrary = kotlinLibrary != null &&
-                    config.cachedLibraries.isLibraryCached(kotlinLibrary) && kotlinLibrary != config.libraryToCache?.klib
-            if (isFullyCachedLibrary && kotlinLibrary.isHeader)
-                linker.deserializeHeadersWithInlineBodies(dependency, kotlinLibrary)
-            else if (isFullyCachedLibrary)
-                linker.deserializeOnlyHeaderModule(dependency, kotlinLibrary)
-            else
-                linker.deserializeIrModuleHeader(dependency, kotlinLibrary, dependency.name.asString())
+        val isFullyCachedLibrary = kotlinLibrary != null
+                && config.cachedLibraries.isLibraryCached(kotlinLibrary)
+                && kotlinLibrary != config.libraryToCache?.klib
+
+        when {
+            dependency.isForwardDeclarationModule ->
+                linker.createAndRegisterModuleDeserializer(dependency, null, { DeserializationStrategy.ALL })
+            isFullyCachedLibrary && kotlinLibrary.isHeader -> linker.deserializeHeadersWithInlineBodies(dependency, kotlinLibrary)
+            isFullyCachedLibrary -> linker.deserializeOnlyHeaderModule(dependency, kotlinLibrary)
+            kotlinLibrary != null -> linker.deserializeIrModuleHeader(dependency, kotlinLibrary)
+            else -> error("Unexpected kind of module dependency $dependency")
         }
-        if (dependencies.size == dependenciesCount) break
-        dependenciesCount = dependencies.size
     }
 }
 
@@ -210,14 +213,15 @@ private fun ensureCStructsAndEnumsAreLoadedForCaching(linker: KonanIrLinker, lib
     // resulting assembly code for the C structs and enums already available, without a need for any special processing.
     if (libraryToCacheModule?.kotlinLibrary?.isCInteropLibrary() == true) {
         val interopModuleDeserializer = linker.getOrCreateDeserializerForModule(libraryToCacheModule, libraryToCacheModule.kotlinLibrary,
-                { DeserializationStrategy.ONLY_REFERENCED }, libraryToCacheModule.name.asString())
+                { DeserializationStrategy.ONLY_REFERENCED })
         (interopModuleDeserializer as? KonanInteropModuleDeserializer)?.deserializeAllCStructsAndEnums()
     }
 }
 
 private fun generateImplForCStructsAndEnums(linker: KonanIrLinker, builtIns: IrBuiltIns, symbols: BackendNativeSymbols) {
     val implGen = IrImplementationGeneratorForCStructsAndEnums(builtIns, symbols)
-    for (module in linker.modules.values) {
+    for (deserializer in linker.allModuleDeserializers) {
+        val module = deserializer.moduleFragment
         if (module.kotlinLibrary?.isCInteropLibrary() == true) {
             for (file in module.files) {
                 for (declaration in file.declarations) {
@@ -230,15 +234,30 @@ private fun generateImplForCStructsAndEnums(linker: KonanIrLinker, builtIns: IrB
     }
 }
 
+private fun IrModuleDependencies.sortFilesAndDeclarationsToKeepPipelineDeterministic() {
+    allDependencies.forEach { module ->
+        module.files.sortBy { file -> file.fileEntry.name }
+
+        // Sort also synthetic `*Function` classes is special function interface files inside the standard library.
+        // They might be generated and added to files on demand and in the different order (based on the order or
+        // the deserialization queue).
+        if (module.kotlinLibrary?.isNativeStdlib == true) {
+            module.files.forEach { file ->
+                if (file.isFunctionInterfaceFile) sortDeclarationsInFunctionInterfaceFile(file)
+            }
+        }
+    }
+}
+
 internal class KonanCInteropModuleDeserializerFactory(
         private val cachedLibraries: CachedLibraries,
         private val deserializationConfiguration: DeserializationConfiguration,
-) : CInteropModuleDeserializerFactory {
+) : CInteropModuleDeserializerFactory<KonanInteropModuleDeserializer> {
     override fun createIrModuleDeserializer(
             moduleFragment: IrModuleFragment,
             klib: KotlinLibrary,
             linker: KonanIrLinker,
-    ): IrModuleDeserializer = KonanInteropModuleDeserializer(
+    ) = KonanInteropModuleDeserializer(
             deserializationConfiguration,
             moduleFragment,
             klib,

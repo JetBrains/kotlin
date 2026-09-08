@@ -34,7 +34,6 @@ import kotlin.test.assertEquals
 
 @DisplayName("SwiftPM import XCFrameworks integration")
 @SwiftPMImportGradlePluginTests
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
 class SwiftPMImportXCFrameworksIT : KGPBaseTest() {
 
     @DisplayName("E2E smoke XCFramework emits a package that can be wired with a generic SwiftPM package and ran on the simulator")

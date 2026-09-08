@@ -131,9 +131,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @NativeGradlePluginTests
     @DisplayName("Configuration cache works with Kotlin Native bundle and its dependencies downloading")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_6],
-    )
     @OsCondition(
         supportedOn = [OS.LINUX, OS.MAC], // disabled on Windows because of tmp dir problem KT-62761
         enabledOnCI = [OS.LINUX, OS.MAC],
@@ -223,9 +220,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     }
 
     @MppGradlePluginTests
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_8_0 // configuration cache and precompiled script plugins fails on earlier versions
-    )
     @GradleTest
     fun `test composite build with precompiled script plugins and multiplatform`(gradleVersion: GradleVersion) {
         val buildOptions = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.MAX_SUPPORTED)) {
@@ -317,7 +311,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testJvmWithJavaConfigurationCache(gradleVersion: GradleVersion) {
         project("mppJvmWithJava", gradleVersion) {
-            if (!isWithJavaSupported) buildGradle.replaceText("withJava()", "")
             build("jvmWithJavaJar")
             build("jvmWithJavaJar") {
                 assertOutputContains("Reusing configuration cache.")
@@ -327,9 +320,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @JvmGradlePluginTests
     @DisplayName("with build report")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0],
-    )
     @GradleTest
     fun testBuildReportSmokeTestForConfigurationCache(gradleVersion: GradleVersion) {
         project(
@@ -431,7 +421,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
                 {
                     val hashesWithCc = provider.buildAndReturn(
                         ":all",
-                        configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED
                     )
                     assertNotNull(hashesWithCc["one"])
                     assertNotEquals(hashesWithCc["one"], hashesWithCc["two"])
@@ -439,7 +428,12 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
                 {
                     val hashesWithCc = provider.buildAndReturn(
                         ":all",
-                        configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                        deriveBuildOptions = {
+                            buildOptions.copy(
+                                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+                            )
+                        },
                     )
                     assertNotNull(hashesWithCc["one"])
                     assertEquals(hashesWithCc["one"], hashesWithCc["two"])
@@ -478,18 +472,10 @@ abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
     }
 
     protected fun buildOptionsToAvoidKT66423(gradleVersion: GradleVersion, konanTempDir: Path) =
-        if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_6)) {
-            defaultBuildOptions.copy(
-                konanDataDir = konanDir,
-                nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
-                    version = System.getProperty("kotlinNativeVersion")
-                )
-            )
-        } else defaultBuildOptions.copy(
-            konanDataDir = konanTempDir,
+        defaultBuildOptions.copy(
+            konanDataDir = konanDir,
             nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
-                // set the KGP's default Kotlin Native version, because in CI we don't have K/N versions in maven repo for each build
-                version = null
+                version = System.getProperty("kotlinNativeVersion")
             )
         )
 }

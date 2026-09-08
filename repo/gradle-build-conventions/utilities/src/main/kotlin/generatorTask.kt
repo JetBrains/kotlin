@@ -54,6 +54,7 @@ fun Project.generator(
     systemProperty("line.separator", "\n")
     systemProperty("idea.ignore.disabled.plugins", "true")
     systemProperty("teamcity", kotlinBuildProperties.isTeamcityBuild.get())
+    systemProperty("kotlin.build.disable.regeneration.check", kotlinBuildProperties.regenerationCheckDisabled.get())
     configure()
 }.also {
     if (registerInAggregateGenerateSources) {

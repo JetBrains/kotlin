@@ -1,3 +1,7 @@
+IGNORE_BACKEND: NATIVE, JS_IR, JS_IR_ES6, WASM
+// ^This test specifically disables UpgradeCallableReferences lowering so that it tests the old references
+// but FIR2IR doesn't check IrRichCallableReferencesInKlibs .
+
 MODULES: lib1, lib2, main
 
 STEP 0:

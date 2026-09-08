@@ -2,7 +2,6 @@ description = "Kotlin Scripting JSR-223 support"
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     java
 }

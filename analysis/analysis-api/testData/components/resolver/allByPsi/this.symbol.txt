@@ -8,7 +8,7 @@ KtNameReferenceExpression(8,11): 'one'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one
     ]
@@ -38,7 +38,7 @@ KtBlockExpression(56,123): '{'
   null
 
 KtCallExpression(66,71): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
@@ -47,7 +47,7 @@ KtNameReferenceExpression(66,69): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
@@ -56,13 +56,13 @@ KtValueArgumentList(69,71): '()'
   null
 
 KtDotQualifiedExpression(80,90): 'this.foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
 
 KtThisExpression(80,84): 'this'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass
     ]
@@ -71,13 +71,13 @@ KtNameReferenceExpression(80,84): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass
     ]
 
 KtCallExpression(85,90): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
@@ -86,7 +86,7 @@ KtNameReferenceExpression(85,88): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
@@ -95,13 +95,13 @@ KtValueArgumentList(88,90): '()'
   null
 
 KtDotQualifiedExpression(99,117): 'this@MyClass.foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
 
 KtThisExpression(99,111): 'this@MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass
     ]
@@ -110,7 +110,7 @@ KtNameReferenceExpression(99,103): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass
     ]
@@ -122,13 +122,13 @@ KtLabelReferenceExpression(103,111): '@MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass
     ]
 
 KtCallExpression(112,117): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
@@ -137,7 +137,7 @@ KtNameReferenceExpression(112,115): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
@@ -170,7 +170,7 @@ KtBlockExpression(189,306): '{'
   null
 
 KtCallExpression(203,208): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
     ]
@@ -179,7 +179,7 @@ KtNameReferenceExpression(203,206): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
     ]
@@ -188,13 +188,13 @@ KtValueArgumentList(206,208): '()'
   null
 
 KtDotQualifiedExpression(221,231): 'this.foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
     ]
 
 KtThisExpression(221,225): 'this'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter
     ]
@@ -203,13 +203,13 @@ KtNameReferenceExpression(221,225): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter
     ]
 
 KtCallExpression(226,231): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
     ]
@@ -218,7 +218,7 @@ KtNameReferenceExpression(226,229): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
     ]
@@ -227,13 +227,13 @@ KtValueArgumentList(229,231): '()'
   null
 
 KtDotQualifiedExpression(244,265): 'this@InnerOuter.foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
     ]
 
 KtThisExpression(244,259): 'this@InnerOuter'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter
     ]
@@ -242,7 +242,7 @@ KtNameReferenceExpression(244,248): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter
     ]
@@ -254,13 +254,13 @@ KtLabelReferenceExpression(248,259): '@InnerOuter'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter
     ]
 
 KtCallExpression(260,265): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
     ]
@@ -269,7 +269,7 @@ KtNameReferenceExpression(260,263): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
     ]
@@ -278,13 +278,13 @@ KtValueArgumentList(263,265): '()'
   null
 
 KtDotQualifiedExpression(278,296): 'this@MyClass.foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
 
 KtThisExpression(278,290): 'this@MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass
     ]
@@ -293,7 +293,7 @@ KtNameReferenceExpression(278,282): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass
     ]
@@ -305,13 +305,13 @@ KtLabelReferenceExpression(282,290): '@MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass
     ]
 
 KtCallExpression(291,296): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
@@ -320,7 +320,7 @@ KtNameReferenceExpression(291,294): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
@@ -353,7 +353,7 @@ KtBlockExpression(385,1208): '{'
   null
 
 KtCallExpression(403,408): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
@@ -362,7 +362,7 @@ KtNameReferenceExpression(403,406): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
@@ -371,13 +371,13 @@ KtValueArgumentList(406,408): '()'
   null
 
 KtDotQualifiedExpression(425,435): 'this.foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
 
 KtThisExpression(425,429): 'this'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested
     ]
@@ -386,13 +386,13 @@ KtNameReferenceExpression(425,429): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested
     ]
 
 KtCallExpression(430,435): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
@@ -401,7 +401,7 @@ KtNameReferenceExpression(430,433): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
@@ -410,13 +410,13 @@ KtValueArgumentList(433,435): '()'
   null
 
 KtDotQualifiedExpression(452,474): 'this@InnerNested.foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
 
 KtThisExpression(452,468): 'this@InnerNested'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested
     ]
@@ -425,7 +425,7 @@ KtNameReferenceExpression(452,456): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested
     ]
@@ -437,13 +437,13 @@ KtLabelReferenceExpression(456,468): '@InnerNested'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested
     ]
 
 KtCallExpression(469,474): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
@@ -452,7 +452,7 @@ KtNameReferenceExpression(469,472): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
@@ -461,13 +461,13 @@ KtValueArgumentList(472,474): '()'
   null
 
 KtDotQualifiedExpression(491,512): 'this@InnerOuter.foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
     ]
 
 KtThisExpression(491,506): 'this@InnerOuter'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter
     ]
@@ -476,7 +476,7 @@ KtNameReferenceExpression(491,495): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter
     ]
@@ -488,13 +488,13 @@ KtLabelReferenceExpression(495,506): '@InnerOuter'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter
     ]
 
 KtCallExpression(507,512): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
     ]
@@ -503,7 +503,7 @@ KtNameReferenceExpression(507,510): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
     ]
@@ -512,13 +512,13 @@ KtValueArgumentList(510,512): '()'
   null
 
 KtDotQualifiedExpression(529,547): 'this@MyClass.foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
 
 KtThisExpression(529,541): 'this@MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass
     ]
@@ -527,7 +527,7 @@ KtNameReferenceExpression(529,533): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass
     ]
@@ -539,13 +539,13 @@ KtLabelReferenceExpression(533,541): '@MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass
     ]
 
 KtCallExpression(542,547): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
@@ -554,7 +554,7 @@ KtNameReferenceExpression(542,545): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
@@ -581,13 +581,13 @@ KtNamedFunction(579,839): 'fun MyClass.(s: String) {'
   null
 
 KtTypeReference(583,590): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass
     ]
 
 KtUserType(583,590): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass
     ]
@@ -596,7 +596,7 @@ KtNameReferenceExpression(583,590): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass
     ]
@@ -608,13 +608,13 @@ KtParameter(592,601): 's: String'
   null
 
 KtTypeReference(595,601): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(595,601): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -623,7 +623,7 @@ KtNameReferenceExpression(595,601): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -632,7 +632,7 @@ KtBlockExpression(603,839): '{'
   null
 
 KtCallExpression(625,630): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
@@ -641,7 +641,7 @@ KtNameReferenceExpression(625,628): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
@@ -650,13 +650,13 @@ KtValueArgumentList(628,630): '()'
   null
 
 KtDotQualifiedExpression(651,661): 'this.foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
 
 KtThisExpression(651,655): 'this'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference
@@ -691,7 +691,7 @@ KtNameReferenceExpression(651,655): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference
@@ -723,7 +723,7 @@ KtNameReferenceExpression(651,655): 'this'
     ]
 
 KtCallExpression(656,661): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
@@ -732,7 +732,7 @@ KtNameReferenceExpression(656,659): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
@@ -741,13 +741,13 @@ KtValueArgumentList(659,661): '()'
   null
 
 KtDotQualifiedExpression(682,697): 'this@anon.foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
 
 KtThisExpression(682,691): 'this@anon'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference
@@ -782,7 +782,7 @@ KtNameReferenceExpression(682,686): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference
@@ -820,13 +820,13 @@ KtLabelReferenceExpression(686,691): '@anon'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(s: kotlin.String): kotlin.Unit
     ]
 
 KtCallExpression(692,697): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
@@ -835,7 +835,7 @@ KtNameReferenceExpression(692,695): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
@@ -844,13 +844,13 @@ KtValueArgumentList(695,697): '()'
   null
 
 KtDotQualifiedExpression(718,740): 'this@InnerNested.foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
 
 KtThisExpression(718,734): 'this@InnerNested'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested
     ]
@@ -859,7 +859,7 @@ KtNameReferenceExpression(718,722): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested
     ]
@@ -871,13 +871,13 @@ KtLabelReferenceExpression(722,734): '@InnerNested'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested
     ]
 
 KtCallExpression(735,740): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
@@ -886,7 +886,7 @@ KtNameReferenceExpression(735,738): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
@@ -895,13 +895,13 @@ KtValueArgumentList(738,740): '()'
   null
 
 KtDotQualifiedExpression(761,782): 'this@InnerOuter.foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
     ]
 
 KtThisExpression(761,776): 'this@InnerOuter'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter
     ]
@@ -910,7 +910,7 @@ KtNameReferenceExpression(761,765): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter
     ]
@@ -922,13 +922,13 @@ KtLabelReferenceExpression(765,776): '@InnerOuter'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter
     ]
 
 KtCallExpression(777,782): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
     ]
@@ -937,7 +937,7 @@ KtNameReferenceExpression(777,780): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
     ]
@@ -946,13 +946,13 @@ KtValueArgumentList(780,782): '()'
   null
 
 KtDotQualifiedExpression(803,821): 'this@MyClass.foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
 
 KtThisExpression(803,815): 'this@MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass
     ]
@@ -961,7 +961,7 @@ KtNameReferenceExpression(803,807): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass
     ]
@@ -973,13 +973,13 @@ KtLabelReferenceExpression(807,815): '@MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass
     ]
 
 KtCallExpression(816,821): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
@@ -988,7 +988,7 @@ KtNameReferenceExpression(816,819): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
@@ -997,7 +997,7 @@ KtValueArgumentList(819,821): '()'
   null
 
 KtCallExpression(857,1107): 'myWith { t ->'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/myWith(<extension receiver>: T, body: T.(T) -> kotlin.Unit): kotlin.Unit
     ]
@@ -1006,7 +1006,7 @@ KtNameReferenceExpression(857,863): 'myWith'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/myWith(<extension receiver>: T, body: T.(T) -> kotlin.Unit): kotlin.Unit
     ]
@@ -1030,7 +1030,7 @@ KtBlockExpression(891,1089): 'foo()'
   null
 
 KtCallExpression(891,896): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
@@ -1039,7 +1039,7 @@ KtNameReferenceExpression(891,894): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
@@ -1048,13 +1048,13 @@ KtValueArgumentList(894,896): '()'
   null
 
 KtDotQualifiedExpression(917,927): 'this.foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
 
 KtThisExpression(917,921): 'this'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtFunctionLiteral
@@ -1089,7 +1089,7 @@ KtNameReferenceExpression(917,921): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtFunctionLiteral
@@ -1121,7 +1121,7 @@ KtNameReferenceExpression(917,921): 'this'
     ]
 
 KtCallExpression(922,927): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
@@ -1130,7 +1130,7 @@ KtNameReferenceExpression(922,925): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
@@ -1139,13 +1139,13 @@ KtValueArgumentList(925,927): '()'
   null
 
 KtDotQualifiedExpression(948,965): 'this@myWith.foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
 
 KtThisExpression(948,959): 'this@myWith'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtFunctionLiteral
@@ -1180,7 +1180,7 @@ KtNameReferenceExpression(948,952): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtFunctionLiteral
@@ -1218,13 +1218,13 @@ KtLabelReferenceExpression(952,959): '@myWith'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(t: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
 
 KtCallExpression(960,965): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
@@ -1233,7 +1233,7 @@ KtNameReferenceExpression(960,963): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
@@ -1242,13 +1242,13 @@ KtValueArgumentList(963,965): '()'
   null
 
 KtDotQualifiedExpression(986,1008): 'this@InnerNested.foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
 
 KtThisExpression(986,1002): 'this@InnerNested'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested
     ]
@@ -1257,7 +1257,7 @@ KtNameReferenceExpression(986,990): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested
     ]
@@ -1269,13 +1269,13 @@ KtLabelReferenceExpression(990,1002): '@InnerNested'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested
     ]
 
 KtCallExpression(1003,1008): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
@@ -1284,7 +1284,7 @@ KtNameReferenceExpression(1003,1006): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
@@ -1293,13 +1293,13 @@ KtValueArgumentList(1006,1008): '()'
   null
 
 KtDotQualifiedExpression(1029,1050): 'this@InnerOuter.foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
     ]
 
 KtThisExpression(1029,1044): 'this@InnerOuter'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter
     ]
@@ -1308,7 +1308,7 @@ KtNameReferenceExpression(1029,1033): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter
     ]
@@ -1320,13 +1320,13 @@ KtLabelReferenceExpression(1033,1044): '@InnerOuter'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter
     ]
 
 KtCallExpression(1045,1050): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
     ]
@@ -1335,7 +1335,7 @@ KtNameReferenceExpression(1045,1048): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.foo(<dispatch receiver>: one.MyClass.InnerOuter): kotlin.Unit
     ]
@@ -1344,13 +1344,13 @@ KtValueArgumentList(1048,1050): '()'
   null
 
 KtDotQualifiedExpression(1071,1089): 'this@MyClass.foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
 
 KtThisExpression(1071,1083): 'this@MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass
     ]
@@ -1359,7 +1359,7 @@ KtNameReferenceExpression(1071,1075): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass
     ]
@@ -1371,13 +1371,13 @@ KtLabelReferenceExpression(1075,1083): '@MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass
     ]
 
 KtCallExpression(1084,1089): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
@@ -1386,7 +1386,7 @@ KtNameReferenceExpression(1084,1087): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.foo(<dispatch receiver>: one.MyClass): kotlin.Unit
     ]
@@ -1395,7 +1395,7 @@ KtValueArgumentList(1087,1089): '()'
   null
 
 KtCallExpression(1125,1194): 'myWith label@{'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/myWith(<extension receiver>: T, body: T.(T) -> kotlin.Unit): kotlin.Unit
     ]
@@ -1404,7 +1404,7 @@ KtNameReferenceExpression(1125,1131): 'myWith'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/myWith(<extension receiver>: T, body: T.(T) -> kotlin.Unit): kotlin.Unit
     ]
@@ -1434,13 +1434,13 @@ KtBlockExpression(1160,1176): 'this@label.foo()'
   null
 
 KtDotQualifiedExpression(1160,1176): 'this@label.foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
 
 KtThisExpression(1160,1170): 'this@label'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtFunctionLiteral
@@ -1475,7 +1475,7 @@ KtNameReferenceExpression(1160,1164): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtFunctionLiteral
@@ -1513,13 +1513,13 @@ KtLabelReferenceExpression(1164,1170): '@label'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <anonymous function>(it: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
 
 KtCallExpression(1171,1176): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
@@ -1528,7 +1528,7 @@ KtNameReferenceExpression(1171,1174): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/MyClass.InnerOuter.InnerNested.foo(<dispatch receiver>: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
     ]
@@ -1546,13 +1546,13 @@ KtTypeParameter(1233,1234): 'T'
   null
 
 KtTypeReference(1236,1237): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
 
 KtUserType(1236,1237): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -1561,7 +1561,7 @@ KtNameReferenceExpression(1236,1237): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -1573,13 +1573,13 @@ KtParameter(1245,1264): 'body: T.(T) -> Unit'
   null
 
 KtTypeReference(1251,1264): 'T.(T) -> Unit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Function2
     ]
 
 KtFunctionType(1251,1264): 'T.(T) -> Unit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Function2
     ]
@@ -1588,13 +1588,13 @@ KtFunctionTypeReceiver(1251,1252): 'T'
   null
 
 KtTypeReference(1251,1252): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
 
 KtUserType(1251,1252): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -1603,7 +1603,7 @@ KtNameReferenceExpression(1251,1252): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -1615,13 +1615,13 @@ KtParameter(1254,1255): 'T'
   null
 
 KtTypeReference(1254,1255): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
 
 KtUserType(1254,1255): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -1630,19 +1630,19 @@ KtNameReferenceExpression(1254,1255): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
 
 KtTypeReference(1260,1264): 'Unit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Unit
     ]
 
 KtUserType(1260,1264): 'Unit'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Unit
     ]
@@ -1651,7 +1651,7 @@ KtNameReferenceExpression(1260,1264): 'Unit'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Unit
     ]
@@ -1660,7 +1660,7 @@ KtBlockExpression(1266,1284): '{'
   null
 
 KtCallExpression(1272,1282): 'body(this)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Function2.invoke(<dispatch receiver>: (P1, P2) -> R, p1: P1, p2: P2): R
     ]
@@ -1669,7 +1669,7 @@ KtNameReferenceExpression(1272,1276): 'body'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       body: T.(T) -> kotlin.Unit
     ]
@@ -1681,7 +1681,7 @@ KtValueArgument(1277,1281): 'this'
   null
 
 KtThisExpression(1277,1281): 'this'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference
@@ -1715,7 +1715,7 @@ KtNameReferenceExpression(1277,1281): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference

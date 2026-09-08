@@ -1,0 +1,7 @@
+class B {
+    companion object {
+        val removedCompanionVal = 42
+        var removedCompanionVar = 42
+        fun removedCompanionFun() = "removedCompanionFun"
+    }
+}

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.fileAn
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.TestAnnotationRenderer
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
-import org.jetbrains.kotlin.analysis.api.resolution.resolveSymbols
+import org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbols
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiIndexingConfiguration
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.resolution.KtResolvable
@@ -37,7 +36,6 @@ abstract class AbstractContainingFileAnnotationProviderTest : AbstractAnalysisAp
         }
     }
 
-    @OptIn(KtExperimentalApi::class)
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = analyze(mainModule.ktModule) {
             copyAwareAnalyzeForTest(mainFile) { contextFile ->
@@ -51,7 +49,7 @@ abstract class AbstractContainingFileAnnotationProviderTest : AbstractAnalysisAp
                 contextFile.accept(object : KtTreeVisitorVoid() {
                     override fun visitElement(element: PsiElement) {
                         if (element is KtResolvable) {
-                            element.resolveSymbols().forEach(::register)
+                            element.resolveSuccessfulSymbols().forEach(::register)
                         }
 
                         super.visitElement(element)

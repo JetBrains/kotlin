@@ -93,7 +93,6 @@ const val equalsString2 = someStr.equals("123")
 const val equalsString3 = otherStr == someStr
 const val equalsString4 = someStr.equals(1)
 
-// STOP_EVALUATION_CHECKS
 fun box(): String {
     if (equalsBoolean1.id() != true)    return "Fail 1.1"
     if (equalsBoolean2.id() != false)   return "Fail 1.2"

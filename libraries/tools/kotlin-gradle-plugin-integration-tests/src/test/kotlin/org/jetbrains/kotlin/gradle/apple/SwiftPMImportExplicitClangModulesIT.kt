@@ -23,9 +23,6 @@ import kotlin.test.assertEquals
     supportedOn = [OS.MAC],
     enabledOnCI = [OS.MAC],
 )
-@GradleTestVersions(
-    minVersion = TestVersions.Gradle.G_8_0
-)
 @DisplayName("SwiftPM import integration tests for explicit Clang module settings")
 @SwiftPMImportGradlePluginTests
 class SwiftPMImportExplicitClangModulesIT : KGPBaseTest() {

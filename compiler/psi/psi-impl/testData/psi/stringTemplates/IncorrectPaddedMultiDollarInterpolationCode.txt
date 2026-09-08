@@ -5,7 +5,7 @@ KtFile: IncorrectPaddedMultiDollarInterpolationCode.kt
     <empty list>
   PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiComment(EOL_COMMENT)('// interpolation prefix length: 0, 1, 2, 4, 8')
     PsiWhiteSpace('\n')
     PsiComment(EOL_COMMENT)('// interpolation kinds: of arbitrary expression')
@@ -170,7 +170,7 @@ KtFile: IncorrectPaddedMultiDollarInterpolationCode.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiComment(EOL_COMMENT)('// interpolation prefix length: 0, 1, 2, 4, 8')
     PsiWhiteSpace('\n')
     PsiComment(EOL_COMMENT)('// interpolation kinds: of arbitrary expression')
@@ -345,7 +345,7 @@ KtFile: IncorrectPaddedMultiDollarInterpolationCode.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiComment(EOL_COMMENT)('// interpolation prefix length: 0, 1, 2, 4, 8')
     PsiWhiteSpace('\n')
     PsiComment(EOL_COMMENT)('// interpolation kinds: of arbitrary expression')
@@ -520,7 +520,7 @@ KtFile: IncorrectPaddedMultiDollarInterpolationCode.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiComment(EOL_COMMENT)('// interpolation prefix length: 0, 1, 2, 4, 8')
     PsiWhiteSpace('\n')
     PsiComment(EOL_COMMENT)('// interpolation kinds: of simple identifier, of identifier in backticks, of arbitrary expression')
@@ -957,7 +957,7 @@ KtFile: IncorrectPaddedMultiDollarInterpolationCode.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiComment(EOL_COMMENT)('// interpolation prefix length: 0, 1, 2, 4, 8')
     PsiWhiteSpace('\n')
     PsiComment(EOL_COMMENT)('// interpolation kinds: of identifier in backticks, of arbitrary expression')
@@ -1288,7 +1288,7 @@ KtFile: IncorrectPaddedMultiDollarInterpolationCode.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiComment(EOL_COMMENT)('// interpolation prefix length: 0, 1, 2, 4, 8')
     PsiWhiteSpace('\n')
     PsiComment(EOL_COMMENT)('// interpolation kinds: of identifier in backticks, of arbitrary expression')
@@ -1685,7 +1685,7 @@ KtFile: IncorrectPaddedMultiDollarInterpolationCode.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiComment(EOL_COMMENT)('// interpolation prefix length: 0, 1, 2, 4, 8')
     PsiWhiteSpace('\n')
     PsiComment(EOL_COMMENT)('// interpolation kinds: of arbitrary expression')
@@ -1962,7 +1962,7 @@ KtFile: IncorrectPaddedMultiDollarInterpolationCode.kt
   PsiWhiteSpace('\n')
   PsiComment(EOL_COMMENT)('// string literal kinds: single-line, multi-line')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')

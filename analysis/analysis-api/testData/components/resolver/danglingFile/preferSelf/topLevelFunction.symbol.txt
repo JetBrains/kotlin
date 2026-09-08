@@ -2,7 +2,7 @@ KtNameReferenceExpression(16,20): 'call'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /call(): kotlin.Unit
     ]

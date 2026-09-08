@@ -121,10 +121,10 @@ internal class TypeExporter(
             } else {
                 Function(
                     parameters = buildList {
-                        type.contextReceivers.mapTo(this) {
+                        type.contextParameterTypes.mapTo(this) {
                             ExportedParameter(
-                                name = it.label?.asString(),
-                                type = exportType(it.type),
+                                name = null,
+                                type = exportType(it),
                             )
                         }
                         type.receiverType?.let {

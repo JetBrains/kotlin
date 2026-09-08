@@ -27,7 +27,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CombinedContractWithCallInPl
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=contracts]
-  FUN[fqName=holdsInExactlyOnce, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInExactlyOnce]
+  FUNCTION[fqName=holdsInExactlyOnce, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInExactlyOnce]
     MODIFIER_LIST[inline]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=R]
@@ -43,7 +43,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CombinedContractWithCallInPl
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=R]
-  FUN[fqName=holdsInAtLeastOnce, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInAtLeastOnce]
+  FUNCTION[fqName=holdsInAtLeastOnce, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInAtLeastOnce]
     MODIFIER_LIST[inline]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=R]
@@ -59,7 +59,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CombinedContractWithCallInPl
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=R]
-  FUN[fqName=holdsInWithTwoCallInPlace, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInWithTwoCallInPlace]
+  FUNCTION[fqName=holdsInWithTwoCallInPlace, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInWithTwoCallInPlace]
     MODIFIER_LIST[inline]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=R]

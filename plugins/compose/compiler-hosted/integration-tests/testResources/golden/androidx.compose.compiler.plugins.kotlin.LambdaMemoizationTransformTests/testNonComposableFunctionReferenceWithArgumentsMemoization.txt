@@ -46,7 +46,11 @@ fun Something(%composer: Composer?, %changed: Int) {
       val tmp0 = x
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp1_group = %composer.cache(false) {
-        tmp0::qux
+        tmp0::qux<kotlin.reflect.KFunction1> {
+          fun qux(receiver: Stable, p0: @[ParameterName(name = 'arg1')] Any) {
+            return receiver.qux(p0)
+          }
+        }
       }
       sourceInformationMarkerEnd(%composer)
       tmp1_group

@@ -678,7 +678,7 @@ private fun ObjCExportCodeGenerator.generateUnitContinuationToRetainedCompletion
 
 private val ObjCExportBlockCodeGenerator.mappedFunctionNClasses: List<IrClass>
     get() {
-        val stdlibModule = context.irLinker.modules.values.firstOrNull { it.kotlinLibrary?.isNativeStdlib == true }
+        val stdlibModule = context.irLinker.allModuleFragments.firstOrNull { it.kotlinLibrary?.isNativeStdlib == true }
                 ?: error("stdlib module not found")
         val functionFiles = stdlibModule.files.filter { it.isFunctionInterfaceFile }
         val functionN = functionFiles.flatMap { it.declarations.filterIsInstance<IrClass>() }

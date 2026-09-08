@@ -1,0 +1,4 @@
+FUNCTION:
+  /Data.equals
+EQUALITY_BOUND:
+  Data

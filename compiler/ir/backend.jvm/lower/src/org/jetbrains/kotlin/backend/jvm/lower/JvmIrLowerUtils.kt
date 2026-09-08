@@ -39,12 +39,8 @@ val IrSimpleFunction.returnsResultOfStdlibCall: Boolean
         }
     }
 
-/** Criteria for delegate optimizations on the JVM.
- *
- * Keep it consistent with `org.jetbrains.kotlinx.serialization.compiler.backend.ir.getPropertyReferenceForOptimizableDelegatedProperty`
- * until it's replaced with this implementation.
- */
-internal fun IrProperty.getRichPropertyReferenceForOptimizableDelegatedProperty(): IrRichPropertyReference? {
+/** Criteria for delegate optimizations on the JVM. */
+fun IrProperty.getRichPropertyReferenceForOptimizableDelegatedProperty(): IrRichPropertyReference? {
     if (!isDelegated || isFakeOverride || backingField == null) return null
 
     val delegate = backingField?.initializer?.expression

@@ -34,9 +34,15 @@ class DelegateProvider {
 
 fun foo() {
   val testMember: String
-    val testMember$delegate: Delegate = DelegateProvider(value = "OK").provideDelegate(thisRef = null, property = ::testMember)
+    val testMember$delegate: Delegate = DelegateProvider(value = "OK").provideDelegate(thisRef = null, property = KProperty0<String>(
+      /* bound = */ [],
+      /* getter = */      local fun(): String    )
+)
     local get(): String {
-      return testMember$delegate.getValue(thisRef = null, property = ::testMember)
+      return testMember$delegate.getValue(thisRef = null, property = KProperty0<String>(
+        /* bound = */ [],
+        /* getter = */        local fun(): String      )
+)
     }
 
 }

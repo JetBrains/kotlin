@@ -24,7 +24,7 @@ public enum J {
 // FILE: main.kt
 
 fun test_1(): Int {
-    return when (J.getPlatform()) {
+    return <!WHEN_SUBJECT_CAN_BE_NULL_IN_JAVA!>when<!> (J.getPlatform()) {
         J.A -> 1
         J.B -> 2
     }
@@ -137,7 +137,7 @@ fun test_13(): Int {
 fun test_14(): Int {
     val e = J.getNullable()
     if (e == null) return 0
-    return <!UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS!>when<!> (e) {
+    return when (e) {
         J.A -> 1
         J.B -> 2
     }

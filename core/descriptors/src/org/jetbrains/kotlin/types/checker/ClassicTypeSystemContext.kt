@@ -904,8 +904,6 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun usePreciseSimplificationToFlexibleLowerConstraint(): Boolean = false
 
-    override fun simplifyFlexibleUpperConstraintWithDnnBoundToNullable(): Boolean = true
-
     override fun substitutionSupertypePolicy(type: RigidTypeMarker): TypeCheckerState.SupertypesPolicy {
         require(type is SimpleType, type::errorMessage)
         val substitutor = TypeConstructorSubstitution.create(type).buildSubstitutor()

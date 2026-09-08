@@ -3,7 +3,21 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
     FIELD PROPERTY_DELEGATE name:additionalText$delegate type:<root>.DVal visibility:private [final,static]
       EXPRESSION_BODY
         CONSTRUCTOR_CALL 'public constructor <init> (kmember: kotlin.Any) declared in <root>.DVal' type=<root>.DVal origin=null
-          ARG kmember: PROPERTY_REFERENCE 'public final text: kotlin.String? declared in <root>.Value' field=null getter='public final fun <get-text> (): kotlin.String? declared in <root>.Value' setter='public final fun <set-text> (<set-?>: kotlin.String?): kotlin.Unit declared in <root>.Value' type=kotlin.reflect.KMutableProperty1<<root>.Value<T of <root>.<get-additionalText>>, kotlin.String?> origin=null
+          ARG kmember: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<<root>.Value<T of <root>.<get-additionalText>>, kotlin.String?> origin=null reflectionTarget='public final text: kotlin.String? declared in <root>.Value'
+            getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:text visibility:local modality:FINAL returnType:kotlin.String?
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Value<T of <root>.<get-additionalText>>
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun text (p0: <root>.Value<T of <root>.<get-additionalText>>): kotlin.String? declared in <root>.additionalText$delegate'
+                  CALL 'public final fun <get-text> (): kotlin.String? declared in <root>.Value' type=kotlin.String? origin=null
+                    ARG <this>: GET_VAR 'p0: <root>.Value<T of <root>.<get-additionalText>> declared in <root>.additionalText$delegate.text' type=<root>.Value<T of <root>.<get-additionalText>> origin=null
+            setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:text visibility:local modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Value<T of <root>.<get-additionalText>>
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.String?
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun text (p0: <root>.Value<T of <root>.<get-additionalText>>, value: kotlin.String?): kotlin.Unit declared in <root>.additionalText$delegate'
+                  CALL 'public final fun <set-text> (<set-?>: kotlin.String?): kotlin.Unit declared in <root>.Value' type=kotlin.Unit origin=null
+                    ARG <this>: GET_VAR 'p0: <root>.Value<T of <root>.<get-additionalText>> declared in <root>.additionalText$delegate.text' type=<root>.Value<T of <root>.<get-additionalText>> origin=null
+                    ARG <set-?>: GET_VAR 'value: kotlin.String? declared in <root>.additionalText$delegate.text' type=kotlin.String? origin=ADAPTED_FUNCTION_REFERENCE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-additionalText> visibility:public modality:FINAL returnType:kotlin.Int
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:<root>.Value<T of <root>.<get-additionalText>>
@@ -13,13 +27,33 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
           CALL 'public final fun getValue (t: kotlin.Any?, p: kotlin.Any): kotlin.Int declared in <root>.DVal' type=kotlin.Int origin=null
             ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:additionalText$delegate type:<root>.DVal visibility:private [final,static] declared in <root>' type=<root>.DVal origin=null
             ARG t: GET_VAR '<this>: <root>.Value<T of <root>.<get-additionalText>> declared in <root>.<get-additionalText>' type=<root>.Value<T of <root>.<get-additionalText>> origin=null
-            ARG p: PROPERTY_REFERENCE 'public final additionalText: kotlin.Int declared in <root>' field=null getter='public final fun <get-additionalText> <T> (<this>: <root>.Value<T of <root>.<get-additionalText>>): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty1<<root>.Value<T of <root>.<get-additionalText>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-              TYPE_ARG 1: T of <root>.<get-additionalText>
+            ARG p: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<<root>.Value<T of <root>.<get-additionalText>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final additionalText: kotlin.Int declared in <root>'
+              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:additionalText visibility:local modality:FINAL returnType:kotlin.Int
+                VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Value<T of <root>.<get-additionalText>>
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun additionalText (p0: <root>.Value<T of <root>.<get-additionalText>>): kotlin.Int declared in <root>.<get-additionalText>'
+                    CALL 'public final fun <get-additionalText> <T> (<this>: <root>.Value<T of <root>.<get-additionalText>>): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                      TYPE_ARG T: T of <root>.<get-additionalText>
+                      ARG <this>: GET_VAR 'p0: <root>.Value<T of <root>.<get-additionalText>> declared in <root>.<get-additionalText>.additionalText' type=<root>.Value<T of <root>.<get-additionalText>> origin=null
   PROPERTY name:additionalValue visibility:public modality:FINAL [delegated,val]
     FIELD PROPERTY_DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static]
       EXPRESSION_BODY
         CONSTRUCTOR_CALL 'public constructor <init> (kmember: kotlin.Any) declared in <root>.DVal' type=<root>.DVal origin=null
-          ARG kmember: PROPERTY_REFERENCE 'public final value: T of <root>.Value declared in <root>.Value' field=null getter='public final fun <get-value> (): T of <root>.Value declared in <root>.Value' setter='public final fun <set-value> (<set-?>: T of <root>.Value): kotlin.Unit declared in <root>.Value' type=kotlin.reflect.KMutableProperty1<<root>.Value<T of <root>.<get-additionalValue>>, T of <root>.<get-additionalValue>> origin=null
+          ARG kmember: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<<root>.Value<T of <root>.<get-additionalValue>>, T of <root>.<get-additionalValue>> origin=null reflectionTarget='public final value: T of <root>.Value declared in <root>.Value'
+            getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:value visibility:local modality:FINAL returnType:T of <root>.<get-additionalValue>
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Value<T of <root>.<get-additionalValue>>
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun value (p0: <root>.Value<T of <root>.<get-additionalValue>>): T of <root>.<get-additionalValue> declared in <root>.additionalValue$delegate'
+                  CALL 'public final fun <get-value> (): T of <root>.Value declared in <root>.Value' type=T of <root>.<get-additionalValue> origin=null
+                    ARG <this>: GET_VAR 'p0: <root>.Value<T of <root>.<get-additionalValue>> declared in <root>.additionalValue$delegate.value' type=<root>.Value<T of <root>.<get-additionalValue>> origin=null
+            setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:value visibility:local modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Value<T of <root>.<get-additionalValue>>
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:T of <root>.<get-additionalValue>
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun value (p0: <root>.Value<T of <root>.<get-additionalValue>>, value: T of <root>.<get-additionalValue>): kotlin.Unit declared in <root>.additionalValue$delegate'
+                  CALL 'public final fun <set-value> (<set-?>: T of <root>.Value): kotlin.Unit declared in <root>.Value' type=kotlin.Unit origin=null
+                    ARG <this>: GET_VAR 'p0: <root>.Value<T of <root>.<get-additionalValue>> declared in <root>.additionalValue$delegate.value' type=<root>.Value<T of <root>.<get-additionalValue>> origin=null
+                    ARG <set-?>: GET_VAR 'value: T of <root>.<get-additionalValue> declared in <root>.additionalValue$delegate.value' type=T of <root>.<get-additionalValue> origin=ADAPTED_FUNCTION_REFERENCE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-additionalValue> visibility:public modality:FINAL returnType:kotlin.Int
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:<root>.Value<T of <root>.<get-additionalValue>>
@@ -29,8 +63,14 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
           CALL 'public final fun getValue (t: kotlin.Any?, p: kotlin.Any): kotlin.Int declared in <root>.DVal' type=kotlin.Int origin=null
             ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:additionalValue$delegate type:<root>.DVal visibility:private [final,static] declared in <root>' type=<root>.DVal origin=null
             ARG t: GET_VAR '<this>: <root>.Value<T of <root>.<get-additionalValue>> declared in <root>.<get-additionalValue>' type=<root>.Value<T of <root>.<get-additionalValue>> origin=null
-            ARG p: PROPERTY_REFERENCE 'public final additionalValue: kotlin.Int declared in <root>' field=null getter='public final fun <get-additionalValue> <T> (<this>: <root>.Value<T of <root>.<get-additionalValue>>): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty1<<root>.Value<T of <root>.<get-additionalValue>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-              TYPE_ARG 1: T of <root>.<get-additionalValue>
+            ARG p: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<<root>.Value<T of <root>.<get-additionalValue>>, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final additionalValue: kotlin.Int declared in <root>'
+              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:additionalValue visibility:local modality:FINAL returnType:kotlin.Int
+                VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Value<T of <root>.<get-additionalValue>>
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun additionalValue (p0: <root>.Value<T of <root>.<get-additionalValue>>): kotlin.Int declared in <root>.<get-additionalValue>'
+                    CALL 'public final fun <get-additionalValue> <T> (<this>: <root>.Value<T of <root>.<get-additionalValue>>): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                      TYPE_ARG T: T of <root>.<get-additionalValue>
+                      ARG <this>: GET_VAR 'p0: <root>.Value<T of <root>.<get-additionalValue>> declared in <root>.<get-additionalValue>.additionalValue' type=<root>.Value<T of <root>.<get-additionalValue>> origin=null
   PROPERTY name:recivier visibility:public modality:FINAL [var]
     FIELD PROPERTY_BACKING_FIELD name:recivier type:kotlin.Any? visibility:private [static]
       EXPRESSION_BODY
@@ -64,8 +104,23 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
   PROPERTY name:barRef visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:barRef type:kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> visibility:private [final,static]
       EXPRESSION_BODY
-        PROPERTY_REFERENCE 'public final bar: T of <root>.<get-bar> declared in <root>' field=null getter='public final fun <get-bar> <T> (<this>: T of <root>.<get-bar>): T of <root>.<get-bar> declared in <root>' setter='public final fun <set-bar> <T> (<this>: T of <root>.<set-bar>, value: T of <root>.<set-bar>): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> origin=null
-          TYPE_ARG 1: kotlin.String?
+        RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> origin=null reflectionTarget='public final bar: T of <root>.<get-bar> declared in <root>'
+          getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.String?
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:kotlin.String?
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun bar (p0: kotlin.String?): kotlin.String? declared in <root>.barRef'
+                CALL 'public final fun <get-bar> <T> (<this>: T of <root>.<get-bar>): T of <root>.<get-bar> declared in <root>' type=kotlin.String? origin=null
+                  TYPE_ARG T: kotlin.String?
+                  ARG <this>: GET_VAR 'p0: kotlin.String? declared in <root>.barRef.bar' type=kotlin.String? origin=null
+          setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:kotlin.String?
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.String?
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun bar (p0: kotlin.String?, value: kotlin.String?): kotlin.Unit declared in <root>.barRef'
+                CALL 'public final fun <set-bar> <T> (<this>: T of <root>.<set-bar>, value: T of <root>.<set-bar>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  TYPE_ARG T: kotlin.String?
+                  ARG <this>: GET_VAR 'p0: kotlin.String? declared in <root>.barRef.bar' type=kotlin.String? origin=null
+                  ARG value: GET_VAR 'value: kotlin.String? declared in <root>.barRef.bar' type=kotlin.String? origin=ADAPTED_FUNCTION_REFERENCE
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-barRef> visibility:public modality:FINAL returnType:kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?>
       correspondingProperty: PROPERTY name:barRef visibility:public modality:FINAL [val]
       BLOCK_BODY

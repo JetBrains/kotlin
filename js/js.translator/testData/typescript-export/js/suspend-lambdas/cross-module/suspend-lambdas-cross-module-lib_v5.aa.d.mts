@@ -10,3 +10,5 @@ export declare const mainSuspendLambda: {
 export declare function reuseLibSuspendLambda(): (p0: number) => Promise<number>;
 export declare function callMainLambda(callback: () => Promise<string>): Promise<string>;
 export declare function callIntLambda(callback: (p0: number) => Promise<number>, x: number): Promise<number>;
+export declare function box(): string;
+

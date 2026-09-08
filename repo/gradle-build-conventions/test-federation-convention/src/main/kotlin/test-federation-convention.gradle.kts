@@ -6,14 +6,6 @@ import org.jetbrains.kotlin.testFederation.*
 
 val extension = extensions.create<TestFederationExtension>("testFederation")
 
-project.dependencies.extensions.add(
-    ProjectDependency::class.java, "testFederationRuntime", dependencies.project(":repo:test-federation-runtime")
-)
-
-val testFederationRuntime = configurations.detachedConfiguration(dependencies.project(":repo:test-federation-runtime")).apply {
-    isTransitive = false
-}.incoming.files
-
 tasks.withType<Test>().configureEach {
     val currentDomain = testFederationDomains
     val changedDomains = project.testFederationChangedDomains
@@ -37,7 +29,6 @@ tasks.withType<Test>().configureEach {
         if (mode == TestFederationMode.Smoke) domains.toArgumentString() else "*"
     })
 
-    val testFederationRuntime = testFederationRuntime
     val projectPath = project.buildTreePath
     val scan = project.extensions.getByType(DevelocityConfiguration::class).buildScan
 
@@ -124,14 +115,6 @@ tasks.withType<Test>().configureEach {
             testFramework.options.excludeTags("nightly", "org.jetbrains.kotlin.testFederation.NightlyTest")
         }
 
-        /* Ensure that the test federation runtime is always available on the classpath (and the extension is enabled) */
-        systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
-
-        /* Check if classpath contains test federation runtime */
-        if (!classpath.files.containsAll(testFederationRuntime.files)) {
-            error("Test Federation Runtime is not available on the classpath")
-        }
-
         /* Check if classpath contains vintage engine and report it as unsupported */
         if (classpath.files.any { file -> file.name.contains("junit-vintage-engine") }) {
             error("Unsupported 'junit-vintage-engine' found in classpath. Please remove this dependency")
@@ -141,7 +124,6 @@ tasks.withType<Test>().configureEach {
 
 afterEvaluate {
     tasks.withType<Test>().configureEach {
-        classpath += testFederationRuntime
         /*
         When running in smoke test mode, a given test task might actually not provide any smoke test
         */
@@ -156,16 +138,6 @@ afterEvaluate {
             if (testFederationMode.get() == TestFederationMode.Smoke) {
                 filter.isFailOnNoMatchingTests = false
             }
-        }
-    }
-}
-
-afterEvaluate {
-    if (extension.defaultDependencyEnabled.get()) {
-        dependencies {
-            configurations.findByName("testImplementation")?.name(project(":repo:test-federation-runtime"))
-            configurations.findByName("jvmTestImplementation")?.name(project(":repo:test-federation-runtime"))
-            configurations.findByName("testFixturesCompileOnly")?.name(project(":repo:test-federation-runtime"))
         }
     }
 }

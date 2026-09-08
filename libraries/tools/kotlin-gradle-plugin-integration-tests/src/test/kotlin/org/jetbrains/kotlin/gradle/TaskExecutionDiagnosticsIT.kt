@@ -141,8 +141,6 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
                     kotlin("jvm")
                     id("kotlin-dsl")
                 }
-                // before Gradle 8.2, kotlin-dsl plugin configured the versions in afterEvaluate, forcing usage of afterEvaluate to override its configuration
-                val haveToUseAfterEvaluate = gradleVersion < GradleVersion.version("8.2")
                 buildScriptInjection {
                     project.applyJvm {
                         jvmToolchain(17)
@@ -158,12 +156,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
                             it.compilerOptions.languageVersion.set(customizedKotlinVersion)
                         }
                     }
-                    if (haveToUseAfterEvaluate) {
-                        project.afterEvaluate { configureKotlin() }
-                    } else {
-                        configureKotlin()
-                    }
-
+                    configureKotlin()
                 }
 
                 kotlinSourcesDir().source("main.kt") {
@@ -199,7 +192,6 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
 
     @GradleTest
     @OtherGradlePluginTests
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_8)
     fun `karOrKarXZFilesInCompileClasspathAreReported - native`(gradleVersion: GradleVersion) {
         nativeProject("native-simple-project", gradleVersion) {
             val unsupportedLibraryPaths = listOf("foo.kar", "bar.kar.xz").map { fileName ->
@@ -225,7 +217,6 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
 
     @GradleTest
     @OtherGradlePluginTests
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_8)
     fun `karOrKarXZFilesInCompileClasspathAreReported - js`(gradleVersion: GradleVersion) {
         project(
             "kotlin-js-plugin-project", gradleVersion,

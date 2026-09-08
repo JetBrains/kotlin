@@ -898,6 +898,8 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         description = "Use inline scopes numbers for inline marker variables.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        additionalAnnotations(Enables(LanguageFeature.JvmInlineScopesNumbers))
+
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_0,
         )

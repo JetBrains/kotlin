@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 
 /**
  * This transformer walks the IR tree to infer the applier annotations such as ComposableTarget,
@@ -260,7 +261,7 @@ class ComposableTargetAnnotationsTransformer(
 
         val target = (
                 if (
-                    expression.isInvoke() ||
+                    expression.isLambdaInvoke() ||
                     expression.dispatchReceiver?.type?.isSamComposable == true
                 ) {
                     expression.dispatchReceiver?.let {
@@ -359,7 +360,10 @@ class ComposableTargetAnnotationsTransformer(
 
             return when {
                 targetsFromAnnotations.size == 1 -> Token(targetsFromAnnotations.first())
-                targetsFromAnnotations.size > 1 -> Open(explicitOpen ?: -1, allowedTokens = targetsFromAnnotations)
+                targetsFromAnnotations.size > 1 -> Open(
+                    explicitOpen ?: -1,
+                    constraints = Constraints.restrictedTo(targetsFromAnnotations)
+                )
                 explicitOpen != null -> Open(explicitOpen)
                 else -> Open(-1, isUnspecified = true)
             }
@@ -411,6 +415,8 @@ class ComposableTargetAnnotationsTransformer(
         get() = when (this) {
             is IrFunctionExpression -> function.isComposable
             is IrCall -> isComposableSingletonGetter() || hasTransformedLambda
+            // `ComposerLambdaMemoization` casts `composableLambda*` calls back to the composable function type of the lambda they replace
+            is IrTypeOperatorCall if operator == IrTypeOperator.IMPLICIT_CAST -> argument.isComposableLambda
             else -> false
         }
 
@@ -469,12 +475,14 @@ class ComposableTargetAnnotationsTransformer(
                         }
                     )
                 }
-                allowedTokens?.forEach { token ->
-                    annotations.add(
-                        annotation(ComposableTargetClass).also {
-                            it.arguments[0] = irConst(token)
-                        }
-                    )
+                if (!constraints.allowsAllTokens) {
+                    constraints.allowedTokens.forEach { token ->
+                        annotations.add(
+                            annotation(ComposableTargetClass).also {
+                                it.arguments[0] = irConst(token)
+                            }
+                        )
+                    }
                 }
 
                 annotations
@@ -663,7 +671,7 @@ class InferenceFunctionDeclaration(
             transformer.addAnnotationToDeclaration(function, scheme)
         } else {
             transformer.addAnnotationToDeclaration(function, scheme.target)
-            parameters().zip(scheme.parameters) { parameter, parameterScheme ->
+            parameters().forEachZipped(scheme.parameters) { parameter, parameterScheme ->
                 parameter.updateScheme(parameterScheme)
             }
         }

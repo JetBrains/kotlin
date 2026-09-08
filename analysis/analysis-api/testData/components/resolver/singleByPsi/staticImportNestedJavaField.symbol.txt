@@ -2,7 +2,7 @@ KtNameReferenceExpression(89,92): 'bar'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var bar: kotlin.Int
     ]

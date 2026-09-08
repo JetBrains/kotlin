@@ -1,5 +1,5 @@
 KtAnnotationEntry(40,49): '@Suppress'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

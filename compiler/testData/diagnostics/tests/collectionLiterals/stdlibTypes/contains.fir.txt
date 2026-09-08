@@ -1,0 +1,9 @@
+FILE: contains.kt
+    public final fun test(): R|kotlin/Unit| {
+        R|kotlin/collections/listOf|<R|kotlin/collections/List<kotlin/Int>|>(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(42))).R|SubstitutionOverride<kotlin/collections/List.contains: R|kotlin/Boolean|>|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(42)))
+        R|kotlin/collections/listOf|<R|kotlin/collections/Set<kotlin/Int>|>(R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(42))).R|SubstitutionOverride<kotlin/collections/List.contains: R|kotlin/Boolean|>|(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(42)))
+        R|kotlin/collections/listOf|<R|kotlin/Any|>(R|kotlin/Any.Any|()).R|SubstitutionOverride<kotlin/collections/List.contains: R|kotlin/Boolean|>|(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(42)))
+        R|kotlin/sequences/sequenceOf|<R|kotlin/collections/List<kotlin/Int>|>(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(42))).R|kotlin/sequences/contains|<R|kotlin/collections/List<kotlin/Int>|>(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(42)))
+        R|kotlin/sequences/sequenceOf|<R|kotlin/collections/Set<kotlin/Int>|>(R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(42))).R|kotlin/sequences/contains|<R|kotlin/collections/Set<kotlin/Int>|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(42)))
+        R|kotlin/sequences/sequenceOf|<R|kotlin/Any|>(R|kotlin/Any.Any|()).R|kotlin/sequences/contains|<R|kotlin/Any|>(Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(42)))
+    }

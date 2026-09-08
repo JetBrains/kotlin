@@ -85,8 +85,9 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             return CompilationResult.COMPILATION_ERROR
         }
         val loggerAdapter = KotlinLoggerMessageCollectorAdapter(kotlinLogger, compilerMessageRenderer, compilerArguments[WERROR])
-
-        return when (executionPolicy) {
+        compilerArguments.reportArgumentParseWarnings(loggerAdapter, createAndPrepareCompilerArguments())
+        val hasArgumentParsingErrors = loggerAdapter.hasErrors()
+        val result = when (executionPolicy) {
             InProcessExecutionPolicyImpl -> {
                 compileInProcess(loggerAdapter, executionContext)
             }
@@ -98,6 +99,11 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
                     loggerAdapter.kotlinLogger.error("Unknown execution mode: ${executionPolicy::class.qualifiedName}")
                 }
             }
+        }
+        return if (hasArgumentParsingErrors && result == CompilationResult.COMPILATION_SUCCESS) {
+            CompilationResult.COMPILATION_ERROR
+        } else {
+            result
         }
     }
 

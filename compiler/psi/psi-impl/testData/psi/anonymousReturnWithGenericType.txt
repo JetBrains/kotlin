@@ -58,7 +58,7 @@ KtFile: anonymousReturnWithGenericType.kt
               PsiElement(LBRACE)('{')
               PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('f1')
@@ -128,7 +128,7 @@ KtFile: anonymousReturnWithGenericType.kt
               PsiElement(LBRACE)('{')
               PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(private)('private')
         PsiWhiteSpace(' ')

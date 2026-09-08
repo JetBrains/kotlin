@@ -53,8 +53,11 @@ public protocol __Greeter: KotlinRuntimeSupport._KotlinBridgeable {
 public protocol __OverloadedInterface: KotlinRuntimeSupport._KotlinBridgeable {
 }
 open class AbstractBase: KotlinRuntime.KotlinBase {
-    package init() {
-        fatalError()
+    public init() {
+        precondition(Self.self != main.AbstractBase.self, "main.AbstractBase is an abstract class and cannot be instantiated directly")
+        let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___AbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -109,7 +112,12 @@ open class Base: KotlinRuntime.KotlinBase {
         }
     }
     public init() {
-        let __kt = __root___Base_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main.Base.self {
+             __kt = __root___Base_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Base_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
@@ -157,7 +165,12 @@ open class GreeterBase: KotlinRuntime.KotlinBase, main.Greeter, main.__Greeter {
         }
     }
     public init() {
-        let __kt = __root___GreeterBase_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main.GreeterBase.self {
+             __kt = __root___GreeterBase_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___GreeterBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
@@ -186,7 +199,12 @@ open class GreeterBase: KotlinRuntime.KotlinBase, main.Greeter, main.__Greeter {
 }
 open class Overloaded: KotlinRuntime.KotlinBase {
     public init() {
-        let __kt = __root___Overloaded_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main.Overloaded.self {
+             __kt = __root___Overloaded_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Overloaded_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
@@ -257,7 +275,12 @@ open class Overloaded: KotlinRuntime.KotlinBase {
 }
 open class ThrowingMembers: KotlinRuntime.KotlinBase {
     public init() {
-        let __kt = __root___ThrowingMembers_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main.ThrowingMembers.self {
+             __kt = __root___ThrowingMembers_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___ThrowingMembers_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }

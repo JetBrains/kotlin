@@ -7,7 +7,6 @@ package kotlin.jdk7.test
 
 import test.testOnJvm8
 import test.testOnJvm9AndAbove
-import java.lang.NullPointerException
 import java.nio.file.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipException
@@ -144,6 +143,7 @@ class PathRecursiveFunctionsZipTest : AbstractPathTest() {
         }
     }
 
+    @IgnorableReturnValue
     private inline fun <reified T> testDeleteMaybeFailsWith(path: Path): Boolean {
         return try {
             testDeleteSucceeds(path)
@@ -254,13 +254,15 @@ class PathRecursiveFunctionsZipTest : AbstractPathTest() {
         }
 
         withZip("Archive2.zip", listOf("normal", "//")) { root, zipRoot ->
-            // Fails in jvm8, succeeds in jvm9+
-            try {
-                zipRoot.walkIncludeDirectories().toList()
+            testOnJvm8 {
+                assertFailsWith<FileSystemLoopException> {
+                    zipRoot.walkIncludeDirectories().toList()
+                }
+            }
+            testOnJvm9AndAbove {
                 // ["/", "//", "normal"] in jvm9-10
                 // ["/", "/normal"] in jvm11
-            } catch (exception: Exception) {
-                assertIs<FileSystemLoopException>(exception)
+                val _ = zipRoot.walkIncludeDirectories().toList()
             }
 
             val target = root.resolve("UnzipArchive2")
@@ -275,13 +277,15 @@ class PathRecursiveFunctionsZipTest : AbstractPathTest() {
         withZip("Archive3.zip", listOf("a/", "a//")) { root, zipRoot ->
             val aFile = zipRoot.resolve("a")
             val aDir = zipRoot.resolve("a/")
-            // Fails in jvm8, succeeds in jvm9+
-            try {
-                zipRoot.walkIncludeDirectories().toList()
+            testOnJvm8 {
+                assertFailsWith<FileSystemLoopException> {
+                    zipRoot.walkIncludeDirectories().toList()
+                }
+            }
+            testOnJvm9AndAbove {
                 // ["/", "/a", "/a/"] in jvm9-10
                 // ["/", "/a"] in jvm11
-            } catch (exception: Exception) {
-                assertIs<FileSystemLoopException>(exception)
+                val _ = zipRoot.walkIncludeDirectories().toList()
             }
             testWalkMaybeFailsWith<FileSystemLoopException>(aFile, setOf(aFile))
             testWalkMaybeFailsWith<FileSystemLoopException>(aDir, setOf(aFile))

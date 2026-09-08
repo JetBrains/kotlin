@@ -11,11 +11,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CompanionExtensionKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
+          isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
   PROPERTY[fqName=bar2, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=bar2]
     origin: Facade(className=CompanionExtensionKt, jvmClassName=null)
     MODIFIER_LIST[private companion]
@@ -24,11 +26,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CompanionExtensionKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
+          isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
   PROPERTY[fqName=bar3, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=bar3]
     origin: Facade(className=CompanionExtensionKt, jvmClassName=null)
     MODIFIER_LIST[public companion]
@@ -37,15 +41,17 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CompanionExtensionKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
+          isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
       MODIFIER_LIST[public final inline]
       VALUE_PARAMETER_LIST
-  FUN[fqName=foo1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo1]
+  FUNCTION[fqName=foo1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo1]
     origin: Facade(className=CompanionExtensionKt, jvmClassName=null)
     MODIFIER_LIST[public companion]
     TYPE_REFERENCE
@@ -53,13 +59,15 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CompanionExtensionKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
+          isClassRef: true
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=foo2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo2]
+          isClassRef: true
+  FUNCTION[fqName=foo2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo2]
     origin: Facade(className=CompanionExtensionKt, jvmClassName=null)
     MODIFIER_LIST[private companion]
     TYPE_REFERENCE
@@ -67,13 +75,15 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CompanionExtensionKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
+          isClassRef: true
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=foo3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo3]
+          isClassRef: true
+  FUNCTION[fqName=foo3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo3]
     origin: Facade(className=CompanionExtensionKt, jvmClassName=null)
     MODIFIER_LIST[public companion inline]
     TYPE_REFERENCE
@@ -81,9 +91,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CompanionExtensionKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
+          isClassRef: true
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true

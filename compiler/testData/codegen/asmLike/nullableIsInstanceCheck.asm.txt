@@ -1,0 +1,53 @@
+public final class NullableIsInstanceCheckKt : java/lang/Object {
+    public final static java.lang.String isNullableString(java.lang.Object x) {
+        LABEL (L0)
+        LINENUMBER (7)
+          ALOAD (0)
+          DUP
+          IFNONNULL (L1)
+          POP
+          GOTO (L2)
+        LABEL (L1)
+          INSTANCEOF (java/lang/String)
+          IFEQ (L3)
+        LABEL (L2)
+          LDC (true)
+          GOTO (L4)
+        LABEL (L3)
+          LDC (false)
+        LABEL (L4)
+          ARETURN
+        LABEL (L5)
+    }
+
+    public final static java.lang.String isNullableString2(java.lang.Object x) {
+        LABEL (L0)
+        LINENUMBER (9)
+          ALOAD (0)
+          ASTORE (1)
+        LABEL (L1)
+          ICONST_0
+          ISTORE (2)
+        LABEL (L2)
+        LINENUMBER (11)
+          ALOAD (1)
+          DUP
+          IFNONNULL (L3)
+          POP
+          GOTO (L4)
+        LABEL (L3)
+          INSTANCEOF (java/lang/String)
+          IFEQ (L5)
+        LABEL (L4)
+          LDC (true)
+          GOTO (L6)
+        LABEL (L5)
+          LDC (false)
+        LABEL (L6)
+        LINENUMBER (9)
+          ARETURN
+        LABEL (L7)
+    }
+
+    public final static java.lang.String isT(java.lang.Object x)
+}

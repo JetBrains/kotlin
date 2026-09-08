@@ -18,7 +18,7 @@ fun <T> Ref(content: @Composable (T) -> Unit) {
 @FunctionKeyMeta(key = -165560361, startOffset = 84, endOffset = 203)
 fun <T> Ref(content: Function3<T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Ref)N(content)<::Fn>,<Ref<T>...>,<::IntF...>,<Ref(::...>:Test.kt")
+  sourceInformation(%composer, "C(Ref)N(content)<::Fn>,<::Fn>,<Ref<T>...>,<::IntF...>,<::IntF...>,<Ref(::...>:Test.kt")
   if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
@@ -26,11 +26,13 @@ fun <T> Ref(content: Function3<T, Composer, Int, Unit>, %composer: Composer?, %c
     Ref(<block>{
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(false) {
-        @Composable
-        fun <T> Fn(t: T?, %composer: Composer?, %changed: Int) {
-          Fn(t, %composer, 0b1000 and %changed or 0b1110 and %changed, 0)
+        ::Fn<kotlin.reflect.KFunction3> {
+          @Composable
+          @FunctionKeyMeta(key = -357963320, startOffset = 155, endOffset = 159)
+          fun Fn(p0: @[ParameterName(name = 't')] T?, %composer: Composer?, %changed: Int) {
+            return Fn(p0, %composer, 0b1110 and %changed, 0)
+          }
         }
-        ::Fn
       }
       sourceInformationMarkerEnd(%composer)
       tmp0_group
@@ -38,11 +40,13 @@ fun <T> Ref(content: Function3<T, Composer, Int, Unit>, %composer: Composer?, %c
     Ref(<block>{
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp1_group = %composer.cache(false) {
-        @Composable
-        fun IntFn(t: Int, %composer: Composer?, %changed: Int) {
-          IntFn(t, %composer, 0b1110 and %changed, 0)
+        ::IntFn<kotlin.reflect.KFunction3> {
+          @Composable
+          @FunctionKeyMeta(key = 1077446275, startOffset = 181, endOffset = 188)
+          fun IntFn(p0: @[ParameterName(name = 't')] Int, %composer: Composer?, %changed: Int) {
+            return IntFn(p0, %composer, 0b1110 and %changed, 0)
+          }
         }
-        ::IntFn
       }
       sourceInformationMarkerEnd(%composer)
       tmp1_group

@@ -22,7 +22,7 @@ internal class JavaEnumEntriesKProperty(
     private val result = enumEntriesMethod(null, enumClass.java.enumConstants) as EnumEntries<*>
 
     override val container: KDeclarationContainerImpl get() = enumClass
-    override val rawBoundReceiver: Any? get() = null
+    override val rawBoundReceiver: Any? get() = CallableReference.NO_RECEIVER
     override val signature: String get() = ENUM_ENTRIES_SIGNATURE
 
     override val name: String get() = "entries"
@@ -43,6 +43,9 @@ internal class JavaEnumEntriesKProperty(
     override val parameters: List<KParameter> get() = emptyList()
     override val typeParameters: List<KTypeParameter> get() = emptyList()
     override val annotations: List<Annotation> get() = emptyList()
+
+    @ExperimentalCompanionExtensions
+    override val companionExtensionClass: KClass<*>? get() = null
 
     override fun getDelegate(): Any? = null
 
@@ -80,7 +83,7 @@ internal class JavaEnumEntriesKProperty(
     private inner class Getter : ReflectKCallableImpl<EnumEntries<*>>(KCallableOverriddenStorage.EMPTY), KProperty0.Getter<EnumEntries<*>> {
         override val property: ReflectKProperty<EnumEntries<*>> get() = this@JavaEnumEntriesKProperty
         override val container: KDeclarationContainerImpl get() = property.container
-        override val rawBoundReceiver: Any? get() = null
+        override val rawBoundReceiver: Any? get() = CallableReference.NO_RECEIVER
 
         override val name: String get() = "<get-${property.name}>"
 
@@ -97,6 +100,9 @@ internal class JavaEnumEntriesKProperty(
         override val parameters: List<KParameter> get() = property.parameters
         override val typeParameters: List<KTypeParameter> get() = property.typeParameters
         override val annotations: List<Annotation> get() = property.annotations
+
+        @ExperimentalCompanionExtensions
+        override val companionExtensionClass: KClass<*>? get() = null
 
         override val returnType: KType get() = property.returnType
 

@@ -98,8 +98,11 @@ class KlibLayoutReaderTest {
 
         TestMandatoryComponentLayout(klibDir).baseDir.deleteRecursively()
 
-        with(klibDir.toTestLib().mandatoryComponent) { assertThrows<IOException> { intValue } }
-        with(klibDir.compress().toTestLib().mandatoryComponent) { assertThrows<IOException> { intValue } }
+        val mandatoryComponent = klibDir.toTestLib().mandatoryComponent
+        assertThrows<IOException> { mandatoryComponent.intValue }
+
+        val compressedMandatoryComponent = klibDir.compress().toTestLib().mandatoryComponent
+        assertThrows<IOException> { compressedMandatoryComponent.intValue }
     }
 
     @Test

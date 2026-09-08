@@ -1,5 +1,5 @@
 KtCallableReferenceExpression(141,150): 'list::add'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

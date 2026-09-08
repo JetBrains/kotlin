@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PARSE_INLINED_LOCAL_CLASSES
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLICATION_FORMAT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY
@@ -466,6 +467,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val createArchiveTasksForCustomCompilations: Boolean
         get() = booleanProperty(KOTLIN_CREATE_ARCHIVE_TASKS_FOR_CUSTOM_COMPILATIONS) ?: false
 
+    val publicationFormat: Provider<KotlinPublicationFormat>
+        get() = enumProvider<KotlinPublicationFormat>(KOTLIN_PUBLICATION_FORMAT)
+            .orElse(KotlinPublicationFormat.LEGACY_MULTIPLE_PUBLICATIONS)
+
     @Suppress("DEPRECATION")
     @Deprecated("KT-85433: non-BTA JVM compiler invocation is deprecated")
     val runKotlinCompilerViaBuildToolsApi: Provider<Boolean>
@@ -616,17 +621,22 @@ internal class PropertiesProvider private constructor(private val project: Proje
             .orElse(KotlinCompilerArgumentsLogLevel.DEFAULT)
 
     /**
-     * Without unsafe optimization: in k2, if common source is dirty, module will be rebuilt.
-     * With unsafe optimization: regular IC logic is used. Common sources might see declarations from platform sources. See KT-62686
+     * When disabled: in k2, if a common source is dirty, the whole module is rebuilt.
+     * When enabled: common sources are compiled incrementally, and [enableJvmClasspathMetadata] keeps them from seeing
+     * platform declarations. See KT-86703.
      */
-    val enableJvmUnsafeOptimizationsForMultiplatform: Provider<Boolean>
-        get() = booleanProvider(PropertyNames.KOTLIN_JVM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION).orElse(false)
+    val enableJvmIncrementalCompilationOfCommonSources: Provider<Boolean>
+        get() = booleanProvider(PropertyNames.KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES).orElse(false)
 
-    /** See [enableJvmUnsafeOptimizationsForMultiplatform] */
+    /**
+     * When disabled: in k2, if a common source is dirty, the whole module is rebuilt.
+     * When enabled: regular IC logic is used, and common sources might see platform declarations. There is no
+     * counterpart of [enableJvmClasspathMetadata] to prevent this. See KT-62686.
+     */
     val enableJsUnsafeOptimizationsForMultiplatform: Provider<Boolean>
         get() = booleanProvider(PropertyNames.KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION).orElse(false)
 
-    /** See [enableJvmUnsafeOptimizationsForMultiplatform] */
+    /** See [enableJsUnsafeOptimizationsForMultiplatform] */
     val enableWasmUnsafeOptimizationsForMultiplatform: Provider<Boolean>
         get() = booleanProvider(PropertyNames.KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION).orElse(false)
 
@@ -645,7 +655,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * giving each non-leaf fragment an isolated dependency view while jvmMain keeps the full JVM classpath.
      */
     val enableJvmClasspathMetadata: Provider<Boolean>
-        get() = booleanProvider(PropertyNames.KOTLIN_INTERNAL_JVM_CLASSPATH_METADATA).orElse(false)
+        get() = booleanProvider(PropertyNames.KOTLIN_INTERNAL_JVM_CLASSPATH_METADATA).orElse(enableJvmIncrementalCompilationOfCommonSources)
 
     val enableKlibsCrossCompilation: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION) ?: true
@@ -762,6 +772,15 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val playwrightBrowsersPath: Provider<String>
         get() = property(PropertyNames.KOTLIN_PLAYWRIGHT_BROWSERS_PATH)
 
+    /**
+     * Temporary untested workaround for Isolated Project support.
+     * Absolutely no stability guarantees. It will most likely not work, or ever work.
+     * The only intended purpose is to help prototype IP support in kotlin git KT-88136.
+     * Must be removed after KT-80311.
+     */
+    val npmSharedDependenciesProjectMode: Provider<String>
+        get() = property(PropertyNames.NPM_SHARED_DEPENDENCIES_PROJECT_MODE)
+
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = get(deprecatedPropName)
         if (deprecatedProperty != null) {
@@ -776,10 +795,18 @@ internal class PropertiesProvider private constructor(private val project: Proje
     private fun booleanProvider(propName: String): Provider<Boolean> =
         getProvider(propName).map { it.toBoolean() }
 
+    private inline fun <reified T: Enum<T>> String.toEnumValue(): T =
+        enumValueOf<T>(this.toUpperCaseAsciiOnly())
+
     private inline fun <reified T : Enum<T>> enumProperty(
         propName: String,
         defaultValue: T,
-    ): T = get(propName)?.let { enumValueOf<T>(it.toUpperCaseAsciiOnly()) } ?: defaultValue
+    ): T = get(propName)?.toEnumValue<T>() ?: defaultValue
+
+    private inline fun <reified T : Enum<T>> enumProvider(
+        propName: String,
+    ): Provider<T> = getProvider(propName).map { it.toEnumValue<T>() }
+
 
     private val localProperties: Map<String, String> by lazy { project.localProperties.get() }
 
@@ -844,6 +871,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_MPP_ALLOW_LEGACY_DEPENDENCIES = property("kotlin.mpp.allow.legacy.dependencies")
         val KOTLIN_DEPRECATED_TEST_PROPERTY = property("${KOTLIN_INTERNAL_NAMESPACE}.deprecatedTestProperty")
         val KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE = property("kotlin.publishJvmEnvironmentAttribute")
+        val KOTLIN_PUBLICATION_FORMAT = property("kotlin.publicationFormat")
         val KOTLIN_EXPERIMENTAL_TRY_NEXT = property("kotlin.experimental.tryNext")
         val KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS = property(KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS_PROPERTY)
         val KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS = property("kotlin.native.ignoreDisabledTargets")
@@ -871,6 +899,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_KMP_ALLOW_MATCHING_BY_REQUESTED_COORDINATES_IN_GMDT =
             property("${KOTLIN_INTERNAL_NAMESPACE}.kmp.allowMatchingByRequestedCoordinatesInMetadataTransformations")
         val KOTLIN_INCREMENTAL_FIR = property("kotlin.incremental.jvm.fir")
+        val KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES =
+            property("kotlin.jvm.enableIncrementalCompilationOfCommonSources")
         val KOTLIN_KMP_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC = property("kotlin.kmp.unresolvedDependenciesDiagnostic")
         val KOTLIN_KMP_EAGER_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC = property("kotlin.kmp.eagerUnresolvedDependenciesDiagnostic")
         val KOTLIN_DISPLAY_DIAGNOSTICS_IN_IDE_BUILD_LOG = property("kotlin.displayDiagnosticsInIdeBuildLog")
@@ -896,14 +926,13 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_CREATE_ARCHIVE_TASKS_FOR_CUSTOM_COMPILATIONS =
             property("$KOTLIN_INTERNAL_NAMESPACE.mpp.createArchiveTasksForCustomCompilations")
         val KOTLIN_COMPILER_ARGUMENTS_LOG_LEVEL = property("$KOTLIN_INTERNAL_NAMESPACE.compiler.arguments.log.level")
+
         /**
-         * Replaced by the per-target properties below, kept only to report
+         * Replaced by the per-target properties, kept only to report
          * [org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.DeprecatedErrorGradleProperties] on its usage.
          */
         val KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
             property("$KOTLIN_INTERNAL_NAMESPACE.incremental.enableUnsafeOptimizationsForMultiplatform")
-        val KOTLIN_JVM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
-            property("$KOTLIN_INTERNAL_NAMESPACE.jvm.enableUnsafeOptimizationsForMultiplatform")
         val KOTLIN_JS_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
             property("$KOTLIN_INTERNAL_NAMESPACE.js.enableUnsafeOptimizationsForMultiplatform")
         val KOTLIN_WASM_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
@@ -924,6 +953,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_TASK_EXECUTION_CACHE_METRICS_FILE = property("$KOTLIN_INTERNAL_NAMESPACE.reportTaskExecutionCacheMetricsToFile")
 
         val FUNCTIONAL_TEST_MODE_PROPERTY = "$KOTLIN_INTERNAL_NAMESPACE.functionalTestMode"
+
+        val NPM_SHARED_DEPENDENCIES_PROJECT_MODE = property("$KOTLIN_INTERNAL_NAMESPACE.npm.sharedNpmDependenciesProjectMode")
     }
 
     companion object {

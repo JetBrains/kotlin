@@ -3,7 +3,6 @@ import com.github.jengelman.gradle.plugins.shadow.transformers.DontIncludeResour
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     kotlin("jvm")
     id("generated-sources")
     id("test-inputs-check")

@@ -14,7 +14,7 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=tailrec]
     CLASS_BODY
-      FUN[fqName=A.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+      FUNCTION[fqName=A.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=true, shortName=inline]
             CONSTRUCTOR_CALLEE
@@ -25,7 +25,7 @@ FILE[kind=File[packageFqName=<root>]]
               VALUE_ARGUMENT[isSpread=false]
                 INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
         VALUE_PARAMETER_LIST
-      FUN[fqName=A.bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
+      FUNCTION[fqName=A.bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
         MODIFIER_LIST[inline]
         VALUE_PARAMETER_LIST
         CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=Local, superNames=[]]

@@ -34,7 +34,7 @@ main.kt:
     partSimpleName: "MainKt"
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    FUN[fqName=someFunctionWithTypeConstraints, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=someFunctionWithTypeConstraints]
+    FUNCTION[fqName=someFunctionWithTypeConstraints, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=someFunctionWithTypeConstraints]
       TYPE_PARAMETER_LIST
         TYPE_PARAMETER[fqName=null, name=T]
         TYPE_PARAMETER[fqName=null, name=E]
@@ -85,7 +85,7 @@ main.kt:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=MyOtherClass]
-    FUN[fqName=anotherFunctionWithTypeConstraints, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=anotherFunctionWithTypeConstraints]
+    FUNCTION[fqName=anotherFunctionWithTypeConstraints, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=anotherFunctionWithTypeConstraints]
       TYPE_PARAMETER_LIST
         TYPE_PARAMETER[fqName=null, name=D]
         TYPE_PARAMETER[fqName=null, name=T]

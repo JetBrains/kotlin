@@ -26,13 +26,13 @@ KtParameter(39,55): 'argument: String'
   null
 
 KtTypeReference(49,55): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(49,55): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -41,7 +41,7 @@ KtNameReferenceExpression(49,55): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -53,13 +53,13 @@ KtProperty(63,95): 'val itself: MyClass get() = this'
   null
 
 KtTypeReference(75,82): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(75,82): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -68,7 +68,7 @@ KtNameReferenceExpression(75,82): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -80,7 +80,7 @@ KtParameterList(86,88): '()'
   null
 
 KtThisExpression(91,95): 'this'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -89,7 +89,7 @@ KtNameReferenceExpression(91,95): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -98,19 +98,19 @@ KtProperty(99,140): 'val nullableItself: MyClass? get() = this'
   null
 
 KtTypeReference(119,127): 'MyClass?'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtNullableType(119,127): 'MyClass?'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(119,126): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -119,7 +119,7 @@ KtNameReferenceExpression(119,126): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -131,7 +131,7 @@ KtParameterList(131,133): '()'
   null
 
 KtThisExpression(136,140): 'this'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -140,7 +140,7 @@ KtNameReferenceExpression(136,140): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -158,19 +158,19 @@ KtProperty(160,187): 'val s: MyClass? = MyClass()'
   null
 
 KtTypeReference(167,175): 'MyClass?'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtNullableType(167,175): 'MyClass?'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtUserType(167,174): 'MyClass'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -179,13 +179,13 @@ KtNameReferenceExpression(167,174): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtCallExpression(178,187): 'MyClass()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): MyClass
     ]
@@ -194,7 +194,7 @@ KtNameReferenceExpression(178,185): 'MyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
@@ -203,7 +203,7 @@ KtValueArgumentList(185,187): '()'
   null
 
 KtSafeQualifiedExpression(191,205): 's?.itself("1")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.invoke(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
     ]
@@ -212,13 +212,13 @@ KtNameReferenceExpression(191,192): 's'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val s: MyClass?
     ]
 
 KtCallExpression(194,205): 'itself("1")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.invoke(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
     ]
@@ -227,7 +227,7 @@ KtNameReferenceExpression(194,200): 'itself'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val itself: MyClass
     ]
@@ -245,7 +245,7 @@ KtLiteralStringTemplateEntry(202,203): '1'
   null
 
 KtDotQualifiedExpression(209,224): 's!!.itself("2")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.invoke(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
     ]
@@ -257,7 +257,7 @@ KtNameReferenceExpression(209,210): 's'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val s: MyClass?
     ]
@@ -269,7 +269,7 @@ KtOperationReferenceExpression(210,212): '!!'
   null
 
 KtCallExpression(213,224): 'itself("2")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.invoke(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
     ]
@@ -278,7 +278,7 @@ KtNameReferenceExpression(213,219): 'itself'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val itself: MyClass
     ]
@@ -296,7 +296,7 @@ KtLiteralStringTemplateEntry(221,222): '2'
   null
 
 KtCallExpression(228,234): 's("3")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.invoke(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
     ]
@@ -305,7 +305,7 @@ KtNameReferenceExpression(228,229): 's'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val s: MyClass?
     ]
@@ -323,13 +323,13 @@ KtLiteralStringTemplateEntry(231,232): '3'
   null
 
 KtSafeQualifiedExpression(239,268): 's.nullableItself?.invoke("4")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.invoke(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
     ]
 
 KtDotQualifiedExpression(239,255): 's.nullableItself'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val nullableItself: MyClass?
     ]
@@ -338,7 +338,7 @@ KtNameReferenceExpression(239,240): 's'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val s: MyClass?
     ]
@@ -347,13 +347,13 @@ KtNameReferenceExpression(241,255): 'nullableItself'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val nullableItself: MyClass?
     ]
 
 KtCallExpression(257,268): 'invoke("4")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.invoke(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
     ]
@@ -362,7 +362,7 @@ KtNameReferenceExpression(257,263): 'invoke'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.invoke(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
     ]
@@ -380,7 +380,7 @@ KtLiteralStringTemplateEntry(265,266): '4'
   null
 
 KtCallExpression(272,295): 's.nullableItself!!("5")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /MyClass.invoke(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
     ]
@@ -389,7 +389,7 @@ KtPostfixExpression(272,290): 's.nullableItself!!'
   null
 
 KtDotQualifiedExpression(272,288): 's.nullableItself'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val nullableItself: MyClass?
     ]
@@ -398,7 +398,7 @@ KtNameReferenceExpression(272,273): 's'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val s: MyClass?
     ]
@@ -407,7 +407,7 @@ KtNameReferenceExpression(274,288): 'nullableItself'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val nullableItself: MyClass?
     ]

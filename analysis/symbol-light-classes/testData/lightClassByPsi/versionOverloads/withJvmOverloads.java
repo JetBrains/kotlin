@@ -1,4 +1,3 @@
-@kotlin.OptIn(markerClass = {kotlin.ExperimentalVersionOverloading.class})
 @kotlin.Suppress(names = {"CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION"})
 public final class WithJvmOverloadsKt /* WithJvmOverloadsKt*/ {
   @kotlin.jvm.JvmOverloads()

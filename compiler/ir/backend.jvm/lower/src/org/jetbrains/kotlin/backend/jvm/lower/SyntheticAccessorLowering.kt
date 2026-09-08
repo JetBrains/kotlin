@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
-import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
 import org.jetbrains.kotlin.backend.jvm.JvmSyntheticAccessorGenerator
+import org.jetbrains.kotlin.backend.jvm.isExposedByMakingPublic
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineScopeResolver
 import org.jetbrains.kotlin.backend.jvm.ir.findInlineCallSites
 import org.jetbrains.kotlin.backend.jvm.ir.isAssertionsDisabledField
@@ -280,7 +280,11 @@ private class SyntheticAccessorTransformer(
         when {
             accessorGenerator.isOrShouldBeHiddenSinceHasMangledParams(declaration) -> {
                 accessorGenerator.getSyntheticConstructorWithMangledParams(declaration).save()
-                declaration.visibility = DescriptorVisibilities.PRIVATE
+                // A constructor exposed by making it public has to stay public for Java callers.
+                // Its accessor is generated for binary compatibility.
+                if (!declaration.isExposedByMakingPublic()) {
+                    declaration.visibility = DescriptorVisibilities.PRIVATE
+                }
             }
             accessorGenerator.isOrShouldBeHiddenAsSealedClassConstructor(declaration) -> {
                 accessorGenerator.getSyntheticConstructorOfSealedClass(declaration).save()

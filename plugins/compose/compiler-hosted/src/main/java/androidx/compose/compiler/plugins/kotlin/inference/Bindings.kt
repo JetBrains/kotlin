@@ -18,12 +18,11 @@ package androidx.compose.compiler.plugins.kotlin.inference
 
 /**
  * The value of a binding. If [token] is not null, the binding is bound to [token]. If [token] is
- * null, the binding is open. If [allowedTokens] is not null, then the binding may only be bound to
- * an element of [allowedTokens]. [size] is the number of [Binding] instances that share this value.
- * This is used to optimize unifying open bindings. [index] is not used directly but makes debugging
- * easier.
+ * null, the binding is open. [constraints] dictates what tokens the binding may be bound to. [size]
+ * is the number of [Binding] instances that share this value. This is used to optimize unifying open
+ * bindings. [index] is not used directly but makes debugging easier.
  */
-class Value(var token: String?, var observers: Set<Bindings>, var allowedTokens: Set<String>? = null) {
+class Value(var token: String?, var observers: Set<Bindings>, var constraints: Constraints = Constraints.UNRESTRICTED) {
     var size: Int = 1
     val index = valueIndex++
 }
@@ -31,39 +30,38 @@ class Value(var token: String?, var observers: Set<Bindings>, var allowedTokens:
 private var valueIndex = 0
 
 /**
- * A binding that is either closed (with a non-null [token]) or open. If [allowedTokens] is not
- * null, then the binding may only be bound to an element of [allowedTokens]. Unified bindings are
- * linked together in a circular list by [Bindings]. All linked bindings are all closed
- * simultaneously when anyone of them is unified to a closed binding.
+ * A binding that is either closed (with a non-null [token]) or open. [constraints] dictates what
+ * tokens the binding may be bound to. Unified bindings are linked together in a circular list by
+ * [Bindings]. All linked bindings are all closed simultaneously when anyone of them is unified to a
+ * closed binding.
  *
  * @param token the applier token the binding is bound to if it is closed.
- * @param allowedTokens the set of tokens that this binding may be bound to, or null if this binding
- *        may be bound to any token
+ * @param constraints the constraints that dictate what tokens this binding may be bound to
  */
-class Binding(token: String? = null, observers: Set<Bindings>, allowedTokens: Set<String>? = null) {
+class Binding(token: String? = null, observers: Set<Bindings>, constraints: Constraints = Constraints.UNRESTRICTED) {
     /**
      * The token that is bound to this binding. If [token] is null then the binding is still open.
      */
     val token: String? get() = value.token
-    val allowedTokens: Set<String>? get() = value.allowedTokens
+    val constraints: Constraints get() = value.constraints
 
     /**
-     * The set of tokens that this binding is effectively allowed to be bound to, or null if it may
-     * be to be bound to any token.
+     * The effective constraints that are dictating what tokens this binding may be bound to.
      *
-     * A binding that has a non-null `token` field always has a null `allowedTokens` field, but we
-     * consider it to effectively have one allowed token, the one in its `token` field.
+     * A binding that has a non-null `token` field always has a `constraints` field that allows all
+     * tokens, but we consider the binding to effectively be constrained to only one allowed token,
+     * the one in its `token` field.
      */
-    val effectiveAllowedTokens: Set<String>?
-        get() = token?.let {
-            setOf(it)
-        } ?: allowedTokens
+    val effectiveConstraints: Constraints
+        get() = token?.let { t ->
+            Constraints.restrictedTo(setOf(t))
+        } ?: constraints
 
     /**
      * The value of the binding. All linked bindings share the same value which also maintains
      * the count of linked bindings.
      */
-    var value: Value = Value(token, observers, allowedTokens)
+    var value: Value = Value(token, observers, constraints)
 
     /**
      * The linked list next pointer. The list is circular an always non-empty as a binding will
@@ -76,7 +74,9 @@ class Binding(token: String? = null, observers: Set<Bindings>, allowedTokens: Se
         val sb = StringBuilder()
         sb.append("Binding(")
         value.token?.let { sb.append("token = $it") } ?: sb.append(value.index)
-        value.allowedTokens?.let { sb.append(", allowedTokens = ${it.joinToString(separator = ", ", prefix = "{", postfix = "}")}") }
+        if (!value.constraints.allowsAllTokens) {
+            sb.append(", constraints = ${value.constraints}")
+        }
         sb.append(")")
         return sb.toString()
     }
@@ -94,12 +94,12 @@ class Bindings {
     private val listeners = mutableListOf<() -> Unit>()
 
     /**
-     * Create a fresh open applier binding variable. If [allowedTokens] is not null, then the
-     * binding variable may only be bound to an element of [allowedTokens].
+     * Create a fresh open applier binding variable. [constraints] will dictate what tokens the
+     * binding variable may be bound to.
      */
-    fun open(allowedTokens: Set<String>? = null): Binding {
-        assert(allowedTokens == null || allowedTokens.size > 1)
-        return Binding(token = null, observers = setOf(this), allowedTokens)
+    fun open(constraints: Constraints = Constraints.UNRESTRICTED): Binding {
+        assert(constraints.allowsAllTokens || constraints.allowedTokens.size > 1)
+        return Binding(token = null, observers = setOf(this), constraints)
     }
 
     /**
@@ -161,32 +161,28 @@ class Bindings {
         val bValueSize = bValue.size
         val newObservers = aValue.observers + bValue.observers
 
-        val aEffectiveAllowedTokens = a.effectiveAllowedTokens
-        val bEffectiveAllowedTokens = b.effectiveAllowedTokens
+        val aEffectiveConstraints = a.effectiveConstraints
+        val bEffectiveConstraints = b.effectiveConstraints
 
-        val newAllowedTokens = when {
-            aEffectiveAllowedTokens != null && bEffectiveAllowedTokens != null ->
-                (aEffectiveAllowedTokens intersect bEffectiveAllowedTokens).also {
-                    if (it.isEmpty()) return false
-                }
-            aEffectiveAllowedTokens != null -> aEffectiveAllowedTokens
-            else -> bEffectiveAllowedTokens
+        val newConstraints = (aEffectiveConstraints intersect bEffectiveConstraints)
+        if (newConstraints.blocksAllTokens) {
+            return false
         }
 
-        if (newAllowedTokens != null && newAllowedTokens.size == 1) {
-            val token = newAllowedTokens.single()
+        if (newConstraints.allowsSingleToken) {
+            val token = newConstraints.allowedTokens.single()
             return bind(a, token) && bind(b, token)
         }
 
         if (aValueSize > bValueSize) {
             aValue.size += bValueSize
             aValue.observers = newObservers
-            aValue.allowedTokens = newAllowedTokens
+            aValue.constraints = newConstraints
             unifyValues(b, aValue)
         } else {
             bValue.size += aValueSize
             bValue.observers = newObservers
-            bValue.allowedTokens = newAllowedTokens
+            bValue.constraints = newConstraints
             unifyValues(a, bValue)
         }
 
@@ -209,16 +205,12 @@ class Bindings {
     private fun bind(binding: Binding, token: String): Boolean {
         val value = binding.value
 
-        val allowedTokens = value.allowedTokens
-        if (allowedTokens != null) {
-            if (token in allowedTokens) {
-                value.allowedTokens = null
-            } else {
-                return false
-            }
+        if (!value.constraints.allows(token)) {
+            return false
         }
 
         value.token = token
+        value.constraints = Constraints.UNRESTRICTED
         bindingValueChanged(value)
         value.observers = emptySet()
         return true

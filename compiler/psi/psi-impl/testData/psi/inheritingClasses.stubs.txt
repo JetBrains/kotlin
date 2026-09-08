@@ -20,11 +20,11 @@ FILE[kind=File[packageFqName=a]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
         CLASS_BODY
-          FUN[fqName=a.InheritingClasses.A.of, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
+          FUNCTION[fqName=a.InheritingClasses.A.of, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
             MODIFIER_LIST[open]
             VALUE_PARAMETER_LIST
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
-          FUN[fqName=a.InheritingClasses.A.af, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=af]
+          FUNCTION[fqName=a.InheritingClasses.A.af, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=af]
             MODIFIER_LIST[abstract]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
@@ -50,11 +50,11 @@ FILE[kind=File[packageFqName=a]]
               VALUE_ARGUMENT[isSpread=false]
                 INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
         CLASS_BODY
-          FUN[fqName=a.InheritingClasses.B.of, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
+          FUNCTION[fqName=a.InheritingClasses.B.of, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
             MODIFIER_LIST[override]
             VALUE_PARAMETER_LIST
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4]
-          FUN[fqName=a.InheritingClasses.B.af, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=af]
+          FUNCTION[fqName=a.InheritingClasses.B.af, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=af]
             MODIFIER_LIST[override]
             VALUE_PARAMETER_LIST
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]

@@ -39,7 +39,7 @@ KtFile: defaultImplsInInterface.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Boolean')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(suspend)('suspend')
         PsiWhiteSpace(' ')
@@ -58,7 +58,7 @@ KtFile: defaultImplsInInterface.kt
                   PsiElement(IDENTIFIER)('Int')
           PsiElement(RPAR)(')')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('dismiss')
@@ -66,7 +66,7 @@ KtFile: defaultImplsInInterface.kt
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('onDispose')

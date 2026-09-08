@@ -521,11 +521,9 @@ R?C|<local>/otvOwner|.provide#()
 1. `TypeVariable(OT) == ScopeOwner` _from Fix variable OT_
 2. Combine `TypeVariable(PNT) <: TypeVariable(OT)` with `TypeVariable(OT) == ScopeOwner`
     1. `TypeVariable(PNT) <: ScopeOwner`
-3. Combine `TypeVariable(OT) == ScopeOwner` with `TypeVariable(PNT) <: CapturedType(in TypeVariable(OT))`
-    1. `TypeVariable(PNT) <: CapturedType(in ScopeOwner)`
-4. Combine `ScopeOwner <: TypeVariable(PNT)` with `TypeVariable(PNT) <: ScopeOwner`
+3. Combine `ScopeOwner <: TypeVariable(PNT)` with `TypeVariable(PNT) <: ScopeOwner`
     1. `TypeVariable(PNT) == ScopeOwner`
-5. Combine `TypeVariable(PNT) == ScopeOwner` with `TypeVariable(PNT) <: TypeVariable(OT)`
+4. Combine `TypeVariable(PNT) == ScopeOwner` with `TypeVariable(PNT) <: TypeVariable(OT)`
     1. `ScopeOwner <: TypeVariable(OT)`
 
 ### Call 10
@@ -579,8 +577,7 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
 3. `TypeVariable(OT) == ScopeOwner` _from Fix variable OT_
 4. Combine `TypeVariable(PNT) <: TypeVariable(OT)` with `TypeVariable(OT) == ScopeOwner`
     1. `TypeVariable(PNT) <: ScopeOwner`
-5. Combine `TypeVariable(OT) == ScopeOwner` with `TypeVariable(PNT) <: CapturedType(in TypeVariable(OT))`
-    1. `TypeVariable(PNT) <: CapturedType(in ScopeOwner)`
+5. `TypeVariable(PNT) <: CapturedType(in ScopeOwner)` _from Fix variable OT_
 6. Choose `TypeVariable(PNT)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
@@ -720,8 +717,6 @@ R?C|<local>/pntvOwner|.provide#()
 1. `TypeVariable(PNT) == TypeVariable(OT)` _from Fix variable PNT_
 2. Combine `TypeVariable(PNT) == TypeVariable(OT)` with `TypeVariable(PNT) <: CapturedType(in TypeVariable(OT))`
     1. `TypeVariable(OT) <: CapturedType(in TypeVariable(OT))`
-3. Combine `TypeVariable(PNT) == TypeVariable(OT)` with `TypeVariable(PNT) <: TypeVariable(OT)`
-    1. `TypeVariable(OT) <: TypeVariable(OT)`
 
 ### Call 18
 
@@ -733,8 +728,6 @@ R?C|<local>/otvOwner|.constrain#(Q|Interloper|)
 ##### Resolution Stages > CheckArguments:
 
 1. `Interloper <: TypeVariable(OT)` _from Argument Q|Interloper|_
-2. Combine `Interloper <: TypeVariable(OT)` with `TypeVariable(PNT) == TypeVariable(OT)`
-    1. `Interloper <: TypeVariable(PNT)`
 
 ### Call 19
 
@@ -746,6 +739,8 @@ R?C|<local>/pntvOwner|.constrain#(Q|Interloper|)
 ##### Resolution Stages > CheckArguments:
 
 1. `Interloper <: TypeVariable(PNT)` _from Argument Q|Interloper|_
+2. Combine `Interloper <: TypeVariable(PNT)` with `TypeVariable(PNT) <: TypeVariable(OT)`
+    1. `Interloper <: TypeVariable(OT)`
 
 ### Call 14
 
@@ -801,32 +796,26 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
     1. `TypeVariable(PNT) <: BaseType`
 5. Combine `TypeVariable(OT) == BaseType` with `TypeVariable(OT) <: CapturedType(in TypeVariable(OT))`
     1. `BaseType <: TypeVariable(OT)`
-6. Combine `TypeVariable(OT) == BaseType` with `TypeVariable(PNT) <: CapturedType(in TypeVariable(OT))`
-    1. `TypeVariable(PNT) <: CapturedType(in BaseType)`
-7. Combine `TypeVariable(OT) == BaseType` with `TypeVariable(PNT) == TypeVariable(OT)`
-    1. `BaseType <: TypeVariable(PNT)`
-8. Combine `TypeVariable(OT) == BaseType` with `TypeVariable(OT) <: CapturedType(in TypeVariable(OT))`
-    1. `TypeVariable(OT) <: CapturedType(in BaseType)`
-9. Combine `TypeVariable(PNT) == TypeVariable(OT)` with `TypeVariable(PNT) <: BaseType`
+6. Combine `TypeVariable(PNT) == TypeVariable(OT)` with `TypeVariable(PNT) <: BaseType`
     1. `TypeVariable(OT) <: BaseType`
-10. Combine `TypeVariable(PNT) <: BaseType` with `BaseType <: TypeVariable(PNT)`
-    1. `TypeVariable(PNT) == BaseType`
-11. Choose `TypeVariable(PNT)` with `Readiness(
-    	 true ALLOWED
-    	 true HAS_PROPER_CONSTRAINTS
-    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false REIFIED
-    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-    	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-    	 true HAS_PROPER_EQUALITY_CONSTRAINT
-    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-    )`
+7. `TypeVariable(PNT) <: CapturedType(in BaseType)` _from Fix variable OT_
+8. `TypeVariable(PNT) == BaseType` _from Fix variable OT_
+9. Choose `TypeVariable(PNT)` with `Readiness(
+   	 true ALLOWED
+   	 true HAS_PROPER_CONSTRAINTS
+   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
+   	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+   	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+   	 true HAS_PROPER_EQUALITY_CONSTRAINT
+   	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+   )`
 
 ### Call 20
 

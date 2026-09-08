@@ -15,15 +15,17 @@ fun Ref(content: @Composable (Int) -> Int) {
 // Transformed IR
 // ------------------------------------------
 
-val property: Function3<Int, Composer, Int, Int> = @Composable
-fun Fn(int: Int, %composer: Composer?, %changed: Int): Int {
-  %composer.startReplaceGroup(<>)
-  sourceInformation(%composer, "C(Fn)N(int):Test.kt")
-  val tmp0 = Fn(int, %composer, 0b1110 and %changed)
-  %composer.endReplaceGroup()
-  return tmp0
+val property: Function3<Int, Composer, Int, Int> = ::Fn<kotlin.reflect.KFunction3> {
+  @Composable
+  @FunctionKeyMeta(key = 945114496, startOffset = 101, endOffset = 105)
+  fun Fn(p0: @[ParameterName(name = 'int')] Int, %composer: Composer?, %changed: Int): Int {
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "C(Fn)N(p0)<::Fn>:Test.kt")
+    val tmp0 = Fn(p0, %composer, 0b1110 and %changed)
+    %composer.endReplaceGroup()
+    return tmp0
+  }
 }
-::Fn
 @Composable
 @FunctionKeyMeta(key = -165560361, startOffset = 143, endOffset = 231)
 fun Ref(content: Function3<Int, Composer, Int, Int>, %composer: Composer?, %changed: Int) {

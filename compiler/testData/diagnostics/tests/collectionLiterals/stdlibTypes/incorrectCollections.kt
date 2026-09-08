@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-82638
-// LANGUAGE: +CollectionLiterals
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 @OptIn(ExperimentalUnsignedTypes::class)

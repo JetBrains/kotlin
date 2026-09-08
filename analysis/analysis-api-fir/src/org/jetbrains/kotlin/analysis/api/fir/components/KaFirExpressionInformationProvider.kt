@@ -9,15 +9,14 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaWhenMissingCase
-import org.jetbrains.kotlin.analysis.api.components.resolveToCall
 import org.jetbrains.kotlin.analysis.api.components.returnType
 import org.jetbrains.kotlin.analysis.api.expressions.expressionType
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsExpressionInformationProvider
-import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall
 import org.jetbrains.kotlin.analysis.api.resolution.symbols
 import org.jetbrains.kotlin.analysis.api.resolution.tryResolveSymbols
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.fir.withSession
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
 import org.jetbrains.kotlin.resolution.KtResolvable
+import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -440,7 +440,6 @@ internal class KaFirExpressionInformationProvider(
  *
  *  If it resolves to a non-class declaration, it does _not_ refer to a type.
  */
-@OptIn(KtExperimentalApi::class)
 context(session: KaSession)
 private fun doesDoubleColonUseLHS(lhs: PsiElement): Boolean {
     val reference = when (val inner = lhs.unwrapParenthesesLabelsAndAnnotations()) {
@@ -452,7 +451,6 @@ private fun doesDoubleColonUseLHS(lhs: PsiElement): Boolean {
     return reference.canReferenceCallable
 }
 
-@OptIn(KtExperimentalApi::class)
 context(session: KaSession)
 private val KtResolvable.canReferenceCallable: Boolean
     get() {
@@ -479,9 +477,10 @@ private val KtResolvable.canReferenceCallable: Boolean
  *
  * in which the `f` in 2) is regarded as used and `f` in 1) is not.
  */
+@OptIn(KtExperimentalApi::class)
 context(_: KaSession)
 private fun doesCallExpressionUseCallee(callee: PsiElement): Boolean {
-    return callee !is KtReferenceExpression || isVariableAccessCall(callee)
+    return callee !is KtReferenceExpression || callee is KtResolvableCall && callee.resolveSuccessfulCall() is KaVariableAccessCall
 }
 
 /**
@@ -506,15 +505,6 @@ private fun doesNamedFunctionUseBody(namedFunction: KtNamedFunction, body: PsiEl
     !returnsUnit(namedFunction) -> true
     namedFunction.bodyExpression == body -> (body as KtExpression).expressionType?.classId == KaStandardTypeClassIds.UNIT
     else -> false
-}
-
-
-context(session: KaSession)
-private fun isVariableAccessCall(reference: KtReferenceExpression): Boolean = when (val resolution = reference.resolveToCall()) {
-    is KaSuccessCallInfo ->
-        resolution.call is KaVariableAccessCall
-    else ->
-        false
 }
 
 context(session: KaSession)

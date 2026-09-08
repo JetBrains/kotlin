@@ -87,7 +87,7 @@ internal class CommonizerQueue(
     }
 
     fun invokeTarget(outputTarget: OutputCommonizerTarget) {
-        commonizedTargets[outputTarget]?.invoke()
+        val _ = commonizedTargets[outputTarget]?.invoke()
     }
 
     private fun enqueue(outputTarget: OutputCommonizerTarget) {

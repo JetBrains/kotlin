@@ -24,7 +24,7 @@ public enum J {
 // FILE: main.kt
 
 fun test_1(): Int {
-    return when (J.getPlatform()) {
+    return <!WHEN_SUBJECT_CAN_BE_NULL_IN_JAVA!>when<!> (J.getPlatform()) {
         J.A -> 1
         J.B -> 2
     }

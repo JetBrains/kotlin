@@ -1202,7 +1202,7 @@ fun FirBasedSymbol<*>.isExportedToJs(): Boolean {
         hasAnnotationOrInsideAnnotatedClass(StandardClassIds.Annotations.jsExport, session) ||
         hasAnnotationOrInsideAnnotatedClass(StandardClassIds.Annotations.jsExportDefault, session) ||
         getAnnotationBooleanParameter(StandardClassIds.Annotations.jsImplicitExport, session) == true ||
-        getContainingFile()?.symbol?.hasAnnotation(StandardClassIds.Annotations.jsExport, session) == true
+        getContainingFile()?.symbol.hasAnnotation(StandardClassIds.Annotations.jsExport, session)
     ) {
         /**
          * The rules for exporting data class copy functions are inheriting rules for consistent `copy` visibility,

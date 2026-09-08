@@ -1,0 +1,4 @@
+FUNCTION:
+  /InlineValue.equals
+EQUALITY_BOUND:
+  InlineValue

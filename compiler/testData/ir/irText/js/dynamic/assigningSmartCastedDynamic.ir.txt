@@ -1,0 +1,53 @@
+FILE fqName:<root> fileName:/assigningSmartCastedDynamic.kt
+  CLASS INTERFACE name:A modality:ABSTRACT visibility:public [external] superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [external,fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [external,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [external,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+  CLASS INTERFACE name:I modality:ABSTRACT visibility:public [external] superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.I
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [external,fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [external,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [external,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    PROPERTY name:foo visibility:public modality:ABSTRACT [external,var]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-foo> visibility:public modality:ABSTRACT returnType:<root>.A [external]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.I
+        correspondingProperty: PROPERTY name:foo visibility:public modality:ABSTRACT [external,var]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-foo> visibility:public modality:ABSTRACT returnType:kotlin.Unit [external]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.I
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:<root>.A
+        correspondingProperty: PROPERTY name:foo visibility:public modality:ABSTRACT [external,var]
+  FUN name:test1 visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:<root>.I
+    VALUE_PARAMETER kind:Regular name:d index:1 type:dynamic
+    BLOCK_BODY
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: DYN_OP operator=EXCLEQ type=kotlin.Boolean
+            receiver: GET_VAR 'd: dynamic declared in <root>.test1' type=dynamic origin=null
+            0: CONST Null type=kotlin.Nothing? value=null
+          then: BLOCK type=kotlin.Unit origin=null
+            CALL 'public abstract fun <set-foo> (<set-?>: <root>.A): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=EQ
+              ARG <this>: GET_VAR '<this>: <root>.I declared in <root>.test1' type=<root>.I origin=IMPLICIT_ARGUMENT
+              ARG <set-?>: TYPE_OP type=<root>.A origin=IMPLICIT_DYNAMIC_CAST typeOperand=<root>.A
+                GET_VAR 'd: dynamic declared in <root>.test1' type=dynamic origin=null

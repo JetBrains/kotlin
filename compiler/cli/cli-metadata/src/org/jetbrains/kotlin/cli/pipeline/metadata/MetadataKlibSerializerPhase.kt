@@ -26,7 +26,7 @@ import kotlin.io.path.absolute
 
 object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipelineArtifact, MetadataInMemorySerializationArtifact>(
     name = "MetadataKlibInMemorySerializerPhase",
-    preActions = setOf(PerformanceNotifications.KlibWritingStarted),
+    preActions = setOf(PerformanceNotifications.KlibMetadataWritingStarted),
     postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataInMemorySerializationArtifact {
@@ -80,7 +80,7 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
 object MetadataKlibFileWriterPhase : PipelinePhase<MetadataInMemorySerializationArtifact, MetadataSerializationArtifact>(
     name = "MetadataKlibFileWriterPhase",
     preActions = setOf(),
-    postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    postActions = setOf(PerformanceNotifications.KlibMetadataWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: MetadataInMemorySerializationArtifact): MetadataSerializationArtifact {
         val destDir = input.configuration.metadataDestinationDirectory!!

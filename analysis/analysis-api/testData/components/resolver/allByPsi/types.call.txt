@@ -119,7 +119,7 @@ KtNameReferenceExpression(238,248): 'InnerAlias'
   null
 
 KtCallExpression(251,263): 'InnerClass()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -164,7 +164,7 @@ KtCallExpression(251,263): 'InnerClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(251,261): 'InnerClass'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

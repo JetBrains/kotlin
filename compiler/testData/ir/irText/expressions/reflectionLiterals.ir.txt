@@ -30,7 +30,14 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
   PROPERTY name:test3 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.reflect.KFunction1<<root>.A, kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.reflect.KFunction1<<root>.A, kotlin.Unit> origin=null reflectionTarget=<same>
+        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction1<<root>.A, kotlin.Unit> origin=null reflectionTarget='public final fun foo (): kotlin.Unit declared in <root>.A'
+          overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction1): R of kotlin.reflect.KFunction1 declared in kotlin.reflect.KFunction1
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.A
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun foo (p0: <root>.A): kotlin.Unit declared in <root>.test3'
+                CALL 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+                  ARG <this>: GET_VAR 'p0: <root>.A declared in <root>.test3.foo' type=<root>.A origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL returnType:kotlin.reflect.KFunction1<<root>.A, kotlin.Unit>
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -39,7 +46,12 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
   PROPERTY name:test4 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.reflect.KFunction0<<root>.A> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public constructor <init> () declared in <root>.A' type=kotlin.reflect.KFunction0<<root>.A> origin=null reflectionTarget=<same>
+        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction0<<root>.A> origin=null reflectionTarget='public constructor <init> () declared in <root>.A'
+          overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.reflect.KFunction0 declared in kotlin.reflect.KFunction0
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<init> visibility:local modality:FINAL returnType:<root>.A
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun <init> (): <root>.A declared in <root>.test4'
+                CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL returnType:kotlin.reflect.KFunction0<<root>.A>
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -48,8 +60,15 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
   PROPERTY name:test5 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
-          ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
+        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget='public final fun foo (): kotlin.Unit declared in <root>.A'
+          overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.reflect.KFunction0 declared in kotlin.reflect.KFunction0
+          bound receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.A
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun foo (receiver: <root>.A): kotlin.Unit declared in <root>.test5'
+                CALL 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+                  ARG <this>: GET_VAR 'receiver: <root>.A declared in <root>.test5.foo' type=<root>.A origin=ADAPTED_FUNCTION_REFERENCE
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL returnType:kotlin.reflect.KFunction0<kotlin.Unit>
       correspondingProperty: PROPERTY name:test5 visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -58,7 +77,12 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
   PROPERTY name:test6 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public final fun bar (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
+        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget='public final fun bar (): kotlin.Unit declared in <root>'
+          overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.reflect.KFunction0 declared in kotlin.reflect.KFunction0
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.Unit
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun bar (): kotlin.Unit declared in <root>.test6'
+                CALL 'public final fun bar (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test6> visibility:public modality:FINAL returnType:kotlin.reflect.KFunction0<kotlin.Unit>
       correspondingProperty: PROPERTY name:test6 visibility:public modality:FINAL [val]
       BLOCK_BODY

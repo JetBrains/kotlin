@@ -10,26 +10,44 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiFileImpl;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.util.IncorrectOperationException;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType;
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 
-import java.util.Arrays;
-import java.util.List;
 
+/**
+ * Base implementation of {@link KtElement} that may be backed either by the AST tree or by a stub.
+ *
+ * <p>Stubs are a compact, serializable representation of a declaration's structure that can be built and queried without parsing the full
+ * source. They power fast indexing and are used for library and decompiled sources, so that such files do not have to be fully parsed until
+ * their bodies are actually needed. Subclasses read their data from the stub when one is present, and fall back to the AST otherwise.
+ *
+ * <p>This is an internal implementation base class of the Kotlin PSI and is not intended to be used or subclassed outside of the
+ * PSI implementation.
+ *
+ * @param <T> the type of stub backing this element
+ */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiElementBase<T>
         implements KtElement, StubBasedPsiElement<T> {
-    public KtElementImplStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
+    @KtImplementationDetail
+    public KtElementImplStub(@NotNull T stub, @NotNull IElementType nodeType) {
         super(stub, nodeType);
     }
 
+    @KtImplementationDetail
     public KtElementImplStub(@NotNull ASTNode node) {
         super(node);
+    }
+
+    @Override
+    public IElementType getIElementType() {
+        return getElementTypeImpl();
     }
 
     @NotNull
@@ -39,9 +57,8 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     }
 
     @Override
-    @SuppressWarnings("deprecation") // KT-78356
     public String toString() {
-        return getElementType().toString();
+        return getIElementType().toString();
     }
 
     @Override
@@ -108,7 +125,7 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     }
 
     @Override
-    @SuppressWarnings("deprecation") // KT-78356
+    @SuppressWarnings("deprecation") // the overridden KtElement#getReference is deprecated
     public PsiReference getReference() {
         PsiReference[] references = getReferences();
         return (references.length > 0) ? references[0] : null;
@@ -118,14 +135,6 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     @Override
     public PsiReference[] getReferences() {
         return KotlinReferenceProvidersService.getReferencesFromProviders(this);
-    }
-
-    @NotNull
-    @SuppressWarnings("deprecation") // KT-78356
-    protected <PsiT extends KtElementImplStub<?>, StubT extends StubElement<?>> List<PsiT> getStubOrPsiChildrenAsList(
-            @NotNull KtStubElementType<StubT, PsiT> elementType
-    ) {
-        return Arrays.asList(getStubOrPsiChildren(elementType, elementType.getArrayFactory()));
     }
 
     @NotNull

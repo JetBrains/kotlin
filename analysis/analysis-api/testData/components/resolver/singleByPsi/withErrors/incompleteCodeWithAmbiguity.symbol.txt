@@ -1,5 +1,5 @@
 KtCallExpression(89,100): 'Foo<String>'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(len: kotlin.Int): Foo<T>,
       <constructor>(s: kotlin.String): Foo<T>

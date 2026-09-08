@@ -21,7 +21,7 @@ FILE[kind=File[packageFqName=<root>]]
               VALUE_ARGUMENT[isSpread=false]
                 INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0xFF000]
         CLASS_BODY
-          FUN[fqName=Color.RED.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+          FUNCTION[fqName=Color.RED.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
             MODIFIER_LIST[override]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
@@ -38,7 +38,7 @@ FILE[kind=File[packageFqName=<root>]]
               VALUE_ARGUMENT[isSpread=false]
                 INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0x00FF00]
         CLASS_BODY
-          FUN[fqName=Color.GREEN.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+          FUNCTION[fqName=Color.GREEN.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
             MODIFIER_LIST[override]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
@@ -55,13 +55,13 @@ FILE[kind=File[packageFqName=<root>]]
               VALUE_ARGUMENT[isSpread=false]
                 INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0x0000FF]
         CLASS_BODY
-          FUN[fqName=Color.BLUE.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+          FUNCTION[fqName=Color.BLUE.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
             MODIFIER_LIST[override]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=Color.foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+      FUNCTION[fqName=Color.foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         MODIFIER_LIST[abstract]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE

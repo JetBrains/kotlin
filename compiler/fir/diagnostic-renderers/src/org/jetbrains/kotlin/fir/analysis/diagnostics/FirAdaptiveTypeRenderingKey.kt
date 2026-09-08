@@ -98,14 +98,18 @@ object FirAdaptiveTypeRenderingKey : RenderingContext.Key<Map<ConeKotlinType, St
 
             if (isClassLike) {
                 if (isAmbiguous) {
+                    append('\'')
                     append(if (classId.packageFqName.isRoot) "<root>" else classId.packageFqName.asString())
+                    append('\'')
                     append(".")
                 }
 
                 val symbol = toSymbol(session) ?: return null
                 appendClassLikeTemplate(symbol)
             } else {
+                append('\'')
                 append(representation)
+                append('\'')
             }
 
             if (!isClassLike && !isError && isAmbiguous) {
@@ -126,9 +130,9 @@ object FirAdaptiveTypeRenderingKey : RenderingContext.Key<Map<ConeKotlinType, St
                     ?: (this@toFinalRepresentation as? ConeTypeParameterLookupTag)?.typeParameterSymbol
 
             if (typeParameterSymbol != null) {
-                append(" (of ")
+                append(" (of '")
                 append(FirDiagnosticRenderers.TYPE_PARAMETER_OWNER_SYMBOL.render(typeParameterSymbol.containingDeclarationSymbol))
-                append(')')
+                append("')")
             }
         }
     }
@@ -168,7 +172,9 @@ object FirAdaptiveTypeRenderingKey : RenderingContext.Key<Map<ConeKotlinType, St
         }
 
         for ((symbol, genericsStartingIndex, typeArgumentCount) in stack.asReversed()) {
+            append('\'')
             append(symbol.classId.shortClassName)
+            append('\'')
             if (typeArgumentCount != 0) {
                 append("<")
                 for (i in 0..<typeArgumentCount) {

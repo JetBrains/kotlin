@@ -50,7 +50,7 @@ topLevelMembersAnnotated.kt:
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
-    FUN[fqName=a.b.c.topLevelMembersAnnotated.f, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=f]
+    FUNCTION[fqName=a.b.c.topLevelMembersAnnotated.f, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=f]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
           CONSTRUCTOR_CALLEE

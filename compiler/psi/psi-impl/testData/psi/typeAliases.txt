@@ -255,7 +255,7 @@ KtFile: typeAliases.kt
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('Unit')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')
@@ -421,7 +421,7 @@ KtFile: typeAliases.kt
                       PsiElement(IDENTIFIER)('F')
               PsiElement(GT)('>')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('order')
@@ -441,7 +441,7 @@ KtFile: typeAliases.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('order')
@@ -514,7 +514,7 @@ KtFile: typeAliases.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Unit')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 val JSPECIFY_OLD_ANNOTATIONS_PACKAGE = FqName("org.jspecify.nullness")
 val JSPECIFY_ANNOTATIONS_PACKAGE = FqName("org.jspecify.annotations")
+val CHROMIUM_ANNOTATIONS_PACKAGE = FqName("org.chromium.build.annotations")
 val RXJAVA3_ANNOTATIONS_PACKAGE = FqName("io.reactivex.rxjava3.annotations")
 val CHECKER_FRAMEWORK_COMPATQUAL_ANNOTATIONS_PACKAGE = FqName("org.checkerframework.checker.nullness.compatqual")
 
@@ -77,6 +78,11 @@ val NULLABILITY_ANNOTATION_SETTINGS: NullabilityAnnotationStates<JavaNullability
         FqName("io.vertx.codegen.annotations") to JavaNullabilityAnnotationsStatus(
             reportLevelBefore = ReportLevel.WARN,
             sinceVersion = KotlinVersion(2, 5),
+            reportLevelAfter = ReportLevel.STRICT
+        ),
+        CHROMIUM_ANNOTATIONS_PACKAGE to JavaNullabilityAnnotationsStatus(
+            reportLevelBefore = ReportLevel.WARN,
+            sinceVersion = KotlinVersion(2, 7),
             reportLevelAfter = ReportLevel.STRICT
         ),
     )

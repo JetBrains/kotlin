@@ -274,7 +274,7 @@ KtFile: Builder.kt
         CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n    ')
-          FUN
+          FUNCTION
             PsiElement(fun)('fun')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('classpath')
@@ -311,7 +311,7 @@ KtFile: Builder.kt
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('String')
           PsiWhiteSpace('\n    ')
-          FUN
+          FUNCTION
             PsiElement(fun)('fun')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('src')
@@ -354,7 +354,7 @@ KtFile: Builder.kt
         CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n    ')
-          FUN
+          FUNCTION
             PsiElement(fun)('fun')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('classpath')
@@ -381,7 +381,7 @@ KtFile: Builder.kt
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('library')
@@ -448,7 +448,7 @@ KtFile: Builder.kt
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('classpath')
@@ -457,7 +457,7 @@ KtFile: Builder.kt
           PsiComment(BLOCK_COMMENT)('/*...*/')
           PsiElement(RPAR)(')')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('module')

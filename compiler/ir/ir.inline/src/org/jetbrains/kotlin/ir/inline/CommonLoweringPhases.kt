@@ -31,16 +31,6 @@ private fun createSyntheticAccessorGeneration(context: LoweringContext): Synthet
     return SyntheticAccessorLowering(context, isExecutedOnFirstPhase = true)
 }
 
-private fun createIrValidationAfterInliningPrivateFunctionsKlibPhase(context: LoweringContext): IrValidationAfterInliningPrivateFunctionsKlibPhase<LoweringContext> {
-    return IrValidationAfterInliningPrivateFunctionsKlibPhase(
-        context,
-        checkInlineFunctionCallSites = { inlineFunctionUseSite ->
-            // Call sites of only non-private functions are allowed at this stage.
-            !inlineFunctionUseSite.symbol.isConsideredAsPrivateForInlining()
-        }
-    )
-}
-
 fun loweringsOfTheFirstPhase(
     languageVersionSettings: LanguageVersionSettings
 ): List<(PreSerializationLoweringContext) -> ModuleLoweringPass> {
@@ -92,7 +82,7 @@ fun loweringsOfTheFirstPhase(
             this += ::InlineDeclarationCheckerLowering
             this += ::OuterThisInInlineFunctionsSpecialAccessorLowering
             this += ::createSyntheticAccessorGeneration
-            this += ::createIrValidationAfterInliningPrivateFunctionsKlibPhase
+            this += ::IrValidationAfterInliningPrivateFunctionsKlibPhase
             this += ::createInlineAllFunctionsPhase
             this += ::createInlineFunctionSerializationPreProcessing
             this += ::RedundantCastsRemoverLowering

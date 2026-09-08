@@ -98,6 +98,56 @@ public fun org_kotlin_foo_DeprecatedWarningSubClass_init_initialize__TypesOfArgu
     return run { _result; true }
 }
 
+@ExportedBridge("org_kotlin_foo_EnumClassA_ONE")
+public fun org_kotlin_foo_EnumClassA_ONE(): kotlin.native.internal.NativePtr {
+    val _result = run { org.kotlin.foo.EnumClassA.ONE }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("org_kotlin_foo_EnumClassA_THREE")
+public fun org_kotlin_foo_EnumClassA_THREE(): kotlin.native.internal.NativePtr {
+    val _result = run { org.kotlin.foo.EnumClassA.THREE }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("org_kotlin_foo_EnumClassA_TWO")
+public fun org_kotlin_foo_EnumClassA_TWO(): kotlin.native.internal.NativePtr {
+    val _result = run { org.kotlin.foo.EnumClassA.TWO }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("org_kotlin_foo_EnumClassA_ordinal")
+public fun org_kotlin_foo_EnumClassA_ordinal(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as org.kotlin.foo.EnumClassA
+    val _result = run { __self.ordinal }
+    return _result
+}
+
+@ExportedBridge("org_kotlin_foo_EnumClassB_FIVE")
+public fun org_kotlin_foo_EnumClassB_FIVE(): kotlin.native.internal.NativePtr {
+    val _result = run { org.kotlin.foo.EnumClassB.FIVE }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("org_kotlin_foo_EnumClassB_FOUR")
+public fun org_kotlin_foo_EnumClassB_FOUR(): kotlin.native.internal.NativePtr {
+    val _result = run { org.kotlin.foo.EnumClassB.FOUR }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("org_kotlin_foo_EnumClassB_SIX")
+public fun org_kotlin_foo_EnumClassB_SIX(): kotlin.native.internal.NativePtr {
+    val _result = run { org.kotlin.foo.EnumClassB.SIX }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("org_kotlin_foo_EnumClassB_ordinal")
+public fun org_kotlin_foo_EnumClassB_ordinal(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as org.kotlin.foo.EnumClassB
+    val _result = run { __self.ordinal }
+    return _result
+}
+
 @ExportedBridge("org_kotlin_foo_MyClassA_init_allocate")
 public fun org_kotlin_foo_MyClassA_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = run { kotlin.native.internal.createUninitializedInstance<org.kotlin.foo.MyClassA>() }

@@ -4,13 +4,13 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.CallInitializersKt]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  FUN[fqName=test.compute, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=compute]
+  FUNCTION[fqName=test.compute, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=compute]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
-  FUN[fqName=test.sum, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=sum]
+  FUNCTION[fqName=test.sum, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=sum]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=left]
         TYPE_REFERENCE
@@ -118,7 +118,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.CallInitializersKt]]
         VALUE_ARGUMENT[isSpread=false]
           PARENTHESIZED
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
-  FUN[fqName=test.expressionBodyCall, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionBodyCall]
+  FUNCTION[fqName=test.expressionBodyCall, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionBodyCall]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
@@ -126,7 +126,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.CallInitializersKt]]
     CALL_EXPRESSION
       REFERENCE_EXPRESSION[referencedName=compute]
       VALUE_ARGUMENT_LIST
-  FUN[fqName=test.expressionBodyNestedCall, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionBodyNestedCall]
+  FUNCTION[fqName=test.expressionBodyNestedCall, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionBodyNestedCall]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
@@ -140,7 +140,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.CallInitializersKt]]
             VALUE_ARGUMENT_LIST
         VALUE_ARGUMENT[isSpread=false]
           INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=8]
-  FUN[fqName=test.expressionBodyParenthesizedCall, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionBodyParenthesizedCall]
+  FUNCTION[fqName=test.expressionBodyParenthesizedCall, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionBodyParenthesizedCall]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
@@ -158,7 +158,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.CallInitializersKt]]
       CALL_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=compute]
         VALUE_ARGUMENT_LIST
-  FUN[fqName=test.withCallDefault, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=withCallDefault]
+  FUNCTION[fqName=test.withCallDefault, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=withCallDefault]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=value]
         TYPE_REFERENCE

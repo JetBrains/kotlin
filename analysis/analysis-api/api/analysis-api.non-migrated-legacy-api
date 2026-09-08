@@ -22,6 +22,8 @@ KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaScopeKind
 KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaScopeKinds
 KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaScopeWithKind
 KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaScopeWithKindImpl
+KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaSmartCastPossibility
+KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaSmartCastSource
 KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.compositeScope((KaScopeKind) -> Boolean)
 KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.importingScopeContext
 KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.scopeContext(KtElement)

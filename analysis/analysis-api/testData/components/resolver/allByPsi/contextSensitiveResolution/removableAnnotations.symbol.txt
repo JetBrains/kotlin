@@ -8,7 +8,7 @@ KtNameReferenceExpression(96,100): 'main'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       main
     ]
@@ -44,13 +44,13 @@ KtParameter(148,158): 'val f: Foo'
   null
 
 KtTypeReference(155,158): 'Foo'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       main/Foo
     ]
 
 KtUserType(155,158): 'Foo'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       main/Foo
     ]
@@ -59,7 +59,7 @@ KtNameReferenceExpression(155,158): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       main/Foo
     ]
@@ -71,25 +71,25 @@ KtDeclarationModifierList(161,175): '@Anno(Foo.BAR)'
   null
 
 KtAnnotationEntry(161,175): '@Anno(Foo.BAR)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(f: main.Foo): main.Anno
     ]
 
 KtConstructorCalleeExpression(162,166): 'Anno'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(f: main.Foo): main.Anno
     ]
 
 KtTypeReference(162,166): 'Anno'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       main/Anno
     ]
 
 KtUserType(162,166): 'Anno'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       main/Anno
     ]
@@ -98,7 +98,7 @@ KtNameReferenceExpression(162,166): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       main/Anno
     ]
@@ -110,7 +110,7 @@ KtValueArgument(167,174): 'Foo.BAR'
   null
 
 KtDotQualifiedExpression(167,174): 'Foo.BAR'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       main/Foo.BAR
     ]
@@ -119,7 +119,7 @@ KtNameReferenceExpression(167,170): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       main/Foo
     ]
@@ -128,7 +128,7 @@ KtNameReferenceExpression(171,174): 'BAR'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: QualifierCanBeRemoved
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       main/Foo.BAR
     ]

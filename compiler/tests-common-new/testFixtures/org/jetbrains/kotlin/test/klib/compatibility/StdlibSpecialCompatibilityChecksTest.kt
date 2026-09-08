@@ -41,22 +41,29 @@ interface StdlibSpecialCompatibilityChecksTest : DummyLibraryCompiler {
         }
     }
 
-    // TODO (KT-83853): Find a reliable way to detect dev compiler versions.
     @Test
     fun `check compiler DEV version is properly detected`() {
         listOf(
             "2.5.0" to false,
+            "2.5.0-1" to false,
+            "2.5.0-release-123" to false,
+            "2.5.0-M1" to false,
+            "2.5.0-Alpha2" to false,
             "2.5.0-Beta1" to false,
+            "2.5.0-RC" to false,
+            "2.5.0-RC2-release-123" to false,
             "2.5.0-dev" to true,
-            "2.5.0-dev1" to false,
+            "2.5.0-dev1" to true,
             "2.5.0-dev-123" to true,
             "2.5.0-SNAPSHOT" to true,
+            "2.5.0-public-123" to true,
+            "2.5.0-some-playground-123" to true,
         ).forEach { [rawVersion, shouldBeDevVersion] ->
             val parsedVersion = LibrarySpecialCompatibilityChecker.Version.parseVersion(rawVersion)
                 ?: fail("Compiler version cannot be parsed: $rawVersion")
 
             assertEquals(shouldBeDevVersion, parsedVersion.isDevVersion) {
-                "Compiler version $rawVersion is not detected as a DEV version"
+                "Wrong dev version detection result for compiler version $rawVersion"
             }
         }
     }

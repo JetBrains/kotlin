@@ -18,7 +18,7 @@ import java.io.PrintStream
 import java.util.zip.CRC32
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
-
+import kotlin.random.Random
 
 abstract class AbstractFastJarFSTest {
 
@@ -137,6 +137,24 @@ class FastJarFSTest : AbstractFastJarFSTest() {
             out.closeEntry()
         }
         assertEquals(data, String(fs.findFileByPath(jarFile.absolutePath + "!/flat.txt")!!.contentsToByteArray()))
+    }
+
+    @Test
+    fun testDeflatedEntryLargerThanInflateBuffer() {
+        val fs = fs ?: return
+        val tmpDir = KotlinTestUtils.tmpDirForTest(testInfo)
+        val jarFile = File(tmpDir, "tmp.jar")
+
+        // Larger than the buffer that the inflater output is read through, so that several `inflate` calls are needed.
+        val data = Random(42).nextBytes(5 * 1024 * 1024)
+        ZipOutputStream(FileOutputStream(jarFile)).use { out ->
+            out.putNextEntry(ZipEntry("big.bin"))
+            out.write(data)
+            out.closeEntry()
+        }
+
+        val file = fs.findFileByPath(jarFile.absolutePath + "!/big.bin") ?: error("Not found big.bin")
+        Assertions.assertArrayEquals(data, file.contentsToByteArray())
     }
 }
 

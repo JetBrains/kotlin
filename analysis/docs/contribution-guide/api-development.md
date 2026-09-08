@@ -324,6 +324,8 @@ each of the members, as well as how to implement them correctly.
 
 Use `@KaSpiExtensionPoint` annotation to explicitly mark members of the SPI that are designed only for extension, not for direct use.
 
+The Kotlin PSI uses `@KtSpi` and `@KtSpiExtensionPoint` for the same purpose.
+
 `ExtensionPointName` can be used to inject client implementations. Implementation notes:
 
 - The KDoc of the SPI should mention the extension point name (the name that is used to register the EP)
@@ -1218,6 +1220,28 @@ These APIs are intended for all users but depend on unstable language features.
     - Marks APIs that use context parameters, an experimental Kotlin language feature.
     - It is **not** applied to standard public endpoints: they use `context(session: KaSession)` as their canonical form without an opt-in.
       The annotation only remains on the legacy auto-generated bridges that are being retired (see [Endpoint Architecture](#endpoint-architecture)).
+
+### Kotlin PSI Markers
+
+The Kotlin PSI has its own set of markers, most of which carry the same meaning as their Analysis API counterparts:
+
+| Analysis API              | Kotlin PSI                |
+|---------------------------|---------------------------|
+| `@KaExperimentalApi`      | `@KtExperimentalApi`      |
+| `@KaNonPublicApi`         | `@KtNonPublicApi`         |
+| `@KaIdeApi`               | `@KtIdeApi`               |
+| `@KaImplementationDetail` | `@KtImplementationDetail` |
+| `@KaPlatformInterface`    | `@KtPlatformInterface`    |
+| `@KaSpi`                  | `@KtSpi`                  |
+| `@KaSpiExtensionPoint`    | `@KtSpiExtensionPoint`    |
+
+Two markers do not map one-to-one:
+
+- `@KtPlatformInterface` is parallel in name only. The Kotlin PSI has no platform layer of its own, so instead of a set of components that a
+  platform has to implement, the marker denotes the contract with the Analysis API engine and its platform implementations: stub building,
+  decompilation, element type registration, and indexing.
+- `@KtPsiInconsistencyHandling` has no Analysis API counterpart. It marks declarations that are meant to work with possibly inconsistent PSI,
+  which the Kotlin parser cannot produce but PSI modification can.
 
 ### Adding New Annotations
 

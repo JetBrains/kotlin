@@ -17,6 +17,10 @@ public static final class Clazz /* Script.Clazz*/ {
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String foo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  foo(@org.jetbrains.annotations.NotNull() StringWrapper)
 
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String internalFoo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  internalFoo(@org.jetbrains.annotations.NotNull() StringWrapper)
+
   public  Clazz();//  .ctor()
 }
 

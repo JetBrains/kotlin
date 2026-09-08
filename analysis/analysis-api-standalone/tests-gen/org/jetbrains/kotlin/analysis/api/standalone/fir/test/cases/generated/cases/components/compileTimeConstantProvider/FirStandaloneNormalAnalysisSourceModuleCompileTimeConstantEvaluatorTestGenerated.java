@@ -369,6 +369,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCompileTimeConstantEvaluator
   }
 
   @Test
+  @TestMetadata("nullLiteral.kt")
+  public void testNullLiteral() {
+    run("nullLiteral.kt");
+  }
+
+  @Test
   @TestMetadata("positiveZeroEqualsNegativeZero.kt")
   public void testPositiveZeroEqualsNegativeZero() {
     run("positiveZeroEqualsNegativeZero.kt");
@@ -558,6 +564,42 @@ public class FirStandaloneNormalAnalysisSourceModuleCompileTimeConstantEvaluator
   @TestMetadata("typeCheckOnConstantProperty.kt")
   public void testTypeCheckOnConstantProperty() {
     run("typeCheckOnConstantProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("typeMismatch_booleanConstWithIntLiteral.kt")
+  public void testTypeMismatch_booleanConstWithIntLiteral() {
+    run("typeMismatch_booleanConstWithIntLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("typeMismatch_charConstWithIntArithmetic.kt")
+  public void testTypeMismatch_charConstWithIntArithmetic() {
+    run("typeMismatch_charConstWithIntArithmetic.kt");
+  }
+
+  @Test
+  @TestMetadata("typeMismatch_charConstWithIntLiteral.kt")
+  public void testTypeMismatch_charConstWithIntLiteral() {
+    run("typeMismatch_charConstWithIntLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("typeMismatch_charConstWithStringLiteral.kt")
+  public void testTypeMismatch_charConstWithStringLiteral() {
+    run("typeMismatch_charConstWithStringLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("typeMismatch_intConstWithCharLiteral.kt")
+  public void testTypeMismatch_intConstWithCharLiteral() {
+    run("typeMismatch_intConstWithCharLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("typeMismatch_nullableStringConst.kt")
+  public void testTypeMismatch_nullableStringConst() {
+    run("typeMismatch_nullableStringConst.kt");
   }
 
   @Test

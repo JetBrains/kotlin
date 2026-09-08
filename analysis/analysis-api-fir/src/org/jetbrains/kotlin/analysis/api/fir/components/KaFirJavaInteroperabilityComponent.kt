@@ -16,7 +16,6 @@ import com.intellij.psi.impl.compiled.StubBuildingVisitor
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.bridges.lightClassBridge
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
@@ -33,11 +32,8 @@ import org.jetbrains.kotlin.analysis.api.impl.base.symbols.findSyntheticJavaProp
 import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsJavaInteroperabilityComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.baseContextModuleOrSelf
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
@@ -45,7 +41,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isLocalClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightParameter
-import org.jetbrains.kotlin.asJava.mangleInternalName
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -444,7 +439,11 @@ internal class KaFirJavaInteroperabilityComponent(
     override fun javaMethodName(function: KaFunctionSymbol): String? = withValidityAssertion {
         context(analysisSession) {
             val defaultName = defaultJavaMethodName(function) ?: return null
-            computeJavaMethodName(function, defaultName)?.takeIf(StringUtil::isJavaIdentifier)
+            lightClassBridge.computeJavaMethodName(
+                symbol = function,
+                defaultName = defaultName,
+                ignoreValueClassMangling = false
+            )?.takeIf(StringUtil::isJavaIdentifier)
         }
     }
 
@@ -452,8 +451,6 @@ internal class KaFirJavaInteroperabilityComponent(
      * The Java method name for [function] as if there were no [JvmName] annotation and no `internal` mangling.
      *
      * @return `null` if [function] has no method visible from Java
-     *
-     * @see computeJavaMethodName
      */
     context(_: KaSession)
     private fun defaultJavaMethodName(function: KaFunctionSymbol): String? = when (function) {
@@ -521,41 +518,6 @@ internal class KaFirJavaInteroperabilityComponent(
                 JvmStandardClassIds.Annotations.JvmRecord in containingClass.annotations
     }
 
-    /**
-     * Applies [JvmName] and `internal` mangling to [defaultName].
-     *
-     * @return `null` if the name is mangled because of value classes, as such a suffix is out of the endpoint's scope
-     *
-     * @see defaultJavaMethodName
-     */
-    context(_: KaSession)
-    private fun computeJavaMethodName(symbol: KaCallableSymbol, defaultName: String): String? {
-        symbol.jvmNameFromAnnotation?.let { return it }
-
-        val bridge = lightClassBridge
-
-        // 'JvmName' above wins over value class mangling, so the check has to be performed afterwards
-        if (bridge.hasMangledNameDueToValueClasses(symbol)) return null
-
-        // Top-level declarations are placed into a file facade class, and their names are never mangled.
-        // Note: script declarations are members of a script class, so they are affected by mangling
-        if (bridge.jvmMethodOwner(symbol) == null) return defaultName
-
-        // Only the current module has a name to mangle with; library declarations already have mangled names
-        val module = symbol.containingModule.baseContextModuleOrSelf as? KaSourceModule ?: return defaultName
-        if (StandardClassIds.Annotations.PublishedApi in symbol.annotations) return defaultName
-        if (symbol.visibility != KaSymbolVisibility.INTERNAL) return defaultName
-
-        return mangleInternalName(defaultName, module.stableModuleName ?: module.name)
-    }
-}
-
-private val KaAnnotatedSymbol.jvmNameFromAnnotation: String?
-    get() = stringArgumentFromAnnotation(JvmStandardClassIds.Annotations.JvmName)
-
-private fun KaAnnotatedSymbol.stringArgumentFromAnnotation(classId: ClassId): String? {
-    val annotation = annotations[classId].firstOrNull() ?: return null
-    return (annotation.arguments.firstOrNull()?.expression as? KaAnnotationValue.ConstantValue)?.value?.value as? String
 }
 
 private fun ConeKotlinType.simplifyType(

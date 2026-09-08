@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub;
 import org.jetbrains.kotlin.psi.utils.ConstantExpressionUtils;
@@ -19,11 +20,14 @@ import org.jetbrains.kotlin.psi.utils.ConstantExpressionUtils;
  * //      ^^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtConstantExpression extends KtExpressionImplStub<KotlinConstantExpressionStub> {
+    @KtImplementationDetail
     public KtConstantExpression(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtConstantExpression(@NotNull KotlinConstantExpressionStub stub) {
         super(stub, ConstantExpressionUtils.toConstantExpressionElementType(stub.getKind()));
     }

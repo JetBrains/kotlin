@@ -1,0 +1,137 @@
+FILE fqName:<root> fileName:/ComanionTraces.kt
+  PROPERTY name:extTrace visibility:private modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:extTrace type:kotlinx.atomicfu.TraceBase visibility:private [final,static]
+      EXPRESSION_BODY
+        CALL 'public final fun Trace (size: kotlin.Int, format: kotlinx.atomicfu.TraceFormat): kotlinx.atomicfu.TraceBase declared in kotlinx.atomicfu' type=kotlinx.atomicfu.TraceBase origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-extTrace> visibility:private modality:FINAL returnType:kotlinx.atomicfu.TraceBase
+      correspondingProperty: PROPERTY name:extTrace visibility:private modality:FINAL [val]
+      companionExtension: CLASS CLASS name:TraceTest modality:FINAL visibility:public superTypes:[kotlin.Any]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-extTrace> (): kotlinx.atomicfu.TraceBase declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:extTrace type:kotlinx.atomicfu.TraceBase visibility:private [final,static]' type=kotlinx.atomicfu.TraceBase origin=null
+  PROPERTY name:a visibility:private modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:a type:kotlinx.atomicfu.AtomicInt visibility:private [final,static]
+      EXPRESSION_BODY
+        CALL 'public final fun atomic (initial: kotlin.Int, trace: kotlinx.atomicfu.TraceBase): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicInt origin=null
+          ARG initial: CONST Int type=kotlin.Int value=42
+          ARG trace: CALL 'private final fun <get-extTrace> (): kotlinx.atomicfu.TraceBase declared in <root>' type=kotlinx.atomicfu.TraceBase origin=GET_PROPERTY
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicInt
+      correspondingProperty: PROPERTY name:a visibility:private modality:FINAL [val]
+      companionExtension: CLASS CLASS name:TraceTest modality:FINAL visibility:public superTypes:[kotlin.Any]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlinx.atomicfu.AtomicInt visibility:private [final,static]' type=kotlinx.atomicfu.AtomicInt origin=null
+  CLASS CLASS name:TraceTest modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TraceTest
+    PROPERTY name:defaultTrace visibility:private modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:defaultTrace type:kotlinx.atomicfu.TraceBase visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun Trace (size: kotlin.Int, format: kotlinx.atomicfu.TraceFormat): kotlinx.atomicfu.TraceBase declared in kotlinx.atomicfu' type=kotlinx.atomicfu.TraceBase origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-defaultTrace> visibility:private modality:FINAL returnType:kotlinx.atomicfu.TraceBase [companion]
+        correspondingProperty: PROPERTY name:defaultTrace visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-defaultTrace> (): kotlinx.atomicfu.TraceBase declared in <root>.TraceTest'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:defaultTrace type:kotlinx.atomicfu.TraceBase visibility:private [final,static]' type=kotlinx.atomicfu.TraceBase origin=null
+    PROPERTY name:a1 visibility:private modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:a1 type:kotlinx.atomicfu.AtomicInt visibility:private [final,static]
+        EXPRESSION_BODY
+          CALL 'public final fun atomic (initial: kotlin.Int, trace: kotlinx.atomicfu.TraceBase): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicInt origin=null
+            ARG initial: CONST Int type=kotlin.Int value=5
+            ARG trace: CALL 'private final fun <get-defaultTrace> (): kotlinx.atomicfu.TraceBase declared in <root>.TraceTest' type=kotlinx.atomicfu.TraceBase origin=GET_PROPERTY
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a1> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicInt [companion]
+        correspondingProperty: PROPERTY name:a1 visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-a1> (): kotlinx.atomicfu.AtomicInt declared in <root>.TraceTest'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a1 type:kotlinx.atomicfu.AtomicInt visibility:private [final,static]' type=kotlinx.atomicfu.AtomicInt origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.TraceTest [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TraceTest modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:testCompanionTrace visibility:public modality:FINAL returnType:kotlin.Unit [companion]
+      BLOCK_BODY
+        VAR name:oldValue type:kotlin.Int [val]
+          CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
+            ARG <this>: CALL 'private final fun <get-a1> (): kotlinx.atomicfu.AtomicInt declared in <root>.TraceTest' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+        CALL 'public final fun invoke (event: kotlin.Function0<kotlin.Any>): kotlin.Unit declared in kotlinx.atomicfu.TraceBase' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-defaultTrace> (): kotlinx.atomicfu.TraceBase declared in <root>.TraceTest' type=kotlinx.atomicfu.TraceBase origin=GET_PROPERTY
+          ARG event: FUN_EXPR type=kotlin.Function0<kotlin.Any> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Any
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any declared in <root>.TraceTest.testCompanionTrace'
+                  STRING_CONCATENATION type=kotlin.String
+                    CONST String type=kotlin.String value="before CAS value = "
+                    GET_VAR 'val oldValue: kotlin.Int declared in <root>.TraceTest.testCompanionTrace' type=kotlin.Int origin=null
+        VAR name:res type:kotlin.Boolean [val]
+          CALL 'public final fun compareAndSet (expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Boolean origin=null
+            ARG <this>: CALL 'private final fun <get-a1> (): kotlinx.atomicfu.AtomicInt declared in <root>.TraceTest' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+            ARG expect: GET_VAR 'val oldValue: kotlin.Int declared in <root>.TraceTest.testCompanionTrace' type=kotlin.Int origin=null
+            ARG update: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+              ARG <this>: GET_VAR 'val oldValue: kotlin.Int declared in <root>.TraceTest.testCompanionTrace' type=kotlin.Int origin=null
+              ARG other: CONST Int type=kotlin.Int value=10
+        VAR name:newValue type:kotlin.Int [val]
+          CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
+            ARG <this>: CALL 'private final fun <get-a1> (): kotlinx.atomicfu.AtomicInt declared in <root>.TraceTest' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+        CALL 'public final fun invoke (event: kotlin.Function0<kotlin.Any>): kotlin.Unit declared in kotlinx.atomicfu.TraceBase' type=kotlin.Unit origin=null
+          ARG <this>: CALL 'private final fun <get-defaultTrace> (): kotlinx.atomicfu.TraceBase declared in <root>.TraceTest' type=kotlinx.atomicfu.TraceBase origin=GET_PROPERTY
+          ARG event: FUN_EXPR type=kotlin.Function0<kotlin.Any> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Any
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any declared in <root>.TraceTest.testCompanionTrace'
+                  STRING_CONCATENATION type=kotlin.String
+                    CONST String type=kotlin.String value="after CAS value = "
+                    GET_VAR 'val newValue: kotlin.Int declared in <root>.TraceTest.testCompanionTrace' type=kotlin.Int origin=null
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      CALL 'private final fun test (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
+  FUN name:test visibility:private modality:FINAL returnType:kotlin.Unit
+    BLOCK_BODY
+      CALL 'public final fun testCompanionTrace (): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
+      CALL 'public final fun testExtensionTrace (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+  FUN name:testExtensionTrace visibility:public modality:FINAL returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR name:oldValue type:kotlin.Int [val]
+        CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
+          ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+      CALL 'public final fun invoke (event: kotlin.Function0<kotlin.Any>): kotlin.Unit declared in kotlinx.atomicfu.TraceBase' type=kotlin.Unit origin=null
+        ARG <this>: CALL 'private final fun <get-extTrace> (): kotlinx.atomicfu.TraceBase declared in <root>' type=kotlinx.atomicfu.TraceBase origin=GET_PROPERTY
+        ARG event: FUN_EXPR type=kotlin.Function0<kotlin.Any> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Any
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any declared in <root>.testExtensionTrace'
+                STRING_CONCATENATION type=kotlin.String
+                  CONST String type=kotlin.String value="before CAS value = "
+                  GET_VAR 'val oldValue: kotlin.Int declared in <root>.testExtensionTrace' type=kotlin.Int origin=null
+      VAR name:res type:kotlin.Boolean [val]
+        CALL 'public final fun compareAndSet (expect: kotlin.Int, update: kotlin.Int): kotlin.Boolean declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Boolean origin=null
+          ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+          ARG expect: GET_VAR 'val oldValue: kotlin.Int declared in <root>.testExtensionTrace' type=kotlin.Int origin=null
+          ARG update: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+            ARG <this>: GET_VAR 'val oldValue: kotlin.Int declared in <root>.testExtensionTrace' type=kotlin.Int origin=null
+            ARG other: CONST Int type=kotlin.Int value=10
+      VAR name:newValue type:kotlin.Int [val]
+        CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
+          ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+      CALL 'public final fun invoke (event: kotlin.Function0<kotlin.Any>): kotlin.Unit declared in kotlinx.atomicfu.TraceBase' type=kotlin.Unit origin=null
+        ARG <this>: CALL 'private final fun <get-extTrace> (): kotlinx.atomicfu.TraceBase declared in <root>' type=kotlinx.atomicfu.TraceBase origin=GET_PROPERTY
+        ARG event: FUN_EXPR type=kotlin.Function0<kotlin.Any> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Any
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any declared in <root>.testExtensionTrace'
+                STRING_CONCATENATION type=kotlin.String
+                  CONST String type=kotlin.String value="after CAS value = "
+                  GET_VAR 'val newValue: kotlin.Int declared in <root>.testExtensionTrace' type=kotlin.Int origin=null

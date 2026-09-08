@@ -12,11 +12,26 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.moduleStructure
 
 /** @see AbstractCollectDiagnosticsTest */
 abstract class AbstractElementDiagnosticsTest : AbstractAnalysisApiBasedTest() {
+    override val additionalDirectives: List<DirectivesContainer>
+        get() = super.additionalDirectives + Directives
+
+    private object Directives : SimpleDirectivesContainer() {
+        val CHECKER_KIND by valueDirective(
+            description = "Checker kind to request the diagnostics of. " +
+                    "'COMMON' and 'EXTENDED' by default. " +
+                    "A few kinds can be declared as separate directives",
+            parser = { name -> KaDiagnosticCheckerKind.ALL.firstOrNull { it.name == name } },
+        )
+    }
+
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val targetDeclaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeByDirective(
             mainFile,
@@ -24,10 +39,14 @@ abstract class AbstractElementDiagnosticsTest : AbstractAnalysisApiBasedTest() {
             defaultType = KtElement::class,
         ) as KtElement
 
+        val checkerKinds = testServices.moduleStructure.allDirectives[Directives.CHECKER_KIND]
+            .ifEmpty { listOf(KaDiagnosticCheckerKind.COMMON, KaDiagnosticCheckerKind.EXTENDED) }
+            .toSet()
+
         analyzeForTest(mainFile) {
             val diagnostics = targetDeclaration.diagnostics()
                 .directOnly(true)
-                .withCheckers(KaDiagnosticCheckerKind.COMMON, KaDiagnosticCheckerKind.EXTENDED)
+                .withCheckers(checkerKinds)
                 .toList()
 
             val actualText = buildString {

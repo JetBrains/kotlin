@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
@@ -54,8 +55,14 @@ class PluginFunctionKindsTransformer(val pluginContext: IrPluginContext) : IrVis
     }
 
     override fun visitCall(expression: IrCall) {
+        updateCalleeSignature(expression.symbol.owner)
         updateReferenceInCallIfNeeded(expression)
         visitElement(expression)
+    }
+
+    override fun visitConstructorCall(expression: IrConstructorCall) {
+        updateCalleeSignature(expression.symbol.owner)
+        super.visitConstructorCall(expression)
     }
 
     override fun visitVariable(declaration: IrVariable) {
@@ -124,6 +131,21 @@ class PluginFunctionKindsTransformer(val pluginContext: IrPluginContext) : IrVis
                 symbol.owner.defaultType,
                 symbol.constructors.single(),
             )
+        }
+    }
+
+    /**
+     * Updates the signature of [callee].
+     *
+     * A callee from another module is not a part of the visited module fragment, so its signature is left with the synthetic
+     * `some.MyInlineableFunctionN` classes. The JVM descriptor of the call is computed from that signature, so without the update the
+     * call refers to a method which does not exist in the dependency, while the dependency itself was compiled with the
+     * `kotlin.FunctionN` signature.
+     */
+    private fun updateCalleeSignature(callee: IrFunction) {
+        callee.returnType = callee.returnType.update()
+        for (parameter in callee.parameters) {
+            parameter.type = parameter.type.update()
         }
     }
 

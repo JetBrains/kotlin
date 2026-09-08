@@ -42,7 +42,7 @@ fun Test(enabled: Boolean, %composer: Composer?, %changed: Int) {
       } else {
         %composer.skipToGroupEnd()
       }
-    }, %composer, 0b00110110)
+    }, %composer, 0b00110110) as Function2<Composer, Int, Unit>
     Wrap(content, %composer, 0b0110)
     if (isTraceInProgress()) {
       traceEventEnd()

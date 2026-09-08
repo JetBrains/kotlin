@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
-// LANGUAGE: +CollectionLiterals
 
 fun f1(x: Set<Set<Int>>) { }
 fun f1(x: Set<Set<String>>) { }

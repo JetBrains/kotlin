@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import com.sun.jdi.*
+import com.sun.jdi.connect.AttachingConnector
 import com.sun.jdi.event.*
 import com.sun.jdi.request.EventRequest.SUSPEND_ALL
 import com.sun.jdi.request.StepRequest
-import com.sun.tools.jdi.SocketAttachingConnector
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.model.FrontendKind
@@ -101,8 +101,8 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
                                 prepareReq.setSuspendPolicy(SUSPEND_ALL)
                                 EXCLUDED_PACKAGES.forEach { prepareReq.addClassExclusionFilter(it) }
                             }
-                            manager.stepRequests().map { it.enable() }
-                            manager.classPrepareRequests().map { it.enable() }
+                            manager.stepRequests().forEach { it.enable() }
+                            manager.classPrepareRequests().forEach { it.enable() }
                             inBoxMethod = true
                             storeStep(loggedItems, event)
                         }
@@ -113,9 +113,9 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
                             if (event.location().method().name() == "main" &&
                                 event.location().declaringType().name().contains(BOX_MAIN_FILE_CLASS_NAME)
                             ) {
-                                manager.stepRequests().map { it.disable() }
-                                manager.classPrepareRequests().map { it.disable() }
-                                manager.breakpointRequests().map { it.disable() }
+                                manager.stepRequests().forEach { it.disable() }
+                                manager.classPrepareRequests().forEach { it.disable() }
+                                manager.breakpointRequests().forEach { it.disable() }
                                 break@vmLoop
                             }
                             storeStep(loggedItems, event)
@@ -123,9 +123,9 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
                     }
                     is MethodExitEvent -> {
                         if (event.location().method().name() == "box") {
-                            manager.stepRequests().map { it.disable() }
-                            manager.classPrepareRequests().map { it.disable() }
-                            manager.breakpointRequests().map { it.disable() }
+                            manager.stepRequests().forEach { it.disable() }
+                            manager.classPrepareRequests().forEach { it.disable() }
+                            manager.breakpointRequests().forEach { it.disable() }
                             break@vmLoop
                         }
                     }
@@ -186,7 +186,7 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
     }
 
     private fun attachDebugger(port: Int): VirtualMachine {
-        val connector = SocketAttachingConnector()
+        val connector = getAttachingConnector()
         val virtualMachine = connector.attach(connector.defaultArguments().toMutableMap().apply {
             getValue("port").setValue("$port")
             getValue("hostname").setValue("127.0.0.1")
@@ -261,3 +261,9 @@ class LocalVariableDebugRunner(testServices: TestServices) : DebugRunner(testSer
 
 private fun isIndyLambda(location: Location): Boolean =
     "$\$Lambda$" in location.declaringType().name()
+
+private fun getAttachingConnector(): AttachingConnector =
+    Bootstrap.virtualMachineManager()
+        .attachingConnectors()
+        .firstOrNull { it.name() == "com.sun.jdi.SocketAttach" }
+        ?: error("JDI socket attaching connector is not available")

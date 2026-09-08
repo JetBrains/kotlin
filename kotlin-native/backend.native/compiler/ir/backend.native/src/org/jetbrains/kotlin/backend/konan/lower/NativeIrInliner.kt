@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -25,16 +26,16 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 internal class NativePrivateFunctionInlining(generationState: NativeGenerationState) : FunctionInlining(
-        context = generationState.context,
+        context = generationState,
         NativeInlineFunctionResolver(generationState, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS),
 )
 
 internal class NativeAllFunctionInlining(generationState: NativeGenerationState) : FunctionInlining(
-        context = generationState.context,
+        context = generationState,
         NativeInlineFunctionResolver(generationState, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS),
 )
 
-internal class PreCodegenFunctionInlining(val context: NativeBackendContext, val functionsToInline: Set<IrFunction>) {
+internal class PreCodegenFunctionInlining(val context: NativeLoweringContext, val functionsToInline: Set<IrFunction>) {
     fun run(irFunction: IrSimpleFunction) {
         val irBuilder = context.createIrBuilder(irFunction.symbol)
         irFunction.body!!.transformChildrenVoid(object : IrElementTransformerVoid() {

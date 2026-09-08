@@ -91,7 +91,7 @@ internal fun readMetadata(metadata: Metadata): KotlinClassMetadata {
 
 @OptIn(UnstableMetadataApi::class)
 internal fun readModuleFile(file: File): KotlinModuleMetadata? =
-    runCatching { KotlinModuleMetadata.read(file.readBytes()) }.getOrNull()
+    runCatching { KotlinModuleMetadata.readLenient(file.readBytes()) }.getOrNull()
 
 internal fun readBuiltInsFile(file: File): KotlinCommonMetadata? =
     KotlinCommonMetadata.read(file.readBytes())

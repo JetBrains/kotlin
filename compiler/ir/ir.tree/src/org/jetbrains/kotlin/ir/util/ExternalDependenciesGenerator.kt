@@ -36,7 +36,7 @@ class ExternalDependenciesGenerator(
             for (symbol in unbound) {
                 // Symbol could get bound as a side effect of deserializing other symbols.
                 if (!symbol.isBound) {
-                    irProviders.firstNotNullOfOrNull { provider -> provider.getDeclaration(symbol) }
+                    val _ = irProviders.firstNotNullOfOrNull { provider -> provider.getDeclaration(symbol) }
                 }
             }
             // We wait for the unbound to stabilize on fake overrides.

@@ -60,7 +60,7 @@ KtFile: enum.kt
         CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n        ')
-          FUN
+          FUNCTION
             MODIFIER_LIST
               PsiElement(override)('override')
             PsiWhiteSpace(' ')
@@ -79,7 +79,7 @@ KtFile: enum.kt
           PsiElement(RBRACE)('}')
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(open)('open')
         PsiWhiteSpace(' ')

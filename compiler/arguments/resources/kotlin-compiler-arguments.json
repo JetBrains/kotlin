@@ -1,5 +1,5 @@
 {
-    "schemaVersion": 5,
+    "schemaVersion": 6,
     "releases": [
         {
             "name": "1.0.0",
@@ -401,6 +401,12 @@
             "name": "2.6.0",
             "major": 2,
             "minor": 6,
+            "patch": 0
+        },
+        {
+            "name": "2.7.0",
+            "major": 2,
+            "minor": 7,
             "patch": 0
         }
     ],
@@ -13449,7 +13455,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
-                                                "restrictedToCompilerPhase": "KLIB_COMPILATION",
+                                                "restrictedToCompilerPhase": null,
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                                     "isNullable": {
@@ -14009,6 +14015,51 @@
                                                             },
                                                             "defaultValue": {
                                                                 "current": null,
+                                                                "valueInVersions": []
+                                                            }
+                                                        },
+                                                        "deprecatedMessage": null
+                                                    },
+                                                    {
+                                                        "name": "Xexport-kdoc",
+                                                        "shortName": null,
+                                                        "deprecatedName": null,
+                                                        "description": {
+                                                            "current": "Export KDoc entries as JSDoc into the TypeScript declaration files.",
+                                                            "valueInVersions": []
+                                                        },
+                                                        "delimiter": null,
+                                                        "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": null,
+                                                        "valueType": {
+                                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                            "isNullable": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            },
+                                                            "defaultValue": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            }
+                                                        },
+                                                        "valueDescription": {
+                                                            "current": null,
+                                                            "valueInVersions": []
+                                                        },
+                                                        "releaseVersionsMetadata": {
+                                                            "introducedVersion": "2.5.0",
+                                                            "stabilizedVersion": null,
+                                                            "deprecatedVersion": null,
+                                                            "removedVersion": null
+                                                        },
+                                                        "argumentType": {
+                                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                            "isNullable": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            },
+                                                            "defaultValue": {
+                                                                "current": false,
                                                                 "valueInVersions": []
                                                             }
                                                         },
@@ -15681,7 +15732,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
-                                                "restrictedToCompilerPhase": "KLIB_COMPILATION",
+                                                "restrictedToCompilerPhase": null,
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                                     "isNullable": {

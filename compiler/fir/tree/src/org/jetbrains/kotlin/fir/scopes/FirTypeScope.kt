@@ -108,7 +108,7 @@ inline fun <reified S : FirCallableSymbol<*>> FirTypeScope.anyOverriddenOf(
     noinline predicate: (S) -> Boolean,
 ): Boolean {
     var result = false
-    processOverridden(symbol) {
+    val _ = processOverridden(symbol) {
         if (predicate(it)) {
             result = true
             return@processOverridden ProcessorAction.STOP

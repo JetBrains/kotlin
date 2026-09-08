@@ -16,13 +16,18 @@
 
 package org.jetbrains.kotlin.codegen.optimization
 
+import org.jetbrains.kotlin.codegen.inline.getLabelToIndexMap
+import org.jetbrains.kotlin.codegen.inline.getLineNumberOrNull
 import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
-import org.jetbrains.kotlin.codegen.optimization.common.removeAll
+import org.jetbrains.kotlin.codegen.optimization.common.findNextOrNull
+import org.jetbrains.kotlin.codegen.optimization.common.intConstant
+import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -36,98 +41,83 @@ class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
             return
         }
         do {
-            val changes = ConstantConditionsOptimization(internalClassName, methodNode).run()
+            val changes = ConstantConditionsOptimization(internalClassName, methodNode).runOnce()
         } while (changes)
     }
 
     private fun MethodNode.hasOptimizableConditions(): Boolean {
-        return instructions.any { it.isIntJump() } && instructions.any { it.isIntConst() }
+        return instructions.any { it.isIntJump() } && instructions.any { it.intConstant != null }
     }
-
-    private fun AbstractInsnNode.isIntConst() =
-        opcode in Opcodes.ICONST_M1..Opcodes.ICONST_5 || opcode == Opcodes.BIPUSH || opcode == Opcodes.SIPUSH ||
-                (opcode == Opcodes.LDC && this is LdcInsnNode && cst is Int)
 
     private fun AbstractInsnNode.isIntJump() =
         opcode in Opcodes.IFEQ..Opcodes.IFLE || opcode in Opcodes.IF_ICMPEQ..Opcodes.IF_ICMPLE
 
     private class ConstantConditionsOptimization(val internalClassName: String, val methodNode: MethodNode) {
-        fun run(): Boolean {
-            val actions = collectRewriteActions()
-            actions.forEach { it() }
-            return actions.isNotEmpty()
-        }
+        val inlineScopes by lazy(LazyThreadSafetyMode.NONE) { methodNode.computeInlineScopes() }
 
-        private fun collectRewriteActions(): List<() -> Unit> =
-            arrayListOf<() -> Unit>().also { actions ->
-                val deadCode = ArrayList<AbstractInsnNode>()
+        fun runOnce(): Boolean {
+            var changed = false
 
-                val frames = analyze(internalClassName, methodNode, ConstantPropagationInterpreter())
-                val insns = methodNode.instructions.toArray()
+            val frames = analyze(internalClassName, methodNode, ConstantPropagationInterpreter())
+            val insns = methodNode.instructions.toArray()
 
-                for (i in frames.indices) {
-                    val insn = insns[i]
-                    val frame = frames[i]
+            for (i in frames.indices) {
+                val insn = insns[i]
+                val frame = frames[i]
 
-                    if (frame == null) {
-                        if (insn !is LabelNode) {
-                            deadCode.add(insn)
+                if (frame == null) {
+                    if (insn !is LabelNode) {
+                        methodNode.instructions.remove(insn)
+                    }
+                    continue
+                }
+
+                if (insn !is JumpInsnNode) continue
+                when (insn.opcode) {
+                    in Opcodes.IFEQ..Opcodes.IFLE ->
+                        changed = tryRewriteComparisonWithZero(insn, frame) || changed
+                    in Opcodes.IF_ICMPEQ..Opcodes.IF_ICMPLE ->
+                        changed = tryRewriteBinaryComparison(insn, frame) || changed
+                    Opcodes.GOTO -> {
+                        frame.top()?.intConstant?.let {
+                            changed = tryRewriteGotoToComparison(insn, it) || changed
                         }
-                        continue
-                    }
-
-                    if (insn !is JumpInsnNode) continue
-                    when (insn.opcode) {
-                        in Opcodes.IFEQ..Opcodes.IFLE ->
-                            tryRewriteComparisonWithZero(insn, frame, actions)
-                        in Opcodes.IF_ICMPEQ..Opcodes.IF_ICMPLE ->
-                            tryRewriteBinaryComparison(insn, frame, actions)
-                    }
-                }
-
-                if (deadCode.isNotEmpty()) {
-                    actions.add {
-                        methodNode.instructions.removeAll(deadCode)
                     }
                 }
             }
 
-        private fun tryRewriteComparisonWithZero(insn: JumpInsnNode, frame: Frame<BasicValue>, actions: ArrayList<() -> Unit>) {
-            val top = frame.top()!! as? IConstValue ?: return
-
-            val constCondition = when (insn.opcode) {
-                Opcodes.IFEQ -> top.value == 0
-                Opcodes.IFNE -> top.value != 0
-                Opcodes.IFGE -> top.value >= 0
-                Opcodes.IFGT -> top.value > 0
-                Opcodes.IFLE -> top.value <= 0
-                Opcodes.IFLT -> top.value < 0
-                else -> throw AssertionError("Unexpected instruction: ${insn.insnText}")
-            }
-
-            actions.add {
-                methodNode.instructions.run {
-                    insertBefore(insn, InsnNode(Opcodes.POP))
-                    if (constCondition)
-                        set(insn, JumpInsnNode(Opcodes.GOTO, insn.label))
-                    else
-                        remove(insn)
-                }
-            }
+            return changed
         }
 
-        private fun tryRewriteBinaryComparison(insn: JumpInsnNode, frame: Frame<BasicValue>, actions: ArrayList<() -> Unit>) {
-            val arg1 = frame.peek(1)!!
-            val arg2 = frame.peek(0)!!
+        private fun tryRewriteComparisonWithZero(insn: JumpInsnNode, frame: Frame<BasicValue>): Boolean {
+            val top = frame.top()!!.intConstant ?: return false
 
-            if (arg1 is IConstValue && arg2 is IConstValue) {
-                rewriteBinaryComparisonOfConsts(insn, arg1.value, arg2.value, actions)
-            } else if (arg2 is IConstValue && arg2.value == 0) {
-                rewriteBinaryComparisonWith0(insn, actions)
+            if (evaluateComparisonWithZeroInsn(insn.opcode, top)) {
+                methodNode.instructions.insertBefore(insn, InsnNode(Opcodes.POP))
+                insn.opcode = Opcodes.GOTO
+            } else {
+                methodNode.instructions.set(insn, InsnNode(Opcodes.POP))
             }
+
+            return true
         }
 
-        private fun rewriteBinaryComparisonOfConsts(insn: JumpInsnNode, value1: Int, value2: Int, actions: ArrayList<() -> Unit>) {
+        private fun tryRewriteBinaryComparison(insn: JumpInsnNode, frame: Frame<BasicValue>): Boolean {
+            val arg2 = frame.peek(0)!!.intConstant ?: return false
+            val arg1 = frame.peek(1)!!.intConstant
+
+            if (arg1 != null) {
+                rewriteBinaryComparisonOfConsts(insn, arg1, arg2)
+                return true
+            } else if (arg2 == 0) {
+                rewriteBinaryComparisonWith0(insn)
+                return true
+            }
+
+            return false
+        }
+
+        private fun rewriteBinaryComparisonOfConsts(insn: JumpInsnNode, value1: Int, value2: Int) {
             val constCondition = when (insn.opcode) {
                 Opcodes.IF_ICMPEQ -> value1 == value2
                 Opcodes.IF_ICMPNE -> value1 != value2
@@ -138,79 +128,143 @@ class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
                 else -> throw AssertionError("Unexpected instruction: ${insn.insnText}")
             }
 
-            actions.add {
-                methodNode.instructions.run {
-                    insertBefore(insn, InsnNode(Opcodes.POP))
-
-                    insertBefore(insn, InsnNode(Opcodes.POP))
-                    if (constCondition)
-                        set(insn, JumpInsnNode(Opcodes.GOTO, insn.label))
-                    else
-                        remove(insn)
-                }
+            if (constCondition) {
+                methodNode.instructions.insertBefore(insn, InsnNode(Opcodes.POP))
+                methodNode.instructions.insertBefore(insn, InsnNode(Opcodes.POP))
+                insn.opcode = Opcodes.GOTO
+            } else {
+                methodNode.instructions.insertBefore(insn, InsnNode(Opcodes.POP))
+                methodNode.instructions.set(insn, InsnNode(Opcodes.POP))
             }
         }
 
-        private fun rewriteBinaryComparisonWith0(insn: JumpInsnNode, actions: ArrayList<() -> Unit>) {
-            actions.add {
-                methodNode.instructions.run {
-                    insertBefore(insn, InsnNode(Opcodes.POP))
-                    val cmpWith0Opcode = when (insn.opcode) {
-                        Opcodes.IF_ICMPEQ -> Opcodes.IFEQ
-                        Opcodes.IF_ICMPNE -> Opcodes.IFNE
-                        Opcodes.IF_ICMPLE -> Opcodes.IFLE
-                        Opcodes.IF_ICMPLT -> Opcodes.IFLT
-                        Opcodes.IF_ICMPGE -> Opcodes.IFGE
-                        Opcodes.IF_ICMPGT -> Opcodes.IFGT
-                        else -> throw AssertionError("Unexpected instruction: ${insn.insnText}")
-                    }
-                    set(insn, JumpInsnNode(cmpWith0Opcode, insn.label))
-                }
-            }
+        private fun rewriteBinaryComparisonWith0(insn: JumpInsnNode) {
+            require(insn.opcode in Opcodes.IF_ICMPEQ..Opcodes.IF_ICMPLE)
+            methodNode.instructions.insertBefore(insn, InsnNode(Opcodes.POP))
+            // Map the range of opcodes IF_CMPEQ..IF_ICMPLE -> IFEQ..IFLE (IF_CMPEQ -> IFEQ, IFNE -> IF_CMPNE, etc.)
+            insn.opcode = Opcodes.IFEQ + (insn.opcode - Opcodes.IF_ICMPEQ)
         }
-    }
 
-    private class IConstValue private constructor(val value: Int) : StrictBasicValue(Type.INT_TYPE) {
-        override fun equals(other: Any?): Boolean =
-            other === this ||
-                    other is IConstValue && other.value == this.value
+        private fun tryRewriteGotoToComparison(insn: JumpInsnNode, top: Int): Boolean {
+            val targetInsn = insn.targetExecutableInsn() ?: return false
+            if (targetInsn.opcode !in Opcodes.IFEQ..Opcodes.IFLE) return false
 
-        override fun hashCode(): Int = value
+            // Do not optimize jumps across inline scopes, as it messes debug information.
+            if (inlineScopes[insn] !== inlineScopes[targetInsn]) return false
 
-        override fun toString(): String = "IConst($value)"
+            methodNode.instructions.insertBefore(insn, InsnNode(Opcodes.POP))
 
-        companion object {
-            private val ICONST_CACHE = Array(7) { IConstValue(it - 1) }
+            getLineNumberOrNull(targetInsn)?.takeUnless { it == getLineNumberOrNull(insn) }?.let { lineNumber ->
+                val lineNumberLabel = LabelNode()
+                methodNode.instructions.insertBefore(insn, lineNumberLabel)
+                methodNode.instructions.insertBefore(insn, LineNumberNode(lineNumber, lineNumberLabel))
+            }
 
-            fun of(value: Int) =
-                if (value in -1..5)
-                    ICONST_CACHE[value + 1]
-                else
-                    IConstValue(value)
+            insn.label = when (evaluateComparisonWithZeroInsn(targetInsn.opcode, top)) {
+                true -> (targetInsn as JumpInsnNode).label
+                false -> methodNode.instructions.getOrCreateLabelAfter(targetInsn)
+            }
+
+            return true
         }
     }
+}
 
-    private class ConstantPropagationInterpreter : OptimizationBasicInterpreter() {
-        override fun newOperation(insn: AbstractInsnNode): BasicValue =
-            when (insn.opcode) {
-                in Opcodes.ICONST_M1..Opcodes.ICONST_5 ->
-                    IConstValue.of(insn.opcode - Opcodes.ICONST_0)
-                Opcodes.BIPUSH, Opcodes.SIPUSH ->
-                    IConstValue.of((insn as IntInsnNode).operand)
-                Opcodes.LDC -> {
-                    val operand = (insn as LdcInsnNode).cst
-                    if (operand is Int)
-                        IConstValue.of(operand)
-                    else
-                        super.newOperation(insn)
-                }
-                else -> super.newOperation(insn)
-            }
+private class IConstValue private constructor(val value: Int) : StrictBasicValue(Type.INT_TYPE) {
+    override fun equals(other: Any?): Boolean = other is IConstValue && other.value == this.value
+    override fun hashCode(): Int = value
+    override fun toString(): String = "IConst($value)"
 
-        override fun merge(v: BasicValue, w: BasicValue): BasicValue =
-            if (v is IConstValue && w is IConstValue && v == w)
-                v
+    companion object {
+        private val ICONST_CACHE = Array(7) { IConstValue(it - 1) }
+
+        fun of(value: Int) =
+            if (value in -1..5)
+                ICONST_CACHE[value + 1]
             else
-                super.merge(v, w)
+                IConstValue(value)
     }
+}
+
+private class ConstantPropagationInterpreter : OptimizationBasicInterpreter() {
+    override fun newOperation(insn: AbstractInsnNode): BasicValue {
+        insn.intConstant?.let { return IConstValue.of(it) }
+        return super.newOperation(insn)
+    }
+
+    override fun merge(v: BasicValue, w: BasicValue): BasicValue =
+        if (v is IConstValue && w is IConstValue && v == w)
+            v
+        else
+            super.merge(v, w)
+}
+
+private fun evaluateComparisonWithZeroInsn(opcode: Int, value: Int): Boolean =
+    when (opcode) {
+        Opcodes.IFEQ -> value == 0
+        Opcodes.IFNE -> value != 0
+        Opcodes.IFGE -> value >= 0
+        Opcodes.IFGT -> value > 0
+        Opcodes.IFLE -> value <= 0
+        Opcodes.IFLT -> value < 0
+        else -> throw AssertionError("Unexpected instruction opcode: $opcode")
+    }
+
+private fun InsnList.getOrCreateLabelAfter(insn: AbstractInsnNode): LabelNode =
+    insn.findNextOrNull { it.opcode != Opcodes.NOP && it.nodeType != AbstractInsnNode.LINE } as? LabelNode
+        ?: LabelNode().also { insert(insn, it) }
+
+private fun JumpInsnNode.targetExecutableInsn(): AbstractInsnNode? {
+    var target: AbstractInsnNode? = label
+    val visitedGoto = HashSet<JumpInsnNode>()
+    while (target != null) {
+        target = when {
+            target.opcode == Opcodes.GOTO -> {
+                require(target is JumpInsnNode)
+                if (!visitedGoto.add(target)) {
+                    // Goto already visited -> infinite loop
+                    return null
+                }
+                target.label
+            }
+            target.opcode == Opcodes.NOP || target.nodeType == AbstractInsnNode.LABEL || target.nodeType == AbstractInsnNode.LINE -> target.next
+            else -> break
+        }
+    }
+    return target
+}
+
+private val BasicValue.intConstant: Int?
+    get() = when (this) {
+        is IConstValue -> value
+        else -> null
+    }
+
+/**
+ * Maps every instruction inside an inline scope to the innermost inline marker variable.
+ */
+private fun MethodNode.computeInlineScopes(): Map<AbstractInsnNode, LocalVariableNode> {
+    val markers = localVariables?.filter { JvmAbi.isFakeLocalVariableForInline(it.name) }
+    if (markers.isNullOrEmpty()) return emptyMap()
+
+    val labelToIndex = getLabelToIndexMap()
+    val opening = HashMap<LabelNode, MutableList<LocalVariableNode>>()
+    val closing = HashMap<LabelNode, MutableList<LocalVariableNode>>()
+
+    // Widest first, so that the narrowest ends up on top of `active`
+    markers.sortedByDescending { labelToIndex[it.end.label]!! - labelToIndex[it.start.label]!! }.forEach { marker ->
+        opening.getOrPut(marker.start) { mutableListOf() }.add(marker)
+        closing.getOrPut(marker.end) { mutableListOf() }.add(marker)
+    }
+
+    val result = HashMap<AbstractInsnNode, LocalVariableNode>()
+    val active = mutableListOf<LocalVariableNode>()
+    for (insn in instructions) {
+        if (insn is LabelNode) {
+            closing[insn]?.let(active::removeAll)
+            opening[insn]?.let(active::addAll)
+        }
+        active.lastOrNull()?.let { result[insn] = it }
+    }
+    return result
 }

@@ -39,7 +39,7 @@ object Comparators {
     }.thenComparing(stableInitComparator)
         .thenComparing(stableFunctionComparator)
 
-    val stableBridgeComparator: Comparator<SirBridge> = Comparator<SirBridge> { lhs, rhs ->
+    val stableBridgeComparator: Comparator<SirBridge> = Comparator { lhs: SirBridge, rhs: SirBridge ->
         when (lhs) {
             is SirFunctionBridge -> {
                 when (rhs) {

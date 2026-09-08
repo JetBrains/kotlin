@@ -8,7 +8,7 @@ KtNameReferenceExpression(59,63): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test
     ]
@@ -50,13 +50,13 @@ KtTypeAlias(141,157): 'typealias TA = C'
   null
 
 KtTypeReference(156,157): 'C'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
 KtUserType(156,157): 'C'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
@@ -65,7 +65,7 @@ KtNameReferenceExpression(156,157): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
@@ -80,7 +80,7 @@ KtBlockExpression(171,211): '{'
   null
 
 KtDotQualifiedExpression(177,185): 'TA.foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C.foo(): kotlin.Unit
     ]
@@ -89,13 +89,13 @@ KtNameReferenceExpression(177,179): 'TA'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/TA
     ]
 
 KtCallExpression(180,185): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C.foo(): kotlin.Unit
     ]
@@ -104,7 +104,7 @@ KtNameReferenceExpression(180,183): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C.foo(): kotlin.Unit
     ]
@@ -113,7 +113,7 @@ KtValueArgumentList(183,185): '()'
   null
 
 KtDotQualifiedExpression(190,196): 'TA.bar'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val bar: kotlin.Int
     ]
@@ -122,7 +122,7 @@ KtNameReferenceExpression(190,192): 'TA'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/TA
     ]
@@ -131,13 +131,13 @@ KtNameReferenceExpression(193,196): 'bar'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       val bar: kotlin.Int
     ]
 
 KtCallableReferenceExpression(202,209): 'TA::foo'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C.foo(): kotlin.Unit
     ]
@@ -146,7 +146,7 @@ KtNameReferenceExpression(202,204): 'TA'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/TA
     ]
@@ -155,7 +155,7 @@ KtNameReferenceExpression(206,209): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C.foo(): kotlin.Unit
     ]

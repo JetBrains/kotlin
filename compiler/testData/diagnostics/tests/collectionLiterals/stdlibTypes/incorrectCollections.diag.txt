@@ -1,37 +1,37 @@
-/incorrectCollections.kt:8:28: error: Null cannot be a value of a non-null type 'uninferred T (of fun <T> listOf)'.
+/incorrectCollections.kt:7:28: error: Null cannot be a value of a non-null type 'uninferred T (of fun <T> listOf)'.
 
-/incorrectCollections.kt:9:32: error: Null cannot be a value of a non-null type 'uninferred T (of fun <T> mutableListOf)'.
+/incorrectCollections.kt:8:32: error: Null cannot be a value of a non-null type 'uninferred T (of fun <T> mutableListOf)'.
 
-/incorrectCollections.kt:10:27: error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
+/incorrectCollections.kt:9:27: error: Argument type mismatch: actual type is 'Int', but 'String' was expected.
 
-/incorrectCollections.kt:11:34: error: Argument type mismatch: actual type is 'CharSequence', but 'String' was expected.
+/incorrectCollections.kt:10:34: error: Argument type mismatch: actual type is 'CharSequence', but 'String' was expected.
 
-/incorrectCollections.kt:12:29: error: Argument type mismatch: actual type is 'Long', but 'Int' was expected.
+/incorrectCollections.kt:11:29: error: Argument type mismatch: actual type is 'Long', but 'Int' was expected.
 
-/incorrectCollections.kt:12:33: error: Argument type mismatch: actual type is 'Long', but 'Int' was expected.
+/incorrectCollections.kt:11:33: error: Argument type mismatch: actual type is 'Long', but 'Int' was expected.
 
-/incorrectCollections.kt:12:37: error: Argument type mismatch: actual type is 'Long', but 'Int' was expected.
+/incorrectCollections.kt:11:37: error: Argument type mismatch: actual type is 'Long', but 'Int' was expected.
 
-/incorrectCollections.kt:14:34: error: Expected type 'Int' for collection literal does not define operator 'of' and is not a supertype of 'List'.
+/incorrectCollections.kt:13:34: error: Expected type 'Int' for collection literal does not define operator 'of' and is not a supertype of 'List'.
 
-/incorrectCollections.kt:15:24: error: Expected type 'Int' for collection literal does not define operator 'of' and is not a supertype of 'List'.
+/incorrectCollections.kt:14:24: error: Expected type 'Int' for collection literal does not define operator 'of' and is not a supertype of 'List'.
 
-/incorrectCollections.kt:16:25: error: Argument type mismatch: actual type is 'Double', but 'Long' was expected.
+/incorrectCollections.kt:15:25: error: Argument type mismatch: actual type is 'Double', but 'Long' was expected.
 
-/incorrectCollections.kt:17:26: error: Argument type mismatch: actual type is 'Int', but 'Short' was expected.
+/incorrectCollections.kt:16:26: error: Argument type mismatch: actual type is 'Int', but 'Short' was expected.
 
-/incorrectCollections.kt:19:28: error: Argument type mismatch: actual type is 'Unit', but 'Boolean' was expected.
+/incorrectCollections.kt:18:28: error: Argument type mismatch: actual type is 'Unit', but 'Boolean' was expected.
 
-/incorrectCollections.kt:20:26: error: Argument type mismatch: actual type is 'java.lang.Float', but 'kotlin.Float' was expected.
+/incorrectCollections.kt:19:26: error: Argument type mismatch: actual type is 'java.lang.Float', but 'kotlin.Float' was expected.
 
-/incorrectCollections.kt:20:34: warning: This class is not recommended for use in Kotlin. Use 'kotlin.Float' instead.
+/incorrectCollections.kt:19:34: warning: This class is not recommended for use in Kotlin. Use 'kotlin.Float' instead.
 
-/incorrectCollections.kt:21:27: error: Argument type mismatch: actual type is 'Int', but 'Double' was expected.
+/incorrectCollections.kt:20:27: error: Argument type mismatch: actual type is 'Int', but 'Double' was expected.
 
-/incorrectCollections.kt:23:25: error: Argument type mismatch: actual type is 'Int', but 'UInt' was expected.
+/incorrectCollections.kt:22:25: error: Argument type mismatch: actual type is 'Int', but 'UInt' was expected.
 
-/incorrectCollections.kt:24:26: error: Argument type mismatch: actual type is 'Long', but 'ULong' was expected.
+/incorrectCollections.kt:23:26: error: Argument type mismatch: actual type is 'Long', but 'ULong' was expected.
 
-/incorrectCollections.kt:25:27: error: Argument type mismatch: actual type is 'Short', but 'UShort' was expected.
+/incorrectCollections.kt:24:27: error: Argument type mismatch: actual type is 'Short', but 'UShort' was expected.
 
-/incorrectCollections.kt:26:26: error: Argument type mismatch: actual type is '() -> Unit', but 'UByte' was expected.
+/incorrectCollections.kt:25:26: error: Argument type mismatch: actual type is '() -> Unit', but 'UByte' was expected.

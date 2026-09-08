@@ -40,3 +40,23 @@ func swiftSubclassInheritsNonOverriddenKotlinMethod() throws {
     #expect(callWheels(v: v) == 4)
     #expect(callDescribe(v: v) == "fancy")
 }
+
+@Test
+func swiftGrandchildClassMethodDispatch() throws {
+    // Class/vtable analogue of the interface cases in `inherited_swift_adopted_interface`, with no interfaces
+    // involved: a three-level chain with the override in the middle, plus a non-overriding and an overriding
+    // leaf. Also re-checks that a method overridden nowhere in the Swift part (`wheels`) stays reachable from
+    // Kotlin without recursing through the patched vtable slot.
+    class MidVehicle: Vehicle {
+        override func describe() -> String { "mid-vehicle" }
+    }
+    class LeafVehicle: MidVehicle {}
+    class LeafVehicle2: MidVehicle {
+        override func describe() -> String { "leaf-vehicle" }
+    }
+
+    #expect(callDescribe(v: LeafVehicle()) == "mid-vehicle")
+    #expect(callWheels(v: LeafVehicle()) == 4)
+    #expect(LeafVehicle2().describe() == "leaf-vehicle")
+    #expect(callDescribe(v: LeafVehicle2()) == "leaf-vehicle")
+}

@@ -80,7 +80,7 @@ class SimpleTestClassModel(
                 testKClass,
                 isSmokeTest,
                 smokeTestLimit
-            )
+            ).takeUnless { it.isEmpty }
         }.sortedWith(BY_NAME)
     }
 

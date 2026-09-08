@@ -5,7 +5,6 @@ open class A {
     open fun foo(a: String = "a", b: String = "b"): String = a + b
 }
 
-@OptIn(ExperimentalVersionOverloading::class)
 class B : A() {
     override fun foo(a: String, @IntroducedAt("1") b: String): String = a + b
 }

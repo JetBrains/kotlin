@@ -34,7 +34,7 @@ FILE: [ResolvedTo(IMPORTS)] contextParametersInTypes.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] get(): Int
 
     }
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class MyAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final [ResolvedTo(STATUS)] annotation class MyAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyAnnotation] constructor(): R|lib/MyAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }

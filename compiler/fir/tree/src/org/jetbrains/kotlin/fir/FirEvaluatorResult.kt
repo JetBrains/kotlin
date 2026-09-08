@@ -5,25 +5,32 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.AbstractKtSourceElement
+
 sealed class FirEvaluatorResult {
     class Evaluated(val result: FirElement) : FirEvaluatorResult() {
         override fun toString(): String = result.render()
     }
 
-    sealed class NotEvaluated : FirEvaluatorResult()
+    sealed class NotEvaluated(val source: AbstractKtSourceElement?) : FirEvaluatorResult() {
+        override fun toString(): String {
+            return this::class.simpleName!!
+        }
+    }
 
-    sealed class DiagnosticError : NotEvaluated()
-    data object NotConst : DiagnosticError()
-    data object ResolutionError : DiagnosticError()
-    data object EnumNotConst : DiagnosticError()
-    data object NotKClassLiteral : DiagnosticError()
-    data object NotConstValInConstExpression : DiagnosticError()
-    data object KClassLiteralOfTypeParameterError : DiagnosticError()
+    sealed class DiagnosticError(source: AbstractKtSourceElement?) : NotEvaluated(source)
+    class NotConst(source: AbstractKtSourceElement?) : DiagnosticError(source)
+    class ResolutionError(source: AbstractKtSourceElement?) : DiagnosticError(source)
+    class EnumNotConst(source: AbstractKtSourceElement?) : DiagnosticError(source)
+    class NotKClassLiteral(source: AbstractKtSourceElement?) : DiagnosticError(source)
+    class NotConstValInConstExpression(source: AbstractKtSourceElement?) : DiagnosticError(source)
+    class KClassLiteralOfTypeParameterError(source: AbstractKtSourceElement?) : DiagnosticError(source)
+    class ControlFlowNotSupportedError(source: AbstractKtSourceElement?) : DiagnosticError(source)
 
-    sealed class CompileTimeException : NotEvaluated()
-    data object DivisionByZero : CompileTimeException()
-    data object TrimMarginBlankPrefix : CompileTimeException()
-    data object RecursionInInitializer : CompileTimeException()
+    sealed class CompileTimeException(source: AbstractKtSourceElement?) : NotEvaluated(source)
+    class DivisionByZero(source: AbstractKtSourceElement?) : CompileTimeException(source)
+    class TrimMarginBlankPrefix(source: AbstractKtSourceElement?) : CompileTimeException(source)
+    class RecursionInInitializer(source: AbstractKtSourceElement?) : CompileTimeException(source)
 }
 
 inline fun <reified T : FirElement> FirEvaluatorResult.resultOrNull(): T? {

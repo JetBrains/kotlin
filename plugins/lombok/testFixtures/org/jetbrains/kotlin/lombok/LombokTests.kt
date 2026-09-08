@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.lombok
 
 import org.jetbrains.kotlin.lombok.LombokDirectives.ENABLE_LOMBOK
+import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.preprocessors.ConfigCommentTransformerPreprocessor
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
@@ -17,6 +19,11 @@ open class AbstractFirLightTreeBlackBoxCodegenTestForLombok : AbstractFirLightTr
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.enableLombok()
+        builder.configureIrHandlersStep {
+            useHandlers(
+                ::IrPrettyKotlinDumpHandler
+            )
+        }
     }
 }
 

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtLightSourceElement
+import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -35,7 +37,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.toKtLightSourceElement
+import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.util.getChildren
 
 object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
@@ -209,15 +214,22 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
 
     private fun FirFunctionTypeParameter.findSourceForParameterName(): KtSourceElement? {
         val name = this.name ?: return null
-        val treeStructure = source.treeStructure
-        val nodes = source.lighterASTNode.getChildren(treeStructure)
-        val node = nodes.find { it.tokenType == KtTokens.IDENTIFIER && treeStructure.toString(it) == name.identifier } ?: return null
+        if (source is KtLightSourceElement) {
+            val treeStructure = source.treeStructure
+            val nodes = source.lighterASTNode.getChildren(treeStructure)
+            val node = nodes.find { it.tokenType == KtTokens.IDENTIFIER && treeStructure.toString(it) == name.identifier } ?: return null
 
-        return node.toKtLightSourceElement(
-            treeStructure,
-            startOffset = node.startOffset,
-            endOffset = node.endOffset
-        )
+            return node.toKtLightSourceElement(
+                treeStructure,
+                startOffset = node.startOffset,
+                endOffset = node.endOffset
+            )
+        } else {
+            val source = source
+            require(source is KtPsiSourceElement)
+            val psi = source.psi.findDescendantOfType<KtParameter> { it.nameAsName == name } ?: return null
+            return psi.nameIdentifier?.toKtPsiSourceElement()
+        }
     }
 
 

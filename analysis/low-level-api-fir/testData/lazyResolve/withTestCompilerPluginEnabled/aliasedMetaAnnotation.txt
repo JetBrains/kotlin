@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] aliasedMetaAnnotation.kt
         }
 
     }
-    @MyAnno[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class A : R|kotlin/Any| {
+    @R|MyAnno|[CompilerRequiredAnnotations]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -55,7 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] aliasedMetaAnnotation.kt
         }
 
     }
-    @MyAnno[Unresolved]() public final? [ResolvedTo(COMPANION_GENERATION)] class A : R|kotlin/Any| {
+    @R|MyAnno|[CompilerRequiredAnnotations]() public final? [ResolvedTo(COMPANION_GENERATION)] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -71,7 +71,7 @@ FILE: [ResolvedTo(IMPORTS)] aliasedMetaAnnotation.kt
         }
 
     }
-    @MyAnno[Unresolved]() public final? [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+    @R|MyAnno|[CompilerRequiredAnnotations]() public final? [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }

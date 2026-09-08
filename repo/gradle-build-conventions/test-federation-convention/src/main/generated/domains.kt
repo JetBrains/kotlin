@@ -99,7 +99,7 @@ internal object SwiftExportDomainInfo : DomainInfo {
     override val domain = Domain.SwiftExport
     override val include: List<String> = listOf("native/swift", "libraries/tools/analysis-api-based-klib-reader")
     override val exclude: List<String> = listOf()
-    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(AnalysisApiDomainInfo) }
+    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo, AnalysisApiDomainInfo) }
 }
 
 internal object CompilerPluginsDomainInfo : DomainInfo {

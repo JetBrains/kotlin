@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.CoroutineStart.Undispatched
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationExtensionImpl
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.isCalledOutsideKotlinOrAndroidPlugins
@@ -234,6 +235,9 @@ abstract class KotlinJvmProjectExtension @Inject constructor(
 private class KotlinJvmPublishingDsl(private val project: Project) : KotlinPublishing {
     override val adhocSoftwareComponent: AdhocComponentWithVariants
         get() = project.components.getByName("java") as AdhocComponentWithVariants
+
+    override val publicationFormat: Property<KotlinPublicationFormat> = project.objects.property(KotlinPublicationFormat::class.java)
+        .convention(project.kotlinPropertiesProvider.publicationFormat)
 }
 
 @Suppress("unused")
@@ -345,7 +349,7 @@ abstract class KotlinAndroidProjectExtension @Inject constructor(
     }
 
     override var sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
-        @Deprecated("Use source sets provided by Android Gradle Plugin instead.")
+        @Deprecated("Use source sets provided by Android Gradle Plugin instead.", level = DeprecationLevel.ERROR)
         get() {
             /**
              * Android Gradle Plugin calls it for configuration purposes
@@ -360,6 +364,13 @@ abstract class KotlinAndroidProjectExtension @Inject constructor(
         }
         @Deprecated("Assigning new value to 'sourceSets' is deprecated", level = DeprecationLevel.ERROR)
         set(_) {}
+
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated("Use source sets provided by Android Gradle Plugin instead.", level = DeprecationLevel.ERROR)
+    // Workaround for https://github.com/gradle/gradle/issues/37652.
+    fun sourceSets(configure: NamedDomainObjectContainer<KotlinSourceSet>.() -> Unit) {
+        configure(sourceSets)
+    }
 }
 
 enum class NativeCacheKind(val produce: String?, val outputKind: CompilerOutputKind?) {

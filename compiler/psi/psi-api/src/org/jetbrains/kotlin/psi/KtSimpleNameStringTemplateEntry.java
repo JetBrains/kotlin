@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub;
 
 /**
@@ -19,13 +20,16 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub;
  * //              ^___^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtSimpleNameStringTemplateEntry extends KtStringTemplateEntryWithExpression {
+    @KtImplementationDetail
     public KtSimpleNameStringTemplateEntry(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtSimpleNameStringTemplateEntry(@NotNull KotlinPlaceHolderWithTextStub<KtSimpleNameStringTemplateEntry> stub) {
-        super(stub, KtStubBasedElementTypes.SHORT_STRING_TEMPLATE_ENTRY);
+        super(stub, KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY);
     }
 
     @Override

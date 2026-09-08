@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.java.structure.impl
 
 import com.intellij.psi.PsiPackage
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.load.java.JavaAnnotationProvider
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementPsiSource
@@ -31,6 +32,7 @@ class JavaPackageImpl(
     private val annotationsProvider: JavaAnnotationProvider?,
 ) : JavaElementImpl<PsiPackage>(psiPackageSource), JavaPackage, MapBasedJavaAnnotationOwner {
 
+    @K1Deprecation
     override fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass> {
         val psiClasses = psi.getClasses(scope).filter {
             val name = it.name
@@ -39,6 +41,7 @@ class JavaPackageImpl(
         return classes(psiClasses, sourceFactory)
     }
 
+    @K1Deprecation
     override val subPackages: Collection<JavaPackage>
         get() = packages(psi.getSubPackages(scope), scope, sourceFactory, annotationsProvider)
 

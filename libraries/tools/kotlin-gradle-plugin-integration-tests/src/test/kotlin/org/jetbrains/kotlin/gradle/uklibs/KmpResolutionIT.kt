@@ -1359,7 +1359,7 @@ class KmpResolutionIT : KGPBaseTest() {
             js()
             jvm()
             iosArm64()
-            @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+            @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
             iosX64()
             linuxArm64()
             linuxX64()
@@ -1370,7 +1370,11 @@ class KmpResolutionIT : KGPBaseTest() {
         }
 
 
-        val transitiveProducer = project("empty", gradleVersion) {
+        val transitiveProducer = project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+        ) {
             settingsBuildScriptInjection {
                 settings.rootProject.name = "transitive"
             }
@@ -1400,7 +1404,11 @@ class KmpResolutionIT : KGPBaseTest() {
             }
         }.publish(publisherConfiguration = PublisherConfiguration(group = "foo"))
 
-        return project("empty", gradleVersion) {
+        return project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+        ) {
             settingsBuildScriptInjection {
                 settings.rootProject.name = "consumer"
             }

@@ -63,6 +63,6 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ExplicitBackingFieldKt]]
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Number]
     BACKING_FIELD[hasInitializer=false]
-  FUN[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
+  FUNCTION[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
   PROPERTY[fqName=minimalNumber, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=minimalNumber]
     BACKING_FIELD[hasInitializer=false]

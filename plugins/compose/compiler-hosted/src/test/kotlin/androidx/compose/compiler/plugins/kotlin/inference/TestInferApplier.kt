@@ -162,10 +162,10 @@ class TestInferApplier {
         expect("useIdentity", "[Open(0), [Open(0)]]")
         expect("useRun", "[UI, [UI]]")
         expect("useVarAndIdentity", "[UI, [UI], [Vector]]")
-        expect("WX", "[Open(_, allowedTokens = {w, x})]")
-        expect("CallWX/0", "[Open(_, allowedTokens = {w, x})]")
-        expect("CallWX/1", "[Open(_, allowedTokens = {w, x}), [Open(_, allowedTokens = {y, z})]]")
-        expect("CallContent", "[Open(0, allowedTokens = {w, x}), [Open(0, allowedTokens = {w, x})]: [Open(_, allowedTokens = {y, z})]]")
+        expect("WX", "[Open(_, constrainedTo = {w, x})]")
+        expect("CallWX/0", "[Open(_, constrainedTo = {w, x})]")
+        expect("CallWX/1", "[Open(_, constrainedTo = {w, x}), [Open(_, constrainedTo = {y, z})]]")
+        expect("CallContent", "[Open(0, constrainedTo = {w, x}), [Open(0, constrainedTo = {w, x})]: [Open(_, constrainedTo = {y, z})]]")
 
         assertEquals(expectations.joinToString("\n"), results.joinToString("\n"))
     }

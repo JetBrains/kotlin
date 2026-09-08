@@ -27,12 +27,13 @@ Smart Casts:
     FirLocalPropertySymbol lvar x: R|kotlin/Int?|
     Stability: STABLE_VALUE
     Types:
+        kotlin.Int?
         kotlin.Any
 
 FILE: [ResolvedTo(IMPORTS)] nestedSink.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
         [ResolvedTo(BODY_RESOLVE)] lvar x: R|kotlin/Int?| = Int(42)
-        R|<local>/x| = <Unresolved name: getNullableInt>#()
+        R|<local>/x| = R|/getNullableInt|()
         R|/run|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             when () {
                 !=(R|<local>/x|, Null(null)) ->  {
@@ -43,4 +44,5 @@ FILE: [ResolvedTo(IMPORTS)] nestedSink.kt
         }
         )
     }
+    public final [ResolvedTo(STATUS)] fun getNullableInt(): R|kotlin/Int?| { LAZY_BLOCK }
     public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] R> run([ResolvedTo(STATUS)] block: R|() -> R|): R|kotlin/Unit| { LAZY_BLOCK }

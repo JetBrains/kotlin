@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.konan.util.DependencyDirectories
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     id("native-dependencies-downloader")
     id("native-dependencies")
@@ -42,11 +41,22 @@ val llvmDevBinaryData = configurations.create("llvmDevBinaryData") {
     isCanBeResolved = false
 }
 
+val hostXcode = configurations.create("hostXcode") {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+}
+
 artifacts {
     val llvmHome = nativeDependencies.hostPlatform.llvmHome!!
     val llvmDir = file("${nativeDependencies.nativeDependenciesRoot}/$llvmHome")
     add(llvmDevBinaryData.name, llvmDir) {
         type = "directory"
         builtBy(nativeDependencies.targetDependency())
+    }
+    nativeDependenciesDownloader.hostXcodeApp?.let { xcodeApp ->
+        add(hostXcode.name, xcodeApp) {
+            type = "directory"
+            builtBy(nativeDependencies.targetDependency())
+        }
     }
 }

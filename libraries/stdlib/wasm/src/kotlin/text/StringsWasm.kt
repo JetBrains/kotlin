@@ -545,12 +545,13 @@ public actual fun String.endsWith(suffix: String, ignoreCase: Boolean = false): 
  * @param otherOffset the start offset in the other char sequence of the substring to compare.
  * @param length the length of the substring to compare.
  */
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharSequence.regionMatches(
     thisOffset: Int,
     other: CharSequence,
     otherOffset: Int,
     length: Int,
-    ignoreCase: Boolean
+    ignoreCase: Boolean = false
 ): Boolean = regionMatchesImpl(thisOffset, other, otherOffset, length, ignoreCase)
 
 /**

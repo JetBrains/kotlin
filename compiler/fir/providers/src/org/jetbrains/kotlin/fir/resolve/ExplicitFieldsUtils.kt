@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.references.FirPropertyWithExplicitBackingFieldResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 private fun FirPropertySymbol.isEffectivelyFinal(session: FirSession): Boolean {
@@ -23,7 +23,7 @@ private fun FirPropertySymbol.isEffectivelyFinal(session: FirSession): Boolean {
 }
 
 fun FirPropertySymbol.tryAccessExplicitFieldSymbol(
-    closestPublicApiInlineFunction: FirFunction?,
+    closestPublicApiInlineFunction: FirFunctionSymbol<*>?,
     session: FirSession,
     hasVisibleBackingField: Boolean,
 ): FirBackingFieldSymbol? =
@@ -34,7 +34,7 @@ fun FirPropertySymbol.tryAccessExplicitFieldSymbol(
     }
 
 fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.tryAccessExplicitFieldSymbol(
-    closestInlineFunction: FirFunction?,
+    closestInlineFunction: FirFunctionSymbol<*>?,
     session: FirSession,
 ): FirBackingFieldSymbol? =
     (resolvedSymbol as? FirPropertySymbol)?.tryAccessExplicitFieldSymbol(closestInlineFunction, session, hasVisibleBackingField)

@@ -9,7 +9,7 @@ repositories {
 }
 
 kotlin {
-    jvm { withJava() }
+    jvm { }
     val testCompilation = jvm().compilations.getByName("test")
     testCompilation.associateWith(jvm().compilations.getByName("testFixtures"))
 

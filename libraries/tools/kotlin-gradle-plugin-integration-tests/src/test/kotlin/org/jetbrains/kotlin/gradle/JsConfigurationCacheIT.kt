@@ -51,7 +51,6 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
     }
 
     @DisplayName("configuration cache is reused when idea.version system property is changed in browser project")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
     fun testBrowserDistributionOnIdeaPropertyChange(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
@@ -90,7 +89,6 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
     }
 
     @DisplayName("configuration cache is reused when idea.version system property is changed in node project")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
     fun testNodeJsOnIdeaPropertyChange(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {
@@ -150,15 +148,9 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
         project("kotlin-js-nodejs-project", gradleVersion) {
             build("jsNodeDevelopmentRun", buildOptions = buildOptions) {
                 assertTasksExecuted(":jsNodeDevelopmentRun")
-                if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5)) {
-                    assertOutputContains(
-                        "Calculating task graph as no configuration cache is available for tasks: jsNodeDevelopmentRun"
-                    )
-                } else {
-                    assertOutputContains(
-                        "Calculating task graph as no cached configuration is available for tasks: jsNodeDevelopmentRun"
-                    )
-                }
+                assertOutputContains(
+                    "Calculating task graph as no cached configuration is available for tasks: jsNodeDevelopmentRun"
+                )
 
                 assertConfigurationCacheStored()
             }

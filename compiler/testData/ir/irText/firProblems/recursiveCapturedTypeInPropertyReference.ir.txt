@@ -30,7 +30,13 @@ FILE fqName:<root> fileName:/recursiveCapturedTypeInPropertyReference.kt
             ARG <this>: CALL 'public final fun filterIsInstance <R> (<this>: kotlin.collections.Iterable<*>): kotlin.collections.List<@[NoInfer] R of kotlin.collections.filterIsInstance> declared in kotlin.collections' type=kotlin.collections.List<@[NoInfer] <root>.Recursive<*>> origin=null
               TYPE_ARG R: <root>.Recursive<*>
               ARG <this>: GET_VAR 'list: kotlin.collections.List<kotlin.Any> declared in <root>.AbstractSymbol.foo' type=kotlin.collections.List<kotlin.Any> origin=null
-            ARG transform: PROPERTY_REFERENCE 'public abstract symbol: <root>.AbstractSymbol<R of <root>.Recursive> declared in <root>.Recursive' field=null getter='public abstract fun <get-symbol> (): <root>.AbstractSymbol<R of <root>.Recursive> declared in <root>.Recursive' setter=null type=kotlin.reflect.KProperty1<<root>.Recursive<*>, <root>.AbstractSymbol<out kotlin.Any>> origin=null
+            ARG transform: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<<root>.Recursive<*>, <root>.AbstractSymbol<out kotlin.Any>> origin=null reflectionTarget='public abstract symbol: <root>.AbstractSymbol<R of <root>.Recursive> declared in <root>.Recursive'
+              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:symbol visibility:local modality:FINAL returnType:<root>.AbstractSymbol<out kotlin.Any>
+                VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Recursive<*>
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun symbol (p0: <root>.Recursive<*>): <root>.AbstractSymbol<out kotlin.Any> declared in <root>.AbstractSymbol.foo'
+                    CALL 'public abstract fun <get-symbol> (): <root>.AbstractSymbol<R of <root>.Recursive> declared in <root>.Recursive' type=<root>.AbstractSymbol<out kotlin.Any> origin=null
+                      ARG <this>: GET_VAR 'p0: <root>.Recursive<*> declared in <root>.AbstractSymbol.foo.symbol' type=<root>.Recursive<*> origin=null
   CLASS INTERFACE name:Recursive modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Recursive<R of <root>.Recursive>
     TYPE_PARAMETER name:R index:0 variance: superTypes:[<root>.Recursive<R of <root>.Recursive>; <root>.Something] reified:false

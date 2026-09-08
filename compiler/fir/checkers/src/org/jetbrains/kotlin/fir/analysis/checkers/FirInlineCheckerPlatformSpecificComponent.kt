@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.utils.SmartSet
 
 abstract class FirInlineCheckerPlatformSpecificComponent : FirComposableSessionComponent<FirInlineCheckerPlatformSpecificComponent> {
@@ -54,7 +53,6 @@ abstract class FirInlineCheckerPlatformSpecificComponent : FirComposableSessionC
 
             (symbol as? FirNamedFunctionSymbol)?.processOverriddenFunctionsSafe {
                 checkDefaultParamsRecursive(it)
-                ProcessorAction.NEXT
             }
         }
 

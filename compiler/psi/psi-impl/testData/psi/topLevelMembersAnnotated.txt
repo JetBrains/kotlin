@@ -111,7 +111,7 @@ KtFile: topLevelMembersAnnotated.kt
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('0')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')

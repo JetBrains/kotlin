@@ -40,8 +40,8 @@ internal abstract class KotlinAndroidTargetPreset @Inject constructor(
         } else {
             project.checkIfNewDslIsUsed(isKmpProject = true)
             project.reportKotlinAndroidDeprecation(
-                KotlinToolingDiagnostics.NonKmpAgpIsDeprecated(androidPluginId)
-            )
+                KotlinToolingDiagnostics.NonKmpAgpIsDeprecated,
+            ) { alreadyOnAgp9 -> invoke(androidPluginId, alreadyOnAgp9) }
         }
 
         return project.objects.KotlinAndroidTarget(project, name, true).apply {

@@ -2,14 +2,12 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     alias(libs.plugins.gradle.node)
     id("java-test-fixtures")
     id("d8-configuration")
     id("nodejs-configuration")
-    id("project-tests-convention")
     id("test-inputs-check")
 }
 

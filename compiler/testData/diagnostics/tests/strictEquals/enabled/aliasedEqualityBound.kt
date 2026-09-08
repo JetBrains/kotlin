@@ -14,7 +14,7 @@ class Foo {
 import kotlin.EqualityBound as MyEqualityBound
 
 class Bar {
-    override fun equals(@MyEqualityBound(<!UNRESOLVED_EQUALITY_BOUND_ARGUMENT!>Bar<!>::class) other: Any?): Boolean = true
+    override fun equals(@MyEqualityBound(Bar::class) other: Any?): Boolean = true
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, nullableType, operator, override,

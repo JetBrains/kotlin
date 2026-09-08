@@ -43,6 +43,9 @@ import kotlin.test.fail
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
+private const val defaultGradleDaemonMemoryLimitInMb = 2048
+private const val defaultKotlinDaemonMemoryLimitInMb = 512
+
 /**
  * Create a new test project.
  *
@@ -63,8 +66,8 @@ fun KGPBaseTest.project(
     enableOfflineMode: Boolean = false,
     addHeapDumpOptions: Boolean = true,
     enableGradleDebug: EnableGradleDebug = EnableGradleDebug.AUTO,
-    enableGradleDaemonMemoryLimitInMb: Int? = 512,
-    enableKotlinDaemonMemoryLimitInMb: Int? = 256,
+    enableGradleDaemonMemoryLimitInMb: Int? = defaultGradleDaemonMemoryLimitInMb,
+    enableKotlinDaemonMemoryLimitInMb: Int? = defaultKotlinDaemonMemoryLimitInMb,
     kotlinDaemonIdleTimeout: Duration? = 1.minutes,
     projectPathAdditionalSuffix: String = "",
     buildJdk: File? = null,
@@ -80,10 +83,8 @@ fun KGPBaseTest.project(
         projectPathAdditionalSuffix,
     )
     projectPath.addDefaultSettingsToSettingsGradle(
-        gradleVersion,
         dependencyManagement,
         localRepoDir,
-        buildOptions.isolatedProjects.toBooleanFlag(gradleVersion)
     )
     projectPath.enableCacheRedirector()
     projectPath.enableAndroidSdk()
@@ -147,8 +148,8 @@ fun KGPBaseTest.nativeProject(
     dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
     addHeapDumpOptions: Boolean = true,
     enableGradleDebug: EnableGradleDebug = EnableGradleDebug.AUTO,
-    enableGradleDaemonMemoryLimitInMb: Int? = 512,
-    enableKotlinDaemonMemoryLimitInMb: Int? = 256,
+    enableGradleDaemonMemoryLimitInMb: Int? = defaultGradleDaemonMemoryLimitInMb,
+    enableKotlinDaemonMemoryLimitInMb: Int? = defaultKotlinDaemonMemoryLimitInMb,
     kotlinDaemonIdleTimeout: Duration? = 1.minutes,
     projectPathAdditionalSuffix: String = "",
     buildJdk: File? = null,
@@ -649,7 +650,7 @@ class TestProject(
         val otherProjectPath = "$pathPrefix/$otherProjectName".testProjectPath
         otherProjectPath.copyRecursively(projectPath.resolve(newProjectName))
 
-        projectPath.resolve(newProjectName).addDefaultSettingsToSettingsGradle(gradleVersion)
+        projectPath.resolve(newProjectName).addDefaultSettingsToSettingsGradle()
 
         if (settingsGradle.exists()) {
             settingsGradle.append(
@@ -696,12 +697,14 @@ private fun commonBuildSetup(
     kotlinDaemonDebugPort: Int? = null,
 ): List<String> {
     val gradleJvmOptions = collectGradleJvmOptions(
-        enableGradleDaemonMemoryLimitInMb,
+        buildOptions.gradleDaemonMemoryLimitInMb ?: enableGradleDaemonMemoryLimitInMb,
         buildOptions.fileLeaksReportFile,
         connectSubprocessVMToDebugger,
         addHeapDumpOptions,
     )
-    val kotlinDaemonJvmArgs = collectKotlinJvmArgs(enableKotlinDaemonMemoryLimitInMb, kotlinDaemonDebugPort)
+    val kotlinDaemonJvmArgs = collectKotlinJvmArgs(
+        buildOptions.kotlinDaemonMemoryLimitInMb ?: enableKotlinDaemonMemoryLimitInMb, kotlinDaemonDebugPort
+    )
 
     /**
      * Encloses each argument into double quotes to properly handle values with whitespaces based on [enclose] value
@@ -773,6 +776,7 @@ private fun collectGradleJvmOptions(
     }
     // Limiting Gradle daemon heap size to reduce memory pressure on CI agents
     if (enableGradleDaemonMemoryLimitInMb != null) {
+        add("-XX:+UseG1GC")
         add("-Xmx${enableGradleDaemonMemoryLimitInMb}m")
         addAll(heapShrinkingJvmOptions)
     }
@@ -788,6 +792,25 @@ private fun collectGradleJvmOptions(
     if (addHeapDumpOptions) {
         addAll(heapDumpJvmOptions())
     }
+
+    addJacocoRuntimeIfEnabled()
+}
+
+private fun MutableList<String>.addJacocoRuntimeIfEnabled() {
+    val testCoverageEnabled = System.getProperty("kgp.jacoco.enabled").toBoolean()
+    if (!testCoverageEnabled) return
+
+    val jacocoRuntimeJar = System.getProperty("jacocoRuntimeJar") ?: return
+    val jacocoDestFile = System.getProperty("jacocoDestFile") ?: return
+
+    // Offline instrumentation: probes are already embedded in bytecode.
+    // Add JaCoCo runtime to boot classpath so probes can reach it from any classloader.
+    add("-Xbootclasspath/a:$jacocoRuntimeJar")
+    // configure jacoco output instead of default task name files
+    add("-Djacoco-agent.destfile=${jacocoDestFile}")
+    // explicitly configure file strategy, it matches the defaults
+    add("-Djacoco-agent.append=true")
+    add("-Djacoco-agent.output=file")
 }
 
 private fun collectKotlinJvmArgs(
@@ -880,26 +903,16 @@ private fun setupProjectFromTestResources(
 private val String.testProjectPath: Path get() = Paths.get("src", "test", "resources", "testProject", this)
 
 internal fun Path.addDefaultSettingsToSettingsGradle(
-    gradleVersion: GradleVersion,
     dependencyManagement: DependencyManagement = DependencyManagement.DefaultDependencyManagement(),
     localRepo: Path? = null,
-    projectIsolationEnabled: Boolean = false,
 ) {
     addPluginManagementToSettings()
     when (dependencyManagement) {
         is DependencyManagement.DefaultDependencyManagement -> {
-            // we cannot switch to dependencyManagement before Gradle 8.1 because of KT-65708
-            if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_1) && !projectIsolationEnabled) {
-                addDependencyRepositoriesToBuildScript(
-                    additionalDependencyRepositories = dependencyManagement.additionalRepos,
-                    localRepo = localRepo
-                )
-            } else {
-                addDependencyManagementToSettings(
-                    additionalDependencyRepositories = dependencyManagement.additionalRepos,
-                    localRepo = localRepo
-                )
-            }
+            addDependencyManagementToSettings(
+                additionalDependencyRepositories = dependencyManagement.additionalRepos,
+                localRepo = localRepo
+            )
         }
         is DependencyManagement.DisabledDependencyManagement -> {}
     }

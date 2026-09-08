@@ -24,13 +24,14 @@ import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 import org.gradle.plugin.use.PluginId
 import org.gradle.plugins.signing.SigningExtension
-import org.gradle.util.GradleVersion
+import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.ExportExtension
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
@@ -86,17 +87,10 @@ class OnBuildCompletionSerializingInjection<Return : Any>(
                 ObjectOutputStream(it).writeObject(returnValue)
             }
         }
-        if (GradleVersion.current() < GradleVersion.version("8.1")) {
-            @Suppress("DEPRECATION")
-            target.gradle.buildFinished {
-                serializeOutput()
-            }
-        } else {
-            target.serviceOf<FlowScope>().always(
-                ExecuteOnBuildFinish::class.java
-            ) {
-                it.parameters.onBuildFinish.set(serializeOutput)
-            }
+        target.serviceOf<FlowScope>().always(
+            ExecuteOnBuildFinish::class.java
+        ) {
+            it.parameters.onBuildFinish.set(serializeOutput)
         }
     }
 }
@@ -145,18 +139,10 @@ class FindMatchingBuildFailureInjection<ExpectedException : Exception>(
             }
         }
 
-        // Catch the errors caused directly by the build failure
-        if (GradleVersion.current() < GradleVersion.version("8.1")) {
-            @Suppress("DEPRECATION")
-            target.gradle.buildFinished {
-                serializeOutput(it.failure)
-            }
-        } else {
-            val result = target.serviceOf<FlowProviders>().buildWorkResult
-            target.serviceOf<FlowScope>().always(CatchBuildFailure::class.java) {
-                it.parameters.onBuildFinish.set(serializeOutput)
-                it.parameters.buildWorkResult.set(result)
-            }
+        val result = target.serviceOf<FlowProviders>().buildWorkResult
+        target.serviceOf<FlowScope>().always(CatchBuildFailure::class.java) {
+            it.parameters.onBuildFinish.set(serializeOutput)
+            it.parameters.buildWorkResult.set(result)
         }
     }
 
@@ -278,7 +264,8 @@ class GradleProjectBuildScriptInjectionContext(
     val kotlinMultiplatform get() = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
     val kotlinJvm get() = project.extensions.getByName("kotlin") as KotlinJvmProjectExtension
     val cocoapods get() = kotlinMultiplatform.extensions.getByName("cocoapods") as CocoapodsExtension
-    val swiftExport get() = kotlinMultiplatform.extensions.getByName("swiftExport") as SwiftExportExtension
+    val swiftExport get() = kotlinMultiplatform.swiftExport
+    val export get() = kotlinMultiplatform.extensions.getByName("export") as ExportExtension
     val swiftImport get() = kotlinMultiplatform.extensions.getByName(SwiftPMImportExtension.EXTENSION_NAME) as SwiftPMImportExtension
     val androidLibrary get() = project.extensions.getByName("android") as LibraryExtension
     val androidApp get() = project.extensions.getByName("android") as AppExtension
@@ -314,26 +301,17 @@ class ReturnFromBuildScriptAfterExecution<T>(
     fun buildAndReturn(
         vararg buildArguments: String = arrayOf(defaultEvaluationTask),
         executingProject: TestProject = returnContainingGradleProject,
-        /**
-         * FIXME: With enabled CC and "configuration-cache.problems=fail" if build fails due to CC serialization, Gradle will not report an
-         * error in the FlowScope and it will not be caught in [catchBuildFailures]. With "configuration-cache.problems=warn" Gradle
-         * always forces CC deserialization before task execution and will therefore produce a catchable build failure, but only if the
-         * violating task actually executes
-         */
-        configurationCache: BuildOptions.ConfigurationCacheValue = BuildOptions.ConfigurationCacheValue.AUTO,
-        configurationCacheProblems: BuildOptions.ConfigurationCacheProblems = BuildOptions.ConfigurationCacheProblems.FAIL,
         deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
         buildAction: BuildAction = defaultBuildAction,
+        buildAssertions: BuildResult.() -> Unit = {},
     ): T {
         executingProject.buildAction(
             arrayOf(
                 *buildArguments,
                 "-P${injectionLoadProperty}=true",
             ),
-            executingProject.deriveBuildOptions().copy(
-                configurationCache = configurationCache,
-                configurationCacheProblems = configurationCacheProblems,
-            )
+            executingProject.deriveBuildOptions(),
+            buildAssertions
         )
         ObjectInputStream(serializedReturnPath.inputStream()).use {
             @Suppress("UNCHECKED_CAST")
@@ -548,7 +526,7 @@ fun TestProject.addEcosystemPluginToBuildScriptCompilationClasspath() {
 }
 
 fun GradleProject.addEcosystemPluginToBuildScriptCompilationClasspath(
-    kotlinVersion: String
+    kotlinVersion: String,
 ) {
     settingsBuildScriptBuildscriptBlockInjection {
         settings.buildscript.configurations.getByName("classpath").dependencies.add(

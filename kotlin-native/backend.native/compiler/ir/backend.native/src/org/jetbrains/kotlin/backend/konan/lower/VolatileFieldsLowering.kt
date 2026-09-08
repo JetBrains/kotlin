@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
@@ -39,7 +38,7 @@ enum class AtomicFunctionType {
 private var IrField.atomicFunction: MutableMap<AtomicFunctionType, IrSimpleFunction>? by irAttribute(copyByDefault = false)
 internal var IrSimpleFunction.volatileField: IrField? by irAttribute(copyByDefault = false)
 
-internal class VolatileFieldsLowering(val context: NativeBackendContext) : FileLoweringPass {
+internal class VolatileFieldsLowering(val context: NativeLoweringContext) : FileLoweringPass {
     private val symbols = context.symbols
     private val irBuiltins = context.irBuiltIns
     private fun IrBuilderWithScope.irByteToBool(expression: IrExpression) = irCall(symbols.areEqualByValue[PrimitiveBinaryType.BYTE]!!).apply {
@@ -66,9 +65,10 @@ internal class VolatileFieldsLowering(val context: NativeBackendContext) : FileL
         require(scope != null)
         require(scope is IrClass || scope is IrFile)
         parent = scope
-        if (scope is IrClass) {
+        val receiverParameter = property.getter?.dispatchReceiverParameter
+        if (receiverParameter != null) {
             parameters += buildReceiverParameter {
-                type = scope.defaultType
+                type = receiverParameter.type
                 startOffset = irField.startOffset
                 endOffset = irField.endOffset
             }

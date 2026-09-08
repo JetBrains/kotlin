@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.konan.NativeBackendContext
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -38,7 +38,8 @@ internal val BackendNativeSymbols.mutablePropertiesConstructors
             listOf(kMutableProperty0Impl, kMutableProperty1Impl, kMutableProperty2Impl)
     )
 
-internal class PropertyReferenceLowering(generationState: NativeGenerationState) : AbstractPropertyReferenceLowering<NativeBackendContext>(generationState.context) {
+@PhasePrerequisites(VolatileFieldsLowering::class, DelegatedPropertyOptimizationLowering::class)
+internal class PropertyReferenceLowering(context: NativeLoweringContext) : AbstractPropertyReferenceLowering<NativeLoweringContext>(context) {
     private val symbols = context.symbols
     private val immutableSymbols = symbols.immutablePropertiesConstructors
     private val mutableSymbols = symbols.mutablePropertiesConstructors

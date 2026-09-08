@@ -20,5 +20,6 @@ internal object StandardKTypes {
     val UNIT_RETURN_TYPE: KType = SimpleKType(
         Unit::class, arguments = emptyList(), isMarkedNullable = false, lazyAnnotations = lazyOf(emptyList()), abbreviation = null,
         isDefinitelyNotNullType = false, isNothingType = false, isSuspendFunctionType = false, mutableCollectionClass = null,
-    ) { Void.TYPE }
+        computeJavaType = lazyOf(Void.TYPE),
+    )
 }

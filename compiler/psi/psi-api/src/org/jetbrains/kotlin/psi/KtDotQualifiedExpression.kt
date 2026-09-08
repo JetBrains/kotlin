@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.utils.exceptions.logErrorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 /**
- * Represents a dot-qualified expression for member/extention access.
+ * Represents a dot-qualified expression for member/extension access.
  *
  * ### Example:
  *
@@ -22,10 +22,13 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
  * //        ^________^
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtDotQualifiedExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtDotQualifiedExpression>>, KtQualifiedExpression {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
 
-    constructor(stub: KotlinPlaceHolderStub<KtDotQualifiedExpression>) : super(stub, KtStubBasedElementTypes.DOT_QUALIFIED_EXPRESSION)
+    @KtImplementationDetail
+    constructor(stub: KotlinPlaceHolderStub<KtDotQualifiedExpression>) : super(stub, KtNodeTypes.DOT_QUALIFIED_EXPRESSION)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitDotQualifiedExpression(this, data)

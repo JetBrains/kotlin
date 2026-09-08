@@ -19,7 +19,7 @@ class LazyTest {
         assertEquals(1, callCount)
         assertTrue(lazyInt.isInitialized())
 
-        lazyInt.value
+        assertEquals(1, lazyInt.value)
         assertEquals(1, callCount)
     }
 

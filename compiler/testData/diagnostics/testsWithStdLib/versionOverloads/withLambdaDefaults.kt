@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
-@file:OptIn(ExperimentalVersionOverloading::class)
 
 fun inTrailing(
     x: String,

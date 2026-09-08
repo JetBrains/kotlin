@@ -39,16 +39,19 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
             "kotlinxSerializationK2AgainstK1",
             gradleVersion,
             buildOptions = defaultBuildOptions.suppressDeprecationWarningsSinceGradleVersion(
-                TestVersions.Gradle.G_9_0,
+                TestVersions.Gradle.G_8_14,
                 gradleVersion,
-                "KGP 1.9.25 produces deprecation warning in Gradle 9.x releases"
+                "KGP 1.9.25 produces deprecation warning"
             ).run {
                 if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_9_0)) {
-                    copy(configurationCache = ConfigurationCacheValue.DISABLED)
+                    copy(
+                        configurationCache = ConfigurationCacheValue.DISABLED,
+                        isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED
+                    )
                 } else this
             }
         ) {
-            projectPath.resolve("lib").addDefaultSettingsToSettingsGradle(gradleVersion)
+            projectPath.resolve("lib").addDefaultSettingsToSettingsGradle()
             subprojects("app", "lib").buildScriptInjection {
                 project.plugins.apply("org.jetbrains.kotlin.plugin.serialization")
                 dependencies.add("implementation", "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
@@ -68,12 +71,15 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             localRepoDir = tempDir,
             buildOptions = defaultBuildOptions.suppressDeprecationWarningsSinceGradleVersion(
-                TestVersions.Gradle.G_8_7,
+                TestVersions.Gradle.G_8_14,
                 gradleVersion,
                 "KGP 1.7.20 produces deprecation warning in Gradle 8.7"
             )
                 // KGP 1.7.20 is not compatible with configuration cache in Gradle 8
-                .copy(configurationCache = ConfigurationCacheValue.DISABLED)
+                .copy(
+                    configurationCache = ConfigurationCacheValue.DISABLED,
+                    isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED
+                )
         ) {
             build(":publish") {
                 assertTasksExecuted(":publish")

@@ -59,7 +59,7 @@ KtWhenExpression(103,153): 'when (b) {'
   null
 
 KtNameReferenceExpression(109,110): 'b'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -91,7 +91,7 @@ KtNameReferenceExpression(125,130): 'Child'
   null
 
 KtDotQualifiedExpression(134,147): '"".hashCode()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -114,7 +114,7 @@ KtStringTemplateExpression(134,136): '""'
   null
 
 KtCallExpression(137,147): 'hashCode()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -134,7 +134,7 @@ KtCallExpression(137,147): 'hashCode()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(137,145): 'hashCode'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

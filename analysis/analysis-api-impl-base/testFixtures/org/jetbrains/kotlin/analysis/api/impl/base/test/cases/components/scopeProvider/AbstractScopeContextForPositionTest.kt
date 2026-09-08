@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractScopeContextForPositionTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val element = testServices.expressionMarkerProvider.getTopmostSelectedElementOfType<KtElement>(mainFile)
+        val element = testServices.expressionMarkerProvider.getBottommostSelectedElementOfType<KtElement>(mainFile)
 
         copyAwareAnalyzeForTest(element) { contextElement ->
             val scopeContext = mainFile.scopeContext(contextElement)

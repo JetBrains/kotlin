@@ -3,7 +3,7 @@ KtFile: LineCommentForFirstDeclaration.kt
     <empty list>
   IMPORT_LIST
     <empty list>
-  FUN
+  FUNCTION
     PsiComment(EOL_COMMENT)('// This is foo')
     PsiWhiteSpace('\n')
     PsiElement(fun)('fun')

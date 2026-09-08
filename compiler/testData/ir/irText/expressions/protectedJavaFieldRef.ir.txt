@@ -9,8 +9,22 @@ FILE fqName:<root> fileName:/protectedJavaFieldRef.kt
     PROPERTY name:ref visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:ref type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final]
         EXPRESSION_BODY
-          PROPERTY_REFERENCE 'protected/*protected and package*/ final j declared in <root>.Derived' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in <root>.Derived' getter=null setter=null type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
-            ARG 1: GET_VAR '<this>: <root>.Derived declared in <root>.Derived' type=<root>.Derived origin=IMPLICIT_ARGUMENT
+          RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null reflectionTarget='protected/*protected and package*/ final j declared in <root>.Derived'
+            bound receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived' type=<root>.Derived origin=IMPLICIT_ARGUMENT
+            getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:j visibility:local modality:FINAL returnType:@[FlexibleNullability] kotlin.String?
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Derived
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun j (receiver: <root>.Derived): @[FlexibleNullability] kotlin.String? declared in <root>.Derived.ref'
+                  GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in <root>.Derived' type=@[FlexibleNullability] kotlin.String? origin=null
+                    receiver: GET_VAR 'receiver: <root>.Derived declared in <root>.Derived.ref.j' type=<root>.Derived origin=null
+            setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:j visibility:local modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Derived
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:@[FlexibleNullability] kotlin.String?
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun j (receiver: <root>.Derived, value: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Derived.ref'
+                  SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:j type:@[FlexibleNullability] kotlin.String? visibility:protected/*protected and package*/ declared in <root>.Derived' type=kotlin.Unit origin=null
+                    receiver: GET_VAR 'receiver: <root>.Derived declared in <root>.Derived.ref.j' type=<root>.Derived origin=null
+                    value: GET_VAR 'value: @[FlexibleNullability] kotlin.String? declared in <root>.Derived.ref.j' type=@[FlexibleNullability] kotlin.String? origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ref> visibility:public modality:FINAL returnType:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?>
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Derived
         correspondingProperty: PROPERTY name:ref visibility:public modality:FINAL [val]

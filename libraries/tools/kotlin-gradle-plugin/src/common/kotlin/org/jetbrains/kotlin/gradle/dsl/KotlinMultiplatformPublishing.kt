@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.gradle.dsl
 import org.gradle.api.Project
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.component.SoftwareComponentFactory
+import org.gradle.api.provider.Property
+import org.jetbrains.kotlin.gradle.plugin.KotlinPublicationFormat
 import org.jetbrains.kotlin.gradle.plugin.KotlinPublishing
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import javax.inject.Inject
 
 internal abstract class KotlinMultiplatformPublishing @Inject constructor(
@@ -20,4 +23,7 @@ internal abstract class KotlinMultiplatformPublishing @Inject constructor(
             .adhoc("adhocKotlin")
             .also { project.components.add(it) }
     }
+
+    override val publicationFormat: Property<KotlinPublicationFormat> = project.objects.property(KotlinPublicationFormat::class.java)
+        .convention(project.kotlinPropertiesProvider.publicationFormat)
 }

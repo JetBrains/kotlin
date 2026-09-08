@@ -251,3 +251,37 @@ public func unnamedContextParametersFunction(
     let (ctx, _1) = context
     return { __root___unnamedContextParametersFunction__TypesOfArgumentsC2__main_Context_main_ContextB__(ctx.__externalRCRef(), _1.__externalRCRef()); return () }()
 }
+extension main.Bar {
+    public func combine(
+        bar: main.Bar
+    ) -> main.Bar {
+        let receiver = self
+        return main.combine(receiver, bar: bar)
+    }
+}
+extension Swift.String {
+    public func getComplexContextProperty(
+        _ context: (contextA: main.ContextA, contextB: main.ContextB)
+    ) -> Swift.Bool {
+        let receiver = self
+        return main.getComplexContextProperty(context, receiver)
+    }
+}
+extension Swift.String {
+    public func setComplexContextProperty(
+        _ context: (contextA: main.ContextA, contextB: main.ContextB),
+        value: Swift.Bool
+    ) -> Swift.Void {
+        let receiver = self
+        return main.setComplexContextProperty(context, receiver, value: value)
+    }
+}
+extension Swift.String {
+    public func complexContextFunction(
+        _ context: (context: main.Context, contextA: main.ContextA, contextB: main.ContextB),
+        yes: Swift.Bool
+    ) -> Swift.Int32 {
+        let receiver = self
+        return main.complexContextFunction(context, receiver, yes: yes)
+    }
+}

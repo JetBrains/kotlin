@@ -25,9 +25,6 @@ import kotlin.io.path.writeText
     supportedOn = [OS.MAC],
     enabledOnCI = [OS.MAC],
 )
-@GradleTestVersions(
-    minVersion = TestVersions.Gradle.G_8_0
-)
 @DisplayName("SwiftPM import does not fail IDE sync when the pipeline fails (KT-85468)")
 @SwiftPMImportGradlePluginTests
 class SwiftPMImportLenientSyncIT : KGPBaseTest() {

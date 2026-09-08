@@ -41,7 +41,7 @@ internal class ModuleDeserializerProvider(
                 && cachedLibraries.isLibraryCached(klib, allowIncomplete = isFromLibraryBeingCached)
                 && !declarationBeingCached
         ) {
-            linker.moduleDeserializers[packageFragment.module] ?: error("No module deserializer for ${declaration.render()}")
+            linker.findKonanModuleDeserializer(klib) ?: error("No module deserializer for ${declaration.render()}")
         } else {
             null
         }
@@ -51,6 +51,6 @@ internal class ModuleDeserializerProvider(
      * @return a [KonanPartialModuleDeserializer] for the corresponding [library]. Null if it is a cinterop library.
      */
     fun getDeserializerOrNull(library: KotlinLibrary): KonanPartialModuleDeserializer? {
-        return linker.klibToModuleDeserializerMap[library]
+        return linker.findKonanModuleDeserializer(library)
     }
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.compilerRunner.btapi.jvm
 
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
@@ -19,6 +20,12 @@ import org.jetbrains.kotlin.gradle.utils.destinationAsFile
 internal class JvmBuildOperationFactory(val compilerArgs: List<String>, val kotlinScriptExtensions: List<String>) :
     BuildOperationFactory<JvmCompilationOperation.Builder> {
     override fun createOperation(kotlinToolchains: KotlinToolchains): JvmCompilationOperation.Builder {
+        /*
+         * GradleCompilerRunner.runCompilerAsync transforms arguments adding the freeArgs separator (`--`)
+         * This way, even incorrect arguments are surviving the `parseCommandLineArguments` call (by staying in `args.freeArgs`)
+         * and can be passed to BTA.
+         * If you rework this, please make sure that the freeArgs separator is not reaching BTA.
+         */
         val args: K2JVMCompilerArguments = parseCommandLineArguments(compilerArgs)
         val compilationOperationBuilder = kotlinToolchains.jvm.jvmCompilationOperationBuilder(
             extractSourceFiles(args.freeArgs),
@@ -27,7 +34,8 @@ internal class JvmBuildOperationFactory(val compilerArgs: List<String>, val kotl
             args.destination = null // TODO: KT-85394 refactor setting up arguments to avoid this hack
             compilationOperationBuilder[KOTLINSCRIPT_EXTENSIONS] = kotlinScriptExtensions.toTypedArray()
         }
-        compilationOperationBuilder.compilerArguments.applyArgumentStrings(args.toArgumentStrings(allowArgFileInValues = false))
+        @OptIn(DelicateBuildToolsApi::class)
+        compilationOperationBuilder.compilerArguments.applyCommandLineArguments(args.toArgumentStrings(allowArgFileInValues = false))
         return compilationOperationBuilder
     }
 }

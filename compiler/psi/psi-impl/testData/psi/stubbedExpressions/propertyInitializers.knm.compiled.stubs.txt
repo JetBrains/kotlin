@@ -10,6 +10,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Boolean]
+          isClassRef: true
     BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
   PROPERTY[fqName=test.byte, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=byte]
     constantInitializer: 1.toByte()
@@ -19,6 +20,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Byte]
+          isClassRef: true
     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
   PROPERTY[fqName=test.short, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=short]
     constantInitializer: 2.toShort()
@@ -28,6 +30,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Short]
+          isClassRef: true
     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
   PROPERTY[fqName=test.int, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=int]
     constantInitializer: 3
@@ -37,6 +40,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
   PROPERTY[fqName=test.long, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=long]
     constantInitializer: 4.toLong()
@@ -46,6 +50,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Long]
+          isClassRef: true
     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4L]
   PROPERTY[fqName=test.float, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=float]
     constantInitializer: 5.0.toFloat()
@@ -55,6 +60,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Float]
+          isClassRef: true
     FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=5.0F]
   PROPERTY[fqName=test.double, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=double]
     constantInitializer: 6.6.toDouble()
@@ -64,6 +70,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Double]
+          isClassRef: true
     FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=6.6]
   PROPERTY[fqName=test.char, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=char]
     constantInitializer: \u0063 ('c')
@@ -73,6 +80,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Char]
+          isClassRef: true
     CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='c']
   PROPERTY[fqName=test.string, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=string]
     constantInitializer: "s"
@@ -82,6 +90,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
+          isClassRef: true
     STRING_TEMPLATE
       LITERAL_STRING_TEMPLATE_ENTRY[text=s]
   PROPERTY[fqName=test.negative, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=negative]
@@ -92,6 +101,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
     PREFIX_EXPRESSION
       OPERATION_REFERENCE[operationToken=MINUS, referencedName=-]
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=7]
@@ -103,6 +113,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
   PROPERTY[fqName=test.parenthesized, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=parenthesized]
     constantInitializer: 8
@@ -112,6 +123,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=8]
   PROPERTY[fqName=test.concatenation, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=concatenation]
     constantInitializer: "ab"
@@ -121,6 +133,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
+          isClassRef: true
     STRING_TEMPLATE
       LITERAL_STRING_TEMPLATE_ENTRY[text=ab]
   PROPERTY[fqName=test.reference, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=reference]
@@ -131,6 +144,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
   PROPERTY[fqName=test.qualified, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=qualified]
     constantInitializer: 3
@@ -140,6 +154,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
   PROPERTY[fqName=test.infinity, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=infinity]
     constantInitializer: Infinity.toDouble()
@@ -149,6 +164,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Double]
+          isClassRef: true
     DOT_QUALIFIED_EXPRESSION
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=kotlin]
@@ -162,6 +178,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Float]
+          isClassRef: true
     DOT_QUALIFIED_EXPRESSION
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=kotlin]
@@ -175,6 +192,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
+          isClassRef: true
     STRING_TEMPLATE
       LITERAL_STRING_TEMPLATE_ENTRY[text=12]
   PROPERTY[fqName=test.intrinsicProperty, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=intrinsicProperty]
@@ -185,6 +203,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
   PROPERTY[fqName=test.nonConst, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=nonConst]
     MODIFIER_LIST[public]
@@ -193,6 +212,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
   PROPERTY[fqName=test.mutable, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=mutable]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
@@ -200,6 +220,7 @@ FILE[kind=File[packageFqName=test]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
+          isClassRef: true
   OBJECT_DECLARATION[classId=test/Holder, fqName=test.Holder, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Holder, superNames=[]]
     MODIFIER_LIST[public]
     CLASS_BODY
@@ -211,6 +232,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]
       PROPERTY[fqName=test.Holder.inferred, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=inferred]
         MODIFIER_LIST[public final]
@@ -219,6 +241,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
       PROPERTY[fqName=test.Holder.infinityInObject, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=infinityInObject]
         constantInitializer: Infinity.toDouble()
         MODIFIER_LIST[public const]
@@ -227,6 +250,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Double]
+              isClassRef: true
         DOT_QUALIFIED_EXPRESSION
           DOT_QUALIFIED_EXPRESSION
             REFERENCE_EXPRESSION[referencedName=kotlin]
@@ -245,3 +269,4 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Char]
+              isClassRef: true

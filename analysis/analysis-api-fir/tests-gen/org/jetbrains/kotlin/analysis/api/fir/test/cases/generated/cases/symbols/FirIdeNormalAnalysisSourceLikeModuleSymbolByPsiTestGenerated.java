@@ -423,6 +423,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByPsiTestGenerated extend
   }
 
   @Test
+  @TestMetadata("jvmExposeBoxedInternalDeclarations.kt")
+  public void testJvmExposeBoxedInternalDeclarations() {
+    run("jvmExposeBoxedInternalDeclarations.kt");
+  }
+
+  @Test
   @TestMetadata("jvmField.kt")
   public void testJvmField() {
     run("jvmField.kt");

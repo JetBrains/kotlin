@@ -761,6 +761,23 @@ open class LocalDeclarationsLowering(
             localClassConstructors.values.forEach {
                 createTransformedConstructorDeclaration(it)
             }
+
+            // Transformed local functions replace their originals in the IR tree during `rewriteDeclarations()`,
+            // so parents captured from the original declarations must be remapped to the transformed ones.
+            // Otherwise declarations nested inside a transformed function keep dangling references to the replaced
+            // original until `LocalDeclarationPopupLowering` moves them to their final container.
+            patchParents()
+        }
+
+        private fun patchParents() {
+            localFunctions.values.forEach {
+                val newDeclaration = it.transformedDeclaration
+                (newDeclaration.parent as? IrFunction)?.transformed?.let { newParent -> newDeclaration.parent = newParent }
+            }
+            localClasses.values.forEach {
+                val declaration = it.declaration
+                (declaration.parent as? IrFunction)?.transformed?.let { newParent -> declaration.parent = newParent }
+            }
         }
 
         /**

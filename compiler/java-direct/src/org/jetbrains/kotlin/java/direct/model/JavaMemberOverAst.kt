@@ -8,25 +8,25 @@ package org.jetbrains.kotlin.java.direct.model
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.platform.syntax.SyntaxElementType
-import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
-import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
-import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.getSimpleImport
 import org.jetbrains.kotlin.java.direct.resolution.resolveExternalFieldValue
 import org.jetbrains.kotlin.java.direct.util.ConstantEvaluator
+import org.jetbrains.kotlin.java.direct.util.JavaLiteralParser
 import org.jetbrains.kotlin.java.direct.util.computeTypeParameters
 import org.jetbrains.kotlin.java.direct.util.isDeprecatedInJavaDoc
+import org.jetbrains.kotlin.kmp.tree.LightNode
+import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 abstract class JavaMemberOverAst(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     override val containingClass: JavaClassOverAst,
 ) : JavaElementOverAst(node, tree), JavaMember {
 
@@ -70,8 +70,8 @@ abstract class JavaMemberOverAst(
 }
 
 class JavaFieldOverAst(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     containingClass: JavaClassOverAst,
 ) : JavaMemberOverAst(node, tree, containingClass), JavaField {
     override val isEnumEntry: Boolean
@@ -81,11 +81,11 @@ class JavaFieldOverAst(
      * For multi-field declarations like `public static int A = 1, B = 2, C = 3;`,
      * the parser only attaches MODIFIER_LIST and TYPE to the first FIELD node.
      */
-    private val leadingFieldNode: JavaLightNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val leadingFieldNode: LightNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         computeLeadingFieldNode()
     }
 
-    private fun computeLeadingFieldNode(): JavaLightNode? {
+    private fun computeLeadingFieldNode(): LightNode? {
         if (tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST) != null ||
             tree.findChildByType(node, JavaSyntaxElementType.TYPE) != null
         ) {
@@ -107,7 +107,7 @@ class JavaFieldOverAst(
         return null
     }
 
-    override val modifierList: JavaLightNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    override val modifierList: LightNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
             ?: leadingFieldNode?.let { tree.findChildByType(it, JavaSyntaxElementType.MODIFIER_LIST) }
     }
@@ -140,7 +140,7 @@ class JavaFieldOverAst(
         computeType()
     }
 
-    private fun computeType(): JavaType {
+    internal fun computeType(): JavaType {
         if (isEnumEntry) {
             // The constant's type is its containing enum class, already resolved.
             return ResolvedJavaClassifierType(containingClass)
@@ -155,7 +155,7 @@ class JavaFieldOverAst(
     /**
      * The initializer expression node, if present.
      */
-    private val initializerNode: JavaLightNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val initializerNode: LightNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val children = tree.getChildren(node)
         val eqIndex = children.indexOfFirst { tree.getType(it) == JavaSyntaxTokenType.EQ }
         if (eqIndex < 0) null
@@ -187,7 +187,7 @@ class JavaFieldOverAst(
      * potentially constant even if we cannot evaluate them locally, since they might be resolved
      * via cross-language callback. Unresolvable simple names and method calls return false.
      */
-    private fun isInitializerPotentiallyConstant(n: JavaLightNode): Boolean {
+    private fun isInitializerPotentiallyConstant(n: LightNode): Boolean {
         return when (tree.getType(n)) {
             JavaSyntaxElementType.LITERAL_EXPRESSION -> {
                 val child = tree.getChildren(n).firstOrNull()
@@ -222,6 +222,14 @@ class JavaFieldOverAst(
                     t != JavaSyntaxTokenType.LPARENTH && t != JavaSyntaxTokenType.RPARENTH
                 }
                 inner != null && isInitializerPotentiallyConstant(inner)
+            }
+            // `(byte) 0` and similar: a cast to a primitive (or String) type keeps the expression
+            // constant (JLS 15.29), so the operand alone decides.
+            JavaSyntaxElementType.TYPE_CAST_EXPRESSION -> {
+                val children = tree.getChildren(n)
+                val rparenthIndex = children.indexOfFirst { tree.getType(it) == JavaSyntaxTokenType.RPARENTH }
+                val operand = if (rparenthIndex < 0) null else children.getOrNull(rparenthIndex + 1)
+                operand != null && isInitializerPotentiallyConstant(operand)
             }
             JavaSyntaxElementType.REFERENCE_EXPRESSION -> {
                 val refText = tree.getText(n).toString().trim()
@@ -270,17 +278,7 @@ class JavaFieldOverAst(
     private fun coerceConstantToFieldType(value: Any?): Any? {
         if (value == null) return null
         val primitive = (type as? JavaPrimitiveType)?.type ?: return value  // String / non-primitive — no coercion
-        // else -> null = no constant for this declared primitive type; mirrors PSI.
-        return when (primitive) {
-            PrimitiveType.BOOLEAN -> value as? Boolean
-            PrimitiveType.CHAR -> when (value) {
-                is Char -> value
-                is Number -> value.toInt().toChar()
-                else -> null
-            }
-            PrimitiveType.BYTE, PrimitiveType.SHORT, PrimitiveType.INT,
-            PrimitiveType.LONG, PrimitiveType.FLOAT, PrimitiveType.DOUBLE -> coerceNumberOrChar(value, primitive)
-        }
+        return JavaLiteralParser.coerceToPrimitive(value, primitive)
     }
 
     override val isStatic: Boolean get() = containingClass.isInterface || isEnumEntry || hasFieldModifier(JavaSyntaxTokenType.STATIC_KEYWORD)
@@ -288,8 +286,8 @@ class JavaFieldOverAst(
 }
 
 abstract class JavaMethodBaseOverAst(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     containingClass: JavaClassOverAst,
 ) : JavaMemberOverAst(node, tree, containingClass) {
 
@@ -312,8 +310,8 @@ abstract class JavaMethodBaseOverAst(
 }
 
 class JavaMethodOverAst(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     containingClass: JavaClassOverAst,
 ) : JavaMethodBaseOverAst(node, tree, containingClass), JavaMethod {
 
@@ -365,18 +363,25 @@ class JavaMethodOverAst(
 }
 
 class JavaConstructorOverAst(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     containingClass: JavaClassOverAst,
 ) : JavaMethodBaseOverAst(node, tree, containingClass), JavaConstructor {
     override val isAbstract: Boolean get() = false
     override val isStatic: Boolean get() = false
     override val isFinal: Boolean get() = true
+
+    // A constructor of an enum class is private even when written without a modifier: JLS 8.9.2
+    // both forbids `public`/`protected` there and makes the access implicitly private. PSI reports
+    // the same (`PsiModifierListImpl.hasModifierProperty` special-cases enum constructors), as does
+    // the class-file reader, which sees `ACC_PRIVATE`.
+    override val visibility: Visibility
+        get() = if (containingClass.isEnum) Visibilities.Private else super.visibility
 }
 
 class JavaValueParameterOverAst(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     private val resolutionContext: JavaResolutionContext,
 ) : JavaElementOverAst(node, tree), JavaValueParameter {
     override val name: Name?
@@ -403,23 +408,4 @@ class JavaValueParameterOverAst(
         get() = isDeprecatedInJavaDoc(tree, node)
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
-}
-
-// JLS 5.2 narrowing-of-constant-expression conversion for the six numeric primitive types.
-// Returns null for non-Number / non-Char inputs (mirrors PSI: no constant value for this type).
-private fun coerceNumberOrChar(value: Any, primitive: PrimitiveType): Any? {
-    val n: Number = when (value) {
-        is Number -> value
-        is Char -> value.code
-        else -> return null
-    }
-    return when (primitive) {
-        PrimitiveType.BYTE -> n.toByte()
-        PrimitiveType.SHORT -> n.toShort()
-        PrimitiveType.INT -> n.toInt()
-        PrimitiveType.LONG -> n.toLong()
-        PrimitiveType.FLOAT -> n.toFloat()
-        PrimitiveType.DOUBLE -> n.toDouble()
-        else -> null
-    }
 }

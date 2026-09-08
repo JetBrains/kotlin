@@ -1,13 +1,31 @@
 val test1: KFunction0<Unit>
-  field = A()::foo
+  field = KFunction0<Unit>(
+    /* bound = */ [A()],
+    /* invoke = */    local fun(receiver: A) {
+      return receiver.foo()
+    }
+  )
+
   get
 
 val test2: KProperty0<Int>
-  field = A()::bar
+  field = KProperty0<Int>(
+    /* bound = */ [A()],
+    /* getter = */    local fun(receiver: A): Int {
+      return receiver.<get-bar>()
+    }
+  )
+
   get
 
 val test3: KFunction0<Unit>
-  field = ::qux/*(<this> = A()) */
+  field = KFunction0<Unit>(
+    /* bound = */ [A()],
+    /* invoke = */    local fun(receiver: A) {
+      return qux(/* <this> = receiver */)
+    }
+  )
+
   get
 
 class A {

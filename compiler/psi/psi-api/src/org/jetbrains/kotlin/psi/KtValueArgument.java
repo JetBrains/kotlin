@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub;
@@ -26,16 +27,23 @@ import org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub;
  * //      ^_____^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<? extends KtValueArgument>> implements ValueArgument {
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtValueArgument[] EMPTY_ARRAY = new KtValueArgument[0];
+
+    @KtImplementationDetail
     public KtValueArgument(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtValueArgument(@NotNull KotlinValueArgumentStub<KtValueArgument> stub) {
-        super(stub, KtStubBasedElementTypes.VALUE_ARGUMENT);
+        super(stub, KtNodeTypes.VALUE_ARGUMENT);
     }
 
-    protected KtValueArgument(KotlinValueArgumentStub<? extends KtValueArgument> stub, IStubElementType nodeType) {
+    @KtImplementationDetail
+    protected KtValueArgument(@NotNull KotlinValueArgumentStub<? extends KtValueArgument> stub, @NotNull IElementType nodeType) {
         super(stub, nodeType);
     }
 
@@ -45,7 +53,7 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
     }
 
     private static final TokenSet STRING_TEMPLATE_EXPRESSIONS_TYPES = TokenSet.create(
-            KtStubBasedElementTypes.STRING_TEMPLATE
+            KtNodeTypes.STRING_TEMPLATE
     );
 
     @Override
@@ -60,6 +68,10 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
         return findChildByClass(KtExpression.class);
     }
 
+    /**
+     * Returns the argument expression as a {@link KtStringTemplateExpression} if the argument is a string literal, or {@code null}
+     * otherwise. This is an optimization that reads the string directly from the stub when possible.
+     */
     @Nullable
     public KtStringTemplateExpression getStringTemplateExpression() {
         KotlinPlaceHolderStub<? extends KtValueArgument> stub = getStub();
@@ -76,11 +88,11 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
 
     @Override
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtValueArgumentName getArgumentName() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_ARGUMENT_NAME);
+        return getStubOrPsiChild(KtNodeTypes.VALUE_ARGUMENT_NAME, KtValueArgumentName.class);
     }
 
+    /** Returns the {@code =} token of a named argument ({@code name = value}), or {@code null} if this argument is positional. */
     @Nullable
     public PsiElement getEqualsToken() {
         return findChildByType(KtTokens.EQ);
@@ -118,6 +130,7 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
         return getSpreadElement() != null;
     }
 
+    /** Always {@code false}: a value argument written in source is never an external (synthetic) argument. */
     @Override
     public boolean isExternal() {
         return false;

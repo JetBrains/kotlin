@@ -1,9 +1,7 @@
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
-    id("project-tests-convention")
     id("test-inputs-check")
     id("java-test-fixtures")
 }
@@ -45,7 +43,10 @@ projectTests {
 
     testTask(
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_21_0),
-        javaLauncher = JdkMajorVersion.JDK_1_8
+        javaLauncher = JdkMajorVersion.JDK_1_8,
+        maxHeapSize = testMaxHeapSizeLarge,
+        // Use Parallel GC because this test runs on JDK 8.
+        garbageCollector = GarbageCollector.Parallel,
     ) {
         systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
     }

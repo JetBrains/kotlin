@@ -48,3 +48,12 @@ open class Relayer {
 
 @Throws(Throwable::class)
 fun callRelay(r: Relayer): String = r.relay()
+
+// An exported Kotlin Throwable with an overridable member, so that a Swift subclass of it is a genuinely
+// Swift-backed object (dynamic Kotlin class, patched slot) rather than a bare wrapper.
+open class ThrowableBranch(val origin: String) : Exception("kotlin throwable: $origin") {
+    open fun throwableValue(): String = "kotlin-throwable:$origin"
+}
+
+@Throws(Throwable::class)
+fun throwProvided(value: ThrowableBranch): Unit = throw value

@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub;
 
 /**
@@ -19,12 +20,18 @@ import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub;
  * // ^___________________^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtDeclarationModifierList extends KtModifierList {
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtDeclarationModifierList[] EMPTY_ARRAY = new KtDeclarationModifierList[0];
+
+    @KtImplementationDetail
     public KtDeclarationModifierList(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtDeclarationModifierList(@NotNull KotlinModifierListStub stub) {
-        super(stub, KtStubBasedElementTypes.MODIFIER_LIST);
+        super(stub, KtNodeTypes.MODIFIER_LIST);
     }
 }

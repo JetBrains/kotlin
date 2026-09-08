@@ -4,28 +4,28 @@
 class A
 class B
 
-context(a: A)
-<!CONFLICTING_JVM_DECLARATIONS!>fun foo() {}<!>
+<!CONFLICTING_JVM_DECLARATIONS!>context(a: A)
+fun foo()<!> {}
 
-<!CONFLICTING_JVM_DECLARATIONS!>fun A.foo() { }<!>
+<!CONFLICTING_JVM_DECLARATIONS!>fun A.foo()<!> { }
 
-context(a: A, b: B)
-<!CONFLICTING_JVM_DECLARATIONS!>fun bar(){}<!>
+<!CONFLICTING_JVM_DECLARATIONS!>context(a: A, b: B)
+fun bar()<!>{}
 
-context(a: A)
-<!CONFLICTING_JVM_DECLARATIONS!>fun B.bar(){}<!>
+<!CONFLICTING_JVM_DECLARATIONS!>context(a: A)
+fun B.bar()<!>{}
 
-context(a: A, b: B)
-<!CONFLICTING_JVM_DECLARATIONS!>fun qux(){}<!>
+<!CONFLICTING_JVM_DECLARATIONS!>context(a: A, b: B)
+fun qux()<!>{}
 
-<!CONFLICTING_JVM_DECLARATIONS!>fun A.qux(b: B){}<!>
+<!CONFLICTING_JVM_DECLARATIONS!>fun A.qux(b: B)<!>{}
 
 context(a: A)
 val b: String
-    <!CONFLICTING_JVM_DECLARATIONS!>get() = ""<!>
+    <!CONFLICTING_JVM_DECLARATIONS!>get()<!> = ""
 
 val A.b: String
-    <!CONFLICTING_JVM_DECLARATIONS!>get() = ""<!>
+    <!CONFLICTING_JVM_DECLARATIONS!>get()<!> = ""
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
 getter, propertyDeclaration, propertyDeclarationWithContext, propertyWithExtensionReceiver, stringLiteral */

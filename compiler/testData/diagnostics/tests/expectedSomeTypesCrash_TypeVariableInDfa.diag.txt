@@ -1,10 +1,10 @@
 /expectedSomeTypesCrash_TypeVariableInDfa.kt:11:5: error: Argument type mismatch: actual type is 'MutableList<Int>', but 'Number' was expected.
 
-/expectedSomeTypesCrash_TypeVariableInDfa.kt:11:10: error: Candidate 'fun Number.f(): Unit' is inapplicable because of a receiver type mismatch.
+/expectedSomeTypesCrash_TypeVariableInDfa.kt:11:10: error: Candidate 'fun Number.f(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is 'MutableList<Int>'.
 
 /expectedSomeTypesCrash_TypeVariableInDfa.kt:13:5: error: Argument type mismatch: actual type is 'String', but 'Any?' was expected.
 
-/expectedSomeTypesCrash_TypeVariableInDfa.kt:13:5: error: Unfixed type variable applied via smart cast. If this is the only error, please report an issue to https://kotl.in/issue.
+/expectedSomeTypesCrash_TypeVariableInDfa.kt:13:5: warning: Unfixed type variable applied via smart cast. If this is the only error, please report an issue to https://kotl.in/issue.
 
 /expectedSomeTypesCrash_TypeVariableInDfa.kt:13:12: error: Argument type mismatch: actual type is 'K (of fun <K> WHEN_CALL)', but 'Any?' was expected.
 

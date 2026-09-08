@@ -8,7 +8,6 @@ package kotlin
 import kotlin.wasm.internal.jsToKotlinStringAdapter
 import kotlin.wasm.internal.wasmGetObjectRtti
 import kotlin.wasm.internal.getQualifiedName
-import kotlin.wasm.internal.getSimpleName
 
 /**
  * The base class for all errors and exceptions. Only instances of this class can be thrown or caught.
@@ -19,12 +18,12 @@ import kotlin.wasm.internal.getSimpleName
 @OptIn(ExperimentalWasmJsInterop::class)
 public actual open class Throwable internal constructor(
     public actual open val message: String?,
-    public actual open val cause: kotlin.Throwable?,
+    public actual open val cause: Throwable?,
     internal val jsError: JsError?
 ) {
     init {
         if (jsError != null) {
-            jsError.name = getSimpleName(wasmGetObjectRtti(this))
+            jsError.name = getQualifiedName(wasmGetObjectRtti(this))
             jsError.kotlinException = toJsReference()
         }
     }
@@ -45,6 +44,15 @@ public actual open class Throwable internal constructor(
             var value = _stack
             if (value == null) {
                 value = jsToKotlinStringAdapter(jsStack)
+
+                // We rely on the fact that the engine emits
+                // header with error name and message
+                // right at the beginning of the stack,
+                // if emits at all.
+                val header = jsError?.stackHeader
+                if (!header.isNullOrEmpty() && value.startsWith(header)) {
+                    value = value.substring(header.length).removePrefix("\n")
+                }
                 _stack = value
             }
 
@@ -65,10 +73,23 @@ public actual open class Throwable internal constructor(
 
 internal actual var Throwable.suppressedExceptionsList: MutableList<Throwable>?
     get() = this.suppressedExceptionsList
-    set(value) { this.suppressedExceptionsList = value }
+    set(value) {
+        this.suppressedExceptionsList = value
+    }
 
 internal actual val Throwable.stack: String get() = this.stack
 
 @OptIn(ExperimentalWasmJsInterop::class)
 internal fun createJsError(message: String?, cause: JsError?): JsError =
     js("new Error(message, { cause })")
+
+// Correctly predict stacktrace header containing error name and message to strip.
+// Currently, V8 engine emits this header (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/stack).
+private val JsError.stackHeader: String
+    get() = when {
+        // https://tc39.es/ecma262/2020/#sec-error.prototype.tostring:
+        // an empty name leaves just the message, an empty message just the name.
+        name.isEmpty() -> message
+        message.isEmpty() -> name
+        else -> "$name: $message"
+    }

@@ -7,7 +7,7 @@ KtFile: incorrectLTGTFallback.kt
   PsiWhiteSpace('\n')
   PsiComment(EOL_COMMENT)('// ISSUE: KT-53719')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('main')

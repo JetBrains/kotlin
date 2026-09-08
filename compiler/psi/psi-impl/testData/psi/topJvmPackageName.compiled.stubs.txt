@@ -6,7 +6,7 @@ FILE[kind=Facade[packageFqName=some.other, facadeFqName=some.other.jvm.OtherKt]]
       REFERENCE_EXPRESSION[referencedName=some]
       REFERENCE_EXPRESSION[referencedName=other]
   IMPORT_LIST
-  FUN[fqName=some.other.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUNCTION[fqName=some.other.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     origin: Facade(className=some/other/OtherKt, jvmClassName=some/other/jvm/OtherKt)
     MODIFIER_LIST[public]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
@@ -17,6 +17,7 @@ FILE[kind=Facade[packageFqName=some.other, facadeFqName=some.other.jvm.OtherKt]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+                isClassRef: true
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             VALUE_ARGUMENT_NAME
@@ -29,3 +30,4 @@ FILE[kind=Facade[packageFqName=some.other, facadeFqName=some.other.jvm.OtherKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true

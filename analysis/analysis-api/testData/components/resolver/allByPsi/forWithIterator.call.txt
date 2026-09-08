@@ -104,7 +104,7 @@ KtProperty(133,166): 'var current = this@iterator.start'
   null
 
 KtDotQualifiedExpression(147,166): 'this@iterator.start'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -136,7 +136,7 @@ KtLabelReferenceExpression(151,160): '@iterator'
   null
 
 KtNameReferenceExpression(161,166): 'start'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -165,7 +165,7 @@ KtParameterList(191,193): '()'
   null
 
 KtBinaryExpression(196,224): 'current <= this@iterator.end'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -201,7 +201,7 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
       }
 
 KtNameReferenceExpression(196,203): 'current'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -220,7 +220,7 @@ KtNameReferenceExpression(196,203): 'current'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(204,206): '<='
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -256,7 +256,7 @@ KtOperationReferenceExpression(204,206): '<='
       }
 
 KtDotQualifiedExpression(207,224): 'this@iterator.end'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -288,7 +288,7 @@ KtLabelReferenceExpression(211,220): '@iterator'
   null
 
 KtNameReferenceExpression(221,224): 'end'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -366,7 +366,7 @@ KtPostfixExpression(256,265): 'current++'
         typeArgumentsMapping = {}
 
 KtNameReferenceExpression(256,263): 'current'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -495,7 +495,7 @@ KtContainerNode(297,318): 'IntProgression(1, 10)'
   null
 
 KtCallExpression(297,318): 'IntProgression(1, 10)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -542,7 +542,7 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
       }
 
 KtNameReferenceExpression(297,311): 'IntProgression'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

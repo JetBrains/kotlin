@@ -517,7 +517,7 @@ internal class SymbolLightAccessorMethod private constructor(
             val isNonMaterializableValueClassProperty =
                 // Assessors with JvmStatic should be materialized inside the containing value class
                 !context.staticsFromCompanion &&
-                        context.destinationLightClass.isValueClass &&
+                        context.destinationLightClass.isKotlinValueClass &&
                         // Constructor properties are materialized by default
                         (property as? KaKotlinPropertySymbol)?.primaryConstructorParameter == null &&
                         // Overrides are materialized by default
@@ -617,7 +617,7 @@ internal class SymbolLightAccessorMethod private constructor(
             isHiddenOrSynthetic(accessorSymbol) -> false
             !accessorSymbol.isNotDefault && accessorSymbol.visibility == KaSymbolVisibility.PRIVATE -> false
             // Value classes have special logic
-            context.destinationLightClass.isValueClass -> when {
+            context.destinationLightClass.isKotlinValueClass -> when {
                 // Overrides are generated for value classes
                 property.isOverride -> true
 

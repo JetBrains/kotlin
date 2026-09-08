@@ -65,7 +65,7 @@ KtNameReferenceExpression(207,213): 'MyEnum'
   null
 
 KtNameReferenceExpression(216,223): 'Option1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -105,7 +105,7 @@ KtParameterList(281,283): '()'
   null
 
 KtNameReferenceExpression(286,293): 'Option1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -154,7 +154,7 @@ KtProperty(327,363): 'val EnumOptionAlias = MyEnum.Option1'
   null
 
 KtDotQualifiedExpression(349,363): 'MyEnum.Option1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -177,7 +177,7 @@ KtNameReferenceExpression(349,355): 'MyEnum'
   null
 
 KtNameReferenceExpression(356,363): 'Option1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -221,7 +221,7 @@ KtPostfixExpression(416,425): 'Option1!!'
   null
 
 KtNameReferenceExpression(416,423): 'Option1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -259,7 +259,7 @@ KtPostfixExpression(448,458): 'enumProp!!'
   null
 
 KtNameReferenceExpression(448,456): 'enumProp'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -297,7 +297,7 @@ KtPostfixExpression(481,493): 'stringProp!!'
   null
 
 KtNameReferenceExpression(481,491): 'stringProp'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -320,7 +320,7 @@ KtOperationReferenceExpression(491,493): '!!'
   null
 
 KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -355,7 +355,7 @@ KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
       }
 
 KtNameReferenceExpression(499,506): 'receive'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -414,7 +414,7 @@ KtPostfixExpression(515,524): 'Option1!!'
   null
 
 KtNameReferenceExpression(515,522): 'Option1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -437,7 +437,7 @@ KtOperationReferenceExpression(522,524): '!!'
   null
 
 KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -472,7 +472,7 @@ KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
       }
 
 KtNameReferenceExpression(530,537): 'receive'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -531,7 +531,7 @@ KtPostfixExpression(546,556): 'enumProp!!'
   null
 
 KtNameReferenceExpression(546,554): 'enumProp'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -554,7 +554,7 @@ KtOperationReferenceExpression(554,556): '!!'
   null
 
 KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -592,7 +592,7 @@ KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum?' was expected.>
 
 KtNameReferenceExpression(562,569): 'receive'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -654,7 +654,7 @@ KtPostfixExpression(578,590): 'stringProp!!'
   null
 
 KtNameReferenceExpression(578,588): 'stringProp'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

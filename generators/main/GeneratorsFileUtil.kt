@@ -14,6 +14,17 @@ object GeneratorsFileUtil {
     private val isTeamCityBuild: Boolean =
         System.getProperty("teamcity", "false").toBoolean() || System.getenv("TEAMCITY_VERSION") != null
 
+    /**
+     * Makes generators write the new content instead of reporting a "Re-generation needed!" build problem.
+     *
+     * Enabled during version branching, when every version-dependent generator produces a diff at once. See KT-88942.
+     *
+     * The env variable covers generators not launched through the `generator`/`generatedSourcesTask` build conventions.
+     */
+    private val isRegenerationCheckDisabled: Boolean =
+        System.getProperty("kotlin.build.disable.regeneration.check", "false").toBoolean() ||
+                System.getenv("KOTLIN_BUILD_DISABLE_REGENERATION_CHECK") != null
+
     val GENERATED_MESSAGE = """
     /*
      * This file was generated automatically
@@ -62,7 +73,7 @@ object GeneratorsFileUtil {
     }
 
     private fun failOnTeamCity(message: String): Boolean {
-        if (!isTeamCityBuild) return false
+        if (!isTeamCityBuild || isRegenerationCheckDisabled) return false
 
         fun String.escapeForTC(): String = StringBuilder(length).apply {
             for (char in this@escapeForTC) {

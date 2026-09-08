@@ -28,6 +28,7 @@ import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionBase
+import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.JvmFunctionSignature.*
 import kotlin.reflect.jvm.internal.calls.*
 import kotlin.reflect.jvm.internal.calls.AnnotationConstructorCaller.CallMode.CALL_BY_NAME
@@ -214,7 +215,7 @@ internal class DescriptorKFunction private constructor(
         }
     }
 
-    override fun computeReturnType(): DescriptorKType =
+    override fun computeReturnType(): KType =
         DescriptorKType(descriptor.returnType!!) {
             extractContinuationArgument() ?: caller.returnType
         }

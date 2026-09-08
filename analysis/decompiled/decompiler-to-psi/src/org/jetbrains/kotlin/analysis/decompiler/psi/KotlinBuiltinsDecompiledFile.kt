@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.analysis.decompiler.psi
 
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 
 /**
  * The file represents decompiled .kotlin_builtins/.kotlin_metadata files
  *
  * @see KotlinBuiltInFileType
  */
+@OptIn(KtImplementationDetail::class)
 class KotlinBuiltinsDecompiledFile(viewProvider: KotlinDecompiledFileViewProvider) : KtDecompiledFile(viewProvider)

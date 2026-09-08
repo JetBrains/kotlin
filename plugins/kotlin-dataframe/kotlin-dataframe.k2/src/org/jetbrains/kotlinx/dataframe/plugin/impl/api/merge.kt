@@ -1,14 +1,18 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlinx.dataframe.api.*
 import org.jetbrains.kotlinx.dataframe.columns.ColumnPath
 import org.jetbrains.kotlinx.dataframe.columns.toColumnSet
 import org.jetbrains.kotlinx.dataframe.impl.ColumnNameGenerator
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.mergeRows
 
-class MergeApproximation(
+data class MergeApproximation(
     val df: PluginDataFrameSchema,
     val columns: ColumnsResolver,
+    val transform: Boolean = false
 )
 
 class Merge0 : AbstractInterpreter<MergeApproximation>() {
@@ -26,7 +30,7 @@ class MergeInto0 : AbstractSchemaModificationInterpreter() {
     val Arguments.typeArg2 by type()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return merge(receiver.df, receiver.columns, pathOf(columnName), simpleColumnOf(columnName, typeArg2.coneType))
+        return merge(receiver.df, receiver.columns, pathOf(columnName), typeArg2.coneType, receiver.transform)
     }
 }
 
@@ -47,7 +51,7 @@ class MergeBy0 : AbstractInterpreter<MergeApproximation>() {
     val Arguments.truncated by ignore()
 
     override fun Arguments.interpret(): MergeApproximation {
-        return receiver
+        return receiver.copy(transform = true)
     }
 }
 
@@ -57,15 +61,17 @@ class MergeBy1 : AbstractInterpreter<MergeApproximation>() {
     val Arguments.transform by ignore()
 
     override fun Arguments.interpret(): MergeApproximation {
-        return receiver
+        return receiver.copy(transform = true)
     }
 }
 
+context(_: KotlinTypeFacade)
 fun merge(
     schema: PluginDataFrameSchema,
     columns: ColumnsResolver,
     path: ColumnPath,
-    result: SimpleCol,
+    result: ConeKotlinType,
+    transform: Boolean
 ): PluginDataFrameSchema {
     val df = schema.asDataFrame(impliedColumnsResolver = columns)
     val mergedPath = if (df.getColumnOrNull(path) != null) {
@@ -75,9 +81,24 @@ fun merge(
         path
     }
 
+    val merged = if (transform) {
+        simpleColumnOf(mergedPath.columnName, result)
+    } else {
+        val colsToMerge = columns.resolve(schema).map { it.column }
+        val columnGroups = colsToMerge.filterIsInstance<SimpleColumnGroup>()
+        if (colsToMerge.size == columnGroups.size) {
+            val mergedGroup = columnGroups.reduce { schema, otherSchema ->
+                SimpleColumnGroup(mergedPath.columnName, mergeRows(schema, otherSchema))
+            }
+            SimpleFrameColumn(mergedGroup.name, mergedGroup.columns())
+        } else {
+            simpleColumnOf(mergedPath.columnName, result)
+        }
+    }
+
     val grouped = df.move { columns }.under { mergedPath }
 
-    var res = grouped.replace { mergedPath }.with { result.rename(mergedPath.columnName).asDataColumn() }
+    var res = grouped.replace { mergedPath }.with { merged.asDataColumn() }
     if (mergedPath != path) {
         res = res.remove { path }.move { mergedPath }.into { path }
     }

@@ -26,7 +26,7 @@ class InstantIsoStringsTest {
         fun assertMonthBoundariesAreCorrect(year: Int, month: Int, lastDayOfMonth: Int) {
             val validString = "${localDateToString(year, month, lastDayOfMonth)}T23:59:59Z"
             val invalidString = "${localDateToString(year, month, lastDayOfMonth + 1)}T23:59:59Z"
-            Instant.parse(validString) // shouldn't throw
+            val _ = Instant.parse(validString) // shouldn't throw
             assertNotNull(Instant.parseOrNull(validString))
             assertInvalidFormat(invalidString) { Instant.parse(invalidString) }
             assertNull(Instant.parseOrNull(invalidString))

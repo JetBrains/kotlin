@@ -20,11 +20,11 @@ FILE[kind=File[packageFqName=a.b.c.test.enum]]
       ENUM_ENTRY[classId=null, fqName=a.b.c.test.enum.Enum.E, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=E, superNames=[]]
       ENUM_ENTRY[classId=null, fqName=a.b.c.test.enum.Enum.F, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=F, superNames=[]]
         CLASS_BODY
-          FUN[fqName=a.b.c.test.enum.Enum.F.f, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+          FUNCTION[fqName=a.b.c.test.enum.Enum.F.f, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
             MODIFIER_LIST[override]
             VALUE_PARAMETER_LIST
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4]
-      FUN[fqName=a.b.c.test.enum.Enum.f, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+      FUNCTION[fqName=a.b.c.test.enum.Enum.f, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         MODIFIER_LIST[open]
         VALUE_PARAMETER_LIST
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]

@@ -358,7 +358,7 @@ KtFile: SoftKeywords.kt
             PsiElement(LBRACE)('{')
             PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(public)('public')
           PsiWhiteSpace(' ')
@@ -383,7 +383,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('abstract')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('open')
@@ -399,7 +399,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('open')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('enum')
@@ -415,7 +415,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('enum')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('open')
@@ -431,7 +431,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('open')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('annotation')
@@ -447,7 +447,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('annotation')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('override')
@@ -463,7 +463,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('override')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('open')
@@ -479,7 +479,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('open')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('abstract')
@@ -495,7 +495,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('abstract')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('private')
@@ -511,7 +511,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('private')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('protected')
@@ -527,7 +527,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('protected')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('public')
@@ -543,7 +543,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('public')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('internal')
@@ -559,7 +559,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('internal')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('lazy')
@@ -575,7 +575,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('lazy')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('wraps')
@@ -591,7 +591,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('wraps')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('import')
@@ -607,7 +607,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('import')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('where')
@@ -623,7 +623,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('where')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('by')
@@ -639,7 +639,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('by')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('get')
@@ -655,7 +655,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('get')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('set')
@@ -671,7 +671,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('set')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('public')
@@ -687,7 +687,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('public')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('private')
@@ -703,7 +703,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('private')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('protected')
@@ -719,7 +719,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('protected')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('internal')
@@ -735,7 +735,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('internal')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('field')
@@ -751,7 +751,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('field')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('property')
@@ -767,7 +767,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('property')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('receiver')
@@ -783,7 +783,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('receiver')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('param')
@@ -799,7 +799,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('param')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('setparam')
@@ -815,7 +815,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('setparam')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('lateinit')
@@ -831,7 +831,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('lateinit')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('const')
@@ -847,7 +847,7 @@ KtFile: SoftKeywords.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('const')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('test')

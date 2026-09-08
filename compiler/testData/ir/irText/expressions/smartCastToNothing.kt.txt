@@ -1,0 +1,16 @@
+fun main() {
+  val result: String = produce()
+  when {
+    EQEQ(arg0 = result, arg1 = null) -> { // BLOCK
+      take<Nothing>(value = result /*as Nothing */)
+    }
+  }
+}
+
+fun produce(): String {
+  return "x"
+}
+
+fun <T : Any> take(value: T?): T {
+  return CHECK_NOT_NULL<(T & Any)>(arg0 = value)
+}

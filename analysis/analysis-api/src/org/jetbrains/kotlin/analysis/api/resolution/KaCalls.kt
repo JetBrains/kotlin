@@ -13,15 +13,18 @@ import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.resolution.KtResolvableCall
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 /**
- * Represents a resolved call that can be either a single call or a compound (multi) call.
+ * Represents a resolved call that can be either a simple call or a multi call.
  *
- * It can be either a [KaSingleCall] or a [KaMultiCall].
+ * It can be either a [KaSimpleCall] or a [KaMultiCall].
  *
  * ### Example
  * ```kotlin
@@ -36,17 +39,32 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall
  * }
  * ```
  *
- * `function()` call will be represented as a [KaSingleCall] (the target is the function),
+ * `function()` call will be represented as a [KaSimpleCall] (the target is the function),
  * and `int++` call as a [KaMultiCall] (with two targets: the `int` property and the `++` operator function)
  *
- * @see KaSingleCall
+ * @see KaSimpleCall
  * @see KaMultiCall
  */
 @KaExperimentalApi
-public sealed interface KaSingleOrMultiCall : KaLifetimeOwner
+public sealed interface KaSimpleOrMultiCall : KaLifetimeOwner
 
 /**
- * Represents a successful resolution resulting in a single call.
+ * The former name of [KaSimpleOrMultiCall].
+ *
+ * @see KaSimpleOrMultiCall
+ */
+@Deprecated(
+    message = "Use 'KaSimpleOrMultiCall' instead",
+    replaceWith = ReplaceWith(
+        expression = "KaSimpleOrMultiCall",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaSimpleOrMultiCall"],
+    ),
+)
+@KaExperimentalApi
+public typealias KaSingleOrMultiCall = KaSimpleOrMultiCall
+
+/**
+ * Represents a successful resolution resulting in a simple call.
  *
  * ### Example
  * ```kotlin
@@ -59,14 +77,14 @@ public sealed interface KaSingleOrMultiCall : KaLifetimeOwner
  * }
  * ```
  *
- * `function()` call will be represented as a [KaSingleCall]
+ * `function()` call will be represented as a [KaSimpleCall]
  *
  * @see KaResolver.tryResolveCall
  * @see KaResolver.resolveCall
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaSingleCall<S : KaCallableSymbol, C : KaCallableSignature<S>> : KaSingleOrMultiCall {
+public interface KaSimpleCall<S : KaCallableSymbol, C : KaCallableSignature<S>> : KaSimpleOrMultiCall {
     /**
      * The function or variable declaration.
      */
@@ -100,6 +118,21 @@ public interface KaSingleCall<S : KaCallableSymbol, C : KaCallableSignature<S>> 
 }
 
 /**
+ * The former name of [KaSimpleCall].
+ *
+ * @see KaSimpleCall
+ */
+@Deprecated(
+    message = "Use 'KaSimpleCall' instead",
+    replaceWith = ReplaceWith(
+        expression = "KaSimpleCall<S, C>",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCall"],
+    ),
+)
+@KaExperimentalApi
+public typealias KaSingleCall<S, C> = KaSimpleCall<S, C>
+
+/**
  * Represents a successful resolution resulting in multiple calls.
  *
  * ### Example
@@ -111,19 +144,19 @@ public interface KaSingleCall<S : KaCallableSymbol, C : KaCallableSignature<S>> 
  * }
  * ```
  *
- * `int++` call will be represented as a [KaMultiCall] with two [KaSingleCall]s inside: one for the `int` property
+ * `int++` call will be represented as a [KaMultiCall] with two [KaSimpleCall]s inside: one for the `int` property
  * and one for the `++` operator function ([Int.inc])
  *
  * @see KaResolver.tryResolveCall
  * @see KaResolver.resolveCall
  */
 @KaExperimentalApi
-public sealed interface KaMultiCall : KaSingleOrMultiCall {
+public sealed interface KaMultiCall : KaSimpleOrMultiCall {
     /**
-     * The non-empty list of [KaSingleCall]s that were discovered during resolution of [KtResolvableCall]
+     * The non-empty list of [KaSimpleCall]s that were discovered during resolution of [KtResolvableCall]
      */
     @KaExperimentalApi
-    public val calls: List<KaSingleCall<*, *>>
+    public val calls: List<KaSimpleCall<*, *>>
 }
 
 /**
@@ -138,33 +171,152 @@ public sealed interface KaMultiCall : KaSingleOrMultiCall {
 private interface KaMultiUnknownCall : KaMultiCall
 
 /**
- * The flattened list of [KaSingleCall]s.
+ * The flattened list of [KaSimpleCall]s.
  *
- * - If [this] is an instance of [KaSingleCall], the list will contain only [this] call
+ * - If [this] is an instance of [KaSimpleCall], the list will contain only [this] call
  * - If [this] is an instance of [KaMultiCall], the list will contain [KaMultiCall.calls]
  */
 @KaExperimentalApi
-public val KaSingleOrMultiCall.calls: List<KaSingleCall<*, *>>
+public val KaSimpleOrMultiCall.calls: List<KaSimpleCall<*, *>>
     get() = when (this) {
-        is KaSingleCall<*, *> -> listOf(this)
+        is KaSimpleCall<*, *> -> listOf(this)
         is KaMultiCall -> calls
     }
 
 /**
  * The flattened list of [KaSymbol]s for the resolved calls.
  *
- * - If [this] is an instance of [KaSingleCall], the list will contain only the [KaSingleCall.signature]'s symbol
+ * - If [this] is an instance of [KaSimpleCall], the list will contain only the [KaSimpleCall.signature]'s symbol
  * - If [this] is an instance of [KaMultiCall], the list will contain symbols from all [KaMultiCall.calls]
  */
 @KaExperimentalApi
-public val KaSingleOrMultiCall.symbols: List<KaSymbol>
+public val KaSimpleOrMultiCall.symbols: List<KaSymbol>
     get() = when (this) {
-        is KaSingleCall<*, *> -> listOf(symbol)
+        is KaSimpleCall<*, *> -> listOf(symbol)
         is KaMultiCall -> calls.map { it.signature.symbol }
     }
 
 /**
- * The resolved [KaCallableSymbol] of the [KaSingleCall].
+ * [this] call as a [KaSimpleCall], or `null` if it is a [KaMultiCall].
+ *
+ * ### Example
+ * ```kotlin
+ * var int: Int = 1
+ *
+ * fun usage() {
+ *    int = 2
+ *    int++
+ * }
+ * ```
+ *
+ * For `int = 2`, [simple] is the write access to `int`. For `int++`, which is a [KaMultiCall], [simple] is `null`.
+ *
+ * @see KaSimpleCall
+ */
+@KaExperimentalApi
+public val KaSimpleOrMultiCall.simple: KaSimpleCall<*, *>?
+    get() {
+        @OptIn(ExperimentalContracts::class)
+        contract { returnsNotNull() implies (this@simple is KaSimpleCall<*, *>) }
+
+        return this as? KaSimpleCall<*, *>
+    }
+
+/**
+ * [this] call as a [KaFunctionCall], or `null` if it is not a call to a function.
+ *
+ * ### Example
+ * ```kotlin
+ * class Foo {
+ *    fun function() {}
+ *    var int: Int = 1
+ * }
+ *
+ * fun Foo.usage() {
+ *    function()
+ *    int
+ * }
+ * ```
+ *
+ * For `function()`, [function] is the call to `function`. For `int`, which is a [KaVariableAccessCall], [function] is `null`.
+ *
+ * @see KaFunctionCall
+ * @see variable
+ */
+@KaExperimentalApi
+public val KaSimpleOrMultiCall.function: KaFunctionCall<*>?
+    get() {
+        @OptIn(ExperimentalContracts::class)
+        contract { returnsNotNull() implies (this@function is KaFunctionCall<*>) }
+
+        return this as? KaFunctionCall<*>
+    }
+
+/**
+ * [this] call as a [KaVariableAccessCall], or `null` if it is not an access to a variable.
+ *
+ * ### Example
+ * ```kotlin
+ * class Foo {
+ *    fun function() {}
+ *    var int: Int = 1
+ * }
+ *
+ * fun Foo.usage() {
+ *    int
+ *    function()
+ * }
+ * ```
+ *
+ * For `int`, [variable] is the read access to `int`. For `function()`, which is a [KaFunctionCall], [variable] is `null`.
+ *
+ * @see KaVariableAccessCall
+ * @see function
+ */
+@KaExperimentalApi
+public val KaSimpleOrMultiCall.variable: KaVariableAccessCall?
+    get() {
+        @OptIn(ExperimentalContracts::class)
+        contract { returnsNotNull() implies (this@variable is KaVariableAccessCall) }
+
+        return this as? KaVariableAccessCall
+    }
+
+/**
+ * [this] call as a call to a [constructor][KaConstructorSymbol], or `null` if it is not a constructor call.
+ *
+ * ### Example
+ * ```kotlin
+ * annotation class Anno
+ *
+ * class Foo
+ *
+ * @Anno
+ * fun usage() {
+ *    Foo()
+ * }
+ * ```
+ *
+ * Both the `Foo()` call and the `@Anno` annotation entry are constructor calls, so [constructor] returns the call itself.
+ *
+ * @see KaConstructorSymbol
+ * @see function
+ */
+@KaExperimentalApi
+public val KaSimpleOrMultiCall.constructor: KaFunctionCall<KaConstructorSymbol>?
+    get() {
+        @OptIn(ExperimentalContracts::class)
+        contract { returnsNotNull() implies (this@constructor is KaFunctionCall<KaConstructorSymbol>) }
+
+        val call = function ?: return null
+        if (call.symbol !is KaConstructorSymbol) return null
+
+        @Suppress("UNCHECKED_CAST")
+        return call as KaFunctionCall<KaConstructorSymbol>
+    }
+
+/**
+ * The resolved [KaCallableSymbol] of the [KaSimpleCall].
  *
  * This is a short-cut for [KaCallableSignature.symbol].
  */
@@ -175,5 +327,5 @@ public val KaSingleOrMultiCall.symbols: List<KaSymbol>
 // The workaround could be moved to the `KaCallableMemberCall.symbol` side once the API is stabilized.
 @Suppress("INVISIBLE_REFERENCE")
 @kotlin.internal.LowPriorityInOverloadResolution
-public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaSingleCall<S, C>.symbol: S
+public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaSimpleCall<S, C>.symbol: S
     get() = signature.symbol

@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
 /**
@@ -19,13 +20,16 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
  * //          ^______^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtSuperTypeEntry extends KtSuperTypeListEntry {
+    @KtImplementationDetail
     public KtSuperTypeEntry(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtSuperTypeEntry(@NotNull KotlinPlaceHolderStub<? extends KtSuperTypeListEntry> stub) {
-        super(stub, KtStubBasedElementTypes.SUPER_TYPE_ENTRY);
+        super(stub, KtNodeTypes.SUPER_TYPE_ENTRY);
     }
 
     @Override

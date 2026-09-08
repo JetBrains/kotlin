@@ -9,12 +9,10 @@ import org.jetbrains.kotlin.konan.target.*
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("native-dependencies")
     id("test-inputs-check")
-    id("project-tests-convention")
 }
 
 val testCppRuntime = configurations.create("testCppRuntime") {

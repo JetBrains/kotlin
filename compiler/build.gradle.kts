@@ -4,12 +4,10 @@ import org.jetbrains.kotlin.testFederation.testFederationDomains
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("d8-configuration")
     id("java-test-fixtures")
-    id("project-tests-convention")
     id("test-inputs-check")
 }
 
@@ -57,6 +55,9 @@ sourceSets {
 projectTests {
     testTask(
         javaLauncher = JdkMajorVersion.JDK_1_8,
+        maxHeapSize = testMaxHeapSizeLarge,
+        // Use Parallel GC because this test runs on JDK 8.
+        garbageCollector = GarbageCollector.Parallel,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
     ) {
         filter {
@@ -79,7 +80,6 @@ projectTests {
     testData(isolated, "testData/checkLocalVariablesTable")
     testData(isolated, "testData/codegen")
     testData(isolated, "testData/serialization")
-    testData(isolated, "testData/versionRequirement")
     testData(isolated, "testData/writeFlags")
     testData(isolated, "testData/writeSignature")
     withJvmStdlibAndReflect()

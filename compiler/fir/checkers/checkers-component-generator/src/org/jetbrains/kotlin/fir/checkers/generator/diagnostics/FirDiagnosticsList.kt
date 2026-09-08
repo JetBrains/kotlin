@@ -146,6 +146,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val UNRESOLVED_REFERENCE_WRONG_RECEIVER by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Symbol>("candidate")
             parameter<String?>("operator")
+            parameter<ConeKotlinType>("actualType")
         }
         val INACCESSIBLE_OUTER_CLASS_RECEIVER by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<FirBasedSymbol<*>>("symbol")
@@ -220,7 +221,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val ROOT_IDE_PACKAGE_DEPRECATED by warning<PsiElement>(PositioningStrategy.DEFAULT)
 
-        val SMARTCAST_TO_TYPE_VARIABLE by error<PsiElement>()
+        val SMARTCAST_TO_TYPE_VARIABLE by warning<PsiElement>()
     }
 
     val CALL_RESOLUTION by object : DiagnosticGroup("Call resolution") {
@@ -372,6 +373,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val ANNOTATION_ARGUMENT_MUST_BE_CONST by error<KtExpression>()
         val ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST by error<KtExpression>()
         val ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL by error<KtExpression>()
+        val ANNOTATION_ARGUMENT_WITH_CONTROL_FLOW_NOT_SUPPORTED by error<KtExpression>()
         val ANNOTATION_CLASS_MEMBER by error<PsiElement>(PositioningStrategy.CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS)
         val ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT by error<KtExpression>()
         val INVALID_TYPE_OF_ANNOTATION_MEMBER by error<KtElement>()
@@ -511,6 +513,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val AMBIGUOUS_ANNOTATION_ARGUMENT by error<PsiElement> {
             parameter<List<FirBasedSymbol<*>>>("symbols")
+        }
+
+        val COMPILER_REQUIRED_ANNOTATION_ARGUMENT_MUST_BE_LITERAL by deprecationError<KtExpression>(LanguageFeature.ForbidNonLiteralStringArgumentsForCompilerRequiredAnnotationParameters) {
+            parameter<Name>("name")
         }
 
         val VOLATILE_ON_VALUE by error<KtAnnotationEntry>()
@@ -1667,6 +1673,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val CONST_VAL_WITHOUT_INITIALIZER by error<KtProperty>(PositioningStrategy.CONST_MODIFIER)
         val CONST_VAL_WITH_EBF by error<KtProperty>(PositioningStrategy.CONST_MODIFIER)
         val CONST_VAL_WITH_NON_CONST_INITIALIZER by error<KtExpression>()
+        val CONST_VAL_WITH_CONTROL_FLOW_IN_INITIALIZER by error<KtExpression>()
         val DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER_ERROR by error<KtProperty>(PositioningStrategy.PROPERTY_DELEGATE) {
             parameter<FirTypeParameterSymbol>("usedTypeParameter")
         }

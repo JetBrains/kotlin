@@ -13,7 +13,7 @@ KtFile: Properties_ERR.kt
     PsiErrorElement:Property getter or setter expected
       <empty list>
   PsiWhiteSpace(' ')
-  FUN
+  FUNCTION
     PsiErrorElement:Expecting a top level declaration
       <empty list>
     BLOCK
@@ -27,7 +27,7 @@ KtFile: Properties_ERR.kt
     PsiErrorElement:Property getter or setter expected
       <empty list>
   PsiWhiteSpace(' ')
-  FUN
+  FUNCTION
     PsiErrorElement:Expecting a top level declaration
       <empty list>
     BLOCK
@@ -172,7 +172,7 @@ KtFile: Properties_ERR.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  FUN
+  FUNCTION
     PsiErrorElement:Expecting a top level declaration
       <empty list>
     BLOCK

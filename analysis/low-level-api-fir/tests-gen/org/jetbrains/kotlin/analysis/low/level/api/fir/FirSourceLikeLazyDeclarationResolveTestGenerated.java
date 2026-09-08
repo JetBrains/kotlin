@@ -1452,6 +1452,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("compilerRequiredAliased.kt")
+    public void testCompilerRequiredAliased() {
+      run("compilerRequiredAliased.kt");
+    }
+
+    @Test
     @TestMetadata("constructorProperty_all.kt")
     public void testConstructorProperty_all() {
       run("constructorProperty_all.kt");
@@ -1491,6 +1497,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     @TestMetadata("intrinsicConstOnIncorrectProperty.kt")
     public void testIntrinsicConstOnIncorrectProperty() {
       run("intrinsicConstOnIncorrectProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("targetWithContextSensitive.kt")
+    public void testTargetWithContextSensitive() {
+      run("targetWithContextSensitive.kt");
     }
 
     @Test
@@ -4059,6 +4071,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     @TestMetadata("annotation.kt")
     public void testAnnotation() {
       run("annotation.kt");
+    }
+
+    @Test
+    @TestMetadata("cyclicAliasedAnnotation.kt")
+    public void testCyclicAliasedAnnotation() {
+      run("cyclicAliasedAnnotation.kt");
     }
 
     @Test

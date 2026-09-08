@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.NamedStub
 import com.intellij.psi.stubs.StubBase
 import com.intellij.psi.stubs.StubElement
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.*
 import java.lang.reflect.Method
 
+@KtImplementationDetail
 val STUB_TO_STRING_PREFIX = "KotlinStub$"
 
 private val IGNORED_NULL_VALUES: Map<Class<out StubElement<*>>, Set<String>> = buildMap {
@@ -26,20 +26,12 @@ private val IGNORED_NULL_VALUES: Map<Class<out StubElement<*>>, Set<String>> = b
     put(KotlinObjectStub::class.java, setOf(KotlinClassOrObjectStub<*>::kdocText.name))
 }
 
-@OptIn(KtImplementationDetail::class)
+@KtImplementationDetail
 abstract class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?, elementType: IElementType) :
     StubBase<T>(parent, elementType), KotlinStubElement<T> {
 
     @KtImplementationDetail
     abstract override fun copyInto(newParent: StubElement<*>?): KotlinStubBaseImpl<T>
-
-    @Deprecated(
-        message = "Deprecated stub API",
-        replaceWith = ReplaceWith("elementType"),
-    )
-    @Suppress("DEPRECATION") // KT-78356
-    override fun getStubType(): IStubElementType<out StubElement<*>, *> =
-        super.getStubType() as IStubElementType<out StubElement<*>, *>
 
     override fun toString(): String {
         val stubInterface = this::class.java.interfaces.single { it.name.contains("Stub") }

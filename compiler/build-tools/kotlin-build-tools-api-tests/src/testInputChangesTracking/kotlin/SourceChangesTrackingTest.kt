@@ -186,11 +186,11 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
         }
     }
 
-    @DefaultStrategyAgnosticCompilationTest
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
     @DisplayName("KT-49023: Renaming a file with a case-only change should not cause redeclaration errors")
     @TestMetadata("ic-scenarios/kt-49023")
-    fun testCaseOnlyFileRenameDoesNotCauseRedeclarationErrors(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
+    fun testCaseOnlyFileRenameDoesNotCauseRedeclarationErrors(scenario: ScenarioCreator) {
+        scenario {
             val mod = module("ic-scenarios/kt-49023")
 
             mod.deleteFile("Foo.kt")

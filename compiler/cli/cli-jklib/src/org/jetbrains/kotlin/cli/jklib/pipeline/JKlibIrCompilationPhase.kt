@@ -146,11 +146,10 @@ object JKlibIrCompilationPhase :
             }
         }
 
-        linker.deserializeIrModuleHeader(
+        linker.createAndRegisterModuleDeserializer(
             jarDepsModuleDescriptor,
             null,
             { DeserializationStrategy.ALL },
-            jarDepsModuleDescriptor.name.asString(),
         )
 
         @OptIn(InternalSymbolFinderAPI::class) 

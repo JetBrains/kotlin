@@ -54,6 +54,7 @@ class Builtins {
         assertPrints(7.floorDiv(-3), "-3")
 
         // Dividing by zero throws, just like the / operator
+        @Suppress("DIVISION_BY_ZERO")
         assertFailsWith<ArithmeticException> { 1.floorDiv(0) }
     }
 
@@ -67,6 +68,7 @@ class Builtins {
         assertPrints(7.mod(-3), "-2")
 
         // A zero divisor throws, just like the % operator
+        @Suppress("DIVISION_BY_ZERO")
         assertFailsWith<ArithmeticException> { 1.mod(0) }
     }
 
@@ -83,6 +85,7 @@ class Builtins {
         assertPrints((-0.0).mod(3.0), "-0.0")
 
         // Unlike integer mod, a zero divisor produces NaN instead of throwing
+        @Suppress("DIVISION_BY_ZERO")
         assertPrints(5.0.mod(0.0), "NaN")
 
         // If either argument is NaN, or the dividend is infinite, the result is NaN
@@ -103,6 +106,7 @@ class Builtins {
         assertPrints(7u / 3u, "2")
 
         // Dividing by zero throws
+        @Suppress("DIVISION_BY_ZERO")
         assertFailsWith<ArithmeticException> { 1u.floorDiv(0u) }
     }
 
@@ -114,6 +118,7 @@ class Builtins {
         assertPrints(7u % 3u, "1")
 
         // A zero divisor throws
+        @Suppress("DIVISION_BY_ZERO")
         assertFailsWith<ArithmeticException> { 1u.mod(0u) }
     }
 }

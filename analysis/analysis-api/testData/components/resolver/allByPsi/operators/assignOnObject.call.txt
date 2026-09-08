@@ -74,7 +74,7 @@ KtBlockExpression(136,198): '{'
   null
 
 KtBinaryExpression(142,165): 'ClientTransaction += 10'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -113,7 +113,7 @@ KtNameReferenceExpression(142,159): 'ClientTransaction'
   null
 
 KtOperationReferenceExpression(160,162): '+='
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -152,7 +152,7 @@ KtConstantExpression(163,165): '10'
   null
 
 KtBinaryExpression(170,196): 'ClientTransaction -= "foo"'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -191,7 +191,7 @@ KtNameReferenceExpression(170,187): 'ClientTransaction'
   null
 
 KtOperationReferenceExpression(188,190): '-='
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

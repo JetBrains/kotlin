@@ -58,7 +58,6 @@ import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
-import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.METADATA_ONLY_COMPILATION
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.SEPARATE_KMP_COMPILATION
@@ -72,6 +71,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirOutputPartForDependsOnModule
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.utils.AbstractTwoAttributesMetaInfoProcessor
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -497,22 +497,13 @@ private class DebugDiagnosticConsumer(
             return
         }
 
-        val diagnostic = when (sourceElement) {
-            is KtPsiSourceElement -> KtPsiSimpleDiagnostic(
-                sourceElement,
-                factory.severity,
-                factory,
-                factory.defaultPositioningStrategy,
-                DiagnosticContext.Default,
-            )
-            is KtLightSourceElement -> KtLightSimpleDiagnostic(
-                sourceElement,
-                factory.severity,
-                factory,
-                factory.defaultPositioningStrategy,
-                DiagnosticContext.Default,
-            )
-        }
+        val diagnostic = KtSimpleDiagnostic(
+            sourceElement,
+            factory.severity,
+            factory,
+            factory.defaultPositioningStrategy,
+            DiagnosticContext.Default,
+        )
 
         result.add(diagnostic)
     }
@@ -533,24 +524,14 @@ private class DebugDiagnosticConsumer(
             return
         }
 
-        val diagnostic = when (positionedElement) {
-            is KtPsiSourceElement -> KtPsiDiagnosticWithParameters1(
-                positionedElement,
-                argumentFactory(),
-                factory.severity,
-                factory,
-                factory.defaultPositioningStrategy,
-                DiagnosticContext.Default,
-            )
-            is KtLightSourceElement -> KtLightDiagnosticWithParameters1(
-                positionedElement,
-                argumentFactory(),
-                factory.severity,
-                factory,
-                factory.defaultPositioningStrategy,
-                DiagnosticContext.Default,
-            )
-        }
+        val diagnostic = KtDiagnosticWithParameters1(
+            positionedElement,
+            argumentFactory(),
+            factory.severity,
+            factory,
+            factory.defaultPositioningStrategy,
+            DiagnosticContext.Default,
+        )
 
         result.add(diagnostic)
     }

@@ -3,12 +3,11 @@ import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
-    id("project-tests-convention")
     id("test-inputs-check")
+    id("test-data-manager")
 }
 
 dependencies {
@@ -49,6 +48,9 @@ kotlin {
 projectTests {
     testTask(
         javaLauncher = JdkMajorVersion.JDK_1_8,
+        maxHeapSize = testMaxHeapSizeLarge,
+        // Use Parallel GC because this test runs on JDK 8.
+        garbageCollector = GarbageCollector.Parallel,
         defineJDKEnvVariables = listOf(
             JdkMajorVersion.JDK_11_0, // TestsWithJava11 and others
             JdkMajorVersion.JDK_17_0, // TestsWithJava17 and others
@@ -88,4 +90,5 @@ projectTests {
     withScriptingPlugin()
     withTestScriptDefinition()
     withPluginSandboxAnnotations()
+    withPluginSandboxJar()
 }

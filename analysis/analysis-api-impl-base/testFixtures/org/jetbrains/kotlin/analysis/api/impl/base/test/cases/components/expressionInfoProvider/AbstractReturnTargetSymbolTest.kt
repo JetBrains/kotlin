@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expres
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol
+import org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.utils.getNameWithPositionString
@@ -37,7 +37,7 @@ abstract class AbstractReturnTargetSymbolTest : AbstractAnalysisApiBasedTest() {
                         expression.returnKeyword.accept(this)
                         expression.labeledExpression?.accept(this)
 
-                        val target = expression.resolveSymbol()
+                        val target = expression.resolveSuccessfulSymbol()
                         append("/* " + target?.getNameWithPositionString() + " */")
 
                         expression.returnedExpression?.accept(this)

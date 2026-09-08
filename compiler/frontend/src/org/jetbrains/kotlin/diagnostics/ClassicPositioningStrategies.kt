@@ -37,8 +37,8 @@ object ClassicPositioningStrategies {
         get() {
             @Suppress("UNCHECKED_CAST")
             val map = when (factoryName) {
-                Errors.NO_ACTUAL_FOR_EXPECT.name -> (this as DiagnosticWithParameters3Marker<*, *, *>).c
-                Errors.ACTUAL_WITHOUT_EXPECT.name -> (this as DiagnosticWithParameters2Marker<*, *>).b
+                Errors.NO_ACTUAL_FOR_EXPECT.name -> (this as DiagnosticWithParameters3<*, *, *, *>).c
+                Errors.ACTUAL_WITHOUT_EXPECT.name -> (this as DiagnosticWithParameters2<*, *, *>).b
                 else -> null
             } as? Map<K1ExpectActualCompatibility.Incompatible<MemberDescriptor>, Collection<MemberDescriptor>> ?: return null
             return map.keys.firstOrNull()
@@ -124,8 +124,8 @@ object ClassicPositioningStrategies {
     val UNREACHABLE_CODE: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun markDiagnostic(diagnostic: DiagnosticMarker): List<TextRange> {
             @Suppress("UNCHECKED_CAST")
-            val unreachableCode = diagnostic as DiagnosticWithParameters2Marker<Set<KtElement>, Set<KtElement>>
-            return UnreachableCode.getUnreachableTextRanges(unreachableCode.psiElement as KtElement, unreachableCode.a, unreachableCode.b)
+            val unreachableCode = diagnostic as DiagnosticWithParameters2<*, Set<KtElement>, Set<KtElement>>
+            return UnreachableCode.getUnreachableTextRanges(diagnostic.psiElement as KtElement, unreachableCode.a, unreachableCode.b)
         }
     }
 

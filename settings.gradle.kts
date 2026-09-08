@@ -217,8 +217,6 @@ include(
     ":compiler:tests-compiler-utils",
     ":compiler:tests-common",
     ":compiler:tests-integration",
-    ":compiler:tests-mutes",
-    ":compiler:tests-mutes:mutes-junit5",
     ":compiler:jklib.tests",
     ":js:js.ast",
     ":js:js.sourcemap",
@@ -396,6 +394,7 @@ include(
     ":kotlin-gradle-plugin-test-utils-embeddable",
     ":kotlin-gradle-plugin-integration-tests",
     ":kotlin-gradle-plugins-bom",
+    ":kotlin-gradle-plugin-test-coverage",
     ":kotlin-privacy-manifests-plugin",
     ":compiler:build-tools:kotlin-build-statistics",
     ":gradle:android-test-fixes",
@@ -459,7 +458,7 @@ include(
     ":wasm:wasm.frontend",
     ":wasm:wasm.config",
     ":wasm:wasm.debug.browsers",
-    ":repo:test-federation-runtime",
+    ":repo:test-runtime",
     ":repo:codebase-tests",
     ":repo:auto-code-review",
     ":repo:artifacts-tests"
@@ -633,6 +632,8 @@ include(
     ":prepare:analysis-api:kotlin-analysis-api-platform-interface",
     ":prepare:analysis-api:kotlin-analysis-api-implementation",
     ":prepare:analysis-api:kotlin-analysis-api-fir-diagnostics",
+    ":prepare:analysis-api:kotlin-analysis-api-standalone-surface",
+    ":prepare:analysis-api:kotlin-analysis-api-standalone-implementation",
     ":prepare:analysis-api:kotlin-analysis-api-intellij-api-surface-components",
     ":prepare:analysis-api:kotlin-analysis-api-intellij-implementation-components",
     ":prepare:analysis-api:kotlin-analysis-api-allopen-compiler-plugin-support",
@@ -649,6 +650,7 @@ include(
 
 include(
     ":compiler:build-tools:kotlin-build-tools-api",
+    ":compiler:build-tools:kotlin-build-tools-api-backports",
     ":compiler:build-tools:kotlin-build-tools-impl",
     ":compiler:build-tools:kotlin-build-tools-compat",
     ":compiler:build-tools:kotlin-build-tools-api-tests",
@@ -724,8 +726,7 @@ include(
     ":analysis:symbol-light-classes",
     ":analysis:light-classes-base",
     ":analysis:analysis-api-standalone",
-    ":analysis:analysis-api-standalone:analysis-api-standalone-base",
-    ":analysis:analysis-api-standalone:analysis-api-fir-standalone-base",
+    ":analysis:analysis-api-standalone:analysis-api-standalone-fir",
     ":analysis:decompiled:decompiler-to-psi",
     ":analysis:decompiled:decompiler-to-stubs",
     ":analysis:decompiled:decompiler-to-file-stubs",
@@ -925,6 +926,7 @@ project(":kotlin-gradle-plugin-test-utils-embeddable").projectDir =
     File("$rootDir/libraries/tools/kotlin-gradle-plugin-test-utils-embeddable")
 project(":kotlin-gradle-plugin-integration-tests").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin-integration-tests")
 project(":kotlin-gradle-plugins-bom").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugins-bom")
+project(":kotlin-gradle-plugin-test-coverage").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin-test-coverage")
 project(":kotlin-privacy-manifests-plugin").projectDir = File("$rootDir/libraries/tools/kotlin-privacy-manifests-plugin")
 project(":gradle:android-test-fixes").projectDir = File("$rootDir/libraries/tools/gradle/android-test-fixes")
 project(":gradle:documentation").projectDir = File("$rootDir/libraries/tools/gradle/documentation")

@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-80500
-// LANGUAGE: +CollectionLiterals
 // WITH_STDLIB
 
 fun <U> mutableFoo(x: MutableSet<MutableSet<U>>) { }

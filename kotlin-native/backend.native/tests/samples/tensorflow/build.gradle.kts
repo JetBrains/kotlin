@@ -15,7 +15,6 @@ kotlin {
 
     // Create target for the host platform.
     val hostTarget = when {
-        hostOs == "Mac OS X" -> macosX64("tensorflow")
         hostOs == "Linux" -> linuxX64("tensorflow")
         // Windows is not supported
         else -> throw GradleException("Host OS '$hostOs' is not supported in Kotlin/Native $project.")
@@ -28,12 +27,11 @@ kotlin {
                 linkerOpts("-L${tensorflowHome.resolve("lib")}", "-ltensorflow")
                 runTask?.environment(
                     "LD_LIBRARY_PATH" to tensorflowHome.resolve("lib"),
-                    "DYLD_LIBRARY_PATH" to tensorflowHome.resolve("lib")
                 )
             }
         }
         compilations["main"].cinterops {
-            val tensorflow = create("tensorflow") {
+            create("tensorflow") {
                 includeDirs(tensorflowHome.resolve("include"))
             }
         }

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.incremental.js
 
-data class TranslationResultValue(val metadata: ByteArray, val binaryAst: ByteArray, val inlineData: ByteArray)
+class TranslationResultValue(val metadata: ByteArray)
 
 data class IrTranslationResultValue(
     val fileData: ByteArray,

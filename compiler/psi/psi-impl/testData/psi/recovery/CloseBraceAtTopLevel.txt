@@ -13,7 +13,7 @@ KtFile: CloseBraceAtTopLevel.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('C')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('bar')

@@ -1,5 +1,5 @@
 KDocName(33,35): 'bb'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b/bb(): kotlin.Unit
     ]

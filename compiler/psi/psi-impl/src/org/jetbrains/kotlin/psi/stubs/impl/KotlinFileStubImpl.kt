@@ -7,16 +7,17 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.PsiFileStubImpl
 import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtNodeTypes.IMPORT_LIST
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.*
-import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-@OptIn(KtImplementationDetail::class)
-class KotlinFileStubImpl @KtImplementationDetail internal constructor(
+@KtImplementationDetail
+class KotlinFileStubImpl internal constructor(
     file: KtFile?,
     override val kind: KotlinFileStubKind,
 ) : PsiFileStubImpl<KtFile>(file), KotlinFileStub {
@@ -29,7 +30,8 @@ class KotlinFileStubImpl @KtImplementationDetail internal constructor(
     val facadeFqName: FqName?
         get() = (kind as? KotlinFileStubKind.WithPackage.Facade)?.facadeFqName
 
-    override fun getType(): KtFileElementType = KtFileElementType
+    override fun getFileElementType(): IElementType = KtNodeTypes.FILE
+    override fun getElementType(): IElementType = KtNodeTypes.FILE
 
     override fun toString(): String = "${STUB_TO_STRING_PREFIX}FILE[kind=$kind]"
 
@@ -51,7 +53,6 @@ class KotlinFileStubImpl @KtImplementationDetail internal constructor(
         other is KotlinFileStubImpl &&
                 other.kind == kind
 
-    @OptIn(KtImplementationDetail::class)
     companion object {
         fun forFile(packageFqName: FqName): KotlinFileStubImpl = KotlinFileStubImpl(
             file = null,

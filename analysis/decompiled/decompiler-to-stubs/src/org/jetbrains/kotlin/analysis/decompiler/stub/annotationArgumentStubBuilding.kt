@@ -2,6 +2,7 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(KtImplementationDetail::class)
 
 package org.jetbrains.kotlin.analysis.decompiler.stub
 
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.impl.*
 
@@ -55,10 +57,10 @@ private val ClassId.isRepresentableAsStub: Boolean
  * [areRepresentableAsStubs] has to be checked beforehand.
  */
 internal fun createValueArgumentListStub(parent: StubElement<*>, args: Map<Name, ConstantValue<*>>) {
-    val argumentList = KotlinPlaceHolderStubImpl<KtValueArgumentList>(parent, KtNodeTypes.VALUE_ARGUMENT_LIST)
+    val argumentList = KotlinPlaceHolderStubImpl<KtValueArgumentList>(parent = parent, elementType = KtNodeTypes.VALUE_ARGUMENT_LIST)
     for ([name, value] in args) {
         val argument = KotlinValueArgumentStubImpl<KtValueArgument>(argumentList, KtNodeTypes.VALUE_ARGUMENT, isSpread = false)
-        val argumentName = KotlinPlaceHolderStubImpl<KtValueArgumentName>(argument, KtNodeTypes.VALUE_ARGUMENT_NAME)
+        val argumentName = KotlinPlaceHolderStubImpl<KtValueArgumentName>(parent = argument, elementType = KtNodeTypes.VALUE_ARGUMENT_NAME)
         createNameReferenceStub(argumentName, name)
 
         // An annotation argument is never the declaration of the constant it refers to
@@ -108,7 +110,6 @@ internal fun createValueStub(parent: StubElement<*>, value: ConstantValue<*>, co
  * Note: the absolute value of a minimal value doesn't fit into its type, but this is a compilation
  * error and not a parsing one, so the same tree is built for the reparsed text.
  */
-@OptIn(KtImplementationDetail::class)
 private fun createNumberStub(parent: StubElement<*>, kind: ConstantValueKind, text: String) {
     val positiveText = text.removePrefix("-")
     if (positiveText.length == text.length) {
@@ -116,7 +117,7 @@ private fun createNumberStub(parent: StubElement<*>, kind: ConstantValueKind, te
         return
     }
 
-    val prefixExpression = KotlinPlaceHolderStubImpl<KtPrefixExpression>(parent, KtNodeTypes.PREFIX_EXPRESSION)
+    val prefixExpression = KotlinPlaceHolderStubImpl<KtPrefixExpression>(parent = parent, elementType = KtNodeTypes.PREFIX_EXPRESSION)
     KotlinOperationReferenceExpressionStubImpl(prefixExpression, KtTokens.MINUS.value.ref(), KtTokens.MINUS)
     createConstantStub(prefixExpression, kind, positiveText)
 }
@@ -151,7 +152,6 @@ private fun createFloatingPointStub(
 /**
  * Creates a stub for the expression [constantName] is defined by, e.g., `1.0/0.0` for [Double.POSITIVE_INFINITY].
  */
-@OptIn(KtImplementationDetail::class)
 private fun createFloatingPointDefinitionStub(parent: StubElement<*>, constantName: Name, isFloat: Boolean) {
     val suffix = if (isFloat) FLOAT_SUFFIX else ""
     val zero = "0.0$suffix"
@@ -160,12 +160,15 @@ private fun createFloatingPointDefinitionStub(parent: StubElement<*>, constantNa
         NEGATIVE_INFINITY_NAME -> createDivisionStub(parent, "-1.0$suffix", zero)
         // The division alone is already a NaN, but the negation is a part of the declaration
         NAN_NAME -> {
-            val prefixExpression = KotlinPlaceHolderStubImpl<KtPrefixExpression>(parent, KtNodeTypes.PREFIX_EXPRESSION)
+            val prefixExpression = KotlinPlaceHolderStubImpl<KtPrefixExpression>(
+                parent = parent,
+                elementType = KtNodeTypes.PREFIX_EXPRESSION,
+            )
             KotlinOperationReferenceExpressionStubImpl(prefixExpression, KtTokens.MINUS.value.ref(), KtTokens.MINUS)
 
             val parenthesized = KotlinPlaceHolderStubImpl<KtParenthesizedExpression>(
-                prefixExpression,
-                KtNodeTypes.PARENTHESIZED,
+                parent = prefixExpression,
+                elementType = KtNodeTypes.PARENTHESIZED,
             )
 
             createDivisionStub(parenthesized, zero, zero)
@@ -175,16 +178,15 @@ private fun createFloatingPointDefinitionStub(parent: StubElement<*>, constantNa
     }
 }
 
-@OptIn(KtImplementationDetail::class)
 private fun createDivisionStub(parent: StubElement<*>, dividend: String, divisor: String) {
-    val binaryExpression = KotlinPlaceHolderStubImpl<KtBinaryExpression>(parent, KtNodeTypes.BINARY_EXPRESSION)
+    val binaryExpression = KotlinPlaceHolderStubImpl<KtBinaryExpression>(parent = parent, elementType = KtNodeTypes.BINARY_EXPRESSION)
     createNumberStub(binaryExpression, ConstantValueKind.FLOAT_CONSTANT, dividend)
     KotlinOperationReferenceExpressionStubImpl(binaryExpression, KtTokens.DIV.value.ref(), KtTokens.DIV)
     createConstantStub(binaryExpression, ConstantValueKind.FLOAT_CONSTANT, divisor)
 }
 
 private fun createStringTemplateStub(parent: StubElement<*>, value: String) {
-    val template = KotlinPlaceHolderStubImpl<KtStringTemplateExpression>(parent, KtNodeTypes.STRING_TEMPLATE)
+    val template = KotlinPlaceHolderStubImpl<KtStringTemplateExpression>(parent = parent, elementType = KtNodeTypes.STRING_TEMPLATE)
     val literal = StringBuilder()
 
     fun flushLiteral() {
@@ -216,7 +218,10 @@ private fun createStringTemplateStub(parent: StubElement<*>, value: String) {
 }
 
 private fun createClassLiteralStub(parent: StubElement<*>, value: KClassValue.Value.NormalClass) {
-    val classLiteral = KotlinClassLiteralExpressionStubImpl(parent)
+    val classLiteral = KotlinPlaceHolderStubImpl<KtClassLiteralExpression>(
+        parent = parent,
+        elementType = KtNodeTypes.CLASS_LITERAL_EXPRESSION,
+    )
     val arrayDimensions = value.arrayDimensions
     if (arrayDimensions == 0) {
         createReferenceChainStub(classLiteral, value.classId.segments())
@@ -225,7 +230,7 @@ private fun createClassLiteralStub(parent: StubElement<*>, value: KClassValue.Va
 
     // An array class literal has no separate class id, so it is rendered as `kotlin.Array<...>::class`
     createQualifiedStub(classLiteral, StandardClassIds.Array.segments().dropLast(1)) { receiver ->
-        val call = KotlinPlaceHolderStubImpl<KtCallExpression>(receiver, KtNodeTypes.CALL_EXPRESSION)
+        val call = KotlinPlaceHolderStubImpl<KtCallExpression>(parent = receiver, elementType = KtNodeTypes.CALL_EXPRESSION)
         createNameReferenceStub(call, StandardClassIds.Array.shortClassName)
         createTypeArgumentListStub(call) { typeReference ->
             createArrayTypeStub(typeReference, value.classId, arrayDimensions - 1)
@@ -250,16 +255,19 @@ private fun createArrayTypeStub(parent: StubElement<*>, classId: ClassId, arrayD
 }
 
 private fun createTypeArgumentListStub(parent: StubElement<*>, createType: (StubElement<*>) -> Unit) {
-    val typeArgumentList = KotlinPlaceHolderStubImpl<KtTypeArgumentList>(parent, KtNodeTypes.TYPE_ARGUMENT_LIST)
-    val typeProjection = KotlinTypeProjectionStubImpl(typeArgumentList, KtProjectionKind.NONE.ordinal)
-    val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(typeProjection, KtNodeTypes.TYPE_REFERENCE)
+    val typeArgumentList = KotlinPlaceHolderStubImpl<KtTypeArgumentList>(parent = parent, elementType = KtNodeTypes.TYPE_ARGUMENT_LIST)
+    val typeProjection = KotlinTypeProjectionStubImpl(
+        parent = typeArgumentList,
+        projectionKindOrdinal = KtProjectionKind.NONE.ordinal,
+    )
+    val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(parent = typeProjection, elementType = KtNodeTypes.TYPE_REFERENCE)
     createType(typeReference)
 }
 
 private fun createNestedAnnotationStub(parent: StubElement<*>, value: AnnotationValue.Value) {
     val segments = value.classId.segments()
     createQualifiedStub(parent, segments.dropLast(1)) { receiver ->
-        val call = KotlinPlaceHolderStubImpl<KtCallExpression>(receiver, KtNodeTypes.CALL_EXPRESSION)
+        val call = KotlinPlaceHolderStubImpl<KtCallExpression>(parent = receiver, elementType = KtNodeTypes.CALL_EXPRESSION)
         createNameReferenceStub(call, segments.last())
 
         // The list is created even for an empty mapping, otherwise the text would be rendered as a plain reference
@@ -279,7 +287,7 @@ private fun createConstantStub(parent: StubElement<*>, kind: ConstantValueKind, 
 }
 
 private fun createNameReferenceStub(parent: StubElement<*>, name: Name) {
-    KotlinNameReferenceExpressionStubImpl(parent, name.ref(), /* myClassRef = */ false)
+    KotlinNameReferenceExpressionStubImpl(parent = parent, referencedNameRef = name.ref(), isClassRef = false)
 }
 
 /**
@@ -308,8 +316,8 @@ private fun createQualifiedStub(
     }
 
     val qualifiedExpression = KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(
-        parent,
-        KtNodeTypes.DOT_QUALIFIED_EXPRESSION,
+        parent = parent,
+        elementType = KtNodeTypes.DOT_QUALIFIED_EXPRESSION,
     )
 
     createReferenceChainStub(qualifiedExpression, receiverSegments)

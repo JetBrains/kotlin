@@ -240,16 +240,7 @@ fun FirBasedSymbol<*>.getDeprecationForCallSite(
 }
 
 private fun FirAnnotation.getDeprecationLevel(): DeprecationLevelValue? {
-    //take last because Annotation might be not resolved yet and arguments passed without explicit names
-    val argument = if (resolved) {
-        argumentMapping.mapping[ParameterNames.deprecatedLevel]
-    } else {
-        val call = this as? FirAnnotationCall ?: return null
-        call.arguments
-            .firstOrNull { it is FirNamedArgumentExpression && it.name == ParameterNames.deprecatedLevel }
-            ?.unwrapArgument()
-            ?: arguments.lastOrNull()
-    } ?: return null
+    val argument = argumentMapping.mapping[ParameterNames.deprecatedLevel] ?: return null
 
     val targetName = argument.extractEnumValueArgumentInfo()?.enumEntryName?.asString() ?: return null
 

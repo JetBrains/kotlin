@@ -308,10 +308,12 @@ data class KotlinWebpackConfig(
                 }
             }
             appendErrorPlugin()
-            appendFromConfigDir()
             appendDefinePluginForBrowser()
             appendExperiments()
             appendExtraJs()
+
+            // keep it last thing to add
+            appendFromConfigDir()
 
             if (export) {
                 //language=JavaScript 1.8

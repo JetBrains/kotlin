@@ -41,7 +41,7 @@ KtFile: variableNamedValueInSquareBrackets.kt
                 PsiElement(IDENTIFIER)('String')
         PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo1')
@@ -155,7 +155,7 @@ KtFile: variableNamedValueInSquareBrackets.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo2')
@@ -279,7 +279,7 @@ KtFile: variableNamedValueInSquareBrackets.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo3')
@@ -393,7 +393,7 @@ KtFile: variableNamedValueInSquareBrackets.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo4')

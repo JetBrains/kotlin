@@ -96,7 +96,7 @@ Use other similar tools only if it is not possible to use the JetBrains IDE MCP,
 - MCP changes integrate with IDE's undo history
 
 **IDE capabilities:**
-- `search_in_files_by_text` uses IntelliJ indexes — faster than grep on large codebases
+- `search_text` uses IntelliJ indexes — faster than grep on large codebases
 - `rename_refactoring` understands code structure and updates all references correctly
 - `get_symbol_info` provides type info, documentation, and declarations
 - `get_file_problems` runs IntelliJ inspections beyond syntax checking
@@ -108,13 +108,13 @@ If there are many options for the JetBrains IDE MCP server, ask the user what MC
 
 ### Tool mapping
 
-| Instead of      | Use JetBrains MCP                                     |
-|-----------------|-------------------------------------------------------|
-| `Read`          | `get_file_text_by_path`                               |
-| `Edit`, `Write` | `replace_text_in_file`, `create_new_file`             |
-| `Grep`          | `search_in_files_by_text`, `search_in_files_by_regex` |
-| `Glob`          | `find_files_by_name_keyword`, `find_files_by_glob`    |
-| `Task(Explore)` | `list_directory_tree`, `search_in_files_by_text`      |
+| Instead of      | Use JetBrains MCP                    |
+|-----------------|--------------------------------------|
+| `Read`          | `read_file`                          |
+| `Edit`, `Write` | `apply_patch`, `create_new_file`     |
+| `Grep`          | `search_text`, `search_regex`        |
+| `Glob`          | `search_file`                        |
+| `Task(Explore)` | `list_directory_tree`, `search_text` |
 
 ### Additional MCP tools
 

@@ -163,7 +163,7 @@ private fun FirNamedFunctionSymbol.firstOverriddenFunction(
 
 private inline fun <T : FirCallableSymbol<*>> T.firstOverriddenCallable(
     containingScope: FirTypeScope,
-    processFunction: FirTypeScope.(T, (T) -> ProcessorAction) -> ProcessorAction,
+    processFunction: FirTypeScope.(T, (T) -> ProcessorAction) -> Unit,
     noinline predicate: (T) -> Boolean,
 ): T? {
     var result: T? = null

@@ -131,7 +131,7 @@ KtSuperTypeList(291,304): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(291,304): 'SealedClass()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -149,7 +149,7 @@ KtSuperTypeCallEntry(291,304): 'SealedClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(291,302): 'SealedClass'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -173,7 +173,7 @@ KtUserType(291,302): 'SealedClass'
   null
 
 KtNameReferenceExpression(291,302): 'SealedClass'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -221,7 +221,7 @@ KtSuperTypeList(353,366): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(353,366): 'SealedClass()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -239,7 +239,7 @@ KtSuperTypeCallEntry(353,366): 'SealedClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(353,364): 'SealedClass'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -263,7 +263,7 @@ KtUserType(353,364): 'SealedClass'
   null
 
 KtNameReferenceExpression(353,364): 'SealedClass'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -329,7 +329,7 @@ KtSuperTypeList(442,460): 'SealedGeneric<T>()'
   null
 
 KtSuperTypeCallEntry(442,460): 'SealedGeneric<T>()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -349,7 +349,7 @@ KtSuperTypeCallEntry(442,460): 'SealedGeneric<T>()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(442,458): 'SealedGeneric<T>'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -375,7 +375,7 @@ KtUserType(442,458): 'SealedGeneric<T>'
   null
 
 KtNameReferenceExpression(442,455): 'SealedGeneric'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -443,7 +443,7 @@ KtSuperTypeList(501,519): 'SealedGeneric<T>()'
   null
 
 KtSuperTypeCallEntry(501,519): 'SealedGeneric<T>()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -463,7 +463,7 @@ KtSuperTypeCallEntry(501,519): 'SealedGeneric<T>()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(501,517): 'SealedGeneric<T>'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -489,7 +489,7 @@ KtUserType(501,517): 'SealedGeneric<T>'
   null
 
 KtNameReferenceExpression(501,514): 'SealedGeneric'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -572,7 +572,7 @@ KtWhenExpression(580,745): 'when (instance) {'
   null
 
 KtNameReferenceExpression(586,594): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -604,7 +604,7 @@ KtNameReferenceExpression(605,621): 'SealedInheritor1'
   null
 
 KtDotQualifiedExpression(625,639): 'instance.prop1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -626,7 +626,7 @@ KtDotQualifiedExpression(625,639): 'instance.prop1'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(625,633): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -643,7 +643,7 @@ KtNameReferenceExpression(625,633): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(634,639): 'prop1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -686,7 +686,7 @@ KtIsExpression(668,696): 'instance is SealedInheritor2'
   null
 
 KtNameReferenceExpression(668,676): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -715,7 +715,7 @@ KtNameReferenceExpression(680,696): 'SealedInheritor2'
   null
 
 KtDotQualifiedExpression(700,725): 'instance.prop2.toString()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -735,7 +735,7 @@ KtDotQualifiedExpression(700,725): 'instance.prop2.toString()'
       valueArgumentMapping = {}
 
 KtDotQualifiedExpression(700,714): 'instance.prop2'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -757,7 +757,7 @@ KtDotQualifiedExpression(700,714): 'instance.prop2'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(700,708): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -774,7 +774,7 @@ KtNameReferenceExpression(700,708): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(709,714): 'prop2'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -796,7 +796,7 @@ KtNameReferenceExpression(709,714): 'prop2'
       typeArgumentsMapping = {}
 
 KtCallExpression(715,725): 'toString()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -816,7 +816,7 @@ KtCallExpression(715,725): 'toString()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(715,723): 'toString'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -920,7 +920,7 @@ KtWhenExpression(844,1009): 'when (instance) {'
   null
 
 KtNameReferenceExpression(850,858): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -952,12 +952,12 @@ KtNameReferenceExpression(869,885): 'SealedInheritor1'
   null
 
 KtDotQualifiedExpression(889,903): 'instance.prop1'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'SealedClass & OtherI'.>
 
 KtNameReferenceExpression(889,897): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -974,7 +974,7 @@ KtNameReferenceExpression(889,897): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(898,903): 'prop1'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'SealedClass & OtherI'.>
 
@@ -1000,7 +1000,7 @@ KtIsExpression(932,960): 'instance is SealedInheritor2'
   null
 
 KtNameReferenceExpression(932,940): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1029,7 +1029,7 @@ KtNameReferenceExpression(944,960): 'SealedInheritor2'
   null
 
 KtDotQualifiedExpression(964,989): 'instance.prop2.toString()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1049,12 +1049,12 @@ KtDotQualifiedExpression(964,989): 'instance.prop2.toString()'
       valueArgumentMapping = {}
 
 KtDotQualifiedExpression(964,978): 'instance.prop2'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2' on receiver of type 'SealedClass & OtherI'.>
 
 KtNameReferenceExpression(964,972): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1071,12 +1071,12 @@ KtNameReferenceExpression(964,972): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(973,978): 'prop2'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2' on receiver of type 'SealedClass & OtherI'.>
 
 KtCallExpression(979,989): 'toString()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1096,7 +1096,7 @@ KtCallExpression(979,989): 'toString()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(979,987): 'toString'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1161,7 +1161,7 @@ KtWhenExpression(1062,1193): 'when(instance) {'
   null
 
 KtNameReferenceExpression(1067,1075): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1193,7 +1193,7 @@ KtNameReferenceExpression(1086,1102): 'SealedInheritor1'
   null
 
 KtDotQualifiedExpression(1106,1120): 'instance.prop1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1215,7 +1215,7 @@ KtDotQualifiedExpression(1106,1120): 'instance.prop1'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1106,1114): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1232,7 +1232,7 @@ KtNameReferenceExpression(1106,1114): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1115,1120): 'prop1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1269,7 +1269,7 @@ KtNameReferenceExpression(1128,1144): 'SealedInheritor2'
   null
 
 KtDotQualifiedExpression(1148,1173): 'instance.prop2.toString()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1289,7 +1289,7 @@ KtDotQualifiedExpression(1148,1173): 'instance.prop2.toString()'
       valueArgumentMapping = {}
 
 KtDotQualifiedExpression(1148,1162): 'instance.prop2'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1311,7 +1311,7 @@ KtDotQualifiedExpression(1148,1162): 'instance.prop2'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1148,1156): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1328,7 +1328,7 @@ KtNameReferenceExpression(1148,1156): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1157,1162): 'prop2'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1350,7 +1350,7 @@ KtNameReferenceExpression(1157,1162): 'prop2'
       typeArgumentsMapping = {}
 
 KtCallExpression(1163,1173): 'toString()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1370,7 +1370,7 @@ KtCallExpression(1163,1173): 'toString()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(1163,1171): 'toString'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1519,7 +1519,7 @@ KtWhenExpression(1373,1465): 'when (arg) {'
   null
 
 KtNameReferenceExpression(1379,1382): 'arg'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1641,7 +1641,7 @@ KtWhenExpression(1553,1684): 'when(instance) {'
   null
 
 KtNameReferenceExpression(1558,1566): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1673,7 +1673,7 @@ KtNameReferenceExpression(1577,1593): 'SealedInheritor1'
   null
 
 KtDotQualifiedExpression(1597,1611): 'instance.prop1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1695,7 +1695,7 @@ KtDotQualifiedExpression(1597,1611): 'instance.prop1'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1597,1605): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1712,7 +1712,7 @@ KtNameReferenceExpression(1597,1605): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1606,1611): 'prop1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1749,7 +1749,7 @@ KtNameReferenceExpression(1619,1635): 'SealedInheritor2'
   null
 
 KtDotQualifiedExpression(1639,1664): 'instance.prop2.toString()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1769,7 +1769,7 @@ KtDotQualifiedExpression(1639,1664): 'instance.prop2.toString()'
       valueArgumentMapping = {}
 
 KtDotQualifiedExpression(1639,1653): 'instance.prop2'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1791,7 +1791,7 @@ KtDotQualifiedExpression(1639,1653): 'instance.prop2'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1639,1647): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1808,7 +1808,7 @@ KtNameReferenceExpression(1639,1647): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1648,1653): 'prop2'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1830,7 +1830,7 @@ KtNameReferenceExpression(1648,1653): 'prop2'
       typeArgumentsMapping = {}
 
 KtCallExpression(1654,1664): 'toString()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1850,7 +1850,7 @@ KtCallExpression(1654,1664): 'toString()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(1654,1662): 'toString'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1924,7 +1924,7 @@ KtIsExpression(1745,1772): 'instance is SealedInterface'
   null
 
 KtNameReferenceExpression(1745,1753): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1959,7 +1959,7 @@ KtIsExpression(1776,1819): 'instance is SealedInterface.NestedInheritor'
   null
 
 KtNameReferenceExpression(1776,1784): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2006,7 +2006,7 @@ KtWhenExpression(1838,1998): 'when(instance) {'
   null
 
 KtNameReferenceExpression(1843,1851): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2038,12 +2038,12 @@ KtNameReferenceExpression(1870,1885): 'NestedInheritor'
   null
 
 KtDotQualifiedExpression(1889,1902): 'instance.prop'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'SealedInterface.NestedInheritor'.>
 
 KtNameReferenceExpression(1889,1897): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2060,7 +2060,7 @@ KtNameReferenceExpression(1889,1897): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1898,1902): 'prop'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'SealedInterface.NestedInheritor'.>
 
@@ -2080,12 +2080,12 @@ KtNameReferenceExpression(1918,1939): 'NestedNestedInheritor'
   null
 
 KtDotQualifiedExpression(1943,1962): 'instance.propNested'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'propNested' on receiver of type 'SealedInterface.NestedInheritor'.>
 
 KtNameReferenceExpression(1943,1951): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2102,7 +2102,7 @@ KtNameReferenceExpression(1943,1951): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1952,1962): 'propNested'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'propNested' on receiver of type 'SealedInterface.NestedInheritor'.>
 
@@ -2167,7 +2167,7 @@ KtIsExpression(2079,2106): 'instance is SealedInterface'
   null
 
 KtNameReferenceExpression(2079,2087): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2202,7 +2202,7 @@ KtIsExpression(2110,2125): 'instance is Any'
   null
 
 KtNameReferenceExpression(2110,2118): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2243,7 +2243,7 @@ KtWhenExpression(2144,2304): 'when(instance) {'
   null
 
 KtNameReferenceExpression(2149,2157): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2275,12 +2275,12 @@ KtNameReferenceExpression(2176,2191): 'NestedInheritor'
   null
 
 KtDotQualifiedExpression(2195,2208): 'instance.prop'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'SealedInterface.NestedInheritor'.>
 
 KtNameReferenceExpression(2195,2203): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2297,7 +2297,7 @@ KtNameReferenceExpression(2195,2203): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(2204,2208): 'prop'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'SealedInterface.NestedInheritor'.>
 
@@ -2317,12 +2317,12 @@ KtNameReferenceExpression(2224,2245): 'NestedNestedInheritor'
   null
 
 KtDotQualifiedExpression(2249,2268): 'instance.propNested'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'propNested' on receiver of type 'SealedInterface'.>
 
 KtNameReferenceExpression(2249,2257): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2339,7 +2339,7 @@ KtNameReferenceExpression(2249,2257): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(2258,2268): 'propNested'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'propNested' on receiver of type 'SealedInterface'.>
 
@@ -2431,7 +2431,7 @@ KtWhenExpression(2428,2546): 'when(instance) {'
   null
 
 KtNameReferenceExpression(2433,2441): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2463,12 +2463,12 @@ KtNameReferenceExpression(2452,2467): 'NestedInheritor'
   null
 
 KtDotQualifiedExpression(2471,2484): 'instance.prop'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'SealedInterface & SealedClass'.>
 
 KtNameReferenceExpression(2471,2479): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2485,7 +2485,7 @@ KtNameReferenceExpression(2471,2479): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(2480,2484): 'prop'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'SealedInterface & SealedClass'.>
 
@@ -2505,12 +2505,12 @@ KtNameReferenceExpression(2492,2508): 'SealedInheritor1'
   null
 
 KtDotQualifiedExpression(2512,2526): 'instance.prop1'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'SealedInterface & SealedClass'.>
 
 KtNameReferenceExpression(2512,2520): 'instance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2527,7 +2527,7 @@ KtNameReferenceExpression(2512,2520): 'instance'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(2521,2526): 'prop1'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'SealedInterface & SealedClass'.>
 
@@ -2568,7 +2568,7 @@ KtProperty(2590,2615): 'val i = JClass.staticProp'
   null
 
 KtDotQualifiedExpression(2598,2615): 'JClass.staticProp'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -2591,7 +2591,7 @@ KtNameReferenceExpression(2598,2604): 'JClass'
   null
 
 KtNameReferenceExpression(2605,2615): 'staticProp'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -2626,7 +2626,7 @@ KtNameReferenceExpression(2630,2639): 'SCOption1'
   null
 
 KtDotQualifiedExpression(2643,2650): 'i.prop1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -2648,7 +2648,7 @@ KtDotQualifiedExpression(2643,2650): 'i.prop1'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(2643,2644): 'i'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2665,7 +2665,7 @@ KtNameReferenceExpression(2643,2644): 'i'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(2645,2650): 'prop1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -2702,7 +2702,7 @@ KtNameReferenceExpression(2662,2671): 'SCOption2'
   null
 
 KtDotQualifiedExpression(2675,2682): 'i.prop2'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -2724,7 +2724,7 @@ KtDotQualifiedExpression(2675,2682): 'i.prop2'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(2675,2676): 'i'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2741,7 +2741,7 @@ KtNameReferenceExpression(2675,2676): 'i'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(2677,2682): 'prop2'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -2796,7 +2796,7 @@ KtDeclarationModifierList(2751,2766): '@UnsafeVariance'
   null
 
 KtAnnotationEntry(2751,2766): '@UnsafeVariance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2813,7 +2813,7 @@ KtAnnotationEntry(2751,2766): '@UnsafeVariance'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(2752,2766): 'UnsafeVariance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2836,7 +2836,7 @@ KtUserType(2752,2766): 'UnsafeVariance'
   null
 
 KtNameReferenceExpression(2752,2766): 'UnsafeVariance'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2910,7 +2910,7 @@ KtWhenExpression(2836,2936): 'when (arg.a) {'
   null
 
 KtDotQualifiedExpression(2842,2847): 'arg.a'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -2930,7 +2930,7 @@ KtDotQualifiedExpression(2842,2847): 'arg.a'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(2842,2845): 'arg'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2947,7 +2947,7 @@ KtNameReferenceExpression(2842,2845): 'arg'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(2846,2847): 'a'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

@@ -1,5 +1,5 @@
 KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaDelegatedConstructorCall:
         contextArgumentMapping = {}

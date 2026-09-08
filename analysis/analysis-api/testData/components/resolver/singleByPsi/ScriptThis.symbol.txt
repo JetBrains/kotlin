@@ -2,7 +2,7 @@ KtNameReferenceExpression(16,20): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaScriptSymbol:
         anchorPsi: KtScript

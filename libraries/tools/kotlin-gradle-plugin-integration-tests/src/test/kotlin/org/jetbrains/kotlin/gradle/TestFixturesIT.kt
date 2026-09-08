@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
-import kotlin.io.path.exists
 
 @DisplayName("Integration with the Gradle java-test-fixtures plugin")
 class TestFixturesIT : KGPBaseTest() {
@@ -33,34 +31,12 @@ class TestFixturesIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Test fixtures can access internals of the main JVM source set in KMP projects using 'withJava()'")
+    @DisplayName("Test fixtures can access internals of the main JVM source set in KMP projects")
     @MppGradlePluginTests
     @GradleTest
-    @TestMetadata(MPP_TEST_FIXTURES_PROJECT_NAME)
-    fun testInternalAccessInMppProjectWithJava(gradleVersion: GradleVersion) {
-        project(MPP_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
-            applyJavaPluginIfRequired(gradleVersion)
-            if (!isWithJavaSupported) buildGradle.replaceText("withJava()", "")
-            kotlinSourcesDir("jvmTestFixtures").resolve("Netherlands.kt").appendText(
-                //language=kt
-                """
-
-                    fun isCityFromNetherlands(city: City) = city.isNetherlands()
-                """.trimIndent()
-            )
-
-            build("compileTestFixturesKotlinJvm")
-        }
-    }
-
-    @DisplayName("Test fixtures can access internals of the main JVM source set in Kotlin MPP projects")
-    @MppGradlePluginTests
-    @GradleTest
-    @TestMetadata(MPP_TEST_FIXTURES_PROJECT_NAME)
-    fun testInternalAccessInMppProject(gradleVersion: GradleVersion) {
-        project(MPP_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
-            applyJavaPluginIfRequired(gradleVersion)
-            if (!isWithJavaSupported) buildGradle.replaceText("withJava()", "")
+    @TestMetadata(KMP_TEST_FIXTURES_PROJECT_NAME)
+    fun testInternalAccessInKmpProject(gradleVersion: GradleVersion) {
+        project(KMP_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
             kotlinSourcesDir("jvmTestFixtures").resolve("Netherlands.kt").appendText(
                 //language=kt
                 """
@@ -98,14 +74,12 @@ class TestFixturesIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("JVM test code can access internals of the test fixtures source set in Kotlin MPP projects")
+    @DisplayName("JVM test code can access internals of the test fixtures source set in KMP projects")
     @MppGradlePluginTests
     @GradleTest
-    @TestMetadata(MPP_TEST_FIXTURES_PROJECT_NAME)
-    fun testInternalAccessFromTestsInMppProject(gradleVersion: GradleVersion) {
-        project(MPP_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
-            applyJavaPluginIfRequired(gradleVersion)
-            if (!isWithJavaSupported) buildGradle.replaceText("withJava()", "")
+    @TestMetadata(KMP_TEST_FIXTURES_PROJECT_NAME)
+    fun testInternalAccessFromTestsInKmpProject(gradleVersion: GradleVersion) {
+        project(KMP_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
             kotlinSourcesDir("jvmTestFixtures").resolve("Netherlands.kt").appendText(
                 //language=kt
                 """
@@ -128,12 +102,9 @@ class TestFixturesIT : KGPBaseTest() {
     @DisplayName("Test associated 'functionalTest' compilation can compile and run with test and testFixtures in JVM project")
     @MppGradlePluginTests
     @GradleTest
-    @TestMetadata(MPP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME)
+    @TestMetadata(KMP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME)
     fun testTestFixturesAndFunctionalTestsInJvmProject(gradleVersion: GradleVersion) {
-        project(MPP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME, gradleVersion) {
-            applyJavaPluginIfRequired(gradleVersion)
-            if (!isWithJavaSupported) buildGradleKts.replaceText("withJava()", "")
-
+        project(KMP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME, gradleVersion) {
             build("functionalTest") {
                 assertOutputContains("src/main OK!")
                 assertOutputContains("src/test OK!")
@@ -146,15 +117,12 @@ class TestFixturesIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Test associated 'functionalTest' compilation can compile and run with test and testFixtures in Multiplatform project")
+    @DisplayName("Test associated 'functionalTest' compilation can compile and run with test and testFixtures in KMP project")
     @MppGradlePluginTests
     @GradleTest
-    @TestMetadata(MPP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME)
-    fun testTestFixturesAndFunctionalTestsInMppProject(gradleVersion: GradleVersion) {
-        project(MPP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME, gradleVersion) {
-            applyJavaPluginIfRequired(gradleVersion)
-            if (!isWithJavaSupported) buildGradleKts.replaceText("withJava()", "")
-
+    @TestMetadata(KMP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME)
+    fun testTestFixturesAndFunctionalTestsInKmpProject(gradleVersion: GradleVersion) {
+        project(KMP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME, gradleVersion) {
             build("functionalTest") {
                 assertOutputContains("src/main OK!")
                 assertOutputContains("src/test OK!")
@@ -198,37 +166,17 @@ class TestFixturesIT : KGPBaseTest() {
     @DisplayName("KT-75808: Correct project dependency on testFixtures")
     @MppGradlePluginTests
     @GradleTest
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_8_4 // 'testFixturesApi' configuration is only available in KMP projects since this version
-    )
+    @TestMetadata(KMP_JVM_TEST_FIXTURES_PROJECT_NAME)
     fun testProjectDependencyOnKmpTestFixtures(gradleVersion: GradleVersion) {
-        project("kmp-jvm-test-fixtures", gradleVersion) {
+        project(KMP_JVM_TEST_FIXTURES_PROJECT_NAME, gradleVersion) {
             build(":lib:testClasses")
         }
     }
 
-    /**
-     * The `java` plugin is not required for `java-test-fixtures` since Gradle 8.4:
-     * https://github.com/gradle/gradle/commit/7cc5e4f695e42ecbdd3cc938a2a4dd7ade01ad2a
-     */
-    private fun TestProject.applyJavaPluginIfRequired(gradleVersion: GradleVersion) {
-        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_4)) {
-            if (buildGradle.exists()) {
-                buildGradle.modify {
-                    it.replace("id(\"java-test-fixtures\")", "id(\"java\")\nid(\"java-test-fixtures\")")
-                }
-            } else {
-                buildGradleKts.modify {
-                    it.replace("`java-test-fixtures`", "java\n`java-test-fixtures`")
-                }
-            }
-        }
-    }
-
-
     companion object {
         private const val JVM_TEST_FIXTURES_PROJECT_NAME = "jvm-test-fixtures"
-        private const val MPP_TEST_FIXTURES_PROJECT_NAME = "mpp-test-fixtures"
-        private const val MPP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME = "mpp-test-fixtures-functionalTest"
+        private const val KMP_TEST_FIXTURES_PROJECT_NAME = "mpp-test-fixtures"
+        private const val KMP_TEST_FIXTURES_WITH_FUNCTIONAL_TEST_PROJECT_NAME = "mpp-test-fixtures-functionalTest"
+        private const val KMP_JVM_TEST_FIXTURES_PROJECT_NAME = "kmp-jvm-test-fixtures"
     }
 }

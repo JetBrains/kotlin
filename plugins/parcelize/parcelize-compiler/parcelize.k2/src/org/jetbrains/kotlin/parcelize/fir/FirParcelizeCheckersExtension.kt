@@ -10,30 +10,17 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationCallChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.*
 
-class FirParcelizeCheckersExtension(
-    session: FirSession,
-    val parcelizeAnnotations: List<ClassId>,
-    val experimentalCodeGeneration: Boolean,
-) : FirAdditionalCheckersExtension(session) {
+class FirParcelizeCheckersExtension(session: FirSession) : FirAdditionalCheckersExtension(session) {
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
-        override val annotationCallCheckers: Set<FirAnnotationCallChecker>
-            get() = setOf(FirParcelizeAnnotationChecker(parcelizeAnnotations))
+        override val annotationCallCheckers: Set<FirAnnotationCallChecker> = setOf(FirParcelizeAnnotationChecker)
     }
 
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
-        override val classCheckers: Set<FirClassChecker>
-            get() = setOf(FirParcelizeClassChecker(parcelizeAnnotations))
-
-        override val propertyCheckers: Set<FirPropertyChecker>
-            get() = setOf(FirParcelizePropertyChecker(parcelizeAnnotations))
-
-        override val namedFunctionCheckers: Set<FirNamedFunctionChecker>
-            get() = setOf(FirParcelizeFunctionChecker(parcelizeAnnotations))
-
-        override val constructorCheckers: Set<FirConstructorChecker>
-            get() = setOf(FirParcelizeConstructorChecker(parcelizeAnnotations, experimentalCodeGeneration))
+        override val classCheckers: Set<FirClassChecker> = setOf(FirParcelizeClassChecker, FirPolymorphicSealedClassChecker)
+        override val propertyCheckers: Set<FirPropertyChecker> = setOf(FirParcelizePropertyChecker)
+        override val namedFunctionCheckers: Set<FirNamedFunctionChecker> = setOf(FirParcelizeFunctionChecker)
+        override val constructorCheckers: Set<FirConstructorChecker> = setOf(FirParcelizeConstructorChecker)
     }
 }

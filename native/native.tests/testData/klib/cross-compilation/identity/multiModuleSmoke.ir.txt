@@ -179,12 +179,12 @@ MODULE_FRAGMENT name:<lib2>
                   VAR IR_TEMPORARY_VARIABLE name:tmp4 type:kotlin.reflect.KProperty<*> [val]
                     TYPE_OP type=kotlin.reflect.KProperty<*> origin=IMPLICIT_CAST typeOperand=kotlin.reflect.KProperty<*>
                       RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<lib2.SealedInterface.Object, kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='lib2/SealedInterface.Object.v|{}v[0]'
-                        getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-v> visibility:local modality:FINAL returnType:kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>
-                          VALUE_PARAMETER kind:Regular name:p0 index:0 type:lib2.SealedInterface.Object
+                        getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:v visibility:local modality:FINAL returnType:kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>
+                          VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:lib2.SealedInterface.Object
                           BLOCK_BODY
-                            RETURN type=kotlin.Nothing from='local final fun <get-v> (p0: lib2.SealedInterface.Object): kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> declared in lib2.SealedInterface.Object.<get-v>'
+                            RETURN type=kotlin.Nothing from='local final fun v (p0: lib2.SealedInterface.Object): kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> declared in lib2.SealedInterface.Object.<get-v>'
                               CALL 'lib2/SealedInterface.Object.v.<get-v>|<get-v>(){}[0]' type=kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> origin=null
-                                ARG <this>: GET_VAR 'p0: lib2.SealedInterface.Object declared in lib2.SealedInterface.Object.<get-v>.<get-v>' type=lib2.SealedInterface.Object origin=null
+                                ARG <this>: GET_VAR 'p0: lib2.SealedInterface.Object declared in lib2.SealedInterface.Object.<get-v>.v' type=lib2.SealedInterface.Object origin=null
                   RETURNABLE_BLOCK type=kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> origin=null
                     INLINED_BLOCK type=kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> origin=null
                       inlinedFunctionSymbol: kotlin/getValue|getValue@kotlin.Lazy<0:0>(kotlin.Any?;kotlin.reflect.KProperty<*>){0§<kotlin.Any?>}[0]

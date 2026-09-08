@@ -1,5 +1,5 @@
 KtAnnotationEntry(35,40): '@Anno'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

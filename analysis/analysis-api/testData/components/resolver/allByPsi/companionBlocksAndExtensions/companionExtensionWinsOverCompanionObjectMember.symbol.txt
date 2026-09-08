@@ -8,7 +8,7 @@ KtNameReferenceExpression(59,63): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test
     ]
@@ -47,13 +47,13 @@ KtDeclarationModifierList(130,139): 'companion'
   null
 
 KtTypeReference(144,145): 'C'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
 KtUserType(144,145): 'C'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
@@ -62,7 +62,7 @@ KtNameReferenceExpression(144,145): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
@@ -83,7 +83,7 @@ KtBlockExpression(171,187): '{'
   null
 
 KtDotQualifiedExpression(177,185): 'C.same()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/same(<extension receiver>: test.C): kotlin.String
     ]
@@ -92,13 +92,13 @@ KtNameReferenceExpression(177,178): 'C'
   isImplicitReferenceToCompanion: true
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C.Companion
     ]
 
 KtCallExpression(179,185): 'same()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/same(<extension receiver>: test.C): kotlin.String
     ]
@@ -107,7 +107,7 @@ KtNameReferenceExpression(179,183): 'same'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/same(<extension receiver>: test.C): kotlin.String
     ]

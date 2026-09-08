@@ -1,0 +1,4 @@
+FUNCTION:
+  /DataSingleton.equals
+EQUALITY_BOUND:
+  DataSingleton

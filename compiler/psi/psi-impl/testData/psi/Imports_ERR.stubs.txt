@@ -92,5 +92,5 @@ FILE[kind=Facade[packageFqName=foo.bar.goo, facadeFqName=foo.bar.goo.Imports_ERR
     IMPORT_DIRECTIVE[importedFqName=null, isAllUnder=false, isValid=false]
     IMPORT_DIRECTIVE[importedFqName=foo, isAllUnder=false, isValid=true]
       REFERENCE_EXPRESSION[referencedName=foo]
-  FUN[fqName=foo.bar.goo.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUNCTION[fqName=foo.bar.goo.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST

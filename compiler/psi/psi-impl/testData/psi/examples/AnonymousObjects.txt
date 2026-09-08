@@ -5,7 +5,7 @@ KtFile: AnonymousObjects.kt
     <empty list>
   PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
@@ -56,7 +56,7 @@ KtFile: AnonymousObjects.kt
                       PsiElement(INTEGER_LITERAL)('0')
                     PsiElement(SEMICOLON)(';')
                   PsiWhiteSpace('\n\n  ')
-                  FUN
+                  FUNCTION
                     MODIFIER_LIST
                       PsiElement(override)('override')
                     PsiWhiteSpace(' ')
@@ -163,7 +163,7 @@ KtFile: AnonymousObjects.kt
             CLASS_BODY
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n  ')
-              FUN
+              FUNCTION
                 PsiElement(fun)('fun')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('sendMessage')

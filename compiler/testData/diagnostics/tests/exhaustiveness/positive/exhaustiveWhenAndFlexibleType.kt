@@ -28,7 +28,7 @@ fun test_1() {
 
 fun test_2() {
     val e = Utils.getEnum()
-    val s = when (e) {
+    val s = <!WHEN_SUBJECT_CAN_BE_NULL_IN_JAVA!>when<!> (e) {
         E.A -> ""
         E.B -> ""
         E.C -> ""

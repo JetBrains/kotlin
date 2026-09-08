@@ -180,26 +180,6 @@ class KotlinJsBrowserTestDslTest {
             test.dumpRunners(),
         )
     }
-
-    @Test
-    fun `using new test DSL in wasmJs target throws an error`() {
-        val project = buildProjectWithMPP {
-            with(multiplatformExtension) {
-                @OptIn(ExperimentalWasmDsl::class)
-                wasmJs {
-                    browser {
-                        test {
-                            it.chromium()
-                        }
-                    }
-                }
-            }
-        }
-
-        project.evaluate()
-
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.NewJsTestDslNotSupportedForWasmError)
-    }
 }
 
 

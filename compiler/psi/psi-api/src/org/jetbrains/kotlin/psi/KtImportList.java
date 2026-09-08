@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,14 +24,19 @@ import java.util.List;
  * // ^____________________________^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtImportList extends KtElementImplStub<KotlinPlaceHolderStub<KtImportList>> {
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtImportList[] EMPTY_ARRAY = new KtImportList[0];
 
+    @KtImplementationDetail
     public KtImportList(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtImportList(@NotNull KotlinPlaceHolderStub<KtImportList> stub) {
-        super(stub, KtStubBasedElementTypes.IMPORT_LIST);
+        super(stub, KtNodeTypes.IMPORT_LIST);
     }
 
     @Override
@@ -37,8 +44,9 @@ public class KtImportList extends KtElementImplStub<KotlinPlaceHolderStub<KtImpo
         return visitor.visitImportList(this, data);
     }
 
+    /** Returns the import directives in this list, in source order; empty if there are none. */
     @NotNull
     public List<KtImportDirective> getImports() {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.IMPORT_DIRECTIVE);
+        return Arrays.asList(getStubOrPsiChildren(KtNodeTypes.IMPORT_DIRECTIVE, KtImportDirective.EMPTY_ARRAY));
     }
 }

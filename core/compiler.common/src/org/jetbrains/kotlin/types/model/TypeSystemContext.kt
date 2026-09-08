@@ -371,8 +371,6 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
      */
     fun usePreciseSimplificationToFlexibleLowerConstraint(): Boolean
 
-    fun simplifyFlexibleUpperConstraintWithDnnBoundToNullable(): Boolean
-
     /**
      * It's only relevant for K2 (and is not expected to be implemented properly in other contexts)
      */
@@ -667,6 +665,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
      * @returns substituted type or [type] if there were no substitution
      */
     fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker
+
+    fun TypeSubstitutorMarker.substituteOrNull(type: KotlinTypeMarker): KotlinTypeMarker? = safeSubstitute(type).takeIf { it !== type }
 
     /** See [CustomSubtypingCallback] */
     val customSubtypingCallback: CustomSubtypingCallback? get() = null

@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-80492
 // RENDER_DIAGNOSTIC_ARGUMENTS
-// LANGUAGE: +CollectionLiterals
 
 class Irrelevant
 

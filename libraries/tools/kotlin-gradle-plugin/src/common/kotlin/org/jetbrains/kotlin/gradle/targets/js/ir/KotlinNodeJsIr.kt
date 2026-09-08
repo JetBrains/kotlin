@@ -53,13 +53,7 @@ internal constructor(
         }
 
         if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
-            test.dependsOn(
-                nodeJsRoot.npmInstallTaskProvider,
-            )
-            if (target.webTargetVariant(jsVariant = false, wasmVariant = true)) {
-                test.dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
-            }
-            test.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
+            test.dependsOnNpmTooling(binary.compilation)
             test.dependsOn(binary.linkSyncTask)
         }
         test.dependsOn(binary.linkTask)

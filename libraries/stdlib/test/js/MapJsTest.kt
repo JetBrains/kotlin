@@ -12,9 +12,9 @@ import test.collections.behaviors.*
 class ComplexMapJsTest : MapJsTest() {
     // Helper function with generic parameter to force to use ComlpexHashMap
     fun <K : kotlin.Comparable<K>> doTest() {
-        HashMap<K, Int>()
-        HashMap<K, Int>(3)
-        HashMap<K, Int>(3, 0.5f)
+        val _ = HashMap<K, Int>()
+        val _ = HashMap<K, Int>(3)
+        val _ = HashMap<K, Int>(3, 0.5f)
         @Suppress("UNCHECKED_CAST")
         val map = HashMap<K, Int>(createTestMap() as HashMap<K, Int>)
 
@@ -35,9 +35,9 @@ class ComplexMapJsTest : MapJsTest() {
 
 class PrimitiveMapJsTest : MapJsTest() {
     @Test override fun constructors() {
-        HashMap<String, Int>()
-        HashMap<String, Int>(3)
-        HashMap<String, Int>(3, 0.5f)
+        val _ = HashMap<String, Int>()
+        val _ = HashMap<String, Int>(3)
+        val _ = HashMap<String, Int>(3, 0.5f)
 
         val map = HashMap<String, Int>(createTestMap())
 
@@ -76,9 +76,9 @@ class PrimitiveMapJsTest : MapJsTest() {
 
 class LinkedHashMapJsTest : LinkedMapJsTest() {
     @Test override fun constructors() {
-        LinkedHashMap<String, Int>()
-        LinkedHashMap<String, Int>(3)
-        LinkedHashMap<String, Int>(3, 0.5f)
+        val _ = LinkedHashMap<String, Int>()
+        val _ = LinkedHashMap<String, Int>(3)
+        val _ = LinkedHashMap<String, Int>(3, 0.5f)
 
         val map = LinkedHashMap<String, Int>(createTestMap())
 

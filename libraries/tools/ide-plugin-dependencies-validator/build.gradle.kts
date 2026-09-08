@@ -1,14 +1,13 @@
+import org.gradle.kotlin.dsl.testImplementation
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import kotlin.io.path.readLines
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     application
     kotlin("jvm")
-    id("project-tests-convention")
 }
 
 
@@ -20,6 +19,7 @@ dependencies {
 
     // runtime dependencies for IJ
     runtimeOnly(libs.intellij.fastutil)
+    runtimeOnly(libs.opentelemetry.api)
     runtimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     runtimeOnly(commonDependency("com.fasterxml:aalto-xml"))
 

@@ -196,7 +196,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
                 false
             }
             else -> error(
-                "Unexpected incremental compilation configuration: ${icConfig::class}. In this version, it must be an instance of JvmSnapshotBasedIncrementalCompilationConfiguration for incremental compilation, or null for non-incremental compilation."
+                "Unexpected incremental compilation configuration: ${icConfig::class}. In this version, it must be an instance of ${JsHistoryBasedIncrementalCompilationConfigurationImpl::class} for incremental compilation, or null for non-incremental compilation."
             )
         }
     }
@@ -257,7 +257,8 @@ internal class JsKlibCompilationOperationImpl private constructor(
             ),
             CompileScopeExpansionMode.ALWAYS,
             icFeatures,
-            executionContext.classloadersCache?.asPluginsLoader()
+            executionContext.classloadersCache?.asPluginsLoader(),
+            getLookupTrackerAdapter()
         )
 
         arguments.incrementalCompilation = true

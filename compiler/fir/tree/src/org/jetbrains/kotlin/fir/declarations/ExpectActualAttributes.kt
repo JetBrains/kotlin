@@ -61,6 +61,17 @@ val FirBasedSymbol<*>.expectForActual: ExpectForActualMatchingData?
         return fir.expectForActual
     }
 
+/**
+ * Finds the most `expect` declaration in hierarchy with potential present
+ * of ExpectRefinement feature/
+ */
+fun FirFunctionSymbol<*>.unwrapActualizationInRegardExpectRefinement(): FirFunctionSymbol<*> {
+    var current = this
+    while (true) {
+        current = current.getSingleMatchedExpectForActualOrNull() ?: return current
+    }
+}
+
 
 // Expect class in the key is needed, because class may correspond to two expects
 // in case when two `actual typealias` point to the same class.

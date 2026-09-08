@@ -1057,6 +1057,7 @@ class UnsignedArraysTest {
     }
 
     @Test
+    @Suppress("RETURN_VALUE_NOT_USED_COERCION")
     fun onEach() {
         assertEquals(listOf<UInt>(1u, 2u, 3u), mutableListOf<UInt>().apply { uintArrayOf(1u, 2u, 3u).onEach { add(it) } })
         assertEquals(listOf<UByte>(1u, 2u, 3u), mutableListOf<UByte>().apply { ubyteArrayOf(1u, 2u, 3u).onEach { add(it) } })
@@ -1065,6 +1066,7 @@ class UnsignedArraysTest {
     }
 
     @Test
+    @Suppress("RETURN_VALUE_NOT_USED_COERCION")
     fun onEachIndexed() {
         assertEquals(listOf<UInt>(1u, 3u, 5u), mutableListOf<UInt>().apply { uintArrayOf(1u, 2u, 3u).onEachIndexed { i, e -> add(i.toUInt() + e) } })
         assertEquals(listOf<UInt>(1u, 3u, 5u), mutableListOf<UInt>().apply { ubyteArrayOf(1u, 2u, 3u).onEachIndexed { i, e -> add(i.toUByte() + e) } })

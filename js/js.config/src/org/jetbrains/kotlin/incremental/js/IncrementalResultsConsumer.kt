@@ -19,13 +19,8 @@ package org.jetbrains.kotlin.incremental.js
 import java.io.File
 
 interface IncrementalResultsConsumer {
-    /** processes new header metadata (serialized [JsProtoBuf.Header]) */
-    fun processHeader(headerMetadata: ByteArray)
-
     /** processes new package part metadata and binary tree for compiled source file */
-    fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray, binaryAst: ByteArray, inlineData: ByteArray)
-
-    fun processPackageMetadata(packageName: String, metadata: ByteArray)
+    fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray)
 
     fun processIrFile(
         sourceFile: File,
@@ -48,25 +43,11 @@ interface IncrementalNextRoundChecker {
 }
 
 open class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
-    lateinit var headerMetadata: ByteArray
-        private set
-
     val packageParts: Map<File, TranslationResultValue>
         field = hashMapOf<File, TranslationResultValue>()
 
-    override fun processHeader(headerMetadata: ByteArray) {
-        this.headerMetadata = headerMetadata
-    }
-
-    override fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray, binaryAst: ByteArray, inlineData: ByteArray) {
-        packageParts.put(sourceFile, TranslationResultValue(packagePartMetadata, binaryAst, inlineData))
-    }
-
-    val packageMetadata: Map<String, ByteArray>
-        field = hashMapOf<String, ByteArray>()
-
-    override fun processPackageMetadata(packageName: String, metadata: ByteArray) {
-        packageMetadata[packageName] = metadata
+    override fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray) {
+        packageParts.put(sourceFile, TranslationResultValue(packagePartMetadata))
     }
 
 //    class IrFileData(fileData: ByteArray, symbols: ByteArray, types: ByteArray, strings: ByteArray, bodies: ByteArray, declarations: ByteArray)

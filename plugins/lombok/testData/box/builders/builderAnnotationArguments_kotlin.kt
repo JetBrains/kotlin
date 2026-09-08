@@ -6,7 +6,7 @@ import lombok.Builder
     buildMethodName = "execute",
     builderMethodName = "createBuilder",
     toBuilder = true,
-    access = AccessLevel.PACKAGE,
+    access = AccessLevel.PUBLIC,
     setterPrefix = "set"
 )
 class User(

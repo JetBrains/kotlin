@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
@@ -30,16 +31,20 @@ import java.util.List;
  * element of their own. {@code (@A Int)?} and {@code @A Int?} denote the same type, but in the former the modifier
  * list belongs to this element rather than to the enclosing {@link KtTypeReference}.
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtNullableType extends KtModifierListOwnerStub<KotlinPlaceHolderStub<KtNullableType>>
         implements KtTypeElement, KtResolvable {
+    @KtImplementationDetail
     public KtNullableType(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtNullableType(@NotNull KotlinPlaceHolderStub<KtNullableType> stub) {
-        super(stub, KtStubBasedElementTypes.NULLABLE_TYPE);
+        super(stub, KtNodeTypes.NULLABLE_TYPE);
     }
 
+    /** Returns the AST node of the {@code ?} token that marks the type as nullable. */
     @NotNull
     public ASTNode getQuestionMarkNode() {
         return getNode().findChildByType(KtTokens.QUEST);
@@ -57,6 +62,7 @@ public class KtNullableType extends KtModifierListOwnerStub<KotlinPlaceHolderStu
         return visitor.visitNullableType(this, data);
     }
 
+    /** Returns the underlying non-nullable type (the part before {@code ?}), or {@code null} if it is absent in incomplete code. */
     @Nullable
     @IfNotParsed
     public KtTypeElement getInnerType() {

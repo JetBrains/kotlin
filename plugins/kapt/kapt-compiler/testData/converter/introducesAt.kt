@@ -1,6 +1,5 @@
 
 // WITH_STDLIB
-@file:OptIn(ExperimentalVersionOverloading::class)
 
 fun topLevelFun(
     a: Int,

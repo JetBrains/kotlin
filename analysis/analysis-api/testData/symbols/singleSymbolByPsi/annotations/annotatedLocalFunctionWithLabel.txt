@@ -1,0 +1,46 @@
+KaNamedFunctionSymbol:
+  anchorPsi: KtNamedFunction
+  annotations: [
+    MyAnnotation()
+      psi: KtAnnotationEntry
+  ]
+  callableId: null
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: LOCAL
+  modality: FINAL
+  name: bar
+  origin: SOURCE
+  psi: KtNamedFunction
+  realPsi: KtNamedFunction
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
+  typeParameters: []
+  valueParameters: []
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(annotatedLocalFunctionWithLabel.kt)
+  getContainingJvmClassName: null
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  returnValueStatus: Unspecified
+  javaMethodName: null
+  importableFqName: null

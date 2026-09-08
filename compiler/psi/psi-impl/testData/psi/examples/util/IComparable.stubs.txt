@@ -7,7 +7,7 @@ FILE[kind=File[packageFqName=<root>]]
       TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[in]
     CLASS_BODY
-      FUN[fqName=IComparable.compareTo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareTo]
+      FUNCTION[fqName=IComparable.compareTo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareTo]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
             TYPE_REFERENCE

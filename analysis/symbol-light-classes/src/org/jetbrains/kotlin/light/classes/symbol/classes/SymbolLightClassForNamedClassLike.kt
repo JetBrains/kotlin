@@ -100,9 +100,14 @@ internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForC
 
     context(session: KaSession)
     protected fun addCompanionObjectFieldIfNeeded(result: MutableList<PsiField>, classSymbol: KaNamedClassSymbol) {
-        val companionObjectSymbols: List<KaNamedClassSymbol>? = classOrObjectDeclaration?.companionObjects?.mapNotNull {
-            it.namedClassSymbol
-        } ?: classSymbol.companionObject?.let(::listOf)
+        // The declaration is preferred over the symbol as erroneous code may declare several companion objects,
+        // while the symbol always exposes only the first one.
+        // An empty list means that nothing is declared in the source code, so the companion object,
+        // if any, comes from a compiler plugin and has no PSI counterpart.
+        val companionObjectSymbols = classOrObjectDeclaration?.companionObjects
+            ?.mapNotNull { it.namedClassSymbol }
+            ?.takeIf { it.isNotEmpty() }
+            ?: classSymbol.companionObject?.let(::listOf)
 
         companionObjectSymbols?.forEach {
             result.add(

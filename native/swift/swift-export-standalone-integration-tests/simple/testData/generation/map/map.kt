@@ -20,3 +20,5 @@ fun testStarMap(m: Map<*, *>) = m
 interface Bar
 
 fun testMapBarKey(m: Map<Bar, Int>) = m
+
+fun foo(): MutableMap<String, String> = TODO()

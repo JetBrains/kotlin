@@ -7,11 +7,21 @@ package org.jetbrains.kotlin.psi.psiUtil
 
 import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.utils.*
 
+/**
+ * Computes [ClassId]s for class-like declarations purely from the PSI structure, without semantic resolution.
+ */
 internal object ClassIdCalculator {
+    /**
+     * Returns the [ClassId] of the given [declaration] by walking its parents, or `null` if it has none — for example, a local declaration,
+     * an enum entry, or a declaration inside an object literal or code fragment.
+     */
     fun calculateClassId(declaration: KtClassLikeDeclaration): ClassId? {
         var ktFile: KtFile? = null
         val containingClassNames = mutableListOf<String>()
@@ -54,13 +64,10 @@ internal object ClassIdCalculator {
     }
 
     /**
-     * A best-effort way to get the class id of expression's type without resolve.
+     * Infers the [ClassId] of the given constant expression's type from PSI only, without semantic resolution.
      */
     fun inferConstantExpressionClassIdByPsi(expression: KtConstantExpression): ClassId? {
-        @Suppress("DEPRECATION") // KT-78356
-        val elementType =
-            expression.elementType
-
+        val elementType = expression.iElementType
         val convertedText: Any? = when (elementType) {
             KtNodeTypes.INTEGER_CONSTANT, KtNodeTypes.FLOAT_CONSTANT -> {
                 val isFloatingPoint = elementType == KtNodeTypes.FLOAT_CONSTANT

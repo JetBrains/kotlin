@@ -2,11 +2,12 @@ package test.wasm.unsafe
 
 import kotlin.wasm.unsafe.*
 import kotlin.test.*
+import kotlin.wasm.ExperimentalWasmInterop
 
 private fun jsConcatStrings(a: String, b: String): String =
     js("a + b")
 
-@OptIn(UnsafeWasmMemoryApi::class)
+@OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
 class MemoryAllocationJsTest {
     @Test
     fun testJsIntropInsideAllocations() {

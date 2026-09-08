@@ -87,6 +87,7 @@ class IncrementalJsCompilerRunner(
     private val scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER,
     icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
     pluginsLoader: PluginsLoader? = null,
+    override val lookupTrackerDelegate: LookupTracker = LookupTracker.DO_NOTHING,
 ) : IncrementalCompilerRunner<CommonJsAndWasmCompilerArguments, IncrementalJsCachesManager>(
     workingDir,
     "caches-js",
@@ -205,7 +206,6 @@ class IncrementalJsCompilerRunner(
         val incrementalResults = services[IncrementalResultsConsumer::class.java] as IncrementalResultsConsumerImpl
 
         val jsCache = caches.platformCache
-        jsCache.header = incrementalResults.headerMetadata
 
         jsCache.compareAndUpdate(incrementalResults, changesCollector)
         jsCache.clearCacheForRemovedClasses(changesCollector)
@@ -262,11 +262,10 @@ class IncrementalJsCompilerRunner(
     ) : IncrementalNextRoundChecker {
         val newDirtySources = HashSet<File>()
 
-        private val emptyByteArray = ByteArray(0)
         private val translatedFiles = HashMap<File, TranslationResultValue>()
 
         override fun checkProtoChanges(sourceFile: File, packagePartMetadata: ByteArray) {
-            translatedFiles[sourceFile] = TranslationResultValue(packagePartMetadata, emptyByteArray, emptyByteArray)
+            translatedFiles[sourceFile] = TranslationResultValue(packagePartMetadata)
         }
 
         override fun shouldGoToNextRound(): Boolean {

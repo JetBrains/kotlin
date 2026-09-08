@@ -1,6 +1,6 @@
 KtFile: fragment.kt
   BLOCK
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('foo')

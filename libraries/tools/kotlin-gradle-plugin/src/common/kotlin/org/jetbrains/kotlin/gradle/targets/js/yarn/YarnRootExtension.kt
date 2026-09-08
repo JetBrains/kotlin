@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.process.ExecOperations
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
@@ -38,7 +39,7 @@ internal constructor(
             get() = extensionName("yarn")
 
         operator fun get(project: Project): YarnRootExtension {
-            val rootProject = project.rootProject
+            val rootProject = project.jsToolingProject()
             rootProject.plugins.apply(YarnPlugin::class.java)
             return rootProject.extensions.getByName(YARN) as YarnRootExtension
         }

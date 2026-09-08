@@ -66,7 +66,10 @@ fun test(foo: Foo, %composer: Composer?, %changed: Int) {
         if (isTraceInProgress()) {
           traceEventStart(<>, %changed, -1, <>)
         }
-        val tmp0 = delegated%delegate.getValue(null, ::delegated%delegate, %composer, 0b00110000)
+        val tmp0 = delegated%delegate.getValue(null, ::delegated {
+          @Composable
+          @FunctionKeyMeta(key = 1961329001, startOffset = 457, endOffset = 460)
+          fun delegated(%composer: Composer?, %changed: Int): Foo }, %composer, 0b00110000)
         if (isTraceInProgress()) {
           traceEventEnd()
         }

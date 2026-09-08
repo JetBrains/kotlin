@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassLikeSymbol
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.serialization.constant.toConstantValue
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirAnnotationSerializer(
     override val session: FirSession,
@@ -30,7 +33,21 @@ class FirAnnotationSerializer(
     internal val localClassIdOracle: LocalClassIdOracle,
 ) : SessionAndScopeSessionHolder {
     fun serializeAnnotation(annotation: FirAnnotation): ProtoBuf.Annotation? {
-        if (annotation.toAnnotationClassLikeSymbol(session)?.hasAnnotation(StandardClassIds.Annotations.OptionalExpectation, session) == true) return null
+        /*
+         * In platform compilation we want to strip out optional-expectation annotations from the metadata, as they are missing
+         * on this platform (otherwise they would be resolved to actual one).
+         *
+         * In metadata compilation we need to keep them, as it's unknown yet if these annotations would be stripped or not in
+         * future platform compilations.
+         */
+        val isMetadataCompilation = session.moduleData.isCommon
+        runIf(!isMetadataCompilation) {
+            val annotationClass = annotation.toAnnotationClassLikeSymbol(session) ?: return@runIf
+            if (annotationClass.isExpect && annotationClass.hasAnnotation(StandardClassIds.Annotations.OptionalExpectation, session)) {
+                return null
+            }
+        }
+
         val annotationValue = annotation.toConstantValue<AnnotationValue>()
             ?: error("Cannot serialize annotation ${annotation.render()}")
         return serializeAnnotation(annotationValue)

@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.android.externalAndroidTarget
 
-import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
-import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import java.util.zip.ZipFile
@@ -378,37 +376,6 @@ class AndroidLibraryWithJavaIT : KGPBaseTest() {
                 assertTasksExecuted(":compileAndroidDeviceTestJavaWithJavac")
             }
         }
-    }
-
-    private fun externalAndroidLibraryProject(
-        gradleVersion: GradleVersion,
-        androidVersion: String,
-        jdkVersion: JdkVersions.ProvidedJdk,
-        namespace: String,
-        withJava: Boolean = false,
-        androidLibraryConfiguration: KotlinMultiplatformAndroidLibraryTarget.() -> Unit = {},
-        configureProject: TestProject.() -> Unit = {},
-    ): TestProject = project(
-        "empty",
-        gradleVersion = gradleVersion,
-        buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
-        buildJdk = jdkVersion.location,
-    ) {
-        plugins {
-            kotlin("multiplatform")
-            id("com.android.kotlin.multiplatform.library")
-        }
-        buildScriptInjection {
-            kotlinMultiplatform.apply {
-                targets.withType(KotlinMultiplatformAndroidLibraryTarget::class.java).configureEach { target ->
-                    target.compileSdk = 34
-                    target.namespace = namespace
-                    if (withJava) target.withJava()
-                    target.androidLibraryConfiguration()
-                }
-            }
-        }
-        configureProject()
     }
 
     private fun TestProject.assertAarContainsClass(aarPath: String, classPath: String) {

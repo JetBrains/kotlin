@@ -5,37 +5,41 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web.wasm
 
-import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
-import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
+import org.jetbrains.kotlin.backend.wasm.*
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
-import org.jetbrains.kotlin.backend.wasm.linkIr
-import org.jetbrains.kotlin.backend.wasm.linkWasmIr
-import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
-import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
-import org.jetbrains.kotlin.cli.pipeline.web.WasmBackendPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.web.WebBackendPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.WebIrLoadingPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode.Companion.wasmCompilationMode
+import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextBase
+import org.jetbrains.kotlin.cli.pipeline.web.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
+import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
+import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
+import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
+import org.jetbrains.kotlin.ir.backend.js.ic.SrcFileArtifact
 import org.jetbrains.kotlin.js.config.outputDir
-import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 
-object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArtifact, List<WasmIrModuleConfiguration>>(
-    name = "WasmBackendPipelinePhase",
-) {
+abstract class WasmBackendPipelinePhase<TModuleArtifact, TFileArtifact, TFragments, TIcContext> : WebBackendPipelinePhase<
+        WasmBackendPipelineArtifact,
+        WasmIntermediatePipelineArtifact,
+        TModuleArtifact,
+        TFileArtifact,
+        TFragments,
+        WasmBackendContext
+        >(name = "WasmBackendPipelinePhase")
+        where TModuleArtifact : ModuleArtifact,
+              TFileArtifact : SrcFileArtifact,
+              TFragments : IrICProgramFragments,
+              TIcContext : WasmICContextBase<TModuleArtifact, TFileArtifact, TFragments> {
     override val klibLoadingPhase: WebIrLoadingPipelinePhase
         get() = WasmIrLoadingPipelinePhase
 
     override fun compileIntermediate(
-        intermediateResult: List<WasmIrModuleConfiguration>,
+        intermediateResult: WasmIntermediatePipelineArtifact,
         configuration: CompilerConfiguration,
     ): WasmBackendPipelineArtifact = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
         val outputDir = configuration.outputDir!!
-        val results = intermediateResult.map { result ->
+        val results = intermediateResult.backendIr.map { result ->
             val linkedModule = linkWasmIr(result)
             val compileResult = compileWasmIrToBinary(result, linkedModule)
             writeCompilationResult(
@@ -49,29 +53,16 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         WasmBackendPipelineArtifact(results, outputDir, configuration)
     }
 
-    override fun compileIncrementally(
-        icCaches: IcCachesArtifacts,
+    protected abstract fun createNonIncrementalCompiler(
         configuration: CompilerConfiguration,
-    ): List<WasmIrModuleConfiguration> {
-        val fragmentCompiler = when (configuration.wasmCompilationMode()) {
-            WasmCompilationMode.MULTI_MODULE -> ::compileIncrementallyMultimodule
-            WasmCompilationMode.SINGLE_MODULE -> ::compileIncrementallySingleModule
-            WasmCompilationMode.REGULAR -> ::compileIncrementallyWholeWorld
-        }
-        return fragmentCompiler(icCaches.artifacts, configuration)
-    }
+        irFactory: IrFactoryImplForWasmIC,
+        module: ModulesStructure,
+    ): WasmCompilerBase
 
-    override fun compileNonIncrementally(loadedIrArtifact: WebLoadedIrPipelineArtifact): List<WasmIrModuleConfiguration> {
+    override fun compileNonIncrementally(loadedIrArtifact: WebLoadedIrPipelineArtifact): WasmIntermediatePipelineArtifact {
         (val loadedIr = moduleInfo, val module = moduleStructure, val configuration) = loadedIrArtifact
         val irFactory = loadedIr.bultins.irFactory as IrFactoryImplForWasmIC
-        val compiler = when (configuration.wasmCompilationMode()) {
-            WasmCompilationMode.MULTI_MODULE ->
-                WholeWorldMultiModuleCompiler(configuration, irFactory)
-            WasmCompilationMode.SINGLE_MODULE ->
-                SingleModuleCompiler(configuration, irFactory, isWasmStdlib = module.klibs.included?.isWasmStdlib == true)
-            WasmCompilationMode.REGULAR ->
-                WholeWorldCompiler(configuration, irFactory)
-        }
+        val compiler = createNonIncrementalCompiler(configuration, irFactory, module)
 
         val [allModules, context] = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
             linkIr(loadedIr, configuration)
@@ -82,7 +73,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         }
 
         return configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
-            compiler.compileIr(loweredIr)
+            WasmIntermediatePipelineArtifact(compiler.compileIr(loweredIr), null, configuration)
         }
     }
 }

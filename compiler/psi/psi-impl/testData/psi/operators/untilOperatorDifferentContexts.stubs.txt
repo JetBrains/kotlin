@@ -3,9 +3,9 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UntilOperatorDifferentContex
   partSimpleName: "UntilOperatorDifferentContextsKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=main, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=main]
+  FUNCTION[fqName=main, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=main]
     VALUE_PARAMETER_LIST
-  FUN[fqName=main, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=main]
+  FUNCTION[fqName=main, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=main]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=x]
         TYPE_REFERENCE
@@ -15,7 +15,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UntilOperatorDifferentContex
           INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
           OPERATION_REFERENCE[operationToken=RANGE_UNTIL, referencedName=..<]
           REFERENCE_EXPRESSION[referencedName=n]
-  FUN[fqName=main, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=main]
+  FUNCTION[fqName=main, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=main]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Suppress]
         CONSTRUCTOR_CALLEE
@@ -29,7 +29,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UntilOperatorDifferentContex
               OPERATION_REFERENCE[operationToken=RANGE_UNTIL, referencedName=..<]
               REFERENCE_EXPRESSION[referencedName=n]
     VALUE_PARAMETER_LIST
-  FUN[fqName=main, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=main]
+  FUNCTION[fqName=main, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=main]
     VALUE_PARAMETER_LIST
-  FUN[fqName=main, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=main]
+  FUNCTION[fqName=main, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=main]
     VALUE_PARAMETER_LIST

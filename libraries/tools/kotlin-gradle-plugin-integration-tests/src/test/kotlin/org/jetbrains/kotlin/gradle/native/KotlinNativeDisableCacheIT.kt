@@ -25,7 +25,6 @@ import java.net.URI
 @NativeGradlePluginTests
 internal class KotlinNativeDisableCacheIT : KGPBaseTest() {
 
-    @OptIn(KotlinNativeCacheApi::class)
     @GradleTest
     @OsCondition(supportedOn = [OS.MAC, OS.LINUX], enabledOnCI = [OS.LINUX])
     fun testNativeCacheDisabledDiagnostic(
@@ -45,7 +44,6 @@ internal class KotlinNativeDisableCacheIT : KGPBaseTest() {
         }
     }
 
-    @OptIn(KotlinNativeCacheApi::class)
     @GradleTest
     @OsCondition(supportedOn = [OS.MAC, OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
     fun testNativeCacheRedundantDiagnostic(
@@ -65,7 +63,6 @@ internal class KotlinNativeDisableCacheIT : KGPBaseTest() {
         }
     }
 
-    @OptIn(KotlinNativeCacheApi::class)
     @GradleTest
     @OsCondition(supportedOn = [OS.MAC, OS.LINUX], enabledOnCI = [OS.LINUX])
     // KT-83353 DisableNativeCache breaks up-to-date checks for non-cacheable K/N targets
@@ -107,10 +104,9 @@ internal class KotlinNativeDisableCacheIT : KGPBaseTest() {
                 |kotlin {
                 |    mingwX64 {
                 |        binaries.staticLib {
-                |            @Suppress("DEPRECATION")
                 |            @OptIn(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCacheApi::class)
                 |            disableNativeCache(
-                |              org.jetbrains.kotlin.gradle.plugin.mpp.DisableCacheInKotlinVersion.`2_4_20`,
+                |              org.jetbrains.kotlin.gradle.plugin.mpp.DisableCacheInKotlinVersion.$latestDisableCacheInKotlinVersionName,
                 |              "Disabled for integration testing"
                 |            )
                 |        }
@@ -136,9 +132,8 @@ internal class KotlinNativeDisableCacheIT : KGPBaseTest() {
                 |kotlin {
                 |    targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
                 |        binaries.all {
-                |            @Suppress("DEPRECATION")
                 |            disableNativeCache(
-                |              org.jetbrains.kotlin.gradle.plugin.mpp.DisableCacheInKotlinVersion.`2_4_20`,
+                |              org.jetbrains.kotlin.gradle.plugin.mpp.DisableCacheInKotlinVersion.$latestDisableCacheInKotlinVersionName,
                 |              "Disabled for integration testing"
                 |            )
                 |        }
@@ -163,7 +158,6 @@ internal class KotlinNativeDisableCacheUnsupportedHostIT : KGPDaemonsBaseTest() 
      */
     private val linuxArm64HostParameters = listOf("-Dos.name=Linux", "-Dos.arch=aarch64")
 
-    @OptIn(KotlinNativeCacheApi::class)
     @GradleTest
     @OsCondition(supportedOn = [OS.MAC, OS.LINUX], enabledOnCI = [OS.LINUX])
     fun testNoNativeCacheDiagnosticsOnUnsupportedHost(
@@ -201,6 +195,24 @@ private fun getDebugStaticTaskName(targetName: String) = lowerCamelCaseName(
     targetName
 )
 
+/**
+ * The newest constant of [DisableCacheInKotlinVersion], resolved reflectively.
+ *
+ * The generated constants follow a rolling cycle where N-1 is deprecated, N-2 is a deprecation error and N-3 is dropped, so a literal
+ * constant makes this test fail to compile on every Kotlin version bump. The newest one is always available and never deprecated.
+ */
+@OptIn(KotlinNativeCacheApi::class)
+private fun latestDisableCacheInKotlinVersion(): DisableCacheInKotlinVersion =
+    DisableCacheInKotlinVersion::class.java.declaredClasses
+        .mapNotNull { nested -> nested.fields.singleOrNull { it.name == "INSTANCE" }?.get(null) }
+        .filterIsInstance<DisableCacheInKotlinVersion>()
+        .maxOrNull() ?: error("No DisableCacheInKotlinVersion constants found")
+
+/** Name of [latestDisableCacheInKotlinVersion] as it has to be spelled in a build script, for example ``2_5_0``. */
+@OptIn(KotlinNativeCacheApi::class)
+private val latestDisableCacheInKotlinVersionName: String
+    get() = latestDisableCacheInKotlinVersion().let { "`${it.major}_${it.minor}_${it.patch}`" }
+
 @OptIn(KotlinNativeCacheApi::class)
 private fun KGPBaseTest.setupNativeCacheTest(
     gradleVersion: GradleVersion,
@@ -216,9 +228,8 @@ private fun KGPBaseTest.setupNativeCacheTest(
                 val target = targetProvider()
 
                 target.binaries.staticLib {
-                    @Suppress("DEPRECATION")
                     disableNativeCache(
-                        DisableCacheInKotlinVersion.`2_4_20`,
+                        latestDisableCacheInKotlinVersion(),
                         "Disabled for integration testing",
                         URI("https://kotlinlang.org")
                     )

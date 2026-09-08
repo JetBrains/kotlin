@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBui
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchyDslImpl
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.redundantDependsOnEdgesTracker
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.swiftPMImportIdeModelProvider
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
@@ -282,6 +283,92 @@ internal constructor(
     // This getter is consumed during KMP import in KotlinMPPGradleModelBuilder
     internal val swiftPMImportIdeModel
         get() = if (!project.kotlinPropertiesProvider.disableSwiftPMImport) project.swiftPMImportIdeModelProvider().get() else null
+
+    /**
+     * The Swift Export extension of this project.
+     *
+     * Unlike [swiftExport], reading this property doesn't request Swift Export for this project.
+     */
+    internal val swiftExportInternal: SwiftExportExtension by lazy {
+        project.objects.SwiftExportExtension(
+            project.dependencies,
+            project.variantImplementationFactoryProvider(),
+        ) { path -> project.project(path) }
+    }
+
+    /**
+     * Whether Swift Export was requested for this project through the [swiftExport] DSL.
+     */
+    internal var isSwiftExportRequested: Boolean = false
+        private set
+
+    /*
+    The members below are intentionally not marked with @ExperimentalSwiftExportDsl: the `swiftExport {}` extension used
+    to be accessible through the accessors Gradle generates for it, which never required an opt-in.
+     */
+
+    /**
+     * An *experimental* plugin DSL extension to configure Swift Export.
+     *
+     * Swift Export is a part of the Kotlin toolset designed to generate Swift code from Kotlin source files.
+     *
+     * Accessing this property causes Swift Export to be requested for this project and the corresponding tasks
+     * to be created.
+     *
+     * Note that this DSL is experimental, and it will likely change in future versions until it is stable.
+     *
+     * @since 2.1.0
+     */
+    val swiftExport: SwiftExportExtension
+        get() {
+            isSwiftExportRequested = true
+            return swiftExportInternal
+        }
+
+    /**
+     * Requests Swift Export for this project.
+     *
+     * Calling this function causes Swift Export to be requested for this project and the corresponding tasks
+     * to be created.
+     *
+     * @since 2.1.0
+     */
+    fun swiftExport() {
+        isSwiftExportRequested = true
+    }
+
+    /**
+     * Requests and configures Swift Export for this project.
+     *
+     * ```kotlin
+     * kotlin {
+     *     swiftExport {
+     *         // Your Swift Export configuration
+     *     }
+     * }
+     * ```
+     *
+     * Calling this function causes Swift Export to be requested for this project and the corresponding tasks
+     * to be created.
+     *
+     * @since 2.1.0
+     */
+    fun swiftExport(configure: SwiftExportExtension.() -> Unit) {
+        // Note: `swiftExport.configure()` would resolve to SwiftExportExtension.configure() instead of this parameter.
+        configure(swiftExport)
+    }
+
+    /**
+     * Requests and configures Swift Export for this project.
+     *
+     * Calling this function causes Swift Export to be requested for this project and the corresponding tasks
+     * to be created.
+     *
+     * @since 2.1.0
+     */
+    fun swiftExport(configure: Action<SwiftExportExtension>) = swiftExport {
+        configure.execute(this)
+    }
 }
 
 private const val targetsExtensionDeprecationMessage =

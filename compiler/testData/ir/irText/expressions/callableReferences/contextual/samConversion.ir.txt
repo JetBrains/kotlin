@@ -33,5 +33,6 @@ FILE fqName:<root> fileName:/samConversion.kt
             invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.Unit
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:c0 index:0 type:kotlin.String
               BLOCK_BODY
-                CALL 'public final fun foo ($context-String: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                  ARG $context-String: GET_VAR 'c0: kotlin.String declared in <root>.test.foo' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
+                RETURN type=kotlin.Nothing from='local final fun foo (c0: kotlin.String): kotlin.Unit declared in <root>.test'
+                  CALL 'public final fun foo ($context-String: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                    ARG $context-String: GET_VAR 'c0: kotlin.String declared in <root>.test.foo' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE

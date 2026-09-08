@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.process.ExecOperations
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
@@ -38,7 +39,7 @@ abstract class NpmExtension internal constructor(
             get() = extensionName("npm")
 
         operator fun get(project: Project): NpmExtension {
-            val rootProject = project.rootProject
+            val rootProject = project.jsToolingProject()
             rootProject.plugins.apply(NodeJsRootPlugin::class.java)
             return rootProject.extensions.getByName(EXTENSION_NAME) as NpmExtension
         }

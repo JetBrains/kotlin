@@ -11,6 +11,8 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.targets.js.internal.checkIsJsToolingProject
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironmentTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonFilesTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.UsesKotlinNpmResolutionManager
@@ -22,7 +24,9 @@ abstract class RootPackageJsonTask :
     PackageJsonFilesTask,
     UsesKotlinNpmResolutionManager {
     init {
-        check(project == project.rootProject)
+        checkIsJsToolingProject(project) {
+            "Cannot register ${RootPackageJsonTask::class.java.simpleName} in ${project.displayName}. It can only be registered in ${project.jsToolingProject().displayName}."
+        }
     }
 
     @get:OutputFile

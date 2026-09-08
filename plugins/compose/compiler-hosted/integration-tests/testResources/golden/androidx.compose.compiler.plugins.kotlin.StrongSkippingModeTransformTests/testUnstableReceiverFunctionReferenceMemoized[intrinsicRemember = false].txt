@@ -27,7 +27,11 @@ fun Something(%composer: Composer?, %changed: Int) {
     val x = <block>{
       val tmp0 = unstable
       %composer.cache(%composer.changedInstance(tmp0)) {
-        tmp0::method
+        tmp0::method<kotlin.reflect.KFunction1> {
+          fun method(receiver: Unstable, p0: @[ParameterName(name = 'arg1')] Int) {
+            return receiver.method(p0)
+          }
+        }
       }
     }
     if (isTraceInProgress()) {

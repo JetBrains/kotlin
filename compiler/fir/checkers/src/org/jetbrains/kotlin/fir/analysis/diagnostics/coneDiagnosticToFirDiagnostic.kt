@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstr
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.asCone
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -42,7 +41,6 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtLambdaExpression
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -53,7 +51,6 @@ import org.jetbrains.kotlin.util.getPreviousSibling
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -614,7 +611,17 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
     is ConeInapplicableWrongReceiver -> when (val diagnostic = primaryDiagnostic) {
         is DynamicReceiverExpectedButWasNonDynamic ->
             FirErrors.DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC.createOn(source, diagnostic.actualType, session)
-        else -> FirErrors.UNRESOLVED_REFERENCE_WRONG_RECEIVER.createOn(source, this.candidateSymbol, this.operatorToken, session)
+        else -> FirErrors.UNRESOLVED_REFERENCE_WRONG_RECEIVER.createOn(
+            source,
+            this.candidateSymbol, this.operatorToken,
+            // This diagnostic only fires when the extension receiver of `symbol` doesn't typecheck.
+            // Observation: if the call site has both an explicit and an implicit receiver, it
+            // must have necessarily been the explicit one that failed.
+            candidate.chosenExtensionReceiver?.expression?.resolvedType
+                ?: candidate.dispatchReceiver?.expression?.resolvedType
+                ?: error("Receiver missing in ConeInapplicableWrongReceiver"),
+            session,
+        )
     }
     is ConeNoCompanionObject -> FirErrors.NO_COMPANION_OBJECT.createOn(source, this.candidateSymbol as FirClassLikeSymbol<*>, session)
 
@@ -785,9 +792,10 @@ private fun unexpectedTrailingLambdaOnNewLineOrNull(argument: FirExpression, ses
             parent = treeStructure.getParent(parent) ?: return false
         }
         if (parent.tokenType == KtNodeTypes.LAMBDA_ARGUMENT) {
+            // Only trivia separates the lambda from the rest of the call, so the walk stops at the first preceding element
             var prevSibling = parent.getPreviousSibling(treeStructure)
-            while (prevSibling != null && prevSibling.tokenType !is KtStubElementType<*, *>) {
-                if (prevSibling.tokenType == TokenType.WHITE_SPACE && prevSibling is LighterASTTokenNode && prevSibling.text.contains("\n")) {
+            while (prevSibling is LighterASTTokenNode) {
+                if (prevSibling.tokenType == TokenType.WHITE_SPACE && prevSibling.text.contains("\n")) {
                     return true
                 }
                 prevSibling = prevSibling.getPreviousSibling(treeStructure)

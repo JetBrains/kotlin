@@ -934,7 +934,7 @@ class DurationTest {
 
         for (valid in validDefaultFormat) {
             assertNotNull(Duration.parseOrNull(valid), "Should parse valid ordering: $valid")
-            Duration.parse(valid)  // should not throw
+            val _ = Duration.parse(valid)  // should not throw
         }
 
         val invalidDefaultFormat = listOf(
@@ -969,7 +969,7 @@ class DurationTest {
 
         for (valid in validIsoFormat) {
             assertNotNull(Duration.parseIsoStringOrNull(valid), "Should parse valid ISO ordering: $valid")
-            Duration.parseIsoString(valid)  // should not throw
+            val _ = Duration.parseIsoString(valid)  // should not throw
         }
 
         val invalidIsoFormat = listOf(

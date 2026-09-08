@@ -1,5 +1,5 @@
 KtArrayAccessExpression(68,72): '1[2]'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

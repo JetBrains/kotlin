@@ -6,8 +6,7 @@ KaFunctionType:
       psi: null
   ]
   classId: some/MyInlineableFunction0
-  contextReceivers: []
-  hasContextReceivers: false
+  contextParameterTypes: []
   hasReceiver: false
   isReflectType: false
   isSuspend: false

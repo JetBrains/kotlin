@@ -27,7 +27,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=properties/Anno.position] position: R|kotlin/String|): R|properties/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -58,4 +58,3 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
             public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] property1: R|@R|properties/Anno|(position = <strcat>(String(parameter1 type: ), R|properties/constant|) [evaluated = String(parameter1 type: 0)])  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested parameter1 type: ), R|properties/constant|) [evaluated = String(nested parameter1 type: 0)])  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter1 type: ), R|properties/constant|) [evaluated = String(nested nested parameter1 type: 0)])  kotlin/Int>>| = this@R|properties/MyClass|.R|properties/MyClass.property1|, [ResolvedTo(STATUS)] property2: R|@R|properties/Anno|(position = <strcat>(String(parameter2 type: ), R|properties/constant|) [evaluated = String(parameter2 type: 0)])  kotlin/collections/Collection<@R|properties/Anno|(position = <strcat>(String(nested parameter2 type: ), R|properties/constant|) [evaluated = String(nested parameter2 type: 0)])  kotlin/collections/Collection<@R|properties/Anno|(position = <strcat>(String(nested nested parameter2 type: ), R|properties/constant|) [evaluated = String(nested nested parameter2 type: 0)])  kotlin/String>>| = this@R|properties/MyClass|.R|properties/MyClass.property2|): R|properties/MyClass|
 
         }
-

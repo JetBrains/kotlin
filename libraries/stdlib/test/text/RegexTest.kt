@@ -379,7 +379,7 @@ class RegexTest {
             assertEquals(input.substring(match.range), match.value)
         }
 
-        matches.zipWithNext { [_, m1], [_, m2] ->
+        val _ = matches.zipWithNext { [_, m1], [_, m2] ->
             assertEquals(m2.range, assertNotNull(m1.next()).range)
         }
         assertNull(matches.last().second.next())

@@ -95,12 +95,15 @@ public class SirDeclarationFromKtSymbolProvider(
             }
             is KaVariableSymbol -> {
                 if (ktSymbol is KaPropertySymbol && (ktSymbol.isExtension || ktSymbol.contextParameters.isNotEmpty())) {
-                    ktSymbol.getter?.toSirFunction(ktSymbol)
-                        ?.takeUnlessUnavailableInProtocol()?.takeUnlessNSObjectConflict()?.let { getter ->
-                            val setter = ktSymbol.setter?.takeUnless { it.deprecatedAnnotation?.level == DeprecationLevel.HIDDEN }
-                                ?.toSirFunction(ktSymbol)?.takeUnlessUnavailableInProtocol()?.takeUnlessNSObjectConflict()
-                            SirTranslationResult.ExtensionProperty(getter, setter)
-                        } ?: SirTranslationResult.Untranslatable(KotlinSource(ktSymbol))
+                    ktSymbol.getter?.let {
+                        SirGetterFunctionFromKtSymbol(ktSymbol, it, sirSession)
+                    }?.takeUnlessUnavailableInProtocol()?.takeUnlessNSObjectConflict()?.let { getter ->
+                        val setter = ktSymbol.setter?.takeUnless { it.deprecatedAnnotation?.level == DeprecationLevel.HIDDEN }
+                            ?.let { SirSetterFunctionFromKtSymbol(ktSymbol, it, sirSession, getter) }
+                            ?.takeUnlessUnavailableInProtocol()?.takeUnlessNSObjectConflict()
+                        getter.setter = setter
+                        SirTranslationResult.ExtensionProperty(getter, setter)
+                    } ?: SirTranslationResult.Untranslatable(KotlinSource(ktSymbol))
                 } else {
                     ktSymbol.toSirVariable()?.takeUnlessUnavailableInProtocol()?.takeUnlessNSObjectConflict()
                         ?.let(SirTranslationResult::RegularProperty)
@@ -115,12 +118,6 @@ public class SirDeclarationFromKtSymbolProvider(
             }
             else -> TODO("encountered unknown symbol type - $ktSymbol. Error system should be reworked KT-65980")
         }
-
-    private fun KaPropertyAccessorSymbol.toSirFunction(ktPropertySymbol: KaPropertySymbol): SirFunction = SirFunctionFromKtPropertySymbol(
-        ktPropertySymbol = ktPropertySymbol,
-        ktSymbol = this,
-        sirSession = sirSession,
-    )
 
     private fun KaVariableSymbol.toSirVariable(): SirAbstractVariableFromKtSymbol? =
         if (this is KaPropertySymbol

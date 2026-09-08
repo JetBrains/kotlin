@@ -5,7 +5,7 @@ KtFile: WhenWithSubjectVariable_ERR.kt
     <empty list>
   PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('test')
@@ -105,7 +105,7 @@ KtFile: WhenWithSubjectVariable_ERR.kt
         PsiElement(when)('when')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        FUN
+        FUNCTION
           PsiElement(fun)('fun')
           PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('foo')

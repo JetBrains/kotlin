@@ -1,27 +1,27 @@
 <caret_1>:
   KDocName(167,182): 'FooAlias.fooExt'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         test/fooExt(<extension receiver>: test.Foo): kotlin.Unit
       ]
 
 <caret_2>:
   KDocName(191,206): 'Foo.fooAliasExt'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         test/fooAliasExt(<extension receiver>: {test.FooAlias=} test.Foo): kotlin.Unit
       ]
 
 <caret_3>:
   KDocName(212,232): 'FooAlias.fooAliasExt'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         test/fooAliasExt(<extension receiver>: {test.FooAlias=} test.Foo): kotlin.Unit
       ]
 
 <caret_4>:
   KDocName(241,256): 'FooAlias.anyExt'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         test/anyExt(<extension receiver>: kotlin.Any): kotlin.Unit
       ]

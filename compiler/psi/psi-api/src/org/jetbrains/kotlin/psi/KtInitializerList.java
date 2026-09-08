@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 
@@ -25,13 +26,16 @@ import java.util.List;
  * }
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtInitializerList extends KtElementImplStub<KotlinPlaceHolderStub<KtInitializerList>> {
+    @KtImplementationDetail
     public KtInitializerList(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtInitializerList(@NotNull KotlinPlaceHolderStub<KtInitializerList> stub) {
-        super(stub, KtStubBasedElementTypes.INITIALIZER_LIST);
+        super(stub, KtNodeTypes.INITIALIZER_LIST);
     }
 
     @Override
@@ -39,6 +43,10 @@ public class KtInitializerList extends KtElementImplStub<KotlinPlaceHolderStub<K
         return visitor.visitInitializerList(this, data);
     }
 
+    /**
+     * Returns the initializer entries (the superclass constructor call carrying the arguments). In valid code this is a single entry; a
+     * longer list only occurs in erroneous code.
+     */
     @NotNull
     public List<KtSuperTypeListEntry> getInitializers() {
         return Arrays.asList(getStubOrPsiChildren(KtTokenSets.SUPER_TYPE_LIST_ENTRIES, KtSuperTypeListEntry.ARRAY_FACTORY));

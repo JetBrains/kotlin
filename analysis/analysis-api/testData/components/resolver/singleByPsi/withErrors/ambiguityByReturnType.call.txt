@@ -1,5 +1,5 @@
 KtCallExpression(208,319): 'sumOf { c ->'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}

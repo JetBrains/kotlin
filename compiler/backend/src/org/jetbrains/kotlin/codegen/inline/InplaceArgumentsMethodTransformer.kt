@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.codegen.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.boxing.isMethodInsnWith
 import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
+import org.jetbrains.kotlin.utils.addToStdlib.skipNext
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.*
 
@@ -121,7 +122,7 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
                     val next = insn.next
                     return when {
                         next is VarInsnNode && next.opcode in Opcodes.ISTORE..Opcodes.ASTORE -> {
-                            iter.next()
+                            iter.skipNext()
                             ArgContext(start, insn, calls, next)
                         }
                         insn.previous.isInplaceArgumentStartMarker() -> {

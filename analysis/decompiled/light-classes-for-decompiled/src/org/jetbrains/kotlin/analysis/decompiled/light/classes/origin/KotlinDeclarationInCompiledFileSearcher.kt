@@ -2,6 +2,7 @@
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(KtImplementationDetail::class)
 
 package org.jetbrains.kotlin.analysis.decompiled.light.classes.origin
 
@@ -22,11 +23,13 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.psi.psiUtil.isCompanion
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -337,7 +340,7 @@ class KotlinDeclarationInCompiledFileSearcher {
 
     private fun doTypeParametersMatchByName(member: PsiMethod, callableDeclaration: KtCallableDeclaration): Boolean {
         if (member.typeParameters.size != callableDeclaration.typeParameters.size) return false
-        member.typeParameters.zip(callableDeclaration.typeParameters) { psiTypeParam, ktTypeParameter ->
+        member.typeParameters.forEachZipped(callableDeclaration.typeParameters) { psiTypeParam, ktTypeParameter ->
             if (psiTypeParam.name.toString() != ktTypeParameter.name) {
                 return false
             }
@@ -416,7 +419,7 @@ class KotlinDeclarationInCompiledFileSearcher {
     private fun doTypeParameters(member: PsiMethod, ktNamedFunction: KtFunction): Boolean {
         if (member.typeParameters.size != ktNamedFunction.typeParameters.size) return false
         val boundsByName = ktNamedFunction.typeConstraints.groupBy { it.subjectTypeParameterName?.getReferencedName() }
-        member.typeParameters.zip(ktNamedFunction.typeParameters) { psiTypeParam, ktTypeParameter ->
+        member.typeParameters.forEachZipped(ktNamedFunction.typeParameters) { psiTypeParam, ktTypeParameter ->
             if (psiTypeParam.name.toString() != ktTypeParameter.name) return false
             val psiBounds = mutableListOf<KtTypeReference>()
             psiBounds.addIfNotNull(ktTypeParameter.extendsBound)
@@ -425,7 +428,7 @@ class KotlinDeclarationInCompiledFileSearcher {
             }
             val expectedBounds = psiTypeParam.extendsListTypes
             if (psiBounds.size != expectedBounds.size) return false
-            expectedBounds.zip(psiBounds) { expectedBound, candidateBound ->
+            expectedBounds.forEachZipped(psiBounds) { expectedBound, candidateBound ->
                 if (!areTypesTheSame(candidateBound, expectedBound, false)) {
                     return false
                 }

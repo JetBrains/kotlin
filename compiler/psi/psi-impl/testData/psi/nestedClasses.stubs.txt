@@ -6,7 +6,7 @@ FILE[kind=File[packageFqName=test]]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=TOuter]
     CLASS_BODY
-      FUN[fqName=test.NestedClasses.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+      FUNCTION[fqName=test.NestedClasses.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         VALUE_PARAMETER_LIST
       PROPERTY[fqName=test.NestedClasses.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
         TYPE_REFERENCE
@@ -18,7 +18,7 @@ FILE[kind=File[packageFqName=test]]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=TN]
         CLASS_BODY
-          FUN[fqName=test.NestedClasses.Nested.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+          FUNCTION[fqName=test.NestedClasses.Nested.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
                 TYPE_REFERENCE
@@ -31,7 +31,7 @@ FILE[kind=File[packageFqName=test]]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, name=TNN]
             CLASS_BODY
-              FUN[fqName=test.NestedClasses.Nested.NN.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+              FUNCTION[fqName=test.NestedClasses.Nested.NN.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
                     TYPE_REFERENCE
@@ -47,7 +47,7 @@ FILE[kind=File[packageFqName=test]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=TN]
             CLASS_BODY
-              FUN[fqName=test.NestedClasses.Nested.NI.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+              FUNCTION[fqName=test.NestedClasses.Nested.NI.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
                     TYPE_REFERENCE
@@ -65,7 +65,7 @@ FILE[kind=File[packageFqName=test]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=TOuter]
         CLASS_BODY
-          FUN[fqName=test.NestedClasses.Inner.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+          FUNCTION[fqName=test.NestedClasses.Inner.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
                 TYPE_REFERENCE
@@ -76,7 +76,7 @@ FILE[kind=File[packageFqName=test]]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, name=TII]
             CLASS_BODY
-              FUN[fqName=test.NestedClasses.Inner.II.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+              FUNCTION[fqName=test.NestedClasses.Inner.II.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
                     TYPE_REFERENCE

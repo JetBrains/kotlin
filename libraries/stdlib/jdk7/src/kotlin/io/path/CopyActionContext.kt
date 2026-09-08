@@ -26,5 +26,6 @@ public interface CopyActionContext {
      *   If this entry is not a symbolic link, the value of this parameter doesn't make any difference.
      * @return [CopyActionResult.CONTINUE]
      */
+    @IgnorableReturnValue
     public fun Path.copyToIgnoringExistingDirectory(target: Path, followLinks: Boolean): CopyActionResult
 }

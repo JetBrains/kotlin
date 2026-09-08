@@ -19,6 +19,10 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureJsLangu
         put(LanguageFeature.JsAllowExportingSuspendFunctions, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.exportKDoc) {
+        put(LanguageFeature.ExportKDocDocumentationToKlib, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.integerDivisionCheck) {
         put(LanguageFeature.JsIntegerDivisionCheck, LanguageFeature.State.ENABLED)
     }

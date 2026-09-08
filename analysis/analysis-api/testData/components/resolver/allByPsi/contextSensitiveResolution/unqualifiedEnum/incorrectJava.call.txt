@@ -29,7 +29,7 @@ KtWhenExpression(62,114): 'when (javaEnum) {'
   null
 
 KtNameReferenceExpression(68,76): 'javaEnum'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -52,12 +52,12 @@ KtWhenConditionWithExpression(84,91): 'first()'
   null
 
 KtCallExpression(84,91): 'first()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
 KtNameReferenceExpression(84,89): 'first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
@@ -74,7 +74,7 @@ KtWhenConditionWithExpression(101,107): 'second'
   null
 
 KtNameReferenceExpression(101,107): 'second'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

@@ -11,19 +11,20 @@ import com.intellij.platform.syntax.SyntaxElementType
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
-import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
-import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.util.computeTypeParameters
 import org.jetbrains.kotlin.java.direct.util.isDeprecatedInJavaDoc
+import org.jetbrains.kotlin.kmp.tree.LightNode
+import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import java.util.concurrent.ConcurrentHashMap
 
 class JavaClassOverAst(
-    node: JavaLightNode,
-    tree: JavaLightTree,
+    node: LightNode,
+    tree: LightSyntaxTree,
     internal val resolutionContext: JavaResolutionContext,
     override val outerClass: JavaClass? = null,
 ) : JavaElementOverAst(node, tree), JavaClass {
@@ -40,7 +41,7 @@ class JavaClassOverAst(
         outerClass?.fqName?.child(name) ?: resolutionContext.packageFqName.child(name)
     }
 
-    override val modifierList: JavaLightNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    override val modifierList: LightNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
     }
 
@@ -61,7 +62,10 @@ class JavaClassOverAst(
                 (outerClass?.isInterface == true)
 
     override val isFinal: Boolean
-        get() = (isEnum && !methods.any { it.isAbstract }) || hasModifier(JavaSyntaxTokenType.FINAL_KEYWORD)
+        get() = (isEnum && !methods.any { it.isAbstract }) ||
+                isRecord ||
+                isValue ||
+                hasModifier(JavaSyntaxTokenType.FINAL_KEYWORD)
 
     override val visibility: Visibility
         get() = when {
@@ -82,21 +86,23 @@ class JavaClassOverAst(
     override val supertypes: Collection<JavaClassifierType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val result = mutableListOf<JavaClassifierType>()
 
-            if (isEnum) {
-                result.add(EnumSupertypeForJavaDirect(this, memberResolutionContext))
-            } else if (isAnnotationType) {
-                result.add(SimpleClassifierType("java.lang.annotation.Annotation", memberResolutionContext))
-            }
+        if (isEnum) {
+            result.add(EnumSupertypeForJavaDirect(this, memberResolutionContext))
+        } else if (isAnnotationType) {
+            result.add(ImplicitSupertypeForJavaDirect(JvmStandardClassIds.Annotations.Java.Annotation, memberResolutionContext))
+        } else if (isRecord) {
+            result.add(ImplicitSupertypeForJavaDirect(JvmStandardClassIds.Java.Record, memberResolutionContext))
+        }
 
-            tree.findChildByType(node, JavaSyntaxElementType.EXTENDS_LIST)?.let { extList ->
-                tree.getChildrenByType(extList, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach {
-                    result.add(JavaClassifierTypeOverAst(it, tree, memberResolutionContext))
-                }
+        tree.findChildByType(node, JavaSyntaxElementType.EXTENDS_LIST)?.let { extList ->
+            tree.getChildrenByType(extList, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach {
+                result.add(JavaClassifierTypeOverAst(it, tree, memberResolutionContext))
             }
+        }
 
-            if (result.isEmpty() && !isInterface) {
-                result.add(SimpleClassifierType("java.lang.Object", memberResolutionContext))
-            }
+        if (result.isEmpty() && !isInterface) {
+            result.add(ImplicitSupertypeForJavaDirect(JvmStandardClassIds.Java.Object, memberResolutionContext))
+        }
 
         tree.findChildByType(node, JavaSyntaxElementType.IMPLEMENTS_LIST)?.let { implList ->
             tree.getChildrenByType(implList, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach {
@@ -204,7 +210,7 @@ class JavaClassOverAst(
     }
 
     override val isValue: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        tree.findChildByType(node, JavaSyntaxTokenType.VALUE_KEYWORD) != null
+        hasModifier(JavaSyntaxTokenType.VALUE_KEYWORD)
     }
 
     override val isSealed: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -238,7 +244,7 @@ class JavaClassOverAst(
      */
     private fun deriveImplicitPermittedTypes(): Sequence<JavaClassifierType> {
         val myFqName = fqName
-        val candidateNodes = mutableListOf<JavaLightNode>()
+        val candidateNodes = mutableListOf<LightNode>()
         collectClassNodes(tree.getRoot(), candidateNodes)
         return candidateNodes.asSequence().mapNotNull { classNode ->
             val candidate = resolveSameFileClassNode(classNode) ?: return@mapNotNull null
@@ -252,7 +258,7 @@ class JavaClassOverAst(
     }
 
     /** Recursively collects every CLASS node under [container]; purely structural. */
-    private fun collectClassNodes(container: JavaLightNode, out: MutableList<JavaLightNode>) {
+    private fun collectClassNodes(container: LightNode, out: MutableList<LightNode>) {
         for (child in tree.getChildren(container)) {
             if (tree.getType(child) != JavaSyntaxElementType.CLASS) continue
             out.add(child)
@@ -267,11 +273,11 @@ class JavaClassOverAst(
      * reached with the declared-only [JavaClass.findInnerClass]. Returns `null` if any segment of
      * the enclosing chain cannot be resolved (e.g. a malformed/anonymous node without a name).
      */
-    private fun resolveSameFileClassNode(classNode: JavaLightNode): JavaClass? {
+    private fun resolveSameFileClassNode(classNode: LightNode): JavaClass? {
         // Build the enclosing CLASS chain (top-level first). Climb while the parent is itself a
         // CLASS, stopping at the compilation-unit root so the synthetic root is never included.
         val rootNode = tree.getRoot()
-        val chain = ArrayList<JavaLightNode>()
+        val chain = ArrayList<LightNode>()
         var current = classNode
         while (true) {
             chain.add(current)
@@ -290,7 +296,7 @@ class JavaClassOverAst(
         return resolved
     }
 
-    private fun classNodeSimpleName(classNode: JavaLightNode): String? =
+    private fun classNodeSimpleName(classNode: LightNode): String? =
         tree.findChildByType(classNode, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.getText(it).toString() }
 
     override val lightClassOriginKind: LightClassOriginKind? get() = null
@@ -306,10 +312,14 @@ class JavaClassOverAst(
             .map { JavaMethodOverAst(it, tree, this) }
     }
 
+    // Declaration order, so that the enum constants — which JLS 8.9.1 requires to be written before
+    // any other member — come first, as they also do for the class-file reader (`BinaryJavaClass`
+    // sees them in constant-pool/field order). FIR keeps this order for its declarations, and enum
+    // entries must precede the rest of them.
     override val fields: Collection<JavaField> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val fieldNodes = tree.getChildrenByType(node, JavaSyntaxElementType.FIELD) +
-                tree.getChildrenByType(node, JavaSyntaxElementType.ENUM_CONSTANT)
-        fieldNodes.map { JavaFieldOverAst(it, tree, this) }
+        tree.getChildren(node)
+            .filter { tree.getType(it) == JavaSyntaxElementType.FIELD || tree.getType(it) == JavaSyntaxElementType.ENUM_CONSTANT }
+            .map { JavaFieldOverAst(it, tree, this) }
     }
 
     // A constructor is a METHOD node with no return TYPE (mirrors PSI's

@@ -16,7 +16,8 @@ internal interface BuildOperationFactory<out T : BaseCompilationOperation.Builde
 
 internal fun extractSourceFiles(freeArgs: List<String>): List<Path> = freeArgs.mapNotNull {
     try {
-        Paths.get(it)
+        // all source paths are converted to absolute, so use this as a cheap check
+        Paths.get(it).takeIf { file -> file.isAbsolute }
     } catch (_: Exception) {
         null
     }

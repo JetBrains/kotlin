@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-80492
-// LANGUAGE: +CollectionLiterals
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 class MyList<T> {

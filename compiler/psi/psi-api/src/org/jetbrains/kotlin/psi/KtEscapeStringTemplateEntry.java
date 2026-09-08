@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.text.StringUtil;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub;
 
 /**
@@ -20,13 +21,16 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub;
  * //            ^^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtEscapeStringTemplateEntry extends KtStringTemplateEntry {
+    @KtImplementationDetail
     public KtEscapeStringTemplateEntry(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtEscapeStringTemplateEntry(@NotNull KotlinPlaceHolderWithTextStub<KtEscapeStringTemplateEntry> stub) {
-        super(stub, KtStubBasedElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY);
+        super(stub, KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY);
     }
 
     @Override
@@ -34,6 +38,7 @@ public class KtEscapeStringTemplateEntry extends KtStringTemplateEntry {
         return visitor.visitEscapeStringTemplateEntry(this, data);
     }
 
+    /** Returns the decoded character(s) this escape sequence stands for (for example, {@code "\n"} yields a newline). */
     public String getUnescapedValue() {
         return StringUtil.unescapeStringCharacters(getText());
     }

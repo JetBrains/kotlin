@@ -168,6 +168,6 @@ In this example, we aim to report "`abstract foo` not implemented" on class `C`,
 
 To handle such cases, it is recommended to split platform checkers into two parts:
 - `Regular`: Platform checkers that run for everything except `expect` declarations.
-- `ForExpectClass`: Common checkers that run exclusively for `expect` declarations.
+- `ForExpect(Class)`: Common checkers that run exclusively for `expect` declarations.
 
 As an example, refer to the implementation of the [FirImplementationMismatchChecker](compiler/fir/checkers/src/org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirImplementationMismatchChecker.kt) checker.

@@ -21,7 +21,6 @@ import plugins.publishing.configureMultiModuleMavenPublishing
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("multiplatform")
     `maven-publish`
@@ -33,7 +32,9 @@ plugins {
 description = "Kotlin Test Library"
 base.archivesName = "kotlin-test"
 
-configureJvmToolchain(JdkMajorVersion.JDK_1_8)
+jvmToolchains {
+    targetBytecodeVersion = JdkMajorVersion.JDK_1_8
+}
 
 val kotlinTestCapability = "$group:${base.archivesName.get()}:$version" // add to variants with explicit capabilities when the default one is needed, too
 val baseCapability = "$group:kotlin-test-framework:$version"

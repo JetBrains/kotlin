@@ -1,0 +1,93 @@
+KClass: class A : Java2
+  constructors:
+    public final fun `<init>`(): A
+  members:
+    public open fun A.bar(): kotlin.collections.MutableList<(raw) kotlin.Any?>
+    public open operator fun A.equals(kotlin.Any?): kotlin.Boolean
+    public open fun A.foo(kotlin.collections.MutableList<(raw) kotlin.Any?>): kotlin.Unit
+    public open fun A.hashCode(): kotlin.Int
+    public open fun A.toString(): kotlin.String
+    public final var A.a: kotlin.collections.MutableList<(raw) kotlin.Any?>
+  declaredMembers:
+KClass: class B : Java2
+  constructors:
+    public final fun `<init>`(): B
+  members:
+    public open fun B.bar(): kotlin.collections.MutableList<kotlin.Any?>
+    public open operator fun B.equals(kotlin.Any?): kotlin.Boolean
+    public open fun B.foo(kotlin.collections.MutableList<kotlin.Any?>?): kotlin.Unit
+    public open fun B.hashCode(): kotlin.Int
+    public open fun B.toString(): kotlin.String
+    public final val B.a: kotlin.collections.MutableList<kotlin.Any?>
+    public final var B.a: kotlin.collections.MutableList<(raw) kotlin.Any?>
+  declaredMembers:
+    public open fun B.bar(): kotlin.collections.MutableList<kotlin.Any?>
+    public open fun B.foo(kotlin.collections.MutableList<kotlin.Any?>?): kotlin.Unit
+    public final val B.a: kotlin.collections.MutableList<kotlin.Any?>
+KClass: class C : Java3
+  constructors:
+    public final fun `<init>`(): C
+  members:
+    public open fun C.bar(): kotlin.collections.(Mutable)List<kotlin.Any?>!
+    public open operator fun C.equals(kotlin.Any?): kotlin.Boolean
+    public open fun C.foo(kotlin.collections.MutableList<(raw) kotlin.Any?>): kotlin.Unit
+    public open fun C.hashCode(): kotlin.Int
+    public open fun C.toString(): kotlin.String
+    public final var C.a: kotlin.collections.(Mutable)List<kotlin.Any!>!
+  declaredMembers:
+KClass: class D : Java3
+  constructors:
+    public final fun `<init>`(): D
+  members:
+    public open fun D.bar(): kotlin.collections.MutableList<kotlin.Any?>
+    public open operator fun D.equals(kotlin.Any?): kotlin.Boolean
+    public open fun D.foo(kotlin.collections.MutableList<kotlin.Any?>): kotlin.Unit
+    public open fun D.hashCode(): kotlin.Int
+    public open fun D.toString(): kotlin.String
+    public final val D.a: kotlin.collections.MutableList<kotlin.Any?>
+    public final var D.a: kotlin.collections.(Mutable)List<kotlin.Any!>!
+  declaredMembers:
+    public open fun D.bar(): kotlin.collections.MutableList<kotlin.Any?>
+    public open fun D.foo(kotlin.collections.MutableList<kotlin.Any?>): kotlin.Unit
+    public final val D.a: kotlin.collections.MutableList<kotlin.Any?>
+KClass: class Java1 : Any
+  constructors:
+    public final fun `<init>`(): Java1
+  members:
+    public open fun Java1.bar(): kotlin.collections.MutableList<(raw) kotlin.Any?>
+    public open operator fun Java1.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java1.foo(kotlin.collections.MutableList<(raw) kotlin.Any?>): kotlin.Unit
+    public open fun Java1.hashCode(): kotlin.Int
+    public open fun Java1.toString(): kotlin.String
+    public final var Java1.a: kotlin.collections.MutableList<(raw) kotlin.Any?>
+  declaredMembers:
+    public open fun Java1.bar(): kotlin.collections.MutableList<(raw) kotlin.Any?>
+    public open fun Java1.foo(kotlin.collections.MutableList<(raw) kotlin.Any?>): kotlin.Unit
+    public final var Java1.a: kotlin.collections.MutableList<(raw) kotlin.Any?>
+KClass: class Java2 : Java1
+  constructors:
+    public final fun `<init>`(): Java2
+  members:
+    public open fun Java2.bar(): kotlin.collections.MutableList<(raw) kotlin.Any?>
+    public open operator fun Java2.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java2.foo(kotlin.collections.MutableList<(raw) kotlin.Any?>): kotlin.Unit
+    public open fun Java2.hashCode(): kotlin.Int
+    public open fun Java2.toString(): kotlin.String
+    public final var Java2.a: kotlin.collections.MutableList<(raw) kotlin.Any?>
+  declaredMembers:
+KClass: class Java3 : Java1
+  constructors:
+    public final fun `<init>`(): Java3
+  members:
+    public open fun Java3.bar(): kotlin.collections.(Mutable)List<kotlin.Any?>!
+    public open operator fun Java3.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java3.foo(kotlin.collections.MutableList<(raw) kotlin.Any?>): kotlin.Unit
+    public open fun Java3.hashCode(): kotlin.Int
+    public open fun Java3.toString(): kotlin.String
+    public final var Java3.a: kotlin.collections.(Mutable)List<kotlin.Any!>!
+  declaredMembers:
+    public open fun Java3.bar(): kotlin.collections.(Mutable)List<kotlin.Any?>!
+    public open fun Java3.foo(kotlin.collections.MutableList<(raw) kotlin.Any?>): kotlin.Unit
+    public final var Java3.a: kotlin.collections.(Mutable)List<kotlin.Any!>!
+KPackage: _1Kt
+  public final fun test(A, B, C, D): kotlin.Unit

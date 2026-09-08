@@ -100,33 +100,7 @@ class BackendWasmSymbols(
 
     val voidType by ClassIds.Void.defaultType()
 
-    private val consumeAnyIntoVoid by CallableIds.consumeAnyIntoVoid.functionSymbol()
-
-    private val consumePrimitiveIntoVoid: Map<IrType, IrSimpleFunctionSymbol> by run {
-        val consumeBooleanIntoVoid by CallableIds.consumeBooleanIntoVoid.functionSymbol()
-        val consumeByteIntoVoid by CallableIds.consumeByteIntoVoid.functionSymbol()
-        val consumeShortIntoVoid by CallableIds.consumeShortIntoVoid.functionSymbol()
-        val consumeCharIntoVoid by CallableIds.consumeCharIntoVoid.functionSymbol()
-        val consumeIntIntoVoid by CallableIds.consumeIntIntoVoid.functionSymbol()
-        val consumeLongIntoVoid by CallableIds.consumeLongIntoVoid.functionSymbol()
-        val consumeFloatIntoVoid by CallableIds.consumeFloatIntoVoid.functionSymbol()
-        val consumeDoubleIntoVoid by CallableIds.consumeDoubleIntoVoid.functionSymbol()
-        lazy {
-            mapOf(
-                irBuiltIns.booleanType to consumeBooleanIntoVoid,
-                irBuiltIns.byteType to consumeByteIntoVoid,
-                irBuiltIns.shortType to consumeShortIntoVoid,
-                irBuiltIns.charType to consumeCharIntoVoid,
-                irBuiltIns.intType to consumeIntIntoVoid,
-                irBuiltIns.longType to consumeLongIntoVoid,
-                irBuiltIns.floatType to consumeFloatIntoVoid,
-                irBuiltIns.doubleType to consumeDoubleIntoVoid,
-            )
-        }
-    }
-
-    fun findVoidConsumer(type: IrType): IrSimpleFunctionSymbol =
-        consumePrimitiveIntoVoid[type] ?: consumeAnyIntoVoid
+    val consumeAnyIntoVoid by CallableIds.consumeAnyIntoVoid.functionSymbol()
 
     val equalityFunctions: Map<IrType, IrSimpleFunctionSymbol> by run {
         val wasm_i32_eq by CallableIds.wasm_i32_eq.functionSymbol()
@@ -198,8 +172,25 @@ class BackendWasmSymbols(
 
     val rangeCheck by CallableIds.rangeCheck.functionSymbol()
 
-    val getBoxedBoolean: IrSimpleFunctionSymbol by CallableIds.getBoxedBoolean.functionSymbol()
-    val boxBoolean: IrSimpleFunctionSymbol by CallableIds.boxBoolean.functionSymbol()
+    val createBoxIntrinsic by CallableIds.createBoxIntrinsic.functionSymbol()
+
+    val getOrBoxForPrimitives: Map<IrType, IrSimpleFunctionSymbol> = run {
+        val getOrBoxBoolean: IrSimpleFunctionSymbol by CallableIds.getOrBoxBoolean.functionSymbol()
+        val getOrBoxChar: IrSimpleFunctionSymbol by CallableIds.getOrBoxChar.functionSymbol()
+        val getOrBoxByte: IrSimpleFunctionSymbol by CallableIds.getOrBoxByte.functionSymbol()
+        val getOrBoxShort: IrSimpleFunctionSymbol by CallableIds.getOrBoxShort.functionSymbol()
+        val getOrBoxInt: IrSimpleFunctionSymbol by CallableIds.getOrBoxInt.functionSymbol()
+        val getOrBoxLong: IrSimpleFunctionSymbol by CallableIds.getOrBoxLong.functionSymbol()
+        mapOf(
+            irBuiltIns.booleanType to getOrBoxBoolean,
+            irBuiltIns.charType to getOrBoxChar,
+            irBuiltIns.byteType to getOrBoxByte,
+            irBuiltIns.shortType to getOrBoxShort,
+            irBuiltIns.intType to getOrBoxInt,
+            irBuiltIns.longType to getOrBoxLong,
+        )
+    }
+
     val boxIntrinsic: IrSimpleFunctionSymbol by CallableIds.boxIntrinsic.functionSymbol()
     val unboxIntrinsic: IrSimpleFunctionSymbol by CallableIds.unboxIntrinsic.functionSymbol()
 
@@ -435,6 +426,16 @@ class BackendWasmSymbols(
             else -> lazyOf(null)
         }
     }
+
+    // cabi_realloc is a @WasmExport'ed function defined in the Wasm/WASI standard library, and only referenced here in order to preserve it during IR Serialization/Deserialization
+    @Suppress("unused")
+    val cabiRealloc: IrSimpleFunctionSymbol? by run {
+        when (configuration.wasmTarget == WasmTarget.WASI) {
+            true -> CallableIds.cabiRealloc.functionSymbol()
+            else -> lazyOf(null)
+        }
+    }
+
 }
 
 private object ClassIds {
@@ -526,14 +527,7 @@ private object CallableIds {
     val enumValuesIntrinsic = "enumValuesIntrinsic".wasmCallableId
     val wasm_unreachable = "wasm_unreachable".wasmCallableId
     val consumeAnyIntoVoid = "consumeAnyIntoVoid".wasmCallableId
-    val consumeBooleanIntoVoid = "consumeBooleanIntoVoid".wasmCallableId
-    val consumeByteIntoVoid = "consumeByteIntoVoid".wasmCallableId
-    val consumeShortIntoVoid = "consumeShortIntoVoid".wasmCallableId
-    val consumeCharIntoVoid = "consumeCharIntoVoid".wasmCallableId
-    val consumeIntIntoVoid = "consumeIntIntoVoid".wasmCallableId
-    val consumeLongIntoVoid = "consumeLongIntoVoid".wasmCallableId
-    val consumeFloatIntoVoid = "consumeFloatIntoVoid".wasmCallableId
-    val consumeDoubleIntoVoid = "consumeDoubleIntoVoid".wasmCallableId
+
     val wasm_i32_eq = "wasm_i32_eq".wasmCallableId
     val wasm_i64_eq = "wasm_i64_eq".wasmCallableId
     val wasm_f32_eq = "wasm_f32_eq".wasmCallableId
@@ -550,10 +544,18 @@ private object CallableIds {
     val array_new_data0_char_array = "array_new_data0_char_array".wasmCallableId
     val wasm_i64_extend_i32_s = "wasm_i64_extend_i32_s".wasmCallableId
     val rangeCheck = "rangeCheck".wasmCallableId
-    val getBoxedBoolean = "getBoxedBoolean".wasmCallableId
-    val boxBoolean = "boxBoolean".wasmCallableId
+
+    val createBoxIntrinsic = "createBoxIntrinsic".wasmCallableId
+    val getOrBoxBoolean = "getOrBoxBoolean".wasmCallableId
+    val getOrBoxByte = "getOrBoxByte".wasmCallableId
+    val getOrBoxShort = "getOrBoxShort".wasmCallableId
+    val getOrBoxInt = "getOrBoxInt".wasmCallableId
+    val getOrBoxChar = "getOrBoxChar".wasmCallableId
+    val getOrBoxLong = "getOrBoxLong".wasmCallableId
+
     val boxIntrinsic = "boxIntrinsic".wasmCallableId
     val unboxIntrinsic = "unboxIntrinsic".wasmCallableId
+
     val getWasmAbiVersion = "getWasmAbiVersion".wasmCallableId
     val wasmTypeId = "wasmTypeId".wasmCallableId
     val wasmGetTypeRtti = "wasmGetTypeRtti".wasmCallableId
@@ -677,5 +679,6 @@ private object CallableIds {
     val registerRootSuiteBlock = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("registerRootSuiteBlock"))
     val runRootSuites = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("runRootSuites"))
     val checkStaticInitializationState = "checkStaticInitializationState".wasmCallableId
+    val cabiRealloc = "cabi_realloc".wasmCallableId
 }
 

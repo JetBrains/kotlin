@@ -18,7 +18,7 @@ fun box(): String {
     try {
         describe("")
         return "FAIL"
-    } catch (_: NotImplementedError) {
-        return "OK"
+    } catch (e: NotImplementedError) {
+        return e.toString()
     }
 }

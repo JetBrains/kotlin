@@ -37,27 +37,27 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BinaryHeapKt]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=BinaryHeap.extract, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=extract]
+      FUNCTION[fqName=BinaryHeap.extract, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=extract]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=BinaryHeap.add, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
+      FUNCTION[fqName=BinaryHeap.add, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=item]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=BinaryHeap.siftDown, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=siftDown]
+      FUNCTION[fqName=BinaryHeap.siftDown, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=siftDown]
         MODIFIER_LIST[private]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=BinaryHeap.siftUp, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=siftUp]
+      FUNCTION[fqName=BinaryHeap.siftUp, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=siftUp]
         MODIFIER_LIST[private]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -148,7 +148,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BinaryHeapKt]]
               BINARY_EXPRESSION
                 OPERATION_REFERENCE[operationToken=GTEQ, referencedName=>=]
                 INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
-      FUN[fqName=BinaryHeap.compareTo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=compareTo]
+      FUNCTION[fqName=BinaryHeap.compareTo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=compareTo]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=T]
         TYPE_REFERENCE
@@ -168,7 +168,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BinaryHeapKt]]
             VALUE_ARGUMENT[isSpread=false]
             VALUE_ARGUMENT[isSpread=false]
               REFERENCE_EXPRESSION[referencedName=other]
-  FUN[fqName=swap, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=swap]
+  FUNCTION[fqName=swap, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=swap]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=IMutableList]

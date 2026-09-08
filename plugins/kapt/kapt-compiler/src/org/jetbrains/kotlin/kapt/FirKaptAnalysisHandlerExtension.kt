@@ -9,7 +9,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.cli.reportOutput
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
@@ -17,16 +16,10 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.PipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.cli.registerExtensionStorage
-import org.jetbrains.kotlin.codegen.ClassBuilderMode
+import org.jetbrains.kotlin.cli.reportOutput
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt.base.*
@@ -36,11 +29,9 @@ import org.jetbrains.kotlin.kapt.base.util.getPackageNameJava9Aware
 import org.jetbrains.kotlin.kapt.base.util.info
 import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter
 import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter.KaptStub
-import org.jetbrains.kotlin.kapt.stubs.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.kapt.util.CompilerConfigurationBackedKaptLogger
 import org.jetbrains.kotlin.kapt.util.prettyPrint
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
-import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.utils.kapt.MemoryLeakDetector
 import java.io.File
 
@@ -176,54 +167,16 @@ open class FirKaptAnalysisHandlerExtension(
         }
     }
 
-    protected open fun updateConfiguration(configuration: CompilerConfiguration) {
-    }
-
-    @OptIn(PipelineArtifact.CliPipelineInternals::class)
     private fun contextForStubGeneration(disposable: Disposable, configuration: CompilerConfiguration): KaptContextForStubGeneration? {
-        updateConfiguration(configuration)
         configuration.moduleChunk = ModuleChunk(configuration.modules)
 
-        // We want to ignore all diagnostics except syntax one, which will be checked manually.
-        // So we need to create a new configuration with a separate diagnostics collector, to avoid
-        // reporting any errors into the diagnostics collector of the root configuration, which would be
-        // checked by the main CLI pipeline upon finishing the KAPT stage.
-        val configurationForFrontend = configuration.copy().apply {
-            diagnosticsCollector = DiagnosticsCollectorImpl()
-        }
-
-        val frontendInput = ConfigurationPipelineArtifact(configurationForFrontend, disposable)
-        val frontendOutput = JvmFrontendPipelinePhase.executePhase(frontendInput) ?: return null
-
-        if (checkForSyntaxErrorsAndReport(frontendOutput)) return null
-
-        configuration.perfManager?.notifyPhaseFinished(PhaseType.Analysis)
-
-        // FIR2IR checks for diagnostics in the collector after the main transformation and before const and plugin transformation,
-        // and early returns if there are any errors, so we need to create an empty diagnostics collector once again
-        val configurationForFir2Ir = configuration.copy().apply {
-            diagnosticsCollector = DiagnosticsCollectorImpl()
-        }
-        val fir2IrOutput = JvmFir2IrPipelinePhase.executePhase(
-            frontendOutput.withCompilerConfiguration(configurationForFir2Ir),
-            irGenerationExtensions = emptyList()
-        ) ?: return null
-
-        val builderFactory = OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3)
-
-        // JVM backend checks for diagnostics in the collector and early returns if there are any errors
-        // so we need to create an empty diagnostics collector once again
-        val configurationForBackend = configuration.copy().apply {
-            diagnosticsCollector = DiagnosticsCollectorImpl()
-            put(JvmBackendPipelinePhase.customClassBuilderFactory, builderFactory)
-        }
-        val backendOutput = JvmBackendPipelinePhase.executePhase(fir2IrOutput.withCompilerConfiguration(configurationForBackend))
-        val generationState = backendOutput.outputs.singleOrNull() ?: return null
-
-        return KaptContextForStubGeneration(
-            options, false, logger, builderFactory.compiledClasses, builderFactory.origins, generationState,
-            frontendOutput.frontendOutput.outputs.flatMap { it.fir },
-            fir2IrOutput.result.irBuiltIns,
+        return compileForStubGeneration(
+            disposable,
+            configuration,
+            options,
+            logger,
+            withJdk = false,
+            onFrontendOutput = ::checkForSyntaxErrorsAndReport,
         )
     }
 
@@ -265,8 +218,8 @@ open class FirKaptAnalysisHandlerExtension(
         kaptContext: KaptContextForStubGeneration,
         stubs: List<KaptStub>,
     ) {
-        val reportOutputFiles = kaptContext.generationState.configuration.reportOutputFiles
-        val outputFiles = if (reportOutputFiles) kaptContext.generationState.factory.asList().associateBy {
+        val reportOutputFiles = kaptContext.configuration.reportOutputFiles
+        val outputFiles = if (reportOutputFiles) kaptContext.classFileFactory.asList().associateBy {
             it.relativePath.substringBeforeLast(".class", missingDelimiterValue = "")
         } else null
 
@@ -304,10 +257,7 @@ open class FirKaptAnalysisHandlerExtension(
                 if (classFilePathWithoutExtension == "error/NonExistentClass") return
                 val sourceFiles = (outputFiles?.get(classFilePathWithoutExtension)
                     ?: error("The `outputFiles` map is not properly initialized (key = $classFilePathWithoutExtension)")).sourceFiles
-                kaptContext.generationState.configuration.fileMappingTracker?.recordSourceFilesToOutputFileMapping(
-                    sourceFiles,
-                    generatedFile
-                )
+                kaptContext.configuration.fileMappingTracker?.recordSourceFilesToOutputFileMapping(sourceFiles, generatedFile)
                 logger.configuration.reportOutput(OutputMessageUtil.formatOutputMessage(sourceFiles, generatedFile))
             }
 
@@ -331,9 +281,9 @@ open class FirKaptAnalysisHandlerExtension(
     ) {
         val incrementalDataOutputDir = options.incrementalDataOutputDir ?: return
 
-        val reportOutputFiles = kaptContext.generationState.configuration.reportOutputFiles
-        kaptContext.generationState.factory.writeAll(incrementalDataOutputDir) { outputInfo, output ->
-            kaptContext.generationState.configuration.fileMappingTracker?.let {
+        val reportOutputFiles = kaptContext.configuration.reportOutputFiles
+        kaptContext.classFileFactory.writeAll(incrementalDataOutputDir) { outputInfo, output ->
+            kaptContext.configuration.fileMappingTracker?.let {
                 when (outputInfo.generatedForCompilerPlugin) {
                     false -> it.recordSourceFilesToOutputFileMapping(
                         outputInfo.sourceFiles,

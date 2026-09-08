@@ -59,7 +59,7 @@ KtProperty(228,255): 'val EnumValue3 = EnumValue1'
   null
 
 KtNameReferenceExpression(245,255): 'EnumValue1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -93,7 +93,7 @@ KtSuperTypeList(314,323): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(314,323): 'MyClass()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -111,7 +111,7 @@ KtSuperTypeCallEntry(314,323): 'MyClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(314,321): 'MyClass'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -135,7 +135,7 @@ KtUserType(314,321): 'MyClass'
   null
 
 KtNameReferenceExpression(314,321): 'MyClass'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -165,7 +165,7 @@ KtSuperTypeList(354,363): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(354,363): 'MyClass()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -183,7 +183,7 @@ KtSuperTypeCallEntry(354,363): 'MyClass()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(354,361): 'MyClass'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -207,7 +207,7 @@ KtUserType(354,361): 'MyClass'
   null
 
 KtNameReferenceExpression(354,361): 'MyClass'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -246,7 +246,7 @@ KtSuperTypeList(441,450): 'MySuper()'
   null
 
 KtSuperTypeCallEntry(441,450): 'MySuper()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -264,7 +264,7 @@ KtSuperTypeCallEntry(441,450): 'MySuper()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(441,448): 'MySuper'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -288,7 +288,7 @@ KtUserType(441,448): 'MySuper'
   null
 
 KtNameReferenceExpression(441,448): 'MySuper'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -324,7 +324,7 @@ KtNameReferenceExpression(476,483): 'MyClass'
   null
 
 KtCallExpression(486,492): 'TODO()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -341,7 +341,7 @@ KtCallExpression(486,492): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(486,490): 'TODO'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -373,7 +373,7 @@ KtNameReferenceExpression(525,539): 'InheritorClass'
   null
 
 KtCallExpression(542,558): 'InheritorClass()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -390,7 +390,7 @@ KtCallExpression(542,558): 'InheritorClass()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(542,556): 'InheritorClass'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -455,7 +455,7 @@ KtNameReferenceExpression(676,683): 'MyClass'
   null
 
 KtCallExpression(686,692): 'TODO()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -472,7 +472,7 @@ KtCallExpression(686,692): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(686,690): 'TODO'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -544,7 +544,7 @@ KtPropertyDelegate(722,734): 'by lazy {""}'
       valueSetterCall = null
 
 KtCallExpression(725,734): 'lazy {""}'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -579,7 +579,7 @@ KtCallExpression(725,734): 'lazy {""}'
       }
 
 KtNameReferenceExpression(725,729): 'lazy'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -707,7 +707,7 @@ KtBlockExpression(908,1287): '{'
   null
 
 KtCallExpression(914,1001): 'namedArgumentsHolder('
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -754,7 +754,7 @@ KtCallExpression(914,1001): 'namedArgumentsHolder('
       }
 
 KtNameReferenceExpression(914,934): 'namedArgumentsHolder'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -825,7 +825,7 @@ KtNameReferenceExpression(975,982): 'enumArg'
   null
 
 KtNameReferenceExpression(985,995): 'EnumValue1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -845,7 +845,7 @@ KtNameReferenceExpression(985,995): 'EnumValue1'
       typeArgumentsMapping = {}
 
 KtCallExpression(1006,1087): 'namedArgumentsHolder('
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -892,7 +892,7 @@ KtCallExpression(1006,1087): 'namedArgumentsHolder('
       }
 
 KtNameReferenceExpression(1006,1026): 'namedArgumentsHolder'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -951,7 +951,7 @@ KtNameReferenceExpression(1036,1043): 'enumArg'
   null
 
 KtNameReferenceExpression(1046,1056): 'EnumValue3'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -980,7 +980,7 @@ KtNameReferenceExpression(1066,1069): 'arg'
   null
 
 KtNameReferenceExpression(1072,1081): 'propClass'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1000,7 +1000,7 @@ KtNameReferenceExpression(1072,1081): 'propClass'
       typeArgumentsMapping = {}
 
 KtCallExpression(1092,1123): 'namedArgumentHolder(arg = prop)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1036,7 +1036,7 @@ KtCallExpression(1092,1123): 'namedArgumentHolder(arg = prop)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1092,1111): 'namedArgumentHolder'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1084,7 +1084,7 @@ KtNameReferenceExpression(1112,1115): 'arg'
   null
 
 KtNameReferenceExpression(1118,1122): 'prop'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1104,7 +1104,7 @@ KtNameReferenceExpression(1118,1122): 'prop'
       typeArgumentsMapping = {}
 
 KtCallExpression(1128,1164): 'namedArgumentHolder(arg = superProp)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1140,7 +1140,7 @@ KtCallExpression(1128,1164): 'namedArgumentHolder(arg = superProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1128,1147): 'namedArgumentHolder'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1188,7 +1188,7 @@ KtNameReferenceExpression(1148,1151): 'arg'
   null
 
 KtNameReferenceExpression(1154,1163): 'superProp'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1208,7 +1208,7 @@ KtNameReferenceExpression(1154,1163): 'superProp'
       typeArgumentsMapping = {}
 
 KtCallExpression(1169,1202): 'namedArgumentHolder(arg = func())'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1241,7 +1241,7 @@ KtCallExpression(1169,1202): 'namedArgumentHolder(arg = func())'
       }
 
 KtNameReferenceExpression(1169,1188): 'namedArgumentHolder'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1286,12 +1286,12 @@ KtNameReferenceExpression(1189,1192): 'arg'
   null
 
 KtCallExpression(1195,1201): 'func()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtNameReferenceExpression(1195,1199): 'func'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
@@ -1299,7 +1299,7 @@ KtValueArgumentList(1199,1201): '()'
   null
 
 KtCallExpression(1207,1245): 'namedArgumentHolder(arg = superFunc())'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1332,7 +1332,7 @@ KtCallExpression(1207,1245): 'namedArgumentHolder(arg = superFunc())'
       }
 
 KtNameReferenceExpression(1207,1226): 'namedArgumentHolder'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1377,12 +1377,12 @@ KtNameReferenceExpression(1227,1230): 'arg'
   null
 
 KtCallExpression(1233,1244): 'superFunc()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
 KtNameReferenceExpression(1233,1242): 'superFunc'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
@@ -1390,7 +1390,7 @@ KtValueArgumentList(1242,1244): '()'
   null
 
 KtCallExpression(1250,1285): 'namedArgumentHolder(arg = lazyProp)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1426,7 +1426,7 @@ KtCallExpression(1250,1285): 'namedArgumentHolder(arg = lazyProp)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1250,1269): 'namedArgumentHolder'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1474,7 +1474,7 @@ KtNameReferenceExpression(1270,1273): 'arg'
   null
 
 KtNameReferenceExpression(1276,1284): 'lazyProp'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

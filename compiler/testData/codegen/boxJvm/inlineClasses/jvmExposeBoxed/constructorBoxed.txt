@@ -29,6 +29,7 @@ public final class Test {
     // source: 'IC.kt'
     private final @org.jetbrains.annotations.Nullable field s: StringWrapper
     public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.Nullable p0: StringWrapper): void
+    public synthetic method <init>(p0: StringWrapper, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.Nullable method getS(): StringWrapper
     public final @org.jetbrains.annotations.Nullable method getS-DSQDras(): StringWrapper
     public final @org.jetbrains.annotations.NotNull method ok(): java.lang.String

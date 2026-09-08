@@ -160,7 +160,7 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
     protected int getTokenId() {
         IElementType elementType = tt();
-        return (elementType instanceof KtToken) ? ((KtToken)elementType).tokenId : INVALID_Id;
+        return (elementType instanceof KtToken) ? ((KtToken)elementType).tokenId : 0;
     }
 
     protected IElementType tt() {

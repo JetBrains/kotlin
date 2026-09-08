@@ -94,6 +94,7 @@ internal suspend fun Project.commonizeCInteropTask(): TaskProvider<CInteropCommo
     }
 
     val nativeDownloadTask = getOrRegisterDownloadKotlinNativeDistributionTask()
+    val outputRoot = cInteropCommonizerOutputRoot
 
     return locateOrRegisterTask(
         commonizeCInteropTaskName,
@@ -107,6 +108,7 @@ internal suspend fun Project.commonizeCInteropTask(): TaskProvider<CInteropCommo
         configureTask = {
             group = "interop"
             description = "Invokes the commonizer on c-interop bindings of the project"
+            outputDirectory.fileValue(outputRoot)
 
             commonizerClasspath.from(project.maybeCreateCommonizerClasspathConfiguration())
             customJvmArgs.set(PropertiesProvider(project).commonizerJvmArgs)
@@ -142,6 +144,7 @@ private suspend fun Project.isCommonizeCInteropTaskRegistrationEnabled(): Boolea
 internal suspend fun Project.copyCommonizeCInteropForIdeTask(): TaskProvider<CopyCommonizeCInteropForIdeTask>? {
     val commonizeCInteropTask = commonizeCInteropTask()
     if (commonizeCInteropTask != null) {
+        val outputRoot = copyCInteropCommonizerForIdeOutputRoot
         return locateOrRegisterTask(
             "copyCommonizeCInteropForIde",
             args = listOf(commonizeCInteropTask),
@@ -158,6 +161,7 @@ internal suspend fun Project.copyCommonizeCInteropForIdeTask(): TaskProvider<Cop
                 group = "interop"
                 description = "Copies the output of $commonizeCInteropTaskName into " +
                         "the root projects .gradle folder for the IDE"
+                outputDirectory.fileValue(outputRoot)
             }
         )
     }

@@ -6,9 +6,18 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 interface KotlinTypeFacade : SessionHolder {
     val isTest: Boolean
+}
+
+context(sessionHolder: SessionHolder)
+internal fun ConeKotlinType.approximateIntersections(): ConeKotlinType {
+    return sessionHolder.session.typeApproximator.approximateToSuperType(
+        this,
+        TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes,
+    ) ?: this
 }
 
 context(sessionHolder: SessionHolder)
@@ -27,10 +36,6 @@ fun ColumnType.typeArgument(): ColumnType {
         else -> error("${argument::class} $argument")
     }
     return ColumnType(argument)
-}
-
-fun SessionContext(session: FirSession) = object : SessionHolder {
-    override val session: FirSession = session
 }
 
 private val List = "List".collectionsId()

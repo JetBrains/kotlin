@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.psi;
 
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
+import kotlin.ReplaceWith;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub;
 import org.jetbrains.kotlin.resolution.KtResolvable;
 
@@ -27,35 +29,37 @@ import java.util.List;
  *
  * <h3>Analysis API Resolver Notes:</h3>
  *
- * <p>Resolution of a {@link KtUserType} delegates to its {@link #getReferenceExpression() referenceExpression},
- * so calling {@code resolveSymbol()} returns the same symbol as resolving the inner simple-name expression.
+ * <p>Resolution of a {@link KtUserType} delegates to its {@link #getReferenceExpression() referenceExpression}, so calling
+ * {@code resolveSuccessfulSymbol()} returns the same symbol as resolving the inner simple-name expression.
  *
  * <p>For a well-formed type, the result is a {@code KaClassifierSymbol} (a class, type alias, or type parameter):
  *
  * <pre>{@code
  * val list: List<String> = listOf()
- * //        ^^^^^^^^^^^^  resolves to `kotlin.collections.List`
- * //             ^^^^^^   resolves to `kotlin.String`
+ * //        ^^^^^^^^^^^^  resolves to kotlin.collections.List
+ * //             ^^^^^^   resolves to kotlin.String
  * }</pre>
  *
- * <p><b>Note:</b> a {@link KtUserType} may also resolve to a {@code KaPackageSymbol} when it appears as the
- * package qualifier of a fully qualified nested type. In that case the user type is not a classifier reference
- * itself but a package portion of one:
+ * <p><b>Note:</b> a {@link KtUserType} may also resolve to a {@code KaPackageSymbol} when it appears as the package qualifier of a fully
+ * qualified nested type. In that case the user type is not a classifier reference itself but a package portion of one:
  *
  * <pre>{@code
  * val foo: one.two.TopLevel = ...
- * //       ^^^^^^^           resolves to the package `one.two`
- * //       ^^^                 resolves to the package `one`
- * //               ^^^^^^^^  resolves to the class `one.two.TopLevel`
+ * //       ^^^^^^^           resolves to the package one.two
+ * //       ^^^                 resolves to the package one
+ * //               ^^^^^^^^  resolves to the class one.two.TopLevel
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements KtTypeElement, KtResolvable {
+    @KtImplementationDetail
     public KtUserType(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtUserType(@NotNull KotlinUserTypeStub stub) {
-        super(stub, KtStubBasedElementTypes.USER_TYPE);
+        super(stub, KtNodeTypes.USER_TYPE);
     }
 
     @Override
@@ -63,12 +67,13 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
         return visitor.visitUserType(this, data);
     }
 
+    /** Returns the angle-bracketed type argument list, or {@code null} if this type has no type arguments. */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtTypeArgumentList getTypeArgumentList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_ARGUMENT_LIST);
+        return getStubOrPsiChild(KtNodeTypes.TYPE_ARGUMENT_LIST, KtTypeArgumentList.class);
     }
 
+    /** Returns the type arguments (as projections), or an empty list if this type has none. */
     @NotNull
     public List<KtTypeProjection> getTypeArguments() {
         // TODO: empty elements in PSI
@@ -86,17 +91,30 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
         return result;
     }
 
+    /**
+     * Returns the simple-name reference to the classifier (the rightmost segment of the type name), or {@code null} if it is absent in
+     * incomplete code.
+     */
     @Nullable @IfNotParsed
-    @SuppressWarnings("deprecation") // KT-78356
     public KtSimpleNameExpression getReferenceExpression() {
-        KtNameReferenceExpression nameRefExpr = getStubOrPsiChild(KtStubBasedElementTypes.REFERENCE_EXPRESSION);
-        return nameRefExpr != null ? nameRefExpr : getStubOrPsiChild(KtStubBasedElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION);
+        KtNameReferenceExpression nameRefExpr = getStubOrPsiChild(KtNodeTypes.REFERENCE_EXPRESSION, KtNameReferenceExpression.class);
+        if (nameRefExpr != null) {
+            return nameRefExpr;
+        }
+
+        return getStubOrPsiChild(
+                KtNodeTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION,
+                KtEnumEntrySuperclassReferenceExpression.class
+        );
     }
 
+    /**
+     * Returns the qualifier of a dotted type name (for example, {@code kotlin.collections} in {@code kotlin.collections.List}), or
+     * {@code null} if the type name is unqualified.
+     */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtUserType getQualifier() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.USER_TYPE);
+        return getStubOrPsiChild(KtNodeTypes.USER_TYPE, KtUserType.class);
     }
 
     /**
@@ -105,7 +123,7 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
      */
     @kotlin.Deprecated(
             message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.removeQualifier(this)' instead.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "this.removeQualifier()",
                     imports = "org.jetbrains.kotlin.idea.base.psi.removeQualifier"
             )
@@ -115,6 +133,7 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
         KtPsiMutationService.getInstance().removeQualifier(this);
     }
 
+    /** Returns the simple name of the referenced classifier (the rightmost segment), or {@code null} if it is absent in incomplete code. */
     @Nullable
     public String getReferencedName() {
         KtSimpleNameExpression referenceExpression = getReferenceExpression();

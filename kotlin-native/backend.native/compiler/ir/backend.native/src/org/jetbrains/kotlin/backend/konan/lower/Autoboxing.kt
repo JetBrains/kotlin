@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.ClassifierPartialLink
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageStatus
 import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.optimizations.STATEMENT_ORIGIN_NO_CAST_NEEDED
@@ -39,7 +40,8 @@ import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
 /**
  * Boxes and unboxes values of value types when necessary.
  */
-internal class Autoboxing(val context: NativeBackendContext) : FileLoweringPass {
+@PhasePrerequisites(BridgesBuilding::class, NativeSuspendFunctionsLowering::class, GenericCallsReturnTypeEraser::class)
+internal class Autoboxing(val context: NativeLoweringContext) : FileLoweringPass {
 
     private val transformer = AutoboxingTransformer(context)
 
@@ -50,7 +52,7 @@ internal class Autoboxing(val context: NativeBackendContext) : FileLoweringPass 
 
 }
 
-private class AutoboxingTransformer(val context: NativeBackendContext) : AbstractValueUsageTransformer(
+private class AutoboxingTransformer(val context: NativeLoweringContext) : AbstractValueUsageTransformer(
         context.symbols,
         context.irBuiltIns
 ) {
@@ -272,10 +274,12 @@ private class AutoboxingTransformer(val context: NativeBackendContext) : Abstrac
             symbols.initInstance -> {
                 val instance = expression.arguments[0]!!
                 val constructorCall = expression.arguments[1]!!
-                check(constructorCall is IrConstructorCall) { "Expected a constructor call: ${constructorCall.render()}" }
+                check(constructorCall is IrConstructorCall || constructorCall is IrDelegatingConstructorCall) {
+                    "Expected a constructor call: ${constructorCall.render()}"
+                }
                 expression.arguments[0] = instance.transform(this, data = null).useAs(irBuiltIns.anyType)
-                // Leave the second argument of [initInstance] as is.
-                super.visitConstructorCall(constructorCall)
+                // Leave the second argument of [initInstance] as is, but coerce its arguments.
+                super.visitFunctionAccess(constructorCall)
 
                 expression
             }
@@ -286,10 +290,8 @@ private class AutoboxingTransformer(val context: NativeBackendContext) : Abstrac
 
 }
 
-private class InlineClassTransformer(private val context: NativeBackendContext) : IrBuildingTransformer(context) {
-
+private class InlineClassTransformer(private val context: NativeLoweringContext) : IrBuildingTransformer(context) {
     private val symbols = context.symbols
-    private val irBuiltIns = context.irBuiltIns
 
     private val builtSpecialFunctions = mutableListOf<IrFunction>()
 
@@ -378,6 +380,7 @@ private class InlineClassTransformer(private val context: NativeBackendContext) 
 
         val instance = expression.arguments[0]!!
         val constructorCall = expression.arguments[1]!!
+        if (constructorCall is IrDelegatingConstructorCall) return super.visitCall(expression)
         check(constructorCall is IrConstructorCall) { "Expected a constructor call: ${constructorCall.render()}" }
         val constructor = constructorCall.symbol.owner
         return if (!constructor.constructedClass.isInlined())
@@ -627,7 +630,7 @@ private class InlineClassTransformer(private val context: NativeBackendContext) 
 
 private var IrConstructor.loweredInlineClassConstructor: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
-private fun NativeBackendContext.getLoweredInlineClassConstructor(irConstructor: IrConstructor): IrSimpleFunction = irConstructor::loweredInlineClassConstructor.getOrSetIfNull {
+private fun NativeLoweringContext.getLoweredInlineClassConstructor(irConstructor: IrConstructor): IrSimpleFunction = irConstructor::loweredInlineClassConstructor.getOrSetIfNull {
     require(irConstructor.constructedClass.isInlined())
 
     val returnType = if (irConstructor.isPrimary) {

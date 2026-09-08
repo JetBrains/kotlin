@@ -6,7 +6,7 @@ FILE[kind=File[packageFqName=test.class_object]]
   IMPORT_LIST
   CLASS[classId=test/class_object/ClassObject, fqName=test.class_object.ClassObject, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassObject, superNames=[]]
     CLASS_BODY
-      FUN[fqName=test.class_object.ClassObject.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+      FUNCTION[fqName=test.class_object.ClassObject.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         VALUE_PARAMETER_LIST
       PROPERTY[fqName=test.class_object.ClassObject.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=c]
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
@@ -15,7 +15,7 @@ FILE[kind=File[packageFqName=test.class_object]]
         CLASS_BODY
           PROPERTY[fqName=test.class_object.ClassObject.Companion.j, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=j]
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
-          FUN[fqName=test.class_object.ClassObject.Companion.z, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=z]
+          FUNCTION[fqName=test.class_object.ClassObject.Companion.z, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=z]
             VALUE_PARAMETER_LIST
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
           CLASS[classId=test/class_object/ClassObject.Companion.A, fqName=test.class_object.ClassObject.Companion.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
@@ -27,7 +27,7 @@ FILE[kind=File[packageFqName=test.class_object]]
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=Int]
                     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
-                  FUN[fqName=test.class_object.ClassObject.Companion.A.B.f, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+                  FUNCTION[fqName=test.class_object.ClassObject.Companion.A.B.f, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
                     VALUE_PARAMETER_LIST
                     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
       CLASS[classId=test/class_object/ClassObject.B, fqName=test.class_object.ClassObject.B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
@@ -47,7 +47,7 @@ FILE[kind=File[packageFqName=test.class_object]]
                             CLASS_BODY
                               PROPERTY[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.i, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=i]
                                 INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
-                              FUN[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+                              FUNCTION[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
                                 VALUE_PARAMETER_LIST
                               CLASS[classId=test/class_object/ClassObject.B.Companion.C.Companion.D.Companion.En, fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.En, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=En, superNames=[]]
                                 MODIFIER_LIST[enum]

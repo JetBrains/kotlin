@@ -1,3 +1,5 @@
+// DUMP_KT_IR
+
 import lombok.ToString
 
 @ToString
@@ -28,6 +30,26 @@ class WithExistingNonConflictingToString(val x: Int) {
 @ToString
 class WithComputedProperties {
     val computedProp: String get() = "computed"
+}
+
+// KT-88410: a skipped property must not leave a separator behind
+@ToString
+class WithComputedPropertyFirst {
+    val computedProp: Int get() = 1
+    val b = 2
+}
+
+@ToString
+class WithComputedPropertyInTheMiddle {
+    val a = 1
+    val computedProp: Int get() = 2
+    val c = 3
+}
+
+@ToString(callSuper = true)
+class CallSuperWithComputedPropertyFirst : CallSuperBase(10) {
+    val computedProp: Int get() = 1
+    val ownProp = 2
 }
 
 @ToString
@@ -94,8 +116,29 @@ open class CallSuperBase(val baseProp: Int)
 @ToString(callSuper = true)
 class CallSuperDerived(val ownProp: String) : CallSuperBase(10)
 
+// An explicit `callSuper` is never gated on there being a superclass worth chaining to - only the
+// `lombok.toString.callSuper` config is, see `callSuperConfig.kt`.
 @ToString(callSuper = true)
 class CallSuperWithOnlyAnyParent(val x: Int)
+
+// ISSUE: KT-88419
+@ToString
+class WithArrays {
+    val objectArray = arrayOf("a", "b")
+    val nestedArray = arrayOf(arrayOf("a"), arrayOf("b"))
+    val intArray = intArrayOf(1, 2)
+    val charArray = charArrayOf('x', 'y')
+    val nullArray: Array<String>? = null
+}
+
+// A `$`-prefixed name is generated or internal by convention, so Lombok leaves such a property out unless it is
+// explicitly opted in with `@ToString.Include`, KT-88636.
+@ToString
+class WithDollarPrefixedProperties(
+    val regular: String,
+    val `$excludedByDefault`: String,
+    @ToString.Include val `$explicitlyIncluded`: String,
+)
 
 fun box(): String {
     assertEquals("Simple(name=Alice, age=30)", Simple("Alice", 30).toString())
@@ -106,6 +149,12 @@ fun box(): String {
     assertEquals("custom", WithExistingToString(5).toString())
     assertEquals("WithExistingNonConflictingToString(x=5)", WithExistingNonConflictingToString(5).toString())
     assertEquals("WithComputedProperties()", WithComputedProperties().toString())
+    assertEquals("WithComputedPropertyFirst(b=2)", WithComputedPropertyFirst().toString())
+    assertEquals("WithComputedPropertyInTheMiddle(a=1, c=3)", WithComputedPropertyInTheMiddle().toString())
+    assertEquals(
+        "CallSuperWithComputedPropertyFirst(super=CallSuperBase(baseProp=10), ownProp=2)",
+        CallSuperWithComputedPropertyFirst().toString()
+    )
     assertEquals("WithImplicitReturnTypeProperty(implicitReturnTypeProp=implicit return type)", WithImplicitReturnTypeProperty().toString())
     assertEquals("WithBackingFieldAndGetter(x=42)", WithBackingFieldAndGetter().toString())
     assertEquals("WithNonConflictingExtensionFunction(a=6)", WithNonConflictingExtensionFunction(6).toString())
@@ -127,7 +176,25 @@ fun box(): String {
 
     assertEquals("CallSuperBase(baseProp=10)", CallSuperBase(10).toString())
     assertEquals("CallSuperDerived(super=CallSuperBase(baseProp=10), ownProp=hello)", CallSuperDerived("hello").toString())
-    assertEquals("CallSuperWithOnlyAnyParent(x=5)", CallSuperWithOnlyAnyParent(5).toString())
+    // An explicit `callSuper = true` is honored even against `Any`, whose `toString` is the bare identity hash
+    // `Object.toString` renders - "pretty much meaningless", as `@ToString`'s own javadoc puts it, but asked
+    // for, and Lombok has no error for it the way `@EqualsAndHashCode` does. The hash rules out `assertEquals`.
+    val onlyAnyParent = CallSuperWithOnlyAnyParent(5).toString()
+    if (!onlyAnyParent.startsWith("CallSuperWithOnlyAnyParent(super=CallSuperWithOnlyAnyParent@") ||
+        !onlyAnyParent.endsWith(", x=5)")
+    ) {
+        return "FAIL: $onlyAnyParent"
+    }
+
+    assertEquals(
+        "WithArrays(objectArray=[a, b], nestedArray=[[a], [b]], intArray=[1, 2], charArray=[x, y], nullArray=null)",
+        WithArrays().toString()
+    )
+
+    assertEquals(
+        "WithDollarPrefixedProperties(regular=r, ${'$'}explicitlyIncluded=i)",
+        WithDollarPrefixedProperties("r", "e", "i").toString()
+    )
 
     return "OK"
 }

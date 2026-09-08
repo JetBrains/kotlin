@@ -32,8 +32,9 @@ import kotlin.io.path.extension
 /**
  * Collect source file path as [String] from the given source roots in [compilerConfig].
  *
- * Such source roots are either [KotlinSourceRoot] or [JavaSourceRoot], and thus
- * this util collects all `.kt` and `.java` files under source roots.
+ * Such source roots are either [KotlinSourceRoot][org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot]
+ * or [JavaSourceRoot][org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot], and thus this util collects all `.kt` and `.java`
+ * files under source roots.
  */
 internal fun getSourceFilePaths(
     compilerConfig: CompilerConfiguration,
@@ -149,7 +150,7 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
                     libraryName = "Library for $moduleName"
                 }
             )
-            compilerConfig.get(JVMConfigurationKeys.JDK_HOME)?.let { jdkHome ->
+            compilerConfig[JVMConfigurationKeys.JDK_HOME]?.let { jdkHome ->
                 addRegularDependency(
                     buildKtSdkModule {
                         this.platform = platform
@@ -175,7 +176,7 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
         buildKtSourceModule {
             configLanguageVersionSettings?.let { this.languageVersionSettings = it }
             this.platform = platform
-            this.moduleName = compilerConfig.get(CommonConfigurationKeys.MODULE_NAME) ?: "<no module name provided>"
+            this.moduleName = compilerConfig[CommonConfigurationKeys.MODULE_NAME] ?: "<no module name provided>"
 
             addModuleDependencies(moduleName)
 

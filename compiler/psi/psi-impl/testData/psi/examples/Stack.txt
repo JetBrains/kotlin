@@ -61,7 +61,7 @@ KtFile: Stack.kt
             PsiElement(RPAR)(')')
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -102,7 +102,7 @@ KtFile: Stack.kt
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')

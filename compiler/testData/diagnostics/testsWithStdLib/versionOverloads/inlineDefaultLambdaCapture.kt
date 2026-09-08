@@ -1,7 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 
-@file:OptIn(ExperimentalVersionOverloading::class)
-
 inline fun foo(
     x: String,
     @IntroducedAt("1") y: Int = 1,

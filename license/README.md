@@ -118,10 +118,6 @@ the Kotlin IntelliJ IDEA plugin:
       - License: Boost Software License 1.0 ([license/third_party/boost_LICENSE.txt][boost])
       - Origin: Derived from boost special math functions, Copyright Eric Ford & Hubert Holin 2001.
 
- - Path: libraries/stdlib/wasm/internal/kotlin/wasm/internal/Number2String.kt
-      - License: Apache 2 ([license/third_party/assemblyscript_license.txt][assemblyscript])
-      - Origin: Derived from assemblyscript standard library
-
  - Path: libraries/tools/kotlin-power-assert
       - License: Apache 2 ([license/third_party/power_assert_license.txt][power-assert])
       - Origin: Copyright (C) 2020-2023 Brian Norman
@@ -158,10 +154,6 @@ the Kotlin IntelliJ IDEA plugin:
       - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
       - Origin: Derived from JetPack Compose compiler plugin code, Copyright 2019 The Android Open Source Project
 
- - Path: libraries/stdlib/wasm/src/kotlin/text/FloatingPointConverter.kt
-   - License: MIT ([license/third_party/asmble_license.txt][asmble])
-   - Origin: Copyright (C) 2018 Chad Retz
-
  - Path: libraries/stdlib/wasm/src/kotlin/math/fdlibm/
    - License: SUN ([license/third_party/sun_license.txt][sun])
    - Origin: Copyright (C) 1993 by Sun Microsystems, Inc.
@@ -181,6 +173,22 @@ the Kotlin IntelliJ IDEA plugin:
  - Path: compiler/util-klib-abi/src/org/jetbrains/kotlin/library/abi/parser
     - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
     - Origin: Copyright (C) 2024 The Android Open Source Project
+
+ - Path: libraries/stdlib/native-wasm/src/kotlin/internal/dtoa
+    - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
+    - Origin: Copyright (C) 2024 Apache Harmony - Open Source Java SE
+
+ - Path: libraries/stdlib/native-wasm/src/kotlin/text/HexStringParser.kt
+    - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
+    - Origin: Copyright (C) 2024 Apache Harmony - Open Source Java SE
+
+ - Path: libraries/stdlib/native-wasm/src/kotlin/text/FloatingPointParser.kt
+    - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
+    - Origin: Copyright (C) 2024 Apache Harmony - Open Source Java SE
+
+ - Path: libraries/stdlib/native-wasm/src/kotlin/internal/NumberConverter.kt
+    - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
+    - Origin: Copyright (C) 2024 Apache Harmony - Open Source Java SE
 
 ## Kotlin Test Data
 
@@ -206,6 +214,10 @@ any distributions of the compiler, libraries or plugin:
  - Path: third-party/annotations/edu/umd/cs/findbugs
       - License: LGPL 2.1 ([license/third_party/testdata/findbugs_license.txt][findbugs])
       - Origin: Bytecode Analysis Framework, Copyright (C) 2005 University of Maryland
+
+ - Path: third-party/java8-annotations/org/chromium
+      - License: BSD ([license/third_party/testdata/chromium_license.txt][chromium])
+      - Origin: Chromium, Copyright 2015 The Chromium Authors
 
  - Path: third-party/java8-annotations/org/eclipse
       - License: Eclipse Public License v1.0 ([license/third_party/testdata/eclipse_license.txt][eclipse])
@@ -271,6 +283,10 @@ any distributions of the compiler, libraries or plugin:
       - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
       - Origin: Copyright (C) 2008 The Android Open Source Project
 
+ - Path: js/js.parser/test/org/jetbrains/kotlin/sourcemaps/JsSourcemapScopesDecoderErrorsTest.kt
+      - License: BSD-3-Clause ([license/third_party/testdata/chromedevtools_license.txt][chromedevtools])
+      - Origin: Copyright 2025 The Chromium Authors
+
 ## Kotlin Tools and Libraries Tests
 
 The following source code is used for testing the Kotlin tools and/or libraries and is not incorporated into
@@ -331,9 +347,10 @@ any distributions of the compiler, libraries or plugin:
 [aosp]: third_party/aosp_license.txt
 [asm]: third_party/asm_license.txt
 [asmble]: third_party/asmble_license.txt
-[assemblyscript]: third_party/assemblyscript_license.txt
 [antlr_js_grammar]: third_party/antlr_js_grammar_license.txt
 [boost]: third_party/boost_LICENSE.txt
+[chromedevtools]: third_party/testdata/chromedevtools_license.txt
+[chromium]: third_party/testdata/chromium_license.txt
 [closure-compiler]: third_party/closure-compiler_LICENSE.txt
 [compose]: third_party/compose_license.txt
 [dagger]: third_party/testdata/dagger_license.txt

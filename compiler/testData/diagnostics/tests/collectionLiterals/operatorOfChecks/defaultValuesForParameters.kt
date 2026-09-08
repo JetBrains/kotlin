@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-80492
-// LANGUAGE: +CollectionLiterals
 // RENDER_DIAGNOSTIC_ARGUMENTS
 
 class DefaultVararg {

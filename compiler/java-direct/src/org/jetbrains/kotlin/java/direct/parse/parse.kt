@@ -8,11 +8,12 @@
 package org.jetbrains.kotlin.java.direct.parse
 
 import com.intellij.java.syntax.JavaSyntaxDefinition
-import com.intellij.java.syntax.parser.JavaParser
 import com.intellij.platform.syntax.lexer.performLexing
 import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
 import com.intellij.platform.syntax.parser.SyntaxTreeBuilderFactory
 import com.intellij.pom.java.LanguageLevel
+import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
+import org.jetbrains.kotlin.kmp.tree.buildLanguageSpecificLightTree
 
 fun parseJavaToSyntaxTreeBuilder(
     charSequence: CharSequence,
@@ -29,21 +30,24 @@ fun parseJavaToSyntaxTreeBuilder(
         .withWhitespaceOrCommentBindingPolicy(JavaSyntaxDefinition.whitespaceOrCommentBindingPolicy)
         .build()
 
-    parse(LanguageLevel.HIGHEST, syntaxTreeBuilder)
+    parse(LanguageLevel.JDK_X, syntaxTreeBuilder)
     return syntaxTreeBuilder
 }
 
 fun parse(languageLevel: LanguageLevel, builder: SyntaxTreeBuilder) {
-    val parser = JavaParser(languageLevel)
-    parser.fileParser.parse(builder)
+    JavaSyntaxDefinition.parse(languageLevel, builder)
 }
 
 /**
- * Convenience wrapper around [parseJavaToSyntaxTreeBuilder] + [buildJavaLightTree] for callers
- * that just need the resulting [JavaLightTree].
+ * Convenience wrapper around [parseJavaToSyntaxTreeBuilder] + [buildLanguageSpecificLightTree] for callers
+ * that just need the resulting [LightSyntaxTree].
  */
-fun parseJavaToLightTree(charSequence: CharSequence, start: Int): JavaLightTree {
+fun parseJavaToLightTree(charSequence: CharSequence, start: Int): LightSyntaxTree {
     val builder = parseJavaToSyntaxTreeBuilder(charSequence, start)
-    return buildJavaLightTree(builder, charSequence)
+    return buildLanguageSpecificLightTree(
+        builder, charSequence,
+        buildLanguageSpecificTreeStructure = { JavaLightTreeStructure(it) },
+        isComment = { it in JavaSyntaxDefinition.comments },
+    )
 }
 

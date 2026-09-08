@@ -13,6 +13,8 @@ plugins {
     kotlin("multiplatform")
 }
 
+group = "kotlin-multiplatform-projects"
+
 kotlin {
     jvm()
     linuxX64()

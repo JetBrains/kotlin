@@ -38,14 +38,16 @@ FILE fqName:<root> fileName:/localDifferentReceivers.kt
             ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) declared in <root>.MyClass' type=<root>.MyClass origin=null
               ARG value: CONST String type=kotlin.String value="O"
             ARG host: CONST Null type=kotlin.Nothing? value=null
-            ARG p: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val testO: kotlin.String by (...)' delegate='val testO$delegate: kotlin.String declared in <root>.box' getter='local final fun <get-testO> (): kotlin.String declared in <root>.box' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            ARG p: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='val testO: kotlin.String by (...)'
+              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:testO visibility:local modality:FINAL returnType:kotlin.String
         FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testO> visibility:local modality:FINAL returnType:kotlin.String
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='local final fun <get-testO> (): kotlin.String declared in <root>.box'
               CALL 'public final fun getValue (<this>: kotlin.String, receiver: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>' type=kotlin.String origin=null
                 ARG <this>: GET_VAR 'val testO$delegate: kotlin.String declared in <root>.box' type=kotlin.String origin=null
                 ARG receiver: CONST Null type=kotlin.Nothing? value=null
-                ARG p: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val testO: kotlin.String by (...)' delegate='val testO$delegate: kotlin.String declared in <root>.box' getter='local final fun <get-testO> (): kotlin.String declared in <root>.box' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+                ARG p: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='val testO: kotlin.String by (...)'
+                  getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:testO visibility:local modality:FINAL returnType:kotlin.String
       LOCAL_DELEGATED_PROPERTY name:testK type:kotlin.String flags:val
         VAR PROPERTY_DELEGATE name:testK$delegate type:kotlin.String [val]
           CONST String type=kotlin.String value="K"
@@ -55,7 +57,8 @@ FILE fqName:<root> fileName:/localDifferentReceivers.kt
               CALL 'public final fun getValue (<this>: kotlin.String, receiver: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>' type=kotlin.String origin=null
                 ARG <this>: GET_VAR 'val testK$delegate: kotlin.String declared in <root>.box' type=kotlin.String origin=null
                 ARG receiver: CONST Null type=kotlin.Nothing? value=null
-                ARG p: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val testK: kotlin.String by (...)' delegate='val testK$delegate: kotlin.String declared in <root>.box' getter='local final fun <get-testK> (): kotlin.String declared in <root>.box' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+                ARG p: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='val testK: kotlin.String by (...)'
+                  getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:testK visibility:local modality:FINAL returnType:kotlin.String
       VAR name:testOK type:kotlin.String [val]
         CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
           ARG <this>: CALL 'local final fun <get-testO> (): kotlin.String declared in <root>.box' type=kotlin.String origin=GET_LOCAL_PROPERTY

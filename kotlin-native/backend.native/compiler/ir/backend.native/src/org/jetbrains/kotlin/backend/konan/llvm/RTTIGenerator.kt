@@ -581,13 +581,8 @@ internal class RTTIGenerator(
 
     private fun getReflectionInfo(irClass: IrClass): ReflectionInfo {
         val packageFragment = irClass.getPackageFragment()
-        val reflectionPackageName = if (packageFragment is IrFile) {
-            // This annotation is used by test infrastructure.
-            packageFragment.annotations.findAnnotation(KonanFqNames.reflectionPackageName)?.getConstArgument<String>("name")
-        } else {
-            null
-        }
-
+        // `@kotlin.internal.ReflectionPackageName` is used by test infrastructure.
+        val reflectionPackageName = (packageFragment as? IrFile)?.reflectionPackageName
         val packageName: String = reflectionPackageName ?: packageFragment.packageFqName.asString() // Compute and store package name in TypeInfo anyways.
         val relativeName: String?
         val flags: Int

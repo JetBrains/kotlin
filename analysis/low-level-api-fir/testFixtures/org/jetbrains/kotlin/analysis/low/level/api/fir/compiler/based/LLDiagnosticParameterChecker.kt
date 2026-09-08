@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirAnalysisHandler
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class LLDiagnosticParameterChecker(testServices: TestServices) : FirAnalysisHandler(testServices) {
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
@@ -24,19 +22,19 @@ internal class LLDiagnosticParameterChecker(testServices: TestServices) : FirAna
             val diagnostics = facade.runCheckers().values.flatten()
 
             for (diagnostic in diagnostics) {
-                checkDiagnosticIsSuitableForFirIde(diagnostic as KtPsiDiagnostic)
+                checkDiagnosticIsSuitableForFirIde(diagnostic as KtDiagnosticWithSource)
             }
         }
     }
 
-    private fun checkDiagnosticIsSuitableForFirIde(diagnostic: KtPsiDiagnostic) {
+    private fun checkDiagnosticIsSuitableForFirIde(diagnostic: KtDiagnosticWithSource) {
         val parameters = diagnostic.allParameters()
         for (parameter in parameters) {
             checkDiagnosticParameter(diagnostic, parameter)
         }
     }
 
-    private fun checkDiagnosticParameter(diagnostic: KtPsiDiagnostic, parameter: Any?) {
+    private fun checkDiagnosticParameter(diagnostic: KtDiagnosticWithSource, parameter: Any?) {
         when (parameter) {
             is ConeKotlinType -> checkType(parameter, diagnostic as KtDiagnostic)
         }
@@ -52,15 +50,12 @@ internal class LLDiagnosticParameterChecker(testServices: TestServices) : FirAna
         }
     }
 
-    private fun KtPsiDiagnostic.allParameters(): List<Any?> = when (this) {
-        is KtPsiDiagnosticWithParameters1<*> -> listOf(a)
-        is KtPsiDiagnosticWithParameters2<*, *> -> listOf(a, b)
-        is KtPsiDiagnosticWithParameters3<*, *, *> -> listOf(a, b, c)
-        is KtPsiDiagnosticWithParameters4<*, *, *, *> -> listOf(a, b, c, d)
-        is KtPsiSimpleDiagnostic -> emptyList()
-        else -> errorWithAttachment("Unexpected diagnostic ${this::class}, $factoryName") {
-            withPsiEntry("onElement", psiElement)
-        }
+    private fun KtDiagnosticWithSource.allParameters(): List<Any?> = when (this) {
+        is KtDiagnosticWithParameters1<*> -> listOf(a)
+        is KtDiagnosticWithParameters2<*, *> -> listOf(a, b)
+        is KtDiagnosticWithParameters3<*, *, *> -> listOf(a, b, c)
+        is KtDiagnosticWithParameters4<*, *, *, *> -> listOf(a, b, c, d)
+        is KtSimpleDiagnostic -> emptyList()
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}

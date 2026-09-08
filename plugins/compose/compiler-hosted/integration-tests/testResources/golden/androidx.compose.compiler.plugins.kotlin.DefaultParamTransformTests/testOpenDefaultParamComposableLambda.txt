@@ -111,7 +111,7 @@ private interface DefaultParamInterface {
             } else {
               %composer.skipToGroupEnd()
             }
-          }, %composer, 0b00110110)
+          }, %composer, 0b00110110) as Function2<Composer, Int, Unit>
         }
         if (isTraceInProgress()) {
           traceEventStart(<>, %dirty, -1, <>)

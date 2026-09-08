@@ -1,5 +1,5 @@
 KtEnumEntrySuperclassReferenceExpression(127,127): ''
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionContainer
+import org.jetbrains.kotlin.gradle.targets.js.internal.checkIsJsToolingProject
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
@@ -53,8 +55,8 @@ internal class YarnPluginApplier(
 ) {
 
     fun apply(project: Project) {
-        check(project == project.rootProject) {
-            "${this::class.java.name} can be applied only to root project"
+        checkIsJsToolingProject(project) {
+            "Cannot register ${YarnPluginApplier::class.simpleName} in ${project.displayName}. It can only be registered in ${project.jsToolingProject().displayName}."
         }
 
         nodeJsRootApply(project)

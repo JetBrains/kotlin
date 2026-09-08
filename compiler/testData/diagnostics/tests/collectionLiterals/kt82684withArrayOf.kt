@@ -1,5 +1,8 @@
+// LANGUAGE_FEATURE_TOGGLED_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-82684
+// LANGUAGE: -CollectionLiterals
+// LANGUAGE_FEATURE_TOGGLED: CollectionLiteralsBasedAnnotationResolution
 
 import kotlin.reflect.KClass
 

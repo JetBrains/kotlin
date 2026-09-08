@@ -14,7 +14,7 @@ FILE[kind=File[packageFqName=<root>]]
         TYPE_REFERENCE
           DYNAMIC_TYPE
     CLASS_BODY
-      FUN[fqName=dynamic.dynamic, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=dynamic]
+      FUNCTION[fqName=dynamic.dynamic, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=dynamic]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=dynamic]
             CONSTRUCTOR_CALLEE

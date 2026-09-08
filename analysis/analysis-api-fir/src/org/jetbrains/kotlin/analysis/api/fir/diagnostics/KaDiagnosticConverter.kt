@@ -63,12 +63,12 @@ internal class KaDiagnosticConverter(private val conversions: Map<KtDiagnosticFa
     private fun buildCreatorForPluginDiagnostic(factory: AbstractKtDiagnosticFactory): KaFirDiagnosticCreator = when (factory) {
         is KtSourcelessDiagnosticFactory -> shouldNotBeCalled()
         is KtDiagnosticFactory0 -> KaFirDiagnostic0Creator {
-            KaCompilerPluginDiagnostic0Impl(it as KtPsiSimpleDiagnostic, token)
+            KaCompilerPluginDiagnostic0Impl(it, token)
         }
 
         is KtDiagnosticFactory1<*> -> KaFirDiagnostic1Creator<Any?> { // Type argument specified because of KT-55281
             KaCompilerPluginDiagnostic1Impl(
-                it as KtPsiDiagnosticWithParameters1<*>,
+                it,
                 token,
                 convertArgument(it.a, this)
             )
@@ -76,7 +76,7 @@ internal class KaDiagnosticConverter(private val conversions: Map<KtDiagnosticFa
 
         is KtDiagnosticFactory2<*, *> -> KaFirDiagnostic2Creator<Any?, Any?> {
             KaCompilerPluginDiagnostic2Impl(
-                it as KtPsiDiagnosticWithParameters2<*, *>,
+                it,
                 token,
                 convertArgument(it.a, this),
                 convertArgument(it.b, this)
@@ -85,7 +85,7 @@ internal class KaDiagnosticConverter(private val conversions: Map<KtDiagnosticFa
 
         is KtDiagnosticFactory3<*, *, *> -> KaFirDiagnostic3Creator<Any?, Any?, Any?> {
             KaCompilerPluginDiagnostic3Impl(
-                it as KtPsiDiagnosticWithParameters3<*, *, *>,
+                it,
                 token,
                 convertArgument(it.a, this),
                 convertArgument(it.b, this),
@@ -95,7 +95,7 @@ internal class KaDiagnosticConverter(private val conversions: Map<KtDiagnosticFa
 
         is KtDiagnosticFactory4<*, *, *, *> -> KaFirDiagnostic4Creator<Any?, Any?, Any?, Any?> {
             KaCompilerPluginDiagnostic4Impl(
-                it as KtPsiDiagnosticWithParameters4<*, *, *, *>,
+                it,
                 token,
                 convertArgument(it.a, this),
                 convertArgument(it.b, this),

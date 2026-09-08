@@ -1,0 +1,1 @@
+val removedCompanionVarRef = B::removedCompanionVar

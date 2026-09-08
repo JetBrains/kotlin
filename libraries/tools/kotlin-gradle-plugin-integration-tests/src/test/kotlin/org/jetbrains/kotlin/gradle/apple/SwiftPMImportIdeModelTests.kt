@@ -110,12 +110,22 @@ class SwiftPMImportIdeModelTests : KGPBaseTest() {
                 "prepareKotlinIdeaImport",
                 executingProject = this,
                 // CC is also disabled during import
-                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED
+                deriveBuildOptions = {
+                    buildOptions.copy(
+                        configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                        isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+                    )
+                },
             )
             val consumerWithoutDependencyHasSwiftPMDependencies = consumerWithoutDependencyHasSwiftPMDependenciesProvider.buildAndReturn(
                 "prepareKotlinIdeaImport",
                 executingProject = this,
-                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED
+                deriveBuildOptions = {
+                    buildOptions.copy(
+                        configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                        isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+                    )
+                },
             )
 
             assertEquals(true, consumerWithDependencyHasSwiftPMDependencies)

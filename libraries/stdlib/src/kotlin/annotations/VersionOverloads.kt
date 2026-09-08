@@ -77,6 +77,7 @@ public annotation class ExperimentalVersionOverloading
  */
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @MustBeDocumented
-@SinceKotlin("2.3")
-@ExperimentalVersionOverloading
+@WasExperimental(ExperimentalVersionOverloading::class)
+@SinceKotlin("2.5")
+@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 public annotation class IntroducedAt(val version: String)

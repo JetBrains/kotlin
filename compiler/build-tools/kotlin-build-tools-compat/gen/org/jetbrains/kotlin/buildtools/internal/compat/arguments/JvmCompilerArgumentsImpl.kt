@@ -106,24 +106,25 @@ import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerAr
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerArgumentsImpl.Companion.X_VALIDATE_BYTECODE
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerArgumentsImpl.Companion.X_VALUE_CLASSES
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerArgumentsImpl.Companion.X_WHEN_EXPRESSIONS
+import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.AbiStabilityMode
+import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.AssertionsMode
+import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.CompatqualAnnotationsMode
+import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.JdkRelease
+import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.JspecifyAnnotationsMode
+import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.JvmDefaultMode
+import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.JvmTarget
+import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.LambdasMode
+import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.SamConversionsMode
+import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.StringConcatMode
+import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.enums.WhenExpressionsMode
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.Jsr305
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.NullabilityAnnotation
 import org.jetbrains.kotlin.buildtools.api.arguments.ProfileCompilerCommand
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.AbiStabilityMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.AssertionsMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.CompatqualAnnotationsMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JdkRelease
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JspecifyAnnotationsMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmDefaultMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.LambdasMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.SamConversionsMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.StringConcatMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.WhenExpressionsMode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArguments
@@ -141,16 +142,22 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: JvmCompilerArgument<V>): V = optionsMap[key.id] as V
 
-  private operator fun <V> `set`(key: JvmCompilerArgument<V>, `value`: V) {
+  public operator fun <V> `set`(key: JvmCompilerArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
 
   public operator fun contains(key: JvmCompilerArgument<*>): Boolean = key.id in optionsMap
 
+  private operator fun `get`(key: String): Any? = JvmCompilerArgumentValueAdapter.toApi(optionsMap[key])
+
+  private operator fun `set`(key: String, `value`: Any?) {
+    optionsMap[key] = JvmCompilerArgumentValueAdapter.toImpl(`value`)
+  }
+
   @Suppress("UNCHECKED_CAST")
   override operator fun <V> `get`(key: JvmCompilerArguments.JvmCompilerArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return optionsMap[key.id] as V
+    return this[key.id] as V
   }
 
   override operator fun <V> `set`(key: JvmCompilerArguments.JvmCompilerArgument<V>, `value`: V) {
@@ -158,7 +165,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     if (key.availableSinceVersion > KotlinReleaseVersion(currentKotlinVersion.major, currentKotlinVersion.minor, currentKotlinVersion.patch)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    optionsMap[key.id] = `value`
+    this[key.id] = `value`
   }
 
   @Deprecated(
@@ -345,10 +352,19 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
+  @Deprecated(
+    message = "This method is deprecated. Use applyCommandLineArguments instead.",
+    level = DeprecationLevel.WARNING,
+  )
   override fun applyArgumentStrings(arguments: List<String>) {
     val compilerArgs: K2JVMCompilerArguments = parseCommandLineArguments(arguments)
     validateArguments(compilerArgs.errors)?.let { throw CompilerArgumentsParseException(it) }
     applyCompilerArguments(compilerArgs)
+  }
+
+  @DelicateBuildToolsApi
+  override fun applyCommandLineArguments(arguments: List<String>) {
+    error("Will never be called, it's handled in JvmCompilerArgumentsImplV1Adapter")
   }
 
   override fun toArgumentStrings(): List<String> {

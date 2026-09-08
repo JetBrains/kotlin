@@ -40,7 +40,6 @@ class A {
     fun getA(): A = A()
 }
 
-// STOP_EVALUATION_CHECKS
 fun box(): String {
     A().test()
     return "OK"

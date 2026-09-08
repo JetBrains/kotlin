@@ -2,7 +2,7 @@ KtNameReferenceExpression(67,70): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       main/foo(t: {main.T=} ERROR CLASS: Symbol not found for A): kotlin.Unit
     ]

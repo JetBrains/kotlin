@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,28 +8,25 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.backend.wasm.*
-import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextMultimodule
-import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextSingleModule
-import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextWholeWorld
+import org.jetbrains.kotlin.backend.wasm.ic.*
 import org.jetbrains.kotlin.backend.wasm.lower.markFunctionToExport
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode
+import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.WasmIntermediatePipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.WebIncrementalCachePipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.*
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode.Companion.wasmCompilationMode
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.compileIncrementallyMultimodule
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.compileIncrementallySingleModule
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.compileIncrementallyWholeWorld
 import org.jetbrains.kotlin.codegen.ModelTarget
 import org.jetbrains.kotlin.codegen.ModuleInfo
 import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.targetPlatform
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
-import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
-import org.jetbrains.kotlin.ir.backend.js.ic.IrCompilerICInterface
-import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
+import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
+import org.jetbrains.kotlin.ir.backend.js.ic.PlatformDependentICContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.isBoolean
@@ -69,6 +66,12 @@ private fun markExportedDeclarations(dirtyFiles: Collection<IrFile>, context: Wa
     }
 }
 
+object WasmMultiModuleIncrementalCachePreparationPipelinePhaseForTesting :
+    WasmIncrementalCachePreparationPipelinePhase<WasmModuleArtifactMultimodule, WasmICContextMultimodule>(
+        name = WasmMultiModuleIncrementalCachePreparationPipelinePhaseForTesting::class.java.simpleName,
+        contextFactory = { _, _, _, _ -> WasmICContextMultimoduleForTesting() },
+    )
+
 private class WasmICContextMultimoduleForTesting : WasmICContextMultimodule(
     allowIncompleteImplementations = false,
     skipLocalNames = false,
@@ -79,20 +82,29 @@ private class WasmICContextMultimoduleForTesting : WasmICContextMultimodule(
         mainModule: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
         configuration: CompilerConfiguration,
-        context: JsCommonBackendContext
-    ): IrCompilerICInterface = object : WasmCompilerWithICMultimodule(
+        context: WasmBackendContext,
+    ): WasmCompilerWithICMultimodule = object : WasmCompilerWithICMultimodule(
         mainModule = mainModule,
         allowIncompleteImplementations = false,
         skipCommentInstructions = false,
         skipLocations = false,
-        context = context as WasmBackendContext,
+        context = context,
     ) {
-        override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
+        override fun compile(
+            allModules: Collection<IrModuleFragment>,
+            dirtyFiles: Collection<IrFile>,
+        ): List<() -> WasmIrProgramFragmentsMultimodule> {
             markExportedDeclarations(dirtyFiles, super.context)
             return super.compile(allModules, dirtyFiles)
         }
     }
 }
+
+object WasmSingleModuleIncrementalCachePreparationPipelinePhaseForTesting :
+    WasmIncrementalCachePreparationPipelinePhase<WasmModuleArtifactSingleModule, WasmICContextSingleModule>(
+        name = WasmSingleModuleIncrementalCachePreparationPipelinePhaseForTesting::class.java.simpleName,
+        contextFactory = { _, _, _, _ -> WasmICContextSingleModuleForTesting() },
+    )
 
 private class WasmICContextSingleModuleForTesting : WasmICContextSingleModule(
     allowIncompleteImplementations = false,
@@ -104,20 +116,29 @@ private class WasmICContextSingleModuleForTesting : WasmICContextSingleModule(
         mainModule: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
         configuration: CompilerConfiguration,
-        context: JsCommonBackendContext,
-    ): IrCompilerICInterface = object : WasmCompilerWithICSingleModule(
+        context: WasmBackendContext,
+    ): WasmCompilerWithICSingleModule = object : WasmCompilerWithICSingleModule(
         mainModule = mainModule,
         allowIncompleteImplementations = false,
         skipCommentInstructions = false,
         skipLocations = false,
-        context = context as WasmBackendContext,
+        context = context,
     ) {
-        override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
+        override fun compile(
+            allModules: Collection<IrModuleFragment>,
+            dirtyFiles: Collection<IrFile>,
+        ): List<() -> WasmIrProgramFragmentsSingleModule> {
             markExportedDeclarations(dirtyFiles, super.context)
             return super.compile(allModules, dirtyFiles)
         }
     }
 }
+
+object WasmWholeWorldIncrementalCachePreparationPipelinePhaseForTesting :
+    WasmIncrementalCachePreparationPipelinePhase<WasmModuleArtifact, WasmICContextWholeWorld>(
+        name = WasmWholeWorldIncrementalCachePreparationPipelinePhaseForTesting::class.java.simpleName,
+        contextFactory = { _, _, _, _ -> WasmICContextWholeWorldForTesting() },
+    )
 
 private class WasmICContextWholeWorldForTesting : WasmICContextWholeWorld(
     allowIncompleteImplementations = false,
@@ -129,15 +150,15 @@ private class WasmICContextWholeWorldForTesting : WasmICContextWholeWorld(
         mainModule: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
         configuration: CompilerConfiguration,
-        context: JsCommonBackendContext,
-    ): IrCompilerICInterface = object : WasmCompilerWithICWholeWorld(
+        context: WasmBackendContext,
+    ): WasmCompilerWithICWholeWorld = object : WasmCompilerWithICWholeWorld(
         mainModule = mainModule,
         allowIncompleteImplementations = false,
         skipCommentInstructions = false,
         skipLocations = false,
-        context = context as WasmBackendContext,
+        context = context,
     ) {
-        override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
+        override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> WasmIrProgramFragments> {
             markExportedDeclarations(dirtyFiles, super.context)
             return super.compile(allModules, dirtyFiles)
         }
@@ -227,43 +248,50 @@ abstract class WasmAbstractInvalidationTest(
             testInfo: List<TestStepInfo>,
             removedModulesInfo: List<TestStepInfo>,
         ) {
+            configuration.icCacheDirectory = cacheDir.absolutePath
             val wasmCompilationMode = configuration.wasmCompilationMode()
-            val icContext = when (wasmCompilationMode) {
-                WasmCompilationMode.MULTI_MODULE -> WasmICContextMultimoduleForTesting()
-                WasmCompilationMode.SINGLE_MODULE -> WasmICContextSingleModuleForTesting()
-                WasmCompilationMode.REGULAR -> WasmICContextWholeWorldForTesting()
-            }
-
-            val cacheUpdater = CacheUpdater(
-                cacheDir = cacheDir.absolutePath,
-                compilerConfiguration = configuration,
-                artifactConfiguration = WebArtifactConfiguration.fromFlags(
+            configuration.artifactConfigurations = listOf(
+                WebArtifactConfiguration.fromFlags(
                     configuration,
                     isPerModule = false,
                     isPerFile = false,
                     generateDts = false
                 )!!,
-                icContext = icContext,
-                checkForClassStructuralChanges = true,
-                loadBodiesOnlyForMainModule = wasmCompilationMode == WasmCompilationMode.SINGLE_MODULE,
             )
 
-            val icCaches = cacheUpdater.actualizeCaches()
-            if (wasmCompilationMode != WasmCompilationMode.SINGLE_MODULE) {
-                verifyCacheUpdateStats(stepId, cacheUpdater.getDirtyFileLastStats(), testInfo + removedModulesInfo)
+            fun <M : ModuleArtifact, C : PlatformDependentICContext<M, *, *, *>> runPipeline(
+                icCachePreparationPhase: WasmIncrementalCachePreparationPipelinePhase<M, C>,
+                incrementalBuildingPhase: PipelinePhase<WebIncrementalCachePipelineArtifact<M>, WasmIntermediatePipelineArtifact>,
+            ) {
+                val preparedIcCachesArtifact =
+                    icCachePreparationPhase.executePhase(ConfigurationPipelineArtifact(configuration, rootDisposable))!!
+
+                if (wasmCompilationMode != WasmCompilationMode.SINGLE_MODULE) {
+                    verifyCacheUpdateStats(stepId, preparedIcCachesArtifact.dirtyFileLastStats, testInfo + removedModulesInfo)
+                }
+
+                val [parametersList] = incrementalBuildingPhase.executePhase(preparedIcCachesArtifact)!!
+
+                parametersList.forEach { parameters ->
+                    val linkedModule = linkWasmIr(parameters)
+                    val compilationResult = compileWasmIrToBinary(parameters, linkedModule)
+                    writeCompilationResult(compilationResult, buildDir, parameters.baseFileName)
+                }
             }
 
-            val fragmentCompiler = when (wasmCompilationMode) {
-                WasmCompilationMode.MULTI_MODULE -> ::compileIncrementallyMultimodule
-                WasmCompilationMode.SINGLE_MODULE -> ::compileIncrementallySingleModule
-                WasmCompilationMode.REGULAR -> ::compileIncrementallyWholeWorld
-            }
-            val parametersList = fragmentCompiler(icCaches, configuration)
-
-            parametersList.forEach { parameters ->
-                val linkedModule = linkWasmIr(parameters)
-                val compilationResult = compileWasmIrToBinary(parameters, linkedModule)
-                writeCompilationResult(compilationResult, buildDir, parameters.baseFileName)
+            when (wasmCompilationMode) {
+                WasmCompilationMode.MULTI_MODULE -> runPipeline(
+                    WasmMultiModuleIncrementalCachePreparationPipelinePhaseForTesting,
+                    WasmMultiModuleIncrementalBuildingPhase,
+                )
+                WasmCompilationMode.SINGLE_MODULE -> runPipeline(
+                    WasmSingleModuleIncrementalCachePreparationPipelinePhaseForTesting,
+                    WasmSingleModuleIncrementalBuildingPhase,
+                )
+                WasmCompilationMode.REGULAR -> runPipeline(
+                    WasmWholeWorldIncrementalCachePreparationPipelinePhaseForTesting,
+                    WasmWholeWorldIncrementalBuildingPhase,
+                )
             }
         }
 

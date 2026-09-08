@@ -158,7 +158,7 @@ class PgpHelpersTest : KGPBaseTest() {
     @GradleTest
     @DisplayName("Use generated key from Gradle signing plugin")
     internal fun useGeneratedKeyInSigningPlugin(gradleVersion: GradleVersion) {
-        project("empty", gradleVersion, buildOptions = BuildOptions().disableConfigurationCacheForGradle7(gradleVersion)) {
+        project("empty", gradleVersion, buildOptions = BuildOptions()) {
             plugins {
                 kotlin("jvm")
                 `maven-publish`

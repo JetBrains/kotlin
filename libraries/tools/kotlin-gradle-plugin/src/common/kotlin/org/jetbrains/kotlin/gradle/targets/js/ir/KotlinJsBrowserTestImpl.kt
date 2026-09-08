@@ -8,16 +8,14 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.Action
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.MapProperty
-import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
+import org.gradle.api.provider.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinDefaultJsTestLocation
 import org.jetbrains.kotlin.gradle.targets.js.testing.locateOrRegisterBrowserTestBundleTask
+import org.jetbrains.kotlin.gradle.targets.js.testing.locateOrRegisterEsmBundleKotlinJsTestsTask
+import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
@@ -41,21 +39,21 @@ internal abstract class KotlinBrowserTestRunner(
 
 internal class KotlinChromiumTestRunner(
     name: String,
-    objects: ObjectFactory
+    objects: ObjectFactory,
 ) : KotlinBrowserTestRunner(name, objects), KotlinJsBrowserTestDsl.ChromiumTestRunnerDsl
 
 internal class KotlinFirefoxTestRunner(
     name: String,
-    objects: ObjectFactory
+    objects: ObjectFactory,
 ) : KotlinBrowserTestRunner(name, objects), KotlinJsBrowserTestDsl.FirefoxTestRunnerDsl
 
 internal class KotlinWebkitTestRunner(
     name: String,
-    objects: ObjectFactory
+    objects: ObjectFactory,
 ) : KotlinBrowserTestRunner(name, objects), KotlinJsBrowserTestDsl.WebkitTestRunnerDsl
 
 internal fun ObjectFactory.createKotlinJsBrowserTestImpl(
-    testCompilation: KotlinJsIrCompilation
+    testCompilation: KotlinJsIrCompilation,
 ) = newInstance(KotlinJsBrowserTestImpl::class.java, testCompilation)
 
 internal abstract class KotlinJsBrowserTestImpl
@@ -65,15 +63,16 @@ internal abstract class KotlinJsBrowserTestImpl
     providers: ProviderFactory,
 ) : KotlinJsBrowserTestDsl {
 
-    override val allBrowserRunners: Provider<Map<String, KotlinBrowserTestRunnerDsl>> = providers.provider {
-        chromiumRunners + firefoxRunners + webkitRunners
+    internal fun setUpDefaultBrowserRunner() {
+        chromium("chromium")
     }
 
-    override val defaultTestsLocationProvider: Provider<KotlinDefaultJsTestLocation> = testCompilation
-        .locateOrRegisterBrowserTestBundleTask {
-            // enabled when at least one browser runner is enabled. So the user has an intention to test via the browser pipeline.
-            browserRunnersDeclared.set(allBrowserRunners.map { it.isNotEmpty() })
-        }.map { it.kotlinJsTestLocation }
+    override val allBrowserRunners: Provider<Map<String, KotlinBrowserTestRunnerDsl>> = providers.provider {
+        (chromiumRunners + firefoxRunners + webkitRunners)
+    }
+
+    override val defaultTestsLocationProvider: Provider<KotlinDefaultJsTestLocation> =
+        testCompilation.registerTestLocations()
 
     val chromiumRunners = mutableMapOf<String, KotlinChromiumTestRunner>()
     override fun chromium(
@@ -126,6 +125,16 @@ internal abstract class KotlinJsBrowserTestImpl
         browserLevelDsl.headless.convention(headless)
         browserLevelDsl.timeout.convention(timeout)
         browserLevelDsl.launchEnvironmentVariables.convention(launchEnvironmentVariables)
+    }
+
+    private fun KotlinJsIrCompilation.registerTestLocations(): Provider<KotlinDefaultJsTestLocation> {
+        return when {
+            isWasm -> locateOrRegisterEsmBundleKotlinJsTestsTask().map { it.kotlinJsTestLocation }
+            else -> locateOrRegisterBrowserTestBundleTask {
+                // enabled when at least one browser runner is enabled. So the user has an intention to test via the browser pipeline.
+                browserRunnersDeclared.set(allBrowserRunners.map { it.isNotEmpty() })
+            }.map { it.kotlinJsTestLocation }
+        }
     }
 
     internal companion object {

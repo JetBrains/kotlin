@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.test.directives.assertEqualsToDump
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 
 class KaptAnnotationProcessingHandler(testServices: TestServices) : BaseKaptHandler(testServices) {
@@ -23,7 +22,7 @@ class KaptAnnotationProcessingHandler(testServices: TestServices) : BaseKaptHand
         get() = listOf(TestDumpDirectives)
 
     override fun processModule(module: TestModule, info: KaptContextBinaryArtifact) {
-        val kaptContext = info.kaptContext
+        val kaptContext = info.kaptContext ?: assertions.fail { "KAPT context is not created" }
         val compilationUnits = convert(module, kaptContext, generateNonExistentClass = false)
         kaptContext.doAnnotationProcessing(
             emptyList(),

@@ -78,7 +78,7 @@ fun Foo(crossinline child: Function2<Composer, Int, Unit>, %composer: Composer?,
     } else {
       %composer.skipToGroupEnd()
     }
-  }, %composer, 0b00110110)
+  }, %composer, 0b00110110) as Function2<Composer, Int, Unit>
   Box(rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C<a()>,<child(...>:Test.kt")
     if (%composer.shouldExecute(%changed and 0b0011 != 0b0010, %changed and 0b0001)) {
@@ -94,7 +94,7 @@ fun Foo(crossinline child: Function2<Composer, Int, Unit>, %composer: Composer?,
     } else {
       %composer.skipToGroupEnd()
     }
-  }, %composer, 0b00110110), %composer, 0b0110)
+  }, %composer, 0b00110110) as Function2<Composer, Int, Unit>, %composer, 0b0110)
   sourceInformationMarkerEnd(%composer)
 }
 @Composable

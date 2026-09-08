@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.js.test.runners.tsexport
 
-import org.jetbrains.kotlin.js.test.converters.AnalysisApiBasedDtsGenerationHandler
+import org.jetbrains.kotlin.js.test.converters.AnalysisApiBasedDtsGeneratorFacade
 import org.jetbrains.kotlin.js.test.runners.AbstractJsES6Test
 import org.jetbrains.kotlin.js.test.runners.AbstractJsTest
 import org.jetbrains.kotlin.js.test.utils.configureJsTypeScriptExportTest
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.configureKlibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_ANALYSIS_API_BASED_TYPESCRIPT_EXPORT
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
@@ -54,7 +53,7 @@ abstract class AbstractJsES6AnalysisApiTypeScriptExportTest(
     override val customIgnoreDirective: ValueDirective<TargetBackend>?
         get() = IGNORE_ANALYSIS_API_BASED_TYPESCRIPT_EXPORT
 
-    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+    override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureJsAnalysisApiTypeScriptExportTest(isWholeFileJsExport)
     }
@@ -69,8 +68,6 @@ private fun TestConfigurationBuilder.configureJsAnalysisApiTypeScriptExportTest(
     defaultDirectives {
         DIAGNOSTICS with "-warnings"
     }
-    configureKlibArtifactsHandlersStep {
-        useHandlers(::AnalysisApiBasedDtsGenerationHandler)
-    }
+    facadeStep(::AnalysisApiBasedDtsGeneratorFacade)
     configureJsTypeScriptExportTest(isWholeFileJsExport, expectedDtsSuffix = "aa")
 }

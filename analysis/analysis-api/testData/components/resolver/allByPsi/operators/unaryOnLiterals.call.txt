@@ -17,7 +17,7 @@ KtBlockExpression(18,51): '{'
   null
 
 KtPrefixExpression(24,26): '+1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -37,7 +37,7 @@ KtPrefixExpression(24,26): '+1'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(24,25): '+'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -60,7 +60,7 @@ KtConstantExpression(25,26): '1'
   null
 
 KtPrefixExpression(31,33): '-2'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -80,7 +80,7 @@ KtPrefixExpression(31,33): '-2'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(31,32): '-'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -103,7 +103,7 @@ KtConstantExpression(32,33): '2'
   null
 
 KtPrefixExpression(38,41): '+3L'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -123,7 +123,7 @@ KtPrefixExpression(38,41): '+3L'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(38,39): '+'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -146,7 +146,7 @@ KtConstantExpression(39,41): '3L'
   null
 
 KtPrefixExpression(46,49): '-4L'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -166,7 +166,7 @@ KtPrefixExpression(46,49): '-4L'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(46,47): '-'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -198,12 +198,12 @@ KtBlockExpression(66,87): '{'
   null
 
 KtPrefixExpression(72,76): '+"5"'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryPlus' for operator '+' on receiver of type 'String'.>
 
 KtOperationReferenceExpression(72,73): '+'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryPlus' for operator '+' on receiver of type 'String'.>
 
@@ -214,12 +214,12 @@ KtLiteralStringTemplateEntry(74,75): '5'
   null
 
 KtPrefixExpression(81,85): '-"6"'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryMinus' for operator '-' on receiver of type 'String'.>
 
 KtOperationReferenceExpression(81,82): '-'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryMinus' for operator '-' on receiver of type 'String'.>
 

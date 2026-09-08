@@ -29,7 +29,21 @@ FILE fqName:<root> fileName:/InitializationOrderTest.kt
               ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:d$delegate type:kotlinx.atomicfu.AtomicRef<kotlin.String> visibility:private [final] declared in <root>.Delegator' type=kotlinx.atomicfu.AtomicRef<kotlin.String> origin=null
                 receiver: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator.<get-d>' type=<root>.Delegator origin=IMPLICIT_ARGUMENT
               ARG thisRef: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator.<get-d>' type=<root>.Delegator origin=null
-              ARG property: PROPERTY_REFERENCE 'private final d: kotlin.String declared in <root>.Delegator' field=null getter='private final fun <get-d> (): kotlin.String declared in <root>.Delegator' setter='private final fun <set-d> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Delegator' type=kotlin.reflect.KMutableProperty1<<root>.Delegator, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<<root>.Delegator, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='private final d: kotlin.String declared in <root>.Delegator'
+                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:d visibility:local modality:FINAL returnType:kotlin.String
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Delegator
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun d (p0: <root>.Delegator): kotlin.String declared in <root>.Delegator.<get-d>'
+                      CALL 'private final fun <get-d> (): kotlin.String declared in <root>.Delegator' type=kotlin.String origin=null
+                        ARG <this>: GET_VAR 'p0: <root>.Delegator declared in <root>.Delegator.<get-d>.d' type=<root>.Delegator origin=null
+                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:d visibility:local modality:FINAL returnType:kotlin.Unit
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Delegator
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.String
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun d (p0: <root>.Delegator, value: kotlin.String): kotlin.Unit declared in <root>.Delegator.<get-d>'
+                      CALL 'private final fun <set-d> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Delegator' type=kotlin.Unit origin=null
+                        ARG <this>: GET_VAR 'p0: <root>.Delegator declared in <root>.Delegator.<get-d>.d' type=<root>.Delegator origin=null
+                        ARG <set-?>: GET_VAR 'value: kotlin.String declared in <root>.Delegator.<get-d>.d' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
       FUN DELEGATED_PROPERTY_ACCESSOR name:<set-d> visibility:private modality:FINAL returnType:kotlin.Unit
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Delegator
         VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.String
@@ -40,7 +54,21 @@ FILE fqName:<root> fileName:/InitializationOrderTest.kt
               ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:d$delegate type:kotlinx.atomicfu.AtomicRef<kotlin.String> visibility:private [final] declared in <root>.Delegator' type=kotlinx.atomicfu.AtomicRef<kotlin.String> origin=null
                 receiver: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator.<set-d>' type=<root>.Delegator origin=IMPLICIT_ARGUMENT
               ARG thisRef: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator.<set-d>' type=<root>.Delegator origin=null
-              ARG property: PROPERTY_REFERENCE 'private final d: kotlin.String declared in <root>.Delegator' field=null getter='private final fun <get-d> (): kotlin.String declared in <root>.Delegator' setter='private final fun <set-d> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Delegator' type=kotlin.reflect.KMutableProperty1<<root>.Delegator, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<<root>.Delegator, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='private final d: kotlin.String declared in <root>.Delegator'
+                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:d visibility:local modality:FINAL returnType:kotlin.String
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Delegator
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun d (p0: <root>.Delegator): kotlin.String declared in <root>.Delegator.<set-d>'
+                      CALL 'private final fun <get-d> (): kotlin.String declared in <root>.Delegator' type=kotlin.String origin=null
+                        ARG <this>: GET_VAR 'p0: <root>.Delegator declared in <root>.Delegator.<set-d>.d' type=<root>.Delegator origin=null
+                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:d visibility:local modality:FINAL returnType:kotlin.Unit
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Delegator
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.String
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun d (p0: <root>.Delegator, value: kotlin.String): kotlin.Unit declared in <root>.Delegator.<set-d>'
+                      CALL 'private final fun <set-d> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Delegator' type=kotlin.Unit origin=null
+                        ARG <this>: GET_VAR 'p0: <root>.Delegator declared in <root>.Delegator.<set-d>.d' type=<root>.Delegator origin=null
+                        ARG <set-?>: GET_VAR 'value: kotlin.String declared in <root>.Delegator.<set-d>.d' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
               ARG value: GET_VAR '<set-?>: kotlin.String declared in <root>.Delegator.<set-d>' type=kotlin.String origin=null
     PROPERTY name:b visibility:private modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:b type:kotlinx.atomicfu.AtomicInt visibility:private [final]
@@ -68,7 +96,21 @@ FILE fqName:<root> fileName:/InitializationOrderTest.kt
               ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:bDelegate$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final] declared in <root>.Delegator' type=kotlinx.atomicfu.AtomicInt origin=null
                 receiver: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator.<get-bDelegate>' type=<root>.Delegator origin=IMPLICIT_ARGUMENT
               ARG thisRef: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator.<get-bDelegate>' type=<root>.Delegator origin=null
-              ARG property: PROPERTY_REFERENCE 'private final bDelegate: kotlin.Int declared in <root>.Delegator' field=null getter='private final fun <get-bDelegate> (): kotlin.Int declared in <root>.Delegator' setter='private final fun <set-bDelegate> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Delegator' type=kotlin.reflect.KMutableProperty1<<root>.Delegator, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<<root>.Delegator, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='private final bDelegate: kotlin.Int declared in <root>.Delegator'
+                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bDelegate visibility:local modality:FINAL returnType:kotlin.Int
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Delegator
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun bDelegate (p0: <root>.Delegator): kotlin.Int declared in <root>.Delegator.<get-bDelegate>'
+                      CALL 'private final fun <get-bDelegate> (): kotlin.Int declared in <root>.Delegator' type=kotlin.Int origin=null
+                        ARG <this>: GET_VAR 'p0: <root>.Delegator declared in <root>.Delegator.<get-bDelegate>.bDelegate' type=<root>.Delegator origin=null
+                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bDelegate visibility:local modality:FINAL returnType:kotlin.Unit
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Delegator
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun bDelegate (p0: <root>.Delegator, value: kotlin.Int): kotlin.Unit declared in <root>.Delegator.<get-bDelegate>'
+                      CALL 'private final fun <set-bDelegate> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Delegator' type=kotlin.Unit origin=null
+                        ARG <this>: GET_VAR 'p0: <root>.Delegator declared in <root>.Delegator.<get-bDelegate>.bDelegate' type=<root>.Delegator origin=null
+                        ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.Delegator.<get-bDelegate>.bDelegate' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
       FUN DELEGATED_PROPERTY_ACCESSOR name:<set-bDelegate> visibility:private modality:FINAL returnType:kotlin.Unit
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Delegator
         VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
@@ -79,7 +121,21 @@ FILE fqName:<root> fileName:/InitializationOrderTest.kt
               ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:bDelegate$delegate type:kotlinx.atomicfu.AtomicInt visibility:private [final] declared in <root>.Delegator' type=kotlinx.atomicfu.AtomicInt origin=null
                 receiver: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator.<set-bDelegate>' type=<root>.Delegator origin=IMPLICIT_ARGUMENT
               ARG thisRef: GET_VAR '<this>: <root>.Delegator declared in <root>.Delegator.<set-bDelegate>' type=<root>.Delegator origin=null
-              ARG property: PROPERTY_REFERENCE 'private final bDelegate: kotlin.Int declared in <root>.Delegator' field=null getter='private final fun <get-bDelegate> (): kotlin.Int declared in <root>.Delegator' setter='private final fun <set-bDelegate> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Delegator' type=kotlin.reflect.KMutableProperty1<<root>.Delegator, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<<root>.Delegator, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='private final bDelegate: kotlin.Int declared in <root>.Delegator'
+                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bDelegate visibility:local modality:FINAL returnType:kotlin.Int
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Delegator
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun bDelegate (p0: <root>.Delegator): kotlin.Int declared in <root>.Delegator.<set-bDelegate>'
+                      CALL 'private final fun <get-bDelegate> (): kotlin.Int declared in <root>.Delegator' type=kotlin.Int origin=null
+                        ARG <this>: GET_VAR 'p0: <root>.Delegator declared in <root>.Delegator.<set-bDelegate>.bDelegate' type=<root>.Delegator origin=null
+                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bDelegate visibility:local modality:FINAL returnType:kotlin.Unit
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Delegator
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.Int
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun bDelegate (p0: <root>.Delegator, value: kotlin.Int): kotlin.Unit declared in <root>.Delegator.<set-bDelegate>'
+                      CALL 'private final fun <set-bDelegate> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Delegator' type=kotlin.Unit origin=null
+                        ARG <this>: GET_VAR 'p0: <root>.Delegator declared in <root>.Delegator.<set-bDelegate>.bDelegate' type=<root>.Delegator origin=null
+                        ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.Delegator.<set-bDelegate>.bDelegate' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
               ARG value: GET_VAR '<set-?>: kotlin.Int declared in <root>.Delegator.<set-bDelegate>' type=kotlin.Int origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY

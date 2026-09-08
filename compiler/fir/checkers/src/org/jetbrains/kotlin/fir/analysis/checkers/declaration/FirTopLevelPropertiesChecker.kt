@@ -232,7 +232,7 @@ internal fun checkPropertyInitializer(
                         !propertySymbol.hasExplicitBackingField &&
                         !inInterfaceAndNonStatic &&
                         isCorrectlyInitialized &&
-                        propertySymbol.backingFieldSymbol?.hasAnnotation(StandardClassIds.Annotations.Transient, context.session) != true &&
+                        !propertySymbol.backingFieldSymbol.hasAnnotation(StandardClassIds.Annotations.Transient, context.session) &&
                         !propertySymbol.hasAnnotation(KOTLINX_SERIALIZATION_TRANSIENT, context.session)
                     ) {
                         reporter.reportOn(propertySource, FirErrors.UNNECESSARY_LATEINIT)

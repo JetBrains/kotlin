@@ -9,16 +9,17 @@ import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter.IrDiagnosticContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.fqNameWithoutFileClassesWhenAvailable
 
 interface IrDiagnosticReporter {
-    fun at(irDeclaration: IrDeclaration): IrDiagnosticContext
     fun at(irElement: IrElement, containingIrFile: IrFile): IrDiagnosticContext
-    fun at(irElement: IrElement, containingIrDeclaration: IrDeclaration): IrDiagnosticContext
-    fun at(sourceElement: AbstractKtSourceElement?, irElement: IrElement, containingFile: IrFile): IrDiagnosticContext
+    fun atPotentiallyNonSource(irElement: IrElement, containingIrFile: IrFile?): IrDiagnosticContext
 
     fun report(factory: KtSourcelessDiagnosticFactory, message: String, location: CompilerMessageSourceLocation? = null)
     val hasErrors: Boolean
@@ -45,6 +46,12 @@ interface IrDiagnosticReporter {
         }
 
         fun <A : Any, B : Any, C : Any> report(factory: KtDiagnosticFactory3<A, B, C>, a: A, b: B, c: C)
+
+        fun <A : Any, B : Any, C : Any, D : Any> report(factory: KtDiagnosticFactoryForDeprecation4<A, B, C, D>, a: A, b: B, c: C, d: D) {
+            report(factory.chooseFactory(), a, b, c, d)
+        }
+
+        fun <A : Any, B : Any, C : Any, D : Any> report(factory: KtDiagnosticFactory4<A, B, C, D>, a: A, b: B, c: C, d: D)
 
         abstract override fun equals(other: Any?): Boolean
         abstract override fun hashCode(): Int
@@ -77,4 +84,16 @@ object IrDiagnosticRenderers {
     val DECLARATION_KIND_AND_NAME = Renderer<IrDeclaration> { declaration ->
         "${DECLARATION_KIND.render(declaration)} '${(declaration as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString()}'"
     }
+}
+
+fun IrDiagnosticReporter.at(irDeclaration: IrDeclaration): IrDiagnosticContext {
+    return at(irDeclaration, irDeclaration.file)
+}
+
+fun IrDiagnosticReporter.atPotentiallyNonSource(irDeclaration: IrDeclaration): IrDiagnosticContext {
+    return atPotentiallyNonSource(irDeclaration, irDeclaration.fileOrNull)
+}
+
+fun IrDiagnosticReporter.at(irElement: IrElement, containingIrDeclaration: IrDeclaration): IrDiagnosticContext {
+    return at(irElement, containingIrDeclaration.file)
 }

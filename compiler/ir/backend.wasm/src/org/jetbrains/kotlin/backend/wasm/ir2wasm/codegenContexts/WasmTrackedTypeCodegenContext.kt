@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.getAllSuperclasses
+import org.jetbrains.kotlin.wasm.ir.WasmFunctionType
 
 class ModuleReferencedTypes(
     val gcTypes: MutableSet<IdSignature> = mutableSetOf(),
@@ -110,5 +111,17 @@ class WasmTrackedTypeCodegenContext(
     override fun referenceFunctionHeapType(irClass: IrFunctionSymbol): FunctionHeapTypeSymbol {
         moduleReferencedTypes.addFunctionTypeToReferenced(irClass, referencedModules, idSignatureRetriever)
         return super.referenceFunctionHeapType(irClass)
+    }
+
+    override fun referenceWasmFunctionType(wasmFunctionType: WasmFunctionType): FunctionTypeSymbol {
+        return super.referenceWasmFunctionType(wasmFunctionType).also {
+            moduleReferencedTypes.functionTypes.add(it.value)
+        }
+    }
+
+    override fun referenceWasmFunctionHeapType(wasmFunctionType: WasmFunctionType): FunctionHeapTypeSymbol {
+        return super.referenceWasmFunctionHeapType(wasmFunctionType).also {
+            moduleReferencedTypes.functionTypes.add(it.type)
+        }
     }
 }

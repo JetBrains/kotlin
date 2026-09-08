@@ -1,14 +1,9 @@
 @file:JvmName("JvmToolchain")
 
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.toolchain.*
 import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.withType
-import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 enum class JdkMajorVersion(
     val majorVersion: Int,
@@ -27,12 +22,26 @@ enum class JdkMajorVersion(
 /**
  * Default Java version used to compile code.
  *
- * You can override it like this:
+ * You can override it via the `jvmToolchains { }` convention plugin DSL:
  * ```
- * project.configureJvmToolchain(JdkMajorVersion.JDK_17_0)
+ * jvmToolchains {
+ *     jdkVersion = JdkMajorVersion.JDK_17_0
+ * }
  * ```
  */
 val DEFAULT_JVM_TOOLCHAIN = JdkMajorVersion.JDK_1_8
+
+/**
+ * Default Java version the produced bytecode is compatible with.
+ *
+ * You can override it via the `jvmToolchains { }` convention plugin DSL:
+ * ```
+ * jvmToolchains {
+ *     targetBytecodeVersion = JdkMajorVersion.JDK_17_0
+ * }
+ * ```
+ */
+val DEFAULT_JVM_TARGET = JdkMajorVersion.JDK_1_8
 
 /**
  * Default Java version used to run tests (for test tasks registered via `project-tests-convention`)
@@ -52,82 +61,7 @@ val DEFAULT_JVM_TOOLCHAIN = JdkMajorVersion.JDK_1_8
  */
 val DEFAULT_JAVA_LAUNCHER_FOR_TESTS = JdkMajorVersion.JDK_11_0
 
-fun Project.configureJvmDefaultToolchain() {
-    configureJvmToolchain(DEFAULT_JVM_TOOLCHAIN)
-}
-
-fun Project.configureJvmToolchain(jdkVersion: JdkMajorVersion) {
-    // Ensure java only modules also set default toolchain
-    configureJavaOnlyToolchain(jdkVersion)
-
-    plugins.withId("org.jetbrains.kotlin.jvm") {
-        // Update to KotlinBaseExtension once the bootstrap version will be higher than 2.1.20-dev-201
-        @Suppress("Deprecation")
-        val kotlinExtension = extensions.getByType<KotlinTopLevelExtension>()
-        kotlinExtension.jvmToolchain {
-            setupToolchain(jdkVersion)
-        }
-        tasks
-            .matching { it.name != "compileJava9Java" && it is JavaCompile }
-            .configureEach {
-                with(this as JavaCompile) {
-                    options.compilerArgs.add("-proc:none")
-                    options.encoding = "UTF-8"
-                }
-            }
-    }
-}
-
-fun JavaToolchainSpec.setupToolchain(jdkVersion: JdkMajorVersion) {
-    languageVersion.set(JavaLanguageVersion.of(jdkVersion.majorVersion))
-}
-
-fun Project.configureJavaOnlyToolchain(
-    jdkVersion: JdkMajorVersion,
-) {
-    plugins.withId("java-base") {
-        val javaExtension = extensions.getByType<JavaPluginExtension>()
-        javaExtension.toolchain {
-            setupToolchain(jdkVersion)
-        }
-    }
-}
-
-fun KotlinJvmCompile.configureTaskToolchain(
-    jdkVersion: JdkMajorVersion,
-) {
-    kotlinJavaToolchain.toolchain.use(
-        project.getToolchainLauncherFor(jdkVersion)
-    )
-}
-
-fun JavaCompile.configureTaskToolchain(
-    jdkVersion: JdkMajorVersion,
-) {
-    javaCompiler.set(project.getToolchainCompilerFor(jdkVersion))
-}
-
-fun Project.updateJvmTarget(
-    jvmTarget: String,
-) {
-    // Java 9 tasks are exceptions that are configured in configureJava9Compilation
-    tasks
-        .withType<KotlinJvmCompile>()
-        .matching { it.name != "compileJava9Kotlin" }
-        .configureEach {
-            compilerOptions.jvmTarget.set(JvmTarget.fromTarget(jvmTarget))
-        }
-
-    tasks
-        .withType<JavaCompile>()
-        .matching { it.name != "compileJava9Java" }
-        .configureEach {
-            sourceCompatibility = jvmTarget
-            targetCompatibility = jvmTarget
-        }
-}
-
-private fun Project.getToolchainCompilerFor(
+fun Project.getToolchainCompilerFor(
     jdkVersion: JdkMajorVersion,
 ): Provider<JavaCompiler> {
     val service = project.extensions.getByType<JavaToolchainService>()
@@ -142,6 +76,16 @@ fun Project.getToolchainLauncherFor(
     val service = project.extensions.getByType<JavaToolchainService>()
     return service.launcherFor {
         this.languageVersion.set(JavaLanguageVersion.of(jdkVersion.majorVersion))
+    }
+}
+
+fun Project.getNativeImageToolchainLauncherFor(
+    jdkVersion: JdkMajorVersion,
+): Provider<JavaLauncher> {
+    val service = project.extensions.getByType<JavaToolchainService>()
+    return service.launcherFor {
+        this.languageVersion.set(JavaLanguageVersion.of(jdkVersion.majorVersion))
+        this.nativeImageCapable.set(true)
     }
 }
 

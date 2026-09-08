@@ -4,15 +4,15 @@
 class A
 class B
 
-context(a: A)
-<!CONFLICTING_JVM_DECLARATIONS!>fun foo(){}<!>
+<!CONFLICTING_JVM_DECLARATIONS!>context(a: A)
+fun foo()<!>{}
 
-<!CONFLICTING_JVM_DECLARATIONS!>fun foo(a: A){}<!>
+<!CONFLICTING_JVM_DECLARATIONS!>fun foo(a: A)<!>{}
 
-context(a: A, b: B)
-<!CONFLICTING_JVM_DECLARATIONS!>fun bar(){}<!>
+<!CONFLICTING_JVM_DECLARATIONS!>context(a: A, b: B)
+fun bar()<!>{}
 
-context(a: A)
-<!CONFLICTING_JVM_DECLARATIONS!>fun bar(b: B){}<!>
+<!CONFLICTING_JVM_DECLARATIONS!>context(a: A)
+fun bar(b: B)<!>{}
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext */

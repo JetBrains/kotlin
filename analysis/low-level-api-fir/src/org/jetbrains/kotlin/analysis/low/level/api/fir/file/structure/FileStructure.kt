@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLDiagnostic
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.LLFirDiagnosticVisitor
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.psi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.elementCanBeLazilyResolved
@@ -212,7 +213,7 @@ internal class FileStructure private constructor(
                 // A structure element may cover a wider piece of code than the requested element, and it may even own diagnostics reported
                 // outside its own declaration (e.g., a primary constructor element owns diagnostics of the super type call). So diagnostics
                 // reported outside the element have to be dropped.
-                if (isWholeFile || element.isAncestor(llDiagnostic.diagnostic.psiElement, strict = false)) {
+                if (isWholeFile || element.isAncestor(llDiagnostic.diagnostic.psi, strict = false)) {
                     yield(llDiagnostic)
                 }
             }

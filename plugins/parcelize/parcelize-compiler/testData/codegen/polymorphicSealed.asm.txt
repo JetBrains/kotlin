@@ -1,0 +1,493 @@
+public final class test/Container$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>() {
+        Local variables:
+            0 this: Ltest/Container$Creator;
+    }
+
+    public final test.Container createFromParcel(android.os.Parcel parcel) {
+        Local variables:
+            0 this: Ltest/Container$Creator;
+            1 parcel: Landroid/os/Parcel;
+    
+        LABEL (L0)
+          ALOAD (1)
+          LDC (parcel)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          NEW (test/Container)
+          DUP
+          GETSTATIC (test/State, CREATOR, Landroid/os/Parcelable$Creator;)
+          ALOAD (1)
+          INVOKEINTERFACE (android/os/Parcelable$Creator, createFromParcel, (Landroid/os/Parcel;)Ljava/lang/Object;)
+          CHECKCAST (test/State)
+          INVOKESPECIAL (test/Container, <init>, (Ltest/State;)V)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public java.lang.Object createFromParcel(android.os.Parcel source) {
+        Local variables:
+            0 this: Ltest/Container$Creator;
+            1 source: Landroid/os/Parcel;
+    
+        LABEL (L0)
+          ALOAD (0)
+          ALOAD (1)
+          INVOKEVIRTUAL (test/Container$Creator, createFromParcel, (Landroid/os/Parcel;)Ltest/Container;)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public final test.Container[] newArray(int size) {
+        Local variables:
+            0 this: Ltest/Container$Creator;
+            1 size: I
+    }
+
+    public java.lang.Object[] newArray(int size) {
+        Local variables:
+            0 this: Ltest/Container$Creator;
+            1 size: I
+    }
+}
+
+public final class test/Container : java/lang/Object, android/os/Parcelable {
+    public final static android.os.Parcelable$Creator CREATOR
+
+    private final test.State state
+
+    static void <clinit>() {
+          NEW (test/Container$Creator)
+          DUP
+          INVOKESPECIAL (test/Container$Creator, <init>, ()V)
+          CHECKCAST (android/os/Parcelable$Creator)
+          PUTSTATIC (test/Container, CREATOR, Landroid/os/Parcelable$Creator;)
+          RETURN
+    }
+
+    public void <init>(test.State state) {
+        Local variables:
+            0 this: Ltest/Container;
+            1 state: Ltest/State;
+    }
+
+    public final test.State component1() {
+        Local variables:
+            0 this: Ltest/Container;
+    }
+
+    public final test.Container copy(test.State state) {
+        Local variables:
+            0 this: Ltest/Container;
+            1 state: Ltest/State;
+    }
+
+    public static test.Container copy$default(test.Container p0, test.State p1, int p2, java.lang.Object p3)
+
+    public final int describeContents() {
+        Local variables:
+            0 this: Ltest/Container;
+    }
+
+    public boolean equals(java.lang.Object other) {
+        Local variables:
+            0 this: Ltest/Container;
+            1 other: Ljava/lang/Object;
+    }
+
+    public final test.State getState() {
+        Local variables:
+            0 this: Ltest/Container;
+    }
+
+    public int hashCode() {
+        Local variables:
+            0 this: Ltest/Container;
+    }
+
+    public java.lang.String toString() {
+        Local variables:
+            0 this: Ltest/Container;
+    }
+
+    public final void writeToParcel(android.os.Parcel dest, int flags) {
+        Local variables:
+            0 this: Ltest/Container;
+            1 dest: Landroid/os/Parcel;
+            2 flags: I
+    
+        LABEL (L0)
+          ALOAD (1)
+          LDC (dest)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (0)
+          GETFIELD (test/Container, state, Ltest/State;)
+          ALOAD (1)
+          ILOAD (2)
+          INVOKEVIRTUAL (test/State, writeToParcel, (Landroid/os/Parcel;I)V)
+        LABEL (L1)
+        LINENUMBER (22)
+          RETURN
+        LABEL (L2)
+    }
+}
+
+public final class test/State$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>() {
+        Local variables:
+            0 this: Ltest/State$Creator;
+    }
+
+    public final test.State createFromParcel(android.os.Parcel parcel) {
+        Local variables:
+            0 this: Ltest/State$Creator;
+            1 parcel: Landroid/os/Parcel;
+    
+        LABEL (L0)
+          ALOAD (1)
+          LDC (parcel)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          LOOKUPSWITCH
+            0: L1
+            42: L2
+            default: L3
+        LABEL (L1)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          POP
+          GETSTATIC (test/State$Idle, INSTANCE, Ltest/State$Idle;)
+          CHECKCAST (test/State)
+          GOTO (L4)
+        LABEL (L2)
+          NEW (test/State$Loading)
+          DUP
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readFloat, ()F)
+          GETSTATIC (kotlinx/parcelize/DirectInitializerMarker, INSTANCE, Lkotlinx/parcelize/DirectInitializerMarker;)
+          INVOKESPECIAL (test/State$Loading, <init>, (FLkotlinx/parcelize/DirectInitializerMarker;)V)
+          CHECKCAST (test/State)
+          GOTO (L4)
+        LABEL (L3)
+          NEW (java/lang/IllegalArgumentException)
+          DUP
+          LDC (Unknown tag for sealed class State)
+          INVOKESPECIAL (java/lang/IllegalArgumentException, <init>, (Ljava/lang/String;)V)
+          ATHROW
+        LABEL (L4)
+          ARETURN
+        LABEL (L5)
+    }
+
+    public java.lang.Object createFromParcel(android.os.Parcel source) {
+        Local variables:
+            0 this: Ltest/State$Creator;
+            1 source: Landroid/os/Parcel;
+
+        LABEL (L0)
+          ALOAD (0)
+          ALOAD (1)
+          INVOKEVIRTUAL (test/State$Creator, createFromParcel, (Landroid/os/Parcel;)Ltest/State;)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public final test.State[] newArray(int size) {
+        Local variables:
+            0 this: Ltest/State$Creator;
+            1 size: I
+    }
+
+    public java.lang.Object[] newArray(int size) {
+        Local variables:
+            0 this: Ltest/State$Creator;
+            1 size: I
+    }
+}
+
+public final class test/State$Idle$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>() {
+        Local variables:
+            0 this: Ltest/State$Idle$Creator;
+    }
+
+    public final test.State$Idle createFromParcel(android.os.Parcel parcel) {
+        Local variables:
+            0 this: Ltest/State$Idle$Creator;
+            1 parcel: Landroid/os/Parcel;
+
+        LABEL (L0)
+          ALOAD (1)
+          LDC (parcel)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          POP
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          POP
+          GETSTATIC (test/State$Idle, INSTANCE, Ltest/State$Idle;)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public java.lang.Object createFromParcel(android.os.Parcel source) {
+        Local variables:
+            0 this: Ltest/State$Idle$Creator;
+            1 source: Landroid/os/Parcel;
+
+        LABEL (L0)
+          ALOAD (0)
+          ALOAD (1)
+          INVOKEVIRTUAL (test/State$Idle$Creator, createFromParcel, (Landroid/os/Parcel;)Ltest/State$Idle;)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public final test.State$Idle[] newArray(int size) {
+        Local variables:
+            0 this: Ltest/State$Idle$Creator;
+            1 size: I
+    }
+
+    public java.lang.Object[] newArray(int size) {
+        Local variables:
+            0 this: Ltest/State$Idle$Creator;
+            1 size: I
+    }
+}
+
+public final class test/State$Idle : test/State {
+    public final static android.os.Parcelable$Creator CREATOR
+
+    public final static test.State$Idle INSTANCE
+
+    static void <clinit>() {
+          NEW (test/State$Idle)
+          DUP
+          INVOKESPECIAL (test/State$Idle, <init>, ()V)
+          PUTSTATIC (test/State$Idle, INSTANCE, Ltest/State$Idle;)
+          NEW (test/State$Idle$Creator)
+          DUP
+          INVOKESPECIAL (test/State$Idle$Creator, <init>, ()V)
+          CHECKCAST (android/os/Parcelable$Creator)
+          PUTSTATIC (test/State$Idle, CREATOR, Landroid/os/Parcelable$Creator;)
+          RETURN
+    }
+
+    private void <init>() {
+        Local variables:
+            0 this: Ltest/State$Idle;
+    }
+
+    public final int describeContents() {
+        Local variables:
+            0 this: Ltest/State$Idle;
+    }
+
+    public boolean equals(java.lang.Object other) {
+        Local variables:
+            0 this: Ltest/State$Idle;
+            1 other: Ljava/lang/Object;
+    }
+
+    public int hashCode() {
+        Local variables:
+            0 this: Ltest/State$Idle;
+    }
+
+    public java.lang.String toString() {
+        Local variables:
+            0 this: Ltest/State$Idle;
+    }
+
+    public final void writeToParcel(android.os.Parcel dest, int flags) {
+        Local variables:
+            0 this: Ltest/State$Idle;
+            1 dest: Landroid/os/Parcel;
+            2 flags: I
+
+        LABEL (L0)
+          ALOAD (1)
+          LDC (dest)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (1)
+          ICONST_0
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          ALOAD (1)
+          ICONST_1
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+        LABEL (L1)
+        LINENUMBER (15)
+          RETURN
+        LABEL (L2)
+    }
+}
+
+public final class test/State$Loading$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>() {
+        Local variables:
+            0 this: Ltest/State$Loading$Creator;
+    }
+
+    public final test.State$Loading createFromParcel(android.os.Parcel parcel) {
+        Local variables:
+            0 this: Ltest/State$Loading$Creator;
+            1 parcel: Landroid/os/Parcel;
+
+        LABEL (L0)
+          ALOAD (1)
+          LDC (parcel)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          POP
+          NEW (test/State$Loading)
+          DUP
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readFloat, ()F)
+          GETSTATIC (kotlinx/parcelize/DirectInitializerMarker, INSTANCE, Lkotlinx/parcelize/DirectInitializerMarker;)
+          INVOKESPECIAL (test/State$Loading, <init>, (FLkotlinx/parcelize/DirectInitializerMarker;)V)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public java.lang.Object createFromParcel(android.os.Parcel source) {
+        Local variables:
+            0 this: Ltest/State$Loading$Creator;
+            1 source: Landroid/os/Parcel;
+
+        LABEL (L0)
+          ALOAD (0)
+          ALOAD (1)
+          INVOKEVIRTUAL (test/State$Loading$Creator, createFromParcel, (Landroid/os/Parcel;)Ltest/State$Loading;)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public final test.State$Loading[] newArray(int size) {
+        Local variables:
+            0 this: Ltest/State$Loading$Creator;
+            1 size: I
+    }
+
+    public java.lang.Object[] newArray(int size) {
+        Local variables:
+            0 this: Ltest/State$Loading$Creator;
+            1 size: I
+    }
+}
+
+public final class test/State$Loading : test/State {
+    public final static android.os.Parcelable$Creator CREATOR
+
+    private final float progress
+
+    static void <clinit>() {
+          NEW (test/State$Loading$Creator)
+          DUP
+          INVOKESPECIAL (test/State$Loading$Creator, <init>, ()V)
+          CHECKCAST (android/os/Parcelable$Creator)
+          PUTSTATIC (test/State$Loading, CREATOR, Landroid/os/Parcelable$Creator;)
+          RETURN
+    }
+
+    public void <init>(float progress) {
+        Local variables:
+            0 this: Ltest/State$Loading;
+            1 progress: F
+    }
+
+    public void <init>(float progress, kotlinx.parcelize.DirectInitializerMarker $marker) {
+        Local variables:
+            0 this: Ltest/State$Loading;
+            1 progress: F
+            2 $marker: Lkotlinx/parcelize/DirectInitializerMarker;
+    }
+
+    public final float component1() {
+        Local variables:
+            0 this: Ltest/State$Loading;
+    }
+
+    public final test.State$Loading copy(float progress) {
+        Local variables:
+            0 this: Ltest/State$Loading;
+            1 progress: F
+    }
+
+    public static test.State$Loading copy$default(test.State$Loading p0, float p1, int p2, java.lang.Object p3)
+
+    public final int describeContents() {
+        Local variables:
+            0 this: Ltest/State$Loading;
+    }
+
+    public boolean equals(java.lang.Object other) {
+        Local variables:
+            0 this: Ltest/State$Loading;
+            1 other: Ljava/lang/Object;
+    }
+
+    public final float getProgress() {
+        Local variables:
+            0 this: Ltest/State$Loading;
+    }
+
+    public int hashCode() {
+        Local variables:
+            0 this: Ltest/State$Loading;
+    }
+
+    public java.lang.String toString() {
+        Local variables:
+            0 this: Ltest/State$Loading;
+    }
+
+    public final void writeToParcel(android.os.Parcel dest, int flags) {
+        Local variables:
+            0 this: Ltest/State$Loading;
+            1 dest: Landroid/os/Parcel;
+            2 flags: I
+
+        LABEL (L0)
+          ALOAD (1)
+          LDC (dest)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (1)
+          BIPUSH (42)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (test/State$Loading, progress, F)
+          INVOKEVIRTUAL (android/os/Parcel, writeFloat, (F)V)
+        LABEL (L1)
+        LINENUMBER (18)
+          RETURN
+        LABEL (L2)
+    }
+}
+
+public abstract class test/State : java/lang/Object, android/os/Parcelable {
+    public final static android.os.Parcelable$Creator CREATOR
+
+    static void <clinit>() {
+          NEW (test/State$Creator)
+          DUP
+          INVOKESPECIAL (test/State$Creator, <init>, ()V)
+          CHECKCAST (android/os/Parcelable$Creator)
+          PUTSTATIC (test/State, CREATOR, Landroid/os/Parcelable$Creator;)
+          RETURN
+    }
+
+    private void <init>() {
+        Local variables:
+            0 this: Ltest/State;
+    }
+
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker) {
+        Local variables:
+            0 this: Ltest/State;
+            1 $constructor_marker: Lkotlin/jvm/internal/DefaultConstructorMarker;
+    }
+}

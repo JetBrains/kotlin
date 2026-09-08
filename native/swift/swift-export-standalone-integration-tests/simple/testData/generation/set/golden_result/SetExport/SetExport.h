@@ -3,6 +3,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+void * __root___foo();
+
 NSSet<NSNumber *> * _Nullable __root___testOptSetInt__TypesOfArguments__Swift_Optional_Swift_Set_Swift_Int32____(NSSet<NSNumber *> * _Nullable s);
 
 NSSet<id> * __root___testSetAny__TypesOfArguments__Swift_Set_Swift_AnyHashable___(NSSet<id> * s);

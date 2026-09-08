@@ -22,7 +22,7 @@ private fun IrDeclaration.findPsiElementForDeclarationOrigin(): PsiElement? {
     // For synthetic $annotations methods for properties, use the PSI for the property or the constructor parameter.
     // It's used in KAPT stub generation to sort the properties correctly based on their source position (see KT-44130),
     // and to put doc comments on $annotations methods.
-    if (this is IrFunction && name.asString().endsWith("\$annotations")) {
+    if (this is IrFunction && name.asString().endsWith($$"$annotations")) {
         (metadata as? MetadataSource.Property)?.psi?.let { return it }
     }
 

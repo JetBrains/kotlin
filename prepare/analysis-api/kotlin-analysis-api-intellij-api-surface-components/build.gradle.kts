@@ -1,6 +1,5 @@
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     `java-library`
     id("analysis-api-artifact")
@@ -12,6 +11,6 @@ dependencies {
 
 analysisApiArtifact {
     content {
-        project(":dependencies:intellij-java-psi-api", isTransitive = true)
+        project(":dependencies:intellij-java-psi-api")
     }
 }

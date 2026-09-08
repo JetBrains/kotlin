@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildTypealias
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTrampolineDeclarationsProvider
+import org.jetbrains.kotlin.sir.providers.impl.nodes.SirTrampolineExtension
+import org.jetbrains.kotlin.sir.providers.impl.nodes.SirTrampolineExtensionVariable
 import org.jetbrains.kotlin.sir.providers.impl.nodes.SirTrampolineFunction
 import org.jetbrains.kotlin.sir.providers.impl.nodes.SirTrampolineVariable
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
@@ -23,26 +25,37 @@ public class SirTrampolineDeclarationsProviderImpl(
     override fun SirDeclaration.trampolineDeclarations(): List<SirDeclaration> = generateDeclarations(this)
 
     private fun generateDeclarations(declaration: SirDeclaration): List<SirDeclaration> = generatedDeclarations.getOrPut(declaration) {
-        if (targetPackageFqName == null)
-            return emptyList()
-
-
-        with(sirSession) {
-            val targetEnum = if (declaration is SirEnum && declaration.isNamespace(targetPackageFqName)) {
-                declaration // avoid recursion
-            } else {
-                with(enumGenerator) { targetPackageFqName.sirPackageEnum() }
-            }
-
-            val shouldExportToRoot = when (val parent = declaration.parent) {
-                is SirEnum -> parent == targetEnum
-                is SirExtension -> parent.extendedType == SirNominalType(targetEnum)
-                else -> false
-            }
-
-            return listOfNotNull(declaration.takeIf { shouldExportToRoot }?.trampolineDeclaration())
+        // We don't create trampolines for setters if a trampoline extension variable is generated for the getter
+        if (declaration is SirSetterFunction && declaration.getter.trampolineDeclarations()
+                .any { it is SirTrampolineExtension && it.trampoline is SirTrampolineExtensionVariable }
+        ) {
+            return@getOrPut emptyList()
         }
+        // Always create extension trampolines for top-level declarations
+        val parent = declaration.parent
+        if (parent is SirModule) {
+            return@getOrPut listOfNotNull(declaration.trampolineExtensionDeclaration())
+        }
+        // Create trampolines for packages that are exported to the root
+        if (targetPackageFqName == null) return@getOrPut emptyList()
+        val targetPackageEnum = when (declaration) {
+            is SirEnum if declaration.isNamespace(targetPackageFqName) -> declaration // avoid recursion
+            else -> with(sirSession.enumGenerator) { targetPackageFqName.sirPackageEnum() }
+        }
+        val shouldExportToRoot = when (parent) {
+            is SirEnum -> parent == targetPackageEnum
+            is SirExtension -> parent.extendedType == SirNominalType(targetPackageEnum)
+            else -> false
+        }
+        if (!shouldExportToRoot) return@getOrPut emptyList()
+        listOfNotNull(declaration.trampolineExtensionDeclaration() ?: declaration.trampolineDeclaration())
     }
+
+    private fun SirDeclaration.trampolineExtensionDeclaration(): SirTrampolineExtension? = when (this) {
+        is SirGetterFunction -> SirTrampolineExtension(this)
+        is SirFunction -> SirTrampolineExtension(this)
+        else -> null
+    }?.also { it.parent = this.containingModule() }
 
     private fun SirDeclaration.trampolineDeclaration(): SirDeclaration? = when (val declaration = this@trampolineDeclaration) {
         is SirScopeDefiningDeclaration -> {

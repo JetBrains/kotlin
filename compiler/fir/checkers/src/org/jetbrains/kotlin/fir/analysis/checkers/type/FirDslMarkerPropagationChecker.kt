@@ -32,5 +32,5 @@ object FirDslMarkerPropagationChecker : FirFunctionTypeRefChecker(MppCheckerKind
     fun FirAnnotation.isDslMarker(session: FirSession): Boolean =
         annotationTypeRef.coneType
             .fullyExpandedType(session).toClassSymbol(session)
-            ?.hasAnnotation(StandardClassIds.Annotations.DslMarker, session) == true
+            .hasAnnotation(StandardClassIds.Annotations.DslMarker, session)
 }

@@ -45,17 +45,16 @@ class ProjectIsolationIT : KGPBaseTest() {
 
     @DisplayName("Multi-module Android project")
     @GradleAndroidTest
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_85)
     @AndroidGradlePluginTests
     fun testProjectIsolationAndroid(
-       gradleVersion: GradleVersion,
-       agpVersion: String,
-       jdkVersion: JdkVersions.ProvidedJdk
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk
     ) {
         project(
             projectName = "AndroidIncrementalMultiModule",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             build("assembleDebug")
@@ -76,7 +75,7 @@ class ProjectIsolationIT : KGPBaseTest() {
 
     @DisplayName("Kapt with Android multi-module project")
     @AndroidGradlePluginTests
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_85, maxVersion = TestVersions.AGP.AGP_813)
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     @TestMetadata("kapt/android-databinding")
     @GradleAndroidTest
     fun testProjectIsolationAndroidWithKapt(
@@ -87,7 +86,7 @@ class ProjectIsolationIT : KGPBaseTest() {
         project(
             projectName = "kapt/android-databinding",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             gradleProperties.appendText(

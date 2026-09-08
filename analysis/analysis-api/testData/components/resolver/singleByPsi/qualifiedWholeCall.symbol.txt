@@ -1,5 +1,5 @@
 KtDotQualifiedExpression(48,54): 'A.y(1)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A.y(<dispatch receiver>: A, a: kotlin.Int): kotlin.Unit
     ]

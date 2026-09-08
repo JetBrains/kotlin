@@ -1,0 +1,32 @@
+@kotlin.OptIn(markerClass = [kotlin.ExperimentalStdlibApi::class])
+@kotlin.jvm.JvmInline
+@kotlin.jvm.JvmExposeBoxed
+inline class ValueInt(i: kotlin.Int) {
+  val i: kotlin.Int
+
+  internal fun internalFun()
+
+  internal val internalProperty: kotlin.Int
+    internal get()
+
+  @kotlin.PublishedApi
+  internal fun publishedApiFun()
+
+  @kotlin.PublishedApi
+  internal val publishedApiProperty: kotlin.Int
+    internal get()
+}
+
+@kotlin.OptIn(markerClass = [kotlin.ExperimentalStdlibApi::class])
+class InternalNames {
+  @kotlin.jvm.JvmExposeBoxed
+  internal fun unnamedFun(value: ValueInt): ValueInt
+
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "explicitBoxedName")
+  @kotlin.jvm.JvmName(name = "ignoredJvmName")
+  internal fun explicitlyNamedFun(value: ValueInt): ValueInt
+
+  @kotlin.jvm.JvmExposeBoxed
+  @kotlin.jvm.JvmName(name = "jvmNamed")
+  internal fun jvmNamedFun(value: ValueInt): ValueInt
+}

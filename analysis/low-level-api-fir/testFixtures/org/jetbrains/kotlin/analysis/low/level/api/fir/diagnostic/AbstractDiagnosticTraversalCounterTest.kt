@@ -49,8 +49,9 @@ abstract class AbstractDiagnosticTraversalCounterTest : AbstractAnalysisApiBased
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         withResolutionFacade(mainFile) { resolutionFacade ->
-            // we should get diagnostics before we resolve the whole file by  ktFile.getOrBuildFir
-            mainFile.diagnostics(resolutionFacade, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
+            // we should get diagnostics before we resolve the whole file by ktFile.getOrBuildFir
+            val _ = mainFile
+                .diagnostics(resolutionFacade, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
                 .count()
 
             val firFile = mainFile.getOrBuildFirOfType<FirFile>(resolutionFacade)

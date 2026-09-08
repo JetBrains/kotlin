@@ -45,7 +45,7 @@ class SomeClass {
         %composer.skipToGroupEnd()
       }
     }
-    )
+     as Function2<Composer, Int, Unit>)
   }
   val %stable: Int = 8
     get() {
@@ -69,5 +69,5 @@ fun Test() {
       %composer.skipToGroupEnd()
     }
   }
-  )
+   as Function2<Composer, Int, Unit>)
 }

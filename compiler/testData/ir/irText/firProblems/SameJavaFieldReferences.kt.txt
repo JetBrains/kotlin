@@ -1,5 +1,17 @@
 fun foo() {
-  val ref1: KProperty0<String> = ::someJavaField
-  val ref2: KProperty0<String> = ::someJavaField
+  val ref1: KProperty0<String> = KProperty0<String>(
+    /* bound = */ [],
+    /* getter = */    local fun(): String {
+      return "Omega"
+    }
+  )
+
+  val ref2: KProperty0<String> = KProperty0<String>(
+    /* bound = */ [],
+    /* getter = */    local fun(): String {
+      return "Omega"
+    }
+  )
+
 }
 

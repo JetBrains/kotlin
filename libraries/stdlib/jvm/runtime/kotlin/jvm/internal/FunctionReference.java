@@ -9,6 +9,8 @@ import kotlin.SinceKotlin;
 import kotlin.reflect.KCallable;
 import kotlin.reflect.KFunction;
 
+import java.util.Arrays;
+
 @SuppressWarnings({"rawtypes", "unused"})
 public class FunctionReference extends CallableReference implements FunctionBase, KFunction {
     private final int arity;
@@ -84,6 +86,7 @@ public class FunctionReference extends CallableReference implements FunctionBase
             return getName().equals(other.getName()) &&
                    getSignature().equals(other.getSignature()) &&
                    Intrinsics.areEqual(getBoundReceiver(), other.getBoundReceiver()) &&
+                   Arrays.equals(getBoundContextArguments(), other.getBoundContextArguments()) &&
                    Intrinsics.areEqual(getOwner(), other.getOwner());
         }
         if (obj instanceof KFunction) {

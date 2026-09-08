@@ -15,6 +15,7 @@ Ann.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
+                  isClassRef: true
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
@@ -37,6 +38,7 @@ Ann.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -47,7 +49,7 @@ DependencyKt.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=dependency]
     IMPORT_LIST
-    FUN[fqName=dependency.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    FUNCTION[fqName=dependency.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
       origin: Facade(className=dependency/DependencyKt, jvmClassName=null)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
@@ -61,11 +63,13 @@ DependencyKt.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Unit]
+                    isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
+            isClassRef: true
     TYPEALIAS[classId=dependency/A, fqName=dependency.A, isTopLevel=true, name=A]
       MODIFIER_LIST[public]
       TYPE_REFERENCE
@@ -76,6 +80,7 @@ DependencyKt.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
 
 
 Outer.class:
@@ -111,6 +116,7 @@ Outer.class:
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=collections]
                   REFERENCE_EXPRESSION[referencedName=Map]
+                    isClassRef: true
                   TYPE_ARGUMENT_LIST
                     TYPE_PROJECTION[projectionKind=NONE]
                       TYPE_REFERENCE
@@ -120,15 +126,18 @@ Outer.class:
                               REFERENCE_EXPRESSION[referencedName=kotlin]
                             REFERENCE_EXPRESSION[referencedName=collections]
                           REFERENCE_EXPRESSION[referencedName=Map]
+                            isClassRef: true
                           TYPE_ARGUMENT_LIST
                             TYPE_PROJECTION[projectionKind=NONE]
                               TYPE_REFERENCE
                                 USER_TYPE
                                   REFERENCE_EXPRESSION[referencedName=E]
+                                    isClassRef: true
                             TYPE_PROJECTION[projectionKind=NONE]
                               TYPE_REFERENCE
                                 USER_TYPE
                                   REFERENCE_EXPRESSION[referencedName=F]
+                                    isClassRef: true
                     TYPE_PROJECTION[projectionKind=NONE]
                       TYPE_REFERENCE
                         USER_TYPE
@@ -137,15 +146,18 @@ Outer.class:
                               REFERENCE_EXPRESSION[referencedName=kotlin]
                             REFERENCE_EXPRESSION[referencedName=collections]
                           REFERENCE_EXPRESSION[referencedName=Map]
+                            isClassRef: true
                           TYPE_ARGUMENT_LIST
                             TYPE_PROJECTION[projectionKind=NONE]
                               TYPE_REFERENCE
                                 USER_TYPE
                                   REFERENCE_EXPRESSION[referencedName=G]
+                                    isClassRef: true
                             TYPE_PROJECTION[projectionKind=NONE]
                               TYPE_REFERENCE
                                 USER_TYPE
                                   REFERENCE_EXPRESSION[referencedName=H]
+                                    isClassRef: true
 
 
 SomeClass.class:
@@ -172,7 +184,7 @@ TypeAliases.class:
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       CLASS_BODY
-        FUN[fqName=test.TypeAliases.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+        FUNCTION[fqName=test.TypeAliases.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
@@ -185,6 +197,7 @@ TypeAliases.class:
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
                       REFERENCE_EXPRESSION[referencedName=Unit]
+                        isClassRef: true
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
               TYPE_REFERENCE
                 FUNCTION_TYPE
@@ -200,11 +213,13 @@ TypeAliases.class:
                               USER_TYPE
                                 REFERENCE_EXPRESSION[referencedName=kotlin]
                               REFERENCE_EXPRESSION[referencedName=Unit]
+                                isClassRef: true
                   TYPE_REFERENCE
                     USER_TYPE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
                       REFERENCE_EXPRESSION[referencedName=Unit]
+                        isClassRef: true
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=ta]
               TYPE_REFERENCE
                 USER_TYPE
@@ -214,6 +229,7 @@ TypeAliases.class:
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=collections]
                   REFERENCE_EXPRESSION[referencedName=Map]
+                    isClassRef: true
                   TYPE_ARGUMENT_LIST
                     TYPE_PROJECTION[projectionKind=NONE]
                       TYPE_REFERENCE
@@ -223,6 +239,7 @@ TypeAliases.class:
                               REFERENCE_EXPRESSION[referencedName=kotlin]
                             REFERENCE_EXPRESSION[referencedName=collections]
                           REFERENCE_EXPRESSION[referencedName=Map]
+                            isClassRef: true
                           TYPE_ARGUMENT_LIST
                             TYPE_PROJECTION[projectionKind=NONE]
                               TYPE_REFERENCE
@@ -230,12 +247,14 @@ TypeAliases.class:
                                   USER_TYPE
                                     REFERENCE_EXPRESSION[referencedName=kotlin]
                                   REFERENCE_EXPRESSION[referencedName=String]
+                                    isClassRef: true
                             TYPE_PROJECTION[projectionKind=NONE]
                               TYPE_REFERENCE
                                 USER_TYPE
                                   USER_TYPE
                                     REFERENCE_EXPRESSION[referencedName=kotlin]
                                   REFERENCE_EXPRESSION[referencedName=Double]
+                                    isClassRef: true
                     TYPE_PROJECTION[projectionKind=NONE]
                       TYPE_REFERENCE
                         USER_TYPE
@@ -244,6 +263,7 @@ TypeAliases.class:
                               REFERENCE_EXPRESSION[referencedName=kotlin]
                             REFERENCE_EXPRESSION[referencedName=collections]
                           REFERENCE_EXPRESSION[referencedName=Map]
+                            isClassRef: true
                           TYPE_ARGUMENT_LIST
                             TYPE_PROJECTION[projectionKind=NONE]
                               TYPE_REFERENCE
@@ -251,18 +271,21 @@ TypeAliases.class:
                                   USER_TYPE
                                     REFERENCE_EXPRESSION[referencedName=kotlin]
                                   REFERENCE_EXPRESSION[referencedName=Int]
+                                    isClassRef: true
                             TYPE_PROJECTION[projectionKind=NONE]
                               TYPE_REFERENCE
                                 USER_TYPE
                                   USER_TYPE
                                     REFERENCE_EXPRESSION[referencedName=kotlin]
                                   REFERENCE_EXPRESSION[referencedName=Boolean]
+                                    isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
-        FUN[fqName=test.TypeAliases.order, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=order]
+                isClassRef: true
+        FUNCTION[fqName=test.TypeAliases.order, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=order]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=path]
@@ -271,12 +294,14 @@ TypeAliases.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=String]
+                    isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
-        FUN[fqName=test.TypeAliases.order, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=order]
+                isClassRef: true
+        FUNCTION[fqName=test.TypeAliases.order, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=order]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=body]
@@ -286,11 +311,13 @@ TypeAliases.class:
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=dependency]
                   REFERENCE_EXPRESSION[referencedName=SomeClass]
+                    isClassRef: true
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+                isClassRef: true
         CLASS[classId=test/TypeAliases.OrderB, fqName=test.TypeAliases.OrderB, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=OrderB, superNames=[]]
           MODIFIER_LIST[public final]
           PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=OrderB]
@@ -314,11 +341,13 @@ TypeAliases.class:
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=dependency]
                       REFERENCE_EXPRESSION[referencedName=A]
+                        isClassRef: true
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Unit]
+                    isClassRef: true
         TYPEALIAS[classId=test/TypeAliases.Parametrized, fqName=test.TypeAliases.Parametrized, isTopLevel=false, name=Parametrized]
           MODIFIER_LIST[private]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
@@ -329,6 +358,7 @@ TypeAliases.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=Ann]
+                      isClassRef: true
           TYPE_PARAMETER_LIST
             TYPE_PARAMETER[fqName=null, name=E]
             TYPE_PARAMETER[fqName=null, name=F]
@@ -339,15 +369,18 @@ TypeAliases.class:
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=collections]
               REFERENCE_EXPRESSION[referencedName=Map]
+                isClassRef: true
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=E]
+                        isClassRef: true
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=F]
+                        isClassRef: true
 
 
 TypeAliasesKt.class:
@@ -364,3 +397,4 @@ TypeAliasesKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=dependency]
           REFERENCE_EXPRESSION[referencedName=SomeClass]
+            isClassRef: true

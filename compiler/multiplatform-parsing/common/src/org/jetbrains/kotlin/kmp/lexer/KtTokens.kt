@@ -25,16 +25,12 @@ object KtTokens : SyntaxElementTypesWithIds() {
     const val BLOCK_COMMENT_ID: Int = RESERVED_ID + 1
     const val EOL_COMMENT_ID: Int = BLOCK_COMMENT_ID + 1
     const val SHEBANG_COMMENT_ID: Int = EOL_COMMENT_ID + 1
-    const val DOC_COMMENT_ID: Int = SHEBANG_COMMENT_ID + 1
 
-    const val WHITE_SPACE_ID: Int = DOC_COMMENT_ID + 1
-
-    const val INTEGER_LITERAL_ID: Int = WHITE_SPACE_ID + 1
+    const val INTEGER_LITERAL_ID: Int = SHEBANG_COMMENT_ID + 1
     const val FLOAT_LITERAL_ID: Int = INTEGER_LITERAL_ID + 1
     const val CHARACTER_LITERAL_ID: Int = FLOAT_LITERAL_ID + 1
 
-    const val INTERPOLATION_PREFIX_ID: Int = CHARACTER_LITERAL_ID + 1
-    const val CLOSING_QUOTE_ID: Int = INTERPOLATION_PREFIX_ID + 1
+    const val CLOSING_QUOTE_ID: Int = CHARACTER_LITERAL_ID + 1
     const val OPEN_QUOTE_ID: Int = CLOSING_QUOTE_ID + 1
     const val REGULAR_STRING_PART_ID: Int = OPEN_QUOTE_ID + 1
     const val ESCAPE_SEQUENCE_ID: Int = REGULAR_STRING_PART_ID + 1
@@ -127,8 +123,7 @@ object KtTokens : SyntaxElementTypesWithIds() {
     const val AT_ID: Int = HASH_ID + 1
     const val COMMA_ID: Int = AT_ID + 1
     const val EOL_OR_SEMICOLON_ID: Int = COMMA_ID + 1
-    const val ALL_KEYWORD_ID: Int = EOL_OR_SEMICOLON_ID + 1
-    const val FILE_KEYWORD_ID: Int = ALL_KEYWORD_ID + 1
+    const val FILE_KEYWORD_ID: Int = EOL_OR_SEMICOLON_ID + 1
     const val FIELD_KEYWORD_ID: Int = FILE_KEYWORD_ID + 1
     const val PROPERTY_KEYWORD_ID: Int = FIELD_KEYWORD_ID + 1
     const val RECEIVER_KEYWORD_ID: Int = PROPERTY_KEYWORD_ID + 1
@@ -143,7 +138,11 @@ object KtTokens : SyntaxElementTypesWithIds() {
     const val CONSTRUCTOR_KEYWORD_ID: Int = SET_KEYWORD_ID + 1
     const val INIT_KEYWORD_ID: Int = CONSTRUCTOR_KEYWORD_ID + 1
     const val CONTEXT_KEYWORD_ID: Int = INIT_KEYWORD_ID + 1
-    const val ABSTRACT_MODIFIER_ID: Int = CONTEXT_KEYWORD_ID + 1
+    const val CATCH_KEYWORD_ID: Int = CONTEXT_KEYWORD_ID + 1
+    const val DYNAMIC_KEYWORD_ID: Int = CATCH_KEYWORD_ID + 1
+    const val FINALLY_KEYWORD_ID: Int = DYNAMIC_KEYWORD_ID + 1
+
+    const val ABSTRACT_MODIFIER_ID: Int = FINALLY_KEYWORD_ID + 1
     const val ENUM_MODIFIER_ID: Int = ABSTRACT_MODIFIER_ID + 1
     const val CONTRACT_MODIFIER_ID: Int = ENUM_MODIFIER_ID + 1
     const val OPEN_MODIFIER_ID: Int = CONTRACT_MODIFIER_ID + 1
@@ -153,15 +152,12 @@ object KtTokens : SyntaxElementTypesWithIds() {
     const val PUBLIC_MODIFIER_ID: Int = PRIVATE_MODIFIER_ID + 1
     const val INTERNAL_MODIFIER_ID: Int = PUBLIC_MODIFIER_ID + 1
     const val PROTECTED_MODIFIER_ID: Int = INTERNAL_MODIFIER_ID + 1
-    const val CATCH_KEYWORD_ID: Int = PROTECTED_MODIFIER_ID + 1
-    const val OUT_MODIFIER_ID: Int = CATCH_KEYWORD_ID + 1
+    const val OUT_MODIFIER_ID: Int = PROTECTED_MODIFIER_ID + 1
     const val VARARG_MODIFIER_ID: Int = OUT_MODIFIER_ID + 1
     const val REIFIED_MODIFIER_ID: Int = VARARG_MODIFIER_ID + 1
-    const val DYNAMIC_KEYWORD_ID: Int = REIFIED_MODIFIER_ID + 1
-    const val COMPANION_MODIFIER_ID: Int = DYNAMIC_KEYWORD_ID + 1
+    const val COMPANION_MODIFIER_ID: Int = REIFIED_MODIFIER_ID + 1
     const val SEALED_MODIFIER_ID: Int = COMPANION_MODIFIER_ID + 1
-    const val FINALLY_KEYWORD_ID: Int = SEALED_MODIFIER_ID + 1
-    const val FINAL_MODIFIER_ID: Int = FINALLY_KEYWORD_ID + 1
+    const val FINAL_MODIFIER_ID: Int = SEALED_MODIFIER_ID + 1
     const val LATEINIT_MODIFIER_ID: Int = FINAL_MODIFIER_ID + 1
     const val DATA_MODIFIER_ID: Int = LATEINIT_MODIFIER_ID + 1
     const val VALUE_MODIFIER_ID: Int = DATA_MODIFIER_ID + 1
@@ -177,6 +173,11 @@ object KtTokens : SyntaxElementTypesWithIds() {
     const val SUSPEND_MODIFIER_ID: Int = CONST_MODIFIER_ID + 1
     const val EXPECT_MODIFIER_ID: Int = SUSPEND_MODIFIER_ID + 1
     const val ACTUAL_MODIFIER_ID: Int = EXPECT_MODIFIER_ID + 1
+    const val INTERPOLATION_PREFIX_ID: Int = ACTUAL_MODIFIER_ID + 1
+    const val ALL_KEYWORD_ID: Int = INTERPOLATION_PREFIX_ID + 1
+
+    const val DOC_COMMENT_ID: Int = ALL_KEYWORD_ID + 1
+    const val WHITE_SPACE_ID: Int = DOC_COMMENT_ID + 1
     // Remember to update the first ID constant in `KtNodeTypes` after adding a new token
 
     private val softKeywordsAndModifiers: MutableSet<SyntaxElementType> = mutableSetOf()

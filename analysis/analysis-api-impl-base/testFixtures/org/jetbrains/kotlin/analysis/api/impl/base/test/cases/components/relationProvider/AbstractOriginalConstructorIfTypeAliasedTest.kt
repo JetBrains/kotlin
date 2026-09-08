@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerPro
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.test.framework.utils.resolveSymbolPreferringCall
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
-import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.test.services.TestServices
@@ -48,7 +47,6 @@ abstract class AbstractOriginalConstructorIfTypeAliasedTest : AbstractAnalysisAp
         testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 
-    @OptIn(KtExperimentalApi::class)
     context(_: KaSession)
     private fun getReferencedConstructorSymbol(mainFile: KtFile, testServices: TestServices): KaConstructorSymbol? {
         val reference = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtSimpleNameExpression>(mainFile)

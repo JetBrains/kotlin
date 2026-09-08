@@ -36,3 +36,48 @@ open class OverloadedSpeakerBase : OverloadedSpeaker {
 
 fun callSay(s: OverloadedSpeaker): String = s.say()
 fun callSayTimes(s: OverloadedSpeaker, times: Int): String = s.say(times)
+
+// Rich signatures with Kotlin-consumed default arguments, and overload selection across reverse bridges.
+
+data class DataPayload(val text: String, val number: Int)
+
+enum class InheritanceMode {
+    kotlinMode,
+    swiftMode,
+}
+
+open class DefaultSignatureBase {
+    open fun format(
+        prefix: String,
+        payload: DataPayload = DataPayload("default-payload", 7),
+        mode: InheritanceMode = InheritanceMode.kotlinMode,
+        note: String? = null,
+        repeat: Int = 2,
+    ): String = "$prefix:${payload.text}:$mode:$note:$repeat"
+}
+
+fun callFormatWithKotlinDefaults(value: DefaultSignatureBase, prefix: String): String = value.format(prefix)
+
+fun callFormatExplicitly(
+    value: DefaultSignatureBase,
+    prefix: String,
+    payload: DataPayload,
+    mode: InheritanceMode,
+    note: String?,
+    repeat: Int,
+): String = value.format(prefix, payload, mode, note, repeat)
+
+open class OverloadedSignatureBase {
+    open fun choose(value: String): String = "kotlin-one:$value"
+    open fun choose(value: String, count: Int): String = "kotlin-two:$value:$count"
+    open fun choose(value: String, count: Int, mode: InheritanceMode): String = "kotlin-three:$value:$count:$mode"
+}
+
+fun callChooseOne(value: OverloadedSignatureBase, text: String): String = value.choose(text)
+fun callChooseTwo(value: OverloadedSignatureBase, text: String, count: Int): String = value.choose(text, count)
+fun callChooseThree(
+    value: OverloadedSignatureBase,
+    text: String,
+    count: Int,
+    mode: InheritanceMode,
+): String = value.choose(text, count, mode)

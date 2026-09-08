@@ -22,10 +22,10 @@ import java.lang.reflect.Member
 import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 import kotlin.LazyThreadSafetyMode.PUBLICATION
-import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
+import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.JvmPropertySignature.*
 import kotlin.reflect.jvm.internal.calls.*
 import kotlin.reflect.jvm.internal.types.DescriptorKType
@@ -106,7 +106,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
 
     override val callerWithDefaults: Caller<*>? get() = getter.callerWithDefaults
 
-    override fun computeReturnType(): DescriptorKType =
+    override fun computeReturnType(): KType =
         DescriptorKType(descriptor.returnType!!, if (isLocalDelegated) null else fun(): Type {
             return caller.returnType
         })
@@ -171,13 +171,13 @@ internal abstract class DescriptorKProperty<out V> private constructor(
             computeCallerForAccessor(isGetter = true)
         }
 
-        override fun computeReturnType(): DescriptorKType =
-            property.returnType as DescriptorKType
+        override fun computeReturnType(): KType =
+            property.returnType
 
         override fun toString(): String = "getter of $property"
 
         override fun equals(other: Any?): Boolean =
-            other is Getter<*> && property == other.property
+            other is KProperty.Getter<*> && property == other.property
 
         override fun hashCode(): Int =
             property.hashCode()
@@ -194,13 +194,13 @@ internal abstract class DescriptorKProperty<out V> private constructor(
             computeCallerForAccessor(isGetter = false)
         }
 
-        override fun computeReturnType(): DescriptorKType =
+        override fun computeReturnType(): KType =
             DescriptorKType(descriptor.builtIns.unitType) { Void.TYPE }
 
         override fun toString(): String = "setter of $property"
 
         override fun equals(other: Any?): Boolean =
-            other is Setter<*> && property == other.property
+            other is KMutableProperty.Setter<*> && property == other.property
 
         override fun hashCode(): Int =
             property.hashCode()
@@ -290,7 +290,7 @@ private fun DescriptorKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter
             }
         }
         is JavaField -> {
-            computeFieldCaller(jvmSignature.field)
+            computeFieldCaller(property.javaField ?: jvmSignature.field)
         }
         is JavaMethodProperty -> {
             val method =

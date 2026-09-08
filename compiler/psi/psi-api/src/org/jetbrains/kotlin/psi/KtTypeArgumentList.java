@@ -7,13 +7,16 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import kotlin.ReplaceWith;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -25,13 +28,16 @@ import java.util.List;
  * //            ^___________^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtTypeArgumentList extends KtElementImplStub<KotlinPlaceHolderStub<KtTypeArgumentList>> {
+    @KtImplementationDetail
     public KtTypeArgumentList(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtTypeArgumentList(@NotNull KotlinPlaceHolderStub<KtTypeArgumentList> stub) {
-        super(stub, KtStubBasedElementTypes.TYPE_ARGUMENT_LIST);
+        super(stub, KtNodeTypes.TYPE_ARGUMENT_LIST);
     }
 
     @Override
@@ -39,9 +45,10 @@ public class KtTypeArgumentList extends KtElementImplStub<KotlinPlaceHolderStub<
         return visitor.visitTypeArgumentList(this, data);
     }
 
+    /** Returns the type arguments (as projections), in source order; empty if there are none. */
     @NotNull
     public List<KtTypeProjection> getArguments() {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_PROJECTION);
+        return Arrays.asList(getStubOrPsiChildren(KtNodeTypes.TYPE_PROJECTION, KtTypeProjection.EMPTY_ARRAY));
     }
 
     /**
@@ -51,7 +58,7 @@ public class KtTypeArgumentList extends KtElementImplStub<KotlinPlaceHolderStub<
     @NotNull
     @kotlin.Deprecated(
             message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.appendTypeArgument(this, typeArgument)' instead.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "this.appendTypeArgument(typeArgument)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.appendTypeArgument"
             )
@@ -61,6 +68,7 @@ public class KtTypeArgumentList extends KtElementImplStub<KotlinPlaceHolderStub<
         return KtPsiMutationService.getInstance().appendTypeArgument(this, typeArgument);
     }
 
+    /** Returns the trailing comma after the last type argument, or {@code null} if there is none. */
     @Nullable
     public PsiElement getTrailingComma() {
         return KtPsiUtilKt.getTrailingCommaByClosingElement(findChildByType(KtTokens.GT));

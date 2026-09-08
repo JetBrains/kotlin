@@ -1,0 +1,7 @@
+/equalsAndHashCodeCallSuper.kt:12:1: warning: Generating 'equals/hashCode' implementation but without a call to superclass, even though this class does not extend 'Any'. If this is intentional, add '@EqualsAndHashCode(callSuper=false)' to your type.
+
+/equalsAndHashCodeCallSuper.kt:23:32: error: Generating 'equals/hashCode' with a supercall to 'Any' is pointless: 'Any' compares by identity.
+
+/equalsAndHashCodeCallSuper.kt:36:1: strong_warning: This annotation has no effect on target 'enum class'. Relevant targets: class, local class.
+
+/equalsAndHashCodeCallSuper.kt:39:1: strong_warning: This annotation has no effect on target 'standalone object'. Relevant targets: class, local class.

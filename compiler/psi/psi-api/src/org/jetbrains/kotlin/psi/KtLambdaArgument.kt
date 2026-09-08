@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub
 
 /**
@@ -19,10 +19,19 @@ import org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub
  * //           ^_____________^
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtLambdaArgument : KtValueArgument, LambdaArgument {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
 
-    constructor(stub: KotlinValueArgumentStub<KtLambdaArgument>) : super(stub, KtStubBasedElementTypes.LAMBDA_ARGUMENT) {}
+    @KtImplementationDetail
+    constructor(stub: KotlinValueArgumentStub<KtLambdaArgument>) : super(stub, KtNodeTypes.LAMBDA_ARGUMENT)
 
     override fun getLambdaExpression(): KtLambdaExpression? = getArgumentExpression()?.unpackFunctionLiteral()
+
+    companion object {
+        /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+        @JvmField
+        val EMPTY_ARRAY: Array<KtLambdaArgument> = emptyArray()
+    }
 }

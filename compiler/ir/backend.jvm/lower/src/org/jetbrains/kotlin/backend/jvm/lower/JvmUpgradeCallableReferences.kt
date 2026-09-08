@@ -7,11 +7,8 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.ir.expressions.*
 
 internal class JvmUpgradeCallableReferences(context: JvmBackendContext) : UpgradeCallableReferences(
     context = context,
     upgradeSamConversions = true,
-    castDispatchReceiver = false,
-    generateFakeAccessorsForReflectionProperty = true,
 )

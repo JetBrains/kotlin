@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.nativeBinaryOptions.*
+import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.visibleName
@@ -260,6 +261,9 @@ private fun String.absoluteNormalizedFile() = java.io.File(this).absoluteFile.no
 internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSecondStageCompilationConfig) = with(NativeConfigurationKeys) {
     konanTarget = config.target.toString()
     put(DEBUG, config.debug)
+    put(OPTIMIZATION, config.optimizationsEnabled)
+    put(BinaryOptions.enableReleaseBinaryCache, config.enableReleaseBinaryCache)
+    config.configuration.phaseConfig?.let { phaseConfig = it }
     setupPartialLinkageConfig(config.partialLinkageConfig)
     putIfNotNull(EXTERNAL_DEPENDENCIES, config.externalDependenciesFile?.absolutePathString())
     put(PROPERTY_LAZY_INITIALIZATION, config.propertyLazyInitialization)

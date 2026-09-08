@@ -3,12 +3,10 @@ import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("generated-sources")
     id("java-test-fixtures")
-    id("project-tests-convention")
     id("test-data-manager")
     id("test-inputs-check")
 }
@@ -38,14 +36,13 @@ dependencies {
     implementation(libs.opentelemetry.api)
 
     testFixturesImplementation(testFixtures(project(":analysis:low-level-api-fir")))
-    testFixturesApi(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
+    testFixturesApi(project(":analysis:analysis-api-standalone:analysis-api-standalone-fir"))
     testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesImplementation(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
 
-    testFixturesImplementation(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
     testFixturesImplementation(kotlinTest("junit5"))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
 
@@ -94,6 +91,7 @@ projectTests {
     withMockJdkAnnotationsJar()
     withScriptRuntime()
     withPluginSandboxAnnotations()
+    withPluginSandboxJar()
     withWasmRuntime()
 
     @OptIn(KotlinCompilerDistUsage::class)

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.compilerRunner.btapi.js
 
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
@@ -20,11 +20,25 @@ import kotlin.io.path.Path
 internal class JsKlibBuildOperationFactory(private val compilerArgs: List<String>) :
     BuildOperationFactory<JsKlibCompilationOperation.Builder> {
     override fun createOperation(kotlinToolchains: KotlinToolchains): JsKlibCompilationOperation.Builder {
+        /*
+         * GradleCompilerRunner.runCompilerAsync transforms arguments adding the freeArgs separator (`--`)
+         * This way, even incorrect arguments are surviving the `parseCommandLineArguments` call (by staying in `args.freeArgs`)
+         * and can be passed to BTA.
+         * If you rework this, please make sure that the freeArgs separator is not reaching BTA.
+         */
         val args: K2JSCompilerArguments = parseCommandLineArguments(compilerArgs)
         val destination = Path(requireNotNull(args.outputDir))
         val compilationOperationBuilder =
             kotlinToolchains.js.jsKlibCompilationOperationBuilder(extractSourceFiles(args.freeArgs), destination)
-        @OptIn(ExperimentalCompilerArgument::class) compilationOperationBuilder.compilerArguments.applyArgumentStrings(
+
+        args.outputDir = null
+        @Suppress("DEPRECATION")
+        args.irProduceKlibDir = null
+        @Suppress("DEPRECATION")
+        args.irProduceKlibFile = null
+
+        @OptIn(DelicateBuildToolsApi::class)
+        compilationOperationBuilder.compilerArguments.applyCommandLineArguments(
             args.toArgumentStrings(
                 allowArgFileInValues = false
             )
@@ -35,11 +49,23 @@ internal class JsKlibBuildOperationFactory(private val compilerArgs: List<String
 
 internal class JsLinkingBuildOperationFactory(private val compilerArgs: List<String>) : BuildOperationFactory<JsLinkingOperation.Builder> {
     override fun createOperation(kotlinToolchains: KotlinToolchains): JsLinkingOperation.Builder {
+        /*
+         * GradleCompilerRunner.runCompilerAsync transforms arguments adding the freeArgs separator (`--`)
+         * This way, even incorrect arguments are surviving the `parseCommandLineArguments` call (by staying in `args.freeArgs`)
+         * and can be passed to BTA.
+         * If you rework this, please make sure that the freeArgs separator is not reaching BTA.
+         */
         val args: K2JSCompilerArguments = parseCommandLineArguments(compilerArgs)
         val destination = Path(requireNotNull(args.outputDir))
         val includes = Path(requireNotNull(args.includes))
         val compilationOperationBuilder = kotlinToolchains.js.jsLinkingOperationBuilder(includes, destination)
-        @OptIn(ExperimentalCompilerArgument::class) compilationOperationBuilder.compilerArguments.applyArgumentStrings(
+
+        args.outputDir = null
+        args.irProduceJs = K2JSCompilerArguments().irProduceJs
+        args.includes = null
+
+        @OptIn(DelicateBuildToolsApi::class)
+        compilationOperationBuilder.compilerArguments.applyCommandLineArguments(
             args.toArgumentStrings(
                 allowArgFileInValues = false
             )

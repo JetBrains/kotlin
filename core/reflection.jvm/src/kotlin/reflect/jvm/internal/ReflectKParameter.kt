@@ -9,13 +9,13 @@ import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import java.lang.reflect.Constructor
 import java.lang.reflect.Member
 import java.lang.reflect.Method
-import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.full.createDefaultType
+import kotlin.reflect.full.instanceParameter
 
 internal abstract class ReflectKParameter : KParameter {
     abstract val callable: ReflectKCallable<*>
@@ -45,10 +45,13 @@ internal abstract class ReflectKParameter : KParameter {
 
 internal class InstanceParameter(override val callable: ReflectKCallable<*>, klass: KClass<*>) : ReflectKParameter() {
     override val index: Int get() = 0
-    override val type: KType = klass.createDefaultType {
-        if (callable.overriddenStorage.isFakeOverride) klass.java
-        else callable.caller.parameterTypes.first()
-    }
+    override val type: KType = klass.createDefaultType(
+        if (callable.overriddenStorage.isFakeOverride)
+            lazyOf(klass.java)
+        else lazy(PUBLICATION) {
+            callable.caller.parameterTypes.first()
+        }
+    )
     override val name: String? get() = null
     override val kind: KParameter.Kind get() = KParameter.Kind.INSTANCE
     override val isOptional: Boolean get() = false
@@ -65,9 +68,8 @@ private fun ReflectKParameter.loadAnnotationsOnAnnotationParameter(): List<Annot
     return kmParameter.annotations.map { it.toAnnotation(callable.container.jClass.safeClassLoader) }
 }
 
-internal class DefaultSetterValueParameter(private val property: ReflectKProperty<*>) : ReflectKParameter() {
+internal class DefaultSetterValueParameter(private val property: ReflectKProperty<*>, override val index: Int) : ReflectKParameter() {
     override val callable: ReflectKCallable<*> get() = (property as KMutableProperty<*>).setter as ReflectKCallable<*>
-    override val index: Int get() = 0
     override val name: String? get() = null
     override val type: KType get() = property.returnType
     override val kind: KParameter.Kind get() = KParameter.Kind.VALUE
@@ -92,23 +94,23 @@ internal class DefaultSetterValueParameter(private val property: ReflectKPropert
 internal class JavaParameter(val callable: Member, val index: Int)
 
 internal val ReflectKParameter.javaParameter: JavaParameter?
-    get() = when (val callable = callable.caller.member) {
+    get() = when (val member = callable.caller.member) {
         is Method -> {
-            JavaParameter(callable, index + (if (Modifier.isStatic(callable.modifiers)) 0 else -1))
+            JavaParameter(member, index + (if (callable.instanceParameter == null) 0 else -1))
         }
         is Constructor<*> -> {
             val shift = when {
                 // Inner class constructors before JDK 9 did not have the outer class parameter in `parameterAnnotations`, see
                 // https://bugs.java.com/bugdatabase/view_bug?bug_id=8074977.
-                callable.declaringClass.kotlin.isInner && isJdk8() -> -1
+                member.declaringClass.kotlin.isInner && isJdk8() -> -1
                 // Enum constructors before JDK 17 did not have additional name/ordinal parameters in case there was at least one annotation
                 // on any constructor parameter. (Probably some fixed bug in the JDK as well.)
-                callable.declaringClass.isEnum -> callable.parameterAnnotations.size - callable.parameterTypes.size + 2
+                member.declaringClass.isEnum -> member.parameterAnnotations.size - member.parameterTypes.size + 2
                 else -> 0
             }
-            JavaParameter(callable, index + shift)
+            JavaParameter(member, index + shift)
         }
-        else -> throw KotlinReflectionInternalError("Unsupported parameter owner: $callable")
+        else -> throw KotlinReflectionInternalError("Unsupported parameter owner: $member")
     }
 
 private fun isJdk8(): Boolean =

@@ -1,0 +1,32 @@
+test1(2, 1): ---
+assert(if (a > b) { a == b } else { a.inc() == 3 })
+           | | |  |
+           | | |  false
+           | | 1
+           | true
+           2
+---
+test1(1, 2): ---
+assert(if (a > b) { a == b } else { a.inc() == 3 })
+           | | |                  |
+           | | |                  false
+           | | 2
+           | false
+           1
+---
+test2(1, 2): ---
+assert(if (a < b) { if (a > 10) true ; false } else { true })
+           | | |  |
+           | | |  false
+           | | 2
+           | true
+           1
+---
+test3(1, 2): ---
+assert(if (a < b) { if (a > 10) true else false } else false)
+           | | |  |
+           | | |  false
+           | | 2
+           | true
+           1
+---

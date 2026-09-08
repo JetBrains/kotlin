@@ -83,7 +83,7 @@ FILE fqName:<root> fileName:/generticReferences.kt lineStartOffsets: [0, 11, 35,
         RICH_FUNCTION_REFERENCE[495, 500] type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.Int, kotlin.Int> origin=null reflectionTarget='public final fun foo <T> (x: T of <root>.foo): T of <root>.foo declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction1): R of kotlin.reflect.KFunction1 declared in kotlin.reflect.KFunction1
           invoke: FUN[495, 500] LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.Int
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:@[ParameterName(name = "x")] kotlin.Int
+            VALUE_PARAMETER[495, 500] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:@[ParameterName(name = "x")] kotlin.Int
             BLOCK_BODY[-1, -1]
               RETURN[-1, -1] type=kotlin.Nothing from='local final fun foo (p0: @[ParameterName(name = "x")] kotlin.Int): kotlin.Int declared in <root>.box'
                 CALL[495, 500] 'public final fun foo <T> (x: T of <root>.foo): T of <root>.foo declared in <root>' type=kotlin.Int origin=null
@@ -93,8 +93,8 @@ FILE fqName:<root> fileName:/generticReferences.kt lineStartOffsets: [0, 11, 35,
         RICH_FUNCTION_REFERENCE[514, 525] type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A<kotlin.Int>, @[ParameterName(name = "x")] kotlin.Int, kotlin.Int> origin=null reflectionTarget='public final fun foo <T> (<this>: <root>.A<T of <root>.foo>, x: T of <root>.foo): T of <root>.foo declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
           invoke: FUN[514, 525] LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.Int
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A<kotlin.Int>
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.Int
+            VALUE_PARAMETER[514, 525] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.A<kotlin.Int>
+            VALUE_PARAMETER[514, 525] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.Int
             BLOCK_BODY[-1, -1]
               RETURN[-1, -1] type=kotlin.Nothing from='local final fun foo (p0: <root>.A<kotlin.Int>, p1: @[ParameterName(name = "x")] kotlin.Int): kotlin.Int declared in <root>.box'
                 CALL[514, 525] 'public final fun foo <T> (<this>: <root>.A<T of <root>.foo>, x: T of <root>.foo): T of <root>.foo declared in <root>' type=kotlin.Int origin=null
@@ -105,21 +105,20 @@ FILE fqName:<root> fileName:/generticReferences.kt lineStartOffsets: [0, 11, 35,
         RICH_FUNCTION_REFERENCE[539, 548] type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A<*>, kotlin.Any?, kotlin.Any?> origin=null reflectionTarget='public final fun foo <T> (<this>: <root>.A<T of <root>.foo>, x: T of <root>.foo): T of <root>.foo declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
           invoke: FUN[539, 548] LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.Any?
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A<*>
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:kotlin.Any?
+            VALUE_PARAMETER[539, 548] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.A<*>
+            VALUE_PARAMETER[539, 548] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p1 index:1 type:kotlin.Any?
             BLOCK_BODY[-1, -1]
               RETURN[-1, -1] type=kotlin.Nothing from='local final fun foo (p0: <root>.A<*>, p1: kotlin.Any?): kotlin.Any? declared in <root>.box'
                 CALL[539, 548] 'public final fun foo <T> (<this>: <root>.A<T of <root>.foo>, x: T of <root>.foo): T of <root>.foo declared in <root>' type=kotlin.Any? origin=null
                   TYPE_ARG T: kotlin.Any?
-                  ARG <this>: TYPE_OP[539, 548] type=<root>.A<kotlin.Any?> origin=IMPLICIT_CAST typeOperand=<root>.A<kotlin.Any?>
-                    GET_VAR[539, 548] 'p0: <root>.A<*> declared in <root>.box.foo' type=<root>.A<*> origin=null
+                  ARG <this>: GET_VAR[539, 548] 'p0: <root>.A<*> declared in <root>.box.foo' type=<root>.A<*> origin=null
                   ARG x: GET_VAR[539, 548] 'p1: kotlin.Any? declared in <root>.box.foo' type=kotlin.Any? origin=null
       VAR[553, 573] name:r4 type:kotlin.reflect.KFunction2<<root>.A<kotlin.Int>, @[ParameterName(name = "x")] kotlin.Int, kotlin.Int> [val]
         RICH_FUNCTION_REFERENCE[562, 573] type=kotlin.reflect.KFunction2<<root>.A<kotlin.Int>, @[ParameterName(name = "x")] kotlin.Int, kotlin.Int> origin=null reflectionTarget='public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
           invoke: FUN[562, 573] LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.Int
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A<kotlin.Int>
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.Int
+            VALUE_PARAMETER[562, 573] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.A<kotlin.Int>
+            VALUE_PARAMETER[562, 573] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.Int
             BLOCK_BODY[-1, -1]
               RETURN[-1, -1] type=kotlin.Nothing from='local final fun bar (p0: <root>.A<kotlin.Int>, p1: @[ParameterName(name = "x")] kotlin.Int): kotlin.Int declared in <root>.box'
                 CALL[562, 573] 'public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A' type=kotlin.Int origin=null
@@ -129,8 +128,8 @@ FILE fqName:<root> fileName:/generticReferences.kt lineStartOffsets: [0, 11, 35,
         RICH_FUNCTION_REFERENCE[587, 596] type=kotlin.reflect.KFunction2<<root>.A<*>, kotlin.Any?, kotlin.Any?> origin=null reflectionTarget='public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
           invoke: FUN[587, 596] LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.Any?
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A<*>
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:kotlin.Any?
+            VALUE_PARAMETER[587, 596] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.A<*>
+            VALUE_PARAMETER[587, 596] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p1 index:1 type:kotlin.Any?
             BLOCK_BODY[-1, -1]
               RETURN[-1, -1] type=kotlin.Nothing from='local final fun bar (p0: <root>.A<*>, p1: kotlin.Any?): kotlin.Any? declared in <root>.box'
                 CALL[587, 596] 'public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A' type=kotlin.Any? origin=null
@@ -140,7 +139,7 @@ FILE fqName:<root> fileName:/generticReferences.kt lineStartOffsets: [0, 11, 35,
         RICH_FUNCTION_REFERENCE[632, 638] type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget='public final fun foo2 <T> (x: T of <root>.foo2): T of <root>.foo2 declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction1): R of kotlin.reflect.KFunction1 declared in kotlin.reflect.KFunction1
           invoke: FUN[632, 638] LOCAL_FUNCTION_FOR_LAMBDA name:foo2 visibility:local modality:FINAL returnType:kotlin.String
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:@[ParameterName(name = "x")] kotlin.String
+            VALUE_PARAMETER[632, 638] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:@[ParameterName(name = "x")] kotlin.String
             BLOCK_BODY[-1, -1]
               RETURN[-1, -1] type=kotlin.Nothing from='local final fun foo2 (p0: @[ParameterName(name = "x")] kotlin.String): kotlin.String declared in <root>.box'
                 CALL[632, 638] 'public final fun foo2 <T> (x: T of <root>.foo2): T of <root>.foo2 declared in <root>' type=kotlin.String origin=null
@@ -150,8 +149,8 @@ FILE fqName:<root> fileName:/generticReferences.kt lineStartOffsets: [0, 11, 35,
         RICH_FUNCTION_REFERENCE[652, 668] type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A2<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget='public final fun foo2 <T> (<this>: <root>.A2<T of <root>.foo2>, x: T of <root>.foo2): T of <root>.foo2 declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
           invoke: FUN[652, 668] LOCAL_FUNCTION_FOR_LAMBDA name:foo2 visibility:local modality:FINAL returnType:kotlin.String
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A2<kotlin.String>
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.String
+            VALUE_PARAMETER[652, 668] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.A2<kotlin.String>
+            VALUE_PARAMETER[652, 668] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.String
             BLOCK_BODY[-1, -1]
               RETURN[-1, -1] type=kotlin.Nothing from='local final fun foo2 (p0: <root>.A2<kotlin.String>, p1: @[ParameterName(name = "x")] kotlin.String): kotlin.String declared in <root>.box'
                 CALL[652, 668] 'public final fun foo2 <T> (<this>: <root>.A2<T of <root>.foo2>, x: T of <root>.foo2): T of <root>.foo2 declared in <root>' type=kotlin.String origin=null
@@ -162,21 +161,20 @@ FILE fqName:<root> fileName:/generticReferences.kt lineStartOffsets: [0, 11, 35,
         RICH_FUNCTION_REFERENCE[682, 693] type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A2<*>, kotlin.CharSequence, kotlin.CharSequence> origin=null reflectionTarget='public final fun foo2 <T> (<this>: <root>.A2<T of <root>.foo2>, x: T of <root>.foo2): T of <root>.foo2 declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
           invoke: FUN[682, 693] LOCAL_FUNCTION_FOR_LAMBDA name:foo2 visibility:local modality:FINAL returnType:kotlin.CharSequence
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A2<*>
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:kotlin.CharSequence
+            VALUE_PARAMETER[682, 693] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.A2<*>
+            VALUE_PARAMETER[682, 693] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p1 index:1 type:kotlin.CharSequence
             BLOCK_BODY[-1, -1]
               RETURN[-1, -1] type=kotlin.Nothing from='local final fun foo2 (p0: <root>.A2<*>, p1: kotlin.CharSequence): kotlin.CharSequence declared in <root>.box'
                 CALL[682, 693] 'public final fun foo2 <T> (<this>: <root>.A2<T of <root>.foo2>, x: T of <root>.foo2): T of <root>.foo2 declared in <root>' type=kotlin.CharSequence origin=null
                   TYPE_ARG T: kotlin.CharSequence
-                  ARG <this>: TYPE_OP[682, 693] type=<root>.A2<kotlin.CharSequence> origin=IMPLICIT_CAST typeOperand=<root>.A2<kotlin.CharSequence>
-                    GET_VAR[682, 693] 'p0: <root>.A2<*> declared in <root>.box.foo2' type=<root>.A2<*> origin=null
+                  ARG <this>: GET_VAR[682, 693] 'p0: <root>.A2<*> declared in <root>.box.foo2' type=<root>.A2<*> origin=null
                   ARG x: GET_VAR[682, 693] 'p1: kotlin.CharSequence declared in <root>.box.foo2' type=kotlin.CharSequence origin=null
       VAR[698, 723] name:s4 type:kotlin.reflect.KFunction2<<root>.A2<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> [val]
         RICH_FUNCTION_REFERENCE[707, 723] type=kotlin.reflect.KFunction2<<root>.A2<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget='public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
           invoke: FUN[707, 723] LOCAL_FUNCTION_FOR_LAMBDA name:bar2 visibility:local modality:FINAL returnType:kotlin.String
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A2<kotlin.String>
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.String
+            VALUE_PARAMETER[707, 723] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.A2<kotlin.String>
+            VALUE_PARAMETER[707, 723] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.String
             BLOCK_BODY[-1, -1]
               RETURN[-1, -1] type=kotlin.Nothing from='local final fun bar2 (p0: <root>.A2<kotlin.String>, p1: @[ParameterName(name = "x")] kotlin.String): kotlin.String declared in <root>.box'
                 CALL[707, 723] 'public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2' type=kotlin.String origin=null
@@ -186,8 +184,8 @@ FILE fqName:<root> fileName:/generticReferences.kt lineStartOffsets: [0, 11, 35,
         RICH_FUNCTION_REFERENCE[737, 748] type=kotlin.reflect.KFunction2<<root>.A2<*>, kotlin.CharSequence, kotlin.CharSequence> origin=null reflectionTarget='public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
           invoke: FUN[737, 748] LOCAL_FUNCTION_FOR_LAMBDA name:bar2 visibility:local modality:FINAL returnType:kotlin.CharSequence
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A2<*>
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:kotlin.CharSequence
+            VALUE_PARAMETER[737, 748] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.A2<*>
+            VALUE_PARAMETER[737, 748] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p1 index:1 type:kotlin.CharSequence
             BLOCK_BODY[-1, -1]
               RETURN[-1, -1] type=kotlin.Nothing from='local final fun bar2 (p0: <root>.A2<*>, p1: kotlin.CharSequence): kotlin.CharSequence declared in <root>.box'
                 CALL[737, 748] 'public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2' type=kotlin.CharSequence origin=null
@@ -197,7 +195,7 @@ FILE fqName:<root> fileName:/generticReferences.kt lineStartOffsets: [0, 11, 35,
         RICH_FUNCTION_REFERENCE[783, 789] type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget='public final fun foo3 <T> (x: T of <root>.foo3): T of <root>.foo3 declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction1): R of kotlin.reflect.KFunction1 declared in kotlin.reflect.KFunction1
           invoke: FUN[783, 789] LOCAL_FUNCTION_FOR_LAMBDA name:foo3 visibility:local modality:FINAL returnType:kotlin.String
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:@[ParameterName(name = "x")] kotlin.String
+            VALUE_PARAMETER[783, 789] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:@[ParameterName(name = "x")] kotlin.String
             BLOCK_BODY[-1, -1]
               RETURN[-1, -1] type=kotlin.Nothing from='local final fun foo3 (p0: @[ParameterName(name = "x")] kotlin.String): kotlin.String declared in <root>.box'
                 CALL[783, 789] 'public final fun foo3 <T> (x: T of <root>.foo3): T of <root>.foo3 declared in <root>' type=kotlin.String origin=null
@@ -207,8 +205,8 @@ FILE fqName:<root> fileName:/generticReferences.kt lineStartOffsets: [0, 11, 35,
         RICH_FUNCTION_REFERENCE[803, 819] type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A3<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget='public final fun foo3 <T> (<this>: <root>.A3<T of <root>.foo3>, x: T of <root>.foo3): T of <root>.foo3 declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
           invoke: FUN[803, 819] LOCAL_FUNCTION_FOR_LAMBDA name:foo3 visibility:local modality:FINAL returnType:kotlin.String
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A3<kotlin.String>
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.String
+            VALUE_PARAMETER[803, 819] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.A3<kotlin.String>
+            VALUE_PARAMETER[803, 819] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.String
             BLOCK_BODY[-1, -1]
               RETURN[-1, -1] type=kotlin.Nothing from='local final fun foo3 (p0: <root>.A3<kotlin.String>, p1: @[ParameterName(name = "x")] kotlin.String): kotlin.String declared in <root>.box'
                 CALL[803, 819] 'public final fun foo3 <T> (<this>: <root>.A3<T of <root>.foo3>, x: T of <root>.foo3): T of <root>.foo3 declared in <root>' type=kotlin.String origin=null
@@ -219,21 +217,20 @@ FILE fqName:<root> fileName:/generticReferences.kt lineStartOffsets: [0, 11, 35,
         RICH_FUNCTION_REFERENCE[833, 844] type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A3<*>, kotlin.Comparable<*>, kotlin.Comparable<*>> origin=null reflectionTarget='public final fun foo3 <T> (<this>: <root>.A3<T of <root>.foo3>, x: T of <root>.foo3): T of <root>.foo3 declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
           invoke: FUN[833, 844] LOCAL_FUNCTION_FOR_LAMBDA name:foo3 visibility:local modality:FINAL returnType:kotlin.Comparable<*>
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A3<*>
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:kotlin.Comparable<*>
+            VALUE_PARAMETER[833, 844] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.A3<*>
+            VALUE_PARAMETER[833, 844] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p1 index:1 type:kotlin.Comparable<*>
             BLOCK_BODY[-1, -1]
               RETURN[-1, -1] type=kotlin.Nothing from='local final fun foo3 (p0: <root>.A3<*>, p1: kotlin.Comparable<*>): kotlin.Comparable<*> declared in <root>.box'
                 CALL[833, 844] 'public final fun foo3 <T> (<this>: <root>.A3<T of <root>.foo3>, x: T of <root>.foo3): T of <root>.foo3 declared in <root>' type=kotlin.Comparable<*> origin=null
                   TYPE_ARG T: kotlin.Comparable<*>
-                  ARG <this>: TYPE_OP[833, 844] type=<root>.A3<kotlin.Comparable<*>> origin=IMPLICIT_CAST typeOperand=<root>.A3<kotlin.Comparable<*>>
-                    GET_VAR[833, 844] 'p0: <root>.A3<*> declared in <root>.box.foo3' type=<root>.A3<*> origin=null
+                  ARG <this>: GET_VAR[833, 844] 'p0: <root>.A3<*> declared in <root>.box.foo3' type=<root>.A3<*> origin=null
                   ARG x: GET_VAR[833, 844] 'p1: kotlin.Comparable<*> declared in <root>.box.foo3' type=kotlin.Comparable<*> origin=null
       VAR[849, 874] name:t4 type:kotlin.reflect.KFunction2<<root>.A3<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> [val]
         RICH_FUNCTION_REFERENCE[858, 874] type=kotlin.reflect.KFunction2<<root>.A3<kotlin.String>, @[ParameterName(name = "x")] kotlin.String, kotlin.String> origin=null reflectionTarget='public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
           invoke: FUN[858, 874] LOCAL_FUNCTION_FOR_LAMBDA name:bar3 visibility:local modality:FINAL returnType:kotlin.String
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A3<kotlin.String>
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.String
+            VALUE_PARAMETER[858, 874] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.A3<kotlin.String>
+            VALUE_PARAMETER[858, 874] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p1 index:1 type:@[ParameterName(name = "x")] kotlin.String
             BLOCK_BODY[-1, -1]
               RETURN[-1, -1] type=kotlin.Nothing from='local final fun bar3 (p0: <root>.A3<kotlin.String>, p1: @[ParameterName(name = "x")] kotlin.String): kotlin.String declared in <root>.box'
                 CALL[858, 874] 'public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3' type=kotlin.String origin=null
@@ -243,8 +240,8 @@ FILE fqName:<root> fileName:/generticReferences.kt lineStartOffsets: [0, 11, 35,
         RICH_FUNCTION_REFERENCE[888, 899] type=kotlin.reflect.KFunction2<<root>.A3<*>, kotlin.Comparable<*>, kotlin.Comparable<*>> origin=null reflectionTarget='public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
           invoke: FUN[888, 899] LOCAL_FUNCTION_FOR_LAMBDA name:bar3 visibility:local modality:FINAL returnType:kotlin.Comparable<*>
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p0 index:0 type:<root>.A3<*>
-            VALUE_PARAMETER[-1, -1] kind:Regular name:p1 index:1 type:kotlin.Comparable<*>
+            VALUE_PARAMETER[888, 899] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.A3<*>
+            VALUE_PARAMETER[888, 899] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p1 index:1 type:kotlin.Comparable<*>
             BLOCK_BODY[-1, -1]
               RETURN[-1, -1] type=kotlin.Nothing from='local final fun bar3 (p0: <root>.A3<*>, p1: kotlin.Comparable<*>): kotlin.Comparable<*> declared in <root>.box'
                 CALL[888, 899] 'public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3' type=kotlin.Comparable<*> origin=null

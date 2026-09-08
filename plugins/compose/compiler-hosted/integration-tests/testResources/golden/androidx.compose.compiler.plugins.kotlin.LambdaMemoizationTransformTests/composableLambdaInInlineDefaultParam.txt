@@ -27,7 +27,7 @@ fun <T: Any> NavGraphBuilder.bottomSheet(noinline dragHandle: Function2<Composer
     %composer.skipToGroupEnd()
   }
 }
-) { }
+ as Function2<Composer, Int, Unit>) { }
 internal object ComposableSingletons%TestKt {
   val lambda%-355041365: Function2<Composer, Int, Unit>?
     get() {

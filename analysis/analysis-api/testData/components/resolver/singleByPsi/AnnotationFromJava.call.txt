@@ -1,5 +1,5 @@
 KtNameReferenceExpression(137,152): 'MyRestrictedApi'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

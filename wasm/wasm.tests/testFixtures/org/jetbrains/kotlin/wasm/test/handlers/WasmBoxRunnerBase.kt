@@ -30,10 +30,10 @@ abstract class WasmBoxRunnerBase(
         listOfNotNull(WasmVM.V8)
     } else {
         // KT-82392 [Wasm] Investigate and fix JSC test run on windows
-        val jscOfNotWindows = WasmVM.JavaScriptCore.takeIf {
-            !System.getProperty("os.name").startsWith("Windows", ignoreCase = true)
-        }
-        listOfNotNull(WasmVM.V8, WasmVM.SpiderMonkey, jscOfNotWindows)
+        val isNotWindows = !System.getProperty("os.name").startsWith("Windows", ignoreCase = true)
+        val isForcedOnWindows = System.getProperty("javascript.engine.JavaScriptCore.EnableOnWindows") == "true"
+        val jscIfNeeded = WasmVM.JavaScriptCore.takeIf { isNotWindows || isForcedOnWindows }
+        listOfNotNull(WasmVM.V8, WasmVM.SpiderMonkey, jscIfNeeded)
     }
 
     fun saveAdditionalFilesAndRun(

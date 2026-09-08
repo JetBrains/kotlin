@@ -1,6 +1,7 @@
 @_implementationOnly import KotlinBridges_SetExport
 import KotlinRuntime
 import KotlinRuntimeSupport
+import KotlinStdlib
 
 public protocol Foo: KotlinRuntime.KotlinBase, SetExport._Foo {
 }
@@ -14,6 +15,9 @@ public var testSetFoo: Swift.Never {
     get {
         fatalError()
     }
+}
+public func foo() -> any ExportedKotlinPackages.kotlin.collections.MutableSet {
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___foo(), conformsTo: ExportedKotlinPackages.kotlin.collections.MutableSet.Type.self) as! any ExportedKotlinPackages.kotlin.collections.MutableSet
 }
 public func testOptSetInt(
     s: Swift.Set<Swift.Int32>?

@@ -16,7 +16,12 @@ open class Cousin: overrides.Parent {
     public override init(
         value: Swift.String
     ) {
-        let __kt = __root___Cousin_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == overrides_across_modules.Cousin.self {
+             __kt = __root___Cousin_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Cousin_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(__kt, value); return () }()
     }

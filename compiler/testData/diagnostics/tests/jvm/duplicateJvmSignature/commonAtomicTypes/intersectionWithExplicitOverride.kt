@@ -29,11 +29,11 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.atomics.AtomicInt
 
 class IntersectionWithExplicitOverride: KotlinInterface, JavaClass() {
-    override <!ACCIDENTAL_OVERRIDE!>fun foo(a: AtomicInt) {}<!>
+    <!ACCIDENTAL_OVERRIDE!>override fun foo(a: AtomicInt)<!> {}
 }
 
 class IntersectionWithExplicitOverride2: KotlinInterface, JavaClass() {
-    override <!ACCIDENTAL_OVERRIDE!>fun foo(a: AtomicInteger) {}<!>
+    <!ACCIDENTAL_OVERRIDE!>override fun foo(a: AtomicInteger)<!> {}
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, functionDeclaration, getter,

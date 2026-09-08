@@ -616,7 +616,7 @@ internal object ArgumentCheckingProcessor {
             argumentTypeWithInvoke.unwrapLowerBound()
                 .fastCorrespondingSupertypes(expectedFunctionType.typeConstructor())
                 ?.firstOrNull() as? ConeClassLikeType ?: return null
-        }
+        }.withNullability(expectedFunctionType.isMarkedNullable, c.session.typeContext)
 
         val typeArguments =
             functionType.typeArguments.map { it.type ?: c.session.builtinTypes.nullableAnyType.coneType }

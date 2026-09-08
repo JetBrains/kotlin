@@ -25,6 +25,7 @@ kotlin {
 
     linuxX64("linux64")
     mingwX64("mingw64")
+    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
     macosX64("macos64")
     macosArm64("macosArm64")
 

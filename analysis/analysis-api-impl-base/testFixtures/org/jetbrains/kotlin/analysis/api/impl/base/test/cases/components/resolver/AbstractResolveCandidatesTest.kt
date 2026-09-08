@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compare
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -21,11 +20,14 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
     override val resolveKind: String get() = "candidates"
 
-    @OptIn(KtExperimentalApi::class)
     override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String = analyzeForTest(mainElement) {
         val candidates = collectCallCandidates(mainElement)
         val candidatesAgain = collectCallCandidates(mainElement)
         val callAttempt = (mainElement as? KtResolvableCall)?.tryResolveCall()
+
+        if (mainElement is KtResolvableCall) {
+            checkConsistencyWithObsoleteApi(mainElement, candidates.asKaCallCandidates(), testServices)
+        }
 
         ignoreStabilityIfNeeded {
             assertStableSymbolResult(testServices, candidates.asKaCallCandidates(), candidatesAgain.asKaCallCandidates())
@@ -46,7 +48,7 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
         candidates: List<KaCallCandidate>,
         testServices: TestServices,
     ) {
-        val resolvedCall = callAttempt?.successfulCall
+        val resolvedCall = callAttempt?.successful
         if (candidates.isEmpty()) {
             testServices.assertions.assertEquals(null, resolvedCall) {
                 "Inconsistency between candidates and resolved call. " +
@@ -70,9 +72,36 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
     }
 
     /**
+     * [org.jetbrains.kotlin.analysis.api.components.KaResolver.resolveToCallCandidates] is the obsolete counterpart of
+     * [KtResolvableCall.collectCallCandidates]. It has to report the same candidates, and it must not fail on calls which have
+     * no legacy [KaCall] counterpart, such as callable references (KT-88489).
+     */
+    context(_: KaSession)
+    private fun checkConsistencyWithObsoleteApi(
+        element: KtElement,
+        candidates: List<KaCallCandidate>,
+        testServices: TestServices,
+    ) {
+        val obsoleteCandidates = element.resolveToCallCandidates().asKaCallCandidates()
+        testServices.assertions.assertEquals(candidates.renderForComparison(), obsoleteCandidates.renderForComparison()) {
+            "Inconsistency between 'collectCallCandidates' and the obsolete 'resolveToCallCandidates'"
+        }
+    }
+
+    /**
+     * Renders only the properties which survive the conversion to the obsolete API, as the obsolete API represents
+     * some calls differently (e.g., a callable reference is exposed as a simple function or variable access call).
+     */
+    context(_: KaSession)
+    private fun List<KaCallCandidate>.renderForComparison(): String = joinToString(separator = "\n\n") { candidate ->
+        val applicability = if (candidate is KaApplicableCallCandidate) "APPLICABLE" else "INAPPLICABLE"
+        "$applicability(isInBestCandidates=${candidate.isInBestCandidates}):\n" +
+                candidate.candidate.symbols.joinToString(separator = "\n") { stringRepresentation(it) }
+    }
+
+    /**
      * Returns either [List]<[KaCallCandidate]> (new API) or [List]<[KaCallCandidateInfo]> (old API).
      */
-    @OptIn(KtExperimentalApi::class)
     context(_: KaSession)
     private fun collectCallCandidates(element: KtElement): List<*> = if (element is KtResolvableCall) {
         element.collectCallCandidates()
@@ -95,13 +124,13 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
     private fun sortCandidates(candidates: List<*>): List<*> = candidates.sortedWith { a, b ->
         val call1 = when (a) {
             is KaCallCandidate -> a.candidate
-            is KaCallCandidateInfo -> a.candidate as KaSingleOrMultiCall
+            is KaCallCandidateInfo -> a.candidate as KaSimpleOrMultiCall
             else -> return@sortedWith 0
         }
 
         val call2 = when (b) {
             is KaCallCandidate -> b.candidate
-            is KaCallCandidateInfo -> b.candidate as KaSingleOrMultiCall
+            is KaCallCandidateInfo -> b.candidate as KaSimpleOrMultiCall
             else -> return@sortedWith 0
         }
 

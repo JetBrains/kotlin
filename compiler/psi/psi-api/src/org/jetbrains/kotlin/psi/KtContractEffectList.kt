@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
 /**
@@ -25,10 +25,17 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
  * }
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtContractEffectList : KtElementImplStub<KotlinPlaceHolderStub<KtContractEffectList>> {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
-    constructor(stub: KotlinPlaceHolderStub<KtContractEffectList>) : super(stub, KtStubBasedElementTypes.CONTRACT_EFFECT_LIST)
+
+    @KtImplementationDetail
+    constructor(stub: KotlinPlaceHolderStub<KtContractEffectList>) : super(stub, KtNodeTypes.CONTRACT_EFFECT_LIST)
 }
 
+/**
+ * Returns the individual contract effects declared in this list, in source order.
+ */
 fun KtContractEffectList.getContractEffects(): List<KtContractEffect> =
-    getStubOrPsiChildrenAsList(KtStubBasedElementTypes.CONTRACT_EFFECT)
+    getStubOrPsiChildren(KtNodeTypes.CONTRACT_EFFECT, KtContractEffect.EMPTY_ARRAY).asList()

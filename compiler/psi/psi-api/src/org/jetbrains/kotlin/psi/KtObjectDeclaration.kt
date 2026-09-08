@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub
@@ -26,9 +26,13 @@ import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub
  * // The entire object
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtObjectDeclaration : KtClassOrObject {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
-    constructor(stub: KotlinObjectStub) : super(stub, KtStubBasedElementTypes.OBJECT_DECLARATION)
+
+    @KtImplementationDetail
+    constructor(stub: KotlinObjectStub) : super(stub, KtNodeTypes.OBJECT_DECLARATION)
 
     private val _stub: KotlinObjectStub?
         get() = greenStub as? KotlinObjectStub
@@ -47,6 +51,9 @@ class KtObjectDeclaration : KtClassOrObject {
     @OptIn(KtNonPublicApi::class)
     override fun setName(@NonNls name: String): PsiElement = KtPsiMutationService.getInstance().setObjectDeclarationName(this, name)
 
+    /**
+     * Returns `true` if this is a companion object (declared with the `companion` modifier).
+     */
     fun isCompanion(): Boolean = hasModifier(KtTokens.COMPANION_KEYWORD)
 
     override fun getTextOffset(): Int = nameIdentifier?.textRange?.startOffset
@@ -56,11 +63,25 @@ class KtObjectDeclaration : KtClassOrObject {
         return visitor.visitObjectDeclaration(this, data)
     }
 
+    /**
+     * Returns `true` if this object is the body of an object literal (`object : Foo { ... }`) rather than a named or companion
+     * object declaration.
+     */
     fun isObjectLiteral(): Boolean = _stub?.isObjectLiteral ?: (parent is KtObjectLiteralExpression)
 
+    /**
+     * Returns the `object` keyword, or `null` if it is absent in incomplete code.
+     */
     fun getObjectKeyword(): PsiElement? = findChildByType(KtTokens.OBJECT_KEYWORD)
 
     override fun getIdentifyingElement(): PsiElement? = getObjectKeyword()
 
+    /** Always empty: an object declaration cannot itself declare companion objects. */
     override fun getCompanionObjects(): List<KtObjectDeclaration> = emptyList()
+
+    companion object {
+        /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+        @JvmField
+        val EMPTY_ARRAY: Array<KtObjectDeclaration> = emptyArray()
+    }
 }

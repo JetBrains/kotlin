@@ -151,6 +151,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConcatWithKeys
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConvertAsColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConvertAsFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ConvertNotNull
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataColumnValueCounts
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameAddAll
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderFill
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderFillIndexed
@@ -165,6 +166,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderRandomInt
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderRandomIntRange
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderRandomLong
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderRandomLongRange
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameConcat
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameCumSum
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameCumSum0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameGenerator
@@ -703,6 +705,7 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "AggregateRow" -> AggregateRow()
         "DataFrameOf3" -> DataFrameOf3()
         "ValueCounts" -> ValueCounts()
+        "DataColumnValueCounts" -> DataColumnValueCounts()
         "RenameToCamelCase" -> RenameToCamelCase()
         "RenameToCamelCaseClause" -> RenameToCamelCaseClause()
         "MoveUnder0" -> MoveUnder0()
@@ -786,6 +789,7 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "GatherExplodeLists" -> GatherExplodeLists()
         "GatherValuesInto" -> GatherValuesInto()
         "GatherKeysInto" -> GatherKeysInto()
+        "DataFrameConcat" -> DataFrameConcat()
         "ConcatWithKeys" -> ConcatWithKeys()
         "DataFrameUnfold" -> DataFrameUnfold()
         "StringInvokeUntyped" -> StringInvokeUntyped()

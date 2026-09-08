@@ -6,7 +6,6 @@ val disambiguationAttribute = Attribute.of("disambiguationAttribute", String::cl
 
 kotlin {
     jvm {
-        withJava()
         attributes { attribute(disambiguationAttribute, "plainJvm") }
     }
 

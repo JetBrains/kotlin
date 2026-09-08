@@ -20,7 +20,7 @@ internal interface ReflectKProperty<out V> : ReflectKCallable<V>, KProperty<V>, 
 
     val javaField: Field?
 
-    override fun findJavaDeclaration(): GenericDeclaration? = container.findMethodBySignature(signature)
+    override fun findJavaDeclaration(): GenericDeclaration? = originalContainer.findMethodBySignature(signature)
 
     override fun rebind(boundReceiver: Any?): ReflectKCallable<V> =
         when {

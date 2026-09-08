@@ -15,23 +15,25 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.resolve.isSubclassOf
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.OLD_PARCELER_ID
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELABLE_ID
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_CLASS_IDS
+import org.jetbrains.kotlin.parcelize.fir.parcelizeService
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-class FirParcelizeClassChecker(private val parcelizeAnnotations: List<ClassId>) : FirClassChecker(MppCheckerKind.Platform) {
+object FirParcelizeClassChecker : FirClassChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
         checkParcelableClass(declaration, context, reporter)
@@ -40,32 +42,42 @@ class FirParcelizeClassChecker(private val parcelizeAnnotations: List<ClassId>) 
 
     private fun checkParcelableClass(klass: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val symbol = klass.symbol
-        if (!symbol.isParcelize(context.session, parcelizeAnnotations)) return
+        if (!symbol.isParcelize(context.session)) return
         val source = klass.source ?: return
         val classKind = klass.classKind
 
-        if (klass is FirRegularClass) {
-            if (classKind == ClassKind.ANNOTATION_CLASS || classKind == ClassKind.INTERFACE && !klass.isSealed) {
-                reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_SHOULD_BE_CLASS, context)
-                return
-            }
+        when (klass) {
+            is FirRegularClass -> {
+                if (classKind == ClassKind.ANNOTATION_CLASS) {
+                    reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_CANT_BE_ANNOTATION_CLASS, context)
+                    return
+                }
 
-            klass.companionObjectSymbol?.let { companionSymbol ->
-                if (companionSymbol.classId.shortClassName == CREATOR_NAME) {
-                    reporter.reportOn(companionSymbol.source, KtErrorsParcelize.CREATOR_DEFINITION_IS_NOT_ALLOWED, context)
+                if (classKind == ClassKind.INTERFACE && !klass.isSealed) {
+                    reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_CANT_BE_NON_SEALED_INTERFACE, context)
+                    return
+                }
+
+                klass.companionObjectSymbol?.let { companionSymbol ->
+                    if (companionSymbol.classId.shortClassName == CREATOR_NAME) {
+                        reporter.reportOn(companionSymbol.source, KtErrorsParcelize.CREATOR_DEFINITION_IS_NOT_ALLOWED, context)
+                    }
+                }
+
+                if (klass.isInner) {
+                    reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_CANT_BE_INNER_CLASS, context)
+                }
+
+                if (klass.isLocal) {
+                    reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_CANT_BE_LOCAL_CLASS, context)
                 }
             }
-
-            if (klass.isInner) {
-                reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_CANT_BE_INNER_CLASS, context)
+            is FirAnonymousObject -> {
+                if (classKind != ClassKind.ENUM_ENTRY) {
+                    reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_CANT_BE_ANONYMOUS_OBJECT, context)
+                    return
+                }
             }
-
-            if (klass.isLocal) {
-                reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_CANT_BE_LOCAL_CLASS, context)
-            }
-        } else if (classKind != ClassKind.ENUM_ENTRY) {
-            reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_SHOULD_BE_CLASS, context)
-            return
         }
 
         if (classKind == ClassKind.CLASS && klass.isAbstract) {
@@ -112,12 +124,13 @@ class FirParcelizeClassChecker(private val parcelizeAnnotations: List<ClassId>) 
 }
 
 @OptIn(ExperimentalContracts::class)
-fun FirClassSymbol<*>?.isParcelize(session: FirSession, parcelizeAnnotations: List<ClassId>): Boolean {
+fun FirClassSymbol<*>?.isParcelize(session: FirSession): Boolean {
     contract {
         returns(true) implies (this@isParcelize != null)
     }
 
     if (this == null) return false
+    val parcelizeAnnotations = session.parcelizeService.parcelizeAnnotations
     return checkParcelizeClassSymbols(this, session) { symbol ->
         symbol.resolvedAnnotationsWithClassIds.any { it.toAnnotationClassId(session) in parcelizeAnnotations }
     }

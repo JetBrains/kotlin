@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.backend.konan.optimizations
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
+import org.jetbrains.kotlin.backend.common.lower.FinallyBlocksLowering
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.getInlinedClassNative
 import org.jetbrains.kotlin.backend.konan.logMultiple
@@ -62,7 +65,8 @@ import org.jetbrains.kotlin.utils.forEachBit
 import org.jetbrains.kotlin.utils.mapEachBit
 import java.util.BitSet
 
-internal class ComputeTypesPass(val context: NativeBackendContext) : BodyLoweringPass {
+@PhasePrerequisites(FinallyBlocksLowering::class)
+internal class ComputeTypesPass(val context: LoweringContext) : BodyLoweringPass {
     private val unitType = context.irBuiltIns.unitType
 
     private fun IrClass.superClassesHierarchy(): List<IrClass> {
@@ -357,8 +361,10 @@ internal class ComputeTypesPass(val context: NativeBackendContext) : BodyLowerin
                     breaksCFMPInfos[loop] = breaksCFMPInfo
                     continuesCFMPInfos[loop] = continuesCFMPInfo
                     val vvAtBodyEnd = loop.body?.accept(this, vvAtLoopStart) ?: vvAtLoopStart
-                    val vvAtConditionStart =
-                            controlFlowMergePoint(continuesCFMPInfo, dummyUnitExpression, vvAtBodyEnd)
+                    controlFlowMergePoint(continuesCFMPInfo, dummyUnitExpression, vvAtBodyEnd)
+                    // The condition is reached both by falling through the body and by every continue,
+                    // so the merged values must be taken here, not just the fall-through ones.
+                    val vvAtConditionStart = continuesCFMPInfo.variablesValues
                     val vvAtConditionEnd = loop.condition.accept(this, vvAtConditionStart)
                     vvAtLoopStart = vvAtConditionEnd
                     if (iter > 1) // Merge starting with the second iteration since the first is always executed.
@@ -369,7 +375,10 @@ internal class ComputeTypesPass(val context: NativeBackendContext) : BodyLowerin
                     if (vvAtLoopStart == prevVVAtLoopStart) {
                         breaksCFMPInfos.remove(loop)
                         continuesCFMPInfos.remove(loop)
-                        return controlFlowMergePoint(breaksCFMPInfo, dummyUnitExpression, vvAtConditionEnd)
+                        // Same goes for the loop's exit: it is reached both by the condition becoming false
+                        // and by every break.
+                        controlFlowMergePoint(breaksCFMPInfo, dummyUnitExpression, vvAtConditionEnd)
+                        return breaksCFMPInfo.variablesValues
                     }
                 }
             }

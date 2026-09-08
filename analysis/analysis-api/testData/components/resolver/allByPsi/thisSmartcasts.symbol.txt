@@ -17,13 +17,13 @@ KtProperty(21,36): 'var baz: String'
   null
 
 KtTypeReference(30,36): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(30,36): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -32,7 +32,7 @@ KtNameReferenceExpression(30,36): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -44,13 +44,13 @@ KtParameterList(48,50): '()'
   null
 
 KtTypeReference(52,59): 'Boolean'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
 
 KtUserType(52,59): 'Boolean'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
@@ -59,7 +59,7 @@ KtNameReferenceExpression(52,59): 'Boolean'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
     ]
@@ -74,19 +74,19 @@ KtSuperTypeList(85,89): 'Base'
   null
 
 KtSuperTypeEntry(85,89): 'Base'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Base
     ]
 
 KtTypeReference(85,89): 'Base'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Base
     ]
 
 KtUserType(85,89): 'Base'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Base
     ]
@@ -95,7 +95,7 @@ KtNameReferenceExpression(85,89): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Base
     ]
@@ -122,13 +122,13 @@ KtNamedFunction(134,444): 'fun Any.test() {'
   null
 
 KtTypeReference(138,141): 'Any'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
     ]
 
 KtUserType(138,141): 'Any'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
     ]
@@ -137,7 +137,7 @@ KtNameReferenceExpression(138,141): 'Any'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
     ]
@@ -158,7 +158,7 @@ KtIsExpression(182,194): 'this is Base'
   null
 
 KtThisExpression(182,186): 'this'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference
@@ -193,7 +193,7 @@ KtNameReferenceExpression(182,186): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference
@@ -231,13 +231,13 @@ KtOperationReferenceExpression(187,189): 'is'
   null
 
 KtTypeReference(190,194): 'Base'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Base
     ]
 
 KtUserType(190,194): 'Base'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Base
     ]
@@ -246,7 +246,7 @@ KtNameReferenceExpression(190,194): 'Base'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Base
     ]
@@ -258,19 +258,19 @@ KtBlockExpression(196,442): '{'
   null
 
 KtBinaryExpression(206,220): 'this.baz = baz'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var baz: kotlin.String
     ]
 
 KtDotQualifiedExpression(206,214): 'this.baz'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var baz: kotlin.String
     ]
 
 KtThisExpression(206,210): 'this'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference
@@ -305,7 +305,7 @@ KtNameReferenceExpression(206,210): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference
@@ -340,7 +340,7 @@ KtNameReferenceExpression(211,214): 'baz'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var baz: kotlin.String
     ]
@@ -355,13 +355,13 @@ KtNameReferenceExpression(217,220): 'baz'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var baz: kotlin.String
     ]
 
 KtBinaryExpression(229,238): 'baz = baz'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var baz: kotlin.String
     ]
@@ -370,7 +370,7 @@ KtNameReferenceExpression(229,232): 'baz'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var baz: kotlin.String
     ]
@@ -385,13 +385,13 @@ KtNameReferenceExpression(235,238): 'baz'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var baz: kotlin.String
     ]
 
 KtCallExpression(247,252): 'baz()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Base.baz(<dispatch receiver>: Base): kotlin.Boolean
     ]
@@ -400,7 +400,7 @@ KtNameReferenceExpression(247,250): 'baz'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Base.baz(<dispatch receiver>: Base): kotlin.Boolean
     ]
@@ -418,7 +418,7 @@ KtIsExpression(294,306): 'this is Test'
   null
 
 KtThisExpression(294,298): 'this'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference
@@ -453,7 +453,7 @@ KtNameReferenceExpression(294,298): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference
@@ -491,13 +491,13 @@ KtOperationReferenceExpression(299,301): 'is'
   null
 
 KtTypeReference(302,306): 'Test'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Test
     ]
 
 KtUserType(302,306): 'Test'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Test
     ]
@@ -506,7 +506,7 @@ KtNameReferenceExpression(302,306): 'Test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Test
     ]
@@ -518,19 +518,19 @@ KtBlockExpression(308,437): '{'
   null
 
 KtBinaryExpression(322,336): 'this.baz = baz'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var baz: kotlin.String
     ]
 
 KtDotQualifiedExpression(322,330): 'this.baz'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var baz: kotlin.String
     ]
 
 KtThisExpression(322,326): 'this'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference
@@ -565,7 +565,7 @@ KtNameReferenceExpression(322,326): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference
@@ -600,7 +600,7 @@ KtNameReferenceExpression(327,330): 'baz'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var baz: kotlin.String
     ]
@@ -615,13 +615,13 @@ KtNameReferenceExpression(333,336): 'baz'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var baz: kotlin.String
     ]
 
 KtBinaryExpression(349,358): 'baz = baz'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var baz: kotlin.String
     ]
@@ -630,7 +630,7 @@ KtNameReferenceExpression(349,352): 'baz'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var baz: kotlin.String
     ]
@@ -645,25 +645,25 @@ KtNameReferenceExpression(355,358): 'baz'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var baz: kotlin.String
     ]
 
 KtBinaryExpression(372,386): 'this.foo = foo'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var foo: kotlin.Int
     ]
 
 KtDotQualifiedExpression(372,380): 'this.foo'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var foo: kotlin.Int
     ]
 
 KtThisExpression(372,376): 'this'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference
@@ -698,7 +698,7 @@ KtNameReferenceExpression(372,376): 'this'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         anchorPsi: KtTypeReference
@@ -733,7 +733,7 @@ KtNameReferenceExpression(377,380): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var foo: kotlin.Int
     ]
@@ -748,13 +748,13 @@ KtNameReferenceExpression(383,386): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var foo: kotlin.Int
     ]
 
 KtBinaryExpression(399,408): 'foo = foo'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var foo: kotlin.Int
     ]
@@ -763,7 +763,7 @@ KtNameReferenceExpression(399,402): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var foo: kotlin.Int
     ]
@@ -778,13 +778,13 @@ KtNameReferenceExpression(405,408): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var foo: kotlin.Int
     ]
 
 KtCallExpression(422,427): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Test.foo(<dispatch receiver>: Test): kotlin.Unit
     ]
@@ -793,7 +793,7 @@ KtNameReferenceExpression(422,425): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Test.foo(<dispatch receiver>: Test): kotlin.Unit
     ]

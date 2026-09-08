@@ -16,7 +16,7 @@ KtFile: emptyEnum.kt
       PsiWhiteSpace('\n    ')
       PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')

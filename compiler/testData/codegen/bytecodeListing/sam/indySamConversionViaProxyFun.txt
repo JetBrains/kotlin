@@ -1,11 +1,11 @@
 @kotlin.Metadata
 public final class<null>  IndySamConversionViaProxyFun_ktKt {
     // source: 'indySamConversionViaProxyFun.kt.kt'
+    private final static <()Ljava/util/Map<Ljava/lang/String;Ljava/lang/String;>;> method test$mutableMapOf(): java.util.Map
     public final static <<U:Ljava/lang/Object;>(LSam4<TU;>;)V> method use4(@org.jetbrains.annotations.NotNull p0: Sam4): void
     public final static <null> method ifn(): void
     private final static <null> method test$ifn(): void
     private final static <null> method test$intArrayOf(p0: int[]): int[]
-    private final static <null> method test$mutableMapOf(): java.util.Map
     private final static <null> method test$plus$0(p0: java.lang.String, p1: java.lang.Object): java.lang.String
     private final static <null> method test$plus$1(p0: java.lang.String, p1: java.lang.Object): java.lang.String
     private final static <null> method test$plus(p0: java.lang.String, p1: java.lang.Object): java.lang.String

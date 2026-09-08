@@ -128,7 +128,7 @@ KtDestructuringDeclaration(229,265): '[val first, var second: String,] = x'
   null
 
 KtDestructuringDeclarationEntry(230,239): 'val first'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -148,7 +148,7 @@ KtDestructuringDeclarationEntry(230,239): 'val first'
       valueArgumentMapping = {}
 
 KtDestructuringDeclarationEntry(241,259): 'var second: String'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -177,7 +177,7 @@ KtNameReferenceExpression(253,259): 'String'
   null
 
 KtNameReferenceExpression(264,265): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -212,7 +212,7 @@ KtDestructuringDeclaration(284,304): '[var first: Int] = x'
   null
 
 KtDestructuringDeclarationEntry(285,299): 'var first: Int'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -241,7 +241,7 @@ KtNameReferenceExpression(296,299): 'Int'
   null
 
 KtNameReferenceExpression(303,304): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -276,12 +276,12 @@ KtDestructuringDeclaration(323,338): '[val first] = y'
   null
 
 KtDestructuringDeclarationEntry(324,333): 'val first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1' on receiver of type 'NonDataTuple'.>
 
 KtNameReferenceExpression(337,338): 'y'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -316,7 +316,7 @@ KtDestructuringDeclaration(357,368): '[val first]'
   null
 
 KtDestructuringDeclarationEntry(358,367): 'val first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
 
@@ -430,7 +430,7 @@ KtDestructuringDeclaration(427,459): '[val first, val second: String,]'
   null
 
 KtDestructuringDeclarationEntry(428,437): 'val first'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -450,7 +450,7 @@ KtDestructuringDeclarationEntry(428,437): 'val first'
       valueArgumentMapping = {}
 
 KtDestructuringDeclarationEntry(439,457): 'val second: String'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -482,7 +482,7 @@ KtContainerNode(463,464): 'x'
   null
 
 KtNameReferenceExpression(463,464): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -566,7 +566,7 @@ KtDestructuringDeclaration(478,494): '[val first: Int]'
   null
 
 KtDestructuringDeclarationEntry(479,493): 'val first: Int'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -598,7 +598,7 @@ KtContainerNode(498,499): 'x'
   null
 
 KtNameReferenceExpression(498,499): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -622,13 +622,13 @@ KtBlockExpression(501,503): '{}'
 
 KtForExpression(508,541): 'for ([val first: String] in y) {}'
   KaForLoopCallResolutionAttempt:
-    hasNextCallAttempt = KaCallResolutionError:
+    hasNextCallAttempt = KaSimpleCallResolutionError:
       candidateCalls = []
       diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hasNext'.>
-    iteratorCallAttempt = KaCallResolutionError:
+    iteratorCallAttempt = KaSimpleCallResolutionError:
       candidateCalls = []
       diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator' on receiver of type 'NonDataTuple'.>
-    nextCallAttempt = KaCallResolutionError:
+    nextCallAttempt = KaSimpleCallResolutionError:
       candidateCalls = []
       diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next'.>
 
@@ -639,7 +639,7 @@ KtDestructuringDeclaration(513,532): '[val first: String]'
   null
 
 KtDestructuringDeclarationEntry(514,531): 'val first: String'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
 
@@ -656,7 +656,7 @@ KtContainerNode(536,537): 'y'
   null
 
 KtNameReferenceExpression(536,537): 'y'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -772,7 +772,7 @@ KtBlockExpression(634,636): '{}'
   null
 
 KtCallExpression(642,685): 'foo { [val first, val second: String,] -> }'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -805,7 +805,7 @@ KtCallExpression(642,685): 'foo { [val first, val second: String,] -> }'
       }
 
 KtNameReferenceExpression(642,645): 'foo'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -856,7 +856,7 @@ KtDestructuringDeclaration(648,680): '[val first, val second: String,]'
   null
 
 KtDestructuringDeclarationEntry(649,658): 'val first'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -876,7 +876,7 @@ KtDestructuringDeclarationEntry(649,658): 'val first'
       valueArgumentMapping = {}
 
 KtDestructuringDeclarationEntry(660,678): 'val second: String'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -908,7 +908,7 @@ KtBlockExpression(684,684): ''
   null
 
 KtCallExpression(690,717): 'foo { [val first: Int] -> }'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -941,7 +941,7 @@ KtCallExpression(690,717): 'foo { [val first: Int] -> }'
       }
 
 KtNameReferenceExpression(690,693): 'foo'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -992,7 +992,7 @@ KtDestructuringDeclaration(696,712): '[val first: Int]'
   null
 
 KtDestructuringDeclarationEntry(697,711): 'val first: Int'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1024,7 +1024,7 @@ KtBlockExpression(716,716): ''
   null
 
 KtCallExpression(722,744): 'bar { [val first] -> }'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1057,7 +1057,7 @@ KtCallExpression(722,744): 'bar { [val first] -> }'
       }
 
 KtNameReferenceExpression(722,725): 'bar'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1108,7 +1108,7 @@ KtDestructuringDeclaration(728,739): '[val first]'
   null
 
 KtDestructuringDeclarationEntry(729,738): 'val first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1' on receiver of type 'NonDataTuple'.>
 

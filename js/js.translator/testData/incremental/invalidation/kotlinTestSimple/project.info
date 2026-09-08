@@ -1,0 +1,14 @@
+MODULES: main
+
+STEP 0:
+    libs: main
+    dirty js modules: main
+    dirty js files:   main, main/common, main/m.export, main/m, main/test
+STEP 1:
+    libs: main
+    dirty js modules: main
+    dirty js files:   main/test
+STEP 2:
+    libs: main
+    dirty js modules: main
+    dirty js files:   main/test

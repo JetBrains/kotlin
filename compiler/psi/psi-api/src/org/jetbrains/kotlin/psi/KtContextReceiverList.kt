@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
  */
 @OptIn(KtImplementationDetail::class)
 class KtContextReceiverList : KtContextParameterList {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
+
+    @KtImplementationDetail
     constructor(stub: KotlinPlaceHolderStub<KtContextParameterList>) : super(stub)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {

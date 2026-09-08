@@ -1,4 +1,5 @@
 // MODULE: context
+// COMPILATION_ERRORS
 
 // FILE: context.kt
 const val prefix = "prefix_"

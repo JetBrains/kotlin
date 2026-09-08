@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinBlockStringTemplateEntryStub;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub;
 
@@ -23,13 +24,16 @@ import java.util.List;
  * //            ^______^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtBlockStringTemplateEntry extends KtStringTemplateEntryWithExpression {
+    @KtImplementationDetail
     public KtBlockStringTemplateEntry(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtBlockStringTemplateEntry(@NotNull KotlinBlockStringTemplateEntryStub stub) {
-        super(stub, KtStubBasedElementTypes.LONG_STRING_TEMPLATE_ENTRY);
+        super(stub, KtNodeTypes.LONG_STRING_TEMPLATE_ENTRY);
     }
 
     @Override

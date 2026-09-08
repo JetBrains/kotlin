@@ -9,7 +9,6 @@ def complexLibAttribute = Attribute.of('org.jetbrains.qa.complexlib', String)
 kotlin {
     jvmToolchain(8)
     jvm("jvmWithJava") {
-        withJava()
         attributes { attribute(complexLibAttribute, 'jvmWithJava') }
 
         compilations.all {

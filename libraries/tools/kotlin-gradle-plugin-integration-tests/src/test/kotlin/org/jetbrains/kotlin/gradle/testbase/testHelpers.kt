@@ -213,25 +213,14 @@ fun GradleProject.addPropertyToGradleProperties(
 internal fun TestProject.addArchivesBaseNameCompat(
     archivesBaseName: String,
 ) {
-    if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_5)) {
-        buildGradle.appendText(
-            """
-            |
-            |base {
-            |    archivesName = '$archivesBaseName'
-            |}
-            """.trimMargin()
-        )
-    } else {
-        buildGradle.appendText(
-            """
-            |
-            |base {
-            |    archivesBaseName = '$archivesBaseName'
-            |}
-            """.trimMargin()
-        )
-    }
+    buildGradle.appendText(
+        """
+        |
+        |base {
+        |    archivesName = '$archivesBaseName'
+        |}
+        """.trimMargin()
+    )
 }
 
 /**
@@ -271,12 +260,6 @@ val Throwable.fullMessage
         }
         it
     }.toString()
-
-/**
- * @return `true` if 'withJava()' method should not produce a configuration error.
- */
-internal val TestProject.isWithJavaSupported: Boolean
-    get() = gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_7)
 
 /**
  * Returns a list of subprojects for the [TestProject], explicitly specified by their names.

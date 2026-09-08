@@ -6,7 +6,7 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/ContextReceiversCallableMembers, fqName=ContextReceiversCallableMembers, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ContextReceiversCallableMembers, superNames=[]]
     MODIFIER_LIST[private open]
     CLASS_BODY
-      FUN[fqName=ContextReceiversCallableMembers.function, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=function]
+      FUNCTION[fqName=ContextReceiversCallableMembers.function, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=function]
         MODIFIER_LIST[private]
           CONTEXT_PARAMETER_LIST
             CONTEXT_RECEIVER[label=null]

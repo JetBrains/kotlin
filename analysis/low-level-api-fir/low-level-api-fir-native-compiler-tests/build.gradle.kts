@@ -1,16 +1,13 @@
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
-    id("project-tests-convention")
     id("test-data-manager")
 }
 
 dependencies {
     testFixturesApi(project(":analysis:low-level-api-fir"))
-    testFixturesApi(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
@@ -29,7 +26,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask {
+    testTask(maxHeapSize = testMaxHeapSizeLarge) {
         dependsOn(":dist")
         workingDir = rootDir
     }

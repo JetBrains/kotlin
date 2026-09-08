@@ -474,7 +474,6 @@ class AppleFrameworkIT : KGPBaseTest() {
 
     @DisplayName("Configuration errors reported to Xcode when embedAndSign task requested")
     @OptIn(EnvironmentalVariablesOverride::class)
-    @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_1])
     @GradleTest
     fun shouldReportConfErrorsToXcodeWhenRequestedByEmbedAndSign(
         gradleVersion: GradleVersion,
@@ -482,9 +481,6 @@ class AppleFrameworkIT : KGPBaseTest() {
         nativeProject(
             "sharedAppleFramework",
             gradleVersion,
-            buildOptions = defaultBuildOptions
-                // on Gradle 7 with CC enabled field `libraries` of task `:shared:compileKotlinIosArm64` can't be cached
-                .disableConfigurationCacheForGradle7(gradleVersion),
         ) {
             val environmentVariables = EnvironmentalVariables(
                 "CONFIGURATION" to "debug",
@@ -520,8 +516,6 @@ class AppleFrameworkIT : KGPBaseTest() {
         nativeProject(
             "sharedAppleFramework",
             gradleVersion,
-            buildOptions = defaultBuildOptions
-                .disableConfigurationCacheForGradle7(gradleVersion),
         ) {
             val environmentVariables = EnvironmentalVariables(
                 "CONFIGURATION" to "debug",
@@ -580,8 +574,6 @@ class AppleFrameworkIT : KGPBaseTest() {
         nativeProject(
             "sharedAppleFramework",
             gradleVersion,
-            buildOptions = defaultBuildOptions
-                .disableConfigurationCacheForGradle7(gradleVersion),
         ) {
             val environmentVariables = EnvironmentalVariables(
                 "CONFIGURATION" to "debug",

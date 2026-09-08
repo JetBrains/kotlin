@@ -9,7 +9,6 @@ description = "Kotlin Compiler"
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     // HACK: java plugin makes idea import dependencies on this project as source (with empty sources however),
     // this prevents reindexing of kotlin-compiler.jar after build on every change in compiler modules
@@ -203,6 +202,7 @@ dependencies {
     fatJarContents(commonDependency("com.google.code.findbugs", "jsr305"))
     fatJarContents(libs.vavr)
     fatJarContents(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm")) { isTransitive = false }
+    fatJarContents(project(":kotlin-tooling-core")) { isTransitive = false }
 
     fatJarContents(intellijCore())
     fatJarContents(commonDependency("org.jetbrains.intellij.deps.jna:jna")) { isTransitive = false }
@@ -212,6 +212,7 @@ dependencies {
     fatJarContents(libs.intellij.asm) { isTransitive = false }
     fatJarContents(libs.guava) { isTransitive = false }
     fatJarContents(libs.guava.failureaccess) { isTransitive = false }
+    fatJarContents(libs.opentelemetry.api) { isTransitive = false }
     //Gson is needed for kotlin-build-statistics. Build statistics could be enabled for JPS and Gradle builds. Gson will come from inteliij or KGP.
     proguardLibraries(commonDependency("com.google.code.gson:gson")) { isTransitive = false }
 
@@ -382,7 +383,7 @@ val jar = runtimeJar {
 sourcesJar {
     from {
         CompilerModules.compilerModules.map {
-            project(it).mainSourceSet.allSource
+            project(it).run { commonMainKotlinSourceSet()?.kotlin ?: mainSourceSet.allSource }
         }
     }
 

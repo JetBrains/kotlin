@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
 import java.util.Collections;
@@ -22,13 +23,16 @@ import java.util.List;
  * //         ^_____^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtDynamicType extends KtElementImplStub<KotlinPlaceHolderStub<KtDynamicType>> implements KtTypeElement {
+    @KtImplementationDetail
     public KtDynamicType(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtDynamicType(@NotNull KotlinPlaceHolderStub<KtDynamicType> stub) {
-        super(stub, KtStubBasedElementTypes.DYNAMIC_TYPE);
+        super(stub, KtNodeTypes.DYNAMIC_TYPE);
     }
 
     @Override
@@ -36,6 +40,7 @@ public class KtDynamicType extends KtElementImplStub<KotlinPlaceHolderStub<KtDyn
         return visitor.visitDynamicType(this, data);
     }
 
+    /** Always empty: the {@code dynamic} type has no type arguments. */
     @NotNull
     @Override
     public List<KtTypeReference> getTypeArgumentsAsTypes() {

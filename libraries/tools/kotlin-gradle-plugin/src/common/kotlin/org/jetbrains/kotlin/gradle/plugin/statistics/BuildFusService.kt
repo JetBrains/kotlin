@@ -115,7 +115,7 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
                 val reason = when {
                     project.isInIdeaSync.get() -> "Idea sync is in progress"
                     !project.kotlinPropertiesProvider.enableFusMetricsCollection -> "Fus was disabled for the build"
-                    !project.isCustomLoggerRootPathIsProvided && isCiBuild() -> "CI build is detected via environment variable ${detectedCiProperty()}"
+                    !project.isCustomLoggerRootPathProvided && isCiBuild() -> "CI build is detected via environment variable ${detectedCiProperty()}"
                     else -> "BuildFusService should not be created."
                 }
                 project.logger.debug("Fus metrics won't be collected: $reason.")
@@ -154,7 +154,8 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
                     pluginVersion,
                     isProjectIsolationEnabled,
                     isProjectIsolationRequested,
-                    isConfigurationCacheRequested
+                    isConfigurationCacheRequested,
+                    gradle.startParameter.isBuildCacheEnabled
                 )
             }
 
@@ -256,12 +257,13 @@ class MetricContainer : Serializable {
     fun put(metric: StringMetrics, value: String) = stringMetrics.put(metric, value)
     fun put(metric: BooleanMetrics, value: Boolean) = booleanMetrics.put(metric, value)
     fun put(metric: NumericalMetrics, value: Long) = numericalMetrics.put(metric, value)
-    fun put(metric: StringListMetrics, value: List<String>) = stringListMetrics.put(metric, value)
+    //KT-88448: custom List implementation like BuildList could cause serialization issues and break configuration cache
+    fun put(metric: StringListMetrics, value: List<String>) = stringListMetrics.put(metric, ArrayList(value))
     fun put(metric: StringListMetrics, value: String) = put(metric, listOf(value))
 }
 
 internal val Project.buildServiceShouldBeCreated
-    get() = !isInIdeaSync.get() && kotlinPropertiesProvider.enableFusMetricsCollection && (isCustomLoggerRootPathIsProvided || !isCiBuild())
+    get() = !isInIdeaSync.get() && kotlinPropertiesProvider.enableFusMetricsCollection && (isCustomLoggerRootPathProvided || !isCiBuild())
 
 internal fun BuildFusService.Parameters.finalizeGeneralConfigurationMetrics() {
     if (generalMetricsFinalized.get()) return

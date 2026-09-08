@@ -63,7 +63,7 @@ KtFile: ValNoName.kt
     PsiErrorElement:Expecting property name or receiver type
       <empty list>
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
@@ -88,7 +88,7 @@ KtFile: ValNoName.kt
         PsiErrorElement:Expecting property name or receiver type
           <empty list>
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')
@@ -100,7 +100,7 @@ KtFile: ValNoName.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('bar')
@@ -116,7 +116,7 @@ KtFile: ValNoName.kt
             PsiErrorElement:Expecting property name or receiver type
               <empty list>
           PsiWhiteSpace('\n        ')
-          FUN
+          FUNCTION
             PsiElement(fun)('fun')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('foo')
@@ -190,7 +190,7 @@ KtFile: ValNoName.kt
     PsiErrorElement:Expecting property name or receiver type
       <empty list>
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('baz')
@@ -215,7 +215,7 @@ KtFile: ValNoName.kt
         PsiErrorElement:Expecting property name or receiver type
           <empty list>
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')
@@ -227,7 +227,7 @@ KtFile: ValNoName.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('bar')
@@ -243,7 +243,7 @@ KtFile: ValNoName.kt
             PsiErrorElement:Expecting property name or receiver type
               <empty list>
           PsiWhiteSpace('\n        ')
-          FUN
+          FUNCTION
             PsiElement(fun)('fun')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('foo')

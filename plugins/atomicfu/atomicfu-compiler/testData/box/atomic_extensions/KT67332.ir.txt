@@ -37,8 +37,15 @@ FILE fqName:<root> fileName:/KT67332.kt
         CALL 'internal final fun find (<this>: kotlinx.atomicfu.AtomicRef<<root>.Seg>, callback: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
           ARG <this>: CALL 'public final fun <get-tail> (): kotlinx.atomicfu.AtomicRef<<root>.Seg> declared in <root>.Head' type=kotlinx.atomicfu.AtomicRef<<root>.Seg> origin=GET_PROPERTY
             ARG <this>: GET_VAR '<this>: <root>.Head declared in <root>.Head.bogus' type=<root>.Head origin=IMPLICIT_ARGUMENT
-          ARG callback: FUNCTION_REFERENCE 'private final fun doNothing (): kotlin.Unit declared in <root>.Head' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
-            ARG <this>: GET_VAR '<this>: <root>.Head declared in <root>.Head.bogus' type=<root>.Head origin=IMPLICIT_ARGUMENT
+          ARG callback: RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget='private final fun doNothing (): kotlin.Unit declared in <root>.Head'
+            overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.reflect.KFunction0 declared in kotlin.reflect.KFunction0
+            bound receiver: GET_VAR '<this>: <root>.Head declared in <root>.Head.bogus' type=<root>.Head origin=IMPLICIT_ARGUMENT
+            invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:doNothing visibility:local modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Head
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun doNothing (receiver: <root>.Head): kotlin.Unit declared in <root>.Head.bogus'
+                  CALL 'private final fun doNothing (): kotlin.Unit declared in <root>.Head' type=kotlin.Unit origin=null
+                    ARG <this>: GET_VAR 'receiver: <root>.Head declared in <root>.Head.bogus.doNothing' type=<root>.Head origin=ADAPTED_FUNCTION_REFERENCE
     FUN name:doNothing visibility:private modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Head
       BLOCK_BODY

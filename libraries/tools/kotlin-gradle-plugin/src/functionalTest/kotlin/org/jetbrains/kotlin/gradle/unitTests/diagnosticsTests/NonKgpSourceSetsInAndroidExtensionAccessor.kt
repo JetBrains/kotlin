@@ -8,6 +8,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidExtension
 // Important that this class stays without package, or package different that org.jetbrains.kotlin.
 // Because it simulates access of sourceSets outside KGP plugin. e.g. buildScript
 object NonKgpSourceSetsInAndroidExtensionAccessor {
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     fun KotlinAndroidExtension.accessSourceSets() = sourceSets
 }

@@ -2,7 +2,6 @@ description = "Kotlin Serialization Compiler Plugin (Common)"
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }

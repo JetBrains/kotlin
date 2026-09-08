@@ -271,6 +271,9 @@ object IR_SERIALIZATION : GradleBuildTimeMetric(COMPILER_PERFORMANCE, "Compiler 
 object KLIB_WRITING : GradleBuildTimeMetric(COMPILER_PERFORMANCE, "Compiler Klib writing", name = "KLIB_WRITING") {
     private fun readResolve(): Any = KLIB_WRITING
 }
+object KLIB_METADATA_WRITING : GradleBuildTimeMetric(COMPILER_PERFORMANCE, "Compiler Klib metadata writing", name = "KLIB_METADATA_WRITING") {
+    private fun readResolve(): Any = KLIB_METADATA_WRITING
+}
 object IR_LINKING : GradleBuildTimeMetric(COMPILER_PERFORMANCE, "Compiler IR linking", name = "IR_LINKING") {
     private fun readResolve(): Any = IR_LINKING
 }

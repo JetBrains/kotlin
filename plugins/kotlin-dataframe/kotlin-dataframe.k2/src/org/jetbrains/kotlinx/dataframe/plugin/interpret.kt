@@ -36,8 +36,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlinx.dataframe.annotations.HasSchema
 import org.jetbrains.kotlinx.dataframe.columns.ColumnPath
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.CallShapeData
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.approximateIntersections
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.callShapeData
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnsResolver
@@ -75,8 +76,7 @@ fun <T> KotlinTypeFacade.interpret(
                 firTypeProjection.toConeTypeProjection()
             } else {
                 val type = firTypeProjection.toConeTypeProjection().type ?: session.builtinTypes.nullableAnyType.coneType
-                if (type is ConeIntersectionType) return@forEachIndexed
-                ColumnType(type)
+                ColumnType(type.approximateIntersections())
             }
             put(key, Interpreter.Success(value))
         }

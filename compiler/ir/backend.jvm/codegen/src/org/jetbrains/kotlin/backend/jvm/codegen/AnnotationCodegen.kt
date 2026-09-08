@@ -58,7 +58,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
 
     fun genAnnotations(annotated: IrDeclaration, annotations: List<IrAnnotation> = annotated.annotations) {
         for (annotation in annotations) {
-            val applicableTargets = annotation.annotationClass.getAnnotationTargets().orEmpty()
+            val applicableTargets = annotation.annotationClass.getAllowedAnnotationTargets()
             if (annotated is IrSimpleFunction &&
                 annotated.origin === IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
                 KotlinTarget.FUNCTION !in applicableTargets &&
@@ -355,4 +355,10 @@ internal fun IrClass.applicableJavaTargetSet(): Set<String>? {
         ?.argumentMapping[StandardClassIds.Annotations.ParameterNames.value] as? IrVararg
         ?: return null
     return valueArgument.elements.filterIsInstance<IrGetEnumValue>().map { it.symbol.owner.name.asString() }.toSet()
+}
+
+private fun IrClass.getAllowedAnnotationTargets(): Set<KotlinTarget> {
+    val targets = getAnnotationTargets() ?: return emptySet()
+    // See `FirClassLikeSymbol.getAllowedAnnotationTargets`.
+    return if (isFromJava()) targets + KotlinTarget.EXPRESSION else targets
 }

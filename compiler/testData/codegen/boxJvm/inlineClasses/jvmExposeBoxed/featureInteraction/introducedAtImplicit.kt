@@ -4,7 +4,7 @@
 // JVM_EXPOSE_BOXED
 
 // FILE: Test.kt
-@file:OptIn(ExperimentalStdlibApi::class, ExperimentalVersionOverloading::class)
+@file:OptIn(ExperimentalStdlibApi::class)
 
 class MyClass(@IntroducedAt(version = "3") val property: UInt = 2u)
 

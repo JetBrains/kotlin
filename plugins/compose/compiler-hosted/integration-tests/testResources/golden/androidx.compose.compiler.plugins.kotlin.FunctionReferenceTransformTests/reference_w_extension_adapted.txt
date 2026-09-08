@@ -25,12 +25,13 @@ fun Ref(content: @[ExtensionFunctionType] Function3<Cls, Composer, Int, Unit>, %
     Ref(<block>{
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(false) {
-        @Composable
-        @FunctionKeyMeta(key = 1314640978, startOffset = 151, endOffset = 158)
-        fun Fn(p0: Cls, %composer: Composer?, %changed: Int) {
-          p0.Fn(0, %composer, Cls.%stable or 0b1110 and %changed, 0b0001)
+        ::Fn<kotlin.Function3> {
+          @Composable
+          @FunctionKeyMeta(key = 1314640978, startOffset = 151, endOffset = 158)
+          fun Fn(p0: Cls, %composer: Composer?, %changed: Int) {
+            return p0.Fn(0, %composer, Cls.%stable or 0b1110 and %changed, 0b0001)
+          }
         }
-        ::Fn
       }
       sourceInformationMarkerEnd(%composer)
       tmp0_group

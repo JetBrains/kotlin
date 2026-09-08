@@ -216,7 +216,8 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             dumpFormat = PerformanceManager.DumpFormat.PlainText;
         }
 
-        @NotNull String actualPerfReport = perfManager.createPerformanceReport(dumpFormat);
+        @NotNull String actualPerfReport = perfManager.createPerformanceReport(dumpFormat)
+                .replaceAll("(?m)^(GC time for ).+( is \\d+ ms, \\d+ collections)$", "$1<GC>$2");
 
         assertValueAgnosticEqualsToFile(expectedPerfLogFile, actualPerfReport);
     }

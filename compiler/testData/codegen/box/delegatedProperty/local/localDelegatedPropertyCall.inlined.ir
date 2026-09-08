@@ -43,10 +43,7 @@ FILE fqName:<root> fileName:/localDelegatedPropertyCall.kt lineStartOffsets: [0,
                       ARG <this>: GET_VAR[314, 324] 'val x$delegate: <root>.Delegate declared in <root>.box' type=<root>.Delegate origin=null
                       ARG thiz: CONST[-1, -1] Null type=kotlin.Nothing? value=null
                       ARG prop: RICH_PROPERTY_REFERENCE[314, 324] type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='val x: kotlin.String by (...)'
-                        getter: FUN[314, 324] LOCAL_FUNCTION_FOR_LAMBDA name:<get-x> visibility:local modality:FINAL returnType:kotlin.Nothing
-                          BLOCK_BODY[-1, -1]
-                            CALL[-1, -1] 'internal final fun throwUnsupportedOperationException (message: kotlin.String): kotlin.Nothing declared in kotlin.internal' type=kotlin.Nothing origin=null
-                              ARG message: CONST[-1, -1] String type=kotlin.String value="Not supported for local property reference."
+                        getter: FUN[314, 324] LOCAL_FUNCTION_FOR_LAMBDA name:x visibility:local modality:FINAL returnType:kotlin.String
             CALL[333, 334] 'local final fun <get-x> (): kotlin.String declared in <root>.box' type=kotlin.String origin=GET_LOCAL_PROPERTY
           CATCH[341, 402] parameter=val e: kotlin.UnsupportedOperationException declared in <root>.box
             VAR[348, 380] CATCH_PARAMETER name:e type:kotlin.UnsupportedOperationException [val]

@@ -13,7 +13,6 @@ actual open class A {
     actual open fun foo(a: String, b: String): String = a + b
 }
 
-@OptIn(ExperimentalVersionOverloading::class)
 class B : A() {
     override fun foo(a: String, @IntroducedAt("1") b: String): String = a + b
 }

@@ -26,16 +26,6 @@ class MppJvmWithJavaIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
     ): Unit = doTestJvmWithJava(gradleVersion, testJavaSupportInJvmTargets = false)
 
-    @GradleTest
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_8_3, // Shadow requires Gradle 8.3+
-        maxVersion = TestVersions.Gradle.G_8_6, // last version where 'withJava()' method has warning deprecation
-    )
-    @TestMetadata(value = "new-mpp-lib-and-app")
-    fun testJavaSupportInJvmTargets(
-        gradleVersion: GradleVersion,
-    ): Unit = doTestJvmWithJava(gradleVersion, testJavaSupportInJvmTargets = true)
-
     private fun doTestJvmWithJava(
         gradleVersion: GradleVersion,
         testJavaSupportInJvmTargets: Boolean,
@@ -188,7 +178,7 @@ class MppJvmWithJavaIT : KGPBaseTest() {
                 "clean", "build", "run", "shadowJar",
                 buildOptions = buildOptions
                     .suppressDeprecationWarningsOn("KT-66542: withJava() produces deprecation warning") {
-                        gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_7)
+                        gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_14)
                     }
             ) {
                 val expectedMainClasses =

@@ -23,7 +23,7 @@ public enum J {
 // FILE: K.kt
 
 fun foo(): Int {
-    when (J.create()) {
+    <!WHEN_SUBJECT_CAN_BE_NULL_IN_JAVA!>when<!> (J.create()) {
         J.A -> return 1
         J.B -> return 2
     }

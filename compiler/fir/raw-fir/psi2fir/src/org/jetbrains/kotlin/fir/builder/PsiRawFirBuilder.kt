@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.builder
 
-import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
+import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.childrenOfType
 import com.intellij.util.AstLoadingFilter
@@ -100,11 +100,10 @@ open class PsiRawFirBuilder(
         return this.toKtPsiSourceElement(actualKind)
     }
 
-    @Suppress("DEPRECATION") // KT-78356
     override val PsiElement.elementType: IElementType
         get() {
-            val stubBasedElement = this as? StubBasedPsiElementBase<*>
-            return stubBasedElement?.elementType ?: node.elementType
+            val stubBasedElement = this as? StubBasedPsiElement<*>
+            return stubBasedElement?.iElementType ?: node.elementType
         }
 
     override val PsiElement.asText: String

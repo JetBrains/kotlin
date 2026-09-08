@@ -25,7 +25,7 @@ try {
         throw Error("Expected Error");
     }
 
-    if (e.name !== "RuntimeException") {
+    if (e.name !== "kotlin.RuntimeException") {
         throw Error("Wrong e.name");
     }
     if (e.message !== "Outer wrapper") {
@@ -40,7 +40,7 @@ try {
     if (!(c instanceof Error)) {
         throw Error("Expected cause to be Error");
     }
-    if (c.name !== "IllegalStateException") {
+    if (c.name !== "kotlin.IllegalStateException") {
         throw Error("Wrong cause.name");
     }
     if (c.message !== "Inner cause") {

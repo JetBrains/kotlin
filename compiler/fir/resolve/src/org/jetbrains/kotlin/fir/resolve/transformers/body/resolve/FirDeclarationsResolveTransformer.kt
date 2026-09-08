@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
@@ -36,8 +35,6 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ArrayLiteralPosition
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
-import org.jetbrains.kotlin.fir.types.coneTypeOrNull
-import org.jetbrains.kotlin.fir.types.contains
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrInitializer
 import org.jetbrains.kotlin.fir.resolve.inference.FirDelegatedPropertyInferenceSession
@@ -628,10 +625,17 @@ open class FirDeclarationsResolveTransformer(
 
         var resultType: ConeKotlinType? = null
 
-        // Temporary declare all the "outer" variables as proper (i.e., all inner variables as improper)
+        // Temporary declare all variables as proper (i.e., all inner variables as improper)
         // Without that, all variables (both inner and outer ones) would be considered as improper,
         // while we want to fix to assume `Delegate<Tv>` as proper because `Tv` belongs to the outer system
-        candidateSystem.withTypeVariablesThatAreCountedAsProperTypes(candidateSystem.outerTypeVariables.orEmpty()) {
+        // testData/diagnostics/tests/delegatedProperty/inference/provideDelegateFixationResultContainsOtherInnerVariable.kt
+        val typeVariablesCountedAsProperTypes =
+            if (session.languageVersionSettings.supportsFeature(LanguageFeature.EliminateSecondKindIncorporation)) {
+                candidateSystem.notFixedTypeVariables.keys
+            } else {
+                candidateSystem.outerTypeVariables.orEmpty()
+            }
+        candidateSystem.withTypeVariablesThatAreCountedAsProperTypes(typeVariablesCountedAsProperTypes) {
             // TODO: reconsider the approach here (KT-61781 for tracking)
             // Actually, this code might fail with an exception in some rare cases (see KT-61781)
             // The problem is that in the issue example, when fixing T type variable, it has two upper bounds: X and Delegate<Y>
@@ -811,6 +815,10 @@ open class FirDeclarationsResolveTransformer(
             // it's been propagated to receivers in the RawFirBuilder
             if (accessor.returnTypeRef is FirImplicitTypeRef && propertyTypeRef !is FirImplicitTypeRef) {
                 accessor.replaceReturnTypeRef(propertyTypeRef)
+            }
+
+            if (shouldResolveEverything) {
+                accessor.resolveLocalFunctionAnnotations()
             }
 
             if (accessor is FirDefaultPropertyAccessor || accessor.body == null) {
@@ -1019,10 +1027,8 @@ open class FirDeclarationsResolveTransformer(
 
         val containingDeclaration = context.containerIfAny
         return context.withNamedFunction(namedFunction, session) {
-            // this is required to resolve annotations on functions of local classes
             if (shouldResolveEverything) {
-                namedFunction.transformReceiverParameter(this, data)
-                doTransformTypeParameters(namedFunction)
+                namedFunction.resolveLocalFunctionAnnotations()
             }
 
             if (containingDeclaration != null && containingDeclaration !is FirClass && containingDeclaration !is FirFile && (containingDeclaration !is FirScript || namedFunction.status.visibility == Visibilities.Local)) {
@@ -1041,6 +1047,41 @@ open class FirDeclarationsResolveTransformer(
                 }
             }
         }
+    }
+
+    /**
+     * If [FirFunction.isLocal] is `true`, resolves all annotations in the function signature.
+     *
+     * It's necessary to call this before the function parameters are added to the scope so that annotation arguments are not resolved
+     * to them.
+     *
+     * Resolves own annotations and annotations in receiver, type parameters, return type, and context and value parameters.
+     * Annotations inside parameter default values are not resolved here because they do in fact observe the function parameters.
+     *
+     * Non-local functions don't have this problem because their annotations are resolved in a different phase.
+     */
+    private fun FirFunction.resolveLocalFunctionAnnotations() {
+        if (!isLocal) return
+
+        transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
+        transformAnnotations(transformer, ResolutionMode.ContextIndependent)
+        transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
+
+        @OptIn(PrivateForInline::class)
+        fun transformValueParameterAnnotations(parameters: List<FirValueParameter>) {
+            for (parameter in parameters) {
+                context.withContainer(parameter) {
+                    parameter
+                        .transformAnnotations(transformer, ResolutionMode.ContextIndependent)
+                        .transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
+                }
+            }
+        }
+
+        transformValueParameterAnnotations(contextParameters)
+        transformValueParameterAnnotations(valueParameters)
+
+        doTransformTypeParameters(this)
     }
 
     private fun <F : FirFunction> transformFunctionWithGivenSignature(function: F, shouldResolveEverything: Boolean): F {
@@ -1115,8 +1156,6 @@ open class FirDeclarationsResolveTransformer(
         dataFlowAnalyzer.enterFunction(function)
 
         if (shouldResolveEverything) {
-            // Annotations here are required only in the case of a local class member function.
-            // Separate annotation transformers are responsible in the case of non-local functions.
             function
                 .transformReturnTypeRef(this, ResolutionMode.ContextIndependent)
                 .transformContextParameters(this, ResolutionMode.ContextIndependent)
@@ -1159,6 +1198,8 @@ open class FirDeclarationsResolveTransformer(
                     }
                 }
             }
+
+            constructor.resolveLocalFunctionAnnotations()
 
             return transformConstructorContent(constructor, data)
         }

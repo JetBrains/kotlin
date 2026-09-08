@@ -152,7 +152,7 @@ class IrNoParameterClassParcelSerializer(private val irClass: IrClass) : IrParce
         val defaultConstructor = irClass.primaryConstructor!!
         return irBlock {
             +parcelReadInt(irGet(parcel))
-            +irCall(defaultConstructor)
+            +irCall(defaultConstructor.symbol, irClass.symbol.starProjectedType)
         }
     }
 

@@ -774,7 +774,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaE
 	public abstract fun isSafeNavigation ()Z
 }
 
-public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall : org/jetbrains/kotlin/analysis/api/resolution/KaCallableMemberCall, org/jetbrains/kotlin/analysis/api/resolution/KaSingleCall {
+public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall : org/jetbrains/kotlin/analysis/api/resolution/KaCallableMemberCall, org/jetbrains/kotlin/analysis/api/resolution/KaSimpleCall {
 	public fun getArgumentMapping ()Ljava/util/Map;
 	public abstract fun getCombinedArgumentMapping ()Ljava/util/Map;
 	public abstract fun getContextArgumentMapping ()Ljava/util/Map;
@@ -834,7 +834,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaS
 	public abstract fun getCall ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaCall;
 }
 
-public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaVariableAccessCall : org/jetbrains/kotlin/analysis/api/resolution/KaCallableMemberCall, org/jetbrains/kotlin/analysis/api/resolution/KaSingleCall {
+public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaVariableAccessCall : org/jetbrains/kotlin/analysis/api/resolution/KaCallableMemberCall, org/jetbrains/kotlin/analysis/api/resolution/KaSimpleCall {
 	public abstract fun getKind ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaVariableAccessCall$Kind;
 	public abstract fun getPartiallyAppliedSymbol ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaPartiallyAppliedSymbol;
 }
@@ -1566,6 +1566,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/types/KaFlexibleType : o
 public abstract class org/jetbrains/kotlin/analysis/api/types/KaFunctionType : org/jetbrains/kotlin/analysis/api/types/KaClassType, org/jetbrains/kotlin/analysis/api/base/KaContextReceiversOwner {
 	public fun <init> ()V
 	public abstract fun getArity ()I
+	public abstract fun getContextParameterTypes ()Ljava/util/List;
 	public abstract fun getHasReceiver ()Z
 	public abstract fun getParameterTypes ()Ljava/util/List;
 	public abstract fun getReceiverType ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;

@@ -39,6 +39,8 @@ class NpmVersionsTest {
                 "kotlin-web-helpers",
                 "mini-css-extract-plugin",
                 "mocha",
+                "playwright",
+                "playwright-core",
                 "sass",
                 "sass-loader",
                 "source-map-loader",
@@ -73,6 +75,16 @@ class NpmVersionsTest {
             npmVersions.allDependencies.map {
                 { assertContains(npmVersions.requestedVersions, it) }
             }
+        )
+    }
+
+    @Test
+    fun `verify playwright and playwright-core versions are aligned`() {
+        val npmVersions = NpmVersions()
+        assertEquals(
+            npmVersions.playwright.version,
+            npmVersions.playwrightCore.version,
+            "Playwright and Playwright Core versions should be aligned"
         )
     }
 }

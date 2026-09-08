@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.test.directives.KlibAbiConsistencyDirectives.CHECK_S
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.ir.AbstractNonJvmIrTextTest
-import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmSecondStageEnvironmentConfigurator
@@ -60,8 +59,6 @@ abstract class AbstractWasmJsIrTextTest :
             ::WasmFirstStageEnvironmentConfigurator.bind(WasmTarget.JS),
             ::WasmSecondStageEnvironmentConfigurator.bind(WasmTarget.JS),
         )
-
-        useAdditionalService(::LibraryProvider)
     }
 
     override fun configure(builder: TestConfigurationBuilder) {

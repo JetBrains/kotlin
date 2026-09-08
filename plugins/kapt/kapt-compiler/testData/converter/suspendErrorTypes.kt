@@ -6,4 +6,6 @@ class Foo {
     suspend fun a(): ABC = TODO()
 
     suspend fun b(): Result<ABC> = TODO()
+
+    suspend fun c(): List<ABC> = TODO()
 }

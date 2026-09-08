@@ -44,7 +44,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     GRADLE_CONFIGURATION_CACHE_ENABLED(OR, SAFE),
     GRADLE_PROJECT_ISOLATION_ENABLED(OR, SAFE),
 
-    KOTLIN_OFFICIAL_CODESTYLE(OVERRIDE, SAFE),
     KOTLIN_PROGRESSIVE_MODE(OVERRIDE, SAFE),
     KOTLIN_KTS_USED(OR, SAFE),
     KOTLIN_BTA_USED(OR, SAFE),
@@ -65,15 +64,13 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     KOTLIN_SEPARATE_KMP_COMPILATION_ENABLED(OR, SAFE),
     // kotlin.internal.jvm.enableKmpClasspathMetadataForIncrementalCompilation, reported per KMP JVM compilation
     KMP_JVM_CLASSPATH_METADATA_ENABLED(OR, SAFE),
-    // kotlin.internal.jvm.enableUnsafeOptimizationsForMultiplatform, reported per KMP JVM compilation
-    KMP_JVM_UNSAFE_OPTIMIZATIONS_ENABLED(OR, SAFE),
+    // kotlin.jvm.enableIncrementalCompilationOfCommonSources, reported per KMP JVM compilation
+    KMP_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES_ENABLED(OR, SAFE),
     KMP_TOP_LEVEL_DEPENDENCIES_BLOCK(OR, SAFE),
     KOTLIN_NATIVE_CACHE_DISABLED(OR, SAFE),
     KMP_SWIFT_PM_IMPORT_HAS_DIRECT_DEPENDENCIES(OR, SAFE),
     KMP_COCOAPODS_HAS_DIRECT_DEPENDENCIES(OR, SAFE),
     KMP_SWIFT_PM_IMPORT_HAS_TRANSITIVE_DEPENDENCIES_FROM_MODULAR_DEPENDENCIES(OR, SAFE),
-
-    JS_GENERATE_EXTERNALS(OR, SAFE),
 
     JS_SOURCE_MAP(OR, SAFE),
 
@@ -146,6 +143,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     ;
 
     companion object {
-        const val VERSION = 30
+        const val VERSION = 32
     }
 }

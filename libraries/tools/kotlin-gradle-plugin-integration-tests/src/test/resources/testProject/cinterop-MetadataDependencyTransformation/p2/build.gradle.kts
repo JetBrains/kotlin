@@ -13,6 +13,8 @@ plugins {
     kotlin("multiplatform")
 }
 
+group = "kotlin-multiplatform-projects"
+
 val dependencyMode = providers.gradleProperty("dependencyMode")
 
 kotlin {
@@ -21,6 +23,7 @@ kotlin {
     linuxX64()
     linuxArm64()
 
+    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
     macosX64("macos")
     iosX64()
     iosArm64()

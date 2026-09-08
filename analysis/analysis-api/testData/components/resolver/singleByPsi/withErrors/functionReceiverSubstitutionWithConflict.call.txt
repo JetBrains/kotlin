@@ -1,5 +1,5 @@
 KtDotQualifiedExpression(106,113): 'f.foo()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}

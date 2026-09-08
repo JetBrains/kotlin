@@ -1,5 +1,5 @@
 KtNameReferenceExpression(87,100): 'mutableListOf'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

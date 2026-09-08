@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.provider.Provider
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.withType
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -1326,8 +1328,6 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         project(
             "wasm-composite-build",
             gradleVersion,
-            // `:compileKotlinWasmJs` task is not compatible with CC on Gradle 7
-            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
         ) {
             fun BuildResult.moduleVersion(rootModulePath: String, moduleName: String): String =
                 projectPath.resolve(rootModulePath).toFile()
@@ -1396,13 +1396,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
     @DisplayName("when project has FAIL_ON_PROJECT_REPOS, expect Kotlin/Wasm tools are downloaded correctly")
     @GradleTest
     fun testFailOnProjectReposUsingCustomRepo(gradleVersion: GradleVersion) {
-        // Gradle versions below 8.1 do not correctly support repository mode
-        val dependencyManagement =
-            if (gradleVersion <= GradleVersion.version("8.1")) {
-                DependencyManagement.DisabledDependencyManagement
-            } else {
-                DependencyManagement.DefaultDependencyManagement()
-            }
+        val dependencyManagement = DependencyManagement.DefaultDependencyManagement()
 
         project(
             "wasm-project-repos",
@@ -1480,13 +1474,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
     @DisplayName("when project has FAIL_ON_PROJECT_REPOS without downloading tools, expect KGP does not download tools")
     @GradleTest
     fun testFailOnProjectReposNoDownload(gradleVersion: GradleVersion) {
-        // Gradle versions below 8.1 do not correctly support repository mode
-        val dependencyManagement =
-            if (gradleVersion <= GradleVersion.version("8.1")) {
-                DependencyManagement.DisabledDependencyManagement
-            } else {
-                DependencyManagement.DefaultDependencyManagement()
-            }
+        val dependencyManagement = DependencyManagement.DefaultDependencyManagement()
 
         project(
             "wasm-project-repos",
@@ -1518,6 +1506,56 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
                 assertTasksSkipped(":kotlinWasmBinaryenSetup")
                 assertTasksSkipped(":kotlinWasmD8Setup")
             }
+        }
+    }
+
+    @DisplayName("Webpack.config.d content should be in the end of webpack.config.js")
+    @GradleTest
+    fun testWebpackConfigDInTheEnd(gradleVersion: GradleVersion) {
+        val testProject = project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    @OptIn(ExperimentalWasmDsl::class)
+                    wasmJs {
+                        browser()
+                        binaries.executable()
+                    }
+                }
+            }
+        }
+
+        testProject.projectPath.resolve("src/wasmJsMain/kotlin/main.kt")
+            .also {
+                it.parent.createDirectories()
+            }
+            .writeText(
+                """
+                fun main() {
+                    println("Hello, world")
+                }
+                """.trimIndent()
+            )
+
+        val webpackConfigDMarker = "// HELLO FROM WEBPACK.CONFIG.D"
+        testProject.projectPath.resolve("webpack.config.d").createDirectories()
+            .resolve("foo.js")
+            .writeText(webpackConfigDMarker)
+
+        testProject.build("assemble") {
+            assertFileContains(
+                testProject.projectPath.resolve("build/wasm/packages/empty/webpack.config.js"),
+                """
+                    // foo.js
+                    $webpackConfigDMarker
+
+
+                    module.exports = config
+                """.trimIndent()
+            )
         }
     }
 }

@@ -1,5 +1,5 @@
 KtNameReferenceExpression(183,194): 'suspendHere'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}

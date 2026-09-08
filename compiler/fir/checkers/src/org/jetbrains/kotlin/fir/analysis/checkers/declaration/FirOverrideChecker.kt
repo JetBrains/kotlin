@@ -257,7 +257,7 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKi
     ) {
         for (valueParameterSymbol in valueParameterSymbols) {
             if (valueParameterSymbol.hasDefaultValue) {
-                reporter.reportOn(valueParameterSymbol.defaultValueSource, FirErrors.DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE)
+                reporter.reportOn(valueParameterSymbol.resolvedDefaultValueSource, FirErrors.DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE)
             }
         }
     }

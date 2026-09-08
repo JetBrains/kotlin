@@ -32,9 +32,12 @@ class StandaloneModeConfigurator(
     private val sourceConfigurator = LLSourceLikeTestConfigurator()
 
     override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
-        get() = sourceConfigurator.serviceRegistrars -
-                listOf(AnalysisApiIdeModeTestServiceRegistrar) +
-                listOf(StandaloneSessionServiceRegistrar, StandaloneModeTestServiceRegistrar)
+        get() = buildList {
+            addAll(this@StandaloneModeConfigurator.sourceConfigurator.serviceRegistrars)
+            remove(AnalysisApiIdeModeTestServiceRegistrar)
+            add(StandaloneSessionServiceRegistrar)
+            add(StandaloneModeTestServiceRegistrar)
+        }
 
     override fun createModules(
         moduleStructure: TestModuleStructure,

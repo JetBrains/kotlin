@@ -53,7 +53,7 @@ KtFile: IMutableList.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('set')
@@ -88,7 +88,7 @@ KtFile: IMutableList.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('T')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('add')
@@ -116,7 +116,7 @@ KtFile: IMutableList.kt
                   PsiElement(IDENTIFIER)('T')
           PsiElement(RPAR)(')')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('remove')
@@ -140,7 +140,7 @@ KtFile: IMutableList.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('T')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('mutableIterator')

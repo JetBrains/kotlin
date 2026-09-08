@@ -1,7 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 
-@file:OptIn(ExperimentalVersionOverloading::class)
-
 open class B {
     open fun foo(a: Int = 0, b: Int = 1) {}
 }

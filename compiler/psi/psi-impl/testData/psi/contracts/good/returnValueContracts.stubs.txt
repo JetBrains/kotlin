@@ -18,7 +18,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ReturnValueContractsKt]]
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=contracts]
-  FUN[fqName=myAlso, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=true, mayHaveContract=true, name=myAlso]
+  FUNCTION[fqName=myAlso, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=true, mayHaveContract=true, name=myAlso]
     MODIFIER_LIST[inline]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
@@ -40,7 +40,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ReturnValueContractsKt]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=T]
-  FUN[fqName=myLet, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=true, mayHaveContract=true, name=myLet]
+  FUNCTION[fqName=myLet, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=true, mayHaveContract=true, name=myLet]
     MODIFIER_LIST[inline]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]

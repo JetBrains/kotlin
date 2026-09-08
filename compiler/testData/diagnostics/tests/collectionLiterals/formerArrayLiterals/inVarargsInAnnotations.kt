@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-79330
-// LANGUAGE: +CollectionLiterals
 
 class Foo
 annotation class AnnoFoo
@@ -58,7 +57,7 @@ val annoFoo = AnnoFoo()
 fun annoFooTarget() = Unit
 
 @NestedAnno(NestedAnno(*[NestedAnno(NestedAnno(*[NestedAnno(args=[NestedAnno()])]), NestedAnno(*[NestedAnno(NestedAnno(), NestedAnno(args=[NestedAnno(NestedAnno(), NestedAnno())]))]))]), NestedAnno())
-@NestedAnno(args=<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>NestedAnno(args=[NestedAnno(*[NestedAnno(*[NestedAnno(args=[NestedAnno(<!UNRESOLVED_COLLECTION_LITERAL!>[NestedAnno(args=[NestedAnno(*[NestedAnno(*[NestedAnno()])])])]<!>)])])])])<!>]<!>)
+@NestedAnno(args=<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[NestedAnno(args=[NestedAnno(*[NestedAnno(*[NestedAnno(args=[NestedAnno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL!>[NestedAnno(args=[NestedAnno(*[NestedAnno(*[NestedAnno()])])])]<!>)])])])])]<!>)
 @NestedAnno(*arrayOf(NestedAnno(args=[NestedAnno(args=[NestedAnno(*arrayOf(NestedAnno()))])])))
 @NestedAnno(*<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL!>[NestedAnno(args=[NestedAnno()])]<!>]<!>)
 @NestedAnno(args=[NestedAnno(*arrayOf(*[NestedAnno(NestedAnno(), NestedAnno())]))])

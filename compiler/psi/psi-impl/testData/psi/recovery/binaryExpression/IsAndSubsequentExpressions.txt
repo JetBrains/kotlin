@@ -7,7 +7,7 @@ KtFile: IsAndSubsequentExpressions.kt
   PsiWhiteSpace('\n')
   PsiComment(EOL_COMMENT)('// It's found during working on binary expression optimizing KT-77993')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('testLowerPriority')
@@ -48,7 +48,7 @@ KtFile: IsAndSubsequentExpressions.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('testEqualPriority')
@@ -91,7 +91,7 @@ KtFile: IsAndSubsequentExpressions.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('testHigherPriority')

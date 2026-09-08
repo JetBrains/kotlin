@@ -26,6 +26,8 @@ public protocol Consumer: KotlinRuntime.KotlinBase, main._Consumer {
 }
 public protocol ConsumerProducer: KotlinRuntime.KotlinBase, main.Consumer, main.Producer, main._ConsumerProducer {
 }
+public protocol Foo: KotlinRuntime.KotlinBase, main._Foo {
+}
 public protocol Processor: KotlinRuntime.KotlinBase, main._Processor {
     func process(
         input: (any KotlinRuntimeSupport._KotlinBridgeable)?
@@ -49,6 +51,9 @@ public protocol _Consumer {
 @objc(_main_ConsumerProducer)
 public protocol _ConsumerProducer: main._Consumer, main._Producer {
 }
+@objc(_main_Foo)
+public protocol _Foo {
+}
 @objc(_main_Processor)
 public protocol _Processor {
 }
@@ -64,6 +69,8 @@ public protocol __B: KotlinRuntimeSupport._KotlinBridgeable {
 public protocol __Consumer: KotlinRuntimeSupport._KotlinBridgeable {
 }
 public protocol __ConsumerProducer: KotlinRuntimeSupport._KotlinBridgeable, main.__Consumer, main.__Producer {
+}
+public protocol __Foo: KotlinRuntimeSupport._KotlinBridgeable {
 }
 public protocol __Processor: KotlinRuntimeSupport._KotlinBridgeable {
 }
@@ -105,16 +112,33 @@ public final class ArrayBox: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
+open class Bar: KotlinRuntime.KotlinBase {
+    public init() {
+        precondition(Self.self != main.Bar.self, "main.Bar is an abstract class and cannot be instantiated directly")
+        let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+}
 open class Box: KotlinRuntime.KotlinBase {
     public final var t: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get {
             return { switch Box_t_get(self.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
         }
     }
-    package init(
+    public init(
         t: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) {
-        fatalError()
+        precondition(Self.self != main.Box.self, "main.Box is an abstract class and cannot be instantiated directly")
+        let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___Box_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, t.map { it in it.__externalRCRef() } ?? nil); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -289,7 +313,12 @@ public final class Pair: KotlinRuntime.KotlinBase {
 }
 open class StringProducer: KotlinRuntime.KotlinBase {
     public init() {
-        let __kt = __root___StringProducer_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main.StringProducer.self {
+             __kt = __root___StringProducer_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___StringProducer_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
@@ -449,6 +478,14 @@ extension main.AFactory where Self : main.__AFactory {
 }
 extension main.AFactory {
 }
+extension [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
+    public func customFilter(
+        predicate: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) -> Swift.Bool
+    ) -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
+        let receiver = self
+        return main.customFilter(receiver, predicate: predicate)
+    }
+}
 @_documentation(visibility: internal)
 extension main.B where Self : main.__B {
     public var foo: (any KotlinRuntimeSupport._KotlinBridgeable)? {
@@ -473,6 +510,11 @@ extension main.Consumer {
 extension main.ConsumerProducer where Self : main.__ConsumerProducer {
 }
 extension main.ConsumerProducer {
+}
+@_documentation(visibility: internal)
+extension main.Foo where Self : main.__Foo {
+}
+extension main.Foo {
 }
 @_documentation(visibility: internal)
 extension main.Processor where Self : main.__Processor {
@@ -514,6 +556,9 @@ extension KotlinRuntimeSupport._KotlinExistential: main.B, main.__B where Wrappe
 extension KotlinRuntimeSupport._KotlinExistential: main.AFactory, main.__AFactory where Wrapped : main._AFactory {
 }
 @_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: main.Foo, main.__Foo where Wrapped : main._Foo {
+}
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Producer {
 }
 @_documentation(visibility: internal)
@@ -533,6 +578,9 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._B {
 }
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._AFactory {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Foo {
 }
 @_cdecl("AFactory_create__reverse_swift")
 package func AFactory_create__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {

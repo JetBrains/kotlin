@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
+import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirReplFrontendFacade
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
@@ -67,6 +69,7 @@ open class AbstractReplWithTestExtensionsDiagnosticsTest : AbstractKotlinCompile
             defaultDirectives {
                 +WITH_STDLIB
             }
+            useFailureSuppressors(::FirMetaInfoDiffSuppressor)
         }
     }
 }
@@ -106,6 +109,8 @@ open class AbstractReplViaApiDiagnosticsTest : AbstractKotlinCompilerTest() {
             namedHandlersStep("ReplDiagnosticHandlerStep", ReplCompilationArtifact.Kind, CompilationStage.FIRST) {
                 useHandlers(::ReplCompilerDiagnosticsHandler)
             }
+
+            useFailureSuppressors(::FirMetaInfoDiffSuppressor)
         }
     }
 }

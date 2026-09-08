@@ -43,7 +43,7 @@ fun withNullableNothing(e: E?) = when (e) {
     nullableNothing() -> null
 }
 
-fun platformType() = when (J.foo()) {
+fun platformType() = <!WHEN_SUBJECT_CAN_BE_NULL_IN_JAVA!>when<!> (J.foo()) {
     E.A -> 7
     E.B -> 8
 }

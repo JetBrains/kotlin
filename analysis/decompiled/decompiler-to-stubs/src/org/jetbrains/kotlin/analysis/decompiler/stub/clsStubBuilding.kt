@@ -2,6 +2,7 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(KtImplementationDetail::class)
 
 package org.jetbrains.kotlin.analysis.decompiler.stub
 
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.impl.*
@@ -139,9 +141,9 @@ fun createFileStub(packageFqName: FqName, isScript: Boolean): KotlinFileStubImpl
 }
 
 private fun setupFileStub(fileStub: KotlinFileStubImpl) {
-    val packageDirectiveStub = KotlinPlaceHolderStubImpl<KtPackageDirective>(fileStub, KtNodeTypes.PACKAGE_DIRECTIVE)
+    val packageDirectiveStub = KotlinPlaceHolderStubImpl<KtPackageDirective>(parent = fileStub, elementType = KtNodeTypes.PACKAGE_DIRECTIVE)
     createStubForPackageName(packageDirectiveStub, fileStub.getPackageFqName())
-    KotlinPlaceHolderStubImpl<KtImportList>(fileStub, KtNodeTypes.IMPORT_LIST)
+    KotlinPlaceHolderStubImpl<KtImportList>(parent = fileStub, elementType = KtNodeTypes.IMPORT_LIST)
 }
 
 fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtPackageDirective>, packageFqName: FqName) {
@@ -153,21 +155,24 @@ fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtP
             -1 -> return
             0 -> {
                 KotlinNameReferenceExpressionStubImpl(
-                    /* parent = */ current,
-                    /* referencedName = */ iterator.previous().ref(),
-                    /* myClassRef = */ false,
+                    parent = current,
+                    referencedNameRef = iterator.previous().ref(),
+                    isClassRef = false,
                 )
 
                 return
             }
             else -> {
                 val lastSegment = iterator.previous()
-                val receiver = KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(current, KtNodeTypes.DOT_QUALIFIED_EXPRESSION)
+                val receiver = KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(
+                    parent = current,
+                    elementType = KtNodeTypes.DOT_QUALIFIED_EXPRESSION,
+                )
                 recCreateStubForPackageName(receiver)
                 KotlinNameReferenceExpressionStubImpl(
-                    /* parent = */ receiver,
-                    /* referencedName = */ lastSegment.ref(),
-                    /* myClassRef = */ false,
+                    parent = receiver,
+                    referencedNameRef = lastSegment.ref(),
+                    isClassRef = false,
                 )
             }
         }
@@ -217,9 +222,9 @@ fun createStubForTypeName(
         }
 
         KotlinNameReferenceExpressionStubImpl(
-            /* parent = */ userTypeStub,
-            /* referencedName = */ lastSegment.ref(),
-            /* myClassRef = */ level < classesNestedLevel,
+            parent = userTypeStub,
+            referencedNameRef = lastSegment.ref(),
+            isClassRef = level < classesNestedLevel,
         )
 
         if (!substituteWithAny) {
@@ -260,7 +265,6 @@ fun createModifierListStub(
 
     val regularMask = ModifierMaskUtils.computeMask { it in modifiers }
 
-    @OptIn(KtImplementationDetail::class)
     val specialMask = ModifierMaskUtils.computeMaskForSpecialFlags { flag ->
         when (flag) {
             KotlinModifierListStub.SpecialFlag.MustUseReturnValue   -> returnValueStatus == ProtoBuf.ReturnValueStatus.MUST_USE
@@ -269,15 +273,15 @@ fun createModifierListStub(
     }
 
     return KotlinModifierListStubImpl(
-        parent,
-        regularMask or specialMask
+        parent = parent,
+        mask = regularMask or specialMask,
     )
 }
 
 fun createEmptyModifierListStub(parent: KotlinStubBaseImpl<*>): KotlinModifierListStubImpl {
     return KotlinModifierListStubImpl(
-        parent,
-        ModifierMaskUtils.computeMask { false }
+        parent = parent,
+        mask = ModifierMaskUtils.computeMask { false },
     )
 }
 
@@ -305,8 +309,11 @@ fun createTargetedAnnotationStubs(
             KotlinAnnotationUseSiteTargetStubImpl(annotationEntryStubImpl, StringRef.fromString(target.name)!!)
         }
         val constructorCallee =
-            KotlinPlaceHolderStubImpl<KtConstructorCalleeExpression>(annotationEntryStubImpl, KtNodeTypes.CONSTRUCTOR_CALLEE)
-        val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(constructorCallee, KtNodeTypes.TYPE_REFERENCE)
+            KotlinPlaceHolderStubImpl<KtConstructorCalleeExpression>(
+                parent = annotationEntryStubImpl,
+                elementType = KtNodeTypes.CONSTRUCTOR_CALLEE,
+            )
+        val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(parent = constructorCallee, elementType = KtNodeTypes.TYPE_REFERENCE)
         createStubForTypeName(annotationWithArgs.classId, typeReference)
 
         if (hasStubBasedArguments) {

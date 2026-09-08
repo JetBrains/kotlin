@@ -1,5 +1,5 @@
 KtNameReferenceExpression(245,259): 'propertyMember'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = [
         KaImplicitReceiverValue:

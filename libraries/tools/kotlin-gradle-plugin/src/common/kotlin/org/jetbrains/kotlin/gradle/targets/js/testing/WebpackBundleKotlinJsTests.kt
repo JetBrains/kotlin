@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.internal.jsQuoted
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.dependsOnNpmTooling
 import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
@@ -202,13 +203,23 @@ constructor(
         }
 
         val output = outputBundleDir.get().asFile.resolve(TEST_HTML_FILE_NAME)
-        output.writeText(html)
+        output.writeText(pinMochaCdnUrls(html))
     }
 
     companion object {
         private const val TEST_HTML_FILE_NAME = "test.html"
     }
 }
+
+internal fun pinMochaCdnUrls(html: String): String =
+    html
+        .replace(MOCHA_CSS_URL, PINNED_MOCHA_CSS_URL)
+        .replace(MOCHA_SCRIPT_URL, PINNED_MOCHA_SCRIPT_URL)
+
+private const val MOCHA_CSS_URL = "https://unpkg.com/mocha/mocha.css"
+private const val MOCHA_SCRIPT_URL = "https://unpkg.com/mocha/mocha.js"
+private const val PINNED_MOCHA_CSS_URL = "https://unpkg.com/mocha@11.8.0/mocha.css"
+private const val PINNED_MOCHA_SCRIPT_URL = "https://unpkg.com/mocha@11.8.0/mocha.js"
 
 internal fun KotlinJsIrCompilation.locateOrRegisterBrowserTestBundleTask(
     configure: WebpackBundleKotlinJsTests.() -> Unit
@@ -223,22 +234,11 @@ internal fun KotlinJsIrCompilation.locateOrRegisterBrowserTestBundleTask(
         val compilation = this@locateOrRegisterBrowserTestBundleTask
 
         val nodeJsRoot = compilation.nodeJsRoot()
-        val nodeJsEnvSpec = compilation.nodeJsEnvSpec
-
         task.versions.value(nodeJsRoot.versions).disallowChanges()
 
-        with(nodeJsEnvSpec) {
-            task.dependsOn(project.nodeJsSetupTaskProvider)
-        }
-
-        task.dependsOn(nodeJsRoot.npmInstallTaskProvider)
-        task.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
-
-        if (compilation.isWasm) {
-            task.dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
-        }
         task.npmToolingEnvDir.set(compilation.npmToolingDir())
         task.npmToolingEnvDir.disallowChanges()
+        task.dependsOnNpmTooling(compilation)
 
         val binary = compilation.binaries.getIrBinaries(
             KotlinJsBinaryMode.DEVELOPMENT

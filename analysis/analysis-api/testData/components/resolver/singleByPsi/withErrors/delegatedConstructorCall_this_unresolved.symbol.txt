@@ -1,5 +1,5 @@
 KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(i: kotlin.Int, j: kotlin.Int): Sub,
       <constructor>(p: kotlin.Int): Sub

@@ -1,5 +1,7 @@
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
+import org.jetbrains.gradle.ext.ProjectSettings
+import org.jetbrains.gradle.ext.TaskTriggersConfig
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin
@@ -316,6 +318,7 @@ tasks {
     // === Build: JSCompilerTestsES5 ===
     testLifecycleTask("jsCompilerTest") {
         dependsOn(":js:js.tests:jsTest")
+        dependsOn(":js:js.parser:test")
         dependsOn(":compiler:ir.serialization.js:test")
     }
 
@@ -571,14 +574,12 @@ tasks {
     fun registerSpecialPublishingTasks(nameSuffix: String, artifactProjectList: List<String>, latch: Project.(() -> Unit) -> Unit) {
         register("publish$nameSuffix") {
             latch {
-                @Suppress("UNCHECKED_CAST")
                 dependsOn(artifactProjectList.map { "$it:publish" })
             }
         }
 
         register("install$nameSuffix") {
             latch {
-                @Suppress("UNCHECKED_CAST")
                 dependsOn(artifactProjectList.map { "$it:install" })
             }
         }
@@ -586,13 +587,13 @@ tasks {
 
     registerSpecialPublishingTasks(
         nameSuffix = "IdeArtifacts",
-        artifactProjectList = @Suppress("UNCHECKED_CAST") (CompilerModules.compilerArtifactsForIde),
+        artifactProjectList = CompilerModules.compilerArtifactsForIde,
         latch = Project::idePluginPublishingLatch
     )
 
     registerSpecialPublishingTasks(
         nameSuffix = "AnalysisApiArtifacts",
-        artifactProjectList = @Suppress("UNCHECKED_CAST") (CompilerModules.analysisApiArtifacts),
+        artifactProjectList = CompilerModules.analysisApiArtifacts,
         latch = Project::analysisApiPublishingLatch
     )
 
@@ -716,10 +717,23 @@ configure<IdeaModel> {
             )
         )
     }
+
+    project {
+        // Patched IntelliJ classes are consumed as fat-JAR artifacts of the ':dependencies:intellij-*' projects,
+        // so on a clean checkout the IDE cannot resolve IntelliJ PSI references until those JARs are built.
+        // Build them (together with sources for navigation) right after every Gradle import.
+        (this as ExtensionAware).configure<ProjectSettings> {
+            (this as ExtensionAware).configure<TaskTriggersConfig> {
+                afterSync(
+                    ":dependencies:intellij-java-psi-api:jar",
+                    ":dependencies:intellij-java-psi-api:sourcesJar",
+                    ":dependencies:intellij-core-implementation:jar",
+                    ":dependencies:intellij-core-implementation:sourcesJar",
+                )
+            }
+        }
+    }
 }
-
-
-gradle.taskGraph.whenReady(checkYarnAndNPMSuppressed)
 
 plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
     extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension::class.java) {

@@ -376,12 +376,16 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
                 assertEquals("1/3", source.relativePathString(src))
                 OnErrorResult.SKIP_SUBTREE
             }) { source, target ->
-                try {
-                    source.copyToIgnoringExistingDirectory(target, followLinks = false)
-                } catch (exception: Throwable) {
-                    assertIs<java.nio.file.AccessDeniedException>(exception)
+                @IgnorableReturnValue
+                fun copySourceToTarget() = source.copyToIgnoringExistingDirectory(target, followLinks = false)
+
+                if (source.relativePathString(src) == "7.txt") {
+                    val exception = assertFailsWith<java.nio.file.AccessDeniedException> {
+                        copySourceToTarget()
+                    }
                     assertEquals(source.toString(), exception.file)
-                    assertEquals("7.txt", source.relativePathString(src))
+                } else {
+                    copySourceToTarget()
                 }
                 CopyActionResult.CONTINUE
             }

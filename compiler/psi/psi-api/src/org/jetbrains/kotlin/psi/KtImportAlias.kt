@@ -9,7 +9,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.search.LocalSearchScope
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
@@ -24,17 +24,23 @@ import org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
  * //                    ^^^^^^^^^^^
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtImportAlias : KtElementImplStub<KotlinImportAliasStub>, PsiNameIdentifierOwner {
     @Suppress("unused")
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
 
     @Suppress("unused")
-    constructor(stub: KotlinImportAliasStub) : super(stub, KtStubBasedElementTypes.IMPORT_ALIAS)
+    @KtImplementationDetail
+    constructor(stub: KotlinImportAliasStub) : super(stub, KtNodeTypes.IMPORT_ALIAS)
 
     override fun <R : Any?, D : Any?> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitImportAlias(this, data)
     }
 
+    /**
+     * The import directive this alias belongs to, or `null` if the alias is detached from an import.
+     */
     val importDirective: KtImportDirective?
         get() = parent as? KtImportDirective
 

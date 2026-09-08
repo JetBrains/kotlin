@@ -1,5 +1,5 @@
 KtPrefixExpression(31,34): '++i'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var i: kotlin.Int,
       kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int

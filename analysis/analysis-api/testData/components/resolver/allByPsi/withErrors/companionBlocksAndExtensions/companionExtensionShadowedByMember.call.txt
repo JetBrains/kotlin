@@ -65,7 +65,7 @@ KtBlockExpression(159,174): '{'
   null
 
 KtDotQualifiedExpression(165,172): 'C.foo()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -88,7 +88,7 @@ KtNameReferenceExpression(165,166): 'C'
   null
 
 KtCallExpression(167,172): 'foo()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -108,7 +108,7 @@ KtCallExpression(167,172): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(167,170): 'foo'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

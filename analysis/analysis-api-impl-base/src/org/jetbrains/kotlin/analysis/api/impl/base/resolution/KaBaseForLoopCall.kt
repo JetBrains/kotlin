@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaForLoopCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaFunctionCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaSingleCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCall
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 
 @KaImplementationDetail
@@ -32,6 +32,6 @@ class KaBaseForLoopCall(
         get() = withValidityAssertion { backingNextCall }
 
     @KaExperimentalApi
-    override val calls: List<KaSingleCall<*, *>>
+    override val calls: List<KaSimpleCall<*, *>>
         get() = withValidityAssertion { listOf(backingIteratorCall, backingHasNextCall, backingNextCall) }
 }

@@ -5,7 +5,7 @@ KtFile: FunctionComment.kts
     <empty list>
   SCRIPT
     BLOCK
-      FUN
+      FUNCTION
         KDoc
           PsiElement(KDOC_START)('/**')
           KDOC_SECTION

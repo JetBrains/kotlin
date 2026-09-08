@@ -2,7 +2,7 @@ KtNameReferenceExpression(103,108): 'Local'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       Local
     ]

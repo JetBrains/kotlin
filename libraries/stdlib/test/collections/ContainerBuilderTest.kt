@@ -32,7 +32,7 @@ class ContainerBuilderTest {
 
         "clear()"                               to { clear() },
 
-        "iterator().apply { next() }.remove()"  to { iterator().apply { next() }.remove() }
+        "iterator().apply { next() }.remove()"  to { iterator().apply { val _ = next() }.remove() }
     )
 
     private fun <E> mutableListOperations(present: E, absent: E) = mutableCollectionOperations(present, absent) + listOf<Pair<String, MutableList<E>.() -> Unit>>(
@@ -41,9 +41,9 @@ class ContainerBuilderTest {
         "addAll(0, emptyList())"                        to { addAll(0, emptyList()) },
         "removeAt(0)"                                   to { removeAt(0) },
         "set(0, present)"                               to { set(0, present) },
-        "listIterator().apply { next() }.remove()"      to { listIterator().apply { next() }.remove() },
-        "listIterator(0).apply { next() }.remove()"     to { listIterator(0).apply { next() }.remove() },
-        "listIterator().apply { next() }.set(present)"  to { listIterator().apply { next() }.set(present) },
+        "listIterator().apply { next() }.remove()"      to { listIterator().apply { val _ = next() }.remove() },
+        "listIterator(0).apply { next() }.remove()"     to { listIterator(0).apply { val _ = next() }.remove() },
+        "listIterator().apply { next() }.set(present)"  to { listIterator().apply { val _ = next() }.set(present) },
         "listIterator().add(present)"                   to { listIterator().add(present) }
     )
 
@@ -146,7 +146,7 @@ class ContainerBuilderTest {
 
     @Test
     fun listBuilderSubList() {
-        buildList<Char> {
+        val _ = buildList<Char> {
             addAll(listOf('a', 'b', 'c', 'd', 'e'))
 
             val subList = subList(1, 4)

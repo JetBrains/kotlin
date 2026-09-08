@@ -137,7 +137,7 @@ KtNameReferenceExpression(239,240): 'S'
   null
 
 KtCallExpression(243,249): 'TODO()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -154,7 +154,7 @@ KtCallExpression(243,249): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(243,247): 'TODO'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -195,7 +195,7 @@ KtBlockExpression(270,478): '{'
   null
 
 KtCallExpression(276,326): 'generate {'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -233,7 +233,7 @@ KtCallExpression(276,326): 'generate {'
       }
 
 KtNameReferenceExpression(276,284): 'generate'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -283,7 +283,7 @@ KtBlockExpression(295,320): 'yield(m)'
   null
 
 KtCallExpression(295,303): 'yield(m)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -349,7 +349,7 @@ KtCallExpression(295,303): 'yield(m)'
       }
 
 KtNameReferenceExpression(295,300): 'yield'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -421,7 +421,7 @@ KtValueArgument(301,302): 'm'
   null
 
 KtNameReferenceExpression(301,302): 'm'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -438,7 +438,7 @@ KtNameReferenceExpression(301,302): 'm'
       typeArgumentsMapping = {}
 
 KtCallExpression(312,320): 'yield(X)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -504,7 +504,7 @@ KtCallExpression(312,320): 'yield(X)'
       }
 
 KtNameReferenceExpression(312,317): 'yield'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -576,7 +576,7 @@ KtValueArgument(318,319): 'X'
   null
 
 KtNameReferenceExpression(318,319): 'X'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -596,7 +596,7 @@ KtNameReferenceExpression(318,319): 'X'
       typeArgumentsMapping = {}
 
 KtCallExpression(332,382): 'generate {'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -634,7 +634,7 @@ KtCallExpression(332,382): 'generate {'
       }
 
 KtNameReferenceExpression(332,340): 'generate'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -684,7 +684,7 @@ KtBlockExpression(351,376): 'yield(X)'
   null
 
 KtCallExpression(351,359): 'yield(X)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -750,7 +750,7 @@ KtCallExpression(351,359): 'yield(X)'
       }
 
 KtNameReferenceExpression(351,356): 'yield'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -822,7 +822,7 @@ KtValueArgument(357,358): 'X'
   null
 
 KtNameReferenceExpression(357,358): 'X'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -842,7 +842,7 @@ KtNameReferenceExpression(357,358): 'X'
       typeArgumentsMapping = {}
 
 KtCallExpression(368,376): 'yield(m)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -908,7 +908,7 @@ KtCallExpression(368,376): 'yield(m)'
       }
 
 KtNameReferenceExpression(368,373): 'yield'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -980,7 +980,7 @@ KtValueArgument(374,375): 'm'
   null
 
 KtNameReferenceExpression(374,375): 'm'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1009,7 +1009,7 @@ KtNameReferenceExpression(395,401): 'MyEnum'
   null
 
 KtCallExpression(404,437): 'generate {'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1046,7 +1046,7 @@ KtCallExpression(404,437): 'generate {'
       }
 
 KtNameReferenceExpression(404,412): 'generate'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1095,7 +1095,7 @@ KtBlockExpression(423,431): 'yield(X)'
   null
 
 KtCallExpression(423,431): 'yield(X)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1161,7 +1161,7 @@ KtCallExpression(423,431): 'yield(X)'
       }
 
 KtNameReferenceExpression(423,428): 'yield'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1233,7 +1233,7 @@ KtValueArgument(429,430): 'X'
   null
 
 KtNameReferenceExpression(429,430): 'X'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1253,7 +1253,7 @@ KtNameReferenceExpression(429,430): 'X'
       typeArgumentsMapping = {}
 
 KtCallExpression(443,476): 'generate {'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1293,7 +1293,7 @@ KtCallExpression(443,476): 'generate {'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /generate>
 
 KtNameReferenceExpression(443,451): 'generate'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1345,7 +1345,7 @@ KtBlockExpression(462,470): 'yield(X)'
   null
 
 KtCallExpression(462,470): 'yield(X)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1410,7 +1410,7 @@ KtCallExpression(462,470): 'yield(X)'
       }
 
 KtNameReferenceExpression(462,467): 'yield'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1481,6 +1481,6 @@ KtValueArgument(468,469): 'X'
   null
 
 KtNameReferenceExpression(468,469): 'X'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>

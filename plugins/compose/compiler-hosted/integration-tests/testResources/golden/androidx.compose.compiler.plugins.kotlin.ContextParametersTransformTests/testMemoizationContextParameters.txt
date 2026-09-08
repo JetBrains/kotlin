@@ -71,7 +71,7 @@ fun <T: Any> TypeCrossfade(state: T, content: @[ExtensionFunctionType] Function4
       } else {
         %composer.skipToGroupEnd()
       }
-    }, %composer, 0b00110110), %composer, 0b00110000 or 0b1000 and %dirty or 0b1110 and %dirty)
+    }, %composer, 0b00110110) as Function3<T, Composer, Int, Unit>, %composer, 0b00110000 or 0b1000 and %dirty or 0b1110 and %dirty)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

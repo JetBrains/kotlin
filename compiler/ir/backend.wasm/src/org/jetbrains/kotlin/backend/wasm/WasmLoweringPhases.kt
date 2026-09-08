@@ -16,38 +16,12 @@ import org.jetbrains.kotlin.backend.wasm.lower.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
-import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
 import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
-import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.ir.inline.loweringsOfTheFirstPhase
-import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
-
-private fun createIrValidationAfterInliningPrivateFunctionsKlibPhase(context: LoweringContext): IrValidationAfterInliningPrivateFunctionsKlibPhase<*> {
-    return IrValidationAfterInliningPrivateFunctionsKlibPhase(
-        context,
-        checkInlineFunctionCallSites = { inlineFunctionUseSite ->
-            // Call sites of only non-private functions are allowed at this stage.
-            !inlineFunctionUseSite.symbol.isConsideredAsPrivateForInlining()
-        }
-    )
-}
-
-private fun createIrValidationAfterInliningAllFunctionsKlibSecondStagePhase(context: LoweringContext): IrValidationAfterInliningAllFunctionsKlibSecondStagePhase<*> {
-    return IrValidationAfterInliningAllFunctionsKlibSecondStagePhase(
-        context,
-        checkInlineFunctionCallSites = check@{ inlineFunctionUseSite ->
-            // No inline function call sites should remain at this stage.
-            val inlineFunction = inlineFunctionUseSite.symbol.owner
-            // it's fine to have typeOf<T>, it would be ignored by inliner and handled on the second stage of compilation
-            if (inlineFunction.symbol.isTypeOfIntrinsic()) return@check true
-            return@check inlineFunction.body == null
-        }
-    )
-}
 
 private fun createKotlinNothingValueExceptionPhase(context: CommonBackendContext): KotlinNothingValueExceptionLowering {
     return KotlinNothingValueExceptionLowering(context)
@@ -92,13 +66,9 @@ private fun createDefaultParameterCleanerPhase(context: CommonBackendContext): D
     return DefaultParameterCleaner(context)
 }
 
-private fun createAutoboxingTransformerPhase(context: JsCommonBackendContext): AutoboxingTransformer {
-    return AutoboxingTransformer(context)
-}
-
 //@PhasePrerequisites(FunctionInlining::class) // This prerequisite is hard to represent for common lowering
 private fun createConstEvaluationPhase(context: CommonBackendContext): ConstEvaluationLowering {
-    return ConstEvaluationLowering(context, isFloatingPointOptimizationEnabled = false)
+    return ConstEvaluationLowering(context)
 }
 
 fun wasmLoweringsOfTheFirstPhase(
@@ -128,10 +98,10 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::createSyntheticAccessorGenerationPhase,
     // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
     // just because it goes so in Native.
-    ::createIrValidationAfterInliningPrivateFunctionsKlibPhase,
+    ::IrValidationAfterInliningPrivateFunctionsKlibPhase,
     ::WasmAllFunctionInlining,
     ::RedundantCastsRemoverLowering,
-    ::createIrValidationAfterInliningAllFunctionsKlibSecondStagePhase,
+    ::IrValidationAfterInliningAllFunctionsKlibSecondStagePhase,
     // END: Common Native/JS/Wasm prefix.
 
     ::createConstEvaluationPhase,
@@ -196,6 +166,8 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
 
     ::WasmAddContinuationToNonLocalSuspendFunctionsLowering,
     ::WasmAddContinuationToFunctionCallsLowering,
+
+    ::WasmSuspendLambdaMergingLowering,
     ::WasmAddFunctionSupertypeToSuspendFunctionLowering,
     ::GenerateMainFunctionWrappers,
 
@@ -243,7 +215,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     // Replace builtins before autoboxing
     ::BuiltInsLowering,
 
-    ::createAutoboxingTransformerPhase,
+    ::WasmAutoboxingTransformer,
 
     ::ObjectUsageLowering,
     ::WasmPurifyObjectInstanceGettersLowering,

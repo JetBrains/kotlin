@@ -49,7 +49,6 @@ const val code2 = twoVal.code
 const val code3 = threeVal.code
 const val code4 = fourVal.code
 
-// STOP_EVALUATION_CHECKS
 fun box(): String {
     if (compareTo1.id() != -1)   return "Fail 1.1"
     if (compareTo2.id() != 0)    return "Fail 1.2"

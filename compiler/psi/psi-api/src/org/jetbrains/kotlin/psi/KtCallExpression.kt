@@ -5,7 +5,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
 /**
@@ -22,38 +22,40 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
  *
  * Note: this class is not intended to be extended and is marked `open` solely for backward compatibility.
  */
+@SubclassOptInRequired(KtImplementationDetail::class)
 open class KtCallExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtCallExpression>>, KtCallElement, KtReferenceExpression {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinPlaceHolderStub<KtCallExpression>) : super(stub, KtStubBasedElementTypes.CALL_EXPRESSION)
+    constructor(stub: KotlinPlaceHolderStub<KtCallExpression>) : super(stub, KtNodeTypes.CALL_EXPRESSION)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitCallExpression(this, data)
     }
 
     override fun getCalleeExpression(): KtExpression? {
-        @Suppress("DEPRECATION") // KT-78356
-        return getStubOrPsiChild(KtStubBasedElementTypes.REFERENCE_EXPRESSION) ?: findChildByClass(KtExpression::class.java)
+        return getStubOrPsiChild(KtNodeTypes.REFERENCE_EXPRESSION, KtNameReferenceExpression::class.java)
+            ?: findChildByClass(KtExpression::class.java)
     }
 
     override fun getValueArgumentList(): KtValueArgumentList? {
-        @Suppress("DEPRECATION") // KT-78356
-        return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_ARGUMENT_LIST)
+        return getStubOrPsiChild(KtNodeTypes.VALUE_ARGUMENT_LIST, KtValueArgumentList::class.java)
     }
 
     override fun getTypeArgumentList(): KtTypeArgumentList? {
-        @Suppress("DEPRECATION") // KT-78356
-        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_ARGUMENT_LIST)
+        return getStubOrPsiChild(KtNodeTypes.TYPE_ARGUMENT_LIST, KtTypeArgumentList::class.java)
     }
 
     /**
-     * Normally there should be only one (or zero) function literal arguments.
-     * The returned value is a list for better handling of commonly made mistake of a function taking a lambda and returning another function.
-     * Most of users can simply ignore lists of more than one element.
+     * Returns the trailing lambda arguments of this call — lambdas passed outside the value-argument parentheses, as in `foo { ... }`.
+     *
+     * Normally there is only one (or zero) such argument. The return type is a list only to gracefully handle the common mistake of calling
+     * a function that takes a lambda and itself returns a function, as in `foo { } { }`; most callers can simply ignore lists with more
+     * than one element.
      */
     override fun getLambdaArguments(): List<KtLambdaArgument> {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.LAMBDA_ARGUMENT)
+        return getStubOrPsiChildren(KtNodeTypes.LAMBDA_ARGUMENT, KtLambdaArgument.EMPTY_ARRAY).asList()
     }
 
     override fun getValueArguments(): List<KtValueArgument> {

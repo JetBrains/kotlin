@@ -2,7 +2,7 @@ KtNameReferenceExpression(36,39): 'jvm'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin.jvm
     ]

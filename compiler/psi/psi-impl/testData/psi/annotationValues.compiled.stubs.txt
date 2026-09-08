@@ -29,6 +29,7 @@ AnnotationValues.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=Simple]
+                      isClassRef: true
               VALUE_ARGUMENT_LIST
                 VALUE_ARGUMENT[isSpread=false]
                   VALUE_ARGUMENT_NAME
@@ -84,6 +85,7 @@ AnnotationValues.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=StringLiteral]
+                      isClassRef: true
               VALUE_ARGUMENT_LIST
                 VALUE_ARGUMENT[isSpread=false]
                   VALUE_ARGUMENT_NAME
@@ -117,6 +119,7 @@ AnnotationValues.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=EnumLiteral]
+                      isClassRef: true
               VALUE_ARGUMENT_LIST
                 VALUE_ARGUMENT[isSpread=false]
                   VALUE_ARGUMENT_NAME
@@ -156,6 +159,7 @@ AnnotationValues.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=VarArg]
+                      isClassRef: true
               VALUE_ARGUMENT_LIST
                 VALUE_ARGUMENT[isSpread=false]
                   VALUE_ARGUMENT_NAME
@@ -185,6 +189,7 @@ AnnotationValues.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=Arrays]
+                      isClassRef: true
               VALUE_ARGUMENT_LIST
                 VALUE_ARGUMENT[isSpread=false]
                   VALUE_ARGUMENT_NAME
@@ -235,6 +240,7 @@ AnnotationValues.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=ClassLiteral]
+                      isClassRef: true
               VALUE_ARGUMENT_LIST
                 VALUE_ARGUMENT[isSpread=false]
                   VALUE_ARGUMENT_NAME
@@ -271,6 +277,7 @@ AnnotationValues.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=Outer]
+                      isClassRef: true
               VALUE_ARGUMENT_LIST
                 VALUE_ARGUMENT[isSpread=false]
                   VALUE_ARGUMENT_NAME
@@ -316,6 +323,7 @@ AnnotationValuesKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
+            isClassRef: true
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
 
 
@@ -336,6 +344,7 @@ Arrays.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=IntArray]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=test.Arrays.la, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=la]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -343,6 +352,7 @@ Arrays.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=LongArray]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=test.Arrays.fa, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=fa]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -350,6 +360,7 @@ Arrays.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=FloatArray]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=test.Arrays.da, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=da]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -357,6 +368,7 @@ Arrays.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=DoubleArray]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=test.Arrays.ca, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ca]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -364,6 +376,7 @@ Arrays.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=CharArray]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=test.Arrays.ba, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ba]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -371,6 +384,7 @@ Arrays.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=BooleanArray]
+                  isClassRef: true
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -378,6 +392,7 @@ Arrays.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -400,6 +415,7 @@ ClassLiteral.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=reflect]
                 REFERENCE_EXPRESSION[referencedName=KClass]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=STAR]
           VALUE_PARAMETER[fqName=test.ClassLiteral.c2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=c2]
@@ -411,6 +427,7 @@ ClassLiteral.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=reflect]
                 REFERENCE_EXPRESSION[referencedName=KClass]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=STAR]
       SUPER_TYPE_LIST
@@ -420,6 +437,7 @@ ClassLiteral.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -440,6 +458,7 @@ E.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Enum]
+                isClassRef: true
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
@@ -447,6 +466,7 @@ E.class:
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=test]
                       REFERENCE_EXPRESSION[referencedName=E]
+                        isClassRef: true
       CLASS_BODY
         ENUM_ENTRY[classId=null, fqName=test.E.E1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=E1, superNames=[]]
         ENUM_ENTRY[classId=null, fqName=test.E.E2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=E2, superNames=[]]
@@ -469,6 +489,7 @@ EnumLiteral.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=E]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=test.EnumLiteral.e2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=e2]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -476,6 +497,7 @@ EnumLiteral.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=E]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=test.EnumLiteral.e3, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=e3]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -483,6 +505,7 @@ EnumLiteral.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=E]
+                  isClassRef: true
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -490,6 +513,7 @@ EnumLiteral.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -510,6 +534,7 @@ Nested.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=test.Nested.s, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -517,6 +542,7 @@ Nested.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -524,6 +550,7 @@ Nested.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -544,6 +571,7 @@ Outer.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=test.Outer.nested, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=nested]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -551,6 +579,7 @@ Outer.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=Nested]
+                  isClassRef: true
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -558,6 +587,7 @@ Outer.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -578,6 +608,7 @@ Simple.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=test.Simple.l, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=l]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -585,6 +616,7 @@ Simple.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Long]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=test.Simple.b, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=b]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -592,6 +624,7 @@ Simple.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Byte]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=test.Simple.b2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=b2]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -599,6 +632,7 @@ Simple.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Byte]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=test.Simple.d, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=d]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -606,6 +640,7 @@ Simple.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Double]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=test.Simple.f, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=f]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -613,6 +648,7 @@ Simple.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Float]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=test.Simple.c, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=c]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -620,6 +656,7 @@ Simple.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Char]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=test.Simple.bool1, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=bool1]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -627,6 +664,7 @@ Simple.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Boolean]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=test.Simple.bool2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=bool2]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -634,6 +672,7 @@ Simple.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Boolean]
+                  isClassRef: true
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -641,6 +680,7 @@ Simple.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -661,6 +701,7 @@ StringLiteral.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=test.StringLiteral.s2, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s2]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -668,6 +709,7 @@ StringLiteral.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=test.StringLiteral.s3, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=s3]
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
@@ -675,6 +717,7 @@ StringLiteral.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -682,6 +725,7 @@ StringLiteral.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY
 
 
@@ -702,6 +746,7 @@ VarArg.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE
@@ -709,4 +754,5 @@ VarArg.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
       CLASS_BODY

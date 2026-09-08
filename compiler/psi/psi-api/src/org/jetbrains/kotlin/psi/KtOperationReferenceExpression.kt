@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.TreeElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lang.BinaryOperationPrecedence
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -75,15 +75,16 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall
  * @see KtBinaryExpression
  * @see KtUnaryExpression
  */
-@OptIn(KtExperimentalApi::class, KtImplementationDetail::class)
+@OptIn(KtImplementationDetail::class)
 class KtOperationReferenceExpression :
     KtExpressionImplStub<KotlinOperationReferenceExpressionStub>,
     KtSimpleNameExpression,
     KtResolvableCall {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinOperationReferenceExpressionStub) : super(stub, KtStubBasedElementTypes.OPERATION_REFERENCE)
+    constructor(stub: KotlinOperationReferenceExpressionStub) : super(stub, KtNodeTypes.OPERATION_REFERENCE)
 
     private companion object {
         private val OPERATION_TOKENS: TokenSet = TokenSet.create(*buildList {
@@ -174,6 +175,10 @@ class KtOperationReferenceExpression :
         return null
     }
 
+    /**
+     * The token type of the operation sign (for example, [KtTokens.PLUS][org.jetbrains.kotlin.lexer.KtTokens.PLUS] for `+`), or `null` if
+     * the operation is spelled as an identifier (as with a named infix function).
+     */
     val operationSignTokenType: KtSingleValueToken?
         get() {
             val stub = greenStub
@@ -184,6 +189,10 @@ class KtOperationReferenceExpression :
             return (firstChild as? TreeElement)?.elementType as? KtSingleValueToken
         }
 
+    /**
+     * Returns `true` if this operation sign corresponds to a convention operator that maps to a named operator function (for example, `+`
+     * maps to `plus`). Returns `false` for non-convention signs such as `&&`.
+     */
     fun isConventionOperator(): Boolean {
         val tokenType = operationSignTokenType ?: return false
         return OperatorTokens.operationName(tokenType) != null

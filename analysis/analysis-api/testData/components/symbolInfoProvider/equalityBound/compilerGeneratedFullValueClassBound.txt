@@ -1,0 +1,4 @@
+FUNCTION:
+  /FullValue.equals
+EQUALITY_BOUND:
+  FullValue

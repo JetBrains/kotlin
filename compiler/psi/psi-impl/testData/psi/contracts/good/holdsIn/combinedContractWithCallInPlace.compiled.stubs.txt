@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CombinedContractWithCallInPl
   partSimpleName: "CombinedContractWithCallInPlaceKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=holdsInExactlyOnce, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInExactlyOnce]
+  FUNCTION[fqName=holdsInExactlyOnce, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInExactlyOnce]
     contract: [
       effect:param(0) HoldsIn(param(1))
       effect:CallsInPlace(param(1), EXACTLY_ONCE)
@@ -19,6 +19,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CombinedContractWithCallInPl
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=block]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -26,12 +27,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CombinedContractWithCallInPl
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=R]
+                  isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=holdsInAtLeastOnce, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInAtLeastOnce]
+          isClassRef: true
+  FUNCTION[fqName=holdsInAtLeastOnce, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInAtLeastOnce]
     contract: [
       effect:param(0) HoldsIn(param(1))
       effect:CallsInPlace(param(1), AT_LEAST_ONCE)
@@ -47,6 +50,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CombinedContractWithCallInPl
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=block]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -54,12 +58,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CombinedContractWithCallInPl
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=R]
+                  isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=holdsInWithTwoCallInPlace, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInWithTwoCallInPlace]
+          isClassRef: true
+  FUNCTION[fqName=holdsInWithTwoCallInPlace, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInWithTwoCallInPlace]
     contract: [
       effect:param(0) HoldsIn(param(1))
       effect:CallsInPlace(param(1), EXACTLY_ONCE)
@@ -76,6 +82,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CombinedContractWithCallInPl
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=block]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -83,6 +90,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CombinedContractWithCallInPl
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=R]
+                  isClassRef: true
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=block2]
         TYPE_REFERENCE
           FUNCTION_TYPE
@@ -90,8 +98,10 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CombinedContractWithCallInPl
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=R]
+                  isClassRef: true
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
+          isClassRef: true

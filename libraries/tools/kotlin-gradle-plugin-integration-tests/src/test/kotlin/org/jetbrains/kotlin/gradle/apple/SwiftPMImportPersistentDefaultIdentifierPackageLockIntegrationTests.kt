@@ -27,7 +27,6 @@ import kotlin.test.assertTrue
 )
 @DisplayName("SwiftPM import default identifier synchronization integration tests")
 @SwiftPMImportGradlePluginTests
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
 class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPBaseTest() {
 
     @OptIn(ExperimentalKotlinGradlePluginApi::class)

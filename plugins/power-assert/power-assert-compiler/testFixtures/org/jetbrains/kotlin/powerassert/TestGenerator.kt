@@ -15,8 +15,15 @@ fun main(args: Array<String>) {
             testClass<AbstractPowerAssertPluginFirPsiDiagnosticTest> {
                 model("diagnostic", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
-            testClass<AbstractFirLightTreeBlackBoxCodegenTestForPowerAssert> {
+            testClass<AbstractPowerAssertBlackBoxCodegenTest> {
                 model("codegen", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+            }
+            testClass<AbstractPowerAssertMissingRuntimeBlackBoxCodegenTest> {
+                model(
+                    relativeRootPath = "codegen",
+                    excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX,
+                    excludeDirsRecursively = listOf("annotated"),
+                )
             }
         }
     }

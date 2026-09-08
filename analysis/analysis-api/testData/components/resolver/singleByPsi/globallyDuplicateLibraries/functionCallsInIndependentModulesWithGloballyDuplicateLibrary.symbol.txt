@@ -3,7 +3,7 @@ module1 - main1.kt:
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
     lookupLocally: false
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         library/Common.foo(<dispatch receiver>: library.Common): kotlin.String
       ]
@@ -13,7 +13,7 @@ module2 - main2.kt:
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
     lookupLocally: false
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         library/Common.bar(<dispatch receiver>: library.Common): kotlin.Int
       ]

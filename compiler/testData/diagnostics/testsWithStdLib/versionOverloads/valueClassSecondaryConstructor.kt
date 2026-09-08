@@ -1,8 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-87505
 
-@file:OptIn(ExperimentalVersionOverloading::class)
-
 @JvmInline
 value class Some(val x: Int) {
     constructor(

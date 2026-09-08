@@ -130,10 +130,11 @@ FILE fqName:<root> fileName:/properties.kt
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:c1 index:1 type:kotlin.Boolean
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:2 type:kotlin.Int
             BLOCK_BODY
-              CALL 'public final fun <set-foo2> ($context-String: kotlin.String, b: kotlin.Boolean, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                ARG $context-String: GET_VAR 'c0: kotlin.String declared in <root>.test2.foo2' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
-                ARG b: GET_VAR 'c1: kotlin.Boolean declared in <root>.test2.foo2' type=kotlin.Boolean origin=ADAPTED_FUNCTION_REFERENCE
-                ARG value: GET_VAR 'value: kotlin.Int declared in <root>.test2.foo2' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
+              RETURN type=kotlin.Nothing from='local final fun foo2 (c0: kotlin.String, c1: kotlin.Boolean, value: kotlin.Int): kotlin.Unit declared in <root>.test2'
+                CALL 'public final fun <set-foo2> ($context-String: kotlin.String, b: kotlin.Boolean, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  ARG $context-String: GET_VAR 'c0: kotlin.String declared in <root>.test2.foo2' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG b: GET_VAR 'c1: kotlin.Boolean declared in <root>.test2.foo2' type=kotlin.Boolean origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG value: GET_VAR 'value: kotlin.Int declared in <root>.test2.foo2' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<<root>.Bar, kotlin.Int> origin=null reflectionTarget='public final baz2: kotlin.Int declared in <root>.Bar'
           bound c0: GET_VAR 's: kotlin.String declared in <root>.test2' type=kotlin.String origin=null
@@ -154,11 +155,12 @@ FILE fqName:<root> fileName:/properties.kt
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:2 type:<root>.Bar
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:3 type:kotlin.Int
             BLOCK_BODY
-              CALL 'public final fun <set-baz2> ($context-String: kotlin.String, b: kotlin.Boolean, value: kotlin.Int): kotlin.Unit declared in <root>.Bar' type=kotlin.Unit origin=null
-                ARG <this>: GET_VAR 'p0: <root>.Bar declared in <root>.test2.baz2' type=<root>.Bar origin=null
-                ARG $context-String: GET_VAR 'c0: kotlin.String declared in <root>.test2.baz2' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
-                ARG b: GET_VAR 'c1: kotlin.Boolean declared in <root>.test2.baz2' type=kotlin.Boolean origin=ADAPTED_FUNCTION_REFERENCE
-                ARG value: GET_VAR 'value: kotlin.Int declared in <root>.test2.baz2' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
+              RETURN type=kotlin.Nothing from='local final fun baz2 (c0: kotlin.String, c1: kotlin.Boolean, p0: <root>.Bar, value: kotlin.Int): kotlin.Unit declared in <root>.test2'
+                CALL 'public final fun <set-baz2> ($context-String: kotlin.String, b: kotlin.Boolean, value: kotlin.Int): kotlin.Unit declared in <root>.Bar' type=kotlin.Unit origin=null
+                  ARG <this>: GET_VAR 'p0: <root>.Bar declared in <root>.test2.baz2' type=<root>.Bar origin=null
+                  ARG $context-String: GET_VAR 'c0: kotlin.String declared in <root>.test2.baz2' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG b: GET_VAR 'c1: kotlin.Boolean declared in <root>.test2.baz2' type=kotlin.Boolean origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG value: GET_VAR 'value: kotlin.Int declared in <root>.test2.baz2' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='public final baz2: kotlin.Int declared in <root>.Bar'
           bound c0: GET_VAR 's: kotlin.String declared in <root>.test2' type=kotlin.String origin=null
@@ -180,11 +182,12 @@ FILE fqName:<root> fileName:/properties.kt
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:2 type:<root>.Bar
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:3 type:kotlin.Int
             BLOCK_BODY
-              CALL 'public final fun <set-baz2> ($context-String: kotlin.String, b: kotlin.Boolean, value: kotlin.Int): kotlin.Unit declared in <root>.Bar' type=kotlin.Unit origin=null
-                ARG <this>: GET_VAR 'receiver: <root>.Bar declared in <root>.test2.baz2' type=<root>.Bar origin=ADAPTED_FUNCTION_REFERENCE
-                ARG $context-String: GET_VAR 'c0: kotlin.String declared in <root>.test2.baz2' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
-                ARG b: GET_VAR 'c1: kotlin.Boolean declared in <root>.test2.baz2' type=kotlin.Boolean origin=ADAPTED_FUNCTION_REFERENCE
-                ARG value: GET_VAR 'value: kotlin.Int declared in <root>.test2.baz2' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
+              RETURN type=kotlin.Nothing from='local final fun baz2 (c0: kotlin.String, c1: kotlin.Boolean, receiver: <root>.Bar, value: kotlin.Int): kotlin.Unit declared in <root>.test2'
+                CALL 'public final fun <set-baz2> ($context-String: kotlin.String, b: kotlin.Boolean, value: kotlin.Int): kotlin.Unit declared in <root>.Bar' type=kotlin.Unit origin=null
+                  ARG <this>: GET_VAR 'receiver: <root>.Bar declared in <root>.test2.baz2' type=<root>.Bar origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG $context-String: GET_VAR 'c0: kotlin.String declared in <root>.test2.baz2' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG b: GET_VAR 'c1: kotlin.Boolean declared in <root>.test2.baz2' type=kotlin.Boolean origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG value: GET_VAR 'value: kotlin.Int declared in <root>.test2.baz2' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<kotlin.Int, kotlin.Int> origin=null reflectionTarget='public final qux2: kotlin.Int declared in <root>'
           bound c0: GET_VAR 's: kotlin.String declared in <root>.test2' type=kotlin.String origin=null
@@ -205,11 +208,12 @@ FILE fqName:<root> fileName:/properties.kt
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:2 type:kotlin.Int
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:3 type:kotlin.Int
             BLOCK_BODY
-              CALL 'public final fun <set-qux2> ($context-String: kotlin.String, b: kotlin.Boolean, <this>: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                ARG $context-String: GET_VAR 'c0: kotlin.String declared in <root>.test2.qux2' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
-                ARG b: GET_VAR 'c1: kotlin.Boolean declared in <root>.test2.qux2' type=kotlin.Boolean origin=ADAPTED_FUNCTION_REFERENCE
-                ARG <this>: GET_VAR 'p0: kotlin.Int declared in <root>.test2.qux2' type=kotlin.Int origin=null
-                ARG value: GET_VAR 'value: kotlin.Int declared in <root>.test2.qux2' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
+              RETURN type=kotlin.Nothing from='local final fun qux2 (c0: kotlin.String, c1: kotlin.Boolean, p0: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in <root>.test2'
+                CALL 'public final fun <set-qux2> ($context-String: kotlin.String, b: kotlin.Boolean, <this>: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  ARG $context-String: GET_VAR 'c0: kotlin.String declared in <root>.test2.qux2' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG b: GET_VAR 'c1: kotlin.Boolean declared in <root>.test2.qux2' type=kotlin.Boolean origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG <this>: GET_VAR 'p0: kotlin.Int declared in <root>.test2.qux2' type=kotlin.Int origin=null
+                  ARG value: GET_VAR 'value: kotlin.Int declared in <root>.test2.qux2' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='public final qux2: kotlin.Int declared in <root>'
           bound c0: GET_VAR 's: kotlin.String declared in <root>.test2' type=kotlin.String origin=null
@@ -231,11 +235,12 @@ FILE fqName:<root> fileName:/properties.kt
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:2 type:kotlin.Int
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:3 type:kotlin.Int
             BLOCK_BODY
-              CALL 'public final fun <set-qux2> ($context-String: kotlin.String, b: kotlin.Boolean, <this>: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                ARG $context-String: GET_VAR 'c0: kotlin.String declared in <root>.test2.qux2' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
-                ARG b: GET_VAR 'c1: kotlin.Boolean declared in <root>.test2.qux2' type=kotlin.Boolean origin=ADAPTED_FUNCTION_REFERENCE
-                ARG <this>: GET_VAR 'receiver: kotlin.Int declared in <root>.test2.qux2' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
-                ARG value: GET_VAR 'value: kotlin.Int declared in <root>.test2.qux2' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
+              RETURN type=kotlin.Nothing from='local final fun qux2 (c0: kotlin.String, c1: kotlin.Boolean, receiver: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in <root>.test2'
+                CALL 'public final fun <set-qux2> ($context-String: kotlin.String, b: kotlin.Boolean, <this>: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  ARG $context-String: GET_VAR 'c0: kotlin.String declared in <root>.test2.qux2' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG b: GET_VAR 'c1: kotlin.Boolean declared in <root>.test2.qux2' type=kotlin.Boolean origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG <this>: GET_VAR 'receiver: kotlin.Int declared in <root>.test2.qux2' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG value: GET_VAR 'value: kotlin.Int declared in <root>.test2.qux2' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
   PROPERTY name:foo visibility:public modality:FINAL [val]
     FUN name:<get-foo> visibility:public modality:FINAL returnType:kotlin.Int
       VALUE_PARAMETER UNDERSCORE_PARAMETER kind:Context name:$context-String index:0 type:kotlin.String

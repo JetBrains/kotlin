@@ -1,9 +1,7 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import java.net.URI
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("multiplatform")
     id("generated-sources")
@@ -37,6 +35,7 @@ kotlin {
             dependencies {
                 implementation(project(":compiler:psi:psi-api"))
                 implementation(intellijCore())
+                implementation(libs.opentelemetry.api)
                 runtimeOnly(libs.intellij.fastutil)
                 runtimeOnly(commonDependency("com.fasterxml:aalto-xml"))
                 implementation(project.dependencies.testFixtures(project(":compiler:test-infrastructure-utils")))

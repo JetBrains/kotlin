@@ -77,7 +77,7 @@ KtFile: arraysWithNonConstantValue.kt
                   PsiElement(IDENTIFIER)('ENTRY')
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
-              FUN
+              FUNCTION
                 PsiElement(fun)('fun')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('a')

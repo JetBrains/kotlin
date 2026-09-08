@@ -1,6 +1,6 @@
 KtForExpression(23,37): 'for(i in f) {}'
   KaForLoopCallResolutionAttempt:
-    hasNextCallAttempt = KaCallResolutionError:
+    hasNextCallAttempt = KaSimpleCallResolutionError:
       candidateCalls = [
         KaSimpleFunctionCall:
           contextArgumentMapping = {}
@@ -20,8 +20,8 @@ KtForExpression(23,37): 'for(i in f) {}'
           typeArgumentsMapping = {}
           valueArgumentMapping = {}
       ]
-      diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun Int.hasNext(): Boolean' is inapplicable because of a receiver type mismatch.>
-    iteratorCallAttempt = KaCallResolutionSuccess:
+      diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun Int.hasNext(): Boolean' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Iterator'.>
+    iteratorCallAttempt = KaSimpleCallResolutionSuccess:
       call = KaSimpleFunctionCall:
         contextArgumentMapping = {}
         contextArguments = []
@@ -39,7 +39,7 @@ KtForExpression(23,37): 'for(i in f) {}'
           callableId = /Foo.iterator
         typeArgumentsMapping = {}
         valueArgumentMapping = {}
-    nextCallAttempt = KaCallResolutionSuccess:
+    nextCallAttempt = KaSimpleCallResolutionSuccess:
       call = KaSimpleFunctionCall:
         contextArgumentMapping = {}
         contextArguments = []

@@ -8,7 +8,7 @@ KtNameReferenceExpression(59,63): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test
     ]
@@ -38,19 +38,19 @@ KtDeclarationModifierList(94,103): 'companion'
   null
 
 KtTypeReference(108,110): 'C?'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
 KtNullableType(108,110): 'C?'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
 KtUserType(108,109): 'C'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
@@ -59,7 +59,7 @@ KtNameReferenceExpression(108,109): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
@@ -77,13 +77,13 @@ KtDeclarationModifierList(133,142): 'companion'
   null
 
 KtTypeReference(147,148): 'O'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/O
     ]
 
 KtUserType(147,148): 'O'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/O
     ]
@@ -92,7 +92,7 @@ KtNameReferenceExpression(147,148): 'O'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/O
     ]
@@ -119,13 +119,13 @@ KtDeclarationModifierList(191,198): 'reified'
   null
 
 KtTypeReference(202,203): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
 
 KtUserType(202,203): 'T'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -134,7 +134,7 @@ KtNameReferenceExpression(202,203): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
     ]
@@ -152,13 +152,13 @@ KtDeclarationModifierList(231,240): 'companion'
   null
 
 KtTypeReference(245,254): 'G<String>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/G
     ]
 
 KtUserType(245,254): 'G<String>'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/G
     ]
@@ -167,7 +167,7 @@ KtNameReferenceExpression(245,246): 'G'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/G
     ]
@@ -179,13 +179,13 @@ KtTypeProjection(247,253): 'String'
   null
 
 KtTypeReference(247,253): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(247,253): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -194,7 +194,7 @@ KtNameReferenceExpression(247,253): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -215,7 +215,7 @@ KtBlockExpression(295,376): '{'
   null
 
 KtDotQualifiedExpression(301,321): 'C.nullableReceiver()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/nullableReceiver(<extension receiver>: test.C?): kotlin.Unit
     ]
@@ -224,13 +224,13 @@ KtNameReferenceExpression(301,302): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
 KtCallExpression(303,321): 'nullableReceiver()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/nullableReceiver(<extension receiver>: test.C?): kotlin.Unit
     ]
@@ -239,7 +239,7 @@ KtNameReferenceExpression(303,319): 'nullableReceiver'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/nullableReceiver(<extension receiver>: test.C?): kotlin.Unit
     ]
@@ -248,7 +248,7 @@ KtValueArgumentList(319,321): '()'
   null
 
 KtDotQualifiedExpression(326,344): 'O.objectReceiver()'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'objectReceiver'.>
 
@@ -256,13 +256,13 @@ KtNameReferenceExpression(326,327): 'O'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/O
     ]
 
 KtCallExpression(328,344): 'objectReceiver()'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'objectReceiver'.>
 
@@ -270,7 +270,7 @@ KtNameReferenceExpression(328,342): 'objectReceiver'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'objectReceiver'.>
 
@@ -278,7 +278,7 @@ KtValueArgumentList(342,344): '()'
   null
 
 KtDotQualifiedExpression(349,374): 'G.typeArgumentsReceiver()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/typeArgumentsReceiver(<extension receiver>: test.G<kotlin.String>): kotlin.Unit
     ]
@@ -287,13 +287,13 @@ KtNameReferenceExpression(349,350): 'G'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/G
     ]
 
 KtCallExpression(351,374): 'typeArgumentsReceiver()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/typeArgumentsReceiver(<extension receiver>: test.G<kotlin.String>): kotlin.Unit
     ]
@@ -302,7 +302,7 @@ KtNameReferenceExpression(351,372): 'typeArgumentsReceiver'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/typeArgumentsReceiver(<extension receiver>: test.G<kotlin.String>): kotlin.Unit
     ]

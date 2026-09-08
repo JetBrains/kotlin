@@ -303,7 +303,6 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
     }
 
     @DisplayName("KT-63499: source sets conventions are not registered since Gradle 8.2")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_2)
     @GradleTest
     fun sourceSetsConventionsAreNotRegistered(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {

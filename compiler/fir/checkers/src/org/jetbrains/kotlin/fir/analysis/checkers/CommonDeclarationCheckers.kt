@@ -20,7 +20,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = setOf(
         FirModifierChecker,
         FirConflictsDeclarationChecker.Regular,
-        FirConflictsDeclarationChecker.ForExpectClass,
+        FirConflictsDeclarationChecker.ForExpect,
         FirTypeConstraintsChecker,
         FirReservedUnderscoreDeclarationChecker,
         FirExposedVisibilityDeclarationChecker,

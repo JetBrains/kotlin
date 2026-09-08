@@ -45,7 +45,7 @@ KtFile: modifiers.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(external)('external')
         PsiWhiteSpace(' ')
@@ -84,7 +84,7 @@ KtFile: modifiers.kt
           PsiWhiteSpace(' ')
           PsiElement(set)('set')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(tailrec)('tailrec')
         PsiWhiteSpace(' ')
@@ -187,7 +187,7 @@ KtFile: modifiers.kt
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(inline)('inline')
         PsiWhiteSpace(' ')
@@ -244,7 +244,7 @@ KtFile: modifiers.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
           PsiWhiteSpace(' ')
@@ -280,7 +280,7 @@ KtFile: modifiers.kt
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('Ann')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(suspend)('suspend')
         PsiWhiteSpace(' ')
@@ -311,7 +311,7 @@ KtFile: modifiers.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('builder')

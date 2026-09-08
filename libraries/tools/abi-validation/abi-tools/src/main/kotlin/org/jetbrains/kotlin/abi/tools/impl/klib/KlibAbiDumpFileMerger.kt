@@ -113,7 +113,7 @@ internal class KlibAbiDumpMerger {
         val aliases = mutableMapOf<String, Set<KlibTarget>>()
         val bcvTargets = mutableSetOf<KlibTarget>()
         if (isMergedFile) {
-            lines.next() // skip the heading line
+            val _ = lines.next() // skip the heading line
             bcvTargets.addAll(lines.parseTargets())
             aliases.putAll(lines.parseAliases())
         }
@@ -146,7 +146,8 @@ internal class KlibAbiDumpMerger {
         while (lines.hasNext()) {
             val line = lines.peek()!!
             if (line.isEmpty()) {
-                lines.next(); continue
+                val _ = lines.next()
+                continue
             }
             // TODO: wrap the line and cache the depth inside that wrapper?
             val lineDepth = line.depth()
@@ -183,7 +184,7 @@ internal class KlibAbiDumpMerger {
                     if (line.trim() == CLASS_DECLARATION_TERMINATOR) {
                         currentContainer.delimiter = line
                         // We processed the terminator char, so let's skip this line.
-                        lines.next()
+                        val _ = lines.next()
                     }
                     // For the top level declaration depth is -1
                     depth = if (currentContainer.parent == null) -1 else currentContainer.text.depth()
@@ -200,7 +201,7 @@ internal class KlibAbiDumpMerger {
         require(line.startsWith(TARGETS_LIST_PREFIX)) {
             "The line should starts with $TARGETS_LIST_PREFIX, but was: $line"
         }
-        next()
+        val _ = next()
         val targets = parseBcvTargetsLine(line)
         return targets
     }
@@ -241,7 +242,7 @@ internal class KlibAbiDumpMerger {
                 throw IllegalStateException("Library header has invalid format at line \"$next\"")
             }
             header.add(next)
-            next()
+            val _ = next()
             if (next.startsWith(LIBRARY_NAME_PREFIX)) {
                 break
             }
@@ -250,7 +251,7 @@ internal class KlibAbiDumpMerger {
         while (hasNext()) {
             val next = peek()!!
             if (!next.startsWith(COMMENT_PREFIX) || next.startsWith(TARGETS_LIST_PREFIX)) break
-            next()
+            val _ = next()
             // There's no manifest in merged files
             check(!isMergedFile) { "Unexpected header line: $next" }
             when {
@@ -324,7 +325,7 @@ internal class KlibAbiDumpMerger {
     ): DeclarationContainer {
         val line = peek()!!
         return if (line.startsWith(" ".repeat(depth * INDENT_WIDTH) + TARGETS_LIST_PREFIX)) {
-            next() // skip prefix
+            val _ = next() // skip prefix
             // Target list means that the declaration following it has a narrower set of targets than its parent,
             // so we must use it.
             val targets = parseBcvTargetsLine(line)

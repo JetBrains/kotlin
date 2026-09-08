@@ -449,8 +449,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         project(
             "js-composite-build",
             gradleVersion,
-            // `:compileKotlinJs` task is not compatible with CC on Gradle 7
-            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
         ) {
             fun BuildResult.moduleVersion(rootModulePath: String, moduleName: String): String =
                 projectPath.resolve(rootModulePath).toFile()

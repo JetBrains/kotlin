@@ -1,3 +1,4 @@
+// DUMP_KT_IR
 // ISSUE: KT-87886
 
 import lombok.Builder

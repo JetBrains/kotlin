@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
-internal class TypeOfProcessingLowering(val generationState: NativeGenerationState) : FileLoweringPass {
+internal class TypeOfProcessingLowering(val context: NativeLoweringContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         Transformer(
-                generationState.context.irBuiltIns,
-                generationState.context.symbols,
-                generationState.context
+                context.irBuiltIns,
+                context.symbols,
+                context
         ).visitFile(irFile, null)
     }
 }

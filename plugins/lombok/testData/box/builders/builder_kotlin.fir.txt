@@ -1,5 +1,5 @@
 FILE: builder_kotlin.kt
-    @R|lombok/Builder|(toBuilder = Boolean(true) [evaluated = Boolean(true)], access = Q|lombok/AccessLevel|.R|lombok/AccessLevel.PROTECTED| [evaluated = Q|lombok/AccessLevel|.R|lombok/AccessLevel.PROTECTED|]) public final class User : R|kotlin/Any| {
+    @R|lombok/Builder|(toBuilder = Boolean(true) [evaluated = Boolean(true)]) public final class User : R|kotlin/Any| {
         public constructor(name: R|kotlin/String|, age: R|kotlin/Int|, info: R|kotlin/String?|): R|User| {
             super<R|kotlin/Any|>()
         }
@@ -13,10 +13,10 @@ FILE: builder_kotlin.kt
         public final val info: R|kotlin/String?| = R|<local>/info|
             public get(): R|kotlin/String?|
 
-        protected/*protected and package*/ open fun toBuilder(): R|User.UserBuilder|
+        public open fun toBuilder(): R|User.UserBuilder|
 
         public final companion object Companion : R|kotlin/Any| {
-            @R|kotlin/jvm/JvmStatic|() protected/*protected and package*/ final fun builder(): R|User.UserBuilder|
+            @R|kotlin/jvm/JvmStatic|() public final fun builder(): R|User.UserBuilder|
 
             private constructor(): R|User.Companion| {
                 super<R|kotlin/Any|>()
@@ -24,7 +24,7 @@ FILE: builder_kotlin.kt
 
         }
 
-        protected/*protected and package*/ open class UserBuilder : R|kotlin/Any| {
+        public open class UserBuilder : R|kotlin/Any| {
             public open fun build(): R|User|
 
             public open fun name(name: R|kotlin/String|): R|User.UserBuilder|

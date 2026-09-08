@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.js.backend.ast
 
 import java.math.BigInteger
 
-class JsBigIntLiteral(val value: BigInteger) : JsLiteral.JsValueLiteral() {
+class JsBigIntLiteral(val value: BigInteger) : JsNumberLiteral() {
     constructor(value: Long) : this(BigInteger.valueOf(value))
 
     override fun accept(visitor: JsVisitor) {

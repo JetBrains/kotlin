@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.util.IncorrectOperationException;
+import kotlin.ReplaceWith;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 
@@ -25,15 +27,18 @@ import java.util.concurrent.atomic.AtomicLong;
  * //          ^________^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtSuperTypeList>> {
     private final AtomicLong modificationStamp = new AtomicLong();
 
+    @KtImplementationDetail
     public KtSuperTypeList(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtSuperTypeList(@NotNull KotlinPlaceHolderStub<KtSuperTypeList> stub) {
-        super(stub, KtStubBasedElementTypes.SUPER_TYPE_LIST);
+        super(stub, KtNodeTypes.SUPER_TYPE_LIST);
     }
 
     @Override
@@ -48,7 +53,7 @@ public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtS
     @NotNull
     @kotlin.Deprecated(
             message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addSuperType(this, entry)' instead.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "this.addSuperType(entry)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.addSuperType"
             )
@@ -64,7 +69,7 @@ public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtS
      */
     @kotlin.Deprecated(
             message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.removeSuperType(this, entry)' instead.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "this.removeSuperType(entry)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.removeSuperType"
             )
@@ -79,6 +84,7 @@ public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtS
         KtPsiMutationService.getInstance().deleteSuperTypeList(this);
     }
 
+    /** Returns the entries of the super type list, in source order; empty if there are none. */
     public List<KtSuperTypeListEntry> getEntries() {
         return Arrays.asList(getStubOrPsiChildren(KtTokenSets.SUPER_TYPE_LIST_ENTRIES, KtSuperTypeListEntry.ARRAY_FACTORY));
     }
@@ -90,6 +96,7 @@ public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtS
         modificationStamp.getAndIncrement();
     }
 
+    /** Returns a stamp that is incremented whenever this super type list's subtree changes, allowing callers to detect modifications. */
     public long getModificationStamp() {
         return modificationStamp.get();
     }

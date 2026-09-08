@@ -46,7 +46,7 @@ abstract class KaBaseTypeCreatorProvider<T : KaSession> : KaBaseSessionComponent
             val sourceIsMarkedNullable = type.isMarkedNullable
             val sourceIsSuspend = type.isSuspend
             val sourceIsReflectType = type.isReflectType
-            val sourceContextReceivers = type.contextReceivers
+            val sourceContextParameterTypes = type.contextParameterTypes
             val sourceReceiverType = type.receiverType
             val sourceParameters = type.parameters
             val sourceReturnType = type.returnType
@@ -56,8 +56,8 @@ abstract class KaBaseTypeCreatorProvider<T : KaSession> : KaBaseSessionComponent
                 isMarkedNullable = sourceIsMarkedNullable
                 isSuspend = sourceIsSuspend
                 isReflectType = sourceIsReflectType
-                for (contextReceiver in sourceContextReceivers) {
-                    contextParameter(contextReceiver.type)
+                for (contextParameterType in sourceContextParameterTypes) {
+                    contextParameter(contextParameterType)
                 }
                 receiverType = sourceReceiverType
                 for (parameter in sourceParameters) {

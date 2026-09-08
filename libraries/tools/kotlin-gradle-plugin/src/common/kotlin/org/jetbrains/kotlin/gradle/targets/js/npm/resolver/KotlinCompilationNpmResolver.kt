@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.compilationDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
@@ -108,8 +109,8 @@ class KotlinCompilationNpmResolver(
         }
 
         val nodeJsRoot = compilation.webTargetVariant(
-            { project.rootProject.kotlinNodeJsRootExtension },
-            { project.rootProject.wasmKotlinNodeJsRootExtension },
+            { project.jsToolingProject().kotlinNodeJsRootExtension },
+            { project.jsToolingProject().wasmKotlinNodeJsRootExtension },
         )
 
         nodeJsRoot.packageJsonUmbrellaTaskProvider.configure {

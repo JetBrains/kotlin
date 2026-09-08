@@ -126,7 +126,7 @@ KtFile: ExportedKdoc.kt
                     PsiElement(RPAR)(')')
             PsiElement(RPAR)(')')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         KDoc
           PsiElement(KDOC_START)('/**')
           PsiWhiteSpace('\n     ')
@@ -361,7 +361,7 @@ KtFile: ExportedKdoc.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('Obj')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     KDoc
       PsiElement(KDOC_START)('/**')
       PsiWhiteSpace('\n ')

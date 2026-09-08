@@ -24,6 +24,7 @@ object WasmBaseExpressionCheckers : ExpressionCheckers() {
 
     override val functionCallCheckers: Set<FirFunctionCallChecker>
         get() = setOf(
+            FirSuperCallWithDefaultsChecker,
             FirWasmReifiedExternalChecker
         )
 }

@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("compiler/incremental-compilation-impl/tests-gen", "jps/jps-plugin/testData") {
             // K2
-            testClass<AbstractIncrementalK2JvmCompilerRunnerTest>(
+            testClass<AbstractIncrementalJvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
                     folderToExcludePatternMap = mapOf(
                         PURE_KOTLIN to ExcludePattern.forK2
@@ -22,7 +22,7 @@ fun main(args: Array<String>) {
                 )
             )
 
-            testClass<AbstractIncrementalK2FirICJvmCompilerRunnerTest>(
+            testClass<AbstractIncrementalFirICJvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
                     folderToExcludePatternMap = mapOf(
                         PURE_KOTLIN to ExcludePattern.forK2,
@@ -30,7 +30,7 @@ fun main(args: Array<String>) {
                     )
                 )
             )
-            testClass<AbstractIncrementalK2PsiJvmCompilerRunnerTest>(
+            testClass<AbstractIncrementalPsiJvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
                     folderToExcludePatternMap = mapOf(
                         PURE_KOTLIN to ExcludePattern.forK2
@@ -38,12 +38,12 @@ fun main(args: Array<String>) {
                 )
             )
 
-            testClass<AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest> {
+            testClass<AbstractIncrementalJsKlibMultiModuleCompilerRunnerTest> {
                 modelForDirectoryBasedTest("incremental/multiModule", "common", extension = null, excludeParentDirs = true)
             }
 
             // TODO: https://youtrack.jetbrains.com/issue/KT-61602/JS-K2-ICL-Fix-muted-tests
-            testClass<AbstractIncrementalK2JsKlibCompilerWithScopeExpansionRunnerTest> {
+            testClass<AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest> {
                 // IC of sealed interfaces are not supported in JS
                 modelForDirectoryBasedTest(
                     "incremental", "pureKotlin", extension = null, recursive = false,

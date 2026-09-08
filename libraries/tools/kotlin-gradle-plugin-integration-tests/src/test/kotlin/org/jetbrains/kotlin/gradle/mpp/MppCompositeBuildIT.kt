@@ -30,7 +30,10 @@ import kotlin.test.assertIs
 class MppCompositeBuildIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         // FIXME: KT-81095 these tests fail with OOM when CC is enabled
-        get() = super.defaultBuildOptions.copy(configurationCache = ConfigurationCacheValue.DISABLED)
+        get() = super.defaultBuildOptions.copy(
+            configurationCache = ConfigurationCacheValue.DISABLED,
+            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+        )
 
     @GradleTest
     fun `test - sample0 - ide dependencies`(gradleVersion: GradleVersion) {
@@ -150,7 +153,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
     @GradleTest
     fun `test - sample1 - ide dependencies`(gradleVersion: GradleVersion) {
         project("mpp-composite-build/sample1", gradleVersion) {
-            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle(gradleVersion)
+            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle()
             buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
             projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", KOTLIN_VERSION)
 
@@ -176,8 +179,8 @@ class MppCompositeBuildIT : KGPBaseTest() {
 
     @GradleTest
     fun `test - sample1 - assemble and execute`(gradleVersion: GradleVersion) {
-        var buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion)
-        if (gradleVersion < GradleVersion.version("9.1")) {
+        var buildOptions = defaultBuildOptions
+        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_1)) {
             // FIXME: KT-74795
             buildOptions = buildOptions.disableIsolatedProjects()
         }
@@ -186,7 +189,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = buildOptions,
         ) {
-            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle(gradleVersion)
+            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle()
             buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
             projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", KOTLIN_VERSION)
 
@@ -220,11 +223,14 @@ class MppCompositeBuildIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions
                 .suppressDeprecationWarningsOn(
-                    reason = "KGP 1.7.21 produces deprecation warnings with Gradle 8.4"
-                ) { gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_4) }
-                .copy(configurationCache = ConfigurationCacheValue.DISABLED)
+                    reason = "KGP 1.7.21 produces deprecation warnings"
+                ) { gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_14) }
+                .copy(
+                    configurationCache = ConfigurationCacheValue.DISABLED,
+                    isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+                )
         ) {
-            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle(gradleVersion)
+            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle()
             buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
             projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", "1.7.21")
             projectPath.resolve("included-build/included/build.gradle.kts").replaceText(
@@ -436,6 +442,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
 
             build(
                 ":consumerA:compileCommonMainKotlinMetadata",
+                buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion),
             ) {
                 assertTasksExecuted(":consumerA:compileCommonMainKotlinMetadata")
             }

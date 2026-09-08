@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
-// LANGUAGE: +CollectionLiterals
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 fun <T> id(t: T): T = t

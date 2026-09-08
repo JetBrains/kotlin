@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -24,11 +25,14 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall;
  * }
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtCallableReferenceExpression extends KtExpressionImpl implements KtDoubleColonExpression, KtResolvableCall {
+    @KtImplementationDetail
     public KtCallableReferenceExpression(@NotNull ASTNode node) {
         super(node);
     }
 
+    /** Returns the reference to the callable being referenced (the name after {@code ::}, as in {@code ::foo}). */
     @NotNull
     public KtSimpleNameExpression getCallableReference() {
         PsiElement psi = getDoubleColonTokenReference();

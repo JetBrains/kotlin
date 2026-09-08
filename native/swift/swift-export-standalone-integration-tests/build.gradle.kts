@@ -1,6 +1,5 @@
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
@@ -15,7 +14,7 @@ dependencies {
     testFixturesImplementation(project(":native:external-projects-test-utils"))
     testFixturesImplementation(project(":kotlin-util-klib-metadata"))
     testFixturesApi(testFixtures(project(":native:native.tests")))
-    testFixturesCompileOnly(testFederationRuntime)
+    testFixturesCompileOnly(project(":repo:test-runtime"))
 }
 
 sourceSets {

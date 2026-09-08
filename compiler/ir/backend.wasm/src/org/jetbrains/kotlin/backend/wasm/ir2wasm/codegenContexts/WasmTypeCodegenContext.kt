@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.wasm.ir.WasmContType
 import org.jetbrains.kotlin.wasm.ir.WasmFunctionType
 import org.jetbrains.kotlin.wasm.ir.WasmStructDeclaration
-import org.jetbrains.kotlin.wasm.ir.WasmSymbol
 import org.jetbrains.kotlin.wasm.ir.WasmTypeDeclaration
 
 private const val ENCODE_BYTE_COUNT = 9
@@ -70,13 +69,13 @@ open class WasmTypeCodegenContext(
         wasmFileFragment.contFunctionTypes[arity] = wasmType
     }
 
-    fun referenceWasmFunctionType(wasmFunctionType: WasmFunctionType): FunctionTypeSymbol {
+    open fun referenceWasmFunctionType(wasmFunctionType: WasmFunctionType): FunctionTypeSymbol {
         val signature = getFunctionTypeSignature(wasmFunctionType)
         wasmFileFragment.definedFunctionTypes.putIfAbsent(signature, wasmFunctionType)
         return FunctionTypeSymbol(signature)
     }
 
-    fun referenceWasmFunctionHeapType(wasmFunctionType: WasmFunctionType): FunctionHeapTypeSymbol {
+    open fun referenceWasmFunctionHeapType(wasmFunctionType: WasmFunctionType): FunctionHeapTypeSymbol {
         val signature = getFunctionTypeSignature(wasmFunctionType)
         wasmFileFragment.definedFunctionTypes.putIfAbsent(signature, wasmFunctionType)
         return FunctionHeapTypeSymbol(signature)

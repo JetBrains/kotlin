@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.resultOrNull
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -41,6 +40,13 @@ private fun FirAnnotation.toAnnotationLookupTagSafe(session: FirSession): ConeCl
 
 fun FirAnnotation.toAnnotationClassId(session: FirSession): ClassId? =
     toAnnotationLookupTag(session)?.classId
+
+/**
+ * Returns [ClassId] of [this] if its lookup tag is not [ConeClassLikeErrorLookupTag].
+ * Otherwise, returns `null`.
+ */
+fun FirAnnotation.toAnnotationNonErrorClassId(session: FirSession): ClassId? =
+    toAnnotationLookupTagSafe(session).takeIf { it !is ConeClassLikeErrorLookupTag }?.classId
 
 fun FirAnnotation.toAnnotationClassIdSafe(session: FirSession): ClassId? =
     toAnnotationLookupTagSafe(session)?.classId
@@ -68,20 +74,20 @@ fun List<FirAnnotation>.nonSourceAnnotations(session: FirSession): List<FirAnnot
 fun FirAnnotationContainer.nonSourceAnnotations(session: FirSession): List<FirAnnotation> =
     annotations.nonSourceAnnotations(session)
 
-fun FirDeclaration.hasAnnotation(classId: ClassId, session: FirSession): Boolean {
-    return annotations.hasAnnotation(classId, session)
+fun FirDeclaration?.hasAnnotation(classId: ClassId, session: FirSession): Boolean {
+    return this != null && annotations.hasAnnotation(classId, session)
 }
 
-fun FirDeclaration.hasAnnotationSafe(classId: ClassId, session: FirSession): Boolean {
-    return annotations.hasAnnotationSafe(classId, session)
+fun FirDeclaration?.hasAnnotationSafe(classId: ClassId, session: FirSession): Boolean {
+    return this != null && annotations.hasAnnotationSafe(classId, session)
 }
 
-fun FirBasedSymbol<*>.hasAnnotation(classId: ClassId, session: FirSession): Boolean {
-    return resolvedAnnotationsWithClassIds.hasAnnotation(classId, session)
+fun FirBasedSymbol<*>?.hasAnnotation(classId: ClassId, session: FirSession): Boolean {
+    return this != null && resolvedAnnotationsWithClassIds.hasAnnotation(classId, session)
 }
 
-fun FirAnnotationContainer.hasAnnotation(classId: ClassId, session: FirSession): Boolean {
-    return annotations.hasAnnotation(classId, session)
+fun FirAnnotationContainer?.hasAnnotation(classId: ClassId, session: FirSession): Boolean {
+    return this != null && annotations.hasAnnotation(classId, session)
 }
 
 fun List<FirAnnotation>.hasAnnotation(classId: ClassId, session: FirSession): Boolean {

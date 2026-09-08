@@ -27,7 +27,7 @@ KtFile: shortNameBasedDestructuringWithRenaming.kt
                 PsiElement(IDENTIFIER)('String')
         PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('declaration')
@@ -120,7 +120,7 @@ KtFile: shortNameBasedDestructuringWithRenaming.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('loop')
@@ -211,7 +211,7 @@ KtFile: shortNameBasedDestructuringWithRenaming.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('lambda')
@@ -222,7 +222,7 @@ KtFile: shortNameBasedDestructuringWithRenaming.kt
     BLOCK
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')

@@ -1,13 +1,31 @@
 val test1: Function1<Int, Unit>
-  field = ::topLevel1/*<Int>() */
+  field = KFunction1<@ParameterName(name = "x") Int, Unit>(
+    /* bound = */ [],
+    /* invoke = */    local inline fun(p0: @ParameterName(name = "x") Int) {
+      return topLevel1<Int>(x = p0)
+    }
+  )
+
   get
 
 val test2: Function1<List<String>, Unit>
-  field = ::topLevel2/*<String>() */
+  field = KFunction1<@ParameterName(name = "x") List<String>, Unit>(
+    /* bound = */ [],
+    /* invoke = */    local inline fun(p0: @ParameterName(name = "x") List<String>) {
+      return topLevel2<String>(x = p0)
+    }
+  )
+
   get
 
 val test3: Function1<Int, Unit>
-  field = Host::objectMember/*<Int>() */
+  field = KFunction1<@ParameterName(name = "x") Int, Unit>(
+    /* bound = */ [Host],
+    /* invoke = */    local inline fun(receiver: Host, p0: @ParameterName(name = "x") Int) {
+      return receiver.objectMember<Int>(x = p0)
+    }
+  )
+
   get
 
 object Host {

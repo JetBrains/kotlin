@@ -33,7 +33,7 @@ FILE[kind=Facade[packageFqName=boo, facadeFqName=boo.InWrongPlaceKt]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Deprecated]
-  FUN[fqName=boo.a, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=a]
+  FUNCTION[fqName=boo.a, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=a]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
         ANNOTATION_TARGET[useSiteTarget=FIELD]

@@ -1,0 +1,1 @@
+val removedCompanionFunRef = B::removedCompanionFun

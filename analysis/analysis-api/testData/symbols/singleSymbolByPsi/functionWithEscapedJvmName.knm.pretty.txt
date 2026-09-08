@@ -1,2 +1,2 @@
-@`<error>`
+@ERROR_ANNOTATION
 fun foo()

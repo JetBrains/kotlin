@@ -28,7 +28,13 @@ class Foo<T : Any?> {
 
 fun box(): String {
   val z: Foo<String> = Foo<String>()
-  val foo: Inner<String, String> = foo<String, String>(a = "O", b = "K", x = z::Inner/*<String>() */)
+  val foo: Inner<String, String> = foo<String, String>(a = "O", b = "K", x = KFunction2<@ParameterName(name = "a") String, @ParameterName(name = "b") String, Inner<String, String>>(
+    /* bound = */ [z],
+    /* invoke = */    local fun(receiver: Foo<String>, p0: @ParameterName(name = "a") String, p1: @ParameterName(name = "b") String): Inner<String, String> {
+      return receiver.Inner<String>(a = p0, b = p1)
+    }
+  )
+)
   return foo.<get-a>().plus(other = foo.<get-b>())
 }
 

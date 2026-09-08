@@ -1,0 +1,8 @@
+null()
+  psi: KtAnnotationEntry
+
+null()
+  psi: KtAnnotationEntry
+
+kotlin/Int()
+  psi: KtAnnotationEntry

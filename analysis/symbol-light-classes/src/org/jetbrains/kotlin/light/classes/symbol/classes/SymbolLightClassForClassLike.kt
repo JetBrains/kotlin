@@ -13,6 +13,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -155,9 +156,14 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
 
     override fun getUseScope(): SearchScope = classOrObjectDeclaration?.useScope ?: GlobalSearchScope.projectScope(project)
 
-    @Deprecated("Deprecated stub API")
-    @Suppress("DEPRECATION") // KT-78356
+    /**
+     * Kotlin element types are not [IStubElementType]s anymore, so this deprecated accessor cannot be implemented.
+     * The call is delegated to the declaration to fail with the platform diagnostic pointing at [getIElementType].
+     */
+    @Deprecated("Deprecated stub API", ReplaceWith("iElementType"))
+    @Suppress("DEPRECATION")
     override fun getElementType(): IStubElementType<out StubElement<*>, *>? = classOrObjectDeclaration?.elementType
+    override fun getIElementType(): IElementType? = classOrObjectDeclaration?.iElementType
     override fun getStub(): KotlinClassOrObjectStub<out KtClassOrObject>? = classOrObjectDeclaration?.stub
 
     override val originKind: LightClassOriginKind get() = LightClassOriginKind.SOURCE

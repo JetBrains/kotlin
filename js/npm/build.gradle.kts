@@ -9,6 +9,8 @@ plugins {
 description = "Node utils"
 
 node {
+    version.set("24.19.0")
+    npmVersion.set("11.17.0")
     download.set(true)
     distBaseUrl.set(null as String?)
 }
@@ -21,8 +23,7 @@ fun getProperty(name: String, default: String = "") = findProperty(name)?.toStri
 
 val deployVersion = getProperty("kotlin.deploy.version", "0.0.0")
 val deployTag = getProperty("kotlin.deploy.tag", "dev")
-val authToken = getProperty("kotlin.npmjs.auth.token")
-val dryRun = getProperty("dryRun", "false") // Pack instead of publish
+val dryRun = getProperty("dryRun", "false") // Only stage publish
 
 fun Project.createCopyTemplateTask(templateName: String): TaskProvider<Copy> {
     return tasks.register<Copy>("copy-$templateName-template") {
@@ -46,7 +47,6 @@ val makeBinExecutable = tasks.register<Exec>("chmod-kotlinc-bin") {
     commandLine = listOf("chmod", "-R", "ugo+rx", "$deployDir/kotlin-compiler/bin")
 }
 
-val npmWhoami = createWhoamiNpmTask()
 
 fun Project.createPublishToNpmTask(templateName: String): TaskProvider<NpmTask> {
     return tasks.register<NpmTask>("publish-$templateName-to-npm") {
@@ -54,20 +54,10 @@ fun Project.createPublishToNpmTask(templateName: String): TaskProvider<NpmTask> 
         val deployDir = File("$deployDir/$templateName")
         workingDir.set(deployDir)
 
-        val deployArgs = listOf("publish", "--//registry.npmjs.org/:_authToken=$authToken", "--tag=$deployTag")
-        if (dryRun == "true") {
-            println("$deployDir \$ npm arguments: $deployArgs");
-            args.set(listOf("pack"))
-            dependsOn(npmWhoami)
-        } else {
-            args.set(deployArgs)
-        }
-    }
-}
+        val deployArgs = if (dryRun == "true") listOf("stage", "publish", "--tag=$deployTag") else listOf("publish", "--tag=$deployTag")
 
-fun Project.createWhoamiNpmTask(): TaskProvider<NpmTask> {
-    return tasks.register<NpmTask>("npm-whoami") {
-        args.set(listOf("whoami", "--//registry.npmjs.org/:_authToken=$authToken"))
+        println("$deployDir \$ npm arguments: $deployArgs");
+        args.set(deployArgs)
     }
 }
 

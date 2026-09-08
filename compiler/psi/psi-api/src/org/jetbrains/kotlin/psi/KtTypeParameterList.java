@@ -7,13 +7,16 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import kotlin.ReplaceWith;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -25,18 +28,22 @@ import java.util.List;
  * //       ^____^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtTypeParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtTypeParameterList>> {
+    @KtImplementationDetail
     public KtTypeParameterList(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtTypeParameterList(@NotNull KotlinPlaceHolderStub<KtTypeParameterList> stub) {
-        super(stub, KtStubBasedElementTypes.TYPE_PARAMETER_LIST);
+        super(stub, KtNodeTypes.TYPE_PARAMETER_LIST);
     }
 
+    /** Returns the type parameters in this list, in source order; empty if there are none. */
     @NotNull
     public List<KtTypeParameter> getParameters() {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_PARAMETER);
+        return Arrays.asList(getStubOrPsiChildren(KtNodeTypes.TYPE_PARAMETER, KtTypeParameter.EMPTY_ARRAY));
     }
 
     /**
@@ -46,7 +53,7 @@ public class KtTypeParameterList extends KtElementImplStub<KotlinPlaceHolderStub
     @NotNull
     @kotlin.Deprecated(
             message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.appendTypeParameter(this, typeParameter)' instead.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "this.appendTypeParameter(typeParameter)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.appendTypeParameter"
             )
@@ -61,6 +68,7 @@ public class KtTypeParameterList extends KtElementImplStub<KotlinPlaceHolderStub
         return visitor.visitTypeParameterList(this, data);
     }
 
+    /** Returns the trailing comma after the last type parameter, or {@code null} if there is none. */
     @Nullable
     public PsiElement getTrailingComma() {
         return KtPsiUtilKt.getTrailingCommaByClosingElement(findChildByType(KtTokens.GT));

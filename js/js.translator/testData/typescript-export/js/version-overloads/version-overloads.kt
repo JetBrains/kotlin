@@ -5,7 +5,6 @@
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
 // FILE: version-overloads.kt
-@file:OptIn(ExperimentalVersionOverloading::class)
 package foo
 
 @JsExport

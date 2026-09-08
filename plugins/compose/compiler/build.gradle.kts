@@ -1,11 +1,13 @@
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
 }
 
-kotlin.jvmToolchain(11)
+jvmToolchains {
+    jdkVersion = JdkMajorVersion.JDK_11_0
+    targetBytecodeVersion = JdkMajorVersion.JDK_11_0
+}
 
 dependencies {
     embedded(project(":plugins:compose-compiler-plugin:compiler-hosted")) { isTransitive = false }

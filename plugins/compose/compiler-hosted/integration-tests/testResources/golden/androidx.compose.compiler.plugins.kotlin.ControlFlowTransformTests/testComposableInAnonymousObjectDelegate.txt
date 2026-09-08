@@ -23,7 +23,7 @@ interface A
 interface B {
   val property: A
     @Composable @JvmName(name = "getProperty") @FunctionKeyMeta(key = -1422684740, startOffset = 152, endOffset = 178)
-    get() {
+    get(%composer: Composer?, %changed: Int) {
       %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "C(<get-property>):Test.kt")
       if (isTraceInProgress()) {

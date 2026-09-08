@@ -80,6 +80,8 @@ internal val FrontendPhase = createSimpleNamedCompilerPhase(
     val bindingContext = analysisResult.bindingContext
 
     if (analysisResult.shouldGenerateCode) {
+        context.config.configuration.sourcesModules =
+                moduleDescriptor.getIncludedLibraryDescriptors(context.config).toSet() + moduleDescriptor
         FrontendPhaseOutput.Full(moduleDescriptor, bindingContext, context.frontendServices)
     } else {
         FrontendPhaseOutput.ShouldNotGenerateCode

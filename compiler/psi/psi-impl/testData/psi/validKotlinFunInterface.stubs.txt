@@ -6,7 +6,7 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
     MODIFIER_LIST[fun]
     CLASS_BODY
-      FUN[fqName=Foo.invoke, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=invoke]
+      FUNCTION[fqName=Foo.invoke, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=invoke]
         VALUE_PARAMETER_LIST
   CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
     MODIFIER_LIST[private fun]

@@ -59,8 +59,10 @@ class MppDiagnosticsIt : KGPBaseTest() {
                 this.buildGradleKts.writeText("")
                 checkDeprecatedProperties(isDeprecationExpected = true)
 
-                this.gradleProperties.appendText("kotlin.internal.suppressGradlePluginErrors=PreHMPPFlagsError${System.lineSeparator()}")
-                checkDeprecatedProperties(isDeprecationExpected = false)
+                checkDeprecatedProperties(
+                    isDeprecationExpected = false,
+                    buildOptions = buildOptions.suppressingGradlePluginErrors("PreHMPPFlagsError"),
+                )
             }
         }
     }
@@ -141,7 +143,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
     fun testSuppressGradlePluginErrors(gradleVersion: GradleVersion) {
         project("suppressGradlePluginErrors", gradleVersion) {
             // build succeeds
-            build("assemble") {
+            build("assemble", buildOptions = buildOptions.suppressingGradlePluginErrors("CommonMainOrTestWithDependsOnDiagnostic")) {
                 assertEqualsToFile(expectedOutputFile(), extractProjectsAndTheirDiagnostics())
             }
         }
@@ -183,7 +185,10 @@ class MppDiagnosticsIt : KGPBaseTest() {
             "errorsFailOnlyRelevantProjects",
             gradleVersion,
             // CC should be explicitly disabled because it hides the warning on subsequent builds: KT-75750
-            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+            ),
         ) {
             buildAndFail("brokenProjectA:assemble") {
                 assertEqualsToFile(expectedOutputFile("brokenA"), extractProjectsAndTheirDiagnostics())
@@ -223,7 +228,10 @@ class MppDiagnosticsIt : KGPBaseTest() {
             "diagnosticsRenderingWithStacktraceOption",
             gradleVersion,
             // CC should be explicitly disabled because it hides the warning on subsequent builds: KT-75750
-            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED),
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+            ),
         ) {
             // KGP sets showDiagnosticsStacktrace=false and --full-stacktrace by default in tests,
             // need to override that to mimic real-life scenarios
@@ -330,8 +338,11 @@ class MppDiagnosticsIt : KGPBaseTest() {
         return projectPath.resolve("expectedOutput$suffixIfAny.txt").toFile()
     }
 
-    private fun TestProject.checkDeprecatedProperties(isDeprecationExpected: Boolean) {
-        build {
+    private fun TestProject.checkDeprecatedProperties(
+        isDeprecationExpected: Boolean,
+        buildOptions: BuildOptions = this.buildOptions,
+    ) {
+        build(buildOptions = buildOptions) {
             if (isDeprecationExpected)
                 output.assertHasDiagnostic(KotlinToolingDiagnostics.PreHMPPFlagsError)
             else

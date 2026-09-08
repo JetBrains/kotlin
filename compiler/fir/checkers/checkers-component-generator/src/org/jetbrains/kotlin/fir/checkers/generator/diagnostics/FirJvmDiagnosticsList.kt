@@ -55,6 +55,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_LOCALS by error<PsiElement>()
         val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_REIFIED by error<PsiElement>()
         val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE by error<PsiElement>()
+        val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SEALED_CONSTRUCTOR by error<PsiElement>()
         val JVM_EXPOSE_BOXED_CAN_BE_REPLACED_WITH_JVM_NAME by warning<PsiElement>()
 
         val WRONG_TYPE_FOR_JAVA_OVERRIDE by warning<PsiElement>(PositioningStrategy.OVERRIDE_MODIFIER) {
@@ -127,6 +128,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS by warning<PsiElement>(PositioningStrategy.WHEN_EXPRESSION) {
             parameter<ConeKotlinType>("subjectType")
         }
+        val WHEN_SUBJECT_CAN_BE_NULL_IN_JAVA by warning<PsiElement>(PositioningStrategy.WHEN_EXPRESSION) {
+            parameter<ConeKotlinType>("subjectType")
+        }
     }
 
     val TYPE_PARAMETERS by object : DiagnosticGroup("Type parameters") {
@@ -162,6 +166,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_FILES_WITH_CLASSES by error<KtAnnotationEntry>()
 
         val POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION by error<KtExpression>()
+        val POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION_WARNING by warning<KtExpression>()
 
         val REDUNDANT_REPEATABLE_ANNOTATION by warning<KtAnnotationEntry> {
             parameter<FqName>("kotlinRepeatable")

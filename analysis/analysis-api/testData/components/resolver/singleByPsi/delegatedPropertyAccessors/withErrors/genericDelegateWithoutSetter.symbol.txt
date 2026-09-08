@@ -1,11 +1,11 @@
 KtPropertyDelegate(74,109): 'by GenericDelegate<String>("hello")'
   KaCompoundSymbolResolutionError:
-    attempts = [
-      KaSymbolResolutionSuccess:
+    simpleAttempts = [
+      KaSimpleSymbolResolutionSuccess:
         symbols = [
           myPack/GenericDelegate.getValue(<dispatch receiver>: myPack.GenericDelegate<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
         ],
-      KaSymbolResolutionError:
+      KaSimpleSymbolResolutionError:
         candidateSymbols = []
         diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'setValue' on receiver of type 'GenericDelegate<String>'.>
     ]

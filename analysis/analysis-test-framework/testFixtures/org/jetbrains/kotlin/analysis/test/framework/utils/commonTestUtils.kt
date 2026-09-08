@@ -92,16 +92,15 @@ fun KtElement.renderLocationDescription(): String {
 }
 
 /**
- * Preferes to call [resolveCall], but falls back to [resolveSymbol] if [resolveCall] fails.
+ * Preferes to call [tryResolveCall], but falls back to [tryResolveSymbols] if [tryResolveCall] fails.
  *
  * Handles error calls as well.
  *
  * In case of ambiguity, returns `null`.
  */
-@OptIn(KtExperimentalApi::class)
 context(session: KaSession)
 fun KtResolvable.resolveSymbolPreferringCall(): KaSymbol? {
-    return (this as? KtResolvableCall)?.tryResolveCall()?.calls?.flatMap(KaSingleOrMultiCall::symbols)?.singleOrNull()
+    return (this as? KtResolvableCall)?.tryResolveCall()?.calls?.flatMap(KaSimpleOrMultiCall::symbols)?.singleOrNull()
         ?: tryResolveSymbols()?.symbols?.singleOrNull()
 }
 

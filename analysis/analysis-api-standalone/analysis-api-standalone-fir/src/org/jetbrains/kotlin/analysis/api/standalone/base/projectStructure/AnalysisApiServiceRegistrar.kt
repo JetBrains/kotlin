@@ -1,0 +1,67 @@
+package org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure
+
+import com.intellij.mock.MockApplication
+import com.intellij.mock.MockProject
+import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+
+/**
+ * @param DATA Additional information provided to the registrar by the setup process.
+ */
+@KaImplementationDetail
+interface AnalysisApiServiceRegistrar<in DATA> {
+    fun registerApplicationServices(application: MockApplication, disposable: Disposable, data: DATA)
+
+    fun registerProjectExtensionPoints(project: MockProject, data: DATA)
+
+    fun registerProjectServices(project: MockProject, data: DATA)
+
+    fun registerProjectModelServices(project: MockProject, disposable: Disposable, data: DATA)
+}
+
+@KaImplementationDetail
+fun <T> List<AnalysisApiServiceRegistrar<T>>.registerApplicationServices(application: MockApplication, disposable: Disposable, data: T) {
+    ApplicationServiceRegistration.register(application, disposable, this, data)
+}
+
+@KaImplementationDetail
+fun <T> List<AnalysisApiServiceRegistrar<T>>.registerProjectExtensionPoints(project: MockProject, data: T) {
+    forEach { it.registerProjectExtensionPoints(project, data) }
+}
+
+@KaImplementationDetail
+fun <T> List<AnalysisApiServiceRegistrar<T>>.registerProjectServices(project: MockProject, data: T) {
+    forEach { it.registerProjectServices(project, data) }
+}
+
+@KaImplementationDetail
+fun <T> List<AnalysisApiServiceRegistrar<T>>.registerProjectModelServices(project: MockProject, disposable: Disposable, data: T) {
+    forEach { it.registerProjectModelServices(project, disposable, data) }
+}
+
+@KaImplementationDetail
+abstract class AnalysisApiSimpleServiceRegistrar : AnalysisApiServiceRegistrar<Any> {
+    open fun registerApplicationServices(application: MockApplication, disposable: Disposable) {}
+
+    open fun registerProjectExtensionPoints(project: MockProject) {}
+
+    open fun registerProjectServices(project: MockProject) {}
+
+    open fun registerProjectModelServices(project: MockProject, disposable: Disposable) {}
+
+    final override fun registerApplicationServices(application: MockApplication, disposable: Disposable, data: Any) {
+        registerApplicationServices(application, disposable)
+    }
+
+    final override fun registerProjectExtensionPoints(project: MockProject, data: Any) {
+        registerProjectExtensionPoints(project)
+    }
+
+    final override fun registerProjectServices(project: MockProject, data: Any) {
+        registerProjectServices(project)
+    }
+
+    final override fun registerProjectModelServices(project: MockProject, disposable: Disposable, data: Any) {
+        registerProjectModelServices(project, disposable)
+    }
+}

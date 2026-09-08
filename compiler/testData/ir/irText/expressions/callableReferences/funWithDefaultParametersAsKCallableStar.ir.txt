@@ -50,19 +50,51 @@ FILE fqName:<root> fileName:/funWithDefaultParametersAsKCallableStar.kt
   FUN name:testCtorStar visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useKCallableStar (fn: kotlin.reflect.KCallable<*>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: FUNCTION_REFERENCE 'public constructor <init> (x: kotlin.String) declared in <root>.C' type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.String, <root>.C> origin=null reflectionTarget=<same>
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.String, <root>.C> origin=null reflectionTarget='public constructor <init> (x: kotlin.String) declared in <root>.C'
+          overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction1): R of kotlin.reflect.KFunction1 declared in kotlin.reflect.KFunction1
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<init> visibility:local modality:FINAL returnType:<root>.C
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:@[ParameterName(name = "x")] kotlin.String
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun <init> (p0: @[ParameterName(name = "x")] kotlin.String): <root>.C declared in <root>.testCtorStar'
+                CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.String) declared in <root>.C' type=<root>.C origin=null
+                  ARG x: GET_VAR 'p0: @[ParameterName(name = "x")] kotlin.String declared in <root>.testCtorStar.<init>' type=@[ParameterName(name = "x")] kotlin.String origin=null
   FUN name:testDefaultsOnlyStar visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useKCallableStar (fn: kotlin.reflect.KCallable<*>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: FUNCTION_REFERENCE 'public final fun defaultsOnly (x: kotlin.String): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.String, kotlin.Int> origin=null reflectionTarget=<same>
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction1<@[ParameterName(name = "x")] kotlin.String, kotlin.Int> origin=null reflectionTarget='public final fun defaultsOnly (x: kotlin.String): kotlin.Int declared in <root>'
+          overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction1): R of kotlin.reflect.KFunction1 declared in kotlin.reflect.KFunction1
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:defaultsOnly visibility:local modality:FINAL returnType:kotlin.Int
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:@[ParameterName(name = "x")] kotlin.String
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun defaultsOnly (p0: @[ParameterName(name = "x")] kotlin.String): kotlin.Int declared in <root>.testDefaultsOnlyStar'
+                CALL 'public final fun defaultsOnly (x: kotlin.String): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                  ARG x: GET_VAR 'p0: @[ParameterName(name = "x")] kotlin.String declared in <root>.testDefaultsOnlyStar.defaultsOnly' type=@[ParameterName(name = "x")] kotlin.String origin=null
   FUN name:testRegularAndDefaultsStar visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useKCallableStar (fn: kotlin.reflect.KCallable<*>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: FUNCTION_REFERENCE 'public final fun regularAndDefaults (x1: kotlin.String, x2: kotlin.String): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction2<@[ParameterName(name = "x1")] kotlin.String, @[ParameterName(name = "x2")] kotlin.String, kotlin.Int> origin=null reflectionTarget=<same>
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction2<@[ParameterName(name = "x1")] kotlin.String, @[ParameterName(name = "x2")] kotlin.String, kotlin.Int> origin=null reflectionTarget='public final fun regularAndDefaults (x1: kotlin.String, x2: kotlin.String): kotlin.Int declared in <root>'
+          overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:regularAndDefaults visibility:local modality:FINAL returnType:kotlin.Int
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:@[ParameterName(name = "x1")] kotlin.String
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p1 index:1 type:@[ParameterName(name = "x2")] kotlin.String
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun regularAndDefaults (p0: @[ParameterName(name = "x1")] kotlin.String, p1: @[ParameterName(name = "x2")] kotlin.String): kotlin.Int declared in <root>.testRegularAndDefaultsStar'
+                CALL 'public final fun regularAndDefaults (x1: kotlin.String, x2: kotlin.String): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                  ARG x1: GET_VAR 'p0: @[ParameterName(name = "x1")] kotlin.String declared in <root>.testRegularAndDefaultsStar.regularAndDefaults' type=@[ParameterName(name = "x1")] kotlin.String origin=null
+                  ARG x2: GET_VAR 'p1: @[ParameterName(name = "x2")] kotlin.String declared in <root>.testRegularAndDefaultsStar.regularAndDefaults' type=@[ParameterName(name = "x2")] kotlin.String origin=null
   FUN name:testVarargsStar visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useKCallableStar (fn: kotlin.reflect.KCallable<*>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG fn: FUNCTION_REFERENCE 'public final fun varargs (vararg xs: kotlin.String): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<@[ParameterName(name = "xs")] kotlin.Array<out kotlin.String>, kotlin.Int> origin=null reflectionTarget=<same>
+        ARG fn: RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction1<@[ParameterName(name = "xs")] kotlin.Array<out kotlin.String>, kotlin.Int> origin=null reflectionTarget='public final fun varargs (vararg xs: kotlin.String): kotlin.Int declared in <root>'
+          overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction1): R of kotlin.reflect.KFunction1 declared in kotlin.reflect.KFunction1
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:varargs visibility:local modality:FINAL returnType:kotlin.Int
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:@[ParameterName(name = "xs")] kotlin.Array<out kotlin.String>
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun varargs (p0: @[ParameterName(name = "xs")] kotlin.Array<out kotlin.String>): kotlin.Int declared in <root>.testVarargsStar'
+                CALL 'public final fun varargs (vararg xs: kotlin.String): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                  ARG xs: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+                    SPREAD_ELEMENT
+                      GET_VAR 'p0: @[ParameterName(name = "xs")] kotlin.Array<out kotlin.String> declared in <root>.testVarargsStar.varargs' type=@[ParameterName(name = "xs")] kotlin.Array<out kotlin.String> origin=null
   FUN name:useKCallableStar visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:fn index:0 type:kotlin.reflect.KCallable<*>
     BLOCK_BODY

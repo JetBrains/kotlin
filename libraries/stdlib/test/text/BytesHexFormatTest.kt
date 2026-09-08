@@ -436,7 +436,7 @@ class BytesHexFormatTest {
         assertSame(HexFormat.Default.bytes, emptyFormat.bytes)
         assertSame(HexFormat.Default.number, emptyFormat.number)
 
-        val bytesFormat = HexFormat { bytes }
+        val bytesFormat = HexFormat { val _ = bytes }
         assertNotSame(HexFormat.Default.bytes, bytesFormat.bytes)
         assertSame(HexFormat.Default.number, bytesFormat.number)
 

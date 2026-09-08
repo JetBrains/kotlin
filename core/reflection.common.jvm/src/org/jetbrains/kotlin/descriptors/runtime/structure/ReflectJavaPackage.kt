@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.runtime.structure
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
@@ -23,11 +24,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class ReflectJavaPackage(override val fqName: FqName) : ReflectJavaElement(), JavaPackage {
+    @K1Deprecation
     override fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass> {
         // A package at runtime can't know what classes it has and has not
         return listOf()
     }
 
+    @K1Deprecation
     override val subPackages: Collection<JavaPackage>
         get() {
             // A package at runtime can't know what sub packages it has and has not

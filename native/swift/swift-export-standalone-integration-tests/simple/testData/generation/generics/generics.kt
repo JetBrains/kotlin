@@ -140,6 +140,10 @@ fun <A, B: A> returnGenericConstraintToGeneric(arg1: A, arg2: B): A = TODO()
 
 fun <A, B : Box<A>> returnSomeBoxForArg(arg: A): B = TODO()
 
+interface Foo
+
+abstract class Bar<A : Foo, B : A>
+
 // MODULE: f_bounded_type
 // EXPORT_TO_SWIFT
 // FILE: f_bounded_type.kt

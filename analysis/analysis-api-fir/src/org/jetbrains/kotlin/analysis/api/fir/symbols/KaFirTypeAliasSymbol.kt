@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.location
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirClassLikeSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createNestedClassLikeSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.visibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
@@ -82,12 +83,9 @@ internal class KaFirTypeAliasSymbol private constructor(
         when (val symbolKind = location) {
             KaSymbolLocation.LOCAL ->
                 throw KaCannotCreateSymbolPointerForLocalLibraryDeclarationException(classId?.asString() ?: name.asString())
-
-            KaSymbolLocation.CLASS, KaSymbolLocation.TOP_LEVEL -> KaFirClassLikeSymbolPointer(
-                classId!!,
-                KaTypeAliasSymbol::class,
-                this
-            )
+            KaSymbolLocation.CLASS -> createNestedClassLikeSymbolPointer(KaTypeAliasSymbol::class)
+            KaSymbolLocation.TOP_LEVEL ->
+                KaFirClassLikeSymbolPointer(classId!!, KaTypeAliasSymbol::class, this)
             else -> throw KaUnsupportedSymbolLocation(this::class, symbolKind)
         }
     }

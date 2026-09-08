@@ -1,6 +1,6 @@
 <caret_1>:
   KDocName(12,15): 'foo'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /foo(): kotlin.Unit
       ]
@@ -19,7 +19,7 @@
 
 <caret_5>:
   KDocName(73,76): 'foo'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /foo(): kotlin.Unit
       ]

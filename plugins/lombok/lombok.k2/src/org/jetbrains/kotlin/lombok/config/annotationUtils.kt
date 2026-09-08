@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.lombok.config
 
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
@@ -15,9 +14,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.name.Name
 
 @DirectDeclarationsAccess
-fun FirAnnotation?.getVisibility(field: Name, defaultAccessLevel: AccessLevel = AccessLevel.PUBLIC): Visibility? {
-    val value = getArgumentAsString(field)?.let { arg -> AccessLevel.entries.find { it.name == arg } } ?: defaultAccessLevel
-    return value.toVisibility()
+fun FirAnnotation?.getAccessLevel(field: Name, defaultAccessLevel: AccessLevel = AccessLevel.PUBLIC): AccessLevel {
+    return getArgumentAsString(field)?.let { arg -> AccessLevel.entries.find { it.name == arg } } ?: defaultAccessLevel
 }
 
 @DirectDeclarationsAccess

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,11 +21,14 @@ import org.jetbrains.annotations.Nullable;
  * }
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtWhenConditionWithExpression extends KtWhenCondition {
+    @KtImplementationDetail
     public KtWhenConditionWithExpression(@NotNull ASTNode node) {
         super(node);
     }
 
+    /** Returns the expression that the {@code when} subject is compared against, or {@code null} if it is absent in incomplete code. */
     @Nullable
     @IfNotParsed
     public KtExpression getExpression() {

@@ -62,7 +62,7 @@ KtBlockExpression(241,287): '{'
   null
 
 KtCallExpression(247,266): 'expectsFoo(Foo.BAR)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -95,7 +95,7 @@ KtCallExpression(247,266): 'expectsFoo(Foo.BAR)'
       }
 
 KtNameReferenceExpression(247,257): 'expectsFoo'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -134,7 +134,7 @@ KtValueArgument(258,265): 'Foo.BAR'
   null
 
 KtDotQualifiedExpression(258,265): 'Foo.BAR'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -157,7 +157,7 @@ KtNameReferenceExpression(258,261): 'Foo'
   null
 
 KtNameReferenceExpression(262,265): 'BAR'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -180,7 +180,7 @@ KtReturnExpression(271,285): 'return Foo.BAR'
   null
 
 KtDotQualifiedExpression(278,285): 'Foo.BAR'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -203,7 +203,7 @@ KtNameReferenceExpression(278,281): 'Foo'
   null
 
 KtNameReferenceExpression(282,285): 'BAR'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

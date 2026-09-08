@@ -3,11 +3,11 @@
 // LATEST_LV_DIFFERENCE
 
 class C {
-    <!CONFLICTING_JVM_DECLARATIONS!>fun foo() {}<!>
+    <!CONFLICTING_JVM_DECLARATIONS!>fun foo()<!> {}
     <!CONFLICTING_JVM_DECLARATIONS!>val prop<!> = 1
 
     companion {
-        <!CONFLICTING_JVM_DECLARATIONS!>fun foo() {}<!>
+        <!CONFLICTING_JVM_DECLARATIONS!>fun foo()<!> {}
         <!CONFLICTING_JVM_DECLARATIONS!>val prop<!> = 1
     }
 }

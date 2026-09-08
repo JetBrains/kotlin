@@ -132,8 +132,6 @@ class MutableContextInfo private constructor(
         equalValues.printMapEntriesWithSeparator("==")
 
         notEqualValues.printMapEntriesWithSeparator("!=")
-
-        this.toString()
     }
 
 }

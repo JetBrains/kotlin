@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractFirOutOfContentRootLazyBodiesCalculatorTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractLLSourceAnnotationArgumentsCalculatorTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractLLSourceLikeLazyBodiesCalculatorTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractLLSourceLikeRawFirBuilderLazyBodiesTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractLLSourceLikeStubBasedResolutionTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.*
 import org.jetbrains.kotlin.generators.dsl.TestGroup
@@ -38,6 +39,10 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractLLSourceLikeStubBasedResolutionTest> {
+                model("rawBuilder", pattern = KT_OR_KTS)
+            }
+
+            testClass<AbstractLLSourceLikeRawFirBuilderLazyBodiesTest> {
                 model("rawBuilder", pattern = KT_OR_KTS)
             }
         }
@@ -150,10 +155,12 @@ fun main(args: Array<String>) {
         testGroup(generatedTestRoot, "compiler/testData/diagnostics") {
             fun TestGroup.TestClass.modelInitWasmJs() {
                 model("wasmTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("tests/defaultArguments", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
             fun TestGroup.TestClass.modelInitWasmWasi() {
                 model("wasmWasiTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("tests/defaultArguments", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
             testClass<AbstractLLWasmJsDiagnosticsTest>(suiteTestClassName = "LLWasmJsDiagnosticsFe10TestGenerated") {

@@ -63,6 +63,7 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
             // enabled incremental cache parameter, disabled configuration cache
             val withIncrementalCacheBuildOptions = defaultBuildOptions.copy(
                 configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
                 nativeOptions = defaultBuildOptions.nativeOptions.copy(
                     incremental = true,
                 )

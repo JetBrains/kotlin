@@ -110,9 +110,6 @@ interface KotlinValueArgumentStub<T : KtValueArgument> : KotlinPlaceHolderStub<T
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)
-interface KotlinContractEffectStub : KotlinPlaceHolderStub<KtContractEffect>
-
-@SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinAnnotationEntryStub : KotlinStubElement<KtAnnotationEntry> {
     val shortName: String?
     val hasValueArguments: Boolean
@@ -129,9 +126,8 @@ interface KotlinAnnotationUseSiteTargetStub : KotlinStubElement<KtAnnotationUseS
 @SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinDeclarationWithBodyStub<T : KtDeclarationWithBody> : KotlinStubElement<T> {
     /**
-     * Whether the declaration may have a contract.
-     * **false** means that the declaration is definitely having no contract,
-     * but **true** doesn't guarantee that the declaration has a contract.
+     * Whether the declaration may have a contract. **false** means that the declaration definitely has no contract, but **true** doesn't
+     * guarantee that the declaration has a contract.
      */
     val mayHaveContract: Boolean
 
@@ -303,9 +299,6 @@ interface KotlinConstantExpressionStub : KotlinStubElement<KtConstantExpression>
     val kind: ConstantValueKind
     val value: String
 }
-
-@SubclassOptInRequired(KtImplementationDetail::class)
-interface KotlinClassLiteralExpressionStub : KotlinStubElement<KtClassLiteralExpression>
 
 @SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinCollectionLiteralExpressionStub : KotlinStubElement<KtCollectionLiteralExpression> {

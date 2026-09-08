@@ -31,7 +31,9 @@ fun A(%composer: Composer?, %changed: Int) {
         value = "abc"
       )
       get() {
-        return x%delegate.getValue(null, ::x%delegate)
+        return x%delegate.getValue(null, ::x {
+          fun x(): String }
+        )
       }
     }
     B(rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
@@ -47,7 +49,7 @@ fun A(%composer: Composer?, %changed: Int) {
       } else {
         %composer.skipToGroupEnd()
       }
-    }, %composer, 0b00110110), %composer, 0b0110)
+    }, %composer, 0b00110110) as Function2<Composer, Int, Unit>, %composer, 0b0110)
     if (isTraceInProgress()) {
       traceEventEnd()
     }

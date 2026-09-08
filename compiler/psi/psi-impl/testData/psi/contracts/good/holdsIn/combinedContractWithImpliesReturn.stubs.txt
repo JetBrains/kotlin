@@ -21,7 +21,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=CombinedContractWithImpliesR
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=contracts]
-  FUN[fqName=holdsInAndImpliesReturn, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInAndImpliesReturn]
+  FUNCTION[fqName=holdsInAndImpliesReturn, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=holdsInAndImpliesReturn]
     MODIFIER_LIST[inline]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=R]

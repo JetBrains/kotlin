@@ -164,7 +164,7 @@
             </array>
           </value>
         </entry>
-        <entry key="Fir.*JsIrText.*">
+        <entry key="(?!Wasm).*JsIrText.*">
           <value>
             <array>
               <option value="JS" />
@@ -178,31 +178,56 @@
             </array>
           </value>
         </entry>
-        <entry key="Fir.*NativeIrText.*">
+        <entry key=".*NativeIrText.*">
           <value>
             <array>
               <option value="Native" />
             </array>
           </value>
         </entry>
-        <entry key="Fir.*WasmIrText.*">
+        <entry key=".*WasmIrText.*">
           <value>
             <array>
               <option value="WASM" />
             </array>
           </value>
         </entry>
-        <entry key="Js.*BoxCodegen.*">
+        <entry key=".*WasmJsIrText.*">
           <value>
             <array>
-              <option value="JS" />
+              <option value="WASM" />
             </array>
           </value>
         </entry>
-        <entry key="Js.*Codegen.*">
+        <entry key="Js(?!ES6).*BoxCodegen.*">
           <value>
             <array>
               <option value="JS" />
+              <option value="ES5" />
+            </array>
+          </value>
+        </entry>
+        <entry key="JsES6.*BoxCodegen.*">
+          <value>
+            <array>
+              <option value="JS" />
+              <option value="ES6" />
+            </array>
+          </value>
+        </entry>
+        <entry key="Js(?!ES6).*Codegen.*">
+          <value>
+            <array>
+              <option value="JS" />
+              <option value="ES5" />
+            </array>
+          </value>
+        </entry>
+        <entry key="JsES6.*Codegen.*">
+          <value>
+            <array>
+              <option value="JS" />
+              <option value="ES6" />
             </array>
           </value>
         </entry>
@@ -229,7 +254,7 @@
             </array>
           </value>
         </entry>
-        <entry key="FirWasm.*.Codegen.*">
+        <entry key=".*Wasm.*.Codegen.*">
           <value>
             <array>
               <option value="WASM" />

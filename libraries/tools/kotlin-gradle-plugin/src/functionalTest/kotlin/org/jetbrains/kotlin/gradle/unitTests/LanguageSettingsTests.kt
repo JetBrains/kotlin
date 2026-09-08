@@ -38,7 +38,7 @@ class LanguageSettingsTests {
                 linuxX64()
                 linuxArm64()
 
-                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64()
                 iosArm64()
 
@@ -87,7 +87,7 @@ class LanguageSettingsTests {
                 linuxX64()
                 linuxArm64()
 
-                @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                 iosX64()
                 iosArm64()
 
@@ -314,7 +314,7 @@ class LanguageSettingsTests {
                     linuxX64()
                     linuxArm64()
                     mingwX64()
-                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     macosX64()
                     macosArm64()
 

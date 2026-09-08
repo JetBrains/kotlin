@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // MODULE: lib
 // FILE: Lib.kt
@@ -13,7 +13,7 @@ data class Foo private constructor(val x: Int) {
 // PROGRESSIVE_MODE
 // FILE: main.kt
 fun main() {
-    Foo.new().<!DATA_CLASS_INVISIBLE_COPY_USAGE_ERROR!>copy<!>()
+    Foo.new().<!DATA_CLASS_INVISIBLE_COPY_USAGE_WARNING!>copy<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, data, functionDeclaration, integerLiteral, objectDeclaration,

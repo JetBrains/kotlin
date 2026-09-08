@@ -83,6 +83,12 @@ public class FirScriptCodegenTestGenerated extends AbstractFirScriptCodegenTest 
   }
 
   @Test
+  @TestMetadata("intrinsicConst.kts")
+  public void testIntrinsicConst() {
+    run("intrinsicConst.kts");
+  }
+
+  @Test
   @TestMetadata("kt20707.kts")
   public void testKt20707() {
     run("kt20707.kts");

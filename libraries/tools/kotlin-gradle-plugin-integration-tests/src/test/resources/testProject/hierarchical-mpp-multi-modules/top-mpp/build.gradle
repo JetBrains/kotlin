@@ -23,7 +23,6 @@ def complexLibAttribute = Attribute.of('org.jetbrains.qa.complexlib', String)
 kotlin {
     jvmToolchain(8)
     jvm("jvm18") {
-        withJava()
         attributes { attribute(complexLibAttribute, 'jvmWithJava') }
 
         compilations.all {
@@ -45,7 +44,7 @@ kotlin {
         }
     }
 
-    macosX64('macos') {
+    macosArm64('macos') {
         // Binary configuration
         binaries {
             // Creating static library with a custom name.

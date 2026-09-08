@@ -1104,6 +1104,7 @@ object FirTree : AbstractFirTreeBuilder() {
         """.trimIndent()
         parent(expression)
 
+        +field("source", sourceElementType, nullable = true, withReplace = true)
         +field("useSiteTarget", annotationUseSiteTargetType, nullable = true, withReplace = true)
         +field("annotationTypeRef", typeRef, withReplace = true, withTransform = true)
         +field("argumentMapping", annotationArgumentMapping, withReplace = true)

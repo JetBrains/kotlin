@@ -1,15 +1,6 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-
 plugins {
     kotlin("jvm")
     application
-}
-
-tasks.named<KotlinCompile>("compileKotlin").configure {
-    compilerOptions {
-        languageVersion.set(KotlinVersion.KOTLIN_2_0)
-    }
 }
 
 dependencies {

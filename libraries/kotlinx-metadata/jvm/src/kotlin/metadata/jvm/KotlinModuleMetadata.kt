@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
+import kotlin.metadata.jvm.KotlinClassMetadata.Companion.checkMetadataVersionForWrite
+import kotlin.metadata.jvm.KotlinClassMetadata.Companion.throwIfNotWriteable
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion as CompilerMetadataVersion
 
 /**
@@ -25,7 +27,7 @@ import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion as Compiler
  *  and `@OptionalExpectation` declarations ([KmModule.optionalAnnotationClasses]).
  */
 @UnstableMetadataApi
-public class KotlinModuleMetadata public constructor(
+public class KotlinModuleMetadata internal constructor(
     /**
      * [KmModule] representation of this metadata.
      *
@@ -37,7 +39,14 @@ public class KotlinModuleMetadata public constructor(
      * Version of this metadata.
      */
     public var version: JvmMetadataVersion,
+
+    private val isAllowedToWrite: Boolean,
 ) {
+    public constructor(
+        kmModule: KmModule,
+        version: JvmMetadataVersion,
+    ) : this(kmModule, version, true)
+
     /**
      * Encodes and writes this metadata of the Kotlin module file.
      *
@@ -46,6 +55,13 @@ public class KotlinModuleMetadata public constructor(
      * @throws IllegalArgumentException if [kmModule] is not correct and cannot be written or if [version] is not supported for writing.
      */
     public fun write(): ByteArray {
+        throwIfNotWriteable(isAllowedToWrite, "module")
+        checkMetadataVersionForWrite(version)
+        return writeImpl()
+    }
+
+    // internal for testing
+    internal fun writeImpl(): ByteArray {
         val b = JvmModuleProtoBuf.Module.newBuilder()
         kmModule.packageParts.forEach { [fqName, packageParts] ->
             PackageParts(fqName).apply {
@@ -85,27 +101,69 @@ public class KotlinModuleMetadata public constructor(
      * Collection of methods for reading and writing [KotlinModuleMetadata].
      */
     public companion object {
+        @Deprecated(
+            level = DeprecationLevel.WARNING,
+            message = "read() throws an error if metadata version is too high. Use either readStrict() if you want to retain this behavior, or readLenient() if you want to try to read newer metadata.",
+            replaceWith = ReplaceWith("readStrict(bytes)")
+        )
+        @JvmStatic
+        @UnstableMetadataApi
+        public fun read(bytes: ByteArray): KotlinModuleMetadata {
+            return readMetadataImpl(bytes, lenient = false)
+        }
+
         /**
          * Parses the given byte array with the .kotlin_module file content and returns the [KotlinModuleMetadata] instance,
          * or `null` if this byte array encodes a module with an unsupported metadata version.
          *
+         * This method can read only supported metadata versions (see [JvmMetadataVersion.LATEST_STABLE_SUPPORTED] for definition).
+         * It will throw an exception if the metadata version is greater than what kotlin-metadata-jvm understands.
+         * It is suitable when your tooling cannot tolerate reading potentially incomplete or incorrect information due to version differences.
+         * It is also the only method that allows metadata transformation and `KotlinModuleMetadata.write` subsequent calls.
+         *
          * @throws IllegalArgumentException if an error happened while parsing the given byte array,
          * which means that it is either not the content of a `.kotlin_module` file, or it has been corrupted.
+         *
+         * @see JvmMetadataVersion.LATEST_STABLE_SUPPORTED
          */
         @JvmStatic
         @UnstableMetadataApi
-        public fun read(bytes: ByteArray): KotlinModuleMetadata {
+        public fun readStrict(bytes: ByteArray): KotlinModuleMetadata {
+            return readMetadataImpl(bytes, lenient = false)
+        }
+
+        /**
+         * Parses the given byte array with the .kotlin_module file content and returns the [KotlinModuleMetadata] instance,
+         * or `null` if this byte array encodes a module with an unsupported metadata version.
+         *
+         * This method makes best effort to read unsupported metadata versions.
+         * Keep in mind that this method will still throw an exception if metadata is changed in an unpredictable way.
+         * Because obtained metadata can be incomplete, its [KotlinModuleMetadata.write] method will throw an exception.
+         * This method still cannot read metadata produced by pre-1.0 compilers.
+         *
+         * @throws IllegalArgumentException if an error happened while parsing the given byte array,
+         * which means that it is either not the content of a `.kotlin_module` file, or it has been corrupted.
+         *
+         * @see JvmMetadataVersion.LATEST_STABLE_SUPPORTED
+         */
+        @JvmStatic
+        @UnstableMetadataApi
+        public fun readLenient(bytes: ByteArray): KotlinModuleMetadata {
+            return readMetadataImpl(bytes, lenient = true)
+        }
+
+        private fun readMetadataImpl(bytes: ByteArray, lenient: Boolean): KotlinModuleMetadata {
             return wrapIntoMetadataExceptionWhenNeeded {
                 val result = ModuleMapping.loadModuleMapping(
-                    bytes, "KotlinModuleMetadata", skipMetadataVersionCheck = false,
+                    bytes, "KotlinModuleMetadata", skipMetadataVersionCheck = lenient,
                     isJvmPackageNameSupported = true
-                ) { throwIfNotCompatible(it, lenient = false /* TODO */) }
+                ) { throwIfNotCompatible(it, lenient = lenient) }
                 when (result) {
                     ModuleMapping.EMPTY, ModuleMapping.CORRUPTED ->
                         throw IllegalArgumentException("Data is not the content of a .kotlin_module file, or it has been corrupted.")
                 }
                 val module = readModuleMetadataImpl(result)
-                KotlinModuleMetadata(module, JvmMetadataVersion(result.version.toArray()))
+                KotlinModuleMetadata(module, JvmMetadataVersion(result.version.toArray()), isAllowedToWrite = !lenient)
             }
         }
     }

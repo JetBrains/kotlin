@@ -1,40 +1,95 @@
-package test
+library {
+  // module name: <main>
 
-public final class ClassA {
-    public constructor ClassA()
+  library fragment {
+    // package name: test
 
-    public companion object Companion {
-        private constructor Companion()
-        public final val stat: kotlin.Int = 250
+    // class name: test/ClassA
+    // class name: test/ClassA.classB
+    // class name: test/ClassA.classB.BC
+    // class name: test/ClassA.classB.BO
+    // class name: test/ClassA.classC
+    // class name: test/ClassA.Companion
+    // class name: test/ClassA.Companion.D
+    // class name: test/ClassA.ObjA
 
-        public final class D {
-            public constructor D()
-            public final val memberFromD: kotlin.Int = 275
-        }
+    public final class test/ClassA : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: classB
+
+      // nested class: classC
+
+      // nested class: Companion
+
+      // nested class: ObjA
     }
 
-    public object ObjA {
-        private constructor ObjA()
-        public final val memberFromObjA: kotlin.Int = 300
+    public final class test/ClassA.classB : kotlin/Any {
+
+      public constructor()
+
+      public final fun memberFromB(): kotlin/Int
+
+      // nested class: BC
+
+      // nested class: BO
     }
 
-    public final class classB {
-        public constructor classB()
-        public final fun memberFromB(): kotlin.Int
+    public final class test/ClassA.classB.BC : kotlin/Any {
 
-        public final class BC {
-            public constructor BC()
-            public final val memberFromBB: kotlin.Int = 150
-        }
+      public constructor()
 
-        public object BO {
-            private constructor BO()
-            public final val memberFromBO: kotlin.Int = 175
-        }
+      public final val memberFromBB: kotlin/Int /* = ... */
+        public final get
     }
 
-    public final inner class classC {
-        public constructor classC()
-        public final val memberFromC: kotlin.Int = 200
+    public final object test/ClassA.classB.BO : kotlin/Any {
+
+      private constructor()
+
+      public final val memberFromBO: kotlin/Int /* = ... */
+        public final get
     }
+
+    public final inner class test/ClassA.classC : kotlin/Any {
+
+      public constructor()
+
+      public final val memberFromC: kotlin/Int /* = ... */
+        public final get
+    }
+
+    public final companion object test/ClassA.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final val stat: kotlin/Int /* = ... */
+        public final get
+
+      // nested class: D
+    }
+
+    public final class test/ClassA.Companion.D : kotlin/Any {
+
+      public constructor()
+
+      public final val memberFromD: kotlin/Int /* = ... */
+        public final get
+    }
+
+    public final object test/ClassA.ObjA : kotlin/Any {
+
+      private constructor()
+
+      public final val memberFromObjA: kotlin/Int /* = ... */
+        public final get
+    }
+
+    package {
+    }
+  }
 }

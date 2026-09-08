@@ -5,10 +5,8 @@
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
-    id("project-tests-convention")
     id("java-test-fixtures")
 }
 
@@ -36,9 +34,9 @@ dependencies {
     composeCompilerPlugin(project(":plugins:compose-compiler-plugin:compiler-hosted")) { isTransitive = false }
 
     // Used by modularized-tests
-    if (project.extra.has("fir.bench.async.profiler.classpath")) {
-        val asyncProfilerClasspath = project.extra.get("fir.bench.async.profiler.classpath") as String
-        testRuntimeOnly(files(*asyncProfilerClasspath.split(File.pathSeparatorChar).toTypedArray()))
+    val asyncProfilerClasspath = project.providers.gradleProperty("fir.bench.async.profiler.classpath")
+    if (asyncProfilerClasspath.isPresent) {
+        testRuntimeOnly(files(*asyncProfilerClasspath.get().split(File.pathSeparatorChar).toTypedArray()))
     }
 }
 
@@ -55,20 +53,21 @@ optInToK1Deprecation()
 
 projectTests {
     testTask(
-        minHeapSizeMb = 8192,
-        maxHeapSizeMb = 8192,
-        reservedCodeCacheSizeMb = 512,
-        javaLauncher = JdkMajorVersion.JDK_1_8
+        minHeapSize = testMaxHeapSizeHuge,
+        maxHeapSize = testMaxHeapSizeHuge,
+        reservedCodeCacheSize = 512.MiB,
+        javaLauncher = JdkMajorVersion.JDK_1_8,
+        garbageCollector = null // explicitly not selecting any GC as the 'fir.modularized.jvm.args' is expected to provide such settings
     ) {
         dependsOn(":dist", ":plugins:compose-compiler-plugin:compiler-hosted:jar")
         systemProperties(providers.gradlePropertiesPrefixedBy("fir.").get())
         this.workingDir = rootDir
         systemProperty("fir.bench.compose.plugin.classpath", composeCompilerPlugin.asPath)
-        // Used by modularized-tests
-        if (project.extra.has("fir.modularized.jvm.args")) {
-            val argsExt = project.extra.get("fir.modularized.jvm.args") as String
+        // Used by modularized-tests kotlin-compiler-modularized-tests-teamcity/files/mt2025/.teamcity/projects/infrastructure/ModularizedTestStep.kt
+        val modularizedJvmArgs = project.providers.gradleProperty("fir.modularized.jvm.args")
+        if (modularizedJvmArgs.isPresent) {
             val paramRegex = "([^\"]\\S*|\".+?\")\\s*".toRegex()
-            this.jvmArgs(paramRegex.findAll(argsExt).map<MatchResult, String> { it.groupValues[1] }.toList<String>())
+            this.jvmArgs(paramRegex.findAll(modularizedJvmArgs.get()).map<MatchResult, String> { it.groupValues[1] }.toList<String>())
         }
         systemProperties["junit.jupiter.execution.parallel.enabled"] = true
     }

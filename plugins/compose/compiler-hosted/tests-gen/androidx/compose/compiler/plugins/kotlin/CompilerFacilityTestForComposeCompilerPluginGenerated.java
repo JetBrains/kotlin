@@ -130,6 +130,12 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("invokeComposableLambdaLiteral.kt")
+  public void testInvokeComposableLambdaLiteral() {
+    run("invokeComposableLambdaLiteral.kt");
+  }
+
+  @Test
   @TestMetadata("javaSam.kt")
   public void testJavaSam() {
     run("javaSam.kt");

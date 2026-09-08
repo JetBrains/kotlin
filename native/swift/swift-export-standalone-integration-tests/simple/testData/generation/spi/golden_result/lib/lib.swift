@@ -92,7 +92,12 @@ public final class ExperimentalLibClass: KotlinRuntime.KotlinBase {
 open class OpenClass: KotlinRuntime.KotlinBase {
     @_spi(OpenClassOptIn)
     public init() {
-        let __kt = __root___OpenClass_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == lib.OpenClass.self {
+             __kt = __root___OpenClass_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___OpenClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
@@ -236,6 +241,23 @@ extension lib.InterfaceOne {
 extension lib.InterfaceTwo where Self : lib.__InterfaceTwo {
 }
 extension lib.InterfaceTwo {
+}
+extension lib.InternalLibInterface {
+    @_spi(InternalLibApi)
+    public var genericProperty: Swift.String {
+        @_spi(InternalLibApi)
+        get {
+            let receiver = self
+            return lib.getGenericProperty(receiver)
+        }
+    }
+}
+extension lib.InternalLibInterface {
+    @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
+    public func fooB() -> lib.ExperimentalLibClass {
+        let receiver = self
+        return lib.fooB(receiver)
+    }
 }
 @_documentation(visibility: internal)
 extension lib.InternalLibInterface where Self : lib.__InternalLibInterface {

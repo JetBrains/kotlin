@@ -8,7 +8,7 @@ KtNameReferenceExpression(59,63): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test
     ]
@@ -26,13 +26,13 @@ KtDeclarationModifierList(74,92): 'companion operator'
   null
 
 KtTypeReference(97,98): 'C'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
 KtUserType(97,98): 'C'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
@@ -41,7 +41,7 @@ KtNameReferenceExpression(97,98): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
@@ -62,7 +62,7 @@ KtBlockExpression(124,150): '{'
   null
 
 KtCallExpression(130,133): 'C()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): test.C
     ]
@@ -71,7 +71,7 @@ KtNameReferenceExpression(130,131): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
@@ -80,7 +80,7 @@ KtValueArgumentList(131,133): '()'
   null
 
 KtDotQualifiedExpression(138,148): 'C.invoke()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/invoke(<extension receiver>: test.C): kotlin.Unit
     ]
@@ -89,13 +89,13 @@ KtNameReferenceExpression(138,139): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
 KtCallExpression(140,148): 'invoke()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/invoke(<extension receiver>: test.C): kotlin.Unit
     ]
@@ -104,7 +104,7 @@ KtNameReferenceExpression(140,146): 'invoke'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/invoke(<extension receiver>: test.C): kotlin.Unit
     ]

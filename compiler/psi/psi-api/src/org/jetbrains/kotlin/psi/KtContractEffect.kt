@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
-import org.jetbrains.kotlin.psi.stubs.KotlinContractEffectStub
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
 /**
  * Represents a single effect declaration inside a contract block.
@@ -22,9 +22,22 @@ import org.jetbrains.kotlin.psi.stubs.KotlinContractEffectStub
  * }
  * ```
  */
-class KtContractEffect : KtElementImplStub<KotlinContractEffectStub> {
+@OptIn(KtImplementationDetail::class)
+class KtContractEffect : KtElementImplStub<KotlinPlaceHolderStub<KtContractEffect>> {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
-    constructor(stub: KotlinContractEffectStub) : super(stub, KtStubBasedElementTypes.CONTRACT_EFFECT)
+
+    @KtImplementationDetail
+    constructor(stub: KotlinPlaceHolderStub<KtContractEffect>) : super(stub, KtNodeTypes.CONTRACT_EFFECT)
+
+    companion object {
+        /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+        @JvmField
+        val EMPTY_ARRAY: Array<KtContractEffect> = emptyArray()
+    }
 }
 
+/**
+ * Returns the expression that describes this contract effect (for example, `returns() implies (s != null)`).
+ */
 fun KtContractEffect.getExpression(): KtExpression = getChildOfType()!!

@@ -3,6 +3,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+void * __root___foo();
+
 NSDictionary<id, NSNumber *> * __root___testMapAnyLong__TypesOfArguments__Swift_Dictionary_Swift_AnyHashable_Swift_Int64___(NSDictionary<id, NSNumber *> * m);
 
 NSDictionary<NSNumber *, NSString *> * __root___testMapIntString__TypesOfArguments__Swift_Dictionary_Swift_Int32_Swift_String___(NSDictionary<NSNumber *, NSString *> * m);

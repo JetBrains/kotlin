@@ -1,5 +1,5 @@
 KtConstructorDelegationCall(118,130): 'super(i + j)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []

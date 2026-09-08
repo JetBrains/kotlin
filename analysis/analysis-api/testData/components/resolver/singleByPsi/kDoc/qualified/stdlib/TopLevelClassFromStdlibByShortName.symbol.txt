@@ -1,5 +1,5 @@
 KDocName(54,72): 'AbstractCollection'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/AbstractCollection
     ]

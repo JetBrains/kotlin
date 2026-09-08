@@ -4,11 +4,9 @@ import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
-    id("project-tests-convention")
 }
 
 val otherCompilerModules = CompilerModules.compilerModules.filter { it != path }
@@ -88,7 +86,10 @@ projectTests {
             JdkMajorVersion.JDK_17_0,
             JdkMajorVersion.JDK_21_0
         ),
-        javaLauncher = JdkMajorVersion.JDK_1_8
+        javaLauncher = JdkMajorVersion.JDK_1_8,
+        maxHeapSize = testMaxHeapSizeLarge,
+        // Use Parallel GC because this test runs on JDK 8.
+        garbageCollector = GarbageCollector.Parallel,
     ) {
         dependsOn(":dist")
         dependsOn(":kotlin-stdlib:compileKotlinWasmJs")

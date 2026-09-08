@@ -218,6 +218,15 @@ object KLIB_WRITING_LPS : GradleBuildPerformanceMetric(
     private fun readResolve(): Any = KLIB_WRITING_LPS
 }
 
+object KLIB_METADATA_WRITING_LPS : GradleBuildPerformanceMetric(
+    name = "KLIB_METADATA_WRITING_LPS",
+    readableString = "KLib metadata writing lines per second",
+    type = ValueType.NUMBER,
+    parent = COMPILE_ITERATION
+) {
+    private fun readResolve(): Any = KLIB_METADATA_WRITING_LPS
+}
+
 object IR_LINKING_LPS : GradleBuildPerformanceMetric(
     name = "IR_LINKING_LPS",
     readableString = "IR Linking lines per second",

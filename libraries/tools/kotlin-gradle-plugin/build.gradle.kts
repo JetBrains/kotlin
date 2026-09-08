@@ -15,14 +15,14 @@ import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     id("gradle-plugin-common-configuration")
     id("kotlin-git.gradle-build-conventions.binary-compatibility-extended")
     id("kotlin-git.gradle-build-conventions.kgp-npm-tooling-helper")
+    id("kgp-jacoco-on-the-fly")
+    id("kgp-jacoco-instrumenter")
     id("android-sdk-provisioner")
     id("asm-deprecating-transformer")
-    id("project-tests-convention")
     id("native-bootstrap-distribution-provisioner")
     `java-test-fixtures`
     `jvm-test-suite`
@@ -38,6 +38,7 @@ kotlin {
                 "org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi",
                 "org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi",
                 "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
+                "org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl",
                 "org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl",
                 "org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation",
                 "org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl",
@@ -644,6 +645,7 @@ testing {
                 runtimeOnly(libs.android.gradle.plugin.gradle.api.latest)
                 runtimeOnly(gradleApi())
                 runtimeOnly(libs.apache.commons.compress) // is required for `TarArchiveOutputStream` in `NativeVersionValueSourceTest`
+                runtimeOnly(libs.org.tukaani.xz) // is required for `PackKotlinArchiveTaskTest`
             }
 
             targets.configureEach {
@@ -686,7 +688,7 @@ testing {
                     }
 
                     maxParallelForks = if (kotlinBuildProperties.isTeamcityBuild.get()) 2 else 8
-                    maxHeapSize = "4G" // KT-72460 to investigate why we need to change heap size
+                    maxHeapSize = testMaxHeapSizeLarge.toJvmArg() // KT-72460 to investigate why we need to change heap size
 
                     testLogging {
                         events("passed", "skipped", "failed")
@@ -771,17 +773,14 @@ testFixturesCompilation.compileTaskProvider.configure {
 }
 testFixturesCompilation.enableKotlinSerializationPlugin()
 
-val functionalTestCompilation = kotlin.target.compilations.getByName("functionalTest")
-functionalTestCompilation.compileJavaTaskProvider.configure {
-    sourceCompatibility = JavaLanguageVersion.of(17).toString()
-    targetCompatibility = JavaLanguageVersion.of(17).toString()
-}
-functionalTestCompilation.compileTaskProvider.configure {
-    with(this as KotlinCompile) {
-        kotlinJavaToolchain.toolchain.use(project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))
+jvmToolchains {
+    configureForSourceSet("functionalTest") {
+        jdkVersion = JdkMajorVersion.JDK_17_0
+        targetBytecodeVersion = JdkMajorVersion.JDK_17_0
     }
 }
 
+val functionalTestCompilation = kotlin.target.compilations.getByName("functionalTest")
 functionalTestCompilation.enableKotlinSerializationPlugin()
 functionalTestCompilation.associateWith(kotlin.target.compilations.getByName(gradlePluginVariantForFunctionalTests.sourceSetName))
 functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))

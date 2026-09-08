@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.psi.util.parentOfType
-import org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol
+import org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.FirRenderingOptions
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.firRenderingOptions
@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.test.services.TestServices
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractStdLibBasedGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
     override val configurator = LLSourceLikeTestConfigurator()
 
-    @OptIn(KtExperimentalApi::class)
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val project = mainFile.project
         assert(!project.isDisposed) { "$project is disposed" }
@@ -38,7 +36,7 @@ abstract class AbstractStdLibBasedGetOrBuildFirTest : AbstractAnalysisApiBasedTe
         }
 
         val declaration = analyzeForTest(element) {
-            element.resolveSymbol()?.psi as KtDeclaration
+            element.resolveSuccessfulSymbol()?.psi as KtDeclaration
         }
 
         val resolutionFacade = LLResolutionFacadeService.getInstance(project).getResolutionFacade(mainModule.ktModule)

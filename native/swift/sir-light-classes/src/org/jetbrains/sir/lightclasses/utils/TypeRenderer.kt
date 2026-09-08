@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
+import org.jetbrains.kotlin.sir.providers.utils.resolveUpperBound
 
 internal val KaTypeRendererForSource.UPPER_BOUNDS_WITH_QUALIFIED_NAMES: KaTypeRenderer
     get() = WITH_QUALIFIED_NAMES.with {
@@ -30,7 +31,7 @@ private object UpperBoundTypeParameterTypeRenderer : KaTypeParameterTypeRenderer
         typeRenderer: KaTypeRenderer,
         printer: PrettyPrinter
     ) {
-        val type = type.symbol.upperBounds.singleOrNull() ?: analysisSession.builtinTypes.nullableAny
+        val type = type.symbol.resolveUpperBound() ?: analysisSession.builtinTypes.nullableAny
         typeRenderer.renderType(analysisSession, type, printer)
     }
 }
@@ -45,13 +46,7 @@ private object UpperBoundTypeProjectionRenderer : KaTypeProjectionRenderer {
         when (projection) {
             is KaStarTypeProjection -> printer.append('*')
             is KaTypeArgumentWithVariance -> {
-                var type: KaType? = projection.type
-                while (type is KaTypeParameterType) {
-                    type = type.symbol.upperBounds.singleOrNull()
-                }
-                if (type == null) {
-                    type = analysisSession.builtinTypes.nullableAny
-                }
+                val type = projection.type.resolveUpperBound() ?: analysisSession.builtinTypes.nullableAny
                 typeRenderer.renderType(analysisSession, type, printer)
             }
         }

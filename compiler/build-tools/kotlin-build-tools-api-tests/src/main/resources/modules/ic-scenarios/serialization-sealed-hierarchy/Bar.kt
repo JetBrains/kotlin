@@ -1,0 +1,15 @@
+package org.example
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+sealed class Bar : Foo("bar") {
+    abstract fun run()
+}
+
+@Serializable
+class Baz : Bar() {
+    override fun run() {
+        println("Foo")
+    }
+}

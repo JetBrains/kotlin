@@ -1,0 +1,1 @@
+fun test(): String = Derived().select(B()) // should be "common"

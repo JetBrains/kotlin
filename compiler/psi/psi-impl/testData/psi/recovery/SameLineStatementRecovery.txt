@@ -5,7 +5,7 @@ KtFile: SameLineStatementRecovery.kt
     <empty list>
   PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f1')
@@ -52,7 +52,7 @@ KtFile: SameLineStatementRecovery.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f2')
@@ -109,7 +109,7 @@ KtFile: SameLineStatementRecovery.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f3')
@@ -168,7 +168,7 @@ KtFile: SameLineStatementRecovery.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f4')
@@ -224,7 +224,7 @@ KtFile: SameLineStatementRecovery.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f6')
@@ -252,7 +252,7 @@ KtFile: SameLineStatementRecovery.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f7')
@@ -265,7 +265,7 @@ KtFile: SameLineStatementRecovery.kt
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('12')
   PsiWhiteSpace(' ')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f8')
@@ -278,7 +278,7 @@ KtFile: SameLineStatementRecovery.kt
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('12')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f9')
@@ -289,7 +289,7 @@ KtFile: SameLineStatementRecovery.kt
     BLOCK
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('local1')
@@ -304,7 +304,7 @@ KtFile: SameLineStatementRecovery.kt
       PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
         <empty list>
       PsiWhiteSpace(' ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('local2')
@@ -317,7 +317,7 @@ KtFile: SameLineStatementRecovery.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('12')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('local3')
@@ -354,7 +354,7 @@ KtFile: SameLineStatementRecovery.kt
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('GB')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f10')
@@ -394,7 +394,7 @@ KtFile: SameLineStatementRecovery.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f11')
@@ -519,7 +519,7 @@ KtFile: SameLineStatementRecovery.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f12')
@@ -575,7 +575,7 @@ KtFile: SameLineStatementRecovery.kt
         PsiWhiteSpace(' ')
         PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f13')
@@ -617,7 +617,7 @@ KtFile: SameLineStatementRecovery.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f13')

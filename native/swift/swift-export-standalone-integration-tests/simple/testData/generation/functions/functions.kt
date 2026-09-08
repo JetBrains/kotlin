@@ -82,6 +82,8 @@ fun foo(arg1: Foo): Unit = TODO()
 fun foo(arg1: Foo?): Unit = TODO()
 
 // FILE: extension_fun.kt
+@file:OptIn(kotlin.experimental.ExperimentalObjCName::class)
+
 class Foo {
     fun String.ext(): Unit = TODO()
     val String.extVal: String
@@ -95,18 +97,22 @@ fun Int?.foo(): Unit = TODO()
 fun Foo.foo(): Unit = TODO()
 fun Foo?.foo(): Unit = TODO()
 
+@ObjCName("fooProp")
 var Int.foo: String
     get() = TODO()
     set(v) { }
 
+@ObjCName("fooProp")
 var Int?.foo: String
     get() = TODO()
     set(v) = TODO()
 
+@ObjCName("fooProp")
 var Foo.foo: String
     get() = TODO()
     set(v) = TODO()
 
+@ObjCName("fooProp")
 var Foo?.foo: String
     get() = TODO()
     set(v) = TODO()

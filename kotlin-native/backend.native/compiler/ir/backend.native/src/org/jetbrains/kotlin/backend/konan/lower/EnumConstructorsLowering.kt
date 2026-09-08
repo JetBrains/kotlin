@@ -1,13 +1,14 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.enumEntriesMap
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
-import org.jetbrains.kotlin.backend.konan.NativeBackendContext
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-internal class EnumConstructorsLowering(val context: NativeBackendContext) : ClassLoweringPass {
+internal class EnumConstructorsLowering(val context: NativeLoweringContext) : ClassLoweringPass {
 
     fun run(irFile: IrFile) {
         runOnFilePostfix(irFile)
@@ -221,7 +222,7 @@ internal class EnumConstructorsLowering(val context: NativeBackendContext) : Cla
 
             override fun transform(enumConstructorCall: IrEnumConstructorCall): IrExpression {
                 val name = enumEntry.name.asString()
-                val ordinal = context.enumsSupport.enumEntriesMap(enumEntry.parentAsClass)[enumEntry.name]!!.ordinal
+                val ordinal = enumEntriesMap(enumEntry.parentAsClass)[enumEntry.name]!!.ordinal
 
                 val startOffset = enumConstructorCall.startOffset
                 val endOffset = enumConstructorCall.endOffset

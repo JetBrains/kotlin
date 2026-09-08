@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -26,7 +27,9 @@ import java.util.List;
  * // The entire block from 'catch' to the closing curly brace
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtCatchClause extends KtElementImpl {
+    @KtImplementationDetail
     public KtCatchClause(@NotNull ASTNode node) {
         super(node);
     }
@@ -36,11 +39,13 @@ public class KtCatchClause extends KtElementImpl {
         return visitor.visitCatchSection(this, data);
     }
 
+    /** Returns the parameter list holding the caught exception parameter, or {@code null} if it is absent in incomplete code. */
     @Nullable @IfNotParsed
     public KtParameterList getParameterList() {
         return (KtParameterList) findChildByType(KtNodeTypes.VALUE_PARAMETER_LIST);
     }
 
+    /** Returns the caught exception parameter, or {@code null} if it is absent or malformed (not exactly one parameter). */
     @Nullable @IfNotParsed
     public KtParameter getCatchParameter() {
         KtParameterList list = getParameterList();
@@ -50,6 +55,7 @@ public class KtCatchClause extends KtElementImpl {
     }
 
 
+    /** Returns the body executed when the exception is caught, or {@code null} if it is absent in incomplete code. */
     @Nullable @IfNotParsed
     public KtExpression getCatchBody() {
         return findChildByClass(KtExpression.class);

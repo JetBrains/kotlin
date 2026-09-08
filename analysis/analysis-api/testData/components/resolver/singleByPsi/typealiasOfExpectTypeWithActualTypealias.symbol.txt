@@ -7,7 +7,7 @@ jvm - Jvm.kt:
       isImplicitReferenceToCompanion: false
       contextSensitiveResolutionStatus: NotAvailable
       lookupLocally: false
-      KaSymbolResolutionSuccess:
+      KaSimpleSymbolResolutionSuccess:
         symbols = [
           /ExpectClassCommonAlias
         ]
@@ -17,7 +17,7 @@ jvm - Jvm.kt:
       isImplicitReferenceToCompanion: false
       contextSensitiveResolutionStatus: NotAvailable
       lookupLocally: false
-      KaSymbolResolutionSuccess:
+      KaSimpleSymbolResolutionSuccess:
         symbols = [
           /ExpectClassCommonAlias
         ]
@@ -27,7 +27,7 @@ jvm - Jvm.kt:
       isImplicitReferenceToCompanion: false
       contextSensitiveResolutionStatus: NotAvailable
       lookupLocally: false
-      KaSymbolResolutionSuccess:
+      KaSimpleSymbolResolutionSuccess:
         symbols = [
           /ExpectClassCommonAlias
         ]

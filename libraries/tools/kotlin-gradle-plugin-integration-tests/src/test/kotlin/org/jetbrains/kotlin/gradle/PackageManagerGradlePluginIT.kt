@@ -167,8 +167,6 @@ class YarnGradlePluginIT : PackageManagerGradlePluginIT() {
         project(
             "js-composite-build",
             gradleVersion,
-            // `:compileKotlinJs` task is not compatible with CC on Gradle 7
-            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
         ) {
             // 1st run
             build(upgradeTaskName) {
@@ -233,8 +231,6 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
         project(
             "js-composite-build",
             gradleVersion,
-            // `:compileKotlinJs` task is not compatible with CC on Gradle 7
-            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
         ) {
             testJsCompositeBuildWithUpgradeLockFile(
                 upgradeTaskName,

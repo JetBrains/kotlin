@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.getSuperTypes
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -24,17 +25,20 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.parcelize.ParcelizeNames
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.DEPRECATED_RUNTIME_PACKAGE
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.IGNORED_ON_PARCEL_CLASS_IDS
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCEL_TAG_CLASS_IDS
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.POLYMORPHIC_SEALED_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.RAW_VALUE_ANNOTATION_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.TYPE_PARCELER_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_WITH_CLASS_IDS
+import org.jetbrains.kotlin.parcelize.fir.parcelizeService
 
 // TODO: extract common checker for expect interfaces
-class FirParcelizeAnnotationChecker(private val parcelizeAnnotationClassIds: List<ClassId>) :
-    FirAnnotationCallChecker(MppCheckerKind.Platform) {
+object FirParcelizeAnnotationChecker : FirAnnotationCallChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirAnnotationCall) {
         val annotationType = expression.annotationTypeRef.coneType.fullyExpandedType() as? ConeClassLikeType ?: return
         val resolvedAnnotationSymbol = annotationType.lookupTag.toRegularClassSymbol() ?: return
+        val parcelizeAnnotationClassIds = context.session.parcelizeService.parcelizeAnnotations
         when (val annotationClassId = resolvedAnnotationSymbol.classId) {
             in TYPE_PARCELER_CLASS_IDS -> {
                 if (checkDeprecatedAnnotations(expression, annotationClassId, context, reporter, isForbidden = true)) {
@@ -51,6 +55,9 @@ class FirParcelizeAnnotationChecker(private val parcelizeAnnotationClassIds: Lis
             }
             in parcelizeAnnotationClassIds, in RAW_VALUE_ANNOTATION_CLASS_IDS -> {
                 checkDeprecatedAnnotations(expression, annotationClassId, context, reporter, isForbidden = false)
+            }
+            in PARCEL_TAG_CLASS_IDS -> {
+                checkParcelTagUsage(expression, context, reporter)
             }
         }
     }
@@ -152,9 +159,28 @@ class FirParcelizeAnnotationChecker(private val parcelizeAnnotationClassIds: Lis
     private fun checkIfTheContainingClassIsParcelize(annotationCall: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val enclosingClass = context.findClosestClassOrObject() ?: return
 
-        if (!enclosingClass.isParcelize(context.session, parcelizeAnnotationClassIds)) {
+        if (!enclosingClass.isParcelize(context.session)) {
             val reportElement = annotationCall.calleeReference.source ?: annotationCall.source
             reporter.reportOn(reportElement, KtErrorsParcelize.CLASS_SHOULD_BE_PARCELIZE, enclosingClass, context)
+        }
+    }
+
+    private fun checkParcelTagUsage(
+        annotationCall: FirAnnotationCall,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        val annotationContainer = context.annotationContainers.lastOrNull() as? FirClass
+        val containingClass = annotationContainer?.getContainingClassSymbol()
+        val isContainingClassPolymorphicSealed = containingClass?.resolvedAnnotationsWithClassIds.orEmpty().any {
+            it.toAnnotationClassId(context.session) in POLYMORPHIC_SEALED_CLASS_IDS
+        }
+        val implementsContainingClass = annotationContainer?.superTypeRefs.orEmpty().any {
+            it.coneType.toRegularClassSymbol(context.session) == containingClass
+        }
+
+        if (!isContainingClassPolymorphicSealed || !implementsContainingClass) {
+            reporter.reportOn(annotationCall.source, KtErrorsParcelize.INAPPLICABLE_PARCEL_TAG, context)
         }
     }
 }

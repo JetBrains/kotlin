@@ -5,7 +5,7 @@ KtFile: BitArith.kt
     <empty list>
   PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('oneBit')
@@ -34,7 +34,7 @@ KtFile: BitArith.kt
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('index')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('setBit')
@@ -81,7 +81,7 @@ KtFile: BitArith.kt
               PsiElement(IDENTIFIER)('index')
           PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('unsetBit')
@@ -135,7 +135,7 @@ KtFile: BitArith.kt
                 PsiElement(RPAR)(')')
           PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('getBit')
@@ -189,7 +189,7 @@ KtFile: BitArith.kt
       INTEGER_CONSTANT
         PsiElement(INTEGER_LITERAL)('0')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('getBit')
@@ -246,7 +246,7 @@ KtFile: BitArith.kt
       INTEGER_CONSTANT
         PsiElement(INTEGER_LITERAL)('0')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('countOnes')
@@ -337,7 +337,7 @@ KtFile: BitArith.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('mostSignificantBit')
@@ -403,7 +403,7 @@ KtFile: BitArith.kt
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('Int')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('countOnes')
@@ -476,7 +476,7 @@ KtFile: BitArith.kt
                     PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
@@ -558,7 +558,7 @@ KtFile: BitArith.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Int')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           ANNOTATION_ENTRY
             PsiElement(AT)('@')
@@ -591,7 +591,7 @@ KtFile: BitArith.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('This')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           ANNOTATION_ENTRY
             PsiElement(AT)('@')

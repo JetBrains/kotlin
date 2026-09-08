@@ -6,5 +6,6 @@ value class StringWrapper(val s: String)
 
 class Clazz {
     fun foo(s: StringWrapper): String = s.s
+    internal fun internalFoo(s: StringWrapper): String = s.s
     val bar: StringWrapper get() = StringWrapper("OK")
 }

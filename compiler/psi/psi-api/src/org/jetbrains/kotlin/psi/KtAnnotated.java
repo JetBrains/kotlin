@@ -1,19 +1,21 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi;
 
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 /**
- * Represents an element that ows annotations (the element may or may not be the parent for the annotations).
+ * Represents an element that owns annotations (the element may or may not be the parent for the annotations).
  *
  * @see KtAnnotationsContainer
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public interface KtAnnotated extends KtElement {
     /**
      * Retrieves the list of {@link KtAnnotation} associated with this element.

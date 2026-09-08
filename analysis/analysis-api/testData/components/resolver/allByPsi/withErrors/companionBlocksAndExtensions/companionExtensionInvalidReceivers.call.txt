@@ -146,7 +146,7 @@ KtBlockExpression(295,376): '{'
   null
 
 KtDotQualifiedExpression(301,321): 'C.nullableReceiver()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -169,7 +169,7 @@ KtNameReferenceExpression(301,302): 'C'
   null
 
 KtCallExpression(303,321): 'nullableReceiver()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -189,7 +189,7 @@ KtCallExpression(303,321): 'nullableReceiver()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(303,319): 'nullableReceiver'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -212,7 +212,7 @@ KtValueArgumentList(319,321): '()'
   null
 
 KtDotQualifiedExpression(326,344): 'O.objectReceiver()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'objectReceiver'.>
 
@@ -220,12 +220,12 @@ KtNameReferenceExpression(326,327): 'O'
   null
 
 KtCallExpression(328,344): 'objectReceiver()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'objectReceiver'.>
 
 KtNameReferenceExpression(328,342): 'objectReceiver'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'objectReceiver'.>
 
@@ -233,7 +233,7 @@ KtValueArgumentList(342,344): '()'
   null
 
 KtDotQualifiedExpression(349,374): 'G.typeArgumentsReceiver()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -256,7 +256,7 @@ KtNameReferenceExpression(349,350): 'G'
   null
 
 KtCallExpression(351,374): 'typeArgumentsReceiver()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -276,7 +276,7 @@ KtCallExpression(351,374): 'typeArgumentsReceiver()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(351,372): 'typeArgumentsReceiver'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

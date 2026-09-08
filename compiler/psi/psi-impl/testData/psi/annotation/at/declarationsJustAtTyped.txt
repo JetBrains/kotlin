@@ -109,7 +109,7 @@ KtFile: declarationsJustAtTyped.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiErrorElement:Expected annotation identifier after '@'
             PsiElement(AT)('@')
@@ -143,7 +143,7 @@ KtFile: declarationsJustAtTyped.kt
                   PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
           PsiWhiteSpace('\n\n        ')
-          FUN
+          FUNCTION
             MODIFIER_LIST
               PsiErrorElement:Expected annotation identifier after '@'
                 PsiElement(AT)('@')
@@ -213,7 +213,7 @@ KtFile: declarationsJustAtTyped.kt
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT
-                FUN
+                FUNCTION
                   PsiElement(fun)('fun')
                   VALUE_PARAMETER_LIST
                     PsiElement(LPAR)('(')

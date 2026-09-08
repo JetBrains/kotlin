@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 
-@OptIn(KtExperimentalApi::class)
 abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
     override val resolveKind: String get() = "symbol"
 
@@ -60,6 +59,7 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
             assertSpecificResolutionApi(testServices, symbolAttempt, mainElement)
         }
 
+        @OptIn(KtExperimentalApi::class)
         val localLookup = (mainElement as? KtSimpleNameExpression)?.lookupLocally()
 
         if (localLookup != null) {
@@ -123,7 +123,6 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
 /**
  * The function checks that all specific implementations of [KaResolver.resolveSymbol] are consistent.
  */
-@OptIn(KtExperimentalApi::class)
 context(session: KaSession)
 internal fun assertSpecificResolutionApi(
     testServices: TestServices,
@@ -137,8 +136,8 @@ internal fun assertSpecificResolutionApi(
         val specificCall = kFunction.call(session, element)
 
         when (attempt) {
-            null, is KaSymbolResolutionError -> assertions.assertEquals(expected = null, actual = specificCall)
-            is KaSymbolResolutionSuccess -> {
+            null, is KaSimpleSymbolResolutionError -> assertions.assertEquals(expected = null, actual = specificCall)
+            is KaSimpleSymbolResolutionSuccess -> {
                 // Only non-compound cases can be checked
                 assertions.assertEquals(expected = attempt.symbols.singleOrNull(), actual = specificCall)
             }

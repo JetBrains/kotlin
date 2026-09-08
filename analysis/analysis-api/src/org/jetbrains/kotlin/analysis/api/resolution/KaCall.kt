@@ -52,7 +52,7 @@ public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaCallableMemberCa
  */
 @OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaFunctionCall<S : KaFunctionSymbol> : KaSingleCall<S, KaFunctionSignature<S>>,
+public interface KaFunctionCall<S : KaFunctionSymbol> : KaSimpleCall<S, KaFunctionSignature<S>>,
     KaCallableMemberCall<S, KaFunctionSignature<S>> {
 
     /**
@@ -214,7 +214,7 @@ public interface KaDelegatedConstructorCall : KaFunctionCall<KaConstructorSymbol
  */
 @OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaVariableAccessCall : KaSingleCall<KaVariableSymbol, KaVariableSignature<KaVariableSymbol>>,
+public interface KaVariableAccessCall : KaSimpleCall<KaVariableSymbol, KaVariableSignature<KaVariableSymbol>>,
     KaCallableMemberCall<KaVariableSymbol, KaVariableSignature<KaVariableSymbol>> {
 
     @Deprecated("Use the content of the `partiallyAppliedSymbol` directly instead")
@@ -296,16 +296,16 @@ public interface KaSimpleVariableAccessCall : KaVariableAccessCall {
  *
  * Unlike [KaFunctionCall] or [KaVariableAccessCall], a callable reference does not actually invoke
  * the callable, so it has no value-argument mapping nor a read/write access kind — only the
- * [signature][KaSingleCall.signature] of the referenced callable, the bound
- * [dispatch][KaSingleCall.dispatchReceiver]/[extension][KaSingleCall.extensionReceiver]/[context][KaSingleCall.contextArguments]
- * receivers, and the [type-argument mapping][KaSingleCall.typeArgumentsMapping].
+ * [signature][KaSimpleCall.signature] of the referenced callable, the bound
+ * [dispatch][KaSimpleCall.dispatchReceiver]/[extension][KaSimpleCall.extensionReceiver]/[context][KaSimpleCall.contextArguments]
+ * receivers, and the [type-argument mapping][KaSimpleCall.typeArgumentsMapping].
  *
  * @see org.jetbrains.kotlin.analysis.api.components.KaResolver
  * @see org.jetbrains.kotlin.psi.KtCallableReferenceExpression
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaCallableReferenceCall<S : KaCallableSymbol, C : KaCallableSignature<S>> : KaSingleCall<S, C>
+public interface KaCallableReferenceCall<S : KaCallableSymbol, C : KaCallableSignature<S>> : KaSimpleCall<S, C>
 
 /**
  * A compound access of a [variable][KaCompoundVariableAccessCall] or an [array][KaCompoundArrayAccessCall].

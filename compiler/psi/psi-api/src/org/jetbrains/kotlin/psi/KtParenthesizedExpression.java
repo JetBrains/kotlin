@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
 /**
@@ -20,14 +21,16 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
  * //      ^_____^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtParenthesizedExpression extends KtExpressionImplStub<KotlinPlaceHolderStub<KtParenthesizedExpression>> {
+    @KtImplementationDetail
     public KtParenthesizedExpression(@NotNull ASTNode node) {
         super(node);
     }
 
     @KtImplementationDetail
     public KtParenthesizedExpression(@NotNull KotlinPlaceHolderStub<KtParenthesizedExpression> stub) {
-        super(stub, KtStubBasedElementTypes.PARENTHESIZED);
+        super(stub, KtNodeTypes.PARENTHESIZED);
     }
 
     @Override
@@ -35,6 +38,7 @@ public class KtParenthesizedExpression extends KtExpressionImplStub<KotlinPlaceH
         return visitor.visitParenthesizedExpression(this, data);
     }
 
+    /** Returns the expression inside the parentheses, or {@code null} if it is absent in incomplete code. */
     @Nullable @IfNotParsed
     public KtExpression getExpression() {
         KtExpression fromStub = getExpressionFromStub();

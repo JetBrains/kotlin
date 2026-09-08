@@ -137,11 +137,11 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
 
         val moduleCache = icCache[canonicalPath] ?: TestArtifactCache(mainModuleIr.name.asString())
 
-        for (rebuiltFile in rebuiltFiles) {
-            if (rebuiltFile.first.module == mainModuleIr) {
+        for ([irFile, programFragments] in rebuiltFiles) {
+            if (irFile.module == mainModuleIr) {
                 val output = ByteArrayOutputStream()
-                rebuiltFile.second.serialize(output)
-                moduleCache.binaryAsts[rebuiltFile.first.fileEntry.name] = output.toByteArray()
+                programFragments.serialize(output)
+                moduleCache.binaryAsts[irFile.fileEntry.name] = output.toByteArray()
             }
         }
 

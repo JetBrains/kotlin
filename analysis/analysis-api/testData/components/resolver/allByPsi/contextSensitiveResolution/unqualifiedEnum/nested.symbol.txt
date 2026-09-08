@@ -47,13 +47,13 @@ KtParameter(148,156): 'o: Outer'
   null
 
 KtTypeReference(151,156): 'Outer'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Outer
     ]
 
 KtUserType(151,156): 'Outer'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Outer
     ]
@@ -62,7 +62,7 @@ KtNameReferenceExpression(151,156): 'Outer'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Outer
     ]
@@ -71,13 +71,13 @@ KtParameter(158,166): 'i: Inner'
   null
 
 KtTypeReference(161,166): 'Inner'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Inner
     ]
 
 KtUserType(161,166): 'Inner'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Inner
     ]
@@ -86,19 +86,19 @@ KtNameReferenceExpression(161,166): 'Inner'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Inner
     ]
 
 KtTypeReference(169,172): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(169,172): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -107,7 +107,7 @@ KtNameReferenceExpression(169,172): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -116,7 +116,7 @@ KtBlockExpression(173,309): '{'
   null
 
 KtReturnExpression(179,307): 'return when (o) {'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /foo(o: Outer, i: Inner): kotlin.Int
     ]
@@ -128,7 +128,7 @@ KtNameReferenceExpression(192,193): 'o'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       o: Outer
     ]
@@ -143,7 +143,7 @@ KtNameReferenceExpression(205,210): 'FIRST'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Outer.FIRST
     ]
@@ -161,7 +161,7 @@ KtNameReferenceExpression(224,230): 'SECOND'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Outer.SECOND
     ]
@@ -173,7 +173,7 @@ KtNameReferenceExpression(240,241): 'i'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       i: Inner
     ]
@@ -188,7 +188,7 @@ KtNameReferenceExpression(257,263): 'SECOND'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Inner.SECOND
     ]
@@ -206,7 +206,7 @@ KtNameReferenceExpression(281,286): 'THIRD'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Inner.THIRD
     ]
@@ -224,13 +224,13 @@ KtParameter(319,327): 'o: Outer'
   null
 
 KtTypeReference(322,327): 'Outer'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Outer
     ]
 
 KtUserType(322,327): 'Outer'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Outer
     ]
@@ -239,7 +239,7 @@ KtNameReferenceExpression(322,327): 'Outer'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Outer
     ]
@@ -248,13 +248,13 @@ KtParameter(329,337): 'i: Inner'
   null
 
 KtTypeReference(332,337): 'Inner'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Inner
     ]
 
 KtUserType(332,337): 'Inner'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Inner
     ]
@@ -263,19 +263,19 @@ KtNameReferenceExpression(332,337): 'Inner'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Inner
     ]
 
 KtTypeReference(340,343): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(340,343): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -284,7 +284,7 @@ KtNameReferenceExpression(340,343): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -293,7 +293,7 @@ KtBlockExpression(344,600): '{'
   null
 
 KtReturnExpression(350,598): 'return when (o) {'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /bar(o: Outer, i: Inner): kotlin.Int
     ]
@@ -305,7 +305,7 @@ KtNameReferenceExpression(363,364): 'o'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       o: Outer
     ]
@@ -320,7 +320,7 @@ KtNameReferenceExpression(376,381): 'FIRST'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Outer.FIRST
     ]
@@ -338,7 +338,7 @@ KtNameReferenceExpression(395,401): 'SECOND'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Outer.SECOND
     ]
@@ -353,13 +353,13 @@ KtParameterList(426,428): '()'
   null
 
 KtTypeReference(430,433): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(430,433): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -368,7 +368,7 @@ KtNameReferenceExpression(430,433): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -377,7 +377,7 @@ KtBlockExpression(434,564): '{'
   null
 
 KtReturnExpression(452,550): 'return when (i) {'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       baz(): kotlin.Int
     ]
@@ -389,7 +389,7 @@ KtNameReferenceExpression(465,466): 'i'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       i: Inner
     ]
@@ -404,7 +404,7 @@ KtNameReferenceExpression(490,496): 'SECOND'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Inner.SECOND
     ]
@@ -422,7 +422,7 @@ KtNameReferenceExpression(522,527): 'THIRD'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Inner.THIRD
     ]
@@ -431,7 +431,7 @@ KtConstantExpression(531,532): '3'
   null
 
 KtCallExpression(577,582): 'baz()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       baz(): kotlin.Int
     ]
@@ -440,7 +440,7 @@ KtNameReferenceExpression(577,580): 'baz'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       baz(): kotlin.Int
     ]

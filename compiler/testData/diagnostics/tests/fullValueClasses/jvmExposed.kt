@@ -14,7 +14,7 @@ abstract value class PositiveInt2 <!USELESS_JVM_EXPOSE_BOXED!>@JvmExposeBoxed<!>
     <!USELESS_JVM_EXPOSE_BOXED!>@JvmExposeBoxed<!> fun toInt(): Int = value
 }
 
-sealed value class PositiveInt3 <!USELESS_JVM_EXPOSE_BOXED!>@JvmExposeBoxed<!> constructor() {
+sealed value class PositiveInt3 <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SEALED_CONSTRUCTOR, USELESS_JVM_EXPOSE_BOXED!>@JvmExposeBoxed<!> constructor() {
     abstract val value: Int
     <!USELESS_JVM_EXPOSE_BOXED!>@JvmExposeBoxed<!> fun toInt(): Int = value
 }

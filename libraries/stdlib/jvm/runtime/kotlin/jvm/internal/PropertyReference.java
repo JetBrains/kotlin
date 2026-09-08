@@ -9,6 +9,8 @@ import kotlin.SinceKotlin;
 import kotlin.reflect.KCallable;
 import kotlin.reflect.KProperty;
 
+import java.util.Arrays;
+
 @SuppressWarnings("rawtypes")
 public abstract class PropertyReference extends CallableReference implements KProperty {
     private final boolean syntheticJavaProperty;
@@ -68,7 +70,8 @@ public abstract class PropertyReference extends CallableReference implements KPr
             return getOwner().equals(other.getOwner()) &&
                    getName().equals(other.getName()) &&
                    getSignature().equals(other.getSignature()) &&
-                   Intrinsics.areEqual(getBoundReceiver(), other.getBoundReceiver());
+                   Intrinsics.areEqual(getBoundReceiver(), other.getBoundReceiver()) &&
+                   Arrays.equals(getBoundContextArguments(), other.getBoundContextArguments());
         }
         if (obj instanceof KProperty) {
             return obj.equals(compute());

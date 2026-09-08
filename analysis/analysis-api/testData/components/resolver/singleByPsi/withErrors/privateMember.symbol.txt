@@ -1,5 +1,5 @@
 KtDotQualifiedExpression(59,66): 'a.foo()'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /A.foo(<dispatch receiver>: A): kotlin.Unit
     ]

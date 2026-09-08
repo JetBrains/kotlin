@@ -15,7 +15,7 @@ This skill walks through bumping `GradlePluginVariant.GRADLE_COMMON_COMPILE_API_
 — the Gradle API version that the Kotlin Gradle plugins' common source set is compiled against.
 
 **IMPORTANT**: This project uses JetBrains MCP tools for all file operations. Use
-`mcp__idea__*` tools (read_file, replace_text_in_file, search_in_files_by_text, etc.)
+`mcp__idea__*` tools (read_file, apply_patch, search_text, etc.)
 instead of standard Read/Edit/Grep/Glob tools.
 
 ---
@@ -43,7 +43,7 @@ change the constant inside the `companion object`:
 const val GRADLE_COMMON_COMPILE_API_VERSION = "<NEW_VERSION>"
 ```
 
-Use `mcp__idea__replace_text_in_file` to make this change.
+Use `mcp__idea__apply_patch` to make this change.
 
 ---
 
@@ -107,7 +107,7 @@ If errors appear, approach them methodically:
 2. **Understand the API change**: Use `mcp__idea__get_symbol_info` to look up what
    replaced a removed or changed API. Check the Gradle release notes for the target version.
 
-3. **Apply fixes**: Use `mcp__idea__replace_text_in_file` to update code.
+3. **Apply fixes**: Use `mcp__idea__apply_patch` to update code.
 
 4. **Re-run compilation** after each round of fixes until it's clean.
 

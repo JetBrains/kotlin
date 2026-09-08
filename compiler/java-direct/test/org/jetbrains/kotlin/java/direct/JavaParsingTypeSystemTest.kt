@@ -274,7 +274,9 @@ class JavaParsingTypeSystemTest : JavaParsingTestBase() {
         val rawField = javaClass.fields.first { it.name.asString() == "raw" }
         val rawType = rawField.type as JavaClassifierType
         assertEquals("Generic", rawType.classifierQualifiedName)
-        assertTrue(rawType.typeArguments.isEmpty(), "Raw type should have no type arguments")
+        // A raw type has one `null` argument per type parameter of its class.
+        assertEquals(1, rawType.typeArguments.size, "Raw `Generic` has an entry for Generic's T")
+        assertNull(rawType.typeArguments.single(), "and no argument for it")
         // classifier should resolve to the containing class itself
         assertNotNull(rawType.classifier) { "classifier should resolve to Generic class" }
         assertEquals(javaClass, rawType.classifier, "classifier should be the same Generic class")
@@ -291,7 +293,7 @@ class JavaParsingTypeSystemTest : JavaParsingTestBase() {
         // Check the alsoRaw field (instance field, also raw)
         val alsoRawField = javaClass.fields.first { it.name.asString() == "alsoRaw" }
         val alsoRawType = alsoRawField.type as JavaClassifierType
-        assertTrue(alsoRawType.typeArguments.isEmpty(), "alsoRaw should have no type arguments")
+        assertNull(alsoRawType.typeArguments.single(), "alsoRaw supplies no argument for Generic's T")
         assertTrue(alsoRawType.isRaw, "Expected isRaw=true for raw alsoRaw field")
     }
 

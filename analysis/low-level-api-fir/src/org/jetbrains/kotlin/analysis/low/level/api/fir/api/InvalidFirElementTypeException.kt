@@ -43,7 +43,7 @@ class InvalidFirElementTypeException(
 
     override val message: String = buildString {
         ktElement?.let {
-            "For ${ktElement::class.simpleName}, "
+            append("For ${ktElement::class.simpleName}, ")
         }
 
         val message = when (expectedFirClasses.size) {

@@ -13,7 +13,6 @@ kotlin {
     }
 
     jvm("jvmWithJava") {
-        withJava()
         compilerOptions.jvmTarget.set(JvmTarget.JVM_17)
         attributes { attribute(disambiguationAttribute, "jvmWithJava") }
     }

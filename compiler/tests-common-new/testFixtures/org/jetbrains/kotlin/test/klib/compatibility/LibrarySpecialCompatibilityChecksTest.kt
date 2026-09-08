@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.io.zipDirAs
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_ABI_VERSION
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -126,16 +128,8 @@ abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
 
     @Test
     fun testEitherVersionIsMissing() {
-        // TODO (KT-83853): Use KotlinToolingVersion here!
-        fun getKotlinVersion(rawKotlinVersion: String): KotlinVersion {
-            val versionNumbers = rawKotlinVersion.substringBefore('-').split('.').map { it.toInt() }
-
-            return when (versionNumbers.size) {
-                2 -> KotlinVersion(versionNumbers[0], versionNumbers[1])
-                3 -> KotlinVersion(versionNumbers[0], versionNumbers[1], versionNumbers[2])
-                else -> fail { "Malformed Kotlin version: $$rawKotlinVersion" }
-            }
-        }
+        fun getKotlinVersion(rawKotlinVersion: String): KotlinVersion =
+            KotlinToolingVersion(rawKotlinVersion).toKotlinVersion()
 
         val compilerVersionUsedToBuildOriginalLibrary: KotlinVersion = KlibLoader { libraryPaths(originalLibraryPath) }.load().run {
             assertFalse(hasProblems)

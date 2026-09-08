@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.generators.tree.printer.*
 private val elementsWithReplaceSource = setOf(
     FirTree.qualifiedAccessExpression,
     FirTree.delegatedConstructorCall,
+    FirTree.annotation,
 )
 
 internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElementPrinter<Element, Field>(printer) {

@@ -140,9 +140,6 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         }
     }
 
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_8_1,
-    )
     @GradleTest
     fun buildScriptReturnIsCCFriendly(version: GradleVersion) {
         // Sanity check that enabling CC produces CC serialization errors with inappropriately constructed providers in providerBuildScriptReturn
@@ -162,9 +159,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         project("empty", version) {
             buildScriptReturn {
                 project.layout.projectDirectory.file("foo").asFile
-            }.buildAndReturn(
-                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-            )
+            }.buildAndReturn()
         }
 
         // Make sure delayed task providers (e.g. mapped from a task) get queried at the correct time even in runs with CC
@@ -201,9 +196,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
 
             providerBuildScriptReturn {
                 mappedTaskOutputProvider()
-            }.buildAndReturn(
-                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-            )
+            }.buildAndReturn()
         }
     }
 
@@ -568,7 +561,9 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                     this.javaClass.classLoader.loadClass(LibraryExtension::class.java.name).isInstance(
                         project.extensions.getByName("android")
                     )
-                }.buildAndReturn(),
+                }.buildAndReturn(
+                    deriveBuildOptions = { buildOptions.suppressAgpWarningIsProperty(gradleVersion) }
+                ),
                 "At this point the plugin is expected to be applied and the extension must inherit from the relevant class",
             )
         }

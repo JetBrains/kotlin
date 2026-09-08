@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.buildtools.internal.compat
 
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.ProjectId.Companion.RandomProjectUUID
+import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.jvm.*
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensionsOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
@@ -25,23 +26,38 @@ import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1
 import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1Adapter.JvmSnapshotBasedIncrementalCompilationConfigurationV1Adapter.Companion.ROOT_PROJECT_DIR
 import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1Adapter.JvmSnapshotBasedIncrementalCompilationConfigurationV1Adapter.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.internal.compat.arguments.JvmCompilerArgumentsImpl
+import org.jetbrains.kotlin.buildtools.internal.compat.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.incremental.isJavaFile
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import java.io.ByteArrayOutputStream
+import java.lang.reflect.InvocationTargetException
+import java.net.URL
+import java.net.URLClassLoader
 import java.nio.file.Path
+import java.security.CodeSource
 import java.time.Duration
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 public class KotlinToolchainsV1Adapter(
     @Suppress("DEPRECATION_ERROR") private val compilationService: CompilationService,
 ) : KotlinToolchains {
+
+    private val implClassloader: ClassLoader = BackportsClassLoader(emptyArray(), KotlinToolchainsV1Adapter::class.java.classLoader)
+
     private val jvm: JvmPlatformToolchain by lazy {
         object : JvmPlatformToolchain {
             override fun jvmCompilationOperationBuilder(
                 sources: List<Path>,
                 destinationDirectory: Path,
             ): JvmCompilationOperation.Builder {
-                return JvmCompilationOperationV1Adapter(compilationService, sources, destinationDirectory, JvmCompilerArgumentsImpl())
+                return JvmCompilationOperationV1Adapter(
+                    compilationService,
+                    sources,
+                    destinationDirectory,
+                    JvmCompilerArgumentsImplV1Adapter(JvmCompilerArgumentsImpl(), implClassloader)
+                )
             }
 
             override fun classpathSnapshottingOperationBuilder(classpathEntry: Path): JvmClasspathSnapshottingOperation.Builder {
@@ -164,19 +180,46 @@ private class JvmClasspathSnapshottingOperationV1Adapter private constructor(
     }
 }
 
+
+private class JvmCompilerArgumentsImplV1Adapter(
+    val base: JvmCompilerArgumentsImpl,
+    val implClassloader: ClassLoader,
+) : JvmCompilerArguments.Builder by base, JvmCompilerArguments, DeepCopyable<JvmCompilerArgumentsImplV1Adapter> {
+    override fun toArgumentStrings(): List<String> {
+        return base.toArgumentStrings()
+    }
+
+    override fun deepCopy(): JvmCompilerArgumentsImplV1Adapter {
+        return JvmCompilerArgumentsImplV1Adapter(base.deepCopy(), implClassloader)
+    }
+
+    @OptIn(DelicateBuildToolsApi::class)
+    override fun applyCommandLineArguments(arguments: List<String>) {
+        val compilerArgs = base.toCompilerArguments()
+        parseCommandLineArguments(arguments, compilerArgs, false, implClassloader)
+        val method = base.javaClass.getDeclaredMethod("applyCompilerArguments", compilerArgs.javaClass)
+        method.isAccessible = true
+        try {
+            method.invoke(base, compilerArgs)
+        } catch (e: InvocationTargetException) {
+            throw e.targetException
+        }
+    }
+}
+
 private class JvmCompilationOperationV1Adapter private constructor(
     override val options: Options = Options(JvmCompilationOperation::class),
     @Suppress("DEPRECATION_ERROR") val compilationService: CompilationService,
     override val sources: List<Path>,
     override val destinationDirectory: Path,
-    override val compilerArguments: JvmCompilerArgumentsImpl,
+    override val compilerArguments: JvmCompilerArgumentsImplV1Adapter,
 ) : BaseCompilationOperationImpl(), JvmCompilationOperation, JvmCompilationOperation.Builder,
     DeepCopyable<JvmCompilationOperationV1Adapter> {
     constructor(
         @Suppress("DEPRECATION_ERROR") compilationService: CompilationService,
         kotlinSources: List<Path>,
         destinationDirectory: Path,
-        compilerArguments: JvmCompilerArgumentsImpl,
+        compilerArguments: JvmCompilerArgumentsImplV1Adapter,
     ) : this(Options(JvmCompilationOperation::class), compilationService, kotlinSources, destinationDirectory, compilerArguments)
 
     override fun toBuilder(): JvmCompilationOperation.Builder = deepCopy()
@@ -195,7 +238,8 @@ private class JvmCompilationOperationV1Adapter private constructor(
             compilationService,
             sources,
             destinationDirectory,
-            compilerArguments.deepCopy())
+            compilerArguments.deepCopy()
+        )
     }
 
     override fun snapshotBasedIcConfigurationBuilder(
@@ -525,7 +569,8 @@ private class BuildSessionV1Adapter(
 }
 
 @Suppress("DEPRECATION_ERROR")
-public fun CompilationService.asKotlinToolchains(): KotlinToolchains = KotlinToolchainsV1Adapter(this)
+public fun CompilationService.asKotlinToolchains(): KotlinToolchains =
+    KotlinToolchainsV1Adapter(this)
 
 
 private abstract class BaseCompilationOperationImpl : BuildOperationImpl<CompilationResult>(), BaseCompilationOperation {
@@ -562,5 +607,30 @@ private abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation
 
     companion object {
         val METRICS_COLLECTOR: Option<BuildMetricsCollector?> = Option("METRICS_COLLECTOR", default = null)
+    }
+}
+
+private class BackportsClassLoader(urls: Array<URL>, parent: ClassLoader) : URLClassLoader(urls, parent) {
+    private val definedClasses = ConcurrentHashMap<String, Class<*>>()
+
+    override fun loadClass(name: String): Class<*> {
+        return if (name.startsWith("org.jetbrains.kotlin.buildtools.api.internal.backports.")) {
+            definedClasses.computeIfAbsent(name) {
+                val resourceName = name.replace(".", "/") + ".class"
+                val resource = getResourceAsStream(resourceName) ?: error("Can't find resource file $resourceName")
+                val byteArray = ByteArrayOutputStream().apply {
+                    resource.copyTo(this)
+                }.toByteArray()
+                defineClass(
+                    name,
+                    byteArray,
+                    0,
+                    byteArray.size,
+                    null as CodeSource?
+                )
+            }
+        } else {
+            super.loadClass(name)
+        }
     }
 }

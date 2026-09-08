@@ -33,10 +33,19 @@
     <extensionPoint qualifiedName="org.jetbrains.kotlin.irGenerationExtension"
                     interface="org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension"
                     area="IDEA_PROJECT" dynamic="true"/>
+
+    <extensionPoint
+        qualifiedName="org.jetbrains.kotlin.kaSessionListener"
+        interface="org.jetbrains.kotlin.analysis.api.platform.KaSessionListener"
+        dynamic="true"
+    />
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
     <stubElementTypeHolder externalIdPrefix="kotlin." class="org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes"/>
+    <languageStubDefinition language="kotlin"
+                            implementationClass="org.jetbrains.kotlin.psi.stubs.KotlinLanguageStubDefinition"/>
+    <stubElementRegistryExtension implementation="org.jetbrains.kotlin.psi.stubs.KotlinStubRegistryExtension"/>
 
     <fileType name="ARCHIVE" extensions="klib"/>
 

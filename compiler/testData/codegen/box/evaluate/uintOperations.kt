@@ -136,7 +136,6 @@ const val limits1 = 4294967294u+oneVal
 const val limits2 = 4294967295u+oneVal
 const val limits3 = zeroVal-oneVal
 
-// STOP_EVALUATION_CHECKS
 fun box(): String {
     if (compareTo1.id() != -1)   return "Fail compareTo 1"
     if (compareTo2.id() != 0)    return "Fail compareTo2"

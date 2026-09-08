@@ -1,8 +1,6 @@
 // ISSUE: KT-87009
 // DISABLE_IR_VISIBILITY_CHECKS: ANY
 // FULL_JDK
-// IGNORE_BACKEND: WASM
-// ^^^ KT-88074 Package renaming leads to the mismatch with the expected message
 
 package foo
 

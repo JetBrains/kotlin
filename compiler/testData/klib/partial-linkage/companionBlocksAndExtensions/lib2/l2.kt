@@ -17,6 +17,25 @@ fun removedFunCall() = A.removedFun()
 val bodyChangeRef = A::bodyChange
 val removedFunRef = A::removedFun
 
+fun extensionValChangeGet() = A.extensionValChange
+fun removedExtensionValGet() = A.removedExtensionVal
+fun extensionVarChangeGet() = A.extensionVarChange
+fun removedExtensionVarGet() = A.removedExtensionVar
+fun removedExtensionVarSet() {
+    A.removedExtensionVar = 0
+}
+
+val extensionValChangeRef = A::extensionValChange
+val removedExtensionValRef = A::removedExtensionVal
+val extensionVarChangeRef = A::extensionVarChange
+val removedExtensionVarRef = A::removedExtensionVar
+
+fun extensionFunBodyChangeCall() = A.extensionFunBodyChange()
+fun removedExtensionFunCall() = A.removedExtensionFun()
+
+val extensionFunBodyChangeRef = A::extensionFunBodyChange
+val removedExtensionFunRef = A::removedExtensionFun
+
 fun removedClassCall() = A.removedClass()
 fun removedClassValueCall() = A.removedClassValue()
 fun removedClassParameterCall() = A.removedClassParameter(RemovedClass(42))
@@ -28,9 +47,36 @@ fun removedCompanionVarSet() {
     B.removedCompanionVar = 0
 }
 fun removedCompanionFunCall() = B.removedCompanionFun()
+val removedCompanionFunRef = B::removedCompanionFun
+val removedCompanionValRef = B::removedCompanionVal
+val removedCompanionVarRef = B::removedCompanionVar
 
 fun blockToObjectCall() = A.blockToObject()
 fun objectToBlockCall() = A.objectToBlock()
+fun blockToCompanionExtensionCall() = A.blockToCompanionExtension()
+fun companionExtensionToBlockCall() = A.companionExtensionToBlock()
+fun companionToRegularExtensionCall() = A.companionToRegularExtension()
+fun regularToCompanionExtensionCall() = A().regularToCompanionExtension()
+fun blockToRegularExtensionCall() = A.blockToRegularExtension()
+fun regularExtensionToBlockCall() = A().regularExtensionToBlock()
 
 fun noBlockSameFunCall() = RemovedBlock.sameFun()
 fun newBlockSameFunCall() = NewBlock.sameFun()
+
+fun privateClassCall() = PrivateClass.privateClassFun()
+fun aliasCall() = A.aliasFun()
+fun aliasToClassFunCall() = A.aliasToClassFun()
+fun classToAliasFunCall() = B.classToAliasFun()
+
+fun funMovedToParentClass() = Derived.funMovedToParentClass()
+fun propMovedToParentClass() = Derived.propMovedToParentClass
+val funMovedToParentClassRef = Derived::funMovedToParentClass
+val propMovedToParentClassRef = Derived::propMovedToParentClass
+fun funMovedToGrandparentClass() = Derived.funMovedToGrandparentClass()
+fun propMovedToGrandparentClass() = Derived.propMovedToGrandparentClass
+val funMovedToGrandparentClassRef = Derived::funMovedToGrandparentClass
+val propMovedToGrandparentClassRef = Derived::propMovedToGrandparentClass
+fun funMovedToParentInterface() = Derived.funMovedToParentInterface()
+fun propMovedToParentInterface() = Derived.propMovedToParentInterface
+val funMovedToParentInterfaceRef = Derived::funMovedToParentInterface
+val propMovedToParentInterfaceRef = Derived::propMovedToParentInterface

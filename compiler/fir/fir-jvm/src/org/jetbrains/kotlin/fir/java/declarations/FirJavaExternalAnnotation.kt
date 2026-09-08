@@ -67,6 +67,9 @@ class FirJavaExternalAnnotation @FirImplementationDetail constructor(
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
 
+    @FirImplementationDetail
+    override fun replaceSource(newSource: KtSourceElement?) {}
+
     override fun replaceUseSiteTarget(newUseSiteTarget: AnnotationUseSiteTarget?) {}
 
     override fun replaceAnnotationTypeRef(newAnnotationTypeRef: FirTypeRef) {

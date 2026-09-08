@@ -11,7 +11,8 @@ The Analysis API consists of several interconnected components, each serving a s
     - Foundation layer providing syntax tree representation through [`KtElement`](../../../compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/KtElement.kt)
     hierarchy
     - Uses `Kt` prefix (compared to `Ka` for Analysis API)
-    - Has own stability annotations: `@KtExperimentalApi`, `@KtImplementationDetail`, `@KtNonPublicApi`
+    - Has own stability annotations mirroring the Analysis API ones: `@KtExperimentalApi`, `@KtImplementationDetail`, `@KtNonPublicApi`,
+    `@KtIdeApi`, `@KtPlatformInterface`, `@KtSpi`, and `@KtSpiExtensionPoint`
     - Key entities: [`KtFile`](../../../compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/KtFile.kt),
     [`KtDeclaration`](../../../compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/KtDeclaration.java),
     and [`KtExpression`](../../../compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/KtExpression.java)
@@ -80,8 +81,12 @@ Every part of the Analysis API falls under one of these stability categories:
         - Declarations annotated with `@KaImplementationDetail`
 
 > [!NOTE]
-> PSI uses parallel annotations: `@KtExperimentalApi`, `@KtImplementationDetail`, `@KtNonPublicApi`.
+> PSI uses parallel annotations: `@KtExperimentalApi`, `@KtImplementationDetail`, `@KtNonPublicApi`, `@KtIdeApi`, `@KtSpi`, and
+> `@KtSpiExtensionPoint`.
+> `@KtPlatformInterface` is parallel in name only: since the Kotlin PSI has no platform layer of its own, it marks the contract with the
+> Analysis API engine and its platform implementations.
 > The `@KtPsiInconsistencyHandling` annotation marks code handling inconsistent PSI states (no Analysis API equivalent).
+> See [Kotlin PSI Markers](api-development.md#kotlin-psi-markers) for the full mapping.
 
 ## Adding New APIs
 

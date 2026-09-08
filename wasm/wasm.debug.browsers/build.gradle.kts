@@ -5,7 +5,6 @@ description = "Simple Kotlin/Wasm devtools formatters"
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     id("base")
     id("share-kotlin-wasm-custom-formatters")

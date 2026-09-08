@@ -3,21 +3,21 @@ description = "Kotlin Java Direct Compiler Plugin"
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("test-inputs-check")
     id("java-test-fixtures")
-    id("project-tests-convention")
 }
 
 dependencies {
     api(project(":core:compiler.common.jvm"))
 
     compileOnly(intellijCore())
+    compileOnly(libs.intellij.asm)
     implementation(project(":compiler:frontend.common.jvm"))
     implementation(project(":compiler:plugin-api"))
     implementation(project(":compiler:cli"))
+    implementation(project(":compiler:multiplatform-parsing"))
 
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
@@ -43,6 +43,9 @@ optInToExperimentalCompilerApi()
 projectTests {
     testTask(
         javaLauncher = JdkMajorVersion.JDK_1_8,
+        maxHeapSize = testMaxHeapSizeLarge,
+        // Use Parallel GC because this test runs on JDK 8.
+        garbageCollector = GarbageCollector.Parallel,
         defineJDKEnvVariables = listOf(
             JdkMajorVersion.JDK_1_8,
             JdkMajorVersion.JDK_11_0,

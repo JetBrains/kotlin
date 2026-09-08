@@ -16,10 +16,12 @@ import org.jetbrains.kotlin.sir.SirDeclarationParent
 import org.jetbrains.kotlin.sir.SirFixity
 import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.SirFunctionBody
+import org.jetbrains.kotlin.sir.SirGetterFunction
 import org.jetbrains.kotlin.sir.SirModality
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.SirOrigin
 import org.jetbrains.kotlin.sir.SirParameter
+import org.jetbrains.kotlin.sir.SirSetterFunction
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -53,25 +55,43 @@ import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 import kotlin.getValue
 import kotlin.lazy
 
+internal class SirGetterFunctionFromKtSymbol(
+    override val ktPropertySymbol: KaPropertySymbol,
+    override val ktSymbol: KaPropertyGetterSymbol,
+    override val sirSession: SirSession,
+) : SirFunctionFromKtPropertySymbol(), SirGetterFunction {
+    override val getter: SirGetterFunctionFromKtSymbol get() = this
+    override var setter: SirSetterFunctionFromKtSymbol? = null
+}
+
+internal class SirSetterFunctionFromKtSymbol(
+    override val ktPropertySymbol: KaPropertySymbol,
+    override val ktSymbol: KaPropertySetterSymbol,
+    override val sirSession: SirSession,
+    override val getter: SirGetterFunctionFromKtSymbol,
+) : SirFunctionFromKtPropertySymbol(), SirSetterFunction {
+    override val setter: SirSetterFunctionFromKtSymbol get() = this
+}
+
 /**
  * Kotlin extension property accessors in Swift
  */
-internal class SirFunctionFromKtPropertySymbol(
-    val ktPropertySymbol: KaPropertySymbol,
-    override val ktSymbol: KaPropertyAccessorSymbol,
-    override val sirSession: SirSession,
-) : SirFunction(), SirFromKtSymbol<KaPropertyAccessorSymbol> {
+internal sealed class SirFunctionFromKtPropertySymbol : SirFunction(), SirFromKtSymbol<KaPropertyAccessorSymbol> {
+    abstract val ktPropertySymbol: KaPropertySymbol
 
     override val visibility: SirVisibility = SirVisibility.PUBLIC
     override val origin: SirOrigin by lazy {
         KotlinPropertyAccessorOrigin(ktSymbol, ktPropertySymbol)
     }
-    override val name: String by lazyWithSessions {
+    val variableName: String by lazyWithSessions {
+        ktPropertySymbol.sirDeclarationName()
+    }
+    override val name: String by lazy {
         val prefix = when (ktSymbol) {
             is KaPropertyGetterSymbol -> "get"
             is KaPropertySetterSymbol -> "set"
         }
-        prefix + ktPropertySymbol.sirDeclarationName().replaceFirstChar { it.titlecase() }
+        prefix + variableName.replaceFirstChar { it.titlecase() }
     }
     internal val contextParameters: Pair<SirParameter, List<SirParameter>>? by lazy {
         translateContextParameters()

@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.components
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.resolution.KaContextSensitiveResolutionStatus
-import org.jetbrains.kotlin.analysis.api.internals.KaInternalsResolver
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.*
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsResolver
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
@@ -23,12 +21,10 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.resolution.KtResolvableCall
-import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 @KaImplementationDetail
-@OptIn(KtExperimentalApi::class)
 abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaInternalsResolver {
     protected abstract fun performSymbolResolution(psi: KtElement): KaSymbolResolutionAttempt?
 
@@ -36,8 +32,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
         when (resolvable) {
             is KtOperationReferenceExpression -> resolvable.tryResolveSymbolsForOperationReference()
             is KtResolvableCall -> resolvable.tryResolveSymbolsForResolvableCall()
-            is KtElement -> resolvable.tryResolveSymbolsForElement()
-            else -> null
+            else -> resolvable.tryResolveSymbolsForElement()
         }
     }
 
@@ -66,7 +61,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
         is KtNameReferenceExpression, is KtEnumEntrySuperclassReferenceExpression -> tryResolveSymbolsForElement()
         else -> null
     } ?: when (val callAttempt = tryResolveCall(this)) {
-        is KaSingleCallResolutionAttempt -> callAttempt.toSingleSymbolResolutionAttempt()
+        is KaSimpleCallResolutionAttempt -> callAttempt.toSimpleSymbolResolutionAttempt()
         is KaMultiCallResolutionAttempt -> callAttempt.toSymbolResolutionAttempt()
         null -> null
     }
@@ -78,19 +73,19 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
      */
     private fun KtOperationReferenceExpression.tryResolveSymbolsForOperationReference(): KaSymbolResolutionAttempt? {
         return when (val callAttempt = tryResolveCall(this)) {
-            is KaCallResolutionError -> callAttempt.toSingleSymbolResolutionAttempt()
+            is KaSimpleCallResolutionError -> callAttempt.toSimpleSymbolResolutionAttempt()
 
             // Single variable access is not expected to be a result of the symbol resolve (the assignment use case)
-            is KaCallResolutionSuccess if callAttempt.call !is KaVariableAccessCall -> callAttempt.toSingleSymbolResolutionAttempt()
+            is KaSimpleCallResolutionSuccess if callAttempt.call !is KaVariableAccessCall -> callAttempt.toSimpleSymbolResolutionAttempt()
             is KaMultiCallResolutionAttempt -> when (callAttempt) {
                 is KaCompoundArrayAccessCallResolutionAttempt -> mergeSymbolAttempts(
                     listOf(
-                        callAttempt.operationCallAttempt.toSingleSymbolResolutionAttempt(),
-                        callAttempt.setterCallAttempt.toSingleSymbolResolutionAttempt(),
+                        callAttempt.operationCallAttempt.toSimpleSymbolResolutionAttempt(),
+                        callAttempt.setterCallAttempt.toSimpleSymbolResolutionAttempt(),
                     )
                 )
 
-                is KaCompoundVariableAccessCallResolutionAttempt -> callAttempt.operationCallAttempt.toSingleSymbolResolutionAttempt()
+                is KaCompoundVariableAccessCallResolutionAttempt -> callAttempt.operationCallAttempt.toSimpleSymbolResolutionAttempt()
                 else -> callAttempt.toSymbolResolutionAttempt()
             }
 
@@ -98,71 +93,71 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
         }
     }
 
-    private fun <T> T.tryResolveSymbolsForElement(): KaSymbolResolutionAttempt? where T : KtResolvable, T : KtElement {
+    private fun KtResolvable.tryResolveSymbolsForElement(): KaSymbolResolutionAttempt? {
         checkValidity()
         return performSymbolResolution(this)
     }
 
-    final override fun resolveSymbols(resolvable: KtResolvable): Collection<KaSymbol> = withValidityAssertion {
+    final override fun resolveSuccessfulSymbols(resolvable: KtResolvable): Collection<KaSymbol> = withValidityAssertion {
         tryResolveSymbols(resolvable)?.successfulSymbols ?: emptyList()
     }
 
-    final override fun resolveSymbol(resolvable: KtResolvable): KaSymbol? = withValidityAssertion {
-        resolveSymbols(resolvable).singleOrNull()
+    final override fun resolveSuccessfulSymbol(resolvable: KtResolvable): KaSymbol? = withValidityAssertion {
+        resolveSuccessfulSymbols(resolvable).singleOrNull()
     }
 
-    private inline fun <reified R : KaSymbol> KtResolvable.resolveSymbolSafe(): R? = resolveSymbol(this) as? R
+    private inline fun <reified R : KaSymbol> KtResolvable.resolveSymbolSafe(): R? = resolveSuccessfulSymbol(this) as? R
 
-    final override fun resolveSymbol(annotationEntry: KtAnnotationEntry): KaConstructorSymbol? = annotationEntry.resolveSymbolSafe()
-    final override fun resolveSymbol(superTypeCallEntry: KtSuperTypeCallEntry): KaConstructorSymbol? =
+    final override fun resolveSuccessfulSymbol(annotationEntry: KtAnnotationEntry): KaConstructorSymbol? = annotationEntry.resolveSymbolSafe()
+    final override fun resolveSuccessfulSymbol(superTypeCallEntry: KtSuperTypeCallEntry): KaConstructorSymbol? =
         superTypeCallEntry.resolveSymbolSafe()
 
-    final override fun resolveSymbol(constructorDelegationCall: KtConstructorDelegationCall): KaConstructorSymbol? =
+    final override fun resolveSuccessfulSymbol(constructorDelegationCall: KtConstructorDelegationCall): KaConstructorSymbol? =
         constructorDelegationCall.resolveSymbolSafe()
 
-    final override fun resolveSymbol(constructorDelegationReferenceExpression: KtConstructorDelegationReferenceExpression): KaConstructorSymbol? =
+    final override fun resolveSuccessfulSymbol(constructorDelegationReferenceExpression: KtConstructorDelegationReferenceExpression): KaConstructorSymbol? =
         constructorDelegationReferenceExpression.resolveSymbolSafe()
 
-    final override fun resolveSymbol(callElement: KtCallElement): KaFunctionSymbol? = callElement.resolveSymbolSafe()
-    final override fun resolveSymbol(callableReferenceExpression: KtCallableReferenceExpression): KaCallableSymbol? =
+    final override fun resolveSuccessfulSymbol(callElement: KtCallElement): KaFunctionSymbol? = callElement.resolveSymbolSafe()
+    final override fun resolveSuccessfulSymbol(callableReferenceExpression: KtCallableReferenceExpression): KaCallableSymbol? =
         callableReferenceExpression.resolveSymbolSafe()
 
-    final override fun resolveSymbol(arrayAccessExpression: KtArrayAccessExpression): KaNamedFunctionSymbol? =
+    final override fun resolveSuccessfulSymbol(arrayAccessExpression: KtArrayAccessExpression): KaNamedFunctionSymbol? =
         arrayAccessExpression.resolveSymbolSafe()
 
-    final override fun resolveSymbol(collectionLiteralExpression: KtCollectionLiteralExpression): KaNamedFunctionSymbol? =
+    final override fun resolveSuccessfulSymbol(collectionLiteralExpression: KtCollectionLiteralExpression): KaNamedFunctionSymbol? =
         collectionLiteralExpression.resolveSymbolSafe()
 
-    final override fun resolveSymbol(enumEntrySuperclassReferenceExpression: KtEnumEntrySuperclassReferenceExpression): KaNamedClassSymbol? =
+    final override fun resolveSuccessfulSymbol(enumEntrySuperclassReferenceExpression: KtEnumEntrySuperclassReferenceExpression): KaNamedClassSymbol? =
         enumEntrySuperclassReferenceExpression.resolveSymbolSafe()
 
-    final override fun resolveSymbol(labelReferenceExpression: KtLabelReferenceExpression): KaDeclarationSymbol? =
+    final override fun resolveSuccessfulSymbol(labelReferenceExpression: KtLabelReferenceExpression): KaDeclarationSymbol? =
         labelReferenceExpression.resolveSymbolSafe()
 
-    final override fun resolveSymbol(returnExpression: KtReturnExpression): KaFunctionSymbol? = returnExpression.resolveSymbolSafe()
-    final override fun resolveSymbol(whenConditionInRange: KtWhenConditionInRange): KaNamedFunctionSymbol? =
+    final override fun resolveSuccessfulSymbol(returnExpression: KtReturnExpression): KaFunctionSymbol? = returnExpression.resolveSymbolSafe()
+    final override fun resolveSuccessfulSymbol(whenConditionInRange: KtWhenConditionInRange): KaNamedFunctionSymbol? =
         whenConditionInRange.resolveSymbolSafe()
 
-    final override fun resolveSymbol(destructuringDeclarationEntry: KtDestructuringDeclarationEntry): KaCallableSymbol? =
+    final override fun resolveSuccessfulSymbol(destructuringDeclarationEntry: KtDestructuringDeclarationEntry): KaCallableSymbol? =
         destructuringDeclarationEntry.resolveSymbolSafe()
 
-    final override fun resolveSymbol(qualifiedExpression: KtQualifiedExpression): KaCallableSymbol? =
+    final override fun resolveSuccessfulSymbol(qualifiedExpression: KtQualifiedExpression): KaCallableSymbol? =
         qualifiedExpression.resolveSymbolSafe()
 
-    final override fun resolveSymbol(constructorCalleeExpression: KtConstructorCalleeExpression): KaConstructorSymbol? =
+    final override fun resolveSuccessfulSymbol(constructorCalleeExpression: KtConstructorCalleeExpression): KaConstructorSymbol? =
         constructorCalleeExpression.resolveSymbolSafe()
 
-    final override fun resolveSymbol(instanceExpressionWithLabel: KtInstanceExpressionWithLabel): KaDeclarationSymbol? =
+    final override fun resolveSuccessfulSymbol(instanceExpressionWithLabel: KtInstanceExpressionWithLabel): KaDeclarationSymbol? =
         instanceExpressionWithLabel.resolveSymbolSafe()
 
-    final override fun resolveSymbol(nullableType: KtNullableType): KaClassifierSymbol? = nullableType.resolveSymbolSafe()
-    final override fun resolveSymbol(functionType: KtFunctionType): KaClassSymbol? = functionType.resolveSymbolSafe()
-    final override fun resolveSymbol(typeReference: KtTypeReference): KaClassifierSymbol? = typeReference.resolveSymbolSafe()
-    final override fun resolveSymbol(classLiteralExpression: KtClassLiteralExpression): KaClassifierSymbol? =
+    final override fun resolveSuccessfulSymbol(nullableType: KtNullableType): KaClassifierSymbol? = nullableType.resolveSymbolSafe()
+    final override fun resolveSuccessfulSymbol(functionType: KtFunctionType): KaClassSymbol? = functionType.resolveSymbolSafe()
+    final override fun resolveSuccessfulSymbol(typeReference: KtTypeReference): KaClassifierSymbol? = typeReference.resolveSymbolSafe()
+    final override fun resolveSuccessfulSymbol(classLiteralExpression: KtClassLiteralExpression): KaClassifierSymbol? =
         classLiteralExpression.resolveSymbolSafe()
 
-    final override fun resolveSymbol(superTypeEntry: KtSuperTypeEntry): KaClassifierSymbol? = superTypeEntry.resolveSymbolSafe()
-    final override fun resolveSymbol(delegatedSuperTypeEntry: KtDelegatedSuperTypeEntry): KaClassifierSymbol? =
+    final override fun resolveSuccessfulSymbol(superTypeEntry: KtSuperTypeEntry): KaClassifierSymbol? = superTypeEntry.resolveSymbolSafe()
+    final override fun resolveSuccessfulSymbol(delegatedSuperTypeEntry: KtDelegatedSuperTypeEntry): KaClassifierSymbol? =
         delegatedSuperTypeEntry.resolveSymbolSafe()
 
     final override fun resolveToSymbol(reference: KtReference): KaSymbol? = withPsiValidityAssertion(reference.element) {
@@ -177,25 +172,21 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
     protected abstract fun performCallResolution(psi: KtElement): KaCallResolutionAttempt?
 
     final override fun tryResolveCall(resolvableCall: KtResolvableCall): KaCallResolutionAttempt? = withValidityAssertion {
-        if (resolvableCall is KtElement) {
-            resolvableCall.checkValidity()
-            resolvableCall.tryResolveCallImpl()
-        } else {
-            null
-        }
+        resolvableCall.checkValidity()
+        resolvableCall.tryResolveCallImpl()
     }
 
-    final override fun resolveCall(resolvableCall: KtResolvableCall): KaSingleOrMultiCall? = tryResolveCall(resolvableCall)?.successfulCall
+    final override fun resolveSuccessfulCall(resolvableCall: KtResolvableCall): KaSimpleOrMultiCall? = tryResolveCall(resolvableCall)?.successful
 
-    private inline fun <reified R : KaSingleOrMultiCall> KtResolvableCall.resolveCallSafe(): R? = resolveCall(this) as? R
+    private inline fun <reified R : KaSimpleOrMultiCall> KtResolvableCall.resolveCallSafe(): R? = resolveSuccessfulCall(this) as? R
 
-    private inline fun <reified S : KaCallableSymbol, C : KaCallableSignature<S>, reified R : KaSingleCall<S, C>> KtResolvableCall.resolveSingleCallSafe(): R? {
-        val call = resolveCall(this) ?: return null
+    private inline fun <reified S : KaCallableSymbol, C : KaCallableSignature<S>, reified R : KaSimpleCall<S, C>> KtResolvableCall.resolveSimpleCallSafe(): R? {
+        val call = resolveSuccessfulCall(this) ?: return null
         checkWithAttachment(
-            call is KaSingleCall<*, *>,
-            { "Expected call of type ${KaSingleCall::class.simpleName}, got ${call::class.simpleName}" },
+            call is KaSimpleCall<*, *>,
+            { "Expected call of type ${KaSimpleCall::class.simpleName}, got ${call::class.simpleName}" },
         ) {
-            withResolvableEntry(this@resolveSingleCallSafe)
+            withPsiEntry("psi", this@resolveSimpleCallSafe)
         }
 
         val callableSymbol = call.symbol
@@ -207,7 +198,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
                 KaDebugRenderer(renderExtra = true).render(analysisSession, callableSymbol)
             }
 
-            withResolvableEntry(this@resolveSingleCallSafe)
+            withPsiEntry("psi", this@resolveSimpleCallSafe)
         }
 
         checkWithAttachment(
@@ -218,44 +209,44 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
                 KaDebugRenderer(renderExtra = true).render(analysisSession, callableSymbol)
             }
 
-            withResolvableEntry(this@resolveSingleCallSafe)
+            withPsiEntry("psi", this@resolveSimpleCallSafe)
         }
 
         return call
     }
 
-    final override fun resolveCall(annotationEntry: KtAnnotationEntry): KaAnnotationCall? = annotationEntry.resolveSingleCallSafe()
-    final override fun resolveCall(superTypeCallEntry: KtSuperTypeCallEntry): KaFunctionCall<KaConstructorSymbol>? =
-        superTypeCallEntry.resolveSingleCallSafe()
+    final override fun resolveSuccessfulCall(annotationEntry: KtAnnotationEntry): KaAnnotationCall? = annotationEntry.resolveSimpleCallSafe()
+    final override fun resolveSuccessfulCall(superTypeCallEntry: KtSuperTypeCallEntry): KaFunctionCall<KaConstructorSymbol>? =
+        superTypeCallEntry.resolveSimpleCallSafe()
 
-    final override fun resolveCall(constructorDelegationCall: KtConstructorDelegationCall): KaDelegatedConstructorCall? =
-        constructorDelegationCall.resolveSingleCallSafe()
+    final override fun resolveSuccessfulCall(constructorDelegationCall: KtConstructorDelegationCall): KaDelegatedConstructorCall? =
+        constructorDelegationCall.resolveSimpleCallSafe()
 
-    final override fun resolveCall(constructorDelegationReferenceExpression: KtConstructorDelegationReferenceExpression): KaDelegatedConstructorCall? =
-        constructorDelegationReferenceExpression.resolveSingleCallSafe()
+    final override fun resolveSuccessfulCall(constructorDelegationReferenceExpression: KtConstructorDelegationReferenceExpression): KaDelegatedConstructorCall? =
+        constructorDelegationReferenceExpression.resolveSimpleCallSafe()
 
-    final override fun resolveCall(callElement: KtCallElement): KaFunctionCall<*>? = callElement.resolveCallSafe()
-    final override fun resolveCall(callableReferenceExpression: KtCallableReferenceExpression): KaCallableReferenceCall<*, *>? =
+    final override fun resolveSuccessfulCall(callElement: KtCallElement): KaFunctionCall<*>? = callElement.resolveCallSafe()
+    final override fun resolveSuccessfulCall(callableReferenceExpression: KtCallableReferenceExpression): KaCallableReferenceCall<*, *>? =
         callableReferenceExpression.resolveCallSafe()
 
-    final override fun resolveCall(arrayAccessExpression: KtArrayAccessExpression): KaFunctionCall<KaNamedFunctionSymbol>? =
-        arrayAccessExpression.resolveSingleCallSafe()
+    final override fun resolveSuccessfulCall(arrayAccessExpression: KtArrayAccessExpression): KaFunctionCall<KaNamedFunctionSymbol>? =
+        arrayAccessExpression.resolveSimpleCallSafe()
 
-    final override fun resolveCall(collectionLiteralExpression: KtCollectionLiteralExpression): KaFunctionCall<KaNamedFunctionSymbol>? =
-        collectionLiteralExpression.resolveSingleCallSafe()
+    final override fun resolveSuccessfulCall(collectionLiteralExpression: KtCollectionLiteralExpression): KaFunctionCall<KaNamedFunctionSymbol>? =
+        collectionLiteralExpression.resolveSimpleCallSafe()
 
-    final override fun resolveCall(enumEntrySuperclassReferenceExpression: KtEnumEntrySuperclassReferenceExpression): KaDelegatedConstructorCall? =
-        enumEntrySuperclassReferenceExpression.resolveSingleCallSafe()
+    final override fun resolveSuccessfulCall(enumEntrySuperclassReferenceExpression: KtEnumEntrySuperclassReferenceExpression): KaDelegatedConstructorCall? =
+        enumEntrySuperclassReferenceExpression.resolveSimpleCallSafe()
 
-    final override fun resolveCall(whenConditionInRange: KtWhenConditionInRange): KaFunctionCall<KaNamedFunctionSymbol>? =
-        whenConditionInRange.resolveSingleCallSafe()
+    final override fun resolveSuccessfulCall(whenConditionInRange: KtWhenConditionInRange): KaFunctionCall<KaNamedFunctionSymbol>? =
+        whenConditionInRange.resolveSimpleCallSafe()
 
-    final override fun resolveCall(destructuringDeclarationEntry: KtDestructuringDeclarationEntry): KaSingleCall<*, *>? =
+    final override fun resolveSuccessfulCall(destructuringDeclarationEntry: KtDestructuringDeclarationEntry): KaSimpleCall<*, *>? =
         destructuringDeclarationEntry.resolveCallSafe()
 
-    final override fun resolveCall(qualifiedExpression: KtQualifiedExpression): KaSingleCall<*, *>? = qualifiedExpression.resolveCallSafe()
-    final override fun resolveCall(forExpression: KtForExpression): KaForLoopCall? = forExpression.resolveCallSafe()
-    final override fun resolveCall(propertyDelegate: KtPropertyDelegate): KaDelegatedPropertyCall? = propertyDelegate.resolveCallSafe()
+    final override fun resolveSuccessfulCall(qualifiedExpression: KtQualifiedExpression): KaSimpleCall<*, *>? = qualifiedExpression.resolveCallSafe()
+    final override fun resolveSuccessfulCall(forExpression: KtForExpression): KaForLoopCall? = forExpression.resolveCallSafe()
+    final override fun resolveSuccessfulCall(propertyDelegate: KtPropertyDelegate): KaDelegatedPropertyCall? = propertyDelegate.resolveCallSafe()
 
     final override fun tryResolveCall(forExpression: KtForExpression): KaForLoopCallResolutionAttempt? =
         forExpression.tryResolveCallImpl() as? KaForLoopCallResolutionAttempt
@@ -263,54 +254,20 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
     final override fun tryResolveCall(propertyDelegate: KtPropertyDelegate): KaDelegatedPropertyCallResolutionAttempt? =
         propertyDelegate.tryResolveCallImpl() as? KaDelegatedPropertyCallResolutionAttempt
 
-    final override fun resolveCall(constructorCalleeExpression: KtConstructorCalleeExpression): KaFunctionCall<KaConstructorSymbol>? =
-        constructorCalleeExpression.resolveSingleCallSafe()
+    final override fun resolveSuccessfulCall(constructorCalleeExpression: KtConstructorCalleeExpression): KaFunctionCall<KaConstructorSymbol>? =
+        constructorCalleeExpression.resolveSimpleCallSafe()
 
-    final override fun resolveCall(nameReferenceExpression: KtNameReferenceExpression): KaSingleCall<*, *>? =
+    final override fun resolveSuccessfulCall(nameReferenceExpression: KtNameReferenceExpression): KaSimpleCall<*, *>? =
         nameReferenceExpression.resolveCallSafe()
 
     final override fun resolveToCall(element: KtElement): KaCallInfo? = element.withPsiValidityAssertion {
         when (val attempt = element.tryResolveCallImpl()) {
-            is KaCallResolutionError -> KaBaseErrorCallInfo(attempt.candidateCalls.map { it.asKaCall() }, attempt.diagnostic)
-            is KaCallResolutionSuccess -> KaBaseSuccessCallInfo(attempt.kaCall)
+            is KaSimpleCallResolutionError -> KaBaseErrorCallInfo(attempt.candidateCalls.map { it.asKaCall() }, attempt.diagnostic)
+            is KaSimpleCallResolutionSuccess -> KaBaseSuccessCallInfo(attempt.call.asKaCall())
             is KaMultiCallResolutionAttempt -> attempt.toCallInfo()
             null -> null
         }
     }
-
-    /**
-     * Returns the legacy [KaCall] view of [this] [KaSingleOrMultiCall]. Most resolution result types
-     * implement [KaCall] directly. The exception is [KaCallableReferenceCall], which is part of the
-     * new resolution API and intentionally does not extend the deprecated [KaCall] hierarchy. For
-     * that case we emulate a legacy [KaCall] by re-encoding the reference as the corresponding
-     * [KaSimpleFunctionCall] / [KaSimpleVariableAccessCall] view.
-     */
-    protected fun KaSingleOrMultiCall.asKaCall(): KaCall = when (this) {
-        is KaBaseCallableReferenceCall<*, *> -> asLegacyKaCall()
-        else -> this as KaCall
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun KaBaseCallableReferenceCall<*, *>.asLegacyKaCall(): KaCall {
-        val partiallyAppliedSymbol = backingPartiallyAppliedSymbol
-        return when (partiallyAppliedSymbol.symbol) {
-            is KaFunctionSymbol -> KaBaseSimpleFunctionCall(
-                backingPartiallyAppliedSymbol = partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
-                backingArgumentMapping = emptyMap(),
-                backingTypeArgumentsMapping = typeArgumentsMapping,
-            )
-
-            is KaVariableSymbol -> KaBaseSimpleVariableAccessCall(
-                backingPartiallyAppliedSymbol = partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
-                backingTypeArgumentsMapping = typeArgumentsMapping,
-                backingKind = KaBaseVariableReadAccess,
-                backingIsContextSensitive = false,
-            )
-        }
-    }
-
-    protected inline val KaCallResolutionSuccess.kaCall: KaCall
-        get() = call.asKaCall()
 
     private fun KtElement.collectCallCandidatesImpl(): List<KaCallCandidate> {
         val unwrappedElement = unwrapResolvableCall()
@@ -320,12 +277,8 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
     protected abstract fun performCallCandidatesCollection(psi: KtElement): List<KaCallCandidate>
 
     final override fun collectCallCandidates(resolvableCall: KtResolvableCall): List<KaCallCandidate> = withValidityAssertion {
-        if (resolvableCall is KtElement) {
-            resolvableCall.checkValidity()
-            resolvableCall.collectCallCandidatesImpl()
-        } else {
-            emptyList()
-        }
+        resolvableCall.checkValidity()
+        resolvableCall.collectCallCandidatesImpl()
     }
 
     final override fun resolveToCallCandidates(element: KtElement): List<KaCallCandidateInfo> = element.withPsiValidityAssertion {
@@ -382,20 +335,19 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
 
     private fun KaMultiCallResolutionAttempt.toCallInfo(): KaCallInfo = fold(
         onSuccess = { KaBaseSuccessCallInfo(it.asKaCall()) },
-        onFailure = { attempts ->
-            val errorAttempts = attempts.filterIsInstance<KaCallResolutionError>()
-            val firstDiagnostic = errorAttempts.first().diagnostic
-            val candidateCalls = errorAttempts.flatMap { it.candidateCalls.map { call -> call.asKaCall() } }
+        onFailure = { errors ->
+            val firstDiagnostic = errors.first().diagnostic
+            val candidateCalls = errors.flatMap { it.candidateCalls.map { call -> call.asKaCall() } }
             KaBaseErrorCallInfo(candidateCalls, firstDiagnostic)
         },
     )
 
     private fun KaMultiCallResolutionAttempt.toSymbolResolutionAttempt(): KaSymbolResolutionAttempt =
-        mergeSymbolAttempts(attempts.map { it.toSingleSymbolResolutionAttempt() })
+        mergeSymbolAttempts(simpleAttempts.map { it.toSimpleSymbolResolutionAttempt() })
 
-    private fun KaSingleCallResolutionAttempt.toSingleSymbolResolutionAttempt(): KaSingleSymbolResolutionAttempt = when (this) {
-        is KaCallResolutionSuccess -> KaBaseSymbolResolutionSuccess(backingSymbol = call.symbol)
-        is KaCallResolutionError -> KaBaseSymbolResolutionError(
+    private fun KaSimpleCallResolutionAttempt.toSimpleSymbolResolutionAttempt(): KaSimpleSymbolResolutionAttempt = when (this) {
+        is KaSimpleCallResolutionSuccess -> KaBaseSimpleSymbolResolutionSuccess(backingSymbol = call.symbol)
+        is KaSimpleCallResolutionError -> KaBaseSimpleSymbolResolutionError(
             backingDiagnostic = diagnostic,
             backingCandidateSymbols = candidateCalls.map { it.symbol },
         )
@@ -403,20 +355,20 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
 
     /**
      * Merges individual symbol resolution attempts into a single result, satisfying the
-     * [KaCompoundSymbolResolutionError] contract: at most one [KaSymbolResolutionSuccess]
-     * (combining all successful symbols) and at least one [KaSymbolResolutionError].
+     * [KaCompoundSymbolResolutionError] contract: at most one [KaSimpleSymbolResolutionSuccess]
+     * (combining all successful symbols) and at least one [KaSimpleSymbolResolutionError].
      */
-    private fun mergeSymbolAttempts(symbolAttempts: List<KaSingleSymbolResolutionAttempt>): KaSymbolResolutionAttempt {
+    private fun mergeSymbolAttempts(symbolAttempts: List<KaSimpleSymbolResolutionAttempt>): KaSymbolResolutionAttempt {
         val successSymbols = mutableListOf<KaSymbol>()
-        val errors = mutableListOf<KaSymbolResolutionError>()
+        val errors = mutableListOf<KaSimpleSymbolResolutionError>()
 
         for (attempt in symbolAttempts) when (attempt) {
-            is KaSymbolResolutionSuccess -> successSymbols.addAll(attempt.symbols)
-            is KaSymbolResolutionError -> errors.add(attempt)
+            is KaSimpleSymbolResolutionSuccess -> successSymbols.addAll(attempt.symbols)
+            is KaSimpleSymbolResolutionError -> errors.add(attempt)
         }
 
         if (errors.isEmpty()) {
-            return KaBaseSymbolResolutionSuccess(successSymbols)
+            return KaBaseSimpleSymbolResolutionSuccess(successSymbols)
         }
 
         if (symbolAttempts.size == 1) {
@@ -425,7 +377,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
 
         val merged = buildList {
             if (successSymbols.isNotEmpty()) {
-                add(KaBaseSymbolResolutionSuccess(successSymbols))
+                add(KaBaseSimpleSymbolResolutionSuccess(successSymbols))
             }
 
             addAll(errors)
@@ -467,7 +419,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaIn
 }
 
 internal fun KaCallCandidateInfo.asKaCallCandidate(): KaCallCandidate {
-    val call = candidate as KaSingleOrMultiCall
+    val call = candidate as KaSimpleOrMultiCall
     return when (this) {
         is KaApplicableCallCandidateInfo -> KaBaseApplicableCallCandidate(
             backingCandidate = call,
@@ -483,7 +435,7 @@ internal fun KaCallCandidateInfo.asKaCallCandidate(): KaCallCandidate {
 }
 
 internal fun KaCallCandidate.asKaCallCandidateInfo(): KaCallCandidateInfo {
-    val call = candidate as KaCall
+    val call = candidate.asKaCall()
     return when (this) {
         is KaApplicableCallCandidate -> KaBaseApplicableCallCandidateInfo(
             backingCandidate = call,
@@ -498,11 +450,33 @@ internal fun KaCallCandidate.asKaCallCandidateInfo(): KaCallCandidateInfo {
     }
 }
 
-@OptIn(KtExperimentalApi::class)
-private fun ExceptionAttachmentBuilder.withResolvableEntry(resolvable: KtResolvable) {
-    if (resolvable is PsiElement) {
-        withPsiEntry("psi", resolvable)
-    } else {
-        withEntry("ktResolvableCallClass", resolvable::class.simpleName)
+/**
+ * Returns the legacy [KaCall] view of [this] [KaSimpleOrMultiCall]. Most resolution result types
+ * implement [KaCall] directly. The exception is [KaCallableReferenceCall], which is part of the
+ * new resolution API and intentionally does not extend the deprecated [KaCall] hierarchy. For
+ * that case we emulate a legacy [KaCall] by re-encoding the reference as the corresponding
+ * [KaSimpleFunctionCall] / [KaSimpleVariableAccessCall] view.
+ */
+private fun KaSimpleOrMultiCall.asKaCall(): KaCall = when (this) {
+    is KaBaseCallableReferenceCall<*, *> -> asLegacyKaCall()
+    else -> this as KaCall
+}
+
+@Suppress("UNCHECKED_CAST")
+private fun KaBaseCallableReferenceCall<*, *>.asLegacyKaCall(): KaCall {
+    val partiallyAppliedSymbol = backingPartiallyAppliedSymbol
+    return when (partiallyAppliedSymbol.symbol) {
+        is KaFunctionSymbol -> KaBaseSimpleFunctionCall(
+            backingPartiallyAppliedSymbol = partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
+            backingArgumentMapping = emptyMap(),
+            backingTypeArgumentsMapping = typeArgumentsMapping,
+        )
+
+        is KaVariableSymbol -> KaBaseSimpleVariableAccessCall(
+            backingPartiallyAppliedSymbol = partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
+            backingTypeArgumentsMapping = typeArgumentsMapping,
+            backingKind = KaBaseVariableReadAccess,
+            backingIsContextSensitive = false,
+        )
     }
 }

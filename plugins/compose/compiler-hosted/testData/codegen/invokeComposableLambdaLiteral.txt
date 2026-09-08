@@ -1,0 +1,20 @@
+public final class home/MainKt$PublicInline$1 {
+    // source: 'main.kt'
+    enclosing method home/MainKt.PublicInline(Landroidx/compose/runtime/Composer;I)V
+    public final static field INSTANCE: home.MainKt$PublicInline$1
+    inner (anonymous) class home/MainKt$PublicInline$1
+    static method <clinit>(): void
+    public method <init>(): void
+    public final method invoke(p0: androidx.compose.runtime.Composer, p1: int): void
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+}
+
+public final class home/MainKt {
+    // source: 'main.kt'
+    inner (anonymous) class home/MainKt$PublicInline$1
+    private final static method App$lambda$0(p0: int, p1: androidx.compose.runtime.Composer, p2: int): kotlin.Unit
+    private final static method App$lambda$1(p0: int, p1: int, p2: androidx.compose.runtime.Composer, p3: int): kotlin.Unit
+    public final static method App(p0: int, p1: androidx.compose.runtime.Composer, p2: int): void
+    public final static method PublicInline(p0: androidx.compose.runtime.Composer, p1: int): void
+    public final static method used(p0: java.lang.Object): void
+}

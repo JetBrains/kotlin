@@ -210,6 +210,30 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("annotationArgumentWithMismatchedBooleanConst.kt")
+    public void testAnnotationArgumentWithMismatchedBooleanConst() {
+      run("annotationArgumentWithMismatchedBooleanConst.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationArgumentWithMismatchedCharConst.kt")
+    public void testAnnotationArgumentWithMismatchedCharConst() {
+      run("annotationArgumentWithMismatchedCharConst.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationArgumentWithMismatchedIntConst.kt")
+    public void testAnnotationArgumentWithMismatchedIntConst() {
+      run("annotationArgumentWithMismatchedIntConst.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationArgumentWithMismatchedNullableStringConst.kt")
+    public void testAnnotationArgumentWithMismatchedNullableStringConst() {
+      run("annotationArgumentWithMismatchedNullableStringConst.kt");
+    }
+
+    @Test
     @TestMetadata("annotationInsideWhereClass.kt")
     public void testAnnotationInsideWhereClass() {
       run("annotationInsideWhereClass.kt");

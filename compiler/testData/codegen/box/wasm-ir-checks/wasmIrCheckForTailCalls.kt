@@ -10,7 +10,8 @@
 // WASM_CHECK_INSTRUCTION_IN_FUNCTION: instruction=return_call inFunction=whenTailCaller
 
 // Tail call to a Unit-returning function
-// WASM_CHECK_INSTRUCTION_IN_FUNCTION: instruction=return_call inFunction=unitTailCaller
+// Ignored because of KT-88927
+//// WASM_CHECK_INSTRUCTION_IN_FUNCTION: instruction=return_call inFunction=unitTailCaller
 
 // Calls inside try-catch must NOT be emitted as tail calls
 // WASM_CHECK_INSTRUCTION_NOT_IN_FUNCTION: instruction=return_call inFunction=tryCatchCaller

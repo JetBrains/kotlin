@@ -36,7 +36,6 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
     ) {
         testEmbedAndSignIntegration(
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
             target = { macosArm64() },
             temp = temp,
             appName = "My.app",
@@ -58,7 +57,6 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
     ) {
         testEmbedAndSignIntegration(
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
             target = { iosArm64() },
             temp = temp,
             appName = "My.app",
@@ -80,7 +78,6 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
     ) {
         testEmbedAndSignIntegration(
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
             target = { iosArm64() },
             temp = temp,
             appName = "My.app",
@@ -223,7 +220,6 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
     fun `xcframework creation`(gradleVersion: GradleVersion) {
         buildAndTestProject(
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
             buildScript = {
                 project.applyMultiplatform {
                     val xcf = project.XCFramework()
@@ -233,12 +229,12 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
 
                         // Universal
                         watchosSimulatorArm64(),
-                        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                         watchosX64(),
 
                         // Universal macOS
                         macosArm64(),
-                        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                         macosX64(),
                     ).forEach {
                         it.binaries.framework {
@@ -287,7 +283,6 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
     fun `xcframework creation with CocoaPods`(gradleVersion: GradleVersion) {
         buildAndTestProject(
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
             buildScript = {
                 project.plugins.apply("org.jetbrains.kotlin.native.cocoapods")
                 project.applyMultiplatform {
@@ -296,7 +291,7 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
 
                     // Universal
                     watchosSimulatorArm64()
-                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     watchosX64()
 
                     // Thin macOS
@@ -347,7 +342,6 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
     fun `CocoaPods syncFramework integration`(gradleVersion: GradleVersion) {
         buildAndTestProject(
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
             buildScript = {
                 project.plugins.apply("org.jetbrains.kotlin.native.cocoapods")
                 project.applyMultiplatform {
@@ -356,7 +350,7 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
 
                     // Universal
                     watchosSimulatorArm64()
-                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     watchosX64()
 
                     with(cocoapods) {

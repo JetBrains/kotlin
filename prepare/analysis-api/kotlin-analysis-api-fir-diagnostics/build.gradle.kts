@@ -1,8 +1,7 @@
-import org.jetbrains.kotlin.build.foreign.CheckForeignClassUsageTask
+import org.jetbrains.kotlin.build.foreign.registerForeignClassUsageTasks
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     `java-library`
     id("kotlin-git.gradle-build-conventions.foreign-class-usage-checker")
@@ -21,7 +20,7 @@ analysisApiArtifact {
 
 // The generated diagnostics expose plenty of compiler types (`FirModuleData`, `ClassKind`, …) which are shipped in
 // 'kotlin-analysis-api-implementation'. That artifact depends on this one, so the reference cannot be declared here.
-val checkForeignClassUsage = tasks.register("checkForeignClassUsage", CheckForeignClassUsageTask::class) {
+registerForeignClassUsageTasks {
     classes.from(tasks.jar)
     classpath.from(configurations.runtimeClasspath)
     missingClasspathEntriesOutputFile = file("api/analysis-api-fir-diagnostics.classpath-issues")

@@ -14,9 +14,10 @@ import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.StubUtils
 
-enum class KotlinConstantValueKind {
+internal enum class KotlinConstantValueKind {
     NULL, BOOLEAN, CHAR, BYTE, SHORT, INT, LONG, DOUBLE, FLOAT, ENUM, KCLASS, STRING, ARRAY, UBYTE, USHORT, UINT, ULONG, ANNO;
 }
 
@@ -31,7 +32,7 @@ private fun StubInputStream.readConstantKind(): KotlinConstantValueKind? {
     return KotlinConstantValueKind.entries[kind - 1]
 }
 
-fun deserializeConstantValue(dataStream: StubInputStream): ConstantValue<*>? = when (dataStream.readConstantKind()) {
+internal fun deserializeConstantValue(dataStream: StubInputStream): ConstantValue<*>? = when (dataStream.readConstantKind()) {
     null -> null
     KotlinConstantValueKind.NULL -> NullValue
     KotlinConstantValueKind.BOOLEAN -> BooleanValue(dataStream.readBoolean())
@@ -68,7 +69,7 @@ fun deserializeConstantValue(dataStream: StubInputStream): ConstantValue<*>? = w
 }
 
 
-fun serializeConstantValue(constantValue: ConstantValue<*>?, dataStream: StubOutputStream) {
+internal fun serializeConstantValue(constantValue: ConstantValue<*>?, dataStream: StubOutputStream) {
     if (constantValue == null) {
         dataStream.writeConstantKind(null)
         return
@@ -185,9 +186,16 @@ private class KotlinConstantValueSerializationVisitor(private val dataStream: St
     }
 }
 
+@KtImplementationDetail
 data class AnnotationData(val annoClassId: ClassId, val args: Map<Name, ConstantValue<*>>)
+
+@KtImplementationDetail
 data class EnumData(val enumClassId: ClassId, val enumEntryName: Name)
+
+@KtImplementationDetail
 data class KClassData(val classId: ClassId, val arrayNestedness: Int)
+
+@KtImplementationDetail
 fun createConstantValue(value: Any?): ConstantValue<*> {
     return when (value) {
         is Byte -> ByteValue(value)
@@ -216,6 +224,7 @@ fun createConstantValue(value: Any?): ConstantValue<*> {
     }
 }
 
+@KtImplementationDetail
 fun createConstantValue(value: ProtoBuf.Annotation.Argument.Value, nameResolver: NameResolver): ConstantValue<*> {
     val isUnsigned = Flags.IS_UNSIGNED.get(value.flags)
 

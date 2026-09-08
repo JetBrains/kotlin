@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -112,9 +113,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitNamedFunction(namedFunction: FirNamedFunction, data: Nothing?) {
         withAnnotationContainer(namedFunction) {
-            withInlineFunctionBodyIfApplicable(namedFunction, namedFunction.isInline) {
-                visitWithDeclaration(namedFunction)
-            }
+            visitWithFunction(namedFunction, namedFunction.isInline)
         }
     }
 
@@ -163,9 +162,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Nothing?) {
         val property = context.containingDeclarations.last() as FirPropertySymbol
         withAnnotationContainer(propertyAccessor) {
-            withInlineFunctionBodyIfApplicable(propertyAccessor, propertyAccessor.isInline || property.isInline) {
-                visitWithDeclaration(propertyAccessor)
-            }
+            visitWithFunction(propertyAccessor, propertyAccessor.isInline || property.isInline)
         }
     }
 
@@ -332,8 +329,22 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
+    /**
+     * The inline contexts are built from the [function]'s signature, so requesting them for a declaration which is not going to be
+     * visited resolves that declaration for nothing (KT-88889).
+     *
+     * @see shouldVisitDeclaration
+     */
+    private fun visitWithFunction(function: FirFunction, isInline: Boolean) {
+        if (!shouldVisitDeclaration(function)) return
+
+        withInlineFunctionBodyIfApplicable(function.symbol, isInline) {
+            visitWithDeclaration(function)
+        }
+    }
+
     @OptIn(PrivateForInline::class)
-    private inline fun <T> withInlineFunctionBodyIfApplicable(function: FirFunction, isInline: Boolean, block: () -> T): T {
+    private inline fun <T> withInlineFunctionBodyIfApplicable(function: FirFunctionSymbol<*>, isInline: Boolean, block: () -> T): T {
         val oldBodyContext = context.inlineFunctionBodyContext
         val oldInlinableParameterContext = context.inlinableParameterContext
         return try {

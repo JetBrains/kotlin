@@ -1,0 +1,283 @@
+FILE fqName:<root> fileName:/InvokeLoopFromInlineFun.kt
+  PROPERTY name:i visibility:private modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:i type:kotlinx.atomicfu.AtomicInt visibility:private [final,static]
+      EXPRESSION_BODY
+        CALL 'public final fun atomic (initial: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicInt origin=null
+          ARG initial: CONST Int type=kotlin.Int value=0
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-i> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicInt
+      correspondingProperty: PROPERTY name:i visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-i> (): kotlinx.atomicfu.AtomicInt declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlinx.atomicfu.AtomicInt visibility:private [final,static]' type=kotlinx.atomicfu.AtomicInt origin=null
+  PROPERTY name:a visibility:private modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:a type:kotlinx.atomicfu.AtomicIntArray visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicIntArray origin=null
+          ARG size: CONST Int type=kotlin.Int value=1
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicIntArray
+      correspondingProperty: PROPERTY name:a visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-a> (): kotlinx.atomicfu.AtomicIntArray declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlinx.atomicfu.AtomicIntArray visibility:private [final,static]' type=kotlinx.atomicfu.AtomicIntArray origin=null
+  PROPERTY name:delta visibility:private modality:FINAL [var]
+    FIELD PROPERTY_BACKING_FIELD name:delta type:kotlin.Int visibility:private [static]
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value=1
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-delta> visibility:private modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:delta visibility:private modality:FINAL [var]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-delta> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:delta type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-delta> visibility:private modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:Regular name:<set-?> index:0 type:kotlin.Int
+      correspondingProperty: PROPERTY name:delta visibility:private modality:FINAL [var]
+      BLOCK_BODY
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:delta type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
+          value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-delta>' type=kotlin.Int origin=null
+  PROPERTY name:i1 visibility:private modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:i1 type:kotlin.Int visibility:private [final,static]
+      EXPRESSION_BODY
+        CALL 'public final fun topLevel <T> (block: kotlin.Function0<T of <root>.topLevel>): T of <root>.topLevel declared in <root>' type=kotlin.Int origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Int> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.i1'
+                  CALL 'public final fun updateAndGet (<this>: kotlinx.atomicfu.AtomicInt, function: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in kotlinx.atomicfu' type=kotlin.Int origin=null
+                    ARG <this>: CALL 'private final fun <get-i> (): kotlinx.atomicfu.AtomicInt declared in <root>' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+                    ARG function: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+                        VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Int
+                        BLOCK_BODY
+                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Int declared in <root>.i1.<anonymous>'
+                            CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                              ARG <this>: GET_VAR 'it: kotlin.Int declared in <root>.i1.<anonymous>.<anonymous>' type=kotlin.Int origin=null
+                              ARG other: CALL 'private final fun <get-delta> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-i1> visibility:private modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:i1 visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-i1> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i1 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  PROPERTY name:i2 visibility:private modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:i2 type:kotlin.Int visibility:private [final,static]
+      EXPRESSION_BODY
+        CALL 'public final fun topLevel <T> (block: kotlin.Function0<T of <root>.topLevel>): T of <root>.topLevel declared in <root>' type=kotlin.Int origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Int> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.i2'
+                  CALL 'public final fun getAndUpdate (<this>: kotlinx.atomicfu.AtomicInt, function: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in kotlinx.atomicfu' type=kotlin.Int origin=null
+                    ARG <this>: CALL 'private final fun <get-i> (): kotlinx.atomicfu.AtomicInt declared in <root>' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+                    ARG function: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+                        VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Int
+                        BLOCK_BODY
+                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Int declared in <root>.i2.<anonymous>'
+                            CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                              ARG <this>: GET_VAR 'it: kotlin.Int declared in <root>.i2.<anonymous>.<anonymous>' type=kotlin.Int origin=null
+                              ARG other: CALL 'private final fun <get-delta> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-i2> visibility:private modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:i2 visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-i2> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i2 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  PROPERTY name:_v1 visibility:private modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:_v1 type:kotlin.Int visibility:private [final,static]
+      EXPRESSION_BODY
+        CALL 'public final fun also <T> (<this>: T of kotlin.also, block: kotlin.Function1<T of kotlin.also, kotlin.Unit>): T of kotlin.also declared in kotlin' type=kotlin.Int origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG <this>: CONST Int type=kotlin.Int value=3
+          ARG block: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER kind:Regular name:inc index:0 type:kotlin.Int
+              BLOCK_BODY
+                CALL 'public final fun update (<this>: kotlinx.atomicfu.AtomicInt, function: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Unit declared in kotlinx.atomicfu' type=kotlin.Unit origin=null
+                  ARG <this>: CALL 'private final fun <get-i> (): kotlinx.atomicfu.AtomicInt declared in <root>' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+                  ARG function: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+                      VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Int
+                      BLOCK_BODY
+                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Int declared in <root>._v1.<anonymous>'
+                          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                            ARG <this>: GET_VAR 'it: kotlin.Int declared in <root>._v1.<anonymous>.<anonymous>' type=kotlin.Int origin=null
+                            ARG other: GET_VAR 'inc: kotlin.Int declared in <root>._v1.<anonymous>' type=kotlin.Int origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-_v1> visibility:private modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:_v1 visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-_v1> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:_v1 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  PROPERTY name:_v2 visibility:private modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:_v2 type:kotlin.Int visibility:private [final,static]
+      EXPRESSION_BODY
+        CALL 'public final fun also <T> (<this>: T of kotlin.also, block: kotlin.Function1<T of kotlin.also, kotlin.Unit>): T of kotlin.also declared in kotlin' type=kotlin.Int origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG <this>: CONST Int type=kotlin.Int value=4
+          ARG block: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Int
+              BLOCK_BODY
+                CALL 'public final fun loop (<this>: kotlinx.atomicfu.AtomicInt, action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Nothing declared in kotlinx.atomicfu' type=kotlin.Nothing origin=null
+                  ARG <this>: CALL 'private final fun <get-i> (): kotlinx.atomicfu.AtomicInt declared in <root>' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+                  ARG action: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+                      VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Int
+                      BLOCK_BODY
+                        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+                          TYPE_ARG T: kotlin.Int
+                          ARG a: CONST Int type=kotlin.Int value=5
+                          ARG b: GET_VAR 'it: kotlin.Int declared in <root>._v2.<anonymous>.<anonymous>' type=kotlin.Int origin=null
+                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Unit declared in <root>._v2'
+                          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-_v2> visibility:private modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:_v2 visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-_v2> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:_v2 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  PROPERTY name:a1 visibility:private modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:a1 type:kotlin.Int visibility:private [final,static]
+      EXPRESSION_BODY
+        CALL 'public final fun topLevel <T> (block: kotlin.Function0<T of <root>.topLevel>): T of <root>.topLevel declared in <root>' type=kotlin.Int origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Int> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.a1'
+                  CALL 'public final fun updateAndGet (<this>: kotlinx.atomicfu.AtomicInt, function: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in kotlinx.atomicfu' type=kotlin.Int origin=null
+                    ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicInt origin=GET_ARRAY_ELEMENT
+                      ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicIntArray declared in <root>' type=kotlinx.atomicfu.AtomicIntArray origin=GET_PROPERTY
+                      ARG index: CONST Int type=kotlin.Int value=0
+                    ARG function: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+                        VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Int
+                        BLOCK_BODY
+                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Int declared in <root>.a1.<anonymous>'
+                            CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                              ARG <this>: GET_VAR 'it: kotlin.Int declared in <root>.a1.<anonymous>.<anonymous>' type=kotlin.Int origin=null
+                              ARG other: CALL 'private final fun <get-delta> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a1> visibility:private modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:a1 visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-a1> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a1 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  PROPERTY name:a2 visibility:private modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:a2 type:kotlin.Int visibility:private [final,static]
+      EXPRESSION_BODY
+        CALL 'public final fun topLevel <T> (block: kotlin.Function0<T of <root>.topLevel>): T of <root>.topLevel declared in <root>' type=kotlin.Int origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Int> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.a2'
+                  CALL 'public final fun getAndUpdate (<this>: kotlinx.atomicfu.AtomicInt, function: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Int declared in kotlinx.atomicfu' type=kotlin.Int origin=null
+                    ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicInt origin=GET_ARRAY_ELEMENT
+                      ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicIntArray declared in <root>' type=kotlinx.atomicfu.AtomicIntArray origin=GET_PROPERTY
+                      ARG index: CONST Int type=kotlin.Int value=0
+                    ARG function: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+                        VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Int
+                        BLOCK_BODY
+                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Int declared in <root>.a2.<anonymous>'
+                            CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                              ARG <this>: GET_VAR 'it: kotlin.Int declared in <root>.a2.<anonymous>.<anonymous>' type=kotlin.Int origin=null
+                              ARG other: CALL 'private final fun <get-delta> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a2> visibility:private modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:a2 visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-a2> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a2 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  PROPERTY name:_v3 visibility:private modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:_v3 type:kotlin.Int visibility:private [final,static]
+      EXPRESSION_BODY
+        CALL 'public final fun also <T> (<this>: T of kotlin.also, block: kotlin.Function1<T of kotlin.also, kotlin.Unit>): T of kotlin.also declared in kotlin' type=kotlin.Int origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG <this>: CONST Int type=kotlin.Int value=0
+          ARG block: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER kind:Regular name:idx index:0 type:kotlin.Int
+              BLOCK_BODY
+                CALL 'public final fun update (<this>: kotlinx.atomicfu.AtomicInt, function: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Unit declared in kotlinx.atomicfu' type=kotlin.Unit origin=null
+                  ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicInt origin=GET_ARRAY_ELEMENT
+                    ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicIntArray declared in <root>' type=kotlinx.atomicfu.AtomicIntArray origin=GET_PROPERTY
+                    ARG index: GET_VAR 'idx: kotlin.Int declared in <root>._v3.<anonymous>' type=kotlin.Int origin=null
+                  ARG function: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+                      VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Int
+                      BLOCK_BODY
+                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Int declared in <root>._v3.<anonymous>'
+                          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                            ARG <this>: GET_VAR 'it: kotlin.Int declared in <root>._v3.<anonymous>.<anonymous>' type=kotlin.Int origin=null
+                            ARG other: CONST Int type=kotlin.Int value=3
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-_v3> visibility:private modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:_v3 visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-_v3> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:_v3 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  PROPERTY name:_v4 visibility:private modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:_v4 type:kotlin.Int visibility:private [final,static]
+      EXPRESSION_BODY
+        CALL 'public final fun also <T> (<this>: T of kotlin.also, block: kotlin.Function1<T of kotlin.also, kotlin.Unit>): T of kotlin.also declared in kotlin' type=kotlin.Int origin=null
+          TYPE_ARG T: kotlin.Int
+          ARG <this>: CONST Int type=kotlin.Int value=0
+          ARG block: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER kind:Regular name:idx index:0 type:kotlin.Int
+              BLOCK_BODY
+                CALL 'public final fun loop (<this>: kotlinx.atomicfu.AtomicInt, action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Nothing declared in kotlinx.atomicfu' type=kotlin.Nothing origin=null
+                  ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicInt origin=GET_ARRAY_ELEMENT
+                    ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicIntArray declared in <root>' type=kotlinx.atomicfu.AtomicIntArray origin=GET_PROPERTY
+                    ARG index: GET_VAR 'idx: kotlin.Int declared in <root>._v4.<anonymous>' type=kotlin.Int origin=null
+                  ARG action: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+                      VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Int
+                      BLOCK_BODY
+                        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+                          TYPE_ARG T: kotlin.Int
+                          ARG a: CONST Int type=kotlin.Int value=5
+                          ARG b: GET_VAR 'it: kotlin.Int declared in <root>._v4.<anonymous>.<anonymous>' type=kotlin.Int origin=null
+                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (idx: kotlin.Int): kotlin.Unit declared in <root>._v4'
+                          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-_v4> visibility:private modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:_v4 visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-_v4> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:_v4 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG a: CONST Int type=kotlin.Int value=1
+        ARG b: CALL 'private final fun <get-i1> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG a: CONST Int type=kotlin.Int value=1
+        ARG b: CALL 'private final fun <get-i2> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG a: CONST Int type=kotlin.Int value=5
+        ARG b: CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
+          ARG <this>: CALL 'private final fun <get-i> (): kotlinx.atomicfu.AtomicInt declared in <root>' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG a: CONST Int type=kotlin.Int value=1
+        ARG b: CALL 'private final fun <get-a1> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG a: CONST Int type=kotlin.Int value=1
+        ARG b: CALL 'private final fun <get-a2> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.Int
+        ARG a: CONST Int type=kotlin.Int value=5
+        ARG b: CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
+          ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicInt origin=GET_ARRAY_ELEMENT
+            ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicIntArray declared in <root>' type=kotlinx.atomicfu.AtomicIntArray origin=GET_PROPERTY
+            ARG index: CONST Int type=kotlin.Int value=0
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
+  FUN name:topLevel visibility:public modality:FINAL returnType:T of <root>.topLevel [inline]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER kind:Regular name:block index:0 type:kotlin.Function0<T of <root>.topLevel>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun topLevel <T> (block: kotlin.Function0<T of <root>.topLevel>): T of <root>.topLevel declared in <root>'
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.topLevel origin=INVOKE
+          ARG <this>: GET_VAR 'block: kotlin.Function0<T of <root>.topLevel> declared in <root>.topLevel' type=kotlin.Function0<T of <root>.topLevel> origin=VARIABLE_AS_FUNCTION

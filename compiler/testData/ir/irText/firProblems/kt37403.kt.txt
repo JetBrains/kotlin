@@ -1,9 +1,21 @@
 val testRef2: KFunction1<@ParameterName(name = "arg") Float, Float>
-  field = ::foo
+  field = KFunction1<@ParameterName(name = "arg") Float, Float>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: @ParameterName(name = "arg") Float): Float {
+      return foo(arg = p0)
+    }
+  )
+
   get
 
 val testRef1: Float
-  field = bar(f = ::foo)
+  field = bar(f = KFunction1<@ParameterName(name = "arg") Float, Float>(
+    /* bound = */ [],
+    /* invoke = */    local fun(p0: @ParameterName(name = "arg") Float): Float {
+      return foo(arg = p0)
+    }
+  )
+)
   get
 
 fun bar(f: Function1<Float, Float>): Float {
@@ -13,3 +25,4 @@ fun bar(f: Function1<Float, Float>): Float {
 fun foo(arg: Float): Float {
   return arg
 }
+

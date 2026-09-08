@@ -564,7 +564,6 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerA
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments$Companion;
-	public static final field IR_OUTPUT_DIR Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments$CommonJsAndWasmArgument;
 	public static final field IR_OUTPUT_NAME Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments$CommonJsAndWasmArgument;
 	public static final field LIBRARIES Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments$CommonJsAndWasmArgument;
 	public static final field NOPACK Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments$CommonJsAndWasmArgument;
@@ -592,8 +591,6 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasm
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerKlibArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments, org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArgumentsKlibArguments {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerKlibArguments$Companion;
 	public static final field X_IR_PER_MODULE_OUTPUT_NAME Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerKlibArguments$CommonJsAndWasmCompilerKlibArgument;
-	public static final field X_IR_PRODUCE_KLIB_DIR Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerKlibArguments$CommonJsAndWasmCompilerKlibArgument;
-	public static final field X_IR_PRODUCE_KLIB_FILE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerKlibArguments$CommonJsAndWasmCompilerKlibArgument;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerKlibArguments$CommonJsAndWasmCompilerKlibArgument;)Ljava/lang/Object;
 }
 
@@ -622,11 +619,9 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Co
 	public static final field SOURCE_MAP_PREFIX Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
 	public static final field X_CACHE_DIRECTORY Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
 	public static final field X_GENERATE_DTS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
-	public static final field X_INCLUDE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
 	public static final field X_IR_DCE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
 	public static final field X_IR_DCE_PRINT_REACHABILITY_INFO Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
 	public static final field X_IR_DCE_RUNTIME_DIAGNOSTIC Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
-	public static final field X_IR_PRODUCE_JS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
 	public static final field X_IR_PROPERTY_LAZY_INITIALIZATION Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
 	public static final field X_STRICT_IMPLICIT_EXPORT_TYPES Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerLinkingArguments$CommonJsAndWasmCompilerLinkingArgument;)Ljava/lang/Object;
@@ -732,6 +727,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Co
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments$Builder {
 	public abstract fun applyArgumentStrings (Ljava/util/List;)V
+	public abstract fun applyCommandLineArguments (Ljava/util/List;)V
 	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments;
 	public abstract fun contains (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments$CommonToolArgument;)Z
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments$CommonToolArgument;)Ljava/lang/Object;
@@ -779,6 +775,7 @@ public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/a
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments$Companion;
+	public static final field X_EXPORT_KDOC Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments$JsCompilerArgument;
 	public static final field X_SUSPEND_LAMBDA_EXPORTING Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments$JsCompilerArgument;
 	public static final field X_TYPED_ARRAYS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments$JsCompilerArgument;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments$JsCompilerArgument;)Ljava/lang/Object;
@@ -1072,6 +1069,7 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/WarningLevel$Se
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerArguments$Companion;
 	public static final field X_WASM Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerArguments$WasmCompilerArgument;
+	public static final field X_WASM_TARGET Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerArguments$WasmCompilerArgument;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerArguments$WasmCompilerArgument;)Ljava/lang/Object;
 }
 
@@ -1093,7 +1091,6 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerArg
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerKlibArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmCompilerKlibArguments, org/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerArguments {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerKlibArguments$Companion;
 	public static final field X_WASM_KCLASS_FQN Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerKlibArguments$WasmCompilerKlibArgument;
-	public static final field X_WASM_TARGET Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerKlibArguments$WasmCompilerKlibArgument;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerKlibArguments$WasmCompilerKlibArgument;)Ljava/lang/Object;
 }
 
@@ -1801,11 +1798,9 @@ public class org/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncremental
 	public static final field FORCE_RECOMPILATION Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Option;
 	public static final field KEEP_IC_CACHES_IN_MEMORY Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Option;
 	public static final field MODULE_BUILD_DIR Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Option;
-	public static final field MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Option;
 	public static final field OUTPUT_DIRS Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Option;
 	public static final field PRECISE_JAVA_TRACKING Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Option;
 	public static final field ROOT_PROJECT_DIR Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Option;
-	public static final field UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Option;
 	public static final field USE_FIR_RUNNER Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Option;
 	public fun <init> (Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;Ljava/util/List;)V
 	public fun <init> (Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;Ljava/util/List;Ljava/nio/file/Path;)V

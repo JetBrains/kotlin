@@ -1,1 +1,1 @@
-/unresolvedOperatorWrongReceiver.kt:8:7: error: Candidate 'fun String.plus(a: Any): Unit' is inapplicable for operator '+' because of a receiver type mismatch.
+/unresolvedOperatorWrongReceiver.kt:8:7: error: Candidate 'fun String.plus(a: Any): Unit' is inapplicable for operator '+' because of a receiver type mismatch. Actual receiver type is 'Any'.

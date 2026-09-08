@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// LANGUAGE: -ForbidNonLiteralStringArgumentsForCompilerRequiredAnnotationParameters
 
 @file:JvmName(TAG)
 package root

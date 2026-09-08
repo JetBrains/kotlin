@@ -17,7 +17,7 @@ KtFile: localClass.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(private)('private')
         PsiWhiteSpace(' ')
@@ -120,7 +120,7 @@ KtFile: localClass.kt
             CLASS_BODY
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n        ')
-              FUN
+              FUNCTION
                 MODIFIER_LIST
                   PsiElement(override)('override')
                 PsiWhiteSpace(' ')

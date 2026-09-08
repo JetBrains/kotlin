@@ -39,7 +39,7 @@ KtFile: fullPositionBasedDestructuring.kt
                 PsiElement(IDENTIFIER)('String')
         PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('declaration')
@@ -157,7 +157,7 @@ KtFile: fullPositionBasedDestructuring.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('loop')
@@ -274,7 +274,7 @@ KtFile: fullPositionBasedDestructuring.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('lambda')
@@ -285,7 +285,7 @@ KtFile: fullPositionBasedDestructuring.kt
     BLOCK
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('foo')

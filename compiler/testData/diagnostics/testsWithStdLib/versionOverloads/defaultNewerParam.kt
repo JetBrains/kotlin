@@ -1,10 +1,8 @@
 // RUN_PIPELINE_TILL: FRONTEND
 
-@file:OptIn(ExperimentalVersionOverloading::class)
-
 fun foo(
     @IntroducedAt("1") a: Int = <!INVALID_DEFAULT_VALUE_DEPENDENCY, UNINITIALIZED_PARAMETER!>b<!>,
-@IntroducedAt("2") b: Int = 2,
+    @IntroducedAt("2") b: Int = 2,
 ) {}
 
 private fun alsoFun(x: Int) = x

@@ -1548,6 +1548,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     }
 
     @Test
+    @TestMetadata("internalDeclarations.kt")
+    public void testInternalDeclarations() {
+      run("internalDeclarations.kt");
+    }
+
+    @Test
     @TestMetadata("jvmStatic.kt")
     public void testJvmStatic() {
       run("jvmStatic.kt");
@@ -1729,9 +1735,21 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
       }
 
       @Test
+      @TestMetadata("enumClass.kt")
+      public void testEnumClass() {
+        run("enumClass.kt");
+      }
+
+      @Test
       @TestMetadata("extensionVariable.kt")
       public void testExtensionVariable() {
         run("extensionVariable.kt");
+      }
+
+      @Test
+      @TestMetadata("finalClass.kt")
+      public void testFinalClass() {
+        run("finalClass.kt");
       }
 
       @Test
@@ -1780,6 +1798,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
       @TestMetadata("int.kt")
       public void testInt() {
         run("int.kt");
+      }
+
+      @Test
+      @TestMetadata("internalDeclarations.kt")
+      public void testInternalDeclarations() {
+        run("internalDeclarations.kt");
       }
 
       @Test

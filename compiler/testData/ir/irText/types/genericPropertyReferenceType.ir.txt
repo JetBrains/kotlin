@@ -200,20 +200,51 @@ FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
   FUN name:test1 visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun use (p: kotlin.reflect.KMutableProperty<kotlin.String>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG p: PROPERTY_REFERENCE 'public final y: T of <root>.<get-y> declared in <root>' field=null getter='public final fun <get-y> <T> (<this>: <root>.C<T of <root>.<get-y>>): T of <root>.<get-y> declared in <root>' setter='public final fun <set-y> <T> (<this>: <root>.C<T of <root>.<set-y>>, v: T of <root>.<set-y>): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null
-          TYPE_ARG 1: kotlin.String
-          ARG 1: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.C) declared in <root>.C' type=<root>.C<kotlin.String> origin=null
+        ARG p: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null reflectionTarget='public final y: T of <root>.<get-y> declared in <root>'
+          bound receiver: CONSTRUCTOR_CALL 'public constructor <init> (x: T of <root>.C) declared in <root>.C' type=<root>.C<kotlin.String> origin=null
             TYPE_ARG (of class) T: kotlin.String
             ARG x: CONST String type=kotlin.String value="abc"
+          getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:y visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.C<kotlin.String>
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun y (receiver: <root>.C<kotlin.String>): kotlin.String declared in <root>.test1'
+                CALL 'public final fun <get-y> <T> (<this>: <root>.C<T of <root>.<get-y>>): T of <root>.<get-y> declared in <root>' type=kotlin.String origin=null
+                  TYPE_ARG T: kotlin.String
+                  ARG <this>: GET_VAR 'receiver: <root>.C<kotlin.String> declared in <root>.test1.y' type=<root>.C<kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE
+          setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:y visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.C<kotlin.String>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.String
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun y (receiver: <root>.C<kotlin.String>, value: kotlin.String): kotlin.Unit declared in <root>.test1'
+                CALL 'public final fun <set-y> <T> (<this>: <root>.C<T of <root>.<set-y>>, v: T of <root>.<set-y>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  TYPE_ARG T: kotlin.String
+                  ARG <this>: GET_VAR 'receiver: <root>.C<kotlin.String> declared in <root>.test1.y' type=<root>.C<kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG v: GET_VAR 'value: kotlin.String declared in <root>.test1.y' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
       CALL 'public final fun use (p: kotlin.reflect.KMutableProperty<kotlin.String>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG p: PROPERTY_REFERENCE 'public final first: X of <root>.<get-first> declared in <root>' field=null getter='public final fun <get-first> <X, Y> (<this>: <root>.Pair<X of <root>.<get-first>, Y of <root>.<get-first>>): X of <root>.<get-first> declared in <root>' setter='public final fun <set-first> <X, Y> (<this>: <root>.Pair<X of <root>.<set-first>, Y of <root>.<set-first>>, v: X of <root>.<set-first>): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null
-          TYPE_ARG 1: kotlin.String
-          TYPE_ARG 2: kotlin.String
-          ARG 1: CONSTRUCTOR_CALL 'public constructor <init> (x: X of <root>.Pair, y: Y of <root>.Pair) declared in <root>.Pair' type=<root>.Pair<kotlin.String, kotlin.String> origin=null
+        ARG p: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null reflectionTarget='public final first: X of <root>.<get-first> declared in <root>'
+          bound receiver: CONSTRUCTOR_CALL 'public constructor <init> (x: X of <root>.Pair, y: Y of <root>.Pair) declared in <root>.Pair' type=<root>.Pair<kotlin.String, kotlin.String> origin=null
             TYPE_ARG (of class) X: kotlin.String
             TYPE_ARG (of class) Y: kotlin.String
             ARG x: CONST String type=kotlin.String value="abc"
             ARG y: CONST String type=kotlin.String value="def"
+          getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:first visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Pair<kotlin.String, kotlin.String>
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun first (receiver: <root>.Pair<kotlin.String, kotlin.String>): kotlin.String declared in <root>.test1'
+                CALL 'public final fun <get-first> <X, Y> (<this>: <root>.Pair<X of <root>.<get-first>, Y of <root>.<get-first>>): X of <root>.<get-first> declared in <root>' type=kotlin.String origin=null
+                  TYPE_ARG X: kotlin.String
+                  TYPE_ARG Y: kotlin.String
+                  ARG <this>: GET_VAR 'receiver: <root>.Pair<kotlin.String, kotlin.String> declared in <root>.test1.first' type=<root>.Pair<kotlin.String, kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE
+          setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:first visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Pair<kotlin.String, kotlin.String>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.String
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun first (receiver: <root>.Pair<kotlin.String, kotlin.String>, value: kotlin.String): kotlin.Unit declared in <root>.test1'
+                CALL 'public final fun <set-first> <X, Y> (<this>: <root>.Pair<X of <root>.<set-first>, Y of <root>.<set-first>>, v: X of <root>.<set-first>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  TYPE_ARG X: kotlin.String
+                  TYPE_ARG Y: kotlin.String
+                  ARG <this>: GET_VAR 'receiver: <root>.Pair<kotlin.String, kotlin.String> declared in <root>.test1.first' type=<root>.Pair<kotlin.String, kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG v: GET_VAR 'value: kotlin.String declared in <root>.test1.first' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
   FUN name:test2 visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.Any
     BLOCK_BODY
@@ -221,20 +252,51 @@ FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
         TYPE_OP type=<root>.C<kotlin.String> origin=CAST typeOperand=<root>.C<kotlin.String>
           GET_VAR 'a: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
       CALL 'public final fun use (p: kotlin.reflect.KMutableProperty<kotlin.String>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG p: PROPERTY_REFERENCE 'public final y: T of <root>.<get-y> declared in <root>' field=null getter='public final fun <get-y> <T> (<this>: <root>.C<T of <root>.<get-y>>): T of <root>.<get-y> declared in <root>' setter='public final fun <set-y> <T> (<this>: <root>.C<T of <root>.<set-y>>, v: T of <root>.<set-y>): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null
-          TYPE_ARG 1: kotlin.String
-          ARG 1: TYPE_OP type=<root>.C<kotlin.String> origin=IMPLICIT_CAST typeOperand=<root>.C<kotlin.String>
+        ARG p: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null reflectionTarget='public final y: T of <root>.<get-y> declared in <root>'
+          bound receiver: TYPE_OP type=<root>.C<kotlin.String> origin=IMPLICIT_CAST typeOperand=<root>.C<kotlin.String>
             GET_VAR 'a: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
+          getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:y visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.C<kotlin.String>
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun y (receiver: <root>.C<kotlin.String>): kotlin.String declared in <root>.test2'
+                CALL 'public final fun <get-y> <T> (<this>: <root>.C<T of <root>.<get-y>>): T of <root>.<get-y> declared in <root>' type=kotlin.String origin=null
+                  TYPE_ARG T: kotlin.String
+                  ARG <this>: GET_VAR 'receiver: <root>.C<kotlin.String> declared in <root>.test2.y' type=<root>.C<kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE
+          setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:y visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.C<kotlin.String>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.String
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun y (receiver: <root>.C<kotlin.String>, value: kotlin.String): kotlin.Unit declared in <root>.test2'
+                CALL 'public final fun <set-y> <T> (<this>: <root>.C<T of <root>.<set-y>>, v: T of <root>.<set-y>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  TYPE_ARG T: kotlin.String
+                  ARG <this>: GET_VAR 'receiver: <root>.C<kotlin.String> declared in <root>.test2.y' type=<root>.C<kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG v: GET_VAR 'value: kotlin.String declared in <root>.test2.y' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         TYPE_OP type=<root>.Pair<kotlin.String, kotlin.String> origin=CAST typeOperand=<root>.Pair<kotlin.String, kotlin.String>
           TYPE_OP type=<root>.C<kotlin.String> origin=IMPLICIT_CAST typeOperand=<root>.C<kotlin.String>
             GET_VAR 'a: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
       CALL 'public final fun use (p: kotlin.reflect.KMutableProperty<kotlin.String>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        ARG p: PROPERTY_REFERENCE 'public final first: X of <root>.<get-first> declared in <root>' field=null getter='public final fun <get-first> <X, Y> (<this>: <root>.Pair<X of <root>.<get-first>, Y of <root>.<get-first>>): X of <root>.<get-first> declared in <root>' setter='public final fun <set-first> <X, Y> (<this>: <root>.Pair<X of <root>.<set-first>, Y of <root>.<set-first>>, v: X of <root>.<set-first>): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null
-          TYPE_ARG 1: kotlin.String
-          TYPE_ARG 2: kotlin.String
-          ARG 1: TYPE_OP type=<root>.Pair<kotlin.String, kotlin.String> origin=IMPLICIT_CAST typeOperand=<root>.Pair<kotlin.String, kotlin.String>
+        ARG p: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null reflectionTarget='public final first: X of <root>.<get-first> declared in <root>'
+          bound receiver: TYPE_OP type=<root>.Pair<kotlin.String, kotlin.String> origin=IMPLICIT_CAST typeOperand=<root>.Pair<kotlin.String, kotlin.String>
             GET_VAR 'a: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
+          getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:first visibility:local modality:FINAL returnType:kotlin.String
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Pair<kotlin.String, kotlin.String>
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun first (receiver: <root>.Pair<kotlin.String, kotlin.String>): kotlin.String declared in <root>.test2'
+                CALL 'public final fun <get-first> <X, Y> (<this>: <root>.Pair<X of <root>.<get-first>, Y of <root>.<get-first>>): X of <root>.<get-first> declared in <root>' type=kotlin.String origin=null
+                  TYPE_ARG X: kotlin.String
+                  TYPE_ARG Y: kotlin.String
+                  ARG <this>: GET_VAR 'receiver: <root>.Pair<kotlin.String, kotlin.String> declared in <root>.test2.first' type=<root>.Pair<kotlin.String, kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE
+          setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:first visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.Pair<kotlin.String, kotlin.String>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:kotlin.String
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun first (receiver: <root>.Pair<kotlin.String, kotlin.String>, value: kotlin.String): kotlin.Unit declared in <root>.test2'
+                CALL 'public final fun <set-first> <X, Y> (<this>: <root>.Pair<X of <root>.<set-first>, Y of <root>.<set-first>>, v: X of <root>.<set-first>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  TYPE_ARG X: kotlin.String
+                  TYPE_ARG Y: kotlin.String
+                  ARG <this>: GET_VAR 'receiver: <root>.Pair<kotlin.String, kotlin.String> declared in <root>.test2.first' type=<root>.Pair<kotlin.String, kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG v: GET_VAR 'value: kotlin.String declared in <root>.test2.first' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
   FUN name:use visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:p index:0 type:kotlin.reflect.KMutableProperty<kotlin.String>
     BLOCK_BODY

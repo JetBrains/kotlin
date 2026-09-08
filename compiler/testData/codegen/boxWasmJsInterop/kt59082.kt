@@ -2,7 +2,7 @@
 // LANGUAGE: +AllowAnyAsAnActualTypeForExpectInterface
 
 @JsName("null")
-@Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
+@Suppress("COMPANION_OBJECT_IN_EXTERNAL_INTERFACE")
 public external interface CanvasFillRule : JsAny {
     companion object
 }

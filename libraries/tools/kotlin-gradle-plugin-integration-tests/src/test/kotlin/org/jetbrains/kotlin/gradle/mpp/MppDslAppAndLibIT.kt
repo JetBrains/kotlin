@@ -58,10 +58,6 @@ class MppDslAppAndLibIT : KGPBaseTest() {
         appProjectPath: String,
         gradleVersion: GradleVersion,
     ) {
-        val additionalBuildArgs = buildList {
-            add("-P" + "kotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError")
-        }
-
         val localRepoDir = defaultLocalRepo(gradleVersion)
 
         val compileTasksNames = listOf(
@@ -79,11 +75,8 @@ class MppDslAppAndLibIT : KGPBaseTest() {
                 "\nkotlin.jvm.target.validation.mode=warning\n"
             )
             build(
-                buildArguments = buildList {
-                    add("clean")
-                    add("publish")
-                    addAll(additionalBuildArgs)
-                }.toTypedArray(),
+                buildArguments = arrayOf("clean", "publish"),
+                buildOptions = buildOptions.suppressingGradlePluginErrors("KotlinTargetAlreadyDeclaredError"),
             ) {
                 assertTasksExecuted(compileTasksNames)
                 assertTasksExecuted(
@@ -176,10 +169,10 @@ class MppDslAppAndLibIT : KGPBaseTest() {
                 buildArguments = buildList {
                     add("assemble")
                     add("resolveRuntimeDependencies")
-                    addAll(additionalBuildArgs)
                     add("-P" + "kotlinCompileCacheBuster=${System.currentTimeMillis()}")
                     add("-P" + "kotlinCompileLogLevel=DEBUG")
                 }.toTypedArray(),
+                buildOptions = buildOptions.suppressingGradlePluginErrors("KotlinTargetAlreadyDeclaredError"),
             ) {
                 checkAppBuild()
                 assertTasksExecuted(":resolveRuntimeDependencies") // KT-26301
@@ -207,8 +200,8 @@ class MppDslAppAndLibIT : KGPBaseTest() {
                     add("assemble")
                     add("-P" + "kotlinCompileCacheBuster=${System.currentTimeMillis()}")
                     add("-P" + "kotlinCompileLogLevel=DEBUG")
-                    add("-P" + "kotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError")
                 }.toTypedArray(),
+                buildOptions = buildOptions.suppressingGradlePluginErrors("KotlinTargetAlreadyDeclaredError"),
             ) {
                 assertTasksExecuted(":${libProject.projectPath.name}:assemble")
                 checkAppBuild()

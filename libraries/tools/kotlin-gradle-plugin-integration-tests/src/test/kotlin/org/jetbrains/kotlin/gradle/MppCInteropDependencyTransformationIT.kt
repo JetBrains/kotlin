@@ -510,7 +510,10 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
         // configuration cache may hide the problem,
         // especially from Gradle 8.0 as it started to serialize the state even before the first execution
         // so disabling it in this test is mandatory
-        val buildOptions = defaultBuildOptions.copy(configurationCache = ConfigurationCacheValue.DISABLED)
+        val buildOptions = defaultBuildOptions.copy(
+            configurationCache = ConfigurationCacheValue.DISABLED,
+            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+        )
         project("kt-71328", gradleVersion, buildOptions = buildOptions) {
             val projectsToApply = listOf(this, subProject("lib"))
             for (testProject in projectsToApply) {

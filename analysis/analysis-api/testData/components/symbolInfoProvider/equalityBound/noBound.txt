@@ -1,0 +1,4 @@
+FUNCTION:
+  /Unbounded.equals
+EQUALITY_BOUND:
+  null

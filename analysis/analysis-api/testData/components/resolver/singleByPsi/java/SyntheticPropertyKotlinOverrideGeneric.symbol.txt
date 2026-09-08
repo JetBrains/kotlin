@@ -3,7 +3,7 @@
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
     lookupLocally: false
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         var foo: Foo<kotlin.Any>
       ]
@@ -13,7 +13,7 @@
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
     lookupLocally: false
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         var foo: Foo<kotlin.Any>
       ]
@@ -23,7 +23,7 @@
     isImplicitReferenceToCompanion: false
     contextSensitiveResolutionStatus: NotAvailable
     lookupLocally: false
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         var foo: it(Foo<kotlin.Any> & Foo<T!>)
       ]

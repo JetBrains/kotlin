@@ -27,34 +27,17 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
     fun testUnrelatedTaskNotConfigured(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             val compilationConfiguredTasks = configuredTasks().buildAndReturn("compileKotlin")
-            if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) {
-                assertEquals(
-                    mapOf(
-                        ":" to setOf(
-                            "checkKotlinGradlePluginConfigurationErrors",
-                            "clean",
-                            "compileDeployJava",
-                            "compileJava",
-                            "compileKotlin",
-                            "compileTestJava",
-                            "jar"
-                        )
-                    ),
-                    compilationConfiguredTasks,
-                )
-            } else {
-                assertEquals(
-                    mapOf(
-                        ":" to setOf(
-                            "checkKotlinGradlePluginConfigurationErrors",
-                            "clean",
-                            "compileJava",
-                            "compileKotlin",
-                        )
-                    ),
-                    compilationConfiguredTasks,
-                )
-            }
+            assertEquals(
+                mapOf(
+                    ":" to setOf(
+                        "checkKotlinGradlePluginConfigurationErrors",
+                        "clean",
+                        "compileJava",
+                        "compileKotlin",
+                    )
+                ),
+                compilationConfiguredTasks,
+            )
         }
     }
 
@@ -94,7 +77,11 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
         project(
             "AndroidProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions
+                .copy(
+                    androidVersion = agpVersion,
+                    isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+                ),
             buildJdk = providedJdk.location
         ) {
             gradleProperties.appendText("android.defaults.buildfeatures.aidl=true")
@@ -109,6 +96,9 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
                 configuredTasks()
                     .buildAndReturn(
                         "--dry-run",
+                        deriveBuildOptions = {
+                            buildOptions.suppressAgpWarningIsProperty(gradleVersion)
+                        }
                     ),
             )
             build("help")
@@ -162,7 +152,11 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
             }
         }
 
-        val configuredTasks = project("empty", gradleVersion) {
+        val configuredTasks = project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             settingsBuildScriptInjection {
                 settings.rootProject.name = "root"
             }
@@ -270,7 +264,11 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
             }
         }
 
-        val resolvedConfigurations = project("empty", gradleVersion) {
+        val resolvedConfigurations = project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+        ) {
             settingsBuildScriptInjection {
                 settings.rootProject.name = "root"
             }

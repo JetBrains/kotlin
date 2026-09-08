@@ -4,6 +4,12 @@ import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
+@ExportedBridge("__root___foo")
+public fun __root___foo(): kotlin.native.internal.NativePtr {
+    val _result = run { foo() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("__root___testListAny__TypesOfArguments__Swift_Array_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun __root___testListAny__TypesOfArguments__Swift_Array_anyU20KotlinRuntimeSupport__KotlinBridgeable___(l: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __l = interpretObjCPointer<kotlin.collections.List<kotlin.Any>>(l)

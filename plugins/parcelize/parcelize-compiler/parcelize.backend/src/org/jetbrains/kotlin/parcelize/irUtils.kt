@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
@@ -34,13 +35,24 @@ import org.jetbrains.kotlin.types.Variance
 private val PARCELIZE_ALLOWED_CLASS_KINDS = listOf(ClassKind.CLASS, ClassKind.OBJECT, ClassKind.ENUM_CLASS)
 
 // true if the class should be processed by the parcelize plugin
-fun IrClass.isParcelize(parcelizeAnnotations: List<FqName>): Boolean =
-    kind in PARCELIZE_ALLOWED_CLASS_KINDS &&
-            (hasAnyAnnotation(parcelizeAnnotations) || superTypes.any { superType ->
-                superType.classOrNull?.owner?.let {
-                    it.modality == Modality.SEALED && it.hasAnyAnnotation(parcelizeAnnotations)
-                } == true
-            })
+fun IrClass.isParcelize(parcelizeAnnotations: List<FqName>): Boolean {
+    if (kind == ClassKind.INTERFACE) {
+        return isPolymorphicSealed()
+    }
+
+    if (kind !in PARCELIZE_ALLOWED_CLASS_KINDS) {
+        return false
+    }
+
+    if (hasAnyAnnotation(parcelizeAnnotations)) {
+        return true
+    }
+
+    return superTypes.any { superType ->
+        val superClass = superType.classOrNull?.owner ?: return@any false
+        superClass.modality == Modality.SEALED && superClass.hasAnyAnnotation(parcelizeAnnotations)
+    }
+}
 
 // Finds the getter for a pre-existing CREATOR field on the class companion, which is used for manual Parcelable implementations in Kotlin.
 val IrClass.creatorGetter: IrSimpleFunctionSymbol?
@@ -188,7 +200,8 @@ private fun AndroidIrBuilder.kClassToJavaClass(kClassReference: IrExpression): I
     }
 
 // Produce a static reference to the java class of the given type.
-fun AndroidIrBuilder.javaClassReference(classType: IrType): IrCall = kClassToJavaClass(kClassReference(classType))
+fun AndroidIrBuilder.javaClassReference(classType: IrType): IrCall =
+    kClassToJavaClass(kClassReference(classType.erasedUpperBound.symbol.starProjectedType))
 
 fun IrClass.isSubclassOfFqName(fqName: String): Boolean =
     fqNameWhenAvailable?.asString() == fqName || superTypes.any { it.erasedUpperBound.isSubclassOfFqName(fqName) }
@@ -255,4 +268,35 @@ internal fun IrAnnotationContainer.getAnyAnnotation(fqNames: List<FqName>): IrAn
     }
 
     return null
+}
+
+internal fun IrClass.isPolymorphicSealed(): Boolean =
+    modality == Modality.SEALED && hasAnyAnnotation(ParcelizeNames.POLYMORPHIC_SEALED_CLASS_FQ_NAMES)
+
+internal fun IrClass.getPolymorphicSealedSubclasses(): List<IrClass> =
+    declarations.filterIsInstance<IrClass>().filter {
+        it.superTypes.any { superType -> superType.classifierOrNull == this.symbol }
+    }
+
+internal fun IrClass.findPolymorphicSealedRoot(): IrClass? = (parent as? IrClass)?.takeIf { enclosingClass ->
+    enclosingClass.isPolymorphicSealed() && superTypes.any { it.classifierOrNull == enclosingClass.symbol }
+}
+
+private var IrClass.defaultPolymorphicSealedTag: Int? by irAttribute(copyByDefault = true)
+
+internal fun IrClass.getPolymorphicSealedTag(sealedRoot: IrClass): Int {
+    val tagAnnotation = getAnyAnnotation(ParcelizeNames.PARCEL_TAG_CLASS_FQ_NAMES)
+    if (tagAnnotation != null) {
+        val tagConst = tagAnnotation.arguments.singleOrNull() as? IrConst
+        return (tagConst?.value as? Number)?.toInt()
+            ?: error("Expected integer constant for @ParcelTag on ${this.name.asString()}")
+    } else {
+        defaultPolymorphicSealedTag?.let { return it }
+
+        sealedRoot.getPolymorphicSealedSubclasses().forEachIndexed { index, irClass ->
+            irClass.defaultPolymorphicSealedTag = index
+        }
+        return defaultPolymorphicSealedTag
+            ?: error("Subclass ${this.name.asString()} not found among direct subclasses of ${sealedRoot.name.asString()}")
+    }
 }

@@ -16,6 +16,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Target]
+                isClassRef: true
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             VALUE_ARGUMENT_NAME
@@ -52,6 +53,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Retention]
+                isClassRef: true
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             VALUE_ARGUMENT_NAME
@@ -71,6 +73,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+                isClassRef: true
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             VALUE_ARGUMENT_NAME
@@ -87,6 +90,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Annotation]
+              isClassRef: true
     CLASS_BODY
   CLASS[classId=kotlin/internal/PlatformDependent, fqName=kotlin.internal.PlatformDependent, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PlatformDependent, superNames=[Annotation]]
     MODIFIER_LIST[internal final annotation]
@@ -100,6 +104,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Target]
+                isClassRef: true
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             VALUE_ARGUMENT_NAME
@@ -122,6 +127,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Retention]
+                isClassRef: true
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             VALUE_ARGUMENT_NAME
@@ -143,6 +149,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Annotation]
+              isClassRef: true
     CLASS_BODY
   CLASS[classId=kotlin/internal/PureReifiable, fqName=kotlin.internal.PureReifiable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PureReifiable, superNames=[Annotation]]
     MODIFIER_LIST[internal final annotation]
@@ -156,6 +163,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Target]
+                isClassRef: true
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             VALUE_ARGUMENT_NAME
@@ -178,6 +186,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Retention]
+                isClassRef: true
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             VALUE_ARGUMENT_NAME
@@ -199,4 +208,5 @@ FILE[kind=File[packageFqName=kotlin.internal]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Annotation]
+              isClassRef: true
     CLASS_BODY

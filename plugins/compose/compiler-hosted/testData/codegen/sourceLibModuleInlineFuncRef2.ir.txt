@@ -70,8 +70,15 @@ MODULE_FRAGMENT
                           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.reflect.KFunction0<kotlin.String>
                             BLOCK_BODY
                               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.reflect.KFunction0<kotlin.String> declared in home.Greeting'
-                                FUNCTION_REFERENCE 'public final fun giveMeString (): kotlin.String [inline] declared in com.example.myModule.OtherModule' type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget=<same>
-                                  ARG <this>: GET_VAR 'val tmp_0: com.example.myModule.OtherModule [val] declared in home.Greeting' type=com.example.myModule.OtherModule origin=null
+                                RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget='public final fun giveMeString (): kotlin.String [inline] declared in com.example.myModule.OtherModule'
+                                  overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.reflect.KFunction0 [fake_override,operator] declared in kotlin.reflect.KFunction0
+                                  bound receiver: GET_VAR 'val tmp_0: com.example.myModule.OtherModule [val] declared in home.Greeting' type=com.example.myModule.OtherModule origin=null
+                                  invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:giveMeString visibility:local modality:FINAL returnType:kotlin.String [inline]
+                                    VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:com.example.myModule.OtherModule
+                                    BLOCK_BODY
+                                      RETURN type=kotlin.Nothing from='local final fun giveMeString (receiver: com.example.myModule.OtherModule): kotlin.String [inline] declared in home.Greeting.<anonymous>'
+                                        CALL 'public final fun giveMeString (): kotlin.String [inline] declared in com.example.myModule.OtherModule' type=kotlin.String origin=null
+                                          ARG <this>: GET_VAR 'receiver: com.example.myModule.OtherModule declared in home.Greeting.<anonymous>.giveMeString' type=com.example.myModule.OtherModule origin=ADAPTED_FUNCTION_REFERENCE
                     CALL 'public final fun sourceInformationMarkerEnd (composer: androidx.compose.runtime.Composer): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
                       ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Greeting' type=androidx.compose.runtime.Composer? origin=null
                     GET_VAR 'val tmp_1: kotlin.reflect.KFunction0<kotlin.String> [val] declared in home.Greeting' type=kotlin.reflect.KFunction0<kotlin.String> origin=null

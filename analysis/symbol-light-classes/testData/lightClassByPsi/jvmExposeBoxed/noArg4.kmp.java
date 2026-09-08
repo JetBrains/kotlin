@@ -1,4 +1,3 @@
-@<error>()
 @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
 public final class IntWrapper /* IntWrapper*/ {
   private final int i;
@@ -25,9 +24,7 @@ public final class RegularClassWithValueConstructor /* RegularClassWithValueCons
 public final class RegularClassWithValueConstructorAndAnnotation /* RegularClassWithValueConstructorAndAnnotation*/ {
   private final int property;
 
-  @<error>()
   private  RegularClassWithValueConstructorAndAnnotation(int);//  .ctor(int)
 
-  @<error>()
   public  RegularClassWithValueConstructorAndAnnotation();//  .ctor()
 }

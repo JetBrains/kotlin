@@ -1,6 +1,6 @@
 <caret_1>:
   KDocName(225,257): 'OutContainer.someNumberExtension'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /someNumberExtension(<extension receiver>: OutContainer<kotlin.Number>): kotlin.Unit
       ]
@@ -11,28 +11,28 @@
 
 <caret_3>:
   KDocName(328,366): 'NumberOutContainer.someNumberExtension'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /someNumberExtension(<extension receiver>: OutContainer<kotlin.Number>): kotlin.Unit
       ]
 
 <caret_4>:
   KDocName(383,412): 'OutContainer.someIntExtension'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /someIntExtension(<extension receiver>: OutContainer<kotlin.Int>): kotlin.Unit
       ]
 
 <caret_5>:
   KDocName(429,461): 'IntOutContainer.someIntExtension'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /someIntExtension(<extension receiver>: OutContainer<kotlin.Int>): kotlin.Unit
       ]
 
 <caret_6>:
   KDocName(478,513): 'NumberOutContainer.someIntExtension'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         /someIntExtension(<extension receiver>: OutContainer<kotlin.Int>): kotlin.Unit
       ]

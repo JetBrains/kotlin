@@ -302,7 +302,7 @@ KtProperty(393,418): 'val foo = JavaClass.foo()'
   null
 
 KtDotQualifiedExpression(403,418): 'JavaClass.foo()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -325,7 +325,7 @@ KtNameReferenceExpression(403,412): 'JavaClass'
   null
 
 KtCallExpression(413,418): 'foo()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -345,7 +345,7 @@ KtCallExpression(413,418): 'foo()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(413,416): 'foo'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -383,7 +383,7 @@ KtNameReferenceExpression(433,437): 'Left'
   null
 
 KtDotQualifiedExpression(441,446): 'foo.x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -405,7 +405,7 @@ KtDotQualifiedExpression(441,446): 'foo.x'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(441,444): 'foo'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -422,7 +422,7 @@ KtNameReferenceExpression(441,444): 'foo'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(445,446): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -459,7 +459,7 @@ KtNameReferenceExpression(458,463): 'Right'
   null
 
 KtDotQualifiedExpression(467,472): 'foo.y'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -481,7 +481,7 @@ KtDotQualifiedExpression(467,472): 'foo.y'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(467,470): 'foo'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -498,7 +498,7 @@ KtNameReferenceExpression(467,470): 'foo'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(471,472): 'y'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -523,7 +523,7 @@ KtBinaryExpressionWithTypeRHS(583,612): 'mg as MyGenericSealed<String>'
   null
 
 KtNameReferenceExpression(583,585): 'mg'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -570,7 +570,7 @@ KtWhenExpression(617,683): 'when (mg) {'
   null
 
 KtNameReferenceExpression(623,625): 'mg'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -602,7 +602,7 @@ KtNameReferenceExpression(640,644): 'Left'
   null
 
 KtDotQualifiedExpression(648,652): 'mg.x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -624,7 +624,7 @@ KtDotQualifiedExpression(648,652): 'mg.x'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(648,650): 'mg'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -641,7 +641,7 @@ KtNameReferenceExpression(648,650): 'mg'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(651,652): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -678,7 +678,7 @@ KtNameReferenceExpression(664,669): 'Right'
   null
 
 KtDotQualifiedExpression(673,677): 'mg.y'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -700,7 +700,7 @@ KtDotQualifiedExpression(673,677): 'mg.y'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(673,675): 'mg'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -717,7 +717,7 @@ KtNameReferenceExpression(673,675): 'mg'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(676,677): 'y'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -742,7 +742,7 @@ KtBinaryExpressionWithTypeRHS(804,833): 'cs as MyGenericSealed<String>'
   null
 
 KtNameReferenceExpression(804,806): 'cs'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -789,7 +789,7 @@ KtWhenExpression(838,904): 'when (cs) {'
   null
 
 KtNameReferenceExpression(844,846): 'cs'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -821,12 +821,12 @@ KtNameReferenceExpression(861,865): 'Left'
   null
 
 KtDotQualifiedExpression(869,873): 'cs.x'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x' on receiver of type 'MyGenericSealed<String> & CharSequence'.>
 
 KtNameReferenceExpression(869,871): 'cs'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -843,7 +843,7 @@ KtNameReferenceExpression(869,871): 'cs'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(872,873): 'x'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'x' on receiver of type 'MyGenericSealed<String> & CharSequence'.>
 
@@ -863,12 +863,12 @@ KtNameReferenceExpression(885,890): 'Right'
   null
 
 KtDotQualifiedExpression(894,898): 'cs.y'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y' on receiver of type 'MyGenericSealed<String> & CharSequence'.>
 
 KtNameReferenceExpression(894,896): 'cs'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -885,6 +885,6 @@ KtNameReferenceExpression(894,896): 'cs'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(897,898): 'y'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'y' on receiver of type 'MyGenericSealed<String> & CharSequence'.>

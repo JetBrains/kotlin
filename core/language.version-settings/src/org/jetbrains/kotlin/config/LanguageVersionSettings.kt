@@ -516,7 +516,6 @@ enum class LanguageFeature(
 
     // 2.5
 
-    ErrorAboutDataClassCopyVisibilityChange(KOTLIN_2_5, enabledInProgressiveMode = true, "KT-11914"), // KT-11914. Deprecation phase 2
     KlibAnnotationsInMetadata(sinceVersion = KOTLIN_2_5, "KT-81466"),
     ReportDeprecationsOfClassifiersInImplicitInvokes(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KT-82456"),
     ForbidArrayOfNothingInLhsOfClassLiteral(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KT-84589"),
@@ -531,7 +530,6 @@ enum class LanguageFeature(
     ReportDeprecationsOfOuterImportedClasses(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-397"),
     ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds(KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-358"),
     ForbidUselessTypeArgumentsIn25(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-390"),
-    ExplicitContextArguments(sinceVersion = KOTLIN_2_5, issue = "KT-81684"),
     FixesForIntersectionTypesIn25(sinceVersion = KOTLIN_2_5, issue = "KT-86629"),
     ProhibitScriptTopLevelInnerClasses(sinceVersion = KOTLIN_2_5, issue = "KT-87291"),
     AllowEagerSupertypeAccessibilityChecks(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-398"),
@@ -539,7 +537,11 @@ enum class LanguageFeature(
     ForbidOperatorEqualsInEnumEntriesAndAnonymousObjects(KOTLIN_2_5, enabledInProgressiveMode = true, "KT-86143"),
     ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-396"),
     FixApplicabilityOfEmptyIntersection(sinceVersion = KOTLIN_2_5, "KT-86740"),
+    // Superseded by EliminateSecondKindIncorporation: with that feature enabled, the second incorporation
+    // kind does not run at all, so this one has no effect.
+    // TODO: Remove it once EliminateSecondKindIncorporation is being released under 2.5
     EnhancementsOfSecondIncorporationKind25(KOTLIN_2_5, "KT-85879"),
+    EliminateSecondKindIncorporation(sinceVersion = KOTLIN_2_5, issue = "KT-85879"),
     NoWhenBranchMatchedExceptionWithMessage(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_5, issue = "KT-86518"),
     NameBasedDestructuring(sinceVersion = KOTLIN_2_5, "KT-19627"),
     JsAllowExportingAnnotationClasses(sinceVersion = KOTLIN_2_5, "KT-85599"),
@@ -561,14 +563,18 @@ enum class LanguageFeature(
     ForbidValueClassRecursionViaTypeParameters(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, issue = "KT-85848"),
     IrCrossModuleInlinerBeforeKlibSerialization(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_3, forcesPreReleaseBinaries = true, issue = "KT-71896"),
     JvmSupportRecursiveTypeOf(sinceVersion = KOTLIN_2_5, issue = "KT-87339"),
+    ForbidNonLiteralStringArgumentsForCompilerRequiredAnnotationParameters(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, issue = "KT-87072"),
     JsAllowExportTypealiases(sinceVersion = KOTLIN_2_5, "KT-49795"),
+    IntrinsicConstEvaluation(sinceVersion = KOTLIN_2_5, issue = "KT-49303"),
 
     // 2.6
 
     ReportReificationProblemsInDnnAndFlexible(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-399"),
+    ExplicitContextArguments(sinceVersion = KOTLIN_2_6, issue = "KT-81684"),
     ForbidJavaClassPropertyReferences(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-375"),
     ReportSubclassCantCallCompanionProtectedNonStaticWithGenerics(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-412"),
     ConcurrentMapPurelyImplemented(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-416"),
+    EnforceNamedArgumentsOnJavaAnnotationInAccessors(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-418"),
     JsIntegerDivisionCheck(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-17719"),
 
     // End of 2.* language features --------------------------------------------------
@@ -604,12 +610,8 @@ enum class LanguageFeature(
     NoAdditionalErrorsInK1DiagnosticReporter(sinceVersion = null, NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
 
     // Only used for compiling the commonizer's support library with numeric expect classes.
-    AllowExpectValueClassesWithNoPrimaryConstructor(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-69909", enabledInLatestLVTests = false),
-
-    // Just a safety mechanism to revert the change in inference behavior that was required for a performance problem fix.
-    // If no problems are reported about it, can be removed after a couple of releases.
-    // NB: Currently, leads to regression KT-82132
-    DisableSimplificationOfFlexibleUpperConstraintWithDnnLowerBound(sinceVersion = null, "KT-52283", enabledInLatestLVTests = false),
+    AllowExpectValueClassesWithNoPrimaryConstructor(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-85824", enabledInLatestLVTests = false),
+    AllowMultipleExpectsForSingleActual(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-88307", enabledInLatestLVTests = false),
 
     PreciseSimplificationToFlexibleLowerConstraint(sinceVersion = null, "KT-78621", enabledInLatestLVTests = false), // TODO: consider dropping in 2.5 timeframe (KT-84664)
     DiscriminateSuspendInOverloadResolution(sinceVersion = null, "KT-23610", enabledInLatestLVTests = false), // Postponed because of KT-82869
@@ -646,6 +648,7 @@ enum class LanguageFeature(
     DeprecateNameMismatchInShortDestructuringWithParentheses(sinceVersion = null, issue = "KT-19627", enabledInLatestLVTests = true),
     EnableNameBasedDestructuringShortForm(sinceVersion = null, issue = "KT-19627", enabledInLatestLVTests = true),
     LocalTypeAliases(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-81404", enabledInLatestLVTests = false),
+    ErrorAboutDataClassCopyVisibilityChange(sinceVersion = null, enabledInProgressiveMode = true, issue = "KT-11914", enabledInLatestLVTests = false), // Was postponed in KT-89123
 
     // We don't want to turn it on by default (so to show an error instead of a warning) until there will be a possibility to export declarations from libraries
     JsExposedNotExportedSuperInterfaceApiByExportedOne(sinceVersion = null, issue = "KT-83009", enabledInLatestLVTests = false),
@@ -657,7 +660,6 @@ enum class LanguageFeature(
     ReferencesToSyntheticJavaProperties(sinceVersion = null, testOnly = true, issue = "KT-8575", enabledInLatestLVTests = false),
     ImplicitSignedToUnsignedIntegerConversion(sinceVersion = null, testOnly = true, issue = "KT-56583", enabledInLatestLVTests = false),
     ForbidInferringTypeVariablesIntoEmptyIntersection(sinceVersion = null, enabledInProgressiveMode = true, issue = "KT-51221", enabledInLatestLVTests = false),
-    IntrinsicConstEvaluation(sinceVersion = null, issue = "KT-49303", enabledInLatestLVTests = true),
 
     // K1 support only. We keep it, as it's currently unclear what to do with this feature in K2
     DisableCheckingChangedProgressionsResolve(sinceVersion = null, "KT-49276", enabledInLatestLVTests = false),
@@ -675,6 +677,7 @@ enum class LanguageFeature(
     DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives(sinceVersion = null, "KT-70722", enabledInLatestLVTests = false),
     ExportKlibToOlderAbiVersion(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-76131", enabledInLatestLVTests = false),
     JvmLoadAnnotationsOnAnnotationProperties(sinceVersion = null, "KT-22463", enabledInLatestLVTests = false),
+    RichErrors(sinceVersion = null, "KT-68296", enabledInLatestLVTests = true, testOnly = true, forcesPreReleaseBinaries = true),
     ExportKDocDocumentationToKlib(sinceVersion = null, "KT-83921", enabledInLatestLVTests = false),
     FullValueClasses(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-84904", enabledInLatestLVTests = true) {
         context(context: CrossFeatureChecksResultsCollector)
@@ -697,6 +700,7 @@ enum class LanguageFeature(
 
     ReportEscapingCapturedVariable(sinceVersion = null, testOnly = true, issue = "KT-15514", enabledInLatestLVTests = true),
     UnitConversionsOnArbitraryExpressions(sinceVersion = null, issue = "KT-84393", enabledInLatestLVTests = false),
+    JvmInlineScopesNumbers(sinceVersion = null, issue = "KT-79401", enabledInLatestLVTests = false),
     ;
 
     constructor(

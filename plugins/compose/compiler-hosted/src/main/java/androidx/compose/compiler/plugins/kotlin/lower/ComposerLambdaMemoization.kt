@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.jvm.codegen.anyTypeArgument
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -42,6 +41,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -508,7 +508,11 @@ class ComposerLambdaMemoization(
                 return result
             }
 
-            return rememberFunctionReference(functionReference, expression)
+            return rememberFunctionReference(
+                functionReference.symbol.owner,
+                functionReference.arguments,
+                expression
+            )
         }
 
         return result
@@ -536,17 +540,47 @@ class ComposerLambdaMemoization(
             return result
         }
 
-        return rememberFunctionReference(result, result)
+        return rememberFunctionReference(
+            referencedFn = result.symbol.owner,
+            arguments = result.arguments,
+            expression = result
+        )
+    }
+
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+        val result = super.visitRichFunctionReference(expression)
+        val referencedFn = expression.reflectionTargetSymbol?.owner ?: return result
+        if (
+            inlineLambdaInfo.isInlineFunctionExpression(expression) ||
+            inlineLambdaInfo.isInlineLambda(referencedFn)
+        ) {
+            // Do not memoize function references used in inline parameters.
+            return result
+        }
+
+        if (result !is IrRichFunctionReference) {
+            // Do not memoize if the shape doesn't match
+            return result
+        }
+
+        @Suppress("UNCHECKED_CAST") // Pinky promise to not add nulls here
+        val boundValues = expression.boundValues as MutableList<IrExpression?>
+        return rememberFunctionReference(
+            referencedFn,
+            boundValues,
+            result
+        )
     }
 
     private fun rememberFunctionReference(
-        reference: IrFunctionReference,
+        referencedFn: IrFunction,
+        arguments: MutableList<IrExpression?>,
         expression: IrExpression,
     ): IrExpression {
         // Get the local captures for local function ref, to make sure we invalidate memoized
         // reference if its capture is different.
-        val localCaptures = if (reference.symbol.owner.visibility == DescriptorVisibilities.LOCAL) {
-            declarationContextStack.recordLocalCapture(reference.symbol.owner)
+        val localCaptures = if (referencedFn.visibility == DescriptorVisibilities.LOCAL) {
+            declarationContextStack.recordLocalCapture(referencedFn)
         } else {
             null
         }
@@ -557,9 +591,9 @@ class ComposerLambdaMemoization(
 
         if (functionContext.canRemember) {
             // Memoize the reference for <expr>::<method>
-            val argumentsAreNull = reference.arguments.all { it == null }
+            val argumentsAreNull = arguments.all { it == null }
             val argumentsAreNullOrStable =
-                reference.arguments.all { it.isNullOrStable(fileContainingDependent = functionContext.declaration.fileOrNull) }
+                arguments.all { it.isNullOrStable(fileContainingDependent = functionContext.declaration.fileOrNull) }
 
             val captures = mutableListOf<IrValueDeclaration>()
             if (localCaptures != null) {
@@ -579,12 +613,12 @@ class ComposerLambdaMemoization(
                     resultType = expression.type
                 ) {
                     // Patch reference arguments in place
-                    for (i in reference.arguments.indices) {
-                        if (reference.arguments[i] == null) continue
+                    for (i in arguments.indices) {
+                        if (arguments[i] == null) continue
 
-                        val tmp = irTemporary(reference.arguments[i])
+                        val tmp = irTemporary(arguments[i])
                         captures.add(tmp)
-                        reference.arguments[i] = irGet(tmp)
+                        arguments[i] = irGet(tmp)
                     }
 
                     +rememberExpression(
@@ -747,18 +781,13 @@ class ComposerLambdaMemoization(
         )
 
         val isComposableContext = currentFunctionContext?.composable == true
-        if (!collector.hasCaptures) {
+        val originalType = functionExpression.type
+        return if (!collector.hasCaptures) {
             val enclosingFunction = currentFunctionContext?.declaration
             val inPublicInlineScope = enclosingFunction?.isInPublicInlineScope == true
-            if (!context.platform.isJvm() && hasTypeParameter(expression.type)) {
-                // This is a workaround
-                // for TypeParameters having initial parents (old IrFunctions before deepCopy).
-                // Otherwise it doesn't compile on k/js and k/native (can't find symbols).
-                // Ideally we will find a solution to remap symbols of TypeParameters in
-                // ComposableSingletons properties after ComposerParamTransformer
-                // (deepCopy in ComposerParamTransformer didn't help).
-                return wrapFunctionExpression(declarationContext, functionExpression, collector, isComposableContext)
-            }
+            // lambda will be moved into ComposableSingletons, which is a non-generic object, so nothing stored there may reference type parameters of the enclosing declaration
+            // erase them to their upper bounds: the singleton is a single shared instance and genuinely is not parameterized.
+            functionExpression.type = originalType.eraseTypeParameters()
             val singleton = irGetComposableSingleton(
                 lambdaExpression = wrapFunctionExpression(
                     declarationContext,
@@ -766,10 +795,10 @@ class ComposerLambdaMemoization(
                     collector,
                     false
                 ),
-                lambdaType = expression.type,
+                lambdaType = functionExpression.type,
                 lambdaName = createSingletonLambdaName(functionExpression)
             )
-            return if (inPublicInlineScope) {
+            if (inPublicInlineScope) {
                 // Public inline functions can't use singleton instance because changes to the function body
                 // can cause ABI incompatibilities. Note that we still generate singleton instances
                 // to ensure that we don't break existing consumers.
@@ -786,8 +815,31 @@ class ComposerLambdaMemoization(
                 singleton
             }
         } else {
-            return wrapFunctionExpression(declarationContext, functionExpression, collector, isComposableContext)
+            wrapFunctionExpression(declarationContext, functionExpression, collector, isComposableContext)
         }
+            .implicitCastTo(originalType) // restore original type of expression after type erasure (in case of singleton get) or wrapper-induced `ComposableLambda` return type
+    }
+
+    private val typeSystem by lazy { IrTypeSystemContextImpl(context.irBuiltIns) }
+
+    /**
+     * Adjusts the type of a lambda read from ComposableSingletons (back to [expectedType], the type the lambda had before its type parameters were erased)
+     * or wrapped by one of `composableLambda*` functions (they return `ComposableLambda` so erase real lambda type)
+     *
+     * Not always needed: a function type is contravariant in its parameters, so for a lambda parameter type `P<S>` the check reduces to `P<S>` <: `P<Any?>`.
+     * not needed for covariant type arguments: `List<S>` is a subtype of `List<Any?>`
+     * but needed for invariant (`MutableList<S>`) and contravariant (`Comparator<S>`) ones, which are not
+     */
+    private fun IrExpression.implicitCastTo(expectedType: IrType): IrExpression {
+        if (type.isSubtypeOf(expectedType, typeSystem)) return this
+        return IrTypeOperatorCallImpl(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            type = expectedType,
+            operator = IrTypeOperator.IMPLICIT_CAST,
+            typeOperand = expectedType,
+            argument = this,
+        )
     }
 
     private fun createSingletonLambdaName(expression: IrFunctionExpression): String {
@@ -803,10 +855,6 @@ class ComposerLambdaMemoization(
                 return mangledName
             }
         }
-    }
-
-    private fun hasTypeParameter(type: IrType): Boolean {
-        return type.anyTypeArgument { true }
     }
 
     private fun irGetComposableSingleton(
@@ -1250,7 +1298,8 @@ class ComposerLambdaMemoization(
 
     // TODO(b/315869143): consider hoisting property reference receivers into a variable and memoizing based on them.
     private fun IrValueDeclaration.isPropertyReferenceDelegate() =
-        origin == IrDeclarationOrigin.PROPERTY_DELEGATE && this is IrVariable && initializer is IrPropertyReference
+        origin == IrDeclarationOrigin.PROPERTY_DELEGATE && this is IrVariable &&
+                (initializer is IrPropertyReference || initializer is IrRichPropertyReference)
 }
 
 // This must match the highest value of FunctionXX which is current Function22

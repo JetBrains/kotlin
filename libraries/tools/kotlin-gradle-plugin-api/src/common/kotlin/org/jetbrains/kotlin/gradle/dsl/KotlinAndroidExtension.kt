@@ -32,6 +32,6 @@ interface KotlinAndroidExtension : KotlinBaseExtension,
      */
     val target: KotlinTarget
 
-    @Deprecated("Use source sets provided by Android Gradle Plugin instead.")
+    @Deprecated("Use source sets provided by Android Gradle Plugin instead.", level = DeprecationLevel.ERROR)
     override val sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
 }

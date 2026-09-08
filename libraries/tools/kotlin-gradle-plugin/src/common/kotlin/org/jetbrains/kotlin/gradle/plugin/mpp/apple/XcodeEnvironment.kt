@@ -59,6 +59,19 @@ internal class XcodeEnvironment(private val project: Project) {
     val sign: String?
         get() = readEnvVariable("EXPANDED_CODE_SIGN_IDENTITY")
 
+    /**
+     * Name of the build setting holding the deployment target of the Xcode target being built,
+     * for example `IPHONEOS_DEPLOYMENT_TARGET`. Xcode picks it based on the platform.
+     */
+    val deploymentTargetSettingName: String?
+        get() = readEnvVariable("DEPLOYMENT_TARGET_SETTING_NAME")
+
+    /**
+     * Value of the [deploymentTargetSettingName] build setting, for example `18.0`.
+     */
+    val deploymentTarget: String?
+        get() = deploymentTargetSettingName?.let { readEnvVariable(it) }
+
     val userScriptSandboxingEnabled: Boolean
         get() = readEnvVariable("ENABLE_USER_SCRIPT_SANDBOXING") == "YES"
 
@@ -93,5 +106,6 @@ internal class XcodeEnvironment(private val project: Project) {
           embeddedFrameworksDir=$embeddedFrameworksDir
           sign=$sign
           userScriptSandboxingEnabled=$userScriptSandboxingEnabled
+          deploymentTarget=$deploymentTargetSettingName=$deploymentTarget
     """.trimIndent()
 }

@@ -11,6 +11,7 @@ import org.gradle.testkit.runner.GradleRunner
 import org.gradle.util.GradleVersion
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
@@ -25,6 +26,9 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @JsBrowserGradlePluginTests
 class JsBrowserTestsIT : KGPBaseTest() {
+
+    override val defaultBuildOptions: BuildOptions =
+        super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @GradleTest
     fun `verify custom custom KotlinJsTest environment variables are used to launch tests`(gradleVersion: GradleVersion) {
@@ -161,7 +165,7 @@ class JsBrowserTestsIT : KGPBaseTest() {
 
     @GradleTest
     fun `smoke js browser test`(
-        gradleVersion: GradleVersion
+        gradleVersion: GradleVersion,
     ) {
         project(
             "empty",
@@ -179,6 +183,16 @@ class JsBrowserTestsIT : KGPBaseTest() {
                             @OptIn(ExperimentalJsTestDsl::class)
                             with(test) {
                                 chromium()
+                            }
+                        }
+                    }
+
+                    @OptIn(ExperimentalWasmDsl::class)
+                    wasmJs {
+                        browser {
+                            @OptIn(ExperimentalJsTestDsl::class)
+                            test {
+                                it.chromium()
                             }
                         }
                     }
@@ -204,7 +218,8 @@ class JsBrowserTestsIT : KGPBaseTest() {
                                 assertTrue(42 == 0)
                             }
                         }
-                        """.trimIndent())
+                        """.trimIndent()
+                    )
                 }
             }
 
@@ -218,7 +233,18 @@ class JsBrowserTestsIT : KGPBaseTest() {
                 assertOutputContains("""Execute JS tests with chromium runner at URL: http.*:prepareWebpackBundleForKotlinJsTests/test.html""".toRegex())
                 assertOutputContains("chromium.JsBrowserSmokeTest.assertFails[js, browser, chromium] FAILED")
                 assertOutputContains("2 tests completed, 1 failed")
-                // TODO: KT-86778 Add verification of test report
+            }
+
+            buildAndFail("wasmJsBrowserTest") {
+                assumeFalse(
+                    output.contains("error while loading shared libraries: libglib-2.0"),
+                    "No libglib-2.0 on the test runner machine"
+                )
+                assertTasksExecuted(":wasmJsTestBundleAsEsm")
+                assertTasksFailed(":wasmJsBrowserTest")
+                assertOutputContains("""Execute JS tests with chromium runner at URL: http.*:wasmJsTestBundleAsEsm/test.html""".toRegex())
+                assertOutputContains("chromium.JsBrowserSmokeTest.assertFails[wasmJs, browser, chromium] FAILED")
+                assertOutputContains("2 tests completed, 1 failed")
             }
         }
     }
@@ -227,9 +253,13 @@ class JsBrowserTestsIT : KGPBaseTest() {
     @GradleTest
     @OsCondition(
         supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],
-        enabledOnCI = [OS.LINUX, OS.MAC])
+        enabledOnCI = [OS.LINUX, OS.MAC]
+    )
     fun `prints clear error message when a test times out`(gradleVersion: GradleVersion) {
-        project("empty", gradleVersion = gradleVersion) {
+        project(
+            "empty", gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+        ) {
             plugins {
                 kotlin("multiplatform")
             }

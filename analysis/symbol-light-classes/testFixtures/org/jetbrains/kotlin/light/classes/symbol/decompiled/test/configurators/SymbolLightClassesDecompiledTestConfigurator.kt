@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.decompiled.test.configurators
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryDecompiledTestConfigurator
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.services.TestServices
 
+@OptIn(KaImplementationDetail::class)
 abstract class SymbolLightClassesDecompiledTestConfigurator(
     defaultTargetPlatform: TargetPlatform,
     override val testPrefixes: List<String>,

@@ -10,7 +10,7 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=B, superNames=[]]
   CLASS[classId=/ContextParametersOnCallableMembers, fqName=ContextParametersOnCallableMembers, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ContextParametersOnCallableMembers, superNames=[]]
     CLASS_BODY
-      FUN[fqName=ContextParametersOnCallableMembers.function, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=function]
+      FUNCTION[fqName=ContextParametersOnCallableMembers.function, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=function]
         MODIFIER_LIST[]
           CONTEXT_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]

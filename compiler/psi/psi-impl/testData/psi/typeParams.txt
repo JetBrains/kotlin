@@ -160,7 +160,7 @@ KtFile: typeParams.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('useParams')
@@ -234,7 +234,7 @@ KtFile: typeParams.kt
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('useParamsInOtherOrder')
@@ -295,7 +295,7 @@ KtFile: typeParams.kt
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('useParamsInTypeArg')
@@ -391,7 +391,7 @@ KtFile: typeParams.kt
           PsiWhiteSpace('\n\n    ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         TYPE_PARAMETER_LIST
@@ -479,7 +479,7 @@ KtFile: typeParams.kt
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         TYPE_PARAMETER_LIST
@@ -627,7 +627,7 @@ KtFile: typeParams.kt
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         TYPE_PARAMETER_LIST
@@ -702,7 +702,7 @@ KtFile: typeParams.kt
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         TYPE_PARAMETER_LIST
@@ -897,7 +897,7 @@ KtFile: typeParams.kt
                 PsiElement(LPAR)('(')
                 PsiElement(RPAR)(')')
       PsiWhiteSpace('\n\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(public)('public')
           PsiWhiteSpace(' ')

@@ -9,7 +9,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IOSamplesKt]]
       TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[in]
     CLASS_BODY
-      FUN[fqName=IAdder.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
+      FUNCTION[fqName=IAdder.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=item]
             TYPE_REFERENCE
@@ -21,7 +21,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IOSamplesKt]]
   CLASS[classId=/ICloseable, fqName=ICloseable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ICloseable, superNames=[]]
     MODIFIER_LIST[open]
     CLASS_BODY
-      FUN[fqName=ICloseable.close, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=close]
+      FUNCTION[fqName=ICloseable.close, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=close]
         VALUE_PARAMETER_LIST
   CLASS[classId=/JavaCloseableWrapper, fqName=JavaCloseableWrapper, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=JavaCloseableWrapper, superNames=[ICloseable]]
     MODIFIER_LIST[abstract]
@@ -44,7 +44,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IOSamplesKt]]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=false]
             REFERENCE_EXPRESSION[referencedName=closeable]
-  FUN[fqName=streamCopy, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=streamCopy]
+  FUNCTION[fqName=streamCopy, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=streamCopy]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
@@ -95,7 +95,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IOSamplesKt]]
       PROPERTY[fqName=FileInput.nextUsed, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=nextUsed]
         MODIFIER_LIST[private]
         BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
-      FUN[fqName=FileInput.next, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
+      FUNCTION[fqName=FileInput.next, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
       PROPERTY[fqName=FileInput.hasNext, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=hasNext]
@@ -123,12 +123,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IOSamplesKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=OutputStream]
-      FUN[fqName=FileOutput.add, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
+      FUNCTION[fqName=FileOutput.add, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=item]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Byte]
-  FUN[fqName=example, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=example]
+  FUNCTION[fqName=example, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=example]
     VALUE_PARAMETER_LIST

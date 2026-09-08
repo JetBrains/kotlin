@@ -142,7 +142,6 @@ class CinteropIT : KGPBaseTest() {
     }
 
     @DisplayName("KT-62800: check that optional .def file in cinterop works well with configuration cache")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_1) // Gradle supports checking file existence with configuration cache only since 8.1 version
     @GradleTest
     fun cinteropWithOptionalDefFileAndConfigurationCache(gradleVersion: GradleVersion) {
         nativeProject("cinterop-with-header", gradleVersion = gradleVersion) {

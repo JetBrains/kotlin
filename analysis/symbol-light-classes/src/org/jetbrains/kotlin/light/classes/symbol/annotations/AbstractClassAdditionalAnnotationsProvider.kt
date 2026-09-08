@@ -57,10 +57,7 @@ private fun addAllAnnotationsFromAnnotationClass(
             ?: currentAnnotation.tryConvertToRepeatableJavaAnnotation(owner)
             ?: continue
 
-        val qualifiedName = newAnnotation.qualifiedName
-        requireNotNull(qualifiedName) { "The annotation must have 'qualifiedName'" }
-
-        if (!foundQualifiers.add(qualifiedName)) continue
+        if (!foundQualifiers.add(newAnnotation.qualifiedName)) continue
         currentRawAnnotations += newAnnotation
     }
 
@@ -91,7 +88,7 @@ private fun GranularAnnotationsBox.tryConvertToDocumentedJavaAnnotation(
 
 private fun SymbolLightLazyAnnotation.tryConvertToDocumentedJavaAnnotation(
     owner: PsiElement,
-): PsiAnnotation? = tryConvertToJavaAnnotation(
+): SymbolLightJavaAnnotation? = tryConvertToJavaAnnotation(
     javaQualifier = JvmAnnotationNames.DOCUMENTED_ANNOTATION.asString(),
     kotlinQualifier = StandardNames.FqNames.mustBeDocumented.asString(),
     owner = owner,
@@ -113,7 +110,7 @@ private fun GranularAnnotationsBox.tryConvertToRetentionJavaAnnotation(
 
 private fun SymbolLightLazyAnnotation.tryConvertToRetentionJavaAnnotation(
     owner: PsiElement,
-): PsiAnnotation? = tryConvertToJavaAnnotation(
+): SymbolLightJavaAnnotation? = tryConvertToJavaAnnotation(
     javaQualifier = JvmAnnotationNames.RETENTION_ANNOTATION.asString(),
     kotlinQualifier = StandardNames.FqNames.retention.asString(),
     owner = owner,
@@ -170,7 +167,7 @@ private fun GranularAnnotationsBox.tryConvertToRepeatableJavaAnnotation(
 
 private fun SymbolLightLazyAnnotation.tryConvertToRepeatableJavaAnnotation(
     owner: PsiElement,
-): PsiAnnotation? = tryConvertToJavaAnnotation(
+): SymbolLightJavaAnnotation? = tryConvertToJavaAnnotation(
     javaQualifier = JvmAnnotationNames.REPEATABLE_ANNOTATION.asString(),
     kotlinQualifier = StandardNames.FqNames.repeatable.asString(),
     owner = owner,
@@ -205,7 +202,7 @@ private fun GranularAnnotationsBox.tryConvertToTargetJavaAnnotation(
 
 private fun SymbolLightLazyAnnotation.tryConvertToTargetJavaAnnotation(
     owner: PsiElement,
-): PsiAnnotation? = tryConvertToJavaAnnotation(
+): SymbolLightJavaAnnotation? = tryConvertToJavaAnnotation(
     javaQualifier = JvmAnnotationNames.TARGET_ANNOTATION.asString(),
     kotlinQualifier = StandardNames.FqNames.target.asString(),
     owner = owner,
@@ -289,7 +286,7 @@ private fun SymbolLightLazyAnnotation.tryConvertToJavaAnnotation(
     kotlinQualifier: String,
     owner: PsiElement,
     argumentsComputer: SymbolLightJavaAnnotation.() -> List<AnnotationArgument> = { emptyList() },
-): PsiAnnotation? {
+): SymbolLightJavaAnnotation? {
     if (qualifiedName != kotlinQualifier) return null
     return SymbolLightJavaAnnotation(
         originalLightAnnotation = this,

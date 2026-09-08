@@ -209,7 +209,12 @@ public final class SomeBazzable: KotlinRuntime.KotlinBase, main.SealedBazzable, 
 }
 open class _ContainerProtocol_NestedClass: KotlinRuntime.KotlinBase {
     public init() {
-        let __kt = ContainerProtocol_NestedClass_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main._ContainerProtocol_NestedClass.self {
+             __kt = ContainerProtocol_NestedClass_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { ContainerProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
@@ -222,7 +227,12 @@ open class _ContainerProtocol_NestedClass: KotlinRuntime.KotlinBase {
 }
 open class _ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClass: KotlinRuntime.KotlinBase {
     public init() {
-        let __kt = packagewithprotocols_ContainerProtocol_NestedClass_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClass.self {
+             __kt = packagewithprotocols_ContainerProtocol_NestedClass_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { packagewithprotocols_ContainerProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
@@ -325,7 +335,12 @@ public final class _SiblingProtocol_NestedClass: KotlinRuntime.KotlinBase {
 }
 open class __ContainerProtocol_NestedProtocol_NestedClass: KotlinRuntime.KotlinBase {
     public init() {
-        let __kt = ContainerProtocol_NestedProtocol_NestedClass_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main.__ContainerProtocol_NestedProtocol_NestedClass.self {
+             __kt = ContainerProtocol_NestedProtocol_NestedClass_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { ContainerProtocol_NestedProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
@@ -338,7 +353,12 @@ open class __ContainerProtocol_NestedProtocol_NestedClass: KotlinRuntime.KotlinB
 }
 open class __ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass: KotlinRuntime.KotlinBase {
     public init() {
-        let __kt = packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass_init_allocate()
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main.__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass.self {
+             __kt = packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
@@ -457,6 +477,12 @@ extension main.Bazzable where Self : main.__Bazzable {
 }
 extension main.Bazzable {
 }
+extension main.ContainerProtocol {
+    public func foo() -> Swift.Void {
+        let receiver = self
+        return main.foo(receiver)
+    }
+}
 @_documentation(visibility: internal)
 extension main.ContainerProtocol where Self : main.__ContainerProtocol {
 }
@@ -494,7 +520,10 @@ extension ExportedKotlinPackages.repeating_conformances.Foeble {
 @_documentation(visibility: internal)
 extension main.SealedBazzable where Self : main.__SealedBazzable {
     public func sealedType() -> main.SealedBazzable_SealedType {
-        fatalError("must implement sealedType in subclass")
+        switch self {
+        case let value as main.SomeBazzable: .someBazzable(.init(value))
+        default: fatalError("missing sealedType for \(self)")
+        }
     }
 }
 extension main.SealedBazzable {
@@ -506,7 +535,12 @@ extension main.SealedBazzable {
 @_documentation(visibility: internal)
 extension main.SealedFoeble where Self : main.__SealedFoeble {
     public func sealedType() -> main.SealedFoeble_SealedType {
-        fatalError("must implement sealedType in subclass")
+        switch self {
+        case let value as main.SealedBazzable: .sealedBazzable(value.sealedType())
+        case let value as main._SealedFoeble_SealedBarable: .sealedBarable(value.sealedType())
+        case let value as main._SealedFoeble_SomeFoeble: .someFoeble(.init(value))
+        default: fatalError("missing sealedType for \(self)")
+        }
     }
 }
 extension main.SealedFoeble {
@@ -528,6 +562,12 @@ extension ExportedKotlinPackages.packagewithprotocols.SiblingProtocol where Self
 }
 extension ExportedKotlinPackages.packagewithprotocols.SiblingProtocol {
     public typealias NestedClass = main._ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass
+}
+extension main._ContainerProtocol_NestedProtocol {
+    public func foo() -> Swift.Void {
+        let receiver = self
+        return main.foo(receiver)
+    }
 }
 @_documentation(visibility: internal)
 extension main._ContainerProtocol_NestedProtocol where Self : main.___ContainerProtocol_NestedProtocol {
@@ -628,13 +668,28 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: main.__ExportedKotlinPa
 @_documentation(visibility: internal)
 extension main._SealedFoeble_SealedBarable where Self : main.___SealedFoeble_SealedBarable {
     public func sealedType() -> main.SealedBarable_SealedType {
-        fatalError("must implement sealedType in subclass")
+        switch self {
+        case let value as main._SealedFoeble_SomeBarable: .someBarable(.init(value))
+        default: fatalError("missing sealedType for \(self)")
+        }
     }
 }
 extension main._SealedFoeble_SealedBarable {
     @_disfavoredOverload
     public func sealedType() -> main.SealedFoeble_SealedType {
         .sealedBarable(sealedType())
+    }
+}
+extension main._SiblingProtocol_NestedClass {
+    public func foo() -> Swift.Void {
+        let receiver = self
+        return main.foo(receiver)
+    }
+}
+extension main.__ContainerProtocol_NestedProtocol_NestedClass {
+    public func foo() -> Swift.Void {
+        let receiver = self
+        return main.foo(receiver)
     }
 }
 extension ExportedKotlinPackages.packagewithprotocols {
@@ -775,7 +830,12 @@ extension ExportedKotlinPackages.repeating_conformances {
     }
     open class Child1: ExportedKotlinPackages.repeating_conformances.Parent1 {
         public override init() {
-            let __kt = repeating_conformances_Child1_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.repeating_conformances.Child1.self {
+                 __kt = repeating_conformances_Child1_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { repeating_conformances_Child1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -788,7 +848,12 @@ extension ExportedKotlinPackages.repeating_conformances {
     }
     open class Child2: ExportedKotlinPackages.repeating_conformances.Parent2 {
         public override init() {
-            let __kt = repeating_conformances_Child2_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.repeating_conformances.Child2.self {
+                 __kt = repeating_conformances_Child2_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { repeating_conformances_Child2_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -801,7 +866,12 @@ extension ExportedKotlinPackages.repeating_conformances {
     }
     open class Child3: ExportedKotlinPackages.repeating_conformances.Parent3 {
         public override init() {
-            let __kt = repeating_conformances_Child3_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.repeating_conformances.Child3.self {
+                 __kt = repeating_conformances_Child3_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { repeating_conformances_Child3_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -814,7 +884,12 @@ extension ExportedKotlinPackages.repeating_conformances {
     }
     open class Child4: ExportedKotlinPackages.repeating_conformances.Parent4 {
         public override init() {
-            let __kt = repeating_conformances_Child4_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.repeating_conformances.Child4.self {
+                 __kt = repeating_conformances_Child4_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { repeating_conformances_Child4_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -827,7 +902,12 @@ extension ExportedKotlinPackages.repeating_conformances {
     }
     open class Child5: ExportedKotlinPackages.repeating_conformances.Parent5 {
         public override init() {
-            let __kt = repeating_conformances_Child5_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.repeating_conformances.Child5.self {
+                 __kt = repeating_conformances_Child5_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { repeating_conformances_Child5_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -840,7 +920,12 @@ extension ExportedKotlinPackages.repeating_conformances {
     }
     open class GrandChild1: ExportedKotlinPackages.repeating_conformances.Child1 {
         public override init() {
-            let __kt = repeating_conformances_GrandChild1_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.repeating_conformances.GrandChild1.self {
+                 __kt = repeating_conformances_GrandChild1_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { repeating_conformances_GrandChild1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -853,7 +938,12 @@ extension ExportedKotlinPackages.repeating_conformances {
     }
     open class GrandChild2: ExportedKotlinPackages.repeating_conformances.Child2 {
         public override init() {
-            let __kt = repeating_conformances_GrandChild2_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.repeating_conformances.GrandChild2.self {
+                 __kt = repeating_conformances_GrandChild2_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { repeating_conformances_GrandChild2_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -866,7 +956,12 @@ extension ExportedKotlinPackages.repeating_conformances {
     }
     open class GrandChild3: ExportedKotlinPackages.repeating_conformances.Child3 {
         public override init() {
-            let __kt = repeating_conformances_GrandChild3_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.repeating_conformances.GrandChild3.self {
+                 __kt = repeating_conformances_GrandChild3_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { repeating_conformances_GrandChild3_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -879,7 +974,12 @@ extension ExportedKotlinPackages.repeating_conformances {
     }
     open class GrandChild4: ExportedKotlinPackages.repeating_conformances.Child4, ExportedKotlinPackages.repeating_conformances.Barable, ExportedKotlinPackages.repeating_conformances.__Barable {
         public override init() {
-            let __kt = repeating_conformances_GrandChild4_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.repeating_conformances.GrandChild4.self {
+                 __kt = repeating_conformances_GrandChild4_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { repeating_conformances_GrandChild4_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -892,7 +992,12 @@ extension ExportedKotlinPackages.repeating_conformances {
     }
     open class GrandChild5: ExportedKotlinPackages.repeating_conformances.Child5, ExportedKotlinPackages.repeating_conformances.Barable, ExportedKotlinPackages.repeating_conformances.__Barable, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances.__Foeble {
         public override init() {
-            let __kt = repeating_conformances_GrandChild5_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.repeating_conformances.GrandChild5.self {
+                 __kt = repeating_conformances_GrandChild5_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { repeating_conformances_GrandChild5_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -905,7 +1010,12 @@ extension ExportedKotlinPackages.repeating_conformances {
     }
     open class Parent1: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances.__Foeble {
         public init() {
-            let __kt = repeating_conformances_Parent1_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.repeating_conformances.Parent1.self {
+                 __kt = repeating_conformances_Parent1_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { repeating_conformances_Parent1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -918,7 +1028,12 @@ extension ExportedKotlinPackages.repeating_conformances {
     }
     open class Parent2: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances.__Foeble {
         public init() {
-            let __kt = repeating_conformances_Parent2_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.repeating_conformances.Parent2.self {
+                 __kt = repeating_conformances_Parent2_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { repeating_conformances_Parent2_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -931,7 +1046,12 @@ extension ExportedKotlinPackages.repeating_conformances {
     }
     open class Parent3: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Barable, ExportedKotlinPackages.repeating_conformances.__Barable {
         public init() {
-            let __kt = repeating_conformances_Parent3_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.repeating_conformances.Parent3.self {
+                 __kt = repeating_conformances_Parent3_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { repeating_conformances_Parent3_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -944,7 +1064,12 @@ extension ExportedKotlinPackages.repeating_conformances {
     }
     open class Parent4: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances.__Foeble {
         public init() {
-            let __kt = repeating_conformances_Parent4_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.repeating_conformances.Parent4.self {
+                 __kt = repeating_conformances_Parent4_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { repeating_conformances_Parent4_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
@@ -957,7 +1082,12 @@ extension ExportedKotlinPackages.repeating_conformances {
     }
     open class Parent5: KotlinRuntime.KotlinBase {
         public init() {
-            let __kt = repeating_conformances_Parent5_init_allocate()
+             let __kt: Swift.UnsafeMutableRawPointer!
+             if Self.self == ExportedKotlinPackages.repeating_conformances.Parent5.self {
+                 __kt = repeating_conformances_Parent5_init_allocate()
+             } else {
+                 __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+             }
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { repeating_conformances_Parent5_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }

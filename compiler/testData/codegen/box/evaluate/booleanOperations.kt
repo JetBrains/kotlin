@@ -34,7 +34,6 @@ const val equals4 = falseVal == falseVal
 const val toString1 = trueVal.toString()
 const val toString2 = falseVal.toString()
 
-// STOP_EVALUATION_CHECKS
 fun box(): String {
     if (not1.id() != false)  return "Fail 1.1"
     if (not2.id() != true)   return "Fail 1.2"

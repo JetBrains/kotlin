@@ -79,7 +79,7 @@ internal class KPackageImpl(
             }
         }
 
-        val kotlinClass: ReflectKotlinClass? by ReflectProperties.lazySoft {
+        val kotlinClass: ReflectKotlinClass? by lazy(PUBLICATION) {
             ReflectKotlinClass.create(jClass)
         }
 
@@ -100,7 +100,7 @@ internal class KPackageImpl(
             else null
         }
 
-        val members: Collection<KCallable<*>> by ReflectProperties.lazySoft {
+        val members: Collection<KCallable<*>> by lazy(PUBLICATION) {
             if (useK1Implementation) {
                 val visitor = object : CreateKCallableVisitor(this@KPackageImpl) {
                     override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): DescriptorKCallable<*> =

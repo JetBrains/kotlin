@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +CollectionLiterals
 // WITH_STDLIB
 
 fun foo(x: Any, y: List<String>) { }

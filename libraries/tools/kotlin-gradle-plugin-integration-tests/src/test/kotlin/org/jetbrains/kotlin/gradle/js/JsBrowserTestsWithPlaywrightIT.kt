@@ -34,9 +34,7 @@ import org.junit.jupiter.api.condition.OS
 import java.net.URI
 import javax.inject.Inject
 import kotlin.io.path.writeText
-import kotlin.test.Ignore
 import kotlin.test.assertContains
-import kotlin.test.assertEquals
 
 @OptIn(ExperimentalJsTestDsl::class)
 @OsCondition(
@@ -105,7 +103,10 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
         project(
             "empty",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(configurationCache = ConfigurationCacheValue.DISABLED)
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = ConfigurationCacheValue.DISABLED,
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+            )
         ) {
             addKgpToBuildScriptCompilationClasspath()
             buildScriptInjection {
@@ -496,7 +497,6 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_2])
     fun `verify playwright install browsers executed only once for multiple js targets`(gradleVersion: GradleVersion) {
         project(
             "empty",
@@ -555,9 +555,8 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
         }
     }
 
-    @Ignore("KT-88448 test fails on TeamCity")
     @GradleTest
-    fun `js smoke test when no browser is set`(gradleVersion: GradleVersion) {
+    fun `default browser is used`(gradleVersion: GradleVersion) {
         project(
             "empty",
             gradleVersion = gradleVersion,
@@ -594,8 +593,9 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
             }
 
             build(":jsBrowserTest") {
-                assertTasksAreNotInTaskGraph(":kotlinInstallPlaywrightChromium", ":kotlinInstallPlaywrightWebkit", ":kotlinInstallPlaywrightFirefox")
-                assertTasksExecuted(":jsBrowserTest")
+                assertTasksAreNotInTaskGraph(":kotlinInstallPlaywrightWebkit", ":kotlinInstallPlaywrightFirefox")
+                //when no runners are configured, default chromium runner should be installed
+                assertTasksExecuted(":kotlinInstallPlaywrightChromium", ":jsBrowserTest")
             }
         }
     }

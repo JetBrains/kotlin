@@ -3,10 +3,8 @@ import org.jetbrains.kotlin.tools.lib
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     id("native-interop-plugin")
-    id("project-tests-convention")
     id("test-inputs-check")
 }
 

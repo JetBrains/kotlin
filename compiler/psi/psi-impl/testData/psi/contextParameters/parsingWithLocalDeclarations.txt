@@ -20,7 +20,7 @@ KtFile: parsingWithLocalDeclarations.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('KClass')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('test')
@@ -69,7 +69,7 @@ KtFile: parsingWithLocalDeclarations.kt
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            FUN
+            FUNCTION
               PsiElement(fun)('fun')
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
@@ -108,7 +108,7 @@ KtFile: parsingWithLocalDeclarations.kt
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
-            FUN
+            FUNCTION
               PsiElement(fun)('fun')
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
@@ -140,7 +140,7 @@ KtFile: parsingWithLocalDeclarations.kt
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            FUN
+            FUNCTION
               PsiElement(fun)('fun')
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
@@ -185,7 +185,7 @@ KtFile: parsingWithLocalDeclarations.kt
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
-            FUN
+            FUNCTION
               PsiElement(fun)('fun')
               VALUE_PARAMETER_LIST
                 PsiElement(LPAR)('(')
@@ -225,7 +225,7 @@ KtFile: parsingWithLocalDeclarations.kt
               VALUE_ARGUMENT_LIST
                 PsiElement(LPAR)('(')
                 VALUE_ARGUMENT
-                  FUN
+                  FUNCTION
                     PsiElement(fun)('fun')
                     PsiWhiteSpace(' ')
                     VALUE_PARAMETER_LIST
@@ -324,7 +324,7 @@ KtFile: parsingWithLocalDeclarations.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
@@ -350,7 +350,7 @@ KtFile: parsingWithLocalDeclarations.kt
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
@@ -394,7 +394,7 @@ KtFile: parsingWithLocalDeclarations.kt
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')
@@ -438,7 +438,7 @@ KtFile: parsingWithLocalDeclarations.kt
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       CONTEXT_PARAMETER_LIST
         PsiElement(context)('context')

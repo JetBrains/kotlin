@@ -1,5 +1,5 @@
 KtPropertyDelegate(62,84): 'by Delegates.notNull()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/properties/ReadWriteProperty.getValue(<dispatch receiver>: kotlin.properties.ReadWriteProperty<T, V>, thisRef: T, property: kotlin.reflect.KProperty<*>): V,
       kotlin/properties/ReadWriteProperty.setValue(<dispatch receiver>: kotlin.properties.ReadWriteProperty<T, V>, thisRef: T, property: kotlin.reflect.KProperty<*>, value: V): kotlin.Unit

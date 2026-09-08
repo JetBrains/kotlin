@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationTarget
 import org.jetbrains.kotlin.analysis.api.internals.internals
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 
@@ -68,6 +69,70 @@ public val KaNamedFunctionSymbol.canBeOperator: Boolean
     get() {
         @OptIn(KaImplementationDetail::class)
         return internals.symbolInformationProvider.canBeOperator(this)
+    }
+
+/**
+ * The equality bound associated with this `equals`
+ * [operator function](https://kotlinlang.org/docs/operator-overloading.html#equality-and-inequality-operators), or `null` if the function
+ * is not an `equals` operator function or has no equality bound.
+ *
+ * With [more-specific `equals`](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0456-equals.md), an equality bound narrows
+ * the contract of `equals`: the function is guaranteed to return `false` when its argument value is not an instance of the bound.
+ * A bound can be declared with the `kotlin.EqualityBound` annotation, inherited from overridden `equals` functions, or generated
+ * together with a compiler-generated `equals` implementation.
+ *
+ * When several overridden functions contribute unrelated bounds, the result is their intersection and is represented as
+ * a [KaIntersectionType][org.jetbrains.kotlin.analysis.api.types.KaIntersectionType]. Generic class types participating in a bound are
+ * star-projected because type arguments do not affect equality compatibility. In erroneous code, the result can be a
+ * [KaErrorType][org.jetbrains.kotlin.analysis.api.types.KaErrorType].
+ *
+ * Note: this property describes the function symbol itself; it does not calculate an equality bound for a particular dispatch receiver
+ * type. For example, enum classes inherit `kotlin.Enum.equals`, whose symbol has no enum-class-specific bound. However, it's an error
+ * to compare by equality two enum entries of different types. The compiler-defined strict equality of those classifiers is therefore *not*
+ * represented by this property.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * open class Base {
+ *     // equalityBound = Base, declared explicitly.
+ *     override fun equals(@EqualityBound(Base::class) other: Any?): Boolean = true
+ * }
+ *
+ * class Derived : Base() {
+ *     // equalityBound = Base, inherited from 'Base.equals'.
+ *     override fun equals(other: Any?): Boolean = true
+ * }
+ *
+ * interface Left {
+ *     override fun equals(@EqualityBound(Left::class) other: Any?): Boolean
+ * }
+ *
+ * interface Right {
+ *     override fun equals(@EqualityBound(Right::class) other: Any?): Boolean
+ * }
+ *
+ * class Combined : Left, Right {
+ *     // Invalid: Kotlin requires an explicit denotable equality bound here.
+ *     // In this erroneous code, equalityBound = Left & Right, inherited from both overridden functions.
+ *     override fun equals(other: Any?): Boolean = true
+ * }
+ *
+ * class Unbounded {
+ *     // equalityBound = null, as neither this function nor any overridden one declares a bound.
+ *     override fun equals(other: Any?): Boolean = true
+ * }
+ *
+ * // equalityBound = Data<*>, generated together with the 'equals' of the generic data class.
+ * data class Data<T>(val value: T)
+ * ```
+ */
+@KaExperimentalApi
+context(session: KaSession)
+public val KaNamedFunctionSymbol.equalityBound: KaType?
+    get() {
+        @OptIn(KaImplementationDetail::class)
+        return internals.symbolInformationProvider.equalityBound(this)
     }
 
 /**

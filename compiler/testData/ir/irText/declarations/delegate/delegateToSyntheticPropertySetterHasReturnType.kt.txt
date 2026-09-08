@@ -1,0 +1,49 @@
+class Foo {
+  val j: J
+    field = j
+    get
+
+  var bar: @FlexibleNullability String? /* by */
+    field = KMutableProperty0<@FlexibleNullability String?>(
+      /* bound = */ [<this>.<get-j>()],
+      /* getter = */      local fun(receiver: J): @FlexibleNullability String? {
+        return receiver.getFoo()
+      }
+      /* setter = */      local fun(receiver: J, value: @FlexibleNullability String?) {
+        return receiver.setFoo(foo = value) /*~> Unit */
+      }
+    )
+
+    get(): @FlexibleNullability String? {
+      return getValue<@FlexibleNullability String?>(/* <this> = <this>.#bar$delegate, */ thisRef = <this>, property = KMutableProperty1<Foo, @FlexibleNullability String?>(
+        /* bound = */ [],
+        /* getter = */        local fun(p0: Foo): @FlexibleNullability String? {
+          return p0.<get-bar>()
+        }
+        /* setter = */        local fun(p0: Foo, value: @FlexibleNullability String?) {
+          return p0.<set-bar>(<set-?> = value)
+        }
+      )
+)
+    }
+    set(<set-?>: @FlexibleNullability String?) {
+      return setValue<@FlexibleNullability String?>(/* <this> = <this>.#bar$delegate, */ thisRef = <this>, property = KMutableProperty1<Foo, @FlexibleNullability String?>(
+        /* bound = */ [],
+        /* getter = */        local fun(p0: Foo): @FlexibleNullability String? {
+          return p0.<get-bar>()
+        }
+        /* setter = */        local fun(p0: Foo, value: @FlexibleNullability String?) {
+          return p0.<set-bar>(<set-?> = value)
+        }
+      )
+, value = <set-?>)
+    }
+
+  constructor(j: J) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestRoots
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ExternalSourceTransformers
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ThreadSafeCache
+import org.jetbrains.kotlin.test.utils.ReplacingSourceTransformer
 import org.jetbrains.kotlin.test.utils.TransformersFunctions.removeOptionalJvmInlineAnnotation
 import java.io.File
 
@@ -39,7 +40,7 @@ internal class EagerExtTestCaseGroupProvider : ExtTestCaseGroupProvider() {
                 .mapNotNull {
                     val extendedSettings = object : Settings(
                         parent = settings,
-                        settings = listOf(ExternalSourceTransformersProvider::class to JvmInlineAnnotationRemover)
+                        settings = listOf(ExternalSourceTransformersProvider::class to NativeCodegenSourceTransformers)
                     ) {}
                     super.getTestCaseGroup(TestCaseGroupId.TestDataDir(it), extendedSettings)
                 }.toSet()
@@ -62,11 +63,18 @@ internal class EagerExtTestCaseGroupProvider : ExtTestCaseGroupProvider() {
         }
 
     /*
-     * It is necessary to use this source processor as soon as it is being used in inline classes tests.
-     * This processor is registered in the class constructor, but during the test grouping it is not accessible.
+     * It is necessary to use these source processors as soon as they are being used in codegen tests.
+     * They are registered in the test class constructor, but during the test grouping they are not accessible.
      * This happens because we eagerly iterate through the test data, while JUnit does not create actual test instances.
+     *
+     * Keep this list in sync with `AbstractNativeCodegenBoxTest.getSourceTransformers()`: a transformer that is
+     * missing here is silently not applied, which makes the affected test data fail to compile only in the eager mode.
      */
-    private object JvmInlineAnnotationRemover : ExternalSourceTransformersProvider {
-        override fun getSourceTransformers(testDataFile: File): ExternalSourceTransformers = listOf(removeOptionalJvmInlineAnnotation)
+    private object NativeCodegenSourceTransformers : ExternalSourceTransformersProvider {
+        override fun getSourceTransformers(testDataFile: File): ExternalSourceTransformers = listOf(
+            // `JvmInlineSourceTransformer.computeModifier(TargetBackend.NATIVE)` resolves to exactly this transformer.
+            removeOptionalJvmInlineAnnotation,
+            ReplacingSourceTransformer("BACKEND_UNDER_TEST", "\"NATIVE\""),
+        )
     }
 }

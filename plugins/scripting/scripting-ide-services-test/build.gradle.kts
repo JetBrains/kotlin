@@ -2,13 +2,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
-    id("project-tests-convention")
 }
-
-project.updateJvmTarget("1.8")
 
 val allTestsRuntime = configurations.create("allTestsRuntime")
 

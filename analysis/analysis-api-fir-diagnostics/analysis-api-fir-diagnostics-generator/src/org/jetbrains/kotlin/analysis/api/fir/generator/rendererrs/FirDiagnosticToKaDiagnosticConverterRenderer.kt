@@ -60,7 +60,7 @@ object FirDiagnosticToKaDiagnosticConverterRenderer : AbstractDiagnosticsDataCla
 
     private fun SmartPrinter.printDiagnosticParameters(diagnostic: HLDiagnostic) {
         printCustomParameters(diagnostic)
-        println("firDiagnostic as KtPsiDiagnostic,")
+        println("firDiagnostic as KtDiagnosticWithSource,")
         println("token,")
     }
 
@@ -88,7 +88,7 @@ object FirDiagnosticToKaDiagnosticConverterRenderer : AbstractDiagnosticsDataCla
     }
 
     override val defaultImports = listOf(
-        "org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic",
+        "org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource",
         "org.jetbrains.kotlin.fir.builder.FirSyntaxErrors",
         "org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors",
         "org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors",

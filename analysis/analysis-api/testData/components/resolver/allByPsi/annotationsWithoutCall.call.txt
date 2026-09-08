@@ -23,7 +23,7 @@ KtDeclarationModifierList(36,41): '@Anno'
   null
 
 KtAnnotationEntry(36,41): '@Anno'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -40,7 +40,7 @@ KtAnnotationEntry(36,41): '@Anno'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(37,41): 'Anno'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -63,7 +63,7 @@ KtUserType(37,41): 'Anno'
   null
 
 KtNameReferenceExpression(37,41): 'Anno'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaAnnotationCall:
       contextArgumentMapping = {}
       contextArguments = []

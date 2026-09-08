@@ -29,7 +29,7 @@ RUN rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /usr/lib/jvm
 
-RUN curl https://corretto.aws/downloads/resources/8.392.08.1/amazon-corretto-8.392.08.1-linux-x64.tar.gz | tar -xz -C /usr/lib/jvm
+RUN curl https://corretto.aws/downloads/resources/8.502.07.1/amazon-corretto-8.502.07.1-linux-x64.tar.gz | tar -xz -C /usr/lib/jvm
 
 RUN curl https://corretto.aws/downloads/resources/11.0.26.4.1/amazon-corretto-11.0.26.4.1-linux-x64.tar.gz | tar -xz -C /usr/lib/jvm
 
@@ -41,8 +41,10 @@ RUN curl https://corretto.aws/downloads/resources/25.0.2.10.1/amazon-corretto-25
 
 RUN curl https://download.java.net/java/early_access/valhalla/27/1/openjdk-27-jep401ea3+1-1_linux-x64_bin.tar.gz | tar -xz -C /usr/lib/jvm
 
+RUN curl -L https://gds.oracle.com/download/graal/25i2/latest/graalvm-jdk-25i2-25_linux-x64_bin.tar.gz | tar -xz -C /usr/lib/jvm
+
 # New naming conventions
-ENV JDK8=/usr/lib/jvm/amazon-corretto-8.392.08.1-linux-x64 \
+ENV JDK8=/usr/lib/jvm/amazon-corretto-8.502.07.1-linux-x64 \
     JDK11=/usr/lib/jvm/amazon-corretto-11.0.26.4.1-linux-x64 \
     JDK17=/usr/lib/jvm/amazon-corretto-17.0.9.8.1-linux-x64 \
     JDK21=/usr/lib/jvm/amazon-corretto-21.0.1.12.1-linux-x64 \
@@ -61,6 +63,7 @@ ENV JDK_11_0=$JDK11 \
     JDK_25_0=$JDK25
 
 ENV JDK_VALHALLA=/usr/lib/jvm/jdk-27
+ENV JDK_NATIVE_IMAGE=/usr/lib/jvm/graalvm-25.2.4+7.1
 
 ENV JAVA_HOME=$JDK_17_0
 ENV PATH="$PATH:$JAVA_HOME/bin"

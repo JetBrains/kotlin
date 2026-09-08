@@ -8,7 +8,7 @@ KtNameReferenceExpression(33,37): 'main'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       main
     ]
@@ -26,7 +26,7 @@ KtNameReferenceExpression(46,50): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test
     ]
@@ -35,7 +35,7 @@ KtNameReferenceExpression(51,54): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo
     ]
@@ -53,7 +53,7 @@ KtNameReferenceExpression(62,66): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test
     ]
@@ -62,7 +62,7 @@ KtNameReferenceExpression(67,70): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo
     ]
@@ -71,7 +71,7 @@ KtNameReferenceExpression(71,74): 'BAR'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo.BAR
     ]
@@ -86,13 +86,13 @@ KtParameter(91,99): 'foo: Foo'
   null
 
 KtTypeReference(96,99): 'Foo'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo
     ]
 
 KtUserType(96,99): 'Foo'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo
     ]
@@ -101,7 +101,7 @@ KtNameReferenceExpression(96,99): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo
     ]
@@ -116,13 +116,13 @@ KtParameterList(114,116): '()'
   null
 
 KtTypeReference(118,121): 'Foo'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo
     ]
 
 KtUserType(118,121): 'Foo'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo
     ]
@@ -131,7 +131,7 @@ KtNameReferenceExpression(118,121): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo
     ]
@@ -140,7 +140,7 @@ KtBlockExpression(122,160): '{'
   null
 
 KtCallExpression(128,143): 'expectsFoo(BAR)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       main/expectsFoo(foo: test.Foo): kotlin.Unit
     ]
@@ -149,7 +149,7 @@ KtNameReferenceExpression(128,138): 'expectsFoo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       main/expectsFoo(foo: test.Foo): kotlin.Unit
     ]
@@ -164,13 +164,13 @@ KtNameReferenceExpression(139,142): 'BAR'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: ImportCanBeRemoved
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo.BAR
     ]
 
 KtReturnExpression(148,158): 'return BAR'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       main/usage(): test.Foo
     ]
@@ -179,7 +179,7 @@ KtNameReferenceExpression(155,158): 'BAR'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: ImportCanBeRemoved
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo.BAR
     ]

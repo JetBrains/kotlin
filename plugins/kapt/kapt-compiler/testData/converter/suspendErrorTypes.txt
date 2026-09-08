@@ -10,6 +10,9 @@
  *   // signature: b-IoAF18A(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
  *   public final suspend fun b(): kotlin/Result<error/NonExistentClass>
  *
+ *   // signature: c(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ *   public final suspend fun c(): kotlin/collections/List<error/NonExistentClass>
+ *
  *   // module name: main
  * }
  */
@@ -23,6 +26,12 @@ public final class Foo {
     @org.jetbrains.annotations.Nullable()
     public final java.lang.Object a(@org.jetbrains.annotations.NotNull()
     kotlin.coroutines.Continuation<ABC> $completion) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.Nullable()
+    public final java.lang.Object c(@org.jetbrains.annotations.NotNull()
+    kotlin.coroutines.Continuation<java.util.List<? extends ABC>> $completion) {
         return null;
     }
 }

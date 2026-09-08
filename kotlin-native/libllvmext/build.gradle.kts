@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.tools.ToolExecutionTask
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("kotlin.native.build-tools-conventions")
@@ -33,7 +32,6 @@ plugins {
     id("native-dependencies")
     id("git-clang-format")
     id("java-test-fixtures")
-    id("project-tests-convention")
     id("test-inputs-check")
 }
 

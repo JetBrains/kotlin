@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
-import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 
@@ -26,12 +26,18 @@ import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
  * // The entire class
  * ```
  */
+@SubclassOptInRequired(KtImplementationDetail::class)
 open class KtClass : KtClassOrObject {
     private val classInterfaceTokenSet = TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD)
 
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
-    constructor(stub: KotlinClassStub) : super(stub, KtStubBasedElementTypes.CLASS)
-    constructor(stub: KotlinClassStub, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
+
+    @KtImplementationDetail
+    constructor(stub: KotlinClassStub) : super(stub, KtNodeTypes.CLASS)
+
+    @KtImplementationDetail
+    constructor(stub: KotlinClassStub, nodeType: IElementType) : super(stub, nodeType)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitClass(this, data)
@@ -40,23 +46,58 @@ open class KtClass : KtClassOrObject {
     private val _stub: KotlinClassStub?
         get() = greenStub as? KotlinClassStub
 
+    /**
+     * Returns the properties declared directly in this class body, in source order; empty if there are none.
+     */
     fun getProperties(): List<KtProperty> = body?.properties.orEmpty()
 
+    /**
+     * Returns `true` if this declaration is an interface (declared with `interface`) rather than a class.
+     */
     fun isInterface(): Boolean =
         _stub?.isInterface ?: (findChildByType<PsiElement>(KtTokens.INTERFACE_KEYWORD) != null)
 
+    /**
+     * Returns `true` if this declaration has the `enum` modifier.
+     */
     fun isEnum(): Boolean = hasModifier(KtTokens.ENUM_KEYWORD)
+
+    /**
+     * Returns `true` if this declaration has the `sealed` modifier.
+     */
     fun isSealed(): Boolean = hasModifier(KtTokens.SEALED_KEYWORD)
+
+    /**
+     * Returns `true` if this declaration has the `inner` modifier.
+     */
     fun isInner(): Boolean = hasModifier(KtTokens.INNER_KEYWORD)
+
+    /**
+     * Returns `true` if this declaration has the `inline` modifier.
+     */
     fun isInline(): Boolean = hasModifier(KtTokens.INLINE_KEYWORD)
+
+    /**
+     * Returns `true` if this declaration has the `value` modifier (that is, it declares a value class).
+     */
     fun isValue(): Boolean = hasModifier(KtTokens.VALUE_KEYWORD)
 
     override fun getCompanionObjects(): List<KtObjectDeclaration> = body?.allCompanionObjects.orEmpty()
 
+    /**
+     * Returns the `class` or `interface` keyword introducing this declaration, or `null` if it is absent in incomplete code.
+     */
     fun getClassOrInterfaceKeyword(): PsiElement? = findChildByType(classInterfaceTokenSet)
 
+    /**
+     * Returns the `class` keyword, or `null` if this declaration is an interface or the keyword is absent.
+     */
     fun getClassKeyword(): PsiElement? = findChildByType(KtTokens.CLASS_KEYWORD)
 
+    /**
+     * Returns the `fun` keyword of a functional (SAM) interface (`fun interface`), or `null` if this declaration is not a
+     * functional interface.
+     */
     fun getFunKeyword(): PsiElement? = modifierList?.getModifier(KtTokens.FUN_KEYWORD)
 }
 

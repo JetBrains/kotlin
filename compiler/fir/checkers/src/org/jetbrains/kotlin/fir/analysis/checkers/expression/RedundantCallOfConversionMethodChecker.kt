@@ -52,7 +52,7 @@ object RedundantCallOfConversionMethodChecker : FirFunctionCallChecker(MppChecke
             when {
                 resolvedType is ConeFlexibleType -> null
                 resolvedType.isMarkedNullable -> null
-                resolvedType.abbreviatedTypeOrSelf.toClassLikeSymbol()?.hasAnnotation(unsafeNumberClassId, session) == true -> null
+                resolvedType.abbreviatedTypeOrSelf.toClassLikeSymbol().hasAnnotation(unsafeNumberClassId, session) -> null
                 else -> resolvedType.fullyExpandedClassId(session)
             }
         }

@@ -11,13 +11,14 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.ReplaceWith;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
-
 import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
 import java.util.Collections;
@@ -35,8 +36,10 @@ import static org.jetbrains.kotlin.lexer.KtTokens.EQ;
  * }</pre>
  */
 @SuppressWarnings("deprecation")
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbed implements KtVariableDeclaration, KtResolvableCall {
 
+    @KtImplementationDetail
     public KtDestructuringDeclarationEntry(@NotNull ASTNode node) {
         super(node);
     }
@@ -54,7 +57,7 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbe
     @Nullable
     @kotlin.Deprecated(
             message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.setDestructuringDeclarationEntryTypeReference(this, typeRef)' instead.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "this.setDestructuringDeclarationEntryTypeReference(typeRef)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.setDestructuringDeclarationEntryTypeReference"
             )
@@ -70,42 +73,49 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbe
         return findChildByType(KtTokens.COLON);
     }
 
+    /** Always {@code null}: a destructuring entry has no value parameter list. */
     @Nullable
     @Override
     public KtParameterList getValueParameterList() {
         return null;
     }
 
+    /** Always empty: a destructuring entry has no value parameters. */
     @NotNull
     @Override
     public List<KtParameter> getValueParameters() {
         return Collections.emptyList();
     }
 
+    /** Always {@code null}: a destructuring entry cannot have an extension receiver. */
     @Nullable
     @Override
     public KtTypeReference getReceiverTypeReference() {
         return null;
     }
 
+    /** Always {@code null}: a destructuring entry cannot declare type parameters. */
     @Nullable
     @Override
     public KtTypeParameterList getTypeParameterList() {
         return null;
     }
 
+    /** Always {@code null}: a destructuring entry cannot have a {@code where} clause. */
     @Nullable
     @Override
     public KtTypeConstraintList getTypeConstraintList() {
         return null;
     }
 
+    /** Always empty: a destructuring entry has no type constraints. */
     @NotNull
     @Override
     public List<KtTypeConstraint> getTypeConstraints() {
         return Collections.emptyList();
     }
 
+    /** Always empty: a destructuring entry cannot declare type parameters. */
     @NotNull
     @Override
     public List<KtTypeParameter> getTypeParameters() {
@@ -171,6 +181,7 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbe
         return findChildByType(KtTokens.VAL_VAR);
     }
 
+    /** Always {@code null}: a destructuring entry has no fully qualified name. */
     @Nullable
     @Override
     public FqName getFqName() {

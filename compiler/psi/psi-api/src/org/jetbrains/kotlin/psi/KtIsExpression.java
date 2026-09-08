@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -22,7 +23,9 @@ import org.jetbrains.kotlin.lexer.KtTokens;
  * }
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtIsExpression extends KtExpressionImpl implements KtOperationExpression {
+    @KtImplementationDetail
     public KtIsExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -32,11 +35,13 @@ public class KtIsExpression extends KtExpressionImpl implements KtOperationExpre
         return visitor.visitIsExpression(this, data);
     }
 
+    /** Returns the operand being type-checked (the expression on the left of {@code is}). */
     @NotNull
     public KtExpression getLeftHandSide() {
         return findChildByClass(KtExpression.class);
     }
 
+    /** Returns the type reference being checked against, or {@code null} if it is absent in incomplete code. */
     @Nullable @IfNotParsed
     public KtTypeReference getTypeReference() {
         return (KtTypeReference) findChildByType(KtNodeTypes.TYPE_REFERENCE);
@@ -48,6 +53,7 @@ public class KtIsExpression extends KtExpressionImpl implements KtOperationExpre
         return (KtSimpleNameExpression) findChildByType(KtNodeTypes.OPERATION_REFERENCE);
     }
 
+    /** Returns {@code true} if this is a {@code !is} (negated) check rather than a plain {@code is} check. */
     public boolean isNegated() {
         return getOperationReference().getReferencedNameElementType() == KtTokens.NOT_IS;
     }

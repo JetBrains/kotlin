@@ -14,11 +14,12 @@ import org.jetbrains.kotlin.analysis.api.impl.base.util.toAnalysisApiSeverity
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.psi
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
 
 internal abstract class KaAbstractFirDiagnostic<PSI : PsiElement>(
-    private val firDiagnostic: KtPsiDiagnostic,
+    private val firDiagnostic: KtDiagnosticWithSource,
     override val token: KaLifetimeToken,
 ) : KaDiagnosticWithPsi<PSI>, KaLifetimeOwner {
 
@@ -36,7 +37,7 @@ internal abstract class KaAbstractFirDiagnostic<PSI : PsiElement>(
 
     @Suppress("UNCHECKED_CAST")
     override val psi: PSI
-        get() = withValidityAssertion { firDiagnostic.psiElement as PSI }
+        get() = withValidityAssertion { firDiagnostic.psi as PSI }
 
     override val severity: KaSeverity
         get() = withValidityAssertion { firDiagnostic.severity.toAnalysisApiSeverity() }

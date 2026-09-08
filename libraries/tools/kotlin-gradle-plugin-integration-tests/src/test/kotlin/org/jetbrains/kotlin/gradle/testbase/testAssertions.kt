@@ -6,15 +6,21 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import com.intellij.openapi.util.JDOMUtil
+import org.gradle.internal.impldep.com.google.common.hash.HashFunction
+import org.gradle.internal.impldep.com.google.common.hash.Hashing
+import org.gradle.util.GradleVersion
 import org.jdom.Content
 import org.jdom.Element
 import org.jdom.Text
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
+import java.nio.file.Files
 import java.nio.file.Path
+import java.util.Base64
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * @param stripBrowserVersionInfoFromTestCaseNames Some test executor implementations include browser version info in test case names,
@@ -56,6 +62,20 @@ fun GradleProject.assertTestResults(
     val expectedTestResults = prettyPrintXml(expectedTestReport.readText())
 
     assertEquals(expectedTestResults, actualTestResults)
+}
+
+fun GradleProject.assertNoTestResultsProduced(
+    taskName: String,
+    subprojectName: String? = null,
+) {
+    val testResultsDir = testResultsAndReportsDirs(taskName, subprojectName).first
+    if (Files.exists(testResultsDir)) {
+        val xmlFiles = testResultsDir.allFilesWithExtension("xml")
+        assertTrue(
+            xmlFiles.isEmpty(),
+            "Expected no test result XML files in '$testResultsDir', but found: ${xmlFiles.joinToString()}"
+        )
+    }
 }
 
 internal fun readValidateAndCleanupTestResults(
@@ -132,3 +152,127 @@ internal fun readValidateAndCleanupTestResults(
 
 internal fun prettyPrintXml(uglyXml: String): String =
     JDOMUtil.write(JDOMUtil.load(uglyXml.reader()))
+
+fun GradleProject.readTestCases(
+    taskName: String,
+    subprojectName: String? = null,
+): List<TestCaseResult> {
+    val simpleTaskName = taskName.substringAfterLast(':')
+    val testReportDir = testResultsAndReportsDirs(taskName, subprojectName).first
+
+    if (!Files.exists(testReportDir)) {
+        return emptyList()
+    }
+
+    val xmlFiles = testReportDir.allFilesWithExtension("xml")
+    return xmlFiles.flatMap { xmlFile ->
+        val root = JDOMUtil.load(xmlFile)
+        val testCases = when (root.name) {
+            "testcase" -> listOf(root)
+            "testsuites" -> root.getChildren("testcase") + root.getChildren("testsuite").flatMap { it.getChildren("testcase") }
+            else -> root.getChildren("testcase")
+        }
+        testCases.map { testCaseElement ->
+            val rawClassName = testCaseElement.getAttributeValue("classname")
+                ?: testCaseElement.getAttributeValue("className")
+                ?: ""
+            val className = rawClassName.removePrefix("$simpleTaskName.")
+            val name = testCaseElement.getAttributeValue("name") ?: ""
+            val failureElement = testCaseElement.getChild("failure") ?: testCaseElement.getChild("error")
+            val failure = failureElement?.let {
+                TestFailureInfo(
+                    message = it.getAttributeValue("message"),
+                    type = it.getAttributeValue("type"),
+                    stackTrace = it.textTrim.ifEmpty { null } ?: it.text.ifEmpty { null }
+                )
+            }
+            TestCaseResult(
+                className = className,
+                name = name,
+                failure = failure
+            )
+        }
+    }
+}
+
+fun GradleProject.assertExecutedTestCases(
+    taskName: String,
+    vararg expectedIds: String,
+    subprojectName: String? = null,
+) {
+    val actualIds = readTestCases(taskName, subprojectName).map { it.id }.toSortedSet()
+    val expected = expectedIds.toSortedSet()
+    assertEquals(expected, actualIds)
+}
+
+private fun GradleProject.testResultsAndReportsDirs(
+    taskName: String,
+    subprojectName: String? = null,
+): Pair<Path, Path> {
+    val cleanTaskName = taskName.removePrefix(":")
+    val subproject: String? = when {
+        subprojectName != null -> subprojectName
+        cleanTaskName.contains(':') -> cleanTaskName.substringBeforeLast(':').replace(':', '/')
+        else -> null
+    }
+    val simpleTaskName: String = cleanTaskName.substringAfterLast(':')
+    val buildDirLocation = if (subproject != null) {
+        projectPath.resolve(subproject)
+    } else {
+        projectPath
+    }
+    val testResultsDir = buildDirLocation.resolve("build/test-results/$simpleTaskName")
+    val testReportsDir = buildDirLocation.resolve("build/reports/tests/$simpleTaskName")
+    return testResultsDir to testReportsDir
+}
+
+fun GradleProject.testClassHtmlReport(
+    taskName: String,
+    className: String,
+    gradleVersion: GradleVersion,
+    subprojectName: String? = null,
+    targetName: String? = null,
+): Path {
+    val testReportsDir = testResultsAndReportsDirs(taskName, subprojectName).second
+    val simpleTaskName = taskName.removePrefix(":").substringAfterLast(':')
+
+    val reportRelativePath = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) {
+        "classes/$className.html"
+    } else {
+        val prefix = if (targetName == "jvm") "" else "$simpleTaskName."
+        val dirName = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_4) ||
+            gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_9_6)
+        ) {
+            "$prefix$className"
+        } else {
+            "$prefix$className".hashTestPathSegment()
+        }
+        "$dirName/index.html"
+    }
+
+    return testReportsDir.resolve(reportRelativePath)
+}
+
+// Adopted from Gradle
+// platforms/software/testing-base/src/main/java/org/gradle/api/internal/tasks/testing/report/generic/GenericHtmlTestReportGenerator.java
+// Caused by https://github.com/gradle/gradle/pull/37052
+private fun String.hashTestPathSegment(): String {
+    val hashBytes = TEST_PATH_HASHER.hashUnencodedChars(this).asBytes()
+    return Base64.getUrlEncoder().withoutPadding().encodeToString(hashBytes)
+}
+
+private val TEST_PATH_HASHER: HashFunction = Hashing.farmHashFingerprint64()
+
+data class TestCaseResult(
+    val className: String,
+    val name: String,
+    val failure: TestFailureInfo? = null,
+) {
+    val id: String = "$className#${name.substringBefore('[')}"
+}
+
+data class TestFailureInfo(
+    val message: String? = null,
+    val type: String? = null,
+    val stackTrace: String? = null,
+)

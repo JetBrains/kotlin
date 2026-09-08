@@ -39,11 +39,8 @@ com/intellij/psi/impl/source/tree/LeafPsiElement
 com/intellij/psi/search/GlobalSearchScope
 com/intellij/psi/search/LocalSearchScope
 com/intellij/psi/search/SearchScope
-com/intellij/psi/stubs/IStubElementType
-com/intellij/psi/stubs/IndexSink
 com/intellij/psi/stubs/NamedStub
 com/intellij/psi/stubs/PsiFileStub
-com/intellij/psi/stubs/Stub
 com/intellij/psi/stubs/StubElement
 com/intellij/psi/tree/IElementType
 com/intellij/psi/tree/IFileElementType

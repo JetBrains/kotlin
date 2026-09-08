@@ -41,12 +41,12 @@ KtSuperTypeList(64,67): 'T()'
   null
 
 KtSuperTypeCallEntry(64,67): 'T()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<OTHER_ERROR: Erroneous delegated constructor call>
 
 KtConstructorCalleeExpression(64,65): 'T'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<OTHER_ERROR: Erroneous delegated constructor call>
 
@@ -57,7 +57,7 @@ KtUserType(64,65): 'T'
   null
 
 KtNameReferenceExpression(64,65): 'T'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<OTHER_ERROR: Erroneous delegated constructor call>
 

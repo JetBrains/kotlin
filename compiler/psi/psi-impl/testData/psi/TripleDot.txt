@@ -8,7 +8,7 @@ KtFile: TripleDot.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(RESERVED)('...')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')

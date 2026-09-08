@@ -35,7 +35,7 @@ KtClassLiteralExpression(55,74): 'MyClass<Int>::class'
   null
 
 KtCallExpression(55,67): 'MyClass<Int>'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -57,7 +57,7 @@ KtCallExpression(55,67): 'MyClass<Int>'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
 
 KtNameReferenceExpression(55,62): 'MyClass'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}

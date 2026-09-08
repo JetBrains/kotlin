@@ -8,7 +8,7 @@ KtNameReferenceExpression(59,63): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test
     ]
@@ -29,13 +29,13 @@ KtParameterList(90,92): '()'
   null
 
 KtConstructorDelegationCall(92,92): ''
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): kotlin.Any
     ]
 
 KtConstructorDelegationReferenceExpression(92,92): ''
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): kotlin.Any
     ]
@@ -47,13 +47,13 @@ KtParameterList(108,110): '()'
   null
 
 KtConstructorDelegationCall(110,110): ''
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): kotlin.Any
     ]
 
 KtConstructorDelegationReferenceExpression(110,110): ''
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): kotlin.Any
     ]
@@ -68,13 +68,13 @@ KtParameter(127,136): 's: String'
   null
 
 KtTypeReference(130,136): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(130,136): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -83,19 +83,19 @@ KtNameReferenceExpression(130,136): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtConstructorDelegationCall(137,137): ''
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): kotlin.Any
     ]
 
 KtConstructorDelegationReferenceExpression(137,137): ''
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): kotlin.Any
     ]
@@ -107,13 +107,13 @@ KtDeclarationModifierList(141,159): 'companion operator'
   null
 
 KtTypeReference(164,165): 'C'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
 KtUserType(164,165): 'C'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
@@ -122,7 +122,7 @@ KtNameReferenceExpression(164,165): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
@@ -140,13 +140,13 @@ KtDeclarationModifierList(178,196): 'companion operator'
   null
 
 KtTypeReference(201,202): 'C'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
 KtUserType(201,202): 'C'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
@@ -155,7 +155,7 @@ KtNameReferenceExpression(201,202): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
@@ -173,13 +173,13 @@ KtDeclarationModifierList(215,233): 'companion operator'
   null
 
 KtTypeReference(238,239): 'C'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
 KtUserType(238,239): 'C'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
@@ -188,7 +188,7 @@ KtNameReferenceExpression(238,239): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
@@ -200,13 +200,13 @@ KtParameter(247,261): 'withParam: Int'
   null
 
 KtTypeReference(258,261): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(258,261): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -215,7 +215,7 @@ KtNameReferenceExpression(258,261): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -233,7 +233,7 @@ KtBlockExpression(279,305): '{'
   null
 
 KtCallExpression(285,288): 'C()'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(): test.C,
       <constructor>(): test.C
@@ -246,7 +246,7 @@ KtNameReferenceExpression(285,286): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(): test.C,
       <constructor>(): test.C
@@ -259,7 +259,7 @@ KtValueArgumentList(286,288): '()'
   null
 
 KtDotQualifiedExpression(293,303): 'C.invoke()'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       test/invoke(<extension receiver>: test.C): kotlin.Unit,
       test/invoke(<extension receiver>: test.C): kotlin.Unit
@@ -272,13 +272,13 @@ KtNameReferenceExpression(293,294): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/C
     ]
 
 KtCallExpression(295,303): 'invoke()'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       test/invoke(<extension receiver>: test.C): kotlin.Unit,
       test/invoke(<extension receiver>: test.C): kotlin.Unit
@@ -291,7 +291,7 @@ KtNameReferenceExpression(295,301): 'invoke'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       test/invoke(<extension receiver>: test.C): kotlin.Unit,
       test/invoke(<extension receiver>: test.C): kotlin.Unit

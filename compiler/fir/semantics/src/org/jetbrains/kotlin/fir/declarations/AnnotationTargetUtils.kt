@@ -54,13 +54,8 @@ fun FirAnnotation.forEachAnnotationTarget(session: FirSession, action: (Name) ->
         }
     }
 
-    if (this is FirAnnotationCall) {
-        for (arg in argumentList.arguments) {
-            arg.unwrapAndFlattenArgument(flattenArrays = true).forEach(::take)
-        }
-    } else {
-        argumentMapping.mapping[StandardClassIds.Annotations.ParameterNames.targetAllowedTargets]
-            ?.unwrapAndFlattenArgument(flattenArrays = true)
-            ?.forEach(::take)
-    }
+    argumentMapping.mapping[StandardClassIds.Annotations.ParameterNames.targetAllowedTargets]
+        ?.unwrapAndFlattenArgument(flattenArrays = true)
+        ?.forEach(::take)
 }
+

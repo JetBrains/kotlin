@@ -1,0 +1,105 @@
+FILE fqName:<root> fileName:/test.kt
+  CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Foo
+    PROPERTY name:j visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:j type:<root>.J visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'j: <root>.J declared in <root>.Foo.<init>' type=<root>.J origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-j> visibility:public modality:FINAL returnType:<root>.J
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Foo
+        correspondingProperty: PROPERTY name:j visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-j> (): <root>.J declared in <root>.Foo'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.J visibility:private [final]' type=<root>.J origin=null
+              receiver: GET_VAR '<this>: <root>.Foo declared in <root>.Foo.<get-j>' type=<root>.Foo origin=null
+    PROPERTY name:bar visibility:public modality:FINAL [delegated,var]
+      FIELD PROPERTY_DELEGATE name:bar$delegate type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final]
+        EXPRESSION_BODY
+          RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null reflectionTarget='public open foo declared in <root>.Foo.bar$delegate'
+            bound receiver: CALL 'public final fun <get-j> (): <root>.J declared in <root>.Foo' type=<root>.J origin=GET_PROPERTY
+              ARG <this>: GET_VAR '<this>: <root>.Foo declared in <root>.Foo' type=<root>.Foo origin=IMPLICIT_ARGUMENT
+            getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:@[FlexibleNullability] kotlin.String?
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.J
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun foo (receiver: <root>.J): @[FlexibleNullability] kotlin.String? declared in <root>.Foo.bar$delegate'
+                  CALL 'public open fun getFoo (): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null
+                    ARG <this>: GET_VAR 'receiver: <root>.J declared in <root>.Foo.bar$delegate.foo' type=<root>.J origin=ADAPTED_FUNCTION_REFERENCE
+            setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.J
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:@[FlexibleNullability] kotlin.String?
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun foo (receiver: <root>.J, value: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Foo.bar$delegate'
+                  TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                    CALL 'public open fun setFoo (foo: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null
+                      ARG <this>: GET_VAR 'receiver: <root>.J declared in <root>.Foo.bar$delegate.foo' type=<root>.J origin=ADAPTED_FUNCTION_REFERENCE
+                      ARG foo: GET_VAR 'value: @[FlexibleNullability] kotlin.String? declared in <root>.Foo.bar$delegate.foo' type=@[FlexibleNullability] kotlin.String? origin=ADAPTED_FUNCTION_REFERENCE
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:FINAL returnType:@[FlexibleNullability] kotlin.String?
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Foo
+        correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL [delegated,var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-bar> (): @[FlexibleNullability] kotlin.String? declared in <root>.Foo'
+            CALL 'public final fun getValue <V> (<this>: kotlin.reflect.KProperty0<V of kotlin.getValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V of kotlin.getValue declared in kotlin' type=@[FlexibleNullability] kotlin.String? origin=null
+              TYPE_ARG V: @[FlexibleNullability] kotlin.String?
+              ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:bar$delegate type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final] declared in <root>.Foo' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
+                receiver: GET_VAR '<this>: <root>.Foo declared in <root>.Foo.<get-bar>' type=<root>.Foo origin=IMPLICIT_ARGUMENT
+              ARG thisRef: GET_VAR '<this>: <root>.Foo declared in <root>.Foo.<get-bar>' type=<root>.Foo origin=null
+              ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<<root>.Foo, @[FlexibleNullability] kotlin.String?> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final bar: @[FlexibleNullability] kotlin.String? declared in <root>.Foo'
+                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:@[FlexibleNullability] kotlin.String?
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Foo
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun bar (p0: <root>.Foo): @[FlexibleNullability] kotlin.String? declared in <root>.Foo.<get-bar>'
+                      CALL 'public final fun <get-bar> (): @[FlexibleNullability] kotlin.String? declared in <root>.Foo' type=@[FlexibleNullability] kotlin.String? origin=null
+                        ARG <this>: GET_VAR 'p0: <root>.Foo declared in <root>.Foo.<get-bar>.bar' type=<root>.Foo origin=null
+                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.Unit
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Foo
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:@[FlexibleNullability] kotlin.String?
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun bar (p0: <root>.Foo, value: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Foo.<get-bar>'
+                      CALL 'public final fun <set-bar> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Foo' type=kotlin.Unit origin=null
+                        ARG <this>: GET_VAR 'p0: <root>.Foo declared in <root>.Foo.<get-bar>.bar' type=<root>.Foo origin=null
+                        ARG <set-?>: GET_VAR 'value: @[FlexibleNullability] kotlin.String? declared in <root>.Foo.<get-bar>.bar' type=@[FlexibleNullability] kotlin.String? origin=ADAPTED_FUNCTION_REFERENCE
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<set-bar> visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Foo
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:@[FlexibleNullability] kotlin.String?
+        correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL [delegated,var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <set-bar> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Foo'
+            CALL 'public final fun setValue <V> (<this>: kotlin.reflect.KMutableProperty0<V of kotlin.setValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.setValue): kotlin.Unit declared in kotlin' type=kotlin.Unit origin=null
+              TYPE_ARG V: @[FlexibleNullability] kotlin.String?
+              ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:bar$delegate type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final] declared in <root>.Foo' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
+                receiver: GET_VAR '<this>: <root>.Foo declared in <root>.Foo.<set-bar>' type=<root>.Foo origin=IMPLICIT_ARGUMENT
+              ARG thisRef: GET_VAR '<this>: <root>.Foo declared in <root>.Foo.<set-bar>' type=<root>.Foo origin=null
+              ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<<root>.Foo, @[FlexibleNullability] kotlin.String?> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final bar: @[FlexibleNullability] kotlin.String? declared in <root>.Foo'
+                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:@[FlexibleNullability] kotlin.String?
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Foo
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun bar (p0: <root>.Foo): @[FlexibleNullability] kotlin.String? declared in <root>.Foo.<set-bar>'
+                      CALL 'public final fun <get-bar> (): @[FlexibleNullability] kotlin.String? declared in <root>.Foo' type=@[FlexibleNullability] kotlin.String? origin=null
+                        ARG <this>: GET_VAR 'p0: <root>.Foo declared in <root>.Foo.<set-bar>.bar' type=<root>.Foo origin=null
+                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.Unit
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.Foo
+                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:1 type:@[FlexibleNullability] kotlin.String?
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun bar (p0: <root>.Foo, value: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Foo.<set-bar>'
+                      CALL 'public final fun <set-bar> (<set-?>: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Foo' type=kotlin.Unit origin=null
+                        ARG <this>: GET_VAR 'p0: <root>.Foo declared in <root>.Foo.<set-bar>.bar' type=<root>.Foo origin=null
+                        ARG <set-?>: GET_VAR 'value: @[FlexibleNullability] kotlin.String? declared in <root>.Foo.<set-bar>.bar' type=@[FlexibleNullability] kotlin.String? origin=ADAPTED_FUNCTION_REFERENCE
+              ARG value: GET_VAR '<set-?>: @[FlexibleNullability] kotlin.String? declared in <root>.Foo.<set-bar>' type=@[FlexibleNullability] kotlin.String? origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.Foo [primary]
+      VALUE_PARAMETER kind:Regular name:j index:0 type:<root>.J
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any

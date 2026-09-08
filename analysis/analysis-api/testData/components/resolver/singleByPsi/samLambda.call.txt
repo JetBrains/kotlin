@@ -1,5 +1,5 @@
 KtCallExpression(143,162): 'test { uiMethod() }'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

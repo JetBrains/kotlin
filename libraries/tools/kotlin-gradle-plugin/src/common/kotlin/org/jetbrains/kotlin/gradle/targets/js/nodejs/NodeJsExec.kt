@@ -13,11 +13,11 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.dependsOnNpmTooling
 import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
@@ -129,14 +129,7 @@ constructor(
                 it.executable = nodeJsEnvSpec.executable.get()
                 if (compilation.target.wasmTargetType != KotlinWasmTargetType.WASI) {
                     it.workingDir(npmProject.dir)
-                    it.dependsOn(
-                        nodeJsRoot.npmInstallTaskProvider,
-                    )
-                    it.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
-
-                    if (compilation.isWasm) {
-                        it.dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
-                    }
+                    it.dependsOnNpmTooling(compilation)
                 }
 
                 it.npmToolingEnvDir.set(npmToolingDir)
@@ -149,34 +142,5 @@ constructor(
                 it.configuration()
             }
         }
-
-        @Deprecated(
-            "Use create(KotlinJsIrCompilation, name, configuration). Scheduled for removal in Kotlin 2.5.",
-            replaceWith = ReplaceWith("create(compilation, name, configuration)"),
-            // KT-85179 Used by kotlinx-benchmark https://github.com/Kotlin/kotlinx-benchmark/issues/355
-            level = DeprecationLevel.HIDDEN
-        )
-        fun create(
-            compilation: KotlinJsCompilation,
-            name: String,
-            configuration: NodeJsExec.() -> Unit = {},
-        ): TaskProvider<NodeJsExec> =
-            register(
-                compilation as KotlinJsIrCompilation,
-                name,
-                configuration
-            )
-
-        @Deprecated(
-            "Use register instead. Scheduled for removal in Kotlin 2.5.",
-            ReplaceWith("register(compilation, name, configuration)"),
-            level = DeprecationLevel.HIDDEN
-            // KT-85179 Used by kotlinx-benchmark https://github.com/Kotlin/kotlinx-benchmark/issues/355
-        )
-        fun create(
-            compilation: KotlinJsIrCompilation,
-            name: String,
-            configuration: NodeJsExec.() -> Unit = {},
-        ): TaskProvider<NodeJsExec> = register(compilation, name, configuration)
     }
 }

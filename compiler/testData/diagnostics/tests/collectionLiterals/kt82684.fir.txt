@@ -1,6 +1,6 @@
 FILE: kt82684.kt
     public final annotation class ExpectInt : R|kotlin/Annotation| {
-        public constructor(x: R|kotlin/Int| = ERROR_EXPR(CS errors: kotlin/arrayOf)): R|ExpectInt| {
+        public constructor(x: R|kotlin/Int| = <Not a superclass of 'List' expected>#()): R|ExpectInt| {
             super<R|kotlin/Any|>()
         }
 
@@ -9,7 +9,7 @@ FILE: kt82684.kt
 
     }
     public final annotation class ExpectString : R|kotlin/Annotation| {
-        public constructor(x: R|kotlin/String| = ERROR_EXPR(CS errors: kotlin/arrayOf)): R|ExpectString| {
+        public constructor(x: R|kotlin/String| = <Not a superclass of 'List' expected>#()): R|ExpectString| {
             super<R|kotlin/Any|>()
         }
 
@@ -34,7 +34,7 @@ FILE: kt82684.kt
 
     }
     public final annotation class ExpectEnum : R|kotlin/Annotation| {
-        public constructor(x: R|E| = ERROR_EXPR(CS errors: kotlin/arrayOf)): R|ExpectEnum| {
+        public constructor(x: R|E| = <Not a superclass of 'List' expected>#()): R|ExpectEnum| {
             super<R|kotlin/Any|>()
         }
 
@@ -43,7 +43,7 @@ FILE: kt82684.kt
 
     }
     public final annotation class ExpectAnno : R|kotlin/Annotation| {
-        public constructor(x: R|ExpectInt| = ERROR_EXPR(CS errors: kotlin/arrayOf)): R|ExpectAnno| {
+        public constructor(x: R|ExpectInt| = <Not a superclass of 'List' expected>#()): R|ExpectAnno| {
             super<R|kotlin/Any|>()
         }
 
@@ -52,7 +52,7 @@ FILE: kt82684.kt
 
     }
     public final annotation class ExpectClass : R|kotlin/Annotation| {
-        public constructor(x: R|kotlin/reflect/KClass<kotlin/Int>| = ERROR_EXPR(CS errors: kotlin/arrayOf)): R|ExpectClass| {
+        public constructor(x: R|kotlin/reflect/KClass<kotlin/Int>| = <Not a superclass of 'List' expected>#()): R|ExpectClass| {
             super<R|kotlin/Any|>()
         }
 

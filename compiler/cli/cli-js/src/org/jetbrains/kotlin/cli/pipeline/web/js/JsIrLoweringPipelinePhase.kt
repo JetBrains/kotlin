@@ -61,7 +61,7 @@ object JsIrLoweringPipelinePhase : PipelinePhase<WebLoadedIrPipelineArtifact, Js
         deserializer.clear()
         // Sort dependencies after IR linkage.
         val sortedModuleDependencies = deserializer.moduleDependencyTracker.reverseTopoOrder(moduleDependencies = moduleDependencies)
-        val allModules = sortedModuleDependencies.all
+        val allModules = sortedModuleDependencies.allDependencies
         allModules.forEach { module ->
             if (shouldGeneratePolyfills) {
                 collectNativeImplementations(context, module)

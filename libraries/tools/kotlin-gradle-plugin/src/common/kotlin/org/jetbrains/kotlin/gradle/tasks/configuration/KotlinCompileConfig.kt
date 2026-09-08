@@ -53,7 +53,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                 task.useFirRunner.convention(propertiesProvider.incrementalJvmFir)
                 task.enableJvmClasspathMetadata.convention(propertiesProvider.enableJvmClasspathMetadata)
                 task.enableUnsafeIncrementalCompilationForMultiplatform
-                    .convention(propertiesProvider.enableJvmUnsafeOptimizationsForMultiplatform)
+                    .convention(propertiesProvider.enableJvmIncrementalCompilationOfCommonSources)
                     .finalizeValueOnRead()
                 task.usePreciseJavaTracking = propertiesProvider.usePreciseJavaTracking ?: true
                 task.jvmTargetValidationMode.convention(propertiesProvider.jvmTargetValidationMode).finalizeValueOnRead()
@@ -170,11 +170,11 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
             project.kotlinPropertiesProvider.expandTypeAliasesInClasspathSnapshots.map { it && isMultiplatform }
         )
 
-        val suppressVersionInconsistencyChecks = project.kotlinPropertiesProvider.suppressBuildToolsApiVersionConsistencyChecks
-        if (!suppressVersionInconsistencyChecks) {
-            parameters.buildToolsImplVersion.set(classpath.map { configuration -> configuration.findBuildToolsApiImplVersion() })
-        }
-        parameters.suppressVersionInconsistencyChecks.set(suppressVersionInconsistencyChecks)
+        parameters.suppressVersionInconsistencyChecks.set(
+            project.kotlinPropertiesProvider.suppressBuildToolsApiVersionConsistencyChecks
+        )
+
+        parameters.buildToolsImplVersion.set(classpath.map { configuration -> configuration.findBuildToolsApiImplVersion() })
         parameters.buildSessionService.set(buildSessionService)
     }
 

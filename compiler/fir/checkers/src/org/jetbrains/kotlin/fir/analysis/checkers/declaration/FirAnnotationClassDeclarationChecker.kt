@@ -70,7 +70,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
                     }
                     if (parameter.hasDefaultValue && parameter.resolvedDefaultValue != null && !canBeEvaluated(parameter.resolvedDefaultValue!!)) {
                         reporter.reportOn(
-                            parameter.defaultValueSource,
+                            parameter.resolvedDefaultValueSource,
                             FirErrors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT
                         )
                     }

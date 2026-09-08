@@ -8,17 +8,17 @@ plugins {
 val sdkName: String? = System.getenv("SDK_NAME")
 
 enum class Target(val simulator: Boolean, val key: String) {
-    WATCHOS_X64(true, "watchos"), WATCHOS_ARM64(false, "watchos"),
-    IOS_X64(true, "ios"), IOS_ARM64(false, "ios")
+    WATCHOS_SIMULATOR_ARM64(true, "watchos"), WATCHOS_ARM64(false, "watchos"),
+    IOS_SIMULATOR_ARM64(true, "ios"), IOS_ARM64(false, "ios")
 }
 
 val target = sdkName.orEmpty().let {
     when {
         it.startsWith("iphoneos") -> Target.IOS_ARM64
-        it.startsWith("iphonesimulator") -> Target.IOS_X64
+        it.startsWith("iphonesimulator") -> Target.IOS_SIMULATOR_ARM64
         it.startsWith("watchos") -> Target.WATCHOS_ARM64
-        it.startsWith("watchsimulator") -> Target.WATCHOS_X64
-        else -> Target.WATCHOS_X64
+        it.startsWith("watchsimulator") -> Target.WATCHOS_SIMULATOR_ARM64
+        else -> Target.WATCHOS_SIMULATOR_ARM64
     }
 }
 
@@ -28,7 +28,7 @@ val buildType = System.getenv("CONFIGURATION")?.let {
 
 kotlin {
     // Declare a target.
-    // We declare only one target (either arm64 or x64)
+    // We declare only one target (either device or simulator)
     // to workaround lack of common platform libraries
     // for both device and simulator.
     val ios = if (!target.simulator ) {
@@ -36,7 +36,7 @@ kotlin {
         iosArm64("ios")
     } else {
         // Simulator.
-        iosX64("ios")
+        iosSimulatorArm64("ios")
     }
 
     val watchos = if (!target.simulator) {
@@ -44,7 +44,7 @@ kotlin {
         watchosArm64("watchos")
     } else {
         // Simulator.
-        watchosX64("watchos")
+        watchosSimulatorArm64("watchos")
     }
 
     // Declare the output program.

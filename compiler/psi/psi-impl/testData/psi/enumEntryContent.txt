@@ -66,7 +66,7 @@ KtFile: enumEntryContent.kt
             BLOCK
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n            ')
-              FUN
+              FUNCTION
                 PsiElement(fun)('fun')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('initFunction')
@@ -110,7 +110,7 @@ KtFile: enumEntryContent.kt
                     CLASS_BODY
                       PsiElement(LBRACE)('{')
                       PsiWhiteSpace('\n                ')
-                      FUN
+                      FUNCTION
                         PsiElement(fun)('fun')
                         PsiWhiteSpace(' ')
                         PsiElement(IDENTIFIER)('literalFunction')
@@ -136,7 +136,7 @@ KtFile: enumEntryContent.kt
               PsiWhiteSpace('\n        ')
               PsiElement(RBRACE)('}')
           PsiWhiteSpace('\n\n        ')
-          FUN
+          FUNCTION
             PsiElement(fun)('fun')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('foo')

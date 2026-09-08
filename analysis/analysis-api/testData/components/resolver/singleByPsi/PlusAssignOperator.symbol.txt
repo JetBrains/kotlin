@@ -2,7 +2,7 @@ KtOperationReferenceExpression(159,161): '+='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/WithOperator.plusAssign(<dispatch receiver>: test.WithOperator, f: test.Foo): kotlin.Unit
     ]

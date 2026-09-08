@@ -236,7 +236,7 @@ KtNameReferenceExpression(350,351): 'T'
   null
 
 KtNameReferenceExpression(354,355): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -298,7 +298,7 @@ KtNameReferenceExpression(409,410): 'T'
   null
 
 KtCallExpression(413,419): 'TODO()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -315,7 +315,7 @@ KtCallExpression(413,419): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(413,417): 'TODO'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -353,7 +353,7 @@ KtParameterList(443,445): '()'
   null
 
 KtCallExpression(448,454): 'TODO()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -370,7 +370,7 @@ KtCallExpression(448,454): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(448,452): 'TODO'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -480,7 +480,7 @@ KtBlockExpression(632,652): '{'
   null
 
 KtCallableReferenceExpression(638,650): '::overloaded'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -528,7 +528,7 @@ KtCallableReferenceExpression(638,650): '::overloaded'
     fun overloaded(x: String): Unit>
 
 KtNameReferenceExpression(640,650): 'overloaded'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -585,7 +585,7 @@ KtBlockExpression(691,734): '{'
   null
 
 KtCallableReferenceExpression(697,711): 'Holder::method'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -642,7 +642,7 @@ KtNameReferenceExpression(697,703): 'Holder'
   null
 
 KtNameReferenceExpression(705,711): 'method'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -696,7 +696,7 @@ KtNameReferenceExpression(705,711): 'method'
     fun method(x: String): Unit>
 
 KtCallableReferenceExpression(716,732): 'Holder()::method'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -750,7 +750,7 @@ KtCallableReferenceExpression(716,732): 'Holder()::method'
     fun method(x: String): Unit>
 
 KtCallExpression(716,724): 'Holder()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -767,7 +767,7 @@ KtCallExpression(716,724): 'Holder()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(716,722): 'Holder'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -787,7 +787,7 @@ KtValueArgumentList(722,724): '()'
   null
 
 KtNameReferenceExpression(726,732): 'method'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -850,7 +850,7 @@ KtBlockExpression(780,811): '{'
   null
 
 KtCallableReferenceExpression(786,809): 'Holder::ambiguousMember'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -891,7 +891,7 @@ KtNameReferenceExpression(786,792): 'Holder'
   null
 
 KtNameReferenceExpression(794,809): 'ambiguousMember'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -938,7 +938,7 @@ KtBlockExpression(850,911): '{'
   null
 
 KtCallableReferenceExpression(856,874): '::overloaded(true)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -986,7 +986,7 @@ KtCallableReferenceExpression(856,874): '::overloaded(true)'
     fun overloaded(x: String): Unit>
 
 KtNameReferenceExpression(858,868): 'overloaded'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -1043,7 +1043,7 @@ KtConstantExpression(869,873): 'true'
   null
 
 KtCallableReferenceExpression(879,909): 'Holder::method(Holder(), true)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -1100,7 +1100,7 @@ KtNameReferenceExpression(879,885): 'Holder'
   null
 
 KtNameReferenceExpression(887,893): 'method'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -1160,7 +1160,7 @@ KtValueArgument(894,902): 'Holder()'
   null
 
 KtCallExpression(894,902): 'Holder()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1177,7 +1177,7 @@ KtCallExpression(894,902): 'Holder()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(894,900): 'Holder'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1212,7 +1212,7 @@ KtBlockExpression(961,1111): '{'
   null
 
 KtCallableReferenceExpression(967,978): '::simple(1)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1235,7 +1235,7 @@ KtCallableReferenceExpression(967,978): '::simple(1)'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(969,975): 'simple'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1267,7 +1267,7 @@ KtConstantExpression(976,977): '1'
   null
 
 KtCallableReferenceExpression(983,999): '::simpleProperty'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1282,7 +1282,7 @@ KtCallableReferenceExpression(983,999): '::simpleProperty'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(985,999): 'simpleProperty'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1297,7 +1297,7 @@ KtNameReferenceExpression(985,999): 'simpleProperty'
       typeArgumentsMapping = {}
 
 KtCallableReferenceExpression(1004,1031): 'Single::method(Single(), 1)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1323,7 +1323,7 @@ KtNameReferenceExpression(1004,1010): 'Single'
   null
 
 KtNameReferenceExpression(1012,1018): 'method'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1352,7 +1352,7 @@ KtValueArgument(1019,1027): 'Single()'
   null
 
 KtCallExpression(1019,1027): 'Single()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1369,7 +1369,7 @@ KtCallExpression(1019,1027): 'Single()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(1019,1025): 'Single'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1395,7 +1395,7 @@ KtConstantExpression(1029,1030): '1'
   null
 
 KtCallableReferenceExpression(1036,1055): 'Single()::method(1)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1421,7 +1421,7 @@ KtCallableReferenceExpression(1036,1055): 'Single()::method(1)'
       typeArgumentsMapping = {}
 
 KtCallExpression(1036,1044): 'Single()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1438,7 +1438,7 @@ KtCallExpression(1036,1044): 'Single()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(1036,1042): 'Single'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1458,7 +1458,7 @@ KtValueArgumentList(1042,1044): '()'
   null
 
 KtNameReferenceExpression(1046,1052): 'method'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1493,7 +1493,7 @@ KtConstantExpression(1053,1054): '1'
   null
 
 KtCallableReferenceExpression(1060,1086): 'Single::property(Single())'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1511,7 +1511,7 @@ KtNameReferenceExpression(1060,1066): 'Single'
   null
 
 KtNameReferenceExpression(1068,1076): 'property'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1532,7 +1532,7 @@ KtValueArgument(1077,1085): 'Single()'
   null
 
 KtCallExpression(1077,1085): 'Single()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1549,7 +1549,7 @@ KtCallExpression(1077,1085): 'Single()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(1077,1083): 'Single'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1569,7 +1569,7 @@ KtValueArgumentList(1083,1085): '()'
   null
 
 KtCallableReferenceExpression(1091,1109): 'Single()::property'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1587,7 +1587,7 @@ KtCallableReferenceExpression(1091,1109): 'Single()::property'
       typeArgumentsMapping = {}
 
 KtCallExpression(1091,1099): 'Single()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1604,7 +1604,7 @@ KtCallExpression(1091,1099): 'Single()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(1091,1097): 'Single'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1624,7 +1624,7 @@ KtValueArgumentList(1097,1099): '()'
   null
 
 KtNameReferenceExpression(1101,1109): 'property'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1651,7 +1651,7 @@ KtBlockExpression(1154,1332): '{'
   null
 
 KtCallableReferenceExpression(1160,1174): '::generic<Int>'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -1677,7 +1677,7 @@ KtCallableReferenceExpression(1160,1174): '::generic<Int>'
     diagnostic = ERROR<OTHER_ERROR: CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL>
 
 KtNameReferenceExpression(1162,1169): 'generic'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -1715,7 +1715,7 @@ KtNameReferenceExpression(1170,1173): 'Int'
   null
 
 KtCallableReferenceExpression(1179,1196): '::generic<Int>(1)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -1741,7 +1741,7 @@ KtCallableReferenceExpression(1179,1196): '::generic<Int>(1)'
     diagnostic = ERROR<OTHER_ERROR: CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL>
 
 KtNameReferenceExpression(1181,1188): 'generic'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -1788,7 +1788,7 @@ KtConstantExpression(1194,1195): '1'
   null
 
 KtCallableReferenceExpression(1201,1236): 'GenericHolder<Int>::generic<String>'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -1835,7 +1835,7 @@ KtNameReferenceExpression(1215,1218): 'Int'
   null
 
 KtNameReferenceExpression(1221,1228): 'generic'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -1873,7 +1873,7 @@ KtNameReferenceExpression(1229,1235): 'String'
   null
 
 KtCallableReferenceExpression(1241,1297): 'GenericHolder<Int>::generic<String>(GenericHolder(), "")'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -1920,7 +1920,7 @@ KtNameReferenceExpression(1255,1258): 'Int'
   null
 
 KtNameReferenceExpression(1261,1268): 'generic'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -1964,7 +1964,7 @@ KtValueArgument(1277,1292): 'GenericHolder()'
   null
 
 KtCallExpression(1277,1292): 'GenericHolder()'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -1986,7 +1986,7 @@ KtCallExpression(1277,1292): 'GenericHolder()'
     diagnostic = ERROR<OTHER_ERROR: CS errors: pack/GenericHolder.GenericHolder>
 
 KtNameReferenceExpression(1277,1290): 'GenericHolder'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -2017,7 +2017,7 @@ KtStringTemplateExpression(1294,1296): '""'
   null
 
 KtCallableReferenceExpression(1302,1330): 'GenericHolder<Int>::property'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2053,7 +2053,7 @@ KtNameReferenceExpression(1316,1319): 'Int'
   null
 
 KtNameReferenceExpression(1322,1330): 'property'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -2077,7 +2077,7 @@ KtBlockExpression(1378,1506): '{'
   null
 
 KtCallableReferenceExpression(1384,1397): '::withContext'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -2111,7 +2111,7 @@ KtCallableReferenceExpression(1384,1397): '::withContext'
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtNameReferenceExpression(1386,1397): 'withContext'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -2145,7 +2145,7 @@ KtNameReferenceExpression(1386,1397): 'withContext'
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtCallableReferenceExpression(1402,1435): '::withContext(LoggerContext(), 1)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -2179,7 +2179,7 @@ KtCallableReferenceExpression(1402,1435): '::withContext(LoggerContext(), 1)'
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtNameReferenceExpression(1404,1415): 'withContext'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -2219,7 +2219,7 @@ KtValueArgument(1416,1431): 'LoggerContext()'
   null
 
 KtCallExpression(1416,1431): 'LoggerContext()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2236,7 +2236,7 @@ KtCallExpression(1416,1431): 'LoggerContext()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(1416,1429): 'LoggerContext'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2262,7 +2262,7 @@ KtConstantExpression(1433,1434): '1'
   null
 
 KtCallableReferenceExpression(1440,1461): '::withContextProperty'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -2288,7 +2288,7 @@ KtCallableReferenceExpression(1440,1461): '::withContextProperty'
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtNameReferenceExpression(1442,1461): 'withContextProperty'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -2314,7 +2314,7 @@ KtNameReferenceExpression(1442,1461): 'withContextProperty'
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtCallableReferenceExpression(1466,1504): '::withContextProperty(LoggerContext())'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -2340,7 +2340,7 @@ KtCallableReferenceExpression(1466,1504): '::withContextProperty(LoggerContext()
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtNameReferenceExpression(1468,1487): 'withContextProperty'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaCallableReferenceCall:
         contextArguments = []
@@ -2372,7 +2372,7 @@ KtValueArgument(1488,1503): 'LoggerContext()'
   null
 
 KtCallExpression(1488,1503): 'LoggerContext()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2389,7 +2389,7 @@ KtCallExpression(1488,1503): 'LoggerContext()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(1488,1501): 'LoggerContext'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2436,7 +2436,7 @@ KtBlockExpression(1589,1717): '{'
   null
 
 KtCallableReferenceExpression(1595,1608): '::withContext'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = [
         KaImplicitReceiverValue:
@@ -2471,7 +2471,7 @@ KtCallableReferenceExpression(1595,1608): '::withContext'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1597,1608): 'withContext'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = [
         KaImplicitReceiverValue:
@@ -2506,7 +2506,7 @@ KtNameReferenceExpression(1597,1608): 'withContext'
       typeArgumentsMapping = {}
 
 KtCallableReferenceExpression(1613,1646): '::withContext(LoggerContext(), 1)'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = [
         KaImplicitReceiverValue:
@@ -2541,7 +2541,7 @@ KtCallableReferenceExpression(1613,1646): '::withContext(LoggerContext(), 1)'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1615,1626): 'withContext'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = [
         KaImplicitReceiverValue:
@@ -2582,7 +2582,7 @@ KtValueArgument(1627,1642): 'LoggerContext()'
   null
 
 KtCallExpression(1627,1642): 'LoggerContext()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2599,7 +2599,7 @@ KtCallExpression(1627,1642): 'LoggerContext()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(1627,1640): 'LoggerContext'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2625,7 +2625,7 @@ KtConstantExpression(1644,1645): '1'
   null
 
 KtCallableReferenceExpression(1651,1672): '::withContextProperty'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = [
         KaImplicitReceiverValue:
@@ -2652,7 +2652,7 @@ KtCallableReferenceExpression(1651,1672): '::withContextProperty'
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1653,1672): 'withContextProperty'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = [
         KaImplicitReceiverValue:
@@ -2679,7 +2679,7 @@ KtNameReferenceExpression(1653,1672): 'withContextProperty'
       typeArgumentsMapping = {}
 
 KtCallableReferenceExpression(1677,1715): '::withContextProperty(LoggerContext())'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = [
         KaImplicitReceiverValue:
@@ -2706,7 +2706,7 @@ KtCallableReferenceExpression(1677,1715): '::withContextProperty(LoggerContext()
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1679,1698): 'withContextProperty'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = [
         KaImplicitReceiverValue:
@@ -2739,7 +2739,7 @@ KtValueArgument(1699,1714): 'LoggerContext()'
   null
 
 KtCallExpression(1699,1714): 'LoggerContext()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2756,7 +2756,7 @@ KtCallExpression(1699,1714): 'LoggerContext()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(1699,1712): 'LoggerContext'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

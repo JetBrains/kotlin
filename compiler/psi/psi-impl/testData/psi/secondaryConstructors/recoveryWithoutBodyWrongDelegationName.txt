@@ -51,7 +51,7 @@ KtFile: recoveryWithoutBodyWrongDelegationName.kt
           PsiErrorElement:Expecting a 'this' or 'super' constructor call
             <empty list>
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           ANNOTATION_ENTRY
             PsiElement(AT)('@')

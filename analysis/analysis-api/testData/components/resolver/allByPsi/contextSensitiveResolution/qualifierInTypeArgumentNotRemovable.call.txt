@@ -41,7 +41,7 @@ KtSuperTypeList(139,148): 'Base<T>()'
   null
 
 KtSuperTypeCallEntry(139,148): 'Base<T>()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -61,7 +61,7 @@ KtSuperTypeCallEntry(139,148): 'Base<T>()'
       valueArgumentMapping = {}
 
 KtConstructorCalleeExpression(139,146): 'Base<T>'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -87,7 +87,7 @@ KtUserType(139,146): 'Base<T>'
   null
 
 KtNameReferenceExpression(139,143): 'Base'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -164,7 +164,7 @@ KtBinaryExpressionWithTypeRHS(182,202): 'b as Base.Child<Foo>'
   null
 
 KtNameReferenceExpression(182,183): 'b'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

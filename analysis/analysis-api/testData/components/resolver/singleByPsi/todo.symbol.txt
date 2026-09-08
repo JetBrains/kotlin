@@ -2,7 +2,7 @@ KtNameReferenceExpression(55,59): 'TODO'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(reason: kotlin.String): kotlin.Nothing
     ]

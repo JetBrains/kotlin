@@ -76,7 +76,9 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
             "AndroidSimpleApp",
             gradleVersion,
             buildJdk = jdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = agpVersion)
+                .suppressAgpWarningIsProperty(gradleVersion),
         ) {
             buildGradle.appendText(
                 //language=Groovy
@@ -166,7 +168,9 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
         project(
             "multiplatformAndroidSourceSetLayout2",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = agpVersion)
+                .suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdk.location
         ) {
             buildGradleKts.appendText(
@@ -206,7 +210,9 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
         project(
             projectName = "multiplatformAndroidSourceSetLayout2",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = agpVersion)
+                .suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdk.location
         ) {
             buildGradleKts.appendText(

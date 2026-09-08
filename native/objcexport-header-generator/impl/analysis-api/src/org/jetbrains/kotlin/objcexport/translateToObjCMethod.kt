@@ -231,8 +231,12 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
     val parameters = valueParametersAssociated(methodBridge, symbol)
     val method = symbol
     val sb = StringBuilder()
+
+    // ObjCExportNamerImpl.getSelector() queries Predefined.anyMethodSelector through the `.name` property
+    // but queries reserved methodSelectors based on getMangledName()'s value. We do the same here.
     val anyMethodSelector = anyMethodSelectors[symbol.name]
-    val reservedNameSelector = objCReservedNameMethodSelectors[symbol.name]
+    val methodName = getMangledName(symbol, forSwift = false)
+    val reservedNameSelector = objCReservedNameMethodSelectors[Name.identifier(methodName)]
 
     if (reservedNameSelector != null && parameters.isEmpty()) {
         /**
@@ -249,8 +253,6 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
     if (anyMethodSelector != null && analysisSession.overridesAnyMethod(symbol)) {
         return anyMethodSelector
     }
-
-    val methodName = getMangledName(symbol, forSwift = false)
 
     parameters.forEachIndexed { index, [bridge, parameter] ->
         val name = when (bridge) {

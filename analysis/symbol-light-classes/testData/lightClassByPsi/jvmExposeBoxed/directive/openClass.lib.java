@@ -26,16 +26,44 @@ public final class IC /* IC*/ {
 
 public abstract interface Test /* Test*/ {
   @org.jetbrains.annotations.Nullable()
+  public abstract IC getFinalFoo-qjS0p_s();//  getFinalFoo-qjS0p_s()
+
+  @org.jetbrains.annotations.Nullable()
   public abstract IC getFoo-qjS0p_s();//  getFoo-qjS0p_s()
 
+  public abstract int finalTest-Eh1mVAw(int);//  finalTest-Eh1mVAw(int)
+
   public abstract int test-Eh1mVAw(int);//  test-Eh1mVAw(int)
+
+  public abstract void setFinalFoo-6iVyXxs(@org.jetbrains.annotations.Nullable() IC);//  setFinalFoo-6iVyXxs(IC)
 }
 
 public class TestClass1 /* TestClass1*/ implements Test {
   @org.jetbrains.annotations.Nullable()
+  private IC finalFoo;
+
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
+  @org.jetbrains.annotations.NotNull()
+  public final IC finalTest(@org.jetbrains.annotations.NotNull() IC);//  finalTest(IC)
+
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
+  @org.jetbrains.annotations.Nullable()
+  public final IC getFinalFoo();//  getFinalFoo()
+
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
+  public final void setFinalFoo(@org.jetbrains.annotations.Nullable() IC);//  setFinalFoo(IC)
+
+  @org.jetbrains.annotations.Nullable()
   public IC getFoo-qjS0p_s();//  getFoo-qjS0p_s()
 
+  @org.jetbrains.annotations.Nullable()
+  public final IC getFinalFoo-qjS0p_s();//  getFinalFoo-qjS0p_s()
+
   public  TestClass1();//  .ctor()
+
+  public final int finalTest-Eh1mVAw(int);//  finalTest-Eh1mVAw(int)
+
+  public final void setFinalFoo-6iVyXxs(@org.jetbrains.annotations.Nullable() IC);//  setFinalFoo-6iVyXxs(IC)
 
   public int test-Eh1mVAw(int);//  test-Eh1mVAw(int)
 }

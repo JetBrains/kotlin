@@ -3,15 +3,16 @@ import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     kotlin("plugin.serialization")
-    id("project-tests-convention")
 }
 
-val jdkVersion = JdkMajorVersion.JDK_17_0
-configureJvmToolchain(jdkVersion)
+val jdkVersionToUse = JdkMajorVersion.JDK_17_0
+jvmToolchains {
+    jdkVersion = jdkVersionToUse
+    targetBytecodeVersion = jdkVersionToUse
+}
 
 dependencies {
     // The `reviewCode` task is used on TeamCity and might also be used locally in cold build scenarios
@@ -42,16 +43,16 @@ sourceSets {
 
 abstract class CodeReviewTask : JavaExec() {
     @get:Option(
-        "base",
-        "The base git revision to compare the sources against. For example, origin/master (default) or HEAD~2"
+        option = "base",
+        description = "The base git revision to compare the sources against. For example, origin/master (default) or HEAD~2"
     )
     @get:Input
     @get:Optional
     abstract val base: Property<String>
 
     @get:Option(
-        "output",
-        "The path to the output Markdown file"
+        option = "output",
+        description = "The path to the output Markdown file"
     )
     @get:OutputFile
     abstract val output: RegularFileProperty
@@ -85,7 +86,7 @@ tasks.register<CodeReviewTask>("reviewCode") {
 }
 
 projectTests {
-    testTask(javaLauncher = jdkVersion) {
+    testTask(javaLauncher = jdkVersionToUse) {
         systemProperty("kotlin.repo.auto-code-review.rootDir", rootDir.absolutePath)
 
         // One of the tests traverses all files in the repo. And the tests are fairly quick.

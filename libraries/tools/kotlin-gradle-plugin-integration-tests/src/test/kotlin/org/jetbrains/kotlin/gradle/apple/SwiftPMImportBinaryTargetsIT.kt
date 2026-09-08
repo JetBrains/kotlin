@@ -42,9 +42,6 @@ import kotlin.test.assertEquals
     supportedOn = [OS.MAC],
     enabledOnCI = [OS.MAC],
 )
-@GradleTestVersions(
-    minVersion = TestVersions.Gradle.G_8_0
-)
 @OptIn(EnvironmentalVariablesOverride::class)
 @SwiftPMImportGradlePluginTests
 class SwiftPMImportBinaryTargetsIT : KGPBaseTest() {

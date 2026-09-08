@@ -11,6 +11,8 @@ object ImplementationConfigurator : AbstractSwiftIrTreeImplementationConfigurato
 
     override fun configure(model: Model) = with(SwiftIrTree) {
         // Declare custom implementation classes, see org.jetbrains.kotlin.fir.tree.generator.ImplementationConfigurator
+        noImpl(setterFunction)
+        noImpl(getterFunction)
     }
 
     override fun configureAllImplementations(model: Model) {

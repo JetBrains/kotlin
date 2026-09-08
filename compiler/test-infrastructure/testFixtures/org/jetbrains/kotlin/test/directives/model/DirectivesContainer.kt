@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.test.directives.model
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
+@RequiresOptIn
+annotation class SensitiveDirectiveAPI(val reason: String)
+
 sealed class DirectivesContainer {
     object Empty : SimpleDirectivesContainer()
 
@@ -15,14 +18,44 @@ sealed class DirectivesContainer {
     abstract operator fun contains(directive: Directive): Boolean
 }
 
-abstract class SimpleDirectivesContainer : DirectivesContainer() {
-    @RequiresOptIn
-    annotation class SensitiveDirectiveAPI(val reason: String)
+abstract class SimpleDirectivesContainerBase<D : Directive> : DirectivesContainer() {
+    private val registeredDirectives: MutableMap<String, D> = mutableMapOf()
 
-    private val registeredDirectives: MutableMap<String, Directive> = mutableMapOf()
+    val allDirectives: Collection<D>
+        get() = registeredDirectives.values
 
-    override operator fun get(name: String): Directive? = registeredDirectives[name]
+    override operator fun get(name: String): D? = registeredDirectives[name]
 
+    override fun contains(directive: Directive): Boolean {
+        return directive in registeredDirectives.values
+    }
+
+    protected fun registerDirective(directive: D) {
+        registeredDirectives[directive.name] = directive
+    }
+
+    override fun toString(): String {
+        return buildString {
+            appendLine("Directive container:")
+            for (directive in registeredDirectives.values) {
+                append("  ")
+                appendLine(directive)
+            }
+        }
+    }
+
+    protected inner class DirectiveDelegateProvider<T : D>(val directiveConstructor: (String) -> T) {
+        operator fun provideDelegate(
+            thisRef: SimpleDirectivesContainerBase<D>,
+            property: KProperty<*>
+        ): ReadOnlyProperty<SimpleDirectivesContainerBase<D>, T> {
+            val directive = directiveConstructor(property.name).also { thisRef.registerDirective(it) }
+            return ReadOnlyProperty { _, _ -> directive }
+        }
+    }
+}
+
+abstract class SimpleDirectivesContainer : SimpleDirectivesContainerBase<Directive>() {
     protected fun directive(
         description: String,
         applicability: DirectiveApplicability = DirectiveApplicability.Global
@@ -65,33 +98,25 @@ abstract class SimpleDirectivesContainer : DirectivesContainer() {
     ): DirectiveDelegateProvider<ValueDirective<T>> {
         return DirectiveDelegateProvider { ValueDirective(it, description, applicability, parser, splitValuesOnSpaces) }
     }
+}
 
-    protected fun registerDirective(directive: Directive) {
-        registeredDirectives[directive.name] = directive
+abstract class HomogenousValueDirectivesContainer<T : Any> : SimpleDirectivesContainerBase<ValueDirective<T>>() {
+    protected fun valueDirective(
+        description: String,
+        applicability: DirectiveApplicability = DirectiveApplicability.Global,
+        parser: (String) -> T?,
+    ): DirectiveDelegateProvider<ValueDirective<T>> {
+        return DirectiveDelegateProvider { ValueDirective(it, description, applicability, parser, splitValuesOnSpaces = true) }
     }
 
-    override fun contains(directive: Directive): Boolean {
-        return directive in registeredDirectives.values
-    }
-
-    override fun toString(): String {
-        return buildString {
-            appendLine("Directive container:")
-            for (directive in registeredDirectives.values) {
-                append("  ")
-                appendLine(directive)
-            }
-        }
-    }
-
-    protected inner class DirectiveDelegateProvider<T : Directive>(val directiveConstructor: (String) -> T) {
-        operator fun provideDelegate(
-            thisRef: SimpleDirectivesContainer,
-            property: KProperty<*>
-        ): ReadOnlyProperty<SimpleDirectivesContainer, T> {
-            val directive = directiveConstructor(property.name).also { thisRef.registerDirective(it) }
-            return ReadOnlyProperty { _, _ -> directive }
-        }
+    @SensitiveDirectiveAPI("Not splitting values of a directive on spaces should be well-thought out, to not introduce confusion with existing directives that do split on spaces")
+    protected fun valueDirective(
+        description: String,
+        applicability: DirectiveApplicability = DirectiveApplicability.Global,
+        splitValuesOnSpaces: Boolean,
+        parser: (String) -> T?,
+    ): DirectiveDelegateProvider<ValueDirective<T>> {
+        return DirectiveDelegateProvider { ValueDirective(it, description, applicability, parser, splitValuesOnSpaces) }
     }
 }
 

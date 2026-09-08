@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-80492
-// LANGUAGE: +CollectionLiterals, +ContextParameters
+// LANGUAGE: +ContextParameters
 // RENDER_DIAGNOSTIC_ARGUMENTS
 
 class Suspend {

@@ -1,5 +1,3 @@
-// DO_NOT_REQUIRE_NON_PSI_SYMBOL_RESTORATION
-
 fun <A : Number> topLevelFunction() {}
 val <B> B.topLevelProperty: B get() = this
 

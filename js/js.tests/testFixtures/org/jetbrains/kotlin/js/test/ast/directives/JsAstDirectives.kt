@@ -3,21 +3,21 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("MoveLambdaOutsideParentheses")
+@file:Suppress("MoveLambdaOutsideParentheses", "unused")
 
 package org.jetbrains.kotlin.js.test.ast
 
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.test.ast.directives.*
-import org.jetbrains.kotlin.js.testOld.utils.ArgumentsHelper
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
-import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.HomogenousValueDirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.SensitiveDirectiveAPI
 import org.jetbrains.kotlin.utils.bind
 
-internal object JsAstDirectives : SimpleDirectivesContainer() {
+internal object JsAstDirectives : HomogenousValueDirectivesContainer<JsAstDirective>() {
 
     @OptIn(SensitiveDirectiveAPI::class)
-    private fun <T : ArgumentsHelper> directiveWithArguments(description: String, parser: (String) -> T) =
+    private fun directiveWithArguments(description: String, parser: (String) -> JsAstDirective) =
         valueDirective(description, DirectiveApplicability.Any, splitValuesOnSpaces = false, parser = parser)
 
     val EXPECT_GENERATED_JS by directiveWithArguments(

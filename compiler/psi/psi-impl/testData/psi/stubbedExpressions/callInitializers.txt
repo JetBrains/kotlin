@@ -9,7 +9,7 @@ KtFile: callInitializers.kt
   IMPORT_LIST
     <empty list>
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('compute')
@@ -28,7 +28,7 @@ KtFile: callInitializers.kt
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('0')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('sum')
@@ -311,7 +311,7 @@ KtFile: callInitializers.kt
             PsiElement(RPAR)(')')
         PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('expressionBodyCall')
@@ -334,7 +334,7 @@ KtFile: callInitializers.kt
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('expressionBodyNestedCall')
@@ -369,7 +369,7 @@ KtFile: callInitializers.kt
             PsiElement(INTEGER_LITERAL)('8')
         PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('expressionBodyParenthesizedCall')
@@ -421,7 +421,7 @@ KtFile: callInitializers.kt
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('withCallDefault')

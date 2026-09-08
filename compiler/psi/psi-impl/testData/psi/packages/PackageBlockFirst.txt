@@ -9,7 +9,7 @@ KtFile: PackageBlockFirst.kt
   IMPORT_LIST
     <empty list>
   PsiWhiteSpace(' ')
-  FUN
+  FUNCTION
     PsiErrorElement:Expecting a top level declaration
       <empty list>
     BLOCK

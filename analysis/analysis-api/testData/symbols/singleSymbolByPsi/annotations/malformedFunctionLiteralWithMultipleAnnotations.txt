@@ -1,0 +1,34 @@
+KaAnonymousFunctionSymbol:
+  anchorPsi: KtFunctionLiteral
+  annotations: [
+    Ann()
+      psi: KtAnnotationEntry
+  ]
+  callableId: null
+  contextParameters: []
+  contextReceivers: []
+  hasStableParameterNames: true
+  isActual: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  location: LOCAL
+  modality: FINAL
+  origin: SOURCE
+  psi: KtFunctionLiteral
+  realPsi: KtFunctionLiteral
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(malformedFunctionLiteralWithMultipleAnnotations.kt)
+  getContainingJvmClassName: null
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  javaMethodName: null
+  importableFqName: null

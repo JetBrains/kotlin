@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.tools.ToolExecutionTask
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     id("kotlin.native.build-tools-conventions")
     id("native")
@@ -42,7 +41,7 @@ native {
             "-DLLVM_DISABLE_ABI_BREAKING_CHECKS_ENFORCING=1",
             *reproducibilityCompilerFlags,
     )
-    if (PlatformInfo.isMac()) {
+    if (PlatformInfo.isMac() || PlatformInfo.isLinux()) {
         cxxflags += "-DLIBCLANGEXT_ENABLE=1"
     }
     suffixes {

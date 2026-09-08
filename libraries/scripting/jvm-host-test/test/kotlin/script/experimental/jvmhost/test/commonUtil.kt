@@ -10,7 +10,7 @@ import java.nio.file.Files
 
 internal const val TEST_DATA_DIR = "libraries/scripting/jvm-host-test/testData"
 
-internal fun <R> withTempDir(keyName: String = "tmp", body: (File) -> R) {
+internal fun withTempDir(keyName: String = "tmp", body: (File) -> Unit) {
     val tempDir = Files.createTempDirectory(keyName).toFile()
     try {
         body(tempDir)

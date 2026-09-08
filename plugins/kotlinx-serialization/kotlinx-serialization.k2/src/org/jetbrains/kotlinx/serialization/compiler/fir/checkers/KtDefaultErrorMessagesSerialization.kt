@@ -191,6 +191,20 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
             FirSerializationErrors.INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE,
             "Repeatable serial info annotations cannot be inheritable. Either remove @Repeatable or use a regular @SerialInfo annotation."
         )
+        map.put(
+            FirSerializationErrors.SERIALINFO_INAPPLICABLE_TARGET,
+            "@SerialInfo is only meaningful on class- or property-targeted annotations, but this annotation is also applicable to: {0}. " +
+                    "Applying it to these targets has no effect and may lead to behavior changes in future versions. " +
+                    "Restrict its @Target to CLASS and/or PROPERTY.",
+            CommonRenderers.STRING
+        )
+        map.put(
+            FirSerializationErrors.INHERITABLE_SERIALINFO_INAPPLICABLE_TARGET,
+            "@InheritableSerialInfo is only supported on class-targeted annotations, but this annotation is also applicable to: {0}. " +
+                    "Allowing it on these targets has no effect and may lead to behavior changes in future versions. " +
+                    "Restrict its @Target to CLASS.",
+            CommonRenderers.STRING
+        )
 
         map.put(
             FirSerializationErrors.EXTERNAL_SERIALIZER_USELESS,

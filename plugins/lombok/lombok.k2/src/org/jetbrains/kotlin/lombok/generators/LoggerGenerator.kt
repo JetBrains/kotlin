@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
@@ -108,6 +109,11 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                     return@initializeCompanionObjectIfNeeded null
                 }
 
+                // Nothing would go into the companion object anyway, so don't leave an empty one behind
+                if (owner.declaresConflictingLogProperty()) {
+                    return@initializeCompanionObjectIfNeeded null
+                }
+
                 return@initializeCompanionObjectIfNeeded LoggerGeneratorKey(firstLog.annotation)
             }
         }
@@ -172,15 +178,12 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
 
         // Generate log field based on the first encountered log annotation
         val log = if (classSymbol.isCompanion) {
-            val logOnCompanion = session.lombokService.getLogs(classSymbol).firstOrNull()
-            if (logOnCompanion != null) {
-                targetClassSymbol = classSymbol
-                logOnCompanion.takeIf { config.logFieldIsStatic }
-            } else {
-                val outerClass = classSymbol.classId.outerClassId?.toSymbol(session) as? FirRegularClassSymbol ?: return null
-                targetClassSymbol = outerClass
-                session.lombokService.getLogs(outerClass).firstOrNull().takeIf { config.logFieldIsStatic }
-            }
+            // An annotation on the companion object itself is ignored - it is reported as `ANNOTATION_HAS_NO_EFFECT`
+            // (KT-88288), since `logFieldIsStatic` alone decides whether the logger lands here. The one that produces
+            // a logger for a companion object is therefore always the one on the class holding it.
+            val outerClass = classSymbol.classId.outerClassId?.toSymbol(session) as? FirRegularClassSymbol ?: return null
+            targetClassSymbol = outerClass
+            session.lombokService.getLogs(outerClass).firstOrNull().takeIf { config.logFieldIsStatic }
         } else {
             targetClassSymbol = classSymbol
             // Always generate static/non-static fields for Java classes
@@ -188,6 +191,10 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 session.lombokService.getLogs(classSymbol).firstOrNull()
             }
         } ?: return null
+
+        // `targetClassSymbol` rather than `classSymbol`: the logger of an annotated interface goes into its
+        // companion object, so it is the annotated class that decides whether anything is generated at all.
+        if (!targetClassSymbol.isSupportedLombokTarget) return null
 
         val logFieldOrPropertyName = Name.identifier(config.logFieldName)
 
@@ -198,7 +205,27 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         }
         if (fieldOrPropertyAlreadyExists) return null
 
+        // A static logger goes into the companion object, so a property of the same name declared in the class the
+        // annotation is on doesn't collide with it - it shadows it. Generating the logger anyway would leave the
+        // use site resolving to that property, with nothing but an unresolved logging call to show for it.
+        if (targetClassSymbol.declaresConflictingLogProperty()) return null
+
         return generateLogFieldOrProperty(log, classSymbol, targetClassSymbol)
+    }
+
+    /**
+     * Whether the class declares a property that the generated logger would be shadowed by.
+     *
+     * [DirectDeclarationsAccess] is what is wanted here rather than a scope: only the properties written by the user
+     * can shadow the logger, and requesting a scope would run the other Lombok generators for this very class in the
+     * middle of generating the members of its companion object.
+     */
+    @OptIn(DirectDeclarationsAccess::class)
+    private fun FirClassSymbol<*>.declaresConflictingLogProperty(): Boolean {
+        val logFieldOrPropertyName = Name.identifier(session.lombokService.config.logFieldName)
+        return declarationSymbols.any {
+            it is FirVariableSymbol<*> && it.name == logFieldOrPropertyName && !it.hasReceiverOrContextParameters
+        }
     }
 
     private fun generateLogFieldOrProperty(
@@ -206,7 +233,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         logContainingClass: FirClassSymbol<*>,
         logTargetClass: FirClassSymbol<*>
     ): FirVariableSymbol<*>? {
-        val fieldVisibility = log.visibility ?: return null
+        val fieldVisibility = log.accessLevel.toVisibility(logContainingClass) ?: return null
 
         val loggerClassType = log.loggerClassId.constructClassLikeType()
         val config = session.lombokService.config

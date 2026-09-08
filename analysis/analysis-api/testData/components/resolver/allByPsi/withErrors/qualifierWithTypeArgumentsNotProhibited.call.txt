@@ -17,7 +17,7 @@ KtBlockExpression(38,199): '{'
   null
 
 KtDotQualifiedExpression(43,69): 'JavaClass<Int>.staticField'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -58,7 +58,7 @@ KtNameReferenceExpression(53,56): 'Int'
   null
 
 KtNameReferenceExpression(58,69): 'staticField'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -78,7 +78,7 @@ KtNameReferenceExpression(58,69): 'staticField'
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(73,99): 'JavaClass<Long>.unresolved'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unresolved'.>
 
@@ -104,12 +104,12 @@ KtNameReferenceExpression(83,87): 'Long'
   null
 
 KtNameReferenceExpression(89,99): 'unresolved'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unresolved'.>
 
 KtCallableReferenceExpression(103,133): 'JavaClass<String>::staticField'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -148,7 +148,7 @@ KtNameReferenceExpression(113,119): 'String'
   null
 
 KtNameReferenceExpression(122,133): 'staticField'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -166,7 +166,7 @@ KtNameReferenceExpression(122,133): 'staticField'
       typeArgumentsMapping = {}
 
 KtCallableReferenceExpression(137,163): 'JavaClass<Boolean>::method'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -202,7 +202,7 @@ KtNameReferenceExpression(147,154): 'Boolean'
   null
 
 KtNameReferenceExpression(157,163): 'method'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null
@@ -217,7 +217,7 @@ KtNameReferenceExpression(157,163): 'method'
       typeArgumentsMapping = {}
 
 KtCallableReferenceExpression(167,197): 'JavaClass<Short>::staticMethod'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -256,7 +256,7 @@ KtNameReferenceExpression(177,182): 'Short'
   null
 
 KtNameReferenceExpression(185,197): 'staticMethod'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

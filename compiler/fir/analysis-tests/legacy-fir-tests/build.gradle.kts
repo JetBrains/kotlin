@@ -8,11 +8,9 @@ import JdkMajorVersion.JDK_21_0
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
-    id("project-tests-convention")
     id("test-inputs-check")
     id("require-explicit-types")
 }
@@ -46,7 +44,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(maxHeapSizeMb = 3072, defineJDKEnvVariables = listOf(JDK_1_8, JDK_21_0))
+    testTask(maxHeapSize = testMaxHeapSizeLarge, defineJDKEnvVariables = listOf(JDK_1_8, JDK_21_0))
 
     testGenerator("org.jetbrains.kotlin.fir.TestGeneratorForLegacyFirTestsKt", generateTestsInBuildDirectory = true)
 

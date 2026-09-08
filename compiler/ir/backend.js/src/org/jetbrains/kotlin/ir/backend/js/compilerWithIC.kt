@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.js.ic.*
+import org.jetbrains.kotlin.ir.backend.js.ic.IrCompilerICInterface
+import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
+import org.jetbrains.kotlin.ir.backend.js.ic.JsSrcFileArtifact
+import org.jetbrains.kotlin.ir.backend.js.ic.PlatformDependentICContext
 import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
@@ -25,7 +27,8 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import java.io.File
 
-class JsICContext(private val granularity: JsGenerationGranularity) : PlatformDependentICContext {
+class JsICContext(private val granularity: JsGenerationGranularity) :
+    PlatformDependentICContext<JsModuleArtifact, JsSrcFileArtifact, JsIrProgramFragments, JsIrBackendContext> {
     override fun getICCacheStableKeys(): Set<CompilerConfigurationKey<*>> =
         setOf(
             JSConfigurationKeys.LIBRARIES,
@@ -36,13 +39,12 @@ class JsICContext(private val granularity: JsGenerationGranularity) : PlatformDe
     override fun createIrFactory(): IrFactory =
         IrFactoryImplForJsIC(WholeWorldStageController())
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun createBackendContext(
         mainModule: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
         symbolTable: SymbolTable,
         configuration: CompilerConfiguration,
-    ): JsCommonBackendContext {
+    ): JsIrBackendContext {
         return JsIrBackendContext(
             mainModule,
             irBuiltIns,
@@ -56,31 +58,30 @@ class JsICContext(private val granularity: JsGenerationGranularity) : PlatformDe
         mainModule: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
         configuration: CompilerConfiguration,
-        context: JsCommonBackendContext,
-    ): IrCompilerICInterface =
-        JsIrCompilerWithIC(mainModule, context as JsIrBackendContext, granularity)
+        context: JsIrBackendContext,
+    ): IrCompilerICInterface<JsIrProgramFragments> =
+        JsIrCompilerWithIC(mainModule, context, granularity)
 
-    override fun createSrcFileArtifact(srcFilePath: String, fragments: IrICProgramFragments?, astArtifact: File?): SrcFileArtifact =
-        JsSrcFileArtifact(srcFilePath, fragments as? JsIrProgramFragments, astArtifact)
+    override fun createSrcFileArtifact(srcFilePath: String, fragments: JsIrProgramFragments?, astArtifact: File?): JsSrcFileArtifact =
+        JsSrcFileArtifact(srcFilePath, fragments, astArtifact)
 
     override fun createModuleArtifact(
         moduleName: String,
-        fileArtifacts: List<SrcFileArtifact>,
+        fileArtifacts: List<JsSrcFileArtifact>,
         artifactsDir: File?,
         forceRebuild: Boolean,
         externalModuleName: String?,
-    ): ModuleArtifact =
-        JsModuleArtifact(moduleName, fileArtifacts.map { it as JsSrcFileArtifact }, artifactsDir, forceRebuild, externalModuleName)
+    ): JsModuleArtifact =
+        JsModuleArtifact(moduleName, fileArtifacts, artifactsDir, forceRebuild, externalModuleName)
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 class JsIrCompilerWithIC(
     private val mainModule: IrModuleFragment,
     private val context: JsIrBackendContext,
     private val granularity: JsGenerationGranularity,
-) : IrCompilerICInterface {
+) : IrCompilerICInterface<JsIrProgramFragments> {
 
-    override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
+    override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> JsIrProgramFragments> {
         val shouldGeneratePolyfills = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
 
         allModules.forEach {

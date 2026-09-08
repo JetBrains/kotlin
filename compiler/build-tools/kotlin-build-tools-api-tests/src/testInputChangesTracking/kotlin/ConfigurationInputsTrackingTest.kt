@@ -20,37 +20,44 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoesNotContainPatterns
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.AbstractProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAndPlatformAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.MetadataProject
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.ProjectCreator
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.DisplayName
 
 class ConfigurationInputsTrackingTest : BaseCompilationTest() {
 
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
     @DisplayName("First build forces non-incremental rebuild")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testFirstBuildForcesNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testFirstBuildForcesNonIncrementalRebuild(project: ProjectCreator) {
+        project {
+            assumeNotMetadata()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.UNKNOWN_CHANGES_IN_GRADLE_INPUTS.readableString}".toRegex(),
                 )
             }
         }
     }
 
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
     @DisplayName("Subsequent build with unchanged config stays incremental")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testSubsequentBuildWithUnchangedConfigStaysIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testSubsequentBuildWithUnchangedConfigStaysIncremental(project: ProjectCreator) {
+        project {
+            assumeNotMetadata()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -62,7 +69,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
             ) {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(),
                     ".*Non-incremental compilation will be performed.*".toRegex(),
                 )
             }
@@ -85,7 +92,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 compilationConfigAction = { it.compilerArguments[JvmCompilerArguments.JVM_TARGET] = JvmTarget.JVM_11 },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.COMPILER_ARGS_CHANGED.readableString}".toRegex(),
                 )
             }
@@ -109,18 +116,19 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 compilationConfigAction = { it.compilerArguments[JvmCompilerArguments.JVM_TARGET] = JvmTarget.JVM_17 },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.COMPILER_ARGS_CHANGED.readableString}".toRegex(),
                 )
             }
         }
     }
 
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
     @DisplayName("Removing a tracked compiler arg triggers rebuild")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testCompilerArgsRemovalTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testCompilerArgsRemovalTriggersNonIncrementalRebuild(project: ProjectCreator) {
+        project {
+            assumeNotMetadata()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -132,18 +140,19 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.COMPILER_ARGS_CHANGED.readableString}".toRegex(),
                 )
             }
         }
     }
 
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
     @DisplayName("Adding a non-tracked compiler arg does not trigger rebuild")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testNonTrackedCompilerArgAdditionDoesNotTriggerRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testNonTrackedCompilerArgAdditionDoesNotTriggerRebuild(project: ProjectCreator) {
+        project {
+            assumeNotMetadata()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -156,18 +165,19 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
             ) {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(),
                     ".*Non-incremental compilation will be performed.*".toRegex(),
                 )
             }
         }
     }
 
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
     @DisplayName("Changing a non-tracked compiler arg does not trigger rebuild")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testNonTrackedCompilerArgChangeDoesNotTriggerRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testNonTrackedCompilerArgChangeDoesNotTriggerRebuild(project: ProjectCreator) {
+        project {
+            assumeNotMetadata()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -181,18 +191,19 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
             ) {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(),
                     ".*Non-incremental compilation will be performed.*".toRegex(),
                 )
             }
         }
     }
 
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
     @DisplayName("Removing a non-tracked compiler arg does not trigger rebuild")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testNonTrackedCompilerArgRemovalDoesNotTriggerRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testNonTrackedCompilerArgRemovalDoesNotTriggerRebuild(project: ProjectCreator) {
+        project {
+            assumeNotMetadata()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -205,7 +216,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
             ) {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(),
                     ".*Non-incremental compilation will be performed.*".toRegex(),
                 )
             }
@@ -213,11 +224,12 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     }
 
     @OptIn(ExperimentalCompilerArgument::class)
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
     @DisplayName("Adding a tracked IC config option triggers rebuild")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testIcConfigAdditionTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testIcConfigAdditionTriggersNonIncrementalRebuild(project: ProjectCreator) {
+        project {
+            assumeNotMetadata()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -231,7 +243,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.INCREMENTAL_COMPILATION_CONFIGURATION_CHANGED.readableString}".toRegex(),
                 )
             }
@@ -239,11 +251,12 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     }
 
     @OptIn(ExperimentalCompilerArgument::class)
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
     @DisplayName("Changing a tracked IC config value triggers rebuild")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testIcConfigChangeTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testIcConfigChangeTriggersNonIncrementalRebuild(project: ProjectCreator) {
+        project {
+            assumeNotMetadata()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -260,7 +273,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.INCREMENTAL_COMPILATION_CONFIGURATION_CHANGED.readableString}".toRegex(),
                 )
             }
@@ -268,11 +281,12 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     }
 
     @OptIn(ExperimentalCompilerArgument::class)
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
     @DisplayName("Removing a tracked IC config option triggers rebuild")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testIcConfigRemovalTriggersNonIncrementalRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testIcConfigRemovalTriggersNonIncrementalRebuild(project: ProjectCreator) {
+        project {
+            assumeNotMetadata()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -286,18 +300,19 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.INCREMENTAL_COMPILATION_CONFIGURATION_CHANGED.readableString}".toRegex(),
                 )
             }
         }
     }
 
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
     @DisplayName("Adding a non-tracked IC config option does not trigger rebuild")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testNonTrackedIcConfigAdditionDoesNotTriggerRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testNonTrackedIcConfigAdditionDoesNotTriggerRebuild(project: ProjectCreator) {
+        project {
+            assumeNotMetadata()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -312,18 +327,19 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
             ) {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(),
                     ".*Non-incremental compilation will be performed.*".toRegex(),
                 )
             }
         }
     }
 
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
     @DisplayName("Changing a non-tracked IC config option does not trigger rebuild")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testNonTrackedIcConfigChangeDoesNotTriggerRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testNonTrackedIcConfigChangeDoesNotTriggerRebuild(project: ProjectCreator) {
+        project {
+            assumeNotMetadata()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -341,18 +357,19 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
             ) {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(),
                     ".*Non-incremental compilation will be performed.*".toRegex(),
                 )
             }
         }
     }
 
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
     @DisplayName("Removing a non-tracked IC config option does not trigger rebuild")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testNonTrackedIcConfigRemovalDoesNotTriggerRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testNonTrackedIcConfigRemovalDoesNotTriggerRebuild(project: ProjectCreator) {
+        project {
+            assumeNotMetadata()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -367,7 +384,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
             ) {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(),
                     ".*Non-incremental compilation will be performed.*".toRegex(),
                 )
             }
@@ -398,7 +415,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 compilationConfigAction = { it.compilerArguments[JvmCompilerArguments.JVM_TARGET] = JvmTarget.JVM_17 },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.INCREMENTAL_COMPILATION_CONFIGURATION_CHANGED.readableString}".toRegex()
                 )
             }
@@ -406,11 +423,12 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     }
 
     @OptIn(ExperimentalCompilerArgument::class)
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
     @DisplayName("IC config change is ignored when tracking is disabled")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testIcConfigChangeDoesNotTriggerRebuildWhenTrackingDisabled(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testIcConfigChangeDoesNotTriggerRebuildWhenTrackingDisabled(project: ProjectCreator) {
+        project {
+            assumeNotMetadata()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -428,18 +446,19 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
             ) {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(),
                     ".*Non-incremental compilation will be performed.*".toRegex(),
                 )
             }
         }
     }
 
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
     @DisplayName("Compiler arg change is ignored when tracking is disabled")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testCompilerArgChangeDoesNotTriggerRebuildWhenTrackingDisabled(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testCompilerArgChangeDoesNotTriggerRebuildWhenTrackingDisabled(project: ProjectCreator) {
+        project {
+            assumeNotMetadata()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -453,18 +472,19 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
             ) {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(),
                     ".*Non-incremental compilation will be performed.*".toRegex(),
                 )
             }
         }
     }
 
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
     @DisplayName("Compiler arg change is ignored when tracking is disabled in subsequent build")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testCompilerArgChangeDoesNotTriggerRebuildAfterTrackingDisabled(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testCompilerArgChangeDoesNotTriggerRebuildAfterTrackingDisabled(project: ProjectCreator) {
+        project {
+            assumeNotMetadata()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -478,7 +498,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
             ) {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(),
                     ".*Non-incremental compilation will be performed.*".toRegex(),
                 )
             }
@@ -486,11 +506,12 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     }
 
     @OptIn(ExperimentalCompilerArgument::class)
-    @BtaV2StrategyAgnosticCompilationTest
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
     @DisplayName("Enabling tracking in subsequent build triggers rebuild due to missing snapshot")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testEnablingTrackingInSubsequentBuildTriggersRebuild(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
+    fun testEnablingTrackingInSubsequentBuildTriggersRebuild(project: ProjectCreator) {
+        project {
+            assumeNotMetadata()
             val module = module("basic-multimodule-project/module-1")
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
@@ -507,13 +528,17 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.UNKNOWN_CHANGES_IN_GRADLE_INPUTS.readableString}".toRegex(),
                 )
             }
         }
     }
 
-    private fun expectedLogLevel(strategyConfig: CompilerExecutionStrategyConfiguration): LogLevel =
-        if (strategyConfig.second is ExecutionPolicy.WithDaemon) LogLevel.DEBUG else LogLevel.INFO // TODO: KT-85024
+    private fun AbstractProject<*, *, *>.expectedLogLevel(): LogLevel =
+        if (defaultStrategyConfig is ExecutionPolicy.WithDaemon) LogLevel.DEBUG else LogLevel.INFO // TODO: KT-85024
+
+    private fun AbstractProject<*, *, *>.assumeNotMetadata() {
+        assumeFalse(this is MetadataProject)
+    }
 }

@@ -13,7 +13,13 @@ fun test2(a: Function0<Unit>): Runnable {
 }
 
 fun test3(): Runnable {
-  return ::foo /*-> Runnable */
+  return KFunction0<Unit>(
+    /* bound = */ [],
+    /* invoke = */    local fun() {
+      return foo()
+    }
+  )
+ /*-> Runnable */
 }
 
 fun test4(): Comparator<Int> {

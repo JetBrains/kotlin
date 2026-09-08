@@ -121,7 +121,7 @@ local fun <anonymous>(/* var */ $composer: Composer?, $changed: Int) {
       }
 , $composer = $composer, $changed = 0)
     }
-), $composer = $composer, $changed = 6.or(other = 112.and(other = $changed.shl(bitCount = 3))))
+) /*as Function2<Composer, Int, Unit> */, $composer = $composer, $changed = 6.or(other = 112.and(other = $changed.shl(bitCount = 3))))
     when {
       isTraceInProgress() -> traceEventEnd()
     }

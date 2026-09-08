@@ -14,7 +14,7 @@ KtDeclarationModifierList(28,56): '@MyJavaAnnotation(test = [])'
   null
 
 KtAnnotationEntry(28,56): '@MyJavaAnnotation(test = [])'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
         contextArgumentMapping = {}
@@ -57,7 +57,7 @@ KtAnnotationEntry(28,56): '@MyJavaAnnotation(test = [])'
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'.>
 
 KtConstructorCalleeExpression(29,45): 'MyJavaAnnotation'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
         contextArgumentMapping = {}
@@ -106,7 +106,7 @@ KtUserType(29,45): 'MyJavaAnnotation'
   null
 
 KtNameReferenceExpression(29,45): 'MyJavaAnnotation'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
         contextArgumentMapping = {}
@@ -161,7 +161,7 @@ KtNameReferenceExpression(46,50): 'test'
   null
 
 KtCollectionLiteralExpression(53,55): '[]'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

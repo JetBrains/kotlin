@@ -56,6 +56,9 @@ class WasmModule(
     override val expectedOutputFileName: String
         get() = "$moduleName.wasm"
 
+    val linkOutputDirectory: Path
+        get() = buildDirectory.resolve("dist")
+
     override fun link(
         strategyConfig: ExecutionPolicy,
         forceOutput: LogLevel?,
@@ -71,18 +74,20 @@ class WasmModule(
             } else {
                 outputDirectory
             },
-            outputDirectory,
+            linkOutputDirectory,
         ) {
-            compilationConfigAction(this)
-            compilerArguments[LIBRARIES] = dependencyFiles
+            // both are set before the caller's action, so that a test is able to override them
             compilerArguments[IR_OUTPUT_NAME] = moduleName
+            compilerArguments[LIBRARIES] = dependencyFiles
+            compilationConfigAction(this)
         }
         val result = compilationOperation.let {
             compilationAction(it)
             buildSession.executeOperation(it, strategyConfig, kotlinLogger)
         }
 
-        processOutcome(kotlinLogger, result, assertions, forceOutput)
+        // the assertions resolve files against outputDirectory, so point them at the linking output directory
+        processOutcome(kotlinLogger, result, assertions, forceOutput, WasmLinkOutputContext(this, linkOutputDirectory))
         return result
     }
 
@@ -100,11 +105,12 @@ class WasmModule(
                 .toList(),
             outputDirectory,
         ) {
+            // both are set before the caller's action, so that a test is able to override them
             compilerArguments[NOPACK] = true
+            compilerArguments[IR_OUTPUT_NAME] = moduleName
             moduleCompilationConfigAction(this)
             compilationConfigAction(this)
             compilerArguments[LIBRARIES] = dependencyFiles
-            compilerArguments[IR_OUTPUT_NAME] = moduleName
 
             lastCompileProducedPackedKlib = !compilerArguments[NOPACK]
         }
@@ -159,3 +165,8 @@ class WasmModule(
         throw UnsupportedOperationException("Execution of compiled Wasm modules is not supported directly")
     }
 }
+
+private class WasmLinkOutputContext(
+    target: WasmModule,
+    override val outputDirectory: Path,
+) : Module<WasmKlibCompilationOperation, WasmKlibCompilationOperation.Builder, WasmHistoryBasedIncrementalCompilationConfiguration.Builder> by target

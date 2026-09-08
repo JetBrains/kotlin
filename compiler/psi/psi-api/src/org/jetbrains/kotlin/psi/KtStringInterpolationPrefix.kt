@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinStringInterpolationPrefixStub
 
@@ -29,9 +29,13 @@ import org.jetbrains.kotlin.psi.stubs.KotlinStringInterpolationPrefixStub
  * $$"I'm $$name" // I'm Kotlin
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtStringInterpolationPrefix : KtElementImplStub<KotlinStringInterpolationPrefixStub> {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
-    constructor(stub: KotlinStringInterpolationPrefixStub) : super(stub, KtStubBasedElementTypes.STRING_INTERPOLATION_PREFIX)
+
+    @KtImplementationDetail
+    constructor(stub: KotlinStringInterpolationPrefixStub) : super(stub, KtNodeTypes.STRING_INTERPOLATION_PREFIX)
 
     /**
      * The interpolation prefix.

@@ -1,5 +1,5 @@
 KtCallExpression(78,84): 'peek()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

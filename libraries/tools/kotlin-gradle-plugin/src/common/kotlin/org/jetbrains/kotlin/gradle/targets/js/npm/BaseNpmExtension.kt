@@ -18,6 +18,8 @@ import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
+import org.jetbrains.kotlin.gradle.targets.js.internal.checkIsJsToolingProject
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NpmApiExtension
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
@@ -36,7 +38,9 @@ abstract class BaseNpmExtension internal constructor(
     private val execOps: ExecOperations,
 ) : ConfigurationPhaseAware<NpmEnv>(), NpmApiExtension<NpmEnvironment, Npm> {
     init {
-        check(project == project.rootProject)
+        checkIsJsToolingProject(project) {
+            "Cannot register ${BaseNpmExtension::class.simpleName} in ${project.displayName}. It can only be registered in ${project.jsToolingProject().displayName}."
+        }
         project.logger.kotlinInfo("Storing cached files in ${project.gradle.gradleUserHomeDir}")
     }
 

@@ -12,21 +12,25 @@ FooKt.class:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=I1]
+                isClassRef: true
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=T]
+            isClassRef: true
       TYPE_REFERENCE
         NULLABLE_TYPE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
+              isClassRef: true
       TYPE_CONSTRAINT_LIST
         TYPE_CONSTRAINT
           REFERENCE_EXPRESSION[referencedName=T]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=I2]
+                isClassRef: true
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST

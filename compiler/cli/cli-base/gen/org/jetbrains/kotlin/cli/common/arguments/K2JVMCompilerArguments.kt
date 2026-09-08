@@ -607,6 +607,7 @@ See KT-45671 for more details.""",
         value = "-Xuse-inline-scopes-numbers",
         description = "Use inline scopes numbers for inline marker variables.",
     )
+    @Enables(LanguageFeature.JvmInlineScopesNumbers)
     var useInlineScopesNumbers: Boolean = false
         set(value) {
             checkFrozen()

@@ -53,7 +53,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
     @GradleTest
     @DisplayName("Check build with published third-party library")
     fun testPublishedModules(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
-        val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG, suppressedGradlePluginErrors = emptySet())
 
         publishThirdPartyLib(gradleVersion = gradleVersion, localRepoDir = tempDir)
 
@@ -220,7 +220,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
                 "hierarchical-mpp-project-dependency",
                 gradleVersion,
                 localRepoDir = tempDir,
-                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG, suppressedGradlePluginErrors = emptySet())
             )
         ) {
             build("publish", "assemble") {
@@ -235,7 +235,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
     @TestMetadata("hierarchical-mpp-published-modules")
     @DisplayName("Check that only composite metadata artifacts are transformed")
     fun testOnlyCompositeMetadataArtifactsTransformed(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
-        val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG, suppressedGradlePluginErrors = emptySet())
         publishThirdPartyLib(gradleVersion = gradleVersion, localRepoDir = tempDir)
 
         val regex = """artifact: '(.+)'""".toRegex()
@@ -309,15 +309,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             "hierarchical-mpp-multi-modules",
             gradleVersion
         ) {
-            if (!isWithJavaSupported) {
-                listOf(
-                    "bottom-mpp",
-                    "top-mpp",
-                ).forEach {
-                    subProject(it).buildGradle.replaceText("withJava()", "")
-                }
-            }
-            build("assemble", "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError")
+            build("assemble", buildOptions = buildOptions.suppressingGradlePluginErrors("KotlinTargetAlreadyDeclaredError"))
         }
     }
 
@@ -339,25 +331,18 @@ open class HierarchicalMppIT : KGPBaseTest() {
             projectName = "kt-31468-multiple-jvm-targets-with-java",
             gradleVersion = gradleVersion
         ) {
-            if (!isWithJavaSupported) {
-                listOf("lib", "dependsOnPlainJvm", "dependsOnJvmWithJava").forEach {
-                    subProject(it).buildGradleKts.replaceText("withJava()", "")
-                }
-            }
+            val testClassesTaskName = "jvmTestClasses"
 
-            val testClassesTaskName = if (isWithJavaSupported) "testClasses" else "jvmTestClasses"
-
-            build("assemble", testClassesTaskName, "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError") {
+            build("assemble", testClassesTaskName, buildOptions = buildOptions.suppressingGradlePluginErrors("KotlinTargetAlreadyDeclaredError")) {
                 assertTasksExecuted(
                     ":dependsOnPlainJvm:compileKotlinJvm",
-                    if (isWithJavaSupported) ":dependsOnPlainJvm:compileJava" else ":dependsOnPlainJvm:compileJvmMainJava",
+                    ":dependsOnPlainJvm:compileJvmMainJava",
                     ":dependsOnJvmWithJava:compileKotlinJvm",
-                    if (isWithJavaSupported) ":dependsOnJvmWithJava:compileJava" else ":dependsOnJvmWithJava:compileJvmMainJava",
-
+                    ":dependsOnJvmWithJava:compileJvmMainJava",
                     ":dependsOnPlainJvm:compileTestKotlinJvm",
-                    if (isWithJavaSupported) ":dependsOnPlainJvm:compileTestJava" else ":dependsOnPlainJvm:compileJvmTestJava",
+                    ":dependsOnPlainJvm:compileJvmTestJava",
                     ":dependsOnJvmWithJava:compileTestKotlinJvm",
-                    if (isWithJavaSupported) ":dependsOnJvmWithJava:compileTestJava" else ":dependsOnJvmWithJava:compileJvmTestJava",
+                    ":dependsOnJvmWithJava:compileJvmTestJava",
                 )
             }
         }
@@ -813,7 +798,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             localRepoDir = tempDir
         ).run {
-            build("publish", "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError")
+            build("publish", buildOptions = buildOptions.suppressingGradlePluginErrors("KotlinTargetAlreadyDeclaredError"))
 
             fun macOnly(code: () -> List<String>): List<String> = if (OS.MAC.isCurrentOs) code() else emptyList()
 
@@ -966,7 +951,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            build("publish", "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError")
+            build("publish", buildOptions = buildOptions.suppressingGradlePluginErrors("KotlinTargetAlreadyDeclaredError"))
 
             val gradleModuleFileContent = tempDir.resolveRepoArtifactPath("test", "lib", "1.0", extension = "module").readText()
             fun assertNoSourcesPublished(expectedJarLocation: Path, variantName: String) {
@@ -1098,11 +1083,8 @@ open class HierarchicalMppIT : KGPBaseTest() {
     @GradleTest
     fun `test type safe project accessors with KotlinDependencyHandler`(gradleVersion: GradleVersion) {
         project("mpp-project-with-type-safe-accessors", gradleVersion) {
-            val projectPathString = if (gradleVersion < GradleVersion.version("8.11")) {
-                "${'$'}{it.dependencyProject.path}"
-            } else {
-                "${'$'}{it.path}"
-            }
+            val projectPathString = "${'$'}{it.path}"
+
             buildGradleKts.appendText(
                 //language=kotlin
                 """

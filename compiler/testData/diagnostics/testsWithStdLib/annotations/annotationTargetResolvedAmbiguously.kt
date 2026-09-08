@@ -40,7 +40,7 @@ class Derived : Base() {
     @<!COMPILER_REQUIRED_ANNOTATION_AMBIGUITY!>Target<!>(<!ARGUMENT_TYPE_MISMATCH!>AnnotationTarget.<!AMBIGUOUS_ANNOTATION_ARGUMENT!>TYPE<!><!>)
     annotation class Ann
 
-    fun foo(x: <!WRONG_ANNOTATION_TARGET!>@Ann<!> String) {}
+    fun foo(x: @Ann String) {}
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, const, enumDeclaration, enumEntry, functionDeclaration,

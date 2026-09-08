@@ -19,6 +19,13 @@ import com.intellij.lang.ASTNode
  * }
  * ```
  */
-class KtWhenEntryGuard(node: ASTNode) : KtElementImpl(node) {
+@OptIn(KtImplementationDetail::class)
+class KtWhenEntryGuard : KtElementImpl {
+    @KtImplementationDetail
+    constructor(node: ASTNode) : super(node)
+
+    /**
+     * Returns the boolean guard expression (the part after `if`), or `null` if it is absent in incomplete code.
+     */
     fun getExpression(): KtExpression? = findChildByClass(KtExpression::class.java)
 }

@@ -80,7 +80,7 @@ KtDestructuringDeclaration(183,203): 'val (a, second,) = x'
   null
 
 KtDestructuringDeclarationEntry(188,189): 'a'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -100,12 +100,12 @@ KtDestructuringDeclarationEntry(188,189): 'a'
       typeArgumentsMapping = {}
 
 KtDestructuringDeclarationEntry(191,197): 'second'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'second' on receiver of type 'Tuple'.>
 
 KtNameReferenceExpression(202,203): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -140,12 +140,12 @@ KtDestructuringDeclaration(222,237): 'var (first) = x'
   null
 
 KtDestructuringDeclarationEntry(227,232): 'first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
 KtNameReferenceExpression(236,237): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -180,7 +180,7 @@ KtDestructuringDeclaration(256,279): 'val (first: String) = x'
   null
 
 KtDestructuringDeclarationEntry(261,274): 'first: String'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -194,7 +194,7 @@ KtNameReferenceExpression(268,274): 'String'
   null
 
 KtNameReferenceExpression(278,279): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -229,7 +229,7 @@ KtDestructuringDeclaration(298,309): 'val (first)'
   null
 
 KtDestructuringDeclarationEntry(303,308): 'first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
@@ -252,7 +252,7 @@ KtDestructuringDeclaration(328,355): 'val (a: Int, b: String) = x'
   null
 
 KtDestructuringDeclarationEntry(333,339): 'a: Int'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -281,7 +281,7 @@ KtNameReferenceExpression(336,339): 'Int'
   null
 
 KtDestructuringDeclarationEntry(341,350): 'b: String'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -310,7 +310,7 @@ KtNameReferenceExpression(344,350): 'String'
   null
 
 KtNameReferenceExpression(354,355): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -345,7 +345,7 @@ KtDestructuringDeclaration(374,418): 'val (first: Int = a, second: String = b) =
   null
 
 KtDestructuringDeclarationEntry(379,393): 'first: Int = a'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -377,7 +377,7 @@ KtNameReferenceExpression(392,393): 'a'
   null
 
 KtDestructuringDeclarationEntry(395,413): 'second: String = b'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -409,7 +409,7 @@ KtNameReferenceExpression(412,413): 'b'
   null
 
 KtNameReferenceExpression(417,418): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -444,12 +444,12 @@ KtDestructuringDeclaration(437,448): 'val (_) = x'
   null
 
 KtDestructuringDeclarationEntry(442,443): '_'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING: Underscore in name-based destructuring without renaming is forbidden.>
 
 KtNameReferenceExpression(447,448): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -484,7 +484,7 @@ KtDestructuringDeclaration(467,486): 'val (_: String) = x'
   null
 
 KtDestructuringDeclarationEntry(472,481): '_: String'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING: Underscore in name-based destructuring without renaming is forbidden.>
 
@@ -498,7 +498,7 @@ KtNameReferenceExpression(475,481): 'String'
   null
 
 KtNameReferenceExpression(485,486): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -533,7 +533,7 @@ KtDestructuringDeclaration(521,541): 'val (aa = first) = x'
   null
 
 KtDestructuringDeclarationEntry(526,536): 'aa = first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -541,7 +541,7 @@ KtNameReferenceExpression(531,536): 'first'
   null
 
 KtNameReferenceExpression(540,541): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -576,7 +576,7 @@ KtDestructuringDeclaration(560,588): 'val (aa: String = first) = x'
   null
 
 KtDestructuringDeclarationEntry(565,583): 'aa: String = first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -593,7 +593,7 @@ KtNameReferenceExpression(578,583): 'first'
   null
 
 KtNameReferenceExpression(587,588): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -628,7 +628,7 @@ KtDestructuringDeclaration(607,622): 'val (a = first)'
   null
 
 KtDestructuringDeclarationEntry(612,621): 'a = first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
@@ -654,7 +654,7 @@ KtDestructuringDeclaration(641,685): 'val (first: Int = a, second: String = b) =
   null
 
 KtDestructuringDeclarationEntry(646,660): 'first: Int = a'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -686,7 +686,7 @@ KtNameReferenceExpression(659,660): 'a'
   null
 
 KtDestructuringDeclarationEntry(662,680): 'second: String = b'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -718,7 +718,7 @@ KtNameReferenceExpression(679,680): 'b'
   null
 
 KtNameReferenceExpression(684,685): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -832,12 +832,12 @@ KtDestructuringDeclaration(727,743): '(first, second,)'
   null
 
 KtDestructuringDeclarationEntry(728,733): 'first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
 KtDestructuringDeclarationEntry(735,741): 'second'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'second' on receiver of type 'Tuple'.>
 
@@ -845,7 +845,7 @@ KtContainerNode(747,748): 'x'
   null
 
 KtNameReferenceExpression(747,748): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -929,7 +929,7 @@ KtDestructuringDeclaration(762,769): '(first)'
   null
 
 KtDestructuringDeclarationEntry(763,768): 'first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -937,7 +937,7 @@ KtContainerNode(773,774): 'x'
   null
 
 KtNameReferenceExpression(773,774): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1021,7 +1021,7 @@ KtDestructuringDeclaration(788,803): '(first: String)'
   null
 
 KtDestructuringDeclarationEntry(789,802): 'first: String'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -1038,7 +1038,7 @@ KtContainerNode(807,808): 'x'
   null
 
 KtNameReferenceExpression(807,808): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1122,7 +1122,7 @@ KtDestructuringDeclaration(822,841): '(a: Int, b: String)'
   null
 
 KtDestructuringDeclarationEntry(823,829): 'a: Int'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1151,7 +1151,7 @@ KtNameReferenceExpression(826,829): 'Int'
   null
 
 KtDestructuringDeclarationEntry(831,840): 'b: String'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1183,7 +1183,7 @@ KtContainerNode(845,846): 'x'
   null
 
 KtNameReferenceExpression(845,846): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1267,7 +1267,7 @@ KtDestructuringDeclaration(860,863): '(_)'
   null
 
 KtDestructuringDeclarationEntry(861,862): '_'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING: Underscore in name-based destructuring without renaming is forbidden.>
 
@@ -1275,7 +1275,7 @@ KtContainerNode(867,868): 'x'
   null
 
 KtNameReferenceExpression(867,868): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1359,7 +1359,7 @@ KtDestructuringDeclaration(882,893): '(_: String)'
   null
 
 KtDestructuringDeclarationEntry(883,892): '_: String'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING: Underscore in name-based destructuring without renaming is forbidden.>
 
@@ -1376,7 +1376,7 @@ KtContainerNode(897,898): 'x'
   null
 
 KtNameReferenceExpression(897,898): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1460,7 +1460,7 @@ KtDestructuringDeclaration(929,941): '(aa = first)'
   null
 
 KtDestructuringDeclarationEntry(930,940): 'aa = first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -1471,7 +1471,7 @@ KtContainerNode(945,946): 'x'
   null
 
 KtNameReferenceExpression(945,946): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1555,7 +1555,7 @@ KtDestructuringDeclaration(960,980): '(aa: String = first)'
   null
 
 KtDestructuringDeclarationEntry(961,979): 'aa: String = first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -1575,7 +1575,7 @@ KtContainerNode(984,985): 'x'
   null
 
 KtNameReferenceExpression(984,985): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1659,7 +1659,7 @@ KtDestructuringDeclaration(999,1035): '(first: Int = a, second: String = b)'
   null
 
 KtDestructuringDeclarationEntry(1000,1014): 'first: Int = a'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1691,7 +1691,7 @@ KtNameReferenceExpression(1013,1014): 'a'
   null
 
 KtDestructuringDeclarationEntry(1016,1034): 'second: String = b'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1726,7 +1726,7 @@ KtContainerNode(1039,1040): 'x'
   null
 
 KtNameReferenceExpression(1039,1040): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -1800,7 +1800,7 @@ KtBlockExpression(1095,1097): '{}'
   null
 
 KtCallExpression(1103,1130): 'foo { (first, second,) -> }'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1833,7 +1833,7 @@ KtCallExpression(1103,1130): 'foo { (first, second,) -> }'
       }
 
 KtNameReferenceExpression(1103,1106): 'foo'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1884,12 +1884,12 @@ KtDestructuringDeclaration(1109,1125): '(first, second,)'
   null
 
 KtDestructuringDeclarationEntry(1110,1115): 'first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
 KtDestructuringDeclarationEntry(1117,1123): 'second'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'second' on receiver of type 'Tuple'.>
 
@@ -1897,7 +1897,7 @@ KtBlockExpression(1129,1129): ''
   null
 
 KtCallExpression(1135,1153): 'foo { (first) -> }'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1930,7 +1930,7 @@ KtCallExpression(1135,1153): 'foo { (first) -> }'
       }
 
 KtNameReferenceExpression(1135,1138): 'foo'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1981,7 +1981,7 @@ KtDestructuringDeclaration(1141,1148): '(first)'
   null
 
 KtDestructuringDeclarationEntry(1142,1147): 'first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -1989,7 +1989,7 @@ KtBlockExpression(1152,1152): ''
   null
 
 KtCallExpression(1158,1184): 'foo { (first: String) -> }'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2022,7 +2022,7 @@ KtCallExpression(1158,1184): 'foo { (first: String) -> }'
       }
 
 KtNameReferenceExpression(1158,1161): 'foo'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2073,7 +2073,7 @@ KtDestructuringDeclaration(1164,1179): '(first: String)'
   null
 
 KtDestructuringDeclarationEntry(1165,1178): 'first: String'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -2090,7 +2090,7 @@ KtBlockExpression(1183,1183): ''
   null
 
 KtCallExpression(1189,1219): 'foo { (a: Int, b: String) -> }'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2123,7 +2123,7 @@ KtCallExpression(1189,1219): 'foo { (a: Int, b: String) -> }'
       }
 
 KtNameReferenceExpression(1189,1192): 'foo'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2174,7 +2174,7 @@ KtDestructuringDeclaration(1195,1214): '(a: Int, b: String)'
   null
 
 KtDestructuringDeclarationEntry(1196,1202): 'a: Int'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -2203,7 +2203,7 @@ KtNameReferenceExpression(1199,1202): 'Int'
   null
 
 KtDestructuringDeclarationEntry(1204,1213): 'b: String'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -2235,7 +2235,7 @@ KtBlockExpression(1218,1218): ''
   null
 
 KtCallExpression(1224,1238): 'foo { (_) -> }'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2268,7 +2268,7 @@ KtCallExpression(1224,1238): 'foo { (_) -> }'
       }
 
 KtNameReferenceExpression(1224,1227): 'foo'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2319,7 +2319,7 @@ KtDestructuringDeclaration(1230,1233): '(_)'
   null
 
 KtDestructuringDeclarationEntry(1231,1232): '_'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING: Underscore in name-based destructuring without renaming is forbidden.>
 
@@ -2327,7 +2327,7 @@ KtBlockExpression(1237,1237): ''
   null
 
 KtCallExpression(1243,1265): 'foo { (_: String) -> }'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2360,7 +2360,7 @@ KtCallExpression(1243,1265): 'foo { (_: String) -> }'
       }
 
 KtNameReferenceExpression(1243,1246): 'foo'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2411,7 +2411,7 @@ KtDestructuringDeclaration(1249,1260): '(_: String)'
   null
 
 KtDestructuringDeclarationEntry(1250,1259): '_: String'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING: Underscore in name-based destructuring without renaming is forbidden.>
 
@@ -2428,7 +2428,7 @@ KtBlockExpression(1264,1264): ''
   null
 
 KtCallExpression(1287,1310): 'foo { (aa = first) -> }'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2461,7 +2461,7 @@ KtCallExpression(1287,1310): 'foo { (aa = first) -> }'
       }
 
 KtNameReferenceExpression(1287,1290): 'foo'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2512,7 +2512,7 @@ KtDestructuringDeclaration(1293,1305): '(aa = first)'
   null
 
 KtDestructuringDeclarationEntry(1294,1304): 'aa = first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -2523,7 +2523,7 @@ KtBlockExpression(1309,1309): ''
   null
 
 KtCallExpression(1315,1346): 'foo { (aa: String = first) -> }'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2556,7 +2556,7 @@ KtCallExpression(1315,1346): 'foo { (aa: String = first) -> }'
       }
 
 KtNameReferenceExpression(1315,1318): 'foo'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2607,7 +2607,7 @@ KtDestructuringDeclaration(1321,1341): '(aa: String = first)'
   null
 
 KtDestructuringDeclarationEntry(1322,1340): 'aa: String = first'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first' on receiver of type 'Tuple'.>
 
@@ -2627,7 +2627,7 @@ KtBlockExpression(1345,1345): ''
   null
 
 KtCallExpression(1351,1398): 'foo { (first: Int = a, second: String = b) -> }'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2660,7 +2660,7 @@ KtCallExpression(1351,1398): 'foo { (first: Int = a, second: String = b) -> }'
       }
 
 KtNameReferenceExpression(1351,1354): 'foo'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2711,7 +2711,7 @@ KtDestructuringDeclaration(1357,1393): '(first: Int = a, second: String = b)'
   null
 
 KtDestructuringDeclarationEntry(1358,1372): 'first: Int = a'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -2743,7 +2743,7 @@ KtNameReferenceExpression(1371,1372): 'a'
   null
 
 KtDestructuringDeclarationEntry(1374,1392): 'second: String = b'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

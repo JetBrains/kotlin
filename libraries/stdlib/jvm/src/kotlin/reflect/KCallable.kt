@@ -84,4 +84,10 @@ public actual interface KCallable<out R> : KAnnotatedElement {
      */
     @SinceKotlin("1.3")
     public val isSuspend: Boolean
+
+    /**
+     * Companion extension class of the function or property, if this is a companion extension.
+     */
+    @ExperimentalCompanionExtensions
+    public val companionExtensionClass: KClass<*>?
 }

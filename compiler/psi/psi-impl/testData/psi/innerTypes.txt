@@ -60,7 +60,7 @@ KtFile: innerTypes.kt
             CLASS_BODY
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n            ')
-              FUN
+              FUNCTION
                 PsiElement(fun)('fun')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('foo')
@@ -223,7 +223,7 @@ KtFile: innerTypes.kt
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('Inner2')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('bar')

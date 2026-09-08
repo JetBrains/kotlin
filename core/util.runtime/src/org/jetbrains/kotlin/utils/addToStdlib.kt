@@ -544,3 +544,25 @@ class ChainedIterator<T>(delegates: Collection<Iterator<T>>) : Iterator<T> {
         return currentIterator?.next() ?: throw NoSuchElementException()
     }
 }
+
+fun <T> Iterator<T>.skipNext() {
+    // util.runtime is compiled with the language-version=2.2
+    // will be changed to val _ = next() once the module is compiled with >= 2.5
+    next()
+}
+
+inline fun <T, K> Iterable<T>.forEachZipped(other: Iterable<K>, transform: (T, K) -> Unit) {
+    val first = iterator()
+    val second = other.iterator()
+    while (first.hasNext() && second.hasNext()) {
+        transform(first.next(), second.next())
+    }
+}
+
+inline fun <T, K> Array<out T>.forEachZipped(other: Iterable<K>, transform: (T, K) -> Unit) {
+    val second = other.iterator()
+    for (first in this) {
+        if (!second.hasNext()) break
+        transform(first, second.next())
+    }
+}

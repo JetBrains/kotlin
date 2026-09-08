@@ -3,11 +3,9 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
-    id("project-tests-convention")
     id("test-inputs-check")
 }
 
@@ -33,6 +31,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":kotlin-util-klib-abi")))
     testImplementation(project(":kotlin-util-klib-metadata"))
     testImplementation(project(":native:cinterop.deserialization"))
+    testImplementation(project(":compiler:cli-metadata"))
 
     if (project.kotlinBuildProperties.isKotlinNativeEnabled.get()) {
         llvmDevBinaryDataUsage(project(":kotlin-native:dependencies", configuration = "llvmDevBinaryData"))
@@ -53,16 +52,20 @@ projectTests {
     testData(project(":compiler").isolated, "testData/ir")
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":compiler").isolated, "testData/loadJava")
+    testData(project(":compiler").isolated, "testData/serialization")
     testData(project(":native:native.tests").isolated, "testData/codegen")
     testData(project(":native:native.tests").isolated, "testData/klib")
     testData(project(":native:native.tests").isolated, "testData/irProvidersMismatch")
     testData(project(":native:native.tests").isolated, "testData/oneStageCompilation")
+
+    withStdlibCommon()
 
     nativeTestTask(
         "test",
         allowParallelExecution = true,
         requirePlatformLibs = true,
         enableGroupingTestEngine = true,
+        maxHeapSize = testMaxHeapSizeLarge
     ) {
         val testTargetName = providers.gradleProperty("kotlin.internal.native.test.target")
             .orElse(providers.gradleProperty("kn.target"))

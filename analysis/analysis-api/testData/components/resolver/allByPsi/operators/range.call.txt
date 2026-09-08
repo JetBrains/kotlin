@@ -122,7 +122,7 @@ KtNameReferenceExpression(120,121): 'A'
   null
 
 KtCallExpression(125,131): 'TODO()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -139,7 +139,7 @@ KtCallExpression(125,131): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(125,129): 'TODO'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -204,7 +204,7 @@ KtNameReferenceExpression(184,185): 'A'
   null
 
 KtCallExpression(189,195): 'TODO()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -221,7 +221,7 @@ KtCallExpression(189,195): 'TODO()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(189,193): 'TODO'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -253,7 +253,7 @@ KtProperty(216,227): 'val a = A()'
   null
 
 KtCallExpression(224,227): 'A()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -270,7 +270,7 @@ KtCallExpression(224,227): 'A()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(224,225): 'A'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -293,7 +293,7 @@ KtProperty(232,243): 'val b = A()'
   null
 
 KtCallExpression(240,243): 'A()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -310,7 +310,7 @@ KtCallExpression(240,243): 'A()'
       valueArgumentMapping = {}
 
 KtNameReferenceExpression(240,241): 'A'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -330,7 +330,7 @@ KtValueArgumentList(241,243): '()'
   null
 
 KtBinaryExpression(248,252): 'a..b'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -366,7 +366,7 @@ KtBinaryExpression(248,252): 'a..b'
       }
 
 KtNameReferenceExpression(248,249): 'a'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -383,7 +383,7 @@ KtNameReferenceExpression(248,249): 'a'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(249,251): '..'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -419,7 +419,7 @@ KtOperationReferenceExpression(249,251): '..'
       }
 
 KtNameReferenceExpression(251,252): 'b'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -436,7 +436,7 @@ KtNameReferenceExpression(251,252): 'b'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(257,262): 'a..<b'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -472,7 +472,7 @@ KtBinaryExpression(257,262): 'a..<b'
       }
 
 KtNameReferenceExpression(257,258): 'a'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -489,7 +489,7 @@ KtNameReferenceExpression(257,258): 'a'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(258,261): '..<'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -525,7 +525,7 @@ KtOperationReferenceExpression(258,261): '..<'
       }
 
 KtNameReferenceExpression(261,262): 'b'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

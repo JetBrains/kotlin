@@ -10,7 +10,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.KtNodeTypes.BINARY_EXPRESSION
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -52,42 +51,47 @@ object FirPrefixAndSuffixSyntaxChecker : FirExpressionSyntaxChecker<FirStatement
             ?.let { checkLiteralPrefixOrSuffix(it, source) }
     }
 
-    private enum class Direction(val offset: Int) {
-        PREVIOUS(-1),
-        NEXT(1)
-    }
-
-    private fun LighterASTNode.getLeaf(
-        direction: Direction,
+    /**
+     * Returns the leaf adjacent to this node in the token stream: the one right after it when [forward] is `true`, the
+     * one right before it otherwise. Returns `null` at the edges of the file.
+     *
+     * This mirrors `PsiTreeUtil.prevLeaf`/`nextLeaf`, which [checkPsi] relies on, so that both halves of the checker
+     * report the same diagnostics (KT-88961).
+     *
+     * The walk up the tree is iterative on purpose. A chain such as `"a0" + "a1" + ...` nests one `BINARY_EXPRESSION`
+     * per operand, so recursing once per level overflows the stack on generated sources (KT-88399).
+     */
+    private fun LighterASTNode.adjacentLeaf(
         treeStructure: FlyweightCapableTreeStructure<LighterASTNode>,
+        forward: Boolean,
     ): LighterASTNode? {
-        val parent = treeStructure.getParent(this) ?: return null
-        val children = parent.getChildren(treeStructure)
-        val index = children.indexOf(this)
-        val leaf = children.getOrNull(index - direction.offset)
-        return when {
-            // Necessary for finding the next leaf in complex binary expressions, for example 'a foo"asdsfsa"foo a'
-            leaf == null && parent.tokenType == BINARY_EXPRESSION -> parent.getLeaf(direction, treeStructure)
-            leaf == null -> null
-            else -> {
-                // This is necessary to obtain the simplest node, as the found leaf can be a complex expression
-                var result = leaf
-                var resultChildren = leaf.getChildren(treeStructure)
-                while (resultChildren.isNotEmpty()) {
-                    result = if (direction == Direction.PREVIOUS) resultChildren.first() else resultChildren.last()
-                    resultChildren = result.getChildren(treeStructure)
-                }
-                result
+        var node: LighterASTNode = this
+        while (true) {
+            val parent = treeStructure.getParent(node) ?: return null
+            val children = parent.getChildren(treeStructure)
+            val index = children.indexOf(node)
+            val sibling = children.getOrNull(if (forward) index + 1 else index - 1)
+            if (sibling == null) {
+                // Nothing on that side of the parent: the adjacent leaf lives outside it, so keep climbing.
+                node = parent
+                continue
+            }
+            // The sibling can be a composite expression, so descend to the leaf that actually touches this node.
+            var result: LighterASTNode = sibling
+            while (true) {
+                val resultChildren = result.getChildren(treeStructure)
+                if (resultChildren.isEmpty()) return result
+                result = if (forward) resultChildren.first() else resultChildren.last()
             }
         }
     }
 
     private fun LighterASTNode.prevLeaf(treeStructure: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode? {
-        return getLeaf(Direction.PREVIOUS, treeStructure)
+        return adjacentLeaf(treeStructure, forward = false)
     }
 
     private fun LighterASTNode.nextLeaf(treeStructure: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode? {
-        return getLeaf(Direction.NEXT, treeStructure)
+        return adjacentLeaf(treeStructure, forward = true)
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)

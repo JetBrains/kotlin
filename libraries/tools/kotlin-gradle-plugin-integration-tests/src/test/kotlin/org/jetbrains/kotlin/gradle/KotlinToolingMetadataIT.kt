@@ -86,13 +86,13 @@ class KotlinToolingMetadataMppIT : KGPBaseTest() {
             }
 
             // Adding macos target
-            buildGradleKts.replaceText("linuxX64()", "linuxX64()\nmacosX64()")
+            buildGradleKts.replaceText("linuxX64()", "linuxX64()\nmacosArm64()")
 
             build("publish") {
                 assertTasksExecuted(":$buildKotlinToolingMetadataTaskName")
                 val metadata = KotlinToolingMetadata.parseJsonOrThrow(defaultKotlinToolingMetadataJsonPath.readText())
                 assertEquals(
-                    listOf(KonanTarget.LINUX_X64.name, KonanTarget.MACOS_X64.name).sorted(),
+                    listOf(KonanTarget.LINUX_X64.name, KonanTarget.MACOS_ARM64.name).sorted(),
                     metadata.projectTargets.mapNotNull { it.extras.native?.konanTarget }.sorted()
                 )
             }

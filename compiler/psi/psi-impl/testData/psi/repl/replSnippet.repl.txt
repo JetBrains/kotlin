@@ -13,7 +13,7 @@ KtFile: replSnippet.repl.kts
         CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n    ')
-          FUN
+          FUNCTION
             PsiElement(fun)('fun')
             PsiWhiteSpace(' ')
             PsiElement(IDENTIFIER)('bar')
@@ -43,7 +43,7 @@ KtFile: replSnippet.repl.kts
             CLASS_BODY
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n        ')
-              FUN
+              FUNCTION
                 PsiElement(fun)('fun')
                 PsiWhiteSpace(' ')
                 PsiElement(IDENTIFIER)('member')
@@ -100,7 +100,7 @@ KtFile: replSnippet.repl.kts
           PsiWhiteSpace('\n')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('topLevel')
@@ -135,7 +135,7 @@ KtFile: replSnippet.repl.kts
                 CLASS_BODY
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace('\n        ')
-                  FUN
+                  FUNCTION
                     PsiElement(fun)('fun')
                     PsiWhiteSpace(' ')
                     PsiElement(IDENTIFIER)('localMember')

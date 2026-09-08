@@ -1,5 +1,5 @@
 KtCallableReferenceExpression(76,84): 'Foo::foo'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null

@@ -1,13 +1,13 @@
 <caret_1>:
   KDocName(8,11): 'abc'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         abc: kotlin.Int
       ]
 
 <caret_2>:
   KDocName(24,27): 'abc'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         abc: kotlin.Int
       ]
@@ -18,7 +18,7 @@
 
 <caret_4>:
   KDocName(65,68): 'abc'
-    KaSymbolResolutionSuccess:
+    KaSimpleSymbolResolutionSuccess:
       symbols = [
         abc: kotlin.Int
       ]

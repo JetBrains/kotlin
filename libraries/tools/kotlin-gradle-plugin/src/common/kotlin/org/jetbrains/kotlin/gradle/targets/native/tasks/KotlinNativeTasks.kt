@@ -62,7 +62,6 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DefFile
-import org.jetbrains.kotlin.project.model.LanguageSettings
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 import java.nio.file.Files
@@ -194,30 +193,6 @@ abstract class AbstractKotlinNativeCompile<
     )
     @get:Internal
     abstract val kotlinOptions: T
-
-    @Deprecated(
-        message = "Use implementations compilerOptions to get/set freeCompilerArgs",
-        level = DeprecationLevel.ERROR,
-    )
-    @get:Input
-    abstract val additionalCompilerOptions: Provider<Collection<String>>
-
-    @Deprecated(
-        message = "Use implementations compilerOptions",
-        level = DeprecationLevel.ERROR,
-    )
-    @get:Internal
-    val languageSettings: LanguageSettings
-        get() = compilation.languageSettings
-
-    @Suppress("DeprecatedCallableAddReplaceWith")
-    @get:Deprecated(
-        message = "Replaced with 'compilerOptions.progressiveMode'",
-        level = DeprecationLevel.ERROR,
-    )
-    @get:Internal
-    val progressiveMode: Boolean
-        get() = compilation.compilerOptions.options.progressiveMode.get()
     // endregion.
 
     @get:Input
@@ -308,14 +283,6 @@ internal constructor(
         else "${project.name}_${compilation.compilationName}"
     }
 
-    @Deprecated(
-        message = "Please use 'compilerOptions.moduleName' to configure",
-        level = DeprecationLevel.ERROR,
-        replaceWith = ReplaceWith("compilerOptions.moduleName.get()")
-    )
-    @get:Internal
-    val moduleName: String get() = compilerOptions.moduleName.get()
-
     @get:Input
     val shortModuleName: String by providerFactory.provider { baseName }
 
@@ -341,62 +308,12 @@ internal constructor(
             NoopKotlinNativeProvider(project)
         )
 
-    @Deprecated(
-        message = "This property will be removed in future releases. Don't use it in your code.",
-        level = DeprecationLevel.ERROR,
-    )
-    @get:Internal
-    val konanDataDir: Provider<String?> = kotlinNativeProvider.flatMap { it.konanDataDir }
-
-    @Deprecated(
-        message = "This property will be removed in future releases. Don't use it in your code.",
-        level = DeprecationLevel.ERROR,
-    )
-    @get:Internal
-    val konanHome: Provider<String> = kotlinNativeProvider.flatMap { it.bundleDirectory }
-
     @get:Nested
     override val multiplatformStructure: K2MultiplatformStructure = objectFactory.newInstance()
 
     private val commonSourcesTree: FileTree
         get() = commonSources.asFileTree
 
-    // endregion.
-
-    // region Language settings imported from a SourceSet.
-    @Deprecated(
-        message = "Replaced with kotlinOptions.languageVersion",
-        level = DeprecationLevel.ERROR,
-        replaceWith = ReplaceWith("kotlinOptions.languageVersion")
-    )
-    val languageVersion: String?
-        @Optional @Input get() = compilerOptions.languageVersion.orNull?.version
-
-    @Deprecated(
-        message = "Replaced with kotlinOptions.apiVersion",
-        level = DeprecationLevel.ERROR,
-        replaceWith = ReplaceWith("kotlinOptions.apiVersion")
-    )
-    val apiVersion: String?
-        @Optional @Input get() = compilerOptions.apiVersion.orNull?.version
-
-    @Deprecated(
-        message = "Language features is internal Kotlin compiler flags and should not be used directly",
-        level = DeprecationLevel.ERROR,
-    )
-    val enabledLanguageFeatures: Set<String>
-        @Internal get() = compilerOptions
-            .freeCompilerArgs.get()
-            .filter { it.startsWith("-XXLanguage:+") }
-            .toSet()
-
-    @Deprecated(
-        message = "Replaced with compilerOptions.optIn",
-        level = DeprecationLevel.ERROR,
-        replaceWith = ReplaceWith("compilerOptions.optIn")
-    )
-    val optInAnnotationsInUse: Set<String>
-        @Internal get() = compilerOptions.optIn.get().toSet()
     // endregion.
 
     // region Kotlin options
@@ -415,16 +332,6 @@ internal constructor(
         override val options: KotlinCommonCompilerOptions
             get() = compilerOptions
     }
-
-    @Suppress("UNCHECKED_CAST")
-    @Deprecated(
-        message = "Replaced with compilerOptions.freeCompilerArgs",
-        level = DeprecationLevel.ERROR,
-        replaceWith = ReplaceWith("compilerOptions.freeCompilerArgs.get()")
-    )
-    @get:Input
-    override val additionalCompilerOptions: Provider<Collection<String>>
-        get() = compilerOptions.freeCompilerArgs as Provider<Collection<String>>
 
     @get:Internal
     internal val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel> = objectFactory
@@ -846,15 +753,6 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     @get:Internal
     internal var isGeneratedCinterop: Boolean = false
 
-    @Deprecated(
-        "Eager outputFile was replaced with lazy outputFileProvider",
-        level = DeprecationLevel.ERROR,
-        replaceWith = ReplaceWith("outputFileProvider")
-    )
-    @get:Internal
-    val outputFile: File
-        get() = outputFileProvider.get()
-
     @get:Nested
     internal val kotlinNativeProvider: Property<KotlinNativeProvider> =
         project.objects.propertyWithConvention<KotlinNativeProvider>(
@@ -863,20 +761,6 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
             // and added convention for backwards compatibility.
             NoopKotlinNativeProvider(project)
         )
-
-    @Deprecated(
-        message = "This property will be removed in future releases. Don't use it in your code.",
-        level = DeprecationLevel.ERROR,
-    )
-    @get:Internal
-    val konanDataDir: Provider<String?> = kotlinNativeProvider.flatMap { it.konanDataDir }
-
-    @Deprecated(
-        message = "This property will be removed in future releases. Don't use it in your code.",
-        level = DeprecationLevel.ERROR,
-    )
-    @get:Internal
-    val konanHome: Provider<String> = kotlinNativeProvider.flatMap { it.bundleDirectory }
 
     private val actualNativeHomeDirectory = project.nativeProperties.actualNativeHomeDirectory
     private val runnerJvmArgs = project.nativeProperties.jvmArgs
@@ -911,15 +795,6 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     @get:NormalizeLineEndings
     @get:Optional
     abstract val definitionFile: RegularFileProperty
-
-    @get:Internal
-    @Deprecated(
-        "This eager parameter is deprecated.",
-        level = DeprecationLevel.ERROR,
-        replaceWith = ReplaceWith("definitionFile")
-    )
-    val defFile: File get() = definitionFile.asFile.get()
-
 
     @get:Optional
     @get:Input

@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinCollectionLiteralExpressionStub;
 import org.jetbrains.kotlin.resolution.KtResolvableCall;
@@ -33,12 +34,15 @@ import static org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt.getTrailingCommaByClo
  * fun foo() {}
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtCollectionLiteralExpression extends KtElementImplStub<KotlinCollectionLiteralExpressionStub>
         implements KtReferenceExpression, KtResolvableCall {
+    @KtImplementationDetail
     public KtCollectionLiteralExpression(@NotNull KotlinCollectionLiteralExpressionStub stub) {
-        super(stub, KtStubBasedElementTypes.COLLECTION_LITERAL_EXPRESSION);
+        super(stub, KtNodeTypes.COLLECTION_LITERAL_EXPRESSION);
     }
 
+    @KtImplementationDetail
     public KtCollectionLiteralExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -48,18 +52,21 @@ public class KtCollectionLiteralExpression extends KtElementImplStub<KotlinColle
         return visitor.visitCollectionLiteralExpression(this, data);
     }
 
+    /** Returns the opening bracket {@code [}, or {@code null} if it is absent in incomplete code. */
     @Nullable
     public PsiElement getLeftBracket() {
         ASTNode astNode = getNode().findChildByType(KtTokens.LBRACKET);
         return astNode != null ? astNode.getPsi() : null;
     }
 
+    /** Returns the closing bracket {@code ]}, or {@code null} if it is absent in incomplete code. */
     @Nullable
     public PsiElement getRightBracket() {
         ASTNode astNode = getNode().findChildByType(KtTokens.RBRACKET);
         return astNode != null ? astNode.getPsi() : null;
     }
 
+    /** Returns the trailing comma after the last element, or {@code null} if there is none. */
     @Nullable
     public PsiElement getTrailingComma() {
         PsiElement rightBracket = getRightBracket();

@@ -1,5 +1,5 @@
 KtConstructorCalleeExpression(40,41): 'A'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(x: kotlin.String): A
     ]

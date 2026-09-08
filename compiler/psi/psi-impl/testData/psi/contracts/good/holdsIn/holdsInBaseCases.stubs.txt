@@ -21,7 +21,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HoldsInBaseCasesKt]]
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=contracts]
-  FUN[fqName=runIf, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=runIf]
+  FUNCTION[fqName=runIf, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=runIf]
     MODIFIER_LIST[inline]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=R]
@@ -41,7 +41,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HoldsInBaseCasesKt]]
       NULLABLE_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=R]
-  FUN[fqName=runIfNot, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=runIfNot]
+  FUNCTION[fqName=runIfNot, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=runIfNot]
     MODIFIER_LIST[inline]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=R]
@@ -61,7 +61,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HoldsInBaseCasesKt]]
       NULLABLE_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=R]
-  FUN[fqName=runIfElse, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=runIfElse]
+  FUNCTION[fqName=runIfElse, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=runIfElse]
     MODIFIER_LIST[inline]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=R]

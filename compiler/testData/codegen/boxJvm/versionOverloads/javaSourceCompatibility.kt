@@ -2,7 +2,6 @@
 // WITH_STDLIB
 
 // FILE: test.kt
-@file:OptIn(ExperimentalVersionOverloading::class)
 
 fun foo(s: String, @IntroducedAt("2") b: Int = 0): String = s
 

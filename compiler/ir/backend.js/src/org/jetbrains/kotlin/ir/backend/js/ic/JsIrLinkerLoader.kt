@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.FunctionTypeInterfacePackages
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -52,12 +50,8 @@ internal class LoadedJsIr(
         val unorderedModuleFragments: List<IrModuleFragment> = loadedFragments.values.toList()
 
         val orderedAndIndexedModuleFragments: Map<IrModuleFragment, Int> = linker.moduleDependencyTracker.reverseTopoOrder(
-            IrModuleDependencies(
-                all = unorderedModuleFragments,
-                stdlib = unorderedModuleFragments.firstOrNull { it.kotlinLibrary?.isAnyPlatformStdlib == true },
-                included = unorderedModuleFragments.last(),
-            )
-        ).all.mapIndexed { index, moduleFragment -> moduleFragment to index }.toMap()
+            IrModuleDependencies(unorderedModuleFragments)
+        ).allDependencies.mapIndexed { index, moduleFragment -> moduleFragment to index }.toMap()
 
         val orderedLoadedFragments: Map<KotlinLibraryFile, IrModuleFragment> = loadedFragments.entries
             .map { [libraryFile, moduleFragment] -> libraryFile to moduleFragment }
@@ -75,7 +69,7 @@ internal class LoadedJsIr(
     private val irFileSourceNames = hashMapOf<IrModuleFragment, Map<IrFile, KotlinSourceFile>>()
 
     private fun collectSignatureProviders(lib: KotlinLibraryFile, irModule: IrModuleFragment): List<FileSignatureProvider> {
-        val moduleDeserializer = linker.moduleDeserializer(irModule.descriptor)
+        val moduleDeserializer = linker.moduleDeserializer(irModule)
         val deserializers = moduleDeserializer.fileDeserializers()
         val providers = ArrayList<FileSignatureProvider>(deserializers.size)
         val sourceFiles = getIrFileNames(irModule)
@@ -128,7 +122,7 @@ internal class JsIrLinkerLoader(
     private val compilerConfiguration: CompilerConfiguration,
     private val orderedLibraries: List<KotlinLibrary>,
     private val mainModuleFriends: Collection<KotlinLibrary>,
-    private val icContext: PlatformDependentICContext,
+    private val icContext: PlatformDependentICContext<*, *, *, *>,
     private val stubbedSignatures: Set<IdSignature>,
     private val loadBodiesOnlyForMainModule: Boolean,
     private val mainLibrary: KotlinLibrary,
@@ -218,7 +212,7 @@ internal class JsIrLinkerLoader(
         if (!loadAllIr) {
             for ([loadingLibFile, loadingSrcFiles] in modifiedFiles) {
                 val loadingIrModule = irModules[loadingLibFile] ?: notFoundIcError("loading fragment", loadingLibFile)
-                val moduleDeserializer = linker.moduleDeserializer(loadingIrModule.descriptor)
+                val moduleDeserializer = linker.moduleDeserializer(loadingIrModule)
                 for (loadingSrcFileSignatures in loadingSrcFiles.values) {
                     for (loadingSignature in loadingSrcFileSignatures.getExportedSignatures()) {
                         if (checkIsFunctionInterface(loadingSignature)) {
@@ -243,7 +237,6 @@ internal class JsIrLinkerLoader(
             }
         }
 
-        @OptIn(ObsoleteDescriptorBasedAPI::class)
         val loadedIr = LoadedJsIr(irModules, irBuiltIns, linker)
 
         // This should be done because referenced declaration from the compiler should be loaded as well

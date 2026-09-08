@@ -53,7 +53,7 @@ KtReturnExpression(68,76): 'return x'
   null
 
 KtNameReferenceExpression(75,76): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -94,7 +94,7 @@ KtBlockExpression(98,99): 'x'
   null
 
 KtNameReferenceExpression(98,99): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -111,7 +111,7 @@ KtNameReferenceExpression(98,99): 'x'
       typeArgumentsMapping = {}
 
 KtBinaryExpression(105,110): 'x + 1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -147,7 +147,7 @@ KtBinaryExpression(105,110): 'x + 1'
       }
 
 KtNameReferenceExpression(105,106): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -164,7 +164,7 @@ KtNameReferenceExpression(105,106): 'x'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(107,108): '+'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -230,7 +230,7 @@ KtProperty(159,168): 'val x = x'
   null
 
 KtNameReferenceExpression(167,168): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -250,7 +250,7 @@ KtDestructuringDeclaration(173,192): 'val (x, y) = x to 1'
   null
 
 KtDestructuringDeclarationEntry(178,179): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -270,7 +270,7 @@ KtDestructuringDeclarationEntry(178,179): 'x'
       valueArgumentMapping = {}
 
 KtDestructuringDeclarationEntry(181,182): 'y'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -290,7 +290,7 @@ KtDestructuringDeclarationEntry(181,182): 'y'
       valueArgumentMapping = {}
 
 KtBinaryExpression(186,192): 'x to 1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -329,7 +329,7 @@ KtBinaryExpression(186,192): 'x to 1'
       }
 
 KtNameReferenceExpression(186,187): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -346,7 +346,7 @@ KtNameReferenceExpression(186,187): 'x'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(188,190): 'to'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -449,7 +449,7 @@ KtContainerNode(207,211): 'x..y'
   null
 
 KtBinaryExpression(207,211): 'x..y'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -485,7 +485,7 @@ KtBinaryExpression(207,211): 'x..y'
       }
 
 KtNameReferenceExpression(207,208): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -502,7 +502,7 @@ KtNameReferenceExpression(207,208): 'x'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(208,210): '..'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -538,7 +538,7 @@ KtOperationReferenceExpression(208,210): '..'
       }
 
 KtNameReferenceExpression(210,211): 'y'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null

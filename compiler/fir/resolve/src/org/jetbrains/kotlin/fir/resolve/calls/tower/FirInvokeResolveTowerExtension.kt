@@ -9,7 +9,6 @@ import kotlinx.collections.immutable.toPersistentSet
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -408,7 +407,7 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
 
         val extraType = when (symbol) {
             is FirPropertySymbol -> {
-                symbol.tryAccessExplicitFieldSymbol(inlineFunction, session, candidate.hasVisibleBackingField)?.resolvedReturnType
+                symbol.tryAccessExplicitFieldSymbol(inlineFunction?.symbol, session, candidate.hasVisibleBackingField)?.resolvedReturnType
             }
             is FirValueParameterSymbol if LanguageFeature.StrictEquals.isEnabled() -> {
                 symbol.equalityBoundType

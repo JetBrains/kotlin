@@ -15,7 +15,7 @@ KtFile: suspendLambda.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         TYPE_PARAMETER_LIST
@@ -67,7 +67,7 @@ KtFile: suspendLambda.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         TYPE_PARAMETER_LIST
@@ -139,7 +139,7 @@ KtFile: suspendLambda.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         TYPE_PARAMETER_LIST
@@ -196,7 +196,7 @@ KtFile: suspendLambda.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         TYPE_PARAMETER_LIST
@@ -240,7 +240,7 @@ KtFile: suspendLambda.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         TYPE_PARAMETER_LIST
@@ -500,7 +500,7 @@ KtFile: suspendLambda.kt
         NULL
           PsiElement(null)('null')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('override')
@@ -549,7 +549,7 @@ KtFile: suspendLambda.kt
         NULL
           PsiElement(null)('null')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('override')
@@ -588,7 +588,7 @@ KtFile: suspendLambda.kt
         NULL
           PsiElement(null)('null')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('annotatedReturnSuspend')
@@ -635,7 +635,7 @@ KtFile: suspendLambda.kt
               <empty list>
             PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('returnSuspend')

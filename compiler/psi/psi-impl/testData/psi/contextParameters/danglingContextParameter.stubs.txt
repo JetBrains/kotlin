@@ -76,7 +76,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextParameterKt]]
                                 LITERAL_STRING_TEMPLATE_ENTRY[text=str]
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=Unresolved]
-  FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
     CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=Foo, superNames=[]]
       CLASS_BODY

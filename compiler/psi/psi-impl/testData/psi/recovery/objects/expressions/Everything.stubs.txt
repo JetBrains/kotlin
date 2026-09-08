@@ -30,5 +30,5 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EverythingKt]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Baz]
         CLASS_BODY
-          FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+          FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
             VALUE_PARAMETER_LIST

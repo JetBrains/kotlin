@@ -18,6 +18,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Iterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
@@ -25,8 +26,9 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Boolean]
+                      isClassRef: true
     CLASS_BODY
-      FUN[fqName=kotlin.collections.BooleanIterator.next, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
+      FUNCTION[fqName=kotlin.collections.BooleanIterator.next, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
         MODIFIER_LIST[public final operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -34,7 +36,8 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.BooleanIterator.nextBoolean, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextBoolean]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.BooleanIterator.nextBoolean, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextBoolean]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -42,6 +45,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
   CLASS[classId=kotlin/collections/ByteIterator, fqName=kotlin.collections.ByteIterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ByteIterator, superNames=[Iterator]]
     MODIFIER_LIST[public abstract]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ByteIterator]
@@ -56,6 +60,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Iterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
@@ -63,8 +68,9 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Byte]
+                      isClassRef: true
     CLASS_BODY
-      FUN[fqName=kotlin.collections.ByteIterator.next, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
+      FUNCTION[fqName=kotlin.collections.ByteIterator.next, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
         MODIFIER_LIST[public final operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -72,7 +78,8 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Byte]
-      FUN[fqName=kotlin.collections.ByteIterator.nextByte, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextByte]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.ByteIterator.nextByte, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextByte]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -80,6 +87,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Byte]
+              isClassRef: true
   CLASS[classId=kotlin/collections/CharIterator, fqName=kotlin.collections.CharIterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=CharIterator, superNames=[Iterator]]
     MODIFIER_LIST[public abstract]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=CharIterator]
@@ -94,6 +102,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Iterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
@@ -101,8 +110,9 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Char]
+                      isClassRef: true
     CLASS_BODY
-      FUN[fqName=kotlin.collections.CharIterator.next, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
+      FUNCTION[fqName=kotlin.collections.CharIterator.next, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
         MODIFIER_LIST[public final operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -110,7 +120,8 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Char]
-      FUN[fqName=kotlin.collections.CharIterator.nextChar, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextChar]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.CharIterator.nextChar, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextChar]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -118,6 +129,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Char]
+              isClassRef: true
   CLASS[classId=kotlin/collections/Collection, fqName=kotlin.collections.Collection, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Collection, superNames=[Iterable]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
@@ -132,11 +144,13 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Iterable]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
+                      isClassRef: true
     CLASS_BODY
       PROPERTY[fqName=kotlin.collections.Collection.size, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=size]
         MODIFIER_LIST[public abstract MustUseReturnValue]
@@ -145,7 +159,8 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.collections.Collection.isEmpty, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.Collection.isEmpty, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -153,19 +168,22 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.Collection.contains, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contains]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.Collection.contains, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contains]
         MODIFIER_LIST[public abstract operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=element]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=E]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.Collection.iterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.Collection.iterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
         MODIFIER_LIST[public abstract operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -175,12 +193,14 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Iterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
-      FUN[fqName=kotlin.collections.Collection.containsAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=containsAll]
+                      isClassRef: true
+      FUNCTION[fqName=kotlin.collections.Collection.containsAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=containsAll]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
@@ -191,16 +211,19 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=collections]
                 REFERENCE_EXPRESSION[referencedName=Collection]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=E]
+                          isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
   CLASS[classId=kotlin/collections/DoubleIterator, fqName=kotlin.collections.DoubleIterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=DoubleIterator, superNames=[Iterator]]
     MODIFIER_LIST[public abstract]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=DoubleIterator]
@@ -215,6 +238,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Iterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
@@ -222,8 +246,9 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Double]
+                      isClassRef: true
     CLASS_BODY
-      FUN[fqName=kotlin.collections.DoubleIterator.next, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
+      FUNCTION[fqName=kotlin.collections.DoubleIterator.next, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
         MODIFIER_LIST[public final operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -231,7 +256,8 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Double]
-      FUN[fqName=kotlin.collections.DoubleIterator.nextDouble, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextDouble]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.DoubleIterator.nextDouble, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextDouble]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -239,6 +265,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Double]
+              isClassRef: true
   CLASS[classId=kotlin/collections/FloatIterator, fqName=kotlin.collections.FloatIterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=FloatIterator, superNames=[Iterator]]
     MODIFIER_LIST[public abstract]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=FloatIterator]
@@ -253,6 +280,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Iterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
@@ -260,8 +288,9 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Float]
+                      isClassRef: true
     CLASS_BODY
-      FUN[fqName=kotlin.collections.FloatIterator.next, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
+      FUNCTION[fqName=kotlin.collections.FloatIterator.next, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
         MODIFIER_LIST[public final operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -269,7 +298,8 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Float]
-      FUN[fqName=kotlin.collections.FloatIterator.nextFloat, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextFloat]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.FloatIterator.nextFloat, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextFloat]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -277,6 +307,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Float]
+              isClassRef: true
   CLASS[classId=kotlin/collections/IntIterator, fqName=kotlin.collections.IntIterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=IntIterator, superNames=[Iterator]]
     MODIFIER_LIST[public abstract]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=IntIterator]
@@ -291,6 +322,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Iterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
@@ -298,8 +330,9 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Int]
+                      isClassRef: true
     CLASS_BODY
-      FUN[fqName=kotlin.collections.IntIterator.next, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
+      FUNCTION[fqName=kotlin.collections.IntIterator.next, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
         MODIFIER_LIST[public final operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -307,7 +340,8 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.collections.IntIterator.nextInt, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextInt]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.IntIterator.nextInt, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextInt]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -315,13 +349,14 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
   CLASS[classId=kotlin/collections/Iterable, fqName=kotlin.collections.Iterable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Iterable, superNames=[]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[out]
     CLASS_BODY
-      FUN[fqName=kotlin.collections.Iterable.iterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
+      FUNCTION[fqName=kotlin.collections.Iterable.iterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
         MODIFIER_LIST[public abstract operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -331,24 +366,27 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Iterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
+                      isClassRef: true
   CLASS[classId=kotlin/collections/Iterator, fqName=kotlin.collections.Iterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Iterator, superNames=[]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[out]
     CLASS_BODY
-      FUN[fqName=kotlin.collections.Iterator.next, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
+      FUNCTION[fqName=kotlin.collections.Iterator.next, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
         MODIFIER_LIST[public abstract operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=kotlin.collections.Iterator.hasNext, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hasNext]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.Iterator.hasNext, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hasNext]
         MODIFIER_LIST[public abstract operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -356,6 +394,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
   CLASS[classId=kotlin/collections/List, fqName=kotlin.collections.List, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=List, superNames=[Collection]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
@@ -370,11 +409,13 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Collection]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
+                      isClassRef: true
     CLASS_BODY
       PROPERTY[fqName=kotlin.collections.List.size, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=size]
         MODIFIER_LIST[public abstract MustUseReturnValue]
@@ -383,7 +424,8 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.collections.List.isEmpty, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.List.isEmpty, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -391,19 +433,22 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.List.contains, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contains]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.List.contains, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contains]
         MODIFIER_LIST[public abstract operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=element]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=E]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.List.iterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.List.iterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
         MODIFIER_LIST[public abstract operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -413,12 +458,14 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Iterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
-      FUN[fqName=kotlin.collections.List.containsAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=containsAll]
+                      isClassRef: true
+      FUNCTION[fqName=kotlin.collections.List.containsAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=containsAll]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
@@ -429,17 +476,20 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=collections]
                 REFERENCE_EXPRESSION[referencedName=Collection]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=E]
+                          isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.List.get, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=get]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.List.get, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=get]
         MODIFIER_LIST[public abstract operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -448,34 +498,40 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=E]
-      FUN[fqName=kotlin.collections.List.indexOf, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=indexOf]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.List.indexOf, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=indexOf]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=element]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=E]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.collections.List.lastIndexOf, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=lastIndexOf]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.List.lastIndexOf, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=lastIndexOf]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=element]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=E]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.collections.List.listIterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=listIterator]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.List.listIterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=listIterator]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -485,12 +541,14 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=ListIterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
-      FUN[fqName=kotlin.collections.List.listIterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=listIterator]
+                      isClassRef: true
+      FUNCTION[fqName=kotlin.collections.List.listIterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=listIterator]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -499,6 +557,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
@@ -506,12 +565,14 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=ListIterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
-      FUN[fqName=kotlin.collections.List.subList, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=subList]
+                      isClassRef: true
+      FUNCTION[fqName=kotlin.collections.List.subList, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=subList]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=fromIndex]
@@ -520,12 +581,14 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=toIndex]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
@@ -533,11 +596,13 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=List]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
+                      isClassRef: true
   CLASS[classId=kotlin/collections/ListIterator, fqName=kotlin.collections.ListIterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=ListIterator, superNames=[Iterator]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
@@ -552,19 +617,22 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Iterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
+                      isClassRef: true
     CLASS_BODY
-      FUN[fqName=kotlin.collections.ListIterator.next, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
+      FUNCTION[fqName=kotlin.collections.ListIterator.next, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
         MODIFIER_LIST[public abstract operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=kotlin.collections.ListIterator.hasNext, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hasNext]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.ListIterator.hasNext, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hasNext]
         MODIFIER_LIST[public abstract operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -572,7 +640,8 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.ListIterator.hasPrevious, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hasPrevious]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.ListIterator.hasPrevious, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hasPrevious]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -580,13 +649,15 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.ListIterator.previous, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=previous]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.ListIterator.previous, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=previous]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=kotlin.collections.ListIterator.nextIndex, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextIndex]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.ListIterator.nextIndex, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextIndex]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -594,7 +665,8 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.collections.ListIterator.previousIndex, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=previousIndex]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.ListIterator.previousIndex, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=previousIndex]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -602,6 +674,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
   CLASS[classId=kotlin/collections/LongIterator, fqName=kotlin.collections.LongIterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=LongIterator, superNames=[Iterator]]
     MODIFIER_LIST[public abstract]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=LongIterator]
@@ -616,6 +689,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Iterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
@@ -623,8 +697,9 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Long]
+                      isClassRef: true
     CLASS_BODY
-      FUN[fqName=kotlin.collections.LongIterator.next, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
+      FUNCTION[fqName=kotlin.collections.LongIterator.next, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
         MODIFIER_LIST[public final operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -632,7 +707,8 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Long]
-      FUN[fqName=kotlin.collections.LongIterator.nextLong, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextLong]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.LongIterator.nextLong, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextLong]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -640,6 +716,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Long]
+              isClassRef: true
   CLASS[classId=kotlin/collections/Map, fqName=kotlin.collections.Map, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Map, superNames=[]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
@@ -654,6 +731,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
       PROPERTY[fqName=kotlin.collections.Map.keys, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=keys]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         TYPE_REFERENCE
@@ -663,11 +741,13 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Set]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=K]
+                      isClassRef: true
       PROPERTY[fqName=kotlin.collections.Map.values, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=values]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         TYPE_REFERENCE
@@ -677,11 +757,13 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Collection]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=V]
+                      isClassRef: true
       PROPERTY[fqName=kotlin.collections.Map.entries, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=entries]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         TYPE_REFERENCE
@@ -691,6 +773,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Set]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
@@ -701,17 +784,21 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=collections]
                       REFERENCE_EXPRESSION[referencedName=Map]
+                        isClassRef: true
                     REFERENCE_EXPRESSION[referencedName=Entry]
+                      isClassRef: true
                     TYPE_ARGUMENT_LIST
                       TYPE_PROJECTION[projectionKind=NONE]
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=K]
+                              isClassRef: true
                       TYPE_PROJECTION[projectionKind=NONE]
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=V]
-      FUN[fqName=kotlin.collections.Map.isEmpty, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
+                              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.Map.isEmpty, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -719,42 +806,49 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.Map.containsKey, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=containsKey]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.Map.containsKey, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=containsKey]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=key]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=K]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.Map.containsValue, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=containsValue]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.Map.containsValue, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=containsValue]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=V]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.Map.get, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=get]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.Map.get, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=get]
         MODIFIER_LIST[public abstract operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=key]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=K]
+                  isClassRef: true
         TYPE_REFERENCE
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=V]
-      FUN[fqName=kotlin.collections.Map.getOrDefault, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=getOrDefault]
+                isClassRef: true
+      FUNCTION[fqName=kotlin.collections.Map.getOrDefault, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=getOrDefault]
         MODIFIER_LIST[public open MustUseReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
             valueArguments: [ version -> "1.1" ]
@@ -764,6 +858,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+                    isClassRef: true
             VALUE_ARGUMENT_LIST
               VALUE_ARGUMENT[isSpread=false]
                 VALUE_ARGUMENT_NAME
@@ -780,18 +875,22 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=internal]
                   REFERENCE_EXPRESSION[referencedName=PlatformDependent]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=key]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=K]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=defaultValue]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=V]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=V]
+              isClassRef: true
       CLASS[classId=kotlin/collections/Map.Entry, fqName=kotlin.collections.Map.Entry, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=false, name=Entry, superNames=[]]
         MODIFIER_LIST[public]
         TYPE_PARAMETER_LIST
@@ -805,11 +904,13 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=K]
+                  isClassRef: true
           PROPERTY[fqName=kotlin.collections.Map.Entry.value, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=value]
             MODIFIER_LIST[public abstract MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=V]
+                  isClassRef: true
   CLASS[classId=kotlin/collections/MutableCollection, fqName=kotlin.collections.MutableCollection, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableCollection, superNames=[Collection, MutableIterable]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
@@ -823,11 +924,13 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Collection]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
+                      isClassRef: true
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE
           USER_TYPE
@@ -836,13 +939,15 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=MutableIterable]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
+                      isClassRef: true
     CLASS_BODY
-      FUN[fqName=kotlin.collections.MutableCollection.iterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
+      FUNCTION[fqName=kotlin.collections.MutableCollection.iterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
         MODIFIER_LIST[public abstract operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -852,12 +957,14 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=MutableIterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
-      FUN[fqName=kotlin.collections.MutableCollection.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
+                      isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableCollection.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
         MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             valueArguments: [ ]
@@ -867,17 +974,20 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=element]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=E]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.MutableCollection.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableCollection.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
         MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             valueArguments: [ ]
@@ -887,17 +997,20 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=element]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=E]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.MutableCollection.addAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAll]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableCollection.addAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAll]
         MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             valueArguments: [ ]
@@ -907,6 +1020,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
             TYPE_REFERENCE
@@ -916,17 +1030,20 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=collections]
                 REFERENCE_EXPRESSION[referencedName=Collection]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=E]
+                          isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.MutableCollection.removeAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=removeAll]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableCollection.removeAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=removeAll]
         MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             valueArguments: [ ]
@@ -936,6 +1053,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
             TYPE_REFERENCE
@@ -945,17 +1063,20 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=collections]
                 REFERENCE_EXPRESSION[referencedName=Collection]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=E]
+                          isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.MutableCollection.retainAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=retainAll]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableCollection.retainAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=retainAll]
         MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             valueArguments: [ ]
@@ -965,6 +1086,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
             TYPE_REFERENCE
@@ -974,17 +1096,20 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=collections]
                 REFERENCE_EXPRESSION[referencedName=Collection]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=E]
+                          isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.MutableCollection.clear, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=clear]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableCollection.clear, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=clear]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -992,6 +1117,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
   CLASS[classId=kotlin/collections/MutableIterable, fqName=kotlin.collections.MutableIterable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableIterable, superNames=[Iterable]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
@@ -1006,13 +1132,15 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Iterable]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
+                      isClassRef: true
     CLASS_BODY
-      FUN[fqName=kotlin.collections.MutableIterable.iterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
+      FUNCTION[fqName=kotlin.collections.MutableIterable.iterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
         MODIFIER_LIST[public abstract operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -1022,11 +1150,13 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=MutableIterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
+                      isClassRef: true
   CLASS[classId=kotlin/collections/MutableIterator, fqName=kotlin.collections.MutableIterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableIterator, superNames=[Iterator]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
@@ -1041,13 +1171,15 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Iterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
+                      isClassRef: true
     CLASS_BODY
-      FUN[fqName=kotlin.collections.MutableIterator.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
+      FUNCTION[fqName=kotlin.collections.MutableIterator.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -1055,6 +1187,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
   CLASS[classId=kotlin/collections/MutableList, fqName=kotlin.collections.MutableList, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableList, superNames=[List, MutableCollection]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
@@ -1068,11 +1201,13 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=List]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
+                      isClassRef: true
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE
           USER_TYPE
@@ -1081,13 +1216,15 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=MutableCollection]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
+                      isClassRef: true
     CLASS_BODY
-      FUN[fqName=kotlin.collections.MutableList.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
+      FUNCTION[fqName=kotlin.collections.MutableList.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
         MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             valueArguments: [ ]
@@ -1097,17 +1234,20 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=element]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=E]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.MutableList.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableList.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
         MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             valueArguments: [ ]
@@ -1117,17 +1257,20 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=element]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=E]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.MutableList.addAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAll]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableList.addAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAll]
         MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             valueArguments: [ ]
@@ -1137,6 +1280,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
             TYPE_REFERENCE
@@ -1146,17 +1290,20 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=collections]
                 REFERENCE_EXPRESSION[referencedName=Collection]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=E]
+                          isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.MutableList.addAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAll]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableList.addAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAll]
         MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             valueArguments: [ ]
@@ -1166,6 +1313,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
             TYPE_REFERENCE
@@ -1173,6 +1321,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
             TYPE_REFERENCE
               USER_TYPE
@@ -1181,17 +1330,20 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=collections]
                 REFERENCE_EXPRESSION[referencedName=Collection]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=E]
+                          isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.MutableList.removeAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=removeAll]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableList.removeAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=removeAll]
         MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             valueArguments: [ ]
@@ -1201,6 +1353,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
             TYPE_REFERENCE
@@ -1210,17 +1363,20 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=collections]
                 REFERENCE_EXPRESSION[referencedName=Collection]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=E]
+                          isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.MutableList.retainAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=retainAll]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableList.retainAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=retainAll]
         MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             valueArguments: [ ]
@@ -1230,6 +1386,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
             TYPE_REFERENCE
@@ -1239,17 +1396,20 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=collections]
                 REFERENCE_EXPRESSION[referencedName=Collection]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=E]
+                          isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.MutableList.clear, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=clear]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableList.clear, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=clear]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -1257,7 +1417,8 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=kotlin.collections.MutableList.set, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableList.set, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]
         MODIFIER_LIST[public abstract operator IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             valueArguments: [ ]
@@ -1267,6 +1428,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
             TYPE_REFERENCE
@@ -1274,14 +1436,17 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=element]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=E]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=E]
-      FUN[fqName=kotlin.collections.MutableList.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableList.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -1290,16 +1455,19 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=element]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=E]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=kotlin.collections.MutableList.removeAt, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=removeAt]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableList.removeAt, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=removeAt]
         MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             valueArguments: [ ]
@@ -1309,6 +1477,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
             TYPE_REFERENCE
@@ -1316,10 +1485,12 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=E]
-      FUN[fqName=kotlin.collections.MutableList.listIterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=listIterator]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableList.listIterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=listIterator]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -1329,12 +1500,14 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=MutableListIterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
-      FUN[fqName=kotlin.collections.MutableList.listIterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=listIterator]
+                      isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableList.listIterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=listIterator]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -1343,6 +1516,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
@@ -1350,12 +1524,14 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=MutableListIterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
-      FUN[fqName=kotlin.collections.MutableList.subList, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=subList]
+                      isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableList.subList, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=subList]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=fromIndex]
@@ -1364,12 +1540,14 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=toIndex]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
@@ -1377,11 +1555,13 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=MutableList]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
+                      isClassRef: true
   CLASS[classId=kotlin/collections/MutableListIterator, fqName=kotlin.collections.MutableListIterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableListIterator, superNames=[ListIterator, MutableIterator]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
@@ -1395,11 +1575,13 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=ListIterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
+                      isClassRef: true
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE
           USER_TYPE
@@ -1408,19 +1590,22 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=MutableIterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
+                      isClassRef: true
     CLASS_BODY
-      FUN[fqName=kotlin.collections.MutableListIterator.next, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
+      FUNCTION[fqName=kotlin.collections.MutableListIterator.next, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
         MODIFIER_LIST[public abstract operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=kotlin.collections.MutableListIterator.hasNext, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hasNext]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableListIterator.hasNext, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hasNext]
         MODIFIER_LIST[public abstract operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -1428,7 +1613,8 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.MutableListIterator.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableListIterator.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -1436,30 +1622,35 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=kotlin.collections.MutableListIterator.set, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]
-        MODIFIER_LIST[public abstract MustUseReturnValue]
-        VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=element]
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=T]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=kotlin.collections.MutableListIterator.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableListIterator.set, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=element]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableListIterator.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
+        MODIFIER_LIST[public abstract MustUseReturnValue]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=element]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=T]
+                  isClassRef: true
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
   CLASS[classId=kotlin/collections/MutableMap, fqName=kotlin.collections.MutableMap, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableMap, superNames=[Map]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
@@ -1474,15 +1665,18 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Map]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=K]
+                      isClassRef: true
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=V]
+                      isClassRef: true
     CLASS_BODY
       PROPERTY[fqName=kotlin.collections.MutableMap.keys, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=keys]
         MODIFIER_LIST[public abstract MustUseReturnValue]
@@ -1493,11 +1687,13 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=MutableSet]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=K]
+                      isClassRef: true
       PROPERTY[fqName=kotlin.collections.MutableMap.values, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=values]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         TYPE_REFERENCE
@@ -1507,11 +1703,13 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=MutableCollection]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=V]
+                      isClassRef: true
       PROPERTY[fqName=kotlin.collections.MutableMap.entries, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=entries]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         TYPE_REFERENCE
@@ -1521,6 +1719,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=MutableSet]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
@@ -1531,17 +1730,21 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=collections]
                       REFERENCE_EXPRESSION[referencedName=MutableMap]
+                        isClassRef: true
                     REFERENCE_EXPRESSION[referencedName=MutableEntry]
+                      isClassRef: true
                     TYPE_ARGUMENT_LIST
                       TYPE_PROJECTION[projectionKind=NONE]
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=K]
+                              isClassRef: true
                       TYPE_PROJECTION[projectionKind=NONE]
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=V]
-      FUN[fqName=kotlin.collections.MutableMap.put, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=put]
+                              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableMap.put, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=put]
         MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             valueArguments: [ ]
@@ -1551,20 +1754,24 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=key]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=K]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=V]
+                  isClassRef: true
         TYPE_REFERENCE
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=V]
-      FUN[fqName=kotlin.collections.MutableMap.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
+                isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableMap.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
         MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             valueArguments: [ ]
@@ -1574,16 +1781,19 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=key]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=K]
+                  isClassRef: true
         TYPE_REFERENCE
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=V]
-      FUN[fqName=kotlin.collections.MutableMap.remove, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
+                isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableMap.remove, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
         MODIFIER_LIST[public open IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
             valueArguments: [ version -> "1.1" ]
@@ -1593,6 +1803,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+                    isClassRef: true
             VALUE_ARGUMENT_LIST
               VALUE_ARGUMENT[isSpread=false]
                 VALUE_ARGUMENT_NAME
@@ -1609,6 +1820,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=internal]
                   REFERENCE_EXPRESSION[referencedName=PlatformDependent]
+                    isClassRef: true
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             valueArguments: [ ]
             CONSTRUCTOR_CALLEE
@@ -1617,21 +1829,25 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=key]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=K]
+                  isClassRef: true
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=V]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.MutableMap.putAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=putAll]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableMap.putAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=putAll]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=from]
@@ -1642,22 +1858,26 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=collections]
                 REFERENCE_EXPRESSION[referencedName=Map]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=OUT]
                     MODIFIER_LIST[out]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=K]
+                          isClassRef: true
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=V]
+                          isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=kotlin.collections.MutableMap.clear, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=clear]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableMap.clear, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=clear]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -1665,6 +1885,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
       CLASS[classId=kotlin/collections/MutableMap.MutableEntry, fqName=kotlin.collections.MutableMap.MutableEntry, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=false, name=MutableEntry, superNames=[Entry]]
         MODIFIER_LIST[public]
         TYPE_PARAMETER_LIST
@@ -1680,18 +1901,22 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=collections]
                   REFERENCE_EXPRESSION[referencedName=Map]
+                    isClassRef: true
                 REFERENCE_EXPRESSION[referencedName=Entry]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=K]
+                          isClassRef: true
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=V]
+                          isClassRef: true
         CLASS_BODY
-          FUN[fqName=kotlin.collections.MutableMap.MutableEntry.setValue, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=setValue]
+          FUNCTION[fqName=kotlin.collections.MutableMap.MutableEntry.setValue, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=setValue]
             MODIFIER_LIST[public abstract IgnorableReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
                 valueArguments: [ ]
@@ -1701,14 +1926,17 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
                       REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                        isClassRef: true
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=newValue]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=V]
+                      isClassRef: true
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=V]
+                  isClassRef: true
   CLASS[classId=kotlin/collections/MutableSet, fqName=kotlin.collections.MutableSet, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableSet, superNames=[Set, MutableCollection]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
@@ -1722,11 +1950,13 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Set]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
+                      isClassRef: true
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE
           USER_TYPE
@@ -1735,13 +1965,15 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=MutableCollection]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
+                      isClassRef: true
     CLASS_BODY
-      FUN[fqName=kotlin.collections.MutableSet.iterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
+      FUNCTION[fqName=kotlin.collections.MutableSet.iterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
         MODIFIER_LIST[public abstract operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -1751,12 +1983,14 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=MutableIterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
-      FUN[fqName=kotlin.collections.MutableSet.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
+                      isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableSet.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
         MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             valueArguments: [ ]
@@ -1766,17 +2000,20 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=element]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=E]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.MutableSet.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableSet.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
         MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             valueArguments: [ ]
@@ -1786,17 +2023,20 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=element]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=E]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.MutableSet.addAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAll]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableSet.addAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAll]
         MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             valueArguments: [ ]
@@ -1806,6 +2046,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
             TYPE_REFERENCE
@@ -1815,17 +2056,20 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=collections]
                 REFERENCE_EXPRESSION[referencedName=Collection]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=E]
+                          isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.MutableSet.removeAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=removeAll]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableSet.removeAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=removeAll]
         MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             valueArguments: [ ]
@@ -1835,6 +2079,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
             TYPE_REFERENCE
@@ -1844,17 +2089,20 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=collections]
                 REFERENCE_EXPRESSION[referencedName=Collection]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=E]
+                          isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.MutableSet.retainAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=retainAll]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableSet.retainAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=retainAll]
         MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             valueArguments: [ ]
@@ -1864,6 +2112,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+                    isClassRef: true
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
             TYPE_REFERENCE
@@ -1873,17 +2122,20 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=collections]
                 REFERENCE_EXPRESSION[referencedName=Collection]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=E]
+                          isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.MutableSet.clear, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=clear]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.MutableSet.clear, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=clear]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -1891,6 +2143,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+              isClassRef: true
   CLASS[classId=kotlin/collections/Set, fqName=kotlin.collections.Set, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Set, superNames=[Collection]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
@@ -1905,11 +2158,13 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Collection]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
+                      isClassRef: true
     CLASS_BODY
       PROPERTY[fqName=kotlin.collections.Set.size, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=size]
         MODIFIER_LIST[public abstract MustUseReturnValue]
@@ -1918,7 +2173,8 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=kotlin.collections.Set.isEmpty, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.Set.isEmpty, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isEmpty]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -1926,19 +2182,22 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.Set.contains, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contains]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.Set.contains, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contains]
         MODIFIER_LIST[public abstract operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=element]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=E]
+                  isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=kotlin.collections.Set.iterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.Set.iterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
         MODIFIER_LIST[public abstract operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -1948,12 +2207,14 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Iterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
-      FUN[fqName=kotlin.collections.Set.containsAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=containsAll]
+                      isClassRef: true
+      FUNCTION[fqName=kotlin.collections.Set.containsAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=containsAll]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
@@ -1964,16 +2225,19 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=collections]
                 REFERENCE_EXPRESSION[referencedName=Collection]
+                  isClassRef: true
                 TYPE_ARGUMENT_LIST
                   TYPE_PROJECTION[projectionKind=NONE]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=E]
+                          isClassRef: true
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
+              isClassRef: true
   CLASS[classId=kotlin/collections/ShortIterator, fqName=kotlin.collections.ShortIterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ShortIterator, superNames=[Iterator]]
     MODIFIER_LIST[public abstract]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ShortIterator]
@@ -1988,6 +2252,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=Iterator]
+              isClassRef: true
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=NONE]
                 TYPE_REFERENCE
@@ -1995,8 +2260,9 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Short]
+                      isClassRef: true
     CLASS_BODY
-      FUN[fqName=kotlin.collections.ShortIterator.next, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
+      FUNCTION[fqName=kotlin.collections.ShortIterator.next, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
         MODIFIER_LIST[public final operator MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -2004,7 +2270,8 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Short]
-      FUN[fqName=kotlin.collections.ShortIterator.nextShort, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextShort]
+              isClassRef: true
+      FUNCTION[fqName=kotlin.collections.ShortIterator.nextShort, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nextShort]
         MODIFIER_LIST[public abstract MustUseReturnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -2012,3 +2279,4 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Short]
+              isClassRef: true

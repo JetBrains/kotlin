@@ -4,6 +4,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // DISABLE_IR_VISIBILITY_CHECKS: ANY
 // DIAGNOSTICS: -ERROR_SUPPRESSION -NOTHING_TO_INLINE
+// LANGUAGE: +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
 
 // MODULE: lib
 // FILE: lib.kt

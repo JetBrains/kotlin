@@ -4,10 +4,8 @@ import org.jetbrains.kotlin.tools.lib
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     id("native-interop-plugin")
-    id("project-tests-convention")
     id("test-inputs-check")
 }
 
@@ -73,6 +71,11 @@ nativeInteropPlugin {
                     "__ZN4llvm4hlsl7rootsig16dumpRootElementsERNS_11raw_ostreamENS_8ArrayRefINSt3__17variantIJNS_4dxbc9RootFlagsENS1_13RootConstantsENS1_14RootDescriptorENS1_15DescriptorTableENS1_21DescriptorTableClauseENS1_13StaticSamplerEEEEEE"
             ).mapTo(this) { "-Wl,-U,$it" }
             addAll(listOf("-lpthread", "-lz", "-lm", "-lcurses"))
+        } else if (PlatformInfo.isLinux()) {
+            // Linux linkers (ld/lld) allow unresolved symbols by default when producing shared libraries, so '-Wl,-U' flags are not
+            // needed here.
+            add("-Wl,-z,noexecstack")
+            addAll(listOf("-lrt", "-ldl", "-lpthread", "-lz", "-lm"))
         }
     })
     additionalLinkedStaticLibraries.set(buildList {
@@ -82,7 +85,7 @@ nativeInteropPlugin {
             "lib/${System.mapLibraryName("clang")}"
         }
         add("${nativeDependencies.llvmPath}/$libclang")
-        if (PlatformInfo.isMac()) {
+        if (PlatformInfo.isMac() || PlatformInfo.isLinux()) {
             listOf(
                     "clangAST", "clangASTMatchers", "clangAnalysis", "clangBasic", "clangDriver", "clangEdit",
                     "clangFrontend", "clangFrontendTool", "clangLex", "clangParse", "clangSema",

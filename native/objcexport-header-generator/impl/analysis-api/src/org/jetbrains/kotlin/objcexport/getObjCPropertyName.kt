@@ -16,7 +16,7 @@ fun ObjCExportContext.getObjCPropertyName(symbol: KaVariableSymbol): ObjCExportP
 fun ObjCExportContext.getObjCPropertyName(symbol: KaVariableSymbol, transform: (String) -> String): ObjCExportPropertyName {
     val resolveObjCNameAnnotation = symbol.resolveObjCNameAnnotation()
     val stringName = exportSession.overrideObjCNameOrSymbolName(symbol)
-    val propertyName = transform(stringName.mangleIfReservedObjCName())
+    val propertyName = transform(stringName.mangleIfReservedPropertyName())
 
     return ObjCExportPropertyName(
         objCName = (resolveObjCNameAnnotation?.objCName ?: propertyName).mangleIfStdMacro(),

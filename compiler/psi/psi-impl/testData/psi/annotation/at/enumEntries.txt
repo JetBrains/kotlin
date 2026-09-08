@@ -150,7 +150,7 @@ KtFile: enumEntries.kt
         PsiElement(IDENTIFIER)('W')
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           ANNOTATION_ENTRY
             PsiElement(AT)('@')

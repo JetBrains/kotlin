@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -20,7 +21,9 @@ import org.jetbrains.kotlin.KtNodeTypes;
  * //        ^___________^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtBinaryExpressionWithTypeRHS extends KtExpressionImpl implements KtOperationExpression {
+    @KtImplementationDetail
     public KtBinaryExpressionWithTypeRHS(@NotNull ASTNode node) {
         super(node);
     }
@@ -30,6 +33,7 @@ public class KtBinaryExpressionWithTypeRHS extends KtExpressionImpl implements K
         return visitor.visitBinaryWithTypeRHSExpression(this, data);
     }
 
+    /** Returns the operand being cast (the expression on the left of {@code as}). */
     @NotNull
     public KtExpression getLeft() {
         KtExpression left = findChildByClass(KtExpression.class);
@@ -37,6 +41,7 @@ public class KtBinaryExpressionWithTypeRHS extends KtExpressionImpl implements K
         return left;
     }
 
+    /** Returns the target type reference (the type on the right of {@code as}), or {@code null} if it is absent in incomplete code. */
     @Nullable @IfNotParsed
     public KtTypeReference getRight() {
         ASTNode node = getOperationReference().getNode();

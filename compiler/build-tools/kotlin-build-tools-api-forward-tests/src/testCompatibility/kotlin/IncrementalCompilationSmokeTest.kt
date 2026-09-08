@@ -5,16 +5,20 @@
 
 package org.jetbrains.kotlin.buildtools.forward.tests
 
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.assertions.assertOutputs
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.DefaultStrategyAndPlatformAgnosticScenarioTest
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.ScenarioCreator
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.jsProject
+import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.wasmProject
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.scenario.assertNoOutputSetChanges
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
@@ -23,6 +27,10 @@ import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import java.nio.file.Path
+import kotlin.io.path.name
+import kotlin.io.path.walk
+import kotlin.io.path.writeText
 
 class IncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DisplayName("IC works with the externally tracked changes, similarly to Gradle")
@@ -58,38 +66,69 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
         runMixedModuleTest(strategyConfig, useTrackedModules = false)
     }
 
-//    @OptIn(ExperimentalCompilerArgument::class)
-//    @DisplayName("Basic IC setup works for JS project")
-//    @BtaV2StrategyAgnosticCompilationTest
-//    @TestMetadata("js-ic-basic")
-//    fun jsBasicIcWorks(strategyConfig: CompilerExecutionStrategyConfiguration) {
-//        jsProject(strategyConfig) {
-//            val libModule = module("js-ic-basic-lib")
-//            val appModule = module("js-ic-basic-app", dependencies = listOf(libModule))
-//
-//            val libSources = libModule.sourcesDirectory.walk().filter { it.name.endsWith(".kt") }.toList()
-//
-//            libModule.compileIncrementally(SourcesChanges.ToBeCalculated)
-//            appModule.compileIncrementally(SourcesChanges.ToBeCalculated)
-//
-//            val modifiedFile = libSources.find { file -> file.name == "A.kt" } ?: error("No A.kt file in test project")
-//            modifiedFile.writeText(
-//                """
-//                    class A {
-//                        val x = "a"
-//                    }
-//                """.trimIndent()
-//            )
-//            libModule.compileIncrementally(SourcesChanges.ToBeCalculated) {
-//                val expectedCompiledSources = setOf("A.kt", "useAInLibMain.kt")
-//                assertCompiledSources(expectedCompiledSources)
-//            }
-//            appModule.compileIncrementally(SourcesChanges.Known(libModule.outputDirectory.walk().map(Path::toFile).toList(), emptyList())) {
-//                val expectedCompiledSources = setOf("useAInAppMain.kt")
-//                assertCompiledSources(expectedCompiledSources)
-//            }
-//        }
-//    }
+    @DisplayName("Basic IC setup works for JS project")
+    @BtaV2StrategyAgnosticCompilationTest
+    @TestMetadata("js-ic-basic")
+    fun jsBasicIcWorks(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jsProject(strategyConfig) {
+            val libModule = module("js-ic-basic-lib")
+            val appModule = module("js-ic-basic-app", dependencies = listOf(libModule))
+
+            val libSources = libModule.sourcesDirectory.walk().filter { it.name.endsWith(".kt") }.toList()
+
+            libModule.compileIncrementally(SourcesChanges.ToBeCalculated)
+            appModule.compileIncrementally(SourcesChanges.ToBeCalculated)
+
+            val modifiedFile = libSources.find { file -> file.name == "A.kt" } ?: error("No A.kt file in test project")
+            modifiedFile.writeText(
+                """
+                    class A {
+                        val x = "a"
+                    }
+                """.trimIndent()
+            )
+            libModule.compileIncrementally(SourcesChanges.ToBeCalculated) {
+                val expectedCompiledSources = setOf("A.kt", "useAInLibMain.kt")
+                assertCompiledSources(expectedCompiledSources)
+            }
+            appModule.compileIncrementally(SourcesChanges.Known(libModule.outputDirectory.walk().map(Path::toFile).toList(), emptyList())) {
+                val expectedCompiledSources = setOf("useAInAppMain.kt")
+                assertCompiledSources(expectedCompiledSources)
+            }
+        }
+    }
+
+    @DisplayName("Basic IC setup works for Wasm project")
+    @BtaV2StrategyAgnosticCompilationTest
+    @TestMetadata("js-ic-basic")
+    fun wasmBasicIcWorks(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        wasmProject(strategyConfig) {
+            val libModule = module("js-ic-basic-lib")
+            val appModule = module("js-ic-basic-app", dependencies = listOf(libModule))
+
+            val libSources = libModule.sourcesDirectory.walk().filter { it.name.endsWith(".kt") }.toList()
+
+            libModule.compileIncrementally(SourcesChanges.ToBeCalculated)
+            appModule.compileIncrementally(SourcesChanges.ToBeCalculated)
+
+            val modifiedFile = libSources.find { file -> file.name == "A.kt" } ?: error("No A.kt file in test project")
+            modifiedFile.writeText(
+                """
+                    class A {
+                        val x = "a"
+                    }
+                """.trimIndent()
+            )
+            libModule.compileIncrementally(SourcesChanges.ToBeCalculated) {
+                val expectedCompiledSources = setOf("A.kt", "useAInLibMain.kt")
+                assertCompiledSources(expectedCompiledSources)
+            }
+            appModule.compileIncrementally(SourcesChanges.Known(libModule.outputDirectory.walk().map(Path::toFile).toList(), emptyList())) {
+                val expectedCompiledSources = setOf("useAInAppMain.kt")
+                assertCompiledSources(expectedCompiledSources)
+            }
+        }
+    }
 
     private fun runMixedModuleTest(strategyConfig: CompilerExecutionStrategyConfiguration, useTrackedModules: Boolean) {
         jvmScenario(strategyConfig) {

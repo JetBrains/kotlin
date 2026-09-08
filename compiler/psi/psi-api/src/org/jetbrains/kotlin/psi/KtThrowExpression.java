@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,7 +19,9 @@ import org.jetbrains.annotations.Nullable;
  * // ^_____________________________________________^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtThrowExpression extends KtExpressionImpl implements KtStatementExpression {
+    @KtImplementationDetail
     public KtThrowExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -28,6 +31,7 @@ public class KtThrowExpression extends KtExpressionImpl implements KtStatementEx
         return visitor.visitThrowExpression(this, data);
     }
 
+    /** Returns the expression being thrown, or {@code null} if it is absent in incomplete code. */
     @Nullable @IfNotParsed
     public KtExpression getThrownExpression() {
         return findChildByClass(KtExpression.class);

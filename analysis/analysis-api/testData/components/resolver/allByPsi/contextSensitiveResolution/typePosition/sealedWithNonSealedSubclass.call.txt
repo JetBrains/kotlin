@@ -149,7 +149,7 @@ KtNameReferenceExpression(281,285): 'Left'
   null
 
 KtNameReferenceExpression(289,290): 'x'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -211,7 +211,7 @@ KtNameReferenceExpression(298,303): 'Right'
   null
 
 KtNameReferenceExpression(307,308): 'y'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -273,6 +273,6 @@ KtNameReferenceExpression(316,333): 'NonSealedSubclass'
   null
 
 KtNameReferenceExpression(337,338): 'z'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'z'.>

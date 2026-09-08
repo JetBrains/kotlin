@@ -17,7 +17,7 @@ fun Ref(intf: Intf, content: @Composable () -> Unit) {
 @FunctionKeyMeta(key = -704485017, startOffset = 84, endOffset = 188)
 fun Ref(intf: Intf, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Ref)N(intf,content)<intf::...>,<intf::...>,<Ref(in...>:Test.kt")
+  sourceInformation(%composer, "C(Ref)N(intf,content)<intf::...>,<Ref(in...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
@@ -35,12 +35,16 @@ fun Ref(intf: Intf, content: Function2<Composer, Int, Unit>, %composer: Composer
       val tmp0 = intf
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 || %dirty and 0b1000 != 0 && %composer.changedInstance(tmp0)) {
-        @Composable
-        @FunctionKeyMeta(key = -1747373846, startOffset = 165, endOffset = 173)
-        fun Intf.Fn(%composer: Composer?, %changed: Int) {
-          Fn%default(0, receiver, %composer, 0b01110000 and %changed shl 0b0011, 0b0001)
+        tmp0::Fn<kotlin.Function2> {
+          @Composable
+          @FunctionKeyMeta(key = 1637578748, startOffset = 165, endOffset = 173)
+          fun Fn(receiver: Intf, %composer: Composer?, %changed: Int) {
+            %composer.startReplaceGroup(<>)
+            sourceInformation(%composer, "C(Fn)N(receiver)<intf::...>:Test.kt")
+            Fn%default(0, receiver, %composer, 0b01110000 and %changed shl 0b0011, 0b0001)
+            %composer.endReplaceGroup()
+          }
         }
-        tmp0::Fn
       }
       sourceInformationMarkerEnd(%composer)
       tmp0_group

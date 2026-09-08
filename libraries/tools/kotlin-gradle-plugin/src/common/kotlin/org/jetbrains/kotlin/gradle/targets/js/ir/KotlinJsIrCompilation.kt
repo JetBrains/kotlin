@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.gradle.api.Task
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
+import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
@@ -58,6 +61,8 @@ open class KotlinJsIrCompilation @Inject internal constructor(
  * It is possible for users to override the directory,
  * allowing them to manually control KGP's npm tooling dependencies for WasmJS targets.
  * However, this is not widely used. It's not documented and is challenging to set up.
+ *
+ * **Don't forget:** to call [Task.dependsOnNpmTooling] when setting [npmToolingDir] to task property.
  */
 internal fun KotlinJsIrCompilation.npmToolingDir(): Provider<Directory> {
     val npmToolingDir: Provider<File> = webTargetVariant(
@@ -68,10 +73,24 @@ internal fun KotlinJsIrCompilation.npmToolingDir(): Provider<Directory> {
     return project.objects.directoryProperty().fileProvider(npmToolingDir)
 }
 
+internal fun Task.dependsOnNpmTooling(compilation: KotlinJsIrCompilation) {
+    val task = this
+    with(compilation) {
+        val nodeJsRoot = nodeJsRoot()
+
+        task.dependsOn(nodeJsRoot.npmInstallTaskProvider)
+        task.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
+
+        if (isWasm) {
+            task.dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
+        }
+    }
+}
+
 internal fun KotlinJsIrCompilation.nodeJsRoot(): BaseNodeJsRootExtension {
     return webTargetVariant(
-        { NodeJsRootPlugin.apply(project.rootProject) },
-        { WasmNodeJsRootPlugin.apply(project.rootProject) },
+        { NodeJsRootPlugin.apply(project.jsToolingProject()) },
+        { WasmNodeJsRootPlugin.apply(project.jsToolingProject()) },
     )
 }
 

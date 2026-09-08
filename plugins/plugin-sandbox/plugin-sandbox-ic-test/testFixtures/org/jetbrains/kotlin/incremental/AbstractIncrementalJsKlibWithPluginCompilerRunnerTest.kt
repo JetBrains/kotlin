@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime.pluginS
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import java.io.File
 
-abstract class AbstractIncrementalJsKlibWithPluginCompilerRunnerTest : AbstractIncrementalK2JsKlibCompilerWithScopeExpansionRunnerTest() {
+abstract class AbstractIncrementalJsKlibWithPluginCompilerRunnerTest : AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest() {
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments =
         super.createCompilerArguments(destinationDir, testDir).apply {
             val annotationsKlib = pluginSandboxAnnotationsJsForTests().path

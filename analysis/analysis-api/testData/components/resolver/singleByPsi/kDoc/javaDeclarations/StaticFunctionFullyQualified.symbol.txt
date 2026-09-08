@@ -1,5 +1,5 @@
 KDocName(25,55): 'dependency.JavaClass.staticFun'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       dependency/JavaClass.staticFun(): kotlin.Unit
     ]

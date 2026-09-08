@@ -51,7 +51,6 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
      >: TypeVariable(T)?
      >: kotlin/String!
      = kotlin/String! (inferred during fixation)
-     >: kotlin/Nothing? (inferred during fixation)
     FIXED TO: kotlin/String!
 TypeVariable(T) --- Readiness(
     	 true ALLOWED
@@ -92,7 +91,6 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
      >: TypeVariable(T)?
      >: kotlin/String!
      = kotlin/String! (inferred during fixation)
-     >: kotlin/Nothing? (inferred during fixation)
     FIXED TO: kotlin/String!
 TypeVariable(T) --- Readiness(
     	 true ALLOWED
@@ -187,7 +185,6 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
      >: TypeVariable(T)?
      >: kotlin/String!
      = kotlin/String! (inferred during fixation)
-     >: kotlin/Nothing? (inferred during fixation)
     FIXED TO: kotlin/String!
 TypeVariable(T) --- Readiness(
     	 true ALLOWED
@@ -228,7 +225,6 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
      >: TypeVariable(T)?
      >: kotlin/String!
      = kotlin/String! (inferred during fixation)
-     >: kotlin/Nothing? (inferred during fixation)
     FIXED TO: kotlin/String!
 TypeVariable(T) --- Readiness(
     	 true ALLOWED

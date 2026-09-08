@@ -1,22 +1,13 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.ReplaceWith;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -27,7 +18,16 @@ import org.jetbrains.kotlin.psi.findDocComment.FindDocCommentKt;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Base implementation of {@link KtDeclaration} backed directly by the AST tree.
+ *
+ * <p>This is an internal implementation base class of the Kotlin PSI, used by declaration types that are never represented by a stub. It is
+ * not intended for direct use or subclassing outside of the PSI implementation. For declarations that may also be backed by a stub, see
+ * {@link KtDeclarationStub}.
+ */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public abstract class KtDeclarationImpl extends KtExpressionImpl implements KtDeclaration {
+    @KtImplementationDetail
     public KtDeclarationImpl(@NotNull ASTNode node) {
         super(node);
     }
@@ -51,7 +51,7 @@ public abstract class KtDeclarationImpl extends KtExpressionImpl implements KtDe
     @Override
     @kotlin.Deprecated(
             message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addModifierKeyword(this, modifier)' instead.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "this.addModifierKeyword(modifier)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.addModifierKeyword"
             )
@@ -68,7 +68,7 @@ public abstract class KtDeclarationImpl extends KtExpressionImpl implements KtDe
     @Override
     @kotlin.Deprecated(
             message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.removeModifierKeyword(this, modifier)' instead.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "this.removeModifierKeyword(modifier)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.removeModifierKeyword"
             )
@@ -86,7 +86,7 @@ public abstract class KtDeclarationImpl extends KtExpressionImpl implements KtDe
     @Override
     @kotlin.Deprecated(
             message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addAnnotation(this, annotationEntry)' instead.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "this.addAnnotation(annotationEntry)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.addAnnotation"
             )

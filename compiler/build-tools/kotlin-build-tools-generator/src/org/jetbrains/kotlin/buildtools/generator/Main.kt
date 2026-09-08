@@ -167,7 +167,6 @@ private fun generateBtaVersion(localArgs: Array<String>, genDir: Path, kotlinVer
             file = genFile.toFile(),
             newText = content,
             logNotChanged = false,
-            forbidGenerationOnTeamcity = false
         )
         generatedFiles.add(genFile)
     }
@@ -178,21 +177,12 @@ private fun generateBtaVersion(localArgs: Array<String>, genDir: Path, kotlinVer
 private fun SyntheticArgumentInterface.toLevelWithParent(
     targetPackage: String,
 ): LevelWithParent = LevelWithParent(
-    KotlinCompilerArgumentsLevel(
-        name,
-        level.arguments.filter { it.restrictedToCompilerPhase == restrictedToCompilerPhase }.toSet(),
-        if (syntheticArgumentInterfaces.any { this in it.parentInterfaces }) {
-            setOf(DummyLevel)
-        } else emptySet(),
-        level.modifiers
-    ),
+    syntheticLevels.getValue(name),
     parentInterfaces.firstOrNull()?.let {
         ClassName(targetPackage, it.name)
     } ?: ClassName(targetPackage, "CommonCompilerArguments"),
     parentInterfaces.map { ClassName(targetPackage, it.name) }
 )
-
-val DummyLevel = KotlinCompilerArgumentsLevel("", emptySet(), emptySet(), emptySet())
 
 internal interface BtaOptionsGenerator {
     val targetPackage: String

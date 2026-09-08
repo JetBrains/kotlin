@@ -43,7 +43,7 @@ internal fun checkJsModuleUsage(
             calleeContainingFile?.symbol?.getAnnotationStringParameter(JsStandardClassIds.Annotations.JsModule, calleeSession) != null
 
     val callToNonModule = calleeRoot.hasAnnotation(JsStandardClassIds.Annotations.JsNonModule, calleeSession) ||
-            calleeContainingFile?.symbol?.hasAnnotation(JsStandardClassIds.Annotations.JsNonModule, calleeSession) == true
+            calleeContainingFile?.symbol.hasAnnotation(JsStandardClassIds.Annotations.JsNonModule, calleeSession)
 
     when (moduleKind) {
         ModuleKind.UMD -> {

@@ -339,10 +339,13 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                         entityClass.primaryConstructorIfAny(session)?.valueParameterSymbols?.map { it.fir } ?: emptyList()
                     } else {
                         entityClass.declarations.mapNotNull { declaration ->
+                            // A static field is never a builder field in Lombok. On the Kotlin side these are what a
+                            // `companion { }` block declares (KT-88367); on the Java side they are plain `static`
+                            // fields, which real Lombok leaves out of the builder just the same.
                             if (isJavaClass) {
-                                declaration as? FirJavaField
+                                (declaration as? FirJavaField)?.takeIf { !it.isStatic }
                             } else {
-                                (declaration as? FirProperty)?.takeIf { it.hasBackingField }
+                                (declaration as? FirProperty)?.takeIf { it.hasBackingField && !it.isStatic }
                             }
                         }
                     }
@@ -448,7 +451,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         containingClassSymbol: FirClassSymbol<*>,
     ) {
         for ((val builder, val builderDeclaration = declaration) in builderWithDeclarations) {
-            val visibility = builder.visibility ?: continue
+            val visibility = builder.accessLevel.toVisibility(containingClassSymbol) ?: continue
             val entityClassId = entitySymbol.classId
             val builderClassName = Name.identifier(builder.getBuilderClassShortName(builderDeclaration) ?: continue)
             val builderClassId = entityClassId.createNestedClassId(builderClassName)
@@ -611,7 +614,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             }
 
             for ((val builder, val builderDeclaration = declaration) in builderWithDeclarations) {
-                if (builder.visibility == null) continue
+                if (builder.accessLevel.toVisibility(classSymbol) == null) continue
                 val builderName = Name.identifier(builder.getBuilderClassShortName(builderDeclaration) ?: continue)
 
                 // Don't generate classes if they already exist
@@ -628,7 +631,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val builderWithDeclarations = builderWithDeclarationsCache.getValue(owner) ?: return null
 
         for ((val builder, val builderDeclaration = declaration) in builderWithDeclarations) {
-            val visibility = builder.visibility ?: continue
+            val visibility = builder.accessLevel.toVisibility(owner) ?: continue
             val builderName = Name.identifier(builder.getBuilderClassShortName(builderDeclaration) ?: continue)
 
             if (builderName == name) {
@@ -675,7 +678,9 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }
 
         return buildList {
-            if (allowedTargets.contains(KotlinTarget.CLASS)) {
+            // Only the class-level `@Builder` is dropped: a `@Builder`-annotated member function of an interface,
+            // an enum class or an object still builds whatever that function returns, and is a legitimate case.
+            if (allowedTargets.contains(KotlinTarget.CLASS) && classSymbol.isPlainClass) {
                 getBuilder(classSymbol)?.let { add(BuilderWithDeclaration(it, classSymbol.fir)) }
             }
 
@@ -703,7 +708,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val fieldName = item.name
         val setterName = fieldName.toMethodName(builder)
         val builderType = getBuilderType(builderSymbol) ?: return
-        val visibility = builder.builderFunctionsVisibility ?: return
+        val visibility = builder.builderFunctionsAccessLevel.toVisibility(builderSymbol) ?: return
 
         addIfNonClashing(setterName, existingFunctionNames) {
             createJavaOrKotlinMemberFunction(
@@ -841,7 +846,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val builderType = getBuilderType(builderSymbol)?.toFirResolvedTypeRef() ?: return
 
         // Early return in case of `AccessLevel.NONE` is used (it means not generating anything at all)
-        val visibility = builder.builderFunctionsVisibility ?: return
+        val visibility = builder.builderFunctionsAccessLevel.toVisibility(builderSymbol) ?: return
 
         addIfNonClashing(nameInSingularForm.toMethodName(builder), existingFunctionNames) {
             createJavaOrKotlinMemberFunction(
@@ -868,7 +873,10 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                     SingularAddAllParameterType.Map -> JavaClasses.Map
                     SingularAddAllParameterType.Table -> JavaClasses.Table
                 }
-                DummyJavaClassType(baseType, typeArgumentRefs.map { (it as FirJavaTypeRef).type }, annotations).toRef(source = null)
+                // `? extends T` for every argument, mirroring the `Collection<? extends T>` Lombok itself
+                // generates: an invariant argument rejects a collection of a subtype with `JAVA_TYPE_MISMATCH`.
+                val wildcardArguments = typeArgumentRefs.map { DummyJavaExtendsWildcardType((it as FirJavaTypeRef).type) }
+                DummyJavaClassType(baseType, wildcardArguments, annotations).toRef(source = null)
             } else {
                 val baseType = when (collectionType) {
                     SingularAddAllParameterType.Iterable -> StandardClassIds.Iterable
@@ -917,7 +925,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         createCallable: (name: Name) -> K
     ) {
         if (name !in existingNames) {
-            getOrPut(name) { createCallable(name) }
+            val _ = getOrPut(name) { createCallable(name) }
         }
     }
 

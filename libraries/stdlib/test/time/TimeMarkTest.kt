@@ -258,7 +258,7 @@ class TimeMarkTest {
     fun longTimeMarkInfinities() {
         for (unit in units) {
             val timeSource = LongTimeSource(unit).apply {
-                markNow() // fix zero reading
+                val _ = markNow() // fix zero reading
                 reading = Long.MIN_VALUE + 1
             }
 

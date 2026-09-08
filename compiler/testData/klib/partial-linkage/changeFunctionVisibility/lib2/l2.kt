@@ -49,3 +49,5 @@ class ContainerImpl : Container() {
     fun newOpenInternalPAFunctionAccess() = newOpenInternalPAFunction()
     fun newPrivateFunctionAccess() = newPrivateFunction()
 }
+
+internal fun friendInternalTopLevelFunction() = "friendInternalTopLevelFunction"

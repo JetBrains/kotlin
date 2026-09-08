@@ -37,6 +37,8 @@ _Bool kotlin_IntArray_set__TypesOfArguments__Swift_Int32_Swift_Int32__(void * se
 
 int32_t kotlin_IntArray_size_get(void * self);
 
+_Bool kotlin_Number_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 int8_t kotlin_Number_toByte(void * self);
 
 uint16_t kotlin_Number_toChar(void * self);
@@ -53,9 +55,13 @@ int64_t kotlin_Number_toLong(void * self);
 
 int16_t kotlin_Number_toShort(void * self);
 
+_Bool kotlin_collections_BooleanIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 _Bool kotlin_collections_BooleanIterator_next(void * self);
 
 _Bool kotlin_collections_BooleanIterator_nextBoolean(void * self);
+
+_Bool kotlin_collections_IntIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 int32_t kotlin_collections_IntIterator_next(void * self);
 

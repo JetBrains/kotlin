@@ -52,7 +52,7 @@ class JsIrModule(
     override val fragments: List<JsIrProgramFragment>,
     val reexportedInModuleWithName: String? = null,
     val importedWithEffectInModuleWithName: String? = null,
-) : IrICModule() {
+) : IrICModule<JsIrProgramFragment>() {
     fun makeModuleHeader(): JsIrModuleHeader {
         val nameBindings = mutableMapOf<String, String>()
         val definitions = mutableSetOf<String>()

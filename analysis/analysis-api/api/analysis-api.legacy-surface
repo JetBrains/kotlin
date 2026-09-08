@@ -270,6 +270,7 @@ org.jetbrains.kotlin.analysis.api.components.KaReturnValueStatus.toString()
 org.jetbrains.kotlin.analysis.api.components.KaScopeContext
 org.jetbrains.kotlin.analysis.api.components.KaScopeContext.implicitReceivers
 org.jetbrains.kotlin.analysis.api.components.KaScopeContext.implicitValues
+org.jetbrains.kotlin.analysis.api.components.KaScopeContext.possibleSmartCasts
 org.jetbrains.kotlin.analysis.api.components.KaScopeContext.scopes
 org.jetbrains.kotlin.analysis.api.components.KaScopeImplicitArgumentValue
 org.jetbrains.kotlin.analysis.api.components.KaScopeImplicitArgumentValue.symbol
@@ -341,6 +342,15 @@ org.jetbrains.kotlin.analysis.api.components.KaSmartCastInfo
 org.jetbrains.kotlin.analysis.api.components.KaSmartCastInfo.isStable
 org.jetbrains.kotlin.analysis.api.components.KaSmartCastInfo.originalType
 org.jetbrains.kotlin.analysis.api.components.KaSmartCastInfo.smartCastType
+org.jetbrains.kotlin.analysis.api.components.KaSmartCastPossibility
+org.jetbrains.kotlin.analysis.api.components.KaSmartCastPossibility.isStable
+org.jetbrains.kotlin.analysis.api.components.KaSmartCastPossibility.smartCastTypes
+org.jetbrains.kotlin.analysis.api.components.KaSmartCastPossibility.source
+org.jetbrains.kotlin.analysis.api.components.KaSmartCastSource
+org.jetbrains.kotlin.analysis.api.components.KaSmartCastSource.dispatchReceiver
+org.jetbrains.kotlin.analysis.api.components.KaSmartCastSource.extensionReceiver
+org.jetbrains.kotlin.analysis.api.components.KaSmartCastSource.originalType
+org.jetbrains.kotlin.analysis.api.components.KaSmartCastSource.symbol
 org.jetbrains.kotlin.analysis.api.components.KaSourceProvider
 org.jetbrains.kotlin.analysis.api.components.KaSourceProvider.klibSourceFileName
 org.jetbrains.kotlin.analysis.api.components.KaStandardTypeClassIds

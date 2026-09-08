@@ -45,7 +45,7 @@ FILE[kind=Facade[packageFqName=one two.three four, facadeFqName=one two.three fo
               REFERENCE_EXPRESSION[referencedName=Top Level Object]
             REFERENCE_EXPRESSION[referencedName=Member Level Interface]
     CLASS_BODY
-      FUN[fqName=one two.three four.Top Level Class.member function, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=member function]
+      FUNCTION[fqName=one two.three four.Top Level Class.member function, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=member function]
         MODIFIER_LIST[]
           CONTEXT_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=context name]

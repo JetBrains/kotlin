@@ -1,5 +1,5 @@
 KtAnnotationEntry(121,198): '@AnnotationArray(annos = [Annotation("v1", "v2"), Annotation(*["v3", "v4"])])'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(vararg annos: Annotation): AnnotationArray
     ]

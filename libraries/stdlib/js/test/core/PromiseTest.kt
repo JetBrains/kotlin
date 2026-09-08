@@ -53,7 +53,7 @@ class PromiseTest {
             }
         )
 
-        p.then {
+        val _ = p.then {
             ps
         }.then {
             assertStaticAndRuntimeTypeIs<String>(it)

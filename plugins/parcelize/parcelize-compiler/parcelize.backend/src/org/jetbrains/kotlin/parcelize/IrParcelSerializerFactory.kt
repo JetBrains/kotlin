@@ -83,7 +83,7 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
             // Built-in parcel serializers
             "kotlin.String", "java.lang.String" ->
                 return stringSerializer
-            "kotlin.CharSequence", "java.lang.CharSequence" ->
+            "kotlin.CharSequence", "java.lang.CharSequence", "android.text.SpannableString" ->
                 return charSequenceSerializer
             "android.os.Bundle" ->
                 return IrParcelSerializerWithClassLoader(parcelizeType, symbols.parcelReadBundle, symbols.parcelWriteBundle)
@@ -317,7 +317,7 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
                 // for writeToParcel/createFromParcel. For Java classes (or compiled Kotlin classes annotated with
                 // @Parcelize), we'll have a field in the class itself. Finally, with Parcelable instances which were
                 // manually implemented in Kotlin, we'll instead have an @JvmField property getter in the companion object.
-                return if (classifier.modality == Modality.FINAL && isCurrentModule
+                return if ((classifier.modality == Modality.FINAL || classifier.isPolymorphicSealed()) && isCurrentModule
                     && (classifier.isParcelize(parcelizeAnnotations) || classifier.hasCreatorField)
                 ) {
                     wrapNullableSerializerIfNeeded(irType, IrEfficientParcelableParcelSerializer(classifier))

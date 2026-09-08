@@ -50,6 +50,7 @@ class PsiClassRenderer private constructor(
             psiClass.isAnnotationType -> "@interface"
             psiClass.isInterface -> "interface"
             psiClass.isEnum -> "enum"
+            psiClass.isValueClass -> "value class"
             else -> "class"
         }
 
@@ -304,7 +305,7 @@ class PsiClassRenderer private constructor(
 
         val renderedAttributesString = renderedAttributes.joinToString()
         if (qualifiedName == null && renderedAttributesString.isEmpty()) {
-            return ""
+            return "@EMPTY_FQN"
         }
         return "@$qualifiedName(${renderedAttributes.joinToString()})"
     }

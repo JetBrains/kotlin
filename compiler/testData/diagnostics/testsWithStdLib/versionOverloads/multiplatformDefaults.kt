@@ -3,8 +3,6 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-@file:OptIn(ExperimentalVersionOverloading::class)
-
 expect fun repeatDefault(
     x: String = "O",
     @IntroducedAt("2") y: String = "foo",
@@ -17,8 +15,6 @@ expect fun missingDefault(
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
-
-@file:OptIn(ExperimentalVersionOverloading::class)
 
 actual fun repeatDefault(
     x: String,

@@ -1,5 +1,5 @@
 KDocName(34,36): 'BB'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       b/BB
     ]

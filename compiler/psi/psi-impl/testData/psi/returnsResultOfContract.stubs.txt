@@ -7,7 +7,7 @@ FILE[kind=File[packageFqName=<root>]]
         REFERENCE_EXPRESSION[referencedName=contracts]
   CLASS[classId=/Outer, fqName=Outer, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer, superNames=[]]
     CLASS_BODY
-      FUN[fqName=Outer.myLet, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=true, name=myLet]
+      FUNCTION[fqName=Outer.myLet, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=true, name=myLet]
         MODIFIER_LIST[inline]
           ANNOTATION_ENTRY[hasValueArguments=true, shortName=OptIn]
             CONSTRUCTOR_CALLEE

@@ -174,7 +174,7 @@ KtFile: validDeclarations.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           ANNOTATION_ENTRY
             PsiElement(AT)('@')
@@ -252,7 +252,7 @@ KtFile: validDeclarations.kt
                   PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
           PsiWhiteSpace('\n\n        ')
-          FUN
+          FUNCTION
             MODIFIER_LIST
               ANNOTATION_ENTRY
                 PsiElement(AT)('@')
@@ -343,7 +343,7 @@ KtFile: validDeclarations.kt
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT
-                FUN
+                FUNCTION
                   PsiElement(fun)('fun')
                   VALUE_PARAMETER_LIST
                     PsiElement(LPAR)('(')
@@ -520,7 +520,7 @@ KtFile: validDeclarations.kt
           CONSTRUCTOR_DELEGATION_REFERENCE
             <empty list>
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         TYPE_PARAMETER_LIST
@@ -593,7 +593,7 @@ KtFile: validDeclarations.kt
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('1')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
@@ -617,7 +617,7 @@ KtFile: validDeclarations.kt
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('1')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('bar')

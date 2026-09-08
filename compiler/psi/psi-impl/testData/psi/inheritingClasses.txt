@@ -59,7 +59,7 @@ KtFile: inheritingClasses.kt
         CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n        ')
-          FUN
+          FUNCTION
             MODIFIER_LIST
               PsiElement(open)('open')
             PsiWhiteSpace(' ')
@@ -75,7 +75,7 @@ KtFile: inheritingClasses.kt
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('3')
           PsiWhiteSpace('\n        ')
-          FUN
+          FUNCTION
             MODIFIER_LIST
               PsiElement(abstract)('abstract')
             PsiWhiteSpace(' ')
@@ -148,7 +148,7 @@ KtFile: inheritingClasses.kt
         CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n        ')
-          FUN
+          FUNCTION
             MODIFIER_LIST
               PsiElement(override)('override')
             PsiWhiteSpace(' ')
@@ -164,7 +164,7 @@ KtFile: inheritingClasses.kt
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('4')
           PsiWhiteSpace('\n        ')
-          FUN
+          FUNCTION
             MODIFIER_LIST
               PsiElement(override)('override')
             PsiWhiteSpace(' ')

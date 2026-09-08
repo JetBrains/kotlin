@@ -8,7 +8,7 @@ KtNameReferenceExpression(78,82): 'test'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test
     ]
@@ -38,13 +38,13 @@ KtParameter(123,131): 'foo: Foo'
   null
 
 KtTypeReference(128,131): 'Foo'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo
     ]
 
 KtUserType(128,131): 'Foo'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo
     ]
@@ -53,7 +53,7 @@ KtNameReferenceExpression(128,131): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo
     ]
@@ -68,13 +68,13 @@ KtParameterList(146,148): '()'
   null
 
 KtTypeReference(150,153): 'Foo'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo
     ]
 
 KtUserType(150,153): 'Foo'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo
     ]
@@ -83,7 +83,7 @@ KtNameReferenceExpression(150,153): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo
     ]
@@ -92,7 +92,7 @@ KtBlockExpression(154,200): '{'
   null
 
 KtCallExpression(160,179): 'expectsFoo(Foo.BAR)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/expectsFoo(foo: test.Foo): kotlin.Unit
     ]
@@ -101,7 +101,7 @@ KtNameReferenceExpression(160,170): 'expectsFoo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/expectsFoo(foo: test.Foo): kotlin.Unit
     ]
@@ -113,7 +113,7 @@ KtValueArgument(171,178): 'Foo.BAR'
   null
 
 KtDotQualifiedExpression(171,178): 'Foo.BAR'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo.BAR
     ]
@@ -122,7 +122,7 @@ KtNameReferenceExpression(171,174): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo
     ]
@@ -131,19 +131,19 @@ KtNameReferenceExpression(175,178): 'BAR'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: QualifierCanBeRemoved
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo.BAR
     ]
 
 KtReturnExpression(184,198): 'return Foo.BAR'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/usage(): test.Foo
     ]
 
 KtDotQualifiedExpression(191,198): 'Foo.BAR'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo.BAR
     ]
@@ -152,7 +152,7 @@ KtNameReferenceExpression(191,194): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo
     ]
@@ -161,7 +161,7 @@ KtNameReferenceExpression(195,198): 'BAR'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: QualifierCanBeRemoved
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       test/Foo.BAR
     ]

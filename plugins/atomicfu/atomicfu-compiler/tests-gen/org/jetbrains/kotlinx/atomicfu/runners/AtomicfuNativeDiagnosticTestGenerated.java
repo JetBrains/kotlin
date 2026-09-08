@@ -40,6 +40,12 @@ public class AtomicfuNativeDiagnosticTestGenerated extends AbstractAtomicfuNativ
   }
 
   @Test
+  @TestMetadata("leakingVolatilePropertyThroughInternalInlineFun.kt")
+  public void testLeakingVolatilePropertyThroughInternalInlineFun() {
+    run("leakingVolatilePropertyThroughInternalInlineFun.kt");
+  }
+
+  @Test
   @TestMetadata("MultiFileCAS.kt")
   public void testMultiFileCAS() {
     run("MultiFileCAS.kt");

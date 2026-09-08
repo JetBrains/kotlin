@@ -110,7 +110,7 @@ KtFile: classMembers.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('3')
       PsiWhiteSpace('\n    ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('bar')
@@ -135,7 +135,7 @@ KtFile: classMembers.kt
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(open)('open')
         PsiWhiteSpace(' ')
@@ -151,7 +151,7 @@ KtFile: classMembers.kt
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(abstract)('abstract')
         PsiWhiteSpace(' ')

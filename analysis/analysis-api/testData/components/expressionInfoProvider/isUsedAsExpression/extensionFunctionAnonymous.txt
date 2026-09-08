@@ -1,4 +1,4 @@
-expression: FUN
+expression: FUNCTION
 text: fun String.(): Int {
         return 56
     }

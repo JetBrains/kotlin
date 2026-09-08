@@ -14,15 +14,18 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.powerassert.PowerAssertConfigurationDirectives.DISABLE_PLUGIN
+import org.jetbrains.kotlin.powerassert.PowerAssertConfigurationDirectives.DISABLE_RUNTIME
 import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RESULT_OUTPUT_EXTENSION
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.FULL_JDK
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestFile
@@ -36,10 +39,25 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 // ------------------------ codegen ------------------------
 
-open class AbstractFirLightTreeBlackBoxCodegenTestForPowerAssert : AbstractFirLightTreeBlackBoxCodegenTest() {
+open class AbstractPowerAssertBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configurePlugin()
+        builder.defaultDirectives {
+            RESULT_OUTPUT_EXTENSION with ".box.txt"
+        }
+    }
+}
+
+open class AbstractPowerAssertMissingRuntimeBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configurePlugin()
+        builder.defaultDirectives {
+            RESULT_OUTPUT_EXTENSION with ".box.txt"
+            +DISABLE_RUNTIME
+            TestDumpDirectives.DUMP_CLASSIFIER with "noruntime"
+        }
     }
 }
 

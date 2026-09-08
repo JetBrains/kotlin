@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import kotlin.contracts.ExperimentalContracts
@@ -123,17 +124,53 @@ internal fun KaFirPsiSymbol<*, *>.psiOrSymbolEquals(other: Any?): Boolean {
 }
 
 /**
- * Note: This function is supposed only for simple cases there annotations can be declared only
- * directly on the underlying [KtAnnotated], so cases like property accessors or
- * generated constructor property are not supported.
+ * Provides [KaAnnotationList] for the given symbol.
+ *
+ * [anchorPsi] is used for the PSI-based optimization, set to [backingPsi] by default.
+ * In rare cases, a custom [anchorPsi] could be provided when annotations are not placed directly on the [backingPsi].
+ * E.g., some anonymous declarations with [KtAnnotated] backing PSI could have no annotation entries or not be a subject of
+ * some [KtAnnotatedExpression]. Instead, the corresponding annotations are placed on some parent PSI expression instead.
+ * Then, this PSI parent should be provided as [anchorPsi].
+ * See [KaFirAnonymousObjectSymbol.annotations] and [KaFirAnonymousFunctionSymbol.annotations] as examples.
  */
-internal fun KaFirKtBasedSymbol<KtAnnotated, *>.psiOrSymbolAnnotationList(): KaAnnotationList {
-    if (backingPsi?.annotationEntries?.isEmpty() == true) {
+internal fun KaFirKtBasedSymbol<*, *>.psiOrSymbolAnnotationList(anchorPsi: KtElement? = backingPsi): KaAnnotationList {
+    if (anchorPsi?.hasAnnotations == false) {
         return KaBaseEmptyAnnotationList(token)
     }
 
     return KaFirAnnotationListForDeclaration.create(firSymbol, builder)
 }
+
+/**
+ * Returns whether [this] has any annotation entries.
+ * If [this] is [KtAnnotated] with non-empty annotation entries, immediately returns `true`.
+ *
+ * Otherwise, recursively unwraps [KtLabeledExpression] and [KtParenthesizedExpression] parents
+ * until the first [KtAnnotatedExpression] with some annotation entries.
+ * If such a [KtAnnotatedExpression] parent is found, returns `true`.
+ * Otherwise, if there is no [KtAnnotatedExpression] parent with annotations or there is some other parent on the path, returns `false`.
+ *
+ * Note that stopping on [KtAnnotatedExpression] and not just [KtAnnotated] is vital.
+ * If the recursion handled [KtAnnotated] instead, it could just accidentally take
+ * annotations from the enclosing declaration.
+ */
+private val KtElement.hasAnnotations: Boolean
+    get() {
+        (this as? KtAnnotated)?.annotationEntries?.ifNotEmpty {
+            return true
+        }
+
+        return when (val parent = parent) {
+            /**
+             * Some malformed annotations might have no entries.
+             * In such cases, a deeper search is needed.
+             */
+            is KtAnnotatedExpression -> parent.annotationEntries.isNotEmpty() || parent.hasAnnotations
+            is KtLabeledExpression -> parent.hasAnnotations
+            is KtParenthesizedExpression -> parent.hasAnnotations
+            else -> false
+        }
+    }
 
 internal fun KaFirKtBasedSymbol<KtCallableDeclaration, FirCallableSymbol<*>>.createContextReceivers(): List<KaContextReceiver> {
     val psi = backingPsi

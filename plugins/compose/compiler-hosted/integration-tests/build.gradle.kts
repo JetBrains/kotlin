@@ -1,9 +1,7 @@
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
-    id("project-tests-convention")
 }
 
 repositories {
@@ -20,8 +18,9 @@ fun DependencyHandler.testImplementationArtifactOnly(dependency: String) {
 
 optInToObsoleteDescriptorBasedAPI()
 
-kotlin {
-    jvmToolchain(11)
+jvmToolchains {
+    jdkVersion = JdkMajorVersion.JDK_11_0
+    targetBytecodeVersion = JdkMajorVersion.JDK_11_0
 }
 
 sourceSets {
@@ -61,6 +60,7 @@ dependencies {
     testImplementation(project(":core:deserialization.common.jvm"))
     testImplementation(project(":core:language.targets.jvm"))
     testImplementation(intellijCore())
+    testImplementation(libs.opentelemetry.api)
     testImplementation(libs.guava)
 
     // Compose compiler deps
@@ -99,7 +99,7 @@ dependencies {
 }
 
 projectTests {
-    testTask(maxHeapSizeMb = 1024) {
+    testTask(maxHeapSize = testMaxHeapSizeSmall) {
         workingDir = rootDir
         jvmArgs("--add-opens=jdk.jdi/com.sun.tools.jdi=ALL-UNNAMED")
         environment("CI", kotlinBuildProperties.isTeamcityBuild.get())

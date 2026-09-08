@@ -1,5 +1,5 @@
 KtCallableReferenceExpression(72,80): 'obj::foo'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /foo(<extension receiver>: Foo, a: kotlin.Int): kotlin.Unit
     ]

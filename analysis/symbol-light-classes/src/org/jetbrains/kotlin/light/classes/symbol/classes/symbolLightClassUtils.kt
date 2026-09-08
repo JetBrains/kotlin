@@ -11,13 +11,16 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.baseContextModuleOrSelf
 import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -27,6 +30,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.findEntry
 import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
+import org.jetbrains.kotlin.asJava.mangleInternalName
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.JvmDefaultMode
@@ -820,6 +824,40 @@ internal fun hasMangledNameDueValueClassesInSignature(
 }
 
 /**
+ * Applies [JvmName] and `internal` mangling to [defaultName].
+ *
+ * @param ignoreValueClassMangling whether to compute the name as if value classes did not require mangling
+ * @return the computed Java method name, or `null` if value-class mangling is required and
+ * [ignoreValueClassMangling] is `false`
+ */
+context(_: KaSession)
+internal fun computeJavaMethodName(symbol: KaCallableSymbol, defaultName: String, ignoreValueClassMangling: Boolean): String? {
+    symbol.jvmNameFromAnnotation?.let { return it }
+
+    // 'JvmName' above wins over value class mangling, so the check has to be performed afterwards
+    if (!ignoreValueClassMangling && hasMangledNameDueToValueClasses(symbol)) return null
+
+    // Top-level declarations are placed into a file facade class, and their names are never mangled.
+    // Note: script declarations are members of a script class, so they are affected by mangling
+    if (jvmMethodOwner(symbol) == null) return defaultName
+
+    // Only the current module has a name to mangle with; library declarations already have mangled names
+    val module = symbol.containingModule.baseContextModuleOrSelf as? KaSourceModule ?: return defaultName
+    if (StandardClassIds.Annotations.PublishedApi in symbol.annotations) return defaultName
+    if (symbol.visibility != KaSymbolVisibility.INTERNAL) return defaultName
+
+    return mangleInternalName(defaultName, module.stableModuleName ?: module.name)
+}
+
+private val KaAnnotatedSymbol.jvmNameFromAnnotation: String?
+    get() = stringArgumentFromAnnotation(JvmStandardClassIds.Annotations.JvmName)
+
+private fun KaAnnotatedSymbol.stringArgumentFromAnnotation(classId: ClassId): String? {
+    val annotation = annotations[classId].firstOrNull() ?: return null
+    return (annotation.arguments.firstOrNull()?.expression as? KaAnnotationValue.ConstantValue)?.value?.value as? String
+}
+
+/**
  * Whether the JVM name of [symbol] is mangled because of value classes.
  *
  * The suffix is either a hash of the signature, as in `classFunInParameter-5lyY9Q4`, or `impl` for a member of a value class,
@@ -829,7 +867,7 @@ internal fun hasMangledNameDueValueClassesInSignature(
  * to narrow the checked value parameters down.
  */
 context(_: KaSession)
-internal fun hasMangledNameDueToValueClasses(symbol: KaCallableSymbol): Boolean {
+private fun hasMangledNameDueToValueClasses(symbol: KaCallableSymbol): Boolean {
     // On the JVM, an accessor has the receiver, the context parameters, and the type of its property, while the symbol
     // itself only has the receiver
     val declaration = (symbol as? KaPropertyAccessorSymbol)?.containingDeclaration as? KaCallableSymbol ?: symbol
@@ -856,7 +894,7 @@ internal fun hasMangledNameDueToValueClasses(symbol: KaCallableSymbol): Boolean 
  * For a property accessor, the owner of the property is used, as an accessor is never owned by its property on the JVM.
  */
 context(_: KaSession)
-internal fun jvmMethodOwner(symbol: KaCallableSymbol): KaDeclarationSymbol? {
+private fun jvmMethodOwner(symbol: KaCallableSymbol): KaDeclarationSymbol? {
     val containingDeclaration = symbol.containingDeclaration
     return if (containingDeclaration is KaPropertySymbol) containingDeclaration.containingDeclaration else containingDeclaration
 }
@@ -923,5 +961,5 @@ internal inline fun <reified T : KaClassSymbol> KtClassOrObject.createSymbolPoin
     symbol.createPointer() as KaSymbolPointer<T>
 }
 
-internal inline val SymbolLightClassBase.isValueClass: Boolean
-    get() = this is SymbolLightClassForClassOrObject && isValueClass
+internal inline val SymbolLightClassBase.isKotlinValueClass: Boolean
+    get() = this is SymbolLightClassForClassOrObject && isKotlinValueClass

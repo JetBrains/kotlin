@@ -3,6 +3,9 @@
 
 // FILE: test.kt
 
+// Its own package, so that its loggers cannot collide with another test file's - see `log.kt`.
+package logWithConfig
+
 import lombok.extern.java.Log
 import lombok.AccessLevel
 

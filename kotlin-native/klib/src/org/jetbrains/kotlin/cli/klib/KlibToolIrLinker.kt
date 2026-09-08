@@ -23,7 +23,7 @@ internal class KlibToolIrLinker(
     output: KlibToolOutput,
     module: ModuleDescriptor,
     symbolTable: SymbolTable,
-) : KotlinIrLinker(module, symbolTable, exportedDependencies = emptyList(), errorCallback = output::logError) {
+) : KotlinIrLinker(module, symbolTable, errorCallback = output::logError) {
     override val irMangler: KotlinMangler.IrMangler = KonanManglerIr
 
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
@@ -46,7 +46,7 @@ internal class KlibToolIrLinker(
         strategyResolver = strategyResolver
     )
 
-    override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor) = false
+    override fun isBuiltInModule(module: IrModuleFragment) = false
 
     private inner class KlibToolModuleDeserializer(
         moduleFragment: IrModuleFragment,

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -60,7 +59,7 @@ internal fun annotationsByClassId(
         // - `transformAnnotations` theoretically may modify annotations, but it is not allowed due
         // to the compiler contract to change already published annotations – only their content can be changed
         return annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol).mapNotNull { annotation ->
-            if (annotation.toAnnotationClassIdSafe(session) != classId) {
+            if (annotation.toAnnotationNonErrorClassId(session) != classId) {
                 return@mapNotNull null
             }
 
@@ -69,7 +68,7 @@ internal fun annotationsByClassId(
     }
 
     return annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).mapNotNull { annotation ->
-        if (annotation.toAnnotationClassId(session) != classId) {
+        if (annotation.toAnnotationNonErrorClassId(session) != classId) {
             return@mapNotNull null
         }
 
@@ -106,7 +105,7 @@ private fun computeTargetAnnotationArguments(
     annotationParameterName: Name,
     nameMapper: (String) -> String?,
 ): List<KaNamedAnnotationValue> {
-    val rawValues = annotation.findFromRawArguments(expectedEnumClass = expectedEnumClassId, nameMapper)
+    val rawValues = annotation.findFromArgumentMapping(expectedEnumClass = expectedEnumClassId, nameMapper)
 
     if (rawValues.isNotEmpty()) {
         val token = builder.token
@@ -146,7 +145,7 @@ private fun computeJavaTargetAnnotationArguments(annotation: FirAnnotation, buil
     }
 }
 
-private fun <T> FirAnnotation.findFromRawArguments(expectedEnumClass: ClassId, transformer: (String) -> T?): Set<T> = buildSet {
+private fun <T> FirAnnotation.findFromArgumentMapping(expectedEnumClass: ClassId, transformer: (String) -> T?): Set<T> = buildSet {
     fun addIfMatching(arg: FirExpression) {
         if (arg !is FirQualifiedAccessExpression) return
         val callableSymbol = arg.calleeReference.toResolvedCallableSymbol() ?: return
@@ -155,10 +154,8 @@ private fun <T> FirAnnotation.findFromRawArguments(expectedEnumClass: ClassId, t
         transformer(identifier)?.let(::add)
     }
 
-    if (this@findFromRawArguments is FirAnnotationCall) {
-        for (arg in argumentList.arguments) {
-            arg.unwrapAndFlattenArgument(flattenArrays = true).forEach(::addIfMatching)
-        }
+    for (arg in argumentMapping.mapping.values) {
+        arg.unwrapAndFlattenArgument(flattenArrays = true).forEach(::addIfMatching)
     }
 }
 
@@ -175,7 +172,7 @@ internal fun annotationClassIds(
     useSiteSession: FirSession,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
 ): Collection<ClassId> = annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).mapNotNull {
-    it.toAnnotationClassId(useSiteSession)
+    it.toAnnotationNonErrorClassId(useSiteSession)
 }
 
 internal fun hasAnnotation(
@@ -190,11 +187,11 @@ internal fun hasAnnotation(
     // - `transformAnnotations` theoretically may modify annotations, but it is not allowed due
     // to the compiler contract to change already published annotations – only their content can be changed
     annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol).any {
-        it.toAnnotationClassIdSafe(useSiteSession) == classId
+        it.toAnnotationNonErrorClassId(useSiteSession) == classId
     }
 } else {
     annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).any {
-        it.toAnnotationClassId(useSiteSession) == classId
+        it.toAnnotationNonErrorClassId(useSiteSession) == classId
     }
 }
 

@@ -80,7 +80,7 @@ KtFile: annotatedReturnType.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('String')
       PsiWhiteSpace('\n\n    ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           ANNOTATION_ENTRY
             PsiElement(AT)('@')

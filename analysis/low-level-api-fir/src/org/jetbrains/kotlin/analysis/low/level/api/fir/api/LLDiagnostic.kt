@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
+import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 /**
  * A [diagnostic] reported by compiler checkers, together with its [suppression status][isSuppressed].
@@ -18,7 +21,7 @@ import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
  */
 @KaImplementationDetail
 class LLDiagnostic(
-    val diagnostic: KtPsiDiagnostic,
+    val diagnostic: KtDiagnosticWithSource,
 
     /**
      * Whether the diagnostic is suppressed at its use site, e.g., by a `@Suppress` annotation.
@@ -28,5 +31,25 @@ class LLDiagnostic(
      */
     val isSuppressed: Boolean,
 ) {
+    init {
+        diagnostic.checkPsiTypeConsistency()
+    }
+
     override fun toString(): String = if (isSuppressed) "$diagnostic (suppressed)" else diagnostic.toString()
+}
+
+private const val CHECK_PSI_CONSISTENCY_IN_DIAGNOSTICS = true
+
+private fun KtDiagnosticWithSource.checkPsiTypeConsistency() {
+    if (CHECK_PSI_CONSISTENCY_IN_DIAGNOSTICS) {
+        val element = this.element as? KtPsiSourceElement ?: return
+        val psiElement = element.psi
+        requireWithAttachment(
+            factory.psiType.isInstance(psiElement),
+            { "${psiElement::class} is not a subtype of ${factory.psiType} for factory $factory" }
+        ) {
+            withPsiEntry("psi", psiElement)
+            withPsiEntry("file", psiElement.containingFile)
+        }
+    }
 }

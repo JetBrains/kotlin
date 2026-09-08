@@ -8,14 +8,18 @@ package org.jetbrains.kotlin.fir.pipeline
 import org.jetbrains.kotlin.config.hmppProvidersEnabled
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCommonDeclarationsMappingCollectingSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
@@ -60,8 +64,10 @@ private val builtinTopLevelCallables: List<CallableId> = listOf(
 )
 
 private class Visitor(val session: FirSession) : FirDefaultVisitorVoid() {
+    private val visitedClasses = mutableSetOf<FirClassLikeSymbol<*>>()
+
     override fun visitElement(element: FirElement) {
-        if (element is FirExpression) {
+        if (element is FirExpression && element !is FirExpressionStub) {
             lookupInType(element.resolvedType)
         }
         element.acceptChildren(this)
@@ -95,7 +101,11 @@ private class Visitor(val session: FirSession) : FirDefaultVisitorVoid() {
         type.forEachType l@{
             val lookupTag = it.classLikeLookupTagIfAny ?: return@l
             if (lookupTag is ConeClassLikeLookupTagWithFixedSymbol) return@l
-            session.symbolProvider.getClassLikeSymbolByClassId(lookupTag.classId)
+            val classSymbol = session.symbolProvider.getClassLikeSymbolByClassId(lookupTag.classId) ?: return@l
+            if (classSymbol.origin != FirDeclarationOrigin.Source && visitedClasses.add(classSymbol)) {
+                @OptIn(SymbolInternals::class)
+                classSymbol.fir.accept(this)
+            }
         }
     }
 }

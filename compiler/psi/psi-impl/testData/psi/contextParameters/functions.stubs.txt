@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsKt]]
   partSimpleName: "FunctionsKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=simple, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=simple]
+  FUNCTION[fqName=simple, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=simple]
     MODIFIER_LIST[]
       CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=param1]
@@ -20,7 +20,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsKt]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Int]
     VALUE_PARAMETER_LIST
-  FUN[fqName=annotated, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=annotated]
+  FUNCTION[fqName=annotated, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=annotated]
     MODIFIER_LIST[]
       CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=parameter1]
@@ -61,7 +61,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsKt]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Int]
     VALUE_PARAMETER_LIST
-  FUN[fqName=annotatedParameter, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=annotatedParameter]
+  FUNCTION[fqName=annotatedParameter, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=annotatedParameter]
     MODIFIER_LIST[]
       CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c]

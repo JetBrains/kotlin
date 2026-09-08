@@ -68,6 +68,15 @@ FILE: ConstructorExample.kt
         }
 
     }
+    @R|lombok/NoArgsConstructor|(force = Boolean(true) [evaluated = Boolean(true)]) @R|kotlin/jvm/JvmInline|() public final value class ConstructorExampleOnValueClass : R|kotlin/Any| {
+        public constructor(value: R|kotlin/Int|): R|ConstructorExampleOnValueClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val value: R|kotlin/Int| = R|<local>/value|
+            public get(): R|kotlin/Int|
+
+    }
     public final fun box(): R|kotlin/String| {
         lval zeroObject: R|ConstructorExample| = R|/ConstructorExample|()
         R|/assertEquals|<R|kotlin/Boolean|>(Boolean(false), R|<local>/zeroObject|.R|/ConstructorExample.boolean|)

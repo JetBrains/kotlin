@@ -85,9 +85,10 @@ class AdditionalBuiltInsMembersSignatureListsTest {
                     else
                         scope.getContributedFunctions(Name.identifier(stringName), NoLookupLocation.FROM_TEST)
 
-                functions.singleOrNull {
+                val matchingFunction = functions.singleOrNull {
                     it.isEffectivelyPublicApi && it.computeJvmDescriptor() == jvmDescriptor
-                } ?: fail("Expected single function with signature $jvmDescriptor in $internalName")
+                }
+                if (matchingFunction == null) fail("Expected single function with signature $jvmDescriptor in $internalName")
             }
         }
     }

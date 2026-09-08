@@ -9,5 +9,5 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InterfaceInExpressionPositio
       OPERATION_REFERENCE[operationToken=LT, referencedName=<]
       CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=true, isTopLevel=false, name=I, superNames=[]]
         CLASS_BODY
-          FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+          FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
             VALUE_PARAMETER_LIST

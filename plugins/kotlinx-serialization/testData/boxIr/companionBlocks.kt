@@ -1,15 +1,14 @@
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
-// TARGET_BACKEND: JVM_IR
-// JS: KT-85459, Native: KT-84829
+// WITH_STDLIB
 
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import kotlinx.serialization.builtins.*
 
 @Serializable
-data class Vector(val x: Double, val y: Double) {
+data class Vector(val x: Int, val y: Int) {
     companion {
-        val UnitX = Vector(1.0, 0.0)
+        val UnitX = Vector(1, 0)
 
         val json = Json { encodeDefaults = false }
 
@@ -60,9 +59,9 @@ fun <T> boxTest(t: T, kSerializer: KSerializer<T>, expected: String, descCount: 
 }
 
 fun box(): String {
-    val vector = boxTest(Vector.UnitX, Vector.serializer(), """{"x":1.0,"y":0.0}""", 2)
+    val vector = boxTest(Vector.UnitX, Vector.serializer(), """{"x":1,"y":0}""", 2)
     if (vector != "OK") return vector
-    val vectorAccess = boxTest(Vector.UnitX, Vector.serializerAccess(), """{"x":1.0,"y":0.0}""", 2)
+    val vectorAccess = boxTest(Vector.UnitX, Vector.serializerAccess(), """{"x":1,"y":0}""", 2)
     if (vectorAccess != "OK") return vectorAccess
     val box = boxTest(Box("abc"), Box.serializer(String.serializer()), """{"t":"abc"}""", 1)
     if (box != "OK") return box

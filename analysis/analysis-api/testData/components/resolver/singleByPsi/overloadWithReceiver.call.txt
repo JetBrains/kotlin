@@ -1,5 +1,5 @@
 KtCallExpression(50,57): 'myRun()'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

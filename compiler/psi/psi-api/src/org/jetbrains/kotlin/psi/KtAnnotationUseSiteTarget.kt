@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub
@@ -22,14 +22,22 @@ import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub
  * val foo: String = "bar"
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtAnnotationUseSiteTarget : KtElementImplStub<KotlinAnnotationUseSiteTargetStub> {
 
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
 
-    constructor(stub: KotlinAnnotationUseSiteTargetStub) : super(stub, KtStubBasedElementTypes.ANNOTATION_TARGET)
+    @KtImplementationDetail
+    constructor(stub: KotlinAnnotationUseSiteTargetStub) : super(stub, KtNodeTypes.ANNOTATION_TARGET)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitAnnotationUseSiteTarget(this, data)
 
+    /**
+     * Returns the parsed use-site target this element denotes (for example, [AnnotationUseSiteTarget.PROPERTY_GETTER] for `@get:`).
+     *
+     * @throws IllegalStateException if the target keyword is not recognized
+     */
     fun getAnnotationUseSiteTarget(): AnnotationUseSiteTarget {
         val targetString = stub?.useSiteTarget
         if (targetString != null) {

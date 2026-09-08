@@ -3901,6 +3901,7 @@ public abstract interface class kotlin/jvm/functions/FunctionN : kotlin/Function
 }
 
 public class kotlin/jvm/internal/AdaptedFunctionReference : java/io/Serializable, kotlin/jvm/internal/FunctionBase {
+	protected field boundContextArguments [Ljava/lang/Object;
 	protected final field receiver Ljava/lang/Object;
 	public fun <init> (ILjava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun <init> (ILjava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
@@ -3957,6 +3958,7 @@ public final class kotlin/jvm/internal/ByteSpreadBuilder : kotlin/jvm/internal/P
 
 public abstract class kotlin/jvm/internal/CallableReference : java/io/Serializable, kotlin/jvm/internal/KotlinGenericDeclaration, kotlin/reflect/KCallable {
 	public static final field NO_RECEIVER Ljava/lang/Object;
+	protected field boundContextArguments [Ljava/lang/Object;
 	protected final field receiver Ljava/lang/Object;
 	public fun <init> ()V
 	protected fun <init> (Ljava/lang/Object;)V
@@ -3967,7 +3969,9 @@ public abstract class kotlin/jvm/internal/CallableReference : java/io/Serializab
 	protected abstract fun computeReflected ()Lkotlin/reflect/KCallable;
 	public fun findJavaDeclaration ()Ljava/lang/reflect/GenericDeclaration;
 	public fun getAnnotations ()Ljava/util/List;
+	public fun getBoundContextArguments ()[Ljava/lang/Object;
 	public fun getBoundReceiver ()Ljava/lang/Object;
+	public fun getCompanionExtensionClass ()Lkotlin/reflect/KClass;
 	public fun getName ()Ljava/lang/String;
 	public fun getOwner ()Lkotlin/reflect/KDeclarationContainer;
 	public fun getParameters ()Ljava/util/List;
@@ -4339,6 +4343,8 @@ public class kotlin/jvm/internal/MutablePropertyReference0Impl : kotlin/jvm/inte
 	public fun <init> (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun <init> (Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun <init> (Lkotlin/reflect/KDeclarationContainer;Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> ([Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
+	public fun <init> ([Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun get ()Ljava/lang/Object;
 	public fun set (Ljava/lang/Object;)V
 }
@@ -4360,6 +4366,7 @@ public class kotlin/jvm/internal/MutablePropertyReference1Impl : kotlin/jvm/inte
 	public fun <init> (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun <init> (Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun <init> (Lkotlin/reflect/KDeclarationContainer;Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> ([Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun get (Ljava/lang/Object;)Ljava/lang/Object;
 	public fun set (Ljava/lang/Object;Ljava/lang/Object;)V
 }
@@ -4431,6 +4438,8 @@ public class kotlin/jvm/internal/PropertyReference0Impl : kotlin/jvm/internal/Pr
 	public fun <init> (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun <init> (Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun <init> (Lkotlin/reflect/KDeclarationContainer;Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> ([Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
+	public fun <init> ([Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun get ()Ljava/lang/Object;
 }
 
@@ -4449,6 +4458,7 @@ public class kotlin/jvm/internal/PropertyReference1Impl : kotlin/jvm/internal/Pr
 	public fun <init> (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun <init> (Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun <init> (Lkotlin/reflect/KDeclarationContainer;Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> ([Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun get (Ljava/lang/Object;)Ljava/lang/Object;
 }
 
@@ -5258,6 +5268,9 @@ public final class kotlin/ranges/URangesKt {
 	public static final fun until-eb3DHEI (JJ)Lkotlin/ranges/ULongRange;
 }
 
+public abstract interface annotation class kotlin/reflect/ExperimentalCompanionExtensions : java/lang/annotation/Annotation {
+}
+
 public abstract interface class kotlin/reflect/KAnnotatedElement {
 	public abstract fun getAnnotations ()Ljava/util/List;
 }
@@ -5265,6 +5278,7 @@ public abstract interface class kotlin/reflect/KAnnotatedElement {
 public abstract interface class kotlin/reflect/KCallable : kotlin/reflect/KAnnotatedElement {
 	public abstract fun call ([Ljava/lang/Object;)Ljava/lang/Object;
 	public abstract fun callBy (Ljava/util/Map;)Ljava/lang/Object;
+	public abstract fun getCompanionExtensionClass ()Lkotlin/reflect/KClass;
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getParameters ()Ljava/util/List;
 	public abstract fun getReturnType ()Lkotlin/reflect/KType;

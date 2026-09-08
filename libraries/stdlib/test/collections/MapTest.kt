@@ -532,7 +532,7 @@ class MapTest {
         doTest("HashMap", mapLetterToIndex.toMap(HashMap()), "c", 2)
         doTest("LinkedHashMap", mapLetterToIndex.toMap(LinkedHashMap()), "d", 3)
 
-        buildMap {
+        val _ = buildMap {
             putAll(mapLetterToIndex)
             doTest("MapBuilder", this, "z", 25)
         }
@@ -579,7 +579,7 @@ class MapTest {
             doTest("HashMap", mapLetterToIndex.toMap(HashMap()), key, value)
             doTest("LinkedHashMap", mapLetterToIndex.toMap(LinkedHashMap()), key, value)
 
-            buildMap {
+            val _ = buildMap {
                 putAll(mapLetterToIndex)
                 doTest("MapBuilder", this, key, value)
             }
@@ -628,7 +628,7 @@ class MapTest {
             }
         }
 
-        buildMap {
+        val _ = buildMap {
             this["a"] = 1
             this["b"] = 2
             this["c"] = 3
@@ -834,20 +834,20 @@ class MapTest {
     @Test fun minBySelectorEvaluateOnce() {
         val source = listOf(1, 2, 3).associateWith { it }
         var c = 0
-        source.minBy { c++ }
+        val _ = source.minBy { c++ }
         assertEquals(3, c)
         c = 0
-        source.minByOrNull { c++ }
+        val _ = source.minByOrNull { c++ }
         assertEquals(3, c)
     }
 
     @Test fun maxBySelectorEvaluateOnce() {
         val source = listOf(1, 2, 3).associateWith { it }
         var c = 0
-        source.maxBy { c++ }
+        val _ = source.maxBy { c++ }
         assertEquals(3, c)
         c = 0
-        source.maxByOrNull { c++ }
+        val _ = source.maxByOrNull { c++ }
         assertEquals(3, c)
     }
 
@@ -1062,7 +1062,7 @@ class MapTest {
             map.entries.removeAll(copiedEntries)
             assertEquals(0, map.size)
 
-            copiedKeyValues.zip(copiedEntries) { pair, entry ->
+            val _ = copiedKeyValues.zip(copiedEntries) { pair, entry ->
                 assertEquals(pair, entry.toPair())
             }
 
@@ -1072,7 +1072,7 @@ class MapTest {
         }
 
         testDetachedCopyBehavior(mutableMapOf("a" to 1, "b" to 2))
-        buildMap {
+        val _ = buildMap {
             put("a", 1); put("b", 2)
             testDetachedCopyBehavior(this)
         }

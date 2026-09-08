@@ -29,7 +29,7 @@ class Outer {
 
 fun foo() {
     @Parcelize
-    <!ABSTRACT_MEMBER_NOT_IMPLEMENTED, PARCELABLE_SHOULD_BE_CLASS!>object<!> : Parcelable {}
+    <!ABSTRACT_MEMBER_NOT_IMPLEMENTED, PARCELABLE_CANT_BE_ANONYMOUS_OBJECT!>object<!> : Parcelable {}
 
     object : Open("") {}
 

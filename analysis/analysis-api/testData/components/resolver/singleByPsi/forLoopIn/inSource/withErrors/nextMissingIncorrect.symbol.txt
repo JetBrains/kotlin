@@ -1,12 +1,12 @@
 KtForExpression(23,37): 'for(i in f) {}'
   KaCompoundSymbolResolutionError:
-    attempts = [
-      KaSymbolResolutionSuccess:
+    simpleAttempts = [
+      KaSimpleSymbolResolutionSuccess:
         symbols = [
           /Foo.iterator(<dispatch receiver>: Foo): Iterator,
           /Iterator.hasNext(<dispatch receiver>: Iterator): kotlin.Boolean
         ],
-      KaSymbolResolutionError:
+      KaSimpleSymbolResolutionError:
         candidateSymbols = [
           /next(<extension receiver>: kotlin.Int): kotlin.Any,
           /next(<extension receiver>: kotlin.String): kotlin.Any
@@ -14,8 +14,8 @@ KtForExpression(23,37): 'for(i in f) {}'
         diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
 
         fun Int.next(): Any:
-          Candidate 'fun Int.next(): Any' is inapplicable because of a receiver type mismatch.
+          Candidate 'fun Int.next(): Any' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Iterator'.
 
         fun String.next(): Any:
-          Candidate 'fun String.next(): Any' is inapplicable because of a receiver type mismatch.>
+          Candidate 'fun String.next(): Any' is inapplicable because of a receiver type mismatch. Actual receiver type is 'Iterator'.>
     ]

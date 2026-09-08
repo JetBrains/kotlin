@@ -75,79 +75,79 @@ class TestBindings {
     }
 
     @Test
-    fun canCreateOpenBindingWithAllowedTokens() {
+    fun canCreateOpenBindingWithConstraints() {
         val bindings = Bindings()
-        val open = bindings.open(setOf("W", "X"))
+        val open = bindings.open(Constraints.restrictedTo(setOf("W", "X")))
         assertNull(open.token)
-        assertEquals(setOf("W", "X"), open.allowedTokens)
+        assertEquals(Constraints.restrictedTo(setOf("W", "X")), open.constraints)
     }
 
     @Test
     fun unifyConstrainedAndUnconstrainedOpenBindings() {
         val bindings = Bindings()
-        val open1 = bindings.open(setOf("W", "X"))
+        val open1 = bindings.open(Constraints.restrictedTo(setOf("W", "X")))
         val open2 = bindings.open()
-        
+
         assertTrue(bindings.unify(open1, open2))
         assertNull(open1.token)
-        assertEquals(setOf("W", "X"), open1.allowedTokens)
+        assertEquals(Constraints.restrictedTo(setOf("W", "X")), open1.constraints)
         assertNull(open2.token)
-        assertEquals(setOf("W", "X"), open2.allowedTokens)
+        assertEquals(Constraints.restrictedTo(setOf("W", "X")), open2.constraints)
     }
 
     @Test
-    fun unifyTwoOpenBindingsWithDisjointAllowedTokensFails() {
+    fun unifyTwoOpenBindingsWithDisjointConstraintsFails() {
         val bindings = Bindings()
-        val open1 = bindings.open(setOf("W", "X"))
-        val open2 = bindings.open(setOf("Y", "Z"))
-        
+        val open1 = bindings.open(Constraints.restrictedTo(setOf("W", "X")))
+        val open2 = bindings.open(Constraints.restrictedTo(setOf("Y", "Z")))
+
         assertFalse(bindings.unify(open1, open2))
         assertNull(open1.token)
-        assertEquals(setOf("W", "X"), open1.allowedTokens)
+        assertEquals(Constraints.restrictedTo(setOf("W", "X")), open1.constraints)
         assertNull(open2.token)
-        assertEquals(setOf("Y", "Z"), open2.allowedTokens)
+        assertEquals(Constraints.restrictedTo(setOf("Y", "Z")), open2.constraints)
     }
 
     @Test
-    fun unifyTwoOpenBindingsWithIntersectingAllowedTokens() {
+    fun unifyTwoOpenBindingsWithIntersectingConstraints() {
         val bindings = Bindings()
-        val open1 = bindings.open(setOf("W", "X", "Y"))
-        val open2 = bindings.open(setOf("X", "Y", "Z"))
-        
+        val open1 = bindings.open(Constraints.restrictedTo(setOf("W", "X", "Y")))
+        val open2 = bindings.open(Constraints.restrictedTo(setOf("X", "Y", "Z")))
+
         assertTrue(bindings.unify(open1, open2))
         assertNull(open1.token)
-        assertEquals(setOf("X", "Y"), open1.allowedTokens)
+        assertEquals(Constraints.restrictedTo(setOf("X", "Y")), open1.constraints)
         assertNull(open2.token)
-        assertEquals(setOf("X", "Y"), open2.allowedTokens)
+        assertEquals(Constraints.restrictedTo(setOf("X", "Y")), open2.constraints)
     }
 
     @Test
     fun unifyTwoOpenBindingsWithIntersectionOfOneTokenClosesThem() {
         val bindings = Bindings()
-        val open1 = bindings.open(setOf("W", "X"))
-        val open2 = bindings.open(setOf("X", "Y", "Z"))
-        
+        val open1 = bindings.open(Constraints.restrictedTo(setOf("W", "X")))
+        val open2 = bindings.open(Constraints.restrictedTo(setOf("X", "Y", "Z")))
+
         assertTrue(bindings.unify(open1, open2))
         assertEquals("X", open1.token)
-        assertNull(open1.allowedTokens)
+        assertEquals(Constraints.UNRESTRICTED, open1.constraints)
         assertEquals("X", open2.token)
-        assertNull(open2.allowedTokens)
+        assertEquals(Constraints.UNRESTRICTED, open2.constraints)
     }
 
     @Test
     fun unifyConstrainedOpenBindingAndClosedBinding() {
         val bindings = Bindings()
-        val open = bindings.open(setOf("W", "X"))
+        val open = bindings.open(Constraints.restrictedTo(setOf("W", "X")))
         val closed1 = bindings.closed("W")
         val closed2 = bindings.closed("Y")
-        
+
         assertFalse(bindings.unify(open, closed2))
         assertNull(open.token)
-        assertEquals(setOf("W", "X"), open.allowedTokens)
-        
+        assertEquals(Constraints.restrictedTo(setOf("W", "X")), open.constraints)
+
         assertTrue(bindings.unify(open, closed1))
         assertEquals("W", open.token)
-        assertNull(open.allowedTokens)
+        assertEquals(Constraints.UNRESTRICTED, open.constraints)
     }
 
     @Test

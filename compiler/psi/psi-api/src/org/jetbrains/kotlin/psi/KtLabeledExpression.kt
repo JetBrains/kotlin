@@ -20,10 +20,17 @@ import com.intellij.psi.search.LocalSearchScope
  *        break@outer
  *    }
  * // ^_____________________^
- * // The entire `for` block from `outer@' to '}'
+ * // The entire `for` block from `outer@` to `}`
  * ```
  */
-class KtLabeledExpression(node: ASTNode) : KtExpressionWithLabel(node), PsiNameIdentifierOwner {
+@OptIn(KtImplementationDetail::class)
+class KtLabeledExpression : KtExpressionWithLabel, PsiNameIdentifierOwner {
+    @KtImplementationDetail
+    constructor(node: ASTNode) : super(node)
+
+    /**
+     * The expression the label is attached to (the part after `label@`), or `null` if it is absent in incomplete code.
+     */
     @get:IfNotParsed
     val baseExpression: KtExpression?
         get() = findChildByClass(KtExpression::class.java)

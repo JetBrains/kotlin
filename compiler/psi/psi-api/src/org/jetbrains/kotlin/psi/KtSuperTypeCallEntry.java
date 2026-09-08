@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
 import java.util.Collections;
@@ -23,13 +24,16 @@ import java.util.List;
  * //          ^___^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtSuperTypeCallEntry extends KtSuperTypeListEntry implements KtCallElement {
+    @KtImplementationDetail
     public KtSuperTypeCallEntry(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtSuperTypeCallEntry(@NotNull KotlinPlaceHolderStub<? extends KtSuperTypeListEntry> stub) {
-        super(stub, KtStubBasedElementTypes.SUPER_TYPE_CALL_ENTRY);
+        super(stub, KtNodeTypes.SUPER_TYPE_CALL_ENTRY);
     }
 
     @Override
@@ -39,16 +43,14 @@ public class KtSuperTypeCallEntry extends KtSuperTypeListEntry implements KtCall
 
     @NotNull
     @Override
-    @SuppressWarnings("deprecation") // KT-78356
     public KtConstructorCalleeExpression getCalleeExpression() {
-        return getRequiredStubOrPsiChild(KtStubBasedElementTypes.CONSTRUCTOR_CALLEE);
+        return getRequiredStubOrPsiChild(KtNodeTypes.CONSTRUCTOR_CALLEE, KtConstructorCalleeExpression.class);
     }
 
     @Override
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtValueArgumentList getValueArgumentList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_ARGUMENT_LIST);
+        return getStubOrPsiChild(KtNodeTypes.VALUE_ARGUMENT_LIST, KtValueArgumentList.class);
     }
 
     @Override
@@ -58,6 +60,7 @@ public class KtSuperTypeCallEntry extends KtSuperTypeListEntry implements KtCall
         return list != null ? list.getArguments() : Collections.<KtValueArgument>emptyList();
     }
 
+    /** Always empty: a superclass constructor call cannot have trailing lambda arguments. */
     @NotNull
     @Override
     public List<KtLambdaArgument> getLambdaArguments() {

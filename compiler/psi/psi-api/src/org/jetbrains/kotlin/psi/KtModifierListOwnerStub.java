@@ -1,46 +1,48 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.tree.IElementType;
+import kotlin.ReplaceWith;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Base implementation of {@link KtModifierListOwner} that may be backed either by the AST tree or by a stub.
+ *
+ * <p>This is an internal implementation base class of the Kotlin PSI, not intended for direct use or subclassing outside of the PSI
+ * implementation. See {@link KtElementImplStub} for details on stub backing.
+ *
+ * @param <T> the type of stub backing this element
+ */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElementImplStub<T> implements KtModifierListOwner {
-    public KtModifierListOwnerStub(ASTNode node) {
+    @KtImplementationDetail
+    public KtModifierListOwnerStub(@NotNull ASTNode node) {
         super(node);
     }
 
-    public KtModifierListOwnerStub(T stub, IStubElementType nodeType) {
+    @KtImplementationDetail
+    public KtModifierListOwnerStub(@NotNull T stub, @NotNull IElementType nodeType) {
         super(stub, nodeType);
     }
 
     @Override
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtModifierList getModifierList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.MODIFIER_LIST);
+        return getStubOrPsiChild(KtNodeTypes.MODIFIER_LIST, KtDeclarationModifierList.class);
     }
 
     /**
@@ -61,7 +63,7 @@ public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElement
      */
     @NotNull
     public List<KtDeclarationModifierList> getAllModifierLists() {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.MODIFIER_LIST);
+        return Arrays.asList(getStubOrPsiChildren(KtNodeTypes.MODIFIER_LIST, KtDeclarationModifierList.EMPTY_ARRAY));
     }
 
     @Override
@@ -77,7 +79,7 @@ public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElement
     @Override
     @kotlin.Deprecated(
             message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addModifierKeyword(this, modifier)' instead.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "this.addModifierKeyword(modifier)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.addModifierKeyword"
             )
@@ -94,7 +96,7 @@ public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElement
     @Override
     @kotlin.Deprecated(
             message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.removeModifierKeyword(this, modifier)' instead.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "this.removeModifierKeyword(modifier)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.removeModifierKeyword"
             )
@@ -112,7 +114,7 @@ public class KtModifierListOwnerStub<T extends StubElement<?>> extends KtElement
     @Override
     @kotlin.Deprecated(
             message = "Use 'org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.addAnnotation(this, annotationEntry)' instead.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "this.addAnnotation(annotationEntry)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.addAnnotation"
             )

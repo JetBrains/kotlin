@@ -26,16 +26,17 @@ fun <T> Ref(content: Function2<Composer, Int, T>, %composer: Composer?, %changed
     Ref(<block>{
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(false) {
-        @Composable
-        @FunctionKeyMeta(key = -1060756229, startOffset = 151, endOffset = 155)
-        fun Fn(%composer: Composer?, %changed: Int): T {
-          %composer.startReplaceGroup(<>)
-          sourceInformation(%composer, "C(Fn):Test.kt")
-          val tmp0 = Fn(null, %composer, 0, 0b0001)
-          %composer.endReplaceGroup()
-          return tmp0
+        ::Fn<kotlin.Function2> {
+          @Composable
+          @FunctionKeyMeta(key = -1060756229, startOffset = 151, endOffset = 155)
+          fun Fn(%composer: Composer?, %changed: Int): T {
+            %composer.startReplaceGroup(<>)
+            sourceInformation(%composer, "C(Fn)<::Fn>:Test.kt")
+            val tmp0 = Fn(null, %composer, 0, 0b0001)
+            %composer.endReplaceGroup()
+            return tmp0
+          }
         }
-        ::Fn
       }
       sourceInformationMarkerEnd(%composer)
       tmp0_group
@@ -43,16 +44,17 @@ fun <T> Ref(content: Function2<Composer, Int, T>, %composer: Composer?, %changed
     Ref(<block>{
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp1_group = %composer.cache(false) {
-        @Composable
-        @FunctionKeyMeta(key = 1700255884, startOffset = 177, endOffset = 184)
-        fun IntFn(%composer: Composer?, %changed: Int): Int {
-          %composer.startReplaceGroup(<>)
-          sourceInformation(%composer, "C(IntFn):Test.kt")
-          val tmp0 = IntFn(0, %composer, 0, 0b0001)
-          %composer.endReplaceGroup()
-          return tmp0
+        ::IntFn<kotlin.Function2> {
+          @Composable
+          @FunctionKeyMeta(key = 1700255884, startOffset = 177, endOffset = 184)
+          fun IntFn(%composer: Composer?, %changed: Int): Int {
+            %composer.startReplaceGroup(<>)
+            sourceInformation(%composer, "C(IntFn)<::IntF...>:Test.kt")
+            val tmp0 = IntFn(0, %composer, 0, 0b0001)
+            %composer.endReplaceGroup()
+            return tmp0
+          }
         }
-        ::IntFn
       }
       sourceInformationMarkerEnd(%composer)
       tmp1_group

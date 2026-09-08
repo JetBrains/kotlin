@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -19,8 +20,10 @@ import org.jetbrains.annotations.NotNull;
  * }
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtThisExpression extends KtInstanceExpressionWithLabel {
 
+    @KtImplementationDetail
     public KtThisExpression(@NotNull ASTNode node) {
         super(node);
     }

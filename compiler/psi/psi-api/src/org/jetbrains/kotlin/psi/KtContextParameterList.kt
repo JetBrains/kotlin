@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
 /**
@@ -29,8 +29,11 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
  */
 @SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KtContextParameterList : KtElementImplStub<KotlinPlaceHolderStub<KtContextParameterList>> {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
-    constructor(stub: KotlinPlaceHolderStub<KtContextParameterList>) : super(stub, KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST)
+
+    @KtImplementationDetail
+    constructor(stub: KotlinPlaceHolderStub<KtContextParameterList>) : super(stub, KtNodeTypes.CONTEXT_PARAMETER_LIST)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitContextParameterList(this, data)
@@ -53,25 +56,26 @@ abstract class KtContextParameterList : KtElementImplStub<KotlinPlaceHolderStub<
      * Note that [KtFunctionType] still uses [contextReceivers] for compatibility with K1.
      */
     val contextParameters: List<KtParameter>
-        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.VALUE_PARAMETER)
+        get() = getStubOrPsiChildren(KtNodeTypes.VALUE_PARAMETER, KtParameter.EMPTY_ARRAY).asList()
 
     /**
-     * Returns the context receiver within the list.
+     * Returns the context receivers within the list.
      *
-     * This is API is obsolete for declarations ([contextParameters] has to be used instead),
-     * but it is still used for [KtFunctionType] for compatibility with K1.
+     * This API is obsolete for declarations ([contextParameters] has to be used instead), but it is still used for [KtFunctionType] for
+     * compatibility with K1.
      *
      * This API will be removed in the future (together with [KtContextReceiver]).
      *
      * @see contextParameters
      */
-    fun contextReceivers(): List<KtContextReceiver> = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.CONTEXT_RECEIVER)
+    fun contextReceivers(): List<KtContextReceiver> =
+        getStubOrPsiChildren(KtNodeTypes.CONTEXT_RECEIVER, KtContextReceiver.EMPTY_ARRAY).asList()
 
     /**
-     * Return the list of type references from context receivers.
+     * Returns the list of type references from context receivers.
      *
-     * This is API is obsolete for declarations ([contextParameters] has to be used instead),
-     * but it is still used for [KtFunctionType] for compatibility with K1.
+     * This API is obsolete for declarations ([contextParameters] has to be used instead), but it is still used for [KtFunctionType] for
+     * compatibility with K1.
      *
      * This API will be removed in the future (together with [KtContextReceiver]).
      *
@@ -93,4 +97,10 @@ abstract class KtContextParameterList : KtElementImplStub<KotlinPlaceHolderStub<
             val modifierList = parent as? KtModifierList ?: return null
             return modifierList.owner as? KtDeclaration
         }
+
+    companion object {
+        /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+        @JvmField
+        val EMPTY_ARRAY: Array<KtContextParameterList> = emptyArray()
+    }
 }

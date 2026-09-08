@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -746,6 +747,11 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
             null -> {
                 function.transformChildrenVoid()
 
+                if (function is IrConstructor && function.constructedClass.modality == Modality.SEALED) {
+                    // A sealed class constructor is never exposed - sealed class cannot be instantiated by itself.
+                    function.annotations = function.annotations.withoutJvmExposeBoxedAnnotation()
+                }
+
                 if (function is IrConstructor && function.shouldBeExposed()) {
                     if (function.parameters.filter { it.type.isInlineClassType() }.all { it.type.isBoxedInlineClassType() }) {
                         // If all inline class types of exposed ordinary class constructor are boxed,
@@ -969,6 +975,3 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
         return super.visitRawFunctionReference(expression)
     }
 }
-
-private fun IrType.isBoxedInlineClassType(): Boolean =
-    isInlineClassType() && isNullable() && unboxInlineClass().let { it.isPrimitiveType() || it.isNullable() }

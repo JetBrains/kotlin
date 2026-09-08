@@ -107,6 +107,7 @@ fun Project.generatedSourcesTask(
         mainClass.set(generatorMainClass)
         systemProperties["line.separator"] = "\n"
         systemProperties["teamcity"] = kotlinBuildProperties.isTeamcityBuild.get()
+        systemProperties["kotlin.build.disable.regeneration.check"] = kotlinBuildProperties.regenerationCheckDisabled.get()
         args(argsProvider(generationRoot))
 
         val additionalInputFiles = objects.fileCollection()

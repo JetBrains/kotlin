@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getDestructuredParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
@@ -58,15 +60,15 @@ interface PlatformConflictDeclarationsDiagnosticDispatcher : FirSessionComponent
 
 val FirSession.conflictDeclarationsDiagnosticDispatcher: PlatformConflictDeclarationsDiagnosticDispatcher? by FirSession.nullableSessionComponentAccessor()
 
-abstract class FirConflictsDeclarationChecker(kind: MppCheckerKind) : FirBasicDeclarationChecker(kind) {
-    object Regular : FirConflictsDeclarationChecker(MppCheckerKind.Platform)
-    object ForExpectClass : FirConflictsDeclarationChecker(MppCheckerKind.Common)
+sealed class FirConflictsDeclarationChecker(kind: MppCheckerKind) : FirBasicDeclarationChecker(kind) {
+    data object Regular : FirConflictsDeclarationChecker(MppCheckerKind.Platform)
+    data object ForExpect : FirConflictsDeclarationChecker(MppCheckerKind.Common)
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         val isCommon = mppKind == MppCheckerKind.Common
-        val isExpectClass = declaration is FirClass && declaration.isExpect
-        if (isCommon != isExpectClass) return
+        val isExpect = declaration is FirMemberDeclaration && declaration.isExpect
+        if (isCommon != isExpect) return
         checkImpl(declaration)
     }
 
@@ -150,6 +152,14 @@ abstract class FirConflictsDeclarationChecker(kind: MppCheckerKind) : FirBasicDe
 
             if (symbols.singleOrNull()?.let { isExpectAndNonExpect(conflictingDeclaration, it) } == true) {
                 reporter.reportOn(source, FirErrors.EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, conflictingDeclaration)
+                return@forEach
+            }
+
+            // `expect`s may clash with non-`expect`s, but we want to allow `expect`s that don't clash before actualization.
+            if (
+                LanguageFeature.AllowMultipleExpectsForSingleActual.isEnabled() &&
+                (this == Regular) && conflictingDeclaration.isExpect() && symbols.all { it.isExpect() }
+            ) {
                 return@forEach
             }
 

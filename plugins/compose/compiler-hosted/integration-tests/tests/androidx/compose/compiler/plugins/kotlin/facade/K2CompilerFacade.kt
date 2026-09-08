@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.search.ProjectScope
+import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
@@ -35,7 +36,7 @@ import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
@@ -66,8 +67,8 @@ class FirAnalysisResult(
     val reporter: BaseDiagnosticsCollector,
 ) : AnalysisResult {
     override val diagnostics: Map<String, List<AnalysisResult.Diagnostic>>
-        get() = reporter.diagnostics.filterIsInstance<KtPsiDiagnostic>().groupBy(
-            keySelector = { it.psiElement.containingFile.name },
+        get() = reporter.diagnostics.filterIsInstance<KtDiagnosticWithSource>().filter { it.element is KtPsiSourceElement }.groupBy(
+            keySelector = { (it.element as KtPsiSourceElement).psi.containingFile.name },
             valueTransform = { AnalysisResult.Diagnostic(it.factoryName, it.textRanges) }
         )
 }

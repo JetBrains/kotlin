@@ -25,22 +25,17 @@ import org.jetbrains.org.objectweb.asm.tree.LabelNode
 
 fun generateIsCheck(v: InstructionAdapter, type: IrType, asmType: Type) {
     if (type.isNullable()) {
-        val nope = Label()
+        val nonNull = Label()
         val end = Label()
 
         with(v) {
             dup()
-
-            ifnull(nope)
-
-            TypeIntrinsics.instanceOf(this, type, asmType)
-
-            goTo(end)
-
-            mark(nope)
+            ifnonnull(nonNull)
             pop()
             iconst(1)
-
+            goTo(end)
+            mark(nonNull)
+            TypeIntrinsics.instanceOf(this, type, asmType)
             mark(end)
         }
     } else {

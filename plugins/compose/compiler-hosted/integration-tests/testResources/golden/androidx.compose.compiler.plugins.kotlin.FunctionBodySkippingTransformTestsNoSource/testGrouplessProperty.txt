@@ -31,7 +31,7 @@ fun getHashCode(): Int = currentComposer.hashCode()
 open class Foo {
   val current: Int
     @Composable @ReadOnlyComposable @JvmName(name = "getCurrent") @FunctionKeyMeta(key = 205912272, startOffset = 255, endOffset = 329)
-    get() {
+    get(%composer: Composer?, %changed: Int) {
       val tmp0 = %composer as Any.hashCode()
       return tmp0
     }

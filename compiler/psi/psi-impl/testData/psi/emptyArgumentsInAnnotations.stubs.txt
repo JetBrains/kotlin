@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyArgumentsInAnnotationsK
   partSimpleName: "EmptyArgumentsInAnnotationsKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=simple, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=simple]
+  FUNCTION[fqName=simple, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=simple]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Ann]
         CONSTRUCTOR_CALLEE
@@ -51,7 +51,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyArgumentsInAnnotationsK
           VALUE_ARGUMENT[isSpread=false]
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
     VALUE_PARAMETER_LIST
-  FUN[fqName=named, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=named]
+  FUNCTION[fqName=named, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=named]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Ann]
         CONSTRUCTOR_CALLEE
@@ -119,7 +119,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyArgumentsInAnnotationsK
               REFERENCE_EXPRESSION[referencedName=y]
             COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=0]
     VALUE_PARAMETER_LIST
-  FUN[fqName=spread, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=spread]
+  FUNCTION[fqName=spread, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=spread]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Ann]
         CONSTRUCTOR_CALLEE
@@ -147,7 +147,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyArgumentsInAnnotationsK
           VALUE_ARGUMENT[isSpread=false]
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
     VALUE_PARAMETER_LIST
-  FUN[fqName=mixed, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=mixed]
+  FUNCTION[fqName=mixed, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=mixed]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Ann]
         CONSTRUCTOR_CALLEE

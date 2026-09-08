@@ -11,7 +11,7 @@ KtNameReferenceExpression(8,11): 'com'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com
     ]
@@ -20,7 +20,7 @@ KtNameReferenceExpression(12,19): 'example'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com.example
     ]
@@ -56,13 +56,13 @@ KtParameter(84,94): 'param: Int'
   null
 
 KtTypeReference(91,94): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtUserType(91,94): 'Int'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
@@ -71,13 +71,13 @@ KtNameReferenceExpression(91,94): 'Int'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
     ]
 
 KtCallExpression(98,103): 'Foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): com.example.Foo
     ]
@@ -86,7 +86,7 @@ KtNameReferenceExpression(98,101): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo
     ]
@@ -104,7 +104,7 @@ KtBlockExpression(139,231): '{'
   null
 
 KtCallExpression(145,151): 'Foo(1)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
     ]
@@ -113,7 +113,7 @@ KtNameReferenceExpression(145,148): 'Foo'
   isImplicitReferenceToCompanion: true
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Companion
     ]
@@ -128,7 +128,7 @@ KtConstantExpression(149,150): '1'
   null
 
 KtDotQualifiedExpression(156,174): 'com.example.Foo(2)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
     ]
@@ -140,7 +140,7 @@ KtNameReferenceExpression(156,159): 'com'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com
     ]
@@ -149,13 +149,13 @@ KtNameReferenceExpression(160,167): 'example'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com.example
     ]
 
 KtCallExpression(168,174): 'Foo(2)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
     ]
@@ -164,7 +164,7 @@ KtNameReferenceExpression(168,171): 'Foo'
   isImplicitReferenceToCompanion: true
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Companion
     ]
@@ -179,7 +179,7 @@ KtConstantExpression(172,173): '2'
   null
 
 KtDotQualifiedExpression(180,196): 'Foo.Companion(3)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
     ]
@@ -188,13 +188,13 @@ KtNameReferenceExpression(180,183): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo
     ]
 
 KtCallExpression(184,196): 'Companion(3)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
     ]
@@ -203,7 +203,7 @@ KtNameReferenceExpression(184,193): 'Companion'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Companion
     ]
@@ -218,7 +218,7 @@ KtConstantExpression(194,195): '3'
   null
 
 KtDotQualifiedExpression(201,229): 'com.example.Foo.Companion(4)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
     ]
@@ -233,7 +233,7 @@ KtNameReferenceExpression(201,204): 'com'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com
     ]
@@ -242,7 +242,7 @@ KtNameReferenceExpression(205,212): 'example'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com.example
     ]
@@ -251,13 +251,13 @@ KtNameReferenceExpression(213,216): 'Foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo
     ]
 
 KtCallExpression(217,229): 'Companion(4)'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
     ]
@@ -266,7 +266,7 @@ KtNameReferenceExpression(217,226): 'Companion'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Companion
     ]

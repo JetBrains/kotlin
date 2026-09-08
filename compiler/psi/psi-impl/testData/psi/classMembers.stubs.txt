@@ -35,15 +35,15 @@ FILE[kind=File[packageFqName=test]]
     CLASS_BODY
       PROPERTY[fqName=test.ClassMembers.foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=foo]
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
-      FUN[fqName=test.ClassMembers.bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
+      FUNCTION[fqName=test.ClassMembers.bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=test.ClassMembers.openFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=openFun]
+      FUNCTION[fqName=test.ClassMembers.openFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=openFun]
         MODIFIER_LIST[open]
         VALUE_PARAMETER_LIST
-      FUN[fqName=test.ClassMembers.abstractFun, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=abstractFun]
+      FUNCTION[fqName=test.ClassMembers.abstractFun, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=abstractFun]
         MODIFIER_LIST[abstract]
         VALUE_PARAMETER_LIST
       PROPERTY[fqName=test.ClassMembers.openVal, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=openVal]

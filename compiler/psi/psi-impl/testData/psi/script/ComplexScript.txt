@@ -5,7 +5,7 @@ KtFile: ComplexScript.kts
     <empty list>
   SCRIPT
     BLOCK
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('die')

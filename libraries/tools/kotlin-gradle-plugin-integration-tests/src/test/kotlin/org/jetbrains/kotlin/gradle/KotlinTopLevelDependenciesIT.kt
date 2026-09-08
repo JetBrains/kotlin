@@ -30,7 +30,6 @@ import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
-@GradleTestVersions(additionalVersions = [MinSupportedGradleVersionWithDependencyCollectorsConst])
 class KotlinTopLevelDependenciesIT : KGPBaseTest() {
 
     override val defaultBuildOptions =
@@ -236,11 +235,7 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
 
         // Verify that the published jvm POM contains the kotlinx-coroutines dependency
         val pomFile = parsePom(
-            publish(
-                deriveBuildOptions = {
-                    buildOptions.disableIsolatedProjectsBecauseOfSubprojectGroupAccessInPublicationBeforeGradle12(gradleVersion)
-                }
-            ).jvmMultiplatformComponent.pom
+            publish().jvmMultiplatformComponent.pom
         )
 
         assertEquals<PrettyPrint<List<MavenModule>>>(

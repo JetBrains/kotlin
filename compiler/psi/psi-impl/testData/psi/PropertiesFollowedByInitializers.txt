@@ -269,7 +269,7 @@ KtFile: PropertiesFollowedByInitializers.kt
           PsiWhiteSpace(' ')
           PsiElement(abstract)('abstract')
       PsiWhiteSpace(' ')
-      FUN
+      FUNCTION
         PsiErrorElement:Expecting member declaration
           <empty list>
         BLOCK
@@ -326,7 +326,7 @@ KtFile: PropertiesFollowedByInitializers.kt
           PsiWhiteSpace(' ')
           PsiElement(abstract)('abstract')
       PsiWhiteSpace(' ')
-      FUN
+      FUNCTION
         PsiErrorElement:Expecting member declaration
           <empty list>
         BLOCK
@@ -517,7 +517,7 @@ KtFile: PropertiesFollowedByInitializers.kt
             PsiElement(RPAR)(')')
       PsiElement(SEMICOLON)(';')
   PsiWhiteSpace(' ')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')

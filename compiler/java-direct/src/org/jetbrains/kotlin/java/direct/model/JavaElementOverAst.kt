@@ -12,13 +12,14 @@ import org.jetbrains.kotlin.KtSourceElementKind
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.fir.java.JavaDirectSourceElementOwner
 import org.jetbrains.kotlin.java.direct.parse.JavaLightAstNode
-import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
-import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
+import org.jetbrains.kotlin.java.direct.parse.JavaLightTreeStructure
+import org.jetbrains.kotlin.kmp.tree.LightNode
+import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 
 abstract class JavaElementOverAst(
-    val node: JavaLightNode,
-    val tree: JavaLightTree,
+    val node: LightNode,
+    val tree: LightSyntaxTree,
 ) : JavaElement, JavaDirectSourceElementOwner {
 
     open val isFromSource: Boolean get() = true
@@ -33,7 +34,7 @@ abstract class JavaElementOverAst(
      * This element's own MODIFIER_LIST child, if present. `open` so [JavaClassOverAst] can cache it
      * lazily; the default plain getter is reused by members and value parameters.
      */
-    protected open val modifierList: JavaLightNode?
+    protected open val modifierList: LightNode?
         get() = tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
 
     override fun toKtSourceElement(kind: KtSourceElementKind): KtSourceElement =
@@ -41,7 +42,7 @@ abstract class JavaElementOverAst(
             JavaLightAstNode(tree, node),
             tree.getStartOffset(node),
             tree.getEndOffset(node),
-            tree.lightSourceTreeStructure,
+            tree.lightSourceTreeStructure as JavaLightTreeStructure,
             kind,
         )
 

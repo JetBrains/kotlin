@@ -2,7 +2,7 @@ KtNameReferenceExpression(138,146): 'variable'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       var variable: MyClass
     ]

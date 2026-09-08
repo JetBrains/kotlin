@@ -32,7 +32,11 @@ fun Icon(param: Int, %composer: Composer?, %changed: Int) {
         val tmp0 = param
         sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
         val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100) {
-          tmp0::toString
+          tmp0::toString<kotlin.reflect.KFunction0> {
+            fun toString(receiver: Int): String {
+              return receiver.toString()
+            }
+          }
         }
         sourceInformationMarkerEnd(%composer)
         tmp0_group

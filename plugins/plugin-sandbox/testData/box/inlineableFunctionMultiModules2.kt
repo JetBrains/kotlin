@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS_IR, NATIVE
-// IGNORE_HMPP: JS_IR
 // DUMP_IR
 // WITH_AND_WITHOUT_PLUGIN
 
@@ -34,4 +32,7 @@ fun Greeting(name: String) {
 
 fun show(str: String) {}
 
-fun box(): String = "OK"
+fun box(): String {
+    val result = test()
+    return if (result == 3) "OK" else "Fail: $result"
+}

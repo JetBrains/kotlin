@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle
 
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
-import org.gradle.api.logging.LogLevel
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
@@ -30,101 +29,6 @@ import kotlin.test.assertTrue
 @DisplayName("Compose compiler Gradle plugin")
 class ComposeIT : KGPBaseTest() {
 
-    // AGP 8.6.0+ autoconfigures compose in the presence of Kotlin Compose plugin
-    @DisplayName("Should not affect Android project where compose is not enabled")
-    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_85)
-    @AndroidGradlePluginTests
-    @GradleAndroidTest
-    @TestMetadata("AndroidSimpleApp")
-    fun testAndroidDisabledCompose(
-        gradleVersion: GradleVersion,
-        agpVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk,
-    ) {
-        project(
-            projectName = "AndroidSimpleApp",
-            gradleVersion = gradleVersion,
-            buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
-        ) {
-            buildGradle.modify { originalBuildScript ->
-                """
-                |plugins {
-                |    id "org.jetbrains.kotlin.plugin.compose"
-                |${originalBuildScript.substringAfter("plugins {")}
-                |
-                |dependencies {
-                |    implementation "androidx.compose.runtime:runtime:1.6.4"
-                |}
-                """.trimMargin()
-            }
-
-            gradleProperties.appendText(
-                """
-                android.useAndroidX=true
-                """.trimIndent()
-            )
-
-            build("assembleDebug") {
-                assertCompilerArgument(
-                    ":compileDebugKotlin",
-                    "plugin:androidx.compose.compiler.plugins.kotlin:traceMarkersEnabled=true," +
-                            "plugin:androidx.compose.compiler.plugins.kotlin:sourceInformation=true",
-                    LogLevel.INFO
-                )
-            }
-        }
-    }
-
-    @DisplayName("Should conditionally suggest to migrate to new compose plugin")
-    @AndroidTestVersions(
-        maxVersion = TestVersions.AGP.AGP_86,
-        additionalVersions = [TestVersions.AGP.AGP_85]
-    )
-    @AndroidGradlePluginTests
-    @GradleAndroidTest
-    @TestMetadata("AndroidSimpleApp")
-    fun testAndroidComposeSuggestion(
-        gradleVersion: GradleVersion,
-        agpVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk,
-    ) {
-        project(
-            projectName = "AndroidSimpleApp",
-            gradleVersion = gradleVersion,
-            buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
-        ) {
-            buildGradle.modify { originalBuildScript ->
-                """
-                |$originalBuildScript
-                |
-                |dependencies {
-                |    implementation "androidx.compose.runtime:runtime:1.6.4"
-                |}
-                |
-                |android.buildFeatures.compose = true
-                |
-                """.trimMargin()
-            }
-
-            gradleProperties.appendText(
-                """
-                android.useAndroidX=true
-                """.trimIndent()
-            )
-
-            buildAndFail("assembleDebug") {
-                // This error should come from AGP side
-                assertOutputContains(
-                    "Starting in Kotlin 2.0, the Compose Compiler Gradle plugin is required\n" +
-                            "  when compose is enabled. See the following link for more information:\n" +
-                            "  https://d.android.com/r/studio-ui/compose-compiler"
-                )
-            }
-        }
-    }
-
     @DisplayName("Should work correctly when compose in Android is enabled")
     @AndroidGradlePluginTests
     @GradleAndroidTest
@@ -138,7 +42,9 @@ class ComposeIT : KGPBaseTest() {
             projectName = "AndroidSimpleComposeApp",
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = agpVersion)
+                .suppressAgpWarningIsProperty(gradleVersion),
         ) {
             build("assembleDebug") {
                 assertOutputContains("Detected Android Gradle Plugin compose compiler configuration")
@@ -172,6 +78,7 @@ class ComposeIT : KGPBaseTest() {
 
         project1.build(
             "assembleDebug",
+            buildOptions = project1.buildOptions.suppressAgpWarningIsProperty(gradleVersion)
         ) {
             assertTasksExecuted(":compileDebugKotlin")
         }
@@ -194,8 +101,7 @@ class ComposeIT : KGPBaseTest() {
             .suppressDeprecationWarningsOn(
                 "JB Compose produces deprecation warning: CMP-3945"
             ) {
-                gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_4) &&
-                        gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_0)
+                gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_0)
             }
         if (OS.WINDOWS.isCurrentOs) {
             // CMP-8375 Compose Gradle Plugin is not compatible with Gradle isolated projects on Windows
@@ -288,7 +194,9 @@ class ComposeIT : KGPBaseTest() {
             projectName = "AndroidSimpleApp",
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = agpVersion)
+                .suppressAgpWarningIsProperty(gradleVersion),
         ) {
             buildGradle.modify { originalBuildScript ->
                 """
@@ -405,7 +313,7 @@ class ComposeIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions
                 .copy(androidVersion = agpVersion, kotlinVersion = "1.9.21")
                 .suppressDeprecationWarningsSinceGradleVersion(
-                    TestVersions.Gradle.G_8_13,
+                    TestVersions.Gradle.G_8_14,
                     gradleVersion,
                     "Old Kotlin release produces deprecation warning"
                 )
@@ -640,8 +548,11 @@ class ComposeIT : KGPBaseTest() {
             projectName = "AndroidSimpleComposeApp",
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, buildCacheEnabled = true, configurationCache = ENABLED),
-            enableGradleDaemonMemoryLimitInMb = 1024
+            buildOptions = defaultBuildOptions.copy(
+                androidVersion = agpVersion,
+                buildCacheEnabled = true,
+                configurationCache = ENABLED
+            ).suppressAgpWarningIsProperty(gradleVersion)
         ) {
             buildScriptInjection {
                 val appExtension = project.extensions.getByType<ApplicationAndroidComponentsExtension>()
@@ -745,6 +656,7 @@ class ComposeIT : KGPBaseTest() {
             buildJdk = providedJdk.location,
             buildOptions = defaultBuildOptions
                 .copy(androidVersion = agpVersion)
+                .suppressAgpWarningIsProperty(gradleVersion),
         ) {
             buildScriptInjection {
                 val appExtension = project.extensions.getByType<ApplicationAndroidComponentsExtension>()

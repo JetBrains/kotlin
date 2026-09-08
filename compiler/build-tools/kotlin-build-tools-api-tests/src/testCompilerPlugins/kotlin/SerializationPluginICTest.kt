@@ -35,4 +35,48 @@ class SerializationPluginICTest : BaseCompilationTest() {
             }
         }
     }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("KT-86121: Modifying a concrete subclass in a multi-file sealed serializable hierarchy succeeds incrementally")
+    fun testIncrementalCompilationOfSealedSerializableHierarchy(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val module = module(
+                "ic-scenarios/serialization-sealed-hierarchy",
+                SERIALIZATION_CORE_CLASSPATH.map { FileDependency(it) },
+                compilationConfigAction = {
+                    it.compilerArguments[COMPILER_PLUGINS] = listOf(SERIALIZATION_PLUGIN)
+                },
+            )
+
+            module.replaceFileWithVersion("Bar.kt", "change")
+
+            // before KT-86121 fix, this crashed with IndexOutOfBoundsException in
+            // usesDefaultArguments() during SyntheticAccessorLowering
+            module.compile {
+                assertCompiledSources("Bar.kt")
+            }
+        }
+    }
+
+    @BtaV2StrategyAgnosticCompilationTest
+    @DisplayName("KT-88801: Modifying a subclass of a serializable abstract class with a private field succeeds incrementally")
+    fun testIncrementalCompilationOfSerializableAbstractClassWithPrivateField(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val module = module(
+                "ic-scenarios/serialization-abstract-private-field",
+                SERIALIZATION_CORE_CLASSPATH.map { FileDependency(it) },
+                compilationConfigAction = {
+                    it.compilerArguments[COMPILER_PLUGINS] = listOf(SERIALIZATION_PLUGIN)
+                },
+            )
+
+            module.replaceFileWithVersion("SubClass.kt", "change")
+
+            // before KT-88801 fix, this crashed with IndexOutOfBoundsException in
+            // usesDefaultArguments() during SyntheticAccessorLowering
+            module.compile {
+                assertCompiledSources("SubClass.kt")
+            }
+        }
+    }
 }

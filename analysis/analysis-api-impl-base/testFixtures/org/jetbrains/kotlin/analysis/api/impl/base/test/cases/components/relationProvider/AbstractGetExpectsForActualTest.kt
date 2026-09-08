@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relati
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.renderer.render
-import org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol
+import org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.session.useSiteSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.analysis.test.framework.targets.getTestTargetSymbols
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolution.KtResolvable
@@ -107,7 +106,6 @@ abstract class AbstractGetExpectsForActualByCoordinatesTest : AbstractGetExpects
 }
 
 abstract class AbstractGetExpectsForActualByMarkerTest : AbstractGetExpectsForActualTest() {
-    @OptIn(KtExperimentalApi::class)
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         executeOnPooledThreadInReadAction {
             copyAwareAnalyzeForTest(mainFile) {
@@ -118,7 +116,7 @@ abstract class AbstractGetExpectsForActualByMarkerTest : AbstractGetExpectsForAc
                 val referenceExpression = expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtExpression>(mainFile)
                 if (referenceExpression != null) {
                     check(referenceExpression is KtResolvable) { "Resolvable expression expected, got ${referenceExpression::class}" }
-                    val resolvedSymbol = referenceExpression.resolveSymbol() ?: error("Reference expression cannot be resolved")
+                    val resolvedSymbol = referenceExpression.resolveSuccessfulSymbol() ?: error("Reference expression cannot be resolved")
                     check(resolvedSymbol is KaDeclarationSymbol) { "Expected declaration symbol, got ${resolvedSymbol::class}" }
                     symbol = resolvedSymbol
                 } else {

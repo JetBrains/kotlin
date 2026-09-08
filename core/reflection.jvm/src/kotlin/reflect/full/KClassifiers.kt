@@ -61,7 +61,7 @@ internal fun KClassifier.createTypeImpl(
     nullable: Boolean = false,
     annotations: List<Annotation> = emptyList(),
     mutableCollectionClass: KClass<*>? = null,
-    computeJavaType: (() -> Type)? = null,
+    computeJavaType: Lazy<Type>? = null,
 ): AbstractKType {
     if (useK1Implementation) {
         return createK1KType(arguments, nullable, mutableCollectionClass)

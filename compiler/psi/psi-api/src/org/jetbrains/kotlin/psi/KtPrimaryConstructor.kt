@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
@@ -22,9 +23,13 @@ import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
  * //           ^___________________________^
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
+    @KtImplementationDetail
     constructor(node: ASTNode) : super(node)
-    constructor(stub: KotlinConstructorStub<KtPrimaryConstructor>) : super(stub, KtStubBasedElementTypes.PRIMARY_CONSTRUCTOR)
+
+    @KtImplementationDetail
+    constructor(stub: KotlinConstructorStub<KtPrimaryConstructor>) : super(stub, KtNodeTypes.PRIMARY_CONSTRUCTOR)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitPrimaryConstructor(this, data)
 
@@ -64,5 +69,6 @@ class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
     override fun addAnnotationEntry(annotationEntry: KtAnnotationEntry): KtAnnotationEntry =
         KtPsiMutationService.getInstance().addAnnotation(this, annotationEntry)
 
+    /** Always `false`: a primary constructor has no body and therefore never carries a contract. */
     override fun mayHaveContract(): Boolean = false
 }

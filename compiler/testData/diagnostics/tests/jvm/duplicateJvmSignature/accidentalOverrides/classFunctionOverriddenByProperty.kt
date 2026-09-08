@@ -5,7 +5,7 @@ open class B {
 
 class C : B() {
     val x: Int
-        <!ACCIDENTAL_OVERRIDE!>get() = 1<!>
+        <!ACCIDENTAL_OVERRIDE!>get()<!> = 1
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, propertyDeclaration */

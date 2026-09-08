@@ -20,10 +20,10 @@ class TestErr1<!CONFLICTING_JVM_DECLARATIONS!>(val a: Int)<!> {
     <!CONFLICTING_JVM_DECLARATIONS!>constructor(x: X) : this(x.x)<!>
 }
 
-<!CONFLICTING_JVM_DECLARATIONS!>class TestErr2(val a: Int, val b: Int) {
+class <!CONFLICTING_JVM_DECLARATIONS!>TestErr2(val a: Int, val b: Int)<!> {
     <!CONFLICTING_JVM_DECLARATIONS!>constructor(x: X) : this(x.x, 1)<!>
     <!CONFLICTING_JVM_DECLARATIONS!>constructor(z: Z) : this(z.x, 2)<!>
-}<!>
+}
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration,
 secondaryConstructor, value */

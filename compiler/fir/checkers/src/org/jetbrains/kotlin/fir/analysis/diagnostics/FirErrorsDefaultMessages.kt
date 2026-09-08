@@ -103,6 +103,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_FUNCTIO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_LABEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_SUPER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_ARGUMENT_WITH_CONTROL_FLOW_NOT_SUPPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_ARGUMENT_MUST_BE_CONST
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST
@@ -184,6 +185,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPANION_EXTENSI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPANION_EXTENSION_RECEIVER_WITH_TYPE_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPARE_TO_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPILER_REQUIRED_ANNOTATION_AMBIGUITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPILER_REQUIRED_ANNOTATION_ARGUMENT_MUST_BE_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_ON_NULLABLE
@@ -202,6 +204,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSTRUCTOR_IN_OB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITHOUT_INITIALIZER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_CONTROL_FLOW_IN_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_DELEGATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_EBF
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_GETTER
@@ -1073,9 +1076,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             UNRESOLVED_REFERENCE_WRONG_RECEIVER,
-            "Candidate ''{0}'' is inapplicable{1} because of a receiver type mismatch.",
+            "Candidate ''{0}'' is inapplicable{1} because of a receiver type mismatch. Actual receiver type is ''{2}''.",
             SYMBOL,
             FOR_OPTIONAL_OPERATOR,
+            RENDER_TYPE,
         )
         map.put(
             INACCESSIBLE_OUTER_CLASS_RECEIVER,
@@ -1347,6 +1351,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(ANNOTATION_ARGUMENT_MUST_BE_CONST, "Annotation argument must be a compile-time constant.")
         map.put(ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST, "Enum annotation argument must be an enum constant.")
         map.put(ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL, "Annotation argument must be class literal (T::class).")
+        map.put(ANNOTATION_ARGUMENT_WITH_CONTROL_FLOW_NOT_SUPPORTED, "Control flow in annotation argument is not supported.")
         map.put(
             ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR,
             "Type parameter in class literal is deprecated in an annotation argument."
@@ -1505,6 +1510,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             AMBIGUOUS_ANNOTATION_ARGUMENT,
             "Resolution of the annotation argument is ambiguous between the following candidates:{0}\nUse a fully qualified name as argument.",
             SYMBOLS_ON_NEXT_LINES,
+        )
+        map.put(
+            COMPILER_REQUIRED_ANNOTATION_ARGUMENT_MUST_BE_LITERAL,
+            "The argument passed for parameter ''{0}'' must be a literal: it can be requested before constant expressions are evaluated.",
+            TO_STRING,
         )
         map.put(VOLATILE_ON_VALUE, "'@Volatile' annotation cannot be used on immutable properties.")
         map.put(VOLATILE_ON_DELEGATE, "'@Volatile' annotation cannot be used on delegated properties.")
@@ -3192,6 +3202,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(CONST_VAL_WITH_NON_CONST_INITIALIZER, "Const 'val' initializer must be a constant value.")
         map.put(NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION, "Only 'const val' can be used in constant expressions.")
         map.put(CYCLE_IN_ANNOTATION_PARAMETER_ERROR, "Cycle formed by one or more annotations and their parameter types.")
+        map.put(CONST_VAL_WITH_CONTROL_FLOW_IN_INITIALIZER, "Const 'val' initializer cannot contain controlflow.")
 
         // Multi-platform projects
         map.put(EXPECTED_DECLARATION_WITH_BODY, "'expect' declaration cannot have a body.")

@@ -1,0 +1,4 @@
+FUNCTION:
+  /JavaDerived.equals
+EQUALITY_BOUND:
+  Base

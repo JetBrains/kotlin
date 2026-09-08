@@ -1,0 +1,6 @@
+test1: ---
+assert(actual == Planet.Earth)
+       |      |
+       |      false
+       Pluto
+---

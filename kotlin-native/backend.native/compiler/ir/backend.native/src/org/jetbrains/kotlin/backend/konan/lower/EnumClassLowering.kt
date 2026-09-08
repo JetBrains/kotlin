@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,15 +7,13 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.createArrayOfExpression
-import org.jetbrains.kotlin.backend.common.lower.EnumWhenLowering
-import org.jetbrains.kotlin.backend.common.lower.at
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irBlockBody
-import org.jetbrains.kotlin.backend.konan.NativeBackendContext
+import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
+import org.jetbrains.kotlin.backend.konan.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.KonanNameConventions
-import org.jetbrains.kotlin.backend.konan.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -40,28 +38,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 private var IrClass.enumValueGetter: IrSimpleFunction? by irAttribute(copyByDefault = false)
-private var IrClass.enumEntriesMap: Map<Name, LoweredEnumEntryDescription>? by irAttribute(copyByDefault = false)
-
-internal data class LoweredEnumEntryDescription(val ordinal: Int, val getterId: Int)
 
 internal class EnumsSupport(
         private val irBuiltIns: IrBuiltIns,
         private val irFactory: IrFactory,
 ) {
-    fun enumEntriesMap(enumClass: IrClass): Map<Name, LoweredEnumEntryDescription> {
-        require(enumClass.isEnumClass) { "Expected enum class but was: ${enumClass.render()}" }
-        return enumClass::enumEntriesMap.getOrSetIfNull {
-            data class NameWithOrdinal(val name: Name, val ordinal: Int)
-            enumClass.declarations.asSequence()
-                    .filterIsInstance<IrEnumEntry>()
-                    .mapIndexed { index, it -> NameWithOrdinal(it.name, index) }
-                    .sortedBy { it.name }
-                    .withIndex()
-                    .associate { it.value.name to LoweredEnumEntryDescription(it.value.ordinal, it.index) }
-                    .toMap()
-        }
-    }
-
     fun getValueGetter(enumClass: IrClass): IrSimpleFunction {
         require(enumClass.isEnumClass) { "Expected enum class but was: ${enumClass.render()}" }
         return enumClass::enumValueGetter.getOrSetIfNull {
@@ -86,6 +67,7 @@ internal class EnumsSupport(
 
 internal val DECLARATION_ORIGIN_ENUM = IrDeclarationOriginImpl("ENUM")
 
+@PhasePrerequisites(EnumConstructorsLowering::class, NativeFunctionReferenceLowering::class)
 internal class NativeEnumWhenLowering(private val generationState: NativeGenerationState) : EnumWhenLowering(generationState.context) {
     override fun mapConstEnumEntry(entry: IrEnumEntry): Int {
         // The ordinal is baked into the caller's bitcode as a constant, so the lowered IR
@@ -93,12 +75,12 @@ internal class NativeEnumWhenLowering(private val generationState: NativeGenerat
         // so that incremental compilation invalidates this caller when the enum's source file changes.
         generationState.dependenciesTracker.add(entry, weak = false)
 
-        val enumEntriesMap = (context as NativeBackendContext).enumsSupport.enumEntriesMap(entry.parentAsClass)
-        return enumEntriesMap[entry.name]!!.ordinal
+        return super.mapConstEnumEntry(entry)
     }
 }
 
-internal class EnumUsageLowering(val context: NativeBackendContext) : IrTransformer<IrBuilderWithScope?>(), FileLoweringPass {
+@PhasePrerequisites(EnumClassLowering::class)
+internal class EnumUsageLowering(val context: NativeLoweringContext) : IrTransformer<IrBuilderWithScope?>(), FileLoweringPass {
     private val enumsSupport = context.enumsSupport
 
     override fun lower(irFile: IrFile) {
@@ -174,7 +156,8 @@ internal class EnumUsageLowering(val context: NativeBackendContext) : IrTransfor
 
 }
 
-internal class EnumClassLowering(val context: NativeBackendContext) : FileLoweringPass {
+@PhasePrerequisites(EnumWhenLowering::class)
+internal class EnumClassLowering(val context: NativeLoweringContext) : FileLoweringPass {
     private val enumsSupport = context.enumsSupport
     private val symbols = context.symbols
     private val createUninitializedInstance = symbols.createUninitializedInstance
@@ -216,7 +199,7 @@ internal class EnumClassLowering(val context: NativeBackendContext) : FileLoweri
         }
 
         // also saves this in enumSupport before removing them from list
-        private val enumEntriesMap = enumsSupport.enumEntriesMap(irClass)
+        private val enumEntriesMap = enumEntriesMap(irClass)
 
 
         fun run() {

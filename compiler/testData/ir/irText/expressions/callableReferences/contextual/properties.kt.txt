@@ -75,7 +75,7 @@ fun test2() {
       return <get-foo2>(/* $context-String = c0, b = c1 */)
     }
     /* setter = */    local fun(c0: String, c1: Boolean, value: Int) {
-      <set-foo2>(/* $context-String = c0, b = c1, */ value = value)
+      return <set-foo2>(/* $context-String = c0, b = c1, */ value = value)
     }
   )
  /*~> Unit */
@@ -85,7 +85,7 @@ fun test2() {
       return p0.<get-baz2>(/* $context-String = c0, b = c1 */)
     }
     /* setter = */    local fun(c0: String, c1: Boolean, p0: Bar, value: Int) {
-      p0.<set-baz2>(/* $context-String = c0, b = c1, */ value = value)
+      return p0.<set-baz2>(/* $context-String = c0, b = c1, */ value = value)
     }
   )
  /*~> Unit */
@@ -95,7 +95,7 @@ fun test2() {
       return receiver.<get-baz2>(/* $context-String = c0, b = c1 */)
     }
     /* setter = */    local fun(c0: String, c1: Boolean, receiver: Bar, value: Int) {
-      receiver.<set-baz2>(/* $context-String = c0, b = c1, */ value = value)
+      return receiver.<set-baz2>(/* $context-String = c0, b = c1, */ value = value)
     }
   )
  /*~> Unit */
@@ -105,7 +105,7 @@ fun test2() {
       return <get-qux2>(/* $context-String = c0, b = c1, <this> = p0 */)
     }
     /* setter = */    local fun(c0: String, c1: Boolean, p0: Int, value: Int) {
-      <set-qux2>(/* $context-String = c0, b = c1, <this> = p0, */ value = value)
+      return <set-qux2>(/* $context-String = c0, b = c1, <this> = p0, */ value = value)
     }
   )
  /*~> Unit */
@@ -115,7 +115,7 @@ fun test2() {
       return <get-qux2>(/* $context-String = c0, b = c1, <this> = receiver */)
     }
     /* setter = */    local fun(c0: String, c1: Boolean, receiver: Int, value: Int) {
-      <set-qux2>(/* $context-String = c0, b = c1, <this> = receiver, */ value = value)
+      return <set-qux2>(/* $context-String = c0, b = c1, <this> = receiver, */ value = value)
     }
   )
  /*~> Unit */

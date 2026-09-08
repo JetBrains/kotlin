@@ -71,6 +71,15 @@ fun box() = abiTest {
     success("PublicTopLevelClassInheritor") { PublicTopLevelClassInheritor() }
     success("PublicToInternalTopLevelClassInheritor") { PublicToInternalTopLevelClassInheritor() }
     expectFailure(linkage("Constructor 'PublicToPrivateTopLevelClassInheritor.<init>' can not be called: Class 'PublicToPrivateTopLevelClassInheritor' uses unlinked class symbol '/PublicToPrivateTopLevelClass'")) { PublicToPrivateTopLevelClassInheritor() }
+
+    // Friend module access:
+    success("PublicToInternalTopLevelClass") { PublicToInternalTopLevelClass().toString() }
+    success("PublicTopLevelClass.PublicToInternalNestedClass") { PublicTopLevelClass.PublicToInternalNestedClass().toString() }
+    success("PublicTopLevelClass.PublicToInternalInnerClass") { PublicTopLevelClass().PublicToInternalInnerClass().toString() }
+    success("PublicToInternalTopLevelClass.PublicToInternalNestedClass") { PublicToInternalTopLevelClass.PublicToInternalNestedClass().toString() }
+    success("PublicToInternalTopLevelClass.PublicToProtectedNestedClass") { PublicToInternalTopLevelClass.PublicToProtectedNestedClass().toString() }
+    success("PublicToInternalTopLevelClass.PublicToInternalInnerClass") { PublicToInternalTopLevelClass().PublicToInternalInnerClass().toString() }
+    success("PublicToInternalTopLevelClass.PublicToProtectedInnerClass") { PublicToInternalTopLevelClass().PublicToProtectedInnerClass().toString() }
 }
 
 // Shortcuts:

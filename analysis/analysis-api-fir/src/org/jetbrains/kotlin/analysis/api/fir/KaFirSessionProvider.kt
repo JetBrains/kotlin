@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.structure.LLSess
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.domains.LLAnalysisSessionStatistics
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import java.nio.file.Files
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -99,10 +100,31 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
 
     override fun getAnalysisSession(useSiteElement: PsiElement): KaSession {
         val module = KotlinProjectStructureProvider.getModule(project, useSiteElement, useSiteModule = null)
-        return getAnalysisSession(module)
+        return acquireSessionWithListeners(module, useSiteElement)
     }
 
     override fun getAnalysisSession(useSiteModule: KaModule): KaSession {
+        return acquireSessionWithListeners(useSiteModule, null)
+    }
+
+    private fun acquireSessionWithListeners(
+        useSiteModule: KaModule,
+        useSiteElement: PsiElement?,
+    ): KaSession {
+        forEachListenerSafe { it.beforeAcquiringSession(useSiteModule, useSiteElement) }
+
+        return try {
+            acquireAnalysisSession(useSiteModule)
+        } catch (t: Throwable) {
+            rethrowIntellijPlatformExceptionIfNeeded(t)
+            forEachListenerSafe { it.onSessionAcquisitionException(useSiteModule, useSiteElement, t) }
+            throw t
+        } finally {
+            forEachListenerSafe { it.afterAcquiringSession(useSiteModule, useSiteElement) }
+        }
+    }
+
+    private fun acquireAnalysisSession(useSiteModule: KaModule): KaSession {
         checkUseSiteModule(useSiteModule)
 
         ProgressManager.checkCanceled()

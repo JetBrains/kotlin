@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotResolveEqualityBoundType
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
@@ -288,7 +288,7 @@ open class FirTypeResolveTransformer(
 
     private fun setAccessorTypesByPropertyType(property: FirProperty) {
         property.getter?.replaceReturnTypeRef(property.returnTypeRef)
-        property.setter?.valueParameters?.map { it.replaceReturnTypeRef(property.returnTypeRef) }
+        property.setter?.valueParameters?.forEach { it.replaceReturnTypeRef(property.returnTypeRef) }
     }
 
     override fun transformField(field: FirField, data: Any?): FirField = whileAnalysing(session, field) {
@@ -614,19 +614,17 @@ open class FirTypeResolveTransformer(
      */
     private fun FirVariable.moveOrDeleteIrrelevantAnnotations() {
         if (annotations.isEmpty()) return
-        val languageVersionSettings = session.languageVersionSettings
         replaceAnnotations(annotations.filter { annotation ->
             when (annotation.useSiteTarget) {
-                null -> annotation.multiplexWithoutUseSiteTarget(this, languageVersionSettings)
-                ALL -> annotation.multiplexWithAllUseSiteTarget(this, languageVersionSettings)
+                null -> annotation.multiplexWithoutUseSiteTarget(this)
+                ALL -> annotation.multiplexWithAllUseSiteTarget(this)
                 else -> true
             }
         })
     }
 
     private fun FirAnnotation.multiplexWithoutUseSiteTarget(
-        annotated: FirDeclaration,
-        languageVersionSettings: LanguageVersionSettings
+        annotated: FirDeclaration
     ): Boolean {
         val allowedTargets = useSiteTargetsFromMetaAnnotation(session)
         return when (annotated) {
@@ -636,15 +634,24 @@ open class FirTypeResolveTransformer(
             }
             is FirProperty if annotated.fromPrimaryConstructor == true && CONSTRUCTOR_PARAMETER in allowedTargets -> {
                 when {
-                    !languageVersionSettings.supportsFeature(LanguageFeature.PropertyParamAnnotationDefaultTargetMode) -> {
+                    LanguageFeature.PropertyParamAnnotationDefaultTargetMode.isDisabled() -> {
                         false
                     }
                     // In the property-param mode,
                     // we should apply annotation also to the property (or to the field) if it's allowed
-                    PROPERTY in allowedTargets -> true
+                    PROPERTY in allowedTargets -> {
+                        // Because
+                        // useSiteTarget == null && annotated is FirProperty && annotated.fromPrimaryConstructor == true && CONSTRUCTOR_PARAMETER in allowedTargets
+                        // we know that the annotation is also on the constructor parameter, so this annotation gets a fake source kind
+                        setFakeSourceKind()
+                        true
+                    }
                     annotated.backingField != null && propertyAnnotationShouldBeMovedToField(allowedTargets) -> {
                         if (classDeclarationsStack.lastOrNull()?.classKind != ClassKind.ANNOTATION_CLASS) {
                             val backingField = annotated.backingField!!
+                            // Same as above,
+                            // we know that the annotation is also on the constructor parameter, so this one gets a fake source kind
+                            setFakeSourceKind()
                             backingField.replaceAnnotations(backingField.annotations + this)
                         }
                         false
@@ -668,10 +675,9 @@ open class FirTypeResolveTransformer(
     }
 
     private fun FirAnnotation.multiplexWithAllUseSiteTarget(
-        annotated: FirDeclaration,
-        languageVersionSettings: LanguageVersionSettings
+        annotated: FirDeclaration
     ): Boolean {
-        if (!languageVersionSettings.supportsFeature(LanguageFeature.AnnotationAllUseSiteTarget)) {
+        if (LanguageFeature.AnnotationAllUseSiteTarget.isDisabled()) {
             return true
         }
         val allowedTargets = useSiteTargetsFromMetaAnnotation(session)
@@ -693,6 +699,12 @@ open class FirTypeResolveTransformer(
                         }
                     }
                     replaceAnnotations(annotations + copy)
+
+                    if (addedSomewhere || PROPERTY in allowedTargets) {
+                        // This is definitely not the only instance of the annotation, so we apply the fake source kind
+                        copy.setFakeSourceKind()
+                    }
+
                     addedSomewhere = true
                 }
 
@@ -708,6 +720,10 @@ open class FirTypeResolveTransformer(
                 if (CONSTRUCTOR_PARAMETER in allowedTargets && annotated.fromPrimaryConstructor == true) {
                     // It's already on a constructor parameter, but we set the flag to prevent reporting an error
                     addedSomewhere = true
+                    // Because
+                    // useSiteTarget == ALL && annotated is FirProperty && annotated.fromPrimaryConstructor == true && CONSTRUCTOR_PARAMETER in allowedTargets
+                    // we know that the annotation is also on the constructor parameter, so this annotation gets a fake source kind
+                    setFakeSourceKind()
                 }
                 // If annotation isn't applicable anywhere or the property is delegated, we keep it at property to report an error later
                 PROPERTY in allowedTargets || !addedSomewhere || annotated.delegate != null
@@ -716,6 +732,11 @@ open class FirTypeResolveTransformer(
                 true
             }
         }
+    }
+
+    @OptIn(FirImplementationDetail::class)
+    private fun FirAnnotation.setFakeSourceKind() {
+        replaceSource(source?.fakeElement(KtFakeSourceElementKind.AnnotationCopyFromConstructorParameter))
     }
 
     /**

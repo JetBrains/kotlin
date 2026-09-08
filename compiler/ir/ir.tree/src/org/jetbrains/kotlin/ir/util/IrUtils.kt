@@ -719,41 +719,6 @@ fun ir2stringWhole(ir: IrElement?): String {
     return strWriter.toString()
 }
 
-@Suppress("unused") // Used in rhizomedb
-fun IrClass.addSimpleDelegatingConstructor(
-    superConstructor: IrConstructor,
-    irBuiltIns: IrBuiltIns,
-    isPrimary: Boolean = false,
-    origin: IrDeclarationOrigin? = null
-): IrConstructor =
-    addConstructor {
-        val klass = this@addSimpleDelegatingConstructor
-        this.startOffset = klass.startOffset
-        this.endOffset = klass.endOffset
-        this.origin = origin ?: klass.origin
-        this.visibility = superConstructor.visibility
-        this.isPrimary = isPrimary
-    }.also { constructor ->
-        constructor.parameters = superConstructor.parameters.memoryOptimizedMap { parameter ->
-            parameter.copyTo(constructor)
-        }
-
-        constructor.body = factory.createBlockBody(
-            startOffset, endOffset,
-            listOf(
-                IrDelegatingConstructorCallImpl(
-                    startOffset, endOffset, irBuiltIns.unitType,
-                    superConstructor.symbol, 0
-                ).apply {
-                    constructor.parameters.forEach { parameter ->
-                        arguments[parameter.indexInParameters] = IrGetValueImpl(startOffset, endOffset, parameter.type, parameter.symbol)
-                    }
-                },
-                IrInstanceInitializerCallImpl(startOffset, endOffset, this.symbol, irBuiltIns.unitType)
-            )
-        )
-    }
-
 val IrCall.isSuspend get() = symbol.owner.isSuspend
 val IrFunctionReference.isSuspend get() = (symbol.owner as? IrSimpleFunction)?.isSuspend == true
 

@@ -13,20 +13,20 @@ fun IrElement.dump(normalizeNames: Boolean = false, stableOrder: Boolean = false
 
 fun dump(data: IrElement, dumpStrategy: String): String {
   val dump: @ExtensionFunctionType Function1<IrElement, String> = when {
-    EQEQ(arg0 = dumpStrategy, arg1 = "KotlinLike") -> { // BLOCK
-      local fun dumpKotlinLike(p0: IrElement): String {
+    EQEQ(arg0 = dumpStrategy, arg1 = "KotlinLike") -> @ExtensionFunctionType Function1<IrElement, String>(
+      /* bound = */ [],
+      /* invoke = */      local fun(p0: IrElement): String {
         return dumpKotlinLike(/* <this> = p0 */)
       }
+    )
 
-      ::dumpKotlinLike
-    }
-    else -> { // BLOCK
-      local fun dump(p0: IrElement): String {
+    else -> @ExtensionFunctionType Function1<IrElement, String>(
+      /* bound = */ [],
+      /* invoke = */      local fun(p0: IrElement): String {
         return dump(/* <this> = p0 */)
       }
+    )
 
-      ::dump
-    }
   }
   return dump.invoke(p1 = data)
 }

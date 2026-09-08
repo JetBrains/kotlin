@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.dfa.FirLocalVariableAssignmentAnalyzer
 import org.jetbrains.kotlin.fir.resolve.dfa.Flow
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
-import org.jetbrains.kotlin.fir.resolve.dfa.VariableStorage
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CfgInternals
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ClassExitNode
@@ -410,11 +409,9 @@ private class ContextCollectorVisitor(
 
     @OptIn(CfgInternals::class)
     private fun computeExpressionStability(fir: FirExpression, flow: Flow): SmartcastStability? {
-        val storage = VariableStorage(bodyHolder.session)
-        val realVariable = storage.get(fir, createReal = true, unwrapAlias = { it }) as? RealVariable ?: return null
-        val targetTypes = flow.getTypeStatement(realVariable)?.upperTypes
-
         return context(bodyHolder, context.dataFlowAnalyzerContext) {
+            val realVariable = flow.getVariable(fir) as? RealVariable ?: return null
+            val targetTypes = flow.getTypeStatement(realVariable)?.upperTypes
             realVariable.computeEffectiveStability(flow, targetTypes)
         }
     }

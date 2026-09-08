@@ -1,5 +1,5 @@
 KtCallExpression(45,50): 'Foo()'
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = [
       <constructor>(x: T): Foo<T>
     ]

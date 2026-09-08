@@ -1,5 +1,5 @@
 KtCallExpression(97,102): 'foo()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /foo(): kotlin.Unit
     ]

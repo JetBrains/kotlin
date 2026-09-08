@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.gradle.testbase.buildAndFail
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.compileStubSourceWithSourceSetName
 import org.jetbrains.kotlin.gradle.testbase.disableIsolatedProjectsBecauseOfJsAndWasmKT75899
-import org.jetbrains.kotlin.gradle.testbase.disableIsolatedProjectsForKmpDependenciesChecker
 import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.settingsBuildScriptInjection
+import org.jetbrains.kotlin.gradle.testbase.suppressAgpWarningIsProperty
 import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
 import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.uklibs.applyJvm
@@ -82,7 +82,10 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
         }
 
         consumer.resolveIdeDependencies(
-            buildOptions = defaultBuildOptions.copy(configurationCache = ConfigurationCacheValue.DISABLED),
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = ConfigurationCacheValue.DISABLED,
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+            ),
         ) { container ->
             container["commonMain"].assertMatches(
                 kotlinStdlibDependencies,
@@ -190,7 +193,6 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
     ) {
         val buildOpions = defaultBuildOptions
             .copy(androidVersion = agpVersion)
-            .disableIsolatedProjectsForKmpDependenciesChecker(gradleVersion)
         val consumer = project("empty", gradleVersion, buildOpions) {
             val producer = project("empty", gradleVersion) {
                 plugins {
@@ -227,7 +229,7 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
             include(producer, "producer")
         }
 
-        consumer.build("compileKotlinLinuxArm64") {
+        consumer.build("compileKotlinLinuxArm64", buildOptions = buildOpions.suppressAgpWarningIsProperty(gradleVersion)) {
             assertOutputDoesNotContain("Configuration 'jvmCompileClasspath' was resolved during configuration time")
             assertHasDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
         }
@@ -317,7 +319,7 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
                 project.applyMultiplatform {
                     jvm()
                     iosArm64()
-                    @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     iosX64()
 
                     sourceSets.commonMain.dependencies {
@@ -349,7 +351,7 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
                     project.applyMultiplatform {
                         jvm()
                         iosArm64()
-                        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                         iosX64()
                         sourceSets.getByName("commonMain").compileStubSourceWithSourceSetName()
                         sourceSets.commonMain.dependencies {
@@ -413,7 +415,7 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
                     project.applyMultiplatform {
                         jvm()
                         iosArm64()
-                        @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                         iosX64()
                         sourceSets.getByName("commonMain").compileStubSourceWithSourceSetName()
                         sourceSets.commonMain.dependencies {

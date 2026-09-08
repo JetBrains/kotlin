@@ -1,5 +1,5 @@
 KDocName(7,9): 'BB'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A.BB
     ]

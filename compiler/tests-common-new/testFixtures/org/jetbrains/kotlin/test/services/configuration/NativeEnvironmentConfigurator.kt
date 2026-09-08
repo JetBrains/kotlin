@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.test.services.configuration
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.konan.config.konanFriendLibraries
 import org.jetbrains.kotlin.konan.config.konanHome
-import org.jetbrains.kotlin.konan.config.konanLibraries
 import org.jetbrains.kotlin.konan.config.konanNoDefaultLibs
 import org.jetbrains.kotlin.konan.config.konanNoStdlib
 import org.jetbrains.kotlin.konan.config.konanTarget
@@ -26,7 +24,6 @@ import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirect
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.test.services.testInfo
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
@@ -126,18 +123,9 @@ abstract class NativeEnvironmentConfigurator(
             System.setProperty("kotlin.native.home", it.absolutePath)
         }
 
-        val dependencies = module.regularDependencies.map { getKlibArtifactDir(testServices, it.dependencyModule.name).absolutePath }
-        val friends = module.friendDependencies.map { getKlibArtifactDir(testServices, it.dependencyModule.name).absolutePath }
-
-        val runtimeDependencies = getRuntimeLibraryProviders(module).flatMap { provider ->
-            // Ignore `KlibNativeDistributionLibraryProvider`, because it is anyway applied in loadNativeKlibs().
-            if (provider is KlibNativeDistributionLibraryProvider) emptyList() else provider.getLibraryPaths()
-        }
-
         configuration.konanNoStdlib = ConfigurationDirectives.WITH_STDLIB !in module.directives
         configuration.konanNoDefaultLibs = NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS !in module.directives
-        configuration.konanLibraries = runtimeDependencies + dependencies + friends
-        configuration.konanFriendLibraries = friends
+
         // If `host target` is enforced in testrunner, so dependent native libraries(atomicfu, cinterop, etc) will have a target equal to host.
         // Should konanTarget be set to not host, Klib Loader would reject such libraries and test would fail due to unresolved symbols.
         if (!testServices.testInfo.enforcedHostTarget) {

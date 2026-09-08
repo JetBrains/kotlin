@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
@@ -141,10 +140,6 @@ internal fun Project.filesProvider(
     provider: () -> Any?
 ): ConfigurableFileCollection {
     return project.files(provider).builtBy(*buildDependencies)
-}
-
-internal fun <T : Task> T.outputFilesProvider(provider: T.() -> Any): ConfigurableFileCollection {
-    return project.filesProvider(this) { provider() }
 }
 
 internal inline fun <reified T> Project.listProperty(noinline itemsProvider: () -> Iterable<T>): ListProperty<T> =

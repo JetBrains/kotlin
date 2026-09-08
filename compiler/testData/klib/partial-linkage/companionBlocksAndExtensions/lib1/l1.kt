@@ -16,12 +16,27 @@ class A {
 
     companion {
         fun blockToObject() = "blockToObject"
+        fun blockToCompanionExtension() = "blockToCompanionExtension"
+        fun blockToRegularExtension() = "blockToRegularExtension"
     }
 
     companion object {
         fun objectToBlock() = "objectToBlock"
     }
 }
+
+companion fun A.companionExtensionToBlock() = "companionExtensionToBlock"
+companion fun A.companionToRegularExtension() = "companionToRegularExtension"
+fun A.regularToCompanionExtension() = "regularToCompanionExtension"
+fun A.regularExtensionToBlock() = "regularExtensionToBlock"
+
+companion val A.extensionValChange = "extensionPropertyChange.v1"
+companion val A.removedExtensionVal = 42
+companion var A.extensionVarChange = A.extensionValChange
+companion var A.removedExtensionVar = 42
+
+companion fun A.extensionFunBodyChange() = "extensionFunBodyChange.v1"
+companion fun A.removedExtensionFun() {}
 
 class RemovedBlock {
     companion {
@@ -42,9 +57,31 @@ class NewBlock {
 class RemovedClass(val value: Int)
 
 class B {
-    companion object {
+    companion {
         val removedCompanionVal = 42
         var removedCompanionVar = 42
         fun removedCompanionFun() = "removedCompanionFun"
     }
+}
+
+class PrivateClass
+companion fun PrivateClass.privateClassFun() = "privateClassFun"
+
+typealias TA = A
+companion fun TA.aliasFun() = "aliasFun"
+companion fun TA.aliasToClassFun() = "aliasToClassFun"
+companion fun B.classToAliasFun() = "classToAliasFun"
+
+open class Grandparent {}
+open class BaseClass : Grandparent() {}
+interface Interface {}
+class Derived : BaseClass(), Interface {
+   companion {
+       fun funMovedToParentClass() = "moved.v1"
+       val propMovedToParentClass = 42
+       fun funMovedToGrandparentClass() = "moved.v1"
+       val propMovedToGrandparentClass = 42
+       fun funMovedToParentInterface() = "moved.v1"
+       val propMovedToParentInterface = 42
+   }
 }

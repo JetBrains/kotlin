@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
 import java.util.Objects;
@@ -24,14 +25,16 @@ import java.util.Objects;
  * // The entire block from 'object :' to the closing curly brace
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtObjectLiteralExpression extends KtExpressionImplStub<KotlinPlaceHolderStub<KtObjectLiteralExpression>> {
+    @KtImplementationDetail
     public KtObjectLiteralExpression(@NotNull ASTNode node) {
         super(node);
     }
 
     @KtImplementationDetail
     public KtObjectLiteralExpression(@NotNull KotlinPlaceHolderStub<KtObjectLiteralExpression> stub) {
-        super(stub, KtStubBasedElementTypes.OBJECT_LITERAL);
+        super(stub, KtNodeTypes.OBJECT_LITERAL);
     }
 
     @Override
@@ -39,9 +42,9 @@ public class KtObjectLiteralExpression extends KtExpressionImplStub<KotlinPlaceH
         return visitor.visitObjectLiteralExpression(this, data);
     }
 
+    /** Returns the anonymous object declaration wrapped by this expression. */
     @NotNull
-    @SuppressWarnings("deprecation") // KT-78356
     public KtObjectDeclaration getObjectDeclaration() {
-        return Objects.requireNonNull(getStubOrPsiChild(KtStubBasedElementTypes.OBJECT_DECLARATION));
+        return Objects.requireNonNull(getStubOrPsiChild(KtNodeTypes.OBJECT_DECLARATION, KtObjectDeclaration.class));
     }
 }

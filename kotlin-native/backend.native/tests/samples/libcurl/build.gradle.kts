@@ -13,7 +13,7 @@ kotlin {
 
     // Create target for the host platform.
     val hostTarget = when {
-        hostOs == "Mac OS X" -> macosX64("libcurl")
+        hostOs == "Mac OS X" -> macosArm64("libcurl")
         hostOs == "Linux" -> linuxX64("libcurl")
         hostOs.startsWith("Windows") -> mingwX64("libcurl")
         else -> throw GradleException("Host OS '$hostOs' is not supported in Kotlin/Native $project.")
@@ -21,11 +21,12 @@ kotlin {
 
     hostTarget.apply {
         compilations["main"].cinterops {
-            val libcurl = create("libcurl") {
+            create("libcurl") {
                 when (konanTarget) {
-                    KonanTarget.MACOS_X64 -> includeDirs.headerFilterOnly("/opt/local/include", "/usr/local/include")
+                    KonanTarget.MACOS_ARM64 -> includeDirs.headerFilterOnly("/opt/local/include", "/usr/local/include")
                     KonanTarget.LINUX_X64 -> includeDirs.headerFilterOnly("/usr/include", "/usr/include/x86_64-linux-gnu")
                     KonanTarget.MINGW_X64 -> includeDirs.headerFilterOnly(mingwPath.resolve("include"))
+                    else -> throw GradleException("Target ${konanTarget.name} is not supported in the libcurl sample.")
                 }
             }
         }

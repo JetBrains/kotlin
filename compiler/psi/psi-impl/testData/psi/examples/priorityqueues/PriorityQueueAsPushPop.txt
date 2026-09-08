@@ -56,7 +56,7 @@ KtFile: PriorityQueueAsPushPop.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -80,7 +80,7 @@ KtFile: PriorityQueueAsPushPop.kt
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')

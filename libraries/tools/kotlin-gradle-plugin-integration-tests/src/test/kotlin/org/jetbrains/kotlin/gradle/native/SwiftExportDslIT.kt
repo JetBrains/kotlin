@@ -402,7 +402,6 @@ class SwiftExportDslIT : KGPBaseTest() {
                 with(project) {
                     applyMultiplatform {
                         iosArm64()
-                        with(swiftExport) { }
 
                         sourceSets.commonMain {
                             compileSource(
@@ -423,12 +422,10 @@ class SwiftExportDslIT : KGPBaseTest() {
             // Coroutines export is only supported for iOS 18.0 and above
             build(
                 ":embedSwiftExportForXcode",
-                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir, iphoneOsDeploymentTarget = "18.0")
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 val buildProductsDir = this@project.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
                 assertNotNull(buildProductsDir)
-
-                assertOutputDoesNotContain("Coroutine support is enabled, but no `kotlinx-coroutines-core` module was found in path. Please add kotlinx-coroutines as a dependency to your project, or disable coroutines support to silence this warning.")
 
                 val sharedSwiftPath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/Shared/Shared.swift")
                 assertContains(

@@ -20,5 +20,14 @@ FILE: main.kt
     public final fun show(str: R|kotlin/String|): R|kotlin/Unit| {
     }
     public final fun box(): R|kotlin/String| {
-        ^box String(OK)
+        lval result: R|kotlin/Int| = R|/test|()
+        ^box when () {
+            ==(R|<local>/result|, Int(3)) ->  {
+                String(OK)
+            }
+            else ->  {
+                <strcat>(String(Fail: ), R|<local>/result|)
+            }
+        }
+
     }

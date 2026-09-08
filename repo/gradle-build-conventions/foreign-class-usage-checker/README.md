@@ -27,14 +27,14 @@ plugins {
 }
 ```
 
-### 2. Register a Task
+### 2. Register the Tasks
 
-Create a task instance with the desired configuration:
+Declare a dump and its configuration once; the helper registers a pair of tasks that share it:
 
 ```kotlin
-import org.jetbrains.kotlin.build.foreign.CheckForeignClassUsageTask
+import org.jetbrains.kotlin.build.foreign.registerForeignClassUsageTasks
 
-val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::class) {
+registerForeignClassUsageTasks {
     outputFile = file("api/my-module-api.foreign")
     nonPublicMarkers.addAll(
         listOf(
@@ -45,30 +45,36 @@ val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::clas
 }
 ```
 
-### 3. Run the Task
+`checkForeignClassUsage` reports a difference without touching the dump, and `updateForeignClassUsage` rewrites it. Pass `nameSuffix` to
+declare more than one dump in a module, as `:analysis:analysis-api` does for its unstable API.
 
-The task is automatically added to the `check` task, so it runs during:
+### 3. Run the Tasks
+
+The verifying task is added to the `check` and `checkApiSurface` lifecycle tasks, so it runs during:
 
 ```bash
 ./gradlew check
 ```
 
-You can also run the task separately:
+The rewriting task is added to `updateApiSurface`. You can also run either separately:
 
 ```bash
 ./gradlew checkForeignClassUsage
+./gradlew updateForeignClassUsage
 ```
+
+Do not ask for both in one build: verifying a dump that the same build rewrites is contradictory, and Gradle fails on it.
 
 ## Configuration Options
 
-`CheckForeignClassUsageTask` supports the following configuration properties:
+`ForeignClassUsageTask` supports the following configuration properties:
 
 ### `outputFile` (required)
 
 Type: `RegularFileProperty`
 
-The file where foreign class names will be written. If this file doesn't exist, the task will create it and fail the build. If it exists but
-the content differs, the task updates it and fails the build.
+The file holding the foreign class names. `updateForeignClassUsage` creates it if it is missing, rewrites it if the content differs, and
+fails the build either way, so that the change gets reviewed. `checkForeignClassUsage` only reports what differs.
 
 ### `nonPublicMarkers`
 
@@ -135,8 +141,8 @@ com/intellij/psi/PsiFile
 1. Make changes to your module's public API
 2. Run `./gradlew check` (or specifically `./gradlew checkForeignClassUsage`)
 3. If the foreign class usage changed:
-    - The task updates the `.foreign` file
-    - The build fails with a message
+    - The build fails, listing what the dump no longer expects and what is newly used
+    - Run `./gradlew updateForeignClassUsage` to rewrite the `.foreign` file
     - Review the changes in the `.foreign` file
     - If the changes are acceptable, commit the updated file
     - Re-run the build (it will now pass)

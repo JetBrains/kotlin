@@ -36,15 +36,6 @@ sealed class FirVariableSymbol<out E : FirVariable> : FirCallableSymbol<E>() {
             return fir.initializer
         }
 
-    val resolvedDefaultValue: FirExpression?
-        get() {
-            val valueParameter = fir as? FirValueParameter
-            if (valueParameter?.defaultValue == null) return null
-
-            lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-            return valueParameter.defaultValue
-        }
-
     val isVal: Boolean
         get() = fir.isVal
 
@@ -159,8 +150,16 @@ class FirValueParameterSymbol() : FirVariableSymbol<FirValueParameter>(), ValueP
     val hasDefaultValue: Boolean
         get() = fir.defaultValue != null
 
-    val defaultValueSource: KtSourceElement?
-        get() = fir.defaultValue?.source
+    val resolvedDefaultValueSource: KtSourceElement?
+        get() = resolvedDefaultValue?.source
+
+    val resolvedDefaultValue: FirExpression?
+        get() {
+            if (fir.defaultValue == null) return null
+
+            lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+            return fir.defaultValue
+        }
 
     val isCrossinline: Boolean
         get() = fir.isCrossinline

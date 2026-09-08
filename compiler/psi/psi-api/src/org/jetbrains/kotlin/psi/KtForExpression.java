@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -25,7 +26,9 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall;
  * // The entire block from 'for' to the closing curly brace
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtForExpression extends KtLoopExpression implements KtResolvableCall {
+    @KtImplementationDetail
     public KtForExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -35,11 +38,16 @@ public class KtForExpression extends KtLoopExpression implements KtResolvableCal
         return visitor.visitForExpression(this, data);
     }
 
+    /** Returns the loop variable declaration (the part before {@code in}), or {@code null} if it is absent in incomplete code. */
     @Nullable @IfNotParsed
     public KtParameter getLoopParameter() {
         return (KtParameter) findChildByType(KtNodeTypes.VALUE_PARAMETER);
     }
 
+    /**
+     * Returns the destructuring declaration if the loop variable destructures each element (as in {@code for ((key, value) in map)}), or
+     * {@code null} otherwise.
+     */
     @Nullable
     public KtDestructuringDeclaration getDestructuringDeclaration() {
         KtParameter loopParameter = getLoopParameter();
@@ -47,16 +55,19 @@ public class KtForExpression extends KtLoopExpression implements KtResolvableCal
         return loopParameter.getDestructuringDeclaration();
     }
 
+    /** Returns the expression being iterated over (the part after {@code in}), or {@code null} if it is absent in incomplete code. */
     @Nullable @IfNotParsed
     public KtExpression getLoopRange() {
         return findExpressionUnder(KtNodeTypes.LOOP_RANGE);
     }
 
+    /** Returns the {@code in} keyword, or {@code null} if it is absent in incomplete code. */
     @Nullable @IfNotParsed
     public PsiElement getInKeyword() {
         return findChildByType(KtTokens.IN_KEYWORD);
     }
 
+    /** Returns the {@code for} keyword. */
     @NotNull
     public PsiElement getForKeyword() {
         return findChildByType(KtTokens.FOR_KEYWORD);

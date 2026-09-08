@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // OPT_IN: kotlin.js.ExperimentalJsExport
-@file:OptIn(ExperimentalVersionOverloading::class)
 @file:JsExport
 
 fun withIntroducedAt(

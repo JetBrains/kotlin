@@ -1,14 +1,43 @@
-package test
+library {
+  // module name: <main>
 
-@field:test.Ann public var x: kotlin.Int
-@delegate:test.Ann public var y: kotlin.Int
+  library fragment {
+    // package name: test
 
-public final class A {
-    public constructor A()
-    @field:test.Ann public final var x: kotlin.Int
-    @delegate:test.Ann public final var y: kotlin.Int
-}
+    // class name: test/Ann
+    // class name: test/A
 
-public final annotation class Ann : kotlin.Annotation {
-    public constructor Ann()
+    public final annotation class test/Ann : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    public final class test/A : kotlin/Any {
+
+      public constructor()
+
+      @field:test/Ann
+      public final var x: kotlin/Int
+        public final get
+        public final set
+
+      @delegate:test/Ann
+      public final /* delegated */ var y: kotlin/Int
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: kotlin/Int)
+    }
+
+    package {
+
+      @field:test/Ann
+      public final var x: kotlin/Int
+        public final get
+        public final set
+
+      @delegate:test/Ann
+      public final /* delegated */ var y: kotlin/Int
+        public final /* non-default */ get
+        public final /* non-default */ set(<set-?>: kotlin/Int)
+    }
+  }
 }

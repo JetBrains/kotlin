@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
@@ -20,20 +21,22 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
  * //    ^__^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtValueArgumentName extends KtElementImplStub<KotlinPlaceHolderStub<KtValueArgumentName>> implements ValueArgumentName {
+    @KtImplementationDetail
     public KtValueArgumentName(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtValueArgumentName(@NotNull KotlinPlaceHolderStub<KtValueArgumentName> stub) {
-        super(stub, KtStubBasedElementTypes.VALUE_ARGUMENT_NAME);
+        super(stub, KtNodeTypes.VALUE_ARGUMENT_NAME);
     }
 
     @Override
     @NotNull
-    @SuppressWarnings("deprecation") // KT-78356
     public KtSimpleNameExpression getReferenceExpression() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.REFERENCE_EXPRESSION);
+        return getRequiredStubOrPsiChild(KtNodeTypes.REFERENCE_EXPRESSION, KtNameReferenceExpression.class);
     }
 
     @NotNull

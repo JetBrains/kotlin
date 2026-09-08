@@ -24,7 +24,7 @@ KtFile: IOSamples.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('add')
@@ -61,7 +61,7 @@ KtFile: IOSamples.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n  ')
-      FUN
+      FUNCTION
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('close')
@@ -116,7 +116,7 @@ KtFile: IOSamples.kt
               PsiElement(IDENTIFIER)('closeable')
           PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     TYPE_PARAMETER_LIST
@@ -281,7 +281,7 @@ KtFile: IOSamples.kt
       PsiWhiteSpace('\n  ')
       PsiComment(EOL_COMMENT)('//}')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -497,7 +497,7 @@ KtFile: IOSamples.kt
       PsiWhiteSpace('\n  ')
       PsiComment(EOL_COMMENT)('//}')
       PsiWhiteSpace('\n\n  ')
-      FUN
+      FUNCTION
         MODIFIER_LIST
           PsiElement(override)('override')
         PsiWhiteSpace(' ')
@@ -538,7 +538,7 @@ KtFile: IOSamples.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('example')

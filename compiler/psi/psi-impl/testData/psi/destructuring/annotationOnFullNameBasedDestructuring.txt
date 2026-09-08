@@ -55,7 +55,7 @@ KtFile: annotationOnFullNameBasedDestructuring.kt
             PsiElement(CLOSING_QUOTE)('"')
         PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('test1')

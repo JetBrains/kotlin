@@ -22,8 +22,10 @@ import org.jetbrains.kotlin.sir.providers.SirVisibilityChecker
 import org.jetbrains.kotlin.sir.providers.sirModule
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
 import org.jetbrains.kotlin.sir.providers.utils.deprecatedAnnotation
+import org.jetbrains.kotlin.sir.providers.utils.hasNonPublicOptIns
 import org.jetbrains.kotlin.sir.providers.utils.isAbstract
 import org.jetbrains.kotlin.sir.providers.utils.isFromTemporarilyIgnoredPackage
+import org.jetbrains.kotlin.sir.providers.utils.resolveUpperBound
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirPlatformModule
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -36,7 +38,6 @@ public class SirVisibilityCheckerImpl(
     private val enableCoroutinesSupport: Boolean,
     private val hiddenModules: List<KaModule>
 ) : SirVisibilityChecker {
-    @OptIn(KaExperimentalApi::class)
     override fun KaDeclarationSymbol.sirAvailability(): SirAvailability = sirSession.withSessions {
         val ktSymbol = this@sirAvailability
 
@@ -89,6 +90,9 @@ public class SirVisibilityCheckerImpl(
         if ((ktSymbol.containingSymbol as? KaDeclarationSymbol?)?.sirAvailability() is SirAvailability.Unavailable) {
             return@withSessions SirAvailability.Unavailable("Declaration's lexical parent is unavailable")
         }
+        if (ktSymbol.hasNonPublicOptIns) {
+            return@withSessions SirAvailability.Unavailable("Declarations with non-public OptIn requirements are unsupported")
+        }
         visibility.value = when (ktSymbol) {
             is KaNamedClassSymbol -> {
                 val exported = ktSymbol.isExported()
@@ -97,12 +101,7 @@ public class SirVisibilityCheckerImpl(
                 } else return@withSessions exported
             }
             is KaConstructorSymbol -> {
-                if ((ktSymbol.containingSymbol as? KaClassSymbol)?.modality?.isAbstract() != false) {
-                    // Hide abstract class constructors from users, but not from other Swift Export modules.
-                    SirVisibility.PACKAGE
-                } else {
-                    SirVisibility.PUBLIC
-                }
+                SirVisibility.PUBLIC
             }
             is KaNamedFunctionSymbol -> {
                 if (!ktSymbol.isExported()) {
@@ -121,7 +120,7 @@ public class SirVisibilityCheckerImpl(
             is KaTypeAliasSymbol -> ktSymbol.expandedType.fullyExpandedType.let { type ->
                 if (type is KaFunctionType) {
                     val types = buildList {
-                        addAll(type.contextReceivers.map { it.type })
+                        addAll(type.contextParameterTypes)
                         addIfNotNull(type.receiverType)
                         addAll(type.parameterTypes)
                         add(type.returnType)
@@ -277,7 +276,6 @@ private fun hasUnsupportedInputTypeParameters(ktSymbol: KaCallableSymbol): Boole
         hasUnboundInputTypeParameters(it, false)
     } || hasUnboundInputTypeParameters(ktSymbol.returnType, true)
 
-@OptIn(KaExperimentalApi::class)
 context(ka: KaSession, sirSession: SirSession)
 private fun hasUnboundInputTypeParameters(
     type: KaType,
@@ -287,7 +285,7 @@ private fun hasUnboundInputTypeParameters(
     if (classType.classId in SirTypeProviderImpl.FLOW_CLASS_IDS) return@let false
     if (classType is KaFunctionType) {
         return@let buildList {
-            addAll(classType.contextReceivers.map { it.type })
+            addAll(classType.contextParameterTypes)
             classType.receiverType?.let(::add)
             addAll(classType.parameterTypes)
         }.any {
@@ -296,19 +294,12 @@ private fun hasUnboundInputTypeParameters(
     } else if (isReturnType) {
         return@let false
     }
-    fun getUpperBound(typeParam: KaTypeParameterSymbol): KaType? {
-        val upperBounds = typeParam.upperBounds
-        if (upperBounds.isEmpty()) return ka.builtinTypes.nullableAny // no upperbound indicates Any?
-        return upperBounds.singleOrNull() // null indicates multiple bounds
+    val typeParamUpperBounds = classType.symbol.typeParameters.map {
+        it.resolveUpperBound() ?: ka.builtinTypes.nullableAny
     }
-
-    val typeParamUpperBounds = classType.symbol.typeParameters.map(::getUpperBound)
     if (typeParamUpperBounds.isEmpty()) return@let false
     classType.typeArguments.zipIfSizesAreEqual(typeParamUpperBounds)?.any { [argument, bound] ->
-        var type = argument.type
-        if (type is KaTypeParameterType) {
-            type = getUpperBound(type.symbol)
-        }
+        val type = argument.type?.let { it.resolveUpperBound() ?: ka.builtinTypes.nullableAny }
         type?.let { it != bound } ?: false // .type == null indicates star projection
     } ?: false
 } ?: false

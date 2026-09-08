@@ -68,23 +68,50 @@ internal class CallGraphBuilder(
 
     private data class HandleFunctionParams(val caller: DataFlowIR.FunctionSymbol.Declared?,
                                             val calleeFunction: DataFlowIR.Function)
-    private val functionStack = mutableListOf<HandleFunctionParams>()
+
+    private val functionStack = FunctionStack()
+
+    private inner class FunctionStack {
+        private val stack = mutableListOf<HandleFunctionParams>()
+
+        fun push(caller: DataFlowIR.FunctionSymbol.Declared?, callee: DataFlowIR.Function) {
+            // If the caller is null, callee is a root fn. If we've seen it previously, there's no need to push it onto the stack
+            // again as:
+            //   1. It is already included in the Call Graph we're building, and,
+            //   2. There's no caller to add a reverse edge.
+            //
+            // That said, if the caller is non-null, we need to add a reverse edge irrespective of whether we've seen the callee
+            // previously, and that would require pushing the caller-callee pair onto the fn stack.
+            //
+            // By performing this eager check, we avoid large number of HandleFunctionParams allocations.
+            if (caller != null || !directEdges.containsKey(callee.symbol)) {
+                stack.push(HandleFunctionParams(caller, callee))
+            }
+        }
+
+        fun process() {
+            while (stack.isNotEmpty()) {
+                val (caller, calleeFunction) = stack.pop()
+                val callee = calleeFunction.symbol as DataFlowIR.FunctionSymbol.Declared
+
+                // If the same callee was put on the stack multiple times in one go, and at least one was popped and included
+                // in the Call Graph, any op on it (current and future) is a no-op. Skip such callees.
+                val newFunction = !directEdges.containsKey(callee)
+                if (newFunction)
+                    addNode(callee)
+                if (caller != null)
+                    callGraph.addReversedEdge(caller, callee)
+                if (newFunction)
+                    handleFunction(callee, calleeFunction)
+            }
+        }
+    }
 
     fun build(): CallGraph {
         val rootSet = DevirtualizationAnalysis.computeRootSet(context, irModule, moduleDFG)
         rootSet.forEach { handleRoot(it) }
 
-        while (functionStack.isNotEmpty()) {
-            val (caller, calleeFunction) = functionStack.pop()
-            val callee = calleeFunction.symbol as DataFlowIR.FunctionSymbol.Declared
-            val newFunction = !directEdges.containsKey(callee)
-            if (newFunction)
-                addNode(callee)
-            if (caller != null)
-                callGraph.addReversedEdge(caller, callee)
-            if (newFunction)
-                handleFunction(callee, calleeFunction)
-        }
+        functionStack.process()
         return callGraph
     }
 
@@ -134,7 +161,7 @@ internal class CallGraphBuilder(
         val function = moduleDFG.functions[callee]
         callGraph.addEdge(caller, callSite)
         if (function != null)
-            functionStack.push(HandleFunctionParams(caller, function))
+            functionStack.push(caller, function)
     }
 
     private fun handleRoot(symbol: DataFlowIR.FunctionSymbol) {
@@ -143,7 +170,7 @@ internal class CallGraphBuilder(
             externalRootFunctions.add(symbol)
         else {
             wholeRootSet.add(symbol as DataFlowIR.FunctionSymbol.Declared)
-            functionStack.push(HandleFunctionParams(null, function))
+            functionStack.push(null, function)
         }
     }
 

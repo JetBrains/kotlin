@@ -22,7 +22,7 @@ FILE[kind=File[packageFqName=<root>]]
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=T]
             CLASS_BODY
-      FUN[fqName=AnonymousReturnWithGenericType.f1, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f1]
+      FUNCTION[fqName=AnonymousReturnWithGenericType.f1, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f1]
         VALUE_PARAMETER_LIST
         OBJECT_LITERAL
           OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Foo]]
@@ -52,7 +52,7 @@ FILE[kind=File[packageFqName=<root>]]
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=T]
             CLASS_BODY
-      FUN[fqName=AnonymousReturnWithGenericType.f2, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f2]
+      FUNCTION[fqName=AnonymousReturnWithGenericType.f2, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f2]
         MODIFIER_LIST[private]
         VALUE_PARAMETER_LIST
         OBJECT_LITERAL

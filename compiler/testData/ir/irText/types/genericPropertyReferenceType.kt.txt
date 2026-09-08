@@ -75,15 +75,51 @@ class Pair<X : Any?, Y : Any?> {
 }
 
 fun test1() {
-  use(p = ::y/*<String>(<this> = C<String>(x = "abc")) */)
-  use(p = ::first/*<String, String>(<this> = Pair<String, String>(x = "abc", y = "def")) */)
+  use(p = KMutableProperty0<String>(
+    /* bound = */ [C<String>(x = "abc")],
+    /* getter = */    local fun(receiver: C<String>): String {
+      return <get-y><String>(/* <this> = receiver */)
+    }
+    /* setter = */    local fun(receiver: C<String>, value: String) {
+      return <set-y><String>(/* <this> = receiver, */ v = value)
+    }
+  )
+)
+  use(p = KMutableProperty0<String>(
+    /* bound = */ [Pair<String, String>(x = "abc", y = "def")],
+    /* getter = */    local fun(receiver: Pair<String, String>): String {
+      return <get-first><String, String>(/* <this> = receiver */)
+    }
+    /* setter = */    local fun(receiver: Pair<String, String>, value: String) {
+      return <set-first><String, String>(/* <this> = receiver, */ v = value)
+    }
+  )
+)
 }
 
 fun test2(a: Any) {
   a as C<String> /*~> Unit */
-  use(p = ::y/*<String>(<this> = a /*as C<String> */) */)
+  use(p = KMutableProperty0<String>(
+    /* bound = */ [a /*as C<String> */],
+    /* getter = */    local fun(receiver: C<String>): String {
+      return <get-y><String>(/* <this> = receiver */)
+    }
+    /* setter = */    local fun(receiver: C<String>, value: String) {
+      return <set-y><String>(/* <this> = receiver, */ v = value)
+    }
+  )
+)
   a /*as C<String> */ as Pair<String, String> /*~> Unit */
-  use(p = ::first/*<String, String>(<this> = a /*as Pair<String, String> */) */)
+  use(p = KMutableProperty0<String>(
+    /* bound = */ [a /*as Pair<String, String> */],
+    /* getter = */    local fun(receiver: Pair<String, String>): String {
+      return <get-first><String, String>(/* <this> = receiver */)
+    }
+    /* setter = */    local fun(receiver: Pair<String, String>, value: String) {
+      return <set-first><String, String>(/* <this> = receiver, */ v = value)
+    }
+  )
+)
 }
 
 fun use(p: KMutableProperty<String>) {

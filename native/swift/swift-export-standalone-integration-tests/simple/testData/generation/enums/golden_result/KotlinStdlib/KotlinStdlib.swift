@@ -108,7 +108,7 @@ extension ExportedKotlinPackages.kotlin {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
-        package init(
+        public init(
             name: Swift.String,
             ordinal: Swift.Int32
         ) {

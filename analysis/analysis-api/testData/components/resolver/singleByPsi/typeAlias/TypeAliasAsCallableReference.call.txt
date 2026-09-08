@@ -1,5 +1,5 @@
 KtNameReferenceExpression(88,95): 'MyAlias'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = null

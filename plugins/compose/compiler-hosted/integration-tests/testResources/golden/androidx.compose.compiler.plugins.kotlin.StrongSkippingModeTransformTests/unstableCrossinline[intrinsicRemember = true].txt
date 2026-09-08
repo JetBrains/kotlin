@@ -51,7 +51,11 @@ fun Scratch(vm: MyUnstableViewModel, %composer: Composer?, %changed: Int) {
       Button(<block>{
         val tmp0 = vm
         %composer.cache(%composer.changedInstance(tmp0)) {
-          tmp0::onClickyClicky
+          tmp0::onClickyClicky<kotlin.reflect.KFunction0> {
+            fun onClickyClicky(receiver: MyUnstableViewModel) {
+              return receiver.onClickyClicky()
+            }
+          }
         }
       }, %composer, 0)
       %composer.endReplaceGroup()

@@ -21,7 +21,7 @@ import kotlin.io.path.readText
 
 abstract class AbstractLightTree2FirConverterTestCase : AbstractRawFirBuilderTestCase() {
     @OptIn(ObsoleteTestInfrastructure::class)
-    fun doTest(filePath: String) {
+    override fun runTest(filePath: String) {
         myFileExt = FileUtilRt.getExtension(PathUtil.getFileName(filePath))
         val path = Paths.get(filePath)
         val firFile = LightTree2Fir(

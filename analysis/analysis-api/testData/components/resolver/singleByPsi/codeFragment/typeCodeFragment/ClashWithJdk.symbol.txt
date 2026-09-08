@@ -2,7 +2,7 @@ KtNameReferenceExpression(134,146): 'StringBuffer'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       example/StringBuffer
     ]

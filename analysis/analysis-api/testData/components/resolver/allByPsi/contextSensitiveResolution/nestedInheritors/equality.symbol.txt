@@ -26,19 +26,19 @@ KtSuperTypeList(138,146): 'Settings'
   null
 
 KtSuperTypeEntry(138,146): 'Settings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings
     ]
 
 KtTypeReference(138,146): 'Settings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings
     ]
 
 KtUserType(138,146): 'Settings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings
     ]
@@ -47,7 +47,7 @@ KtNameReferenceExpression(138,146): 'Settings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings
     ]
@@ -62,19 +62,19 @@ KtSuperTypeList(182,190): 'Settings'
   null
 
 KtSuperTypeEntry(182,190): 'Settings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings
     ]
 
 KtTypeReference(182,190): 'Settings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings
     ]
 
 KtUserType(182,190): 'Settings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings
     ]
@@ -83,7 +83,7 @@ KtNameReferenceExpression(182,190): 'Settings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings
     ]
@@ -98,13 +98,13 @@ KtParameter(203,218): 'message: String'
   null
 
 KtTypeReference(212,218): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
 
 KtUserType(212,218): 'String'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -113,7 +113,7 @@ KtNameReferenceExpression(212,218): 'String'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/String
     ]
@@ -131,13 +131,13 @@ KtParameter(235,253): 'settings: Settings'
   null
 
 KtTypeReference(245,253): 'Settings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings
     ]
 
 KtUserType(245,253): 'Settings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings
     ]
@@ -146,7 +146,7 @@ KtNameReferenceExpression(245,253): 'Settings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings
     ]
@@ -155,19 +155,19 @@ KtParameter(255,292): 'basicSettings: Settings.BasicSettings'
   null
 
 KtTypeReference(270,292): 'Settings.BasicSettings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings.BasicSettings
     ]
 
 KtUserType(270,292): 'Settings.BasicSettings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings.BasicSettings
     ]
 
 KtUserType(270,278): 'Settings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings
     ]
@@ -176,7 +176,7 @@ KtNameReferenceExpression(270,278): 'Settings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings
     ]
@@ -185,7 +185,7 @@ KtNameReferenceExpression(279,292): 'BasicSettings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings.BasicSettings
     ]
@@ -200,7 +200,7 @@ KtContainerNode(304,329): 'settings == BasicSettings'
   null
 
 KtBinaryExpression(304,329): 'settings == BasicSettings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
@@ -209,7 +209,7 @@ KtNameReferenceExpression(304,312): 'settings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       settings: Settings
     ]
@@ -218,7 +218,7 @@ KtOperationReferenceExpression(313,315): '=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
@@ -227,7 +227,7 @@ KtNameReferenceExpression(316,329): 'BasicSettings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings.BasicSettings
     ]
@@ -236,7 +236,7 @@ KtContainerNodeForControlStructureBody(331,344): 'work("Basic")'
   null
 
 KtCallExpression(331,344): 'work("Basic")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /work(message: kotlin.String): kotlin.Unit
     ]
@@ -245,7 +245,7 @@ KtNameReferenceExpression(331,335): 'work'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /work(message: kotlin.String): kotlin.Unit
     ]
@@ -269,7 +269,7 @@ KtContainerNode(354,387): 'basicSettings == SpecificSettings'
   null
 
 KtBinaryExpression(354,387): 'basicSettings == SpecificSettings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings.BasicSettings.equals(<dispatch receiver>: Settings.BasicSettings, other: kotlin.Any?): kotlin.Boolean
     ]
@@ -278,7 +278,7 @@ KtNameReferenceExpression(354,367): 'basicSettings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       basicSettings: Settings.BasicSettings
     ]
@@ -287,7 +287,7 @@ KtOperationReferenceExpression(368,370): '=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings.BasicSettings.equals(<dispatch receiver>: Settings.BasicSettings, other: kotlin.Any?): kotlin.Boolean
     ]
@@ -296,7 +296,7 @@ KtNameReferenceExpression(371,387): 'SpecificSettings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings.SpecificSettings
     ]
@@ -305,7 +305,7 @@ KtContainerNodeForControlStructureBody(389,405): 'work("Specific")'
   null
 
 KtCallExpression(389,405): 'work("Specific")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /work(message: kotlin.String): kotlin.Unit
     ]
@@ -314,7 +314,7 @@ KtNameReferenceExpression(389,393): 'work'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /work(message: kotlin.String): kotlin.Unit
     ]
@@ -338,7 +338,7 @@ KtContainerNode(414,456): 'basicSettings == Settings.SpecificSettings'
   null
 
 KtBinaryExpression(414,456): 'basicSettings == Settings.SpecificSettings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings.BasicSettings.equals(<dispatch receiver>: Settings.BasicSettings, other: kotlin.Any?): kotlin.Boolean
     ]
@@ -347,7 +347,7 @@ KtNameReferenceExpression(414,427): 'basicSettings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       basicSettings: Settings.BasicSettings
     ]
@@ -356,7 +356,7 @@ KtOperationReferenceExpression(428,430): '=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings.BasicSettings.equals(<dispatch receiver>: Settings.BasicSettings, other: kotlin.Any?): kotlin.Boolean
     ]
@@ -368,7 +368,7 @@ KtNameReferenceExpression(431,439): 'Settings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings
     ]
@@ -377,7 +377,7 @@ KtNameReferenceExpression(440,456): 'SpecificSettings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /Settings.SpecificSettings
     ]
@@ -386,7 +386,7 @@ KtContainerNodeForControlStructureBody(458,474): 'work("Specific")'
   null
 
 KtCallExpression(458,474): 'work("Specific")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /work(message: kotlin.String): kotlin.Unit
     ]
@@ -395,7 +395,7 @@ KtNameReferenceExpression(458,462): 'work'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /work(message: kotlin.String): kotlin.Unit
     ]
@@ -431,25 +431,25 @@ KtSuperTypeList(540,554): 'OpenSettings()'
   null
 
 KtSuperTypeCallEntry(540,554): 'OpenSettings()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): OpenSettings
     ]
 
 KtConstructorCalleeExpression(540,552): 'OpenSettings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): OpenSettings
     ]
 
 KtTypeReference(540,552): 'OpenSettings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings
     ]
 
 KtUserType(540,552): 'OpenSettings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings
     ]
@@ -458,7 +458,7 @@ KtNameReferenceExpression(540,552): 'OpenSettings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings
     ]
@@ -476,25 +476,25 @@ KtSuperTypeList(594,608): 'OpenSettings()'
   null
 
 KtSuperTypeCallEntry(594,608): 'OpenSettings()'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): OpenSettings
     ]
 
 KtConstructorCalleeExpression(594,606): 'OpenSettings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): OpenSettings
     ]
 
 KtTypeReference(594,606): 'OpenSettings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings
     ]
 
 KtUserType(594,606): 'OpenSettings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings
     ]
@@ -503,7 +503,7 @@ KtNameReferenceExpression(594,606): 'OpenSettings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings
     ]
@@ -521,13 +521,13 @@ KtParameter(626,648): 'settings: OpenSettings'
   null
 
 KtTypeReference(636,648): 'OpenSettings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings
     ]
 
 KtUserType(636,648): 'OpenSettings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings
     ]
@@ -536,7 +536,7 @@ KtNameReferenceExpression(636,648): 'OpenSettings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings
     ]
@@ -545,19 +545,19 @@ KtParameter(650,695): 'basicSettings: OpenSettings.OpenBasicSettings'
   null
 
 KtTypeReference(665,695): 'OpenSettings.OpenBasicSettings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings.OpenBasicSettings
     ]
 
 KtUserType(665,695): 'OpenSettings.OpenBasicSettings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings.OpenBasicSettings
     ]
 
 KtUserType(665,677): 'OpenSettings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings
     ]
@@ -566,7 +566,7 @@ KtNameReferenceExpression(665,677): 'OpenSettings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings
     ]
@@ -575,7 +575,7 @@ KtNameReferenceExpression(678,695): 'OpenBasicSettings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings.OpenBasicSettings
     ]
@@ -590,7 +590,7 @@ KtContainerNode(707,736): 'settings == OpenBasicSettings'
   null
 
 KtBinaryExpression(707,736): 'settings == OpenBasicSettings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
@@ -599,7 +599,7 @@ KtNameReferenceExpression(707,715): 'settings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       settings: OpenSettings
     ]
@@ -608,7 +608,7 @@ KtOperationReferenceExpression(716,718): '=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
@@ -617,7 +617,7 @@ KtNameReferenceExpression(719,736): 'OpenBasicSettings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings.OpenBasicSettings
     ]
@@ -626,7 +626,7 @@ KtContainerNodeForControlStructureBody(738,751): 'work("Basic")'
   null
 
 KtCallExpression(738,751): 'work("Basic")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /work(message: kotlin.String): kotlin.Unit
     ]
@@ -635,7 +635,7 @@ KtNameReferenceExpression(738,742): 'work'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /work(message: kotlin.String): kotlin.Unit
     ]
@@ -659,7 +659,7 @@ KtContainerNode(761,798): 'basicSettings == OpenSpecificSettings'
   null
 
 KtBinaryExpression(761,798): 'basicSettings == OpenSpecificSettings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings.OpenBasicSettings.equals(<dispatch receiver>: OpenSettings.OpenBasicSettings, other: kotlin.Any?): kotlin.Boolean
     ]
@@ -668,7 +668,7 @@ KtNameReferenceExpression(761,774): 'basicSettings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       basicSettings: OpenSettings.OpenBasicSettings
     ]
@@ -677,7 +677,7 @@ KtOperationReferenceExpression(775,777): '=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings.OpenBasicSettings.equals(<dispatch receiver>: OpenSettings.OpenBasicSettings, other: kotlin.Any?): kotlin.Boolean
     ]
@@ -686,7 +686,7 @@ KtNameReferenceExpression(778,798): 'OpenSpecificSettings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionError:
+  KaSimpleSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'OpenSpecificSettings'.>
 
@@ -694,7 +694,7 @@ KtContainerNodeForControlStructureBody(800,816): 'work("Specific")'
   null
 
 KtCallExpression(800,816): 'work("Specific")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /work(message: kotlin.String): kotlin.Unit
     ]
@@ -703,7 +703,7 @@ KtNameReferenceExpression(800,804): 'work'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /work(message: kotlin.String): kotlin.Unit
     ]
@@ -727,7 +727,7 @@ KtContainerNode(825,875): 'basicSettings == OpenSettings.OpenSpecificSettings'
   null
 
 KtBinaryExpression(825,875): 'basicSettings == OpenSettings.OpenSpecificSettings'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings.OpenBasicSettings.equals(<dispatch receiver>: OpenSettings.OpenBasicSettings, other: kotlin.Any?): kotlin.Boolean
     ]
@@ -736,7 +736,7 @@ KtNameReferenceExpression(825,838): 'basicSettings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: true
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       basicSettings: OpenSettings.OpenBasicSettings
     ]
@@ -745,7 +745,7 @@ KtOperationReferenceExpression(839,841): '=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings.OpenBasicSettings.equals(<dispatch receiver>: OpenSettings.OpenBasicSettings, other: kotlin.Any?): kotlin.Boolean
     ]
@@ -757,7 +757,7 @@ KtNameReferenceExpression(842,854): 'OpenSettings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings
     ]
@@ -766,7 +766,7 @@ KtNameReferenceExpression(855,875): 'OpenSpecificSettings'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /OpenSettings.OpenSpecificSettings
     ]
@@ -775,7 +775,7 @@ KtContainerNodeForControlStructureBody(877,893): 'work("Specific")'
   null
 
 KtCallExpression(877,893): 'work("Specific")'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /work(message: kotlin.String): kotlin.Unit
     ]
@@ -784,7 +784,7 @@ KtNameReferenceExpression(877,881): 'work'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       /work(message: kotlin.String): kotlin.Unit
     ]

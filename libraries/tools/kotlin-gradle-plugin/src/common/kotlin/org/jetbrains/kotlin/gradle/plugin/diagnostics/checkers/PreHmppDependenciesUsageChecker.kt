@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCo
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
+import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -32,15 +33,27 @@ internal object PreHmppDependenciesUsageChecker : KotlinGradleProjectChecker {
 
         if (project.kotlinPropertiesProvider.allowLegacyMppDependencies) return
 
-        val metadataTarget = project.multiplatformExtensionOrNull?.awaitTargets()
-            ?.matching { it is KotlinMetadataTarget }
-            ?.singleOrNull()
-            ?: return
+        val multiplatformExtension = project.multiplatformExtensionOrNull ?: return
+        multiplatformExtension.awaitTargets().matching { it is KotlinMetadataTarget }.singleOrNull() ?: return
 
         // Note that we do not inspect dependencies of compilations, because adding dependencies into compilation is esoteric enough on its own,
         // and x2 esoteric for KotlinMetadataTarget
-        val sourceSetsInMetadataCompilations = metadataTarget.compilations.flatMapTo(mutableSetOf()) { it.allKotlinSourceSets }
-        val configurationsToInspect = sourceSetsInMetadataCompilations.map { it.internal.resolvableMetadataConfiguration }
+        //
+        // We can't simply inspect the metadata target's compilations here, because a source set that is shared only between
+        // 'test' compilations (e.g. 'commonTest' shared between jvmTest/jsTest/linuxX64Test) doesn't participate in any
+        // published compilation and therefore never gets an actual metadata compilation created for it
+        // (see KotlinMetadataTargetConfigurator.getCommonSourceSetsForMetadataCompilation). Such source sets still get a real,
+        // resolvable metadata configuration though, so we look for any source set shared between several platform
+        // compilations (main or test) directly, instead of relying on the metadata target's compilations.
+        val sharedSourceSets = multiplatformExtension.awaitSourceSets().filter { sourceSet ->
+            val platformCompilations = sourceSet.internal.awaitPlatformCompilations()
+            val platforms = platformCompilations.map { it.target.platformType }.distinct()
+            // KotlinPlatformType.native is shared by all native targets, so we additionally compare actual targets to detect sharing
+            // among them.
+            platforms.size > 1 || (platforms.singleOrNull() == KotlinPlatformType.native && platformCompilations.map { it.target }
+                .distinct().size > 1)
+        }
+        val configurationsToInspect = sharedSourceSets.map { it.internal.resolvableMetadataConfiguration }
 
         // Resolution of configurations can happen concurrently, so need to use thread-safe primitives
         val reportedDependencies: MutableSet<ComponentIdentifier> = Collections.newSetFromMap(ConcurrentHashMap())

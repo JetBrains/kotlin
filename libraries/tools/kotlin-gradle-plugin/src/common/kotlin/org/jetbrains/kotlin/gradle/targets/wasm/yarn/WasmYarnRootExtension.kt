@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.process.ExecOperations
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
@@ -34,7 +35,7 @@ abstract class WasmYarnRootExtension internal constructor(
             get() = extensionName("yarn")
 
         operator fun get(project: Project): WasmYarnRootExtension {
-            val rootProject = project.rootProject
+            val rootProject = project.jsToolingProject()
             rootProject.plugins.apply(WasmYarnPlugin::class.java)
             return rootProject.extensions.getByName(YARN) as WasmYarnRootExtension
         }

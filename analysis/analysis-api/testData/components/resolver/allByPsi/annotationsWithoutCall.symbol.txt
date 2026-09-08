@@ -8,7 +8,7 @@ KtNameReferenceExpression(8,11): 'one'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one
     ]
@@ -29,25 +29,25 @@ KtDeclarationModifierList(36,41): '@Anno'
   null
 
 KtAnnotationEntry(36,41): '@Anno'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): one.Anno
     ]
 
 KtConstructorCalleeExpression(37,41): 'Anno'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       <constructor>(): one.Anno
     ]
 
 KtTypeReference(37,41): 'Anno'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/Anno
     ]
 
 KtUserType(37,41): 'Anno'
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/Anno
     ]
@@ -56,7 +56,7 @@ KtNameReferenceExpression(37,41): 'Anno'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       one/Anno
     ]

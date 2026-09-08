@@ -37,10 +37,25 @@ class X<T> (val p1: List<T>) {
 class StableDelegateProp {
   var p1: StableDelegate = StableDelegate()
     get() {
-      return field.getValue(<this>, ::p1)
+      return field.getValue(<this>, ::p1 {
+        fun p1(p0: StableDelegateProp): Int {
+          return p0.p1
+        }
+        fun p1(p0: StableDelegateProp, value: Int) {
+          return p0.p1 = value
+        }
+      }
+      )
     }
-    set(value) {
-      return field.setValue(<this>, ::p1, <set-?>)
+    set(<set-?>: Int) {
+      return field.setValue(<this>, ::p1 {
+        fun p1(p0: StableDelegateProp): Int {
+          return p0.p1
+        }
+        fun p1(p0: StableDelegateProp, value: Int) {
+          return p0.p1 = value
+        }
+      }, <set-?>)
     }
   val %stable: Int = 0
     get() {
@@ -51,10 +66,25 @@ class StableDelegateProp {
 class UnstableDelegateProp {
   var p1: UnstableDelegate = UnstableDelegate()
     get() {
-      return field.getValue(<this>, ::p1)
+      return field.getValue(<this>, ::p1 {
+        fun p1(p0: UnstableDelegateProp): Int {
+          return p0.p1
+        }
+        fun p1(p0: UnstableDelegateProp, value: Int) {
+          return p0.p1 = value
+        }
+      }
+      )
     }
-    set(value) {
-      return field.setValue(<this>, ::p1, <set-?>)
+    set(<set-?>: Int) {
+      return field.setValue(<this>, ::p1 {
+        fun p1(p0: UnstableDelegateProp): Int {
+          return p0.p1
+        }
+        fun p1(p0: UnstableDelegateProp, value: Int) {
+          return p0.p1 = value
+        }
+      }, <set-?>)
     }
   val %stable: Int = UnstableDelegate.%stable
     get() {

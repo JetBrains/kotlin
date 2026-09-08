@@ -1,4 +1,3 @@
-// LANGUAGE: +CollectionLiterals
 // DUMP_CFG
 // RUN_PIPELINE_TILL: BACKEND
 

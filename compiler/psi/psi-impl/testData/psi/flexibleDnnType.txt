@@ -207,7 +207,7 @@ KtFile: flexibleDnnType.kt
       PsiErrorElement:Expecting member declaration
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
-      FUN
+      FUNCTION
         PsiErrorElement:Expecting member declaration
           <empty list>
         BLOCK

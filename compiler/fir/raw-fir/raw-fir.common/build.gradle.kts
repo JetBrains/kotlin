@@ -5,7 +5,6 @@
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
@@ -19,6 +18,7 @@ dependencies {
     implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":compiler:psi:parser"))
+    implementation(project(":compiler:multiplatform-parsing"))
 
     compileOnly(intellijCore())
     compileOnly(libs.guava)

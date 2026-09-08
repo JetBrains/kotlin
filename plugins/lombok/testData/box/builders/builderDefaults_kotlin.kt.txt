@@ -1,0 +1,406 @@
+@Builder
+class ChainedDefaults {
+  val a: Int
+    field = a
+    get
+
+  val b: Int
+    field = b
+    get
+
+  open class ChainedDefaultsBuilder {
+    private var a: Int
+      private get
+      private set
+
+    private var b: Int
+      private get
+      private set
+
+    private var a$set: Boolean
+      private get
+      private set
+
+    private var b$set: Boolean
+      private get
+      private set
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    open fun a(a: Int): ChainedDefaultsBuilder {
+      <this>.#a = a
+      <this>.#a$set = true
+      return <this>
+    }
+
+    open fun b(b: Int): ChainedDefaultsBuilder {
+      <this>.#b = b
+      <this>.#b$set = true
+      return <this>
+    }
+
+    open fun build(): ChainedDefaults {
+      val tmp_0: Int = when {
+        <this>.#a$set -> <this>.#a
+        else -> 1
+      }
+      val tmp_1: Int = when {
+        <this>.#b$set -> <this>.#b
+        else -> tmp_0.plus(other = 1)
+      }
+      return ChainedDefaults(a = tmp_0, b = tmp_1)
+    }
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): ChainedDefaultsBuilder {
+      return ChainedDefaultsBuilder()
+    }
+
+  }
+
+  constructor(a: Int = 1, b: Int = a.plus(other = 1)) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Builder
+class DefaultAnn {
+  val ann: String
+    field = ann
+    get
+
+  open class DefaultAnnBuilder {
+    private var ann: String
+      private get
+      private set
+
+    private var ann$set: Boolean
+      private get
+      private set
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    open fun ann(ann: String): DefaultAnnBuilder {
+      <this>.#ann = ann
+      <this>.#ann$set = true
+      return <this>
+    }
+
+    open fun build(): DefaultAnn {
+      val tmp_2: String = when {
+        <this>.#ann$set -> <this>.#ann
+        else -> "default"
+      }
+      return DefaultAnn(ann = tmp_2)
+    }
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): DefaultAnnBuilder {
+      return DefaultAnnBuilder()
+    }
+
+  }
+
+  constructor(ann: String = "default") /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Builder
+class DefaultDependsOnPlain {
+  val base: Int
+    field = base
+    get
+
+  val derived: Int
+    field = derived
+    get
+
+  open class DefaultDependsOnPlainBuilder {
+    private var base: Int
+      private get
+      private set
+
+    private var derived: Int
+      private get
+      private set
+
+    private var derived$set: Boolean
+      private get
+      private set
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    open fun base(base: Int): DefaultDependsOnPlainBuilder {
+      <this>.#base = base
+      return <this>
+    }
+
+    open fun build(): DefaultDependsOnPlain {
+      val tmp_3: Int = <this>.#base
+      val tmp_4: Int = when {
+        <this>.#derived$set -> <this>.#derived
+        else -> tmp_3.times(other = 2)
+      }
+      return DefaultDependsOnPlain(base = tmp_3, derived = tmp_4)
+    }
+
+    open fun derived(derived: Int): DefaultDependsOnPlainBuilder {
+      <this>.#derived = derived
+      <this>.#derived$set = true
+      return <this>
+    }
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): DefaultDependsOnPlainBuilder {
+      return DefaultDependsOnPlainBuilder()
+    }
+
+  }
+
+  constructor(base: Int, derived: Int = base.times(other = 2)) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Builder
+class NotNullable {
+  val notNullable: String
+    field = notNullable
+    get
+
+  open class NotNullableBuilder {
+    private var notNullable: String
+      private get
+      private set
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    open fun build(): NotNullable {
+      val tmp_5: String = <this>.#notNullable
+      return NotNullable(notNullable = tmp_5)
+    }
+
+    open fun notNullable(notNullable: String): NotNullableBuilder {
+      <this>.#notNullable = notNullable
+      return <this>
+    }
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): NotNullableBuilder {
+      return NotNullableBuilder()
+    }
+
+  }
+
+  constructor(notNullable: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Builder
+class PrimitivesAndNullables {
+  val boolean: Boolean
+    field = boolean
+    get
+
+  val char: Char
+    field = char
+    get
+
+  val int: Int
+    field = int
+    get
+
+  val uint: UInt
+    field = uint
+    get
+
+  val nullable: String?
+    field = nullable
+    get
+
+  open class PrimitivesAndNullablesBuilder {
+    private var boolean: Boolean
+      private get
+      private set
+
+    private var char: Char
+      private get
+      private set
+
+    private var int: Int
+      private get
+      private set
+
+    private var uint: UInt
+      private get
+      private set
+
+    private var nullable: String?
+      private get
+      private set
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    open fun boolean(boolean: Boolean): PrimitivesAndNullablesBuilder {
+      <this>.#boolean = boolean
+      return <this>
+    }
+
+    open fun build(): PrimitivesAndNullables {
+      val tmp_6: Boolean = <this>.#boolean
+      val tmp_7: Char = <this>.#char
+      val tmp_8: Int = <this>.#int
+      val tmp_9: UInt = <this>.#uint
+      val tmp_10: String? = <this>.#nullable
+      return PrimitivesAndNullables(boolean = tmp_6, char = tmp_7, int = tmp_8, uint = tmp_9, nullable = tmp_10)
+    }
+
+    open fun char(char: Char): PrimitivesAndNullablesBuilder {
+      <this>.#char = char
+      return <this>
+    }
+
+    open fun int(int: Int): PrimitivesAndNullablesBuilder {
+      <this>.#int = int
+      return <this>
+    }
+
+    open fun nullable(nullable: String?): PrimitivesAndNullablesBuilder {
+      <this>.#nullable = nullable
+      return <this>
+    }
+
+    open fun uint(uint: UInt): PrimitivesAndNullablesBuilder {
+      <this>.#uint = uint
+      return <this>
+    }
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): PrimitivesAndNullablesBuilder {
+      return PrimitivesAndNullablesBuilder()
+    }
+
+  }
+
+  constructor(boolean: Boolean, char: Char, int: Int, uint: UInt, nullable: String?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun box(): String {
+  val obj: PrimitivesAndNullables = Companion.builder().build()
+  assertEquals<Boolean>(a = false, b = obj.<get-boolean>())
+  assertEquals<Char>(a = '\u0000', b = obj.<get-char>())
+  assertEquals<Int>(a = 0, b = obj.<get-int>())
+  assertEquals<UInt>(a = 0, b = obj.<get-uint>())
+  assertEquals<String?>(a = null, b = obj.<get-nullable>())
+  var npe: Boolean = false
+  try { // BLOCK
+    Companion.builder().build()
+  }
+  catch (e: NullPointerException){ // BLOCK
+    npe = true
+  }
+ /*~> Unit */
+  assertEquals<Boolean>(a = true, b = npe)
+  val defaultAnnObj: DefaultAnn = Companion.builder().build()
+  assertEquals<String>(a = "default", b = defaultAnnObj.<get-ann>())
+  val bothDefaulted: ChainedDefaults = Companion.builder().build()
+  assertEquals<Int>(a = 1, b = bothDefaulted.<get-a>())
+  assertEquals<Int>(a = 2, b = bothDefaulted.<get-b>())
+  val onlyASet: ChainedDefaults = Companion.builder().a(a = 5).build()
+  assertEquals<Int>(a = 5, b = onlyASet.<get-a>())
+  assertEquals<Int>(a = 6, b = onlyASet.<get-b>())
+  val onlyBSet: ChainedDefaults = Companion.builder().b(b = 10).build()
+  assertEquals<Int>(a = 1, b = onlyBSet.<get-a>())
+  assertEquals<Int>(a = 10, b = onlyBSet.<get-b>())
+  val bothSet: ChainedDefaults = Companion.builder().a(a = 3).b(b = 4).build()
+  assertEquals<Int>(a = 3, b = bothSet.<get-a>())
+  assertEquals<Int>(a = 4, b = bothSet.<get-b>())
+  val dependsOnPlain: DefaultDependsOnPlain = Companion.builder().base(base = 5).build()
+  assertEquals<Int>(a = 5, b = dependsOnPlain.<get-base>())
+  assertEquals<Int>(a = 10, b = dependsOnPlain.<get-derived>())
+  return "OK"
+}

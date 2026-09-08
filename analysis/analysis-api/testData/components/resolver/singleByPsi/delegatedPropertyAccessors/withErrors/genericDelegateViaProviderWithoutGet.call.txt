@@ -1,6 +1,6 @@
 KtPropertyDelegate(419,455): 'by ProvideDelegateHolder("provided")'
   KaDelegatedPropertyCallResolutionAttempt:
-    provideDelegateCallAttempt = KaCallResolutionSuccess:
+    provideDelegateCallAttempt = KaSimpleCallResolutionSuccess:
       call = KaSimpleFunctionCall:
         contextArgumentMapping = {}
         contextArguments = []
@@ -35,10 +35,10 @@ KtPropertyDelegate(419,455): 'by ProvideDelegateHolder("provided")'
           T -> (kotlin.String)
         }
         valueArgumentMapping = {}
-    valueGetterCallAttempt = KaCallResolutionError:
+    valueGetterCallAttempt = KaSimpleCallResolutionError:
       candidateCalls = []
       diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue' on receiver of type 'GenericDelegate<TypeVariable(T)>'.>
-    valueSetterCallAttempt = KaCallResolutionSuccess:
+    valueSetterCallAttempt = KaSimpleCallResolutionSuccess:
       call = KaSimpleFunctionCall:
         contextArgumentMapping = {}
         contextArguments = []

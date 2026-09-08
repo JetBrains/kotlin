@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.psi;
 
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
+import kotlin.ReplaceWith;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionTypeStub;
@@ -27,16 +29,20 @@ import java.util.List;
  * //          ^______________________^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> implements KtTypeElement, KtResolvable {
 
+    /** The token that separates the parameter list from the return type in a function type (the {@code ->} arrow). */
     public static final KtToken RETURN_TYPE_SEPARATOR = KtTokens.ARROW;
 
+    @KtImplementationDetail
     public KtFunctionType(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtFunctionType(@NotNull KotlinFunctionTypeStub stub) {
-        super(stub, KtStubBasedElementTypes.FUNCTION_TYPE);
+        super(stub, KtNodeTypes.FUNCTION_TYPE);
     }
 
     @NotNull
@@ -66,24 +72,29 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
         return visitor.visitFunctionType(this, data);
     }
 
+    /** Returns the parenthesized list of the function type's parameters, or {@code null} if it is absent in incomplete code. */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtParameterList getParameterList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST);
+        return getStubOrPsiChild(KtNodeTypes.VALUE_PARAMETER_LIST, KtParameterList.class);
     }
 
+    /** Returns the function type's parameters, or an empty list if it takes no parameters. */
     @NotNull
     public List<KtParameter> getParameters() {
         KtParameterList list = getParameterList();
         return list != null ? list.getParameters() : Collections.emptyList();
     }
 
+    /**
+     * Returns the receiver declaration of a function type with receiver (as in {@code String.() -> Unit}), or {@code null} if the function
+     * type has no receiver.
+     */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtFunctionTypeReceiver getReceiver() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.FUNCTION_TYPE_RECEIVER);
+        return getStubOrPsiChild(KtNodeTypes.FUNCTION_TYPE_RECEIVER, KtFunctionTypeReceiver.class);
     }
 
+    /** Returns the receiver type reference of a function type with receiver, or {@code null} if the function type has no receiver. */
     @Nullable
     public KtTypeReference getReceiverTypeReference() {
         KtFunctionTypeReceiver receiverDeclaration = getReceiver();
@@ -101,7 +112,7 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
      */
     @kotlin.Deprecated(
             message = "Use 'getContextParameterList()' instead. This method is obsolete and exists for compatibility reasons only.",
-            replaceWith = @kotlin.ReplaceWith(
+            replaceWith = @ReplaceWith(
                     expression = "contextParameterList",
                     imports = {}
             )
@@ -126,11 +137,11 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
      * @see KtContextParameterList
      */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtContextParameterList getContextParameterList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST);
+        return getStubOrPsiChild(KtNodeTypes.CONTEXT_PARAMETER_LIST, KtContextParameterList.class);
     }
 
+    /** Returns the type references of the context receivers declared for this function type, or an empty list if there are none. */
     public List<KtTypeReference> getContextReceiversTypeReferences() {
         KtContextParameterList contextReceiverList = getContextParameterList();
         if (contextReceiverList != null) {
@@ -140,10 +151,10 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
         }
     }
 
+    /** Returns the return type reference (the part after {@code ->}), or {@code null} if it is absent in incomplete code. */
     @Nullable
-    @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getReturnTypeReference() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
+        return getStubOrPsiChild(KtNodeTypes.TYPE_REFERENCE, KtTypeReference.class);
     }
 
     /**

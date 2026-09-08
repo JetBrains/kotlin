@@ -3,7 +3,13 @@ val valWithBackingField: Int
   get
 
 val test_valWithBackingField: KProperty0<Int>
-  field = ::valWithBackingField
+  field = KProperty0<Int>(
+    /* bound = */ [],
+    /* getter = */    local fun(): Int {
+      return <get-valWithBackingField>()
+    }
+  )
+
   get
 
 var varWithBackingField: Int
@@ -12,7 +18,16 @@ var varWithBackingField: Int
   set
 
 val test_varWithBackingField: KMutableProperty0<Int>
-  field = ::varWithBackingField
+  field = KMutableProperty0<Int>(
+    /* bound = */ [],
+    /* getter = */    local fun(): Int {
+      return <get-varWithBackingField>()
+    }
+    /* setter = */    local fun(value: Int) {
+      return <set-varWithBackingField>(<set-?> = value)
+    }
+  )
+
   get
 
 var varWithBackingFieldAndAccessors: Int
@@ -25,38 +40,101 @@ var varWithBackingFieldAndAccessors: Int
   }
 
 val test_varWithBackingFieldAndAccessors: KMutableProperty0<Int>
-  field = ::varWithBackingFieldAndAccessors
+  field = KMutableProperty0<Int>(
+    /* bound = */ [],
+    /* getter = */    local fun(): Int {
+      return <get-varWithBackingFieldAndAccessors>()
+    }
+    /* setter = */    local fun(value: Int) {
+      return <set-varWithBackingFieldAndAccessors>(value = value)
+    }
+  )
+
   get
 
 val test_valWithAccessors: KProperty0<Int>
-  field = ::valWithAccessors
+  field = KProperty0<Int>(
+    /* bound = */ [],
+    /* getter = */    local fun(): Int {
+      return <get-valWithAccessors>()
+    }
+  )
+
   get
 
 val test_varWithAccessors: KMutableProperty0<Int>
-  field = ::varWithAccessors
+  field = KMutableProperty0<Int>(
+    /* bound = */ [],
+    /* getter = */    local fun(): Int {
+      return <get-varWithAccessors>()
+    }
+    /* setter = */    local fun(value: Int) {
+      return <set-varWithAccessors>(value = value)
+    }
+  )
+
   get
 
 val delegatedVal: Int /* by */
   field = Delegate
   get(): Int {
-    return #delegatedVal$delegate.getValue(thisRef = null, kProp = ::delegatedVal)
+    return #delegatedVal$delegate.getValue(thisRef = null, kProp = KProperty0<Int>(
+      /* bound = */ [],
+      /* getter = */      local fun(): Int {
+        return <get-delegatedVal>()
+      }
+    )
+)
   }
 
 val test_delegatedVal: KProperty0<Int>
-  field = ::delegatedVal
+  field = KProperty0<Int>(
+    /* bound = */ [],
+    /* getter = */    local fun(): Int {
+      return <get-delegatedVal>()
+    }
+  )
+
   get
 
 var delegatedVar: Int /* by */
   field = Delegate
   get(): Int {
-    return #delegatedVar$delegate.getValue(thisRef = null, kProp = ::delegatedVar)
+    return #delegatedVar$delegate.getValue(thisRef = null, kProp = KMutableProperty0<Int>(
+      /* bound = */ [],
+      /* getter = */      local fun(): Int {
+        return <get-delegatedVar>()
+      }
+      /* setter = */      local fun(value: Int) {
+        return <set-delegatedVar>(<set-?> = value)
+      }
+    )
+)
   }
   set(<set-?>: Int) {
-    return #delegatedVar$delegate.setValue(thisRef = null, kProp = ::delegatedVar, value = <set-?>)
+    return #delegatedVar$delegate.setValue(thisRef = null, kProp = KMutableProperty0<Int>(
+      /* bound = */ [],
+      /* getter = */      local fun(): Int {
+        return <get-delegatedVar>()
+      }
+      /* setter = */      local fun(value: Int) {
+        return <set-delegatedVar>(<set-?> = value)
+      }
+    )
+, value = <set-?>)
   }
 
 val test_delegatedVar: KMutableProperty0<Int>
-  field = ::delegatedVar
+  field = KMutableProperty0<Int>(
+    /* bound = */ [],
+    /* getter = */    local fun(): Int {
+      return <get-delegatedVar>()
+    }
+    /* setter = */    local fun(value: Int) {
+      return <set-delegatedVar>(<set-?> = value)
+    }
+  )
+
   get
 
 val constVal: Int
@@ -64,23 +142,56 @@ val constVal: Int
   get
 
 val test_constVal: KProperty0<Int>
-  field = ::constVal
+  field = KProperty0<Int>(
+    /* bound = */ [],
+    /* getter = */    local fun(): Int {
+      return <get-constVal>()
+    }
+  )
+
   get
 
 val test_J_CONST: KProperty0<Int>
-  field = ::CONST
+  field = KProperty0<Int>(
+    /* bound = */ [],
+    /* getter = */    local fun(): Int {
+      return 1
+    }
+  )
+
   get
 
 val test_J_nonConst: KMutableProperty0<Int>
-  field = ::nonConst
+  field = KMutableProperty0<Int>(
+    /* bound = */ [],
+    /* getter = */    local fun(): Int {
+      return #nonConst
+    }
+    /* setter = */    local fun(value: Int) {
+      return #nonConst = value
+    }
+  )
+
   get
 
 val test_varWithPrivateSet: KProperty1<C, Int>
-  field = C::varWithPrivateSet
+  field = KProperty1<C, Int>(
+    /* bound = */ [],
+    /* getter = */    local fun(p0: C): Int {
+      return p0.<get-varWithPrivateSet>()
+    }
+  )
+
   get
 
 val test_varWithProtectedSet: KProperty1<C, Int>
-  field = C::varWithProtectedSet
+  field = KProperty1<C, Int>(
+    /* bound = */ [],
+    /* getter = */    local fun(p0: C): Int {
+      return p0.<get-varWithProtectedSet>()
+    }
+  )
+
   get
 
 open class C {

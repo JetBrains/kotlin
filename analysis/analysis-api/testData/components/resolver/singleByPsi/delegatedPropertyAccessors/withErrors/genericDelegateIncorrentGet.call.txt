@@ -1,7 +1,7 @@
 KtPropertyDelegate(74,109): 'by GenericDelegate<String>("hello")'
   KaDelegatedPropertyCallResolutionAttempt:
     provideDelegateCallAttempt = null
-    valueGetterCallAttempt = KaCallResolutionError:
+    valueGetterCallAttempt = KaSimpleCallResolutionError:
       candidateCalls = [
         KaSimpleFunctionCall:
           contextArgumentMapping = {}
@@ -36,8 +36,8 @@ KtPropertyDelegate(74,109): 'by GenericDelegate<String>("hello")'
           typeArgumentsMapping = {}
           valueArgumentMapping = {}
       ]
-      diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun Int.getValue(thisRef: Any?, property: KProperty<*>): ??? (Unresolved qualified name: T)' is inapplicable because of a receiver type mismatch.>
-    valueSetterCallAttempt = KaCallResolutionSuccess:
+      diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun Int.getValue(thisRef: Any?, property: KProperty<*>): ??? (Unresolved qualified name: T)' is inapplicable because of a receiver type mismatch. Actual receiver type is 'GenericDelegate<String>'.>
+    valueSetterCallAttempt = KaSimpleCallResolutionSuccess:
       call = KaSimpleFunctionCall:
         contextArgumentMapping = {}
         contextArguments = []

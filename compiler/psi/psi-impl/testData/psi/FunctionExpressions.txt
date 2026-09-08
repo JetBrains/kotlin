@@ -12,7 +12,7 @@ KtFile: FunctionExpressions.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       VALUE_PARAMETER_LIST
@@ -26,7 +26,7 @@ KtFile: FunctionExpressions.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('name')
@@ -41,7 +41,7 @@ KtFile: FunctionExpressions.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
@@ -61,7 +61,7 @@ KtFile: FunctionExpressions.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
@@ -108,7 +108,7 @@ KtFile: FunctionExpressions.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
@@ -156,7 +156,7 @@ KtFile: FunctionExpressions.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
@@ -224,7 +224,7 @@ KtFile: FunctionExpressions.kt
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('bar')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('c')
@@ -234,7 +234,7 @@ KtFile: FunctionExpressions.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       VALUE_PARAMETER_LIST
@@ -242,7 +242,7 @@ KtFile: FunctionExpressions.kt
         PsiElement(RPAR)(')')
       PsiElement(SEMICOLON)(';')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('c')
@@ -252,7 +252,7 @@ KtFile: FunctionExpressions.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('name')
@@ -261,7 +261,7 @@ KtFile: FunctionExpressions.kt
         PsiElement(RPAR)(')')
       PsiElement(SEMICOLON)(';')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('c')
@@ -271,7 +271,7 @@ KtFile: FunctionExpressions.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
@@ -296,7 +296,7 @@ KtFile: FunctionExpressions.kt
         PsiElement(RPAR)(')')
       PsiElement(SEMICOLON)(';')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('c')
@@ -306,7 +306,7 @@ KtFile: FunctionExpressions.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
@@ -347,7 +347,7 @@ KtFile: FunctionExpressions.kt
             PsiElement(IDENTIFIER)('bar')
       PsiElement(SEMICOLON)(';')
   PsiWhiteSpace('\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('c')
@@ -357,7 +357,7 @@ KtFile: FunctionExpressions.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_REFERENCE
@@ -433,7 +433,7 @@ KtFile: FunctionExpressions.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       VALUE_PARAMETER_LIST
@@ -452,7 +452,7 @@ KtFile: FunctionExpressions.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('name')
@@ -472,7 +472,7 @@ KtFile: FunctionExpressions.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       MODIFIER_LIST
         ANNOTATION
           PsiElement(AT)('@')
@@ -498,7 +498,7 @@ KtFile: FunctionExpressions.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUN
+    FUNCTION
       PsiElement(fun)('fun')
       PsiWhiteSpace(' ')
       TYPE_PARAMETER_LIST
@@ -524,7 +524,7 @@ KtFile: FunctionExpressions.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('A')
   PsiWhiteSpace('\n\n')
-  FUN
+  FUNCTION
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('outer')
@@ -541,7 +541,7 @@ KtFile: FunctionExpressions.kt
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            FUN
+            FUNCTION
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               VALUE_PARAMETER_LIST
@@ -559,7 +559,7 @@ KtFile: FunctionExpressions.kt
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            FUN
+            FUNCTION
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('name')
@@ -578,7 +578,7 @@ KtFile: FunctionExpressions.kt
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            FUN
+            FUNCTION
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
@@ -613,7 +613,7 @@ KtFile: FunctionExpressions.kt
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            FUN
+            FUNCTION
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
@@ -649,7 +649,7 @@ KtFile: FunctionExpressions.kt
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            FUN
+            FUNCTION
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
@@ -700,7 +700,7 @@ KtFile: FunctionExpressions.kt
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            FUN
+            FUNCTION
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               TYPE_REFERENCE
@@ -782,7 +782,7 @@ KtFile: FunctionExpressions.kt
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               BLOCK
-                FUN
+                FUNCTION
                   PsiElement(fun)('fun')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
@@ -876,7 +876,7 @@ KtFile: FunctionExpressions.kt
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               BLOCK
-                FUN
+                FUNCTION
                   PsiElement(fun)('fun')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
@@ -909,7 +909,7 @@ KtFile: FunctionExpressions.kt
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               BLOCK
-                FUN
+                FUNCTION
                   PsiElement(fun)('fun')
                   PsiWhiteSpace(' ')
                   TYPE_REFERENCE
@@ -940,7 +940,7 @@ KtFile: FunctionExpressions.kt
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            FUN
+            FUNCTION
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               VALUE_PARAMETER_LIST
@@ -959,7 +959,7 @@ KtFile: FunctionExpressions.kt
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            FUN
+            FUNCTION
               PsiElement(fun)('fun')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('name')
@@ -979,7 +979,7 @@ KtFile: FunctionExpressions.kt
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
-            FUN
+            FUNCTION
               MODIFIER_LIST
                 ANNOTATION
                   PsiElement(AT)('@')

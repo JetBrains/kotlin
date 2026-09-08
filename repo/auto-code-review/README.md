@@ -52,10 +52,20 @@ It also makes sure that each invocation is focused on a single rule and receives
 As a side effect, this approach also allows estimating the API costs for each rule separately
 (this information is included in the report).
 
-## code-rules.md format
+## Rule files
 
 Rules are organized in special Markdown files named `code-rules.md`.
-They work akin to `.gitignore` files: each `code-rules.md` covers files inside its directory.
+
+Some sanity checks for all the `code-fules.md` files in the repository are implemented as tests in
+[RepoCodeRulesTests](test/org/jetbrains/kotlin/code/review/RepoCodeRulesTests.kt).
+For example, those tests check that all rule files can be parsed successfully, all includes refer to existing files,
+and every rule applies to at least one file.
+
+When updating rule files, it is reasonable to run those tests. The tests are also included to Aggregate.
+
+### code-rules.md format
+
+`code-rules.md` files work akin to `.gitignore` files: each `code-rules.md` covers files inside its directory.
 
 Here is an example of the file:
 ```markdown

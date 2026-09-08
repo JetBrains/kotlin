@@ -258,7 +258,9 @@ private open class NativeArgsProvider @Inject constructor(
         val customKlibs = customTestDependencies.files + xcTestConfiguration.files
         return listOfNotNull(
             "-D${KOTLIN_NATIVE_HOME.fullName}=${internalNativeHomeDir.get().absolutePath}",
-            "-D${COMPILER_CLASSPATH.fullName}=${compilerClasspath.files.takeIf { it.isNotEmpty() }?.joinToString(File.pathSeparator) { it.absolutePath }}",
+            "-D${COMPILER_CLASSPATH.fullName}=${
+                compilerClasspath.files.takeIf { it.isNotEmpty() }?.joinToString(File.pathSeparator) { it.absolutePath }
+            }",
             "-D${COMPILER_PLUGINS.fullName}=${compilerPluginDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }}".takeIf { !compilerPluginDependencies.isEmpty },
             testKind.orNull?.let { "-D${TEST_KIND.fullName}=$it" },
             "-D${TEAMCITY.fullName}=$teamcity",
@@ -318,6 +320,18 @@ private abstract class JdkVersionDependentFlagsProvider : CommandLineArgumentPro
 private fun ProviderFactory.testProperty(property: TestProperty) =
     gradleProperty(property.fullName).orElse(gradleProperty(property.shortName))
 
+private fun Project.hostXcodeConfiguration(): Configuration =
+    configurations.findByName(HOST_XCODE_CONFIGURATION) ?: run {
+        val hostXcode = dependencies.project(":kotlin-native:dependencies", "hostXcode")
+        configurations.create(HOST_XCODE_CONFIGURATION) {
+            isCanBeConsumed = false
+            isCanBeResolved = true
+            dependencies.add(hostXcode)
+        }
+    }
+
+private const val HOST_XCODE_CONFIGURATION = "nativeTestHostXcode"
+
 /**
  * @param taskName Name of Gradle task.
  * @param tag Optional JUnit test tag. See https://junit.org/junit5/docs/current/user-guide/#writing-tests-tagging-and-filtering
@@ -339,15 +353,20 @@ fun ProjectTestsExtension.nativeTestTask(
     compilerPluginDependencies: List<FileCollection> = emptyList(),
     allowParallelExecution: Boolean = true,
     customCompilerDist: TaskProvider<Sync>? = null,
-    maxMetaspaceSizeMb: Int = 512,
+    maxHeapSize: Size = testMaxHeapSizeLarge, // Extra heap space for Kotlin/Native compiler.
+    maxMetaspaceSize: Size = testDefaultMaxMetaspaceSize,
     allowUnsafe: Boolean = false,
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     enableGroupingTestEngine: Boolean = false,
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> = testTask(
     taskName = taskName,
-    maxHeapSizeMb = 3072, // Extra heap space for Kotlin/Native compiler.
-    maxMetaspaceSizeMb = maxMetaspaceSizeMb,
+    maxHeapSize = maxHeapSize, // Extra heap space for Kotlin/Native compiler.
+    maxMetaspaceSize = maxMetaspaceSize,
+    // Using JDK 11 instead of JDK 8 (project default) makes some tests take 15-25% more time.
+    // This seems to be caused by the fact that JDK 11 uses G1 GC by default, while JDK 8 uses Parallel GC.
+    // Switch back to Parallel GC to mitigate the test execution time degradation:
+    garbageCollector = GarbageCollector.Parallel,
     defineJDKEnvVariables = defineJDKEnvVariables,
     enableGroupingTestEngine = enableGroupingTestEngine,
     skipInLocalBuild = false,
@@ -385,10 +404,6 @@ fun ProjectTestsExtension.nativeTestTask(
             this.allowUnsafe.set(allowUnsafe)
         })
 
-        // Using JDK 11 instead of JDK 8 (project default) makes some tests take 15-25% more time.
-        // This seems to be caused by the fact that JDK 11 uses G1 GC by default, while JDK 8 uses Parallel GC.
-        // Switch back to Parallel GC to mitigate the test execution time degradation:
-        jvmArgs("-XX:+UseParallelGC")
         // Another reason for switching back to Parallel GC is CLI tests:
         // some of them validate the compiler performance report.
         // The latter contains GC statistics, and the format varies per GC.
@@ -422,6 +437,16 @@ fun ProjectTestsExtension.nativeTestTask(
 
         // Pass the current Gradle task name so test can use it in logging.
         environment("GRADLE_TASK_NAME", path)
+
+        if (HostManager.hostIsMac &&
+            kotlinBuildProperties.booleanProperty("kotlin.native.internalServer.wholeXcode", false).get()
+        ) {
+            dependsOn(project.hostXcodeConfiguration())
+            environment(
+                "DEVELOPER_DIR",
+                project.hostXcodeConfiguration().singleFile.resolve("Contents/Developer").absolutePath
+            )
+        }
 
         useJUnitPlatform {
             // Note: arbitrary JUnit tag expressions can be used in this property.

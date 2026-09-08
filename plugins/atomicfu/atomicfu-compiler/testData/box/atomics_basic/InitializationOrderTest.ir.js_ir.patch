@@ -1,6 +1,6 @@
 --- a/InitializationOrderTest.ir.txt
 +++ b/InitializationOrderTest.ir.js_ir.txt
-@@ -1,130 +1,123 @@
+@@ -1,130 +1,129 @@
  FILE fqName:<root> fileName:/InitializationOrderTest.kt
    CLASS CLASS name:AAA modality:FINAL visibility:private superTypes:[kotlin.Any]
      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.AAA
@@ -56,7 +56,13 @@
 +              ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:delegateCounterValue$delegate type:kotlinx.atomicfu.AtomicLong visibility:private [final] declared in <root>.AAA' type=kotlinx.atomicfu.AtomicLong origin=null
 +                receiver: GET_VAR '<this>: <root>.AAA declared in <root>.AAA.<get-delegateCounterValue>' type=<root>.AAA origin=IMPLICIT_ARGUMENT
 +              ARG thisRef: GET_VAR '<this>: <root>.AAA declared in <root>.AAA.<get-delegateCounterValue>' type=<root>.AAA origin=null
-+              ARG property: PROPERTY_REFERENCE 'public final delegateCounterValue: kotlin.Long declared in <root>.AAA' field=null getter='public final fun <get-delegateCounterValue> (): kotlin.Long declared in <root>.AAA' setter=null type=kotlin.reflect.KProperty1<<root>.AAA, kotlin.Long> origin=PROPERTY_REFERENCE_FOR_DELEGATE
++              ARG property: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<<root>.AAA, kotlin.Long> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='public final delegateCounterValue: kotlin.Long declared in <root>.AAA'
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:delegateCounterValue visibility:local modality:FINAL returnType:kotlin.Long
++                  VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:0 type:<root>.AAA
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun delegateCounterValue (p0: <root>.AAA): kotlin.Long declared in <root>.AAA.<get-delegateCounterValue>'
++                      CALL 'public final fun <get-delegateCounterValue> (): kotlin.Long declared in <root>.AAA' type=kotlin.Long origin=null
++                        ARG <this>: GET_VAR 'p0: <root>.AAA declared in <root>.AAA.<get-delegateCounterValue>.delegateCounterValue' type=<root>.AAA origin=null
 +    PROPERTY name:lateInitInt visibility:public modality:FINAL [val]
 +      FIELD PROPERTY_BACKING_FIELD name:lateInitInt type:kotlinx.atomicfu.AtomicInt visibility:private [final]
 +      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lateInitInt> visibility:public modality:FINAL returnType:kotlinx.atomicfu.AtomicInt
@@ -224,7 +230,7 @@
                    ARG <this>: GET_VAR '<this>: <root>.AAA declared in <root>.AAA' type=<root>.AAA origin=IMPLICIT_ARGUMENT
                  ARG index: CONST Int type=kotlin.Int value=1
      CONSTRUCTOR visibility:public returnType:<root>.AAA [primary]
-@@ -150,19 +143,9 @@
+@@ -150,19 +149,9 @@
          correspondingProperty: PROPERTY name:counterValue visibility:public modality:FINAL [val]
          BLOCK_BODY
            RETURN type=kotlin.Nothing from='public final fun <get-counterValue> (): kotlin.Long declared in <root>.AAA'

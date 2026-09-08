@@ -2,10 +2,8 @@ import org.jetbrains.kotlin.kotlinNativeDist
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
-    id("project-tests-convention")
 }
 
 dependencies {

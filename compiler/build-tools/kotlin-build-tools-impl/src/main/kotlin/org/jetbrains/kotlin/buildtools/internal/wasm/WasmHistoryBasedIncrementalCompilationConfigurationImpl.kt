@@ -67,6 +67,7 @@ internal class WasmHistoryBasedIncrementalCompilationConfigurationImpl private c
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: WasmHistoryBasedIncrementalCompilationConfiguration.Option<V>, value: V) {
+        checkOptionIsAvailableForVersion(key)
         options[key] = value
     }
 

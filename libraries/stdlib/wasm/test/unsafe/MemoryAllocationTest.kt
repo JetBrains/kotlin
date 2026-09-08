@@ -2,9 +2,10 @@ package test.wasm.unsafe
 
 import kotlin.wasm.unsafe.*
 import kotlin.test.*
+import kotlin.wasm.ExperimentalWasmInterop
 import kotlin.wasm.internal.*
 
-@OptIn(UnsafeWasmMemoryApi::class)
+@OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
 class MemoryAllocationTest {
     val pageSize = 65_536
 

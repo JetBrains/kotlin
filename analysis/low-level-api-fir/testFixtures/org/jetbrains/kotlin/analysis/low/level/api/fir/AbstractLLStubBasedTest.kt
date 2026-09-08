@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractLLStubBasedTest.Companion.computeAstLoadingAware
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
-import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesByStubTest
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -43,10 +41,10 @@ abstract class AbstractLLStubBasedTest<StubBasedOutput> : AbstractAnalysisApiBas
 
     protected object Directives : SimpleDirectivesContainer() {
         /**
-         * This directive has to be in sync with [AbstractRawFirBuilderLazyBodiesByStubTest]
-         * as [AbstractLLAnnotationArgumentsCalculatorTest] is supposed to work as an extension to the stub test.
+         * The directive is shared between all stub-based tests as they are supposed to work as extensions to each other,
+         * so it has to be applicable to all of them.
          */
-        val IGNORE_TREE_ACCESS by stringDirective("Disables the test. The YT issue number has to be provided")
+        val IGNORE_TREE_ACCESS by stringDirective("Disables the stub-based part of the test. The YT issue number has to be provided")
 
         val INCONSISTENT_DECLARATIONS by directive("Indicates that stub-based and AST-based have a different number of declarations")
     }

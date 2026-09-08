@@ -199,6 +199,9 @@
 # for j2k
 -keep class com.intellij.codeInsight.NullableNotNullManager { public protected *; }
 
+# for Swift Export
+-keep class com.intellij.lang.LanguageExtensionPoint { *; }
+
 # for gradle (see KT-12549)
 -keep class com.intellij.lang.properties.charset.Native2AsciiCharsetProvider { *; }
 
@@ -444,3 +447,14 @@
 -dontwarn kotlinx.coroutines.internal.intellij.IntellijCoroutines
 
 -dontwarn org.jetbrains.kotlin.buildtools.internal.cri.**
+
+# Multiplatform parsing section
+# It seems that proguard cannot work with MPP libs properly
+# Currently mentioned classes are effectively unused,
+# as we need only multiplatform-parsing:jvmMain and not :common
+# TODO: recheck that everything works properly after KT-86282 done
+-dontwarn fleet.com.intellij.multiplatform.util.fastutil.ints.**
+-dontwarn org.jetbrains.kotlin.kmp.parser.utils.**
+-keep class com.intellij.platform.syntax.parser.SyntaxTreeBuilder {
+    public *;
+}

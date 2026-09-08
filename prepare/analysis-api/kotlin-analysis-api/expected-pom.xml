@@ -35,7 +35,19 @@
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-analysis-api-standalone-surface</artifactId>
+      <version>@ARTIFACT_VERSION@</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-analysis-api-implementation</artifactId>
+      <version>@ARTIFACT_VERSION@</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-analysis-api-standalone-implementation</artifactId>
       <version>@ARTIFACT_VERSION@</version>
       <scope>runtime</scope>
     </dependency>

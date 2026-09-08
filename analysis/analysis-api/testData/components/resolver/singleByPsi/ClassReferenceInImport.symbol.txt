@@ -2,7 +2,7 @@ KtNameReferenceExpression(74,75): 'A'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSymbolResolutionSuccess:
+  KaSimpleSymbolResolutionSuccess:
     symbols = [
       testPackage/testOtherPackage/A
     ]

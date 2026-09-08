@@ -89,7 +89,7 @@ KtReturnExpression(59,79): 'return n bar (n + 1)'
   null
 
 KtBinaryExpression(66,79): 'n bar (n + 1)'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
         contextArgumentMapping = {}
@@ -138,7 +138,7 @@ KtBinaryExpression(66,79): 'n bar (n + 1)'
     diagnostic = ERROR<INFIX_MODIFIER_REQUIRED: 'infix' modifier is required on 'fun invoke(p1: Int, p2: Int): Int'.>
 
 KtNameReferenceExpression(66,67): 'n'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -155,7 +155,7 @@ KtNameReferenceExpression(66,67): 'n'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(68,71): 'bar'
-  KaCallResolutionError:
+  KaSimpleCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
         contextArgumentMapping = {}
@@ -207,7 +207,7 @@ KtParenthesizedExpression(72,79): '(n + 1)'
   null
 
 KtBinaryExpression(73,78): 'n + 1'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -243,7 +243,7 @@ KtBinaryExpression(73,78): 'n + 1'
       }
 
 KtNameReferenceExpression(73,74): 'n'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = null
@@ -260,7 +260,7 @@ KtNameReferenceExpression(73,74): 'n'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(75,76): '+'
-  KaCallResolutionSuccess:
+  KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

@@ -6,6 +6,7 @@
 package org.jetbrains.sir.lightclasses.nodes
 
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.types.defaultType
 import org.jetbrains.kotlin.analysis.api.types.isArrayOrPrimitiveArray
 import org.jetbrains.kotlin.sir.*
@@ -86,13 +87,21 @@ internal sealed class SirInitFromKtSymbol(
     protected val isBridged: Boolean
         get() = withSessions {
             (parent as? SirClass)?.kaSymbolOrNull<KaClassSymbol>()?.let {
-                !it.modality.isAbstract() && !it.defaultType.isArrayOrPrimitiveArray && !it.hasFBoundedTypeParameters()
+                !it.defaultType.isArrayOrPrimitiveArray && !it.hasFBoundedTypeParameters()
             } ?: false
         }
 
     protected val isAbstractClass: Boolean
         get() = withSessions {
             (parent as? SirClass)?.kaSymbolOrNull<KaClassSymbol>()?.modality?.isAbstract() ?: false
+        }
+
+    protected val isInheritableClass: Boolean
+        get() = withSessions {
+            when ((parent as? SirClass)?.kaSymbolOrNull<KaClassSymbol>()?.modality) {
+                KaSymbolModality.OPEN, KaSymbolModality.ABSTRACT -> true
+                else -> false
+            }
         }
 
 }
@@ -127,6 +136,8 @@ internal class SirRegularInitFromKtSymbol(
             parent as? SirScopeDefiningDeclaration ?: error("Encountered an Init that produces non-named type: $parent")
         )
 
+        val abstractConstructorTarget: String? = "<init>".takeIf { isAbstractClass }
+
         buildList {
             addAll(
                 bridgeAllocProxy?.createSirBridges {
@@ -143,7 +154,7 @@ internal class SirRegularInitFromKtSymbol(
             )
             if (origin is InnerInitSource) {
                 addAll(
-                    bridgeInitProxy?.createSirBridges {
+                    bridgeInitProxy?.createSirBridges(nonVirtualTargetMethod = abstractConstructorTarget) {
                         val args = this.argNames
 
                         require(!kotlinFqName.parent().isRoot) {
@@ -162,7 +173,7 @@ internal class SirRegularInitFromKtSymbol(
                 )
             } else {
                 addAll(
-                    bridgeInitProxy?.createSirBridges {
+                    bridgeInitProxy?.createSirBridges(nonVirtualTargetMethod = abstractConstructorTarget) {
                         val args = argNames
                         "kotlin.native.internal.initInstance(${args.first()}, ${
                             typeNamer.kotlinFqName(
@@ -180,18 +191,33 @@ internal class SirRegularInitFromKtSymbol(
         set(_) {}
         get() = withSessions {
             val initDescriptor = bridgeInitProxy ?: return@withSessions null
-            val allocDescriptor = bridgeAllocProxy ?: return@withSessions null
+            val scope = parent as? SirScopeDefiningDeclaration
 
             return@withSessions SirFunctionBody(buildList {
                 if (isAbstractClass) {
-                    (parent as? SirScopeDefiningDeclaration)?.let {
-                        add("if Self.self == ${it.swiftFqName}.self { fatalError(\"Abstract class ${it.swiftFqName} cannot be instantiated directly\") }")
+                    scope?.let {
+                        add("precondition(Self.self != ${it.swiftFqName}.self, \"${it.swiftFqName} is an abstract class and cannot be instantiated directly\")")
                     }
                 }
 
-                addAll(allocDescriptor.createSwiftInvocation {
-                    "let ${obj.name} = $it"
-                })
+                when {
+                    isAbstractClass -> add("let ${obj.name} = _kotlinAllocInstanceForSwiftSubclass(Self.self)")
+                    isInheritableClass && scope != null -> {
+                        val allocDescriptor = bridgeAllocProxy ?: return@withSessions null
+                        add("""
+                        | let ${obj.name}: Swift.UnsafeMutableRawPointer!
+                        | if Self.self == ${scope.swiftFqName}.self {
+                        | ${allocDescriptor.createSwiftInvocation { "${obj.name} = $it" }.joinToString("\n|").prependIndent()}
+                        | } else {
+                        |     ${obj.name} = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+                        | }
+                        """.trimMargin())
+                    }
+                    else -> {
+                        val allocDescriptor = bridgeAllocProxy ?: return@withSessions null
+                        addAll(allocDescriptor.createSwiftInvocation { "let ${obj.name} = $it" })
+                    }
+                }
 
                 add("super.init(__externalRCRefUnsafe: ${obj.name}, options: .asBoundBridge);")
 
@@ -200,7 +226,7 @@ internal class SirRegularInitFromKtSymbol(
         }
 
     private val bridgeAllocProxy: BridgeFunctionProxy? by lazyWithSessions {
-        if (!isBridged || bridgeInitProxy == null) return@lazyWithSessions null
+        if (!isBridged || bridgeInitProxy == null || isAbstractClass) return@lazyWithSessions null
 
         val fqName = ktSymbol.containingClassId?.asSingleFqName()
             ?: return@lazyWithSessions null

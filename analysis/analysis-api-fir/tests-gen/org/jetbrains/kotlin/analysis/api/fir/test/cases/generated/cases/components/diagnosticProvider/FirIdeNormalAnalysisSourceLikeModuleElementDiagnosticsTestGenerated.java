@@ -62,6 +62,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleElementDiagnosticsTestGenerated
   }
 
   @Test
+  @TestMetadata("defaultValueInFunctionWithOverride.kt")
+  public void testDefaultValueInFunctionWithOverride() {
+    run("defaultValueInFunctionWithOverride.kt");
+  }
+
+  @Test
   @TestMetadata("delegatedClass.kt")
   public void testDelegatedClass() {
     run("delegatedClass.kt");
@@ -77,6 +83,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleElementDiagnosticsTestGenerated
   @TestMetadata("fileWithFunctionWithImplicitType.kt")
   public void testFileWithFunctionWithImplicitType() {
     run("fileWithFunctionWithImplicitType.kt");
+  }
+
+  @Test
+  @TestMetadata("fileWithInlineFunction.kt")
+  public void testFileWithInlineFunction() {
+    run("fileWithInlineFunction.kt");
   }
 
   @Test

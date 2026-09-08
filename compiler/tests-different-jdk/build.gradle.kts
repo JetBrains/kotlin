@@ -4,10 +4,8 @@ import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
-    id("project-tests-convention")
     id("test-inputs-check")
 }
 
@@ -57,7 +55,8 @@ projectTests {
         testTask(
             taskName = "codegenTarget${targetInTestClass}Jvm${jvm}Test",
             javaLauncher = jdk,
-            maxMetaspaceSizeMb = 1024,
+            maxHeapSize = 6.GiB,
+            maxMetaspaceSize = 1.GiB,
             skipInLocalBuild = false,
             defineJDKEnvVariables = listOf(jdk, JdkMajorVersion.JDK_11_0)
         ) {

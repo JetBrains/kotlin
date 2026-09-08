@@ -1,0 +1,44 @@
+Module: lib
+library {
+  // module name: <lib>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Some
+
+    public abstract interface test/Some : kotlin/Any {
+
+      @kotlin/Deprecated(message = "somemessage", replaceWith = kotlin/ReplaceWith(expression = "somereplacement", imports = []), level = kotlin/DeprecationLevel.WARNING)
+      public abstract fun foo(): kotlin/Unit
+    }
+
+    package {
+    }
+  }
+}
+
+Module: main
+library {
+  // module name: <main>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Other
+
+    public final class test/Other : test/Some {
+
+      public constructor(s: test/Some)
+
+      @kotlin/Deprecated(message = "somemessage", replaceWith = kotlin/ReplaceWith(expression = "somereplacement", imports = []), level = kotlin/DeprecationLevel.WARNING)
+      public open /* delegation */ fun foo(): kotlin/Unit
+
+      public final val s: test/Some
+        public final get
+    }
+
+    package {
+    }
+  }
+}

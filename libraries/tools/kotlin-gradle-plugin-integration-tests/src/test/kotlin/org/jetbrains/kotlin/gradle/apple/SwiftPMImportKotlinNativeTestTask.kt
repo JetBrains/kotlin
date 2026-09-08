@@ -100,7 +100,6 @@ class SwiftPMImportKotlinNativeTestTask : KGPBaseTest() {
         }
     }
 
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
     fun `KT-85114 - incremental linkage smoke test`(version: GradleVersion) {
         project("empty", version) {

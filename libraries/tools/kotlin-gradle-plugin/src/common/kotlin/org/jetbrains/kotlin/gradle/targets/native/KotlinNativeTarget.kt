@@ -9,9 +9,12 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -20,6 +23,7 @@ import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addIfNotNull
 import javax.inject.Inject
@@ -28,10 +32,19 @@ abstract class KotlinNativeTarget @Inject constructor(
     project: Project,
     val konanTarget: KonanTarget,
 ) : HasConfigurableKotlinCompilerOptions<KotlinNativeCompilerOptions>,
+    KotlinTargetWithKotlinArchiveSupport,
     KotlinTargetWithBinaries<KotlinNativeCompilation, KotlinNativeBinaryContainer>(
         project,
         KotlinPlatformType.native
     ) {
+
+    @InternalKotlinGradlePluginApi
+    override val isStoredInKotlinArchive: Provider<Boolean> =
+        project.multiplatformExtension.publishing.publicationFormat.map { it == KotlinPublicationFormat.KOTLIN_ARCHIVE }
+
+    @InternalKotlinGradlePluginApi
+    override val platformNameInKotlinArchive: String
+        get() = konanTarget.presetName
 
     init {
         attributes.attribute(konanTargetAttribute, konanTarget.name)
@@ -150,22 +163,25 @@ private val targetsEnabledOnAllHosts by lazy { hostManager.enabledByHost.values.
 internal fun isHostSpecificKonanTargetsSet(konanTargets: Iterable<KonanTarget>): Boolean =
     konanTargets.none { target -> target in targetsEnabledOnAllHosts }
 
-private suspend fun <T> getHostSpecificElements(
-    fragments: Iterable<T>,
-    isNativeShared: suspend (T) -> Boolean,
-    getKonanTargets: suspend (T) -> Set<KonanTarget>,
-): Set<T> = fragments.filterTo(mutableSetOf()) { isNativeShared(it) && isHostSpecificKonanTargetsSet(getKonanTargets(it)) }
-
 internal suspend fun getHostSpecificSourceSets(project: Project): Set<KotlinSourceSet> {
-    return getHostSpecificElements(
-        project.kotlinExtension.awaitSourceSets(),
-        isNativeShared = { sourceSet -> sourceSet.isNativeSourceSet.await() },
-        getKonanTargets = { sourceSet ->
-            sourceSet.internal.awaitPlatformCompilations()
-                .filterIsInstance<KotlinNativeCompilation>()
-                .mapTo(mutableSetOf()) { it.konanTarget }
+    return project.kotlinExtension.awaitSourceSets().filter {
+        if (!it.isNativeSourceSet.await()) {
+            return@filter false
         }
-    )
+
+        val nativeCompilations = it.internal.awaitPlatformCompilations()
+            .filterIsInstance<KotlinNativeCompilation>()
+
+        /**
+         * Targets stored in Kotlin Archive must not be host-specific. The intention of archive is to get rid of
+         * platform publications, so there would be no "external" place to up this metadata.
+         */
+        if (nativeCompilations.any { compilation -> compilation.target.isStoredInKotlinArchive.get() }) {
+            return@filter false
+        }
+
+        isHostSpecificKonanTargetsSet(nativeCompilations.map { it.konanTarget }.toSet())
+    }.toSet()
 }
 
 /**

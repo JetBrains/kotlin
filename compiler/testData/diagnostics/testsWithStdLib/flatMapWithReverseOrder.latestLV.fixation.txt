@@ -53,7 +53,6 @@ CHOSEN for fixation: TypeVariable(E) --- Readiness(
     )
      <: TypeVariable(W)!
      <: kotlin/Comparable<in TypeVariable(W)!>?
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
 TypeVariable(W) --- Readiness(
     	false ALLOWED
     	false HAS_PROPER_CONSTRAINTS
@@ -72,7 +71,6 @@ TypeVariable(W) --- Readiness(
     )
      <: kotlin/Comparable<in TypeVariable(W)!>!
      >: ft<TypeVariable(E) & Any, TypeVariable(E)?>
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true ALLOWED
@@ -112,13 +110,7 @@ TypeVariable(R) --- Readiness(
      <: TypeVariable(E)
      <: TypeVariable(W)!
      <: kotlin/Comparable<in TypeVariable(W)!>?
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
      <: kotlin/Comparable<in TypeVariable(W)!>!
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
-     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!
-     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?
-     <: kotlin/Comparable<TypeVariable(R)!>!
-     <: kotlin/Comparable<TypeVariable(R)!>?
 TypeVariable(C) --- Readiness(
     	 true ALLOWED
     	false HAS_PROPER_CONSTRAINTS
@@ -155,10 +147,7 @@ TypeVariable(E) --- Readiness(
     )
      <: TypeVariable(W)!
      <: kotlin/Comparable<in TypeVariable(W)!>?
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
      >: TypeVariable(R)
-     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?
-     <: kotlin/Comparable<TypeVariable(R)!>?
 TypeVariable(W) --- Readiness(
     	 true ALLOWED
     	false HAS_PROPER_CONSTRAINTS
@@ -177,10 +166,7 @@ TypeVariable(W) --- Readiness(
     )
      <: kotlin/Comparable<in TypeVariable(W)!>!
      >: ft<TypeVariable(E) & Any, TypeVariable(E)?>
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
      >: TypeVariable(R)!
-     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!
-     <: kotlin/Comparable<TypeVariable(R)!>!
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true ALLOWED
@@ -240,13 +226,7 @@ TypeVariable(R) --- Readiness(
      <: TypeVariable(E)
      <: TypeVariable(W)!
      <: kotlin/Comparable<in TypeVariable(W)!>?
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
      <: kotlin/Comparable<in TypeVariable(W)!>!
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
-     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!
-     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?
-     <: kotlin/Comparable<TypeVariable(R)!>!
-     <: kotlin/Comparable<TypeVariable(R)!>?
 TypeVariable(C) --- Readiness(
     	 true ALLOWED
     	false HAS_PROPER_CONSTRAINTS
@@ -283,10 +263,7 @@ TypeVariable(E) --- Readiness(
     )
      <: TypeVariable(W)!
      <: kotlin/Comparable<in TypeVariable(W)!>?
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
      >: TypeVariable(R)
-     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?
-     <: kotlin/Comparable<TypeVariable(R)!>?
 TypeVariable(W) --- Readiness(
     	 true ALLOWED
     	false HAS_PROPER_CONSTRAINTS
@@ -305,10 +282,7 @@ TypeVariable(W) --- Readiness(
     )
      <: kotlin/Comparable<in TypeVariable(W)!>!
      >: ft<TypeVariable(E) & Any, TypeVariable(E)?>
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
      >: TypeVariable(R)!
-     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!
-     <: kotlin/Comparable<TypeVariable(R)!>!
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true ALLOWED
@@ -348,13 +322,8 @@ CHOSEN for fixation: TypeVariable(W) --- Readiness(
     )
      <: kotlin/Comparable<in TypeVariable(W)!>!
      >: ft<TypeVariable(E) & Any, TypeVariable(E)?>
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
      >: TypeVariable(R)!
-     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!
-     <: kotlin/Comparable<TypeVariable(R)!>!
      = kotlin/Int!
-     <: kotlin/Comparable<kotlin/Int!>!
-     <: kotlin/Comparable<in kotlin/Int!>! (inferred during fixation)
     FIXED TO: kotlin/Int!
 TypeVariable(R) --- Readiness(
     	 true ALLOWED
@@ -375,18 +344,10 @@ TypeVariable(R) --- Readiness(
      <: TypeVariable(E)
      <: TypeVariable(W)!
      <: kotlin/Comparable<in TypeVariable(W)!>?
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
      <: kotlin/Comparable<in TypeVariable(W)!>!
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
-     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!
-     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?
-     <: kotlin/Comparable<TypeVariable(R)!>!
-     <: kotlin/Comparable<TypeVariable(R)!>?
      >: kotlin/Int
-     <: kotlin/Int?
      <: kotlin/Int!
-     <: kotlin/Comparable<kotlin/Int!>!
-     <: kotlin/Comparable<kotlin/Int!>?
+     <: kotlin/Int?
      <: kotlin/Comparable<in kotlin/Int!>? (inferred during fixation)
      <: kotlin/Comparable<in kotlin/Int!>! (inferred during fixation)
 TypeVariable(C) --- Readiness(
@@ -425,13 +386,9 @@ TypeVariable(E) --- Readiness(
     )
      <: TypeVariable(W)!
      <: kotlin/Comparable<in TypeVariable(W)!>?
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
      >: TypeVariable(R)
-     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?
-     <: kotlin/Comparable<TypeVariable(R)!>?
      >: kotlin/Int
      <: kotlin/Int?
-     <: kotlin/Comparable<kotlin/Int!>?
      <: kotlin/Int! (inferred during fixation)
      <: kotlin/Comparable<in kotlin/Int!>? (inferred during fixation)
 ********************************
@@ -441,7 +398,7 @@ CHOSEN for fixation: TypeVariable(R) --- Readiness(
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
     	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
     	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
@@ -452,17 +409,9 @@ CHOSEN for fixation: TypeVariable(R) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      <: TypeVariable(E)
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>!
-     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>!
-     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?
-     <: kotlin/Comparable<TypeVariable(R)!>!
-     <: kotlin/Comparable<TypeVariable(R)!>?
      >: kotlin/Int
-     <: kotlin/Int?
      <: kotlin/Int!
-     <: kotlin/Comparable<kotlin/Int!>!
-     <: kotlin/Comparable<kotlin/Int!>?
+     <: kotlin/Int?
      <: kotlin/Comparable<in kotlin/Int!>?
      <: kotlin/Comparable<in kotlin/Int!>!
      = kotlin/Int (inferred during fixation)
@@ -492,7 +441,7 @@ TypeVariable(E) --- Readiness(
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
     	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
     	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
@@ -502,13 +451,9 @@ TypeVariable(E) --- Readiness(
     	false HAS_PROPER_EQUALITY_CONSTRAINT
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
      >: TypeVariable(R)
-     <: kotlin/Comparable<ft<TypeVariable(R) & Any, TypeVariable(R)?>>?
-     <: kotlin/Comparable<TypeVariable(R)!>?
      >: kotlin/Int
      <: kotlin/Int?
-     <: kotlin/Comparable<kotlin/Int!>?
      <: kotlin/Int!
      <: kotlin/Comparable<in kotlin/Int!>?
 ********************************
@@ -528,10 +473,8 @@ CHOSEN for fixation: TypeVariable(E) --- Readiness(
     	false HAS_PROPER_EQUALITY_CONSTRAINT
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
-     <: kotlin/Comparable<ft<TypeVariable(E) & Any, TypeVariable(E)?>>?
      >: kotlin/Int
      <: kotlin/Int?
-     <: kotlin/Comparable<kotlin/Int!>?
      <: kotlin/Int!
      <: kotlin/Comparable<in kotlin/Int!>?
     FIXED TO: kotlin/Int

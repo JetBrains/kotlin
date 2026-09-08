@@ -202,7 +202,43 @@ data object TypeF : TypeC {
 // FILE: B.kt
 
 fun box(): String {
-  return runAllOutput(tests = [to<String, KFunction0<String>>(/* <this> = "callTypeA", */ that = ::callTypeA), to<String, KFunction0<String>>(/* <this> = "callTypeB", */ that = ::callTypeB), to<String, KFunction0<String>>(/* <this> = "callTypeC", */ that = ::callTypeC), to<String, KFunction0<String>>(/* <this> = "callTypeD", */ that = ::callTypeD), to<String, KFunction0<String>>(/* <this> = "callTypeE", */ that = ::callTypeE), to<String, KFunction0<String>>(/* <this> = "callTypeF", */ that = ::callTypeF)])
+  return runAllOutput(tests = [to<String, KFunction0<String>>(/* <this> = "callTypeA", */ that = KFunction0<String>(
+    /* bound = */ [],
+    /* invoke = */    local fun(): String {
+      return callTypeA()
+    }
+  )
+), to<String, KFunction0<String>>(/* <this> = "callTypeB", */ that = KFunction0<String>(
+    /* bound = */ [],
+    /* invoke = */    local fun(): String {
+      return callTypeB()
+    }
+  )
+), to<String, KFunction0<String>>(/* <this> = "callTypeC", */ that = KFunction0<String>(
+    /* bound = */ [],
+    /* invoke = */    local fun(): String {
+      return callTypeC()
+    }
+  )
+), to<String, KFunction0<String>>(/* <this> = "callTypeD", */ that = KFunction0<String>(
+    /* bound = */ [],
+    /* invoke = */    local fun(): String {
+      return callTypeD()
+    }
+  )
+), to<String, KFunction0<String>>(/* <this> = "callTypeE", */ that = KFunction0<String>(
+    /* bound = */ [],
+    /* invoke = */    local fun(): String {
+      return callTypeE()
+    }
+  )
+), to<String, KFunction0<String>>(/* <this> = "callTypeF", */ that = KFunction0<String>(
+    /* bound = */ [],
+    /* invoke = */    local fun(): String {
+      return callTypeF()
+    }
+  )
+)])
 }
 
 fun callTypeA(): String {

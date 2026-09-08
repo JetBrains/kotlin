@@ -1,0 +1,2 @@
+@MyAnnotation
+class Bar

@@ -106,10 +106,10 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclaratio
      * for lazy resolve tests with [KaDanglingFileResolutionMode.IGNORE_SELF] mode if the copy file differs from the original one.
      * That's why we need to use outer [analyzeCopy] call to manually set the dangling file resolution mode.
      */
-    private inline fun <R> wrapWithAnalyzeCopyIfNeeded(
+    private inline fun wrapWithAnalyzeCopyIfNeeded(
         file: KtFile,
         danglingFileResolutionMode: KaDanglingFileResolutionMode?,
-        crossinline action: () -> R
+        crossinline action: () -> Unit
     ) {
         if (file.copyOrigin != null && danglingFileResolutionMode != null) {
             analyzeCopy(file, danglingFileResolutionMode) {

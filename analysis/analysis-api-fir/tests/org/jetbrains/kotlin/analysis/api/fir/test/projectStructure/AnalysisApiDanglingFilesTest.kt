@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.test.projectStructure
 import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalModuleStateModificationEvent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.isStable
-import org.jetbrains.kotlin.analysis.api.resolution.resolveSymbol
+import org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed
 import org.jetbrains.kotlin.analysis.api.session.useSiteModule
@@ -53,7 +53,7 @@ class AnalysisApiDanglingFilesTest : AbstractAnalysisApiExecutionTest("testData/
         analyze(codeFragmentExpression) {
             assertions.assertTrue(useSiteModule::class.isSubclassOf(KaDanglingFileModule::class))
 
-            val callableSymbol = codeFragmentExpression.resolveSymbol()
+            val callableSymbol = codeFragmentExpression.resolveSuccessfulSymbol()
 
             // Check whether the code fragment is configured correctly
             assertions.assertEquals(method, callableSymbol?.psi)
@@ -69,7 +69,7 @@ class AnalysisApiDanglingFilesTest : AbstractAnalysisApiExecutionTest("testData/
         analyze(codeFragmentCopyExpression) {
             assertions.assertTrue(useSiteModule::class.isSubclassOf(KaDanglingFileModule::class))
 
-            val callableSymbol = codeFragmentCopyExpression.resolveSymbol()
+            val callableSymbol = codeFragmentCopyExpression.resolveSuccessfulSymbol()
 
             // Check whether the code fragment copy is configured correctly
             assertions.assertEquals(method, callableSymbol?.psi)
@@ -121,7 +121,7 @@ class AnalysisApiDanglingFilesTest : AbstractAnalysisApiExecutionTest("testData/
             // unstable.
             assertions.assertFalse(useSiteModule.isStable) { "Expected the code fragment to be unstable." }
 
-            val callableSymbol = codeFragmentExpression.resolveSymbol()
+            val callableSymbol = codeFragmentExpression.resolveSuccessfulSymbol()
 
             // Check whether the code fragment is configured correctly.
             assertions.assertEquals(method, callableSymbol?.psi)
@@ -145,7 +145,7 @@ class AnalysisApiDanglingFilesTest : AbstractAnalysisApiExecutionTest("testData/
 
             assertions.assertFalse(useSiteModule.isStable) { "Expected the nested code fragment to be unstable." }
 
-            val callableSymbol = nestedCodeFragmentExpression.resolveSymbol()
+            val callableSymbol = nestedCodeFragmentExpression.resolveSuccessfulSymbol()
 
             // Check whether the code fragment is configured correctly.
             assertions.assertEquals(method, callableSymbol?.psi)

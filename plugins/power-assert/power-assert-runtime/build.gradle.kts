@@ -1,12 +1,13 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.konan.target.HostManager
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("multiplatform")
     `maven-publish`
@@ -28,8 +29,6 @@ kotlin {
         freeCompilerArgs.addAll(
             "-Xreturn-value-checker=full",
             "-Xallow-kotlin-package",
-            // TODO(KT-50876) Required for reproducible builds.
-            "-Xklib-relative-path-base=${layout.buildDirectory.get().asFile},${layout.projectDirectory.asFile},$rootDir",
         )
     }
 
@@ -51,6 +50,12 @@ kotlin {
                     KotlinPlatformType.androidJvm -> error("unexpected platform type; was a JVM android target added accidentally?")
                 },
             )
+        }
+        if (this !is KotlinJvmTarget && this is HasConfigurableKotlinCompilerOptions<*>) {
+            compilerOptions {
+                // TODO(KT-50876) Required for reproducible builds.
+                freeCompilerArgs.add("-Xklib-relative-path-base=${layout.buildDirectory.get().asFile},${layout.projectDirectory.asFile},$rootDir",)
+            }
         }
     }
 
@@ -77,7 +82,7 @@ kotlin {
         // This is required because of the common source set dependency on a local stdlib.
         // Only these targets are added in the stdlib project during IDEA sync.
         when {
-            HostManager.hostIsMac -> @Suppress("DEPRECATION") macosX64("native")
+            HostManager.hostIsMac -> @Suppress("DEPRECATION", "DEPRECATION_ERROR") macosX64("native")
             HostManager.hostIsMingw -> mingwX64("native")
             HostManager.hostIsLinux -> linuxX64("native")
             else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
@@ -103,10 +108,11 @@ kotlin {
         @Suppress("DEPRECATION") androidNativeX64()
         mingwX64()
         watchosDeviceArm64()
-        @Suppress("DEPRECATION") macosX64()
-        @Suppress("DEPRECATION") iosX64()
-        @Suppress("DEPRECATION") watchosX64()
-        @Suppress("DEPRECATION") tvosX64()
+        @Suppress("DEPRECATION", "DEPRECATION_ERROR") macosX64()
+        @Suppress("DEPRECATION", "DEPRECATION_ERROR") iosX64()
+        @Suppress("DEPRECATION", "DEPRECATION_ERROR") watchosX64()
+        @Suppress("DEPRECATION", "DEPRECATION_ERROR") tvosX64()
+        @Suppress("DEPRECATION") linuxArm32Hfp()
     }
 
     sourceSets {

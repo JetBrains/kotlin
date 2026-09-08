@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -21,13 +23,16 @@ import java.util.List;
  * //               ^________________^
  * }</pre>
  */
+@SubclassOptInRequired(markerClass = KtImplementationDetail.class)
 public class KtTypeConstraintList extends KtElementImplStub<KotlinPlaceHolderStub<KtTypeConstraintList>> {
+    @KtImplementationDetail
     public KtTypeConstraintList(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
     public KtTypeConstraintList(@NotNull KotlinPlaceHolderStub<KtTypeConstraintList> stub) {
-        super(stub, KtStubBasedElementTypes.TYPE_CONSTRAINT_LIST);
+        super(stub, KtNodeTypes.TYPE_CONSTRAINT_LIST);
     }
 
     @Override
@@ -35,8 +40,9 @@ public class KtTypeConstraintList extends KtElementImplStub<KotlinPlaceHolderStu
         return visitor.visitTypeConstraintList(this, data);
     }
 
+    /** Returns the constraints in this {@code where} clause, in source order; empty if there are none. */
     @NotNull
     public List<KtTypeConstraint> getConstraints() {
-        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_CONSTRAINT);
+        return Arrays.asList(getStubOrPsiChildren(KtNodeTypes.TYPE_CONSTRAINT, KtTypeConstraint.EMPTY_ARRAY));
     }
 }
