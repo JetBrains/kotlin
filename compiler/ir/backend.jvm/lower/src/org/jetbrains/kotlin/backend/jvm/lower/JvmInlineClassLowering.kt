@@ -155,6 +155,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
             it == irConstructor || (it is IrFunction && it.isInlineClassFieldGetter && !it.visibility.isPublicAPI)
         }
         buildPrimaryInlineClassConstructor(declaration, irConstructor)
+        declaration.addExposedForJavaSecondaryConstructors()
         buildBoxFunction(declaration)
         buildUnboxFunction(declaration)
         buildSpecializedEqualsMethodIfNeeded(declaration)
@@ -643,13 +644,126 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
                 annotations = irConstructor.annotations.withJvmExposeBoxedAnnotation(irConstructor, this@JvmInlineClassLowering.context)
                 body = this@JvmInlineClassLowering.context.createIrBuilder(symbol).irBlockBody(this) {
                     // Delegate to exposed constructor-impl$default
-                    val tmp = irTemporary(irCall(function).apply {
+                    val tmp = irUnderlyingValueFromConstructorImpl(function, primaryConstructor) {
                         arguments[0] = null
                         passTypeArgumentsFrom(primaryConstructor)
-                    })
+                    }
                     +irDelegatingConstructorCall(primaryConstructor).apply {
                         passTypeArgumentsFrom(primaryConstructor)
-                        arguments[0] = irGet(tmp).coerceToUnboxed()
+                        arguments[0] = irGet(tmp)
+                        arguments[1] = irNull()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun IrStatementsBuilder<*>.irUnderlyingValueFromConstructorImpl(
+        constructorImpl: IrSimpleFunction,
+        primaryConstructor: IrConstructor,
+        configureCall: IrFunctionAccessExpression.() -> Unit,
+    ): IrVariable {
+        val underlyingType = primaryConstructor.parameters[0].type
+        return irTemporary(
+            coerceInlineClasses(
+                irCall(constructorImpl).apply(configureCall),
+                constructorImpl.returnType,
+                underlyingType,
+            ),
+            irType = underlyingType,
+        )
+    }
+
+    private fun IrClass.addExposedForJavaSecondaryConstructors() {
+        val primaryConstructor = primaryConstructor!!
+        val primaryHasMarker =
+            primaryConstructor.parameters.lastOrNull()?.origin == INLINE_CLASS_CONSTRUCTOR_SYNTHETIC_PARAMETER
+
+        val exposedSecondaryConstructors = declarations.filterIsInstance<IrSimpleFunction>().mapNotNull { replacement ->
+            if (replacement.origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR) return@mapNotNull null
+            val constructor = replacement.originalFunctionOfStaticInlineClassReplacement as? IrConstructor ?: return@mapNotNull null
+            if (constructor.isPrimary || constructor.constructedClass != this || !constructor.shouldBeExposedByAnnotationOrFlag(context)) {
+                return@mapNotNull null
+            }
+            constructor to replacement
+        }
+
+        var noArgConstructorIsClaimed = constructors.any {
+            it.origin == JvmLoweredDeclarationOrigin.EXPOSED_INLINE_CLASS_CONSTRUCTOR && it.parameters.isEmpty()
+        }
+
+        for ([constructor, replacement] in exposedSecondaryConstructors) {
+            addExposedForJavaSecondaryConstructor(constructor, primaryConstructor, replacement, primaryHasMarker)
+            if (constructor.parameters.isEmpty()) {
+                noArgConstructorIsClaimed = true
+            }
+            if (noArgConstructorIsClaimed || !constructor.shouldHaveExposedNoArgConstructor()) continue
+            noArgConstructorIsClaimed = true
+            addExposedNoArgForJavaSecondaryConstructor(constructor, primaryConstructor, replacement, primaryHasMarker)
+        }
+    }
+
+    private fun IrClass.addExposedForJavaSecondaryConstructor(
+        constructor: IrConstructor,
+        primaryConstructor: IrConstructor,
+        constructorImpl: IrSimpleFunction,
+        primaryHasMarker: Boolean,
+    ) {
+        addConstructor {
+            updateFrom(constructor)
+            isPrimary = false
+            origin = JvmLoweredDeclarationOrigin.EXPOSED_INLINE_CLASS_CONSTRUCTOR
+        }.apply {
+            copyFunctionSignatureFrom(constructor)
+            // Don't create a default argument stub for the exposed constructor
+            parameters.forEach { it.defaultValue = null }
+            annotations = constructor.annotations.withJvmExposeBoxedAnnotation(constructor, this@JvmInlineClassLowering.context)
+            val exposedParameters = parameters
+            body = this@JvmInlineClassLowering.context.createIrBuilder(symbol).irBlockBody(this) {
+                val underlying = irUnderlyingValueFromConstructorImpl(constructorImpl, primaryConstructor) {
+                    passTypeArgumentsFrom(primaryConstructor)
+                    for ([index, parameter] in exposedParameters.withIndex()) {
+                        arguments[index] = irGet(parameter)
+                    }
+                }
+                +irDelegatingConstructorCall(primaryConstructor).apply {
+                    passTypeArgumentsFrom(primaryConstructor)
+                    arguments[0] = irGet(underlying)
+                    if (primaryHasMarker) {
+                        arguments[1] = irNull()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun IrConstructor.shouldHaveExposedNoArgConstructor(): Boolean =
+        parameters.isNotEmpty() &&
+                parameters.all { it.defaultValue != null } &&
+                !hasAnnotation(JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME)
+
+    private fun IrClass.addExposedNoArgForJavaSecondaryConstructor(
+        constructor: IrConstructor,
+        primaryConstructor: IrConstructor,
+        constructorImpl: IrSimpleFunction,
+        primaryHasMarker: Boolean,
+    ) {
+        addConstructor {
+            updateFrom(constructor)
+            isPrimary = false
+            origin = JvmLoweredDeclarationOrigin.EXPOSED_INLINE_CLASS_CONSTRUCTOR
+            returnType = constructor.returnType
+        }.apply {
+            copyTypeParametersFrom(constructor)
+            annotations = constructor.annotations.withJvmExposeBoxedAnnotation(constructor, this@JvmInlineClassLowering.context)
+            body = this@JvmInlineClassLowering.context.createIrBuilder(symbol).irBlockBody(this) {
+                val tmp = irUnderlyingValueFromConstructorImpl(constructorImpl, primaryConstructor) {
+                    passTypeArgumentsFrom(primaryConstructor)
+                }
+                +irDelegatingConstructorCall(primaryConstructor).apply {
+                    passTypeArgumentsFrom(primaryConstructor)
+                    arguments[0] = irGet(tmp)
+                    if (primaryHasMarker) {
                         arguments[1] = irNull()
                     }
                 }
