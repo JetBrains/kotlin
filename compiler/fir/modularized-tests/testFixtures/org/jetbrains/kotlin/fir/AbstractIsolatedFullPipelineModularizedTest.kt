@@ -37,13 +37,14 @@ open class AbstractIsolatedFullPipelineModularizedTest(private val config: Modul
 
     fun runSingleModelCompilation(
         modelPath: String, tempDir: File? = null,
+        performanceManager: PerformanceManager? = null,
         configureArguments: (K2JVMCompilerArguments) -> Unit = {},
     ): Pair<ExitCode, MessageCollectorImpl> {
         val outputDir = createTempDirectory(tempDir?.toPath(), "compile-output").toFile()
         if (tempDir == null) outputDir.deleteOnExit()
         val moduleData = loadModuleDumpFile(File(modelPath), config).single()
         val messageCollector = MessageCollectorImpl()
-        val result = processModule(moduleData, outputDir, messageCollector, null, configureArguments)
+        val result = processModule(moduleData, outputDir, messageCollector, performanceManager, configureArguments)
         return result to messageCollector
     }
 
