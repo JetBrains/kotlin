@@ -2,21 +2,20 @@
 Current executable set to <path to executable>.
 (lldb) settings set stop-disassembly-display never
 (lldb) command script import <path to lldb script>
-(lldb) b main.kt:14
-Breakpoint 1: where = lldb_inspectMap.kexe`kfun:#main(kotlin.Array<kotlin.String>){} + <breakpoint offset> at main.kt:14:11, address = <memory address>
+(lldb) b main.kt:16
+Breakpoint 1: where = lldb_inspectMap.kexe`kfun:#main(kotlin.Array<kotlin.String>){} + <breakpoint offset> at main.kt:16:11, address = <memory address>
 (lldb) r
 Process <process id> launched: <path to executable>
 Process <process id> stopped
 * thread #<thread id>, stop reason = breakpoint 1.1
-    frame #0: <frame pc> lldb_inspectMap.kexe`kfun:#main(args=[]){} at main.kt:14:11
-   11  	    val simpleMutableMap: MutableMap<Int, String> = mutableMapOf(7 to "seven", 8 to "eight")
-   12  	    val emptyMap: Map<Int, Point> = emptyMap()
-   13  	    val nestedMap: Map<Int, List<Point>> = linkedMapOf(1 to listOf(Point(4, 5), Point(6, 7)), 2 to emptyList())
--> 14  	    return
+    frame #0: <frame pc> lldb_inspectMap.kexe`kfun:#main(args=[]){} at main.kt:16:11
+   13  	    mapWithRemovedEntry.remove(1)
+   14  	    val emptyMap: Map<Int, Point> = emptyMap()
+   15  	    val nestedMap: Map<Int, List<Point>> = linkedMapOf(1 to listOf(Point(4, 5), Point(6, 7)), 2 to emptyList())
+-> 16  	    return
     	          ^
-   15  	}
-   16  	
-   17  	data class Point(val x: Int, val y: Int)
+   17  	}
+   18  	data class Point(val x: Int, val y: Int)
 (lldb) fr var map
 (ObjHeader *) map = {10=Point(x=11, y=12), 13=Point(x=14, y=15)}
 (lldb) fr var -A -P 5 map
@@ -44,6 +43,13 @@ Process <process id> stopped
 (ObjHeader *) simpleMutableMap = {7=seven, 8=eight} {
   [0] = 7 = seven
   [1] = 8 = eight
+}
+(lldb) fr var mapWithRemovedEntry
+(ObjHeader *) mapWithRemovedEntry = {2=two, 3=three}
+(lldb) fr var -A -P 5 mapWithRemovedEntry
+(ObjHeader *) mapWithRemovedEntry = {2=two, 3=three} {
+  [0] = 2 = two
+  [1] = 3 = three
 }
 (lldb) fr var emptyMap
 (ObjHeader *) emptyMap = {}

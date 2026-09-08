@@ -11,9 +11,10 @@ fun main(args: Array<String>) {
     val simpleMutableSet: MutableSet<Int> = mutableSetOf(9, 10)
     val simpleLinkedSet: LinkedHashSet<Int> = linkedSetOf(11, 12)
     val simpleHashSet: HashSet<Int> = hashSetOf(13, 14)
+    val setWithRemovedElement = linkedSetOf(1, 2, 3)
+    setWithRemovedElement.remove(1)
     val emptySet: Set<Point> = emptySet()
     val nestedSet: Set<Set<Point>> = linkedSetOf(linkedSetOf(Point(4, 5), Point(6, 7)), emptySet())
     return
 }
-
 data class Point(val x: Int, val y: Int)

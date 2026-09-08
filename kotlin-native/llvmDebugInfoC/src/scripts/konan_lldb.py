@@ -1301,6 +1301,28 @@ def _synthetic_child_at_index(value, index):
     child = synthetic.GetChildAtIndex(index)
     return child if child is not None and child.IsValid() else None
 
+def _compute_logical_to_physical_idx_mapping(object_proxy):
+    length_value = _object_field_value(object_proxy, "length")
+    presence_array = _object_field_value(object_proxy, "presenceArray")
+    if (
+        length_value is None
+        or not length_value.IsValid()
+        or presence_array is None
+        or not presence_array.IsValid()
+    ):
+        return None
+
+    child_indices = []
+    for index in range(length_value.GetValueAsUnsigned()):
+        presence = _synthetic_child_at_index(presence_array, index)
+        if presence is None:
+            return None
+        # Tombstones have negative value
+        if presence.GetValueAsSigned() >= 0:
+            child_indices.append(index)
+
+    return child_indices
+
 
 class KonanListSyntheticProvider:
     def __init__(self, valobj, backing, children_count):
@@ -1357,12 +1379,10 @@ class KonanListSyntheticProvider:
 
 
 class KonanSetSyntheticProvider:
-    def __init__(self, valobj, keys, children_count):
+    def __init__(self, valobj, keys, child_indices):
         self._valobj = valobj
         self._keys = keys
-        self._children_count = (
-            0 if children_count is None else children_count
-        )
+        self._child_indices = child_indices
 
     @staticmethod
     def fromObjectProxy(valobj, object_proxy, internal_dict):
@@ -1373,7 +1393,7 @@ class KonanSetSyntheticProvider:
         if backing is None or not backing.IsValid() or backing.unsigned == 0:
             # Try to recognize EmptySet singleton via the presence of `serialVersionUID`
             if _has_only_serial_version_uid_field(object_proxy):
-                return KonanSetSyntheticProvider(valobj, None, 0)
+                return KonanSetSyntheticProvider(valobj, None, [])
             return None
 
         backing_object_proxy = KonanObjectSyntheticProvider(backing, internal_dict)
@@ -1382,46 +1402,45 @@ class KonanSetSyntheticProvider:
         if keys is None or not keys.IsValid() or keys.unsigned == 0:
             return None
 
-        size_value = _object_field_value(backing_object_proxy, "length")
-        children_count = (
-            size_value.GetValueAsUnsigned()
-            if size_value is not None and size_value.IsValid()
-            else None
+        child_indices = _compute_logical_to_physical_idx_mapping(
+            backing_object_proxy
         )
-        if children_count is None:
-            synthetic = _synthetic_value_or_self(keys)
-            children_count = 0 if synthetic is None else synthetic.GetNumChildren()
+        if child_indices is None:
+            return None
 
-        return KonanSetSyntheticProvider(
-            valobj,
-            keys,
-            children_count,
-        )
+        return KonanSetSyntheticProvider(valobj, keys, child_indices)
 
     def num_children(self):
-        return self._children_count
+        return len(self._child_indices)
 
     def get_child_index(self, name):
-        child_index = _synthetic_child_index(self._keys, name)
-        return child_index if 0 <= child_index < self.num_children() else -1
+        try:
+            index = int(name.strip("[]"))
+        except ValueError:
+            return -1
+        return index if 0 <= index < self.num_children() else -1
 
     def get_child_at_index(self, index):
         if not 0 <= index < self.num_children():
             return None
-        return _synthetic_child_at_index(self._keys, index)
+        child = _synthetic_child_at_index(self._keys, self._child_indices[index])
+        if child is None:
+            return None
+
+        # Clone the value with the correct name
+        child = child.Clone(str(index))
+        return child if child.IsValid() else None
 
     def update(self):
         return False
 
 
 class KonanMapSyntheticProvider:
-    def __init__(self, valobj, keys, values, children_count):
+    def __init__(self, valobj, keys, values, child_indices):
         self._valobj = valobj
         self._keys = keys
         self._values = values
-        self._children_count = (
-            0 if children_count is None else children_count
-        )
+        self._child_indices = child_indices
         self._entry_type = None
 
     @staticmethod
@@ -1440,19 +1459,16 @@ class KonanMapSyntheticProvider:
             or values.unsigned == 0
         ):
             if _has_only_serial_version_uid_field(object_proxy):
-                return KonanMapSyntheticProvider(valobj, None, None, 0)
+                return KonanMapSyntheticProvider(valobj, None, None, [])
             return None
 
-        size_value = _object_field_value(object_proxy, "length")
-        size = (
-            size_value.GetValueAsUnsigned()
-            if size_value is not None and size_value.IsValid()
-            else None
-        )
-        return KonanMapSyntheticProvider(valobj, keys, values, size)
+        child_indices = _compute_logical_to_physical_idx_mapping(object_proxy)
+        if child_indices is None:
+            return None
+        return KonanMapSyntheticProvider(valobj, keys, values, child_indices)
 
     def num_children(self):
-        return self._children_count
+        return len(self._child_indices)
 
     def get_child_index(self, name):
         try:
@@ -1465,8 +1481,9 @@ class KonanMapSyntheticProvider:
         if not 0 <= index < self.num_children():
             return None
 
-        key = _synthetic_child_at_index(self._keys, index)
-        value = _synthetic_child_at_index(self._values, index)
+        child_index = self._child_indices[index]
+        key = _synthetic_child_at_index(self._keys, child_index)
+        value = _synthetic_child_at_index(self._values, child_index)
         if key is None or value is None or not key.IsValid() or not value.IsValid():
             return None
 

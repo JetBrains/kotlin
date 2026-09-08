@@ -2,21 +2,20 @@
 Current executable set to <path to executable>.
 (lldb) settings set stop-disassembly-display never
 (lldb) command script import <path to lldb script>
-(lldb) b main.kt:16
-Breakpoint 1: where = lldb_inspectSet.kexe`kfun:#main(kotlin.Array<kotlin.String>){} + <breakpoint offset> at main.kt:16:11, address = <memory address>
+(lldb) b main.kt:18
+Breakpoint 1: where = lldb_inspectSet.kexe`kfun:#main(kotlin.Array<kotlin.String>){} + <breakpoint offset> at main.kt:18:11, address = <memory address>
 (lldb) r
 Process <process id> launched: <path to executable>
 Process <process id> stopped
 * thread #<thread id>, stop reason = breakpoint 1.1
-    frame #0: <frame pc> lldb_inspectSet.kexe`kfun:#main(args=[]){} at main.kt:16:11
-   13  	    val simpleHashSet: HashSet<Int> = hashSetOf(13, 14)
-   14  	    val emptySet: Set<Point> = emptySet()
-   15  	    val nestedSet: Set<Set<Point>> = linkedSetOf(linkedSetOf(Point(4, 5), Point(6, 7)), emptySet())
--> 16  	    return
+    frame #0: <frame pc> lldb_inspectSet.kexe`kfun:#main(args=[]){} at main.kt:18:11
+   15  	    setWithRemovedElement.remove(1)
+   16  	    val emptySet: Set<Point> = emptySet()
+   17  	    val nestedSet: Set<Set<Point>> = linkedSetOf(linkedSetOf(Point(4, 5), Point(6, 7)), emptySet())
+-> 18  	    return
     	          ^
-   17  	}
-   18  	
-   19  	data class Point(val x: Int, val y: Int)
+   19  	}
+   20  	data class Point(val x: Int, val y: Int)
 (lldb) fr var set
 (ObjHeader *) set = [Point(x=1, y=2), Point(x=3, y=4)]
 (lldb) fr var -A -P 5 set
@@ -86,6 +85,17 @@ Process <process id> stopped
   }
   1 = 14 {
     value = 14
+  }
+}
+(lldb) fr var setWithRemovedElement
+(ObjHeader *) setWithRemovedElement = [2, 3]
+(lldb) fr var -A -P 5 setWithRemovedElement
+(ObjHeader *) setWithRemovedElement = [2, 3] {
+  0 = 2 {
+    value = 2
+  }
+  1 = 3 {
+    value = 3
   }
 }
 (lldb) fr var emptySet
