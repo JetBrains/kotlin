@@ -34,9 +34,8 @@ class XCFrameworkIT : KGPBaseTest() {
                 assertTasksExecuted(":shared:linkDebugFrameworkWatchosArm64")
                 assertTasksExecuted(":shared:linkDebugFrameworkWatchosDeviceArm64")
                 assertTasksExecuted(":shared:linkDebugFrameworkWatchosSimulatorArm64")
-                assertTasksExecuted(":shared:linkDebugFrameworkWatchosX64")
                 assertTasksExecuted(":shared:assembleDebugWatchosFatFrameworkForSharedXCFramework")
-                assertTasksExecuted(":shared:assembleDebugWatchosSimulatorFatFrameworkForSharedXCFramework")
+                assertTasksSkipped(":shared:assembleDebugWatchosSimulatorFatFrameworkForSharedXCFramework")
                 assertTasksExecuted(":shared:assembleSharedDebugXCFramework")
                 assertDirectoryInProjectExists("shared/build/XCFrameworks/debug/shared.xcframework")
                 assertDirectoryInProjectExists("shared/build/XCFrameworks/debug/shared.xcframework/ios-arm64_x86_64-simulator/dSYMs/shared.framework.dSYM")
@@ -50,7 +49,6 @@ class XCFrameworkIT : KGPBaseTest() {
                 assertTasksUpToDate(":shared:linkDebugFrameworkWatchosSimulatorArm64")
                 assertTasksUpToDate(":shared:linkDebugFrameworkWatchosArm64")
                 assertTasksUpToDate(":shared:linkDebugFrameworkWatchosDeviceArm64")
-                assertTasksUpToDate(":shared:linkDebugFrameworkWatchosX64")
                 assertTasksUpToDate(":shared:assembleDebugWatchosFatFrameworkForSharedXCFramework")
                 assertTasksUpToDate(":shared:assembleSharedDebugXCFramework")
             }

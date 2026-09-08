@@ -45,7 +45,6 @@ class AppleFrameworkNonMacIT : KGPBaseTest() {
                 assertTasksSkipped(":shared:linkDebugFrameworkWatchosSimulatorArm64")
                 assertTasksSkipped(":shared:linkDebugFrameworkWatchosArm64")
                 assertTasksSkipped(":shared:linkDebugFrameworkWatchosDeviceArm64")
-                assertTasksSkipped(":shared:linkDebugFrameworkWatchosX64")
                 assertTasksSkipped(":shared:assembleDebugWatchosFatFrameworkForSharedXCFramework")
                 assertTasksSkipped(":shared:assembleSharedDebugXCFramework")
 

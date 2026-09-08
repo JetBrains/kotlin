@@ -4,16 +4,14 @@ plugins {
 
 kotlin {
     tvosArm64()
-    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-    tvosX64()
+    tvosSimulatorArm64()
 
     // Check that we can reenter the configuration method.
     tvosArm64 {
         binaries.framework(listOf(DEBUG))
     }
 
-    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-    tvosX64 {
+    tvosSimulatorArm64 {
         binaries.framework(listOf(DEBUG))
     }
 
