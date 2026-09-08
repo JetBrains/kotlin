@@ -82,26 +82,31 @@ internal fun createAllocatorInTheNewScope(): ScopedMemoryAllocator {
 @UnsafeWasmMemoryApi
 @ExperimentalWasmInterop
 private data class MemorySlot(val ptr: Pointer, val size: UInt) {
+    companion object {
+        /**
+         * Returns true if the two slots can be merged into one slot, by being exactly adjacent. As allocated memory slots cannot overlap, overlap isn't allowed for the purposes of merging either.
+         */
+        fun canMerge(left: MemorySlot, right: MemorySlot): Boolean {
+            assert(left.ptr.address != right.ptr.address) { "Allocated slots cannot describe memory starting at the exact same address" }
+
+            assert(left.ptr.address + left.size <= right.ptr.address) { "Left slot be left of the right slot, and be adjacent at max, may not be overlap" }
+
+            return left.ptr.address + left.size == right.ptr.address
+        }
+    }
+
     // TODO(REVIEW): in the usages, this is only ever used where we know the direction of the only possible successful one-way merge. So could optimize it based on that, but that would make this code less obvious, I'd vouch for leaving this as a NOTE comment in the code, and not changing it yet
     fun tryMerge(other: MemorySlot): MemorySlot? {
-        val (first, second) = if (ptr.address < other.ptr.address)
+        val [left, right] = if (ptr.address < other.ptr.address)
             this to other
         else
             other to this
 
-        // basically: check for range overlap, but perfect adjacency counts as overlap
-        val firstAddr = first.ptr.address
-        val secondAddr = second.ptr.address
-
-        assert(secondAddr != firstAddr) { "Allocated slots cannot describe memory starting at the exact same address" }
-        assert(firstAddr + first.size <= secondAddr) { "Allocated slots can only overlap by *adjacency*, actual overlap indicates incorrect allocations" }
-
-        // given that first is smaller or equal to second, we only need to check whether first extends into second, not the other way around
-        if (firstAddr + first.size == secondAddr) { // first extends to just next to the second
+        if (canMerge(left, right)) { // left extends to just next to the right
             // the combined allocation end is one of the previous ends, just whichever is larger
-            val newEndAddr = maxOf(firstAddr + first.size, secondAddr + second.size)
-            val newSize = newEndAddr - first.ptr.address
-            return MemorySlot(first.ptr, newSize)
+            val newEndAddr = maxOf(left.ptr.address + left.size, right.ptr.address + right.size)
+            val newSize = newEndAddr - left.ptr.address
+            return MemorySlot(left.ptr, newSize)
         }
 
         return null
@@ -194,40 +199,33 @@ private object FreeList {
                         rightElement?.ptr?.address?.let { allocatedSlot.ptr.address < it } ?: true
             ) { "Binary search has gone wrong" }
 
-            // once we start merging anything, the left and right slots might become adjacent, and need to be merged themselves
-            fun tryMergeLeftAndRight() {
-                // need to access left and right again here, as they can change during the function
-                val leftElement = list.getOrNull(insertionPointIndex - 1)
-                val rightElement = list.getOrNull(insertionPointIndex)
+            // 4 basic cases ("<" meaning "cannot merge", ">=" meaning "can merge"):
+            // 1. (end of left) < (start of new)  && (end of new) <  (start of right)
+            //    Can't merge anything -> insert only
+            // 2. (end of left) < (start of new)  && (end of new) >= (start of right)
+            //    Can only merge one slot, so replace that one
+            // 3. (end of left) >= (start of new) && (end of new) <  (start of right)
+            //    Symmetrical to 2.
+            // 4. (end of left) >= (start of new) && (end of new) >= (start of right)
+            //    Can merge everything into one, so replace one, remove one
 
-                if (leftElement == null || rightElement == null)
-                    return
-
-                val successfulMerge = leftElement.tryMerge(rightElement)
-                if (successfulMerge != null) {
-                    list[insertionPointIndex - 1] = successfulMerge
+            val canMergeLeft = leftElement != null && MemorySlot.canMerge(leftElement, allocatedSlot)
+            val canMergeRight = rightElement != null && MemorySlot.canMerge(allocatedSlot, rightElement)
+            when {
+                !canMergeLeft && !canMergeRight -> {
+                    list.add(insertionPointIndex, allocatedSlot)
+                }
+                canMergeLeft && !canMergeRight -> {
+                    list[insertionPointIndex - 1] = leftElement.tryMerge(allocatedSlot)!!
+                }
+                !canMergeLeft && canMergeRight -> {
+                    list[insertionPointIndex] = allocatedSlot.tryMerge(rightElement)!!
+                }
+                canMergeLeft && canMergeRight -> {
+                    list[insertionPointIndex - 1] = leftElement.tryMerge(allocatedSlot)!!.tryMerge(rightElement)!!
                     list.removeAt(insertionPointIndex)
-                    return
                 }
             }
-
-            val successfulMergeLeft = leftElement?.tryMerge(allocatedSlot)
-            if (successfulMergeLeft != null) {
-                list[insertionPointIndex - 1] = successfulMergeLeft
-                // now that we merged, left and right might be adjacent
-                tryMergeLeftAndRight()
-                return
-            }
-
-            val successfulMergeRight = rightElement?.tryMerge(allocatedSlot)
-            if (successfulMergeRight != null) {
-                list[insertionPointIndex] = successfulMergeRight
-                tryMergeLeftAndRight()
-                return
-            }
-
-            // otherwise, we couldn't merge with either side, so by definition there's no overlap, and we just need to insert a new slot
-            list.add(insertionPointIndex, allocatedSlot)
         } finally {
             isAlreadyOperating = false
         }
