@@ -18,19 +18,22 @@ import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import java.io.File
 
 private const val XCODE_INTEGRATION_CONFIGURE_DSL = "export { swift { xcodeIntegration { configure() } } }"
+private const val EXPORTED_MODULE_ITSELF = "the module being exported"
 
 /**
- * Applies the overrides from `xcodeIntegration { configure(dependency) { } }` to the modules collected from the
- * export graph, then reports overrides that matched nothing.
+ * Applies the overrides from `xcodeIntegration { configure(dependency) { } }` to the collected modules, then
+ * reports overrides that matched nothing and module names shared by more than one module.
  *
- * Runs on the collected modules rather than inside the collector, so the legacy `swiftExport { }` flow is not
- * involved: the two DSLs cannot be combined, so an override can only ever come from the `export { }` DSL.
+ * Works on the collector's output, so the legacy `swiftExport { }` flow never runs through here.
+ *
+ * @param rootModuleName the Swift module name of the module being exported, for collision detection
  */
 internal fun Project.applySwiftExportConsumerOverrides(
     modules: Provider<List<SwiftExportedModule>>,
     overrides: Provider<Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>>,
     exportConfiguration: Provider<LazyResolvedConfigurationWithArtifacts>,
     apiConfiguration: Provider<LazyResolvedConfigurationWithArtifacts?>,
+    rootModuleName: Provider<String>,
 ): Provider<List<SwiftExportedModule>> = provider {
     val overridesMap = overrides.get()
     // Declared option layers, highest precedence first. KT-87987 adds the producer source here.
@@ -66,12 +69,23 @@ internal fun Project.applySwiftExportConsumerOverrides(
         )
     }
 
+    val owners = listOf(rootModuleName.get() to EXPORTED_MODULE_ITSELF) +
+            exported.map { (module, component) -> module.moduleName to (component?.displayName ?: module.artifact.name) }
+    // Ignoring case: the output directories are named after the modules, and the macOS file system is
+    // case-insensitive by default.
+    val duplicates = owners.groupBy { (name, _) -> name.lowercase() }
+        .values
+        .filter { it.size > 1 }
+        .associate { group -> group.map { (name, _) -> name }.distinct().joinToString("/") to group.map { (_, owner) -> owner } }
+    if (duplicates.isNotEmpty()) {
+        reportDiagnostic(KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames(duplicates))
+    }
+
     exported.map { (module, _) -> module }
 }
 
 /**
- * The graph node each artifact came from. The first node reaching an artifact wins, which is also the order the
- * collector derives module names in.
+ * The graph node each artifact came from. First node wins, same as in the collector.
  */
 private fun componentByArtifact(
     exportConfiguration: LazyResolvedConfigurationWithArtifacts,

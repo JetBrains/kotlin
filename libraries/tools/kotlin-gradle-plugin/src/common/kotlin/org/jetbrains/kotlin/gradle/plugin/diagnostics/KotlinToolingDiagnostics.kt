@@ -1934,6 +1934,31 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    /**
+     * FATAL because it is reported after `checkKotlinGradlePluginConfigurationErrors` has run, where an ERROR would
+     * only be logged.
+     */
+    object SwiftExportDuplicateModuleNames : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+        /**
+         * @param duplicates final Swift module name to the components that produced it
+         */
+        operator fun invoke(duplicates: Map<String, List<String>>) = build {
+            title("Duplicate Swift Module Names")
+                .description {
+                    "The following Swift module names are produced by more than one module (compared ignoring case):\n" +
+                            duplicates.entries.joinToString("\n") { (moduleName, owners) ->
+                                "  '$moduleName': ${owners.joinToString(", ")}"
+                            }
+                }
+                .solution {
+                    "Give each module a distinct name with " +
+                            "export { swift { xcodeIntegration { configure(dependency) { moduleName = \"...\" } } } }. " +
+                            "If the collision is with the root module's own name, rename the root module instead with " +
+                            "export { swift { moduleName = \"...\" } }."
+                }
+        }
+    }
+
     object SwiftExportMinimumDeployTargetError : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(
             deploymentTargetSettingName: String,
