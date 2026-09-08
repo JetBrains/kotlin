@@ -17,7 +17,7 @@ FILE: representativeClassCaptured.kt
 
     }
     public final fun addEnum(x: R|kotlin/collections/MutableList<in MyEnum>|): R|kotlin/Unit| {
-        R|<local>/x|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|><Inapplicable(INAPPLICABLE): kotlin/collections/MutableList.add>#|(<Unresolved name: X>#)
+        R|<local>/x|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(Q|MyEnum|.R|/MyEnum.X|)
         R|<local>/x|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(Q|MyEnum|.R|/MyEnum.Y|)
     }
     public final fun addSet(x: R|kotlin/collections/MutableList<in kotlin/collections/Set<kotlin/String>>|): R|kotlin/Unit| {
@@ -25,7 +25,7 @@ FILE: representativeClassCaptured.kt
         R|<local>/x|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/String|>(String(a)))
     }
     public final fun <T : R|MyEnum|> addBound(x: R|kotlin/collections/MutableList<in T>|): R|kotlin/Unit| {
-        R|<local>/x|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|><Inapplicable(INAPPLICABLE): kotlin/collections/MutableList.add>#|(<Unresolved name: X>#)
+        R|<local>/x|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|><Inapplicable(INAPPLICABLE): kotlin/collections/MutableList.add>#|(Q|MyEnum|.R|/MyEnum.X|)
     }
     public final fun addOut(x: R|kotlin/collections/MutableList<out MyEnum>|, y: R|kotlin/collections/List<out kotlin/collections/Set<kotlin/String>>|): R|kotlin/Unit| {
         R|<local>/x|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|><Inapplicable(INAPPLICABLE): kotlin/collections/MutableList.add>#|(<Unresolved name: X>#)
