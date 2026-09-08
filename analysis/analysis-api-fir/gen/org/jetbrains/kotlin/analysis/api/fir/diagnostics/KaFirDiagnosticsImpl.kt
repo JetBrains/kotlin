@@ -6773,6 +6773,16 @@ internal class SyntaxImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.Syntax
 
+internal class LeadingWhitespaceRequiredImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.LeadingWhitespaceRequired
+
+internal class TrailingWhitespaceRequiredImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TrailingWhitespaceRequired
+
 internal class NestedExternalDeclarationImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,

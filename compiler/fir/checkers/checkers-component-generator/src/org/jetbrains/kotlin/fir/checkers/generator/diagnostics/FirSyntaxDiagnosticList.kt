@@ -10,12 +10,14 @@ import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
 
-@Suppress("UNUSED_VARIABLE", "LocalVariableName", "ClassName", "unused")
+@Suppress("UNUSED_VARIABLE", "ClassName", "unused")
 @OptIn(PrivateForInline::class)
 object SYNTAX_DIAGNOSTIC_LIST : DiagnosticList("FirSyntaxErrors") {
     val Syntax by object : DiagnosticGroup("Syntax") {
         val SYNTAX by error<PsiElement>(positioningStrategy = PositioningStrategy.SYNTAX_ERROR) {
             parameter<String>("message")
         }
+        val LEADING_WHITESPACE_REQUIRED by error<PsiElement>()
+        val TRAILING_WHITESPACE_REQUIRED by error<PsiElement>()
     }
 }

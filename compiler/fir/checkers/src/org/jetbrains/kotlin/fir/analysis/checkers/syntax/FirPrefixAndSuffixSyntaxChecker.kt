@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.FLOAT_LITERAL
@@ -38,26 +38,26 @@ object FirPrefixAndSuffixSyntaxChecker : FirExpressionSyntaxChecker<FirStatement
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsi(element: FirStatement, source: KtPsiSourceElement, psi: KtExpression) {
-        fun check(prefixOrSuffix: PsiElement) {
-            checkLiteralPrefixOrSuffix(prefixOrSuffix.node.elementType) {
-                prefixOrSuffix.toKtPsiSourceElement()
+        fun check(affix: PsiElement, prefix: Boolean) {
+            checkLiteralAffix(affix.node.elementType, prefix) {
+                affix.toKtPsiSourceElement()
             }
         }
 
-        psi.prevLeaf()?.let { check(it) }
-        psi.nextLeaf()?.let { check(it) }
+        psi.prevLeaf()?.let { check(it, prefix = true) }
+        psi.nextLeaf()?.let { check(it, prefix = false) }
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkLightTree(element: FirStatement, source: KtLightSourceElement) {
-        fun check(prefixOrSuffix: LighterASTNode, source: KtSourceElement) {
-            checkLiteralPrefixOrSuffix(prefixOrSuffix.tokenType ?: return) {
-                prefixOrSuffix.toKtLightSourceElement(source.treeStructure)
+        fun check(affix: LighterASTNode, source: KtSourceElement, prefix: Boolean) {
+            checkLiteralAffix(affix.tokenType ?: return, prefix) {
+                affix.toKtLightSourceElement(source.treeStructure)
             }
         }
 
-        source.lighterASTNode.adjacentLeaf(source.treeStructure, forward = false)?.let { check(it, source) }
-        source.lighterASTNode.adjacentLeaf(source.treeStructure, forward = true)?.let { check(it, source) }
+        source.lighterASTNode.adjacentLeaf(source.treeStructure, forward = false)?.let { check(it, source, prefix = true) }
+        source.lighterASTNode.adjacentLeaf(source.treeStructure, forward = true)?.let { check(it, source, prefix = false) }
     }
 
     /**
@@ -96,9 +96,12 @@ object FirPrefixAndSuffixSyntaxChecker : FirExpressionSyntaxChecker<FirStatement
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private inline fun checkLiteralPrefixOrSuffix(elementType: IElementType, getKtSourceElement: () -> KtSourceElement) {
+    private inline fun checkLiteralAffix(elementType: IElementType, prefix: Boolean, getKtSourceElement: () -> KtSourceElement) {
         if (elementType === IDENTIFIER || elementType === INTEGER_LITERAL || elementType === FLOAT_LITERAL || elementType is KtKeywordToken) {
-            reporter.reportOn(getKtSourceElement(), FirErrors.UNSUPPORTED, "Literals must be surrounded by whitespace.")
+            reporter.reportOn(
+                getKtSourceElement(),
+                if (prefix) FirSyntaxErrors.TRAILING_WHITESPACE_REQUIRED else FirSyntaxErrors.LEADING_WHITESPACE_REQUIRED
+            )
         }
     }
 }

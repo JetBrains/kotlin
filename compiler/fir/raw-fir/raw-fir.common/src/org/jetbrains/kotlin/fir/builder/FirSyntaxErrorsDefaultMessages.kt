@@ -12,5 +12,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 object FirSyntaxErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("FIR") { map ->
         map.put(FirSyntaxErrors.SYNTAX, "Syntax error{0}.", OPTIONAL_COLON_TO_STRING)
+        map.put(FirSyntaxErrors.LEADING_WHITESPACE_REQUIRED, "At least one leading whitespace is required.")
+        map.put(FirSyntaxErrors.TRAILING_WHITESPACE_REQUIRED, "At least one trailing whitespace is required.")
     }
 }

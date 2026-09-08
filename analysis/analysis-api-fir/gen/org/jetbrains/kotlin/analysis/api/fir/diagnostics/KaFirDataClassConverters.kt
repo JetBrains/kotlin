@@ -2888,6 +2888,12 @@ private fun KaDiagnosticConverterBuilder.addConversions62() {
             token,
         )
     }
+    add(FirSyntaxErrors.LEADING_WHITESPACE_REQUIRED) { firDiagnostic ->
+        LeadingWhitespaceRequiredImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions63() {
@@ -7270,6 +7276,12 @@ private fun KaDiagnosticConverterBuilder.addConversions160() {
         ProtectedCallFromPublicInlineErrorImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirSyntaxErrors.TRAILING_WHITESPACE_REQUIRED) { firDiagnostic ->
+        TrailingWhitespaceRequiredImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
