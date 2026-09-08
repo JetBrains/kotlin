@@ -75,6 +75,7 @@ internal fun Project.registerSwiftExportTask(
         mainCompilation = mainCompilation,
         swiftApiFlattenPackage = swiftExportConfiguration.rootPackage,
         exportedModules = swiftExportConfiguration.exportedModules,
+        swiftExportConfiguration = swiftExportConfiguration,
         customSetting = swiftExportConfiguration.settings
     )
 
@@ -166,6 +167,7 @@ private fun Project.registerSwiftExportRun(
     mainCompilation: KotlinNativeCompilation,
     swiftApiFlattenPackage: Provider<String>,
     exportedModules: Provider<Set<SwiftExportedDependency>>,
+    swiftExportConfiguration: SwiftExportConfigurationCompat,
     customSetting: Provider<Map<String, String>>,
 ): TaskProvider<SwiftExportTask> {
     val swiftExportTaskName = lowerCamelCaseName(
@@ -195,10 +197,14 @@ private fun Project.registerSwiftExportRun(
         task.parameters.bridgeModuleName.set("SharedBridge")
         task.parameters.swiftExportSettings.set(customSetting)
         task.parameters.swiftModules.set(
-            collectModules(
+            swiftExportConfiguration.adjustSwiftModules(
+                collectModules(
+                    exportConfigurationProvider,
+                    apiConfigurationProvider,
+                    exportedModules
+                ),
                 exportConfigurationProvider,
                 apiConfigurationProvider,
-                exportedModules
             )
         )
 
