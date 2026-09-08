@@ -228,6 +228,7 @@ class ScriptingWithCliCompilerTest {
                         "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
                         K2JVMCompilerArguments::classpath.cliArgument, (getMainKtsClassPath() + runtimeJarForTests()).joinToString(File.pathSeparator),
                         K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
+                        @Suppress("DEPRECATION") K2JVMCompilerArguments::useFirLT.cliArgument("false"),
                         K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
                         K2JVMCompilerArguments::verbose.cliArgument,
                         K2JVMCompilerArguments::noStdlib.cliArgument,
@@ -255,6 +256,7 @@ class ScriptingWithCliCompilerTest {
                     arrayOf(
                         "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
                         K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator), K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
+                        @Suppress("DEPRECATION") K2JVMCompilerArguments::useFirLT.cliArgument("false"),
                         K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
                         K2JVMCompilerArguments::verbose.cliArgument,
                         "$TEST_DATA_DIR/compiler/mixedCompilation/nonScriptAccessingScript.kt",

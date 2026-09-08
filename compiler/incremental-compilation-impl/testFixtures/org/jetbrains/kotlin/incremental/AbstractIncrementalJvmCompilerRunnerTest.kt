@@ -85,7 +85,7 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
 
             val compiler =
                 @Suppress("DEPRECATION")
-                if (k2Mode && args.useFirIC) {
+                if (k2Mode && args.useFirIC && args.useFirLT /* TODO by @Ilya.Chernikov: move LT check into runner */) {
                     IncrementalFirJvmCompilerTestRunner(
                         cachesDir,
                         buildReporter,

@@ -172,22 +172,6 @@ val removedCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLe
     }
 
     compilerArgument {
-        name = "Xuse-fir-lt"
-        compilerName = "useFirLT"
-        description = "Compile using the LightTree parser with the frontend IR.".asReleaseDependent()
-        valueType = BooleanType.defaultTrue
-        deprecatedMessage =
-            "The light tree mode is enabled by default, and it will become the only available mode in one of the future releases."
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_7_0,
-            deprecatedVersion = KotlinReleaseVersion.v2_4_20,
-            removedVersion = KotlinReleaseVersion.v2_5_0,
-        )
-        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
-    }
-
-    compilerArgument {
         name = "Xintellij-plugin-root"
         description =
             "Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.".asReleaseDependent()
