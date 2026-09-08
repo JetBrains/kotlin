@@ -462,6 +462,20 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface LeadingWhitespaceRequired : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<LeadingWhitespaceRequired>
+            get() = LeadingWhitespaceRequired::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface TrailingWhitespaceRequired : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<TrailingWhitespaceRequired>
+            get() = TrailingWhitespaceRequired::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface UnresolvedReference : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<UnresolvedReference>
             get() = UnresolvedReference::class

@@ -2841,6 +2841,12 @@ private fun KaDiagnosticConverterBuilder.addConversions62() {
             token,
         )
     }
+    add(FirErrors.LEADING_WHITESPACE_REQUIRED) { firDiagnostic ->
+        LeadingWhitespaceRequiredImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.PLACEHOLDER_PROJECTION_IN_TYPEREF) { firDiagnostic ->
         PlaceholderProjectionInTyperefImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -7242,6 +7248,12 @@ private fun KaDiagnosticConverterBuilder.addConversions159() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions160() {
+    add(FirErrors.TRAILING_WHITESPACE_REQUIRED) { firDiagnostic ->
+        TrailingWhitespaceRequiredImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT_ERROR) { firDiagnostic ->
         ImplicitPropertyTypeMakesBehaviorOrderDependantErrorImpl(
             firSymbolBuilder.variableBuilder.buildVariableSymbol(firDiagnostic.a),

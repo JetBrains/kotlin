@@ -536,6 +536,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_NULLABLE_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_PROPERTY_WITHOUT_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LEADING_WHITESPACE_REQUIRED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LEAKED_IN_PLACE_LAMBDA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LESS_VISIBLE_TYPE_ACCESS_IN_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE
@@ -853,6 +854,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_ON_LHS_OF_DOT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SMARTCAST_TO_TYPE_VARIABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TRAILING_WHITESPACE_REQUIRED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_VARIANCE_CONFLICT_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNCHECKED_CAST
@@ -1064,6 +1066,14 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION,
             "Array literals outside of annotations are unsupported."
+        )
+        map.put(
+            LEADING_WHITESPACE_REQUIRED,
+            "At least one leading whitespace is required."
+        )
+        map.put(
+            TRAILING_WHITESPACE_REQUIRED,
+            "At least one trailing whitespace is required."
         )
 
         // Unresolved

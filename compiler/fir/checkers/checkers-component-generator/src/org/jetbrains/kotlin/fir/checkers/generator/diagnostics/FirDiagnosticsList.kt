@@ -135,6 +135,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION by deprecationError<PsiElement>(
             LanguageFeature.ForbidArrayLiteralsInNonAnnotationContexts,
         )
+        val LEADING_WHITESPACE_REQUIRED by error<PsiElement>()
+        val TRAILING_WHITESPACE_REQUIRED by error<PsiElement>()
     }
 
     val UNRESOLVED by object : DiagnosticGroup("Unresolved") {
