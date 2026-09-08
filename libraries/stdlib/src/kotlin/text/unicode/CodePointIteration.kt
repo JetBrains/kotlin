@@ -19,6 +19,7 @@ package kotlin.text.unicode
  * @return the Unicode code point as a [CodePoint] corresponding to the character or surrogate pair at the given [index].
  * @throws IndexOutOfBoundsException if the [index] is out of range.
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun String.codePointAt(index: Int): CodePoint
 
@@ -36,6 +37,7 @@ public expect fun String.codePointAt(index: Int): CodePoint
  * @return the Unicode code point as a [CodePoint] corresponding to the character or surrogate pair at the given [index].
  * @throws IndexOutOfBoundsException if the [index] is out of range.
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CharSequence.codePointAt(index: Int): CodePoint
 
@@ -53,6 +55,7 @@ public expect fun CharSequence.codePointAt(index: Int): CodePoint
  * @return the Unicode code point as a [CodePoint] corresponding to the character or surrogate pair at the given [index].
  * @throws IndexOutOfBoundsException if the [index] is out of range.
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CharArray.codePointAt(index: Int): CodePoint
 
@@ -73,6 +76,7 @@ public expect fun CharArray.codePointAt(index: Int): CodePoint
  * @return the Unicode code point as a [CodePoint] corresponding to the character or surrogate pair at the given [index].
  * @throws IndexOutOfBoundsException if the [index] or [endIndex] are out of range.
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CharArray.codePointAt(index: Int, endIndex: Int): CodePoint
 
@@ -91,6 +95,7 @@ public expect fun CharArray.codePointAt(index: Int, endIndex: Int): CodePoint
  * @return the Unicode code point value preceding the specified [index].
  * @throws IndexOutOfBoundsException if [index] is out of range.
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun String.codePointBefore(index: Int): CodePoint
 
@@ -109,6 +114,7 @@ public expect fun String.codePointBefore(index: Int): CodePoint
  * @return the Unicode code point value preceding the specified [index].
  * @throws IndexOutOfBoundsException if [index] is out of range.
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CharSequence.codePointBefore(index: Int): CodePoint
 
@@ -127,6 +133,7 @@ public expect fun CharSequence.codePointBefore(index: Int): CodePoint
  * @return the Unicode code point value preceding the specified [index].
  * @throws IndexOutOfBoundsException if [index] is out of range.
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CharArray.codePointBefore(index: Int): CodePoint
 
@@ -148,6 +155,7 @@ public expect fun CharArray.codePointBefore(index: Int): CodePoint
  * @return the Unicode code point value preceding the specified [index].
  * @throws IndexOutOfBoundsException if [index] or [startIndex] are out of range.
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CharArray.codePointBefore(index: Int, startIndex: Int): CodePoint
 
@@ -165,6 +173,7 @@ public expect fun CharArray.codePointBefore(index: Int, startIndex: Int): CodePo
  * @return The number of Unicode code points in the specified range.
  * @throws IndexOutOfBoundsException If [startIndex] or [endIndex] is out of the valid range `0..length` or `endIndex < startIndex`.
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun String.codePointCount(startIndex: Int = 0, endIndex: Int = this.length): Int
 
@@ -182,6 +191,7 @@ public expect fun String.codePointCount(startIndex: Int = 0, endIndex: Int = thi
  * @return The number of Unicode code points in the specified range.
  * @throws IndexOutOfBoundsException If [startIndex] or [endIndex] is out of the valid range `0..length` or `endIndex < startIndex`.
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CharSequence.codePointCount(startIndex: Int = 0, endIndex: Int = this.length): Int
 
@@ -199,6 +209,7 @@ public expect fun CharSequence.codePointCount(startIndex: Int = 0, endIndex: Int
  * @return The number of Unicode code points in the specified range.
  * @throws IndexOutOfBoundsException If [startIndex] or [endIndex] is out of the valid range `0..size` or `endIndex < startIndex`.
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CharArray.codePointCount(startIndex: Int = 0, endIndex: Int = this.size): Int
 
@@ -217,6 +228,7 @@ public expect fun CharArray.codePointCount(startIndex: Int = 0, endIndex: Int = 
  *         there are less than `codePointOffset` code points in the string starting at the specified [index] for positive [codePointOffset] or
  *         there are less than `-codePointOffset` code points in the string before the specified [index] for negative [codePointOffset].
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun String.offsetByCodePoints(index: Int, codePointOffset: Int): Int
 
@@ -235,6 +247,7 @@ public expect fun String.offsetByCodePoints(index: Int, codePointOffset: Int): I
  *         there are less than `codePointOffset` code points in the string starting at the specified [index] for positive [codePointOffset] or
  *         there are less than `-codePointOffset` code points in the string before the specified [index] for negative [codePointOffset].
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CharSequence.offsetByCodePoints(index: Int, codePointOffset: Int): Int
 
@@ -259,6 +272,7 @@ public expect fun CharSequence.offsetByCodePoints(index: Int, codePointOffset: I
  *         there are less than `codePointOffset` code points in the string starting at the specified [index] for positive [codePointOffset] or
  *         there are less than `-codePointOffset` code points in the string before the specified [index] for negative [codePointOffset].
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CharArray.offsetByCodePoints(index: Int, codePointOffset: Int, startIndex: Int = 0, endIndex: Int = this.size): Int
 
@@ -274,6 +288,7 @@ public expect fun CharArray.offsetByCodePoints(index: Int, codePointOffset: Int,
  * @see codePointSequence
  * @see codePointIterator
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public inline fun String.forEachCodePoint(action: (CodePoint) -> Unit) {
     forEachCodePointImpl(0, length, this::codePointAt, action)
@@ -290,6 +305,7 @@ public inline fun String.forEachCodePoint(action: (CodePoint) -> Unit) {
  * @see codePointSequence
  * @see codePointIterator
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public inline fun CharSequence.forEachCodePoint(action: (CodePoint) -> Unit) {
     forEachCodePointImpl(0, length, this::codePointAt, action)
@@ -313,12 +329,14 @@ public inline fun CharSequence.forEachCodePoint(action: (CodePoint) -> Unit) {
  * @see codePointSequence
  * @see codePointIterator
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public inline fun CharArray.forEachCodePoint(startIndex: Int = 0, endIndex: Int = size, action: (CodePoint) -> Unit) {
     if (startIndex < 0 || endIndex > size || startIndex > endIndex) throw IndexOutOfBoundsException("startIndex: $startIndex, endIndex: $endIndex, size: $size")
     forEachCodePointImpl(startIndex, endIndex, { index -> codePointAt(index, endIndex) }, action)
 }
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @PublishedApi
 internal inline fun forEachCodePointImpl(startIndex: Int, endIndex: Int, codePointAt: (Int) -> CodePoint, action: (CodePoint) -> Unit) {
@@ -336,6 +354,7 @@ internal inline fun forEachCodePointImpl(startIndex: Int, endIndex: Int, codePoi
  * The sequence can be obtained from a [String], [CharSequence], or a [CharArray] with the [codePointSequence] function.
  * The sequence allows iterating through the code points in the container in the direction from the beginning to the end.
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public interface CodePointSequence : Sequence<CodePoint> {
     override fun iterator(): CodePointIterator
@@ -347,6 +366,7 @@ public interface CodePointSequence : Sequence<CodePoint> {
  * This iterator type is returned by [CodePointSequence.iterator] operator.
  * It iterates through the code points in the container in the direction from the beginning to the end.
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public interface CodePointIterator : Iterator<CodePoint> {
 }
@@ -366,6 +386,7 @@ public interface CodePointIterator : Iterator<CodePoint> {
  * The iterator can be obtained from a [String], [CharSequence], or [CharArray] using the [codePointIterator] function.
  */
 // TODO: Name TBD
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public interface CodePointIndexedIterator : CodePointIterator {
     /**
@@ -419,6 +440,7 @@ public interface CodePointIndexedIterator : CodePointIterator {
     public fun advanceByCodePoints(codePointOffset: Int)
 }
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 private abstract class AbstractCodePointIterator(startIndex: Int, val endIndex: Int) : CodePointIterator {
     var index = startIndex
@@ -442,6 +464,7 @@ private abstract class AbstractCodePointIterator(startIndex: Int, val endIndex: 
  *
  * @see forEachCodePoint
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public fun String.codePointSequence(): CodePointSequence =
     object : CodePointSequence {
@@ -457,6 +480,7 @@ public fun String.codePointSequence(): CodePointSequence =
  *
  * @see forEachCodePoint
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public fun CharSequence.codePointSequence(): CodePointSequence =
     object : CodePointSequence {
@@ -479,6 +503,7 @@ public fun CharSequence.codePointSequence(): CodePointSequence =
  *
  * @see forEachCodePoint
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public fun CharArray.codePointSequence(startIndex: Int = 0, endIndex: Int = size): CodePointSequence {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, size)
@@ -490,6 +515,7 @@ public fun CharArray.codePointSequence(startIndex: Int = 0, endIndex: Int = size
 }
 
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 private abstract class AbstractCodePointIndexedIterator(initialIndex: Int, val startIndex: Int, val endIndex: Int) : CodePointIndexedIterator {
     companion object {
@@ -547,6 +573,7 @@ private abstract class AbstractCodePointIndexedIterator(initialIndex: Int, val s
  * @return A [CodePointIndexedIterator] for traversing the string's Unicode code points from the specified index.
  * @throws IndexOutOfBoundsException if [index] is not within the range `0..length`.
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public fun String.codePointIterator(index: Int = 0): CodePointIndexedIterator {
     AbstractList.checkPositionIndex(index, length)
@@ -565,6 +592,7 @@ public fun String.codePointIterator(index: Int = 0): CodePointIndexedIterator {
  * @return A [CodePointIndexedIterator] for traversing the string's Unicode code points from the specified index.
  * @throws IndexOutOfBoundsException if [index] is not within the range `0..length`.
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public fun CharSequence.codePointIterator(index: Int = 0): CodePointIndexedIterator {
     AbstractList.checkPositionIndex(index, length)
@@ -593,6 +621,7 @@ public fun CharSequence.codePointIterator(index: Int = 0): CodePointIndexedItera
  * @throws IndexOutOfBoundsException If [startIndex] or [endIndex] is out of the valid range `0..size` or `endIndex < startIndex`.
  * @throws IndexOutOfBoundsException if [index] is not within the range `startIndex..endIndex`.
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public fun CharArray.codePointIterator(index: Int = 0, startIndex: Int = 0, endIndex: Int = size): CodePointIndexedIterator {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, size)

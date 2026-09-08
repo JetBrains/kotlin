@@ -8,10 +8,12 @@ package kotlin.text.unicode
 import kotlin.text.category
 
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public actual val CodePoint.category: CharCategory
     get() = CharCategory.valueOf(Character.getType(this.code))
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public val CodePoint.directionality: CharDirectionality
     get() = CharDirectionality.valueOf(Character.getDirectionality(this.code).toInt())
@@ -21,38 +23,47 @@ public val CodePoint.directionality: CharDirectionality
  *
  * A character is considered to be defined in Unicode if its [category] is not [CharCategory.UNASSIGNED].
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @kotlin.internal.InlineOnly
 public actual inline fun CodePoint.isDefined(): Boolean = Character.isDefined(this.code)
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @kotlin.internal.InlineOnly
 public actual inline fun CodePoint.isLetter(): Boolean = Character.isLetter(this.code)
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @kotlin.internal.InlineOnly
 public actual inline fun CodePoint.isDigit(): Boolean = Character.isDigit(this.code)
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @kotlin.internal.InlineOnly
 public actual inline fun CodePoint.isLetterOrDigit(): Boolean = Character.isLetterOrDigit(this.code)
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @kotlin.internal.InlineOnly
 public actual inline fun CodePoint.isISOControl(): Boolean = Character.isISOControl(this.code)
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @kotlin.internal.InlineOnly
 public actual inline fun CodePoint.isLowerCase(): Boolean = Character.isLowerCase(this.code)
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @kotlin.internal.InlineOnly
 public actual inline fun CodePoint.isTitleCase(): Boolean = Character.isTitleCase(this.code)
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @kotlin.internal.InlineOnly
 public actual inline fun CodePoint.isUpperCase(): Boolean = Character.isUpperCase(this.code)
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public actual fun CodePoint.isWhitespace(): Boolean =
     // no whitespace outside BMP

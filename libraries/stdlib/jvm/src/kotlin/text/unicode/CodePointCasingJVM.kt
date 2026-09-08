@@ -8,26 +8,31 @@ package kotlin.text.unicode
 import kotlin.internal.InlineOnly
 
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @InlineOnly
 public actual inline fun CodePoint.lowercase(): String =
     toString().lowercase()
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @InlineOnly
 public actual inline fun CodePoint.lowercaseCodePoint(): CodePoint =
     Character.toLowerCase(code).toCodePoint()
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @InlineOnly
 public actual inline fun CodePoint.uppercase(): String =
     toString().uppercase()
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @InlineOnly
 public actual inline fun CodePoint.uppercaseCodePoint(): CodePoint =
     Character.toLowerCase(code).toCodePoint()
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @InlineOnly
 public actual inline fun CodePoint.titlecaseCodePoint(): CodePoint =

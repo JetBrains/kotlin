@@ -15,6 +15,7 @@ package kotlin.text.unicode
  *
  * @sample samples.text.Chars.lowercase
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CodePoint.lowercase(): String
 
@@ -27,6 +28,7 @@ public expect fun CodePoint.lowercase(): String
  *
  * @sample samples.text.Chars.lowercase
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CodePoint.lowercaseCodePoint(): CodePoint
 
@@ -40,6 +42,7 @@ public expect fun CodePoint.lowercaseCodePoint(): CodePoint
  *
  * @sample samples.text.Chars.uppercase
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CodePoint.uppercase(): String
 
@@ -52,6 +55,7 @@ public expect fun CodePoint.uppercase(): String
  *
  * @sample samples.text.Chars.uppercase
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CodePoint.uppercaseCodePoint(): CodePoint
 
@@ -65,6 +69,7 @@ public expect fun CodePoint.uppercaseCodePoint(): CodePoint
  *
  * @sample samples.text.Chars.titlecase
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public fun CodePoint.titlecase(): String {
     if (isBasic) {
@@ -84,5 +89,6 @@ public fun CodePoint.titlecase(): String {
  *
  * @sample samples.text.Chars.titlecase
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public expect fun CodePoint.titlecaseCodePoint(): CodePoint
