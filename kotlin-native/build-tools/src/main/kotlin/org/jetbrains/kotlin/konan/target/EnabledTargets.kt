@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.konan.target
 
-// Targets already removed from the in-tree compiler but still present in the bootstrap.
+// Targets no longer supported by the in-tree compiler but still present in the bootstrap.
 // Matched by name so this keeps compiling after the bootstrap drops the KonanTarget constants.
 // todo: KT-78078
-private val removedTargetNames = setOf("watchos_arm32")
+internal val unsupportedTargetNames = setOf("watchos_arm32", "macos_x64")
 
 fun enabledTargets(platformManager: PlatformManager) = platformManager.enabled.filterNot {
-    it.name in removedTargetNames
+    it.name in unsupportedTargetNames
             || (it in KonanTarget.deprecatedTargets && it !in KonanTarget.toleratedDeprecatedTargets)
 }
