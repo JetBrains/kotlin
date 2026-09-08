@@ -1,0 +1,88 @@
+FILE: boundsFromShallowDependencies.kt
+    public sealed class MySealed : R|kotlin/Any| {
+        protected constructor(): R|MySealed| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object Left : R|MySealed| {
+            private constructor(): R|MySealed.Left| {
+                super<R|MySealed|>()
+            }
+
+        }
+
+        public final object Right : R|MySealed| {
+            private constructor(): R|MySealed.Right| {
+                super<R|MySealed|>()
+            }
+
+        }
+
+    }
+    public final enum class MyEnum : R|kotlin/Enum<MyEnum>| {
+        private constructor(): R|MyEnum| {
+            super<R|kotlin/Enum<MyEnum>|>()
+        }
+
+        public final static enum entry X: R|MyEnum|
+        public final static enum entry Y: R|MyEnum|
+        public final static fun values(): R|kotlin/Array<MyEnum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|MyEnum| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<MyEnum>|
+            public static get(): R|kotlin/enums/EnumEntries<MyEnum>|
+
+    }
+    public abstract interface MyInterface : R|kotlin/Any| {
+    }
+    public sealed class MySecondSealed : R|MyInterface| {
+        protected constructor(): R|MySecondSealed| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object First : R|MySecondSealed| {
+            private constructor(): R|MySecondSealed.First| {
+                super<R|MySecondSealed|>()
+            }
+
+        }
+
+        public final object Second : R|MySecondSealed| {
+            private constructor(): R|MySecondSealed.Second| {
+                super<R|MySecondSealed|>()
+            }
+
+        }
+
+    }
+    public final fun <T> select(x: R|T|, y: R|T|): R|T| {
+        ^select R|<local>/x|
+    }
+    public final fun <T> select3(x: R|T|, y: R|T|, z: R|T|): R|T| {
+        ^select3 R|<local>/x|
+    }
+    public final fun <S> id(x: R|S|): R|S| {
+        ^id R|<local>/x|
+    }
+    public final fun <T : R|MySealed|> takeA(x: R|T|): R|T| {
+        ^takeA R|<local>/x|
+    }
+    public final fun <T : R|MyInterface|> takeI(x: R|T|, y: R|T|): R|T| {
+        ^takeI R|<local>/x|
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval a: R|MySealed| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|MySealed.Left|>(Q|MySealed.Left|, R|/id|<R|MySealed.Left|>(Q|MySealed.Right|))
+        lval b: R|MySealed| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|MySealed.Left|>(R|/id|<R|MySealed.Left|>(Q|MySealed.Right|), Q|MySealed.Left|)
+        lval c: R|MySealed| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|MySealed.Left|>(Q|MySealed.Left|, R|/id|<R|MySealed.Left|>(R|/id|<R|MySealed.Left|>(Q|MySealed.Right|)))
+        lval d: R|MySealed| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|MySealed.Left|>(R|/id|<R|MySealed.Left|>(Q|MySealed.Left|), R|/id|<R|MySealed.Left|>(Q|MySealed.Right|))
+        lval e: R|MySealed| = R|/takeA|<R|MySealed|>(R|/id|<R|MySealed|>(Q|MySealed.Right|))
+        lval f: R|MyInterface| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|MySecondSealed.First|>(Q|MySecondSealed.First|, R|/id|<R|MySecondSealed.First|>(Q|MySecondSealed.Second|))
+        lval g: R|MySecondSealed.First| = R|/takeI<Inapplicable(INAPPLICABLE): /takeI>#|<R|MySecondSealed.First|>(R|/id|<R|MySecondSealed.First|>(Q|MySecondSealed.Second|), Q|MySecondSealed.First|)
+        lval h: R|kotlin/Any| = R|/select3|<R|kotlin/Any|>(Q|MySecondSealed.First|, Q|MyEnum|.R|/MyEnum.X|, R|/id|<R|kotlin/Any|>(<Unresolved name: Second>#))
+        lval i: R|kotlin/Any| = R|/select3|<R|kotlin/Any|>(Q|MySecondSealed.First|, String(), R|/id|<R|kotlin/Any|>(<Unresolved name: Second>#))
+        lval j: R|kotlin/Any| = R|/select3|<R|kotlin/Any|>(R|/id|<R|kotlin/Any|>(<Unresolved name: Second>#), Int(1), Q|MySecondSealed.First|)
+        lval k: R|kotlin/Any| = R|/select3|<R|kotlin/Any|>(R|/id|<R|kotlin/Any|>(<Unresolved name: Second>#), Q|MySecondSealed.First|, Q|MyEnum|.R|/MyEnum.X|)
+    }

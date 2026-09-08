@@ -1,0 +1,89 @@
+FILE: multipleOverloadsSameNameInBoth.kt
+    public final enum class MyEnum1 : R|kotlin/Enum<MyEnum1>| {
+        private constructor(): R|MyEnum1| {
+            super<R|kotlin/Enum<MyEnum1>|>()
+        }
+
+        public final static enum entry X: R|MyEnum1|
+        public final static enum entry Y: R|MyEnum1|
+        public final static fun values(): R|kotlin/Array<MyEnum1>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|MyEnum1| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<MyEnum1>|
+            public static get(): R|kotlin/enums/EnumEntries<MyEnum1>|
+
+    }
+    public final enum class MyEnum2 : R|kotlin/Enum<MyEnum2>| {
+        private constructor(): R|MyEnum2| {
+            super<R|kotlin/Enum<MyEnum2>|>()
+        }
+
+        public final static enum entry X: R|MyEnum2|
+        public final static enum entry Z: R|MyEnum2|
+        public final static fun values(): R|kotlin/Array<MyEnum2>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|MyEnum2| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<MyEnum2>|
+            public static get(): R|kotlin/enums/EnumEntries<MyEnum2>|
+
+    }
+    public final enum class MyEnum3 : R|kotlin/Enum<MyEnum3>| {
+        private constructor(): R|MyEnum3| {
+            super<R|kotlin/Enum<MyEnum3>|>()
+        }
+
+        public final static enum entry W: R|MyEnum3|
+        public final static fun values(): R|kotlin/Array<MyEnum3>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|MyEnum3| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<MyEnum3>|
+            public static get(): R|kotlin/enums/EnumEntries<MyEnum3>|
+
+    }
+    public final fun foo(x: R|MyEnum1|): R|kotlin/Unit| {
+    }
+    public final fun foo(x: R|MyEnum2|): R|kotlin/Unit| {
+    }
+    public final fun bar(x: R|MyEnum1|): R|kotlin/Unit| {
+    }
+    public final fun bar(x: R|MyEnum3|): R|kotlin/Unit| {
+    }
+    public final fun baz(x: R|MyEnum1|): R|kotlin/Unit| {
+    }
+    public final fun baz(x: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final fun <T> id(x: R|T|): R|T| {
+        ^id R|<local>/x|
+    }
+    public final fun main(): R|kotlin/Unit| {
+        <Ambiguity: foo, [/foo, /foo]>#(<Unresolved name: X>#)
+        <Ambiguity: foo, [/foo, /foo]>#(<Unresolved name: Y>#)
+        <Ambiguity: foo, [/foo, /foo]>#(<Unresolved name: Z>#)
+        <Ambiguity: bar, [/bar, /bar]>#(<Unresolved name: X>#)
+        <Ambiguity: bar, [/bar, /bar]>#(<Unresolved name: W>#)
+        <Ambiguity: baz, [/baz, /baz]>#(<Unresolved name: X>#)
+        <Ambiguity: baz, [/baz, /baz]>#(<Unresolved name: Y>#)
+        <Ambiguity: foo, [/foo, /foo]>#(<Unresolved name: Q>#)
+        <Ambiguity: bar, [/bar, /bar]>#(R|/id|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<Unresolved name: W>#))
+        <Ambiguity: baz, [/baz, /baz]>#(R|/id|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<Unresolved name: Y>#))
+    }
+    public final fun localOverloads(): R|kotlin/Unit| {
+        local final fun local(x: R|MyEnum1|): R|kotlin/Unit| {
+        }
+
+        local final fun local(x: R|MyEnum3|): R|kotlin/Unit| {
+        }
+
+        <Ambiguity: local, [<local>/local, <local>/local]>#(<Unresolved name: Y>#)
+        <Ambiguity: local, [<local>/local, <local>/local]>#(<Unresolved name: W>#)
+        <Ambiguity: local, [<local>/local, <local>/local]>#(<Unresolved name: X>#)
+    }
