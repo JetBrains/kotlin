@@ -15,6 +15,17 @@ public abstract interface class org/jetbrains/kotlin/gradle/idea/debugger/IdeaKo
 	public abstract fun awaitDebuggerReady-HG0u8IE (Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinDebuggableBrowser;J)V
 	public abstract fun sendBrowserReady (Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinDebuggableBrowser;)V
 	public abstract fun sendFinished (Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinDebuggableBrowser;)V
+	public abstract fun state ()Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$BuildSystemSession$State;
+}
+
+public final class org/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$BuildSystemSession$State : java/lang/Enum {
+	public static final field ABORTED Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$BuildSystemSession$State;
+	public static final field BROWSER_NOT_REPORTED Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$BuildSystemSession$State;
+	public static final field DEBUGGER_READY Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$BuildSystemSession$State;
+	public static final field FINISHED Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$BuildSystemSession$State;
+	public static final field WAITING_FOR_DEBUGGER Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$BuildSystemSession$State;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$BuildSystemSession$State;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$BuildSystemSession$State;
 }
 
 public final class org/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$Companion {
@@ -32,5 +43,16 @@ public abstract interface class org/jetbrains/kotlin/gradle/idea/debugger/IdeaKo
 	public abstract fun awaitBrowser-LRDsOJo (J)Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinDebuggableBrowser;
 	public abstract fun awaitFinished-LRDsOJo (J)V
 	public abstract fun sendDebuggerReady (Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinDebuggableBrowser;)V
+	public abstract fun state ()Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$IdeSession$State;
+}
+
+public final class org/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$IdeSession$State : java/lang/Enum {
+	public static final field ABORTED Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$IdeSession$State;
+	public static final field BROWSER_READY Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$IdeSession$State;
+	public static final field DEBUGGER_READY Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$IdeSession$State;
+	public static final field FINISHED Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$IdeSession$State;
+	public static final field WAITING_FOR_BROWSER Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$IdeSession$State;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$IdeSession$State;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$IdeSession$State;
 }
 

@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.gradle.idea.test.debugger
 
 import org.jetbrains.kotlin.gradle.idea.debugger.*
+import org.jetbrains.kotlin.gradle.idea.debugger.IdeaKotlinJsBrowserDebugSession.BuildSystemSession
 import org.jetbrains.kotlin.gradle.idea.debugger.IdeaKotlinJsBrowserDebugSession.ConnectionAborted
+import org.jetbrains.kotlin.gradle.idea.debugger.IdeaKotlinJsBrowserDebugSession.IdeSession
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -41,6 +43,91 @@ class IdeaKotlinJsBrowserDebugSessionTest {
 
             build.await()
         }
+    }
+
+    @Test
+    fun `test - state - follows the handshake on both sides`() {
+        withIdeSession { ide ->
+            val buildSystem = connect(ide)
+
+            assertEquals(IdeSession.State.WAITING_FOR_BROWSER, ide.state())
+            assertEquals(BuildSystemSession.State.BROWSER_NOT_REPORTED, buildSystem.state())
+
+            buildSystem.sendBrowserReady(browser)
+            ide.awaitBrowser(timeout = 10.seconds)
+
+            assertEquals(IdeSession.State.BROWSER_READY, ide.state())
+            assertEquals(BuildSystemSession.State.WAITING_FOR_DEBUGGER, buildSystem.state())
+
+            ide.sendDebuggerReady(browser)
+            buildSystem.awaitDebuggerReady(browser, timeout = 10.seconds)
+
+            assertEquals(IdeSession.State.DEBUGGER_READY, ide.state())
+            assertEquals(BuildSystemSession.State.DEBUGGER_READY, buildSystem.state())
+
+            buildSystem.sendFinished(browser)
+            ide.awaitFinished(timeout = 10.seconds)
+
+            assertEquals(IdeSession.State.FINISHED, ide.state())
+            assertEquals(BuildSystemSession.State.FINISHED, buildSystem.state())
+        }
+    }
+
+    @Test
+    fun `test - state - aborted by the IDE is visible on both sides`() {
+        withIdeSession { ide ->
+            val buildSystem = connect(ide)
+            buildSystem.sendBrowserReady(browser)
+            ide.awaitBrowser(timeout = 10.seconds)
+
+            ide.abort("the user stopped the debug session")
+
+            assertEquals(IdeSession.State.ABORTED, ide.state())
+            assertEquals(BuildSystemSession.State.ABORTED, buildSystem.state())
+        }
+    }
+
+    @Test
+    fun `test - state - aborted by the build system is visible on both sides`() {
+        withIdeSession { ide ->
+            val buildSystem = connect(ide)
+            buildSystem.sendBrowserReady(browser)
+            ide.awaitBrowser(timeout = 10.seconds)
+
+            buildSystem.abort("the browser crashed")
+
+            assertEquals(BuildSystemSession.State.ABORTED, buildSystem.state())
+            assertEquals(IdeSession.State.ABORTED, ide.state())
+        }
+    }
+
+    @Test
+    fun `test - state - does not wait for the handshake to progress`() {
+        withIdeSession { ide ->
+            val buildSystem = connect(ide)
+            buildSystem.sendBrowserReady(browser)
+            ide.awaitBrowser(timeout = 10.seconds)
+
+            // the debugger is never attached: 'state' must return anyway, unlike 'awaitDebuggerReady'
+            repeat(3) {
+                assertEquals(BuildSystemSession.State.WAITING_FOR_DEBUGGER, buildSystem.state())
+            }
+        }
+    }
+
+    @Test
+    fun `test - state - unreachable IDE is reported as an aborted connection`() {
+        val ide = IdeaKotlinJsBrowserDebugSession.startForIde()
+        val buildSystem = connect(ide)
+
+        // nothing was reported yet, so no request to the IDE is needed
+        assertEquals(BuildSystemSession.State.BROWSER_NOT_REPORTED, buildSystem.state())
+
+        buildSystem.sendBrowserReady(browser)
+        ide.awaitBrowser(timeout = 10.seconds)
+        ide.close()
+
+        assertFailsWith<ConnectionAborted> { buildSystem.state() }
     }
 
     @Test
