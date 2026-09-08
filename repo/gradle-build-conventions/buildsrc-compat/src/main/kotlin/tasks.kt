@@ -36,6 +36,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-gradle-plugin-api",
     ":kotlin-gradle-plugin-annotations",
     ":kotlin-gradle-plugin-idea",
+    ":kotlin-gradle-plugin-idea-browser-debug",
     ":kotlin-gradle-plugin-idea-proto",
     ":kotlin-gradle-plugin",
     ":kotlin-tooling-metadata",
