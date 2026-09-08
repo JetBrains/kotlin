@@ -141,6 +141,9 @@ internal fun FirReference.statementOrigin(): IrStatementOrigin? = when (this) {
                 else -> null
             }
 
+            source?.kind is KtFakeSourceElementKind.CalleeReferenceForOperatorOfCall ->
+                IrStatementOrigin.COLLECTION_LITERAL
+
             else ->
                 null
         }
