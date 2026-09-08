@@ -41,8 +41,7 @@ Escalate agent, queue, or resource problems to the infrastructure team, includin
 ## Incident Guide
 
 All investigation coordination and communication must take place in the `#kotlin-build` Slack channel.
-
-Any developer can contact the affected domain owners directly; infrastructure duty involvement is not required for domain test failures.
+Infrastructure duty involvement is not required for domain test failures.
 Escalate infrastructure problems to the infrastructure engineer on duty.
 
 ### Single Red Domain
