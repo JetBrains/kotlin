@@ -72,7 +72,9 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext) : Fil
     override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
         val indyCallData = expression.indyCallData ?: return super.visitRichFunctionReference(expression)
         expression.transformChildrenVoid()
-        getClassContext().functionsToAdd.add(expression.invokeFunction)
+        if (expression.directImplementationFunction() == null) {
+            getClassContext().functionsToAdd.add(expression.invokeFunction)
+        }
         return rewriteIndyLambdaMetafactoryCall(expression, indyCallData)
     }
 
@@ -322,6 +324,7 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext) : Fil
         val samType = call.type as? IrSimpleType ?: fail("'samType' is expected to be a simple type")
 
         val implFunSymbol = call.invokeFunction.symbol
+        val directImplFunSymbol = call.directImplementationFunction()?.symbol ?: implFunSymbol
 
         // Anonymous functions keep LOCAL_FUNCTION, so mark indy implementations for parameter assertions.
         if (call.invokeFunction.origin == IrDeclarationOrigin.LOCAL_FUNCTION) {
@@ -351,7 +354,7 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext) : Fil
                 SerializableMethodRefInfo(
                     samType = samType,
                     samMethodSymbol = generatedParameters.samMethod.symbol,
-                    implFunSymbol = implFunSymbol,
+                    implFunSymbol = directImplFunSymbol,
                     instanceFunSymbol = generatedParameters.fakeInstanceMethod.symbol,
                     requiredBridges = requiredBridges,
                     dynamicCallSymbol = dynamicCall.symbol
@@ -359,11 +362,42 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext) : Fil
             )
         }
 
-        return backendContext.createJvmIrBuilder(implFunSymbol, startOffset, endOffset)
+        return backendContext.createJvmIrBuilder(directImplFunSymbol, startOffset, endOffset)
             .createLambdaMetafactoryCall(
-                generatedParameters.samMethod.symbol, implFunSymbol,
+                generatedParameters.samMethod.symbol, directImplFunSymbol,
                 generatedParameters.fakeInstanceMethod.symbol, generatedParameters.shouldBeSerializable, requiredBridges, dynamicCall
             )
+    }
+
+    private fun IrRichFunctionReference.directImplementationFunction(): IrSimpleFunction? {
+        val target = reflectionTargetSymbol?.owner as? IrSimpleFunction ?: return null
+        val body = invokeFunction.body as? IrBlockBody ?: return null
+        val returnedCall = (body.statements.lastOrNull() as? IrReturn)?.value as? IrCall ?: return null
+        if (body.statements.dropLast(1).any { statement ->
+                val check = (statement as? IrCall)?.symbol?.owner ?: return@any true
+                check.parentAsClass.fqNameWhenAvailable?.asString() != "kotlin.jvm.internal.Intrinsics" ||
+                    check.name.asString() != "checkNotNullParameter"
+            }) {
+            return null
+        }
+        if (returnedCall.symbol != target.symbol || returnedCall.arguments.size != target.parameters.size) return null
+        val forwardedArguments = buildList<IrExpression?> {
+            returnedCall.dispatchReceiver?.let(::add)
+            addAll(returnedCall.arguments)
+        }
+        val forwardedParameters = forwardedArguments.map {
+            when (it) {
+                is IrGetValue -> it.symbol
+                is IrTypeOperatorCall -> (it.argument as? IrGetValue)?.symbol
+                else -> null
+            } ?: return null
+        }
+        if (forwardedParameters.size != invokeFunction.parameters.size ||
+            forwardedParameters.toSet() != invokeFunction.parameters.map { it.symbol }.toSet()
+        ) {
+            return null
+        }
+        return target
     }
 
     private fun JvmIrBuilder.createLambdaMetafactoryCall(
