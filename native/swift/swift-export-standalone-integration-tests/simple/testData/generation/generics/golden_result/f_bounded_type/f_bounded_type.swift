@@ -12,8 +12,21 @@ public protocol _MyComparable {
 }
 public protocol __MyComparable: KotlinRuntimeSupport._KotlinBridgeable {
 }
+public final class BaseClass: KotlinRuntime.KotlinBase {
+    public var v: any f_bounded_type.MyComparable {
+        get {
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: BaseClass_v_get(self.__externalRCRef()), conformsTo: f_bounded_type.MyComparable.Type.self) as! any f_bounded_type.MyComparable
+        }
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+}
 public final class ConcreteSelfReferencing: f_bounded_type.SelfReferencing {
-    public override init() {
+    public init() {
         let __kt = __root___ConcreteSelfReferencing_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___ConcreteSelfReferencing_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -26,9 +39,6 @@ public final class ConcreteSelfReferencing: f_bounded_type.SelfReferencing {
     }
 }
 open class SelfReferencing: KotlinRuntime.KotlinBase {
-    public init() {
-        fatalError()
-    }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions

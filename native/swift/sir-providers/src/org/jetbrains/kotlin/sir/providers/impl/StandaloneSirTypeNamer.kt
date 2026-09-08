@@ -157,7 +157,9 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
             when {
                 type !is KaClassType -> null
                 type.symbol.classId?.asFqNameString() == fqname -> "*"
-                else -> type.symbol.parametrisedTypeName(type.typeArguments.map { it.type })
+                else -> type.symbol.parametrisedTypeName(type.typeArguments.map { it.type })?.let {
+                    if (it.contains('*')) "*" else it
+                }
             } ?: "kotlin.Any?"
         }
 

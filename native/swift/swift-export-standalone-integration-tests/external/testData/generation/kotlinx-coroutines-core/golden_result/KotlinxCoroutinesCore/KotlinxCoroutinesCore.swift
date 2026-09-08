@@ -622,6 +622,11 @@ extension ExportedKotlinPackages.kotlinx.coroutines {
             block: any ExportedKotlinPackages.kotlinx.coroutines.Runnable,
             context: any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext
         ) -> any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
+        @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+        func scheduleResumeAfterDelay(
+            timeMillis: Swift.Int64,
+            continuation: any ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation
+        ) -> Swift.Void
     }
     @objc(_ExportedKotlinPackages_kotlinx_coroutines_Delay)
     public protocol _Delay {
@@ -5822,6 +5827,35 @@ extension ExportedKotlinPackages.kotlinx.coroutines.selects {
         }
     }
     @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
+    public static func whileSelect(
+        builder: @escaping (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void
+    ) async throws -> Swift.Void {
+        try await withKotlinContinuation { continuation, exception, cancellation in
+            let _: Bool = kotlinx_coroutines_selects_whileSelect__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilderU29202D_U20Swift_Void__({
+                let originalBlock: (any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder) -> Swift.Void = builder
+                return { (arg0: Swift.UnsafeMutableRawPointer) in
+                    let _arg0: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder
+                    let _result = originalBlock(_arg0)
+                    return { _result; return true }()
+                }
+            }(), {
+                let originalBlock: (Swift.Void) -> Swift.Void = continuation
+                return { (arg0: Swift.Bool) in
+                    let _arg0: Swift.Void = { arg0; return () }()
+                    let _result = originalBlock(_arg0)
+                    return { _result; return true }()
+                }
+            }(), {
+                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
+                return { (arg0: Swift.UnsafeMutableRawPointer?) in
+                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
+                    let _result = originalBlock(_arg0)
+                    return { _result; return true }()
+                }
+            }(), cancellation.__externalRCRef())
+        }
+    }
+    @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
     public static func onTimeout(
         _ receiver: any ExportedKotlinPackages.kotlinx.coroutines.selects.SelectBuilder,
         timeMillis: Swift.Int64,
@@ -6979,6 +7013,13 @@ extension ExportedKotlinPackages.kotlinx.coroutines.Delay where Self : ExportedK
         context: any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext
     ) -> any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_coroutines_Delay_invokeOnTimeout__TypesOfArguments__Swift_Int64_anyU20ExportedKotlinPackages_kotlinx_coroutines_Runnable_anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext__(self.__externalRCRef(), timeMillis, block.__externalRCRef(), context.__externalRCRef()), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle
+    }
+    @_spi(kotlinx$coroutines$InternalCoroutinesApi)
+    public func scheduleResumeAfterDelay(
+        timeMillis: Swift.Int64,
+        continuation: any ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation
+    ) -> Swift.Void {
+        return { kotlinx_coroutines_Delay_scheduleResumeAfterDelay__TypesOfArguments__Swift_Int64_anyU20ExportedKotlinPackages_kotlinx_coroutines_CancellableContinuation__(self.__externalRCRef(), timeMillis, continuation.__externalRCRef()); return () }()
     }
 }
 @_documentation(visibility: internal)
@@ -8308,6 +8349,13 @@ package func kotlinx_coroutines_Delay_invokeOnTimeout__TypesOfArguments__Swift_I
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.Delay.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.Delay
     let _result: any ExportedKotlinPackages.kotlinx.coroutines.DisposableHandle = _self.invokeOnTimeout(timeMillis: timeMillis, block: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: block, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.Runnable.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.Runnable, context: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: context, conformsTo: ExportedKotlinPackages.kotlin.coroutines.CoroutineContext.Type.self) as! any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext)
     return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_coroutines_Delay_scheduleResumeAfterDelay__TypesOfArguments__Swift_Int64_anyU20ExportedKotlinPackages_kotlinx_coroutines_CancellableContinuation____reverse_swift")
+package func kotlinx_coroutines_Delay_scheduleResumeAfterDelay__TypesOfArguments__Swift_Int64_anyU20ExportedKotlinPackages_kotlinx_coroutines_CancellableContinuation____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ timeMillis: Swift.Int64, _ continuation: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.Delay.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.Delay
+    let _result: Swift.Void = _self.scheduleResumeAfterDelay(timeMillis: timeMillis, continuation: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: continuation, conformsTo: ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.CancellableContinuation)
+    return { _result; return true }()
 }
 
 @_cdecl("kotlinx_coroutines_DisposableHandle_dispose__reverse_swift")

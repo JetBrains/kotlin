@@ -57,6 +57,8 @@ void * kotlinx_coroutines_Deferred_onAwait_get__reverse_swift(void * self);
 
 void * kotlinx_coroutines_Delay_invokeOnTimeout__TypesOfArguments__Swift_Int64_anyU20ExportedKotlinPackages_kotlinx_coroutines_Runnable_anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext____reverse_swift(void * self, int64_t timeMillis, void * block, void * context);
 
+_Bool kotlinx_coroutines_Delay_scheduleResumeAfterDelay__TypesOfArguments__Swift_Int64_anyU20ExportedKotlinPackages_kotlinx_coroutines_CancellableContinuation____reverse_swift(void * self, int64_t timeMillis, void * continuation);
+
 _Bool kotlinx_coroutines_DisposableHandle_dispose__reverse_swift(void * self);
 
 _Bool kotlinx_coroutines_Job_cancel__TypesOfArguments__Swift_Optional_ExportedKotlinPackages_kotlin_coroutines_cancellation_CancellationException_____reverse_swift(void * self, void * _Nullable cause);
@@ -388,6 +390,8 @@ void * kotlinx_coroutines_Deferred_onAwait_get(void * self);
 void * kotlinx_coroutines_Delay_invokeOnTimeout__TypesOfArguments__Swift_Int64_anyU20ExportedKotlinPackages_kotlinx_coroutines_Runnable_anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext__(void * self, int64_t timeMillis, void * block, void * context);
 
 void * kotlinx_coroutines_Delay_invokeOnTimeout__TypesOfArguments__Swift_Int64_anyU20ExportedKotlinPackages_kotlinx_coroutines_Runnable_anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext___direct(void * self, int64_t timeMillis, void * block, void * context);
+
+_Bool kotlinx_coroutines_Delay_scheduleResumeAfterDelay__TypesOfArguments__Swift_Int64_anyU20ExportedKotlinPackages_kotlinx_coroutines_CancellableContinuation__(void * self, int64_t timeMillis, void * continuation);
 
 void * kotlinx_coroutines_Dispatchers_Default_get(void * self);
 
@@ -1180,6 +1184,8 @@ _Bool kotlinx_coroutines_selects_onTimeout__TypesOfArgumentsE__anyU20ExportedKot
 _Bool kotlinx_coroutines_selects_select__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilderU29202D_U20Swift_Void__(_Bool (^builder)(void *), _Bool (^continuation)(void * _Nullable ), _Bool (^exception)(void * _Nullable ), void * cancellation);
 
 _Bool kotlinx_coroutines_selects_selectUnbiased__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilderU29202D_U20Swift_Void__(_Bool (^builder)(void *), _Bool (^continuation)(void * _Nullable ), _Bool (^exception)(void * _Nullable ), void * cancellation);
+
+_Bool kotlinx_coroutines_selects_whileSelect__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilderU29202D_U20Swift_Void__(_Bool (^builder)(void *), _Bool (^continuation)(_Bool), _Bool (^exception)(void * _Nullable ), void * cancellation);
 
 _Bool kotlinx_coroutines_supervisorScope__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScopeU2920asyncU20throwsU202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_Bool (^block)(void *, void *, void *, void *), _Bool (^continuation)(void * _Nullable ), _Bool (^exception)(void * _Nullable ), void * cancellation);
 
