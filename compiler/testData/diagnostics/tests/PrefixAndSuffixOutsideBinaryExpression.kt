@@ -13,16 +13,16 @@
 // identifier (`in1`), so only the suffix cases in NumberPrefixAndSuffix.kt are reachable.
 
 fun testReturn(): String {
-    <!UNSUPPORTED!>return<!>"str"
+    <!TRAILING_WHITESPACE_REQUIRED!>return<!>"str"
 }
 
 fun testFor() {
-    for (c <!UNSUPPORTED!>in<!>"abc") {}
-    for (c <!UNSUPPORTED!>in<!>'a'..'z') {}
+    for (c <!TRAILING_WHITESPACE_REQUIRED!>in<!>"abc") {}
+    for (c <!TRAILING_WHITESPACE_REQUIRED!>in<!>'a'..'z') {}
 }
 
 fun testElse(): String {
-    return if (true) "a" <!UNSUPPORTED!>else<!>"b"
+    return if (true) "a" <!TRAILING_WHITESPACE_REQUIRED!>else<!>"b"
 }
 
 fun testNoFalsePositives() {
