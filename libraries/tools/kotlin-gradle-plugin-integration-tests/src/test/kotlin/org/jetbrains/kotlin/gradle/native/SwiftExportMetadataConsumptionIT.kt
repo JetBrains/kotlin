@@ -17,8 +17,6 @@ import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
-import kotlin.io.path.readText
-import kotlin.test.assertContains
 import kotlin.test.assertNotNull
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
@@ -91,15 +89,83 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
         )
     }
 
+    @DisplayName(
+        "Swift Export metadata consumed from a transitive published dependency with moduleName and rootPackage overrides"
+    )
+    @GradleTest
+    fun transitivePublishedDependencyWithModuleNameAndRootPackageOverrides(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        testSwiftExportMetadataConsumption(
+            gradleVersion = gradleVersion,
+            testBuildDir = testBuildDir,
+            published = true,
+            moduleNameOverride = "Bar",
+            rootPackageOverride = "com.bar.baz",
+            transitiveModuleNameOverride = "Baz",
+            transitiveRootPackageOverride = "com.foo.bar.baz",
+        )
+    }
+
     private fun testSwiftExportMetadataConsumption(
         gradleVersion: GradleVersion,
         testBuildDir: Path,
         published: Boolean,
         moduleNameOverride: String? = null,
         rootPackageOverride: String? = null,
+        transitivePublished: Boolean = published,
+        transitiveModuleNameOverride: String? = null,
+        transitiveRootPackageOverride: String? = null,
     ) {
+        var transitiveRootPackage: String? = null
+        var transitiveSubproject: TestProject? = null
+        var transitivePublishedSubproject: PublishedProject? = null
+        if (transitiveModuleNameOverride != null || transitiveRootPackageOverride != null) {
+            transitiveRootPackage = transitiveRootPackageOverride ?: "com.bar.baz"
+            transitiveSubproject = project("empty", gradleVersion) {
+                plugins {
+                    kotlin("multiplatform")
+                }
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        export.swift {
+                            this.moduleName.set(transitiveModuleNameOverride)
+                            this.rootPackage.set(transitiveRootPackageOverride)
+                        }
+
+                        sourceSets.commonMain {
+                            compileStubSourceWithSourceSetName()
+                            compileSource(
+                                """
+                            package $transitiveRootPackage
+                            class LibBar
+                            """.trimIndent()
+                            )
+                        }
+                    }
+                }
+            }
+            transitivePublishedSubproject = if (transitivePublished) {
+                transitiveSubproject.publish(publisherConfiguration = PublisherConfiguration(group = "com.bar.baz"))
+            } else {
+                null
+            }
+        }
+
         val rootPackage = rootPackageOverride ?: "com.foo.bar"
         val subproject = project("empty", gradleVersion) {
+            if (transitivePublishedSubproject != null) {
+                addPublishedProjectToRepositories(transitivePublishedSubproject)
+            } else if (transitiveSubproject != null) {
+                include(transitiveSubproject, "transitiveSubproject")
+            }
+            // transitivePublishedSubproject and transitiveSubproject can't be referenced directly inside buildScriptInjection as
+            // they're not Serializable, so extracting these variables to hold serialized values we need inside the block.
+            val transitivePublishedSubprojectRootCoordinate = transitivePublishedSubproject?.rootCoordinate
+            val hasTransitiveSubproject = transitiveSubproject != null
+
             plugins {
                 kotlin("multiplatform")
             }
@@ -113,18 +179,31 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
 
                     sourceSets.commonMain {
                         compileStubSourceWithSourceSetName()
+                        val transitiveClassReference = if (transitiveRootPackage != null) {
+                            "val libBar: $transitiveRootPackage.LibBar"
+                        } else {
+                            ""
+                        }
                         compileSource(
                             """
                             package $rootPackage
-                            class LibFoo
+                            class LibFoo($transitiveClassReference)
                             """.trimIndent()
                         )
+
+                        dependencies {
+                            if (transitivePublishedSubprojectRootCoordinate != null) {
+                                api(transitivePublishedSubprojectRootCoordinate)
+                            } else if (hasTransitiveSubproject) {
+                                api(project(":transitiveSubproject"))
+                            }
+                        }
                     }
                 }
             }
         }
         val publishedSubproject = if (published) {
-            subproject.publish(publisherConfiguration = PublisherConfiguration(group = rootPackage))
+            subproject.publish(publisherConfiguration = PublisherConfiguration(group = "com.foo.bar"))
         } else {
             null
         }
@@ -133,6 +212,12 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
             "empty",
             gradleVersion
         ) {
+            if (transitivePublishedSubproject != null) {
+                addPublishedProjectToRepositories(transitivePublishedSubproject)
+            } else if (transitiveSubproject != null) {
+                include(transitiveSubproject, "transitiveSubproject")
+            }
+
             if (publishedSubproject != null) {
                 addPublishedProjectToRepositories(publishedSubproject)
             } else {
@@ -175,11 +260,6 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
                 val buildProductsDir = this@project.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
                 assertNotNull(buildProductsDir)
 
-                val expectedDependencyModuleName = when {
-                    moduleNameOverride != null -> moduleNameOverride
-                    published -> "ComFooBarEmpty"
-                    else -> "Subproject"
-                }
                 assertSubdirectoriesExist(
                     buildProductsDir,
                     // Default directories.
@@ -188,18 +268,50 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
                     // Exported :shared module.
                     "Shared.swiftmodule",
                     "SharedBridge_Shared",
-                    "$expectedDependencyModuleName.swiftmodule",
-                    "SharedBridge_$expectedDependencyModuleName",
                 )
+
+                val expectedDirectDependencyModuleName = when {
+                    moduleNameOverride != null -> moduleNameOverride
+                    published -> "ComFooBarEmpty"
+                    else -> "Subproject"
+                }
+                assertSubdirectoriesExist(
+                    buildProductsDir,
+                    "$expectedDirectDependencyModuleName.swiftmodule",
+                    "SharedBridge_$expectedDirectDependencyModuleName",
+                )
+
+                val expectedTransitiveDependencyModuleName = when {
+                    transitiveSubproject == null -> null
+                    transitiveModuleNameOverride != null -> transitiveModuleNameOverride
+                    transitivePublished -> "ComBarBazEmpty"
+                    else -> "SharedTransitiveSubproject"
+                }
+                if (expectedTransitiveDependencyModuleName != null) {
+                    assertSubdirectoriesExist(
+                        buildProductsDir,
+                        "$expectedTransitiveDependencyModuleName.swiftmodule",
+                        "SharedBridge_$expectedTransitiveDependencyModuleName",
+                    )
+                }
 
                 assertFileExists(buildProductsDir.resolve("libShared.a"))
 
                 if (rootPackageOverride != null) {
                     val subprojectSwiftPath =
-                        projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/$expectedDependencyModuleName/$expectedDependencyModuleName.swift")
-                    assertContains(
-                        subprojectSwiftPath.readText(),
+                        projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/$expectedDirectDependencyModuleName/$expectedDirectDependencyModuleName.swift")
+                    assertFileContains(
+                        subprojectSwiftPath,
                         "public typealias LibFoo = ExportedKotlinPackages.$rootPackageOverride.LibFoo"
+                    )
+                }
+                // Root package overrides for transitive dependencies are ignored!
+                if (expectedTransitiveDependencyModuleName != null && transitiveRootPackageOverride != null) {
+                    val subprojectSwiftPath =
+                        projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/$expectedTransitiveDependencyModuleName/$expectedTransitiveDependencyModuleName.swift")
+                    assertFileDoesNotContain(
+                        subprojectSwiftPath,
+                        "public typealias LibBar = ExportedKotlinPackages.$transitiveRootPackageOverride.LibBar",
                     )
                 }
             }
