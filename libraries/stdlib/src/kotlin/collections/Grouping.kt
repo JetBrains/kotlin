@@ -72,6 +72,7 @@ public inline fun <T, K, R> Grouping<T, K>.aggregate(
  * @return the [destination] map associating the key of each group with the result of aggregation of the group elements.
  * @sample samples.collections.Grouping.aggregateByRadixTo
  */
+@IgnorableReturnValue
 @SinceKotlin("1.1")
 public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.aggregateTo(
     destination: M,
@@ -133,6 +134,7 @@ public inline fun <T, K, R> Grouping<T, K>.fold(
  * @return the [destination] map associating the key of each group with the result of accumulating the group elements.
  * @sample samples.collections.Grouping.foldByEvenLengthWithComputedInitialValueTo
  */
+@IgnorableReturnValue
 @SinceKotlin("1.1")
 public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.foldTo(
     destination: M,
@@ -179,6 +181,7 @@ public inline fun <T, K, R> Grouping<T, K>.fold(
  * @return the [destination] map associating the key of each group with the result of accumulating the group elements.
  * @sample samples.collections.Grouping.foldByEvenLengthWithConstantInitialValueTo
  */
+@IgnorableReturnValue
 @SinceKotlin("1.1")
 public inline fun <T, K, R, M : MutableMap<in K, R>> Grouping<T, K>.foldTo(
     destination: M,
@@ -231,6 +234,7 @@ public inline fun <S, T : S, K> Grouping<T, K>.reduce(
  * @return the [destination] map associating the key of each group with the result of accumulating the group elements.
  * @sample samples.collections.Grouping.reduceByMaxVowelsTo
  */
+@IgnorableReturnValue
 @SinceKotlin("1.1")
 public inline fun <S, T : S, K, M : MutableMap<in K, S>> Grouping<T, K>.reduceTo(
     destination: M,
@@ -252,6 +256,7 @@ public inline fun <S, T : S, K, M : MutableMap<in K, S>> Grouping<T, K>.reduceTo
  *
  * @sample samples.collections.Grouping.groupingByEachCount
  */
+@IgnorableReturnValue
 @SinceKotlin("1.1")
 public fun <T, K, M : MutableMap<in K, Int>> Grouping<T, K>.eachCountTo(destination: M): M =
     foldTo(destination, 0) { acc, _ -> acc + 1 }
