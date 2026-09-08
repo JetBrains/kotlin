@@ -15,13 +15,15 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
+import org.jetbrains.kotlin.fir.resolve.calls.ConeCollectionLiteralAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.UnsuccessfulCollectionLiteralArgument
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.createErrorReferenceWithExistingCandidate
-import org.jetbrains.kotlin.fir.resolve.inference.CollectionLiteralBounds
+import org.jetbrains.kotlin.fir.resolve.inference.StateForAtomWithExpectedTypeAsStaticReceiver
+import org.jetbrains.kotlin.fir.resolve.inference.ExpectedTypeAsStaticReceiverStrategy
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -100,9 +102,21 @@ fun Collection<FirRegularClassSymbol>.chooseSingleClassFromIntersectionComponent
     }
 }
 
-fun CollectionLiteralBounds?.toConeDiagnostic(): ConeDiagnostic {
+object CollectionLiteralReceiverStrategy : ExpectedTypeAsStaticReceiverStrategy<ConeCollectionLiteralAtom> {
+    context(resolutionContext: ResolutionContext)
+    override fun getClassRepresentative(type: ConeKotlinType): FirRegularClassSymbol? {
+        return type.getClassRepresentativeForCollectionLiteralResolution()
+    }
+
+    context(resolutionContext: ResolutionContext)
+    override fun isSuitableReceiver(atom: ConeCollectionLiteralAtom, classSymbol: FirRegularClassSymbol): Boolean {
+        return classSymbol.declaresOperatorOf()
+    }
+}
+
+fun StateForAtomWithExpectedTypeAsStaticReceiver<*>?.toConeDiagnostic(): ConeDiagnostic {
     return when (this) {
-        is CollectionLiteralBounds.Ambiguity -> ConeCollectionLiteralAmbiguity(bounds.toList())
+        is StateForAtomWithExpectedTypeAsStaticReceiver.MultipleBounds -> ConeCollectionLiteralAmbiguity(bounds.toList())
         else -> error("Fallback should be used instead")
     }
 }
