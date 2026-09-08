@@ -140,10 +140,6 @@ fun BuildResult.extractProjectsAndTheirDiagnosticsInBlocks(): List<String> {
                 // Environment-dependent and expected to differ between local and CI setups.
             }
 
-            KotlinToolingDiagnostics.DeprecatedGradleVersionWarning.id in firstDiagnosticLine -> {
-                // Generic diagnostic that has a dedicated test.
-            }
-
             KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed.id in firstDiagnosticLine -> {
                 val cleanedDiagnostic = filterKgpUtilityPropertiesFromDiagnostic(currentDiagnostic)
                 if (cleanedDiagnostic.isNotEmpty()) blocks += cleanedDiagnostic.joinToString(separator = "\n", postfix = "\n")
