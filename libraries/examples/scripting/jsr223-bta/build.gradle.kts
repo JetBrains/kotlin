@@ -65,12 +65,17 @@ projectTests {
     testTask() {
         dependsOn(":dist")
         workingDir = rootDir
-        val btaImplClasspathProvider = project.provider { btaImplClasspath.files.joinToString(File.pathSeparator) }
-        val scriptingPluginClasspathProvider =
-            project.provider { scriptingCompilerPluginClasspath.files.joinToString(File.pathSeparator) }
+        val btaImplClasspathFiles: FileCollection = btaImplClasspath
+        val scriptingPluginClasspathFiles: FileCollection = scriptingCompilerPluginClasspath
+        inputs.files(btaImplClasspathFiles)
+            .withPropertyName("btaImplClasspath")
+            .withNormalizer(ClasspathNormalizer::class)
+        inputs.files(scriptingPluginClasspathFiles)
+            .withPropertyName("scriptingCompilerPluginClasspath")
+            .withNormalizer(ClasspathNormalizer::class)
         doFirst {
-            systemProperty("kotlinJsr223BtaImplClasspath", btaImplClasspathProvider.get())
-            systemProperty("kotlinJsr223BtaScriptingPluginClasspath", scriptingPluginClasspathProvider.get())
+            systemProperty("kotlinJsr223BtaImplClasspath", btaImplClasspathFiles.asPath)
+            systemProperty("kotlinJsr223BtaScriptingPluginClasspath", scriptingPluginClasspathFiles.asPath)
         }
     }
 }
