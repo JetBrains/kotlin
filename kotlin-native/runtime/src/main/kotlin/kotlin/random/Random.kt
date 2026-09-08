@@ -14,7 +14,7 @@ import kotlin.system.getTimeNanos
 /**
  * The default implementation of pseudo-random generator using the linear congruential generator.
  */
-internal object NativeRandom : Random() {
+private object NativeRandom : Random() {
     private const val MULTIPLIER = 0x5deece66dL
     @Suppress("DEPRECATION_ERROR")
     private val _seed = AtomicLong(mult(getTimeNanos()))
@@ -39,7 +39,7 @@ internal object NativeRandom : Random() {
     override fun nextInt(): Int = nextBits(32)
 }
 
-internal actual fun defaultPlatformRandom(): Random = NativeRandom
+internal actual val defaultRandom: Random = NativeRandom
 
 internal actual fun doubleFromParts(hi26: Int, low27: Int): Double =
         (hi26.toLong().shl(27) + low27) / (1L shl 53).toDouble()

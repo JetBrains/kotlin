@@ -7,7 +7,7 @@ package kotlin.random
 
 import kotlin.math.pow
 
-internal actual fun defaultPlatformRandom(): Random =
+internal actual val defaultRandom: Random =
     Random(js("(Math.random() * Math.pow(2, 32)) | 0").unsafeCast<Int>())
 
 
