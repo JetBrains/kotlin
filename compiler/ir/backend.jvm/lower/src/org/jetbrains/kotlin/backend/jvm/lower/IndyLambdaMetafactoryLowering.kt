@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.isIndyImplementationMethod
 import org.jetbrains.kotlin.backend.jvm.lower.indy.*
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -321,6 +322,11 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext) : Fil
         val samType = call.type as? IrSimpleType ?: fail("'samType' is expected to be a simple type")
 
         val implFunSymbol = call.invokeFunction.symbol
+
+        // Anonymous functions keep LOCAL_FUNCTION, so mark indy implementations for parameter assertions.
+        if (call.invokeFunction.origin == IrDeclarationOrigin.LOCAL_FUNCTION) {
+            call.invokeFunction.isIndyImplementationMethod = true
+        }
 
         val generatedParameters = LambdaMetafactoryArgumentsBuilder(backendContext, emptySet())
             .getLambdaMetafactoryArguments(
