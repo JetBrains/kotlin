@@ -5,10 +5,12 @@
 
 package kotlin.text.unicode
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public actual fun String.codePointAt(index: Int): CodePoint = (this as CharSequence).codePointAt(index)
 
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public actual fun CharSequence.codePointAt(index: Int): CodePoint {
     if (index !in 0..<length) throw IndexOutOfBoundsException("index: $index is required to be in range 0..<$length")
@@ -16,6 +18,7 @@ public actual fun CharSequence.codePointAt(index: Int): CodePoint {
     return codePointAtImpl(index, length, this::get)
 }
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public actual fun CharArray.codePointAt(index: Int): CodePoint {
     if (index !in 0..<size) throw IndexOutOfBoundsException("index: $index is required to be in range 0..<$size")
@@ -23,6 +26,7 @@ public actual fun CharArray.codePointAt(index: Int): CodePoint {
     return codePointAtImpl(index, size, this::get)
 }
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public actual fun CharArray.codePointAt(index: Int, endIndex: Int): CodePoint {
     if (endIndex !in 0..size) throw IndexOutOfBoundsException("endIndex: $endIndex is required to be in range 0..$size")
@@ -31,6 +35,7 @@ public actual fun CharArray.codePointAt(index: Int, endIndex: Int): CodePoint {
     return codePointAtImpl(index, endIndex, this::get)
 }
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 private inline fun codePointAtImpl(index: Int, endIndex: Int, charAt: (Int) -> Char): CodePoint {
     val c1 = charAt(index)
@@ -41,9 +46,11 @@ private inline fun codePointAtImpl(index: Int, endIndex: Int, charAt: (Int) -> C
     return c1.toCodePoint()
 }
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public actual fun String.codePointBefore(index: Int): CodePoint = (this as CharSequence).codePointBefore(index)
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public actual fun CharSequence.codePointBefore(index: Int): CodePoint {
     if (index !in 1..length) throw IndexOutOfBoundsException("index: $index is required to be in range 1..$length")
@@ -51,6 +58,7 @@ public actual fun CharSequence.codePointBefore(index: Int): CodePoint {
     return codePointBeforeImpl(index, 0, this::get)
 }
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public actual fun CharArray.codePointBefore(index: Int): CodePoint {
     if (index !in 1..size) throw IndexOutOfBoundsException("index: $index is required to be in range 1..$size")
@@ -58,6 +66,7 @@ public actual fun CharArray.codePointBefore(index: Int): CodePoint {
     return codePointBeforeImpl(index, 0, this::get)
 }
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public actual fun CharArray.codePointBefore(index: Int, startIndex: Int): CodePoint {
     if (startIndex !in 0..size) throw IndexOutOfBoundsException("startIndex: $startIndex is required to be in range 0..$size")
@@ -66,6 +75,7 @@ public actual fun CharArray.codePointBefore(index: Int, startIndex: Int): CodePo
     return codePointBeforeImpl(index, startIndex, this::get)
 }
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 private inline fun codePointBeforeImpl(index: Int, startIndex: Int, charAt: (Int) -> Char): CodePoint {
     val c2 = charAt(index - 1)
@@ -77,6 +87,7 @@ private inline fun codePointBeforeImpl(index: Int, startIndex: Int, charAt: (Int
 }
 
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public actual fun String.codePointCount(startIndex: Int, endIndex: Int): Int {
     if (startIndex < 0 || endIndex > length || startIndex > endIndex) throw IndexOutOfBoundsException("startIndex: $startIndex, endIndex: $endIndex, length: $length")
@@ -84,6 +95,7 @@ public actual fun String.codePointCount(startIndex: Int, endIndex: Int): Int {
     return codePointCountImpl(startIndex, endIndex, this::get)
 }
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public actual fun CharSequence.codePointCount(startIndex: Int, endIndex: Int): Int {
     if (startIndex < 0 || endIndex > length || startIndex > endIndex) throw IndexOutOfBoundsException("startIndex: $startIndex, endIndex: $endIndex, length: $length")
@@ -91,6 +103,7 @@ public actual fun CharSequence.codePointCount(startIndex: Int, endIndex: Int): I
     return codePointCountImpl(startIndex, endIndex, this::get)
 }
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public actual fun CharArray.codePointCount(startIndex: Int, endIndex: Int): Int {
     if (startIndex < 0 || endIndex > size || startIndex > endIndex) throw IndexOutOfBoundsException("startIndex: $startIndex, endIndex: $endIndex, size: $size")
@@ -116,6 +129,7 @@ private inline fun codePointCountImpl(startIndex: Int, endIndex: Int, charAt: (I
     return count
 }
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public actual fun String.offsetByCodePoints(index: Int, codePointOffset: Int): Int {
     if (index !in 0..length) throw IndexOutOfBoundsException("index: $index, length: $length")
@@ -123,6 +137,7 @@ public actual fun String.offsetByCodePoints(index: Int, codePointOffset: Int): I
     return offsetByCodePointsImpl(index, codePointOffset, 0, length, this::get)
 }
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public actual fun CharSequence.offsetByCodePoints(index: Int, codePointOffset: Int): Int {
     if (index !in 0..length) throw IndexOutOfBoundsException("index: $index, length: $length")
@@ -130,6 +145,7 @@ public actual fun CharSequence.offsetByCodePoints(index: Int, codePointOffset: I
     return offsetByCodePointsImpl(index, codePointOffset, 0, length, this::get)
 }
 
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public actual fun CharArray.offsetByCodePoints(index: Int, codePointOffset: Int, startIndex: Int, endIndex: Int): Int {
     if (startIndex < 0 || endIndex > size || startIndex > endIndex) throw IndexOutOfBoundsException("startIndex: $startIndex, endIndex: $endIndex, size: $size")

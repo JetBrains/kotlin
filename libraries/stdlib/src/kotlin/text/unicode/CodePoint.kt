@@ -52,6 +52,7 @@ private const val MIN_SUPPLEMENTARY_CODE_POINT_VALUE: Int = 0x10000
  * @property code The integer value of the Unicode code point, in the range `0x0..0x10FFFF`.
  * @throws IllegalArgumentException if the provided code value is outside the valid range.
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @kotlin.jvm.JvmInline
 public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
@@ -342,6 +343,7 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
  * @see CodePoint
  * @see Char.toCodePoint
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public fun Int.toCodePoint(): CodePoint =
     CodePoint(this.mod(MAX_CODE_POINT_VALUE + 1))
@@ -355,6 +357,7 @@ public fun Int.toCodePoint(): CodePoint =
  * @see CodePoint.fromChar
  * @see CodePoint.toSingleChar
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 public fun Char.toCodePoint(): CodePoint =
     code.toCodePoint()
@@ -371,6 +374,7 @@ public fun Char.toCodePoint(): CodePoint =
  * @see CodePoint.toString
  * @see CodePoint.toCharArray
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @IgnorableReturnValue
 public fun <T : Appendable> T.appendCodePoint(value: CodePoint): T {
@@ -395,6 +399,7 @@ public fun <T : Appendable> T.appendCodePoint(value: CodePoint): T {
  * @see StringBuilder.insert
  * @see appendCodePoint
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @IgnorableReturnValue
 public fun StringBuilder.insertCodePointAt(index: Int, value: CodePoint): StringBuilder {
@@ -414,6 +419,7 @@ public fun StringBuilder.insertCodePointAt(index: Int, value: CodePoint): String
  * @see StringBuilder.set
  * @see codePointAt
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @IgnorableReturnValue
 public fun StringBuilder.setCodePointAt(index: Int, value: CodePoint): StringBuilder {
@@ -442,6 +448,7 @@ public fun StringBuilder.setCodePointAt(index: Int, value: CodePoint): StringBui
  * @see StringBuilder.deleteAt
  * @see codePointAt
  */
+@SinceKotlin("2.5")
 @ExperimentalUnicodeApi
 @IgnorableReturnValue
 public fun StringBuilder.deleteCodePointAt(index: Int): StringBuilder {
