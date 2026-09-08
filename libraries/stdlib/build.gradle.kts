@@ -1,6 +1,7 @@
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
@@ -8,7 +9,10 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinTargetWithNodeJsDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
@@ -263,11 +267,61 @@ kotlin {
         }
     }
     js {
+        val testCompilation = compilations.getByName("test")
+        val mainCompilation = compilations.getByName("main") {
+            compileTaskProvider.configure {
+                compilerOptions.mainCompilationOptions()
+                compilerOptions.freeCompilerArgs.addAll(
+                    listOfNotNull(
+                        "-Xir-module-name=$KOTLIN_JS_STDLIB_NAME",
+                        diagnosticNamesArg,
+                    )
+                )
+            }
+        }
+
+        val latestJsCompilation = compilations.create("latestJsTest") {
+            associateWith(mainCompilation)
+            defaultSourceSet.dependsOn(testCompilation.defaultSourceSet)
+            binaries.executable(this)
+            binaries.configureEach {
+                linkTask.configure {
+                    compilerOptions {
+                        target.set("es2020")
+                        moduleKind.set(JsModuleKind.MODULE_COMMONJS) // Mocha adapter doesn't support ES modules yet
+                    }
+                }
+            }
+        }
+
+        val latestTargetRunRegistering: KotlinJsSubTargetDsl.() -> KotlinJsPlatformTestRun = {
+            testRuns.create("latestTarget") {
+                setExecutionSourceFrom(latestJsCompilation)
+                executionTask.configure {
+                    val devBinary = latestJsCompilation.binaries
+                        .matching { it.mode == KotlinJsBinaryMode.DEVELOPMENT }
+                        .single()
+
+                    inputFileProperty.set(devBinary.mainFileSyncPath)
+                }
+            }
+        }
+
+
         if (!kotlinBuildProperties.isTeamcityBuild.get()) {
-            browser {}
+            browser {
+                val latestJsRun = latestTargetRunRegistering()
+
+                testTask {
+                    dependsOn(latestJsRun.executionTask)
+                }
+            }
         }
         nodejs {
+            val latestJsRun = latestTargetRunRegistering()
+
             testTask {
+                dependsOn(latestJsRun.executionTask)
                 useMocha {
                     timeout = "10s"
                 }
@@ -283,19 +337,6 @@ kotlin {
             )
         }
 
-        compilations {
-            val main = getByName("main") {
-                compileTaskProvider.configure {
-                    compilerOptions.mainCompilationOptions()
-                    compilerOptions.freeCompilerArgs.addAll(
-                        listOfNotNull(
-                            "-Xir-module-name=$KOTLIN_JS_STDLIB_NAME",
-                            diagnosticNamesArg,
-                        )
-                    )
-                }
-            }
-        }
     }
 
     fun <T> T.commonWasmTargetConfiguration()
