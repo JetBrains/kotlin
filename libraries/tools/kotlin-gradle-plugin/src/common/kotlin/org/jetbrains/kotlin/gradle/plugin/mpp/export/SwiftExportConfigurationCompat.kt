@@ -18,9 +18,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedDependency
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exportedSwiftExportApiConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.applySwiftExportConsumerOverrides
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.targets.native.resolvableApiConfiguration
+import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 
 /**
  * A common interface for [SwiftExportConfiguration] and [org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension]
@@ -53,6 +56,16 @@ internal interface SwiftExportConfigurationCompat {
      * Returns a list of exported modules.
      */
     val exportedModules: Provider<Set<SwiftExportedDependency>>
+
+    /**
+     * Applies what this DSL declares on top of the [modules] collected from the export graph. The legacy DSL
+     * declares nothing and returns them as they are.
+     */
+    fun adjustSwiftModules(
+        modules: Provider<List<SwiftExportedModule>>,
+        exportConfiguration: Provider<LazyResolvedConfigurationWithArtifacts>,
+        apiConfiguration: Provider<LazyResolvedConfigurationWithArtifacts?>,
+    ): Provider<List<SwiftExportedModule>>
 
     /**
      * Configure SwiftExportConfig.settings parameters
@@ -89,6 +102,20 @@ internal interface SwiftExportConfigurationCompat {
 
                 override val exportedModules: Provider<Set<SwiftExportedDependency>>
                     get() = providers.provider { emptySet() } // TODO: KT-85687
+
+                override fun adjustSwiftModules(
+                    modules: Provider<List<SwiftExportedModule>>,
+                    exportConfiguration: Provider<LazyResolvedConfigurationWithArtifacts>,
+                    apiConfiguration: Provider<LazyResolvedConfigurationWithArtifacts?>,
+                ): Provider<List<SwiftExportedModule>> = kotlinNativeCompilation.project.applySwiftExportConsumerOverrides(
+                    modules = modules,
+                    overrides = providers.provider {
+                        configuration.activatedXcodeIntegration?.dependencyOverrides?.orNull ?: emptyMap()
+                    },
+                    exportConfiguration = exportConfiguration,
+                    apiConfiguration = apiConfiguration,
+                )
+
                 override val settings: MapProperty<String, String>
                     get() = objects.mapProperty(String::class.java, String::class.java) // TODO: KT-87890
                 override val freeCompilerArgs: ListProperty<String>
@@ -121,6 +148,12 @@ internal interface SwiftExportConfigurationCompat {
                             kotlinNativeCompilation.internal.configurations.compileDependencyConfiguration
                         )
                     }
+
+                override fun adjustSwiftModules(
+                    modules: Provider<List<SwiftExportedModule>>,
+                    exportConfiguration: Provider<LazyResolvedConfigurationWithArtifacts>,
+                    apiConfiguration: Provider<LazyResolvedConfigurationWithArtifacts?>,
+                ): Provider<List<SwiftExportedModule>> = modules
 
                 override val settings: MapProperty<String, String> get() = extension.advancedConfiguration.settings
                 override val freeCompilerArgs: ListProperty<String> get() = extension.advancedConfiguration.freeCompilerArgs
