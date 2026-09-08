@@ -36,11 +36,8 @@ internal val kotlinArchiveAllSourceSets = listOf(
     "jsMain", "wasmJsMain", "linuxMain", "linuxX64Main", "linuxArm64Main",
     "iosArm64Main", "macosArm64Main",
 )
-internal val kotlinArchiveResourcesSourceSets = listOf(
-    "commonMain", "nativeMain", "jsMain", "wasmJsMain",
-    "linuxX64Main", "linuxArm64Main", "iosArm64Main",
-    "macosArm64Main",
-)
+internal val kotlinArchiveResourcesSourceSets =
+    kotlinArchiveAllSourceSets - listOf("jvmMain")
 
 
 internal fun KGPBaseTest.kotlinArchiveProducer(
@@ -55,6 +52,8 @@ internal fun KGPBaseTest.kotlinArchiveProducer(
         }
         kotlinArchiveAllSourceSets.filter { withAppleTargets || it !in kotlinArchiveAppleSourceSets }.forEach { sourceSetName ->
             addSourceFile(sourceSetName, "fun $sourceSetName() {}")
+            // we are creating test source-sets to test they don't end up in archive
+            addSourceFile(sourceSetName.replace("Main", "Test"), "fun ${sourceSetName}Test() {}")
         }
         buildScriptInjection {
             project.applyMultiplatform {

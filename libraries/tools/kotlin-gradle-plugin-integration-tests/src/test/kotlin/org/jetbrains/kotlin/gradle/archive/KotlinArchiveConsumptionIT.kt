@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.archive
 
 import org.gradle.api.tasks.Copy
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
@@ -57,8 +58,8 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
                         "org.gradle.category" to "library",
                         "org.gradle.jvm.environment" to "non-jvm",
                         "org.gradle.usage" to "kotlin-api",
-                        "org.jetbrains.kotlin.kar.compression.method" to "NONE",
-                        "org.jetbrains.kotlin.kar.state" to "PLATFORM_ARTIFACTS_EXTRACTED",
+                        "org.jetbrains.kotlin.kar.compression.method" to "none",
+                        "org.jetbrains.kotlin.kar.state" to "platform-artifacts-extracted",
                         "org.jetbrains.kotlin.native.target" to "linux_x64",
                         "org.jetbrains.kotlin.platform.type" to "native",
                     ),
@@ -128,7 +129,7 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
         consumer.configureResourcesResolution()
 
         consumer.build("assemble", RESOLVE_RESOURCES_TASK_NAME) {
-            assertTasksExecuted(expectedConsumerCompilationTasks())
+            assertTasksExecuted(expectedConsumerCompilationTasks() + ":${RESOLVE_RESOURCES_TASK_NAME}")
         }
 
         assertEquals(
@@ -138,15 +139,15 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
     }
 
     private fun consumptionWithCInteropsTestImpl(gradleVersion: GradleVersion, withAppleTargets: Boolean) {
-        val producer = kotlinArchiveProducer(gradleVersion)
+        val producer = kotlinArchiveProducer(gradleVersion, withAppleTargets)
         producer.configureCinteropPublication()
         val publishedProject = producer.publish()
 
-        val consumer = kotlinArchiveConsumer(gradleVersion, publishedProject)
-        consumer.cinteropsCallsSource(withAppleTargets)
+        val consumer = kotlinArchiveConsumer(gradleVersion, publishedProject, withAppleTargets)
+        consumer.cinteropsCallsSource()
 
         consumer.build("assemble") {
-            assertTasksExecuted(expectedConsumerCompilationTasks())
+            assertTasksExecuted(expectedConsumerCompilationTasks(withAppleTargets))
         }
     }
 
@@ -194,7 +195,7 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
         publishedProject: PublishedProject,
         withAppleTargets: Boolean = true,
     ): TestProject = project("empty", gradleVersion) {
-        addKgpToBuildScriptCompilationClasspath()
+        plugins { kotlin("multiplatform") }
         addPublishedProjectToRepositories(publishedProject)
         settingsBuildScriptInjection {
             settings.rootProject.name = "consumer"
@@ -234,11 +235,11 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
         }
     }
 
-    private fun TestProject.cinteropsCallsSource(withAppleTargets: Boolean = true) {
+    private fun TestProject.cinteropsCallsSource() {
         buildScriptInjection {
             project.enableCinteropCommonization()
         }
-        nativeSourceSets.filter { withAppleTargets || it !in kotlinArchiveAppleSourceSets }.forEach { sourceSetName ->
+        nativeSourceSets.forEach { sourceSetName ->
             val functionName = "callCinteropIn" + sourceSetName.replaceFirstChar { it.uppercase() }
             addSourceFile(
                 sourceSetName,
@@ -291,22 +292,28 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
          * Resources are not published for the jvm target, so it resolves none of them.
          */
         private val expectedResolvedResources = listOf(
+            "iosArm64/$PRODUCER_RESOURCES_PLACEMENT/appleMain.txt",
             "iosArm64/$PRODUCER_RESOURCES_PLACEMENT/commonMain.txt",
             "iosArm64/$PRODUCER_RESOURCES_PLACEMENT/iosArm64Main.txt",
             "iosArm64/$PRODUCER_RESOURCES_PLACEMENT/nativeMain.txt",
             "js/$PRODUCER_RESOURCES_PLACEMENT/commonMain.txt",
             "js/$PRODUCER_RESOURCES_PLACEMENT/jsMain.txt",
+            "js/$PRODUCER_RESOURCES_PLACEMENT/webMain.txt",
             "linuxArm64/$PRODUCER_RESOURCES_PLACEMENT/commonMain.txt",
             "linuxArm64/$PRODUCER_RESOURCES_PLACEMENT/linuxArm64Main.txt",
+            "linuxArm64/$PRODUCER_RESOURCES_PLACEMENT/linuxMain.txt",
             "linuxArm64/$PRODUCER_RESOURCES_PLACEMENT/nativeMain.txt",
             "linuxX64/$PRODUCER_RESOURCES_PLACEMENT/commonMain.txt",
+            "linuxX64/$PRODUCER_RESOURCES_PLACEMENT/linuxMain.txt",
             "linuxX64/$PRODUCER_RESOURCES_PLACEMENT/linuxX64Main.txt",
             "linuxX64/$PRODUCER_RESOURCES_PLACEMENT/nativeMain.txt",
+            "macosArm64/$PRODUCER_RESOURCES_PLACEMENT/appleMain.txt",
             "macosArm64/$PRODUCER_RESOURCES_PLACEMENT/commonMain.txt",
             "macosArm64/$PRODUCER_RESOURCES_PLACEMENT/macosArm64Main.txt",
             "macosArm64/$PRODUCER_RESOURCES_PLACEMENT/nativeMain.txt",
             "wasmJs/$PRODUCER_RESOURCES_PLACEMENT/commonMain.txt",
             "wasmJs/$PRODUCER_RESOURCES_PLACEMENT/wasmJsMain.txt",
+            "wasmJs/$PRODUCER_RESOURCES_PLACEMENT/webMain.txt",
         )
 
         private fun expectedConsumerCompilationTasks(

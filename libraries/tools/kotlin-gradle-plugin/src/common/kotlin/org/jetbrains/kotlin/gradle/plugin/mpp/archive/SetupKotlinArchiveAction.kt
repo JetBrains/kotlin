@@ -62,8 +62,11 @@ internal val SetupKotlinArchiveAction = KotlinProjectSetupCoroutine {
         target.configureTransformActionFromKarToResources()
     }
     for (sourceSet in extension.awaitSourceSets()) {
-        // TODO: check if this is okey to do on non-shared source-sets.
-        sourceSet.requestDecompressedKarForMetadataCompilation()
+        /**
+         * We are also doing this for platform source-sets. While they are not using metadata configuration
+         * to compile, it still exists, and can be requested for example by IDE import.
+         */
+        sourceSet.requestDecompressedKarForResolvableMetadataConfiguration()
     }
 
     configureTransformActionFromKarXzToKar()
@@ -76,7 +79,7 @@ internal val SetupKotlinArchiveAction = KotlinProjectSetupCoroutine {
  * they work on top of zip archive. We can potentially extract only metadata directory into a separate archive,
  * but that would just be additional work, so we directly pass DECOMPRESSED to the task.
  */
-private fun KotlinSourceSet.requestDecompressedKarForMetadataCompilation() {
+private fun KotlinSourceSet.requestDecompressedKarForResolvableMetadataConfiguration() {
     internal.resolvableMetadataConfiguration.apply {
         attributes.attribute(KarLayout.Attributes.state, KarLayout.Attributes.State.DECOMPRESSED)
     }

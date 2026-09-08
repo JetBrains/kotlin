@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.utils.copyZipFilePartially
 import org.jetbrains.kotlin.gradle.utils.ensureValidZipDirectoryPath
 import org.jetbrains.kotlin.gradle.utils.listDescendants
+import java.io.File
 import java.util.zip.ZipFile
 import javax.inject.Inject
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KarLayout.Attributes as KarAttributes
@@ -40,7 +41,7 @@ private fun <T : Any> TransformSpec<*>.changesAttribute(attribute: Attribute<T>,
     to.attribute(attribute, toValue)
 }
 
-private fun TransformSpec<*>.changesState(fromValue: KarState, toValue: KarState) {
+private fun TransformSpec<*>.changesState(fromValue: String, toValue: String) {
     changesAttribute(KarAttributes.state, fromValue, toValue)
 }
 
@@ -59,7 +60,7 @@ private abstract class XZDecompressAction : TransformAction<TransformParameters.
 
     override fun transform(outputs: TransformOutputs) {
         val archiveFile = inputArtifact.get().asFile
-        val targetFile = outputs.file(archiveFile.nameWithoutExtension)
+        val targetFile = outputs.file(archiveFile.nameWithoutExtension) // .kar.xz -> .kar
 
         archiveFile.inputStream().buffered().use { fileInput ->
             XZCompressorInputStream(fileInput).use { xzInput ->
@@ -104,7 +105,7 @@ internal abstract class KarToResourcesTransformation : TransformAction<KarToReso
 
     interface Parameters : TransformParameters {
         @get:Input
-        val resourcesPath: Property<String>
+        val platformName: Property<String>
     }
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -114,8 +115,8 @@ internal abstract class KarToResourcesTransformation : TransformAction<KarToReso
     override fun transform(outputs: TransformOutputs) {
         copyZipFilePartially(
             sourceZipFile = inputArtifact.get().asFile,
-            destinationZipFile = outputs.file("${inputArtifact.get().asFile.nameWithoutExtension}.${RESOURCES_ZIP_EXTENSION}"),
-            path = parameters.resourcesPath.get()
+            destinationZipFile = outputs.file("${inputArtifact.get().asFile.nameWithoutExtension}-${parameters.platformName.get()}.${RESOURCES_ZIP_EXTENSION}"),
+            path = ensureValidZipDirectoryPath("${KarLayout.RESOURCES_DIRECTORY_NAME}/${parameters.platformName.get()}")
         )
     }
 }
@@ -123,7 +124,7 @@ internal abstract class KarToResourcesTransformation : TransformAction<KarToReso
 internal fun KotlinTarget.configureTransformActionFromKarToResources() {
     if (this !is KotlinTargetWithKotlinArchiveSupport) return
     project.dependencies.registerTransform(KarToResourcesTransformation::class.java) { spec ->
-        spec.parameters.resourcesPath.set("${KarLayout.RESOURCES_DIRECTORY_NAME}/$platformNameInKotlinArchive/")
+        spec.parameters.platformName.set(platformNameInKotlinArchive)
 
         spec.requiresTarget(this)
 
@@ -132,6 +133,12 @@ internal fun KotlinTarget.configureTransformActionFromKarToResources() {
 }
 
 
+/**
+ * This transformation unpacks:
+ * * All content of karFile/platform/{platformName} -> karName-{platformName}/<klib-content>
+ * * For each cinterop (located by listing of directories in karFile/cinterops/{platformName}:
+ *       content of karFile/cinterop/{platformName}/{cinteropName} -> karName-{platformName}-{cinteropName}/<cinterop-klib-content>
+ */
 @DisableCachingByDefault(because = "Unpacking a .kar is not worth caching")
 internal abstract class KarToPlatformArtifactsTransformation : TransformAction<KarToPlatformArtifactsTransformation.Parameters> {
 
@@ -163,39 +170,47 @@ internal abstract class KarToPlatformArtifactsTransformation : TransformAction<K
                 .toList()
         }
 
-        val platformKlibDir = outputs.dir("${karFile.nameWithoutExtension}-${parameters.platformName.get()}")
+
+        data class Entry(val archivePath: String, val outputDirectory: File)
 
         /**
-         * The code below copies:
-         * * All content of karFile/platform/{platformName} -> karName-{platformName}/
-         * * For each cinterop (located by listing of directories in karFile/cinterops/{platformName}:
-         *      content of karFile/cinterop/{platformName}/{cinteropName} -> karName-{platformName}/{cinteropName}
-         *
          *  [outputDirectoriesByArchivePath] is a mapping of archive directory path to a fs directory where to put it's content.
-         *  Each directory in output dir should be created by outputs.dir to make gradle correctly track them
+         *  Each directory in output dir should be created by outputs.dir to make Gradle correctly track them.
+         *
+         *  To make a single path though zip, we create them in advance.
          */
-        val outputDirectoriesByArchivePath = buildMap {
-            put(platformPath, platformKlibDir)
+        val outputDirectoriesByArchivePath = buildList {
+            add(
+                Entry(
+                    archivePath = platformPath,
+                    outputDirectory = outputs.dir("${karFile.nameWithoutExtension}-${parameters.platformName.get()}")
+                )
+            )
             for (cinteropKlibName in cinteropKlibNames) {
-                put("$cinteropsPath$cinteropKlibName/", outputs.dir(cinteropKlibName))
+                add(
+                    Entry(
+                        archivePath = "$cinteropsPath$cinteropKlibName/",
+                        outputDirectory = outputs.dir("${karFile.nameWithoutExtension}-${parameters.platformName.get()}-${cinteropKlibName}")
+                    )
+                )
             }
         }
-        check(outputDirectoriesByArchivePath.values.all { it.parentFile == platformKlibDir.parentFile }) {
+        val baseDir = outputDirectoriesByArchivePath[0].outputDirectory.parentFile
+        check(outputDirectoriesByArchivePath.all { baseDir == it.outputDirectory.parentFile }) {
             "Expected all transformed KLIB output directories to have the same parent"
         }
 
         fileSystemOperations.copy { copy ->
             copy.from(archiveOperations.zipTree(karFile)) { spec ->
-                outputDirectoriesByArchivePath.keys.forEach { archivePath -> spec.include("$archivePath**") }
-                spec.eachFile { file ->
-                    val (archivePath, outputDirectory) = outputDirectoriesByArchivePath.entries.first { (archivePath) ->
-                        file.path.startsWith(archivePath)
+                for ((archivePath, outputDirectory) in outputDirectoriesByArchivePath) {
+                    spec.include("${archivePath}**")
+                    spec.filesMatching("${archivePath}**") { file ->
+                        file.path = "${outputDirectory.name}/${file.path.removePrefix(archivePath)}"
                     }
-                    file.path = "${outputDirectory.name}/${file.path.removePrefix(archivePath)}"
                 }
                 spec.includeEmptyDirs = false
             }
-            copy.into(platformKlibDir.parentFile)
+            copy.into(baseDir)
         }
     }
 }
