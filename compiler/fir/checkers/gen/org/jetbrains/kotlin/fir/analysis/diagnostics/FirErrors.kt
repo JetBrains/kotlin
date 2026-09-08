@@ -203,8 +203,6 @@ object FirErrors : KtDiagnosticsContainer() {
     val PARENTHESIZED_PACKAGE_QUALIFIER: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("PARENTHESIZED_PACKAGE_QUALIFIER", ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val KOTLIN_PACKAGE_USAGE: KtDiagnosticFactory0 = KtDiagnosticFactory0("KOTLIN_PACKAGE_USAGE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION", ForbidArrayLiteralsInNonAnnotationContexts, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
-    val LEADING_WHITESPACE_REQUIRED: KtDiagnosticFactory0 = KtDiagnosticFactory0("LEADING_WHITESPACE_REQUIRED", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
-    val TRAILING_WHITESPACE_REQUIRED: KtDiagnosticFactory0 = KtDiagnosticFactory0("TRAILING_WHITESPACE_REQUIRED", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     // Unresolved
     val UNRESOLVED_REFERENCE: KtDiagnosticFactory3<String, String?, ConeReceiverInfo?> = KtDiagnosticFactory3("UNRESOLVED_REFERENCE", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())

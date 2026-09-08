@@ -2841,12 +2841,6 @@ private fun KaDiagnosticConverterBuilder.addConversions62() {
             token,
         )
     }
-    add(FirErrors.LEADING_WHITESPACE_REQUIRED) { firDiagnostic ->
-        LeadingWhitespaceRequiredImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirErrors.PLACEHOLDER_PROJECTION_IN_TYPEREF) { firDiagnostic ->
         PlaceholderProjectionInTyperefImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -2890,6 +2884,12 @@ private fun KaDiagnosticConverterBuilder.addConversions62() {
     }
     add(FirJvmErrors.ANNOTATION_TARGETS_ONLY_IN_JAVA) { firDiagnostic ->
         AnnotationTargetsOnlyInJavaImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirSyntaxErrors.LEADING_WHITESPACE_REQUIRED) { firDiagnostic ->
+        LeadingWhitespaceRequiredImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -7248,12 +7248,6 @@ private fun KaDiagnosticConverterBuilder.addConversions159() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions160() {
-    add(FirErrors.TRAILING_WHITESPACE_REQUIRED) { firDiagnostic ->
-        TrailingWhitespaceRequiredImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirErrors.IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT_ERROR) { firDiagnostic ->
         ImplicitPropertyTypeMakesBehaviorOrderDependantErrorImpl(
             firSymbolBuilder.variableBuilder.buildVariableSymbol(firDiagnostic.a),
@@ -7282,6 +7276,12 @@ private fun KaDiagnosticConverterBuilder.addConversions160() {
         ProtectedCallFromPublicInlineErrorImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirSyntaxErrors.TRAILING_WHITESPACE_REQUIRED) { firDiagnostic ->
+        TrailingWhitespaceRequiredImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

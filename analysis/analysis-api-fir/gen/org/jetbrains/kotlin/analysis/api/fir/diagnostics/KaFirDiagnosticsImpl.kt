@@ -351,16 +351,6 @@ internal class UnsupportedArrayLiteralOutsideOfAnnotationWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnsupportedArrayLiteralOutsideOfAnnotationWarning
 
-internal class LeadingWhitespaceRequiredImpl(
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.LeadingWhitespaceRequired
-
-internal class TrailingWhitespaceRequiredImpl(
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TrailingWhitespaceRequired
-
 internal class UnresolvedReferenceImpl(
     override val reference: String,
     override val operator: String?,
@@ -6782,6 +6772,16 @@ internal class SyntaxImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.Syntax
+
+internal class LeadingWhitespaceRequiredImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.LeadingWhitespaceRequired
+
+internal class TrailingWhitespaceRequiredImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TrailingWhitespaceRequired
 
 internal class NestedExternalDeclarationImpl(
     firDiagnostic: KtDiagnosticWithSource,
