@@ -1,0 +1,104 @@
+FILE: representativeClassIntersection.kt
+    public sealed interface MySealedInterface : R|kotlin/Any| {
+        public final object First : R|MySealedInterface| {
+            private constructor(): R|MySealedInterface.First| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final object Second : R|MySealedInterface| {
+            private constructor(): R|MySealedInterface.Second| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public abstract interface Marker : R|kotlin/Any| {
+    }
+    public final class Sub : R|MySealedInterface|, R|Marker| {
+        public constructor(): R|Sub| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun testSmartCast(x: R|kotlin/Any|, l: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|MySealedInterface|) && (R|<local>/x| is R|Marker|) ->  {
+                ==(R|<local>/x|, <Unresolved name: First>#)
+                when (lval <when-subject>: R|kotlin/Any| = R|<local>/x|) {
+                    ==($subj$, <Unresolved name: First>#) ->  {
+                        Int(0)
+                    }
+                    else ->  {
+                        Int(1)
+                    }
+                }
+
+            }
+        }
+
+        when () {
+            (R|<local>/x| is R|Sub|) && (R|<local>/x| is R|Marker|) ->  {
+                ==(R|<local>/x|, <Unresolved name: First>#)
+            }
+        }
+
+        when () {
+            (R|<local>/l| is R|kotlin/collections/Collection<kotlin/Int>|) && (R|<local>/l| is R|kotlin/collections/List<kotlin/Int>|) ->  {
+                ==(R|<local>/l|, Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(1)))
+                when (lval <when-subject>: R|kotlin/Any| = R|<local>/l|) {
+                    ==($subj$, Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>()) ->  {
+                        Int(0)
+                    }
+                    else ->  {
+                        Int(1)
+                    }
+                }
+
+            }
+        }
+
+    }
+    public final fun <T : R|MySealedInterface|, R|Marker|> takeIntersection(x: R|T|): R|kotlin/Unit| {
+    }
+    public final fun testGeneric(sub: R|Sub|): R|kotlin/Unit| {
+        R|/takeIntersection<Inapplicable(INAPPLICABLE): /takeIntersection>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(Q|MySealedInterface.First|)
+        R|/takeIntersection|<R|Sub|>(R|<local>/sub|)
+    }
+    public open class Box : R|kotlin/Any| {
+        public constructor(): R|Box| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Box.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun of(vararg elements: R|kotlin/IntArray|): R|Box| {
+                ^of R|kotlin/TODO|()
+            }
+
+        }
+
+    }
+    public final fun <T> select(x: R|T|, y: R|T|): R|T| {
+        ^select R|<local>/x|
+    }
+    public final fun testIntersectionAsBound(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|Box|) && (R|<local>/x| is R|Marker|) ->  {
+                ==(R|<local>/x|, Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(1)))
+                R|/select|<R|kotlin/Any|>(R|<local>/x|, Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(1)))
+            }
+        }
+
+        when () {
+            (R|<local>/x| is R|MySealedInterface|) && (R|<local>/x| is R|Marker|) ->  {
+                R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|it(MySealedInterface & Marker)|>(R|<local>/x|, <Unresolved name: First>#)
+            }
+        }
+
+    }
