@@ -35,6 +35,7 @@ abstract class AbstractProject<O : BaseCompilationOperation, B : BaseCompilation
         dependencies: List<Dependency> = emptyList(),
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
         stdlibClasspath: List<Path>? = null,
+        compileJavaSources: Boolean = false,
         moduleCompilationConfigAction: (B) -> Unit = {},
     ): Module<O, B, IC>
 

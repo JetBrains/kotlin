@@ -23,9 +23,20 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperatio
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.snapshotBasedIcConfiguration
 import java.io.File
 import java.nio.file.Path
+import javax.tools.ToolProvider
 import kotlin.io.path.createParentDirectories
+import kotlin.io.path.extension
 import kotlin.io.path.pathString
 import kotlin.io.path.walk
+import kotlin.reflect.KClass
+
+data class JvmModuleCacheKey(
+    val moduleClass: KClass<*>,
+    val moduleName: String,
+    val dependencies: List<DependencyScenarioDslCacheKey>,
+    val compilationArguments: (JvmCompilationOperation.Builder) -> Unit,
+    val compileJavaSources: Boolean,
+) : DependencyScenarioDslCacheKey
 
 class JvmModule(
     private val kotlinToolchain: KotlinToolchains,
@@ -38,6 +49,7 @@ class JvmModule(
     private val snapshotConfig: SnapshotConfig,
     moduleCompilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
     private val stdlibLocation: List<Path>,
+    val compileJavaSources: Boolean = false,
 ) : AbstractModule<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>(
     project,
     moduleName,
@@ -46,6 +58,14 @@ class JvmModule(
     defaultStrategyConfig,
     moduleCompilationConfigAction,
 ) {
+    override val scenarioDslCacheKey: DependencyScenarioDslCacheKey =
+        JvmModuleCacheKey(
+            this::class,
+            moduleName,
+            dependencies.map { it.scenarioDslCacheKey },
+            moduleCompilationConfigAction,
+            compileJavaSources,
+        )
 
 
     /**
@@ -85,7 +105,25 @@ class JvmModule(
 
         return compilationOperation.let {
             compilationAction(it)
-            buildSession.executeOperation(it, strategyConfig, kotlinLogger)
+            val result = buildSession.executeOperation(it, strategyConfig, kotlinLogger)
+            if (compileJavaSources && result == CompilationResult.COMPILATION_SUCCESS) {
+                val javaFiles = sourcesDirectory.walk().filter { file -> file.extension == "java" }.map { file -> file.toFile() }.toList()
+                if (javaFiles.isNotEmpty()) {
+                    val compiler = ToolProvider.getSystemJavaCompiler()
+                        ?: error("System Java compiler not found. Ensure running on a JDK.")
+                    val success = compiler.getStandardFileManager(null, null, null).use { fileManager ->
+                        val compilationUnits = fileManager.getJavaFileObjectsFromFiles(javaFiles)
+                        val classpathEntries =
+                            (compileClasspath + outputDirectory).map { path -> path.toString() }.joinToString(File.pathSeparator)
+                        val options = listOf("-d", outputDirectory.toString(), "-cp", classpathEntries)
+                        compiler.getTask(null, fileManager, null, options, null, compilationUnits).call()
+                    }
+                    if (!success) {
+                        return@let CompilationResult.COMPILATION_ERROR
+                    }
+                }
+            }
+            result
         }
     }
 

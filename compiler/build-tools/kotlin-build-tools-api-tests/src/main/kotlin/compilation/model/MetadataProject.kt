@@ -28,8 +28,10 @@ class MetadataProject(
         dependencies: List<Dependency>,
         snapshotConfig: SnapshotConfig,
         stdlibClasspath: List<Path>?,
+        compileJavaSources: Boolean,
         moduleCompilationConfigAction: (KotlinMetadataKlibCompilationOperation.Builder) -> Unit,
     ): MetadataModule {
+        require(!compileJavaSources) { "Compiling Java sources is not supported for Kotlin metadata modules" }
         val moduleDirectory = projectDirectory.resolve(moduleName)
         val sanitizedModuleName = moduleName.replace(invalidModuleNameCharactersRegex, "_")
         val module = MetadataModule(
