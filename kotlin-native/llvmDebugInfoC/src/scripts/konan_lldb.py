@@ -394,14 +394,6 @@ def _get_cached_summary(process, key):
     return None if cached_info is None else cached_info.summary
 
 
-def _set_cached_summary(process, key, summary):
-    if summary is None:
-        return
-    cached_info = _get_or_create_cached_sbvalue_info_for_key(process, key)
-    if cached_info is not None:
-        cached_info.summary = summary
-
-
 def _get_cached_type_name(variable):
     if variable is None or not variable.IsValid():
         return None
@@ -1773,12 +1765,7 @@ def _hex(value):
     return f"0x{value:x}"
 
 
-def _init_logger():
-    return
-
-
 def __lldb_init_module(debugger, _):
-    _init_logger()
     _FACTORY["object"] = lambda x, y, z: KonanObjectSyntheticProvider(x, z)
     _FACTORY["array"] = lambda x, y, z: KonanArraySyntheticProvider(x, y, z)
     _FACTORY["string"] = lambda x, y, _: KonanStringSyntheticProvider(x)
