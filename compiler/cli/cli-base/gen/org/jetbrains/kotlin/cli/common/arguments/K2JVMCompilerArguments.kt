@@ -133,6 +133,17 @@ If API Level >= 2.2 -- no-op.""",
         }
 
     @Argument(
+        value = "-Xdirect-java-actualization",
+        description = "Enable experimental direct Java actualization support.",
+    )
+    @Enables(LanguageFeature.DirectJavaActualization)
+    var directJavaActualization: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xdisable-standard-script",
         description = "Disable standard Kotlin scripting support.",
     )

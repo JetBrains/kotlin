@@ -954,4 +954,16 @@ The default value is 'inline'.""",
             introducedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
+
+    compilerArgument {
+        name = "Xdirect-java-actualization"
+        description = "Enable experimental direct Java actualization support.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.DirectJavaActualization))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
 }
