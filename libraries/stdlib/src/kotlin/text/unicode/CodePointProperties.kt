@@ -8,13 +8,13 @@ package kotlin.text.unicode
 /**
  * Returns the Unicode general category of the Unicode character corresponding to this code point.
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public expect val CodePoint.category: CharCategory
 
 /**
  * Returns `true` if the Unicode character corresponding to the specified [codePoint] belongs to this category.
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public operator fun CharCategory.contains(codePoint: CodePoint): Boolean =
     codePoint.category == this
 
@@ -24,7 +24,7 @@ public operator fun CharCategory.contains(codePoint: CodePoint): Boolean =
  *
  * A character is considered to be defined in Unicode if its [category] is not [CharCategory.UNASSIGNED].
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public expect fun CodePoint.isDefined(): Boolean
 
 /**
@@ -34,7 +34,7 @@ public expect fun CodePoint.isDefined(): Boolean
  *
  * @sample samples.text.CodePoints.isDigit
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public expect fun CodePoint.isDigit(): Boolean
 
 /**
@@ -45,7 +45,7 @@ public expect fun CodePoint.isDigit(): Boolean
  *
  * @sample samples.text.CodePoints.isLetter
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public expect fun CodePoint.isLetter(): Boolean
 
 /**
@@ -56,7 +56,7 @@ public expect fun CodePoint.isLetter(): Boolean
  *
  * @sample samples.text.CodePoints.isLetterOrDigit
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public expect fun CodePoint.isLetterOrDigit(): Boolean
 
 /**
@@ -67,7 +67,7 @@ public expect fun CodePoint.isLetterOrDigit(): Boolean
  *
  * @sample samples.text.CodePoints.isISOControl
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public expect fun CodePoint.isISOControl(): Boolean
 
 /**
@@ -78,7 +78,7 @@ public expect fun CodePoint.isISOControl(): Boolean
  *
  * @sample samples.text.CodePoints.isLowerCase
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public expect fun CodePoint.isLowerCase(): Boolean
 
 /**
@@ -89,7 +89,7 @@ public expect fun CodePoint.isLowerCase(): Boolean
  *
  * @sample samples.text.CodePoints.isUpperCase
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public expect fun CodePoint.isUpperCase(): Boolean
 
 /**
@@ -99,7 +99,7 @@ public expect fun CodePoint.isUpperCase(): Boolean
  *
  * @sample samples.text.CodePoints.isTitleCase
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public expect fun CodePoint.isTitleCase(): Boolean
 
 /**
@@ -113,6 +113,6 @@ public expect fun CodePoint.isTitleCase(): Boolean
  *
  * @sample samples.text.CodePoints.isWhitespace
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public expect fun CodePoint.isWhitespace(): Boolean
 
