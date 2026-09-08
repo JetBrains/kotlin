@@ -19,7 +19,8 @@ public abstract interface class org/jetbrains/kotlin/gradle/idea/debugger/IdeaKo
 
 public final class org/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$Companion {
 	public final fun connectWithBuildSystem (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$BuildSystemSession;
-	public final fun startForIde ()Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$IdeSession;
+	public final fun startForIde (Lcom/sun/net/httpserver/HttpServer;)Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$IdeSession;
+	public static synthetic fun startForIde$default (Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$Companion;Lcom/sun/net/httpserver/HttpServer;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$IdeSession;
 }
 
 public final class org/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$ConnectionAborted : java/lang/RuntimeException {
