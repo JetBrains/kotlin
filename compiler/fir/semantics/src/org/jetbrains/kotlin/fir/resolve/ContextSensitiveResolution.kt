@@ -7,65 +7,18 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 fun ConeKotlinType.getParentChainForContextSensitiveResolutionOfExpressions(session: FirSession): Sequence<FirRegularClassSymbol> =
-    getClassRepresentativeForContextSensitiveResolution(session)
+    getClassRepresentativeForResolutionByExpectedType(session)
         ?.getParentChainForContextSensitiveResolution(session, onlySealed = false)
         .orEmpty()
 
 fun ConeKotlinType.getParentChainForContextSensitiveResolutionOfTypes(session: FirSession): Sequence<FirRegularClassSymbol> =
-    getClassRepresentativeForContextSensitiveResolution(session)
+    getClassRepresentativeForResolutionByExpectedType(session)
         ?.getParentChainForContextSensitiveResolution(session, onlySealed = true)
         .orEmpty()
-
-fun ConeKotlinType.getClassRepresentativeForContextSensitiveResolution(session: FirSession): FirRegularClassSymbol? {
-    return when (this) {
-        is ConeFlexibleType ->
-            lowerBound.getClassRepresentativeForContextSensitiveResolution(session)?.takeIf {
-                it == upperBound.getClassRepresentativeForContextSensitiveResolution(session)
-            }
-
-        is ConeDefinitelyNotNullType -> original.getClassRepresentativeForContextSensitiveResolution(session)
-
-        is ConeIntegerLiteralType -> possibleTypes.singleOrNull()?.getClassRepresentativeForContextSensitiveResolution(session)
-
-        is ConeIntersectionType -> {
-            val representativesForComponents =
-                intersectedTypes.map {
-                    it.getClassRepresentativeForContextSensitiveResolution(session)
-                        ?: return@getClassRepresentativeForContextSensitiveResolution null
-                }
-
-            representativesForComponents.firstOrNull { candidate ->
-                representativesForComponents.all { other ->
-                    candidate.fir.isSubclassOf(other.toLookupTag(), session, isStrict = false)
-                }
-            }
-        }
-
-        is ConeLookupTagBasedType ->
-            when (val symbol = lookupTag.toSymbol(session)) {
-                is FirRegularClassSymbol -> symbol
-
-                is FirTypeParameterSymbol ->
-                    symbol.resolvedBounds.singleOrNull()?.coneType?.getClassRepresentativeForContextSensitiveResolution(session)
-
-                is FirAnonymousObjectSymbol -> null
-                is FirTypeAliasSymbol ->
-                    fullyExpandedType(session)
-                        .takeIf { it !== this }
-                        ?.getClassRepresentativeForContextSensitiveResolution(session)
-                null -> null
-            }
-
-        is ConeCapturedType, is ConeStubTypeForTypeVariableInSubtyping, is ConeTypeVariableType, is ConeUnionType -> null
-    }
-}
 
 /**
  * The receiver class itself followed by its enclosing super classes

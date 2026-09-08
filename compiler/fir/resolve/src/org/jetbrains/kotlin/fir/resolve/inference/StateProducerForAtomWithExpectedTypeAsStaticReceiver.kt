@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithExpectedTypeAsStaticReceiver
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
-import org.jetbrains.kotlin.fir.resolve.chooseSingleClassFromIntersectionComponents
+import org.jetbrains.kotlin.fir.resolve.chooseMostSpecificClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.asCone
@@ -128,7 +128,7 @@ class StateProducerForAtomWithExpectedTypeAsStaticReceiver<A : ConeAtomWithExpec
 
             bounds.addAll(lowerSetOfConstraints)
 
-            when (val singleUpperBound = upperSetOfConstraints.chooseSingleClassFromIntersectionComponents()) {
+            when (val singleUpperBound = upperSetOfConstraints.chooseMostSpecificClass(resolutionContext.session)) {
                 null -> bounds += upperSetOfConstraints
                 else -> bounds += singleUpperBound
             }
