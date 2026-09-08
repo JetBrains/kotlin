@@ -162,7 +162,7 @@ internal class DumpIr(output: KlibToolOutput, args: ParsedArguments) : KlibToolC
         val moduleDescriptor = createFakeModuleDescriptor(args.library)
         val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
 
-        val linker = KlibToolIrLinker(output, moduleDescriptor, symbolTable)
+        val linker = KlibToolIrLinker(output, symbolTable)
         val irFragment = linker.deserializeFullModule(moduleDescriptor, args.library)
         linker.modulesWithReachableTopLevels.forEach(IrModuleDeserializer::deserializeReachableDeclarations)
 

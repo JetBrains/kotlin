@@ -139,7 +139,6 @@ class NativeDeserializerFacade(
         val libraryToModuleDescriptor: Map<KotlinLibrary, ModuleDescriptorImpl> = moduleDescriptors.associateBy { it.kotlinLibrary }
 
         val mainLibrary = loadedKlibs.included.single()
-        val mainModuleDescriptor = libraryToModuleDescriptor.getValue(mainLibrary)
 
         val friendsMap = mapOf(mainLibrary.uniqueName to loadedKlibs.friends.map { it.uniqueName })
 
@@ -151,7 +150,6 @@ class NativeDeserializerFacade(
         val symbolTable = SymbolTable(IdSignatureDescriptor(KonanManglerDesc), IrFactoryImpl)
 
         val irLinker = KonanIrLinker(
-            currentModule = mainModuleDescriptor,
             configuration = configuration,
             symbolTable = symbolTable,
             friendModules = friendsMap,

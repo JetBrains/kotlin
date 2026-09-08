@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.isForwardDeclarationModule
 
 class KonanIrLinker(
-    private val currentModule: ModuleDescriptor,
     configuration: CompilerConfiguration,
     symbolTable: SymbolTable,
     friendModules: Map<String, Collection<String>>,
@@ -40,7 +39,7 @@ class KonanIrLinker(
     irDiagnosticReporter: IrDiagnosticReporter,
     private val libraryBeingCached: PartialCacheInfo?,
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
-) : KotlinIrLinker(currentModule, configuration, symbolTable) {
+) : KotlinIrLinker(configuration, symbolTable) {
     override fun isBuiltInModule(module: IrModuleFragment): Boolean {
         val klib = module.kotlinLibrary ?: return false
         return klib.isNativeStdlib
