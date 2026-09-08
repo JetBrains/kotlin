@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.isPublicApi
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -34,10 +35,11 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JKlibIrLinker(
-    module: ModuleDescriptor,
+    private val module: ModuleDescriptor,
     configuration: CompilerConfiguration,
     symbolTable: SymbolTable,
     val descriptorMangler: JKlibDescriptorMangler,
@@ -56,6 +58,15 @@ class JKlibIrLinker(
         }
 
         return this is JavaClassDescriptor || this is JavaCallableMemberDescriptor || (containingDeclaration?.isJavaDescriptor() == true)
+    }
+
+    override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
+        // TODO KT-89344 check if this condition is needed
+        if (!symbol.isPublicApi && symbol.hasDescriptor && !platformSpecificSymbol(symbol) &&
+            symbol.descriptor.module !== module
+        ) return null
+
+        return super.getDeclaration(symbol)
     }
 
     override fun platformSpecificSymbol(symbol: IrSymbol): Boolean {
