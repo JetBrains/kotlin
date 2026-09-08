@@ -7,7 +7,7 @@ package org.jetbrains.dokka.analysis.kotlin.symbols.services
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.analysis.kotlin.internal.KotlinToJavaService
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap // or import kotlin.reflect.jvm.internal.impl.builtins.jvm.JavaToKotlinClassMap see https://github.com/Kotlin/dokka/issues/3226
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap // see https://github.com/Kotlin/dokka/issues/3226
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
