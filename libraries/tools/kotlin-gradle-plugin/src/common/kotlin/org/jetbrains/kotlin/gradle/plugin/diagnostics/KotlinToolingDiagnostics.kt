@@ -2547,6 +2547,17 @@ internal object KotlinToolingDiagnostics {
                 }
         }
     }
+
+    internal object SharedNpmProjectInvalidPackageJson : ToolingDiagnosticFactory(
+        WARNING,
+        DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(file: File) = build {
+            title { "Skipping '$file': not a valid package.json" }
+                .description { "The file could not be parsed or has no 'name', so it is left out of the shared npm project." }
+                .solution { "Check the projects declared on the 'kotlinNpmSharedDependencies' / 'kotlinWasmNpmSharedDependencies' configurations." }
+        }
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
