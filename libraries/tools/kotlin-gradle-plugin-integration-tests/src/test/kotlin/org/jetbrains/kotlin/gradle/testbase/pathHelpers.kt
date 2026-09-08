@@ -86,6 +86,32 @@ internal fun Path.copyRecursively(dest: Path) {
     })
 }
 
+/**
+ * Copies the content of this directory into [dest], overwriting already existing files.
+ *
+ * Unlike [copyRecursively] it could be used to merge several directories into a single one,
+ * for example to add a pre-published Maven repository into the local repository of a test.
+ */
+internal fun Path.copyRecursivelyOverwriting(dest: Path) {
+    Files.walkFileTree(this, setOf(FileVisitOption.FOLLOW_LINKS), Int.MAX_VALUE, object : SimpleFileVisitor<Path>() {
+        override fun preVisitDirectory(
+            dir: Path,
+            attrs: BasicFileAttributes
+        ): FileVisitResult {
+            dest.resolve(relativize(dir)).createDirectories()
+            return FileVisitResult.CONTINUE
+        }
+
+        override fun visitFile(
+            file: Path,
+            attrs: BasicFileAttributes
+        ): FileVisitResult {
+            file.copyTo(dest.resolve(relativize(file)), overwrite = true)
+            return FileVisitResult.CONTINUE
+        }
+    })
+}
+
 internal fun Iterable<String>.toPaths(): List<Path> = map { Paths.get(it) }
 
 /**
