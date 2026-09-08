@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NAMED_COMPAN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NAME_CONTAINS_ILLEGAL_CHARS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_ACTUAL_EXTERNAL_INTERFACE_WHILE_EXPECT_WITHOUT_JS_NO_RUNTIME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NO_RUNTIME_ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_SUSPEND_FUNCTION_INTERFACE_CAST
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS
@@ -101,6 +102,10 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(SPREAD_OPERATOR_IN_DYNAMIC_CALL, "Cannot apply spread operator in dynamic call.")
         map.put(WRONG_OPERATION_WITH_DYNAMIC, "Wrong operation with dynamic value: {0}.", CommonRenderers.STRING)
         map.put(IMPLEMENTING_FUNCTION_INTERFACE, "Implementing a function interface is prohibited in JavaScript.")
+        map.put(
+            JS_SUSPEND_FUNCTION_INTERFACE_CAST,
+            "Casting a type implementing a suspend function interface to a suspend function interface is not allowed."
+        )
         map.put(OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS, "Overriding 'external' function with optional parameters.")
         map.put(
             OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE,

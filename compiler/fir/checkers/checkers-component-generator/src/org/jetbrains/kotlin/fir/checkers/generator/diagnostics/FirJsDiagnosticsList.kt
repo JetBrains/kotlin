@@ -84,6 +84,9 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
 
     val FUN_INTERFACES by object : DiagnosticGroup("Fun Interfaces") {
         val IMPLEMENTING_FUNCTION_INTERFACE by error<KtClassOrObject>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JS_SUSPEND_FUNCTION_INTERFACE_CAST by error<KtElement>() {
+            isSuppressible = true
+        }
     }
 
     val EXTERNAL by object : DiagnosticGroup("External") {
@@ -153,7 +156,6 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
             LanguageFeature.ErrorAboutDataClassCopyVisibilityChange,
         )
     }
-
 
     val NO_RUNTIME by object : DiagnosticGroup("NoRuntime") {
         val JS_NO_RUNTIME_WRONG_TARGET by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)

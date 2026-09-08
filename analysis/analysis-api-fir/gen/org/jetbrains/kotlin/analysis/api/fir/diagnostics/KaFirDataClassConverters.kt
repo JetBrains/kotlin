@@ -7090,6 +7090,12 @@ private fun KaDiagnosticConverterBuilder.addConversions155() {
             token,
         )
     }
+    add(FirJsErrors.JS_SUSPEND_FUNCTION_INTERFACE_CAST) { firDiagnostic ->
+        JsSuspendFunctionInterfaceCastImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions156() {

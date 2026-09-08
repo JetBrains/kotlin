@@ -9307,6 +9307,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JsSuspendFunctionInterfaceCast : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<JsSuspendFunctionInterfaceCast>
+            get() = JsSuspendFunctionInterfaceCast::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface OverridingExternalFunWithOptionalParams : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<OverridingExternalFunWithOptionalParams>
             get() = OverridingExternalFunWithOptionalParams::class

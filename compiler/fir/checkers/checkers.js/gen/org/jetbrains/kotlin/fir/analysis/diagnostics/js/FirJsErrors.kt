@@ -67,6 +67,7 @@ object FirJsErrors : KtDiagnosticsContainer() {
 
     // Fun Interfaces
     val IMPLEMENTING_FUNCTION_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("IMPLEMENTING_FUNCTION_INTERFACE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtClassOrObject::class, getRendererFactory())
+    val JS_SUSPEND_FUNCTION_INTERFACE_CAST: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_SUSPEND_FUNCTION_INTERFACE_CAST", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     // External
     val OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS: KtDiagnosticFactory0 = KtDiagnosticFactory0("OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
