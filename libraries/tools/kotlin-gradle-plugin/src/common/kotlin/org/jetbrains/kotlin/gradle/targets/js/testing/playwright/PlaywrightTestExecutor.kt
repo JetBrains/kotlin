@@ -73,6 +73,7 @@ internal class PwExecutionSpec(
     val playwrightCli: String,
     val ideDebugSessionUrl: String?,
     val onNoChromiumRunnerWhenDebugIsRequested: (declaredRunnersNames: List<String>) -> Unit,
+    val onMultipleChromiumRunnersWhenDebugIsRequested: (chromiumRunnersNames: List<String>) -> Unit,
 ) : TestExecutionSpec
 
 internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
@@ -86,13 +87,17 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
             // debugging via IDE only supports Chromium,
             // so we limit debug execution to only first Chromium runner.
             // this is not good approach, and with TODO(KT-86706) this should be limited only to chrome runners.
-            val chromiumRunner = spec.runners.firstOrNull { it.browserKind == PwBrowserKind.CHROMIUM }
+            val chromiumRunners = spec.runners.filter { it.browserKind == PwBrowserKind.CHROMIUM }
+            val chromiumRunner = chromiumRunners.firstOrNull()
             if (chromiumRunner == null) {
                 ideDebugSession.abort("Debugging Kotlin/JS browser tests requires a Chromium runner, but none is configured")
                 spec.onNoChromiumRunnerWhenDebugIsRequested(spec.runners.map { it.name })
                 return
             }
-            listOfNotNull(chromiumRunner)
+            if (chromiumRunners.size > 1) {
+                spec.onMultipleChromiumRunnersWhenDebugIsRequested(chromiumRunners.map { it.name })
+            }
+            listOf(chromiumRunner)
         } else {
             spec.runners
         }

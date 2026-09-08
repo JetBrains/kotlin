@@ -113,6 +113,44 @@ class JsBrowserDebugSessionIT : KGPBaseTest() {
             assertContains(abort.message!!, "Debugging Kotlin/JS browser tests requires a Chromium runner, but none is configured")
         }
     }
+
+    @GradleTest
+    fun `report diagnostic when debug session is requested with multiple chromium runners`(gradleVersion: GradleVersion) {
+        IdeaKotlinJsBrowserDebugSession.startForIde().use { ide ->
+            // the IDE side is driven in a separate thread, so that the build assertions run on the test thread
+            val idePart = thread {
+                // 5 minutes in case if CI agent is way too slow
+                val debuggableBrowser = ide.awaitBrowser(5.minutes)
+                // simulate that IDE attaches and configures debugger
+                probeCdpVersion(debuggableBrowser.cdpUrl)
+                ide.sendDebuggerReady(debuggableBrowser)
+                // let build system to finish test execution
+                ide.awaitFinished(10.seconds)
+            }
+
+            project(
+                "empty",
+                gradleVersion = gradleVersion,
+                buildOptions = defaultBuildOptions,
+            ) {
+                jsProjectWithDummyTest {
+                    chromium("chromiumFirst")
+                    chromium("chromiumSecond")
+                }
+
+                // only the first Chromium runner is debugged, the others are skipped
+                build(":jsBrowserTest", ide.asGradleProperty()) {
+                    assertTasksExecuted(":jsBrowserTest")
+                    assertHasDiagnostic(
+                        KotlinToolingDiagnostics.JsBrowserTestDebugUsesFirstChromiumRunner,
+                        withSubstring = "Only the first one 'chromiumFirst' is launched",
+                    )
+                }
+            }
+
+            idePart.join(5.seconds.inWholeMilliseconds)
+        }
+    }
 }
 
 private fun IdeaKotlinJsBrowserDebugSession.asGradleProperty() =
