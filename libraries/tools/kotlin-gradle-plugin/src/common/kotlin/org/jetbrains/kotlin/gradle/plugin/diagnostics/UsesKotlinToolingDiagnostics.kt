@@ -14,6 +14,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 
 internal interface UsesKotlinToolingDiagnosticsParameters {
     @get:Internal
@@ -24,6 +25,7 @@ internal interface UsesKotlinToolingDiagnosticsParameters {
 }
 
 internal interface UsesKotlinToolingDiagnostics : UsesKotlinToolingDiagnosticsParameters, Task {
+    @InternalKotlinGradlePluginApi
     fun reportDiagnostic(diagnostic: ToolingDiagnostic, reportOnce: Boolean = false) {
         toolingDiagnosticsCollector.get().report(this, diagnostic, reportOnce = reportOnce)
     }
