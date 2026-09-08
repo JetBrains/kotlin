@@ -108,12 +108,6 @@ extension ExportedKotlinPackages.kotlin {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
-        public init(
-            name: Swift.String,
-            ordinal: Swift.Int32
-        ) {
-            fatalError()
-        }
         public static func <(
             this: ExportedKotlinPackages.kotlin.Enum,
             other: ExportedKotlinPackages.kotlin.Enum

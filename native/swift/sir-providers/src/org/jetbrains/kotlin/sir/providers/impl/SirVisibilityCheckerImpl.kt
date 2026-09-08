@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.sir.providers.utils.isFromTemporarilyIgnoredPackage
 import org.jetbrains.kotlin.sir.providers.utils.resolveUpperBound
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirPlatformModule
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
 import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
@@ -83,6 +84,9 @@ public class SirVisibilityCheckerImpl(
         }
         if (ktSymbol is KaCallableSymbol && hasUnsupportedInputTypeParameters(ktSymbol)) {
             return@withSessions SirAvailability.Unavailable("Callables with parameters unbound generic types are not supported yet")
+        }
+        if (ktSymbol is KaCallableSymbol && ktSymbol.typeParameters.hasUnsupportedFBoundedTypeParameters()) {
+            return@withSessions SirAvailability.Unavailable("Callables with F-bounded generics are not supported yet")
         }
         if (containsHidesFromObjCAnnotation(ktSymbol)) {
             return@withSessions SirAvailability.Unavailable("Declaration is @HiddenFromObjC")
@@ -280,7 +284,7 @@ context(ka: KaSession, sirSession: SirSession)
 private fun hasUnboundInputTypeParameters(
     type: KaType,
     isReturnType: Boolean
-): Boolean = (type.fullyExpandedType as? KaClassType)?.let { classType ->
+): Boolean = (type.resolveUpperBound()?.fullyExpandedType as? KaClassType)?.let { classType ->
     if (sirSession.isTypeSupported(classType)) return@let false
     if (classType.classId in SirTypeProviderImpl.FLOW_CLASS_IDS) return@let false
     if (classType is KaFunctionType) {
@@ -294,13 +298,13 @@ private fun hasUnboundInputTypeParameters(
     } else if (isReturnType) {
         return@let false
     }
-    val typeParamUpperBounds = classType.symbol.typeParameters.map {
-        it.resolveUpperBound() ?: ka.builtinTypes.nullableAny
-    }
-    if (typeParamUpperBounds.isEmpty()) return@let false
-    classType.typeArguments.zipIfSizesAreEqual(typeParamUpperBounds)?.any { [argument, bound] ->
-        val type = argument.type?.let { it.resolveUpperBound() ?: ka.builtinTypes.nullableAny }
-        type?.let { it != bound } ?: false // .type == null indicates star projection
+    val typeParameters = classType.symbol.typeParameters
+    if (typeParameters.isEmpty()) return@let false
+    typeParameters.zipIfSizesAreEqual(classType.typeArguments)?.any { [param, arg] ->
+        if (param.variance == Variance.IN_VARIANCE) return@any false
+        val upperBound = param.resolveUpperBound() ?: ka.builtinTypes.nullableAny
+        val type = arg.type?.let { it.resolveUpperBound() ?: ka.builtinTypes.nullableAny }
+        type?.let { it != upperBound } ?: false // .type == null indicates star projection
     } ?: false
 } ?: false
 
@@ -315,3 +319,21 @@ private val KaCallableSymbol.allParameters: List<KaParameterSymbol>
 
 context(ka: KaSession)
 private fun isClone(symbol: KaNamedFunctionSymbol): Boolean = with(ka) { isClone(symbol) }
+
+private fun List<KaTypeParameterSymbol>.hasUnsupportedFBoundedTypeParameters(): Boolean = any {
+    it.resolveUpperBound().isUnsupportedFBoundedTypeParameter(it)
+}
+
+private fun KaType?.isUnsupportedFBoundedTypeParameter(typeParameterSymbol: KaTypeParameterSymbol): Boolean {
+    return when (this) {
+        null -> false
+        is KaTypeParameterType -> symbol == typeParameterSymbol
+        is KaClassType -> symbol.typeParameters.zip(typeArguments).any { [param, arg] ->
+            if (!arg.type.isUnsupportedFBoundedTypeParameter(typeParameterSymbol)) return@any false
+            // Fallback to the upper bound if this is an in variance parameter
+            if (param.variance != Variance.IN_VARIANCE) return@any true
+            param.resolveUpperBound().isUnsupportedFBoundedTypeParameter(typeParameterSymbol)
+        }
+        else -> false
+    }
+}

@@ -476,6 +476,17 @@ public fun kotlinx_coroutines_Delay_invokeOnTimeout__TypesOfArguments__Swift_Int
     return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlinx.coroutines.DisposableHandle
 }
 
+@ImportedBridge("kotlinx_coroutines_Delay_scheduleResumeAfterDelay__TypesOfArguments__Swift_Int64_anyU20ExportedKotlinPackages_kotlinx_coroutines_CancellableContinuation____reverse_swift")
+internal external fun kotlinx_coroutines_Delay_scheduleResumeAfterDelay__TypesOfArguments__Swift_Int64_anyU20ExportedKotlinPackages_kotlinx_coroutines_CancellableContinuation____reverse_swift(self: kotlin.native.internal.NativePtr, timeMillis: Long, continuation: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.Delay::class, "scheduleResumeAfterDelay")
+public fun kotlinx_coroutines_Delay_scheduleResumeAfterDelay__TypesOfArguments__Swift_Int64_anyU20ExportedKotlinPackages_kotlinx_coroutines_CancellableContinuation____reverse(self: kotlinx.coroutines.Delay, timeMillis: Long, continuation: kotlinx.coroutines.CancellableContinuation<kotlin.Any?>): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
+    val _result = kotlinx_coroutines_Delay_scheduleResumeAfterDelay__TypesOfArguments__Swift_Int64_anyU20ExportedKotlinPackages_kotlinx_coroutines_CancellableContinuation____reverse_swift(__self, timeMillis, __continuation)
+    return run<Unit> { _result }
+}
+
 @ImportedBridge("kotlinx_coroutines_DisposableHandle_dispose__reverse_swift")
 internal external fun kotlinx_coroutines_DisposableHandle_dispose__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
 
@@ -2117,6 +2128,16 @@ public fun kotlinx_coroutines_Delay_invokeOnTimeout__TypesOfArguments__Swift_Int
     val __context = kotlin.native.internal.ref.dereferenceExternalRCRef(context) as kotlin.coroutines.CoroutineContext
     val _result = run { __self.invokeOnTimeout(__timeMillis, __block, __context) }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlinx_coroutines_Delay_scheduleResumeAfterDelay__TypesOfArguments__Swift_Int64_anyU20ExportedKotlinPackages_kotlinx_coroutines_CancellableContinuation__")
+@OptIn(kotlinx.coroutines.InternalCoroutinesApi::class)
+public fun kotlinx_coroutines_Delay_scheduleResumeAfterDelay__TypesOfArguments__Swift_Int64_anyU20ExportedKotlinPackages_kotlinx_coroutines_CancellableContinuation__(self: kotlin.native.internal.NativePtr, timeMillis: Long, continuation: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.coroutines.Delay
+    val __timeMillis = timeMillis
+    val __continuation = kotlin.native.internal.ref.dereferenceExternalRCRef(continuation) as kotlinx.coroutines.CancellableContinuation<kotlin.Any?>
+    val _result = run { __self.scheduleResumeAfterDelay(__timeMillis, __continuation) }
+    return run { _result; true }
 }
 
 @ExportedBridge("kotlinx_coroutines_Dispatchers_Default_get")
@@ -7365,6 +7386,39 @@ public fun kotlinx_coroutines_selects_selectUnbiased__TypesOfArguments__U28anyU2
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
     swiftCoroutine(__continuation, __exception, __cancellation) {
         kotlinx.coroutines.selects.selectUnbiased<kotlin.Any?>(__builder)
+    }
+}
+
+@ExportedBridge("kotlinx_coroutines_selects_whileSelect__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilderU29202D_U20Swift_Void__")
+@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+public fun kotlinx_coroutines_selects_whileSelect__TypesOfArguments__U28anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectBuilderU29202D_U20Swift_Void__(builder: kotlin.native.internal.NativePtr, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
+    val __builder = run {
+        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(builder);
+        { arg0: kotlinx.coroutines.selects.SelectBuilder<*> ->
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
+            run<Unit> { _result }
+        }
+    }
+    val __continuation = run {
+        val kotlinFun = convertBlockPtrToKotlinFunction<(Boolean)->Boolean>(continuation);
+        { arg0: Unit ->
+            val _arg0 = run { arg0; true }
+            val _result = kotlinFun(_arg0)
+            run<Unit> { _result }
+        }
+    }
+    val __exception = run {
+        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
+        { arg0: kotlin.Throwable? ->
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
+            run<Unit> { _result }
+        }
+    }
+    val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        kotlinx.coroutines.selects.whileSelect(__builder)
     }
 }
 

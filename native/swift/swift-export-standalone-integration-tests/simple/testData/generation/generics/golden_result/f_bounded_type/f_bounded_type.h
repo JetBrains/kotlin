@@ -7,6 +7,8 @@ int32_t MyComparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRun
 
 int32_t SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing____reverse_swift(void * self, void * other);
 
+void * BaseClass_v_get(void * self);
+
 int32_t MyComparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
 int32_t SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing__(void * self, void * other);
