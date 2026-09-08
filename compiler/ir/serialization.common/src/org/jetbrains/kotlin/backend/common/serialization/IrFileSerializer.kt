@@ -299,10 +299,7 @@ open class IrFileSerializer(
             is IrVariableSymbol ->
                 BinarySymbolData.SymbolKind.VARIABLE_SYMBOL
             is IrValueParameterSymbol ->
-                if (symbol.descriptor is ReceiverParameterDescriptor) // TODO: we use descriptor here.
-                    BinarySymbolData.SymbolKind.RECEIVER_PARAMETER_SYMBOL
-                else
-                    BinarySymbolData.SymbolKind.VALUE_PARAMETER_SYMBOL
+                BinarySymbolData.SymbolKind.VALUE_PARAMETER_SYMBOL
             is IrSimpleFunctionSymbol ->
                 BinarySymbolData.SymbolKind.FUNCTION_SYMBOL
             is IrReturnableBlockSymbol ->
