@@ -34,15 +34,16 @@ internal val BuildCExports = createSimpleNamedCompilerPhase<LinkKlibsContext, Fr
  * IR variant of [BuildCExports]: builds the C export model (phase 1) from the linked IR of the exported modules,
  * without touching K1 descriptors. Runs post-linkage (unlike [BuildCExports]), where the IR symbols are bound.
  */
-internal fun buildCExportsFromIr(
-        config: NativeSecondStageCompilationConfig,
-        linkKlibsOutput: LinkKlibsOutput,
-): CAdapterExportedElements {
+internal val BuildCExportsFromIr = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, LinkKlibsOutput, CAdapterExportedElements>(
+        "BuildCExportsFromIr",
+        outputIfNotEnabled = { _, _, _, _ -> error("") }
+) { context, input ->
+    val config = context.config
     val prefix = config.cExportPrefix
     val exportedFragments = (config.loadedKlibs.included + config.loadedKlibs.exported)
-            .mapNotNull { linkKlibsOutput.irModules[it.path] }
+            .mapNotNull { input.irModules[it.path] }
             .distinct()
-    return CAdapterIrGenerator(prefix, linkKlibsOutput.irBuiltIns).buildExports(exportedFragments)
+    CAdapterIrGenerator(prefix, input.irBuiltIns).buildExports(exportedFragments)
 }
 
 private val NativeSecondStageCompilationConfig.cExportPrefix: String
