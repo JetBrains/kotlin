@@ -37,7 +37,6 @@ class FunctionPostProcessor(val root: JsFunction, voidName: JsName? = null) {
         { RedundantLabelRemoval(root.body) },
         { EmptyStatementElimination(root.body) },
         { DoWhileGuardElimination(root.body) },
-        { TemporaryVariableElimination(root) },
         { RedundantCallElimination(root.body) },
         { IfStatementReduction(root.body) },
         { DeadCodeElimination(root.body) },
