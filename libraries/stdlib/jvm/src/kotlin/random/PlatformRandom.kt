@@ -6,7 +6,6 @@
 package kotlin.random
 
 import kotlin.internal.IMPLEMENTATIONS
-import kotlin.internal.InlineOnly
 
 /**
  * Creates a [java.util.Random][java.util.Random] instance that uses the specified Kotlin [Random] generator as a randomness source.
@@ -22,10 +21,7 @@ public fun Random.asJavaRandom(): java.util.Random =
 public fun java.util.Random.asKotlinRandom(): Random =
     (this as? KotlinRandom)?.impl ?: PlatformRandom(this)
 
-
-
-@InlineOnly
-internal actual inline fun defaultPlatformRandom(): Random =
+internal actual val defaultRandom: Random =
     IMPLEMENTATIONS.defaultPlatformRandom()
 
 internal actual fun doubleFromParts(hi26: Int, low27: Int): Double =
