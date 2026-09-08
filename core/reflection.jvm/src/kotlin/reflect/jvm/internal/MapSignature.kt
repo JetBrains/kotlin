@@ -20,7 +20,7 @@ internal fun KmProperty.mapSignature(container: KmClass?): JvmFieldSignature {
     fieldSignature?.let { return it }
     val hasExtensionReceiver = receiverParameterType != null && !isStatic
     if (hasExtensionReceiver || contextParameters.isNotEmpty()) {
-        "Extension/contextual properties are not supported when computing a builtin property signature: $name in $container"
+        throw KotlinReflectionInternalError("Extension/contextual properties are not supported when computing a builtin property signature: $name in $container")
     }
     val c = createTypeMappingContext(typeParameters, container, name)
     return JvmFieldSignature(name, buildString {

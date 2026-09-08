@@ -39,6 +39,13 @@ enum class ReturnValueCheckerMode(
             introducedVersion = KotlinReleaseVersion.v2_2_0,
         ),
     ),
+    @SerialName("default")
+    default(
+        modeState = "default",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+        ),
+    ),
     ;
 
     override val stringRepresentation: String

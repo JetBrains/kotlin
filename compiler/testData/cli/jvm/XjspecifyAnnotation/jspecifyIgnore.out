@@ -1,1 +1,4 @@
+compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyUsage.kt:5:13: warning: unused return value of 'length'.
+    a.bar().length
+            ^^^^^^
 OK

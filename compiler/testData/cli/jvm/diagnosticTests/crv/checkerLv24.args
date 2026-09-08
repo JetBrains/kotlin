@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/checker.kt
+-d
+$TEMP_DIR$
+-language-version=2.4
+-Xreturn-value-checker=check
