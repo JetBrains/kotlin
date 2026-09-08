@@ -1,0 +1,113 @@
+FILE: representativeClassTypeParameter.kt
+    public sealed interface MySealedInterface : R|kotlin/Any| {
+        public final object First : R|MySealedInterface| {
+            private constructor(): R|MySealedInterface.First| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final object Second : R|MySealedInterface| {
+            private constructor(): R|MySealedInterface.Second| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class WithSealedBound<T : R|MySealedInterface|> : R|kotlin/Any| {
+        public constructor<T : R|MySealedInterface|>(): R|WithSealedBound<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(x: R|T|): R|kotlin/Int| {
+            ^foo when (lval <when-subject>: R|T| = R|<local>/x|) {
+                ==($subj$, Q|MySealedInterface.First|) ->  {
+                    Int(0)
+                }
+                ==($subj$, Q|MySealedInterface.Second|) ->  {
+                    Int(1)
+                }
+                else ->  {
+                    Int(2)
+                }
+            }
+
+        }
+
+        public final fun bar(x: R|T|): R|kotlin/Boolean| {
+            ^bar ==(R|<local>/x|, Q|MySealedInterface.First|)
+        }
+
+    }
+    public final class WithSetBound<T : R|kotlin/collections/Set<kotlin/Int>|> : R|kotlin/Any| {
+        public constructor<T : R|kotlin/collections/Set<kotlin/Int>|>(): R|WithSetBound<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(x: R|T|): R|kotlin/Int| {
+            ^foo when (lval <when-subject>: R|T| = R|<local>/x|) {
+                ==($subj$, Q|kotlin/collections|.R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>()) ->  {
+                    Int(0)
+                }
+                ==($subj$, Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(1))) ->  {
+                    Int(1)
+                }
+                else ->  {
+                    Int(2)
+                }
+            }
+
+        }
+
+        public final fun bar(x: R|T|): R|kotlin/Boolean| {
+            ^bar ==(R|<local>/x|, Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(1)))
+        }
+
+    }
+    public final class WithIntersectionBound<T : R|MySealedInterface|, R|kotlin/Comparable<T>|> : R|kotlin/Any| {
+        public constructor<T : R|MySealedInterface|, R|kotlin/Comparable<T>|>(): R|WithIntersectionBound<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(x: R|T|): R|kotlin/Int| {
+            ^foo when (lval <when-subject>: R|T| = R|<local>/x|) {
+                ==($subj$, <Unresolved name: First>#) ->  {
+                    Int(0)
+                }
+                else ->  {
+                    Int(1)
+                }
+            }
+
+        }
+
+    }
+    public final fun <T : R|MySealedInterface|> generic(x: R|T|): R|kotlin/Boolean| {
+        ^generic ==(R|<local>/x|, Q|MySealedInterface.Second|)
+    }
+    public final fun <T : R|kotlin/collections/List<kotlin/Int>|> genericList(x: R|T|): R|kotlin/Boolean| {
+        ^genericList ==(R|<local>/x|, Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(1)))
+    }
+    public abstract interface Marker : R|kotlin/Any| {
+    }
+    public final class WithSetAndMarkerBounds<T : R|kotlin/collections/Set<kotlin/Int>|, R|Marker|> : R|kotlin/Any| {
+        public constructor<T : R|kotlin/collections/Set<kotlin/Int>|, R|Marker|>(): R|WithSetAndMarkerBounds<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(x: R|T|): R|kotlin/Boolean| {
+            ^foo ==(R|<local>/x|, Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(1)))
+        }
+
+    }
+    public final class WithMarkerAndSealedBounds<T : R|Marker|, R|MySealedInterface|> : R|kotlin/Any| {
+        public constructor<T : R|Marker|, R|MySealedInterface|>(): R|WithMarkerAndSealedBounds<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(x: R|T|): R|kotlin/Boolean| {
+            ^foo ==(R|<local>/x|, <Unresolved name: First>#)
+        }
+
+    }

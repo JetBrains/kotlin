@@ -1,0 +1,53 @@
+FILE: test.kt
+    public final enum class MyEnum : R|kotlin/Enum<MyEnum>| {
+        private constructor(): R|MyEnum| {
+            super<R|kotlin/Enum<MyEnum>|>()
+        }
+
+        public final static enum entry X: R|MyEnum|
+        public final static enum entry Y: R|MyEnum|
+        public final static fun values(): R|kotlin/Array<MyEnum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|MyEnum| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<MyEnum>|
+            public static get(): R|kotlin/enums/EnumEntries<MyEnum>|
+
+    }
+    public final fun testFlexible(): R|kotlin/Unit| {
+        Q|JavaUtils|.R|/JavaUtils.takeEnum*s|(Q|MyEnum|.R|/MyEnum.X|)
+        Q|JavaUtils|.R|/JavaUtils.takeList*s|(Q|kotlin/collections|.R|kotlin/collections/mutableListOf|<R|MyEnum|>(vararg(Q|MyEnum|.R|/MyEnum.X|, Q|MyEnum|.R|/MyEnum.Y|)))
+        Q|JavaUtils|.R|/JavaUtils.takeSet*s|(Q|kotlin/collections|.R|kotlin/collections/mutableSetOf|<R|kotlin/String|>(vararg(String(a))))
+        Q|JavaUtils|.R|/JavaUtils.takeSet*s|(Q|kotlin/collections|.R|kotlin/collections/mutableSetOf|<R|kotlin/String!|>())
+    }
+    public final fun testIntegerLiteral(): R|kotlin/Int| {
+        ^testIntegerLiteral when (lval <when-subject>: R|kotlin/Long| = Long(10000000000)) {
+            ==($subj$, Q|kotlin/Long|.R|kotlin/Long.Companion.MAX_VALUE|) ->  {
+                Int(1)
+            }
+            else ->  {
+                Int(0)
+            }
+        }
+
+    }
+    public final fun testIntegerLiteralAmbiguousType(): R|kotlin/Int| {
+        ^testIntegerLiteralAmbiguousType when (lval <when-subject>: R|kotlin/Int| = Int(1)) {
+            ==($subj$, Q|kotlin/Int|.R|kotlin/Int.Companion.MAX_VALUE|) ->  {
+                Int(1)
+            }
+            else ->  {
+                Int(0)
+            }
+        }
+
+    }
+    public final fun <T> select(x: R|T|, y: R|T|): R|T| {
+        ^select R|<local>/x|
+    }
+    public final fun testIntegerLiteralInSelect(): R|kotlin/Unit| {
+        R|/select|<R|kotlin/Long|>(Long(10000000000), Q|kotlin/Long|.R|kotlin/Long.Companion.MAX_VALUE|)
+        R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|kotlin/Int|>(Int(0), <Unresolved name: MAX_VALUE>#)
+    }
