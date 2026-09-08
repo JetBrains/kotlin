@@ -27,6 +27,7 @@ class TasksRequirements : Serializable {
         addTaskRequirements(task)
     }
 
+    @Suppress("DEPRECATION")
     internal fun addTaskRequirements(task: RequiresNpmDependenciesTask) {
         val requirements = task.requiredNpmDependencies
 

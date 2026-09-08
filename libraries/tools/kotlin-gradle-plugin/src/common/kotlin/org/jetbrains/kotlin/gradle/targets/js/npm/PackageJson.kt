@@ -149,6 +149,8 @@ internal fun packageJson(
 
     npmDependencies.forEach {
         val dependency = dependencies.getValue(it.name)
+
+        @Suppress("DEPRECATION")
         when (it.scope) {
             NpmDependency.Scope.NORMAL -> packageJson.dependencies[it.name] = dependency
             NpmDependency.Scope.DEV -> packageJson.devDependencies[it.name] = dependency

@@ -12,9 +12,7 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
-import org.jetbrains.kotlin.gradle.targets.js.npm.directoryNpmDependency
-import org.jetbrains.kotlin.gradle.targets.js.npm.moduleName
+import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.File
 import javax.inject.Inject
@@ -91,6 +89,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
             project.dependencies.add(configurationName, it)
         }
 
+    @Suppress("DEPRECATION")
     override fun npm(
         name: String,
         version: String,
@@ -101,6 +100,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
             version = version,
         )
 
+    @Suppress("DEPRECATION")
     override fun npm(
         name: String,
         directory: File,
@@ -111,6 +111,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
             scope = NpmDependency.Scope.NORMAL,
         )
 
+    @Suppress("DEPRECATION")
     override fun npm(
         directory: File,
     ): NpmDependency =
@@ -119,6 +120,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
             directory = directory,
         )
 
+    @Suppress("DEPRECATION")
     override fun devNpm(
         name: String,
         version: String
@@ -130,6 +132,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
             scope = NpmDependency.Scope.DEV
         )
 
+    @Suppress("DEPRECATION")
     override fun devNpm(
         name: String,
         directory: File
@@ -140,12 +143,14 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
             scope = NpmDependency.Scope.DEV,
         )
 
+    @Suppress("DEPRECATION")
     override fun devNpm(directory: File): NpmDependency =
         devNpm(
             name = moduleName(directory),
             directory = directory
         )
 
+    @Suppress("DEPRECATION")
     override fun optionalNpm(
         name: String,
         version: String,
@@ -157,6 +162,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
             scope = NpmDependency.Scope.OPTIONAL,
         )
 
+    @Suppress("DEPRECATION")
     override fun optionalNpm(
         name: String,
         directory: File,
@@ -167,6 +173,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
             scope = NpmDependency.Scope.OPTIONAL,
         )
 
+    @Suppress("DEPRECATION")
     override fun optionalNpm(
         directory: File,
     ): NpmDependency =
@@ -175,6 +182,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
             directory = directory,
         )
 
+    @Suppress("DEPRECATION")
     override fun peerNpm(
         name: String,
         version: String
@@ -186,6 +194,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
             scope = NpmDependency.Scope.PEER
         )
 
+    @Suppress("DEPRECATION")
     private fun directoryNpmDependency(
         name: String,
         directory: File,
