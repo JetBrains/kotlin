@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl
@@ -13,11 +14,15 @@ import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.gradle.util.getNestedList
+import org.jetbrains.kotlin.gradle.util.parseJsonToMap
 import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
+import kotlin.io.path.readText
+import kotlin.test.assertContains
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -266,6 +271,85 @@ class ExportDslIT : KGPBaseTest() {
                 assertHasDiagnostic(KotlinToolingDiagnostics.SwiftExportDuplicateModuleNames)
                 // The build fails before the Swift Export tool is handed the modules.
                 assertTasksAreNotInTaskGraph(":iosArm64DebugSwiftExport")
+            }
+        }
+    }
+
+    @DisplayName("A dependency override renames the module and flattens its package in the generated Swift")
+    @GradleTest
+    fun testDependencyOverrideIsAppliedEndToEnd(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    sourceSets.commonMain {
+                        compileSource(
+                            """
+                            fun makeOne(): com.example.sub.One = com.example.sub.One()
+                            """.trimIndent()
+                        )
+                        dependencies {
+                            api(project(":sub"))
+                        }
+                    }
+                }
+                export.swift {
+                    moduleName.set("Shared")
+                    xcodeIntegration {
+                        configure(project.dependencies.project(mapOf("path" to ":sub"))) {
+                            moduleName.set("Renamed")
+                            rootPackage.set("com.example.sub")
+                        }
+                    }
+                }
+            }
+
+            val subproject = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        sourceSets.commonMain.get().compileSource(
+                            """
+                            package com.example.sub
+                            class One
+                            """.trimIndent()
+                        )
+                    }
+                }
+            }
+
+            include(subproject, "sub")
+
+            build(
+                ":$EMBED_SWIFT_EXPORT_TASK_NAME",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                assertTasksExecuted(":iosArm64DebugSwiftExport")
+
+                val files = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files")
+                // The derived name for `:sub` would have been `Sub`.
+                assertDirectoryDoesNotExist(files.resolve("Sub"))
+                val renamedSwift = files.resolve("Renamed/Renamed.swift")
+                assertFileExists(renamedSwift)
+
+                // Flattening the package exposes `com.example.sub.One` at the top level of the module.
+                assertContains(renamedSwift.readText(), "public typealias One = ExportedKotlinPackages.com.example.sub.One")
+
+                val modules = parseJsonToMap(projectPath.resolve("build/SwiftExport/iosArm64/Debug/modules/Shared.json"))
+                    .getNestedList("modules")
+                    .orEmpty()
+                    .map { it["name"]?.jsonPrimitive?.content }
+                assertContains(modules, "Renamed")
+                assertFalse(modules.contains("Sub"), modules.toString())
             }
         }
     }
