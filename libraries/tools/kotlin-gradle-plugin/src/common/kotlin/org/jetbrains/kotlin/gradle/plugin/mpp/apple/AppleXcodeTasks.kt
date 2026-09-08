@@ -16,6 +16,7 @@ import org.gradle.internal.extensions.core.serviceOf
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy.Companion.dsymFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportConstants
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportDSLConstants
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.registerSwiftExportTask
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
@@ -37,6 +39,7 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.mapToFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.ExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationCompat
 import org.jetbrains.kotlin.gradle.utils.reportXcodeError
 import java.io.File
@@ -193,7 +196,8 @@ private fun isRequestedBinary(binary: NativeBinary, environment: XcodeEnvironmen
 internal fun Project.registerEmbedSwiftExportTask(
     target: KotlinNativeTarget,
     environment: XcodeEnvironment,
-    swiftExportConfiguration: SwiftExportConfigurationCompat,
+    swiftExportExtension: SwiftExportExtension,
+    exportExtension: ExportExtension,
 ) {
     val envTargets = environment.targets
     val binaryTaskName = embedSwiftExportTaskName()
@@ -240,6 +244,23 @@ internal fun Project.registerEmbedSwiftExportTask(
 
     val sandBoxTask = checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled)
 
+    val kotlinNativeCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+    val swiftExportConfiguration = if (exportExtension.isSwiftExportConfigured) {
+        SwiftExportConfigurationCompat.from(
+            configuration = exportExtension.swiftExportConfiguration,
+            kotlinNativeCompilation = kotlinNativeCompilation,
+            providers = providers,
+            objects = objects,
+        )
+    } else {
+        SwiftExportConfigurationCompat.from(
+            extension = swiftExportExtension,
+            target = target,
+            buildType = envBuildType,
+            kotlinNativeCompilation = kotlinNativeCompilation,
+            providers = providers,
+        )
+    }
     val swiftExportTask = registerSwiftExportTask(
         swiftExportConfiguration,
         SwiftExportDSLConstants.TASK_GROUP,

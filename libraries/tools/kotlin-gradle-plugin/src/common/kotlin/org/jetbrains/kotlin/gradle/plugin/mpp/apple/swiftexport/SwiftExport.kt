@@ -20,12 +20,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.configuration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportClasspathResolvableConfiguration
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exportedSwiftExportApiConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.normalizedSwiftExportModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.whenSwiftPMImportAvailable
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationCompat
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -72,10 +70,8 @@ internal fun Project.registerSwiftExportTask(
         target = target,
         configuration = buildConfiguration,
         swiftApiModuleName = swiftApiModuleName,
-        exportConfiguration = target.exportedSwiftExportApiConfiguration(
-            buildType,
-            mainCompilation.internal.configurations.compileDependencyConfiguration
-        ),
+        exportConfiguration = swiftExportConfiguration.exportConfiguration.get(),
+        apiConfiguration = swiftExportConfiguration.apiConfiguration.orNull,
         mainCompilation = mainCompilation,
         swiftApiFlattenPackage = swiftExportConfiguration.rootPackage,
         exportedModules = swiftExportConfiguration.exportedModules,
@@ -166,6 +162,7 @@ private fun Project.registerSwiftExportRun(
     configuration: String,
     swiftApiModuleName: Provider<String>,
     exportConfiguration: Configuration,
+    apiConfiguration: Configuration?,
     mainCompilation: KotlinNativeCompilation,
     swiftApiFlattenPackage: Provider<String>,
     exportedModules: Provider<Set<SwiftExportedDependency>>,
@@ -179,13 +176,17 @@ private fun Project.registerSwiftExportRun(
     val outputs = layout.buildDirectory.dir("SwiftExport/${target.name}/$configuration")
     val files = outputs.map { it.dir("files") }
     val serializedModules = outputs.map { it.dir("modules").file("${swiftApiModuleName.get()}.json") }
-    val configurationProvider = provider { LazyResolvedConfigurationWithArtifacts(exportConfiguration) }
+    val exportConfigurationProvider = provider { LazyResolvedConfigurationWithArtifacts(exportConfiguration) }
+    val apiConfigurationProvider = provider { apiConfiguration?.let(::LazyResolvedConfigurationWithArtifacts) }
 
     return locateOrRegisterTask<SwiftExportTask>(swiftExportTaskName) { task ->
         task.description = "Run $taskNamePrefix Swift Export process"
         task.group = taskGroup
 
         task.inputs.files(exportConfiguration)
+        if (apiConfiguration != null) {
+            task.inputs.files(apiConfiguration)
+        }
         task.inputs.files(mainCompilation.compileTaskProvider.map { it.outputs.files })
 
         // Input
@@ -195,7 +196,8 @@ private fun Project.registerSwiftExportRun(
         task.parameters.swiftExportSettings.set(customSetting)
         task.parameters.swiftModules.set(
             collectModules(
-                configurationProvider,
+                exportConfigurationProvider,
+                apiConfigurationProvider,
                 exportedModules
             )
         )
