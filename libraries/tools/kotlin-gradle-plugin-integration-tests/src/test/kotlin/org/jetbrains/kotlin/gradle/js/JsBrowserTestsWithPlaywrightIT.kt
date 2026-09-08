@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.js
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
@@ -33,8 +34,10 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.condition.OS
 import java.net.URI
 import javax.inject.Inject
+import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.writeText
 import kotlin.test.assertContains
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalJsTestDsl::class)
 @OsCondition(
@@ -556,6 +559,32 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `browserDataDir is used as the browser profile directory`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions
+        ) {
+            jsProject { project ->
+                chromium {
+                    it.browserDataDir.set(project.layout.buildDirectory.dir("my-chromium-profile"))
+                }
+            }
+
+            val profileDir = projectPath.resolve("build/my-chromium-profile")
+
+            build(":jsBrowserTest") {
+                assertOutputContains("dummy test")
+                assertDirectoryExists(profileDir, "Expected the browser to create the configured browserDataDir at $profileDir")
+                assertTrue(
+                    profileDir.listDirectoryEntries().isNotEmpty(),
+                    "Expected the browser to store its profile data in the configured browserDataDir, but $profileDir is empty"
+                )
+            }
+        }
+    }
+
+    @GradleTest
     fun `default browser is used`(gradleVersion: GradleVersion) {
         project(
             "empty",
@@ -629,14 +658,15 @@ private fun TestProject.jsProject(
         }
     """.trimIndent(),
     testFileName: String = "DummyTest.kt",
-    testConfigure: KotlinJsBrowserTestDsl.() -> Unit,
+    testConfigure: KotlinJsBrowserTestDsl.(Project) -> Unit,
 ) {
     addKgpToBuildScriptCompilationClasspath()
     buildScriptInjection {
+        val currentProject = project
         project.applyMultiplatform {
             js().browser {
                 test.apply {
-                    testConfigure()
+                    testConfigure(currentProject)
                 }
             }
             sourceSets.commonTest.dependencies {
