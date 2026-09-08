@@ -339,6 +339,10 @@ tasks {
         dependsOn(":compiler:ir.serialization.js:test")
     }
 
+    testLifecycleTask("jsES6Test", QualityGate.Master) {
+        dependsOn(":js:js.tests:jsES6Test")
+    }
+
     testLifecycleTask("jsKlibCompatibilityTest", QualityGate.Master) {
         dependsOn(":js:js.tests:klib-compatibility:testMinimalInAggregate")
     }
@@ -389,6 +393,18 @@ tasks {
 
     testLifecycleTask("codegenTarget8Jvm11Test", QualityGate.Master) {
         dependsOn(":compiler:tests-different-jdk:codegenTarget8Jvm11Test")
+    }
+
+    testLifecycleTask("codegenTarget8Jvm17Test", QualityGate.Master) {
+        dependsOn(":compiler:tests-different-jdk:codegenTarget8Jvm17Test")
+    }
+
+    testLifecycleTask("codegenTarget11Jvm11Test", QualityGate.Master) {
+        dependsOn(":compiler:tests-different-jdk:codegenTarget11Jvm11Test")
+    }
+
+    testLifecycleTask("codegenTarget17Jvm17Test", QualityGate.Master) {
+        dependsOn(":compiler:tests-different-jdk:codegenTarget17Jvm17Test")
     }
 
     testLifecycleTask("androidCodegenTest", QualityGate.Master) {
