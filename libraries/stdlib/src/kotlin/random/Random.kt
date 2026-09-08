@@ -274,8 +274,6 @@ public abstract class Random {
      * @sample samples.random.Randoms.defaultRandom
      */
     public companion object Default : Random(), Serializable {
-        private val defaultRandom: Random = defaultPlatformRandom()
-
         private object Serialized : Serializable {
             private const val serialVersionUID = 0L
 
@@ -375,7 +373,7 @@ public fun Random.nextLong(range: LongRange): Long = when {
 }
 
 
-internal expect fun defaultPlatformRandom(): Random
+internal expect val defaultRandom: Random
 internal expect fun doubleFromParts(hi26: Int, low27: Int): Double
 
 internal fun fastLog2(value: Int): Int = 31 - value.countLeadingZeroBits()
