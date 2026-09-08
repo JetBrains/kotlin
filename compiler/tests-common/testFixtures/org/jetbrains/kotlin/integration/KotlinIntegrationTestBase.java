@@ -50,7 +50,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
 
     protected int runJava(@NotNull File testDataDir, @Nullable String logName, @NotNull String... arguments) {
         GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(testDataDir);
-        commandLine.setExePath(getJavaRuntime().getAbsolutePath());
+        commandLine.setExePath(getJava17Runtime().getAbsolutePath());
         commandLine.addParameters(arguments);
 
         StringBuilder executionLog = new StringBuilder();
@@ -132,8 +132,8 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         }
     }
 
-    protected static File getJavaRuntime() {
-        File javaHome = new File(System.getProperty("java.home"));
+    protected static File getJava17Runtime() {
+        File javaHome = new File(KtTestUtil.getJdk17Home().getAbsolutePath());
         String javaExe = SystemInfo.isWindows ? "java.exe" : "java";
 
         File runtime = new File(javaHome, "bin" + File.separator + javaExe);

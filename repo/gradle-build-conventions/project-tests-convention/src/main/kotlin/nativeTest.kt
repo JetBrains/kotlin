@@ -383,7 +383,7 @@ fun ProjectTestsExtension.nativeTestTask(
 
         // Use ARM64 JDK on ARM64 Mac as required by the K/N compiler.
         // See https://youtrack.jetbrains.com/issue/KTI-2421#focus=Comments-27-12231298.0-0.
-        val defaultJdkVersion = JdkMajorVersion.JDK_11_0
+        val defaultJdkVersion = JdkMajorVersion.JDK_17_0
 
         val nativeTestJdkVersion = project.providers.testProperty(JDK_VERSION)
             .map { versionString ->

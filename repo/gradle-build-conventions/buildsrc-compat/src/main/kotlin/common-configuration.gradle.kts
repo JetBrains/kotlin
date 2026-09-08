@@ -192,6 +192,7 @@ fun Project.configureKotlinCompilationOptions() {
                         "-Xname-based-destructuring=complete".takeUnless { skipNewLanguageFeatures },
                         "-Xcollection-literals".takeUnless { skipNewLanguageFeatures },
                         "-Xexplicit-context-arguments".takeUnless { skipNewLanguageFeatures },
+                        "-Xallow-pre-17-runtime-jdk", // KT-88174
                         // Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
                         // But this produces a warning
                         // "The argument ... is redundant for the current language version ..."
@@ -259,7 +260,8 @@ fun Project.configureKotlinCompilationOptions() {
                 if (renderDiagnosticNames) {
                     freeCompilerArgs.add("-Xrender-internal-diagnostic-names")
                 }
-                allWarningsAsErrors.set(!kotlinBuildProperties.disableWerror)
+                // TODO: re-enable back, KT-88174.
+//                allWarningsAsErrors.set(!kotlinBuildProperties.disableWerror)
                 if (project.path in projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib) {
                     freeCompilerArgs.add("-opt-in=org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction")
                 }

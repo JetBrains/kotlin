@@ -1,0 +1,4 @@
+-Xallow-pre-17-runtime-jdk
+$TESTDATA_DIR$/../simple.kt
+-d
+$TEMP_DIR$

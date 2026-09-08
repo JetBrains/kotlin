@@ -32,10 +32,10 @@ import com.intellij.openapi.util.SystemInfo
 import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Files
+import kotlin.collections.mapOf
 
 class LauncherScriptTest : TestCaseWithTmpdir() {
     private fun runProcess(
@@ -45,7 +45,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         checkStderr: (String) -> Unit,
         expectedExitCode: Int,
         workDirectory: File? = null,
-        environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath),
+        environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath),
         launcherFile: File? = null,
     ) {
         CliProcessUtils.runProcess(
@@ -69,14 +69,14 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         expectedStderr: String = "",
         expectedExitCode: Int = 0,
         workDirectory: File? = null,
-        environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath),
+        environment: Map<String, String> = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath),
         launcherFile: File? = null,
     ) {
         CliProcessUtils.runProcess(
             executableName,
             *args,
             expectedStdout = expectedStdout,
-            expectedStderr = expectedStderr,
+            expectedStderr = CliProcessUtils.ExpectedText.ExactMatch(expectedStderr),
             expectedExitCode = expectedExitCode,
             workDirectory = workDirectory,
             environment = environment,
@@ -148,7 +148,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             tmpdir.path,
             K2JSCompilerArguments::moduleName.cliArgument,
             "out",
-            environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath)
+            environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath)
         )
     }
 
@@ -162,7 +162,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             KotlinWasmCompilerArguments::nopack.cliArgument,
             KotlinWasmCompilerArguments::outputDir.cliArgument(tmpdir.path),
             KotlinWasmCompilerArguments::moduleName.cliArgument("out"),
-            environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath)
+            environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath)
         )
     }
 
@@ -234,7 +234,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         runProcess(
             "kotlinr", "-howtorun", "jar", "test.HelloWorldKt", workDirectory = tmpdir,
             expectedExitCode = 1,
-            expectedStderr = "error: could not read manifest from test.HelloWorldKt: test.HelloWorldKt (No such file or directory)\n"
+            expectedStderr = "error: could not read manifest from test.HelloWorldKt: test.HelloWorldKt\n"
         )
         runProcess("kotlinr", "-howtorun", "classfile", "test.HelloWorldKt", expectedStdout = "Hello!\n", workDirectory = tmpdir)
     }
@@ -370,30 +370,30 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
 
     @Test
     fun testKotlinUseJdkModuleFromMainClass() {
-        val jdk11 = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath)
+        val jdk17 = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath)
         runProcess(
             "kotlinc", "$testDataDirectory/jdkModuleUsage.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
-            environment = jdk11,
+            environment = jdk17,
         )
         runProcess(
             "kotlinr", K2JVMCompilerArguments::classpath.cliArgument, tmpdir.path, "test.JdkModuleUsageKt",
             expectedStdout = "interface java.sql.Driver\n",
-            environment = jdk11,
+            environment = jdk17,
         )
     }
 
     @Test
     fun testKotlinUseJdkModuleFromJar() {
-        val jdk11 = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath)
+        val jdk17 = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath)
         val output = tmpdir.resolve("out.jar")
         runProcess(
             "kotlinc", "$testDataDirectory/jdkModuleUsage.kt", K2JVMCompilerArguments::destination.cliArgument, output.path,
-            environment = jdk11,
+            environment = jdk17,
         )
         runProcess(
             "kotlinr", output.path,
             expectedStdout = "interface java.sql.Driver\n",
-            environment = jdk11,
+            environment = jdk17,
         )
     }
 
@@ -419,13 +419,37 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         val testKt = tmpdir.resolve("test.kt").apply {
             writeText("fun main() {}")
         }
-        val jdk11 = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath)
+        val jdk11 = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath)
         runProcess(
             "kotlinc", moduleInfo.absolutePath, testKt.absolutePath, K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
             environment = jdk11,
             expectedExitCode = 0,
             expectedStdout = "",
             expectedStderr = ""
+        )
+    }
+
+    @Test
+    fun testPre17RuntimeJdk() {
+        runProcess(
+            "kotlinc",
+            "$testDataDirectory/helloWorld.kt",
+            K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
+            environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath),
+            expectedStderr = "warning: running Kotlin compiler using JDK 11 will not be supported in future versions of Kotlin. Consider upgrading to at least JDK 17 or supplying '-Xallow-pre-17-runtime-jdk' (which will only work until Kotlin 2.5.20-Beta1). See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.",
+            expectedExitCode = 0,
+        )
+    }
+
+    @Test
+    fun testPre17RuntimeJdkTemporarilyPreserved() {
+        runProcess(
+            "kotlinc",
+            "-Xallow-pre-17-runtime-jdk", "$testDataDirectory/helloWorld.kt",
+            K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
+            environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath),
+            expectedStderr = "",
+            expectedExitCode = 0,
         )
     }
 

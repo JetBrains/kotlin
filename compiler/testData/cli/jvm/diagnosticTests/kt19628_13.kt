@@ -1,10 +1,11 @@
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
+@Target(AnnotationTarget.PROPERTY_GETTER)
+annotation class Anno(val value: kotlin.reflect.KClass<*>)
 
 @Suppress("ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR")
 class Data(
-    @get:XmlJavaTypeAdapter(CollapsedStringAdapter::class)
+    @get:Anno(CollapsedStringAdapter::class)
     var value: String?
 ) {
-    @get:XmlJavaTypeAdapter(CollapsedStringAdapter::class)
+    @get:Anno(CollapsedStringAdapter::class)
     private val b: String = ""
 }

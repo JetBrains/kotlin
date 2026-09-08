@@ -717,6 +717,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("unknownExtraFlagWithWerror.args")
+    public void testUnknownExtraFlagWithWerror() {
+      run("unknownExtraFlagWithWerror.args");
+    }
+
+    @Test
     @TestMetadata("unknownExtraFlags.args")
     public void testUnknownExtraFlags() {
       run("unknownExtraFlags.args");
@@ -1370,6 +1376,26 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("unitConversionWithEla.args")
     public void testUnitConversionWithEla() {
       run("unitConversionWithEla.args");
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/cli/jvm/XminimumRuntimeJdk")
+  @TestDataPath("$PROJECT_ROOT")
+  public class XminimumRuntimeJdk {
+    private void run(String fileName) {
+      doJvmTest("compiler/testData/cli/jvm/XminimumRuntimeJdk/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInXminimumRuntimeJdk() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/XminimumRuntimeJdk"), Pattern.compile("^(.+)\\.args$"), null, false);
+    }
+
+    @Test
+    @TestMetadata("minimumRuntimeJdkMinAllowed.args")
+    public void testMinimumRuntimeJdkMinAllowed() {
+      run("minimumRuntimeJdkMinAllowed.args");
     }
   }
 

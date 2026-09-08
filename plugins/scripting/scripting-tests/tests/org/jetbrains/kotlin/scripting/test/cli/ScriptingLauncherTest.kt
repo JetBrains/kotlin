@@ -23,17 +23,32 @@ class ScriptingLauncherTest : TestCaseWithTmpdir() {
         expectedStdout: String = "",
         expectedStderr: String = "",
         expectedExitCode: Int = 0,
-    ) {
-        CliProcessUtils.runProcess(
-            executableName,
-            *args,
-            expectedStdout = expectedStdout,
-            expectedStderr = expectedStderr,
-            expectedExitCode = expectedExitCode,
-            testDataDirectory = testDataDirectory,
-            tmpdir = tmpdir,
-        )
-    }
+    ): Unit = runProcess(
+        executableName,
+        *args,
+        expectedStdout = expectedStdout,
+        expectedStderr = CliProcessUtils.ExpectedText.ExactMatch(expectedStderr),
+        expectedExitCode = expectedExitCode,
+    )
+
+    private fun runProcess(
+        executableName: String,
+        vararg args: String,
+        expectedStdout: String = "",
+        expectedStderr: CliProcessUtils.ExpectedText,
+        expectedExitCode: Int = 0,
+    ): Unit = CliProcessUtils.runProcess(
+        executableName,
+        *args,
+        expectedStdout = expectedStdout,
+        expectedStderr = expectedStderr,
+        expectedExitCode = expectedExitCode,
+        testDataDirectory = testDataDirectory,
+        tmpdir = tmpdir,
+    )
+
+    private fun String.toPattern(): CliProcessUtils.ExpectedText.Pattern =
+        CliProcessUtils.ExpectedText.Pattern(trimMargin().toRegex())
 
     @Test
     fun testKotlincJvmScriptWithClassPathFromSysProp() {
@@ -111,9 +126,10 @@ class ScriptingLauncherTest : TestCaseWithTmpdir() {
         runProcess(
             "kotlinr", K2JVMCompilerArguments::noInline.cliArgument, "$testDataDirectory/noInline.kts",
             expectedExitCode = 3,
-            expectedStderr = """java.lang.IllegalAccessError: tried to access method kotlin.io.ConsoleKt.println(Ljava/lang/Object;)V from class NoInline
-	at NoInline.<init>(noInline.kts:1)
-"""
+            expectedStderr = """
+                |java\.lang\.IllegalAccessError: class NoInline tried to access private method 'void kotlin\.io\.ConsoleKt\.println\(java\.lang\.Object\)' \(.*\)
+                |\s+at NoInline\.<init>\(noInline\.kts:1\)
+            """.toPattern()
         )
         runProcess("kotlinr", "$testDataDirectory/noInline.kts", expectedStdout = "OK\n")
     }
@@ -184,9 +200,10 @@ class ScriptingLauncherTest : TestCaseWithTmpdir() {
             "-P", "plugin:kotlin.scripting:disable-script-compilation-cache=true",
             "$testDataDirectory/noInline.myscript",
             expectedExitCode = 3,
-            expectedStderr = """java.lang.IllegalAccessError: tried to access method kotlin.io.ConsoleKt.println(Ljava/lang/Object;)V from class NoInline
-	at NoInline.<init>(noInline.myscript:3)
-"""
+            expectedStderr = """
+                |java\.lang\.IllegalAccessError: class NoInline tried to access private method 'void kotlin\.io\.ConsoleKt\.println\(java\.lang\.Object\)' \(.*\)
+                |\s+at NoInline\.<init>\(noInline\.myscript:3\)
+            """.toPattern()
         )
     }
 }
