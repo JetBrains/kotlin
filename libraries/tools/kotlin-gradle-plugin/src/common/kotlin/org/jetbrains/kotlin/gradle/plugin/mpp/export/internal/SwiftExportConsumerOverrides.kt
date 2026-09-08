@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.export.internal
 import org.gradle.api.Project
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createFullyExportedSwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createTransitiveSwiftExportedModule
@@ -15,9 +17,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.validat
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import java.io.File
 
+private const val XCODE_INTEGRATION_CONFIGURE_DSL = "export { swift { xcodeIntegration { configure() } } }"
+
 /**
  * Applies the overrides from `xcodeIntegration { configure(dependency) { } }` to the modules collected from the
- * export graph.
+ * export graph, then reports overrides that matched nothing.
  *
  * Runs on the collected modules rather than inside the collector, so the legacy `swiftExport { }` flow is not
  * involved: the two DSLs cannot be combined, so an override can only ever come from the `export { }` DSL.
@@ -49,6 +53,17 @@ internal fun Project.applySwiftExportConsumerOverrides(
             )
         }
         adjusted to component
+    }
+
+    val components = exported.mapNotNull { (_, component) -> component }
+    val unmatched = overridesMap.keys.filterNot { selector -> components.any(selector::matches) }
+    if (unmatched.isNotEmpty()) {
+        reportDiagnostic(
+            KotlinToolingDiagnostics.SwiftExportModuleResolutionError(
+                unmatched.map { it.displayName },
+                XCODE_INTEGRATION_CONFIGURE_DSL,
+            )
+        )
     }
 
     exported.map { (module, _) -> module }
