@@ -9,7 +9,7 @@ import kotlin.text.unicode.*
 import kotlin.math.sign
 import kotlin.test.*
 
-@OptIn(ExperimentalCodePointApi::class)
+@OptIn(ExperimentalUnicodeApi::class)
 class CodePointTest {
 
     companion object {

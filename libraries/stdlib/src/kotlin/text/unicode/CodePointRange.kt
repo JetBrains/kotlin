@@ -11,7 +11,7 @@ import kotlin.random.Random
 /**
  * A range of values of type [CodePoint].
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public class CodePointRange(start: CodePoint, endInclusive: CodePoint) : CodePointProgression(start, endInclusive, 1), ClosedRange<CodePoint>, OpenEndRange<CodePoint> {
     override val start: CodePoint get() = first
     override val endInclusive: CodePoint get() = last
@@ -50,7 +50,7 @@ public class CodePointRange(start: CodePoint, endInclusive: CodePoint) : CodePoi
 /**
  * A progression of values of type [CodePoint].
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public open class CodePointProgression
 internal constructor(
     start: CodePoint,
@@ -109,7 +109,7 @@ internal constructor(
     }
 }
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 private class CodePointProgressionIterator(first: CodePoint, last: CodePoint, step: Int) : Iterator<CodePoint> {
     private val finalElement = last
     private var hasNext: Boolean = if (step > 0) first <= last else first >= last
@@ -136,7 +136,7 @@ private class CodePointProgressionIterator(first: CodePoint, last: CodePoint, st
  *
  * If the [other] value is less than or equal to `this` value, then the returned range is empty.
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 @kotlin.internal.InlineOnly
 public inline infix fun CodePoint.until(to: CodePoint): CodePointRange = this..<to
 
@@ -146,7 +146,7 @@ public inline infix fun CodePoint.until(to: CodePoint): CodePointRange = this..<
  * The [to] value should be less than or equal to `this` value.
  * If the [to] value is greater than `this` value the returned progression is empty.
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public infix fun CodePoint.downTo(to: CodePoint): CodePointProgression {
     return CodePointProgression.fromClosedRange(this, to, -1)
 }
@@ -154,7 +154,7 @@ public infix fun CodePoint.downTo(to: CodePoint): CodePointProgression {
 /**
  * Returns a progression that goes over the same range with the given step.
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public infix fun CodePointProgression.step(step: Int): CodePointProgression {
     checkStepIsPositive(step > 0, step)
     return CodePointProgression.fromClosedRange(first, last, if (this.step > 0) step else -step)
@@ -163,7 +163,7 @@ public infix fun CodePointProgression.step(step: Int): CodePointProgression {
 /**
  * Checks if the specified [value] belongs to this range.
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public operator fun CodePointRange.contains(value: Char): Boolean {
     return value.code in first.code..last.code
 }
@@ -174,7 +174,7 @@ public operator fun CodePointRange.contains(value: Char): Boolean {
  * Always returns `false` if the [element] is `null`.
  */
 @kotlin.internal.InlineOnly
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public inline operator fun CodePointRange.contains(element: CodePoint?): Boolean {
     return element != null && contains(element)
 }
@@ -186,7 +186,7 @@ public inline operator fun CodePointRange.contains(element: CodePoint?): Boolean
  *
  * @throws NoSuchElementException if this range is empty.
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 @kotlin.internal.InlineOnly
 public inline fun CodePointRange.random(): CodePoint {
     return random(Random)
@@ -197,7 +197,7 @@ public inline fun CodePointRange.random(): CodePoint {
  *
  * @throws NoSuchElementException if this range is empty.
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public fun CodePointRange.random(random: Random): CodePoint {
     if (isEmpty()) throw NoSuchElementException("Range is empty")
 
@@ -207,7 +207,7 @@ public fun CodePointRange.random(random: Random): CodePoint {
 /**
  * Returns a random element from this range, or `null` if this range is empty.
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 @kotlin.internal.InlineOnly
 public inline fun CodePointRange.randomOrNull(): CodePoint? {
     return randomOrNull(Random)
@@ -216,7 +216,7 @@ public inline fun CodePointRange.randomOrNull(): CodePoint? {
 /**
  * Returns a random element from this range using the specified source of randomness, or `null` if this range is empty.
  */
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public fun CodePointRange.randomOrNull(random: Random): CodePoint? {
     if (isEmpty())
         return null

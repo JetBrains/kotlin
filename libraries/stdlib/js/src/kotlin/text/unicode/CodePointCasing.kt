@@ -5,20 +5,20 @@
 
 package kotlin.text.unicode
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public actual fun CodePoint.lowercase(): String =
     toString().lowercase()
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public actual fun CodePoint.lowercaseCodePoint(): CodePoint =
     // there's a single multichar expansion
     lowercase().codePointAt(0)
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public actual fun CodePoint.uppercase(): String =
     toString().uppercase()
 
-@ExperimentalCodePointApi
+@ExperimentalUnicodeApi
 public actual fun CodePoint.uppercaseCodePoint(): CodePoint {
     val uppercase = uppercase()
     return if (uppercase.codePointCount() > 1) this else uppercase.codePointAt(0)
