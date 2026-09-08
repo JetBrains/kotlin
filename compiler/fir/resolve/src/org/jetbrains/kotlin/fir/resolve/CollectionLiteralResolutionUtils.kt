@@ -24,51 +24,15 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCan
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.createErrorReferenceWithExistingCandidate
 import org.jetbrains.kotlin.fir.resolve.inference.StateForAtomWithExpectedTypeAsStaticReceiver
 import org.jetbrains.kotlin.fir.resolve.inference.ExpectedTypeAsStaticReceiverStrategy
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.types.ConeCapturedType
-import org.jetbrains.kotlin.fir.types.ConeDefinitelyNotNullType
-import org.jetbrains.kotlin.fir.types.ConeDynamicType
-import org.jetbrains.kotlin.fir.types.ConeFlexibleType
-import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
-import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
-import org.jetbrains.kotlin.fir.types.ConeStubType
-import org.jetbrains.kotlin.fir.types.ConeTypeVariableType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.CollectionNames
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
-
-context(resolutionContext: ResolutionContext)
-fun ConeKotlinType.getClassRepresentativeForCollectionLiteralResolution(): FirRegularClassSymbol? {
-    return when (this) {
-        is ConeFlexibleType -> lowerBound.getClassRepresentativeForCollectionLiteralResolution()
-        is ConeCapturedType -> constructor.lowerType?.getClassRepresentativeForCollectionLiteralResolution()
-        is ConeDefinitelyNotNullType -> {
-            // very rarely, but still needed, because there might be an expected type of form `Captured(in SomeCollection?) & Any`
-            original.getClassRepresentativeForCollectionLiteralResolution()
-        }
-        is ConeDynamicType,
-        is ConeIntersectionType,
-        is ConeStubType,
-        is ConeTypeVariableType,
-        is ConeIntegerLiteralType,
-            -> null
-        is ConeLookupTagBasedType ->
-            when (val symbol = lookupTag.toSymbol()) {
-                is FirTypeParameterSymbol, is FirAnonymousObjectSymbol, null -> null
-                is FirRegularClassSymbol -> symbol
-                is FirTypeAliasSymbol -> fullyExpandedType().getClassRepresentativeForCollectionLiteralResolution()
-            }
-    }
-}
 
 /**
  * For Kotlin class:
@@ -93,19 +57,10 @@ fun FirRegularClassSymbol.declaresOperatorOf(): Boolean {
     } ?: false
 }
 
-context(context: ResolutionContext)
-fun Collection<FirRegularClassSymbol>.chooseSingleClassFromIntersectionComponents(): FirRegularClassSymbol? {
-    return firstOrNull { candidate ->
-        all { other ->
-            candidate.fir.isSubclassOf(other.toLookupTag(), context.session, isStrict = false)
-        }
-    }
-}
-
 object CollectionLiteralReceiverStrategy : ExpectedTypeAsStaticReceiverStrategy<ConeCollectionLiteralAtom> {
     context(resolutionContext: ResolutionContext)
     override fun getClassRepresentative(type: ConeKotlinType): FirRegularClassSymbol? {
-        return type.getClassRepresentativeForCollectionLiteralResolution()
+        return type.getClassRepresentativeForResolutionByExpectedType(resolutionContext.session)
     }
 
     context(resolutionContext: ResolutionContext)
