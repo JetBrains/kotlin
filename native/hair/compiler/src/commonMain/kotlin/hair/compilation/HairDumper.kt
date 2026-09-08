@@ -28,5 +28,9 @@ abstract class HairDumper {
         }
     }
 
+    fun dumpSimple(compilation: FunctionCompilation, title: String, contents: String) {
+        dumpImpl(compilation.function, title, contents)
+    }
+
     abstract fun dumpImpl(f: HairFunction, title: String, contents: String)
 }

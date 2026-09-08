@@ -42,6 +42,8 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
 
     override fun visitAssignVar(node: AssignVar): AssignVar = context(nodeBuilder, NoControlFlowBuilder) { AssignVar(node.variable)(null, null) } as AssignVar
 
+    override fun visitPi(node: Pi): Pi = context(nodeBuilder, NoControlFlowBuilder) { Pi(null, null) } as Pi
+
     override fun visitPhi(node: Phi): Phi = context(nodeBuilder, NoControlFlowBuilder) { Phi(null, *Array(node.joinedValues.size) { null }) } as Phi
 
     override fun visitPhiPlaceholder(node: PhiPlaceholder): PhiPlaceholder = context(nodeBuilder, NoControlFlowBuilder) { PhiPlaceholder(node.origin)(null, *Array(node.joinedValues.size) { null }) } as PhiPlaceholder

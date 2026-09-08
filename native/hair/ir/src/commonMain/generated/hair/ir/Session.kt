@@ -38,6 +38,8 @@ class Session: SessionBase() {
 
     internal val unwindForm = Unwind.form(this).also { register(it) }
 
+    internal val piForm = Pi.form(this).also { register(it) }
+
     internal val phiForm = Phi.form(this).also { register(it) }
 
     internal val catchForm = Catch.form(this).also { register(it) }

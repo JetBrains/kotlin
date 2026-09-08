@@ -560,6 +560,8 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
         runAndMeasurePhase(CoroutinesVarSpillingPhase, it)
     }
     val hair = runAndMeasurePhase(GenerateHairPhase, module)
+    // TODO: benchmark
+    module.files.forEach { runAfterHairBenchmark(context.context, it, hair) }
     runAndMeasurePhase(CreateLLVMDeclarationsPhase, module)
     runAndMeasurePhase(GHAPhase, module, disable = !runGlobalOptimizations || context.config.produce.isCache)
     runAndMeasurePhase(RTTIPhase, RTTIInput(module, dceResult))

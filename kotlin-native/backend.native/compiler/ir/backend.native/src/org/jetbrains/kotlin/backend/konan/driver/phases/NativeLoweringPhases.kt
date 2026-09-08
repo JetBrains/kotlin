@@ -183,6 +183,12 @@ private val forLoopsPhase = createFileLoweringPhase(
         prerequisite = setOf(functionsWithoutBoundCheck)
 )
 
+// TODO: benchmark
+internal val beforeHairBenchmarkPhase = createFileLoweringPhase(
+        { context: NativeBackendContext -> BeforeHairBenchmarkPhase(context) },
+        name = "BeforeHairBenchmark",
+)
+
 private val flattenStringConcatenationPhase = createFileLoweringPhase(
         ::FlattenStringConcatenationLowering,
         name = "FlattenStringConcatenationLowering",
@@ -655,6 +661,8 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         finallyBlocksPhase,
         computeTypesPhase, // Inliner erases generics. Trying to restore some of the information and simplify IR.
         forLoopsPhase,
+        // TODO: benchmark
+        beforeHairBenchmarkPhase,
         flattenStringConcatenationPhase,
         stringConcatenationPhase,
         stringConcatenationTypeNarrowingPhase.takeIf { this.optimizationsEnabled },

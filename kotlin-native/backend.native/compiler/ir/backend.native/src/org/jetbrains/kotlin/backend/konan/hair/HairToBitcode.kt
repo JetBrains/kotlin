@@ -162,6 +162,8 @@ internal class HairToBitcode(
 
         override fun visitParam(node: Param): LLVMValueRef = fgc.param(node.index)
 
+        override fun visitPi(node: Pi): LLVMValueRef = node.value.value()
+
         override fun visitPhi(node: Phi): LLVMValueRef =
                 nodeValues[node]!! // already allocated by visitBlockEntry
 
@@ -208,7 +210,10 @@ internal class HairToBitcode(
             else LLVMBuildFRem(builder, node.lhs.value(), node.rhs.value(), "")!!
         }
 
-        override fun visitNeg(node: Neg): LLVMValueRef = emit { LLVMBuildNeg(builder, node.value(), "")!! }
+        override fun visitNeg(node: Neg): LLVMValueRef = emit {
+            if (node.valueType.isIntegral) sub(makeConstOfType(0, node.valueType.asLLVMType()), node.operand.value())
+            else fneg(node.operand.value())
+        }
 
         override fun visitAnd(node: And): LLVMValueRef = emit { and(node.lhs.value(), node.rhs.value()) }
         override fun visitOr(node: Or): LLVMValueRef = emit { or(node.lhs.value(), node.rhs.value()) }
@@ -218,7 +223,10 @@ internal class HairToBitcode(
         override fun visitShr(node: Shr): LLVMValueRef = emit { shift(LLVMOpcode.LLVMAShr, node.lhs.value(), node.rhs.value()) }
         override fun visitUshr(node: Ushr): LLVMValueRef = emit { shift(LLVMOpcode.LLVMLShr, node.lhs.value(), node.rhs.value()) }
 
-        override fun visitInv(node: Inv): LLVMValueRef = emit { xor(node.value(), makeConstOfType(-1, node.value().type), "") }
+        override fun visitInv(node: Inv): LLVMValueRef = emit {
+            val operand = node.operand.value()
+            xor(operand, makeConstOfType(-1, operand.type), "")
+        }
 
         override fun visitNot(node: Not): LLVMValueRef =
                 emit { not(node.operand.value()) }

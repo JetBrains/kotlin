@@ -117,6 +117,12 @@ context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 operator fun AssignVar.Form.invoke(assignedValue: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, assignedValue) }
 
 context(nodeBuilder: NodeBuilder)
+fun Pi(control: Controlling?, value: Node?): Controlling = nodeBuilder.onNodeBuilt(Pi(nodeBuilder.session.piForm, control, value)) as Controlling
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+fun Pi(value: Node?): Controlling = controlBuilder.appendControlled { ctrl -> Pi(ctrl, value) }
+
+context(nodeBuilder: NodeBuilder)
 fun Phi(block: BlockEntry?, vararg joinedValues: Node?): Node = nodeBuilder.onNodeBuilt(Phi(nodeBuilder.session.phiForm, block, *joinedValues))
 
 context(nodeBuilder: NodeBuilder)

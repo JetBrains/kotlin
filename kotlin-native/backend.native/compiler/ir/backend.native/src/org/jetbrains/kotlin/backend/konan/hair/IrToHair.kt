@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.common.*
 import hair.compilation.*
 import hair.ir.*
 import hair.ir.nodes.*
+import hair.opt.eliminateBoundsChecks
 import hair.opt.optimize
 import hair.sym.CmpOp
 import hair.sym.HairType
@@ -127,6 +128,12 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
         val funCompilation = FunctionCompilation(moduleCompilation, hairFun)
         context.log { "# Generating hair for ${f.computeFullName()}, compilation = $funCompilation" }
 
+        // TODO: benchmark
+        val arrayCheckDepth = mutableMapOf<ArrayIndexCheck, Int>()
+        val arrayLoadDepth = mutableMapOf<LoadArrayElement, Int>()
+        val arrayStoreDepth = mutableMapOf<StoreArrayElement, Int>()
+        var currentIrLoopDepth = 0
+
         with (funCompilation.session) {
             buildInitialIR {
                 // FIXME
@@ -209,15 +216,25 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                                 val arrayOp = expression.getArrayOp()
                                 if (arrayOp != null) {
                                     if (arrayOp.needsIndexCheck) {
-                                        ArrayIndexCheck(args[0], args[1])
+                                        // TODO: benchmark
+                                        val check = ArrayIndexCheck(args[0], args[1]) as ArrayIndexCheck
+                                        arrayCheckDepth[check] = currentIrLoopDepth
                                     }
                                     when (arrayOp) {
                                         ArrayOp.GET,
-                                        ArrayOp.GET_UNCHECKED -> LoadArrayElement(resultType)(args[0], args[1])
+                                        ArrayOp.GET_UNCHECKED -> {
+                                            // TODO: benchmark
+                                            val load = LoadArrayElement(resultType)(args[0], args[1]) as LoadArrayElement
+                                            arrayLoadDepth[load] = currentIrLoopDepth
+                                            load
+                                        }
                                         ArrayOp.SET,
                                         ArrayOp.SET_UNCHECKED -> {
+                                            // TODO: Benchmark
                                             val elementType = function.parameters.last().type.asHairType()
-                                            StoreArrayElement(elementType)(args[0], args[1], args[2])
+                                            val store = StoreArrayElement(elementType)(args[0], args[1], args[2]) as StoreArrayElement
+                                            arrayStoreDepth[store] = currentIrLoopDepth
+                                            UnitValue()
                                         }
                                         ArrayOp.SIZE -> ArraySize(args[0])
                                     }
@@ -350,11 +367,15 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
 
                     override fun visitWhileLoop(loop: IrWhileLoop, data: Unit): Node {
                         val condBlock = BlockEntry(Goto(), null) as BlockEntry
+                        // TODO: benchmark
+                        currentIrLoopDepth++
                         val cond = loop.condition.accept(this, Unit)
                         val [trueExit, falseExit] = IfExits(cond)
 
                         BlockEntry(trueExit)
                         loop.body?.accept(this, Unit)
+                        // TODO: benchmark
+                        currentIrLoopDepth--
                         val trueGoto = Goto()
                         condBlock.preds[1] = trueGoto // FIXME sha t if no exit?
 
@@ -374,9 +395,13 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                         val goto = Goto()
                         val entryBlock = BlockEntry(goto, null) as BlockEntry
 
+                        // TODO: benchmark
+                        currentIrLoopDepth++
                         loop.body?.accept(this, Unit)
 
                         val cond = loop.condition.accept(this, Unit)
+                        // TODO: benchmark
+                        currentIrLoopDepth--
                         val [trueExit, falseExit] = IfExits(cond)
 
                         BlockEntry(trueExit)
@@ -482,13 +507,14 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                         val field = expression.symbol.owner
                         if (field.hasAnnotation(KonanFqNames.volatile)) notImplemented(HairTODO.VOLATILE)
                         val value = expression.value.accept(this, Unit)
-                        return if (field.isStatic) {
+                        if (field.isStatic) {
                             // FIXME global vs field?
                             StoreGlobal(HairGlobalImpl(field))(value)
                         } else {
                             val obj = expression.receiver!!.accept(this, Unit)
                             StoreField(HairFieldImpl(field))(obj, value)
                         }
+                        return UnitValue()
                     }
 
                     override fun visitTry(aTry: IrTry, data: Unit): Node {
@@ -503,8 +529,35 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
 
             funCompilation.dumpHair("initial_ir")
 
+            insertPis()
+            funCompilation.dumpHair("after_pis_insertion")
+
             buildSSA()
             funCompilation.dumpHair("initial_ir_after_SSA")
+
+            context(funCompilation) {
+                eliminateBoundsChecks()
+            }
+            funCompilation.dumpHair("after_bce")
+
+            // TODO: benchmark
+            fun <N : Any> perDepth(nodes: Sequence<N>, tags: Map<N, Int>): List<Int> {
+                val buckets = mutableListOf<Int>()
+                for (n in nodes) {
+                    val d = tags[n] ?: 0
+                    while (buckets.size <= d) buckets.add(0)
+                    buckets[d]++
+                }
+                return buckets
+            }
+            org.jetbrains.kotlin.backend.konan.driver.phases.Dumper.recordHairSnapshot(
+                    funCompilation,
+                    org.jetbrains.kotlin.backend.konan.driver.phases.HairArrayAccessSnapshot(
+                            checksAfterBcePerDepth = perDepth(allNodes<ArrayIndexCheck>(), arrayCheckDepth),
+                            loadsPerDepth = perDepth(allNodes<LoadArrayElement>(), arrayLoadDepth),
+                            storesPerDepth = perDepth(allNodes<StoreArrayElement>(), arrayStoreDepth),
+                    )
+            )
 
             optimize()
             // TODO log IR in optimize after each iteration
