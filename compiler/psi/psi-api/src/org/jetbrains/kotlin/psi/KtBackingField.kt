@@ -72,6 +72,12 @@ open class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifie
         namePlaceholder.textRange.startOffset
 
     /**
+     * The property this backing field belongs to.
+     */
+    val property: KtProperty
+        get() = parent as KtProperty
+
+    /**
      * The `field` keyword introducing this backing field declaration, or `null` if it is absent in incomplete code.
      */
     open val fieldKeyword: PsiElement?
