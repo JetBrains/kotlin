@@ -192,6 +192,12 @@
       "type": "java.util.zip.Inflater",
       "methods": [
         {
+          "name": "inflate",
+          "parameterTypes": [
+            "java.nio.ByteBuffer"
+          ]
+        },
+        {
           "name": "setInput",
           "parameterTypes": [
             "java.nio.ByteBuffer"

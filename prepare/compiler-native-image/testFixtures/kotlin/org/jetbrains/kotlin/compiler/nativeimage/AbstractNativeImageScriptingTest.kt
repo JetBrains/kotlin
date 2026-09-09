@@ -5,48 +5,23 @@
 
 package org.jetbrains.kotlin.compiler.nativeimage
 
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assumptions.assumeTrue
 import java.io.File
 
-abstract class AbstractNativeImageScriptingTest : AbstractNativeImageCodegenTest() {
-    private val runner: NativeImageCompilerRunner by lazy { NativeImageCompilerRunner(javaHome) }
+abstract class AbstractNativeImageScriptingTest : AbstractCompilerTest(NativeImageCompilerRunner()) {
+    override fun buildCompilerArgs(
+        testFile: File,
+        outDir: File,
+        directives: RegisteredDirectives,
+        withFullJdk: Boolean,
+    ): List<String> = super.buildCompilerArgs(testFile, outDir, directives, withFullJdk) + listOf("-script")
 
-    override fun runTest(filePath: String) {
-        val testFile = ForTestCompileRuntime.transformTestDataPath(filePath)
-        val source = testFile.readText()
-        val directives = parseDirectives(source)
+    override fun prepareSourceFile(source: String): File =
+        File(workingDir, "script.kts").apply { writeText(source) }
 
-        val skipReason = shouldSkip(source, directives)
-        assumeTrue(skipReason == null) { "skipped: $skipReason" }
-
-        val withReflect = JvmEnvironmentConfigurationDirectives.WITH_REFLECT in directives
-        val withFullJdk = JvmEnvironmentConfigurationDirectives.FULL_JDK in directives
-
-        val outDir = File(workingDir, "ni-out").apply { mkdirs() }
-
-        val [exitCode, compilerStdout] = runCompiler(
-            arguments = buildCompilerArgs(testFile, outDir, directives, withFullJdk),
-            classpath = buildClasspath(withReflect, withFullJdk),
-        )
-        assertCompilerOutput(exitCode, compilerStdout, directives)
+    override fun checkCompilationResult(result: CompilerInvocationResult, outDir: File, source: String, withReflect: Boolean) {
+        assertEquals(0, result.exitCode, "compilation failed:\n${result.output}")
+        assertEquals("OK", result.stdout.trim(), "script output != 'OK'")
     }
-
-    override fun assertCompilerOutput(exitCode: Int, compilerStdout: String, directives: RegisteredDirectives) {
-        assertEquals(0, exitCode, "compilation failed:\n$compilerStdout")
-        assertEquals("OK", compilerStdout.trim(), "script output != 'OK'")
-    }
-
-    override fun runCompiler(
-        arguments: List<String>,
-        classpath: List<File>,
-    ): CompilerInvocationResult = runner.run(
-        workingDir = workingDir,
-        arguments = arguments + listOf("-script", "-nowarn"),
-        classpath = classpath,
-        jvmArgs = listOf("-Dkotlinc.test.allow.testonly.language.features=true"),
-    )
 }

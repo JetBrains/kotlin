@@ -11,16 +11,9 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 object NativeImagePluginDirectives : SimpleDirectivesContainer() {
     val COMPILER_PLUGIN by stringDirective(
         description = """
-            Usage: // COMPILER_PLUGIN: kotlin-allopen-compiler-plugin.jar annotation=MyOpen
+            Usage: // COMPILER_PLUGIN: pluginId pluginJarName [pluginOptions]
+            Example: // COMPILER_PLUGIN: org.jetbrains.kotlin.allopen kotlin-allopen-compiler-plugin.jar annotation=MyOpen
             Declares a plugin compiler (with options) to load.
-    """.trimIndent(),
-        multiLine = true,
-    )
-
-    val COMPILER_PLUGIN_ORDER by stringDirective(
-        description = """
-            Usage: // COMPILER_PLUGIN_ORDER: org.jetbrains.kotlin.noarg>org.jetbrains.kotlin.allopen
-            Declares an execution-order constraint between plugins
     """.trimIndent(),
         multiLine = true,
     )
@@ -32,6 +25,31 @@ data class PluginSpec(
     val options: List<String>,
 )
 
+enum class PluginLoadingMode {
+    /**
+     * Load plugins with `-Xcompiler-plugin` flag
+     */
+    MODERN {
+        override fun compilerArgs(spec: PluginSpec, jarPath: String): List<String> {
+            val options = when {
+                spec.options.isEmpty() -> ""
+                else -> spec.options.joinToString(prefix = "=", separator = ",")
+            }
+            return listOf("-Xcompiler-plugin=$jarPath$options")
+        }
+    },
+
+    /**
+     * Load plugins with `-Xplugin` flag
+     */
+    LEGACY {
+        override fun compilerArgs(spec: PluginSpec, jarPath: String): List<String> =
+            listOf("-Xplugin=$jarPath") + spec.options.flatMap { listOf("-P", "plugin:${spec.pluginId}:$it") }
+    };
+
+    abstract fun compilerArgs(spec: PluginSpec, jarPath: String): List<String>
+}
+
 private val WHITESPACE = Regex("""\s+""")
 
 fun RegisteredDirectives.pluginSpecs(): List<PluginSpec> =
@@ -42,6 +60,3 @@ fun RegisteredDirectives.pluginSpecs(): List<PluginSpec> =
         val options = tokens.drop(2).flatMap { it.split(",") }.filter { it.isNotBlank() }
         PluginSpec(pluginId, jarName, options)
     }
-
-fun RegisteredDirectives.pluginOrderConstraints(): List<String> =
-    this[NativeImagePluginDirectives.COMPILER_PLUGIN_ORDER]
