@@ -182,33 +182,17 @@ internal class IrBasedSuppressCache : AbstractKotlinSuppressCache<IrElement>() {
             }
         }
 
-        private fun collectSuppressAnnotationKeys(element: IrElement): Boolean =
-            (element as? IrAnnotationContainer)?.annotations?.filter {
-                it.isAnnotationWithEqualFqName(SUPPRESS)
-            }?.flatMap {
-                buildList {
-                    fun addIfStringConst(irConst: IrConst) {
-                        if (irConst.kind == IrConstKind.String) {
-                            add((irConst.value as String).lowercase())
-                        }
-                    }
-
-                    for (arg in it.argumentMapping.values) {
-                        when (arg) {
-                            is IrConst -> addIfStringConst(arg)
-                            is IrConstantArray -> arg.elements.filterIsInstance<IrConstantPrimitive>().forEach {
-                                addIfStringConst(it.value)
-                            }
-                            // TODO: consider leaving only this branch
-                            is IrVararg -> arg.elements.filterIsInstance<IrConst>().forEach {
-                                addIfStringConst(it)
-                            }
-                        }
-                    }
+        private fun collectSuppressAnnotationKeys(element: IrElement): Boolean {
+            val names = buildSet {
+                addAll(element.sourceSuppressedDiagnosticNames.orEmpty())
+                (element as? IrAnnotationContainer)?.annotations?.forEach { annotation ->
+                    addAll(annotation.suppressedDiagnosticNames())
                 }
-            }?.takeIf { it.isNotEmpty() }?.also {
-                annotationKeys[element] = it.toSet()
-            } != null
+            }
+            return names.isNotEmpty().also {
+                if (it) annotationKeys[element] = names
+            }
+        }
     }
 
     override fun getClosestAnnotatedAncestorElement(element: IrElement, rootElement: IrElement, excludeSelf: Boolean): IrElement? {
@@ -220,3 +204,26 @@ internal class IrBasedSuppressCache : AbstractKotlinSuppressCache<IrElement>() {
 }
 
 private val SUPPRESS = FqName("kotlin.Suppress")
+
+fun IrAnnotation.suppressedDiagnosticNames(): Set<String> {
+    if (!isAnnotationWithEqualFqName(SUPPRESS)) return emptySet()
+
+    return buildSet {
+        fun addIfStringConst(irConst: IrConst) {
+            if (irConst.kind == IrConstKind.String) {
+                add((irConst.value as String).lowercase())
+            }
+        }
+
+        for (arg in argumentMapping.values) {
+            when (arg) {
+                is IrConst -> addIfStringConst(arg)
+                is IrConstantArray -> arg.elements.filterIsInstance<IrConstantPrimitive>().forEach {
+                    addIfStringConst(it.value)
+                }
+                // TODO: consider leaving only this branch
+                is IrVararg -> arg.elements.filterIsInstance<IrConst>().forEach(::addIfStringConst)
+            }
+        }
+    }
+}
