@@ -26,3 +26,6 @@ value class JvmClasspathRootId(val id: String) {
             JvmClasspathRootId(root.toAbsolutePath().normalize().invariantSeparatorsPathString.trimEnd('/'))
     }
 }
+
+fun VirtualFile.asJvmClasspathRootId(): JvmClasspathRootId =
+    JvmClasspathRootId(path.removeSuffix(JAR_SEPARATOR).trimEnd('/'))
