@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.toolchain
 
+import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributesSchema
@@ -24,8 +25,13 @@ internal object KotlinNativeBundleArtifactFormat {
     val attribute: Attribute<KotlinNativeBundleArtifactsTypes> =
         Attribute.of("kotlin.native.bundle.type", KotlinNativeBundleArtifactsTypes::class.java)
 
-    internal enum class KotlinNativeBundleArtifactsTypes {
-        DIRECTORY
+    internal enum class KotlinNativeBundleArtifactsTypes : Named {
+        DIRECTORY;
+
+        /**
+         * @return The name of the native bundle artifacts type.
+         */
+        override fun getName(): String = name.lowercase()
     }
 
     /**
