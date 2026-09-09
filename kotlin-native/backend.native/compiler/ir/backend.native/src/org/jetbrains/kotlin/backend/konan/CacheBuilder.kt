@@ -56,7 +56,8 @@ class CacheBuilder(
             && (autoCacheableFrom.isNotEmpty() || icEnabled)
 
     // Note: The order of libraries is not important here.
-    private val allKlibs by lazy { CachedKlibs(config.loadedKlibs.all) }
+    private val allKlibs: CachedKlibs
+        get() = config.cacheSupport.allKlibs
 
     // Note: It's not totally clear, but likely the libraries in `uniqueNameToLibrary` should be in the reverse topo-order.
     private val uniqueNameToLibrary by lazy { allKlibs.librariesReverseTopoSorted.associateBy { it.uniqueName } }

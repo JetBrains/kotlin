@@ -582,12 +582,12 @@ class NativeSecondStageCompilationConfig(
         else -> null
     }
 
-    internal var cacheSupport: CacheSupport = createCacheSupport()
+    internal var cacheSupport: CacheSupport = createCacheSupport(CachedKlibs(loadedKlibs.all))
         private set
 
-    private fun createCacheSupport() = CacheSupport(
+    private fun createCacheSupport(allKlibs: CachedKlibs) = CacheSupport(
             configuration = configuration,
-            allKlibs = CachedKlibs(loadedKlibs.all),
+            allKlibs = allKlibs,
             ignoreCacheReason = ignoreCacheReason,
             systemCacheDirectory = systemCacheDirectory,
             autoCacheDirectory = autoCacheDirectory,
@@ -597,7 +597,8 @@ class NativeSecondStageCompilationConfig(
     )
 
     internal fun reloadCacheSupport() {
-        cacheSupport = createCacheSupport()
+        // Reuse CachedKlibs.
+        cacheSupport = createCacheSupport(cacheSupport.allKlibs)
     }
 
     internal val cachedLibraries: CachedLibraries
