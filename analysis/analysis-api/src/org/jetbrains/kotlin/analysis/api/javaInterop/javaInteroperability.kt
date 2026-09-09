@@ -54,6 +54,9 @@ public fun KaType.mapToJvmTypeDescriptor(): String {
  * primitive-backed, recursively. It is `false` for nullable types, regular reference types, and types without a single primitive-backed
  * representation.
  *
+ * Only the inline representation counts. A full value class is compiled as a regular class on the JVM, so it is never primitive-backed,
+ * even with exactly one primary property; see [org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol.isInline].
+ *
  * This property describes the type's underlying representation. It does not imply that every use of the type is emitted as a JVM primitive,
  * as boxing can still be required by the use-site context.
  *
