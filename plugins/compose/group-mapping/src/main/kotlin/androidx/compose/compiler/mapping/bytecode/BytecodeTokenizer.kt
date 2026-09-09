@@ -227,12 +227,12 @@ private object ComposableLambdaTokenizer : BytecodeTokenizer {
 
     private fun captureInsnCount(context: TokenizerContext, capturesOffset: Int, desc: JvmDescriptor): Result<Int> {
         var offset = capturesOffset
-        repeat(desc.parameters.size) {
+        for (paramIndex in desc.parameters.lastIndex downTo 0) {
             when (val insn = context[offset]) {
                 is FieldInsnNode -> offset -= 2
                 is VarInsnNode -> offset -= 1
                 else -> {
-                    if (desc.parameters[it] == "Z" && (insn is FrameNode || insn is LabelNode)) {
+                    if (desc.parameters[paramIndex] == "Z" && (insn is FrameNode || insn is LabelNode)) {
                         // Kotlin generates if (field) true else false for some reason when
                         // boolean captures are passed through suspend inline functions.
                         // Traverse back to the last iload instruction to continue analyzing captures.
