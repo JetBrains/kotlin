@@ -48,6 +48,57 @@ public actual operator fun MatchGroupCollection.get(name: String): MatchGroup? {
     return namedGroups[name]
 }
 
+private val delazifyPattern = buildString {
+    // negative lookbehind
+    // (do not have uneven amount of backslashes before)
+    append("(?<!")
+    // negative lookbehind
+    // (do not have one backslash before)
+    append("(?<!\\\\)")
+    // exactly two backslashes any amount of times
+    append("(?:\\\\{2})*")
+    // the one escaping backslash
+    append("\\\\")
+    // end of outer negative lookbehind
+    append(")")
+    // negative lookbehind
+    // (do not have an unended character class before)
+    append("(?<!")
+    // negative lookbehind
+    // (do not have uneven amount of backslashes before)
+    append("(?<!")
+    // negative lookbehind
+    // (do not have one backslash before)
+    append("(?<!\\\\)")
+    // exactly two backslashes any amount of times
+    append("(?:\\\\{2})*")
+    // the one escaping backslash
+    append("\\\\")
+    // end of inner negative lookbehind
+    append(")")
+    // the start of the unended character class
+    append("\\[")
+    // no unescaped character class end any amount of times
+    append("(?:")
+    // no character class end
+    append("[^\\]]")
+    // or
+    append("|")
+    // negative lookbehind
+    // (do not have one backslash before)
+    append("(?<!\\\\)")
+    // exactly two backslashes any amount of times
+    append("(?:\\\\{2})*")
+    // the one escaping backslash
+    append("\\\\")
+    // character class end
+    append("\\]")
+    append(")*")
+    // end of outer negative lookbehind
+    append(")")
+    // the lazy quantifier to delazify
+    append("(?<quantifier>[*+?}])\\?")
+}.toRegex()
 
 /**
  * Represents a compiled regular expression.
@@ -84,18 +135,20 @@ public actual class Regex public actual constructor(pattern: String, options: Se
     private var nativeMatchesEntirePattern: RegExp? = null
     private fun initMatchesEntirePattern(): RegExp =
         nativeMatchesEntirePattern ?: run {
-            if (pattern.startsWith('^') && pattern.endsWith('$'))
-                nativePattern
-            else
-                return RegExp("^${pattern.trimStart('^').trimEnd('$')}$", options.toFlags("gu"))
-        }.also { nativeMatchesEntirePattern = it }
-
+            val pattern = if (options.contains(RegexOption.MULTILINE)) {
+                pattern.replace(delazifyPattern, "\${quantifier}")
+            } else {
+                pattern
+            }
+            RegExp("^(?:$pattern)$", options.toFlags("gu")).also { nativeMatchesEntirePattern = it }
+        }
 
     /** Indicates whether the regular expression matches the entire [input]. */
     public actual infix fun matches(input: CharSequence): Boolean {
-        nativePattern.reset()
-        val match = nativePattern.exec(input.toString())
-        return match != null && match.index == 0 && nativePattern.lastIndex == input.length
+        val pattern = initMatchesEntirePattern()
+        pattern.reset()
+        val match = pattern.exec(input.toString())
+        return (match != null) && (match.index == 0) && (pattern.lastIndex == input.length)
     }
 
     /** Indicates whether the regular expression can find at least one match in the specified [input]. */
@@ -150,8 +203,16 @@ public actual class Regex public actual constructor(pattern: String, options: Se
      *
      * @return An instance of [MatchResult] if the entire input matches or `null` otherwise.
      */
-    public actual fun matchEntire(input: CharSequence): MatchResult? =
-        initMatchesEntirePattern().findNext(input.toString(), 0, nativePattern)
+    public actual fun matchEntire(input: CharSequence): MatchResult? {
+        val pattern = initMatchesEntirePattern()
+        pattern.reset()
+        val matchResult = pattern.findNext(input.toString(), 0, nativePattern)
+        return if (
+            (matchResult == null)
+            || (matchResult.range.start != 0)
+            || (matchResult.range.endInclusive != (input.length - 1))
+        ) null else matchResult
+    }
 
     @SinceKotlin("1.7")
     public actual fun matchAt(input: CharSequence, index: Int): MatchResult? {
