@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinBlockStringTemplateEntryStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 
-@OptIn(KtImplementationDetail::class)
 internal class KotlinBlockStringTemplateEntryStubImpl(
     parent: StubElement<*>?,
     override val hasMultipleExpressions: Boolean,

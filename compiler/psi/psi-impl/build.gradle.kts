@@ -32,6 +32,21 @@ dependencies {
     testCompileOnly(intellijCore())
 }
 
+kotlin {
+    // psi-impl implements the PSI API, so it opts in to all of its non-public markers
+    // (the same list psi-api excludes from its ABI dump) instead of repeating the
+    // suppression in every file.
+    compilerOptions.optIn.addAll(
+        listOf(
+            "org.jetbrains.kotlin.psi.KtImplementationDetail",
+            "org.jetbrains.kotlin.psi.KtNonPublicApi",
+            "org.jetbrains.kotlin.psi.KtIdeApi",
+            "org.jetbrains.kotlin.psi.KtExperimentalApi",
+            "org.jetbrains.kotlin.psi.KtPlatformInterface",
+        )
+    )
+}
+
 sourceSets {
     "main" { projectDefault() }
     "test" {

@@ -31,7 +31,6 @@ fun KotlinFileStubImpl.deepCopy(): KotlinFileStubImpl = copyStubRecursively(
 /**
  * Returns a copy of [originalStub].
  */
-@OptIn(KtImplementationDetail::class)
 private fun <T : PsiElement> copyStubRecursively(
     originalStub: StubElement<T>,
     newParentStub: StubElement<*>?,
