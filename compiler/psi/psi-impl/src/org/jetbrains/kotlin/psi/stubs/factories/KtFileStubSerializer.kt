@@ -24,6 +24,6 @@ internal object KtFileStubSerializer : StubSerializer<KotlinFileStubImpl> {
     }
 
     override fun indexStub(stub: KotlinFileStubImpl, sink: IndexSink) {
-        StubIndexService.getInstance().indexFile(stub, sink)
+        StubIndexService.getInstance()?.indexFile(stub, sink)
     }
 }

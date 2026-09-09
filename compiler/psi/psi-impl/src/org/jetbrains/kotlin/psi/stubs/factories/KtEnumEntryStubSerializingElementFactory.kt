@@ -56,6 +56,6 @@ internal object KtEnumEntryStubSerializingElementFactory :
     }
 
     override fun indexStub(stub: KotlinEnumEntryStubImpl, sink: IndexSink) {
-        StubIndexService.getInstance().indexClass(stub, sink)
+        StubIndexService.getInstance()?.indexClass(stub, sink)
     }
 }

@@ -65,6 +65,6 @@ internal object KtAnnotationEntryStubSerializingElementFactory :
     }
 
     override fun indexStub(stub: KotlinAnnotationEntryStubImpl, sink: IndexSink) {
-        StubIndexService.getInstance().indexAnnotation(stub, sink)
+        StubIndexService.getInstance()?.indexAnnotation(stub, sink)
     }
 }

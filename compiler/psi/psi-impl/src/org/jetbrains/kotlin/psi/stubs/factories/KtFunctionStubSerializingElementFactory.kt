@@ -102,6 +102,6 @@ internal object KtFunctionStubSerializingElementFactory :
     }
 
     override fun indexStub(stub: KotlinFunctionStubImpl, sink: IndexSink) {
-        StubIndexService.getInstance().indexFunction(stub, sink)
+        StubIndexService.getInstance()?.indexFunction(stub, sink)
     }
 }

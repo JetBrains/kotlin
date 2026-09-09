@@ -45,6 +45,6 @@ internal object KtScriptStubSerializingElementFactory :
     }
 
     override fun indexStub(stub: KotlinScriptStubImpl, sink: IndexSink) {
-        StubIndexService.getInstance().indexScript(stub, sink)
+        StubIndexService.getInstance()?.indexScript(stub, sink)
     }
 }

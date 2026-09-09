@@ -62,6 +62,6 @@ internal object KtTypeAliasStubSerializingElementFactory :
     }
 
     override fun indexStub(stub: KotlinTypeAliasStubImpl, sink: IndexSink) {
-        StubIndexService.getInstance().indexTypeAlias(stub, sink)
+        StubIndexService.getInstance()?.indexTypeAlias(stub, sink)
     }
 }
