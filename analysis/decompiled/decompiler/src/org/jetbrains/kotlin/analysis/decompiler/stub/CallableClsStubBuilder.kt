@@ -2,7 +2,6 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:OptIn(KtImplementationDetail::class)
 
 package org.jetbrains.kotlin.analysis.decompiler.stub
 
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
@@ -100,7 +98,6 @@ fun createDeclarationsStubs(
     }
 }
 
-@OptIn(KtExperimentalApi::class)
 private fun buildCompanionBlockWithBody(parentStub: StubElement<out PsiElement>): StubElement<out PsiElement> {
     val companionBlockStub = KotlinPlaceHolderStubImpl<KtCompanionBlock>(
         parent = parentStub,
