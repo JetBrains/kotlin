@@ -101,7 +101,7 @@ public sealed interface ExecutionPolicy {
              * The time in milliseconds that the daemon process continues to live after all clients have disconnected.
              */
             @JvmField
-            public val SHUTDOWN_DELAY_MILLIS: Option<Long?> = Option("SHUTDOWN_DELAY_MILLIS", KotlinReleaseVersion(2, 3, 0))
+                public val SHUTDOWN_DELAY_MILLIS: Option<Long?> = Option("SHUTDOWN_DELAY_MILLIS", KotlinReleaseVersion(2, 3, 0))
 
             /**
              * Specify a custom path for daemon runtime files.

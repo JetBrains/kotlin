@@ -3,8 +3,10 @@ import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.internal.ExecutionContext
 import org.jetbrains.kotlin.buildtools.internal.CancellableBuildOperationImpl
+import org.jetbrains.kotlin.buildtools.internal.DaemonConnectionRegistry
 import org.jetbrains.kotlin.buildtools.internal.KotlinToolchainsImpl
 import org.jetbrains.kotlin.buildtools.internal.Options
+import org.jetbrains.kotlin.buildtools.internal.classloading.LruClassLoadersCache
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import java.io.File
 import kotlin.concurrent.atomics.AtomicBoolean
@@ -55,7 +57,10 @@ class CancellableOperationTest {
                         operation.execute(
                             ProjectId.RandomProjectUUID(),
                             KotlinToolchainsImpl().createInProcessExecutionPolicy(),
-                            executionContext = ExecutionContext(lazy { File(".") }, null),
+                            executionContext = ExecutionContext(
+                                LruClassLoadersCache(0, this::class.java.classLoader),
+                                DaemonConnectionRegistry(lazy { File(".") })
+                            ),
                         )
                     )
                 } catch (_: CompilationCanceledException) {
