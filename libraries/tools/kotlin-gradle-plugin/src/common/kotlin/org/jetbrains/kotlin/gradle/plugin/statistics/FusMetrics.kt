@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.build.report.metrics.SOURCE_LINES_NUMBER
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.isKonanIncrementalCompilationEnabled
-import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
@@ -27,6 +26,8 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.statistics.arguments.TrackedCompilerArgument
+import org.jetbrains.kotlin.gradle.plugin.statistics.arguments.TrackedCompilerArguments
 import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
@@ -83,14 +84,43 @@ internal object CompilerArgumentMetrics : FusMetrics {
     internal fun collectMetrics(
         compilerArgs: CommonCompilerArguments?,
         argsArray: Array<String>,
+        logger: Logger,
         metricsConsumer: StatisticsValuesConsumer,
     ) {
-        when (compilerArgs) {
-            is K2JVMCompilerArguments -> {
-                val args = K2JVMCompilerArguments()
-                parseCommandLineArguments(argsArray.toList(), args)
-                metricsConsumer.report(StringListMetrics.JVM_DEFAULTS, args.jvmDefaultStable ?: JvmDefaultMode.DISABLE.description)
+        if (compilerArgs == null) return
 
+        val reconstructedArguments = runMetricMethodSafely(logger, "parse ${compilerArgs::class.simpleName} for FUS metrics") {
+            compilerArgs::class.java.getDeclaredConstructor().newInstance().also {
+                parseCommandLineArguments(argsArray.toList(), it)
+            }
+        } ?: return
+
+        collectTrackedArguments(reconstructedArguments, logger, metricsConsumer)
+        collectManualMetrics(reconstructedArguments, metricsConsumer)
+    }
+
+    internal fun collectTrackedArguments(
+        arguments: CommonToolArguments,
+        logger: Logger,
+        metricsConsumer: StatisticsValuesConsumer,
+        trackedArguments: List<TrackedCompilerArgument<*>> = TrackedCompilerArguments.ALL,
+    ) {
+        val applicableRules = trackedArguments.filter { it.argumentsClass.java.isAssignableFrom(arguments::class.java) }
+        if (applicableRules.isEmpty()) return
+
+        for (rule in applicableRules) {
+            runMetricMethodSafely(logger, "report FUS metrics for compiler arguments") {
+                rule.reportIfApplicable(arguments, metricsConsumer)
+            }
+        }
+    }
+
+    private fun collectManualMetrics(
+        args: CommonCompilerArguments,
+        metricsConsumer: StatisticsValuesConsumer,
+    ) {
+        when (args) {
+            is K2JVMCompilerArguments -> {
                 val pluginPatterns = listOf(
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_ALL_OPEN, "kotlin-allopen-.*jar"),
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_NO_ARG, "kotlin-noarg-.*jar"),
@@ -111,9 +141,6 @@ internal object CompilerArgumentMetrics : FusMetrics {
                 metricsConsumer.reportPluginsFromListIfUsed(args, pluginPatterns)
             }
             is K2JSCompilerArguments -> {
-                val args = K2JSCompilerArguments()
-                parseCommandLineArguments(argsArray.toList(), args)
-
                 val pluginPatterns = listOf(
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_JS_PLAIN_OBJECTS, "js-plain-objects-.*jar"),
                 )
