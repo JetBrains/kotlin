@@ -348,7 +348,7 @@ public class Uuid private constructor(
          * @sample samples.uuid.Uuids.fromByteArray
          */
         public fun fromByteArray(byteArray: ByteArray): Uuid {
-            require(byteArray.size == SIZE_BYTES) {
+            require(byteArray.size == Uuid.SIZE_BYTES) {
                 "Expected exactly $SIZE_BYTES bytes, but was ${byteArray.truncateForErrorMessage(32)} of size ${byteArray.size}"
             }
 
