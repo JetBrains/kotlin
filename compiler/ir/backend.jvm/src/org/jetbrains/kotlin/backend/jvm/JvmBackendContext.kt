@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.caches.BridgeLoweringCache
 import org.jetbrains.kotlin.backend.jvm.caches.CollectionStubComputer
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
+import org.jetbrains.kotlin.codegen.PsiMappingEntry
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
+import java.util.Collections
 
 class JvmBackendContext(
     val state: GenerationState,
@@ -94,6 +96,12 @@ class JvmBackendContext(
     val inlineMethodGenerationLock = Any()
 
     val optionalAnnotations = mutableListOf<MetadataSource.Class>()
+
+    /**
+     * With `-Xgenerate-psi-mapping`: JVM methods generated so far together with their source ranges. Filled by class codegen
+     * (possibly from several threads) and written into the per-module `@PSIMappingMetadata` class after all classes are generated.
+     */
+    val psiMappingEntries: MutableList<PsiMappingEntry> = Collections.synchronizedList(mutableListOf())
 
     @Deprecated("It is non-JVM API", level = DeprecationLevel.ERROR)
     override val inlineClassesUtils: InlineClassesUtils

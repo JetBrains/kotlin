@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import com.intellij.util.ArrayUtil
-import org.jetbrains.kotlin.PSIMetadataMappingEntry
 import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.codegen.AnnotationCodegen.Companion.annotationClass
@@ -18,10 +17,8 @@ import org.jetbrains.kotlin.backend.jvm.mapping.mapType
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap.mapKotlinToJava
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.AsmUtil.PSI_MAPPING_HEADER
-import org.jetbrains.kotlin.codegen.AsmUtil.PSI_MAPPING_VERSION
-import org.jetbrains.kotlin.codegen.AsmUtil.UTF_8_CONSTANT_MAX_LEN
 import org.jetbrains.kotlin.codegen.VersionIndependentOpcodes
+import org.jetbrains.kotlin.codegen.PsiMappingEntry
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -165,17 +162,19 @@ class ClassCodegen private constructor(
             generatePermittedSubclasses()
         }
 
-        val psiMetadataMappingEntries = mutableListOf<PSIMetadataMappingEntry>()
-
         // Generating a method node may cause the addition of a field with an initializer if an inline function
         // call uses `assert` and the JVM assertions mode is enabled. To avoid concurrent modification errors,
         // there is a very specific generation order.
         // 1. Any method other than `<clinit>` can add a field and a `<clinit>` statement:
         for (method in irClass.declarations.filterIsInstance<IrFunction>()) {
-            if (method.name.asString() != "<clinit>" && method.origin != IrDeclarationOrigin.INLINE_LAMBDA && method.origin != IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR && !(method.origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE && method.body == null)) {
+            if (method.name.asString() != "<clinit>" &&
+                method.origin != IrDeclarationOrigin.INLINE_LAMBDA &&
+                method.origin != IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR &&
+                !(method.origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE && method.body == null)
+            ) {
                 val node = generateMethod(method, smap) ?: continue
                 if (config.generatePsiMetadata) {
-                    collectPSIMetadata(method, node, psiMetadataMappingEntries)
+                    collectPsiMapping(method, node)
                 }
             }
         }
@@ -211,99 +210,29 @@ class ClassCodegen private constructor(
         visitor.done(config.generateSmapCopyToAnnotation)
         jvmMethodSignatureClashDetector.reportErrorsTo(context.diagnosticReporter)
         jvmFieldSignatureClashDetector.reportErrorsTo(context.diagnosticReporter)
-
-        if (config.generatePsiMetadata) {
-            writePSIMetadata(psiMetadataMappingEntries)
-        }
     }
 
-    private val IrElement.finalPSISource: IrElement
-        get() {
-            if (offsetSourceForPSIMapping == null) return this
-            val res = offsetSourceForPSIMapping!!.finalPSISource
-            offsetSourceForPSIMapping = res
-            return res
-        }
+    /**
+     * The declaration whose source range is attributed to this element: follows [offsetSourceForPSIMapping] links set for
+     * declarations synthesized by the backend (fake overrides, accessors, `DefaultImpls` redirections, `componentN`, ...).
+     */
+    private val IrElement.psiMappingSource: IrElement
+        get() = offsetSourceForPSIMapping?.psiMappingSource ?: this
 
-    private fun collectPSIMetadata(
-        method: IrFunction,
-        node: MethodNode,
-        entries: MutableList<PSIMetadataMappingEntry>,
-    ) {
-        val offsetSource = method.finalPSISource
-        if (offsetSource.startOffset < 0 || offsetSource.endOffset < 0) return
-        entries.add(
-            PSIMetadataMappingEntry(
-                node.name,
-                node.desc,
-                irClass.file.name,
-                irClass.file.packageFqName.asString(),
-                offsetSource.startOffset,
-                offsetSource.endOffset
+    private fun collectPsiMapping(method: IrFunction, node: MethodNode) {
+        val source = method.psiMappingSource
+        if (source.startOffset < 0 || source.endOffset < 0) return
+        context.psiMappingEntries.add(
+            PsiMappingEntry(
+                className = type.internalName,
+                file = irClass.file.name,
+                packageName = irClass.file.packageFqName.asString(),
+                name = node.name,
+                signature = node.desc,
+                startOffset = source.startOffset,
+                endOffset = source.endOffset,
             )
         )
-    }
-
-    private fun writePSIMetadata(entries: List<PSIMetadataMappingEntry>) {
-        if (entries.isEmpty()) return
-
-        val stringPool = linkedMapOf<String, Int>()
-        var stringPoolCurrentIndex = 0
-
-        fun addStringToPool(str: String) {
-            stringPool.computeIfAbsent(str) { stringPoolCurrentIndex++ }
-        }
-
-        entries.forEach { entry ->
-            addStringToPool(entry.name)
-            addStringToPool(entry.signature)
-            addStringToPool(entry.file)
-            addStringToPool(entry.packageName)
-        }
-
-        val psiMappingsParts = mutableListOf<StringBuilder>()
-
-        var builderCounter = 0
-        lateinit var currentBuilder: StringBuilder
-
-        fun createNewPart(isFirst: Boolean = false) {
-            currentBuilder = StringBuilder().also {
-                it.appendLine("${PSI_MAPPING_HEADER}_${builderCounter++}")
-                if (isFirst) {
-                    it.appendLine(PSI_MAPPING_VERSION)
-                    it.appendLine("${stringPool.size}")
-                }
-                psiMappingsParts.add(it)
-            }
-        }
-
-        createNewPart(isFirst = true)
-
-        for (stringFromPool in stringPool.keys) {
-            if (currentBuilder.length + stringFromPool.length > UTF_8_CONSTANT_MAX_LEN) {
-                createNewPart()
-            }
-            currentBuilder.appendLine(stringFromPool)
-        }
-
-        fun constantIndex(x: String) = stringPool[x]
-
-        entries.forEach { entry ->
-            val encodedEntry =
-                "${constantIndex(entry.file)};${constantIndex(entry.packageName)};${constantIndex(entry.name)};${constantIndex(entry.signature)};${entry.startOffset};${entry.endOffset}"
-            if (currentBuilder.length + encodedEntry.length > UTF_8_CONSTANT_MAX_LEN) {
-                createNewPart()
-            }
-            currentBuilder.appendLine(encodedEntry)
-        }
-
-        val psiMetadata = visitor.newAnnotation(PSI_MAPPING_METADATA_ASM_TYPE.descriptor, true)
-        val arrayVisitor = psiMetadata.visitArray("mappingParts")
-        psiMappingsParts.forEach { mappingPart ->
-            arrayVisitor.visit(null, mappingPart.toString())
-        }
-        arrayVisitor.visitEnd()
-        psiMetadata.visitEnd()
     }
 
     private fun shouldSkipCodeGenerationAccordingToGenerationFilter(): Boolean {

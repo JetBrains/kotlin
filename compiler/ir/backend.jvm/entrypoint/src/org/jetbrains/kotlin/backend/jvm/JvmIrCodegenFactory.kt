@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.EnumEntriesIntrinsicMappingsCacheImpl
 import org.jetbrains.kotlin.backend.jvm.codegen.JvmIrIntrinsicExtension
+import org.jetbrains.kotlin.backend.jvm.codegen.PsiMappingClassGenerator
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.ir.getIoFile
 import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
@@ -191,6 +192,7 @@ class JvmIrCodegenFactory(
 
         if (hasErrors()) return
 
+        PsiMappingClassGenerator.generate(context, module)
         generateModuleMetadata(input.context)
         if (state.config.languageVersionSettings.getFlag(JvmAnalysisFlags.outputBuiltinsMetadata)) {
             serializeBuiltinsMetadata(allBuiltins, context)
