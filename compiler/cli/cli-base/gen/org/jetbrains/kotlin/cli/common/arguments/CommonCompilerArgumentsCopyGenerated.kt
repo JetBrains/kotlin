@@ -102,6 +102,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.skipMetadataVersionCheck = from.skipMetadataVersionCheck
     to.skipPrereleaseCheck = from.skipPrereleaseCheck
     to.stdlibCompilation = from.stdlibCompilation
+    to.strictEqualityForStructuralClasses = from.strictEqualityForStructuralClasses
     to.suppressVersionWarnings = from.suppressVersionWarnings
     @Suppress("DEPRECATION")
     to.useFirIC = from.useFirIC

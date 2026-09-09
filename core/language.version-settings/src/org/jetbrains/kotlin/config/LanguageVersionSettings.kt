@@ -626,6 +626,7 @@ enum class LanguageFeature(
     ProhibitAllMultipleDefaultsInheritedFromSupertypes(sinceVersion = null, enabledInProgressiveMode = false, issue = NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
     FunctionalTypeWithExtensionAsSupertype(sinceVersion = null, "KT-73894", enabledInLatestLVTests = false),
     ContextReceivers(sinceVersion = null, NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
+    StrictEqualsForStructuralClasses(sinceVersion = null, issue = "KT-89201", enabledInLatestLVTests = false),
     StrictEquals(sinceVersion = null, sinceApiVersion = ApiVersion.KOTLIN_2_5, issue = "KT-83683", testOnly = true, enabledInLatestLVTests = true),
     CallableReferencesToContextual(sinceVersion = null, issue = "KT-54594", enabledInLatestLVTests = true),
     JavaSamConversionEqualsHashCode(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-19318", enabledInLatestLVTests = false),
