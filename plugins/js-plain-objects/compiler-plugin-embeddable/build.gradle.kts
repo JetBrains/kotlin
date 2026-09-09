@@ -13,9 +13,5 @@ publish {
 }
 
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
-sourcesJarWithSourcesFromEmbedded(
-    project(":plugins:js-plain-objects:compiler-plugin").tasks.named<Jar>("sourcesJar")
-)
-javadocJarWithJavadocFromEmbedded(
-    project(":plugins:js-plain-objects:compiler-plugin").tasks.named<Jar>("javadocJar")
-)
+sourcesJarWithSourcesFromEmbedded()
+javadocJarWithJavadocFromEmbedded()

@@ -61,12 +61,11 @@ abstract class AnalysisApiArtifactExtension @Inject constructor(private val proj
             val artifactContentElements = configurations.getByName("artifactContentElements")
 
             // Build the included projects' artifacts so their code-generation tasks run and
-            // the generated sources exist on disk for 'addEmbeddedSources'.
+            // the generated sources exist on disk for the published project source JARs.
             dependsOn(artifactContentElements)
 
-            addEmbeddedSources(artifactContentElements.name)
+            addEmbeddedProjectSourcesJars(artifactContentElements.name)
             addEmbeddedLibrarySources(artifactContentElements)
-            addEmbeddedProjectSourcesJars(artifactContentElements)
         }
 
         javadocJar()
