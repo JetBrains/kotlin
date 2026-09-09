@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.test.sharding
 
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor
 import org.junit.platform.engine.FilterResult
 import org.junit.platform.engine.FilterResult.excluded
@@ -15,8 +13,6 @@ import org.junit.platform.engine.TestDescriptor
 import org.junit.platform.launcher.PostDiscoveryFilter
 import java.nio.ByteBuffer
 import java.security.MessageDigest
-import java.util.zip.CRC32
-import java.util.zip.Checksum
 import kotlin.jvm.optionals.getOrNull
 
 class TestShardingPostDiscoveryFilter : PostDiscoveryFilter {
@@ -101,35 +97,6 @@ class TestShardingPostDiscoveryFilter : PostDiscoveryFilter {
         return selectedShard
     }
 
-
-    /**
-     * Checks the class and its superclasses for a method with the given annotation.
-     * ClassValue caches the answer per class, so tests in the same class do not repeat the reflection work.
-     */
-    class HasMethodWithAnnotationClassValue(val annotationClass: Class<out Annotation>) : ClassValue<Boolean>() {
-        override fun computeValue(type: Class<*>): Boolean? {
-            if (type.declaredMethods.any { method ->
-                    method.isAnnotationPresent(annotationClass)
-                }) return true
-
-            type.superclass?.let { superclass ->
-                return this[superclass]
-            }
-
-            return false
-        }
-    }
-
-    /**
-     * Can be used to query if a class contains any [BeforeAll] annotation
-     */
-    val hasBeforeAll = HasMethodWithAnnotationClassValue(BeforeAll::class.java)
-
-    /**
-     * Can be used to query if a class contains any [AfterAll] annotation
-     */
-    val hasAfterAll = HasMethodWithAnnotationClassValue(AfterAll::class.java)
-
     /**
      * Chooses the unit that moves between shards: an individual test or a whole class.
      * Tests with the same key always go to the same shard for a given seed and shard count.
@@ -156,7 +123,9 @@ class TestShardingPostDiscoveryFilter : PostDiscoveryFilter {
                 If the class has @BeforeAll or @AfterAll methods (including inherited ones), use its class ID as the key.
                 This keeps the class's tests together instead of repeating potentially expensive setup and teardown across shards.
                  */
-                if (classDescriptor != null && (hasBeforeAll[classDescriptor.testClass] || hasAfterAll[classDescriptor.testClass])) {
+                if (classDescriptor != null &&
+                    (classDescriptor.testClass.hasBeforeAllAnnotation() || classDescriptor.testClass.hasAfterAllAnnotation())
+                ) {
                     classDescriptor.uniqueId.toString()
                 }
                 /*
