@@ -37,6 +37,7 @@ import java.io.File
 import java.io.Serializable
 import java.net.URL
 import java.net.URLClassLoader
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
 @CacheableTask
@@ -325,25 +326,15 @@ private class KaptExecution @Inject constructor(
                 }
             }
 
-        private val classLoaderStateLock = Any()
+        private val cachedKaptClassLoaders = ConcurrentHashMap<Boolean, ClassLoader>()
 
-        private var classLoadersCache: ClassLoadersCache? = null
-
-        private var cachedKaptClassLoader: ClassLoader? = null
+        private val classLoadersCaches = ConcurrentHashMap<Boolean, ClassLoadersCache>()
     }
 
     private val logger = LoggerFactory.getLogger(KaptExecution::class.java)
 
     override fun run() {
-        // Note: since the kapt classloader (and the classloaders cache built on top of it) is cached
-        // in the companion object, changing 'kapt.isolate.processors.from.build.classpath' takes
-        // effect only after the hosting daemon is restarted, same as a 'toolsJarURLSpec' change.
-        val rootClassLoader = if (isolateProcessorsFromBuildClasspath) {
-            JdkOnlyParentClassLoader(KaptExecution::class.java.classLoader)
-        } else {
-            findRootClassLoader()
-        }
-        val kaptClassLoader = getOrCreateKaptClassLoader(rootClassLoader)
+        val kaptClassLoader = getOrCreateKaptClassLoader()
         val classLoadersCacheForExecution = getOrCreateClassLoadersCache(kaptClassLoader)
 
         val kaptMethod = kaptClassLoader.kaptClass("Kapt").declaredMethods.single { it.name == "kapt" }
@@ -355,30 +346,30 @@ private class KaptExecution @Inject constructor(
         }
     }
 
-    private fun getOrCreateKaptClassLoader(rootClassLoader: ClassLoader): ClassLoader =
-        synchronized(classLoaderStateLock) {
-            cachedKaptClassLoader ?: createKaptClassLoader(rootClassLoader).also {
-                cachedKaptClassLoader = it
+    private fun getOrCreateKaptClassLoader(): ClassLoader =
+        cachedKaptClassLoaders.computeIfAbsent(isolateProcessorsFromBuildClasspath) { isolate ->
+            val rootClassLoader = if (isolate) {
+                JdkOnlyParentClassLoader(KaptExecution::class.java.classLoader)
+            } else {
+                findRootClassLoader()
             }
+            createKaptClassLoader(rootClassLoader)
         }
 
     private fun getOrCreateClassLoadersCache(kaptClassLoader: ClassLoader): ClassLoadersCache? {
         if (classloadersCacheSize <= 0) return null
 
-        // When the isolation is enabled, skip the kapt jars in the parent chain of the cached processor
-        // classloaders: otherwise kapt's own dependencies (e.g. kotlin-stdlib) leak into annotation
-        // processors. Javac and JDK platform classes stay reachable through the kapt classloader's parent.
-        val cacheParentClassLoader = if (isolateProcessorsFromBuildClasspath) {
-            kaptClassLoader.parent ?: kaptClassLoader
-        } else {
-            kaptClassLoader
-        }
-
-        return synchronized(classLoaderStateLock) {
-            classLoadersCache ?: ClassLoadersCache(classloadersCacheSize, cacheParentClassLoader).also {
-                logger.info("Initializing KAPT classloaders cache with size = $classloadersCacheSize")
-                classLoadersCache = it
+        return classLoadersCaches.computeIfAbsent(isolateProcessorsFromBuildClasspath) { isolate ->
+            logger.info("Initializing KAPT classloaders cache with size = $classloadersCacheSize")
+            // When the isolation is enabled, skip the kapt jars in the parent chain of the cached processor
+            // classloaders: otherwise kapt's own dependencies (e.g. kotlin-stdlib) leak into annotation
+            // processors. Javac and JDK platform classes stay reachable through the kapt classloader's parent.
+            val cacheParentClassLoader = if (isolate) {
+                kaptClassLoader.parent ?: kaptClassLoader
+            } else {
+                kaptClassLoader
             }
+            ClassLoadersCache(classloadersCacheSize, cacheParentClassLoader)
         }
     }
 

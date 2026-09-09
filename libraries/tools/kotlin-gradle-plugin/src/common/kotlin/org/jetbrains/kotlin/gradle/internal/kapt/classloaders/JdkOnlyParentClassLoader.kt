@@ -6,37 +6,55 @@
 package org.jetbrains.kotlin.gradle.internal.kapt.classloaders
 
 import org.gradle.api.JavaVersion
+import java.net.URL
+import java.util.Collections
+import java.util.Enumeration
+import java.util.concurrent.ConcurrentHashMap
 
 /**
- * A parent for the kapt classloaders that exposes only JDK classes of the hosting process:
- * platform classes (through the platform classloader on JDK 9+, or the bootstrap classloader on JDK 8)
- * and the javac implementation.
+ * A parent for kapt classloaders that exposes only hosting JDK classes: platform classes and javac.
  *
- * [javacClassLoader] is consulted for javac packages only: on JDK 9+ the `jdk.compiler` module is defined
- * by the application classloader, and on JDK 8 javac comes from `tools.jar`, so these classes cannot be
- * loaded through the platform classloader.
+ * [javacClassLoader] is a JDK 8 fallback for `tools.jar`; on JDK 9+ the platform classloader resolves javac
+ * packages from `jdk.compiler`. The rest of the hosting classpath, including the Gradle daemon runtime, stays
+ * hidden from kapt and annotation processors.
  *
- * Everything else visible in the hosting process (e.g. the Gradle daemon runtime classpath, KT-88583)
- * is hidden from kapt and annotation processors, which otherwise shadows their own dependencies
- * because of the parent-first delegation.
- *
- * A copy of `org.jetbrains.kotlin.kapt.base.util.JdkOnlyParentClassLoader`, which isolates
- * the annotation processing classloader the same way on the kapt side.
+ * A copy of `org.jetbrains.kotlin.kapt.base.util.JdkOnlyParentClassLoader`, which isolates the annotation
+ * processing classloader the same way on the kapt side.
  */
 internal class JdkOnlyParentClassLoader(private val javacClassLoader: ClassLoader) : ClassLoader(platformClassLoaderOrNull) {
+    // registerAsParallelCapable() is caller-sensitive and cannot be called from a Kotlin companion object.
+    // This loader never defines classes, so per-class-name locks are enough.
+    private val classLoadingLocks = ConcurrentHashMap<String, Any>()
+
+    override fun getClassLoadingLock(className: String): Any =
+        classLoadingLocks.computeIfAbsent(className) { Any() }
+
     override fun loadClass(name: String, resolve: Boolean): Class<*> =
         try {
             super.loadClass(name, resolve)
         } catch (e: ClassNotFoundException) {
-            if (javacPackagePrefixes.any { name.startsWith(it) }) {
+            if (name.isJavacClass()) {
                 javacClassLoader.loadClass(name)
             } else {
                 throw e
             }
         }
 
+    // Keep javac resource visibility in sync with javac class visibility on JDK 8 tools.jar.
+    override fun findResource(name: String): URL? =
+        if (name.isJavacResource()) javacClassLoader.getResource(name) else null
+
+    override fun findResources(name: String): Enumeration<URL> =
+        if (name.isJavacResource()) javacClassLoader.getResources(name) else Collections.emptyEnumeration()
+
+    private fun String.isJavacClass(): Boolean = JAVAC_PACKAGE_PREFIXES.any { startsWith(it) }
+
+    private fun String.isJavacResource(): Boolean = JAVAC_RESOURCE_PREFIXES.any { startsWith(it) }
+
     companion object {
-        private val javacPackagePrefixes = listOf("com.sun.tools.", "com.sun.source.")
+        private val JAVAC_PACKAGE_PREFIXES = listOf("com.sun.tools.", "com.sun.source.")
+
+        private val JAVAC_RESOURCE_PREFIXES = JAVAC_PACKAGE_PREFIXES.map { it.replace('.', '/') }
 
         // null parent means the bootstrap classloader, which is correct for JDK 8:
         // there javax.annotation.processing and javax.lang.model come from rt.jar.

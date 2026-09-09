@@ -824,6 +824,12 @@ open class KaptIT : KaptBaseIT() {
                 }
             }
 
+            // Prime the same daemon before enabling the isolation, because kapt classloaders live for the
+            // lifetime of the hosting process.
+            build("build") {
+                assertTasksExecuted(":example:kaptKotlin")
+            }
+
             gradleProperties.append(
                 """
 
@@ -835,19 +841,22 @@ open class KaptIT : KaptBaseIT() {
                 assertTasksExecuted(":example:kaptKotlin")
                 // With the isolation enabled the only classes visible to the processor besides its own
                 // are JDK platform classes and javac.
-                val probes = Regex("""kapt-probe (\S+) visible: (true|false)""")
-                    .findAll(output)
-                    .associate { it.groupValues[1] to it.groupValues[2].toBoolean() }
                 assertEquals(
                     mapOf(
+                        "build-process-classpath" to false,
                         "kotlin.Unit" to false,
                         "com.sun.source.util.Trees" to true,
                     ),
-                    probes,
+                    parseProbes(output),
                 )
             }
         }
     }
+
+    private fun parseProbes(output: String): Map<String, Boolean> =
+        Regex("""kapt-probe (\S+) visible: (true|false)""")
+            .findAll(output)
+            .associate { it.groupValues[1] to it.groupValues[2].toBoolean() }
 
     @DisplayName("should not resolve 'kapt' configuration during build configuration phase")
     @GradleTest
@@ -1467,8 +1476,19 @@ open class KaptIT : KaptBaseIT() {
                 public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
                     if (reported) return false;
                     reported = true;
+                    report("build-process-classpath", buildProcessClasspathIsReachable());
                     probe("kotlin.Unit");
                     probe("com.sun.source.util.Trees");
+                    return false;
+                }
+
+                // The build process classpath is what KT-88583 is about: it is reachable exactly when the
+                // system classloader of the hosting process is somewhere in our own classloader chain.
+                private boolean buildProcessClasspathIsReachable() {
+                    ClassLoader system = ClassLoader.getSystemClassLoader();
+                    for (ClassLoader cl = getClass().getClassLoader(); cl != null; cl = cl.getParent()) {
+                        if (cl == system) return true;
+                    }
                     return false;
                 }
 
@@ -1480,7 +1500,11 @@ open class KaptIT : KaptBaseIT() {
                     } catch (ClassNotFoundException e) {
                         visible = false;
                     }
-                    processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, "kapt-probe " + className + " visible: " + visible);
+                    report(className, visible);
+                }
+
+                private void report(String what, boolean visible) {
+                    processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, "kapt-probe " + what + " visible: " + visible);
                 }
 
                 @Override
