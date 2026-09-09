@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
+import org.jetbrains.kotlin.test.builders.configureLoweredIrHandlersStep
 import org.jetbrains.kotlin.test.configuration.*
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
@@ -34,7 +35,7 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
             DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "-$it" }
         }
 
-        setupJvmPipelineStepsWithoutCompilationErrorHandlers(parser)
+        setupJvmPipelineStepsWithoutCompilationErrorHandlers(parser, separateLoweringDiagnostics = true)
         configureCommonDiagnosticTestPaths()
 
         configureFirHandlersStep {
@@ -50,6 +51,10 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
                 ::IrDiagnosticsHandler,
                 ::NoIrCompilationErrorsHandler
             )
+        }
+
+        configureLoweredIrHandlersStep {
+            useHandlers({ IrDiagnosticsHandler(it, ".lowered.ir.diag.txt") })
         }
 
         configureJvmArtifactsHandlersStep {

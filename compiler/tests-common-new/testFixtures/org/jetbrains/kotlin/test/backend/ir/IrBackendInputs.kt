@@ -10,13 +10,20 @@ import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.serialization.KotlinFileSerializedData
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.cli.pipeline.LoadedIrPipelineArtifact
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.test.diagnostics.DiagnosticsCollectorStub
+import org.jetbrains.kotlin.test.checkTestInfrastructure
+import org.jetbrains.kotlin.test.model.BackendKinds
+import org.jetbrains.kotlin.test.model.IrPreSerializationLoweringFacade
+import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
 data class JsIrAfterFrontendBackendInput(
@@ -54,6 +61,52 @@ class JvmIrBackendInput(
 
     override val diagnosticReporter: BaseDiagnosticsCollector
         get() = state.diagnosticReporter as BaseDiagnosticsCollector
+}
+
+/**
+ * Runs JVM IR lowerings for frontend diagnostic tests that opt into the backend and exposes their diagnostics to
+ * lowered-IR handlers.
+ */
+class JvmIrLoweringFacade(testServices: TestServices) :
+    IrPreSerializationLoweringFacade<IrBackendInput>(testServices, BackendKinds.IrBackend, BackendKinds.IrBackend) {
+    override fun shouldTransform(module: TestModule): Boolean = true
+
+    override fun transform(module: TestModule, inputArtifact: IrBackendInput): IrBackendInput {
+        checkTestInfrastructure(inputArtifact is JvmIrBackendInput) {
+            "JvmIrLoweringFacade expects JvmIrBackendInput as input, but ${inputArtifact::class} was found"
+        }
+        val originalState = inputArtifact.state
+        val loweringState = GenerationState(
+            originalState.project,
+            originalState.module,
+            originalState.configuration,
+            ClassBuilderFactories.TEST,
+            originalState.generateDeclaredClassFilter,
+            originalState.targetId,
+            originalState.moduleName,
+            originalState.jvmBackendClassResolver,
+            DiagnosticsCollectorImpl(),
+        )
+        inputArtifact.codegenFactory.invokeLowerings(loweringState, inputArtifact.backendInput)
+        return JvmIrLoweredBackendInput(
+            inputArtifact,
+            loweringState,
+        )
+    }
+}
+
+class JvmIrLoweredBackendInput(
+    private val originalInput: JvmIrBackendInput,
+    val state: GenerationState,
+) : IrBackendInput() {
+    override val irModuleFragment: IrModuleFragment
+        get() = originalInput.irModuleFragment
+    override val irBuiltIns: IrBuiltIns
+        get() = originalInput.irBuiltIns
+    override val diagnosticReporter: BaseDiagnosticsCollector
+        get() = state.diagnosticReporter as BaseDiagnosticsCollector
+    override val irMangler: KotlinMangler.IrMangler
+        get() = originalInput.irMangler
 }
 
 data class DeserializedFromKlibBackendInput<A : LoadedIrPipelineArtifact>(

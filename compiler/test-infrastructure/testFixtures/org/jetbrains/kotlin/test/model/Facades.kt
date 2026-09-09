@@ -68,11 +68,35 @@ abstract class Frontend2BackendConverter<FrontendOutputArtifact, BackendInputArt
     }
 }
 
-abstract class IrPreSerializationLoweringFacade<BackendInputArtifact>(
+/**
+ * A non-grouping facade that transforms a backend input artifact into another backend input artifact during the
+ * backend phase.
+ */
+abstract class BackendPhaseFacade<BackendInputArtifact>(
     val testServices: TestServices,
     final override val inputKind: BackendKind<BackendInputArtifact>,
     final override val outputKind: BackendKind<BackendInputArtifact>,
 ) : AbstractTestFacade<BackendInputArtifact, BackendInputArtifact>()
+        where BackendInputArtifact : ResultingArtifact.BackendInput<BackendInputArtifact>
+
+abstract class IrPreSerializationLoweringFacade<BackendInputArtifact>(
+    testServices: TestServices,
+    inputKind: BackendKind<BackendInputArtifact>,
+    outputKind: BackendKind<BackendInputArtifact>,
+) : BackendPhaseFacade<BackendInputArtifact>(testServices, inputKind, outputKind)
+        where BackendInputArtifact : ResultingArtifact.BackendInput<BackendInputArtifact>
+
+/**
+ * Transitions between diagnostic-reporting phases without transforming the backend artifact.
+ *
+ * Such a facade belongs to the backend phase just as [IrPreSerializationLoweringFacade] does, but it does not
+ * perform IR lowering.
+ */
+abstract class BackendDiagnosticsPhaseFacade<BackendInputArtifact>(
+    testServices: TestServices,
+    inputKind: BackendKind<BackendInputArtifact>,
+    outputKind: BackendKind<BackendInputArtifact>,
+) : BackendPhaseFacade<BackendInputArtifact>(testServices, inputKind, outputKind)
         where BackendInputArtifact : ResultingArtifact.BackendInput<BackendInputArtifact>
 
 abstract class BackendFacade<BackendInputArtifact, BinaryOutputArtifact>(

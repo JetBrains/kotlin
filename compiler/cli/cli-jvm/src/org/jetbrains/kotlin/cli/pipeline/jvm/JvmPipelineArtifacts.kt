@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.pipeline.Fir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.FrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelineArtifactWithExitCode
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
@@ -65,6 +66,18 @@ data class JvmBackendPipelineArtifact(
 ) : PipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
     override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): JvmBackendPipelineArtifact {
+        return copy(configuration = newConfiguration)
+    }
+}
+
+data class JvmLoweredIrPipelineArtifact(
+    override val configuration: CompilerConfiguration,
+    val environment: VfsBasedProjectEnvironment,
+    val mainClassFqName: FqName?,
+    val codegenInputs: List<JvmIrCodegenFactory.CodegenInput>,
+) : PipelineArtifact() {
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): JvmLoweredIrPipelineArtifact {
         return copy(configuration = newConfiguration)
     }
 }

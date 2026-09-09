@@ -43,6 +43,10 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBac
     )
 ) {
     override fun executePhase(input: JvmFir2IrPipelineArtifact): JvmBackendPipelineArtifact {
+        return runCodegen(runLowerings(input))
+    }
+
+    fun runLowerings(input: JvmFir2IrPipelineArtifact): JvmLoweredIrPipelineArtifact {
         (val fir2IrResult = result, val configuration, val environment, val allSourceFiles = sourceFiles, val mainClassFqName) = input
         val moduleDescriptor = fir2IrResult.irModuleFragment.descriptor
         val diagnosticsCollector = configuration.diagnosticsCollector
@@ -101,7 +105,14 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBac
             )
         }
 
-        val outputs = ArrayList<GenerationState>(chunk.size)
+        return JvmLoweredIrPipelineArtifact(configuration, environment, mainClassFqName, codegenInputs)
+    }
+
+    fun runCodegen(input: JvmLoweredIrPipelineArtifact): JvmBackendPipelineArtifact {
+        val (configuration, environment, mainClassFqName, codegenInputs) = input
+        val diagnosticsCollector = configuration.diagnosticsCollector
+        val codegenFactory = JvmIrCodegenFactory(configuration)
+        val outputs = ArrayList<GenerationState>(codegenInputs.size)
 
         for (input in codegenInputs) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()

@@ -1,0 +1,37 @@
+/tailRecBasic.kt:6:1: warning: A function is marked as tail-recursive but no tail calls are found.
+
+/tailRecBasic.kt:7:5: warning: Recursive call is not a tail call.
+
+/tailRecBasic.kt:11:1: warning: A function is marked as tail-recursive but no tail calls are found.
+
+/tailRecBasic.kt:12:5: warning: Recursive call is not a tail call.
+
+/tailRecBasic.kt:16:1: warning: A function is marked as tail-recursive but no tail calls are found.
+
+/tailRecBasic.kt:17:5: warning: Recursive call is not a tail call.
+
+/tailRecBasic.kt:31:1: warning: A function is marked as tail-recursive but no tail calls are found.
+
+/tailRecBasic.kt:33:9: warning: Recursive call is not a tail call.
+
+/tailRecBasic.kt:44:1: warning: A function is marked as tail-recursive but no tail calls are found.
+
+/tailRecBasic.kt:46:9: warning: Recursive call is not a tail call.
+
+/tailRecBasic.kt:51:1: warning: A function is marked as tail-recursive but no tail calls are found.
+
+/tailRecBasic.kt:53:9: warning: Recursive call is not a tail call.
+
+/tailRecBasic.kt:60:9: warning: Recursive call is not a tail call.
+
+/tailRecBasic.kt:66:1: warning: A function is marked as tail-recursive but no tail calls are found.
+
+/tailRecBasic.kt:67:5: warning: Recursive call is not a tail call.
+
+/tailRecBasic.kt:71:1: warning: A function is marked as tail-recursive but no tail calls are found.
+
+/tailRecBasic.kt:72:5: warning: Recursive call is not a tail call.
+
+/tailRecBasic.kt:78:1: warning: A function is marked as tail-recursive but no tail calls are found.
+
+/tailRecBasic.kt:79:21: warning: Recursive call is not a tail call.

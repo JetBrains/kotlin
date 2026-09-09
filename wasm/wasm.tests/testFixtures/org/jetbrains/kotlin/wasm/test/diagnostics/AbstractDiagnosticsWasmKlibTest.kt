@@ -93,7 +93,7 @@ abstract class AbstractWasmDiagnosticTestBase(
         loweredIrHandlersStep()
 
         configureLoweredIrHandlersStep {
-            useHandlers(::IrDiagnosticsHandler)
+            useHandlers({ IrDiagnosticsHandler(it, ".lowered.ir.diag.txt") })
         }
         facadeStep { FirKlibSerializerCliWasmFacade(it, true) }
 

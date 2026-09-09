@@ -106,7 +106,9 @@ abstract class AbstractNativeDiagnosticsWithBackendTestBase(parser: FirParser) :
 
         facadeStep(::Fir2IrCliNativeFacade)
         facadeStep(::NativePreSerializationLoweringCliFacade)
-        loweredIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
+        loweredIrHandlersStep {
+            useHandlers({ IrDiagnosticsHandler(it, ".lowered.ir.diag.txt") })
+        }
         facadeStep(::KlibSerializerNativeCliFacade)
 
         klibArtifactsHandlersStep {

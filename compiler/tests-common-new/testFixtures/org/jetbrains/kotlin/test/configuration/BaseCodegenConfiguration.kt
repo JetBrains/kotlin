@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.test.TestStepBuilder
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.JvmCodegenDiagnosticsPhaseFacade
+import org.jetbrains.kotlin.test.backend.ir.JvmDiagnosticsLoweringCliFacade
+import org.jetbrains.kotlin.test.backend.ir.JvmLoweringCliFacade
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JVM_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.directives.*
@@ -53,7 +56,10 @@ import org.jetbrains.kotlin.utils.bind
  *
  * There are handler steps after each facade step.
  */
-fun TestConfigurationBuilder.setupJvmPipelineStepsWithoutCompilationErrorHandlers(parser: FirParser) {
+fun TestConfigurationBuilder.setupJvmPipelineStepsWithoutCompilationErrorHandlers(
+    parser: FirParser,
+    separateLoweringDiagnostics: Boolean = false,
+) {
     commonServicesConfigurationForCodegenAndDebugTest()
     configureFirParser(parser)
 
@@ -61,6 +67,15 @@ fun TestConfigurationBuilder.setupJvmPipelineStepsWithoutCompilationErrorHandler
     firHandlersStep(init = {})
     facadeStep(::Fir2IrCliJvmFacade)
     irHandlersStep(init = {})
+    if (separateLoweringDiagnostics) {
+        facadeStep(::JvmDiagnosticsLoweringCliFacade)
+    } else {
+        facadeStep(::JvmLoweringCliFacade)
+    }
+    loweredIrHandlersStep(init = {})
+    if (separateLoweringDiagnostics) {
+        facadeStep(::JvmCodegenDiagnosticsPhaseFacade)
+    }
     facadeStep(::BackendCliJvmFacade)
     jvmArtifactsHandlersStep(init = {})
 }
