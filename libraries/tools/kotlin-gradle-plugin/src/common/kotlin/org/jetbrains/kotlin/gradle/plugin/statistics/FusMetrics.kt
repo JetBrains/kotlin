@@ -146,15 +146,6 @@ internal object CompilerArgumentMetrics : FusMetrics {
                 )
 
                 metricsConsumer.reportPluginsFromListIfUsed(args, pluginPatterns)
-
-                if (args.irProduceJs) {
-                    metricsConsumer.report(BooleanMetrics.JS_SOURCE_MAP, args.sourceMap)
-                    metricsConsumer.report(StringListMetrics.JS_PROPERTY_LAZY_INITIALIZATION, args.irPropertyLazyInitialization.toString())
-
-                    metricsConsumer.report(BooleanMetrics.JS_GENERATE_DTS, args.generateDts)
-                    metricsConsumer.report(StringMetrics.JS_ES_TARGET, args.target ?: "default")
-                    metricsConsumer.report(StringMetrics.JS_MODULE_SYSTEM, args.moduleKind ?: "default")
-                }
             }
         }
     }

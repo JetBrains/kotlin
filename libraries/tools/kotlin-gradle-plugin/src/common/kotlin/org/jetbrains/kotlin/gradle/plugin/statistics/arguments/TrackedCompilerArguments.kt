@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.plugin.statistics.arguments
 
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.JvmDefaultMode
+import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringListMetrics
+import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 
 internal object TrackedCompilerArguments {
     /**
@@ -20,6 +23,16 @@ internal object TrackedCompilerArguments {
                 extract = { it.jvmDefaultMode() },
                 convert = JvmDefaultMode::description,
             )
+        }
+
+        forArguments<K2JSCompilerArguments> {
+            withCondition(K2JSCompilerArguments::irProduceJs) {
+                booleanMetric(BooleanMetrics.JS_SOURCE_MAP, K2JSCompilerArguments::sourceMap)
+                booleanMetric(BooleanMetrics.JS_GENERATE_DTS, K2JSCompilerArguments::generateDts)
+                stringListMetric(StringListMetrics.JS_PROPERTY_LAZY_INITIALIZATION, K2JSCompilerArguments::irPropertyLazyInitialization)
+                stringMetric(StringMetrics.JS_ES_TARGET, K2JSCompilerArguments::target, default = "default")
+                stringMetric(StringMetrics.JS_MODULE_SYSTEM, K2JSCompilerArguments::moduleKind, default = "default")
+            }
         }
     }
 }

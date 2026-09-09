@@ -29,13 +29,17 @@ internal class TrackedCompilerArgument<A : CommonToolArguments>(
      */
     val cliArguments: List<String>,
     private val reportImplicit: Boolean,
+    val condition: (A) -> Boolean,
     private val reporter: (A, StatisticsValuesConsumer) -> Unit,
 ) {
     fun reportIfApplicable(arguments: CommonToolArguments, consumer: StatisticsValuesConsumer) {
         if (!argumentsClass.isInstance(arguments)) return
         if (reportImplicit || arguments.wasExplicitlyPassed(cliArguments)) {
             @Suppress("UNCHECKED_CAST")
-            reporter(arguments as A, consumer)
+            val args = arguments as A
+            if (condition(args)) {
+                reporter(args, consumer)
+            }
         }
     }
 
@@ -53,7 +57,7 @@ internal class TrackedArgumentsBuilder{
     private val trackedArguments = mutableListOf<TrackedCompilerArgument<*>>()
 
     inline fun <reified A : CommonToolArguments> forArguments(declare: TrackedArgumentsScope<A>.() -> Unit, ) {
-        TrackedArgumentsScope(A::class).declare()
+        TrackedArgumentsScope(A::class, condition = { true }).declare()
     }
 
     /**
@@ -61,7 +65,10 @@ internal class TrackedArgumentsBuilder{
      *
      * `null` returned anywhere in an `extract`/`convert` chain means "do not report anything".
      */
-    inner class TrackedArgumentsScope<A : CommonToolArguments>(private val argumentsClass: KClass<A>) {
+    inner class TrackedArgumentsScope<A : CommonToolArguments>(
+        private val argumentsClass: KClass<A>,
+        private val condition: (A) -> Boolean,
+    ) {
         fun booleanMetric(
             metric: BooleanMetrics,
             vararg cliArguments: String,
@@ -195,8 +202,14 @@ internal class TrackedArgumentsBuilder{
             )
         }
 
+        fun withCondition(condition: (A) -> Boolean, declare: TrackedArgumentsScope<A>.() -> Unit) {
+            TrackedArgumentsScope(argumentsClass) {
+                this.condition(it) && condition(it)
+            }.apply(declare)
+        }
+
         private fun register(cliArguments: Array<out String>, allowImplicit: Boolean, reporter: (A, StatisticsValuesConsumer) -> Unit) {
-            trackedArguments += TrackedCompilerArgument(argumentsClass, cliArguments.toList(), allowImplicit, reporter)
+            trackedArguments += TrackedCompilerArgument(argumentsClass, cliArguments.toList(), allowImplicit, condition, reporter)
         }
     }
 
