@@ -30,6 +30,8 @@ internal class KotlinInheritDocTagContentProvider(
             parseWithChildren = false
         )
         val id = docTagParserContext.store(inheritedDocNode)
-        return """<inheritdoc id="$id"/>"""
+        // not a "self-closing" tag, as it's a custom HTML tag which is then replaced during Javadoc HTML parsing
+        // see https://github.com/jhy/jsoup/issues/2300
+        return """<inheritdoc id="$id"></inheritdoc>"""
     }
 }

@@ -10,7 +10,7 @@ import org.jetbrains.dokka.InternalDokkaApi
 import org.jetbrains.dokka.model.doc.DocTag
 import org.jetbrains.dokka.model.doc.Text
 import org.jsoup.internal.StringUtil
-import org.jsoup.nodes.Entities
+import org.jsoup.nodes.TextNode
 
 @InternalDokkaApi
 internal fun String.parseHtmlEncodedWithNormalisedSpaces(
@@ -21,21 +21,31 @@ internal fun String.parseHtmlEncodedWithNormalisedSpaces(
     var lastWasWhite = false
 
     forEachCodePoint { c ->
-        if (renderWhiteCharactersAsSpaces && StringUtil.isWhitespace(c)) {
-            if (!lastWasWhite) {
-                accum.append(' ')
-                lastWasWhite = true
+        when {
+            StringUtil.isWhitespace(c) -> {
+                if (renderWhiteCharactersAsSpaces) {
+                    if (!lastWasWhite) {
+                        accum.append(' ')
+                        lastWasWhite = true
+                    }
+                } else {
+                    accum.appendCodePoint(c)
+                }
             }
-        } else if (Compat.codePointToString(c).let { it != Entities.escape(it) }) {
-            accum.toString().takeIf { it.isNotBlank() }?.let { tags.add(Text(it)) }
-            accum.delete(0, accum.length)
+            // TextNode(...).outerHtml() produces HTML created from the passed text, so it will perform HTML body escaping.
+            // We do only check here if the symbol needs HTML escaping to split text into separate tags.
+            Compat.codePointToString(c).let { it != TextNode(it).outerHtml() } -> {
+                accum.toString().takeIf { it.isNotBlank() }?.let { tags.add(Text(it)) }
+                accum.delete(0, accum.length)
 
-            accum.appendCodePoint(c)
-            tags.add(Text(accum.toString(), params = DocTag.contentTypeParam("html")))
-            accum.delete(0, accum.length)
-        } else if (!StringUtil.isInvisibleChar(c)) {
-            accum.appendCodePoint(c)
-            lastWasWhite = false
+                accum.appendCodePoint(c)
+                tags.add(Text(accum.toString(), params = DocTag.contentTypeParam("html")))
+                accum.delete(0, accum.length)
+            }
+            !StringUtil.isInvisibleChar(c) -> {
+                accum.appendCodePoint(c)
+                lastWasWhite = false
+            }
         }
     }
     accum.toString().takeIf { it.isNotBlank() }?.let { tags.add(Text(it)) }
