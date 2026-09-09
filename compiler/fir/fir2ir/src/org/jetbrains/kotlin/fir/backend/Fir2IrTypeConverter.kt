@@ -251,6 +251,8 @@ class Fir2IrTypeConverter(
                 val approximated = type.approximateForIrOrNull()!!
                 approximated.toIrType(typeOrigin)
             }
+            // TODO(KT-89110)
+            is ConeUnionType -> createErrorType()
             is ConeStubType, is ConeIntegerLiteralType, is ConeTypeVariableType -> createErrorType()
         }
     }

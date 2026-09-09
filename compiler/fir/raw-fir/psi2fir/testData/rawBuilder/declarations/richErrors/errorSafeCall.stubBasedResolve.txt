@@ -5,4 +5,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] errorSafeCall.kt
         }
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] f: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] f: R|union(kotlin/String | Foo)|): R|kotlin/Unit| { LAZY_BLOCK }
