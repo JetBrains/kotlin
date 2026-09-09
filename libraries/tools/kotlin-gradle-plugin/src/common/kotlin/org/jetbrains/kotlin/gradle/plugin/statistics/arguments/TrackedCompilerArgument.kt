@@ -206,6 +206,45 @@ internal class TrackedArgumentsBuilder{
             )
         }
 
+        /**
+         * Reports the [BooleanMetrics] chosen by [selectMetric] with `true`, for arguments whose *value* decides
+         * which metric is meant, like `-Xbinary=gc=noop` reporting `ENABLED_NOOP_GC`.
+         *
+         * Nothing is reported when [selectMetric] returns `null`.
+         */
+        fun selectFlagMetric(
+            argument: KProperty1<A, *>,
+            selectMetric: (A) -> BooleanMetrics?,
+        ) {
+            selectFlagMetric(argument.cliArgument, selectMetric = selectMetric)
+        }
+
+        fun selectFlagMetric(
+            vararg cliArguments: String,
+            selectMetric: (A) -> BooleanMetrics?,
+        ) {
+            register(cliArguments) { arguments, consumer ->
+                selectMetric(arguments)?.let { consumer.report(it, true) }
+            }
+        }
+
+        /**
+         * A [StringMetrics] whose argument value needs converting, like the boolean `-Xir-per-module` becoming
+         * `"per_module"` or `"whole_program"`.
+         */
+        fun <V : Any> stringMetric(
+            metric: StringMetrics,
+            argument: KProperty1<A, V>,
+            convert: (V) -> String?,
+        ) {
+            stringMetric(
+                metric,
+                argument.cliArgument,
+                extract = { argument.get(it) },
+                convert = convert,
+            )
+        }
+
         fun withCondition(condition: (A) -> Boolean, declare: TrackedArgumentsScope<A>.() -> Unit) {
             TrackedArgumentsScope(argumentsClass) {
                 this.condition(it) && condition(it)

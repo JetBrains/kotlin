@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnosti
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.filterAndReportUnsupportedKotlinArchiveLibraries
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
-import org.jetbrains.kotlin.gradle.plugin.statistics.NativeCompilerOptionMetrics
+import org.jetbrains.kotlin.gradle.plugin.statistics.CompilerArgumentMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.plugin.tcs
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
@@ -492,11 +492,13 @@ internal constructor(
                 val output = outputFile.get()
                 output.parentFile.mkdirs()
 
+                val buildArguments = ArgumentUtils.convertArgumentsToStringList(arguments)
+
                 buildFusService.orNull?.reportFusMetrics {
-                    NativeCompilerOptionMetrics.collectMetrics(compilerOptions, separateKmpCompilation.get(), it)
+                    CompilerArgumentMetrics.collectMetrics(arguments, buildArguments.toTypedArray(), logger, it)
                 }
 
-                ArgumentUtils.convertArgumentsToStringList(arguments)
+                buildArguments
             }
 
             nativeCompilerRunner.runTool(
