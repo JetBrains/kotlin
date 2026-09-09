@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildCollectionLiteral
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.isError
-import org.jetbrains.kotlin.fir.resolve.isArrayOfCall
+import org.jetbrains.kotlin.fir.declarations.isArrayOfCall
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
  */
 class FirArrayOfCallTransformer : FirDefaultTransformer<FirSession>() {
     private fun toArrayLiteral(functionCall: FirFunctionCall, session: FirSession): FirExpression? {
-        if (!functionCall.isArrayOfCall(session)) return null
+        if (!functionCall.isArrayOfCall()) return null
         if (functionCall.calleeReference !is FirResolvedNamedReference) return null
         val arrayLiteral = buildCollectionLiteral {
             source = functionCall.source
