@@ -110,8 +110,25 @@ internal abstract class SwiftExportTask @Inject constructor(
     val sharedMetadataFiles: List<FileCollection>
         get() = sharedMetadata.orNull?.let { listOf(it.files) } ?: emptyList()
 
+    /**
+     * The explicitly-exported dependencies declared via the `export("…") { moduleName.set(…); flattenPackage.set(…) }`
+     * DSL. Held as `@Internal` because [SwiftExportedDependency] wraps live Gradle `Property` values and a dependency
+     * selector, which is not a valid task input on its own. Read at execution time by [resolveSwiftExportedModules].
+     * Up-to-date tracking of its output-affecting content is provided by [exportedModulesInputs].
+     */
     @get:Internal
     abstract val exportedModules: SetProperty<SwiftExportedDependency>
+
+    /**
+     * Up-to-date tracking projection of [exportedModules]. It exposes the plain, output-affecting values of every
+     * exported dependency - its identity (external coordinates or project path) and the explicit `moduleName` /
+     * `flattenPackage` overrides - as a stable list of strings.
+     */
+    @get:Input
+    internal val exportedModulesInputs: List<String>
+        get() = exportedModules.get()
+            .map { "${it.name}|${it.moduleName.orNull}|${it.flattenPackage.orNull}" }
+            .sorted()
 
     @get:Internal
     abstract val dependencyOptionsOverrides: MapProperty<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>
