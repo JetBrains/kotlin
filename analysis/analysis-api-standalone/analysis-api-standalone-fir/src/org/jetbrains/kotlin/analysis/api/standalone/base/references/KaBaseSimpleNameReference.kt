@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.references
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentsOfType
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleOrMultiCall
 import org.jetbrains.kotlin.analysis.api.resolution.calls
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.resolve.references.ReferenceAccess
 
-@OptIn(KaImplementationDetail::class)
 internal class KaBaseSimpleNameReference(
     expression: KtSimpleNameExpression,
     val isRead: Boolean,

@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.declarations
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.fir.utils.isSubclassOf
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.cache.LLFirSessionCache
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDirectInheritorsProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.cache.LLFirSessionCache
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -24,9 +23,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.contains
-import kotlin.collections.filter
 
-@OptIn(LLFirInternals::class, SymbolInternals::class, KaImplementationDetail::class)
+@OptIn(LLFirInternals::class)
 internal class KotlinStandaloneFirDirectInheritorsProvider(private val project: Project) : KotlinDirectInheritorsProvider {
     private val standaloneDeclarationProviderFactory by lazy {
         KotlinDeclarationProviderFactory.getInstance(project) as? KotlinStandaloneDeclarationProviderFactory
@@ -43,6 +41,8 @@ internal class KotlinStandaloneFirDirectInheritorsProvider(private val project: 
     ): Iterable<KtClassOrObject> {
         val classId = ktClass.getClassId() ?: return emptyList()
         val baseModule = KotlinProjectStructureProvider.getModule(project, ktClass, useSiteModule = null)
+
+        @OptIn(SymbolInternals::class)
         val baseFirClass = classId.toFirSymbol(baseModule)?.fir as? FirClass ?: return emptyList()
 
         val baseClassNames = mutableSetOf(classId.shortClassName)
@@ -65,7 +65,6 @@ internal class KotlinStandaloneFirDirectInheritorsProvider(private val project: 
         }
     }
 
-    @OptIn(KaImplementationDetail::class)
     private fun isValidInheritor(
         candidate: KtClassOrObject,
         baseFirClass: FirClass,
@@ -83,6 +82,8 @@ internal class KotlinStandaloneFirDirectInheritorsProvider(private val project: 
         val candidateClassId = candidate.getClassId() ?: return false
         val candidateModule = KotlinProjectStructureProvider.getModule(project, candidate, useSiteModule = null)
         val candidateFirSymbol = candidateClassId.toFirSymbol(candidateModule) ?: return false
+
+        @OptIn(SymbolInternals::class)
         val candidateFirClass = candidateFirSymbol.fir as? FirClass ?: return false
 
         // `KotlinDirectInheritorsProvider`'s interface guarantees that `getDirectKotlinInheritors` is only called from lazy resolution to
@@ -90,7 +91,6 @@ internal class KotlinStandaloneFirDirectInheritorsProvider(private val project: 
         return isSubclassOf(candidateFirClass, baseFirClass, candidateFirClass.moduleData.session, allowIndirectSubtyping = false)
     }
 
-    @OptIn(KaImplementationDetail::class)
     private fun ClassId.toFirSymbol(module: KaModule): FirClassLikeSymbol<*>? {
         // Using a resolve session/source-preferred session will cause class stubs from binary libraries to be AST-loaded in IDE mode tests,
         // which results in an exception since we don't have a decompiler for them. See KT-64898, KT-64899, and KT-64900. If not for these
