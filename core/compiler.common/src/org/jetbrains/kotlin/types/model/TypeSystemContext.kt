@@ -495,6 +495,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeConstructorMarker.getParameters(): List<TypeParameterMarker>
     fun TypeConstructorMarker.supertypes(): Collection<KotlinTypeMarker>
     fun TypeConstructorMarker.isIntersection(): Boolean
+    fun TypeConstructorMarker.isUnion(): Boolean = false
     fun TypeConstructorMarker.isClassTypeConstructor(): Boolean
     fun TypeConstructorMarker.isInterface(): Boolean
     fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean
@@ -504,6 +505,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeConstructorMarker.isAnonymous(): Boolean
     fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker?
     fun TypeConstructorMarker.isTypeParameterTypeConstructor(): Boolean
+    fun TypeConstructorMarker.getPrimaryTypeOfUnion(): KotlinTypeMarker? = null
+    fun TypeConstructorMarker.getRichErrorsOfUnion(): List<KotlinTypeMarker> = emptyList()
 
     val TypeVariableTypeConstructorMarker.typeParameter: TypeParameterMarker?
 
