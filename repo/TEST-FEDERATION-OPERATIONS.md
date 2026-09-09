@@ -36,7 +36,9 @@ runs the tests associated with that domain.[^migration] The corresponding develo
 - All build failures, including stable failures and flaky or slow tests
 
 Domain owners should define acceptable build durations for their domains and investigate overruns.
-Escalate agent, queue, or resource problems to the infrastructure team, including safe-merge delays not explained by individual domain durations.
+Domain owners are not expected to monitor agent health, build queues, or infrastructure resource usage; the infrastructure team monitors these centrally.
+If you encounter unexpected build or safe-merge problems that are not explained by your domain’s changes, test failures, or build durations,
+flag them to the infrastructure engineer on duty in `#kotlin-build`. You do not need to diagnose an infrastructure root cause before asking for help.
 
 ## Incident Guide
 
