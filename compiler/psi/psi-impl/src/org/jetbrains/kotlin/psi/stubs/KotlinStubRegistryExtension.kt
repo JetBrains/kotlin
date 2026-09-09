@@ -39,7 +39,6 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
  * such as [KtStubSerializingElementFactory.shouldCreateStub].
  */
 internal object KtStubElementFactories {
-    @OptIn(KtImplementationDetail::class, KtExperimentalApi::class)
     val factories: Map<KtNodeType, KtStubSerializingElementFactory<*, *>> = buildMap {
         registerStubSerializingFactory(
             type = KtStubElementTypes.SECONDARY_CONSTRUCTOR,

@@ -129,7 +129,6 @@ enum class KotlinContractEffectType {
     }
 }
 
-@OptIn(KtImplementationDetail::class)
 internal class KotlinContractSerializationVisitor(val dataStream: StubOutputStream) :
     KtContractDescriptionVisitor<Unit, Nothing?, KotlinTypeBean, Nothing?>() {
     override fun visitConditionalEffectDeclaration(

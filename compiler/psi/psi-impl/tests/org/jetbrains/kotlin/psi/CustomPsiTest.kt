@@ -23,7 +23,6 @@ class CustomPsiTest : AbstractAnalysisApiExecutionTest("testData/custom") {
      * @see com.intellij.psi.impl.source.PsiFileImpl.loadTreeElement
      */
     @Test
-    @OptIn(KtExperimentalApi::class)
     fun replScriptTreeReload(testServices: TestServices) {
         val project = testServices.environmentManager.getProject()
         val replFile = KtPsiFactory(project).createReplSnippet("val foo = 1").containingKtFile
@@ -35,7 +34,6 @@ class CustomPsiTest : AbstractAnalysisApiExecutionTest("testData/custom") {
     }
 
     @Test
-    @OptIn(KtExperimentalApi::class)
     fun replScriptCopy(testServices: TestServices) {
         val project = testServices.environmentManager.getProject()
 

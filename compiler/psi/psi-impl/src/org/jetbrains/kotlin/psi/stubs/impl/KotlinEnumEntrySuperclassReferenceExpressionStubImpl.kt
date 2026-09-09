@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinEnumEntrySuperclassReferenceExpressionStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 
-@OptIn(KtImplementationDetail::class)
 internal class KotlinEnumEntrySuperclassReferenceExpressionStubImpl(
     parent: StubElement<*>?,
     private val referencedNameRef: StringRef,
