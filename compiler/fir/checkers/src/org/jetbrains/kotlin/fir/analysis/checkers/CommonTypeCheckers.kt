@@ -45,4 +45,8 @@ object CommonTypeCheckers : TypeCheckers() {
         FirUnsupportedModifiersInFunctionTypeParameterChecker,
         FirDslMarkerPropagationChecker,
     )
+
+    override val unionTypeRefCheckers: Set<FirUnionTypeRefChecker> = setOf(
+        FirUnionTypeChecker,
+    )
 }
