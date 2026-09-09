@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.compilation.CodeFragmentContextDeclarationCache
+import org.jetbrains.kotlin.analysis.api.fir.components.compilation.getNonLocalContainingOrThisDeclarationWithIrMetadata
 import org.jetbrains.kotlin.analysis.api.impl.base.components.*
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaBaseCompiledFileForOutputFile
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
@@ -35,7 +36,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
@@ -255,7 +255,7 @@ internal class KaFirCompilerFacility(
         val contextDeclarationCache = if (codeFragmentMappings != null) {
             // A code fragment may be moved to a different dangling file module, so here we cannot use the 'mainFile'
             val effectiveCodeFragment = chunks.values.last().mainFile as KtCodeFragment
-            val contextDeclaration = effectiveCodeFragment.context?.getNonLocalContainingOrThisDeclaration()
+            val contextDeclaration = effectiveCodeFragment.context?.getNonLocalContainingOrThisDeclarationWithIrMetadata()
             if (contextDeclaration != null) {
                 CodeFragmentContextDeclarationCache(
                     contextDeclaration,
