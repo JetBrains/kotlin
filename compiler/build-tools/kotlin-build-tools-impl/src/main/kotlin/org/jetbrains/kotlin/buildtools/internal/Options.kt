@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
-internal class Options(
+@ConsistentCopyVisibility
+internal data class Options private constructor(
     private val optionsName: String,
+    private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 ) : DeepCopyable<Options> {
     constructor(typeForName: KClass<*>) : this(typeForName.qualifiedName ?: typeForName.jvmName)
-
-    private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
     @UseFromImplModuleRestricted
     operator fun <V> set(key: BaseOption<V>, value: Any?) {

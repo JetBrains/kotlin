@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.buildtools.internal.metadata.KotlinMetadataPlatformT
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmPlatformToolchainImpl
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
-import java.io.File
 import java.util.concurrent.*
 
 private const val DEFAULT_CLASSLOADERS_CACHE_SIZE = 10
@@ -77,6 +76,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
             Executors.newCachedThreadPool()
         }
         private val executor by executorDelegate
+        private val daemonConnectionRegistry = DaemonConnectionRegistry(sessionIsAliveFlagFile)
 
         /**
          * Pins the shared application environment to this session so it is reused across build operations and
@@ -106,7 +106,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
                     projectId,
                     executionPolicy,
                     logger,
-                    ExecutionContext(sessionIsAliveFlagFile, classloadersCacheWithLogger)
+                    ExecutionContext(classloadersCacheWithLogger, daemonConnectionRegistry)
                 )
             }
             return if (executionPolicy is ExecutionPolicy.InProcess) {
@@ -143,6 +143,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
             if (sessionIsAliveFlagFile.isInitialized()) {
                 sessionIsAliveFlagFile.value.delete()
             }
+            daemonConnectionRegistry.close()
         }
     }
 
@@ -161,6 +162,6 @@ internal sealed interface BtaApiVersion {
 }
 
 internal class ExecutionContext(
-    val sessionIsAliveFlagFile: Lazy<File>,
     val classloadersCache: LruClassLoadersCache?,
+    val daemonConnectionRegistry: DaemonConnectionRegistry
 )
