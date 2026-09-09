@@ -26,7 +26,6 @@ import org.junit.jupiter.api.DisplayName
 @DisplayName("Incremental compilation with Java source and ABI changes")
 class IncrementalJavaChangeTest : BaseCompilationTest() {
     private val javaClassFile = "src/main/java/bar/JavaClass.java"
-    private val trackedJavaClassFile = "src/main/java/bar/TrackedJavaClass.java"
 
     // shared between tests, so that modules with the same configuration are compiled only once, see `Scenario.module`
     private val disablePreciseJavaTracking: (JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit = {
@@ -34,7 +33,7 @@ class IncrementalJavaChangeTest : BaseCompilationTest() {
     }
 
     @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Lib: method signature ABI change in Java class recompiles dependent Kotlin files in app")
+    @DisplayName("Lib: method signature ABI change in Java class recompiles dependent Kotlin files in app and same module")
     @TestMetadata("incrementalMultiprojectJava")
     fun testAbiChangeInLib_changeMethodSignature(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
@@ -43,7 +42,9 @@ class IncrementalJavaChangeTest : BaseCompilationTest() {
 
             lib.changeFile(javaClassFile) { it.replace("String getString", "Object getString") }
 
-            lib.compile()
+            lib.compile {
+                assertCompiledSources("src/main/kotlin/bar/useJavaClassSameModule.kt")
+            }
             app.compile {
                 assertCompiledSources(
                     "src/main/kotlin/foo/JavaClassChild.kt",
@@ -63,47 +64,8 @@ class IncrementalJavaChangeTest : BaseCompilationTest() {
 
             lib.changeFile(javaClassFile) { it.replace("Hello, World!", "Hello, World!!!!") }
 
-            lib.compile()
-            app.compile {
-                assertNoCompiledSources()
-            }
-        }
-    }
-
-    @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Lib: tracked method signature ABI change with disabled precise Java tracking recompiles same module usages")
-    @TestMetadata("incrementalMultiprojectJava")
-    fun testAbiChangeInLib_changeMethodSignature_tracked_disablePreciseJavaTracking(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
-            val lib = module("incrementalMultiprojectJava/lib", compileJavaSources = true, icOptionsConfigAction = disablePreciseJavaTracking)
-            val app = module("incrementalMultiprojectJava/app", dependencies = listOf(lib), icOptionsConfigAction = disablePreciseJavaTracking)
-
-            lib.changeFile(trackedJavaClassFile) { it.replace("String getString", "Object getString") }
-
             lib.compile {
-                assertCompiledSources("src/main/kotlin/bar/useTrackedJavaClassSameModule.kt")
-            }
-            app.compile {
-                assertCompiledSources(
-                    "src/main/kotlin/foo/TrackedJavaClassChild.kt",
-                    "src/main/kotlin/foo/useTrackedJavaClass.kt",
-                )
-            }
-        }
-    }
-
-    @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Lib: tracked method body non-ABI change with disabled precise Java tracking recompiles same module usages")
-    @TestMetadata("incrementalMultiprojectJava")
-    fun testNonAbiChangeInLib_changeMethodBody_tracked_disablePreciseJavaTracking(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
-            val lib = module("incrementalMultiprojectJava/lib", compileJavaSources = true, icOptionsConfigAction = disablePreciseJavaTracking)
-            val app = module("incrementalMultiprojectJava/app", dependencies = listOf(lib), icOptionsConfigAction = disablePreciseJavaTracking)
-
-            lib.changeFile(trackedJavaClassFile) { it.replace("Hello, World!", "Hello, World!!!!") }
-
-            lib.compile {
-                assertCompiledSources("src/main/kotlin/bar/useTrackedJavaClassSameModule.kt")
+                assertCompiledSources("src/main/kotlin/bar/useJavaClassSameModule.kt")
             }
             app.compile {
                 assertNoCompiledSources()
