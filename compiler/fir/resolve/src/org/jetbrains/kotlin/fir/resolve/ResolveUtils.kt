@@ -838,6 +838,7 @@ private fun ConeKotlinType.simplifyForReceiverInfo(): ConeKotlinType {
         is ConeErrorType -> this
         is ConeStubTypeForTypeVariableInSubtyping -> this
         is ConeTypeVariableType -> this
+        is ConeUnionType -> this
     }
 }
 

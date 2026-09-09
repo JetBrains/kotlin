@@ -106,6 +106,7 @@ internal object ConeTypeCompatibilityChecker {
             is ConeClassLikeType -> true
             is ConeDefinitelyNotNullType -> original.isConcreteType()
             is ConeIntersectionType -> intersectedTypes.all { it.isConcreteType() }
+            is ConeUnionType -> primaryType.isConcreteType() && richErrorTypes.all { it.isConcreteType() }
 
             is ConeFlexibleType,
             is ConeCapturedType,
@@ -255,6 +256,10 @@ internal object ConeTypeCompatibilityChecker {
             is ConeTypeVariableType -> emptySet()
             is ConeDefinitelyNotNullType -> original.collectLowerBounds()
             is ConeIntersectionType -> intersectedTypes.flatMap { it.collectLowerBounds() }.toSet()
+            is ConeUnionType -> buildSet {
+                addAll(primaryType.collectLowerBounds())
+                richErrorTypes.flatMapTo(this) { it.collectLowerBounds() }
+            }
             is ConeFlexibleType -> lowerBound.collectLowerBounds()
             is ConeCapturedType -> constructor.supertypes?.flatMap { it.collectLowerBounds() }?.toSet().orEmpty()
             is ConeIntegerConstantOperatorType -> setOf(getApproximatedType())
