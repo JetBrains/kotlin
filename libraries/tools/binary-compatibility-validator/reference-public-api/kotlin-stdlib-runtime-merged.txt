@@ -3905,6 +3905,8 @@ public class kotlin/jvm/internal/AdaptedFunctionReference : java/io/Serializable
 	protected final field receiver Ljava/lang/Object;
 	public fun <init> (ILjava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun <init> (ILjava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
+	public fun <init> (I[Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
+	public fun <init> (I[Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getArity ()I
 	public fun getOwner ()Lkotlin/reflect/KDeclarationContainer;
@@ -4174,6 +4176,8 @@ public class kotlin/jvm/internal/FunctionReferenceImpl : kotlin/jvm/internal/Fun
 	public fun <init> (ILjava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun <init> (ILjava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun <init> (ILkotlin/reflect/KDeclarationContainer;Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (I[Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
+	public fun <init> (I[Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 }
 
 public class kotlin/jvm/internal/InlineMarker {

@@ -75,6 +75,20 @@ public class AdaptedFunctionReference implements FunctionBase, Serializable {
         this.flags = flagsWithIsTopLevel >> 1;
     }
 
+    @SinceKotlin(version = "2.5")
+    @ExperimentalContextParameters
+    public AdaptedFunctionReference(int arity, Object[] contextArguments, Class owner, String name, String signature, int flagsWithIsTopLevel) {
+        this(arity, NO_RECEIVER, owner, name, signature, flagsWithIsTopLevel);
+        this.boundContextArguments = contextArguments;
+    }
+
+    @SinceKotlin(version = "2.5")
+    @ExperimentalContextParameters
+    public AdaptedFunctionReference(int arity, Object[] contextArguments, Object receiver, Class owner, String name, String signature, int flagsWithIsTopLevel) {
+        this(arity, receiver, owner, name, signature, flagsWithIsTopLevel);
+        this.boundContextArguments = contextArguments;
+    }
+
     @Override
     public int getArity() {
         return arity;

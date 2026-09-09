@@ -5,6 +5,7 @@
 
 package kotlin.jvm.internal;
 
+import kotlin.ExperimentalContextParameters;
 import kotlin.SinceKotlin;
 import kotlin.reflect.KClass;
 import kotlin.reflect.KDeclarationContainer;
@@ -27,5 +28,19 @@ public class FunctionReferenceImpl extends FunctionReference {
     @SinceKotlin(version = "1.4")
     public FunctionReferenceImpl(int arity, Object receiver, Class owner, String name, String signature, int flags) {
         super(arity, receiver, owner, name, signature, flags);
+    }
+
+    @SinceKotlin(version = "2.5")
+    @ExperimentalContextParameters
+    public FunctionReferenceImpl(int arity, Object[] contextArguments, Class owner, String name, String signature, int flags) {
+        this(arity, owner, name, signature, flags);
+        this.boundContextArguments = contextArguments;
+    }
+
+    @SinceKotlin(version = "2.5")
+    @ExperimentalContextParameters
+    public FunctionReferenceImpl(int arity, Object[] contextArguments, Object receiver, Class owner, String name, String signature, int flags) {
+        this(arity, receiver, owner, name, signature, flags);
+        this.boundContextArguments = contextArguments;
     }
 }
