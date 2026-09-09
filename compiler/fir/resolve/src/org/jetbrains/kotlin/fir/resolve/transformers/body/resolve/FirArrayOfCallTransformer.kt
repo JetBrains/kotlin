@@ -16,19 +16,21 @@ import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.declarations.isArrayOfCall
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
+import org.jetbrains.kotlin.util.ArrayLiteralResolution
 
 /**
- * A transformer that recursively converts resolved arrayOf() call to [FirCollectionLiteral].
+ * A transformer that recursively converts resolved `arrayOf()` call to [FirCollectionLiteral].
  *
  * Note that `arrayOf()` calls only in [FirAnnotation] or the default value of annotation constructor are transformed.
  *
- * We use this transformer quite differently in old (aka array literal resolution) and new (aka collection literal resolution)
- * modes:
- *  - In new mode, we run transformer once on resolved annotation call / annotation constructor default value, from
- * [FirExpressionsResolveTransformer].
- *  - In old mode, we run transformer on every call in hierarchy, sometimes from [FirExpressionsResolveTransformer],
+ * We run the transformer on every call in hierarchy, sometimes from [FirExpressionsResolveTransformer],
  * sometimes from [org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer].
+ *
+ * NB: Used only with the (old) so-called array literal resolution.
+ * When [org.jetbrains.kotlin.config.LanguageFeature.CollectionLiteralsBasedAnnotationResolution] is enabled,
+ * the corresponding logic is applied on the [FirExpressionEvaluator] level.
  */
+@ArrayLiteralResolution
 class FirArrayOfCallTransformer : FirDefaultTransformer<FirSession>() {
     private fun toArrayLiteral(functionCall: FirFunctionCall, session: FirSession): FirExpression? {
         if (!functionCall.isArrayOfCall()) return null
