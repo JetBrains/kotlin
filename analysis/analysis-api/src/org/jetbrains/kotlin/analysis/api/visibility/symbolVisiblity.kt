@@ -36,7 +36,38 @@ public fun createUseSiteVisibilityChecker(
 }
 
 /**
- * Checks whether the given [KaCallableSymbol] (possibly inherited from a superclass) is visible in the given [classSymbol].
+ * Checks whether the given [KaCallableSymbol] is visible in the given [classSymbol], that is, whether the code inside [classSymbol] can
+ * access the callable.
+ *
+ * The callable is expected to be a member of [classSymbol], either declared in it or inherited from one of its supertypes, e.g., a
+ * callable from the class's member scope. This makes the check suitable for operations on a class as a whole, such as finding out which
+ * inherited members can be overridden or called from a new member of the class. To check the visibility of an arbitrary symbol from a
+ * specific position in code, use [createUseSiteVisibilityChecker] instead.
+ *
+ * ### Visibility rules
+ *
+ * - Public callables are always visible.
+ * - Protected callables are always visible, since [classSymbol] is assumed to be the owner of the callable or its subclass.
+ * - Internal callables are visible if the module of [classSymbol] is the module of the callable or its friend.
+ * - Package-private Java callables are visible if [classSymbol] is in the same package as the callable.
+ * - Private callables are visible if they are declared in [classSymbol], in one of the classes containing it (including the classes
+ *   containing a local [classSymbol]), or in a companion object of any of these classes. A private callable of a supertype is not
+ *   visible in its subclasses.
+ *
+ * #### Example
+ *
+ * ```
+ * open class Base {
+ *     protected fun inherited() {}
+ *     private fun hidden() {}
+ * }
+ *
+ * class Derived : Base() {
+ *     private fun own() {}
+ * }
+ * ```
+ *
+ * In `Derived`, `inherited` and `own` are visible, while `hidden` is not.
  */
 @KaExperimentalApi
 context(session: KaSession)
