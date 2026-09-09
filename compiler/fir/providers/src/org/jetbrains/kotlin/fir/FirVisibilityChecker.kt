@@ -252,28 +252,7 @@ abstract class FirVisibilityChecker : FirComposableSessionComponent<FirVisibilit
                 declaration.moduleData == session.moduleData || session.moduleVisibilityChecker?.isInFriendModule(declaration) == true
             }
             Visibilities.Private, Visibilities.PrivateToThis -> {
-                val ownerLookupTag = symbol.getOwnerLookupTag()
-                if (canSeePrivateDeclarationsOfModule(session, declaration.moduleData)) {
-                    when {
-                        ownerLookupTag == null -> {
-                            // Top-level: visible in file
-                            canSeePrivateTopLevelDeclarationFromFile(session, useSiteFile, symbol)
-                        }
-                        else -> {
-                            // Member: visible inside parent class, including all its member classes
-                            canSeePrivateMemberOf(
-                                symbol,
-                                containingDeclarations,
-                                ownerLookupTag,
-                                dispatchReceiver,
-                                isVariableOrNamedFunction = symbol.isVariableOrNamedFunction(),
-                                session
-                            )
-                        }
-                    }
-                } else {
-                    declaration is FirNamedFunction && declaration.isAllowedToBeAccessedFromOutside()
-                }
+                canSeePrivateDeclaration(declaration, session, useSiteFile, containingDeclarations, dispatchReceiver)
             }
 
             Visibilities.Protected -> {
@@ -530,6 +509,37 @@ abstract class FirVisibilityChecker : FirComposableSessionComponent<FirVisibilit
                     useSiteFile,
                     declarationContainingFile
                 ) == true
+    }
+
+    private fun canSeePrivateDeclaration(
+        declaration: FirMemberDeclaration,
+        session: FirSession,
+        useSiteFile: FirFile,
+        containingDeclarations: List<FirDeclaration>,
+        dispatchReceiver: FirExpression?,
+    ): Boolean {
+        if (!canSeePrivateDeclarationsOfModule(session, declaration.moduleData)) {
+            return declaration is FirNamedFunction && declaration.isAllowedToBeAccessedFromOutside()
+        }
+
+        val symbol = declaration.symbol
+        return when (val ownerLookupTag = symbol.getOwnerLookupTag()) {
+            null -> {
+                // Top-level: visible in file
+                canSeePrivateTopLevelDeclarationFromFile(session, useSiteFile, symbol)
+            }
+            else -> {
+                // Member: visible inside parent class, including all its member classes
+                canSeePrivateMemberOf(
+                    symbol,
+                    containingDeclarations,
+                    ownerLookupTag,
+                    dispatchReceiver,
+                    isVariableOrNamedFunction = symbol.isVariableOrNamedFunction(),
+                    session
+                )
+            }
+        }
     }
 }
 
