@@ -10,24 +10,15 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.standalone.projectStructure.StandaloneLibraryScopeConstructionMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneWorkaroundApi
-import org.jetbrains.kotlin.analysis.project.structure.impl.KaModuleContainerImpl
 import org.jetbrains.kotlin.platform.TargetPlatform
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 
-public class KaModuleContainerBuilder(
-    public val coreApplicationEnvironment: CoreApplicationEnvironment,
-    public val project: Project,
-) {
-    private val allModules: MutableList<KaModule> = mutableListOf()
+public abstract class KaModuleContainerBuilder {
+    public abstract val coreApplicationEnvironment: CoreApplicationEnvironment
+    public abstract val project: Project
 
-    public fun <M : KaModule> addModule(module: M): M {
-        allModules.add(module)
-        return module
-    }
+    public abstract fun <M : KaModule> addModule(module: M): M
 
-    public lateinit var platform: TargetPlatform
+    public open lateinit var platform: TargetPlatform
 
     /**
      * The default [StandaloneLibraryScopeConstructionMode] for library modules created within this provider via [buildKtLibraryModule] or
@@ -39,24 +30,7 @@ public class KaModuleContainerBuilder(
      * the corresponding module-building calls.
      */
     @StandaloneWorkaroundApi
-    public var libraryScopeConstructionMode: StandaloneLibraryScopeConstructionMode =
-        StandaloneLibraryScopeConstructionMode.ParentTraversal
+    public abstract var libraryScopeConstructionMode: StandaloneLibraryScopeConstructionMode
 
-    public fun build(): KaModuleContainer {
-        return KaModuleContainerImpl(allModules)
-    }
-}
-
-@OptIn(ExperimentalContracts::class)
-internal inline fun buildModuleContainer(
-    coreApplicationEnvironment: CoreApplicationEnvironment,
-    project: Project,
-    init: KaModuleContainerBuilder.() -> Unit
-): Pair<KaModuleContainer, TargetPlatform> {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-
-    val moduleContainerBuilder = KaModuleContainerBuilder(coreApplicationEnvironment, project).apply(init)
-    return moduleContainerBuilder.build() to moduleContainerBuilder.platform
+    public abstract fun build(): KaModuleContainer
 }

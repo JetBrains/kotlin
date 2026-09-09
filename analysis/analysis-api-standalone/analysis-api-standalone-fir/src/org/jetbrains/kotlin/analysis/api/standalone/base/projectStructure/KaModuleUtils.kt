@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.project.structure.impl
+package org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure
 
 import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -47,7 +47,7 @@ internal fun collectSourceFilePaths(root: Path): List<Path> {
                 return FileVisitResult.CONTINUE
             }
 
-            override fun visitFileFailed(file: Path, exc: IOException?): FileVisitResult {
+            override fun visitFileFailed(file: Path, exc: IOException): FileVisitResult {
                 // TODO: report or log [IOException]?
                 // NB: this intentionally swallows the exception, hence fail-safe.
                 // Skipping subtree doesn't make any sense, since this is not a directory.
