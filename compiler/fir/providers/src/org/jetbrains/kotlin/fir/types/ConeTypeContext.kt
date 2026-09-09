@@ -224,7 +224,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return when (this) {
             is ConeCapturedTypeConstructor,
             is ConeTypeVariableTypeConstructor,
-            is ConeIntersectionType
+            is ConeIntersectionType,
+            is ConeUnionType,
                 -> 0
             is ConeClassifierLookupTag -> {
                 when (val symbol = toSymbol(session)) {
@@ -276,6 +277,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             }
             is ConeCapturedTypeConstructor -> supertypes.orEmpty()
             is ConeIntersectionType -> intersectedTypes
+            is ConeUnionType -> if (primaryType?.canBeNull(session) == true) {
+                [session.builtinTypes.nullableAnyType.coneType]
+            } else {
+                [session.builtinTypes.anyType.coneType]
+            }
             is ConeIntegerLiteralType -> supertypes
         }
     }
@@ -335,6 +341,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         require(this is ConeTypeConstructorMarker)
         return when (this) {
             is ConeClassifierLookupTag -> this !is ConeClassLikeErrorLookupTag
+            is ConeUnionType -> true
 
             is ConeStubTypeConstructor,
             is ConeCapturedTypeConstructor,
@@ -404,6 +411,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeCapturedType -> true
             is ConeTypeVariableType -> false
             is ConeIntersectionType -> false
+            is ConeUnionType -> false
             is ConeIntegerLiteralType -> true
             is ConeStubType -> true
             is ConeDefinitelyNotNullType -> true

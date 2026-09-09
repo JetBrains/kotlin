@@ -349,3 +349,43 @@ class ConeIntersectionType @DelicateIntersectionConstructor constructor(
         return intersectedTypes.hashCode().also { hashCode = it }
     }
 }
+
+@RequiresOptIn("Consider using ConeTypeUnifier")
+annotation class DelicateUnionConstructor
+
+/**
+ * An intersection type like `String? | MyError | MyOtherError`.
+ *
+ * The contract of the class is
+ *
+ * - [primaryType] must not be a union type
+ * - [richErrorTypes] must not be empty
+ * - no entry of [richErrorTypes] can be a union type.
+ * - [primaryType] can be nullable, no entry of [richErrorTypes] can be nullable.
+ */
+class ConeUnionType @DelicateUnionConstructor constructor(
+    val primaryType: ConeKotlinType?,
+    val richErrorTypes: List<ConeKotlinType>,
+    override val attributes: ConeAttributes,
+) : ConeSimpleKotlinType(), ConeTypeConstructorMarker {
+    override val typeArguments: Array<out ConeTypeProjection>
+        get() = EMPTY_ARRAY
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ConeUnionType
+
+        if (primaryType != other.primaryType) return false
+        if (richErrorTypes != other.richErrorTypes) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = primaryType.hashCode()
+        result = 31 * result + richErrorTypes.hashCode()
+        return result
+    }
+}

@@ -282,6 +282,7 @@ fun ConeKotlinType.isRestrictSuspensionReceiver(): Boolean {
         is ConeDefinitelyNotNullType -> original.isRestrictSuspensionReceiver()
         is ConeCapturedType -> constructor.supertypes?.any { it.isRestrictSuspensionReceiver() } == true
         is ConeIntersectionType -> intersectedTypes.any { it.isRestrictSuspensionReceiver() }
+        is ConeUnionType -> primaryType?.isRestrictSuspensionReceiver() == true
         is ConeIntegerConstantOperatorType,
         is ConeIntegerLiteralConstantType,
         is ConeStubTypeForTypeVariableInSubtyping,

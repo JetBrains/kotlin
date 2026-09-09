@@ -612,6 +612,10 @@ private object CheckDslScopeViolation {
             }
             is ConeDefinitelyNotNullType -> collectDslMarkerAnnotations(originalType.original)
             is ConeIntersectionType -> originalType.intersectedTypes.forEach { collectDslMarkerAnnotations(it) }
+            is ConeUnionType -> {
+                originalType.primaryType?.let { collectDslMarkerAnnotations(it) }
+                originalType.richErrorTypes.forEach { collectDslMarkerAnnotations(it) }
+            }
             is ConeClassLikeType -> {
                 val classDeclaration = originalType.toSymbol() ?: return
                 collectDslMarkerAnnotations(classDeclaration.resolvedAnnotationsWithClassIds)

@@ -205,6 +205,12 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
                     checkVarianceConflict(it, variance, typeRef, containingType, source, isInAbbreviation)
                 }
             }
+            is ConeUnionType -> {
+                type.primaryType?.let { checkVarianceConflict(it, variance, typeRef, containingType, source, isInAbbreviation) }
+                type.richErrorTypes.forEach {
+                    checkVarianceConflict(it, variance, typeRef, containingType, source, isInAbbreviation)
+                }
+            }
             else -> error("Unexpected type ${type.javaClass} in checkVarianceConflict")
         }
     }

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.ConeStubTypeForTypeVariableInSubtyping
 import org.jetbrains.kotlin.fir.types.ConeTypeVariableType
+import org.jetbrains.kotlin.fir.types.ConeUnionType
 
 fun ConeKotlinType.getParentChainForContextSensitiveResolutionOfExpressions(session: FirSession): Sequence<FirRegularClassSymbol> =
     getClassRepresentativeForContextSensitiveResolution(session)
@@ -71,7 +72,7 @@ private fun ConeKotlinType.getClassRepresentativeForContextSensitiveResolution(s
                 null -> null
             }
 
-        is ConeCapturedType, is ConeStubTypeForTypeVariableInSubtyping, is ConeTypeVariableType -> null
+        is ConeCapturedType, is ConeStubTypeForTypeVariableInSubtyping, is ConeTypeVariableType, is ConeUnionType -> null
     }
 }
 

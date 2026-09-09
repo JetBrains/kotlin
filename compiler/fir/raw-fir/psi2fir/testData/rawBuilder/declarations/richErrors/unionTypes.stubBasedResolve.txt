@@ -5,4 +5,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] unionTypes.kt
         }
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|kotlin/String|, [ResolvedTo(ANNOTATION_ARGUMENTS)] b: R|kotlin/String?|, [ResolvedTo(ANNOTATION_ARGUMENTS)] c: R|kotlin/String|, [ResolvedTo(ANNOTATION_ARGUMENTS)] d: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|union(kotlin/String | Foo)|, [ResolvedTo(ANNOTATION_ARGUMENTS)] b: R|union(kotlin/String? | Foo)?|, [ResolvedTo(ANNOTATION_ARGUMENTS)] c: R|union(kotlin/String? | Foo)?|, [ResolvedTo(ANNOTATION_ARGUMENTS)] d: R|kotlin/collections/List<union(kotlin/String | Foo)>|): R|kotlin/Unit| { LAZY_BLOCK }

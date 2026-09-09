@@ -60,6 +60,10 @@ fun collectSymbolsForType(type: ConeKotlinType, useSiteSession: FirSession): Lis
         when (val unwrappedType = unwrapToSimpleTypeUsingLowerBound().fullyExpandedType(useSiteSession)) {
             is ConeClassLikeType -> lookupTags.addIfNotNull(unwrappedType.lookupTag)
             is ConeIntersectionType -> unwrappedType.intersectedTypes.forEach { it.collectClassIds() }
+            is ConeUnionType -> {
+                unwrappedType.primaryType?.collectClassIds()
+                unwrappedType.richErrorTypes.forEach { it.collectClassIds() }
+            }
 
             is ConeCapturedType -> unwrappedType.constructor.supertypes?.forEach { it.collectClassIds() }
             is ConeIntegerLiteralType -> {}

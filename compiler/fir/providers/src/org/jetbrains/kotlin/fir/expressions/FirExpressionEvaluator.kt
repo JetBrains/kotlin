@@ -910,6 +910,7 @@ private fun ConeKotlinType.toConstantValueKind(): ConstantValueKind? =
         is ConeCapturedType -> constructor.lowerType?.toConstantValueKind() ?: constructor.supertypes!!.first().toConstantValueKind()
         is ConeDefinitelyNotNullType -> original.toConstantValueKind()
         is ConeIntersectionType -> intersectedTypes.first().toConstantValueKind()
+        is ConeUnionType -> primaryType?.toConstantValueKind()
         is ConeStubType, is ConeIntegerLiteralType, is ConeTypeVariableType -> null
     }
 

@@ -108,6 +108,10 @@ open class ConeTypeRenderer(
                 render(type)
             }
 
+            is ConeUnionType -> {
+                render(type)
+            }
+
             is ConeDynamicType -> {
                 builder.append("dynamic")
             }
@@ -244,6 +248,11 @@ open class ConeTypeRenderer(
                 "`renderConstructor` mustn't be called with an intersection type argument. " +
                         "Call `render` to simply render the type or filter out intersection types on the call-site."
             )
+
+            is ConeUnionType -> error(
+                "`renderConstructor` mustn't be called with an intersection type argument. " +
+                        "Call `render` to simply render the type or filter out intersection types on the call-site."
+            )
         }
     }
 
@@ -355,6 +364,21 @@ open class ConeTypeRenderer(
         for ([index, intersected] in type.intersectedTypes.withIndex()) {
             if (index > 0) {
                 builder.append(" & ")
+            }
+            this.render(intersected)
+        }
+        builder.append(")")
+    }
+
+    protected open fun render(type: ConeUnionType) {
+        builder.append("union(")
+        type.primaryType?.let {
+            this.render(it)
+            builder.append(" | ")
+        }
+        for ([index, intersected] in type.richErrorTypes.withIndex()) {
+            if (index > 0) {
+                builder.append(" | ")
             }
             this.render(intersected)
         }
