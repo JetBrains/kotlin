@@ -9,7 +9,6 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.java.direct.model.FirBackedJavaClassifierType
 import org.jetbrains.kotlin.java.direct.model.firBackedJavaType
@@ -540,18 +538,12 @@ private fun substituteTypeArgs(
  * Java-side supertype cycles terminate cleanly, and memoized per session. The memoization is
  * essential, not an optimization: the source arm re-enters resolution via `.classifier`, so
  * transitive walks would otherwise re-resolve ancestors exponentially.
- *
- *  1. **Source Java** — walk `JavaClass.supertypes` from the AST (no FIR phase involved).
- *  2. **Binary Java** — read the pre-resolved [FirJavaClass.directSupertypeClassIds] cache
- *     (never triggers the lazy enhancement).
- *  3. **Kotlin / built-in / deserialized** — `lazyResolveToPhase(SUPER_TYPES)`; cycles here are
- *     bounded by FIR's own `SupertypeComputationStatus.Computing` sentinel.
  */
 @OptIn(SymbolInternals::class)
 context(c: JavaResolutionContext)
 internal fun directSupertypeClassIds(classId: ClassId): List<ClassId> =
     c.fileContext.session.memoizedDirectSupertypeClassIds(classId) {
-        c.fileContext.session.cycleGuardedSupertypeWalk(classId, default = emptyList()) {
+        c.fileContext.session.cycleGuardedSupertypeWalk(classId, default = null) {
             // 1. Source Java arm.
             val finder = c.fileContext.classFinder
             if (finder != null && finder.isClassInIndex(classId)) {
@@ -561,8 +553,10 @@ internal fun directSupertypeClassIds(classId: ClassId): List<ClassId> =
                 }
             }
 
-            val symbol = c.fileContext.session.cycleSafeClassLikeSymbol(classId) ?: return@cycleGuardedSupertypeWalk emptyList()
-            val firClass = symbol.fir as? FirRegularClass ?: return@cycleGuardedSupertypeWalk emptyList()
+            // A missing symbol (no provider, unknown class, or a KT-74097 in-flight break) and a
+            // symbol that is not a class both mean "unknown".
+            val symbol = c.fileContext.session.cycleSafeClassLikeSymbol(classId) ?: return@cycleGuardedSupertypeWalk null
+            val firClass = symbol.fir as? FirRegularClass ?: return@cycleGuardedSupertypeWalk null
 
             // 2. Binary Java arm.
             if (firClass is FirJavaClass) {
@@ -570,9 +564,10 @@ internal fun directSupertypeClassIds(classId: ClassId): List<ClassId> =
             }
 
             // 3. Kotlin / built-in / deserialized arm.
-            symbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
-            firClass.superTypeRefs.mapNotNull { ref ->
+            firClass.supertypeRefsForJavaResolution(c.fileContext.session).map { ref ->
+                // A ref that stayed unresolved makes this a partial answer, which must not be cached.
                 ((ref as? FirResolvedTypeRef)?.coneType as? ConeClassLikeType)?.lookupTag?.classId
+                    ?: return@cycleGuardedSupertypeWalk null
             }
         }
     }
@@ -582,9 +577,9 @@ internal fun directSupertypeClassIds(classId: ClassId): List<ClassId> =
  * [ClassId]s. Reads the materialised `classifier` field on each [JavaClassifierType] in
  * [JavaClass.supertypes], which is reliable for every reference (cross-file too).
  */
-private fun resolveSupertypeNames(enclosing: JavaClass): List<ClassId> =
-    enclosing.supertypes.mapNotNull { supertype ->
-        (supertype.classifier as? JavaClass)?.classId
+private fun resolveSupertypeNames(enclosing: JavaClass): List<ClassId>? =
+    enclosing.supertypes.map { supertype ->
+        (supertype.classifier as? JavaClass)?.classId ?: return null
     }
 
 /**

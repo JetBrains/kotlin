@@ -149,16 +149,13 @@ class FirJavaClass @FirImplementationDetail internal constructor(
      * dispatcher needs for the binary-Java arm of supertype-walking, **without** going through
      * the lazy [superTypeRefs] enhancement (which is unsafe to read while the symbol's own
      * `SUPER_TYPES` resolution is on the stack.
-     *
-     * Returns an empty list when [javaClass] is null (no AST backing — the FirJavaClass was
-     * built directly with explicit `superTypeRefs` rather than lazily).
      */
-    private val directSupertypeClassIdsCache: List<ClassId> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val supertypes = javaClass?.supertypes ?: return@lazy emptyList()
-        supertypes.mapNotNull { (it.classifier as? JavaClass)?.classId }
+    private val directSupertypeClassIdsCache: List<ClassId>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val supertypes = javaClass?.supertypes ?: return@lazy null
+        supertypes.map { (it.classifier as? JavaClass)?.classId ?: return@lazy null }
     }
 
-    fun directSupertypeClassIds(): List<ClassId> = directSupertypeClassIdsCache
+    fun directSupertypeClassIds(): List<ClassId>? = directSupertypeClassIdsCache
 
     // returns original visibility to avoid triggering status transformers application
     // NB: according to the assertions in the [applyStatusTransformerExtensions] the transformers should not change the visibility
