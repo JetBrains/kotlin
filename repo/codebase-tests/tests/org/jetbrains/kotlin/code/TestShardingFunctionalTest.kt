@@ -20,6 +20,7 @@ import java.nio.file.Path
 import kotlin.io.path.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import kotlin.test.fail
 
 class TestShardingFunctionalTest {
@@ -54,6 +55,47 @@ class TestShardingFunctionalTest {
         checkShardDistribution(allTestsResult, shard1Result, shard2Result, shard3Result)
     }
 
+
+    @Test
+    fun `junit5 - removing a shard preserves remaining test shard indices`() {
+        junit5SourcesDirectory.resolve("Test.kt").writeCode(
+            """
+            import kotlin.test.Test
+
+            class MyTest {
+                ${(0 until 64).joinToString("\n") { "@Test fun test$it() = Unit" }}
+            }
+            """.trimIndent()
+        )
+
+        val runner = createGradleRunner()
+        val allTests = runner.runTests().parseExecutedTests()
+        assertEquals(64, allTests.size)
+
+        var shards = (1..3).map { shard ->
+            runner.runTests(currentShard = shard, totalShards = 3).parseExecutedTests()
+        }
+        checkShardDistribution(allTests, *shards.toTypedArray())
+        assertEquals(allTests.size, shards.flatten().size)
+
+        for (totalShards in 2 downTo 1) {
+            val remainingShards = (1..totalShards).map { shard ->
+                runner.runTests(currentShard = shard, totalShards = totalShards).parseExecutedTests()
+            }
+            checkShardDistribution(allTests, *remainingShards.toTypedArray())
+            assertEquals(allTests.size, remainingShards.flatten().size)
+
+            shards.dropLast(1).forEachIndexed { index, tests ->
+                tests.forEach { test ->
+                    assertTrue(
+                        test in remainingShards[index],
+                        "Expected $test to remain on shard ${index + 1} after removing shard ${totalShards + 1}"
+                    )
+                }
+            }
+            shards = remainingShards
+        }
+    }
 
     @Test
     fun `junit5 - TestFactory`() {
@@ -272,6 +314,7 @@ class TestShardingFunctionalTest {
         return withArguments(
             *listOfNotNull(
                 "$targetProjectPath:junit5Tests",
+                "--no-build-cache",
                 if (currentShard != null) "-Ptests.currentShard=$currentShard" else null,
                 if (totalShards != null) "-Ptests.totalShards=$totalShards" else null,
 
