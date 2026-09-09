@@ -227,16 +227,6 @@ internal class CAdapterIrGenerator(
     fun buildExports(fragments: List<IrModuleFragment>): CAdapterExportedElements {
         val top = ExportedElementScope(ScopeKind.TOP, "kotlin")
 
-        // Group each package's top-level declarations by source file, preserving file order. K1 processes a package
-        // one metadata fragment (source file) at a time, so ordering is per-file, not merged across the package.
-        val filesByPackage = LinkedHashMap<FqName, MutableList<List<IrDeclaration>>>()
-        for (fragment in fragments) {
-            for (file in fragment.files) {
-                filesByPackage.getOrPut(file.packageFqName) { mutableListOf() }
-                        .add(file.declarations)
-            }
-        }
-
         // The "root" scope is the single child of the top scope and holds the whole package hierarchy. In K1,
         // `getPackageScope(FqName.ROOT)` is named "root"; root-package declarations and every named subpackage
         // are nested under it (the top "kotlin" scope itself never gets declarations directly).
@@ -244,23 +234,30 @@ internal class CAdapterIrGenerator(
         top.scopes += rootScope
         packageScopes[FqName.ROOT] = rootScope
 
-        val namedPackages = filesByPackage.keys
-                .filter { !it.isRoot }
-                .sortedBy { it.asString() }
+        // Group each exported file under its package. Files of the same package keep their module/file order
+        // in the value list, matching the stable sort of CAdapterGenerator.currentPackageFragments by fq name.
+        val filesByPackage = fragments.flatMap { it.files }.groupBy { it.packageFqName }
+        val packageTree = reconstructPackageTree(filesByPackage.keys)
 
-        // Two passes, so within every scope the subpackages precede the package's own classes (as in K1). Pass 1
-        // materializes the whole package-scope tree in fq-name order; pass 2 appends each package's declarations.
-        for (packageFqName in namedPackages) {
-            getPackageScope(packageFqName)
+        fun visitPackage(pkg: FqName) {
+            val scope = getPackageScope(pkg)
+            val files = filesByPackage[pkg].orEmpty()
+            // Transcription of CAdapterGenerator.visitPackageFragmentDescriptor's interleaving: emit a
+            // package's first file, then descend into its subpackages, then emit the package's remaining files.
+            // Reproduces K1's order in which a subpackage lands between the first and the second file of a package.
+            files.firstOrNull()?.let { file ->
+                populateScope(scope, file.declarations, isClassScope = false)
+            }
+            for (child in packageTree[pkg].orEmpty()) {
+                visitPackage(child)
+            }
+            for (file in files.drop(1)) {
+                populateScope(scope, file.declarations, isClassScope = false)
+            }
         }
 
-        filesByPackage[FqName.ROOT]?.let {
-            populateScope(rootScope, it, isClassScope = false)
-        }
-        for (packageFqName in namedPackages) {
-            val scope = getPackageScope(packageFqName)
-            populateScope(scope, filesByPackage.getValue(packageFqName), isClassScope = false)
-        }
+        assert(FqName.ROOT in packageTree)
+        visitPackage(FqName.ROOT)
 
         return CAdapterExportedElements(prefix, mutableListOf(top))
     }
@@ -280,7 +277,7 @@ internal class CAdapterIrGenerator(
         parentScope.scopes += classScope
         // Type getter (also produces the `_instance` getter for singleton objects).
         ExportedElementIr(ElementKind.TYPE, classScope, irClass, this, typeTranslator)
-        populateScope(classScope, listOf(irClass.declarations), isClassScope = true)
+        populateScope(classScope, irClass.declarations, isClassScope = true)
     }
 
     private fun buildEnumEntryScope(entry: IrEnumEntry, parentScope: ExportedElementScope) {
@@ -290,51 +287,48 @@ internal class CAdapterIrGenerator(
     }
 
     /**
-     * Populates [scope] from declarations grouped per source file ([fileGroups]), reproducing the K1 order:
-     *  - sub-scopes: nested classes and enum entries, in declaration order across the files;
+     * Populates [scope] from one source file's (or one class's) [declarations], reproducing the K1 order:
+     *  - sub-scopes: nested classes and enum entries, in declaration order;
      *  - constructors (class scope only), in declaration order;
-     *  - callables: within each file sorted by [memberComparator] (matching the deserializer's
-     *    `NameAndTypeMemberComparator`), the files then concatenated in order.
+     *  - callables: sorted by [memberComparator] (matching the deserializer's `NameAndTypeMemberComparator`).
+     *
+     * A package split across several files is populated by calling this once per file, in file order.
      */
-    private fun populateScope(scope: ExportedElementScope, fileGroups: List<List<IrDeclaration>>, isClassScope: Boolean) {
-        for (declarations in fileGroups) {
-            for (declaration in declarations) {
-                when {
-                    declaration is IrClass && isExportedClass(declaration) && !declaration.hasSpecialName() ->
-                        buildClassScope(declaration, scope)
-                    declaration is IrEnumEntry && isExportedEnumEntry(declaration) ->
-                        buildEnumEntryScope(declaration, scope)
-                }
+    private fun populateScope(scope: ExportedElementScope, declarations: List<IrDeclaration>, isClassScope: Boolean) {
+        for (declaration in declarations) {
+            when {
+                declaration is IrClass && isExportedClass(declaration) && !declaration.hasSpecialName() ->
+                    buildClassScope(declaration, scope)
+                declaration is IrEnumEntry && isExportedEnumEntry(declaration) ->
+                    buildEnumEntryScope(declaration, scope)
             }
         }
         if (isClassScope) {
             // K1 reads constructors via `getConstructors()`, whose deserialized order is
             // `computeSecondaryConstructors() + primaryConstructor` — i.e. secondaries first (in declaration order),
             // then the primary. IR lists the primary first, so move it last (stable keeps the secondaries' order).
-            val constructors = fileGroups.flatMap { group -> group.filterIsInstance<IrConstructor>() }
+            val constructors = declarations.filterIsInstance<IrConstructor>()
                     .filter { isExportedFunction(it) }
                     .sortedBy { it.isPrimary }
             for (constructor in constructors) {
                 ExportedElementIr(ElementKind.FUNCTION, scope, constructor, this, typeTranslator)
             }
         }
-        for (declarations in fileGroups) {
-            val members = declarations.mapNotNull { declaration ->
-                when (declaration) {
-                    is IrProperty -> declaration.takeUnless { it.isExpect || it.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER }
-                    is IrSimpleFunction ->
-                        declaration.takeIf { it.correspondingPropertySymbol == null && isExportedFunction(it) }
-                    else -> null
+        val members = declarations.mapNotNull { declaration ->
+            when (declaration) {
+                is IrProperty -> declaration.takeUnless { it.isExpect || it.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER }
+                is IrSimpleFunction ->
+                    declaration.takeIf { it.correspondingPropertySymbol == null && isExportedFunction(it) }
+                else -> null
+            }
+        }.sortedWith(memberComparator)
+        for (member in members) {
+            when (member) {
+                is IrProperty -> {
+                    member.getter?.let { if (isExportedFunction(it)) ExportedElementIr(ElementKind.FUNCTION, scope, it, this, typeTranslator) }
+                    member.setter?.let { if (isExportedFunction(it)) ExportedElementIr(ElementKind.FUNCTION, scope, it, this, typeTranslator) }
                 }
-            }.sortedWith(memberComparator)
-            for (member in members) {
-                when (member) {
-                    is IrProperty -> {
-                        member.getter?.let { if (isExportedFunction(it)) ExportedElementIr(ElementKind.FUNCTION, scope, it, this, typeTranslator) }
-                        member.setter?.let { if (isExportedFunction(it)) ExportedElementIr(ElementKind.FUNCTION, scope, it, this, typeTranslator) }
-                    }
-                    is IrSimpleFunction -> ExportedElementIr(ElementKind.FUNCTION, scope, member, this, typeTranslator)
-                }
+                is IrSimpleFunction -> ExportedElementIr(ElementKind.FUNCTION, scope, member, this, typeTranslator)
             }
         }
     }
@@ -370,3 +364,24 @@ private fun IrProperty.hasExtensionReceiver(): Boolean =
 
 private fun IrSimpleFunction.hasExtensionReceiver(): Boolean =
         parameters.any { it.kind == IrParameterKind.ExtensionReceiver }
+
+// Reconstruct the full package tree by closing the file packages under their parents. Subpackages of a package are
+// ordered by fq name, matching the sort of currentPackageFragments.
+// The root package is always present, even for an empty input.
+private fun reconstructPackageTree(names: Collection<FqName>): HashMap<FqName, MutableList<FqName>> {
+    val packages = HashMap<FqName, MutableList<FqName>>()
+    packages[FqName.ROOT] = mutableListOf()
+    for (pkg in names) {
+        var current = pkg
+        while (!current.isRoot) {
+            val parent = current.parent()
+            val siblings = packages.getOrPut(parent) { mutableListOf() }
+            if (current !in siblings) siblings += current
+            current = parent
+        }
+    }
+    for (siblings in packages.values) {
+        siblings.sortBy { it.asString() }
+    }
+    return packages
+}
