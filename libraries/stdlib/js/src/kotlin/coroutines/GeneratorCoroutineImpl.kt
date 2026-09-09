@@ -25,11 +25,11 @@ internal class GeneratorCoroutineImpl(val resultContinuation: Continuation<Any?>
 
     public override val context: CoroutineContext get() = _context!!
 
-    fun runGenerator(result: Result<Any?> = Result(null)): Any? {
+    private fun runGenerator(value: Any?, exception: Throwable?): Any? {
         val suspended = COROUTINE_SUSPENDED
-        val stepResult = when (val e = result.exceptionOrNull()) {
-            null -> generator.next(result.value)
-            else -> generator.throws(e)
+        val stepResult = when (exception) {
+            null -> generator.next(value)
+            else -> generator.throws(exception)
         }
 
         var done = stepResult.done
@@ -53,24 +53,45 @@ internal class GeneratorCoroutineImpl(val resultContinuation: Continuation<Any?>
         return value
     }
 
+    fun runGenerator(result: Result<Any?> = Result(null)): Any? {
+        return runGenerator(result.value, result.exceptionOrNull())
+    }
+
     override fun resumeWith(result: Result<Any?>) {
-        var exception: Throwable? = null
-        val nextResult = try {
-            runGenerator(result)
-        } catch (e: Throwable) {
-            exception = e
-            null
-        }
+        var current = this
+        var currentResult: Any? = result.value
+        var currentException: Throwable? = result.exceptionOrNull()
 
-        if (nextResult === COROUTINE_SUSPENDED) return
+        // This loop unrolls recursion in current.resumeWith(param) to make saner and shorter stack traces on resume
+        // It's also fixing the deep recursion case of kotlinx.serialization https://github.com/Kotlin/kotlinx.serialization/issues/1594
+        while (true) {
+            // Set result and exception fields in the current continuation
+            try {
+                val outcome = current.runGenerator(currentResult, currentException)
+                if (outcome === COROUTINE_SUSPENDED) return
+                currentResult = outcome
+                currentException = null
+            } catch (e: dynamic) {
+                currentResult = null
+                currentException = e
+            }
 
-        releaseIntercepted()
+            current.releaseIntercepted() // this state machine instance is terminating
 
-        resultContinuation?.run {
-            if (exception != null) {
-                resumeWithException(exception)
-            } else {
-                resume(nextResult)
+            when (val completion = current.resultContinuation) {
+                null -> return
+                is GeneratorCoroutineImpl -> {
+                    // unrolling recursion via loop
+                    current = completion
+                }
+                else -> {
+                    if (currentException != null) {
+                        completion.resumeWithException(currentException)
+                    } else {
+                        completion.resume(currentResult)
+                    }
+                    return
+                }
             }
         }
     }
