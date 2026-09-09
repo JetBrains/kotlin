@@ -16,6 +16,7 @@ dependencies {
 
     implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-api-standalone"))
+    runtimeOnly(project(":analysis:analysis-api-standalone:analysis-api-standalone-fir"))
     implementation(project(":core:compiler.common.js"))
     implementation(project(":core:util.runtime"))
     implementation(project(":js:js.ast"))

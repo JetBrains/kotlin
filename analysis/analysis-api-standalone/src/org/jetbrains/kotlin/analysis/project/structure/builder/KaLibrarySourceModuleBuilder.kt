@@ -5,33 +5,21 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
-import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.KaStandaloneInternalsProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
-import org.jetbrains.kotlin.analysis.project.structure.impl.KaLibrarySourceModuleImpl
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @KtModuleBuilderDsl
-public class KtLibrarySourceModuleBuilder(private val project: Project) : KtModuleBuilder() {
+public abstract class KtLibrarySourceModuleBuilder : KtModuleBuilder() {
     public lateinit var libraryName: String
     public lateinit var binaryLibrary: KaLibraryModule
     public lateinit var contentScope: GlobalSearchScope
 
-    override fun build(): KaLibrarySourceModule {
-        return KaLibrarySourceModuleImpl(
-            directRegularDependencies,
-            directDependsOnDependencies,
-            directFriendDependencies,
-            contentScope,
-            platform,
-            project,
-            libraryName,
-            binaryLibrary
-        )
-    }
+    abstract override fun build(): KaLibrarySourceModule
 }
 
 @OptIn(ExperimentalContracts::class)
@@ -39,5 +27,5 @@ public inline fun KaModuleContainerBuilder.buildKtLibrarySourceModule(init: KtLi
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return KtLibrarySourceModuleBuilder(project).apply(init).build()
+    return KaStandaloneInternalsProvider.instance.getLibrarySourceModuleBuilder(project).apply(init).build()
 }
