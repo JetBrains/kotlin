@@ -38,8 +38,7 @@ private val softDeprecatedTargets = setOf(
 
 private const val DEPRECATION_LINK = "https://kotl.in/native-targets-tiers"
 
-interface CompilationSpawner {
-    fun spawn(configuration: CompilerConfiguration)
+fun interface CompilationSpawner {
     fun spawn(arguments: List<String>, setupConfiguration: CompilerConfiguration.() -> Unit)
 }
 
