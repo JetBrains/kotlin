@@ -283,22 +283,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
         val konanDriver =
             KonanDriver(environment.project, environment, configuration, perfManager, object : CompilationSpawner {
-                override fun spawn(configuration: CompilerConfiguration) {
-                    val spawnedArguments = K2NativeCompilerArguments()
-                    parseCommandLineArguments(emptyList(), spawnedArguments)
-                    val spawnedPerfManager = PerformanceManagerImpl.createChildIfNeeded(perfManager, start = true)
-                    configuration.perfManager = spawnedPerfManager
-                    @OptIn(CoreEnvironmentDeprecation::class)
-                    val spawnedEnvironment = KotlinCoreEnvironment.createForProduction(
-                        rootDisposable, configuration, EnvironmentConfigFiles.NATIVE_CONFIG_FILES
-                    )
-                    try {
-                        runKonanDriver(configuration, spawnedEnvironment, rootDisposable)
-                    } finally {
-                        perfManager?.addOtherUnitStats(spawnedPerfManager?.unitStats)
-                    }
-                }
-
                 override fun spawn(arguments: List<String>, setupConfiguration: CompilerConfiguration.() -> Unit) {
                     val spawnedArguments = K2NativeCompilerArguments()
                     parseCommandLineArguments(arguments, spawnedArguments)
