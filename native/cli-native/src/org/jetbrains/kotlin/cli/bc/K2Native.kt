@@ -281,53 +281,50 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     ) {
         val perfManager = configuration.perfManager
 
-        val konanDriver =
-            KonanDriver(environment.project, environment, configuration, perfManager, object : CompilationSpawner {
-                override fun spawn(arguments: List<String>, setupConfiguration: CompilerConfiguration.() -> Unit) {
-                    val spawnedArguments = K2NativeCompilerArguments()
-                    parseCommandLineArguments(arguments, spawnedArguments)
-                    val spawnedConfiguration = CompilerConfiguration.create()
+        val konanDriver = KonanDriver(environment.project, environment, configuration, perfManager) { arguments, setupConfiguration ->
+            val spawnedArguments = K2NativeCompilerArguments()
+            parseCommandLineArguments(arguments, spawnedArguments)
+            val spawnedConfiguration = CompilerConfiguration.create()
 
-                    val spawnedPerfManager = PerformanceManagerImpl.createChildIfNeeded(perfManager, start = true)
-                    @OptIn(MessageCollectorAccess::class) // write access
-                    spawnedConfiguration.messageCollector = configuration.messageCollector
-                    spawnedConfiguration.perfManager = spawnedPerfManager
-                    spawnedConfiguration.setupCommonArguments(spawnedArguments, this@K2Native::createMetadataVersion)
-                    spawnedConfiguration.setupFromArguments(spawnedArguments, rootDisposable)
-                    spawnedConfiguration.setupPartialLinkageConfig(configuration.partialLinkageConfig)
-                    configuration.get(CommonConfigurationKeys.USE_FIR)?.let {
-                        spawnedConfiguration.put(CommonConfigurationKeys.USE_FIR, it)
-                    }
-                    configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)?.let {
-                        spawnedConfiguration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, it)
-                    }
-                    configuration[NativeConfigurationKeys.OVERRIDE_KONAN_PROPERTIES]?.let {
-                        spawnedConfiguration.overrideKonanProperties = it
-                    }
-                    configuration.get(BinaryOptions.checkStateAtExternalCalls)?.let {
-                        spawnedConfiguration.put(BinaryOptions.checkStateAtExternalCalls, it)
-                    }
-                    spawnedConfiguration.setupConfiguration()
+            val spawnedPerfManager = PerformanceManagerImpl.createChildIfNeeded(perfManager, start = true)
+            @OptIn(MessageCollectorAccess::class) // write access
+            spawnedConfiguration.messageCollector = configuration.messageCollector
+            spawnedConfiguration.perfManager = spawnedPerfManager
+            spawnedConfiguration.setupCommonArguments(spawnedArguments, this@K2Native::createMetadataVersion)
+            spawnedConfiguration.setupFromArguments(spawnedArguments, rootDisposable)
+            spawnedConfiguration.setupPartialLinkageConfig(configuration.partialLinkageConfig)
+            configuration.get(CommonConfigurationKeys.USE_FIR)?.let {
+                spawnedConfiguration.put(CommonConfigurationKeys.USE_FIR, it)
+            }
+            configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)?.let {
+                spawnedConfiguration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, it)
+            }
+            configuration[NativeConfigurationKeys.OVERRIDE_KONAN_PROPERTIES]?.let {
+                spawnedConfiguration.overrideKonanProperties = it
+            }
+            configuration.get(BinaryOptions.checkStateAtExternalCalls)?.let {
+                spawnedConfiguration.put(BinaryOptions.checkStateAtExternalCalls, it)
+            }
+            spawnedConfiguration.setupConfiguration()
 
-                    if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(spawnedConfiguration)) {
-                        // Some errors during KotlinCoreEnvironment setup.
-                        throw CompilationErrorException()
-                    }
+            if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(spawnedConfiguration)) {
+                // Some errors during KotlinCoreEnvironment setup.
+                throw CompilationErrorException()
+            }
 
-                    val spawnedEnvironment = prepareEnvironment(spawnedArguments, spawnedConfiguration, rootDisposable)
-                    // KT-71976: Should empty `arguments` be provided, prepareEnvironment() resets the keys for 1st compilation stage
-                    // In order to keep them, they should be re-initialized with the second invocation of `setupConfiguration()` lambda below.
-                    // Meanwhile, the first invocation is still needed to initialize other important keys before `prepareEnvironment()`
-                    // TODO KT-72014: Remove the second invocation of `setupConfiguration()`
-                    spawnedConfiguration.setupConfiguration()
+            val spawnedEnvironment = prepareEnvironment(spawnedArguments, spawnedConfiguration, rootDisposable)
+            // KT-71976: Should empty `arguments` be provided, prepareEnvironment() resets the keys for 1st compilation stage
+            // In order to keep them, they should be re-initialized with the second invocation of `setupConfiguration()` lambda below.
+            // Meanwhile, the first invocation is still needed to initialize other important keys before `prepareEnvironment()`
+            // TODO KT-72014: Remove the second invocation of `setupConfiguration()`
+            spawnedConfiguration.setupConfiguration()
 
-                    try {
-                        runKonanDriver(spawnedConfiguration, spawnedEnvironment, rootDisposable)
-                    } finally {
-                        perfManager?.addOtherUnitStats(spawnedPerfManager?.unitStats)
-                    }
-                }
-            })
+            try {
+                runKonanDriver(spawnedConfiguration, spawnedEnvironment, rootDisposable)
+            } finally {
+                perfManager?.addOtherUnitStats(spawnedPerfManager?.unitStats)
+            }
+        }
 
         konanDriver.run()
     }
