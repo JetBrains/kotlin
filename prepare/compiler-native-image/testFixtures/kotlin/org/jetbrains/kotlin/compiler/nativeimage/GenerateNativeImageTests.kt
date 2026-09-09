@@ -15,7 +15,7 @@ fun main(args: Array<String>) {
             testClass<AbstractNativeImageBoxTest> {
                 model("box")
             }
-            testClass<AbstractNativeImageReachabilityMetadataTest> {
+            testClass<AbstractReachabilityMetadataBoxTest> {
                 model("box")
             }
         }
@@ -26,10 +26,10 @@ fun main(args: Array<String>) {
             testClass<AbstractNativeImageLegacyPluginBoxTest> {
                 model("")
             }
-            testClass<AbstractNativeImagePluginReachabilityMetadataTest> {
+            testClass<AbstractReachabilityMetadataPluginBoxTest> {
                 model("")
             }
-            testClass<AbstractNativeImageLegacyPluginReachabilityMetadataTest> {
+            testClass<AbstractReachabilityMetadataLegacyPluginBoxTest> {
                 model("")
             }
         }

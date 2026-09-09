@@ -123,9 +123,9 @@ projectTests {
 
     nativeImageTestTask("generateReachabilityMetadataBox") {
         description = "Runs JVM kotlinc with reachability metadata collector agent on box tests"
-        include("**/NativeImageReachabilityMetadataTestGenerated.class")
-        include("**/NativeImagePluginReachabilityMetadataTestGenerated.class")
-        include("**/NativeImageLegacyPluginReachabilityMetadataTestGenerated.class")
+        include("**/ReachabilityMetadataBoxTestGenerated.class")
+        include("**/ReachabilityMetadataPluginBoxTestGenerated.class")
+        include("**/ReachabilityMetadataLegacyPluginBoxTestGenerated.class")
         // We can't run in parallel because of the tracing agent
         systemProperty(
             "junit.jupiter.execution.parallel.enabled",
