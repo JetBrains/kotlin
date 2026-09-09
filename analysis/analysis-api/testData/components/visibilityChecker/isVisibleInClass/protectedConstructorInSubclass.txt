@@ -1,0 +1,3 @@
+Declaration: protected constructor()
+Class: class Child : Owner()
+Is visible: true

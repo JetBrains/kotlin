@@ -1,0 +1,3 @@
+Declaration: protected fun member(): kotlin.Int
+Class: open class Owner
+Is visible: true

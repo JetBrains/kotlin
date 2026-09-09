@@ -1,0 +1,3 @@
+Declaration: var member: kotlin.Int
+Class: class Child : base.JavaBase()
+Is visible: true

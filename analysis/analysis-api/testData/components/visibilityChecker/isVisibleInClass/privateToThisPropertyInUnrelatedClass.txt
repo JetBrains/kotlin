@@ -1,0 +1,3 @@
+Declaration: private val member: T
+Class: class Unrelated
+Is visible: false

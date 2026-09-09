@@ -1,0 +1,3 @@
+Declaration: private set(value: kotlin.Int)
+Class: class Owner
+Is visible: false

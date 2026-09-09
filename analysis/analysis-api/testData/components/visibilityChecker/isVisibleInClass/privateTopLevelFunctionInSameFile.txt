@@ -1,0 +1,3 @@
+Declaration: private fun helper(): kotlin.Int
+Class: class Owner
+Is visible: false

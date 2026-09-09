@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInf
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInfoProvider.AbstractIsDenotableTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.*
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.visibilityChecker.AbstractIsVisibleInClassTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.visibilityChecker.AbstractVisibilityCheckerTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.danglingFileAnalysis.AbstractDanglingFileResolutionModeProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceImportAliasTest
@@ -778,6 +779,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike
     }
 
     component("visibilityChecker") {
+        test<AbstractIsVisibleInClassTest> {
+            model(it, "isVisibleInClass")
+        }
+
         test<AbstractVisibilityCheckerTest> {
             model(it, "visibility")
         }

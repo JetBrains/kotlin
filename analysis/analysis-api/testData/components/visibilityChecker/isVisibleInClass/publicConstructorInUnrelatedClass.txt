@@ -1,0 +1,3 @@
+Declaration: constructor()
+Class: class Unrelated
+Is visible: true

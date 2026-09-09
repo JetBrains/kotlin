@@ -1,0 +1,3 @@
+Declaration: protected fun member(): kotlin.Int
+Class: class GrandChild : Child()
+Is visible: true

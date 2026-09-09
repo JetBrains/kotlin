@@ -1,0 +1,3 @@
+Declaration: private fun member(): kotlin.Int
+Class: companion object
+Is visible: false

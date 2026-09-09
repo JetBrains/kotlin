@@ -1,0 +1,3 @@
+Declaration: fun member(): kotlin.Int
+Class: object
+Is visible: true
