@@ -54,7 +54,7 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryC
         kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
     ) {
         val swiftTestFiles = testPathFull.walk().filter { it.extension == "swift" }.map { testPathFull.resolve(it) }.toList()
-        val testExecutable = compileTestExecutable(testPathFull.name, swiftTestFiles, swiftModules, kotlinBinaryLibrary)
+        val testExecutable = compileTestExecutable(testPathFull, swiftTestFiles, swiftModules, kotlinBinaryLibrary)
         runExecutableAndVerify(testCase, testExecutable)
     }
 
@@ -65,7 +65,7 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryC
     }
 
     private fun compileTestExecutable(
-        testName: String,
+        testPathFull: File,
         testSources: List<File>,
         swiftModules: Set<TestCompilationArtifact.Swift.Module>,
         kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
@@ -94,7 +94,7 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryC
             testSources + listOf(
                 testSuiteDir.resolve("main-testing.swift")
             ),
-            TestCompilationArtifact.Executable(buildDir(testName).resolve("swiftTestExecutable")),
+            TestCompilationArtifact.Executable(buildDir(testPathFull).resolve("swiftTestExecutable")),
             swiftExtraOpts,
             outputFile = { executable -> executable.executableFile },
             minOSVersion = minOSVersion,
@@ -102,7 +102,7 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryC
         return TestExecutable(
             success.resultingArtifact,
             success.loggedData,
-            listOf(TestName(testName))
+            listOf(TestName(testPathFull.name))
         )
     }
 }
