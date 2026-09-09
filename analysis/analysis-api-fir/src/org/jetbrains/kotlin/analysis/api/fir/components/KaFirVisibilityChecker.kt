@@ -30,10 +30,12 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.collectUseSiteContai
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.isVisibleInClass
+import org.jetbrains.kotlin.fir.isVisibleFromClass
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -85,13 +87,27 @@ internal class KaFirVisibilityChecker(
         require(symbol is KaFirSymbol<*>)
         require(classSymbol is KaFirSymbol<*>)
 
-        val memberFir = symbol.firSymbol.fir as? FirCallableDeclaration ?: return false
-        val parentClassFir = classSymbol.firSymbol.fir as? FirClass ?: return false
+        val memberSymbol = symbol.firSymbol as? FirCallableSymbol<*> ?: return false
+        val useSiteClassSymbol = classSymbol.firSymbol as? FirClassSymbol<*> ?: return false
 
-        // Inspecting visibility requires resolving to status
-        classSymbol.firSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
+        // FIR classes don't reference their containers, so the containers are collected here. This also handles local classes
+        val useSiteFileSymbol = with(analysisSession) { classSymbol.containingFile as? KaFirFileSymbol }?.firSymbol
+        val containingClassSymbols = with(analysisSession) {
+            generateSequence(classSymbol.containingDeclaration) { it.containingDeclaration }
+                .filterIsInstance<KaClassSymbol>()
+                .map { (it as KaFirSymbol<*>).firSymbol }
+                .toList()
+        }
 
-        return memberFir.symbol.isVisibleInClass(parentClassFir.symbol, memberFir.symbol.resolvedStatus)
+        // The visibility is checked from the point of view of the class, so the session of the class's module is used
+        val session = resolutionFacade.getSessionFor(useSiteClassSymbol.llFirModuleData.ktModule)
+        return session.visibilityChecker.isVisibleFromClass(
+            memberSymbol,
+            session,
+            useSiteClassSymbol,
+            useSiteFileSymbol,
+            containingClassSymbols,
+        )
     }
 
     override fun isPublicApi(symbol: KaDeclarationSymbol): Boolean = withValidityAssertion {

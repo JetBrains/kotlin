@@ -190,6 +190,43 @@ abstract class FirVisibilityChecker : FirComposableSessionComponent<FirVisibilit
         } ?: true
     }
 
+    /**
+     * Checks whether [declaration] is visible from the code inside [useSiteClass].
+     *
+     * Non-private declarations are checked in the same way as in [FirBasedSymbol.isVisibleInClass], which is intended for
+     * inheritance-related checks and thus never considers private declarations visible. In contrast, this function treats private
+     * declarations the same way as [isVisible] does:
+     *
+     * - a private member is visible in [useSiteClass] if it is declared in [useSiteClass], in one of its outer classes, or in a companion
+     *   object of any of these classes;
+     * - a private top-level declaration is visible in [useSiteClass] if it is declared in the same file as [useSiteClass].
+     *
+     * Classes are compared by their lookup tags rather than by symbols, so the check also works when [useSiteClass] and the owner of
+     * [declaration] are different copies of the same class, e.g., during the dependent analysis of a file copy in the Analysis API.
+     *
+     * @param useSiteFile The file containing [useSiteClass], if known. Without it, private top-level declarations are never visible.
+     * @param containingDeclarations The declarations containing [useSiteClass], such as its outer classes.
+     */
+    fun isVisibleFromClass(
+        declaration: FirMemberDeclaration,
+        session: FirSession,
+        useSiteClass: FirClass,
+        useSiteFile: FirFile?,
+        containingDeclarations: List<FirDeclaration>,
+    ): Boolean {
+        val originalDeclaration = if (declaration is FirCallableDeclaration) declaration.originalOrSelf() else declaration
+        return when (originalDeclaration.visibility) {
+            Visibilities.Private, Visibilities.PrivateToThis -> canSeePrivateDeclaration(
+                originalDeclaration,
+                session,
+                useSiteFile,
+                containingDeclarations + useSiteClass,
+                dispatchReceiver = null,
+            )
+            else -> originalDeclaration.symbol.isVisibleInClass(useSiteClass.symbol, originalDeclaration.status)
+        }
+    }
+
     fun isVisibleForOverriding(
         candidateInDerivedClass: FirCallableDeclaration,
         candidateInBaseClass: FirCallableDeclaration,
@@ -514,7 +551,7 @@ abstract class FirVisibilityChecker : FirComposableSessionComponent<FirVisibilit
     private fun canSeePrivateDeclaration(
         declaration: FirMemberDeclaration,
         session: FirSession,
-        useSiteFile: FirFile,
+        useSiteFile: FirFile?,
         containingDeclarations: List<FirDeclaration>,
         dispatchReceiver: FirExpression?,
     ): Boolean {
@@ -526,7 +563,7 @@ abstract class FirVisibilityChecker : FirComposableSessionComponent<FirVisibilit
         return when (val ownerLookupTag = symbol.getOwnerLookupTag()) {
             null -> {
                 // Top-level: visible in file
-                canSeePrivateTopLevelDeclarationFromFile(session, useSiteFile, symbol)
+                useSiteFile != null && canSeePrivateTopLevelDeclarationFromFile(session, useSiteFile, symbol)
             }
             else -> {
                 // Member: visible inside parent class, including all its member classes
@@ -660,6 +697,24 @@ fun FirVisibilityChecker.isClassLikeVisible(
     )
 }
 
+fun FirVisibilityChecker.isVisibleFromClass(
+    symbol: FirBasedSymbol<*>,
+    session: FirSession,
+    useSiteClassSymbol: FirClassSymbol<*>,
+    useSiteFileSymbol: FirFileSymbol?,
+    containingDeclarations: List<FirBasedSymbol<*>>,
+): Boolean {
+    symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
+    val declaration = symbol.fir as? FirMemberDeclaration ?: error("Not a member declaration: $symbol")
+    return isVisibleFromClass(
+        declaration,
+        session,
+        useSiteClassSymbol.fir,
+        useSiteFileSymbol?.fir,
+        containingDeclarations.map { it.fir },
+    )
+}
+
 fun FirCallableDeclaration.isVisibleInClass(parentClass: FirClass): Boolean {
     return symbol.isVisibleInClass(parentClass.symbol, symbol.resolvedStatus)
 }
@@ -673,6 +728,14 @@ fun FirBasedSymbol<*>.isVisibleInClass(parentClassSymbol: FirClassSymbol<*>): Bo
     return isVisibleInClass(parentClassSymbol, status)
 }
 
+/**
+ * Checks whether the declaration of [this] symbol with the given [status] is visible in [classSymbol] as its member, assuming that
+ * the declaration is either declared in [classSymbol] or inherited from one of its supertypes.
+ *
+ * Private declarations are never considered visible, since they cannot be inherited. This makes the function suitable for
+ * inheritance-related checks (overrides, conflicting members, fake overrides), but not for checking whether the code inside
+ * [classSymbol] can access the declaration: use [FirVisibilityChecker.isVisibleFromClass] for that.
+ */
 fun FirBasedSymbol<*>.isVisibleInClass(classSymbol: FirClassSymbol<*>, status: FirDeclarationStatus): Boolean {
     val classPackage = classSymbol.classId.packageFqName
     val packageName = when (this) {
