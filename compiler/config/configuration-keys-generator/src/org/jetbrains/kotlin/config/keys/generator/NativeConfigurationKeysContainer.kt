@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.konan.AllocationMode
 import org.jetbrains.kotlin.backend.konan.LlvmVariant
 import org.jetbrains.kotlin.backend.konan.TestRunnerKind
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
+import org.jetbrains.kotlin.konan.library.SerializedKlibDAG
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -86,4 +87,8 @@ object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.ko
     val KONAN_MANIFEST_NATIVE_TARGETS by key<List<KonanTarget>>("Value of native_targets property to write in manifest.")
     val LLVM_MODULE_PASSES by key<String>("LLVM passes to run instead of module optimization pipeline.")
     val LLVM_LTO_PASSES by key<String>("LLVM passes to run instead of LTO optimization pipeline.")
+    val SERIALIZED_KLIB_DAG by key<SerializedKlibDAG>(
+        "A wrapper over the DAG of libraries that the compiler needs to build static caches for." +
+                " It's saved in the compiler configuration for spawned static cache compilation to avoid recomputing the DAG."
+    )
 }
