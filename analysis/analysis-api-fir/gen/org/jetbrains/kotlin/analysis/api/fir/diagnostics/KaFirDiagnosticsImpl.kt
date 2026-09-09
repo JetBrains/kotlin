@@ -6009,6 +6009,12 @@ internal class JvmExposeBoxedCanBeReplacedWithJvmNameImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmExposeBoxedCanBeReplacedWithJvmName
 
+internal class JvmExposeBoxedNameIsNotJavaIdentifierImpl(
+    override val name: String,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmExposeBoxedNameIsNotJavaIdentifier
+
 internal class WrongTypeForJavaOverrideImpl(
     override val override: KaCallableSymbol,
     override val base: KaCallableSymbol,
