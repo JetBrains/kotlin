@@ -2992,6 +2992,18 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("explicitBackingFieldScript.kts")
+    public void testExplicitBackingFieldScript() {
+      run("explicitBackingFieldScript.kts");
+    }
+
+    @Test
+    @TestMetadata("explicitBackingFieldWithImplicitType.kt")
+    public void testExplicitBackingFieldWithImplicitType() {
+      run("explicitBackingFieldWithImplicitType.kt");
+    }
+
+    @Test
     @TestMetadata("finalPropertyInInterface.kt")
     public void testFinalPropertyInInterface() {
       run("finalPropertyInInterface.kt");

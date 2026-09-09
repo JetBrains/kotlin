@@ -270,6 +270,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("annotationOnExplicitBackingField.kt")
+    public void testAnnotationOnExplicitBackingField() {
+      run("annotationOnExplicitBackingField.kt");
+    }
+
+    @Test
     @TestMetadata("annotationOnReturnType.kt")
     public void testAnnotationOnReturnType() {
       run("annotationOnReturnType.kt");
@@ -1550,6 +1556,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("explicitBackingField.kt")
+    public void testExplicitBackingField() {
+      run("explicitBackingField.kt");
+    }
+
+    @Test
     @TestMetadata("initializerConflict.kt")
     public void testInitializerConflict() {
       run("initializerConflict.kt");
@@ -1943,6 +1955,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     @TestMetadata("incExpressionScript.kts")
     public void testIncExpressionScript() {
       run("incExpressionScript.kts");
+    }
+
+    @Test
+    @TestMetadata("insideExplicitBackingFieldInitializer.kt")
+    public void testInsideExplicitBackingFieldInitializer() {
+      run("insideExplicitBackingFieldInitializer.kt");
     }
 
     @Test
@@ -2851,6 +2869,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     @TestMetadata("definitelyNotNullType.kt")
     public void testDefinitelyNotNullType() {
       run("definitelyNotNullType.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitBackingFieldType.kt")
+    public void testExplicitBackingFieldType() {
+      run("explicitBackingFieldType.kt");
     }
 
     @Test

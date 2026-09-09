@@ -252,6 +252,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("annotationOnExplicitBackingField.kt")
+    public void testAnnotationOnExplicitBackingField() {
+      run("annotationOnExplicitBackingField.kt");
+    }
+
+    @Test
     @TestMetadata("annotationOnReturnType.kt")
     public void testAnnotationOnReturnType() {
       run("annotationOnReturnType.kt");
@@ -1208,6 +1214,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("explicitBackingField.kt")
+    public void testExplicitBackingField() {
+      run("explicitBackingField.kt");
+    }
+
+    @Test
     @TestMetadata("initializerConflict.kt")
     public void testInitializerConflict() {
       run("initializerConflict.kt");
@@ -1475,6 +1487,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("incExpression.kt")
     public void testIncExpression() {
       run("incExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("insideExplicitBackingFieldInitializer.kt")
+    public void testInsideExplicitBackingFieldInitializer() {
+      run("insideExplicitBackingFieldInitializer.kt");
     }
 
     @Test
@@ -2161,6 +2179,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("definitelyNotNullType.kt")
     public void testDefinitelyNotNullType() {
       run("definitelyNotNullType.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitBackingFieldType.kt")
+    public void testExplicitBackingFieldType() {
+      run("explicitBackingFieldType.kt");
     }
 
     @Test

@@ -101,6 +101,18 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   }
 
   @Test
+  @TestMetadata("explicitBackingField.kt")
+  public void testExplicitBackingField() {
+    run("explicitBackingField.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitBackingFieldInitializer.kt")
+  public void testExplicitBackingFieldInitializer() {
+    run("explicitBackingFieldInitializer.kt");
+  }
+
+  @Test
   @TestMetadata("extensionFunction.kt")
   public void testExtensionFunction() {
     run("extensionFunction.kt");
