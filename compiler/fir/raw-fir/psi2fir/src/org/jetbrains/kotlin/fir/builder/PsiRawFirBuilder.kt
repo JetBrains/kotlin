@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.ScriptNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.types.Variance
@@ -1495,7 +1496,7 @@ open class PsiRawFirBuilder(
             statementsSetup: MutableList<FirElement>.() -> Unit,
         ): FirReplSnippet {
             val snippetName = firSnippetName(fileName)
-            val snippetClassName = NameUtils.getSnippetTargetClassName(snippetName)
+            val snippetClassName = ScriptNames.getSnippetTargetClassName(snippetName)
             val classSymbol = FirRegularClassSymbol(ClassId(context.packageFqName, snippetClassName))
 
             val snippetSymbol = FirReplSnippetSymbol(classSymbol)

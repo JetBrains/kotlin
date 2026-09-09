@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.name.ScriptNames
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -85,7 +85,7 @@ internal class ScriptsToClassesLowering(
             startOffset = 0
             endOffset = fileEntry.maxOffset
             origin = IrDeclarationOrigin.SCRIPT_CLASS
-            name = NameUtils.getScriptTargetClassName(irScript.name)
+            name = ScriptNames.getScriptTargetClassName(irScript.name)
             kind = ClassKind.CLASS
             visibility = DescriptorVisibilities.PUBLIC
             modality = Modality.FINAL

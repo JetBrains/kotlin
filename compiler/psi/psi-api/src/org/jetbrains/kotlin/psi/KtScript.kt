@@ -11,7 +11,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.name.ScriptNames
 import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 
@@ -47,9 +47,9 @@ open class KtScript : KtNamedDeclarationStub<KotlinScriptStub>, KtDeclarationCon
 
         @OptIn(KtExperimentalApi::class)
         val fileBasedName = if (isReplSnippet) {
-            NameUtils.getSnippetTargetClassName(fileName)
+            ScriptNames.getSnippetTargetClassName(fileName)
         } else {
-            NameUtils.getScriptNameForFile(fileName)
+            ScriptNames.getScriptNameForFile(fileName)
         }
 
         return containingKtFile.packageFqName.child(fileBasedName)

@@ -5,6 +5,8 @@ plugins {
 }
 
 dependencies {
+    api(project(":core:util.runtime"))
+    implementation(project(":core:error.handling"))
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":analysis:analysis-api"))
     implementation(kotlinxCollectionsImmutable())
