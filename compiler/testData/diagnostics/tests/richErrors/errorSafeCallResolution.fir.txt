@@ -1,0 +1,31 @@
+FILE: errorSafeCallResolution.kt
+    public final error class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final error class Bar : R|kotlin/Any| {
+        public constructor(): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract fun memberFun(): R|union(kotlin/String | Bar)|
+
+        public abstract val memberVal: R|union(kotlin/String | Bar)|
+            public get(): R|union(kotlin/String | Bar)|
+
+    }
+    public final fun test(a: R|union(kotlin/String | Foo)|, b: R|union(C | Foo)|, c: R|union(Foo | Bar)|): R|kotlin/Unit| {
+        lval x1: R|union(kotlin/Int | Foo)| = R|<local>/a||.{ $subj$.R|kotlin/String.length| }
+        lval x2: R|union(kotlin/String | Bar | Foo)| = R|<local>/b||.{ $subj$.R|/C.memberFun|() }
+        lval x3: R|union(kotlin/String | Bar | Foo)| = R|<local>/b||.{ $subj$.R|/C.memberVal| }
+        lval x4: R|union(kotlin/String | Foo | Bar)| = R|<local>/c||.{ $subj$.R|kotlin/toString|() }
+        lval x5: R|kotlin/Int| = String()|.{ $subj$.R|kotlin/String.length| }
+    }
