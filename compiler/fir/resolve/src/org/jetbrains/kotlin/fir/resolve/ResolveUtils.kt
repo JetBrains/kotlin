@@ -63,7 +63,6 @@ import org.jetbrains.kotlin.types.model.anySuperTypeConstructor
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
@@ -924,19 +923,4 @@ fun FirScope.toResolvedSymbolOrigin(): FirResolvedSymbolOrigin? = when (this) {
     is FirPackageMemberScope -> FirResolvedSymbolOrigin.Package
     is FirAbstractSimpleImportingScope -> FirResolvedSymbolOrigin.ExplicitImport
     else -> null
-}
-
-fun FirFunctionCall.isArrayOfCall(session: FirSession): Boolean {
-    val function = getOriginalFunction() ?: return false
-    return function.isArrayOfFunction(session, this.argumentList)
-}
-
-private fun FirFunctionCall.getOriginalFunction(): FirNamedFunctionSymbol? {
-    val symbol: FirBasedSymbol<*>? = when (val reference = calleeReference) {
-        is FirResolvedErrorReference -> reference.resolvedSymbol
-        is FirResolvedNamedReference -> reference.resolvedSymbol
-        is FirNamedReferenceWithCandidate -> reference.candidateSymbol
-        else -> null
-    }
-    return symbol as? FirNamedFunctionSymbol
 }
