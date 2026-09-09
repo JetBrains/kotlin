@@ -290,6 +290,18 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this is ConeIntersectionType
     }
 
+    override fun TypeConstructorMarker.isUnion(): Boolean {
+        return this is ConeUnionType
+    }
+
+    override fun TypeConstructorMarker.getPrimaryTypeOfUnion(): KotlinTypeMarker? {
+        return (this as? ConeUnionType)?.primaryType
+    }
+
+    override fun TypeConstructorMarker.getRichErrorsOfUnion(): List<KotlinTypeMarker> {
+        return (this as? ConeUnionType)?.richErrorTypes.orEmpty()
+    }
+
     override fun TypeConstructorMarker.isClassTypeConstructor(): Boolean {
         // See KT-55383
         return this is ConeClassLikeLookupTag || this is ConeStubTypeConstructor

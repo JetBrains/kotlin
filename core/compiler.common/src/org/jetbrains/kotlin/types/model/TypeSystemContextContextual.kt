@@ -185,6 +185,15 @@ context(c: TypeSystemContext)
 fun TypeConstructorMarker.isIntersection(): Boolean = with(c) { isIntersection() }
 
 context(c: TypeSystemContext)
+fun TypeConstructorMarker.isUnion(): Boolean = with(c) { isUnion() }
+
+context(c: TypeSystemContext)
+fun TypeConstructorMarker.getPrimaryTypeOfUnion(): KotlinTypeMarker? = with(c) { getPrimaryTypeOfUnion() }
+
+context(c: TypeSystemContext)
+fun TypeConstructorMarker.getRichErrorsOfUnion(): List<KotlinTypeMarker> = with(c) { getRichErrorsOfUnion() }
+
+context(c: TypeSystemContext)
 fun TypeConstructorMarker.isClassTypeConstructor(): Boolean = with(c) { isClassTypeConstructor() }
 
 context(c: TypeSystemContext)
