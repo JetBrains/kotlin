@@ -13,9 +13,11 @@ import org.junit.platform.engine.FilterResult.excluded
 import org.junit.platform.engine.FilterResult.included
 import org.junit.platform.engine.TestDescriptor
 import org.junit.platform.launcher.PostDiscoveryFilter
+import java.nio.ByteBuffer
+import java.security.MessageDigest
 import java.util.zip.CRC32
+import java.util.zip.Checksum
 import kotlin.jvm.optionals.getOrNull
-import kotlin.math.absoluteValue
 
 class TestShardingPostDiscoveryFilter : PostDiscoveryFilter {
 
@@ -23,19 +25,27 @@ class TestShardingPostDiscoveryFilter : PostDiscoveryFilter {
     private val totalShards = System.getProperty("tests.totalShards")?.toIntOrNull() ?: -1
     private val shardSeed = System.getProperty("tests.shardSeed")?.toIntOrNull() ?: 0
 
+    /* Check inputs */
+    init {
+        if (currentShard != -1 && currentShard !in 1..totalShards) {
+            error("Invalid 'currentShard': $currentShard; Expected 1..$totalShards")
+        }
+
+        if (totalShards != -1 && totalShards < 1) {
+            error("Invalid 'totalShards': $totalShards; Expected >= 1")
+        }
+    }
+
+    // MessageDigest is mutable: reuse one instance per thread, without sharing its state between threads.
+    private val hashing: ThreadLocal<MessageDigest> = ThreadLocal.withInitial {
+        MessageDigest.getInstance("SHA-1")
+    }
+
     override fun apply(test: TestDescriptor): FilterResult {
         if (currentShard < 0 || totalShards < 0) return included("No shards configured")
         val isTestMethod = test.type == TestDescriptor.Type.TEST || test.mayRegisterTests()
         if (!isTestMethod) return included("Classes/Containers are always enabled")
-        val checksum = CRC32()
-
-        checksum.update(shardSeed)
-        checksum.update(shardSeed.shr(8))
-        checksum.update(shardSeed.shr(16))
-        checksum.update(shardSeed.shr(24))
-
-        checksum.update(distributionKey(test).encodeToByteArray())
-        val thisTestShard = (checksum.value.absoluteValue % totalShards).toInt() + 1
+        val thisTestShard = calculateTestShard(test)
 
         return if (thisTestShard == currentShard) {
             included("Current shard: '$currentShard'. Test shard: '$thisTestShard'")
@@ -45,8 +55,56 @@ class TestShardingPostDiscoveryFilter : PostDiscoveryFilter {
     }
 
     /**
-     * Simple ClassValue implementation to query if a class declares any method with the given annotation.
-     * The result is stored within the Class directly and is cached
+     * Uses [rendezvous hashing](https://en.wikipedia.org/wiki/Rendezvous_hashing): give each shard a deterministic,
+     * random-looking score for this test's key, then choose the shard with the highest score.
+     *
+     * With the same seed and key, each shard keeps its score regardless of the total number of shards.
+     * Increasing totalShards only moves tests that a new shard wins. Decreasing it only moves tests whose shard was removed.
+     * This relies on keeping the remaining shard IDs unchanged.
+     *
+     * Scores spread keys across shards, but do not guarantee equal test counts or running times.
+     */
+    private fun calculateTestShard(test: TestDescriptor): Int {
+        var selectedShard = 1
+        var highestWeight = ULong.MIN_VALUE
+        val hash = hashing.get()
+
+        val distributionKey = distributionKey(test).encodeToByteArray()
+
+        for (shard in 1..totalShards) {
+            // Each score hashes only this (seed, shard, key), independently of previously visited shards.
+            hash.reset()
+
+            // Encode the seed in four bytes, the least significant byte first. Changing it reshuffles assignments.
+            hash.update(shardSeed.toByte())
+            hash.update(shardSeed.shr(8).toByte())
+            hash.update(shardSeed.shr(16).toByte())
+            hash.update(shardSeed.shr(24).toByte())
+
+            // Encode the shard ID in four bytes too, so the fields have fixed boundaries
+            hash.update(shard.toByte())
+            hash.update(shard.shr(8).toByte())
+            hash.update(shard.shr(16).toByte())
+            hash.update(shard.shr(24).toByte())
+
+            hash.update(distributionKey)
+            // Use the first eight digest bytes as an unsigned score
+            val weight = ByteBuffer.wrap(hash.digest()).getLong().toULong()
+
+            // On equal scores, keep the lower shard ID, since shards are visited in ascending order.
+            if (weight > highestWeight) {
+                selectedShard = shard
+                highestWeight = weight
+            }
+        }
+
+        return selectedShard
+    }
+
+
+    /**
+     * Checks the class and its superclasses for a method with the given annotation.
+     * ClassValue caches the answer per class, so tests in the same class do not repeat the reflection work.
      */
     class HasMethodWithAnnotationClassValue(val annotationClass: Class<out Annotation>) : ClassValue<Boolean>() {
         override fun computeValue(type: Class<*>): Boolean? {
@@ -73,8 +131,8 @@ class TestShardingPostDiscoveryFilter : PostDiscoveryFilter {
     val hasAfterAll = HasMethodWithAnnotationClassValue(AfterAll::class.java)
 
     /**
-     * Creates a String based key, which will be used to distribute a test across shards.
-     * Returning the same key, will result in the same shard being assigned for the test.
+     * Chooses the unit that moves between shards: an individual test or a whole class.
+     * Tests with the same key always go to the same shard for a given seed and shard count.
      */
     private fun distributionKey(test: TestDescriptor): String {
         val uniqueId = test.uniqueId
@@ -95,17 +153,14 @@ class TestShardingPostDiscoveryFilter : PostDiscoveryFilter {
         return when (uniqueId.engineId.get()) {
             "junit-jupiter" -> {
                 /*
-                Any @BeforeAll or @AfterAll methods will use the closest class descriptor as sharding key.
-                While sharding, based upon methods, can still be OK for many of those tests, some tests may
-                contain actual heavy lifting within their @BeforeAll and therefore shall not be sharded.
+                If the class has @BeforeAll or @AfterAll methods (including inherited ones), use its class ID as the key.
+                This keeps the class's tests together instead of repeating potentially expensive setup and teardown across shards.
                  */
                 if (classDescriptor != null && (hasBeforeAll[classDescriptor.testClass] || hasAfterAll[classDescriptor.testClass])) {
                     classDescriptor.uniqueId.toString()
                 }
                 /*
-                Using the test's uniqueId allows sharding test on the actual test-method level.
-                This more fine-granular scope will increase the number of distributable entities within shards
-                which allows this pseudo random approach produce well-balanced shards of test
+                Otherwise, use the individual test's ID. More independent keys give the hash more chances to balance the shards.
                  */
                 else uniqueId.toString()
             }
