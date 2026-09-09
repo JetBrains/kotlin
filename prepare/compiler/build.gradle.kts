@@ -355,7 +355,7 @@ val proguard = tasks.register<CacheableProguardTask>("proguard") {
 }
 
 val pack: TaskProvider<out DefaultTask> = if (kotlinBuildProperties.proguard) proguard else packCompiler
-val distDir = rootProject.extra["distDir"] as String
+val distDir = "$rootDir/dist"
 
 val jar = runtimeJar {
     dependsOn(pack)
