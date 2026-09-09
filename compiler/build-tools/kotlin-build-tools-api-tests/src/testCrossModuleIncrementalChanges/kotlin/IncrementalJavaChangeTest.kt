@@ -18,16 +18,15 @@ import org.junit.jupiter.api.DisplayName
 /**
  * Build-system-agnostic part of the former KGP `IncrementalJavaChangeIT`: cross-module incremental compilation
  * with Java source and ABI changes in a two-module `lib` (depended on by) `app` project.
- *
- * Precise Java tracking is only implemented for K1 (see KT-57147), so with the default K2 frontend the
- * `PRECISE_JAVA_TRACKING` option has no observable effect. Therefore only the non-precise behavior is covered here,
- * with the option set explicitly to make that expectation obvious.
  */
 @DisplayName("Incremental compilation with Java source and ABI changes")
 class IncrementalJavaChangeTest : BaseCompilationTest() {
     private val javaClassFile = "src/main/java/bar/JavaClass.java"
 
     // shared between tests, so that modules with the same configuration are compiled only once, see `Scenario.module`
+
+    // Pinned explicitly: precise Java tracking is K1-only (KT-57147) and force-disabled on K2,
+    // so only the non-precise behavior is covered here.
     private val disablePreciseJavaTracking: (JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit = {
         it[PRECISE_JAVA_TRACKING] = false
     }
