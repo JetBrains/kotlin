@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.expressions.IrTry
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.irCastIfNeeded
@@ -43,7 +44,8 @@ abstract class LazyGlobalInitializationGenerator {
 
     private fun IrBuilderWithScope.generateStaticInitializationStateChecks(
         getStateField: IrGetField,
-        klass: IrClass?
+        klass: IrClass?,
+        returnValue: IrExpression,
     ): List<IrStatement> {
 
         val state = scope.createTemporaryVariable(
@@ -56,21 +58,24 @@ abstract class LazyGlobalInitializationGenerator {
             state,
             irIfThen(
                 irNot(irGet(state)), // state == InitializationState.INITIALIZED
-                irReturnUnit()
+                irReturn(returnValue),
             ),
-            irIfThen(
-                irEqeqeq(irGet(state), irInt(InitializationState.ERROR)),
-                staticInitializationFailureBranch(klass)
-            )
+            generateErrorStateCheck(state, klass),
         )
     }
+
+    internal fun IrBuilderWithScope.generateErrorStateCheck(state: IrVariable, klass: IrClass?): IrExpression =
+        irIfThen(
+            irEqeqeq(irGet(state), irInt(InitializationState.ERROR)),
+            staticInitializationFailureBranch(klass)
+        )
 
     protected open fun IrBuilderWithScope.undefinedOrNull(): IrExpression = irNull()
 
     protected open val catchParameterType: IrType
         get() = backendContext.irBuiltIns.throwableType
 
-    internal fun createStateField(name: Name, origin: IrDeclarationOrigin): IrField = backendContext.irFactory.buildField {
+    fun createStateField(name: Name, origin: IrDeclarationOrigin): IrField = backendContext.irFactory.buildField {
         this.name = name
         this.origin = origin
         type = backendContext.irBuiltIns.intType
@@ -102,38 +107,49 @@ abstract class LazyGlobalInitializationGenerator {
             this.visibility = visibility
             returnType = backendContext.irBuiltIns.unitType
         }
-        return initFunction.apply {
-            val builder = backendContext.createIrBuilder(symbol)
-            body = backendContext.irFactory.createBlockBody(startOffset, endOffset) {
-                with(builder) {
-                    statements += generateStaticInitializationStateChecks(irGetField(null, stateField), klass)
-                    statements += irSetField(null, stateField, irInt(InitializationState.INITIALIZED))
-                    val allInitializers = irComposite {
-                        beforeAll()
-                        for (initializer in initializers) {
-                            initializer.setDeclarationsParent(initFunction)
-                        }
-                        +initializers
-                    }
-                    val catchParameter = scope.createTemporaryVariableDeclaration(
-                        irType = catchParameterType,
-                        nameHint = "reason",
-                        origin = IrDeclarationOrigin.CATCH_PARAMETER,
-                        startOffset = UNDEFINED_OFFSET,
-                        endOffset = UNDEFINED_OFFSET,
-                        inventUniqueName = false,
-                    )
-                    val catchResult = irComposite {
-                        +irSetField(null, stateField, irInt(InitializationState.ERROR))
-                        +irCall(this@LazyGlobalInitializationGenerator.backendContext.symbols.staticInitializationFailure).apply {
-                            arguments[0] = irCastIfNeeded(irGet(catchParameter), context.irBuiltIns.throwableType)
-                            arguments[1] = undefinedOrNull()
-                        }
-                    }
-                    statements += irTry(context.irBuiltIns.unitType, allInitializers, listOf(irCatch(catchParameter, catchResult)), null)
-                }
+        initFunction.body = backendContext.createIrBuilder(initFunction.symbol).irBlockBody {
+            generateStaticInitializerBody(stateField, klass, initializers, beforeAll, irUnit())
+        }
+        return initFunction
+    }
+
+    fun IrBlockBodyBuilder.generateStaticInitializerBody(
+        stateField: IrField,
+        klass: IrClass?,
+        initializers: List<IrStatement>,
+        beforeAll: IrBlockBuilder.() -> Unit = {},
+        returnValue: IrExpression,
+    ) {
+        val initFunction = parent
+        +generateStaticInitializationStateChecks(irGetField(null, stateField), klass, returnValue)
+        +irSetField(null, stateField, irInt(InitializationState.INITIALIZED))
+        val allInitializers = irComposite {
+            beforeAll()
+            for (initializer in initializers) {
+                initializer.setDeclarationsParent(initFunction)
+            }
+            +initializers
+        }
+        +generateInitializationExceptionHandling(stateField, allInitializers)
+    }
+
+    internal fun IrBlockBodyBuilder.generateInitializationExceptionHandling(stateField: IrField, tryResult: IrExpression): IrTry {
+        val catchParameter = scope.createTemporaryVariableDeclaration(
+            irType = catchParameterType,
+            nameHint = "reason",
+            origin = IrDeclarationOrigin.CATCH_PARAMETER,
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            inventUniqueName = false,
+        )
+        val catchResult = irComposite {
+            +irSetField(null, stateField, irInt(InitializationState.ERROR))
+            +irCall(backendContext.symbols.staticInitializationFailure).apply {
+                arguments[0] = irCastIfNeeded(irGet(catchParameter), context.irBuiltIns.throwableType)
+                arguments[1] = undefinedOrNull()
             }
         }
+        return irTry(context.irBuiltIns.unitType, tryResult, listOf(irCatch(catchParameter, catchResult)), null)
     }
 }
 
