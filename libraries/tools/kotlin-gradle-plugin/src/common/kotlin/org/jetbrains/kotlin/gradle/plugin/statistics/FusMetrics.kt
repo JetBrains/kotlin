@@ -70,9 +70,9 @@ internal object ExecutedTaskMetrics : FusMetrics {
     }
 
     internal fun collectMetrics(event: FinishEvent?, metricConsumer: StatisticsValuesConsumer) {
-        event?.descriptor?.name?.also {
-            getMetricToReport(it)?.also { metricConsumer.report(it, true) }
-        }
+        val name = event?.descriptor?.name ?: return
+        val metrics = getMetricToReport(name) ?: return
+        metricConsumer.report(metrics, value = true)
     }
 }
 
@@ -137,9 +137,9 @@ internal object CompilerArgumentMetrics : FusMetrics {
         pluginPatterns: List<Pair<BooleanMetrics, String>>,
     ) {
         val pluginJars = args.pluginClasspaths.map { it.replace("\\", "/").split("/").last() }
-        for (pluginPattern in pluginPatterns) {
-            if (pluginJars.any { it.matches(pluginPattern.second.toRegex()) }) {
-                report(pluginPattern.first, true)
+        for ((metrics, pattern) in pluginPatterns) {
+            if (pluginJars.any { it.matches(pattern.toRegex()) }) {
+                report(metrics, value = true)
             }
         }
     }
@@ -186,10 +186,10 @@ internal object NativeCompilerOptionMetrics : FusMetrics {
         metricsConsumer: StatisticsValuesConsumer,
     ) {
         metricsConsumer.report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
-        compilerOptions.apiVersion.orNull?.also { v ->
+        compilerOptions.apiVersion.orNull.also { v ->
             metricsConsumer.report(StringMetrics.KOTLIN_API_VERSION, v.version)
         }
-        compilerOptions.languageVersion.orNull?.also { v ->
+        compilerOptions.languageVersion.orNull.also { v ->
             metricsConsumer.report(StringMetrics.KOTLIN_LANGUAGE_VERSION, v.version)
         }
         if (separateKmpCompilationEnabled) {
@@ -284,10 +284,10 @@ internal object CompileKotlinTaskMetrics : FusMetrics {
         metricsContainer: StatisticsValuesConsumer,
     ) {
         metricsContainer.report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
-        compilerOptions.apiVersion.orNull?.also { v ->
+        compilerOptions.apiVersion.orNull.also { v ->
             metricsContainer.report(StringMetrics.KOTLIN_API_VERSION, v.version)
         }
-        compilerOptions.languageVersion.orNull?.also { v ->
+        compilerOptions.languageVersion.orNull.also { v ->
             metricsContainer.report(StringMetrics.KOTLIN_LANGUAGE_VERSION, v.version)
         }
         if (name.contains("Test"))
@@ -373,6 +373,7 @@ internal object KotlinJsBinaryTypeMetrics : FusMetrics {
             val isLibraryConfigured = jsTarget.binaries.withType<Library>().isNotEmpty()
             val isExecutableConfigured = jsTarget.binaries.withType<Executable>().isNotEmpty()
             project.addConfigurationMetrics { metricContainer ->
+                @Suppress("KotlinConstantConditions")
                 when {
                     isLibraryConfigured && isExecutableConfigured -> metricContainer.put(StringListMetrics.JS_BINARY_TYPE, "both")
                     isLibraryConfigured -> metricContainer.put(StringListMetrics.JS_BINARY_TYPE, "library")
@@ -387,6 +388,7 @@ internal object KotlinJsBinaryTypeMetrics : FusMetrics {
 internal object KotlinJsIrTargetMetrics : FusMetrics {
     internal fun collectMetrics(isBrowserConfigured: Boolean, isNodejsConfigured: Boolean, project: Project) {
         project.addConfigurationMetrics { metricContainer ->
+            @Suppress("KotlinConstantConditions")
             when {
                 isBrowserConfigured && isNodejsConfigured -> metricContainer.put(StringListMetrics.JS_TARGET_MODE, "both")
                 isBrowserConfigured -> metricContainer.put(StringListMetrics.JS_TARGET_MODE, "browser")
@@ -414,6 +416,7 @@ internal object KotlinJsBrowserTestMetrics : FusMetrics {
 
     private fun KotlinBrowserTestRunnerDsl.optionsChangedFromDefaults(): List<String> = mutableListOf<String>().apply {
         if (testsLocation.get() !is KotlinDefaultJsTestLocation) add("testsLocation")
+        @Suppress("SimplifyBooleanWithConstants")
         if (headless.get() != KotlinJsBrowserTestImpl.DEFAULT_HEADLESS) add("headless")
         if (launchArgs.get().isNotEmpty()) add("launchArgs")
         if (launchEnvironmentVariables.get().isNotEmpty()) add("launchEnvironmentVariables")
@@ -503,8 +506,8 @@ internal object KotlinSourceSetMetrics : FusMetrics {
     }
 
     private suspend fun Project.reportGeneratedSourcesUsage() {
-        project.kotlinExtension.awaitSourceSets().configureEach {
-            if (it.generatedKotlin.srcDirs.isNotEmpty()) {
+        project.kotlinExtension.awaitSourceSets().configureEach { sourceSet ->
+            if (sourceSet.generatedKotlin.srcDirs.isNotEmpty()) {
                 project.addConfigurationMetrics {
                     it.put(BooleanMetrics.KOTLIN_GENERATED_SOURCES_USED, true)
                 }
