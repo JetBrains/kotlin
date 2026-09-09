@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi.stubs
 
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtIdeApi
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 
 /**
@@ -34,6 +35,7 @@ sealed interface KotlinFileStubKind {
          *
          * [FqName.ROOT] is used if the file has no explicit package.
          */
+        @KtImplementationDetail
         val packageFqName: FqName
 
         /**
@@ -83,6 +85,7 @@ sealed interface KotlinFileStubKind {
              * ```
              * Results to `another.pack.Doo`.
              */
+            @KtIdeApi
             val facadeFqName: FqName
 
             /**
@@ -96,6 +99,7 @@ sealed interface KotlinFileStubKind {
                  * ### Example
                  * If the [facadeFqName] is `com.example.FooKt`, then this is `FooKt`.
                  */
+                @KtImplementationDetail
                 val partSimpleName: String
             }
 
@@ -127,6 +131,7 @@ sealed interface KotlinFileStubKind {
                  *```
                  * [facadeFqName] is `test.MultifileClassKt`, [facadePartSimpleNames] is `["MultifileClass__MultifileClassKt", "MultifileClass__SecondPartKt"]`.
                  */
+                @KtIdeApi
                 val facadePartSimpleNames: List<String>
             }
         }
@@ -143,6 +148,7 @@ sealed interface KotlinFileStubKind {
          * A human-readable error message that describes the reason why the file stub is invalid.
          * It is used instead of decompiled text.
          */
+        @KtImplementationDetail
         val errorMessage: String
     }
 }

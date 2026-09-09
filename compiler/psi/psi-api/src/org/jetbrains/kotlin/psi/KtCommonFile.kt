@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(KtIdeApi::class, KtImplementationDetail::class)
+
 package org.jetbrains.kotlin.psi
 
 import com.intellij.extapi.psi.PsiFileBase
