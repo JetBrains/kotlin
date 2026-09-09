@@ -29,7 +29,7 @@ class ReachabilityMetadataGeneratingCompilerRunner(private val javaHome: String)
         arguments: List<String>,
         classpath: List<File>,
         jvmArgs: List<String> = emptyList(),
-    ): Pair<Int, String> {
+    ): CompilerInvocationResult {
         val cmd = buildList {
             add(javaExecutable)
             add("--add-opens"); add("java.base/java.lang=ALL-UNNAMED")
@@ -49,14 +49,13 @@ class ReachabilityMetadataGeneratingCompilerRunner(private val javaHome: String)
                 add("-cp")
                 add(classpath.joinToString(File.pathSeparator))
             }
-            add("-Xdisable-default-scripting-plugin")
             addAll(arguments)
         }
         val process = ProcessBuilder(cmd)
             .directory(workingDir)
-            .redirectErrorStream(true)
             .start()
         val out = process.inputStream.reader().use { it.readText() }
-        return process.waitFor() to out
+        val err = process.errorStream.reader().use { it.readText() }
+        return CompilerInvocationResult(process.waitFor(), out, err)
     }
 }

@@ -78,7 +78,7 @@ abstract class AbstractNativeImageCodegenTest {
     abstract fun runCompiler(
         arguments: List<String>,
         classpath: List<File>,
-    ): Pair<Int, String>
+    ): CompilerInvocationResult
 
     protected open fun assertCompilerOutput(exitCode: Int, compilerStdout: String, directives: RegisteredDirectives) {
         assertEquals(0, exitCode, "compilation failed:\n$compilerStdout")
@@ -96,7 +96,7 @@ abstract class AbstractNativeImageCodegenTest {
         if (withReflect) listOf(reflectClasspath) else emptyList()
 
     protected open fun buildCompilerArgs(
-        boxFile: File,
+        testFile: File,
         outDir: File,
         directives: RegisteredDirectives,
         withFullJdk: Boolean,
@@ -110,7 +110,7 @@ abstract class AbstractNativeImageCodegenTest {
                 add(materializeHelperFile(path).absolutePath)
             }
         }
-        add(boxFile.absolutePath)
+        add(testFile.absolutePath)
         add("-d")
         add(outDir.absolutePath)
     }
@@ -119,6 +119,14 @@ abstract class AbstractNativeImageCodegenTest {
         addAll(compilationClasspath)
         if (withReflect) add(reflectClasspath)
         if (!withFullJdk) add(mockJdkRtJar)
+    }
+
+    protected open fun parseDirectives(source: String): RegisteredDirectives {
+        val parser = RegisteredDirectivesParser(DIRECTIVES_CONTAINER, JUnit5Assertions)
+        for (line in source.lineSequence()) {
+            if (line.startsWith("//")) parser.parse(line)
+        }
+        return parser.build()
     }
 
     private fun RegisteredDirectives.valueDirectiveFlags(): List<String> = listOfNotNull(
@@ -207,14 +215,6 @@ abstract class AbstractNativeImageCodegenTest {
                 ReplacingSourceTransformer("BACKEND_UNDER_TEST", "\"$BACKEND\""),
             )
             return clearTextFromDiagnosticMarkup(transformers.fold(source) { acc, transformer -> transformer.invokeForTestFile(acc) })
-        }
-
-        private fun parseDirectives(source: String): RegisteredDirectives {
-            val parser = RegisteredDirectivesParser(DIRECTIVES_CONTAINER, JUnit5Assertions)
-            for (line in source.lineSequence()) {
-                if (line.startsWith("//")) parser.parse(line)
-            }
-            return parser.build()
         }
 
         private fun isBackendIgnored(directives: RegisteredDirectives): Boolean {

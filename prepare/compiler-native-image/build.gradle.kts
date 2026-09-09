@@ -37,6 +37,7 @@ val pluginsRuntime = configurations.create("pluginsRuntime") {
 dependencies {
     nativeImageClasspath(project(":kotlin-compiler-embeddable", configuration = "runtimeElements"))
     // Bundled plugins
+    nativeImageClasspath(project(":kotlin-scripting-compiler-embeddable"))
     nativeImageClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable"))
     nativeImageClasspath(project(":kotlin-allopen-compiler-plugin.embeddable"))
     nativeImageClasspath(project(":kotlin-noarg-compiler-plugin.embeddable"))
@@ -83,6 +84,7 @@ projectTests {
     testData(project(":compiler").isolated, "testData/codegen")
     testData(project.isolated, "testData/projects/box")
     testData(project.isolated, "testData/projects/dynamicPlugins")
+    testData(project.isolated, "testData/projects/scripting")
 
     testGenerator(
         "org.jetbrains.kotlin.compiler.nativeimage.GenerateNativeImageTestsKt",
@@ -113,6 +115,7 @@ projectTests {
         if (dynamicPluginsEnabled) {
             include("**/NativeImageDynamicPluginBoxTestGenerated.class")
             include("**/NativeImageDynamicLegacyPluginBoxTestGenerated.class")
+            include("**/NativeImageScriptingTestGenerated.class")
         }
         useNativeImageDist()
         usePlugins()

@@ -41,5 +41,10 @@ fun main(args: Array<String>) {
                 model("")
             }
         }
+        testGroup(testsRoot = args[0], testDataRoot = "prepare/compiler-native-image/testData/projects/scripting") {
+            testClass<AbstractNativeImageScriptingTest> {
+                model("", extension = "kts")
+            }
+        }
     }
 }

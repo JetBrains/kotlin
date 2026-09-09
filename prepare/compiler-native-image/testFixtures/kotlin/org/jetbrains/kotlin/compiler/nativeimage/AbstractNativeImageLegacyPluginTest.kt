@@ -19,12 +19,12 @@ abstract class AbstractNativeImageLegacyPluginTest : AbstractNativeImageCodegenT
     private val kotlinHome: File by lazy { ForTestCompileRuntime.distKotlincForTests() }
 
     override fun buildCompilerArgs(
-        boxFile: File,
+        testFile: File,
         outDir: File,
         directives: RegisteredDirectives,
         withFullJdk: Boolean,
     ): List<String> = buildList {
-        addAll(super.buildCompilerArgs(boxFile, outDir, directives, withFullJdk))
+        addAll(super.buildCompilerArgs(testFile, outDir, directives, withFullJdk))
         for ([pluginId, jarName, options] in directives.pluginSpecs()) {
             val jar = kotlinHome.resolve("lib").resolve(jarName)
             val pluginClasspath = when {
