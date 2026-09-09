@@ -41,13 +41,13 @@ fun <T> select3(x: T, y: T, z: T): T = x
 
 fun test(d: Derived, o: Other, dm: DerivedMarker, d1: Sealed.D1, d2: Sealed.D2) {
     // Derived <: T <: Base: Derived is the most specific bound, its Common wins over Base.Common
-    val a: Base = select(d, <!UNRESOLVED_REFERENCE!>Common<!>)
-    val b: Base = select(<!UNRESOLVED_REFERENCE!>Common<!>, d)
+    val a: Base = select(d, Common)
+    val b: Base = select(Common, d)
     val c: Base = select(d, ONLY_IN_BASE)
     val e: Base = select(d, ONLY_IN_DERIVED)
 
     // Derived <: T, Other <: T, T <: Base: Base is not the most specific, Derived and Other are unrelated
-    val f: Base = select3(d, o, <!UNRESOLVED_REFERENCE!>Common<!>)
+    val f: Base = select3(d, o, Common)
     val g: Base = select3(d, o, ONLY_IN_OTHER)
     val h: Base = select3(d, o, ONLY_IN_BASE)
 

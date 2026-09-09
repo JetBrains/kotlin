@@ -110,20 +110,37 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
 }
 
 /**
- * @return not-nullable value when resolution against at least one of the classes was successful,
- * and all the successful results refer to the same declaration.
+ * Resolves against several class bounds of the expected type variable, preferring the most specific ones:
+ * the bounds are tried from subclasses to superclasses, and once a bound provides the name, the bounds it is a subclass of
+ * are not consulted anymore. The bounds that are consulted are thus unrelated to each other,
+ * and the name must resolve to the same declaration through all of them that provide it.
+ *
+ * @return not-nullable value when resolution was successful
  */
 private fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
     originalExpression: FirPropertyAccessExpression,
     representativeClasses: Collection<FirRegularClassSymbol>,
 ): FirExpression? {
+    fun FirRegularClassSymbol.isStrictSubclassOf(other: FirRegularClassSymbol): Boolean =
+        fir.isSubclassOf(other.toLookupTag(), session, isStrict = true)
+
+    val remainingClasses = representativeClasses.toMutableList()
     var result: FirExpression? = null
-    for (representativeClass in representativeClasses) {
-        val newExpression = runContextSensitiveResolutionForPropertyAccess(originalExpression, representativeClass) ?: continue
+    while (remainingClasses.isNotEmpty()) {
+        val mostSpecificClass = remainingClasses.first { candidate ->
+            remainingClasses.none { it !== candidate && it.isStrictSubclassOf(candidate) }
+        }
+        remainingClasses.remove(mostSpecificClass)
+
+        val newExpression =
+            runContextSensitiveResolutionForPropertyAccess(originalExpression, mostSpecificClass) ?: continue
+
+        remainingClasses.removeAll { mostSpecificClass.isStrictSubclassOf(it) }
+
         if (result == null) {
             result = newExpression
         } else if (result.obtainSymbol() != newExpression.obtainSymbol()) {
-            // Different bounds of the expected type variable provide different declarations for the name,
+            // Unrelated bounds of the expected type variable provide different declarations for the name,
             // there is no way to choose between them
             return null
         }
