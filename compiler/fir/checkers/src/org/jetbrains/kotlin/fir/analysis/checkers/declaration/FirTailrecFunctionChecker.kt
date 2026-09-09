@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.isTailRec
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -67,7 +68,7 @@ object FirTailrecFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 }
                 val dispatchReceiver = functionCall.dispatchReceiver
                 val dispatchReceiverOwner = declaration.dispatchReceiverType?.toClassSymbol()
-                val sameReceiver = dispatchReceiver == null ||
+                val sameReceiver = resolvedSymbol.isStatic || dispatchReceiver == null ||
                         (dispatchReceiver is FirThisReceiverExpression && dispatchReceiver.calleeReference.boundSymbol == dispatchReceiverOwner) ||
                         dispatchReceiverOwner?.classKind?.isSingleton == true
                 if (!sameReceiver) {
