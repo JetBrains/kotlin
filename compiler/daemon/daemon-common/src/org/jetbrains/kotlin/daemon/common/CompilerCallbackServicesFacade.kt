@@ -43,6 +43,9 @@ interface CompilerCallbackServicesFacade : Remote {
     @Throws(RemoteException::class)
     fun hasEnumWhenTracker(): Boolean
 
+    @Throws(RemoteException::class)
+    fun hasImportTracker(): Boolean
+
     // ----------------------------------------------------
     // IncrementalCache
     @Throws(RemoteException::class)
@@ -102,6 +105,11 @@ interface CompilerCallbackServicesFacade : Remote {
     // EnumWhenTracker
     @Throws(RemoteException::class)
     fun enumWhenTracker_report(whenUsageClassPath: String, enumClassFqName: String)
+
+    // ---------------------------------------------------
+    // ImportTracker
+    @Throws(RemoteException::class)
+    fun importTracker_report(filePath: String, importedFqName: String)
 }
 
 
