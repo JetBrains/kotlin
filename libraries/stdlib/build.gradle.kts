@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinTargetWithNodeJsDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmWasiTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
@@ -26,7 +28,6 @@ import kotlin.io.path.copyTo
 
 plugins {
     id("common-configuration")
-    id("test-federation-convention")
     id("com.autonomousapps.dependency-analysis")
     kotlin("multiplatform")
     `maven-publish`
@@ -743,7 +744,8 @@ tasks {
         ownPackages.set(listOf("kotlin"))
     }
 
-/*    val jsJar = named("jsJar", Jar::class) {
+/*
+    val jsJar = named("jsJar", Jar::class) {
         manifestAttributes(manifest, "Main")
         manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-js"))
     }
@@ -801,11 +803,11 @@ tasks {
         }
     }
 
-    val wasmJsJar by existing(Jar::class) {
+    val wasmJsJar = named("wasmJsJar", Jar::class) {
         manifestAttributes(manifest, "Main")
         manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-wasm-js"))
     }
-    val wasmWasiJar by existing(Jar::class) {
+    val wasmWasiJar = named("wasmWasiJar", Jar::class) {
         manifestAttributes(manifest, "Main")
         manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-wasm-wasi"))
     }
