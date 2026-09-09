@@ -263,7 +263,6 @@ internal object StandaloneSessionServiceRegistrar : AnalysisApiSimpleServiceRegi
         }
     }
 
-    @OptIn(KaImplementationDetail::class)
     override fun registerProjectServices(project: MockProject) {
         project.apply {
             registerService(KotlinLifetimeTokenFactory::class.java, KotlinAlwaysAccessibleLifetimeTokenFactory::class.java)
