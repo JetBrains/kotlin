@@ -19,7 +19,8 @@ fun parseJavaToSyntaxTreeBuilder(
     charSequence: CharSequence,
     start: Int,
 ): SyntaxTreeBuilder {
-    val lexer = JavaSyntaxDefinition.createLexer(LanguageLevel.HIGHEST)
+    // `JDK_X` enables experimental features too
+    val lexer = JavaSyntaxDefinition.createLexer(LanguageLevel.JDK_X)
 
     val syntaxTreeBuilder = SyntaxTreeBuilderFactory.builder(
         charSequence,
