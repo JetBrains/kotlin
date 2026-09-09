@@ -802,72 +802,30 @@ internal class StubBasedFirMemberDeserializer(
         return simpleFunction
     }
 
-    @OptIn(SuspiciousFakeSourceCheck::class)
     fun loadConstructor(
         constructor: KtConstructor<*>,
         classOrObject: KtClassOrObject,
         classBuilder: FirRegularClassBuilder,
     ): FirConstructor {
-        val relativeClassName = c.relativeClassName!!
-        val callableId = CallableId(c.packageFqName, relativeClassName, relativeClassName.shortName())
-        val symbol = FirConstructorSymbol(callableId)
+        val symbol = createConstructorSymbol()
         val local = c.childContext(constructor, containingDeclarationSymbol = symbol)
-        val isPrimary = constructor is KtPrimaryConstructor
 
-        val typeParameters = classBuilder.typeParameters
-
-        val delegatedSelfType = buildResolvedTypeRef {
-            coneType = ConeClassLikeTypeImpl(
-                classBuilder.symbol.toLookupTag(),
-                typeParameters.map { ConeTypeParameterType(it.symbol.toLookupTag(), false) }.toTypedArray(),
-                false
-            )
-            source = KtFakePsiSourceElement(classOrObject, KtFakeSourceElementKind.ClassSelfTypeRef)
-        }
-
-        return if (isPrimary) {
-            FirPrimaryConstructorBuilder()
-        } else {
-            FirConstructorBuilder()
-        }.apply {
-            moduleData = c.moduleData
-            source = KtRealPsiSourceElement(constructor)
-            origin = initialOrigin
-            returnTypeRef = delegatedSelfType
-            val visibility = constructor.visibility
-            val isInner = classBuilder.status.isInner
-            status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
-                visibility,
-                Modality.FINAL,
-                visibility.toLazyEffectiveVisibility(classBuilder.symbol)
-            ).apply {
-                isExpect = constructor.hasExpectModifier() || classOrObject.hasExpectModifier()
-                isActual = false
-                isOverride = false
-                this.isInner = isInner
-                setSpecialFlags(constructor.modifierList)
-            }
-            isLocal = false
-            this.symbol = symbol
-            dispatchReceiverType =
-                if (!isInner) null
-                else with(c) {
-                    ClassId(packageFqName, relativeClassName.parent(), isLocal = false).defaultType(outerTypeParameters)
-                }
-            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-            this.typeParameters +=
-                typeParameters.filterIsInstance<FirTypeParameter>()
-                    .map { buildConstructedClassTypeParameterRef { this.symbol = it.symbol } }
+        return buildConstructor(
+            symbol = symbol,
+            isPrimary = constructor is KtPrimaryConstructor,
+            source = KtRealPsiSourceElement(constructor),
+            visibility = constructor.visibility,
+            isExpect = constructor.hasExpectModifier() || classOrObject.hasExpectModifier(),
+            classOrObject = classOrObject,
+            classBuilder = classBuilder,
+            configureStatus = { setSpecialFlags(constructor.modifierList) },
+        ) {
             valueParameters += local.memberDeserializer.valueParameters(
                 constructor.valueParameters,
                 symbol,
                 forceDefaultValue = classBuilder.symbol.classId == StandardClassIds.Enum
             )
-            annotations +=
-                c.annotationDeserializer.loadAnnotations(constructor)
-            containerSource = c.containerSource
-            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
-
+            annotations += c.annotationDeserializer.loadAnnotations(constructor)
             contextParameters.addAll(local.memberDeserializer.createContextReceiversForClass(classOrObject, symbol))
 
             val constructorStub: KotlinConstructorStub<*> = when (constructor) {
@@ -877,6 +835,74 @@ internal class StubBasedFirMemberDeserializer(
             }
 
             applyKDoc(constructorStub.kdocText)
+        }
+    }
+
+    private fun createConstructorSymbol(): FirConstructorSymbol {
+        val relativeClassName = c.relativeClassName!!
+        return FirConstructorSymbol(CallableId(c.packageFqName, relativeClassName, relativeClassName.shortName()))
+    }
+
+    @OptIn(SuspiciousFakeSourceCheck::class)
+    private inline fun buildConstructor(
+        symbol: FirConstructorSymbol,
+        isPrimary: Boolean,
+        source: KtSourceElement,
+        visibility: Visibility,
+        isExpect: Boolean,
+        classOrObject: KtClassOrObject,
+        classBuilder: FirRegularClassBuilder,
+        configureStatus: FirResolvedDeclarationStatusWithLazyEffectiveVisibility.() -> Unit = {},
+        configure: FirAbstractConstructorBuilder.() -> Unit,
+    ): FirConstructor {
+        val typeParameters = classBuilder.typeParameters
+        val isInner = classBuilder.status.isInner
+
+        val delegatedSelfType = buildResolvedTypeRef {
+            coneType = ConeClassLikeTypeImpl(
+                classBuilder.symbol.toLookupTag(),
+                typeParameters.map { ConeTypeParameterType(it.symbol.toLookupTag(), false) }.toTypedArray(),
+                false
+            )
+            this.source = KtFakePsiSourceElement(classOrObject, KtFakeSourceElementKind.ClassSelfTypeRef)
+        }
+
+        return if (isPrimary) {
+            FirPrimaryConstructorBuilder()
+        } else {
+            FirConstructorBuilder()
+        }.apply {
+            moduleData = c.moduleData
+            this.source = source
+            origin = initialOrigin
+            returnTypeRef = delegatedSelfType
+            status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
+                visibility,
+                Modality.FINAL,
+                visibility.toLazyEffectiveVisibility(classBuilder.symbol)
+            ).apply {
+                this.isExpect = isExpect
+                isActual = false
+                isOverride = false
+                this.isInner = isInner
+                configureStatus()
+            }
+            isLocal = false
+            this.symbol = symbol
+            dispatchReceiverType =
+                if (!isInner) null
+                else with(c) {
+                    ClassId(packageFqName, relativeClassName!!.parent(), isLocal = false).defaultType(outerTypeParameters)
+                }
+            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+            this.typeParameters +=
+                typeParameters.filterIsInstance<FirTypeParameter>()
+                    .map { buildConstructedClassTypeParameterRef { this.symbol = it.symbol } }
+            containerSource = c.containerSource
+
+            configure()
+
+            deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
         }.build().apply {
             containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
             setLazyPublishedVisibility(c.session)
