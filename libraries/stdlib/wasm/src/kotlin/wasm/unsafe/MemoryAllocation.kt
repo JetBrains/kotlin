@@ -95,7 +95,6 @@ private data class MemorySlot(val ptr: Pointer, val size: UInt) {
         }
     }
 
-    // TODO(REVIEW): in the usages, this is only ever used where we know the direction of the only possible successful one-way merge. So could optimize it based on that, but that would make this code less obvious, I'd vouch for leaving this as a NOTE comment in the code, and not changing it yet
     fun tryMerge(other: MemorySlot): MemorySlot? {
         val [left, right] = if (ptr.address < other.ptr.address)
             this to other
