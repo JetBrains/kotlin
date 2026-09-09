@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 
 @PhasePrerequisites(
-    ObjectDeclarationLowering::class,
+    JsObjectDeclarationLowering::class,
     EnumEntryInstancesLowering::class,
     EnumEntryCreateGetInstancesFunsLowering::class,
 )
