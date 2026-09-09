@@ -38,7 +38,6 @@ sourceSets {
     "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
-sourcesJar()
 
 private val stableNonPublicMarkers = listOf(
     "org.jetbrains.kotlin.psi.KtImplementationDetail",

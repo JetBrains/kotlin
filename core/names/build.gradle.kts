@@ -22,7 +22,6 @@ sourceSets {
     "main" { projectDefault() }
     "test" { none() }
 }
-sourcesJar()
 
 registerForeignClassUsageTasks {
     outputFile = file("api/names-api.foreign")
