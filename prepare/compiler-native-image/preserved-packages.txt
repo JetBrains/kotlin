@@ -26,3 +26,6 @@ org.jetbrains.kotlin.name.*
 org.jetbrains.kotlin.platform.*
 org.jetbrains.kotlin.types.*
 org.jetbrains.kotlin.util.*
+# scripting
+kotlin.script.*
+org.jetbrains.kotlin.scripting.*

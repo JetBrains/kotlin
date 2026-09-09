@@ -13,7 +13,7 @@ abstract class AbstractNativeImageLegacyPluginReachabilityMetadataTest : Abstrac
     override fun runCompiler(
         arguments: List<String>,
         classpath: List<File>,
-    ): Pair<Int, String> = runner.run(
+    ): CompilerInvocationResult = runner.run(
         workingDir = workingDir,
         arguments = arguments,
         classpath = classpath,

@@ -2,8 +2,8 @@
 
 A GraalVM-compiled native image of `kotlin-compiler-embeddable` that runs as a
 standalone executable. Behaves like the regular `kotlinc` but with some limitations &mdash;
-mainly, no support for plugins. Produces a native image distribution which is similar
-in its structure to the standard `kotlinc` distribution.
+mainly, a limited list of supported compiler plugins (see [Plugins](#Plugins)). Produces a native image distribution which is
+similar in its structure to the standard `kotlinc` distribution.
 
 ## Distribution layout
 

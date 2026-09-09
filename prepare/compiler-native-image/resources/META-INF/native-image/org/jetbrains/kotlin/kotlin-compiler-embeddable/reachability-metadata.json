@@ -59,6 +59,15 @@
       ]
     },
     {
+      "type": "java.lang.ClassLoader",
+      "methods": [
+        {
+          "name": "getPlatformClassLoader",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "java.lang.ClassValue"
     },
     {
@@ -90,6 +99,9 @@
     },
     {
       "type": "java.lang.Object"
+    },
+    {
+      "type": "java.lang.Object[]"
     },
     {
       "type": "java.lang.Runtime",
@@ -336,6 +348,9 @@
           "name": "VARIABLES"
         }
       ]
+    },
+    {
+      "type": "kotlin.script.templates.standard.ScriptTemplateWithArgs"
     },
     {
       "type": "kotlinx.coroutines.CancellableContinuationImpl"
@@ -640,33 +655,6 @@
       ]
     },
     {
-      "type": "org.jetbrains.kotlin.config.CompilerConfigurationKey",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        }
-      ],
-      "fields": [
-        {
-          "name": "Companion"
-        }
-      ]
-    },
-    {
-      "type": "org.jetbrains.kotlin.config.CompilerConfigurationKey$Companion",
-      "methods": [
-        {
-          "name": "create",
-          "parameterTypes": [
-            "java.lang.String"
-          ]
-        }
-      ]
-    },
-    {
       "type": "org.jetbrains.kotlin.compiler.plugin.CliOption",
       "allDeclaredConstructors": true
     },
@@ -707,6 +695,33 @@
     {
       "type": "org.jetbrains.kotlin.compiler.plugin.FirExtensionRegistrarConfigurationUtilKt",
       "allDeclaredMethods": true
+    },
+    {
+      "type": "org.jetbrains.kotlin.config.CompilerConfigurationKey",
+      "fields": [
+        {
+          "name": "Companion"
+        }
+      ],
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.jetbrains.kotlin.config.CompilerConfigurationKey$Companion",
+      "methods": [
+        {
+          "name": "create",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
     },
     {
       "type": "org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryDslKt",
@@ -756,15 +771,6 @@
       ]
     },
     {
-      "type": "org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
       "type": "org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension"
     },
     {
@@ -805,6 +811,15 @@
     },
     {
       "type": "org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptorExtension[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
     },
     {
       "type": "org.jetbrains.kotlin.load.java.ErasedOverridabilityCondition"
@@ -1950,6 +1965,9 @@
       "glob": "kotlin/reflect/reflect.kotlin_builtins"
     },
     {
+      "glob": "kotlin/script/templates/standard/standard.kotlin_builtins"
+    },
+    {
       "glob": "misc/registry.override.properties"
     },
     {
@@ -1960,6 +1978,9 @@
     },
     {
       "glob": "org/jetbrains/kotlin/org/fusesource/jansi/jansi.properties"
+    },
+    {
+      "glob": "org/jetbrains/kotlin/scripting/definitions/AutoloadedScriptDefinitions.class"
     }
   ]
 }

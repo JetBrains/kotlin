@@ -8,6 +8,12 @@ package org.jetbrains.kotlin.compiler.nativeimage
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import java.io.File
 
+data class CompilerInvocationResult(
+    val exitCode: Int,
+    val stdout: String,
+    val stderr: String,
+)
+
 class NativeImageCompilerRunner(private val javaHome: String) {
     private val nativeImageDist: File by lazy { ForTestCompileRuntime.kotlinNativeImageDistForTests() }
 
@@ -24,7 +30,7 @@ class NativeImageCompilerRunner(private val javaHome: String) {
         arguments: List<String>,
         classpath: List<File>,
         jvmArgs: List<String> = emptyList(),
-    ): Pair<Int, String> {
+    ): CompilerInvocationResult {
         val cmd = buildList {
             add(executable.absolutePath)
             addAll(jvmArgs)
@@ -36,10 +42,10 @@ class NativeImageCompilerRunner(private val javaHome: String) {
         }
         val process = ProcessBuilder(cmd)
             .directory(workingDir)
-            .redirectErrorStream(true)
             .also { it.environment().putIfAbsent("JAVA_HOME", javaHome) }
             .start()
         val out = process.inputStream.reader().use { it.readText() }
-        return process.waitFor() to out
+        val err = process.errorStream.reader().use { it.readText() }
+        return CompilerInvocationResult(process.waitFor(), out, err)
     }
 }
