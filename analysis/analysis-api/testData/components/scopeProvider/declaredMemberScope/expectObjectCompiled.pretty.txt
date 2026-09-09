@@ -1,0 +1,3 @@
+expect fun foo()
+
+expect val x: kotlin.Int

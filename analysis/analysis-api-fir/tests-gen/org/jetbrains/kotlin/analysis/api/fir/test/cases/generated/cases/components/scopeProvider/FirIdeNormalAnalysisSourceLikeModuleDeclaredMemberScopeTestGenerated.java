@@ -140,6 +140,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleDeclaredMemberScopeTestGenerate
   }
 
   @Test
+  @TestMetadata("expectCompanionObjectCompiled.kt")
+  public void testExpectCompanionObjectCompiled() {
+    run("expectCompanionObjectCompiled.kt");
+  }
+
+  @Test
+  @TestMetadata("expectObjectCompiled.kt")
+  public void testExpectObjectCompiled() {
+    run("expectObjectCompiled.kt");
+  }
+
+  @Test
   @TestMetadata("innerClass.kt")
   public void testInnerClass() {
     run("innerClass.kt");
