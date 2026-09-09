@@ -79,24 +79,41 @@ internal abstract class SwiftExportTask @Inject constructor(
     abstract val parameters: SwiftExportTaskParameters
 
     /**
-     * The dependency graph the exported modules are resolved from. Held as Configuration-Cache-safe
-     * [LazyResolvedConfigurationWithArtifacts] rather than a precomputed module list so that the resolution happens at
-     * execution time (see [run]); up-to-date checking is provided by the raw configurations wired as task inputs in
-     * `registerSwiftExportRun`.
+     * The complete compilation dependency graph the exported modules are resolved from.
+     *
+     * Held as Configuration-Cache-safe [LazyResolvedConfigurationWithArtifacts] rather than a precomputed module list
+     * so that the resolution happens at execution time (see [run]); up-to-date checking is provided by the raw
+     * configurations wired as task inputs in `registerSwiftExportRun`.
      */
     @get:Internal
     abstract val exportConfiguration: Property<LazyResolvedConfigurationWithArtifacts>
 
+    /**
+     * A version of the compilation dependency graph (represented by [exportConfiguration]) that only includes api
+     * dependencies. Used for identifying direct api dependencies of an exported module.
+     *
+     * Held as Configuration-Cache-safe [LazyResolvedConfigurationWithArtifacts] rather than a precomputed module list
+     * so that the resolution happens at execution time (see [run]); up-to-date checking is provided by the raw
+     * configurations wired as task inputs in `registerSwiftExportRun`.
+     */
     @get:Internal
     abstract val apiConfiguration: Property<LazyResolvedConfigurationWithArtifacts>
 
+    /**
+     * Mirrors [exportConfiguration] but contains Swift Export metadata of dependencies inside [exportConfiguration].
+     *
+     * Held as Configuration-Cache-safe [LazyResolvedConfigurationWithArtifacts] rather than a precomputed module list
+     * so that the resolution happens at execution time (see [run]); up-to-date checking is provided by the raw
+     * configurations wired as task inputs in `registerSwiftExportRun`.
+     */
     @get:Internal
     abstract val metadataConfiguration: Property<LazyResolvedConfigurationWithArtifacts>
 
     /**
-     * Swift Export metadata shared by same-build subproject dependencies as a secondary variant. Held as a
-     * Configuration-Cache-safe [KotlinProjectSharedDataProvider] and read at execution time (see [run]); the producer's
-     * JSON is a task output, so it only exists once [sharedMetadataFiles] has forced the producing task to run.
+     * Swift Export metadata shared by same-build subproject dependencies as a secondary variant.
+     *
+     * Held as a Configuration-Cache-safe [KotlinProjectSharedDataProvider] and read at execution time (see [run]);
+     * the producer's JSON is a task output, so it only exists once [sharedMetadataFiles] has forced the producing task to run.
      */
     @get:Internal
     abstract val sharedMetadata: Property<KotlinProjectSharedDataProvider<SwiftExportMetadata>>
@@ -111,10 +128,12 @@ internal abstract class SwiftExportTask @Inject constructor(
         get() = sharedMetadata.orNull?.let { listOf(it.files) } ?: emptyList()
 
     /**
-     * The explicitly-exported dependencies declared via the `export("…") { moduleName.set(…); flattenPackage.set(…) }`
-     * DSL. Held as `@Internal` because [SwiftExportedDependency] wraps live Gradle `Property` values and a dependency
-     * selector, which is not a valid task input on its own. Read at execution time by [resolveSwiftExportedModules].
-     * Up-to-date tracking of its output-affecting content is provided by [exportedModulesInputs].
+     * The explicitly-exported dependencies declared via the legacy `swiftExport { export(…) }` DSL. Is expected
+     * to be empty when the new `export { swift { … } }` DSL is used.
+     *
+     * Held as `@Internal` because [SwiftExportedDependency] wraps live Gradle `Property` values and a dependency
+     * selector, which is not a valid task input on its own. Up-to-date tracking of its output-affecting content
+     * is provided by [exportedModulesInputs].
      */
     @get:Internal
     abstract val exportedModules: SetProperty<SwiftExportedDependency>
@@ -130,11 +149,24 @@ internal abstract class SwiftExportTask @Inject constructor(
             .map { "${it.name}|${it.moduleName.orNull}|${it.flattenPackage.orNull}" }
             .sorted()
 
+    /**
+     * The consumer-side module option overrides declared via the `export { swift { xcodeIntegration { configure(…) } } }` DSL,
+     * keyed by the dependency they apply to (external `group:name` coordinates or a project path).
+     *
+     * Held as `@Internal` because [SwiftExportDependencySelector] and [SwiftExportDeclaredModuleOptions] wrap plain
+     * values that are not a valid task input on their own. Read at execution time by [resolveSwiftExportedModules].
+     * Up-to-date tracking of its output-affecting content is provided by [dependencyOptionsOverridesInputs].
+     */
     @get:Internal
     abstract val dependencyOptionsOverrides: MapProperty<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>
 
+    /**
+     * Up-to-date tracking projection of [dependencyOptionsOverrides]. It exposes the plain, output-affecting values of
+     * every override - the selector identity (external `group:name` coordinates or a project path) and the declared
+     * `moduleName` / `rootPackage` options - as a stable list of strings.
+     */
     @get:Input
-    internal val overridesInputs: List<String>
+    internal val dependencyOptionsOverridesInputs: List<String>
         get() = dependencyOptionsOverrides.get()
             .map { (selector, options) ->
                 val selectorKey = when (selector) {
