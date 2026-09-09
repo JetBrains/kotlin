@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedT
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCodeFragmentSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -658,15 +657,19 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
                 val receiver = safeCallExpression.receiver
 
-                dataFlowAnalyzer.enterSafeCallAfterNullCheck(safeCallExpression)
+                if (safeCallExpression.kind == FirSafeCallKind.NullSafe) {
+                    dataFlowAnalyzer.enterSafeCallAfterNullCheck(safeCallExpression)
+                }
 
                 safeCallExpression.apply {
-                    checkedSubjectRef.value.propagateTypeFromOriginalReceiver(receiver, components.session, components.file)
+                    checkedSubjectRef.value.propagateTypeFromOriginalReceiver(receiver, kind, components.session, components.file)
                     transformSelector(this@FirExpressionsResolveTransformer, data)
                     propagateTypeFromQualifiedAccessAfterNullCheck(session, context.file)
                 }
 
-                dataFlowAnalyzer.exitSafeCall(safeCallExpression)
+                if (safeCallExpression.kind == FirSafeCallKind.NullSafe) {
+                    dataFlowAnalyzer.exitSafeCall(safeCallExpression)
+                }
 
                 return safeCallExpression
             }
