@@ -285,6 +285,24 @@ private fun Project.skipArgumentForOlderKotlinCompilerVersion(): Boolean {
 }
 
 fun Project.configureArtifacts() {
+    plugins.withType<JavaPlugin> {
+        extensions.configure<JavaPluginExtension> {
+            withSourcesJar()
+        }
+    }
+
+    tasks.withType<Jar>().matching { it.name == "sourcesJar" }.configureEach {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+
+    tasks.withType<AbstractArchiveTask>().configureEach {
+        if (name == "kotlinSourcesJar") {
+            enabled = false
+            archiveClassifier.set("unused-kotlin-sources")
+            archiveFileName.set("unused-kotlin-sources.jar")
+        }
+    }
+
     tasks.withType<Javadoc>().configureEach {
         enabled = false
     }
