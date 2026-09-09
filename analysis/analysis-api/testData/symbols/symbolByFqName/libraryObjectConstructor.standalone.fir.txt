@@ -1,0 +1,33 @@
+KaConstructorSymbol:
+  anchorPsi: null
+  annotations: []
+  callableId: null
+  containingClassId: one/Foo
+  contextParameters: []
+  contextReceivers: []
+  hasStableParameterNames: true
+  isActual: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isPrimary: true
+  location: CLASS
+  modality: FINAL
+  origin: LIBRARY
+  psi: null
+  realPsi: null
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: one/Foo
+  typeParameters: []
+  valueParameters: []
+  visibility: PRIVATE
+  getContainingFileSymbol: null
+  getContainingJvmClassName: one.Foo
+  getContainingModule: KaLibraryModule "Library library"
+  deprecation: null
+  javaMethodName: null
+  importableFqName: one.Foo

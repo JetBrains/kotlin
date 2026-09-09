@@ -1116,7 +1116,34 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: PUBLIC
-    constructors: 0
+    constructors: 1
+      KaConstructorSymbol:
+        anchorPsi: KtObjectDeclaration
+        annotations: []
+        callableId: null
+        containingClassId: kotlin/Enum.Companion
+        contextParameters: []
+        contextReceivers: []
+        hasStableParameterNames: true
+        isActual: false
+        isCompanion: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isPrimary: true
+        location: CLASS
+        modality: FINAL
+        origin: LIBRARY
+        psi: KtObjectDeclaration
+        realPsi: null
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Enum.Companion
+        typeParameters: []
+        valueParameters: []
+        visibility: PRIVATE
 
   ExplicitSimpleImportingScope, index = 6
     packages: 0

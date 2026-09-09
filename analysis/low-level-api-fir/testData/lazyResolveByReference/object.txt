@@ -2,6 +2,8 @@ BODY_RESOLVE:
 TARGET: public final [ResolvedTo(BODY_RESOLVE)] object TopLevelObject : R|kotlin/Any| {
     public final [ResolvedTo(BODY_RESOLVE)] fun objectFunction(): R|kotlin/Unit|
 
+    private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelObject] constructor(): R|library/TopLevelObject|
+
 }
 
 FILE RAW TO BODY:

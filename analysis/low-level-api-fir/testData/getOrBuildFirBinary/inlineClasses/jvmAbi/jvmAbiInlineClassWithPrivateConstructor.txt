@@ -20,6 +20,8 @@ FIR element rendered:
     public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
         public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> create(): R|ThreadLocalDelegate<T>|
 
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|ThreadLocalDelegate.Companion|
+
     }
 
     public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|

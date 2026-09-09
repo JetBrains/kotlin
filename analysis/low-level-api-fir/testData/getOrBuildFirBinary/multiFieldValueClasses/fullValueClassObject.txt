@@ -24,4 +24,6 @@ public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=Fu
     public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val property: R|kotlin/Int|
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ValueObject] get(): R|kotlin/Int|
 
+    private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ValueObject] constructor(): R|pack/ValueObject|
+
 }

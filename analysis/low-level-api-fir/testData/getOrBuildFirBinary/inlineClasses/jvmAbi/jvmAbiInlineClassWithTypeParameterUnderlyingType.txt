@@ -20,6 +20,8 @@ FIR element rendered:
     public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
         public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> of([ResolvedTo(BODY_RESOLVE)] element: R|T|): R|Box<T>|
 
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|Box.Companion|
+
     }
 
     public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|

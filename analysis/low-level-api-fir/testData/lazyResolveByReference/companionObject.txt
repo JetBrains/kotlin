@@ -1,6 +1,8 @@
 BODY_RESOLVE:
 TARGET: public final [ResolvedTo(BODY_RESOLVE)] class ClassWithImplicitConstructorAndCompanion : R|kotlin/Any| {
     public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|library/ClassWithImplicitConstructorAndCompanion.Companion|
+
     }
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ClassWithImplicitConstructorAndCompanion] constructor(): R|library/ClassWithImplicitConstructorAndCompanion|

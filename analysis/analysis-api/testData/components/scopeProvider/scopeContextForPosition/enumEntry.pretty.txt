@@ -72,7 +72,8 @@ scopes:
       fun equals(other: kotlin.Any?): kotlin.Boolean
       fun hashCode(): kotlin.Int
       fun toString(): kotlin.String
-    constructors: 0
+    constructors: 1
+      constructor()
 
   ExplicitSimpleImportingScope, index = 6
     packages: 0

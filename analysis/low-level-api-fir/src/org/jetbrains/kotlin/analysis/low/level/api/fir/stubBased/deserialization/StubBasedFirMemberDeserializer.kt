@@ -838,6 +838,31 @@ internal class StubBasedFirMemberDeserializer(
         }
     }
 
+    /**
+     * Builds the implicit primary constructor of [objectDeclaration].
+     *
+     * The decompiler writes no constructor into the stub of an object, exactly as the sources spell it, although the metadata
+     * of every non-expect object carries one. So the private parameterless constructor is restored on demand, the same way
+     * the compiler's own deserialization has it (KT-64686).
+     */
+    fun loadImplicitObjectConstructor(
+        objectDeclaration: KtObjectDeclaration,
+        classBuilder: FirRegularClassBuilder,
+    ): FirConstructor {
+        val symbol = createConstructorSymbol()
+        return buildConstructor(
+            symbol = symbol,
+            isPrimary = true,
+            source = objectDeclaration.toKtPsiSourceElement(KtFakeSourceElementKind.ImplicitConstructor),
+            visibility = Visibilities.Private,
+            isExpect = objectDeclaration.hasExpectModifier(),
+            classOrObject = objectDeclaration,
+            classBuilder = classBuilder,
+        ) {
+            contextParameters.addAll(createContextReceiversForClass(objectDeclaration, symbol))
+        }
+    }
+
     private fun createConstructorSymbol(): FirConstructorSymbol {
         val relativeClassName = c.relativeClassName!!
         return FirConstructorSymbol(CallableId(c.packageFqName, relativeClassName, relativeClassName.shortName()))

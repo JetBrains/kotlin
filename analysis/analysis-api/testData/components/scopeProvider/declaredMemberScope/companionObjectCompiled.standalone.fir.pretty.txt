@@ -1,5 +1,0 @@
-fun foo()
-
-val x: kotlin.Int
-
-private constructor()

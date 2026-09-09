@@ -94,7 +94,23 @@ KtClassLiteralExpression(110,137): 'kotlin.Int.Companion::class'
   NO_CANDIDATES
 
 KtDotQualifiedExpression(110,130): 'kotlin.Int.Companion'
-  NO_CANDIDATES
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int.Companion
+        symbol = <constructor>(): kotlin.Int.Companion
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
 
 KtDotQualifiedExpression(110,120): 'kotlin.Int'
   KaInapplicableCallCandidate:
@@ -138,4 +154,20 @@ KtNameReferenceExpression(117,120): 'Int'
     isInBestCandidates = false
 
 KtNameReferenceExpression(121,130): 'Companion'
-  NO_CANDIDATES
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int.Companion
+        symbol = <constructor>(): kotlin.Int.Companion
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false

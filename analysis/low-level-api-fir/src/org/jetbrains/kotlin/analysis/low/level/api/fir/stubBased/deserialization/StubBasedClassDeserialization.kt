@@ -208,18 +208,22 @@ internal fun deserializeClassToSymbol(
             superTypeRefs.add(session.builtinTypes.anyType)
         }
 
-        classOrObject.primaryConstructor?.let { constructor ->
-            val firConstructor = memberDeserializer.loadConstructor(constructor, classOrObject, this)
+        val primaryConstructor = classOrObject.primaryConstructor
+        if (primaryConstructor != null) {
+            val firConstructor = memberDeserializer.loadConstructor(primaryConstructor, classOrObject, this)
             addDeclaration(firConstructor)
 
             // A property folded into its parameter has no member declaration of its own to be built from
-            for ([index, parameter] in constructor.valueParameters.withIndex()) {
+            for ([index, parameter] in primaryConstructor.valueParameters.withIndex()) {
                 if (!parameter.hasValOrVar()) continue
 
                 val property = memberDeserializer.loadPropertyFromParameter(parameter, symbol)
                 firConstructor.valueParameters[index].correspondingProperty = property
                 addDeclaration(property)
             }
+        } else if (classOrObject is KtObjectDeclaration && !status.isExpect) {
+            // The stub of an object carries no constructor, while an expect object has none at all, exactly as in the sources
+            addDeclaration(memberDeserializer.loadImplicitObjectConstructor(classOrObject, this))
         }
 
         @OptIn(KtExperimentalApi::class)

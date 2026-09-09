@@ -141,6 +141,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByFqNameTestGenerated ext
   }
 
   @Test
+  @TestMetadata("libraryObjectConstructor.kt")
+  public void testLibraryObjectConstructor() {
+    run("libraryObjectConstructor.kt");
+  }
+
+  @Test
   @TestMetadata("listOf.kt")
   public void testListOf() {
     run("listOf.kt");
