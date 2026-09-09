@@ -591,9 +591,7 @@ class CacheUpdater<TModuleArtifact, TFileArtifact, TFragments, TBackendContext>(
             loadedIr: LoadedJsIr,
             dirtyFiles: Map<KotlinLibraryFile, Set<KotlinSourceFile>>
         ) {
-            val stdlibFragment = loadedIr.irBuiltIns.anyClass.owner.moduleFragment
-            val [stdlibFile, _] = loadedIr.orderedFragments.entries.find { it.value === stdlibFragment }
-                ?: notFoundIcError("stdlib fragment")
+            val stdlibFile = findStdlibFile(loadedIr)
             val stdlibDirtyFiles = dirtyFiles[stdlibFile] ?: return
 
             val stdlibSymbolProviders = loadedIr.getSignatureProvidersForLib(stdlibFile)
@@ -676,6 +674,13 @@ class CacheUpdater<TModuleArtifact, TFileArtifact, TFragments, TBackendContext>(
 
                 cacheArtifact
             }
+        }
+
+        private fun findStdlibFile(loadedIr: LoadedJsIr): KotlinLibraryFile {
+            val stdlibFragment = loadedIr.irBuiltIns.anyClass.owner.moduleFragment
+            val [stdlibFile, _] = loadedIr.orderedFragments.entries.find { it.value === stdlibFragment }
+                ?: notFoundIcError("stdlib fragment")
+            return stdlibFile
         }
     }
 
