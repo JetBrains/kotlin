@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSignatureParser
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClasses
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.asBinaryClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.readBinaryJavaClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -41,7 +43,7 @@ class JavaClassFinderOverBinaryIndex(
 
     private val signatureParser = BinaryClassSignatureParser()
 
-    private val binaryCache: MutableMap<ClassId, JavaClass?> = HashMap()
+    private val binaryCache = BinaryJavaClasses()
 
     private val topLevelClassFiles: MutableMap<FqName, MutableMap<Name, Collection<VirtualFile>>> = HashMap()
 
@@ -99,7 +101,7 @@ class JavaClassFinderOverBinaryIndex(
 
         return readBinaryJavaClass(
             classId = classId,
-            topLevelVirtualFile = virtualFile,
+            topLevelClassFile = virtualFile.asBinaryClassFileHandle(),
             classFileContent = classFileContentFromRequest,
             outerClassFromRequest = outerClassFromRequest,
             binaryCache = binaryCache,
