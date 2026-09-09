@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements
 
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.serviceOrNull
 import com.intellij.psi.stubs.IndexSink
 import org.jetbrains.kotlin.psi.KtIdeApi
 import org.jetbrains.kotlin.psi.KtImplementationDetail
@@ -41,12 +41,7 @@ open class StubIndexService protected constructor() {
     }
 
     companion object {
-        @JvmStatic
         @KtImplementationDetail
-        fun getInstance(): StubIndexService {
-            return ApplicationManager.getApplication().getService(StubIndexService::class.java) ?: NO_INDEX
-        }
-
-        private val NO_INDEX = StubIndexService()
+        fun getInstance(): StubIndexService? = serviceOrNull()
     }
 }
