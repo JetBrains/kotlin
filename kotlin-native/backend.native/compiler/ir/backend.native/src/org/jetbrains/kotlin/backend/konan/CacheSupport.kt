@@ -63,7 +63,7 @@ fun KotlinLibrary.getFileFqNames(filePaths: List<String>): List<String> {
 
 class CacheSupport(
         private val configuration: CompilerConfiguration,
-        private val allKlibs: CachedKlibs,
+        internal val allKlibs: CachedKlibs,
         ignoreCacheReason: String?,
         systemCacheDirectory: Path,
         autoCacheDirectory: Path,
