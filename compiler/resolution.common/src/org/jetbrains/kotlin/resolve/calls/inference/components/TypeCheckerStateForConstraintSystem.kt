@@ -555,18 +555,14 @@ abstract class TypeCheckerStateForConstraintSystem(
 
     private fun assertInputTypes(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Unit = with(typeSystemContext) {
         if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
-        fun correctSubType(subType: RigidTypeMarker) =
-            subType.isSingleClassifierType() || subType.typeConstructor()
-                .isIntersection() || isMyTypeVariable(subType) || subType.isError() || subType.isIntegerLiteralType()
+        fun correctType(type: RigidTypeMarker) =
+            type.isSingleClassifierType() || type.typeConstructor().let { it.isIntersection() || it.isUnion() }||
+                    isMyTypeVariable(type) || type.isError() || type.isIntegerLiteralType()
 
-        fun correctSuperType(superType: RigidTypeMarker) =
-            superType.isSingleClassifierType() || superType.typeConstructor()
-                .isIntersection() || isMyTypeVariable(superType) || superType.isError() || superType.isIntegerLiteralType()
-
-        assert(subType.bothBounds(::correctSubType)) {
+        assert(subType.bothBounds(::correctType)) {
             "Not singleClassifierType and not intersection subType: $subType"
         }
-        assert(superType.bothBounds(::correctSuperType)) {
+        assert(superType.bothBounds(::correctType)) {
             "Not singleClassifierType superType: $superType"
         }
     }
