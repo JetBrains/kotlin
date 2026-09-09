@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSA
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.addBeforeSubstring
 import org.jetbrains.kotlin.gradle.util.checkedReplace
-import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
@@ -787,7 +786,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
-    @DisplayName("KT-88583: build process classpath is hidden from annotation processors when isolation is enabled")
+    @DisplayName("KT-88583: the isolation hides the build process classpath on a fresh daemon and on a dirty daemon")
     @GradleTest
     open fun testIsolateProcessorsFromBuildClasspath(gradleVersion: GradleVersion) {
         project("empty", gradleVersion) {
@@ -824,32 +823,28 @@ open class KaptIT : KaptBaseIT() {
                 }
             }
 
-            // Prime the same daemon before enabling the isolation, because kapt classloaders live for the
-            // lifetime of the hosting process.
-            build("build") {
-                assertTasksExecuted(":example:kaptKotlin")
+            // Use a daemon unique to this copied test project, then keep reusing it across all three builds.
+            val daemonMarker = "-Duser.variant=kt88583${projectPath.parent.fileName}"
+            var hostProcess: String? = null
+
+            fun BuildResult.assertSameHost() {
+                val currentHost = parseHostProcess(output)
+                hostProcess?.let { assertEquals(it, currentHost) } ?: run { hostProcess = currentHost }
             }
 
-            gradleProperties.append(
-                """
-
-                kapt.isolate.processors.from.build.classpath = true
-                """.trimIndent()
-            )
-
-            build("build") {
-                assertTasksExecuted(":example:kaptKotlin")
-                // With the isolation enabled the only classes visible to the processor besides its own
-                // are JDK platform classes and javac.
-                assertEquals(
-                    mapOf(
-                        "build-process-classpath" to false,
-                        "kotlin.Unit" to false,
-                        "com.sun.source.util.Trees" to true,
-                    ),
-                    parseProbes(output),
-                )
+            fun buildAndReadProbes(isolationEnabled: Boolean): Map<String, Boolean> {
+                lateinit var buildOutput: String
+                build("build", daemonMarker, "-P$ISOLATION_PROPERTY=$isolationEnabled") {
+                    assertTasksExecuted(":example:kaptKotlin")
+                    assertSameHost()
+                    buildOutput = output
+                }
+                return parseProbes(buildOutput)
             }
+
+            assertEquals(ISOLATED_PROBES, buildAndReadProbes(isolationEnabled = true))
+            assertEquals(true, buildAndReadProbes(isolationEnabled = false)[JAVAC_PROBE])
+            assertEquals(ISOLATED_PROBES, buildAndReadProbes(isolationEnabled = true))
         }
     }
 
@@ -857,6 +852,11 @@ open class KaptIT : KaptBaseIT() {
         Regex("""kapt-probe (\S+) visible: (true|false)""")
             .findAll(output)
             .associate { it.groupValues[1] to it.groupValues[2].toBoolean() }
+
+    /** The name of the process that hosts kapt. It proves which builds share one daemon. */
+    private fun parseHostProcess(output: String): String =
+        Regex("""kapt-probe-host (\S+)""").find(output)?.groupValues?.get(1)
+            ?: error("The annotation processor did not report the hosting process")
 
     @DisplayName("should not resolve 'kapt' configuration during build configuration phase")
     @GradleTest
@@ -1456,10 +1456,22 @@ open class KaptIT : KaptBaseIT() {
     }
 
     private companion object {
+        private const val ISOLATION_PROPERTY = "kapt.isolate.processors.from.build.classpath"
+
+        private const val JAVAC_PROBE = "com.sun.source.util.Trees"
+
+        /** With the isolation on, a processor sees only its own classes, JDK platform classes and javac. */
+        private val ISOLATED_PROBES = mapOf(
+            "build-process-classpath" to false,
+            "kotlin.Unit" to false,
+            JAVAC_PROBE to true,
+        )
+
         //language=Java
         private val classpathProbeProcessorSource = """
             package org.kotlin.probe;
 
+            import java.lang.management.ManagementFactory;
             import java.util.Set;
             import javax.annotation.processing.AbstractProcessor;
             import javax.annotation.processing.RoundEnvironment;
@@ -1476,6 +1488,7 @@ open class KaptIT : KaptBaseIT() {
                 public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
                     if (reported) return false;
                     reported = true;
+                    printMessage("kapt-probe-host " + ManagementFactory.getRuntimeMXBean().getName());
                     report("build-process-classpath", buildProcessClasspathIsReachable());
                     probe("kotlin.Unit");
                     probe("com.sun.source.util.Trees");
@@ -1504,7 +1517,11 @@ open class KaptIT : KaptBaseIT() {
                 }
 
                 private void report(String what, boolean visible) {
-                    processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, "kapt-probe " + what + " visible: " + visible);
+                    printMessage("kapt-probe " + what + " visible: " + visible);
+                }
+
+                private void printMessage(String message) {
+                    processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, message);
                 }
 
                 @Override
