@@ -176,7 +176,7 @@ private object FreeList {
             if (allocatedSlot.size == 0u)
                 return
 
-            check(allocatedSlot.size == realAllocationSize(allocatedSlot.size)) { "Slot to free clearly does not originate from allocated slot: alignment is wrong" }
+            check(allocatedSlot.size % alignment == 0) { "Slot to free clearly does not originate from allocated slot: alignment is wrong" }
 
             // need to find the slots that this lies in between, in terms of start address
             // NOTE: we assume (and later assert) the allocatedSlot does not overlap with anything in the free list, that wouldn't make sense, by definition, allocatedSlot is not free
