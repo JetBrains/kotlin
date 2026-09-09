@@ -65,7 +65,6 @@ internal fun createLibrarySearchScope(
             createEnumerationLibrarySearchScope(binaryRoots, binaryVirtualFiles, environment, project)
     }
 
-@OptIn(KaImplementationDetail::class)
 internal fun createParentTraversalLibrarySearchScope(
     binaryRoots: Collection<Path>,
     binaryVirtualFiles: Collection<VirtualFile>,
@@ -98,7 +97,6 @@ private class ParentTraversalLibrarySearchScope(
     override fun toString(): String = "Parent-traversal library search scope over $rootFiles"
 }
 
-@OptIn(KaImplementationDetail::class)
 internal fun createTrieLibrarySearchScope(
     binaryRoots: Collection<Path>,
     binaryVirtualFiles: Collection<VirtualFile>,
@@ -159,7 +157,6 @@ internal fun createEnumerationLibrarySearchScope(
     environment: CoreApplicationEnvironment,
     project: Project,
 ): GlobalSearchScope {
-    @OptIn(KaImplementationDetail::class)
     val virtualFileUrls = buildSet {
         for (root in StandaloneProjectFactory.getVirtualFilesForLibraryRoots(binaryRoots, environment) + binaryVirtualFiles) {
             LibraryUtils.getAllVirtualFilesFromRoot(root, includeRoot = true)

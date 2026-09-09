@@ -32,7 +32,6 @@ import com.intellij.util.io.URLUtil.JAR_PROTOCOL
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import com.intellij.util.messages.impl.PluginListenerDescriptor
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleAccessibilityChecker
 import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleAnnotationsProvider
@@ -139,7 +138,6 @@ object StandaloneProjectFactory {
         }
     }
 
-    @OptIn(KaExperimentalApi::class)
     private fun registerProjectServices(project: MockProject) {
         // TODO: rewrite KtResolveExtensionProviderForTest to avoid KtResolveExtensionProvider access before initialized project
         @Suppress("UnstableApiUsage")
@@ -211,7 +209,6 @@ object StandaloneProjectFactory {
         )
     }
 
-    @OptIn(KaImplementationDetail::class)
     private fun initialiseVirtualFileFinderServices(
         environment: KotlinCoreProjectEnvironment,
         modules: List<KaModule>,
@@ -374,7 +371,6 @@ object StandaloneProjectFactory {
         }
     }
 
-    @OptIn(KaImplementationDetail::class)
     fun createLibraryModuleSearchScope(
         binaryRoots: Collection<Path>,
         binaryVirtualFiles: Collection<VirtualFile>,
@@ -457,7 +453,6 @@ object StandaloneProjectFactory {
         }
     }
 
-    @OptIn(KaExperimentalApi::class)
     private fun KaLibraryModule.getJavaRoots(environment: CoreApplicationEnvironment): List<JavaRoot> {
         val binaryRootsAsVirtualFiles = getVirtualFilesForLibraryRoots(binaryRoots, environment) + binaryVirtualFiles
         return binaryRootsAsVirtualFiles.map { root ->
