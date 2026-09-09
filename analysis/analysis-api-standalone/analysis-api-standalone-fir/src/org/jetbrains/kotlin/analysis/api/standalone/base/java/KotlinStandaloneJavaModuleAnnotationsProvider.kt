@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.standalone.base.java
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleJavaAnnotationsProvider
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.name.ClassId
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
  * convert them to PSI annotations (and then another conversion of those PSI annotations back into [JavaAnnotation] in
  * `KaBaseJavaModuleResolver`).
  */
-@OptIn(KaNonPublicApi::class)
 @KaImplementationDetail
 class KotlinStandaloneJavaModuleAnnotationsProvider(
     private val javaModuleResolver: JavaModuleResolver,

@@ -209,7 +209,6 @@ object StandaloneProjectFactory {
         )
     }
 
-    @OptIn(KaImplementationDetail::class)
     private fun initialiseVirtualFileFinderServices(
         environment: KotlinCoreProjectEnvironment,
         modules: List<KaModule>,
@@ -372,7 +371,6 @@ object StandaloneProjectFactory {
         }
     }
 
-    @OptIn(KaImplementationDetail::class)
     fun createLibraryModuleSearchScope(
         binaryRoots: Collection<Path>,
         binaryVirtualFiles: Collection<VirtualFile>,
