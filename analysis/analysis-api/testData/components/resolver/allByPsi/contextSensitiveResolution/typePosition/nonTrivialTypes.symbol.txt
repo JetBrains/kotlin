@@ -217,7 +217,7 @@ KtUserType(214,216): 'E2'
 KtNameReferenceExpression(214,216): 'E2'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       E2
