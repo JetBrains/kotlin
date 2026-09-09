@@ -19,10 +19,16 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.full.memberProperties
 
 fun verifyDiagnostics(vararg diagnosticContainers: KtDiagnosticsContainer) {
+    verifyDiagnostics(diagnosticGroup("default", diagnosticContainers.toList()))
+}
+
+fun verifyDiagnostics(vararg diagnosticContainersWithGroup: KtDiagnosticsContainerWithGroup) {
     val errors = mutableListOf<String>()
-    val existingDiagnosticFactories = mutableMapOf<String, AbstractKtDiagnosticFactory>()
-    for (container in diagnosticContainers) {
-        container.getRendererFactory().MAP.verifyMessages(container, errors, existingDiagnosticFactories)
+    for ((_ = group, diagnosticContainers) in diagnosticContainersWithGroup) {
+        val existingDiagnosticFactories = mutableMapOf<String, AbstractKtDiagnosticFactory>()
+        for (container in diagnosticContainers) {
+            container.getRendererFactory().MAP.verifyMessages(container, errors, existingDiagnosticFactories)
+        }
     }
     checkTestInfrastructure(errors.isEmpty()) {
         errors.joinToString(
@@ -30,6 +36,12 @@ fun verifyDiagnostics(vararg diagnosticContainers: KtDiagnosticsContainer) {
             postfix = "\n\nSee https://youtrack.jetbrains.com/articles/KT-A-610 for the style guide.\n\n"
         )
     }
+}
+
+class KtDiagnosticsContainerWithGroup(val group: String, val diagnosticContainers: List<KtDiagnosticsContainer>)
+
+fun diagnosticGroup(group: String, diagnosticContainers: List<KtDiagnosticsContainer>): KtDiagnosticsContainerWithGroup {
+    return KtDiagnosticsContainerWithGroup(group, diagnosticContainers)
 }
 
 private fun KtDiagnosticFactoryToRendererMap.verifyMessages(
