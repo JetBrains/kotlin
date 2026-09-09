@@ -80,6 +80,12 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclaredMemberScopeTestGener
   }
 
   @Test
+  @TestMetadata("companionObjectCompiled.kt")
+  public void testCompanionObjectCompiled() {
+    run("companionObjectCompiled.kt");
+  }
+
+  @Test
   @TestMetadata("delegateInterface.kt")
   public void testDelegateInterface() {
     run("delegateInterface.kt");
@@ -161,6 +167,12 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclaredMemberScopeTestGener
   @TestMetadata("javaInnerClassConstructor.kt")
   public void testJavaInnerClassConstructor() {
     run("javaInnerClassConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("objectCompiled.kt")
+  public void testObjectCompiled() {
+    run("objectCompiled.kt");
   }
 
   @Test
