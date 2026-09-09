@@ -336,6 +336,13 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
                     //             ^ this x should resolve to the function parameter, not the constructor parameter
                     // }
                     current.primaryConstructorParameters.forEach(::ignoreParameter)
+
+                    // fun <T> f(x: Int) {
+                    //     class A<T>(val a: T)
+                    //     val x = T::class
+                    //             ^ this T should resolve to the function type parameter, not the class type parameter
+                    // }
+                    current.typeParameters.forEach(::ignore)
                 }
             }
 
@@ -394,6 +401,7 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
                 ?.let(::found)
         }
         foundIfNameMatches(klass)
+        klass.typeParameters.processMany(::processTypeParameter)
         if (constructorParametersAllowed) {
             klass.primaryConstructorParameters.processMany {
                 if (it.isPropertyParameter()) {

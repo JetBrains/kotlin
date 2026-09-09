@@ -271,7 +271,7 @@ KtUserType(191,192): 'C'
 KtNameReferenceExpression(191,192): 'C'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       C

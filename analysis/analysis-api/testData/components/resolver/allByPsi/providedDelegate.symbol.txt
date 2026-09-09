@@ -364,7 +364,7 @@ KtUserType(313,314): 'T'
 KtNameReferenceExpression(313,314): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       T

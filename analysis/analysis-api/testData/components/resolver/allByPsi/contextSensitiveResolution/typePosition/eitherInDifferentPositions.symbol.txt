@@ -127,7 +127,7 @@ KtUserType(168,169): 'E'
 KtNameReferenceExpression(168,169): 'E'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       E
@@ -277,7 +277,7 @@ KtUserType(239,240): 'A'
 KtNameReferenceExpression(239,240): 'A'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       A

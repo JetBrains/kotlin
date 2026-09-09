@@ -118,7 +118,7 @@ KtUserType(164,165): 'T'
 KtNameReferenceExpression(164,165): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
@@ -223,7 +223,7 @@ KtUserType(223,224): 'T'
 KtNameReferenceExpression(223,224): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
+  lookupLocally: true
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       T
