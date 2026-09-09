@@ -3869,117 +3869,70 @@ public final class org/jetbrains/kotlin/psi/psiUtil/PsiUtilsKt {
 	public static final fun unwrapParenthesesLabelsAndAnnotationsDeeply (Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/PsiElement;
 }
 
-public final class org/jetbrains/kotlin/psi/stubs/ConstantValueKind : java/lang/Enum {
-	public static final field BOOLEAN_CONSTANT Lorg/jetbrains/kotlin/psi/stubs/ConstantValueKind;
-	public static final field CHARACTER_CONSTANT Lorg/jetbrains/kotlin/psi/stubs/ConstantValueKind;
-	public static final field FLOAT_CONSTANT Lorg/jetbrains/kotlin/psi/stubs/ConstantValueKind;
-	public static final field INTEGER_CONSTANT Lorg/jetbrains/kotlin/psi/stubs/ConstantValueKind;
-	public static final field NULL Lorg/jetbrains/kotlin/psi/stubs/ConstantValueKind;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/psi/stubs/ConstantValueKind;
-	public static fun values ()[Lorg/jetbrains/kotlin/psi/stubs/ConstantValueKind;
-}
-
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinAnnotationEntryStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
-	public abstract fun getHasValueArguments ()Z
-	public abstract fun getShortName ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinAnnotationUseSiteTargetStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
-	public abstract fun getUseSiteTarget ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinBackingFieldStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
-	public abstract fun getHasInitializer ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinBlockStringTemplateEntryStub : org/jetbrains/kotlin/psi/stubs/KotlinPlaceHolderWithTextStub {
-	public abstract fun getHasMultipleExpressions ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinCallableStubBase : org/jetbrains/kotlin/psi/stubs/KotlinStubWithFqName {
-	public abstract fun getKdocText ()Ljava/lang/String;
-	public abstract fun isExtension ()Z
-	public abstract fun isTopLevel ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinClassOrObjectStub : org/jetbrains/kotlin/psi/stubs/KotlinClassifierStub, org/jetbrains/kotlin/psi/stubs/KotlinStubWithFqName {
-	public abstract fun getKdocText ()Ljava/lang/String;
-	public abstract fun getSuperNames ()Ljava/util/List;
-	public fun isLocal ()Z
-	public abstract fun isTopLevel ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinClassStub : org/jetbrains/kotlin/psi/stubs/KotlinClassOrObjectStub {
-	public abstract fun isClsStubCompiledToJvmDefaultImplementation ()Z
-	public abstract fun isInterface ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinClassifierStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
-	public abstract fun getClassId ()Lorg/jetbrains/kotlin/name/ClassId;
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinCollectionLiteralExpressionStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
-	public abstract fun getInnerExpressionCount ()I
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinConstantExpressionStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
-	public abstract fun getKind ()Lorg/jetbrains/kotlin/psi/stubs/ConstantValueKind;
-	public abstract fun getValue ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinConstructorStub : org/jetbrains/kotlin/psi/stubs/KotlinCallableStubBase, org/jetbrains/kotlin/psi/stubs/KotlinDeclarationWithBodyStub {
-	public abstract fun isDelegatedCallToThis ()Z
-	public abstract fun isExplicitDelegationCall ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinContextReceiverStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
-	public abstract fun getLabel ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinDeclarationWithBodyStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
-	public abstract fun getHasBody ()Z
-	public abstract fun getHasNoExpressionBody ()Z
-	public abstract fun getMayHaveContract ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinDestructuringDeclarationStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
-	public abstract fun getHasInitializer ()Z
-	public abstract fun isVar ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinEnumEntrySuperclassReferenceExpressionStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
-	public abstract fun getReferencedName ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStub : com/intellij/psi/stubs/PsiFileStub, org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
-	public abstract fun findImportsByAlias (Ljava/lang/String;)Ljava/util/List;
-	public abstract fun getKind ()Lorg/jetbrains/kotlin/psi/stubs/KotlinFileStubKind;
-	public fun getPackageFqName ()Lorg/jetbrains/kotlin/name/FqName;
-	public fun isScript ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind {
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$Invalid : org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind {
-	public abstract fun getErrorMessage ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$WithPackage : org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind {
-	public abstract fun getPackageFqName ()Lorg/jetbrains/kotlin/name/FqName;
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$WithPackage$Facade : org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$WithPackage {
-	public abstract fun getFacadeFqName ()Lorg/jetbrains/kotlin/name/FqName;
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$WithPackage$Facade$MultifileClass : org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$WithPackage$Facade {
-	public abstract fun getFacadePartSimpleNames ()Ljava/util/List;
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$WithPackage$Facade$Simple : org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$WithPackage$Facade {
-	public abstract fun getPartSimpleName ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$WithPackage$File : org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$WithPackage {
@@ -3989,7 +3942,6 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStubKin
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFunctionStub : org/jetbrains/kotlin/psi/stubs/KotlinCallableStubBase, org/jetbrains/kotlin/psi/stubs/KotlinDeclarationWithBodyStub {
-	public abstract fun getHasTypeParameterListBeforeFunctionName ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFunctionTypeStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
@@ -3999,55 +3951,36 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinImportAlias
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinImportDirectiveStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
-	public abstract fun getImportedFqName ()Lorg/jetbrains/kotlin/name/FqName;
-	public abstract fun isAllUnder ()Z
-	public abstract fun isValid ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinModifierListStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
-	public abstract fun hasModifier (Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;)Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinNameReferenceExpressionStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
-	public abstract fun getReferencedName ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinObjectStub : org/jetbrains/kotlin/psi/stubs/KotlinClassOrObjectStub {
-	public abstract fun isObjectLiteral ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinParameterStub : org/jetbrains/kotlin/psi/stubs/KotlinStubWithFqName {
-	public abstract fun getHasDefaultValue ()Z
-	public abstract fun getHasValOrVar ()Z
-	public abstract fun isMutable ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinPlaceHolderStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinPlaceHolderWithTextStub : org/jetbrains/kotlin/psi/stubs/KotlinPlaceHolderStub {
-	public abstract fun getText ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinPropertyAccessorStub : org/jetbrains/kotlin/psi/stubs/KotlinDeclarationWithBodyStub {
-	public abstract fun isGetter ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinPropertyStub : org/jetbrains/kotlin/psi/stubs/KotlinCallableStubBase {
-	public abstract fun getHasBackingField ()Ljava/lang/Boolean;
-	public abstract fun getHasDelegate ()Z
-	public abstract fun getHasDelegateExpression ()Z
-	public abstract fun getHasInitializer ()Z
-	public abstract fun getHasReturnTypeRef ()Z
-	public abstract fun isVar ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinScriptStub : org/jetbrains/kotlin/psi/stubs/KotlinStubWithFqName {
-	public abstract fun getFqName ()Lorg/jetbrains/kotlin/name/FqName;
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinStringInterpolationPrefixStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
-	public abstract fun getDollarSignCount ()I
 }
 
 public final class org/jetbrains/kotlin/psi/stubs/KotlinStubVersions {
@@ -4060,25 +3993,21 @@ public final class org/jetbrains/kotlin/psi/stubs/KotlinStubVersions {
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinStubWithFqName : com/intellij/psi/stubs/NamedStub, org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
-	public abstract fun getFqName ()Lorg/jetbrains/kotlin/name/FqName;
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinTypeAliasStub : org/jetbrains/kotlin/psi/stubs/KotlinClassifierStub, org/jetbrains/kotlin/psi/stubs/KotlinStubWithFqName {
-	public abstract fun isTopLevel ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinTypeParameterStub : org/jetbrains/kotlin/psi/stubs/KotlinStubWithFqName {
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinTypeProjectionStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
-	public abstract fun getProjectionKind ()Lorg/jetbrains/kotlin/psi/KtProjectionKind;
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinUserTypeStub : org/jetbrains/kotlin/psi/stubs/KotlinStubElement {
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinValueArgumentStub : org/jetbrains/kotlin/psi/stubs/KotlinPlaceHolderStub {
-	public abstract fun isSpread ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/elements/KtTokenSets {
@@ -4107,7 +4036,6 @@ public final class org/jetbrains/kotlin/psi/utils/ConstantExpressionUtils {
 	public static final fun hasUnsignedNumericLiteralSuffix (Ljava/lang/String;)Z
 	public static final fun parseBooleanLiteral (Ljava/lang/String;)Z
 	public static final fun parseNumericLiteral (Ljava/lang/String;Z)Ljava/lang/Number;
-	public static final fun toConstantExpressionElementType (Lorg/jetbrains/kotlin/psi/stubs/ConstantValueKind;)Lorg/jetbrains/kotlin/KtNodeType;
 }
 
 public final class org/jetbrains/kotlin/psi/utils/OperatorTokens {
