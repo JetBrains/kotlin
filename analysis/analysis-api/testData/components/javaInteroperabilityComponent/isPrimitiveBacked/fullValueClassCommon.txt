@@ -5,4 +5,4 @@ KaUsualClassType:
   type: FullValueClass
 
 isPrimitiveBacked:
-true
+false
