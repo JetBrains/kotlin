@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.util.forEachPhaseMeasurement
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
-import java.io.RandomAccessFile
 import java.lang.management.ManagementFactory
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -44,8 +43,18 @@ import java.util.concurrent.atomic.AtomicLong
  *   fir.bench.instrumentation.label     - human-readable label of the configuration, e.g. `m5max-falcon-on`
  *   fir.bench.instrumentation.detailed  - `false` disables per-thread user/cpu time measurement (default `true`)
  *   fir.bench.instrumentation.probes    - `false` disables the environment probes (default `true`)
- *   fir.bench.instrumentation.probes.cpu.iterations  - number of the cpu probe repetitions (default `30`)
- *   fir.bench.instrumentation.probes.exec.iterations - number of the process exec probe repetitions (default `30`)
+ *   fir.bench.instrumentation.probes.suite - `full` (default), `quick` (fewer repetitions, smaller working sets)
+ *                                         or `off` (the same as `probes=false`)
+ *   fir.bench.instrumentation.probes.<name>.iterations - repetitions of an individual probe, e.g.
+ *                                         `fir.bench.instrumentation.probes.processExec.iterations=100`
+ *   fir.bench.sample.fraction           - compile only a deterministic subset of the modules (default `1.0`).
+ *                                         The subset is selected by a stable hash of the model file name, so it is
+ *                                         the same on every machine and in every run with the same seed
+ *   fir.bench.sample.seed               - changes which subset is selected (default `0`)
+ *   fir.bench.sample.list               - path to a file with the model file names to compile, one per line;
+ *                                         overrides the fraction
+ *   fir.bench.compile.repeat            - compile every selected module this many times in a row (default `1`);
+ *                                         every compilation gets its own record with an `iteration` field
  */
 object ModularizedTestInstrumentation {
     val enabled: Boolean = System.getProperty("fir.bench.instrumentation", "true").toBooleanLenient()
@@ -53,7 +62,38 @@ object ModularizedTestInstrumentation {
     /** Enables per-thread user/cpu time measurements inside the compiler, otherwise only wall time is available. */
     val detailedPerf: Boolean = System.getProperty("fir.bench.instrumentation.detailed", "true").toBooleanLenient()
 
-    private val probesEnabled: Boolean = System.getProperty("fir.bench.instrumentation.probes", "true").toBooleanLenient()
+    private val probeSuite: String = System.getProperty("fir.bench.instrumentation.probes.suite", "full").lowercase(Locale.ENGLISH)
+
+    private val probesEnabled: Boolean =
+        System.getProperty("fir.bench.instrumentation.probes", "true").toBooleanLenient() && probeSuite != "off"
+
+    private val quickProbes: Boolean = probeSuite == "quick"
+
+    /**
+     * A deterministic subset of the modules: the selection is a stable hash of the model file name, so every
+     * machine and every repetition compiles exactly the same modules. Needed because the full suite at
+     * `parallelism=1` takes about an hour, while a comparison needs several alternating repetitions.
+     */
+    private val sampleFraction: Double = System.getProperty("fir.bench.sample.fraction")?.toDoubleOrNull() ?: 1.0
+
+    private val sampleSeed: Int = System.getProperty("fir.bench.sample.seed")?.toIntOrNull() ?: 0
+
+    private val sampleList: Set<String>? = System.getProperty("fir.bench.sample.list")?.let { path ->
+        try {
+            File(path).readLines().map { it.trim() }.filter { it.isNotEmpty() && !it.startsWith("#") }.toSet()
+        } catch (e: Exception) {
+            System.err.println("Can't read the module sample list $path: ${e.message}")
+            null
+        }
+    }
+
+    /**
+     * Compiling the same module several times in a row separates the cold state (file cache, JIT, the class path
+     * caches of the compiler) from the steady state: the first iteration is the cold one, the rest are warm.
+     */
+    val compileRepeat: Int = Math.max(1, System.getProperty("fir.bench.compile.repeat")?.toIntOrNull() ?: 1)
+
+    private val skippedBySampling = AtomicInteger()
 
     private val label: String = System.getProperty("fir.bench.instrumentation.label") ?: "default"
 
@@ -94,7 +134,27 @@ object ModularizedTestInstrumentation {
         }
     }
 
-    fun start(modelPath: String): CompilationMeasurement? {
+    /**
+     * `false` means the module is excluded from this run by the `fir.bench.sample.*` configuration and the test
+     * must be skipped (not failed).
+     */
+    fun isSelected(modelPath: String): Boolean {
+        if (!enabled) return true
+        val name = File(modelPath).name
+        sampleList?.let { return name in it }
+        if (sampleFraction >= 1.0) return true
+        if (sampleFraction <= 0.0) return false
+        // FNV-1a over the file name: stable across the JVM versions and the machines, unlike String.hashCode
+        var hash = 2166136261L xor (sampleSeed.toLong() and 0xffffffffL)
+        for (char in name) {
+            hash = (hash xor char.code.toLong()) * 16777619L and 0xffffffffL
+        }
+        return hash % 10_000L < sampleFraction * 10_000L
+    }
+
+    fun noteSkippedBySampling(): Int = skippedBySampling.incrementAndGet()
+
+    fun start(modelPath: String, iteration: Int = 0): CompilationMeasurement? {
         if (!enabled) return null
         // Create the run directory (and run the initial probes) before the first compilation starts
         runDir
@@ -110,6 +170,7 @@ object ModularizedTestInstrumentation {
             startGcMillis = totalGcMillis(),
             startGcCount = totalGcCount(),
             startJitMillis = totalJitMillis(),
+            iteration = iteration,
         )
     }
 
@@ -140,6 +201,9 @@ object ModularizedTestInstrumentation {
             field("exitCode", result.name)
             field("thread", measurement.threadName)
             field("startTimeMs", measurement.startTimeMs)
+            // 0 is the cold compilation of this module, the following ones are warm; see `fir.bench.compile.repeat`
+            field("iteration", measurement.iteration)
+            field("repeatCount", compileRepeat)
             field("wallNanos", wallNanos)
             // The test thread itself; the compiler may use additional threads, see `processCpuNanos`
             field("threadCpuNanos", threadCpuNanos)
@@ -209,6 +273,13 @@ object ModularizedTestInstrumentation {
                 for (name in System.getProperties().stringPropertyNames().sorted()) {
                     if (name.startsWith("fir.bench.")) field(name, System.getProperty(name))
                 }
+                // The effective values, so that a comparison does not depend on which properties were set explicitly
+                field("sampleFraction", sampleFraction)
+                field("sampleSeed", sampleSeed)
+                field("sampleListSize", sampleList?.size ?: 0)
+                field("compileRepeat", compileRepeat)
+                field("probeSuite", probeSuite)
+                field("maxHeapBytesEffective", Runtime.getRuntime().maxMemory())
             }
             objectField("system") { systemDescription() }
             if (probesEnabled) {
@@ -219,11 +290,15 @@ object ModularizedTestInstrumentation {
     }
 
     private fun writeSummary(dir: File) {
+        // Measure the run before settling, otherwise the settling pause would be counted into it
+        val runWallNanos = System.nanoTime() - runStartNanos
+        if (probesEnabled) settleBeforeProbes()
         val text = json {
             field("label", label)
             field("compilations", compilationsCount.get())
             field("failedCompilations", failedCompilationsCount.get())
-            field("runWallNanos", System.nanoTime() - runStartNanos)
+            field("skippedBySampling", skippedBySampling.get())
+            field("runWallNanos", runWallNanos)
             field("sumOfCompilationWallNanos", totalCompilationWallNanos.get())
             field("processCpuNanos", processCpuNanos())
             arrayField("gc") {
@@ -253,117 +328,69 @@ object ModularizedTestInstrumentation {
     }
 
     /**
-     * Calibration probes. The CPU probe is required to compare different machines: all the other numbers should be
-     * normalized by it, otherwise a faster CPU is indistinguishable from a machine without a monitoring agent.
-     * The syscall probes measure exactly the operations intercepted by such agents.
+     * The calibration suite, see [CalibrationProbes]. Two different machines cannot be compared without it: a
+     * faster CPU, a faster memory subsystem and a machine without a monitoring agent all look the same in the
+     * workload numbers alone. One probe per dimension, so that the analysis can build a predicted ratio out of
+     * them and report what is left unexplained (`scripts/calibrate.py`, `scripts/compare-bench-runs.py`).
      */
     private fun JsonBuilder.probes(dir: File) {
-        objectField("cpu") { measurements(cpuProbe()) }
         val probeDir = File(dir, "probe-${probeDirCounter.incrementAndGet()}").also { it.mkdirs() }
-        try {
-            val files = createProbeFiles(probeDir)
-            objectField("fileOpenRead") { measurements(fileOpenReadProbe(files)) }
-            objectField("fileStat") { measurements(fileStatProbe(files)) }
-            objectField("fileOpenReadUnique") { measurements(fileOpenReadUniqueProbe(probeDir)) }
-            objectField("fileCreateDelete") { measurements(fileCreateDeleteProbe(probeDir)) }
-            objectField("processExec") { measurements(processExecProbe()) }
+        val results = try {
+            CalibrationProbes.run(probeDir, quickProbes) { name ->
+                System.getProperty("fir.bench.instrumentation.probes.$name.iterations")?.toIntOrNull()
+            }
+        } catch (e: Throwable) {
+            System.err.println("The calibration probes failed: ${e.message}")
+            emptyList()
         } finally {
             probeDir.deleteRecursively()
+        }
+        for (probe in results) {
+            for (name in listOf(probe.name) + probe.aliases) {
+                objectField(name) { measurements(probe) }
+            }
         }
     }
 
     private val probeDirCounter = AtomicInteger()
 
-    private const val FILE_PROBE_COUNT = 512
-
-    private val execProbeCount: Int = System.getProperty("fir.bench.instrumentation.probes.exec.iterations")?.toIntOrNull() ?: 30
-
-    private val cpuProbeCount: Int = System.getProperty("fir.bench.instrumentation.probes.cpu.iterations")?.toIntOrNull() ?: 30
-
-    private fun cpuProbe(): LongArray {
-        val result = LongArray(cpuProbeCount)
-        for (i in result.indices) {
-            val start = System.nanoTime()
-            var acc = 0L
-            var x = 1L
-            for (j in 0 until 20_000_000L) {
-                x = x * 6364136223846793005L + 1442695040888963407L
-                acc += x ushr 33
-            }
-            blackHole += acc
-            result[i] = System.nanoTime() - start
-        }
-        return result
-    }
-
-    @Volatile
-    private var blackHole: Long = 0
-
-    private fun createProbeFiles(dir: File): List<File> = (0 until FILE_PROBE_COUNT).map { index ->
-        File(dir, "probe-$index.bin").also { it.writeBytes(ByteArray(4096) { index.toByte() }) }
-    }
-
-    private fun fileOpenReadProbe(files: List<File>): LongArray = files.measureEach { file ->
-        RandomAccessFile(file, "r").use { it.read(ByteArray(4096)) }
-    }
-
-    private fun fileStatProbe(files: List<File>): LongArray = files.measureEach { file ->
-        file.length()
-        file.canRead()
-    }
-
     /**
-     * Unlike [fileOpenReadProbe], every path here is opened exactly once, and the paths are spread over a deep
-     * directory tree. A monitoring agent that caches its verdict per file cannot amortize such a probe, so this is
-     * the probe that is expected to expose a synchronously hooked `open`.
+     * The `probesAfter` pass would otherwise start right after the last compilation, on a heap full of garbage and
+     * with the JIT and GC threads still working, which made it noticeably noisier than `probesBefore` (a spread of
+     * 60% on the memory latency probes against 5% before). A calibration factor is worthless if the two passes of
+     * the same run disagree more than the two machines do.
      */
-    private fun fileOpenReadUniqueProbe(dir: File): LongArray {
-        val root = File(dir, "unique")
-        val files = ArrayList<File>(FILE_PROBE_COUNT)
-        val leafCount = 64
-        val filesPerLeaf = FILE_PROBE_COUNT / leafCount
-        for (leaf in 0 until leafCount) {
-            val leafDir = File(root, "${leaf / 8}/${leaf % 8}").also { it.mkdirs() }
-            for (index in 0 until filesPerLeaf) {
-                files += File(leafDir, "unique-$leaf-$index.bin").also { it.writeBytes(ByteArray(4096)) }
-            }
-        }
-        return files.measureEach { file -> RandomAccessFile(file, "r").use { it.read(ByteArray(4096)) } }
-    }
-
-    private fun fileCreateDeleteProbe(dir: File): LongArray = (0 until FILE_PROBE_COUNT).toList().measureEach { index ->
-        val file = File(dir, "created-$index.bin")
-        file.writeBytes(ByteArray(64))
-        file.delete()
-    }
-
-    private fun processExecProbe(): LongArray = (0 until execProbeCount).toList().measureEach {
+    private fun settleBeforeProbes() {
+        System.gc()
         try {
-            ProcessBuilder("/usr/bin/true").start().waitFor()
-        } catch (e: Exception) {
-            // The probe is best effort only
+            Thread.sleep(TimeUnit.SECONDS.toMillis(3))
+        } catch (e: InterruptedException) {
+            Thread.currentThread().interrupt()
         }
     }
 
-    private inline fun <T> List<T>.measureEach(action: (T) -> Unit): LongArray {
-        val result = LongArray(size)
-        for (index in indices) {
-            val start = System.nanoTime()
-            action(this[index])
-            result[index] = System.nanoTime() - start
-        }
-        return result
-    }
-
-    private fun JsonBuilder.measurements(nanos: LongArray) {
-        val sorted = nanos.sortedArray()
+    private fun JsonBuilder.measurements(probe: CalibrationProbes.ProbeResult) {
+        val sorted = probe.nanos.sortedArray()
+        val median = sorted.percentile(0.5)
+        field("kind", probe.kind)
+        field("unit", probe.unit)
+        field("opsPerMeasurement", probe.opsPerMeasurement)
+        field("bytesPerMeasurement", probe.bytesPerMeasurement)
+        field("lowerIsBetter", probe.unit != CalibrationProbes.UNIT_BYTES_PER_SECOND)
         field("count", sorted.size)
         field("totalNanos", sorted.sum())
         field("meanNanos", if (sorted.isEmpty()) 0 else sorted.sum() / sorted.size)
         field("minNanos", sorted.firstOrNull() ?: 0)
-        field("medianNanos", sorted.percentile(0.5))
+        field("medianNanos", median)
         field("p95Nanos", sorted.percentile(0.95))
         field("maxNanos", sorted.lastOrNull() ?: 0)
+        // The derived per-operation figures, so that no consumer has to know the shape of a particular probe
+        if (probe.opsPerMeasurement > 0) {
+            field("medianNanosPerOp", median.toDouble() / probe.opsPerMeasurement)
+        }
+        if (probe.bytesPerMeasurement > 0 && median > 0) {
+            field("medianBytesPerSecond", probe.bytesPerMeasurement * 1_000_000_000L / median)
+        }
     }
 
     private fun LongArray.percentile(ratio: Double): Long {
@@ -462,6 +489,7 @@ class CompilationMeasurement internal constructor(
     val startGcMillis: Long,
     val startGcCount: Long,
     val startJitMillis: Long,
+    val iteration: Int,
 )
 
 /*

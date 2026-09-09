@@ -10,6 +10,8 @@
 # Usage:
 #   scripts/run-bench.sh --label m5max-falcon-on
 #   scripts/run-bench.sh --label m2max-falcon-off --cores 8 --heap 12g --repeat 3
+#   scripts/run-bench.sh --label m5max-serial --serial --sample 0.05 --compile-repeat 3 --heap 4g
+#   scripts/run-bench.sh --label m5max-native --native --heap-per-thread 1g
 #
 # Run the very same command line on both machines, changing only --label.
 
@@ -17,6 +19,57 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
+
+# A wrong value here does not fail the run, it silently produces numbers that cannot be compared - so every
+# knob that influences the measurement is validated before Gradle is started.
+require_int() {
+    local name="$1" value="$2"
+    if [[ ! "$value" =~ ^-?[0-9]+$ ]]; then
+        echo "$name must be an integer, got: $value" >&2
+        exit 2
+    fi
+}
+
+require_positive_int() {
+    local name="$1" value="$2"
+    if [[ ! "$value" =~ ^[1-9][0-9]*$ ]]; then
+        echo "$name must be a positive integer, got: $value" >&2
+        exit 2
+    fi
+}
+
+require_fraction() {
+    local name="$1" value="$2"
+    if ! awk -v v="$value" 'BEGIN { exit !(v + 0 == v && v > 0 && v <= 1) }'; then
+        echo "$name must be a number in (0,1], got: $value" >&2
+        exit 2
+    fi
+}
+
+# hw.ncpu counts the E cores too, which is exactly what a developer's own build gets
+native_cpu_count() {
+    if [[ "$(uname)" == "Darwin" ]]; then
+        sysctl -n hw.ncpu
+    else
+        getconf _NPROCESSORS_ONLN
+    fi
+}
+
+# The build wants the heap in megabytes (-Pkotlin.test.xmx), while the per-thread budget is stated as 1g
+MEGABYTES=0
+to_megabytes() {
+    local size="$1" name="$2"
+    local number="${size%[gGmM]}"
+    local suffix="${size#"$number"}"
+    if [[ ! "$number" =~ ^[1-9][0-9]*$ ]]; then
+        echo "$name must be a size such as 1g, 1024m or a plain number of megabytes, got: $size" >&2
+        exit 2
+    fi
+    case "$suffix" in
+        g|G) MEGABYTES=$((number * 1024)) ;;
+        *) MEGABYTES="$number" ;;
+    esac
+}
 
 # ---------------------------------------------------------------------------------------------------------------
 # Defaults. They are deliberately conservative: 8 cores is available on every Apple Silicon machine, and the
@@ -38,9 +91,19 @@ PURGE=0
 TEST_INSTRUMENTER=1
 DRY_RUN=0
 EXTRA_ARGS=()
+# The sampling/repetition knobs of the harness. Empty means "do not pass the property at all", so that the
+# defaults stay in one place - in the Kotlin code - and a run directory of a default run keeps the same shape.
+SAMPLE_FRACTION=""
+SAMPLE_SEED=""
+SAMPLE_LIST=""
+COMPILE_REPEAT=""
+PROBE_SUITE=""
+HEAP_PER_THREAD=""
+TAG=""
+EXTRA_JVM_ARGS=()
 
 usage() {
-    sed -n '3,14p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
+    sed -n '3,16p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
     cat <<EOF
 
 Options:
@@ -52,6 +115,16 @@ Options:
   -g, --gc NAME           Parallel | G1 | none (default: $GC)
   -r, --repeat N          run the suite N times, labels get an -rN suffix (default: $REPEAT)
   -o, --out-dir DIR       root directory for the run directories (default: <repo>/tmp/fir-bench)
+      --serial            shorthand for --cores 1 --parallelism 1
+      --native            shorthand for --cores/--parallelism = the real core count of this machine
+      --heap-per-thread SIZE  heap = SIZE * parallelism, keeps the memory per concurrent compilation constant
+      --sample FRACTION   compile only a deterministic subset of the modules, fraction in (0,1]
+      --sample-seed N     changes which subset --sample selects (default: 0)
+      --sample-list FILE  explicit list of model file names, one per line; overrides --sample
+      --compile-repeat N  compile every selected module N times in a row (default: 1)
+      --probe-suite NAME  calibration probe suite: full | quick | off (default: full)
+      --jvm-arg ARG       extra argument for the test JVM, may be repeated
+      --tag TEXT          free-form text recorded into run-env.txt, e.g. falcon-off
       --warmup            do a throwaway run first, to warm the file cache up
       --no-prebuild       do not build :dist and the test classes beforehand
       --no-offline        allow Gradle to access the network during the measured run
@@ -73,6 +146,16 @@ while [[ $# -gt 0 ]]; do
         -g|--gc) GC="$2"; shift 2 ;;
         -r|--repeat) REPEAT="$2"; shift 2 ;;
         -o|--out-dir) OUT_DIR="$2"; shift 2 ;;
+        --serial) CORES=1; PARALLELISM=1; shift ;;
+        --native) CORES="$(native_cpu_count)"; PARALLELISM="$CORES"; shift ;;
+        --heap-per-thread) HEAP_PER_THREAD="$2"; shift 2 ;;
+        --sample) SAMPLE_FRACTION="$2"; shift 2 ;;
+        --sample-seed) SAMPLE_SEED="$2"; shift 2 ;;
+        --sample-list) SAMPLE_LIST="$2"; shift 2 ;;
+        --compile-repeat) COMPILE_REPEAT="$2"; shift 2 ;;
+        --probe-suite) PROBE_SUITE="$2"; shift 2 ;;
+        --jvm-arg) EXTRA_JVM_ARGS+=("$2"); shift 2 ;;
+        --tag) TAG="$2"; shift 2 ;;
         --warmup) WARMUP=1; shift ;;
         --no-prebuild) PREBUILD=0; shift ;;
         --no-offline) OFFLINE=0; shift ;;
@@ -93,6 +176,33 @@ fi
 [[ -n "$PARALLELISM" ]] || PARALLELISM="$CORES"
 [[ -n "$OUT_DIR" ]] || OUT_DIR="$REPO_ROOT/tmp/fir-bench"
 
+require_positive_int "--cores" "$CORES"
+require_positive_int "--parallelism" "$PARALLELISM"
+require_positive_int "--repeat" "$REPEAT"
+[[ -z "$SAMPLE_FRACTION" ]] || require_fraction "--sample" "$SAMPLE_FRACTION"
+[[ -z "$SAMPLE_SEED" ]] || require_int "--sample-seed" "$SAMPLE_SEED"
+[[ -z "$COMPILE_REPEAT" ]] || require_positive_int "--compile-repeat" "$COMPILE_REPEAT"
+case "$PROBE_SUITE" in
+    ""|full|quick|off) ;;
+    *) echo "--probe-suite must be one of full | quick | off, got: $PROBE_SUITE" >&2; exit 2 ;;
+esac
+
+if [[ -n "$SAMPLE_LIST" ]]; then
+    # The property is read by the test JVM, whose working directory is not the one of this script
+    if [[ ! -f "$SAMPLE_LIST" ]]; then
+        echo "--sample-list file does not exist: $SAMPLE_LIST" >&2
+        exit 2
+    fi
+    SAMPLE_LIST="$(cd "$(dirname "$SAMPLE_LIST")" && pwd)/$(basename "$SAMPLE_LIST")"
+fi
+
+# The heap has to follow the parallelism: with a fixed heap, raising the parallelism from 12 to 18 silently gives
+# every concurrent compilation a third less memory, and the resulting full GC time dwarfs the effect measured
+if [[ -n "$HEAP_PER_THREAD" ]]; then
+    to_megabytes "$HEAP_PER_THREAD" "--heap-per-thread"
+    HEAP="$((MEGABYTES * PARALLELISM))m"
+fi
+
 mkdir -p "$OUT_DIR"
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -108,6 +218,13 @@ JVM_ARGS="$JVM_ARGS -XX:ParallelGCThreads=$CORES"
 JVM_ARGS="$JVM_ARGS -XX:+AlwaysPreTouch"
 # Same code cache behaviour on both machines
 JVM_ARGS="$JVM_ARGS -XX:-UseCodeCacheFlushing"
+# Note on --serial: ParallelGCThreads stays equal to the pinned core count even at parallelism 1. Forcing it to 1
+# independently of the core count would replace the GC being measured by a different one, and a serial run is
+# meant to differ from a parallel one only in the concurrency of the compilations.
+# Whatever the caller adds goes last, so that it can override any of the pinned flags above on purpose
+if [[ ${#EXTRA_JVM_ARGS[@]} -gt 0 ]]; then
+    JVM_ARGS="$JVM_ARGS ${EXTRA_JVM_ARGS[*]}"
+fi
 
 GRADLE_ARGS=(
     ":compiler:fir:modularized-tests:test"
@@ -129,6 +246,22 @@ if [[ "$OFFLINE" == "1" ]]; then
     # The network is monitored by the very agents being measured; keep Gradle off it during the run
     GRADLE_ARGS+=("--offline")
 fi
+# The build forwards every -Pfir.* property to the test JVM, so this is enough to reach the harness
+if [[ -n "$SAMPLE_FRACTION" ]]; then
+    GRADLE_ARGS+=("-Pfir.bench.sample.fraction=$SAMPLE_FRACTION")
+fi
+if [[ -n "$SAMPLE_SEED" ]]; then
+    GRADLE_ARGS+=("-Pfir.bench.sample.seed=$SAMPLE_SEED")
+fi
+if [[ -n "$SAMPLE_LIST" ]]; then
+    GRADLE_ARGS+=("-Pfir.bench.sample.list=$SAMPLE_LIST")
+fi
+if [[ -n "$COMPILE_REPEAT" ]]; then
+    GRADLE_ARGS+=("-Pfir.bench.compile.repeat=$COMPILE_REPEAT")
+fi
+if [[ -n "$PROBE_SUITE" ]]; then
+    GRADLE_ARGS+=("-Pfir.bench.instrumentation.probes.suite=$PROBE_SUITE")
+fi
 
 check_active_processor_count() {
     local java_home
@@ -148,7 +281,9 @@ write_env_report() {
         echo "date: $(date -Iseconds)"
         echo "host: $(hostname)"
         echo "label: $LABEL"
-        echo "pinned: cores=$CORES parallelism=$PARALLELISM heap=$HEAP gc=$GC"
+        echo "tag: $TAG"
+        echo "pinned: cores=$CORES parallelism=$PARALLELISM heap=$HEAP heapPerThread=${HEAP_PER_THREAD:-n/a} gc=$GC tests=$TESTS"
+        echo "sampling: fraction=${SAMPLE_FRACTION:-default} seed=${SAMPLE_SEED:-default} list=${SAMPLE_LIST:-none} compileRepeat=${COMPILE_REPEAT:-default} probeSuite=${PROBE_SUITE:-default}"
         echo "jvmArgs: $JVM_ARGS"
         echo "gradleArgs: ${GRADLE_ARGS[*]} ${EXTRA_ARGS[*]+${EXTRA_ARGS[*]}}"
         echo "uptime: $(uptime)"
