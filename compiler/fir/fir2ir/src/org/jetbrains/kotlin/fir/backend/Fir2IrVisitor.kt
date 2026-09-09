@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.diagnostics.findChildByType
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.backend.generators.ClassMemberGenerator
 import org.jetbrains.kotlin.fir.backend.generators.OperatorExpressionGenerator
@@ -37,6 +38,8 @@ import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.sourceSuppressedDiagnosticNames
+import org.jetbrains.kotlin.ir.suppressedDiagnosticNames
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -1020,7 +1023,7 @@ class Fir2IrVisitor(
             is FirReplPropertyDelegate -> callGenerator.convertToIrSetCall(delegate, propertySymbol)
             is FirReplDeclarationReference -> null
             else -> accept(this@Fir2IrVisitor, null) as IrStatement
-        }
+        }?.preserveSourceSuppressions(this)
     }
 
     private val FirProperty.isUnnamedLocalVariable: Boolean
@@ -1074,7 +1077,19 @@ class Fir2IrVisitor(
             } else {
                 it
             }
+        }.preserveSourceSuppressions(expression)
+    }
+
+    private fun <T : IrElement> T.preserveSourceSuppressions(firElement: FirElement): T {
+        if (this is IrAnnotationContainer) return this
+
+        val annotations = (firElement as? FirAnnotationContainer)?.annotations ?: return this
+        val suppressionNames = with(annotationGenerator) { annotations.toIrAnnotations() }
+            .flatMapTo(mutableSetOf()) { it.suppressedDiagnosticNames() }
+        if (suppressionNames.isNotEmpty()) {
+            sourceSuppressedDiagnosticNames = suppressionNames
         }
+        return this
     }
 
     internal fun convertToIrReceiverExpression(
