@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -370,27 +371,45 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext) : Fil
     }
 
     private fun IrRichFunctionReference.directImplementationFunction(): IrSimpleFunction? {
-        val target = reflectionTargetSymbol?.owner as? IrSimpleFunction ?: return null
         val body = invokeFunction.body as? IrBlockBody ?: return null
-        val returnedCall = (body.statements.lastOrNull() as? IrReturn)?.value as? IrCall ?: return null
-        if (body.statements.dropLast(1).any { statement ->
-                val check = (statement as? IrCall)?.symbol?.owner ?: return@any true
-                check.parentAsClass.fqNameWhenAvailable?.asString() != "kotlin.jvm.internal.Intrinsics" ||
-                    check.name.asString() != "checkNotNullParameter"
-            }) {
+        val lastStatement = body.statements.lastOrNull() ?: return null
+        val returnedValue = when (lastStatement) {
+            is IrReturn -> lastStatement.value
+            is IrCall -> lastStatement
+            else -> null
+        } ?: return null
+        var unwrappedValue = returnedValue
+        while (unwrappedValue is IrTypeOperatorCall) unwrappedValue = unwrappedValue.argument
+        val returnedCall = unwrappedValue as? IrCall ?: return null
+        val target = returnedCall.symbol.owner.resolveFakeOverrideOrSelf() as? IrSimpleFunction ?: return null
+        val targetClass = target.parent as? IrClass ?: return null
+        // A direct handle cannot bypass accessors, inlining, intrinsics, super dispatch, or wrapper adaptations.
+        if (
+            target.visibility != DescriptorVisibilities.PUBLIC ||
+            targetClass.visibility != DescriptorVisibilities.PUBLIC ||
+            target.isInlineOnly() ||
+            target.typeParameters.any { it.isReified } ||
+            backendContext.getIntrinsic(returnedCall.symbol) != null ||
+            backendContext.getIntrinsic(target.symbol) != null ||
+            returnedCall.superQualifierSymbol != null ||
+            target.returnType.isUnit() && !invokeFunction.returnType.isUnit()
+        ) {
             return null
         }
-        if (returnedCall.symbol != target.symbol || returnedCall.arguments.size != target.parameters.size) return null
-        val forwardedArguments = buildList<IrExpression?> {
-            returnedCall.dispatchReceiver?.let(::add)
-            addAll(returnedCall.arguments)
-        }
+        // `dispatchReceiver` is a view of `arguments[0]`, not an additional slot.
+        // The arguments list already follows the target function's complete parameter list.
+        if (returnedCall.arguments.size != target.parameters.size) return null
+        val forwardedArguments = returnedCall.arguments
         val forwardedParameters = forwardedArguments.map {
             when (it) {
                 is IrGetValue -> it.symbol
-                is IrTypeOperatorCall -> (it.argument as? IrGetValue)?.symbol
                 else -> null
             } ?: return null
+        }
+        if (forwardedArguments.zip(target.parameters).any {
+                it.first?.type != it.second.type
+            }) {
+            return null
         }
         if (forwardedParameters.size != invokeFunction.parameters.size ||
             forwardedParameters.toSet() != invokeFunction.parameters.map { it.symbol }.toSet()
