@@ -214,6 +214,7 @@ class PsiClassRenderer private constructor(
     private fun PsiMethod.renderMethod() =
         renderModifiers() +
                 (if (isVarArgs) "/* vararg */ " else "") +
+                (if (isDefaultConstructor) "/* default ctor */ " else "") +
                 typeParameters.renderTypeParams() +
                 (returnType?.renderType() ?: "") + " " +
                 name +
