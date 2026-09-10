@@ -5,57 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.impl
 
-import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFileSystemItem
-import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.KotlinStaticProjectStructureProvider
-import org.jetbrains.kotlin.analysis.project.structure.builder.*
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.javaSourceRoots
-import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathNioRoots
-import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.psi.KtFile
 import java.io.IOException
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 import kotlin.io.path.extension
-
-/**
- * Collect source file path as [String] from the given source roots in [compilerConfig].
- *
- * Such source roots are either [KotlinSourceRoot][org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot]
- * or [JavaSourceRoot][org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot], and thus this util collects all `.kt` and `.java`
- * files under source roots.
- */
-internal fun getSourceFilePaths(
-    compilerConfig: CompilerConfiguration,
-    includeDirectoryRoot: Boolean = false,
-): Set<Path> {
-    return buildSet {
-        compilerConfig.javaSourceRoots.forEach { srcRoot ->
-            val path = Paths.get(srcRoot)
-            if (Files.isDirectory(path)) {
-                // E.g., project/app/src
-                addAll(collectSourceFilePaths(path))
-                if (includeDirectoryRoot) {
-                    add(path)
-                }
-            } else {
-                // E.g., project/app/src/some/pkg/main.kt
-                add(path)
-            }
-        }
-    }
-}
 
 /**
  * Collect source file path from the given [root]
@@ -109,83 +65,4 @@ internal fun Path.hasSuitableExtensionToAnalyse(): Boolean {
     return extension == KotlinFileType.EXTENSION ||
             extension == KotlinParserDefinition.STD_SCRIPT_SUFFIX ||
             extension == JavaFileType.DEFAULT_EXTENSION
-}
-
-internal inline fun <reified T : PsiFileSystemItem> getPsiFilesFromPaths(
-    kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment,
-    paths: Collection<Path>,
-): List<T> {
-    val fs = kotlinCoreProjectEnvironment.environment.localFileSystem
-    val psiManager = PsiManager.getInstance(kotlinCoreProjectEnvironment.project)
-    return buildList {
-        for (path in paths) {
-            val vFile = fs.findFileByNioFile(path.toAbsolutePath()) ?: continue
-            val psiFileSystemItem =
-                if (vFile.isDirectory)
-                    psiManager.findDirectory(vFile) as? T
-                else
-                    psiManager.findFile(vFile) as? T
-            psiFileSystemItem?.let { add(it) }
-        }
-    }
-}
-
-@OptIn(KaExperimentalApi::class)
-internal fun buildKtModuleProviderByCompilerConfiguration(
-    coreApplicationEnvironment: CoreApplicationEnvironment,
-    project: Project,
-    compilerConfig: CompilerConfiguration,
-    ktFiles: List<KtFile>,
-): KotlinStaticProjectStructureProvider {
-    val [moduleContainer, platform] = buildModuleContainer(coreApplicationEnvironment, project) {
-        val [scriptFiles, _] = ktFiles.partition { it.isScript() }
-        val platform = JvmPlatforms.defaultJvmPlatform
-
-        fun KtModuleBuilder.addModuleDependencies(moduleName: String) {
-            val libraryRoots = compilerConfig.jvmModularRoots.asSequence().map { it.toPath() } + compilerConfig.jvmClasspathNioRoots()
-            addRegularDependency(
-                buildKtLibraryModule {
-                    this.platform = platform
-                    addBinaryRoots(libraryRoots.toList())
-                    libraryName = "Library for $moduleName"
-                }
-            )
-            compilerConfig[JVMConfigurationKeys.JDK_HOME]?.let { jdkHome ->
-                addRegularDependency(
-                    buildKtSdkModule {
-                        this.platform = platform
-                        addBinaryRootsFromJdkHome(jdkHome.toPath(), isJre = false)
-                        libraryName = "JDK for $moduleName"
-                    }
-                )
-            }
-        }
-
-        val configLanguageVersionSettings = compilerConfig[CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS]
-
-        for (scriptFile in scriptFiles) {
-            buildKtScriptModule {
-                configLanguageVersionSettings?.let { this.languageVersionSettings = it }
-                this.platform = platform
-                this.file = scriptFile
-
-                addModuleDependencies("Script " + scriptFile.name)
-            }.apply(::addModule)
-        }
-
-        buildKtSourceModule {
-            configLanguageVersionSettings?.let { this.languageVersionSettings = it }
-            this.platform = platform
-            this.moduleName = compilerConfig[CommonConfigurationKeys.MODULE_NAME] ?: "<no module name provided>"
-
-            addModuleDependencies(moduleName)
-
-            addSourceRoots(compilerConfig.javaSourceRoots.map { Paths.get(it) })
-        }.apply(::addModule)
-
-
-        this.platform = platform
-    }
-
-    return KotlinStandaloneProjectStructureProvider(platform, project, moduleContainer)
 }
