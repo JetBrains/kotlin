@@ -223,10 +223,13 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     /**
      * Whether [owner] needs a generated companion object to host its `builder()` factories. Only a static builder
      * needs one — a `@Builder` method's factory is an instance method on the entity itself, so a class carrying
-     * nothing but method builders must not ask for an otherwise empty companion.
+     * nothing but method builders must not ask for an otherwise empty companion. Neither must one whose
+     * `builderMethodName` is empty: that suppresses the factory outright, leaving nothing to host.
      */
     override fun needsCompanionObject(owner: FirClassSymbol<*>): Boolean =
-        builderWithDeclarationsCache.getValue(owner)?.any { it.declaration.isStaticDeclaration } == true
+        builderWithDeclarationsCache.getValue(owner)?.any {
+            it.declaration.isStaticDeclaration && it.builder.builderMethodName != null
+        } == true
 
     /**
      * The same class can have both builder and entity methods in case of names clashing.
@@ -524,8 +527,12 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 else -> !containingClassSymbol.isCompanion
             }
 
-            if (shouldAddBuilderFactory) {
-                addIfNonClashing(Name.identifier(builder.builderMethodName), existingFunctionNames) { name ->
+            // A `null` name is `builderMethodName = ""`, which Lombok documents as suppressing the factory:
+            // the builder is then reachable through `toBuilder()` alone, and nothing else generated here changes.
+            val builderMethodName = runIf(shouldAddBuilderFactory) { builder.builderMethodName }
+
+            if (builderMethodName != null) {
+                addIfNonClashing(Name.identifier(builderMethodName), existingFunctionNames) { name ->
                     if (containingClassSymbol.hasJavaOrigin) {
                         val methodSymbol = FirNamedFunctionSymbol(CallableId(entitySymbol.classId, name))
                         val methodTypeParameters =
