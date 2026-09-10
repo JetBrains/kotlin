@@ -28,9 +28,9 @@ sealed interface DomainInfo {
     val exclude: List<String>
 
     /**
-     * @see DeclaredDomain.fullyAffectedBy
+     * @see DeclaredDomain.mustRunAllTestsOnChangesIn
      */
-    val fullyAffectedBy: List<DomainInfo>
+    val mustRunAllTestsOnChangesIn: List<DomainInfo>
 
     companion object
 }

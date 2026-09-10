@@ -86,7 +86,7 @@ private val domainDependees: Map<Domain, List<Domain>> = buildMap<Domain, Mutabl
     }
 
     allDomainInfos.forEach { domainInfo ->
-        domainInfo.fullyAffectedBy.forEach { dependency ->
+        domainInfo.mustRunAllTestsOnChangesIn.forEach { dependency ->
             get(dependency.domain)?.add(domainInfo.domain)
         }
     }
