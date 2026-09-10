@@ -14,6 +14,7 @@ import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SWIFT_EXPORT_METADATA_SCHEMA_VERSION
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
@@ -117,7 +118,7 @@ internal fun Project.collectModules(
             exportedModules = exportedModules,
         ),
         overrides = dependencyOptionsOverrides,
-        metadataByComponent = metadataConfiguration?.metadataByComponent() ?: emptyMap(),
+        metadataByComponent = metadataConfiguration?.metadataByComponent(project::reportDiagnostic) ?: emptyMap(),
         exportConfiguration = exportConfiguration,
         apiConfiguration = apiConfiguration,
         rootModuleName = rootModuleName,
@@ -184,18 +185,36 @@ private fun Project.swiftExportedModules(
  *
  * The receiver is expected to be resolved requesting the `swiftExportMetadata` variant, so [resolvedArtifacts] contains
  * only the metadata JSONs. Dependencies without such a variant are simply absent (lenient artifact view). Artifacts that
- * are missing on disk, fail to decode, or carry an incompatible [SwiftExportMetadata.schemaVersion] are skipped rather
- * than failing the build.
+ * are missing on disk are silently skipped. Metadata carrying an unsupported [SwiftExportMetadata.schemaVersion] is
+ * skipped with a warning ([KotlinToolingDiagnostics.SwiftExportUnsupportedMetadataSchemaVersion]), as well as metadata that
+ * fails to decode - ([KotlinToolingDiagnostics.SwiftExportMalformedMetadata]).
  */
-private fun LazyResolvedConfigurationWithArtifacts.metadataByComponent(): Map<ComponentIdentifier, SwiftExportMetadata> {
+internal fun LazyResolvedConfigurationWithArtifacts.metadataByComponent(
+    reportDiagnostic: (ToolingDiagnostic) -> Unit,
+): Map<ComponentIdentifier, SwiftExportMetadata> {
     return resolvedArtifacts.mapNotNull { artifact ->
         if (!artifact.file.exists()) return@mapNotNull null
         val metadata = try {
             artifact.file.inputStream().use(::deserializeSwiftExportMetadata)
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            reportDiagnostic(
+                KotlinToolingDiagnostics.SwiftExportMalformedMetadata(
+                    artifact.id.componentIdentifier.displayName,
+                    e.message,
+                )
+            )
             return@mapNotNull null
         }
-        if (metadata.schemaVersion != SWIFT_EXPORT_METADATA_SCHEMA_VERSION) return@mapNotNull null
+        if (metadata.schemaVersion != SWIFT_EXPORT_METADATA_SCHEMA_VERSION) {
+            reportDiagnostic(
+                KotlinToolingDiagnostics.SwiftExportUnsupportedMetadataSchemaVersion(
+                    artifact.id.componentIdentifier.displayName,
+                    metadata.schemaVersion,
+                    SWIFT_EXPORT_METADATA_SCHEMA_VERSION,
+                )
+            )
+            return@mapNotNull null
+        }
         artifact.id.componentIdentifier to metadata
     }.toMap()
 }
