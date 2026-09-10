@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.whenSwiftPMImpor
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationCompat
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDependencySelector
-import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.applySwiftExportConsumerOverrides
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -200,16 +199,12 @@ private fun Project.registerSwiftExportRun(
         task.parameters.bridgeModuleName.set("SharedBridge")
         task.parameters.swiftExportSettings.set(customSetting)
         task.parameters.swiftModules.set(
-            project.applySwiftExportConsumerOverrides(
-                modules = collectModules(
-                    exportConfigurationProvider,
-                    apiConfigurationProvider,
-                    exportedModules
-                ),
-                overrides = dependencyOptionsOverrides,
-                exportConfiguration = exportConfigurationProvider,
-                apiConfiguration = apiConfigurationProvider,
-                rootModuleName = swiftApiModuleName,
+            collectModules(
+                exportConfigurationProvider = exportConfigurationProvider,
+                apiConfigurationProvider = apiConfigurationProvider,
+                exportedModulesProvider = exportedModules,
+                dependencyOptionsOverridesProvider = dependencyOptionsOverrides,
+                rootModuleNameProvider = swiftApiModuleName,
             )
         )
 

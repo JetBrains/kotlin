@@ -15,6 +15,9 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDependencySelector
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.applySwiftExportConsumerOverrides
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import java.io.File
 import java.io.Serializable
@@ -93,14 +96,27 @@ internal fun Project.collectModules(
     exportConfigurationProvider: Provider<LazyResolvedConfigurationWithArtifacts>,
     apiConfigurationProvider: Provider<LazyResolvedConfigurationWithArtifacts?>,
     exportedModulesProvider: Provider<Set<SwiftExportedDependency>>,
-): Provider<List<SwiftExportedModule>> = exportConfigurationProvider
-    .map { exportConfiguration ->
-        val apiConfiguration = apiConfigurationProvider.orNull
-        return@map exportConfiguration to apiConfiguration
-    }
-    .zip(exportedModulesProvider) { (exportConfiguration, apiConfiguration), modules ->
-        project.swiftExportedModules(exportConfiguration, apiConfiguration, modules)
-    }
+    dependencyOptionsOverridesProvider: Provider<Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>>,
+    rootModuleNameProvider: Provider<String>,
+): Provider<List<SwiftExportedModule>> = provider {
+    val exportConfiguration = exportConfigurationProvider.get()
+    val apiConfiguration = apiConfigurationProvider.orNull
+    val exportedModules = exportedModulesProvider.get()
+    val dependencyOptionsOverrides = dependencyOptionsOverridesProvider.get()
+    val rootModuleName = rootModuleNameProvider.get()
+
+    project.applySwiftExportConsumerOverrides(
+        modules = project.swiftExportedModules(
+            exportConfiguration = exportConfiguration,
+            apiConfiguration = apiConfiguration,
+            exportedModules = exportedModules,
+        ),
+        overrides = dependencyOptionsOverrides,
+        exportConfiguration = exportConfiguration,
+        apiConfiguration = apiConfiguration,
+        rootModuleName = rootModuleName,
+    )
+}
 
 private class ResolvedArtifactWithVersionIdentifier(
     val moduleVersion: ModuleVersionIdentifier,
