@@ -1,7 +1,7 @@
 public abstract interface KtInterface /* KtInterface*/ {
-  public abstract void defaultFun();//  defaultFun()
-
   public abstract void withoutBody();//  withoutBody()
+
+  public default void defaultFun();//  defaultFun()
 
   public static final class DefaultImpls /* KtInterface.DefaultImpls*/ {
     @java.lang.Deprecated()

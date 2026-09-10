@@ -25,11 +25,11 @@ public final class IC /* IC*/ {
 }
 
 public abstract interface Test /* Test*/ {
-  private abstract IC getBar-qjS0p_s();//  getBar-qjS0p_s()
+  private default IC getBar-qjS0p_s();//  getBar-qjS0p_s()
 
-  private abstract int foo-Eh1mVAw(int);//  foo-Eh1mVAw(int)
+  private default int foo-Eh1mVAw(int);//  foo-Eh1mVAw(int)
 
-  public abstract int test-Eh1mVAw(int);//  test-Eh1mVAw(int)
+  public default int test-Eh1mVAw(int);//  test-Eh1mVAw(int)
 
   public static final class DefaultImpls /* Test.DefaultImpls*/ {
     @java.lang.Deprecated()
