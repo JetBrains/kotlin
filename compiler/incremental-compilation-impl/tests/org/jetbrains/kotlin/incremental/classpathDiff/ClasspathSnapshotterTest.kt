@@ -18,10 +18,82 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import java.io.File
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 private val testDataDir =
     ForTestCompileRuntime.transformTestDataPath("compiler/incremental-compilation-impl/testData/org/jetbrains/kotlin/incremental/classpathDiff/ClasspathSnapshotterTest")
+
+class ClasspathEntrySnapshotterTest : ClasspathSnapshotTestCommon() {
+
+    @ParameterizedTest
+    @CsvSource("CLASS_LEVEL, false", "CLASS_LEVEL, true", "CLASS_MEMBER_LEVEL, false", "CLASS_MEMBER_LEVEL, true")
+    fun testDirectoryAndJarSnapshotsMatch(granularity: ClassSnapshotGranularity, parseInlinedLocalClasses: Boolean) {
+        val classBytes = File("$testDataDir/kotlin/testSimpleClass/classes/com/example/SimpleClass.class").readBytes()
+        val facadeBytes = File("$testDataDir/kotlin/testPackageFacadeClasses/classes/com/example/FileFacadeKt.class").readBytes()
+        val files = linkedMapOf(
+            "com/example/SimpleClass.class" to classBytes,
+            "com/example/FileFacadeKt.CLASS" to facadeBytes,
+            "META-INF/Ignored.class" to classBytes,
+            "meta-inf/versions/9/Ignored.class" to classBytes,
+            "module-info.class" to classBytes,
+            "MODULE-INFO.CLASS" to classBytes,
+            "resource.txt" to byteArrayOf(),
+        )
+        val classesDirectory = File(tmpDir, "classes")
+        files.forEach { entry ->
+            File(classesDirectory, entry.key).apply {
+                parentFile.mkdirs()
+                writeBytes(entry.value)
+            }
+        }
+        val classesJar = File(tmpDir, "classes.jar")
+        ZipOutputStream(classesJar.outputStream()).use { output ->
+            output.putNextEntry(ZipEntry("empty.class/"))
+            output.closeEntry()
+            files.entries.forEach { entry ->
+                output.putNextEntry(ZipEntry(entry.key))
+                output.write(entry.value)
+                output.closeEntry()
+            }
+        }
+
+        val settings = ClasspathEntrySnapshotter.Settings(
+            granularity = granularity,
+            parseInlinedLocalClasses = parseInlinedLocalClasses,
+            expandTypeAliases = false,
+        )
+        File(classesDirectory, "empty.class").mkdirs()
+        val directorySnapshot = ClasspathEntrySnapshotter.snapshot(classesDirectory, settings)
+        val jarSnapshot = ClasspathEntrySnapshotter.snapshot(classesJar, settings)
+
+        val expectedPaths = listOf("com/example/FileFacadeKt.CLASS", "com/example/SimpleClass.class")
+        val expectedSnapshots = expectedPaths.associateWith { ClassFile(classesDirectory, it).snapshot(granularity).toGson() }
+        assertNotEquals(expectedSnapshots.values.first(), expectedSnapshots.values.last())
+        for (snapshot in listOf(directorySnapshot, jarSnapshot)) {
+            assertEquals(expectedPaths, snapshot.classSnapshots.keys.toList())
+            assertEquals(expectedSnapshots, snapshot.classSnapshots.mapValues { it.value.toGson() })
+        }
+    }
+
+    @Test
+    fun testEmptyDirectoryAndJarSnapshotsMatch() {
+        val classesDirectory = File(tmpDir, "classes").apply { mkdirs() }
+        val classesJar = File(tmpDir, "classes.jar")
+        ZipOutputStream(classesJar.outputStream()).use { }
+        val settings = ClasspathEntrySnapshotter.Settings(
+            granularity = ClassSnapshotGranularity.CLASS_LEVEL,
+            parseInlinedLocalClasses = false,
+            expandTypeAliases = false,
+        )
+        for (classpathEntry in listOf(classesDirectory, classesJar)) {
+            assertTrue(ClasspathEntrySnapshotter.snapshot(classpathEntry, settings).classSnapshots.isEmpty())
+        }
+    }
+}
 
 class KotlinOnlyClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
 

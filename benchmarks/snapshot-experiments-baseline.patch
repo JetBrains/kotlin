@@ -1,0 +1,296 @@
+--- a/compiler/incremental-compilation-impl/src/org/jetbrains/kotlin/incremental/classpathDiff/ClasspathEntrySnapshotter.kt
++++ b/compiler/incremental-compilation-impl/src/org/jetbrains/kotlin/incremental/classpathDiff/ClasspathEntrySnapshotter.kt
+@@ -8,10 +8,8 @@
+ import org.jetbrains.kotlin.build.report.metrics.*
+ import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
+ import org.jetbrains.kotlin.incremental.classpathDiff.impl.*
+-import java.io.ByteArrayOutputStream
+ import java.io.Closeable
+ import java.io.File
+-import java.io.InputStream
+ import java.util.zip.ZipFile
+ 
+ 
+@@ -131,9 +129,8 @@
+     }
+ 
+     override fun readBytes(unixStyleRelativePath: String): ByteArray {
+-        val entry = zipFile.getEntry(unixStyleRelativePath)
+-        return zipFile.getInputStream(entry).use {
+-            it.readBytesWithExpectedSize(entry.size)
++        return zipFile.getInputStream(zipFile.getEntry(unixStyleRelativePath)).use {
++            it.readBytes()
+         }
+     }
+ 
+@@ -141,34 +138,3 @@
+         zipFile.close()
+     }
+ }
+-
+-internal fun InputStream.readBytesWithExpectedSize(expectedSize: Long): ByteArray {
+-    // ZIP sizes can be incorrect. Bound the initial allocation and still read to EOF.
+-    if (expectedSize !in 0..1024 * 1024L) {
+-        val output = ByteArrayOutputStream(DEFAULT_BUFFER_SIZE)
+-        copyTo(output)
+-        return output.toByteArray()
+-    }
+-
+-    val bytes = ByteArray(expectedSize.toInt())
+-    var offset = 0
+-    while (offset < bytes.size) {
+-        val count = read(bytes, offset, bytes.size - offset)
+-        if (count < 0) return bytes.copyOf(offset)
+-        if (count == 0) {
+-            val next = read()
+-            if (next < 0) return bytes.copyOf(offset)
+-            bytes[offset++] = next.toByte()
+-        } else {
+-            offset += count
+-        }
+-    }
+-    val next = read()
+-    if (next < 0) return bytes
+-
+-    val output = ByteArrayOutputStream()
+-    output.write(bytes)
+-    output.write(next)
+-    copyTo(output)
+-    return output.toByteArray()
+-}
+--- a/compiler/incremental-compilation-impl/src/org/jetbrains/kotlin/incremental/classpathDiff/impl/BasicClassInfo.kt
++++ b/compiler/incremental-compilation-impl/src/org/jetbrains/kotlin/incremental/classpathDiff/impl/BasicClassInfo.kt
+@@ -46,15 +46,13 @@
+ 
+     companion object {
+ 
+-        fun compute(classContents: ByteArray): BasicClassInfo = compute(ClassReader(classContents))
+-
+-        fun compute(classReader: ClassReader): BasicClassInfo {
++        fun compute(classContents: ByteArray): BasicClassInfo {
+             val kotlinClassHeaderClassVisitor = KotlinClassHeaderClassVisitor()
+             val innerClassesClassVisitor = InnerClassesClassVisitor(kotlinClassHeaderClassVisitor)
+             val basicClassInfoVisitor = BasicClassInfoClassVisitor(innerClassesClassVisitor)
+ 
+             // parsingOptions = (SKIP_CODE, SKIP_DEBUG) as method bodies and debug info are not important
+-            classReader.accept(basicClassInfoVisitor, SKIP_CODE or SKIP_DEBUG)
++            ClassReader(classContents).accept(basicClassInfoVisitor, SKIP_CODE or SKIP_DEBUG)
+ 
+             val className = basicClassInfoVisitor.getClassName()
+             val innerClassesInfo = innerClassesClassVisitor.getInnerClassesInfo()
+--- a/compiler/incremental-compilation-impl/src/org/jetbrains/kotlin/incremental/classpathDiff/impl/ClassFile.kt
++++ b/compiler/incremental-compilation-impl/src/org/jetbrains/kotlin/incremental/classpathDiff/impl/ClassFile.kt
+@@ -5,7 +5,6 @@
+ 
+ package org.jetbrains.kotlin.incremental.classpathDiff.impl
+ 
+-import org.jetbrains.org.objectweb.asm.ClassReader
+ import java.io.File
+ 
+ /** Information about the location of a .class file. */
+@@ -39,9 +38,7 @@
+     @Suppress("unused") val classFile: ClassFile,
+     val contents: ByteArray
+ ) {
+-    val classReader: ClassReader by lazy { ClassReader(contents) }
+-
+     val classInfo: BasicClassInfo by lazy {
+-        BasicClassInfo.compute(classReader)
++        BasicClassInfo.compute(contents)
+     }
+ }
+--- a/compiler/incremental-compilation-impl/src/org/jetbrains/kotlin/incremental/classpathDiff/impl/ClassListSnapshotter.kt
++++ b/compiler/incremental-compilation-impl/src/org/jetbrains/kotlin/incremental/classpathDiff/impl/ClassListSnapshotter.kt
+@@ -62,7 +62,7 @@
+                     val kotlinClassInfo = KotlinClassInfo.createFrom(
+                         clazz.classInfo.classId,
+                         clazz.classInfo.kotlinClassHeader!!,
+-                        clazz.classReader,
++                        clazz.contents,
+                     )
+                     snapshotKotlinClass(clazz, settings, kotlinClassInfo)
+                 }
+@@ -170,13 +170,17 @@
+                  * This part is sensitive: extra info computation might require inlinedSnapshots,
+                  * so inlinedSnapshots calculation must not directly call regular snapshotting to prevent infinite loops
+                  */
++                val extraInfo = ExtraInfoGeneratorWithInlinedClassSnapshotting(
++                    classMultiHashProvider = inlinedClassSnapshotter as ClassMultiHashProvider,
++                ).getExtraInfo(
++                    classFileWithContents.classInfo.kotlinClassHeader!!,
++                    classFileWithContents.contents,
++                )
++
+                 val kotlinClassInfo = KotlinClassInfo.createFrom(
+                     classFileWithContents.classInfo.classId,
+                     classFileWithContents.classInfo.kotlinClassHeader!!,
+-                    classFileWithContents.classReader,
+-                    extraInfoGenerator = ExtraInfoGeneratorWithInlinedClassSnapshotting(
+-                        classMultiHashProvider = inlinedClassSnapshotter as ClassMultiHashProvider,
+-                    )
++                    extraInfo = extraInfo
+                 )
+                 snapshotKotlinClass(classFileWithContents, settings, kotlinClassInfo)
+             }
+--- a/compiler/incremental-compilation-impl/src/org/jetbrains/kotlin/incremental/classpathDiff/impl/SingleClassSnapshotter.kt
++++ b/compiler/incremental-compilation-impl/src/org/jetbrains/kotlin/incremental/classpathDiff/impl/SingleClassSnapshotter.kt
+@@ -89,7 +89,7 @@
+         // Note the `parsingOptions` passed to `classReader`:
+         //     - Pass SKIP_CODE as we want to remove method bodies
+         //     - Do not pass SKIP_DEBUG as debug info (e.g., method parameter names) may be important
+-        val classReader = classFile.classReader
++        val classReader = ClassReader(classFile.contents)
+         val selectiveClassVisitor = SelectiveClassVisitor(
+             classNode,
+             shouldVisitField = { _: JvmMemberSignature.Field, isPrivate: Boolean, _: Boolean -> !isPrivate },
+--- a/compiler/incremental-compilation-impl/src/org/jetbrains/kotlin/incremental/classpathDiff/impl/InlinedClassSnapshotter.kt
++++ b/compiler/incremental-compilation-impl/src/org/jetbrains/kotlin/incremental/classpathDiff/impl/InlinedClassSnapshotter.kt
+@@ -13,6 +13,7 @@
+ import org.jetbrains.kotlin.incremental.impl.hashToLong
+ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
+ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
++import org.jetbrains.org.objectweb.asm.ClassReader
+ import org.jetbrains.org.objectweb.asm.ClassVisitor
+ import org.jetbrains.org.objectweb.asm.tree.ClassNode
+ 
+@@ -66,7 +67,7 @@
+ 
+         val usedClasses = mutableSetOf<JvmClassName>()
+         val visitor = InstanceOwnerRecordingClassVisitor(delegateClassVisitor = null, allUsedClassesSet = usedClasses)
+-        val classReader = classData.classReader
++        val classReader = ClassReader(classData.contents)
+         classReader.accept(visitor, 0)
+         knownClassUsages[JvmClassName.byClassId(classData.classInfo.classId)] = usedClasses
+ 
+--- a/build-common/src/org/jetbrains/kotlin/incremental/KotlinClassInfo.kt
++++ b/build-common/src/org/jetbrains/kotlin/incremental/KotlinClassInfo.kt
+@@ -8,15 +8,11 @@
+ import org.jetbrains.kotlin.incremental.impl.ExtraClassInfoGenerator
+ import org.jetbrains.kotlin.incremental.storage.*
+ import org.jetbrains.kotlin.inline.InlineFunctionOrAccessor
+-import org.jetbrains.kotlin.inline.inlineFunctions
+-import org.jetbrains.kotlin.inline.inlinePropertyAccessors
+ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+ import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
+-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+ import org.jetbrains.kotlin.name.ClassId
+ import org.jetbrains.kotlin.name.Name
+ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+-import org.jetbrains.org.objectweb.asm.ClassReader
+ 
+ /**
+  * Minimal information about a Kotlin class to compute recompilation-triggering changes during an incremental run of the `KotlinCompile`
+@@ -77,9 +73,6 @@
+         )
+     }
+ 
+-    // Set only by the factory, before publication, when inline member discovery has already decoded the metadata.
+-    private var protoDataForReuse: ProtoData? = null
+-
+     /**
+      * The [ProtoData] of this class.
+      *
+@@ -90,7 +83,7 @@
+         check(classKind != KotlinClassHeader.Kind.MULTIFILE_CLASS) {
+             "Proto data is not available for KotlinClassHeader.Kind.MULTIFILE_CLASS: $classId"
+         }
+-        protoDataForReuse ?: protoMapValue.toProtoData(classId.packageFqName)
++        protoMapValue.toProtoData(classId.packageFqName)
+     }
+ 
+     /** Name of the companion object of this class (default is "Companion") iff this class HAS a companion object, or null otherwise. */
+@@ -130,46 +123,6 @@
+             )
+         }
+ 
+-        fun createFrom(
+-            classId: ClassId,
+-            classHeader: KotlinClassHeader,
+-            classReader: ClassReader,
+-            extraInfoGenerator: ExtraClassInfoGenerator = ExtraClassInfoGenerator()
+-        ): KotlinClassInfo {
+-            val data = classHeader.data
+-            val strings = classHeader.strings
+-            val protoData = if (data != null && strings != null) {
+-                when (classHeader.kind) {
+-                    KotlinClassHeader.Kind.CLASS -> {
+-                        val [nameResolver, classProto] = JvmProtoBufUtil.readClassDataFrom(data, strings)
+-                        ClassProtoData(classProto, nameResolver)
+-                    }
+-                    KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
+-                        val [nameResolver, packageProto] = JvmProtoBufUtil.readPackageDataFrom(data, strings)
+-                        PackagePartProtoData(packageProto, nameResolver, classId.packageFqName)
+-                    }
+-                    else -> null
+-                }
+-            } else null
+-
+-            val inlineMembers = when (protoData) {
+-                is ClassProtoData ->
+-                    inlineFunctions(protoData.proto.functionList, protoData.nameResolver, protoData.proto.typeTable, excludePrivateFunctions = true) +
+-                            inlinePropertyAccessors(protoData.proto.propertyList, protoData.nameResolver, excludePrivateAccessors = true)
+-                is PackagePartProtoData ->
+-                    inlineFunctions(protoData.proto.functionList, protoData.nameResolver, protoData.proto.typeTable, excludePrivateFunctions = true) +
+-                            inlinePropertyAccessors(protoData.proto.propertyList, protoData.nameResolver, excludePrivateAccessors = true)
+-                null -> emptyList()
+-            }
+-            return createFrom(
+-                classId,
+-                classHeader,
+-                extraInfo = extraInfoGenerator.getExtraInfo(classHeader, classReader, inlineMembers),
+-            ).apply {
+-                protoDataForReuse = protoData
+-            }
+-        }
+-
+         /**
+          * Allows callers to customize [ExtraInfo] computation.
+          */
+--- a/build-common/src/org/jetbrains/kotlin/incremental/impl/ExtraClassInfoGenerator.kt
++++ b/build-common/src/org/jetbrains/kotlin/incremental/impl/ExtraClassInfoGenerator.kt
+@@ -39,17 +39,8 @@
+     }
+ 
+     fun getExtraInfo(classHeader: KotlinClassHeader, classContents: ByteArray): ExtraInfo {
+-        return getExtraInfo(classHeader, ClassReader(classContents), inlineFunctionsAndAccessors(classHeader, excludePrivateMembers = true))
+-    }
+-
+-    /** Allows reusing already discovered non-private inline functions and accessors. */
+-    fun getExtraInfo(
+-        classHeader: KotlinClassHeader,
+-        classReader: ClassReader,
+-        inlineMembers: List<InlineFunctionOrAccessor>
+-    ): ExtraInfo {
+         val inlineFunctionsAndAccessors: Map<JvmMemberSignature.Method, InlineFunctionOrAccessor> =
+-            inlineMembers.associateBy { it.jvmMethodSignature }
++            inlineFunctionsAndAccessors(classHeader, excludePrivateMembers = true).associateBy { it.jvmMethodSignature }
+ 
+         // 1. Create a ClassNode that will contain only required info
+         val classNode = ClassNode()
+@@ -60,6 +51,7 @@
+         //        + Do not filter out private methods because a *non-private* inline function/accessor may have a *private* corresponding method
+         //          in the bytecode (see `InlineOnlyKt.isInlineOnlyPrivateInBytecode`)
+         //        + Do not filter out method bodies
++        val classReader = ClassReader(classContents)
+         val selectiveClassVisitor = SelectiveClassVisitor(
+             cv = makeClassVisitor(classNode),
+             shouldVisitField = { _: JvmMemberSignature.Field, isPrivate: Boolean, isConstant: Boolean ->
+--- a/compiler/frontend.java/src/org/jetbrains/kotlin/inline/inlineUtil.kt
++++ b/compiler/frontend.java/src/org/jetbrains/kotlin/inline/inlineUtil.kt
+@@ -72,8 +72,7 @@
+     }
+ }
+ 
+-@K1Deprecation
+-fun inlineFunctions(
++private fun inlineFunctions(
+     functions: List<ProtoBuf.Function>,
+     nameResolver: NameResolver,
+     protoTypeTable: ProtoBuf.TypeTable,
+@@ -92,5 +91,4 @@
+-@K1Deprecation
+-fun inlinePropertyAccessors(
++private fun inlinePropertyAccessors(
+     properties: List<ProtoBuf.Property>,
+     nameResolver: NameResolver,
+     excludePrivateAccessors: Boolean = false
