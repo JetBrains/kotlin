@@ -1,15 +1,15 @@
 public abstract interface MyInterface /* MyInterface*/ {
-  private abstract int getRegularVariable();//  getRegularVariable()
+  private default int getRegularVariable();//  getRegularVariable()
 
-  private abstract void regularMethod();//  regularMethod()
+  private default void regularMethod();//  regularMethod()
 
-  private abstract void setRegularVariable(int);//  setRegularVariable(int)
+  private default void setRegularVariable(int);//  setRegularVariable(int)
 
-  public abstract int getPublicRegularVariable();//  getPublicRegularVariable()
+  public default int getPublicRegularVariable();//  getPublicRegularVariable()
 
-  public abstract void publicRegularMethod();//  publicRegularMethod()
+  public default void publicRegularMethod();//  publicRegularMethod()
 
-  public abstract void setPublicRegularVariable(int);//  setPublicRegularVariable(int)
+  public default void setPublicRegularVariable(int);//  setPublicRegularVariable(int)
 
   public static final class DefaultImpls /* MyInterface.DefaultImpls*/ {
     private static final int getRegularVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() MyInterface);//  getRegularVariable(@org.jetbrains.annotations.NotNull() MyInterface)

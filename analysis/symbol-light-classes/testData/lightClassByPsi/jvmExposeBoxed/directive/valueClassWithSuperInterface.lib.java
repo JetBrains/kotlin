@@ -5,9 +5,9 @@ public abstract interface Interface /* pack.Interface*/ {
 
   public abstract void functionWithValueParam-0JCZ7rA(int);//  functionWithValueParam-0JCZ7rA(int)
 
-  public abstract void regularFunction();//  regularFunction()
-
   public abstract void setRegularVariable(int);//  setRegularVariable(int)
+
+  public default void regularFunction();//  regularFunction()
 
   public static final class DefaultImpls /* pack.Interface.DefaultImpls*/ {
     @java.lang.Deprecated()

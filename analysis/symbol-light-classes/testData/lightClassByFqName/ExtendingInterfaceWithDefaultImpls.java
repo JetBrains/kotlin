@@ -1,13 +1,13 @@
 public abstract interface C /* p.C*/<T>  extends p.B {
   @org.jetbrains.annotations.NotNull()
-  public abstract @org.jetbrains.annotations.NotNull() java.lang.String c();//  c()
-
-  @org.jetbrains.annotations.NotNull()
   public abstract @org.jetbrains.annotations.NotNull() java.lang.String more();//  more()
 
-  public abstract int getProp3();//  getProp3()
+  @org.jetbrains.annotations.NotNull()
+  public default @org.jetbrains.annotations.NotNull() java.lang.String c();//  c()
 
-  public abstract void setProp3(int);//  setProp3(int)
+  public default int getProp3();//  getProp3()
+
+  public default void setProp3(int);//  setProp3(int)
 
   public static final class DefaultImpls /* p.C.DefaultImpls*/ {
     @org.jetbrains.annotations.NotNull()

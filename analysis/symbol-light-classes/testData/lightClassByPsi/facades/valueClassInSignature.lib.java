@@ -54,15 +54,15 @@ public abstract interface SomeInterface /* SomeInterface*/ {
   @org.jetbrains.annotations.NotNull()
   public abstract java.lang.String memberFunInReturn-YO-7n-0();//  memberFunInReturn-YO-7n-0()
 
-  public abstract int getMemberPropInExtension-5lyY9Q4(@org.jetbrains.annotations.NotNull() java.lang.String);//  getMemberPropInExtension-5lyY9Q4(java.lang.String)
-
   public abstract void memberFunInExtension-5lyY9Q4(@org.jetbrains.annotations.NotNull() java.lang.String);//  memberFunInExtension-5lyY9Q4(java.lang.String)
 
   public abstract void memberFunInParameter-5lyY9Q4(@org.jetbrains.annotations.NotNull() java.lang.String);//  memberFunInParameter-5lyY9Q4(java.lang.String)
 
   public abstract void setMemberProp-5lyY9Q4(@org.jetbrains.annotations.NotNull() java.lang.String);//  setMemberProp-5lyY9Q4(java.lang.String)
 
-  public abstract void setMemberPropInExtension-54afNMI(@org.jetbrains.annotations.NotNull() java.lang.String, int);//  setMemberPropInExtension-54afNMI(java.lang.String, int)
+  public default int getMemberPropInExtension-5lyY9Q4(@org.jetbrains.annotations.NotNull() java.lang.String);//  getMemberPropInExtension-5lyY9Q4(java.lang.String)
+
+  public default void setMemberPropInExtension-54afNMI(@org.jetbrains.annotations.NotNull() java.lang.String, int);//  setMemberPropInExtension-54afNMI(java.lang.String, int)
 
   public static final class DefaultImpls /* SomeInterface.DefaultImpls*/ {
     @java.lang.Deprecated()

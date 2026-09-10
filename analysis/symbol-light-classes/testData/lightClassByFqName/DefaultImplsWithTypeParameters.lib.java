@@ -1,7 +1,7 @@
 public abstract interface Foo /* Foo*/<X, Y>  {
-  public abstract <Z> void foo(X, Y, Z);// <Z>  foo(X, Y, Z)
+  public default <Z> void foo(X, Y, Z);// <Z>  foo(X, Y, Z)
 
-  public abstract int getX();//  getX()
+  public default int getX();//  getX()
 
   public static final class DefaultImpls /* Foo.DefaultImpls*/ {
     @java.lang.Deprecated()

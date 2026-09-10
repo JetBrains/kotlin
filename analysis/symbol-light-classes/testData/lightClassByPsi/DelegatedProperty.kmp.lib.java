@@ -54,9 +54,9 @@ public static final class Companion /* Container.Companion*/ {
 }
 
 public static abstract interface Delegate /* Container.Delegate*/<R>  {
-  public abstract R getValue(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>);//  getValue(@org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>)
+  public default R getValue(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>);//  getValue(@org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>)
 
-  public abstract void setValue(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>, R);//  setValue(@org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>, R)
+  public default void setValue(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>, R);//  setValue(@org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>, R)
 
   public static final class DefaultImpls /* Container.Delegate.DefaultImpls*/ {
     public static <R> R getValue(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Container.Delegate<R>, @org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>);// <R>  getValue(@org.jetbrains.annotations.NotNull() Container.Delegate<R>, @org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>)
