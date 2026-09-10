@@ -474,7 +474,11 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
     }
 
     override fun visitLambdaExpression(element: KtLambdaExpression) {
-        if (!element.functionLiteral.hasParameterSpecification() && name == IMPLICIT_LAMBDA_PARAMETER) {
+        if (
+            !element.functionLiteral.hasParameterSpecification() &&
+            name == IMPLICIT_LAMBDA_PARAMETER &&
+            contextKind in [LocalLookupContextKind.VALUE, LocalLookupContextKind.VALUE_OR_TYPE]
+        ) {
             stopResolution()
         }
 
