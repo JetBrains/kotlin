@@ -712,7 +712,7 @@ internal object DevirtualizationAnalysis {
          * A node is called "useful" if any of the nodes which we are trying to devirtualize is reachable from it.
          * In some cases the number of "useful" nodes is on an order of magnitude less than the total number of nodes.
          */
-        private fun collectUsefulNodes(reversedEdges: IntArray, nodesMap: Map<DataFlowIR.Node, Node>): CustomBitSet {
+        private fun collectUsefulNodes(reversedEdges: IntArray): CustomBitSet {
             val usefulNodes = CustomBitSet(constraintGraph.nodes.size)
 
             fun markReachableFrom(nodeId: Int) {
@@ -735,7 +735,6 @@ internal object DevirtualizationAnalysis {
                 if (!constraintGraph.functions.containsKey(function.symbol)) continue
                 function.body.forEachNonScopeNode { node ->
                     val virtualCall = node as? DataFlowIR.Node.VirtualCall ?: return@forEachNonScopeNode
-                    assert(nodesMap[virtualCall] != null) { "Node for virtual call $virtualCall has not been built" }
                     val receiverNode = constraintGraph.virtualCallSiteReceivers[virtualCall]?.root()
                             ?: error("virtualCallSiteReceivers were not built for virtual call $virtualCall")
 
@@ -757,9 +756,7 @@ internal object DevirtualizationAnalysis {
             val allTypes = typeHierarchy.allTypes
             val rootSet = computeRootSet(context, irModule, moduleDFG)
 
-            val nodesMap = mutableMapOf<DataFlowIR.Node, Node>()
-
-            val (instantiatingClasses, directEdges, reversedEdges) = buildConstraintGraph(nodesMap, functions, rootSet)
+            val (instantiatingClasses, directEdges, reversedEdges) = buildConstraintGraph(functions, rootSet)
 
             context.logMultiple {
                 +"FULL CONSTRAINT GRAPH"
@@ -806,7 +803,7 @@ internal object DevirtualizationAnalysis {
 
             propagateVirtualType(directEdges)
 
-            val usefulNodes = collectUsefulNodes(reversedEdges, nodesMap)
+            val usefulNodes = collectUsefulNodes(reversedEdges)
 
             if (entryPoint == null) {
                 // If a virtual function is called on a receiver coming from external world and
@@ -952,7 +949,6 @@ internal object DevirtualizationAnalysis {
                 if (!constraintGraph.functions.containsKey(function.symbol)) continue
                 function.body.forEachNonScopeNode { node ->
                     val virtualCall = node as? DataFlowIR.Node.VirtualCall ?: return@forEachNonScopeNode
-                    assert(nodesMap[virtualCall] != null) { "Node for virtual call $virtualCall has not been built" }
                     val receiverNode = constraintGraph.virtualCallSiteReceivers[virtualCall]?.root()
                             ?: error("virtualCallSiteReceivers were not built for virtual call $virtualCall")
                     if (receiverNode.types[VIRTUAL_TYPE_ID]) {
@@ -1036,11 +1032,11 @@ internal object DevirtualizationAnalysis {
         // 2. build reversed edges array from the direct edges array.
         // This is to lower memory usage (all of these edges structures are more or less equal by size),
         // and by that we're only holding references to two out of three of them.
-        private fun buildConstraintGraph(nodesMap: MutableMap<DataFlowIR.Node, Node>,
-                                         functions: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
-                                         rootSet: List<DataFlowIR.FunctionSymbol>
+        private fun buildConstraintGraph(
+                functions: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
+                rootSet: List<DataFlowIR.FunctionSymbol>,
         ): ConstraintGraphBuildResult {
-            val precursor = buildConstraintGraphPrecursor(nodesMap, functions, rootSet)
+            val precursor = buildConstraintGraphPrecursor(functions, rootSet)
             return ConstraintGraphBuildResult(precursor.instantiatingClasses, precursor.directEdges,
                     buildReversedEdges(precursor.directEdges, precursor.reversedEdgesCount))
         }
@@ -1068,11 +1064,11 @@ internal object DevirtualizationAnalysis {
             return reversedEdges
         }
 
-        private fun buildConstraintGraphPrecursor(nodesMap: MutableMap<DataFlowIR.Node, Node>,
-                                                  functions: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
-                                                  rootSet: List<DataFlowIR.FunctionSymbol>
+        private fun buildConstraintGraphPrecursor(
+                functions: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
+                rootSet: List<DataFlowIR.FunctionSymbol>
         ): ConstraintGraphPrecursor {
-            val constraintGraphBuilder = ConstraintGraphBuilder(nodesMap, functions, rootSet, true)
+            val constraintGraphBuilder = ConstraintGraphBuilder(functions, rootSet, true)
             constraintGraphBuilder.build()
             val bagOfEdges = constraintGraphBuilder.bagOfEdges
             val directEdgesCount = constraintGraphBuilder.directEdgesCount
@@ -1117,14 +1113,15 @@ internal object DevirtualizationAnalysis {
             }
         }
 
-        private inner class ConstraintGraphBuilder(val functionNodesMap: MutableMap<DataFlowIR.Node, Node>,
-                                                   val functions: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
-                                                   val rootSet: List<DataFlowIR.FunctionSymbol>,
-                                                   val useTypes: Boolean) {
-
+        private inner class ConstraintGraphBuilder(
+                val functions: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
+                val rootSet: List<DataFlowIR.FunctionSymbol>,
+                val useTypes: Boolean,
+        ) {
+            private val functionNodesMap: MutableMap<DataFlowIR.Node, Node> = mutableMapOf()
+            private val variables = mutableMapOf<DataFlowIR.Node.Variable, Node>()
             private val typeHierarchy = moduleDFG.symbolTable.typeHierarchy
             private val allTypes = typeHierarchy.allTypes
-            private val variables = mutableMapOf<DataFlowIR.Node.Variable, Node>()
             private val typesVirtualCallSites = Array(allTypes.size) { mutableListOf<ConstraintGraphVirtualCall>() }
             private val suitableTypes = arrayOfNulls<CustomBitSet?>(allTypes.size)
             private val concreteClasses = arrayOfNulls<Node?>(allTypes.size)
@@ -1249,6 +1246,10 @@ internal object DevirtualizationAnalysis {
                         +"Returns: #${ids[function.body.returns]}"
                         +""
                     }
+
+                    // DFG nodes are function-local, so their mappings are dead once the function is processed.
+                    functionNodesMap.clear()
+                    variables.clear()
                 }
 
                 suitableTypes.forEach {
