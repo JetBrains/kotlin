@@ -22,7 +22,7 @@ class KotlinWasmBuiltinTasksGradlePluginIT : KGPBaseTest() {
     fun jsTargetDist(gradleVersion: GradleVersion) {
         project("wasm-browser-simple-project", gradleVersion) {
             buildGradleKts.modify {
-                it.replace("browser", "browser(useWebpack = false)")
+                it.replace("browser", "browser(bundler = org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserBundler.NONE)")
             }
 
             build("build") {
@@ -44,7 +44,7 @@ class KotlinWasmBuiltinTasksGradlePluginIT : KGPBaseTest() {
     fun jsTargetDistWithNpmDependencies(gradleVersion: GradleVersion) {
         project("wasm-browser-simple-project", gradleVersion) {
             buildGradleKts.modify {
-                it.replace("browser", "browser(useWebpack = false)")
+                it.replace("browser", "browser(bundler = org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserBundler.NONE)")
             }
 
             buildScriptInjection {

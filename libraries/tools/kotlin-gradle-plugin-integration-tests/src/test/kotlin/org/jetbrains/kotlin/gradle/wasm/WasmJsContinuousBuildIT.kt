@@ -40,7 +40,7 @@ class WasmJsContinuousBuildIT : KGPDaemonsBaseTest() {
         project("wasm-browser-simple-project", gradleVersion) {
 
             buildGradleKts.modify {
-                it.replace("browser", "browser(useWebpack = false)")
+                it.replace("browser", "browser(bundler = org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserBundler.NONE)")
             }
 
             val compiledWasm =
