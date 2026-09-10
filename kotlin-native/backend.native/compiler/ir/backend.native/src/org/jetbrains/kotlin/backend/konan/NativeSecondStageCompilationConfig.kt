@@ -582,7 +582,11 @@ class NativeSecondStageCompilationConfig(
         else -> null
     }
 
-    internal var cacheSupport: CacheSupport = createCacheSupport(CachedKlibs(loadedKlibs.all))
+    internal var cacheSupport: CacheSupport = createCacheSupport(
+            allKlibs = configuration.serializedKlibDag?.let {
+                CachedKlibs.restoreFromSerializedDag(it, loadedKlibs.all)
+            } ?: CachedKlibs.buildNew(loadedKlibs.all)
+    )
         private set
 
     private fun createCacheSupport(allKlibs: CachedKlibs) = CacheSupport(

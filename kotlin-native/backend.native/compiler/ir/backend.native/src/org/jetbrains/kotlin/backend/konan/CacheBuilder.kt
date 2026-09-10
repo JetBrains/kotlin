@@ -563,6 +563,7 @@ class CacheBuilder(
                 cachedLibraryDependenciesFingerprint = computeDependenciesFingerprint(library).toString()
             if (filesToCache.isNotEmpty())
                 this.filesToCache = filesToCache
+            serializedKlibDag = allKlibs.toSerializedDag() // Put the DAG of dependencies to compiler configuration to avoid re-computing it again.
         }
     }
 
