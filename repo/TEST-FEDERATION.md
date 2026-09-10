@@ -10,7 +10,7 @@ builds.
 - [What is a Domain? (Quick intuition)](#what-is-a-domain-quick-intuition)
 - [Changed and affected Domains](#changed-and-affected-domains)
 - [Defining Domains](#defining-domains)
-- [`^affects` commit command](#affects-commit-command)
+- [`^test` commit command](#test-commit-command)
     - [Domains fully affecting other Domains](#domains-fully-affecting-other-domains)
 - [Local testing](#local-testing)
     - [Verifying domains](#verifying-domains)
@@ -44,7 +44,7 @@ Test Federation computes two related sets for every change:
 
 1. **Changed Domains** are inferred from changed files.
 2. **Affected Domains** are the Domains whose full test suites must run. Changed Domains are expanded according to `mustRunAllTestsOnChangesIn`
-   relationships, then any Domains named in an `^affects` commit command are added to the result.
+   relationships, then any Domains named in a `^test` commit command are added to the result.
 
 Thus, **changed Domains are always affected, but affected Domains are not necessarily changed**. The distinction matters for Contracts:
 
@@ -72,25 +72,25 @@ descendants, so the `Native` domain above includes everything under the `native`
 `exclude` entries overlap, the most specific matching entry takes precedence. A domain is always marked as changed if any file belonging to
 the domain is changed.
 
-## '^affects' commit command
+## '^test' commit command
 
-If a commit is known to impact a Domain beyond those inferred from its changed files, the commit command `^affects:` can declare additional
+If a commit is known to impact a Domain beyond those inferred from its changed files, the commit command `^test:` can declare additional
 affected Domains. Their full test suites run, but they are not added to the changed Domains and therefore do not activate their Contracts.
 They also do not cause other Domains to become affected through `mustRunAllTestsOnChangesIn`; command-listed Domains are added after that expansion.
 
 ```
-^affects: Gradle, AnalysisApi
-^affects: Compiler
+^test: Gradle, AnalysisApi
+^test: Compiler
 
-// Mark all domains as affected
-^affects: *
+// Run all tests in all domains
+^test: *
 ```
 
 ### Running all tests on changes in other Domains
 
 Some Domains might form a 'Domain/Subdomain' relationship, which can be expressed using `mustRunAllTestsOnChangesIn`. A Domain that lists
 another Domain in this declaration will run all its tests when that other Domain is changed. This does not mark the dependent Domain as changed. Domains
-listed using `^affects` do not participate in this expansion. In the example above:
+listed using `^test` do not participate in this expansion. In the example above:
 
 A change which marks the 'larger Compiler domain' as changed will also mark the 'Native' domain as affected, while a change isolated within
 the 'Native' domain will not affect the 'Compiler' domain.
@@ -253,7 +253,7 @@ class MyImportantJsTests {
 }
 ```
 
-Any commit that marks the `Js` Domain as changed will verify all Contracts associated with `Js`. A Domain added through `^affects` or affected
+Any commit that marks the `Js` Domain as changed will verify all Contracts associated with `Js`. A Domain added through `^test` or affected
 only through `mustRunAllTestsOnChangesIn` still runs its full test suites, but does not activate its Contracts in smoke-mode test tasks.
 
 The full flow from changed files to the tests selected by Test Federation can be seen below.
@@ -264,7 +264,7 @@ It works like this:
     * every changed domain is marked as **affected**
     * all domains listing the changed domain in `mustRunAllTestsOnChangesIn` are marked as **affected**
     * all contracts annotated with `@MustRunOnChangesInXYZ` for the changed domain are marked as **affected**
-* additionally, we take every domain from the `^affects:` commit command and mark them as **affected**
+* additionally, we take every domain from the `^test:` commit command and mark them as **affected**
 
 Everything that is affected must be verified:
 * for affected domain, it means executing all its tests (FULL mode)
@@ -276,13 +276,13 @@ flowchart TD
     ChangedDomains["Changed domains"]
     ContractTests["Contract tests"]
     AffectedDomains["Affected Domains"]
-    AffectsCommand["^affects"]
+    TestCommand["^test"]
     FullTestSuites["Full test suites"]
 
     ChangedFiles --> ChangedDomains
     ChangedDomains -->|activates| ContractTests
     ChangedDomains -->|plus 'mustRunAllTestsOnChangesIn' | AffectedDomains
-    AffectsCommand --->|added directly| AffectedDomains
+    TestCommand --->|added directly| AffectedDomains
     AffectedDomains -->|run| FullTestSuites
 ```
 
