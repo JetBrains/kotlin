@@ -1,4 +1,4 @@
-// COMPILER_ARGUMENTS: -Xjvm-default=all
+// JVM_DEFAULT_MODE: no-compatibility
 
 interface KtInterface {
     fun defaultFun() {
@@ -7,4 +7,3 @@ interface KtInterface {
 
     fun withoutBody()
 }
-
