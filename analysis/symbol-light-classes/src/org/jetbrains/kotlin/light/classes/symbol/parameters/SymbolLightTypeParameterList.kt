@@ -1,47 +1,29 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.light.classes.symbol.parameters
 
-import com.intellij.psi.*
-import com.intellij.psi.impl.light.LightElement
-import com.intellij.psi.scope.PsiScopeProcessor
+import com.intellij.psi.PsiTypeParameter
+import com.intellij.psi.PsiTypeParameterListOwner
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
-import javax.swing.Icon
 
 internal class SymbolLightTypeParameterList(
-    internal val owner: PsiTypeParameterListOwner,
+    owner: PsiTypeParameterListOwner,
     private val symbolWithTypeParameterPointer: KaSymbolPointer<KaDeclarationSymbol>,
     internal val ktModule: KaModule,
     private val ktDeclaration: KtTypeParameterListOwner?,
-) : LightElement(owner.manager, KotlinLanguage.INSTANCE), PsiTypeParameterList {
-    override fun accept(visitor: PsiElementVisitor) {
-        if (visitor is JavaElementVisitor) {
-            visitor.visitTypeParameterList(this)
-        } else {
-            visitor.visitElement(this)
-        }
-    }
-
-    override fun processDeclarations(
-        processor: PsiScopeProcessor,
-        state: ResolveState,
-        lastParent: PsiElement?,
-        place: PsiElement
-    ): Boolean = typeParameters.all { processor.execute(it, state) }
-
-    private val _typeParameters: Collection<PsiTypeParameter> by lazyPub {
-        symbolWithTypeParameterPointer.withSymbol(ktModule) {
+) : SymbolLightTypeParameterListBase<PsiTypeParameterListOwner>(owner) {
+    override val typeParametersCollection: Collection<PsiTypeParameter> by lazyPub {
+        symbolWithTypeParameterPointer.withSymbol(ktModule) { symbol ->
             val parentInterface =
                 (owner as? SymbolLightMethodBase)?.containingClass?.interfaceIfDefaultImpls
 
@@ -49,7 +31,7 @@ internal class SymbolLightTypeParameterList(
                 (it as? SymbolLightTypeParameter)?.copyTo(this@SymbolLightTypeParameterList)
             }.orEmpty()
 
-            fromInterface + it.typeParameters.mapIndexed { index, parameter ->
+            fromInterface + symbol.typeParameters.mapIndexed { index, parameter ->
                 SymbolLightTypeParameter(
                     parent = this@SymbolLightTypeParameterList,
                     index = fromInterface.size + index,
@@ -58,13 +40,6 @@ internal class SymbolLightTypeParameterList(
             }
         }
     }
-
-    override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameters.toArrayIfNotEmptyOrDefault(PsiTypeParameter.EMPTY_ARRAY)
-
-    override fun getTypeParameterIndex(typeParameter: PsiTypeParameter): Int = _typeParameters.indexOf(typeParameter)
-
-    override fun toString(): String = this::class.simpleName.orEmpty()
-    override fun getElementIcon(flags: Int): Icon? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -78,10 +53,6 @@ internal class SymbolLightTypeParameterList(
 
     override fun hashCode(): Int = ktDeclaration.hashCode() + 1
 
-    override fun isEquivalentTo(another: PsiElement?): Boolean = basicIsEquivalentTo(this, another)
-
-    override fun getParent(): PsiElement = owner
-    override fun getContainingFile(): PsiFile = parent.containingFile
     override fun getText(): String? = ktDeclaration?.typeParameterList?.text
     override fun getTextOffset(): Int = ktDeclaration?.typeParameterList?.textOffset ?: -1
     override fun getStartOffsetInParent(): Int = ktDeclaration?.typeParameterList?.startOffsetInParent ?: -1
