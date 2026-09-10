@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.AlwaysAllowedAnnota
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ExcludeAnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.getJvmExposeBoxedNameFromAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmNameAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.computeJavaMethodName
+import org.jetbrains.kotlin.light.classes.symbol.classes.jvmNameFromAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.typeForValueClass
 
 internal abstract class SymbolLightMethodBase(
@@ -138,8 +138,7 @@ internal abstract class SymbolLightMethodBase(
                     ?: computeJavaMethodName(symbol, defaultName, ignoreValueClassMangling = true)
             }
             JvmExposeBoxedKind.EXPOSED_AS_IS -> {
-                val exposedName = if (symbol.hasJvmNameAnnotation()) null else symbol.getJvmExposeBoxedNameFromAnnotation()
-                exposedName ?: symbol.javaMethodName
+                symbol.jvmNameFromAnnotation ?: symbol.getJvmExposeBoxedNameFromAnnotation() ?: symbol.javaMethodName
             }
         }
 
