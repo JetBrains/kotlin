@@ -26,7 +26,13 @@ interface KlibDAGNode {
     val allDependencies: Set<KotlinLibrary>
 }
 
-typealias KlibDAG = Map<KotlinLibrary, KlibDAGNode>
+class KlibDAG(private val dag: Map<KotlinLibrary, KlibDAGNode>) {
+    val libraries: Set<KotlinLibrary>
+        get() = dag.keys
+
+    operator fun get(library: KotlinLibrary): KlibDAGNode =
+        dag[library] ?: error("No such library in Klib DAG: $library")
+}
 
 class KlibDAGCyclicDependencyException : Exception("Recursive dependency detected while computing DAG of KLIB dependencies")
 
@@ -81,10 +87,10 @@ private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (
         }
     }
 
-    private val dag: Map<KotlinLibrary, KlibDAGNodeImpl> = libraries.associateWith(::KlibDAGNodeImpl)
+    private val dagUnderConstruction: Map<KotlinLibrary, KlibDAGNodeImpl> = libraries.associateWith(::KlibDAGNodeImpl)
 
     // Optimization: Stdlib is a dependency for each library. We don't need to extract signatures from it.
-    private val stdlibNode: KlibDAGNodeImpl? = stdlib?.let(dag::get)
+    private val stdlibNode: KlibDAGNodeImpl? = stdlib?.let(dagUnderConstruction::get)
 
     /**
      * Index: contributed package FQNs -> KLIB.
@@ -127,7 +133,7 @@ private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (
 
         // Schedule all roots to be processed.
         for (library in rootsButStdlib) {
-            usedNodes[dag.getValue(library)] = State.SCHEDULED_FOR_PROCESSING
+            usedNodes[dagUnderConstruction.getValue(library)] = State.SCHEDULED_FOR_PROCESSING
         }
 
         outer@ while (true) {
@@ -186,12 +192,12 @@ private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (
         }
 
         // Select only the subset of actually used nodes.
-        return dag.filterValues { it in usedNodes }
+        return KlibDAG(dagUnderConstruction.filterValues { it in usedNodes })
     }
 
     private fun stampStdlibNodeAsDependencyForEveryone() {
         if (stdlibNode != null) {
-            for (node in dag.values) {
+            for (node in dagUnderConstruction.values) {
                 if (node != stdlibNode) node.targets += stdlibNode
             }
         }
@@ -210,7 +216,7 @@ private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (
     private fun populateContributedPackageIndexForLibrary(library: KotlinLibrary): Boolean {
         if (!library.isCInteropLibrary()) return false // Not populated.
 
-        val node = dag.getValue(library)
+        val node = dagUnderConstruction.getValue(library)
 
         // Interop Klibs may declare only one package, and its FQ name is declared in the manifest.
         val contributedPackageName = library.packageFqName?.let(::FqName)
@@ -228,7 +234,7 @@ private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (
      *         `false` if the indices have been already populated earlier.
      */
     private fun populateSignatureIndicesForLibrary(library: KotlinLibrary): Boolean {
-        val node = dag.getValue(library)
+        val node = dagUnderConstruction.getValue(library)
         if (node in nodeToImportedSignatures) return false // The indices were populated earlier.
 
         // Note: We are intentionally extracting only signatures of top-level declarations. It's an optimization.

@@ -50,11 +50,13 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         assertTrue(stdlib.isNativeStdlib)
 
         val dag = KlibDAGBuilder(libraries) { true }.build()
-        assertEquals(1, dag.size)
-        assertEquals(stdlib, dag.keys.single())
-        assertEquals(stdlib, dag.values.single().library)
-        assertTrue(dag.values.single().directDependencies.isEmpty())
-        assertTrue(dag.values.single().allDependencies.isEmpty())
+        assertEquals(1, dag.libraries.size)
+        assertEquals(stdlib, dag.libraries.single())
+
+        val stdlibNode = dag[dag.libraries.single()]
+        assertEquals(stdlib, stdlibNode.library)
+        assertTrue(stdlibNode.directDependencies.isEmpty())
+        assertTrue(stdlibNode.allDependencies.isEmpty())
     }
 
     @Test
@@ -82,13 +84,13 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         val dag = KlibDAGBuilder(libraries) { true }.build()
 
         // Direct dependencies computed by signatures.
-        val directDependenciesByDAGBuilder: Map<KotlinLibrary, Set<KotlinLibrary>> = dag.values.associate { node ->
-            node.library to node.directDependencies
+        val directDependenciesByDAGBuilder: Map<KotlinLibrary, Set<KotlinLibrary>> = dag.libraries.associateWith {
+            dag[it].directDependencies
         }
 
         // All dependencies computed by signatures.
-        val allDependenciesByDAGBuilder: Map<KotlinLibrary, Set<KotlinLibrary>> = dag.values.associate { node ->
-            node.library to node.allDependencies
+        val allDependenciesByDAGBuilder: Map<KotlinLibrary, Set<KotlinLibrary>> = dag.libraries.associateWith {
+            dag[it].allDependencies
         }
 
         // Sanity check:
@@ -168,10 +170,10 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
 
         if (contractedDag) {
             // Only the necessary (used) libraries should be present in the DAG.
-            assertEquals(userProjectModules.modules.size + /* stdlib */ 1, dag.size)
+            assertEquals(userProjectModules.modules.size + /* stdlib */ 1, dag.libraries.size)
         } else {
             // All libraries should be present in the DAG.
-            assertEquals(allLibraries.size, dag.size)
+            assertEquals(allLibraries.size, dag.libraries.size)
         }
 
         val userLibraries: Map</* name of test module */ String, /* use library */ KotlinLibrary> = allLibraries.mapNotNull { library ->
@@ -192,7 +194,7 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
                 mapToSet { userLibraryPathToModuleName.getValue(it.path) }
 
             val userLibrary = userLibraries.getValue(moduleName)
-            val dagNode: KlibDAGNode = dag.getValue(userLibrary)
+            val dagNode: KlibDAGNode = dag[userLibrary]
 
             val actualDirectDependencies = dagNode.directDependencies.excludeStdlib().toUserModuleNames()
             assertEquals(expectedDirectDependencies, actualDirectDependencies)
@@ -298,7 +300,8 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
 
         val libraries = loadLibraries(stdlib = false, others = moduleNameToLibraryPath.values)
 
-        val anyLibraryNode: KlibDAGNode = KlibDAGBuilder(libraries) { true }.build().values.first()
+        val dag = KlibDAGBuilder(libraries) { true }.build()
+        val anyLibraryNode: KlibDAGNode = dag[dag.libraries.first()]
         anyLibraryNode.directDependencies // that should be successful
 
         try {
