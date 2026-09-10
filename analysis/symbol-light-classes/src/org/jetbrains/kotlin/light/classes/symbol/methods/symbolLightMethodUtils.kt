@@ -21,10 +21,6 @@ internal fun isSuppressedFinalModifier(string: String, containingClass: SymbolLi
 
 /**
  * Describes how boxed JVM exposure applies to a callable.
- *
- * This mode records the source of exposure, not whether a boxed wrapper is ultimately generated. Explicit and implicit
- * exposure follow different wrapper-generation rules and differ in whether there is a declaration-level annotation to
- * preserve.
  */
 internal enum class JvmExposeBoxedMode {
     /**
