@@ -19,6 +19,7 @@ public open class LocalVariableReference : PropertyReference0() {
 
     override fun get(): Any? = notSupportedError()
 
+    override val container: KDeclarationContainer get() = notSupportedError()
 }
 
 @SinceKotlin("1.1")
@@ -28,4 +29,6 @@ public open class MutableLocalVariableReference : MutablePropertyReference0() {
     override fun get(): Any? = notSupportedError()
 
     override fun set(value: Any?): Unit = notSupportedError()
+
+    override val container: KDeclarationContainer get() = notSupportedError()
 }

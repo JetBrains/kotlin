@@ -90,4 +90,9 @@ public actual interface KCallable<out R> : KAnnotatedElement {
      */
     @ExperimentalCompanionExtensions
     public val companionExtensionClass: KClass<*>?
+
+    /**
+     * The container to which this callable belongs.
+     */
+    public val container: KDeclarationContainer
 }

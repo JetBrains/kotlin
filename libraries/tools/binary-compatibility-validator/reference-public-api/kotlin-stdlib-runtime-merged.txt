@@ -3972,6 +3972,7 @@ public abstract class kotlin/jvm/internal/CallableReference : java/io/Serializab
 	public fun getBoundContextArguments ()[Ljava/lang/Object;
 	public fun getBoundReceiver ()Ljava/lang/Object;
 	public fun getCompanionExtensionClass ()Lkotlin/reflect/KClass;
+	public fun getContainer ()Lkotlin/reflect/KDeclarationContainer;
 	public fun getName ()Ljava/lang/String;
 	public fun getOwner ()Lkotlin/reflect/KDeclarationContainer;
 	public fun getParameters ()Ljava/util/List;
@@ -4277,6 +4278,7 @@ public abstract class kotlin/jvm/internal/Lambda : java/io/Serializable, kotlin/
 public class kotlin/jvm/internal/LocalVariableReference : kotlin/jvm/internal/PropertyReference0 {
 	public fun <init> ()V
 	public fun get ()Ljava/lang/Object;
+	public fun getContainer ()Lkotlin/reflect/KDeclarationContainer;
 	public fun getOwner ()Lkotlin/reflect/KDeclarationContainer;
 }
 
@@ -4316,6 +4318,7 @@ public class kotlin/jvm/internal/MagicApiIntrinsics {
 public class kotlin/jvm/internal/MutableLocalVariableReference : kotlin/jvm/internal/MutablePropertyReference0 {
 	public fun <init> ()V
 	public fun get ()Ljava/lang/Object;
+	public fun getContainer ()Lkotlin/reflect/KDeclarationContainer;
 	public fun getOwner ()Lkotlin/reflect/KDeclarationContainer;
 	public fun set (Ljava/lang/Object;)V
 }
@@ -5279,6 +5282,7 @@ public abstract interface class kotlin/reflect/KCallable : kotlin/reflect/KAnnot
 	public abstract fun call ([Ljava/lang/Object;)Ljava/lang/Object;
 	public abstract fun callBy (Ljava/util/Map;)Ljava/lang/Object;
 	public abstract fun getCompanionExtensionClass ()Lkotlin/reflect/KClass;
+	public abstract fun getContainer ()Lkotlin/reflect/KDeclarationContainer;
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getParameters ()Ljava/util/List;
 	public abstract fun getReturnType ()Lkotlin/reflect/KType;
