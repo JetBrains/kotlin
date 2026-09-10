@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
 import org.jetbrains.kotlin.backend.konan.serialization.IdSignaturesExtractorFromCInteropKlib
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.konan.library.SerializedKlibDAG
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_PACKAGE
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.ir
@@ -18,6 +19,8 @@ import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.getValue
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
+import java.nio.file.Path
 import kotlin.io.path.pathString
 
 /**
@@ -31,11 +34,61 @@ import kotlin.io.path.pathString
  * from the compiler to the BTA.
  */
 class KlibDAG(private val dag: Map<KotlinLibrary, KlibDAGNode>) {
+    init {
+        // Sanity check.
+        for (node in dag.values) {
+            for (directDependency in node.directDependencies) {
+                check(directDependency in dag) {
+                    "There is a direct dependency $directDependency of library ${node.library} that is not in DAG"
+                }
+            }
+        }
+    }
+
     val libraries: Set<KotlinLibrary>
         get() = dag.keys
 
     operator fun get(library: KotlinLibrary): KlibDAGNode =
         dag[library] ?: error("No such library in Klib DAG: $library")
+
+    /**
+     * Serialize this DAG to [SerializedKlibDAG].
+     */
+    fun serialize(): SerializedKlibDAG = SerializedKlibDAG(
+        dag.values.associate { node ->
+            node.library.canonicalPath to node.directDependencies.mapToSetOrEmpty { it.canonicalPath }
+        }
+    )
+}
+
+/**
+ * Deserialize DAG to [KlibDAG]:
+ * - [this] is used as the source of information about dependencies (via paths).
+ * - [libraries] is used as the source of [KotlinLibrary] instances.
+ *
+ * Note: If some library is represented in [libraries] but nbot represented in [this], it will
+ * not be included into the resulting [KlibDAG].
+ */
+fun SerializedKlibDAG.deserialize(libraries: Collection<KotlinLibrary>): KlibDAG {
+    val pathToLibrary: Map<Path, KotlinLibrary> = libraries.associateByCanonicalPathPreventingDuplicates()
+
+    fun findLibrary(libraryPath: Path): KotlinLibrary =
+        pathToLibrary[libraryPath]
+            ?: error("Library $libraryPath from the serialized DAG is not in the list of the available libraries: ${libraries.joinToString { it.canonicalPath.pathString }}")
+
+    val dagUnderConstruction: Map<KotlinLibrary, KlibDAGNodeImpl> = libraries.associateWith(::KlibDAGNodeImpl)
+    val usedNodes = hashSetOf<KlibDAGNodeImpl>()
+
+    dag.entries.forEach { [libraryPath: Path, directDependencyPaths: Set<Path>] ->
+        val node = dagUnderConstruction.getValue(findLibrary(libraryPath))
+        usedNodes += node
+
+        for (directDependency in directDependencyPaths) {
+            node.targets += dagUnderConstruction.getValue(findLibrary(directDependency))
+        }
+    }
+
+    return KlibDAG(dagUnderConstruction.filterValues { it in usedNodes })
 }
 
 /**
@@ -72,22 +125,10 @@ private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (
     private val others: MutableList<KotlinLibrary> = mutableListOf()
 
     init {
-        val librariesByUniquePath = hashMapOf<String, KotlinLibrary>()
+        // Make sure there are no duplicates.
+        libraries.associateByCanonicalPathPreventingDuplicates()
 
         for (library in libraries) {
-            // Prevention of occasional duplicates.
-            val uniquePath = library.canonicalPath.pathString
-            when (val duplicate = librariesByUniquePath[uniquePath]) {
-                null -> librariesByUniquePath[uniquePath] = library
-                else -> error(
-                    """
-                        Duplicated libraries found:
-                        - $library
-                        - $duplicate
-                    """.trimIndent()
-                )
-            }
-
             // Put the library to the appropriate group.
             when {
                 library.isNativeStdlib -> stdlib = library
@@ -300,4 +341,27 @@ private class KlibDAGNodeImpl(override val library: KotlinLibrary) : KlibDAGNode
             throw KlibDAGCyclicDependencyException()
         }
     )
+}
+
+/**
+ * Aggregate the collection of [KotlinLibrary] by their canonical path throwing exception if there are duplicates.
+ */
+private fun Collection<KotlinLibrary>.associateByCanonicalPathPreventingDuplicates(): Map<Path, KotlinLibrary> {
+    val librariesByCanonicalPath = hashMapOf<Path, KotlinLibrary>()
+
+    for (library in this) {
+        // Prevention of occasional duplicates.
+        when (val duplicate = librariesByCanonicalPath[library.canonicalPath]) {
+            null -> librariesByCanonicalPath[library.canonicalPath] = library
+            else -> error(
+                """
+                    Duplicated libraries found:
+                    - $library
+                    - $duplicate
+                """.trimIndent()
+            )
+        }
+    }
+
+    return librariesByCanonicalPath
 }
