@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.CALL_SUPER_TO_ANY_IS_POI
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.TO_STRING_FUNCTION_ALREADY_EXISTS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.TO_STRING_FUNCTION_IS_FINAL_IN_SUPERCLASS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_WILL_IGNORE_INITIALIZING_EXPRESSION
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_DEFAULT_REQUIRES_INITIALIZING_EXPRESSION
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.BUILDER_DEFAULT_AND_SINGULAR_MIXED
@@ -88,6 +89,7 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val TO_STRING_FUNCTION_IS_FINAL_IN_SUPERCLASS by error1<KtAnnotationEntry, Name>()
     val NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED by error0<KtAnnotationEntry>()
     val NO_ARGS_CONSTRUCTOR_ALREADY_EXISTS by warning0<KtAnnotationEntry>()
+    val NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS by error0<KtAnnotationEntry>()
     val STATIC_CONSTRUCTOR_ALREADY_EXISTS by warning2<KtAnnotationEntry, Name, Name>()
     val EQUALS_OR_HASH_CODE_FUNCTIONS_ALREADY_EXIST by error0<KtAnnotationEntry>()
     val EQUALS_OR_HASH_CODE_FUNCTIONS_ARE_FINAL_IN_SUPERCLASS by error1<KtAnnotationEntry, Name>()
@@ -178,6 +180,11 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
             NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED,
             "Class contains required properties. " +
                     "Use '@NoArgsConstructor(force = true)' to force-initialize them to default values (0 / false / null)."
+        )
+        map.put(
+            NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS,
+            "The superclass has no constructor without arguments for the generated one to delegate to. " +
+                    "Nothing is generated.",
         )
         // Lombok itself stays silent about both clashes below and lets `javac` reject the duplicate it generated,
         // so the wording follows `javac`'s "{0} {1} is already defined in {2} {3}" rather than a Lombok original.
