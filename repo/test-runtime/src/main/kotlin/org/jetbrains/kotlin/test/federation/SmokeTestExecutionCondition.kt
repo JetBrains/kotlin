@@ -22,7 +22,7 @@ class SmokeTestExecutionCondition : ExecutionCondition {
         if (isAutoSmokeTest(context)) return enabled("Auto smoke test selected")
         if (isMustRunAlways(context)) return enabled("@${MustRunAlways::class.java.simpleName}")
 
-        /* Check contract */
+        /* Select tests marked to run for one of the changed domains. */
         val changedDomains = testFederationChangedDomains
             ?: return disabled("Missing '${TEST_FEDERATION_CHANGED_DOMAINS_KEY}'")
         val contracts = changedDomains.filter { domain -> isContract(domain, context) }
@@ -32,7 +32,8 @@ class SmokeTestExecutionCondition : ExecutionCondition {
 }
 
 /**
- * Tests tasks can be configured so that a given percentage of tests are automatically selected as smoke tests.
+ * Selects an approximate percentage of tests using a hash of each test's identity.
+ * The same identity gives the same selection for a given percentage.
  */
 private fun isAutoSmokeTest(context: ExtensionContext): Boolean {
     if (autoSmokeTestPercentage <= 0) return false

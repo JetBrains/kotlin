@@ -35,20 +35,15 @@ class TestMetadataTest {
     }
 
     /**
-     * Our repository contains many tests generated from test-data.
-     * Those tests can use test-data from generic locations.
-     * These test-data locations might be living within a different 'Domain' as the actual test.
-     * This test is checking if the test is executed when the given test-data is changed (according to the rules of federal ci)
+     * Checks that tests using test data are selected to run when the domain containing that test data is changed.
      *
-     * This test, therefore, walks through the repository, analyzing each class file for '@TestMetadata' annotations.
-     * If the provided '@TestMetadata' annotation is found, it will check if the test-data is inside the same 'Domain' as the test.
-     * If the test-data is not inside the same 'Domain', the test will check if the test is executed when the test-data is changed.
+     * Scans compiled classes for `@TestMetadata` annotations and compares the domains of the test and its test data.
      *
      * A test marked by the `@TestMetadata` annotation must meet one of the following conditions:
-     * - the metadata is living in the same domains as the test
-     * - the metadata is living in any of the 'mustRunAllTestsOnChangesIn' dependencies of the test
-     * - the test is marked as '@MustRunOnChangesIn' any of metadata domains
-     * - the test is marked as '@MustRunAlways' (so it always runs)
+     * - the test data belongs to the same domains as the test
+     * - the test's domains list the test data's domains in `mustRunAllTestsOnChangesIn`
+     * - the test is annotated with `@MustRunOnChangesInXYZ` for a domain containing its test data
+     * - the test is annotated with `@MustRunAlways`
      */
     @Test
     fun `test-federation dependencies`() {

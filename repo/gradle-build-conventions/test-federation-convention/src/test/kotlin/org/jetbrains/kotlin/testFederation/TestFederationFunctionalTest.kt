@@ -26,9 +26,8 @@ import kotlin.test.fail
 import kotlin.time.Duration.Companion.seconds
 
 /**
- * This test will launch a build in different [TestFederationMode] and affected [Domain]s.
- * The build launches the ':repo:test-runtime:test' task and parses the output to check if the tests were executed correctly.
- * (e.g., the compiler contract test is expected to only be executed when the compiler subsystem is affected, or the full test mode is specified)
+ * Runs `:repo:test-runtime:test` with different modes and domain selections, then checks which tests ran.
+ * Covers full test runs, selection by annotations and automatic sampling, and nightly filters.
  */
 class TestFederationFunctionalTest {
 
@@ -125,7 +124,7 @@ class TestFederationFunctionalTest {
 
 
     /**
-     * If the test task is marked as 'isSmokeTest', then we expect all tests to be executed, always
+     * Configuring RunAllTests selects all tests even when a different mode is explicitly requested.
      */
     @Test
     fun `test - smokeTestConfig RunAllTests`() {
@@ -134,7 +133,7 @@ class TestFederationFunctionalTest {
     }
 
     /**
-     * If the test task is marked as 'isSmokeTest = false', then we expect it to be skipped in smoke test mode.
+     * Configuring Disabled skips the task when it is not selected for a full test run.
      */
     @Test
     fun `test - smokeTestConfig Disabled`() {
@@ -146,11 +145,11 @@ class TestFederationFunctionalTest {
     }
 
     /**
-     * We override the test task to
+     * Overriding the task's domains changes whether it is selected for a full test run.
      */
     @Test
     fun `test - Test testFederationDomains`() {
-        /* Js affected, test task belongs to no domain -> only contract is executed */
+        /* Js contains changes, task belongs to no domain -> select @MustRunAlways and @MustRunOnChangesInJs tests. */
         run {
             val result = runTestBuild(changed = arrayOf(Domain.Js), testTaskDomainsOverride = listOf())
             assertEquals(
@@ -162,7 +161,7 @@ class TestFederationFunctionalTest {
             )
         }
 
-        /* Js affected, test task is configured to belong to Js and Wasm -> all tests are executed */
+        /* Js contains changes, task belongs to Js and Wasm -> select all tests. */
         run {
             val result = runTestBuild(changed = arrayOf(Domain.Js), testTaskDomainsOverride = listOf(Domain.Js, Domain.Wasm))
             assertEquals(allTests, result.executedTests)
@@ -405,7 +404,7 @@ private data class TestBuildResult(
 }
 
 /**
- * Executes all tests in ':repo:test-runtime:test' with the given [mode] and [changed].
+ * Runs `:repo:test-runtime:test` with the given [mode] and [changed] domains.
  * All executed tests are parsed and returned in [TestBuildResult.executedTests].
  */
 private fun runTestBuild(

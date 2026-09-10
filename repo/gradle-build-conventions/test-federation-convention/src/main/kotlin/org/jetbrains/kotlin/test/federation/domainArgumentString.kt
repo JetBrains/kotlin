@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.testFederation
 
 /**
- * Denotes that indeed not a single domain is affected
- * Note: Passing an empty string is considered as the property being absent (null)
+ * Represents an empty set of domains.
+ * An empty string instead represents an absent value (`null`).
  */
 private const val NONE_DOMAINS_NOTATION = "<none>"
 
 /**
- * Denotes that *all* domains are affected
+ * Represents all domains.
  */
 private const val ALL_DOMAINS_NOTATION = "*"
 
