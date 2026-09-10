@@ -1303,6 +1303,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/Source
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaConfig {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaConfig$Companion;
 	public fun <init> ()V
 	public fun <init> (ZZLjava/lang/String;Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaClient;Ljava/util/List;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;ZZLjava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/lang/Integer;Ljava/util/List;)V
 	public synthetic fun <init> (ZZLjava/lang/String;Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaClient;Ljava/util/List;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;ZZLjava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/lang/Integer;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V

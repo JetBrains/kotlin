@@ -6,6 +6,10 @@
 package org.jetbrains.kotlin.gradle.internal.json
 
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
@@ -101,4 +105,20 @@ internal fun anyToJsonElement(value: Any?): JsonElement = when (value) {
                 "collections and arrays are supported. Pass a Map to get a JSON object, or build a JsonElement " +
                 "explicitly."
     )
+}
+
+/**
+ * Serializer for the `Any` properties the JS DSLs expose, converting through [anyToJsonElement].
+ *
+ * Write-only: the original type cannot be recovered from JSON, and nothing in the plugin reads these files back.
+ */
+internal object AnyAsJsonElementSerializer : KSerializer<Any> {
+    override val descriptor: SerialDescriptor get() = JsonElement.serializer().descriptor
+
+    override fun serialize(encoder: Encoder, value: Any) {
+        encoder.encodeSerializableValue(JsonElement.serializer(), anyToJsonElement(value))
+    }
+
+    override fun deserialize(decoder: Decoder): Any =
+        throw UnsupportedOperationException("${'$'}{descriptor.serialName} is write-only")
 }

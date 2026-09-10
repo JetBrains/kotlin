@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.testing.karma
 
 import jetbrains.buildServer.messages.serviceMessages.BaseTestSuiteMessage
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.buildJsonArray
-import kotlinx.serialization.json.buildJsonObject
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.internal.tasks.testing.TestResultProcessor
@@ -20,7 +16,6 @@ import org.gradle.internal.logging.progress.ProgressLogger
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.json.KgpJson
-import org.jetbrains.kotlin.gradle.internal.json.anyToJsonElement
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -737,43 +732,5 @@ private val KARMA_MESSAGE = "^.*\\d{2} \\d{2} \\d{4,} \\d{2}:\\d{2}:\\d{2}.\\d{3
 private val PROXY_FALSE_WARN = "\"/\" is proxied, you should probably change urlRoot to avoid conflicts".toRegex()
 private val WEBPACK_OUTPUT_WARN = "All files matched by \".+\" were excluded or matched by prior matchers\\.".toRegex()
 
-/** Gson indented with two spaces where kotlinx-serialization defaults to four; keep karma.conf.js identical. */
-private fun karmaConfigToJson(config: KarmaConfig): String =
-    KgpJson.prettyPrintedTwoSpaceIndent.encodeToString(JsonElement.serializer(), config.toJsonElement())
-
-/**
- * Mirrors what Gson's reflective serializer used to emit for [KarmaConfig]: properties in declaration order,
- * `null` ones dropped, and collections always written. karma.conf.js is generated JavaScript, and an absent key
- * is not interchangeable with an empty one for the plugins reading it.
- */
-private fun KarmaConfig.toJsonElement() = buildJsonObject {
-    put("singleRun", JsonPrimitive(singleRun))
-    put("autoWatch", JsonPrimitive(autoWatch))
-    basePath?.let { put("basePath", JsonPrimitive(it)) }
-    put("files", buildJsonArray { files.forEach { add(anyToJsonElement(it)) } })
-    put("frameworks", buildJsonArray { frameworks.forEach { add(JsonPrimitive(it)) } })
-    put("client", buildJsonObject { put("args", buildJsonArray { client.args.forEach { add(JsonPrimitive(it)) } }) })
-    put("browsers", buildJsonArray { browsers.forEach { add(JsonPrimitive(it)) } })
-    put("customLaunchers", buildJsonObject {
-        customLaunchers.forEach { (name, launcher) ->
-            put(name, buildJsonObject {
-                put("base", JsonPrimitive(launcher.base))
-                put("flags", buildJsonArray { launcher.flags.forEach { add(JsonPrimitive(it)) } })
-                launcher.debug?.let { put("debug", JsonPrimitive(it)) }
-            })
-        }
-    })
-    customContextFile?.let { put("customContextFile", JsonPrimitive(it)) }
-    customDebugFile?.let { put("customDebugFile", JsonPrimitive(it)) }
-    put("failOnFailingTestSuite", JsonPrimitive(failOnFailingTestSuite))
-    put("failOnEmptyTestSuite", JsonPrimitive(failOnEmptyTestSuite))
-    put("reporters", buildJsonArray { reporters.forEach { add(JsonPrimitive(it)) } })
-    put("preprocessors", buildJsonObject {
-        preprocessors.forEach { (file, procs) ->
-            put(file, buildJsonArray { procs.forEach { add(JsonPrimitive(it)) } })
-        }
-    })
-    put("proxies", buildJsonObject { proxies.forEach { (k, v) -> put(k, JsonPrimitive(v)) } })
-    port?.let { put("port", JsonPrimitive(it)) }
-    put("webpackCopy", buildJsonArray { webpackCopy.forEach { add(JsonPrimitive(it)) } })
-}
+internal fun karmaConfigToJson(config: KarmaConfig): String =
+    KgpJson.prettyPrintedTwoSpaceIndent.encodeToString(KarmaConfig.serializer(), config)
