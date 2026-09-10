@@ -160,6 +160,7 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
         "-H:+AddAllCharsets",
         "-H:+UnlockExperimentalVMOptions",
         "-H:+AllowJRTFileSystem",
+        "--enable-native-access=ALL-UNNAMED",
         "--add-opens", "java.base/java.lang=ALL-UNNAMED",
         "--add-opens", "java.base/java.io=ALL-UNNAMED",
         "--add-opens", "java.base/java.nio=ALL-UNNAMED",
