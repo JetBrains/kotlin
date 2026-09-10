@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Native
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Runnable
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
+import org.jetbrains.kotlin.backend.konan.optimizations.canOmitSafepoints
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
@@ -125,7 +126,7 @@ internal inline fun generateFunction(
             startLocation,
             endLocation,
             switchToRunnable = isCToKotlinBridge,
-            needSafePoint = true,
+            needSafePoint = !function.canOmitSafepoints,
             function)
     functionGenerationContext.needsRuntimeInit = isCToKotlinBridge
 
