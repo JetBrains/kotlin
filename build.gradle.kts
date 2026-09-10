@@ -94,7 +94,6 @@ val jpsBootstrap = configurations.create("jpsBootstrap")
 
 val commonBuildDir = File(rootDir, "build")
 val distDir = "$rootDir/dist"
-extra["distDir"] = distDir
 val distKotlinHomeDir = "$distDir/kotlinc"
 extra["distKotlinHomeDir"] = distKotlinHomeDir
 val distLibDir = "$distKotlinHomeDir/lib"
@@ -736,6 +735,9 @@ tasks {
             "-Ddeploy-snapshot-url=file://${rootProject.projectDir.resolve("build/repo")}",
             "-Dlocal-bootstrap-url=file://${rootProject.projectDir.resolve("build/repo")}",
         )
+        inputs.files(publishedMarkElements.get().incoming.artifactView { lenient(true) }.files)
+            .withPathSensitivity(PathSensitivity.NONE)
+            .withPropertyName("publishedMarks")
 
         val jdkToolchain1_8 = getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
         doFirst {
