@@ -11,6 +11,7 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModuleMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createFullyExportedSwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createTransitiveSwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.validateSwiftExportModuleName
@@ -44,7 +45,7 @@ internal fun Project.applySwiftExportConsumerOverrides(
         val component = componentByArtifact[module.artifact] ?: return@map module to null
         val declaredName = sources.declaredModuleName(component)?.also { validateSwiftExportModuleName(it) }
         val adjusted = when {
-            module.shouldBeFullyExported -> createFullyExportedSwiftExportedModule(
+            module.exportMode == SwiftExportedModuleMode.FULL -> createFullyExportedSwiftExportedModule(
                 moduleName = declaredName ?: module.moduleName,
                 flattenPackage = sources.declaredRootPackage(component) ?: module.flattenPackage,
                 artifact = module.artifact,

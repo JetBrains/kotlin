@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.EmbedSwiftExportForXcodeTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModuleMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
@@ -583,7 +584,7 @@ class ExportExtensionSwiftExportTests {
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxKotlinxIoBytestring",
                 artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
-                shouldBeFullyExported = true
+                exportMode = SwiftExportedModuleMode.FULL
             ),
         )
 
@@ -614,7 +615,7 @@ class ExportExtensionSwiftExportTests {
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxKotlinxIoBytestring",
                 artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
         )
 
@@ -656,7 +657,7 @@ class ExportExtensionSwiftExportTests {
             ExportedSwiftModuleForAssertion(
                 moduleName = "Subproject",
                 artifactName = "subproject",
-                shouldBeFullyExported = true
+                exportMode = SwiftExportedModuleMode.FULL
             ),
         )
 
@@ -698,7 +699,7 @@ class ExportExtensionSwiftExportTests {
             ExportedSwiftModuleForAssertion(
                 moduleName = "SharedSubproject",
                 artifactName = "subproject",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
         )
 
@@ -744,27 +745,27 @@ class ExportExtensionSwiftExportTests {
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxAtomicfu",
                 artifactName = "atomicfu.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
                 artifactName = "kotlinx-coroutines-core.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxKotlinxDatetime",
                 artifactName = "kotlinx-datetime.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxKotlinxSerializationCore",
                 artifactName = "kotlinx-serialization-core.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "Subproject",
                 artifactName = "subproject",
-                shouldBeFullyExported = true
+                exportMode = SwiftExportedModuleMode.FULL
             ),
         )
 
@@ -832,17 +833,17 @@ class ExportExtensionSwiftExportTests {
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxAtomicfu",
                 artifactName = "atomicfu.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
                 artifactName = "kotlinx-coroutines-core-iosSimulatorArm64Main-1.10.0.klib",
-                shouldBeFullyExported = true
+                exportMode = SwiftExportedModuleMode.FULL
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "SharedSubproject",
                 artifactName = "subproject",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
         )
 
@@ -888,17 +889,17 @@ class ExportExtensionSwiftExportTests {
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxAtomicfu",
                 artifactName = "atomicfu.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
                 artifactName = "kotlinx-coroutines-core-iosSimulatorArm64Main-1.10.0.klib",
-                shouldBeFullyExported = true
+                exportMode = SwiftExportedModuleMode.FULL
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "SharedSubproject",
                 artifactName = "subproject",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
         )
 
@@ -938,22 +939,22 @@ class ExportExtensionSwiftExportTests {
             ExportedSwiftModuleForAssertion(
                 moduleName = "AppCashSqldelightRuntime",
                 artifactName = "runtime.klib",
-                shouldBeFullyExported = true
+                exportMode = SwiftExportedModuleMode.FULL
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsComposeRuntimeRuntime",
                 artifactName = "runtime-uikitSimArm64Main-1.8.2.klib",
-                shouldBeFullyExported = true
+                exportMode = SwiftExportedModuleMode.FULL
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxAtomicfu",
                 artifactName = "atomicfu.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
                 artifactName = "kotlinx-coroutines-core.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
         )
 
@@ -1003,17 +1004,17 @@ class ExportExtensionSwiftExportTests {
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
                 artifactName = "kotlinx-coroutines-core.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "OrgJetbrainsKotlinxKotlinxDatetime",
                 artifactName = "kotlinx-datetime.klib",
-                shouldBeFullyExported = false
+                exportMode = SwiftExportedModuleMode.TRANSITIVE
             ),
             ExportedSwiftModuleForAssertion(
                 moduleName = "Subproject",
                 artifactName = "subproject",
-                shouldBeFullyExported = true
+                exportMode = SwiftExportedModuleMode.FULL
             ),
         )
 
@@ -1050,7 +1051,7 @@ class ExportExtensionSwiftExportTests {
                 ExportedSwiftModuleForAssertion(
                     moduleName = "ByteString",
                     artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
-                    shouldBeFullyExported = true,
+                    exportMode = SwiftExportedModuleMode.FULL,
                 ),
             ),
             actualModules.toModulesForAssertion(),
@@ -1084,7 +1085,7 @@ class ExportExtensionSwiftExportTests {
                 ExportedSwiftModuleForAssertion(
                     moduleName = "OrgJetbrainsKotlinxKotlinxIoBytestring",
                     artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
-                    shouldBeFullyExported = true,
+                    exportMode = SwiftExportedModuleMode.FULL,
                     flattenPackage = "kotlinx.io.bytestring",
                 ),
             ),
@@ -1120,7 +1121,7 @@ class ExportExtensionSwiftExportTests {
                 ExportedSwiftModuleForAssertion(
                     moduleName = "ByteString",
                     artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
-                    shouldBeFullyExported = true,
+                    exportMode = SwiftExportedModuleMode.FULL,
                 ),
             ),
             actualModules.toModulesForAssertion(),
@@ -1156,7 +1157,7 @@ class ExportExtensionSwiftExportTests {
                 ExportedSwiftModuleForAssertion(
                     moduleName = "ByteString",
                     artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
-                    shouldBeFullyExported = true,
+                    exportMode = SwiftExportedModuleMode.FULL,
                 ),
             ),
             actualModules.toModulesForAssertion(),
@@ -1199,7 +1200,7 @@ class ExportExtensionSwiftExportTests {
                 ExportedSwiftModuleForAssertion(
                     moduleName = "Renamed",
                     artifactName = "subproject",
-                    shouldBeFullyExported = true,
+                    exportMode = SwiftExportedModuleMode.FULL,
                     flattenPackage = "org.example.subproject",
                 ),
             ),
@@ -1235,7 +1236,7 @@ class ExportExtensionSwiftExportTests {
                 ExportedSwiftModuleForAssertion(
                     moduleName = "ByteString",
                     artifactName = "kotlinx-io-bytestring-iosSimulatorArm64Main-0.7.0.klib",
-                    shouldBeFullyExported = false,
+                    exportMode = SwiftExportedModuleMode.TRANSITIVE,
                     flattenPackage = null,
                 ),
             ),
@@ -1571,7 +1572,7 @@ private fun List<SwiftExportedModule>.toModulesForAssertion() = mapToSetOrEmpty 
     ExportedSwiftModuleForAssertion(
         moduleName = module.moduleName,
         artifactName = module.artifact.name,
-        shouldBeFullyExported = module.shouldBeFullyExported,
+        exportMode = module.exportMode,
         flattenPackage = module.flattenPackage,
     )
 }
@@ -1579,6 +1580,6 @@ private fun List<SwiftExportedModule>.toModulesForAssertion() = mapToSetOrEmpty 
 private data class ExportedSwiftModuleForAssertion(
     val moduleName: String,
     val artifactName: String,
-    val shouldBeFullyExported: Boolean,
+    val exportMode: SwiftExportedModuleMode,
     val flattenPackage: String? = null,
 )

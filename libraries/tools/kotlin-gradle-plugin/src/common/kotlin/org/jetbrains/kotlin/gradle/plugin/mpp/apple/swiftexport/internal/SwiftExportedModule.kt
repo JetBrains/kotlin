@@ -19,18 +19,36 @@ import java.io.File
 import java.io.Serializable
 
 /**
+ * KGP-side copy of `SwiftModuleExportMode`. The standalone type can't be used here: `swift-export-standalone` is
+ * `compileOnly` in KGP and this value is serialized into worker parameters. [SwiftExportAction] maps between the two.
+ */
+internal enum class SwiftExportedModuleMode {
+    /** The whole public API is translated. */
+    FULL,
+
+    /** Only what fully exported modules refer to is translated. */
+    TRANSITIVE,
+
+    /**
+     * Only the types other modules refer to are emitted, as empty stubs. The klib stays on the analysis path,
+     * so declarations in other modules that mention its types are still exported.
+     */
+    HIDDEN,
+}
+
+/**
  * Represents a module that will be exported to Swift.
  *
  * @property moduleName The name of the module in Swift
- * @property flattenPackage Optional package flattening configuration
+ * @property flattenPackage Optional package flattening configuration, only used for [SwiftExportedModuleMode.FULL]
  * @property artifact The artifact file containing the module
- * @property shouldBeFullyExported Whether this module was explicitly requested for export through the swiftExport { export("foo:bar") } DSL
+ * @property exportMode How Swift Export translates this module
  */
 internal interface SwiftExportedModule : Serializable {
     val moduleName: String
     val flattenPackage: String?
     val artifact: File
-    val shouldBeFullyExported: Boolean
+    val exportMode: SwiftExportedModuleMode
 }
 
 internal fun createFullyExportedSwiftExportedModule(
@@ -42,7 +60,7 @@ internal fun createFullyExportedSwiftExportedModule(
         moduleName,
         flattenPackage,
         artifact,
-        true
+        SwiftExportedModuleMode.FULL
     )
 }
 
@@ -54,7 +72,19 @@ internal fun createTransitiveSwiftExportedModule(
         moduleName,
         null,
         artifact,
-        false
+        SwiftExportedModuleMode.TRANSITIVE
+    )
+}
+
+internal fun createHiddenSwiftExportedModule(
+    moduleName: String,
+    artifact: File,
+): SwiftExportedModule {
+    return SwiftExportedModuleImp(
+        moduleName,
+        null,
+        artifact,
+        SwiftExportedModuleMode.HIDDEN
     )
 }
 
@@ -226,7 +256,7 @@ private data class SwiftExportedModuleImp(
     override val moduleName: String,
     override val flattenPackage: String?,
     override val artifact: File,
-    override val shouldBeFullyExported: Boolean,
+    override val exportMode: SwiftExportedModuleMode,
 ) : SwiftExportedModule
 
 private fun Project.normalizedAndValidatedModuleName(moduleName: String) =
