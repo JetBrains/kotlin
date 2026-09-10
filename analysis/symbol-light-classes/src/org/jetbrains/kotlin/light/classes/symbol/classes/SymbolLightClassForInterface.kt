@@ -47,7 +47,7 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
         withClassSymbol { classSymbol ->
             val result = mutableListOf<PsiMethod>()
 
-            val visibleDeclarations = classSymbol.combinedDeclaredMemberScope.callables.filter { acceptCallableSymbol(it) }
+            val visibleDeclarations = classSymbol.combinedDeclaredMemberScope.callables
 
             createMethods(this@SymbolLightClassForInterface, visibleDeclarations, result)
             addMethodsFromCompanionIfNeeded(result, classSymbol)
@@ -55,8 +55,6 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
             result
         }
     }
-
-    protected open fun acceptCallableSymbol(symbol: KaCallableSymbol): Boolean = true
 
     override fun copy(): SymbolLightClassForInterface =
         SymbolLightClassForInterface(classOrObjectDeclaration, symbolPointer, useSiteModule)
