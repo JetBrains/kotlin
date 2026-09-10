@@ -12,11 +12,15 @@ import org.jetbrains.kotlin.lombok.generators.ToStringGenerator
 import org.jetbrains.kotlin.lombok.generators.EqualsAndHashCodeGenerator
 import org.jetbrains.kotlin.lombok.config.LombokService
 import org.jetbrains.kotlin.lombok.generators.BuilderGenerator
+import org.jetbrains.kotlin.lombok.generators.LombokCompanionObjectGenerator
 import java.io.File
 
 class FirLombokCommonRegistrar(private val lombokConfigFile: File?) : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +LombokService.getFactory(lombokConfigFile)
+        // Registered before every generator that contributes to a companion object, so that the shared one
+        // exists before they are asked for the members going into it.
+        +::LombokCompanionObjectGenerator
         +::LoggerGenerator
         +::ToStringGenerator
         +::LombokConstructorsGenerator
