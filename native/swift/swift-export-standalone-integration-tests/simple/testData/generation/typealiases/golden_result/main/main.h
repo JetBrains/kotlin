@@ -3,6 +3,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+_Bool main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToClosure);
+
 void * DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * o);
 
 _Bool DATA_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
@@ -119,11 +121,11 @@ _Bool __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutable
 
 void * __root___block_get();
 
-_Bool __root___block_set__TypesOfArguments__U2829202D_U20Swift_Void__(_Bool (^newValue)(void));
+_Bool __root___block_set__TypesOfArguments__U2829202D_U20Swift_Void__(void * newValue);
 
-_Bool __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__(_Bool (^block)(void));
+_Bool __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__(void * block);
 
-void * __root___deeper_closure_typealiase__TypesOfArguments__U2829202D_U20Swift_Void__(_Bool (^block)(void));
+void * __root___deeper_closure_typealiase__TypesOfArguments__U2829202D_U20Swift_Void__(void * block);
 
 int32_t __root___increment__TypesOfArguments__Swift_Int32__(int32_t integer);
 

@@ -2,7 +2,6 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("KT_85458_internal_functional_type_caller_U2829202D3E20SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun KT_85458_internal_functional_type_caller_U2829202D3E20SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {

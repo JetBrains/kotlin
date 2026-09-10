@@ -89,6 +89,17 @@ fun saveListBlock(block: (List<Int>) -> List<Int>) {
 }
 fun callListBlock(with: List<Int>): List<Int> = list_block(with)
 
+// Closures inside collections: they travel as references smuggled through NSNumber, so both the
+// element boxing on the Swift side and the unboxing on the Kotlin side are exercised here.
+
+private lateinit var saved_blocks: List<() -> Int>
+
+fun saveBlockList(blocks: List<() -> Int>) {
+    saved_blocks = blocks
+}
+fun callSavedBlocks(): Int = saved_blocks.sumOf { it() }
+fun produceBlockList(): List<() -> Int> = listOf({ 1 }, { 2 })
+
 // FILE: functional_type_produce_collection.kt
 
 var last_seen_bar_by_produceListId: List<Int>? = null

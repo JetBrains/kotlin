@@ -3,7 +3,6 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("org_jetbrains_a_MyLibraryA_init_allocate")
 public fun org_jetbrains_a_MyLibraryA_init_allocate(): kotlin.native.internal.NativePtr {

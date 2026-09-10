@@ -11,7 +11,6 @@ import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 import foo.contextExtFun as foo_contextExtFun
 import foo.contextProp as foo_contextProp
 import foo.nullableFun as foo_nullableFun
@@ -34,6 +33,9 @@ public fun foo_Foo_doubleReceiverExtFun__TypesOfArgumentsE__main_Bar____reverse(
     val _result = foo_Foo_doubleReceiverExtFun__TypesOfArgumentsE__main_Bar____reverse_swift(__self, __receiver)
     return interpretObjCPointer<kotlin.String>(_result)
 }
+
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToClosure: kotlin.native.internal.NativePtr): Boolean
 
 @ExportedBridge("Bar_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__")
 @OptIn(ExperimentalApi::class)
@@ -144,9 +146,10 @@ public fun __root___errorDeprecatedSetterProp_get__TypesOfArgumentsE__main_Bar__
 @ExportedBridge("__root___funExtFun__TypesOfArgumentsE__U2829202D_U20Swift_Void__")
 public fun __root___funExtFun__TypesOfArgumentsE__U2829202D_U20Swift_Void__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->Boolean>(`receiver`);
+        val closurePtr = `receiver`;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         {
-            val _result = kotlinFun()
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(closureBox.objcPtr())
             run<Unit> { _result }
         }
     }
@@ -157,9 +160,10 @@ public fun __root___funExtFun__TypesOfArgumentsE__U2829202D_U20Swift_Void__(`rec
 @ExportedBridge("__root___funExtProp_get__TypesOfArgumentsE__U2829202D_U20Swift_Void__")
 public fun __root___funExtProp_get__TypesOfArgumentsE__U2829202D_U20Swift_Void__(`receiver`: kotlin.native.internal.NativePtr): Int {
     val __receiver = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->Boolean>(`receiver`);
+        val closurePtr = `receiver`;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         {
-            val _result = kotlinFun()
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(closureBox.objcPtr())
             run<Unit> { _result }
         }
     }

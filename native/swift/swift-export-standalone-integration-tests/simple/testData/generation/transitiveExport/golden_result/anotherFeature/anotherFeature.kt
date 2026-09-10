@@ -3,7 +3,6 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("FeatureC_baz")
 public fun FeatureC_baz(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {

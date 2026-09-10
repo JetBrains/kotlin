@@ -18,9 +18,12 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(SEALED.O::class, "4main6SEALEDC1OC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(OUTSIDE_PROTO::class, "_main_OUTSIDE_PROTO")
 
-import kotlin.native.internal.ExportedBridge
+import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+import kotlin.native.internal.ExportedBridge
+
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToClosure: kotlin.native.internal.NativePtr): Boolean
 
 @ExportedBridge("DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
 public fun DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, o: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
@@ -426,9 +429,10 @@ public fun __root___block_get(): kotlin.native.internal.NativePtr {
 @ExportedBridge("__root___block_set__TypesOfArguments__U2829202D_U20Swift_Void__")
 public fun __root___block_set__TypesOfArguments__U2829202D_U20Swift_Void__(newValue: kotlin.native.internal.NativePtr): Boolean {
     val __newValue = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->Boolean>(newValue);
+        val closurePtr = newValue;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         {
-            val _result = kotlinFun()
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(closureBox.objcPtr())
             run<Unit> { _result }
         }
     }
@@ -439,9 +443,10 @@ public fun __root___block_set__TypesOfArguments__U2829202D_U20Swift_Void__(newVa
 @ExportedBridge("__root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__")
 public fun __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__(block: kotlin.native.internal.NativePtr): Boolean {
     val __block = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->Boolean>(block);
+        val closurePtr = block;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         {
-            val _result = kotlinFun()
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(closureBox.objcPtr())
             run<Unit> { _result }
         }
     }
@@ -452,9 +457,10 @@ public fun __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__
 @ExportedBridge("__root___deeper_closure_typealiase__TypesOfArguments__U2829202D_U20Swift_Void__")
 public fun __root___deeper_closure_typealiase__TypesOfArguments__U2829202D_U20Swift_Void__(block: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __block = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->Boolean>(block);
+        val closurePtr = block;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         {
-            val _result = kotlinFun()
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(closureBox.objcPtr())
             run<Unit> { _result }
         }
     }

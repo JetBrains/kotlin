@@ -82,7 +82,8 @@ private fun CodeGenerator.resolveReverseBridgeAdapter(
 }
 
 private fun IrSimpleFunction.hasMatchingSignatureTo(bridgeFunction: IrSimpleFunction): Boolean {
-    val valueParameters = parameters.filter { it.kind == IrParameterKind.Regular }
+    val valueParameters = parameters.filter { it.kind == IrParameterKind.ExtensionReceiver || it.kind == IrParameterKind.Regular }
+
     val bridgeValueParameters = bridgeFunction.parameters.filter { it.kind == IrParameterKind.Regular }.drop(1)
 
     return valueParameters.size == bridgeValueParameters.size &&

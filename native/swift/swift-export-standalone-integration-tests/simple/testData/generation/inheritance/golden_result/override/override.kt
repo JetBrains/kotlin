@@ -7,7 +7,6 @@ import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ImportedBridge("Base_g__TypesOfArguments__anyU20override_P____reverse_swift")
 internal external fun Base_g__TypesOfArguments__anyU20override_P____reverse_swift(self: kotlin.native.internal.NativePtr, x: kotlin.native.internal.NativePtr): Boolean

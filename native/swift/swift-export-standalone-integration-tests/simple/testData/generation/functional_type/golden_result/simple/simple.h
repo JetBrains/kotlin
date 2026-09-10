@@ -3,19 +3,25 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+_Bool simple_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_U28Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32___(void * pointerToClosure, void * _1);
+
+_Bool simple_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToClosure);
+
+void * simple_internal_functional_type_callee_U2829202D3E20SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToClosure);
+
 void * __root___closure_property_get();
 
-_Bool __root___closure_property_set__TypesOfArguments__U2829202D_U20Swift_Void__(_Bool (^newValue)(void));
+_Bool __root___closure_property_set__TypesOfArguments__U2829202D_U20Swift_Void__(void * newValue);
 
 void * __root___foo_1();
 
-_Bool __root___foo_consume_consuming__TypesOfArguments__U2840escapingU2028Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32_U29202D_U20Swift_Void__(_Bool (^block)(void *));
+_Bool __root___foo_consume_consuming__TypesOfArguments__U2840escapingU2028Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32_U29202D_U20Swift_Void__(void * block);
 
-_Bool __root___foo_consume_consuming_2__TypesOfArguments__U2840escapingU2028Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32_U29202D_U20Swift_Void__(_Bool (^block)(void *));
+_Bool __root___foo_consume_consuming_2__TypesOfArguments__U2840escapingU2028Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32_U29202D_U20Swift_Void__(void * block);
 
-_Bool __root___foo_consume_producing__TypesOfArguments__U2829202D_U202829202D_U20Swift_Void__(_Bool (^(^block)(void))(void));
+_Bool __root___foo_consume_producing__TypesOfArguments__U2829202D_U202829202D_U20Swift_Void__(void * block);
 
-_Bool __root___foo_consume_simple__TypesOfArguments__U2829202D_U20Swift_Void__(_Bool (^block)(void));
+_Bool __root___foo_consume_simple__TypesOfArguments__U2829202D_U20Swift_Void__(void * block);
 
 void * kotlin_ranges_intRange_create_int_simple(int32_t start, int32_t end);
 

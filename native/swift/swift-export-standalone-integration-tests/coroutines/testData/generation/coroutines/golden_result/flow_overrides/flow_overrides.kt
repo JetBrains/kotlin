@@ -14,7 +14,6 @@ import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ImportedBridge("namespace_Bar_foo__reverse_swift")
 internal external fun namespace_Bar_foo__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr

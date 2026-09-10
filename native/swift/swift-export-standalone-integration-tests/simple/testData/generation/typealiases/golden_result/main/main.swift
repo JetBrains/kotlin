@@ -496,37 +496,19 @@ public var block: main.closure {
         }()
     }
     set {
-        return { __root___block_set__TypesOfArguments__U2829202D_U20Swift_Void__({
-            let originalBlock: () -> Swift.Void = newValue
-            return {
-                let _result = originalBlock()
-                return { _result; return true }()
-            }
-        }()); return () }()
+        return { __root___block_set__TypesOfArguments__U2829202D_U20Swift_Void__(Unmanaged.passRetained((newValue as () -> Swift.Void) as AnyObject).toOpaque()); return () }()
     }
 }
 public func consume_closure(
     block: @escaping main.closure
 ) -> Swift.Void {
-    return { __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__({
-        let originalBlock: () -> Swift.Void = block
-        return {
-            let _result = originalBlock()
-            return { _result; return true }()
-        }
-    }()); return () }()
+    return { __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__(Unmanaged.passRetained((block as () -> Swift.Void) as AnyObject).toOpaque()); return () }()
 }
 public func deeper_closure_typealiase(
     block: @escaping main.deeper_closure_typealias
 ) -> main.deeper_closure_typealias {
     return {
-        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___deeper_closure_typealiase__TypesOfArguments__U2829202D_U20Swift_Void__({
-        let originalBlock: () -> Swift.Void = block
-        return {
-            let _result = originalBlock()
-            return { _result; return true }()
-        }
-    }()), options: .asBestFittingWrapper)!
+        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___deeper_closure_typealiase__TypesOfArguments__U2829202D_U20Swift_Void__(Unmanaged.passRetained((block as () -> Swift.Void) as AnyObject).toOpaque()), options: .asBestFittingWrapper)!
         return { return { main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef()!); return () }() }
     }()
 }
@@ -585,4 +567,9 @@ extension ExportedKotlinPackages.typealiases {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
+}
+@_cdecl("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+package func main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(_ pointerToClosure: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! () -> Swift.Void)()
+    return { _result; return true }()
 }
