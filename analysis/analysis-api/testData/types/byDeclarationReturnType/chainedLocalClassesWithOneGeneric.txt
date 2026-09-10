@@ -1,0 +1,66 @@
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: <local>/C
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: C
+      symbol: KaNamedClassSymbol(<local>/C)
+      typeArguments: [
+        KaTypeParameterType:
+          abbreviation: null
+          annotations: []
+          name: FOO1
+          symbol: KaTypeParameterSymbol:
+            anchorPsi: KtTypeParameter
+            annotations: []
+            isActual: false
+            isExpect: false
+            isExternal: false
+            isReified: false
+            location: LOCAL
+            modality: FINAL
+            name: FOO1
+            origin: SOURCE
+            psi: KtTypeParameter
+            realPsi: KtTypeParameter
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
+          isMarkedNullable: false
+          isNullable: true
+          hasFlexibleNullability: false
+      ]
+  ]
+  symbol: KaNamedClassSymbol(<local>/C)
+  typeArguments: [
+    KaTypeParameterType:
+      abbreviation: null
+      annotations: []
+      name: FOO1
+      symbol: KaTypeParameterSymbol:
+        anchorPsi: KtTypeParameter
+        annotations: []
+        isActual: false
+        isExpect: false
+        isExternal: false
+        isReified: false
+        location: LOCAL
+        modality: FINAL
+        name: FOO1
+        origin: SOURCE
+        psi: KtTypeParameter
+        realPsi: KtTypeParameter
+        upperBounds: []
+        variance: INVARIANT
+        visibility: LOCAL
+      isMarkedNullable: false
+      isNullable: true
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+C<FOO1>

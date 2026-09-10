@@ -56,6 +56,24 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeByDeclarationReturnTypeTest
   }
 
   @Test
+  @TestMetadata("chainedLocalClassesWithOneGeneric.kt")
+  public void testChainedLocalClassesWithOneGeneric() {
+    run("chainedLocalClassesWithOneGeneric.kt");
+  }
+
+  @Test
+  @TestMetadata("chainedLocalGenericClasses.kt")
+  public void testChainedLocalGenericClasses() {
+    run("chainedLocalGenericClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("chainedLocalGenericClassesWithNonGenericTarget.kt")
+  public void testChainedLocalGenericClassesWithNonGenericTarget() {
+    run("chainedLocalGenericClassesWithNonGenericTarget.kt");
+  }
+
+  @Test
   @TestMetadata("functionTypeWithReceiverAndNamedParameters.kt")
   public void testFunctionTypeWithReceiverAndNamedParameters() {
     run("functionTypeWithReceiverAndNamedParameters.kt");
@@ -80,6 +98,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeByDeclarationReturnTypeTest
   }
 
   @Test
+  @TestMetadata("genericInnerClass.kt")
+  public void testGenericInnerClass() {
+    run("genericInnerClass.kt");
+  }
+
+  @Test
+  @TestMetadata("genericTypeAliasInInnerClass.kt")
+  public void testGenericTypeAliasInInnerClass() {
+    run("genericTypeAliasInInnerClass.kt");
+  }
+
+  @Test
   @TestMetadata("lambdaWithAnnotatedParameterName.kt")
   public void testLambdaWithAnnotatedParameterName() {
     run("lambdaWithAnnotatedParameterName.kt");
@@ -98,9 +128,63 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeByDeclarationReturnTypeTest
   }
 
   @Test
+  @TestMetadata("localGenericAnonymousClass.kt")
+  public void testLocalGenericAnonymousClass() {
+    run("localGenericAnonymousClass.kt");
+  }
+
+  @Test
+  @TestMetadata("localGenericClass.kt")
+  public void testLocalGenericClass() {
+    run("localGenericClass.kt");
+  }
+
+  @Test
+  @TestMetadata("localGenericClassInGenericFunction.kt")
+  public void testLocalGenericClassInGenericFunction() {
+    run("localGenericClassInGenericFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("localGenericClassWithFunctionGenericType.kt")
+  public void testLocalGenericClassWithFunctionGenericType() {
+    run("localGenericClassWithFunctionGenericType.kt");
+  }
+
+  @Test
+  @TestMetadata("localGenericClassWithOuterClasses.kt")
+  public void testLocalGenericClassWithOuterClasses() {
+    run("localGenericClassWithOuterClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("localGenericInnerClasses.kt")
+  public void testLocalGenericInnerClasses() {
+    run("localGenericInnerClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("localGenericTypeAliasInGenericFunction.kt")
+  public void testLocalGenericTypeAliasInGenericFunction() {
+    run("localGenericTypeAliasInGenericFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("localInnerClassWithTwoGenerics.kt")
+  public void testLocalInnerClassWithTwoGenerics() {
+    run("localInnerClassWithTwoGenerics.kt");
+  }
+
+  @Test
   @TestMetadata("localNestedClassType.kt")
   public void testLocalNestedClassType() {
     run("localNestedClassType.kt");
+  }
+
+  @Test
+  @TestMetadata("localNestedGenericClasses.kt")
+  public void testLocalNestedGenericClasses() {
+    run("localNestedGenericClasses.kt");
   }
 
   @Test
@@ -113,6 +197,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeByDeclarationReturnTypeTest
   @TestMetadata("nestedClassInsideGeneratedTopLevelClass.kt")
   public void testNestedClassInsideGeneratedTopLevelClass() {
     run("nestedClassInsideGeneratedTopLevelClass.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedGenericClass.kt")
+  public void testNestedGenericClass() {
+    run("nestedGenericClass.kt");
   }
 
   @Test
