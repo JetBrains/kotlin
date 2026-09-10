@@ -41,6 +41,8 @@ internal fun Project.applySwiftExportConsumerOverrides(
     rootModuleName: Provider<String>,
 ): Provider<List<SwiftExportedModule>> = provider {
     val overridesMap = overrides.get()
+    if (overridesMap.isEmpty()) return@provider modules.get()
+
     // Declared option layers, highest precedence first. KT-87987 adds the producer source here.
     val sources = listOf(ConsumerOverridesOptionsSource(overridesMap))
 

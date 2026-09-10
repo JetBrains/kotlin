@@ -24,6 +24,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.normali
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.whenSwiftPMImportAvailable
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationCompat
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDependencySelector
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.applySwiftExportConsumerOverrides
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -75,7 +78,7 @@ internal fun Project.registerSwiftExportTask(
         mainCompilation = mainCompilation,
         swiftApiFlattenPackage = swiftExportConfiguration.rootPackage,
         exportedModules = swiftExportConfiguration.exportedModules,
-        swiftExportConfiguration = swiftExportConfiguration,
+        dependencyOptionsOverrides = swiftExportConfiguration.dependencyOptionsOverrides,
         customSetting = swiftExportConfiguration.settings
     )
 
@@ -167,7 +170,7 @@ private fun Project.registerSwiftExportRun(
     mainCompilation: KotlinNativeCompilation,
     swiftApiFlattenPackage: Provider<String>,
     exportedModules: Provider<Set<SwiftExportedDependency>>,
-    swiftExportConfiguration: SwiftExportConfigurationCompat,
+    dependencyOptionsOverrides: Provider<Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>>,
     customSetting: Provider<Map<String, String>>,
 ): TaskProvider<SwiftExportTask> {
     val swiftExportTaskName = lowerCamelCaseName(
@@ -197,15 +200,16 @@ private fun Project.registerSwiftExportRun(
         task.parameters.bridgeModuleName.set("SharedBridge")
         task.parameters.swiftExportSettings.set(customSetting)
         task.parameters.swiftModules.set(
-            swiftExportConfiguration.adjustSwiftModules(
-                collectModules(
+            project.applySwiftExportConsumerOverrides(
+                modules = collectModules(
                     exportConfigurationProvider,
                     apiConfigurationProvider,
                     exportedModules
                 ),
-                exportConfigurationProvider,
-                apiConfigurationProvider,
-                swiftApiModuleName,
+                overrides = dependencyOptionsOverrides,
+                exportConfiguration = exportConfigurationProvider,
+                apiConfiguration = apiConfigurationProvider,
+                rootModuleName = swiftApiModuleName,
             )
         )
 
