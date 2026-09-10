@@ -125,6 +125,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
   }
 
   @Test
+  @TestMetadata("defaultMethodInKotlinWithSettingDisable.kt")
+  public void testDefaultMethodInKotlinWithSettingDisable() {
+    run("defaultMethodInKotlinWithSettingDisable.kt");
+  }
+
+  @Test
   @TestMetadata("defaultParameterValue.kt")
   public void testDefaultParameterValue() {
     run("defaultParameterValue.kt");
