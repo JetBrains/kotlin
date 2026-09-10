@@ -6,6 +6,10 @@
 package org.jetbrains.kotlin.gradle.internal.json
 
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
@@ -110,4 +114,16 @@ private fun primitiveArrayToJsonElement(value: Any, serializeNulls: Boolean): Js
 private fun serializableToJsonElement(value: Any): JsonElement? {
     val serializer = runCatching { serializerOrNull(value::class.java) }.getOrNull() ?: return null
     return KgpJson.default.encodeToJsonElement(serializer, value)
+}
+
+/** Writes an `Any` DSL property through [anyToJsonElement]. Write-only. */
+internal object AnyAsJsonElementSerializer : KSerializer<Any> {
+    override val descriptor: SerialDescriptor get() = JsonElement.serializer().descriptor
+
+    override fun serialize(encoder: Encoder, value: Any) {
+        encoder.encodeSerializableValue(JsonElement.serializer(), anyToJsonElement(value))
+    }
+
+    override fun deserialize(decoder: Decoder): Any =
+        throw UnsupportedOperationException("AnyAsJsonElementSerializer is write-only")
 }
