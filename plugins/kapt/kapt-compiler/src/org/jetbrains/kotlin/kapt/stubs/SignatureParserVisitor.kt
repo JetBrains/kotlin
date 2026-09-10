@@ -16,13 +16,7 @@
 
 package org.jetbrains.kotlin.kapt.stubs
 
-import com.sun.tools.javac.code.BoundKind
-import com.sun.tools.javac.code.TypeTag
-import com.sun.tools.javac.tree.JCTree.*
-import org.jetbrains.kotlin.kapt.base.getJavacList
-import org.jetbrains.kotlin.kapt.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt.stubs.ElementKind.*
-import org.jetbrains.kotlin.kapt.util.appendListIfNonEmpty
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.signature.SignatureReader
@@ -91,20 +85,22 @@ private class SignatureNode(val kind: ElementKind, val name: String? = null) {
     val children: MutableList<SignatureNode> = SmartList()
 }
 
-class SignatureParser(private val treeMaker: KaptTreeMaker) {
-    class ClassGenericSignature(
-        val typeParameters: List<Pair<JCTypeParameter, String>>,
-        val superClass: Pair<JCExpression, String>,
-        val interfaces: List<Pair<JCExpression, String>>
+class SignatureParser<Expression, TypeParameter>(
+    private val converter: ParameterizedKaptStubConverter<*, Expression, *, *, *, *, TypeParameter, *, *, *>
+) {
+    class ClassGenericSignature<Expression, TypeParameter>(
+        val typeParameters: List<TypeParameter>,
+        val superClass: Expression,
+        val interfaces: List<Expression>
     )
 
-    class MethodGenericSignature(
-        val typeParameters: List<Pair<JCTypeParameter, String>>,
-        val parameterTypes: List<Pair<JCExpression, String>>,
-        val exceptionTypes: List<Pair<JCExpression, String>>,
-        val returnType: Pair<JCExpression, String>?,
+    class MethodGenericSignature<Expression, TypeParameter>(
+        val typeParameters: List<TypeParameter>,
+        val parameterTypes: List<Expression>,
+        val exceptionTypes: List<Expression>,
+        val returnType: Expression?,
     ) {
-        fun withRefinedReturnType(newReturnType: Pair<JCExpression, String>?) =
+        fun withRefinedReturnType(newReturnType: Expression?) =
             if (newReturnType == null) this
             else MethodGenericSignature(
                 typeParameters,
@@ -114,7 +110,7 @@ class SignatureParser(private val treeMaker: KaptTreeMaker) {
             )
     }
 
-    fun parseClassSignature(signature: String): ClassGenericSignature {
+    fun parseClassSignature(signature: String): ClassGenericSignature<Expression, TypeParameter> {
         val root = parse(signature)
         val typeParameters = smartList()
         val superClasses = smartList()
@@ -129,10 +125,10 @@ class SignatureParser(private val treeMaker: KaptTreeMaker) {
 
     fun parseMethodSignature(
         signature: String,
-        rawParameterTypes: List<Pair<JCExpression, String>>,
+        rawParameterTypes: List<Expression>,
         hasReturnType: Boolean,
-        nonErrorParameterTypeProvider: (Int, () -> Pair<JCExpression, String>) -> Pair<JCExpression, String>
-    ): MethodGenericSignature {
+        nonErrorParameterTypeProvider: (Int, () -> Expression) -> Expression
+    ): MethodGenericSignature<Expression, TypeParameter> {
         val root = parse(signature)
         val typeParameters = smartList()
         val parameterTypes = smartList()
@@ -153,7 +149,7 @@ class SignatureParser(private val treeMaker: KaptTreeMaker) {
 
     fun parseFieldSignature(
         signature: String,
-    ): Pair<JCExpression, String> {
+    ): Expression {
         val root = parse(signature)
         val superClass = root.children.single()
         assert(superClass.kind == SuperClass)
@@ -161,7 +157,7 @@ class SignatureParser(private val treeMaker: KaptTreeMaker) {
         return parseType(superClass.children.single())
     }
 
-    private fun parseTypeParameter(node: SignatureNode): Pair<JCTypeParameter, String> {
+    private fun parseTypeParameter(node: SignatureNode): TypeParameter {
         assert(node.kind == TypeParameter)
 
         val classBounds = smartList()
@@ -170,115 +166,72 @@ class SignatureParser(private val treeMaker: KaptTreeMaker) {
         assert(classBounds.size <= 1)
 
         val parsedClassBound = classBounds.firstOrNull()?.let { parseBound(it) }
-        val jcClassBound = parsedClassBound?.first
         val parsedInterfaceBounds = interfaceBounds.map { parseBound(it) }
-        val jcInterfaceBounds = parsedInterfaceBounds.getJavacList()
-        val allBounds = if (jcClassBound != null) jcInterfaceBounds.prepend(jcClassBound) else jcInterfaceBounds
+        val allBounds = if (parsedClassBound != null) listOf(parsedClassBound) + parsedInterfaceBounds else parsedInterfaceBounds
 
-        val text = buildString {
-            append(node.name!!)
-            if (allBounds.isNotEmpty()) {
-                append(" extends ")
-            }
-            if (parsedClassBound != null) {
-                append(parsedClassBound.second)
-                append(" & ")
-            }
-            for ([_, parsedInterfaceBound] in parsedInterfaceBounds) {
-                append(parsedInterfaceBound)
-                append(" & ")
-            }
-            if (allBounds.isNotEmpty()) {
-                setLength(length - " & ".length)
-            }
-        }
-        return treeMaker.TypeParameter(treeMaker.name(node.name!!), allBounds) to text
+        return converter.makeTypeParameter(node.name!!, allBounds)
     }
 
-    private fun parseBound(node: SignatureNode): Pair<JCExpression, String> {
+    private fun parseBound(node: SignatureNode): Expression {
         assert(node.kind == ClassBound || node.kind == InterfaceBound)
         return parseType(node.children.single())
     }
 
-    private fun parseType(node: SignatureNode): Pair<JCExpression, String> {
+    private fun parseType(node: SignatureNode): Expression {
         val kind = node.kind
         return when (kind) {
             ClassType -> {
                 val typeArgs = mutableListOf<SignatureNode>()
                 val innerClasses = mutableListOf<SignatureNode>()
                 node.split(typeArgs, TypeArgument, innerClasses, InnerClass)
-                val convertedTypeArgs: List<Pair<JCExpression, String>> = typeArgs.map { convertTypeArgument(it) }
+                val convertedTypeArgs: List<Expression> = typeArgs.map { convertTypeArgument(it) }
 
-                val sb = StringBuilder()
-                sb.append(treeMaker.getQualifiedName(node.name!!))
-                sb.appendTypeArguments(convertedTypeArgs)
-                var expression = makeExpressionForClassTypeWithArguments(treeMaker.FqName(node.name), convertedTypeArgs)
-                if (innerClasses.isEmpty()) return expression to sb.toString()
+                val fqName = converter.makeQualifiedName(node.name!!)
+                var expression = makeExpressionForClassTypeWithArguments(fqName, convertedTypeArgs)
+
+                if (innerClasses.isEmpty()) return expression
 
                 for (innerClass in innerClasses) {
-                    val convertedInnerClassArgs: List<Pair<JCExpression, String>> =
+                    val convertedInnerClassArgs: List<Expression> =
                         innerClass.children.map { convertTypeArgument(it) }
                     expression = makeExpressionForClassTypeWithArguments(
-                        treeMaker.Select(expression, treeMaker.name(innerClass.name!!)),
+                        converter.makeSelect(expression, innerClass.name!!),
                         convertedInnerClassArgs
                     )
-                    sb.append(".").append(innerClass.name)
-                    sb.appendTypeArguments(convertedInnerClassArgs)
                 }
 
-                expression to sb.toString()
+                expression
             }
 
-            TypeVariable -> treeMaker.SimpleName(node.name!!) to node.name
+            TypeVariable ->
+                converter.makeSimpleName(node.name!!)
             ArrayType -> {
                 val elementType = parseType(node.children.single())
-                treeMaker.TypeArray(elementType.first) to "${elementType.second}[]"
+                converter.makeArrayType(elementType, 1)
             }
-            PrimitiveType -> {
-                when (node.name!!.single()) {
-                    'V' -> treeMaker.TypeIdent(TypeTag.VOID) to "void"
-                    'Z' -> treeMaker.TypeIdent(TypeTag.BOOLEAN) to "boolean"
-                    'C' -> treeMaker.TypeIdent(TypeTag.CHAR) to "char"
-                    'B' -> treeMaker.TypeIdent(TypeTag.BYTE) to "byte"
-                    'S' -> treeMaker.TypeIdent(TypeTag.SHORT) to "short"
-                    'I' -> treeMaker.TypeIdent(TypeTag.INT) to "int"
-                    'F' -> treeMaker.TypeIdent(TypeTag.FLOAT) to "float"
-                    'J' -> treeMaker.TypeIdent(TypeTag.LONG) to "long"
-                    'D' -> treeMaker.TypeIdent(TypeTag.DOUBLE) to "double"
-                    else -> error("Illegal primitive type ${node.name}")
-                }
-            }
+            PrimitiveType ->
+                converter.makePrimitiveType(node.name!!.single())
 
             else -> error("Unsupported type: $node")
         }
     }
 
     private fun makeExpressionForClassTypeWithArguments(
-        fqNameExpression: JCExpression,
-        args: List<Pair<JCExpression, String>>,
-    ): JCExpression {
+        fqNameExpression: Expression,
+        args: List<Expression>,
+    ): Expression {
         if (args.isEmpty()) return fqNameExpression
-
-        return treeMaker.TypeApply(fqNameExpression, args.getJavacList())
+        return converter.makeTypeApply(fqNameExpression, args)
     }
 
-    private fun convertTypeArgument(arg: SignatureNode): Pair<JCExpression, String> {
+    private fun convertTypeArgument(arg: SignatureNode): Expression {
         assert(arg.kind == TypeArgument) { "Unexpected kind ${arg.kind}, $TypeArgument expected" }
 
-        val variance = arg.name ?: return treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.UNBOUND), null) to "?"
+        val variance = arg.name ?: return converter.makeUnboundWildcard()
+        val asmWildcard = variance.single()
         val argType = parseType(arg.children.single())
-        return when (variance.single()) {
-            '=' -> argType
-            '+' -> treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.EXTENDS), argType.first) to
-                    "? extends ${argType.second}"
-            '-' -> treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.SUPER), argType.first) to
-                    "? super ${argType.second}"
-            else -> error("Unknown variance, '=', '+' or '-' expected")
-        }
+        return converter.makeWildcard(asmWildcard, argType)
     }
-
-    private fun StringBuilder.appendTypeArguments(typeArgs: List<Pair<JCExpression, String>>) =
-        appendListIfNonEmpty(typeArgs, "<", ">") { it.second }
 
     private fun parse(signature: String): SignatureNode {
         val parser = SignatureParserVisitor()
