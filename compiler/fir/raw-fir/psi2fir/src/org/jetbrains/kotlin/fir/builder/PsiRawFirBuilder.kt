@@ -3108,17 +3108,6 @@ open class PsiRawFirBuilder(
         override fun visitStringTemplateExpression(expression: KtStringTemplateExpression, data: FirElement?): FirElement {
             return expression.entries.asList().toInterpolatingCall(
                 expression,
-                getElementType = { element ->
-                    when (element) {
-                        is KtLiteralStringTemplateEntry -> KtNodeTypes.LITERAL_STRING_TEMPLATE_ENTRY
-                        is KtEscapeStringTemplateEntry -> KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY
-                        is KtSimpleNameStringTemplateEntry -> KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY
-                        is KtBlockStringTemplateEntry -> KtNodeTypes.LONG_STRING_TEMPLATE_ENTRY
-                        else -> errorWithAttachment("invalid node type ${element::class}") {
-                            withPsiEntry("element", element)
-                        }
-                    }
-                },
                 convertTemplateEntry = { errorReason ->
                     (this as KtStringTemplateEntryWithExpression).expressions.map { it.toFirExpression(errorReason) }
                 },

@@ -86,22 +86,23 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.types.ConstantValueKind
 import kotlin.collections.plusAssign
 
-interface NodeTypeAnalyzer<Node : Any, Type : Any> {
-    val implicitType: FirImplicitTypeRef
-    val implicitUnitType: FirImplicitBuiltinTypeRef
-    val implicitAnyType: FirImplicitBuiltinTypeRef
-    val implicitEnumType: FirImplicitBuiltinTypeRef
-    val implicitAnnotationType: FirImplicitBuiltinTypeRef
+abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
+    abstract val implicitType: FirImplicitTypeRef
+    abstract val implicitUnitType: FirImplicitBuiltinTypeRef
+    abstract val implicitAnyType: FirImplicitBuiltinTypeRef
+    abstract val implicitEnumType: FirImplicitBuiltinTypeRef
+    abstract val implicitAnnotationType: FirImplicitBuiltinTypeRef
 
-    fun Node.toFirSourceElement(kind: KtFakeSourceElementKind? = null): KtSourceElement
-    fun KtSourceElement.toNode(): Node
-    val Node.elementType: Type
-    val Node.asText: String
+    abstract fun Node.toFirSourceElement(kind: KtFakeSourceElementKind? = null): KtSourceElement
+    abstract fun KtSourceElement.toNode(): Node
+    abstract val Node.elementType: Type
+    abstract val Node.asText: String
+
     fun Node.getAsStringWithoutBacktick(): String {
         return this.asText.replace("`", "")
     }
 
-    fun Node.getLabelName(): String? {
+    open fun Node.getLabelName(): String? {
         if (toTokenId() == KtNodeTypes.FUNCTION_ID) {
             return getParent()?.getLabelName()
         }
@@ -127,14 +128,14 @@ interface NodeTypeAnalyzer<Node : Any, Type : Any> {
         }
     }
 
-    fun Node.getReferencedNameAsName(): Name
-    fun Node.getChildNodeByType(type: Type): Node?
-    fun Node.getChildren(): List<Node> =
+    abstract fun Node.getReferencedNameAsName(): Name
+    abstract fun Node.getChildNodeByType(type: Type): Node?
+    open fun Node.getChildren(): List<Node> =
         throw UnsupportedOperationException("Not supported in PsiRawFirBuilder")
 
     fun Node.getFirstChild(): Node? = getChildren().firstOrNull()
 
-    fun Node.getParent(): Node? =
+    open fun Node.getParent(): Node? =
         throw UnsupportedOperationException("Not supported in PsiRawFirBuilder")
 
     fun isClassLocal(classNode: Node, getParent: Node.() -> Node?): Boolean {
@@ -205,8 +206,8 @@ interface NodeTypeAnalyzer<Node : Any, Type : Any> {
         return getChildren().first().toTokenId()
     }
 
-    fun callableIdForName(name: Name): CallableId
-    fun destructuringKindOf(hasSquareBrackets: Boolean, isFullForm: Boolean): DestructuringKind
+    abstract fun callableIdForName(name: Name): CallableId
+    abstract fun destructuringKindOf(hasSquareBrackets: Boolean, isFullForm: Boolean): DestructuringKind
 
     fun isCallableLocal(callableNode: Node, getParent: Node.() -> Node?): Boolean {
         val parentNode = callableNode.getParent()
@@ -276,25 +277,28 @@ interface NodeTypeAnalyzer<Node : Any, Type : Any> {
         CONTEXT_PARAMETER(shouldExplicitParameterTypeBePresent = true, isAnnotationOwner = true),
     }
 
-    fun convertScriptOrSnippets(declaration: Node, sourceFile: KtSourceFile, fileBuilder: FirFileBuilder?): FirDeclaration
-    fun Node.forEachChildren(f: (Node) -> Unit) {}
-    fun <T> Node.forEachChildrenReturnList(f: (Node, MutableList<T>) -> Unit): MutableList<T> {
+    abstract fun convertScriptOrSnippets(declaration: Node, sourceFile: KtSourceFile, fileBuilder: FirFileBuilder?): FirDeclaration
+
+    open fun Node.forEachChildren(f: (Node) -> Unit) {}
+    open fun <T> Node.forEachChildrenReturnList(f: (Node, MutableList<T>) -> Unit): MutableList<T> {
         return mutableListOf()
     }
 
-    val Node?.receiverExpression: Node?
-    val Node?.selectorExpression: Node?
+    abstract val Node?.receiverExpression: Node?
+    abstract val Node?.selectorExpression: Node?
+    abstract val Node?.indexExpressions: List<Node>?
+    abstract fun KtSourceElement.isChildInParentheses(): Boolean
 
-    fun FirQualifiedAccessExpression.pullUpSafeCallIfNecessary(): FirExpression
+    abstract fun FirQualifiedAccessExpression.pullUpSafeCallIfNecessary(): FirExpression
 
-    fun FirCallableDeclaration.initContainingClassAttr()
-    fun FirClassLikeDeclaration.initContainingClassForLocalAttr()
-    fun FirRegularClass.initContainingScriptOrReplAttr()
+    abstract fun FirCallableDeclaration.initContainingClassAttr()
+    abstract fun FirClassLikeDeclaration.initContainingClassForLocalAttr()
+    abstract fun FirRegularClass.initContainingScriptOrReplAttr()
     fun FirRegularClassBuilder.initCompanionObjectSymbolAttr() {
         companionObjectSymbol = (declarations.firstOrNull { it is FirRegularClass && it.isCompanion } as FirRegularClass?)?.symbol
     }
 
-    fun generateDataClassMembers(
+    abstract fun generateDataClassMembers(
         source: Node,
         classBuilder: FirRegularClassBuilder,
         firPrimaryConstructor: FirConstructor,
@@ -408,7 +412,6 @@ interface NodeTypeAnalyzer<Node : Any, Type : Any> {
 
     fun List<Node?>.toInterpolatingCall(
         base: Node,
-        getElementType: (Node) -> Type = { it.elementType },
         convertTemplateEntry: Node?.(String) -> Collection<FirExpression>,
         prefix: () -> String,
     ): FirExpression {
@@ -489,20 +492,20 @@ interface NodeTypeAnalyzer<Node : Any, Type : Any> {
         return firLabel
     }
 
-    fun registerSelfType(selfType: FirResolvedTypeRef)
-    fun dispatchReceiverForInnerClassConstructor(): ConeClassLikeType?
-    fun callableIdForClassConstructor(): CallableId
-    fun FirLoopJumpBuilder.bindLabel(expression: Node): FirLoopJumpBuilder
-    fun FirLoopBuilder.prepareTarget(firLabelUser: Any): FirLoopTarget
-    fun FirLoopBuilder.configure(target: FirLoopTarget, generateBlock: () -> FirBlock): FirLoop
+    abstract fun registerSelfType(selfType: FirResolvedTypeRef)
+    abstract fun dispatchReceiverForInnerClassConstructor(): ConeClassLikeType?
+    abstract fun callableIdForClassConstructor(): CallableId
+    abstract fun FirLoopJumpBuilder.bindLabel(expression: Node): FirLoopJumpBuilder
+    abstract fun FirLoopBuilder.prepareTarget(firLabelUser: Any): FirLoopTarget
+    abstract fun FirLoopBuilder.configure(target: FirLoopTarget, generateBlock: () -> FirBlock): FirLoop
 
-    fun FirExpression.toReturn(
+    abstract fun FirExpression.toReturn(
         baseSource: KtSourceElement? = source,
         labelName: String? = null,
         fromKtReturnExpression: Boolean = false,
     ): FirReturnExpression
 
-    fun Node?.generateAssignment(
+    abstract fun Node?.generateAssignment(
         baseSource: KtSourceElement,
         arrayAccessSource: KtSourceElement?,
         rhsExpression: FirExpression,
@@ -516,7 +519,7 @@ interface NodeTypeAnalyzer<Node : Any, Type : Any> {
         convert: Node.() -> FirExpression,
     ): FirStatement
 
-    fun generateIncrementOrDecrementBlock(
+    abstract fun generateIncrementOrDecrementBlock(
         // Used to get source-element or text
         wholeExpression: Node,
         operationReference: Node?,
@@ -526,8 +529,8 @@ interface NodeTypeAnalyzer<Node : Any, Type : Any> {
         convert: Node.() -> FirExpression,
     ): FirExpression
 
-    fun generateConstantExpressionByLiteral(expression: Node): FirExpression
+    abstract fun generateConstantExpressionByLiteral(expression: Node): FirExpression
 
     fun Node.toTokenId(): Int = elementType.typeToTokenId()
-    fun Type.typeToTokenId(): Int
+    abstract fun Type.typeToTokenId(): Int
 }

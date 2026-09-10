@@ -118,10 +118,6 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
         return tree.getChildren(this)
     }
 
-    override fun LightNode.getFirstChildExpression(): LightNode? {
-        return tree.getChildren(this).firstOrNull { it.toTokenId().isExpression() }
-    }
-
     override fun LightNode.forEachChildren(f: (LightNode) -> Unit) {
         val kids = tree.getChildren(this)
         for (kid in kids) {

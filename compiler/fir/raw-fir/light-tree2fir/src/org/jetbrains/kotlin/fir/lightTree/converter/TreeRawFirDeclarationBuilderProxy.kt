@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.analysis.firstFunctionCallInBlockHasLambdaArgume
 import org.jetbrains.kotlin.fir.analysis.isCallTheFirstStatement
 import org.jetbrains.kotlin.fir.analysis.isExpression
 import org.jetbrains.kotlin.fir.builder.*
-import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder.Companion.firScriptName
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
@@ -154,13 +153,13 @@ import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
-    val analyzer: NodeTypeAnalyzer<Node, Type>,
-    val context: Context<Node>,
-    val baseModuleData: FirModuleData,
+    val analyzer: AbstractTreeRawFirBuilder<Node, Type>,
+    context: Context<Node>,
+    session: FirSession,
     val expressionConverter: TreeRawFirExpressionBuilderProxy<Node, Type>,
     val headerMode: Boolean,
     val baseScopeProvider: FirScopeProvider,
-) : TreeDeclarationConverter<Node>, NodeTypeAnalyzer<Node, Type> by analyzer {
+) : TreeDeclarationConverter<Node>, AbstractTreeRawFirBuilder<Node, Type>(session, context) {
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFile]
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parsePreamble]
@@ -1152,7 +1151,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                     KtNodeTypes.VALUE_PARAMETER_LIST_ID -> valueParameters += convertValueParameters(
                         it,
                         constructorSymbol,
-                        NodeTypeAnalyzer.ValueParameterDeclaration.PRIMARY_CONSTRUCTOR
+                        ValueParameterDeclaration.PRIMARY_CONSTRUCTOR
                     )
                 }
             }
@@ -1338,7 +1337,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                     KtNodeTypes.VALUE_PARAMETER_LIST_ID -> firValueParameters += convertValueParameters(
                         it,
                         constructorSymbol,
-                        NodeTypeAnalyzer.ValueParameterDeclaration.FUNCTION
+                        ValueParameterDeclaration.FUNCTION
                     )
                     KtNodeTypes.CONSTRUCTOR_DELEGATION_CALL_ID -> delegatedConstructorNode = it
                     KtNodeTypes.BLOCK_ID -> block = it
@@ -2072,7 +2071,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
             when (it.toTokenId()) {
                 KtNodeTypes.MODIFIER_LIST_ID -> modifiers = convertModifierList(it)
                 KtNodeTypes.VALUE_PARAMETER_ID -> firValueParameter =
-                    convertValueParameter(it, functionSymbol, NodeTypeAnalyzer.ValueParameterDeclaration.SETTER).firValueParameter
+                    convertValueParameter(it, functionSymbol, ValueParameterDeclaration.SETTER).firValueParameter
             }
         }
 
@@ -2237,7 +2236,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                         valueParameters += convertValueParameters(
                             list,
                             functionSymbol,
-                            if (isAnonymousFunction) NodeTypeAnalyzer.ValueParameterDeclaration.LAMBDA else NodeTypeAnalyzer.ValueParameterDeclaration.FUNCTION
+                            if (isAnonymousFunction) ValueParameterDeclaration.LAMBDA else ValueParameterDeclaration.FUNCTION
                         ).map { it.firValueParameter }
                     }
 
@@ -2853,7 +2852,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     override fun convertValueParameters(
         valueParameters: Node,
         functionSymbol: FirFunctionSymbol<*>,
-        valueParameterDeclaration: NodeTypeAnalyzer.ValueParameterDeclaration,
+        valueParameterDeclaration: ValueParameterDeclaration,
         additionalAnnotations: List<FirAnnotation>
     ): List<ValueParameter<Node>> {
         return valueParameters.forEachChildrenReturnList { node, container ->
@@ -2874,7 +2873,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     override fun convertValueParameter(
         valueParameter: Node,
         containingDeclarationSymbol: FirBasedSymbol<*>?,
-        valueParameterDeclaration: NodeTypeAnalyzer.ValueParameterDeclaration,
+        valueParameterDeclaration: ValueParameterDeclaration,
         additionalAnnotations: List<FirAnnotation>
     ): ValueParameter<Node> {
         var modifiers: ModifierList<Node>? = null
@@ -2921,8 +2920,8 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                     },
                 source = valueParameterSource,
                 moduleData = baseModuleData,
-                isFromPrimaryConstructor = valueParameterDeclaration == NodeTypeAnalyzer.ValueParameterDeclaration.PRIMARY_CONSTRUCTOR,
-                isContextParameter = valueParameterDeclaration == NodeTypeAnalyzer.ValueParameterDeclaration.CONTEXT_PARAMETER,
+                isFromPrimaryConstructor = valueParameterDeclaration == ValueParameterDeclaration.PRIMARY_CONSTRUCTOR,
+                isContextParameter = valueParameterDeclaration == ValueParameterDeclaration.CONTEXT_PARAMETER,
                 additionalAnnotations = additionalAnnotations,
                 name = name,
                 defaultValue = firExpression,
@@ -2962,7 +2961,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                 convertValueParameter(
                     valueParameter = contextParameterElement,
                     containingDeclarationSymbol = containingDeclarationSymbol,
-                    valueParameterDeclaration = NodeTypeAnalyzer.ValueParameterDeclaration.CONTEXT_PARAMETER
+                    valueParameterDeclaration = ValueParameterDeclaration.CONTEXT_PARAMETER
                 ).firValueParameter
             }
 
@@ -3002,7 +3001,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         }
     }
 
-    fun convertScript(
+    override fun convertScript(
         script: Node,
         scriptSource: KtSourceElement,
         fileName: String,
@@ -3080,8 +3079,58 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         }
     }
 
-    val isDirectlyInsideCompanionBlock: Boolean
-        get() = context.currentCompanionBlockOwnerOrNull.let { it != null && it == context.containerSymbolIfAny }
+    override fun Node.toFirSourceElement(kind: KtFakeSourceElementKind?): KtSourceElement {
+        return with(analyzer) { toFirSourceElement(kind) }
+    }
+
+    override fun KtSourceElement.toNode(): Node {
+        return with(analyzer) { toNode() }
+    }
+
+    override val Node.elementType: Type
+        get() = with(analyzer) { elementType }
+    override val Node.asText: String
+        get() = with(analyzer) { asText }
+
+    override fun Node.getChildNodeByType(type: Type): Node? {
+        return with(analyzer) { getChildNodeByType(type) }
+    }
+
+    override val Node?.receiverExpression: Node?
+        get() = with(analyzer) { receiverExpression }
+    override val Node?.selectorExpression: Node?
+        get() = with(analyzer) { selectorExpression }
+
+    override fun generateConstantExpressionByLiteral(expression: Node): FirExpression {
+        return analyzer.generateConstantExpressionByLiteral(expression)
+    }
+
+    override fun Type.typeToTokenId(): Int {
+        return with(analyzer) { typeToTokenId() }
+    }
+
+    override fun Node.forEachChildren(f: (Node) -> Unit) {
+        return with(analyzer) { forEachChildren(f) }
+    }
+
+    override fun <T> Node.forEachChildrenReturnList(f: (Node, MutableList<T>) -> Unit): MutableList<T> {
+        return with(analyzer) { forEachChildrenReturnList(f) }
+    }
+
+    override fun Node.getParent(): Node? {
+        return with(analyzer) { getParent() }
+    }
+
+    override fun Node.getChildren(): List<Node> {
+        return with(analyzer) { getChildren() }
+    }
+
+    override val Node?.indexExpressions: List<Node>?
+        get() = with(analyzer) { indexExpressions }
+
+    override fun KtSourceElement.isChildInParentheses(): Boolean {
+        return with(analyzer) { isChildInParentheses()}
+    }
 
     private fun Node.isExpression(): Boolean = toTokenId().isExpression()
 

@@ -27,9 +27,9 @@ class LightTreeRawFirDeclarationBuilder(
 ) : AbstractLightTreeRawFirBuilder(session, tree, context) {
 
     private val headerMode = session.languageVersionSettings.getFlag(AnalysisFlags.headerMode)
-    private val expressionConverter = TreeRawFirExpressionBuilderProxy(this, context, baseModuleData, headerMode)
+    private val expressionConverter = TreeRawFirExpressionBuilderProxy(this, context, session, headerMode)
     private val declarationConverter = TreeRawFirDeclarationBuilderProxy(
-        this, context, baseModuleData, expressionConverter, headerMode, baseScopeProvider
+        this, context, session, expressionConverter, headerMode, baseScopeProvider
     )
 
     init {
