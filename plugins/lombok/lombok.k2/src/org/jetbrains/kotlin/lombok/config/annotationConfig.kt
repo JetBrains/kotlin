@@ -329,7 +329,10 @@ object ConeLombokAnnotations {
     sealed class AbstractBuilder(
         val builderClassName: String?,
         val buildMethodName: String,
-        val builderMethodName: String,
+        /**
+         * The name of the `builder()` factory to generate, or `null` where the annotation suppresses it.
+         */
+        val builderMethodName: String?,
         val requiresToBuilder: Boolean,
         val accessLevel: AccessLevel,
         val setterPrefix: String?,
@@ -341,8 +344,16 @@ object ConeLombokAnnotations {
             protected fun getBuildMethodName(annotation: FirAnnotation): String =
                 annotation.getStringArgument(BUILD_METHOD_NAME) ?: "build"
 
-            protected fun getBuilderMethodName(annotation: FirAnnotation): String =
-                annotation.getStringArgument(BUILDER_METHOD_NAME) ?: "builder"
+            /**
+             * The name of the `builder()` factory to generate, or `null` where the annotation suppresses it.
+             *
+             * Lombok documents the argument as "if the empty string, suppress generating the `builder`
+             * method", and `HandleBuilder` clears its `generateBuilderMethod` flag on exactly `isEmpty()`.
+             */
+            protected fun getBuilderMethodName(annotation: FirAnnotation): String? {
+                val builderMethodName = annotation.getStringArgument(BUILDER_METHOD_NAME) ?: return "builder"
+                return builderMethodName.takeIf { it.isNotEmpty() }
+            }
 
             protected fun getRequiresToBuilder(annotation: FirAnnotation): Boolean =
                 annotation.getBooleanArgument(TO_BUILDER) ?: false
@@ -366,7 +377,7 @@ object ConeLombokAnnotations {
     class Builder(
         builderClassName: String?,
         buildMethodName: String,
-        builderMethodName: String,
+        builderMethodName: String?,
         requiresToBuilder: Boolean,
         accessLevel: AccessLevel,
         setterPrefix: String?,
@@ -402,7 +413,7 @@ object ConeLombokAnnotations {
     class SuperBuilder(
         builderClassName: String?,
         buildMethodName: String,
-        builderMethodName: String,
+        builderMethodName: String?,
         requiresToBuilder: Boolean,
         setterPrefix: String?,
         hasSpecifiedBuilderClassName: Boolean,
