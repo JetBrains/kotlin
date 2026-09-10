@@ -61,13 +61,15 @@ abstract class AbstractLightTreeRawFirBuilder(
         get() {
             var candidate: LighterASTNode? = null
             var result: LighterASTNode? = null
-            this?.forEachChildren {
-                if (result != null) return@forEachChildren
-                when (it.tokenType) {
-                    DOT, SAFE_ACCESS -> result = if (candidate?.elementType != TokenType.ERROR_ELEMENT) candidate else null
-                    else -> candidate = it
+            this?.forEachChildren(object : ChildrenHandler<LighterASTNode>() {
+                override fun handle(child: LighterASTNode) {
+                    if (result != null) return
+                    when (child.tokenType) {
+                        DOT, SAFE_ACCESS -> result = if (candidate?.elementType != TokenType.ERROR_ELEMENT) candidate else null
+                        else -> candidate = child
+                    }
                 }
-            }
+            })
             return result
         }
 
@@ -75,15 +77,17 @@ abstract class AbstractLightTreeRawFirBuilder(
         get() {
             var isSelector = false
             var result: LighterASTNode? = null
-            this?.forEachChildren {
-                if (result != null) return@forEachChildren
-                when (it.tokenType) {
-                    DOT, SAFE_ACCESS -> isSelector = true
-                    else -> if (isSelector) {
-                        result = if (it.elementType != TokenType.ERROR_ELEMENT) it else null
+            this?.forEachChildren(object : ChildrenHandler<LighterASTNode>() {
+                override fun handle(child: LighterASTNode) {
+                    if (result != null) return
+                    when (child.tokenType) {
+                        DOT, SAFE_ACCESS -> isSelector = true
+                        else -> if (isSelector) {
+                            result = if (child.elementType != TokenType.ERROR_ELEMENT) child else null
+                        }
                     }
                 }
-            }
+            })
             return result
         }
 
@@ -102,12 +106,12 @@ abstract class AbstractLightTreeRawFirBuilder(
         return kidsRef.get()
     }
 
-    override fun LighterASTNode.forEachChildren(f: (LighterASTNode) -> Unit) {
+    override fun LighterASTNode.forEachChildren(handler: ChildrenHandler<LighterASTNode>) {
         val kidsArray = this.getChildrenAsArray()
         for (kid in kidsArray) {
             if (kid == null) break
             if (ignoredTokens.contains(kid.tokenType)) continue
-            f(kid)
+            handler.handle(kid)
         }
     }
 

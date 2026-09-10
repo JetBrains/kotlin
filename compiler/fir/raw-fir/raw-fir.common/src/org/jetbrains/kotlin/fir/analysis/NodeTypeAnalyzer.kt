@@ -107,12 +107,14 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
             return getParent()?.getLabelName()
         }
         var result: String? = null
-        this.forEachChildren {
-            if (result != null) return@forEachChildren
-            when (it.toTokenId()) {
-                KtNodeTypes.LABEL_QUALIFIER_ID -> result = it.asText.replaceFirst("@", "").let(::unquoteIdentifier)
+        this.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                if (result != null) return
+                when (child.toTokenId()) {
+                    KtNodeTypes.LABEL_QUALIFIER_ID -> result = child.asText.replaceFirst("@", "").let(::unquoteIdentifier)
+                }
             }
-        }
+        })
         return result
     }
 
@@ -168,12 +170,14 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
 
     fun Node.getChildNodeByTokenId(tokenId: Int): Node? {
         var result: Node? = null
-        forEachChildren { node ->
-            if (result != null) return@forEachChildren
-            when (node.toTokenId()) {
-                tokenId -> result = node
+        forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                if (result != null) return
+                when (child.toTokenId()) {
+                    tokenId -> result = child
+                }
             }
-        }
+        })
         return result
     }
 
@@ -279,10 +283,16 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
 
     abstract fun convertScriptOrSnippets(declaration: Node, sourceFile: KtSourceFile, fileBuilder: FirFileBuilder?): FirDeclaration
 
-    open fun Node.forEachChildren(f: (Node) -> Unit) {}
+    open fun Node.forEachChildren(handler: ChildrenHandler<Node>) {}
     open fun <T> Node.forEachChildrenReturnList(f: (Node, MutableList<T>) -> Unit): MutableList<T> {
         return mutableListOf()
     }
+
+    abstract class ChildrenHandler<Node : Any> {
+        abstract fun handle(child: Node)
+    }
+
+    abstract class ChildrenHandlerWithResultAccumulation<Node : Any, T>(val list: MutableList<T>) : ChildrenHandler<Node>()
 
     abstract val Node?.receiverExpression: Node?
     abstract val Node?.selectorExpression: Node?

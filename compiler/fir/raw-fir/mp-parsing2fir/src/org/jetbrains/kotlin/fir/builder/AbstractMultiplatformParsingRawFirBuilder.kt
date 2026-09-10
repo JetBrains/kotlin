@@ -79,13 +79,15 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
         get() {
             var candidate: LightNode? = null
             var result: LightNode? = null
-            this?.forEachChildren {
-                if (result != null) return@forEachChildren
-                when (it.tokenType) {
-                    DOT, SAFE_ACCESS -> result = if (candidate?.tokenType != ERROR_ELEMENT) candidate else null
-                    else -> candidate = it
+            this?.forEachChildren(object : ChildrenHandler<LightNode>() {
+                override fun handle(child: LightNode) {
+                    if (result != null) return
+                    when (child.tokenType) {
+                        DOT, SAFE_ACCESS -> result = if (candidate?.tokenType != ERROR_ELEMENT) candidate else null
+                        else -> candidate = child
+                    }
                 }
-            }
+            })
             return result
         }
 
@@ -93,15 +95,17 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
         get() {
             var isSelector = false
             var result: LightNode? = null
-            this?.forEachChildren {
-                if (result != null) return@forEachChildren
-                when (it.tokenType) {
-                    DOT, SAFE_ACCESS -> isSelector = true
-                    else -> if (isSelector) {
-                        result = if (it.tokenType != ERROR_ELEMENT) it else null
+            this?.forEachChildren(object : ChildrenHandler<LightNode>() {
+                override fun handle(child: LightNode) {
+                    if (result != null) return
+                    when (child.tokenType) {
+                        DOT, SAFE_ACCESS -> isSelector = true
+                        else -> if (isSelector) {
+                            result = if (child.tokenType != ERROR_ELEMENT) child else null
+                        }
                     }
                 }
-            }
+            })
             return result
         }
 
@@ -118,11 +122,11 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
         return tree.getChildren(this)
     }
 
-    override fun LightNode.forEachChildren(f: (LightNode) -> Unit) {
+    override fun LightNode.forEachChildren(handler: ChildrenHandler<LightNode>) {
         val kids = tree.getChildren(this)
         for (kid in kids) {
             if (ignoredTokens.contains(kid.tokenType)) continue
-            f(kid)
+            handler.handle(kid)
         }
     }
 

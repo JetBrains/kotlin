@@ -177,17 +177,19 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var hasArrow = false
 
         val functionSymbol = FirAnonymousFunctionSymbol()
-        lambdaExpression.getChildNodesByTokenId(KtNodeTypes.FUNCTION_LITERAL_ID).first().forEachChildren {
-            when (it.toTokenId()) {
-                KtNodeTypes.VALUE_PARAMETER_LIST_ID -> valueParameterList += declarationBuilder.convertValueParameters(
-                    valueParameters = it,
-                    functionSymbol,
-                    NodeTypeAnalyzer.ValueParameterDeclaration.LAMBDA
-                )
-                KtNodeTypes.BLOCK_ID -> block = it
-                KtTokens.ARROW_ID -> hasArrow = true
+        lambdaExpression.getChildNodesByTokenId(KtNodeTypes.FUNCTION_LITERAL_ID).first().forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.VALUE_PARAMETER_LIST_ID -> valueParameterList += declarationBuilder.convertValueParameters(
+                        valueParameters = child,
+                        functionSymbol,
+                        ValueParameterDeclaration.LAMBDA
+                    )
+                    KtNodeTypes.BLOCK_ID -> block = child
+                    KtTokens.ARROW_ID -> hasArrow = true
+                }
             }
-        }
+        })
 
 
         val expressionSource = lambdaExpression.toFirSourceElement()
@@ -348,20 +350,22 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var left: Node? = null
         var op: Node? = null
         var right: Node? = null
-        binaryExpression.forEachChildren {
-            when (it.toTokenId()) {
-                KtNodeTypes.OPERATION_REFERENCE_ID -> {
-                    op = it
-                }
-                else -> if (it.isExpression()) {
-                    if (op == null) {
-                        left = it
-                    } else {
-                        right = it
+        binaryExpression.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.OPERATION_REFERENCE_ID -> {
+                        op = child
+                    }
+                    else -> if (child.isExpression()) {
+                        if (op == null) {
+                            left = child
+                        } else {
+                            right = child
+                        }
                     }
                 }
             }
-        }
+        })
         return Triple(left, op!!, right)
     }
 
@@ -511,13 +515,15 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         lateinit var operationReference: Node
         var leftArgAsFir: FirExpression? = null
         lateinit var firType: FirTypeRef
-        binaryExpression.forEachChildren {
-            when (it.toTokenId()) {
-                KtNodeTypes.OPERATION_REFERENCE_ID -> operationReference = it
-                KtNodeTypes.TYPE_REFERENCE_ID -> firType = declarationBuilder.convertType(it)
-                else -> if (it.isExpression()) leftArgAsFir = getAsFirExpression(it, "No left operand")
+        binaryExpression.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.OPERATION_REFERENCE_ID -> operationReference = child
+                    KtNodeTypes.TYPE_REFERENCE_ID -> firType = declarationBuilder.convertType(child)
+                    else -> if (child.isExpression()) leftArgAsFir = getAsFirExpression(child, "No left operand")
+                }
             }
-        }
+        })
 
         return buildTypeOperatorCall {
             source = binaryExpression.toFirSourceElement()
@@ -540,20 +546,22 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
 
         val isRepetitiveLabel = labeledExpression.getLabeledExpression()?.toTokenId() == KtNodeTypes.LABELED_EXPRESSION_ID
 
-        labeledExpression.forEachChildren {
-            context.setNewLabelUserNode(it)
-            when (it.toTokenId()) {
-                KtNodeTypes.LABEL_QUALIFIER_ID -> {
-                    val name = it.asText.dropLast(1)
-                    labelSource = it.getChildNodesByTokenId(KtNodeTypes.LABEL_ID).single().toFirSourceElement()
-                    context.addNewLabel(buildLabel(name, labelSource))
-                    forbiddenLabelKind = getForbiddenLabelKind(name, isRepetitiveLabel)
+        labeledExpression.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                context.setNewLabelUserNode(child)
+                when (child.toTokenId()) {
+                    KtNodeTypes.LABEL_QUALIFIER_ID -> {
+                        val name = child.asText.dropLast(1)
+                        labelSource = child.getChildNodesByTokenId(KtNodeTypes.LABEL_ID).single().toFirSourceElement()
+                        context.addNewLabel(buildLabel(name, labelSource))
+                        forbiddenLabelKind = getForbiddenLabelKind(name, isRepetitiveLabel)
+                    }
+                    KtNodeTypes.BLOCK_ID -> firExpression = declarationBuilder.convertBlock(child)
+                    KtNodeTypes.PROPERTY_ID -> firExpression = declarationBuilder.convertPropertyDeclaration(child)
+                    else -> if (child.isExpression()) firExpression = getAsFirStatement(child)
                 }
-                KtNodeTypes.BLOCK_ID -> firExpression = declarationBuilder.convertBlock(it)
-                KtNodeTypes.PROPERTY_ID -> firExpression = declarationBuilder.convertPropertyDeclaration(it)
-                else -> if (it.isExpression()) firExpression = getAsFirStatement(it)
             }
-        }
+        })
 
         context.dropLastLabel()
 
@@ -574,14 +582,16 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     private fun convertUnaryExpression(unaryExpression: Node): FirExpression {
         var argument: Node? = null
         lateinit var operationReference: Node
-        unaryExpression.forEachChildren {
-            when (it.toTokenId()) {
-                KtNodeTypes.OPERATION_REFERENCE_ID -> {
-                    operationReference = it
+        unaryExpression.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.OPERATION_REFERENCE_ID -> {
+                        operationReference = child
+                    }
+                    else -> if (child.isExpression()) argument = child
                 }
-                else -> if (it.isExpression()) argument = it
             }
-        }
+        })
 
         val operationToken = operationReference.getOperationTokenId()
         val conventionCallName = ktTokenToUnaryOperationNameMap[operationToken]
@@ -632,17 +642,19 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     private fun convertAnnotatedExpression(annotatedExpression: Node): FirStatement {
         var firExpression: FirStatement? = null
         val firAnnotationList = mutableListOf<FirAnnotation>()
-        annotatedExpression.forEachChildren {
-            when (it.toTokenId()) {
-                KtNodeTypes.ANNOTATION_ID -> declarationBuilder.convertAnnotationTo(it, firAnnotationList)
-                KtNodeTypes.ANNOTATION_ENTRY_ID -> firAnnotationList += declarationBuilder.convertAnnotationEntry(it)
-                KtNodeTypes.BLOCK_ID -> firExpression = declarationBuilder.convertBlockExpression(it)
-                else -> if (it.isExpression()) {
-                    context.forwardLabelUsagePermission(annotatedExpression, it)
-                    firExpression = getAsFirStatement(it)
+        annotatedExpression.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.ANNOTATION_ID -> declarationBuilder.convertAnnotationTo(child, firAnnotationList)
+                    KtNodeTypes.ANNOTATION_ENTRY_ID -> firAnnotationList += declarationBuilder.convertAnnotationEntry(child)
+                    KtNodeTypes.BLOCK_ID -> firExpression = declarationBuilder.convertBlockExpression(child)
+                    else -> if (child.isExpression()) {
+                        context.forwardLabelUsagePermission(annotatedExpression, child)
+                        firExpression = getAsFirStatement(child)
+                    }
                 }
             }
-        }
+        })
 
         val result = firExpression ?: buildErrorExpression(annotatedExpression.toFirSourceElement(), ConeNotAnnotationContainer("???"))
         result.replaceAnnotations(result.annotations.smartPlus(firAnnotationList))
@@ -655,9 +667,11 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
      */
     private fun convertClassLiteralExpression(classLiteralExpression: Node): FirGetClassCall {
         var firReceiverExpression: FirExpression? = null
-        classLiteralExpression.forEachChildren {
-            if (it.isExpression()) firReceiverExpression = getAsFirExpression(it, "No receiver in class literal")
-        }
+        classLiteralExpression.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                if (child.isExpression()) firReceiverExpression = getAsFirExpression(child, "No receiver in class literal")
+            }
+        })
 
         val classLiteralSource = classLiteralExpression.toFirSourceElement()
 
@@ -730,40 +744,46 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var isSafe = false
         var firSelector: FirExpression? = null
         var firReceiver: FirExpression? = null //before dot
-        dotQualifiedExpression.forEachChildren {
-            when (val tokenType = it.toTokenId()) {
-                KtTokens.DOT_ID -> isSelector = true
-                KtTokens.SAFE_ACCESS_ID -> {
-                    isSafe = true
-                    isSelector = true
-                }
-                else -> {
-                    val isEffectiveSelector = isSelector && tokenType != SyntaxElementTypesWithIds.NO_ID
-                    val firExpression =
-                        getAsFirExpression<FirExpression>(it, "Incorrect ${if (isEffectiveSelector) "selector" else "receiver"} expression")
-                    if (isEffectiveSelector) {
-                        val callExpressionCallee = if (tokenType == KtNodeTypes.CALL_EXPRESSION_ID) it.getFirstChildExpressionUnwrapped() else null
-                        firSelector =
-                            if (tokenType == KtNodeTypes.REFERENCE_EXPRESSION_ID ||
-                                (tokenType == KtNodeTypes.CALL_EXPRESSION_ID && callExpressionCallee?.toTokenId() != KtNodeTypes.LAMBDA_EXPRESSION_ID)
-                            ) {
-                                firExpression
-                            } else {
-                                buildErrorExpression {
-                                    source = callExpressionCallee?.toFirSourceElement() ?: it.toFirSourceElement()
-                                    diagnostic = ConeSimpleDiagnostic(
-                                        "The expression cannot be a selector (occur after a dot)",
-                                        if (callExpressionCallee == null) DiagnosticKind.IllegalSelector else DiagnosticKind.NoReceiverAllowed
-                                    )
-                                    expression = firExpression
+        dotQualifiedExpression.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (val tokenType = child.toTokenId()) {
+                    KtTokens.DOT_ID -> isSelector = true
+                    KtTokens.SAFE_ACCESS_ID -> {
+                        isSafe = true
+                        isSelector = true
+                    }
+                    else -> {
+                        val isEffectiveSelector = isSelector && tokenType != SyntaxElementTypesWithIds.NO_ID
+                        val firExpression =
+                            getAsFirExpression<FirExpression>(
+                                child,
+                                "Incorrect ${if (isEffectiveSelector) "selector" else "receiver"} expression"
+                            )
+                        if (isEffectiveSelector) {
+                            val callExpressionCallee =
+                                if (tokenType == KtNodeTypes.CALL_EXPRESSION_ID) child.getFirstChildExpressionUnwrapped() else null
+                            firSelector =
+                                if (tokenType == KtNodeTypes.REFERENCE_EXPRESSION_ID ||
+                                    (tokenType == KtNodeTypes.CALL_EXPRESSION_ID && callExpressionCallee?.toTokenId() != KtNodeTypes.LAMBDA_EXPRESSION_ID)
+                                ) {
+                                    firExpression
+                                } else {
+                                    buildErrorExpression {
+                                        source = callExpressionCallee?.toFirSourceElement() ?: child.toFirSourceElement()
+                                        diagnostic = ConeSimpleDiagnostic(
+                                            "The expression cannot be a selector (occur after a dot)",
+                                            if (callExpressionCallee == null) DiagnosticKind.IllegalSelector else DiagnosticKind.NoReceiverAllowed
+                                        )
+                                        expression = firExpression
+                                    }
                                 }
-                            }
-                    } else {
-                        firReceiver = firExpression
+                        } else {
+                            firReceiver = firExpression
+                        }
                     }
                 }
             }
-        }
+        })
 
         return when (val selector = firSelector) {
             is FirQualifiedAccessExpression -> {
@@ -807,37 +827,39 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var additionalArgument: FirExpression? = null
         var hasArguments = false
         var superNode: Node? = null
-        callSuffix.forEachChildren { child ->
-            fun process(node: Node) {
-                when (node.toTokenId()) {
-                    KtNodeTypes.REFERENCE_EXPRESSION_ID -> {
-                        name = node.asText
-                    }
-                    KtNodeTypes.SUPER_EXPRESSION_ID -> {
-                        superNode = node
-                    }
-                    KtNodeTypes.PARENTHESIZED_ID -> if (node.toTokenId() != SyntaxElementTypesWithIds.NO_ID) {
-                        additionalArgument = getAsFirExpression(
-                            node.getExpressionInParentheses(),
-                            "Incorrect invoke receiver",
-                            sourceWhenInvalidExpression = node
-                        )
-                    }
-                    KtNodeTypes.TYPE_ARGUMENT_LIST_ID -> {
-                        firTypeArguments += declarationBuilder.convertTypeArguments(node, allowedUnderscoredTypeArgument = true)
-                    }
-                    KtNodeTypes.VALUE_ARGUMENT_LIST_ID, KtNodeTypes.LAMBDA_ARGUMENT_ID -> {
-                        hasArguments = true
-                        valueArguments += node
-                    }
-                    else -> if (node.toTokenId() != SyntaxElementTypesWithIds.NO_ID) {
-                        additionalArgument = getAsFirExpression(node, "Incorrect invoke receiver")
+        callSuffix.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                fun process(node: Node) {
+                    when (node.toTokenId()) {
+                        KtNodeTypes.REFERENCE_EXPRESSION_ID -> {
+                            name = node.asText
+                        }
+                        KtNodeTypes.SUPER_EXPRESSION_ID -> {
+                            superNode = node
+                        }
+                        KtNodeTypes.PARENTHESIZED_ID -> if (node.toTokenId() != SyntaxElementTypesWithIds.NO_ID) {
+                            additionalArgument = getAsFirExpression(
+                                node.getExpressionInParentheses(),
+                                "Incorrect invoke receiver",
+                                sourceWhenInvalidExpression = node
+                            )
+                        }
+                        KtNodeTypes.TYPE_ARGUMENT_LIST_ID -> {
+                            firTypeArguments += declarationBuilder.convertTypeArguments(node, allowedUnderscoredTypeArgument = true)
+                        }
+                        KtNodeTypes.VALUE_ARGUMENT_LIST_ID, KtNodeTypes.LAMBDA_ARGUMENT_ID -> {
+                            hasArguments = true
+                            valueArguments += node
+                        }
+                        else -> if (node.toTokenId() != SyntaxElementTypesWithIds.NO_ID) {
+                            additionalArgument = getAsFirExpression(node, "Incorrect invoke receiver")
+                        }
                     }
                 }
-            }
 
-            process(child)
-        }
+                process(child)
+            }
+        })
 
         val source = callSuffix.toFirSourceElement()
 
@@ -855,40 +877,43 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
             }
         }
 
-        (val calleeReference = reference, val receiverForInvoke) = when {
-            name != null -> CalleeAndReceiver(
-                buildSimpleNamedReference {
-                    this.source = callSuffix.getFirstChildExpressionUnwrapped()?.toFirSourceElement() ?: source
-                    this.name = name.nameAsSafeName()
-                }
-            )
+        (
+            val calleeReference = reference, val receiverForInvoke,
+        ) =
+            when {
+                name != null -> CalleeAndReceiver(
+                    buildSimpleNamedReference {
+                        this.source = callSuffix.getFirstChildExpressionUnwrapped()?.toFirSourceElement() ?: source
+                        this.name = name.nameAsSafeName()
+                    }
+                )
 
-            superNode != null || additionalArgument is FirSuperReceiverExpression -> {
-                CalleeAndReceiver(
+                superNode != null || additionalArgument is FirSuperReceiverExpression -> {
+                    CalleeAndReceiver(
+                        buildErrorNamedReferenceWithNoName(
+                            source = superNode?.toFirSourceElement() ?: (additionalArgument as? FirResolvable)?.calleeReference?.source,
+                            diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed),
+                        )
+                    )
+                }
+
+                additionalArgument != null -> {
+                    CalleeAndReceiver(
+                        buildSimpleNamedReference {
+                            this.source = source
+                            this.name = OperatorNameConventions.INVOKE
+                        },
+                        additionalArgument,
+                    )
+                }
+
+                else -> CalleeAndReceiver(
                     buildErrorNamedReferenceWithNoName(
-                        source = superNode?.toFirSourceElement() ?: (additionalArgument as? FirResolvable)?.calleeReference?.source,
-                        diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed),
+                        diagnostic = ConeSyntaxDiagnostic("Call has no callee"),
+                        source,
                     )
                 )
             }
-
-            additionalArgument != null -> {
-                CalleeAndReceiver(
-                    buildSimpleNamedReference {
-                        this.source = source
-                        this.name = OperatorNameConventions.INVOKE
-                    },
-                    additionalArgument,
-                )
-            }
-
-            else -> CalleeAndReceiver(
-                buildErrorNamedReferenceWithNoName(
-                    diagnostic = ConeSyntaxDiagnostic("Call has no callee"),
-                    source,
-                )
-            )
-        }
 
         val builder: FirQualifiedAccessExpressionBuilder = if (hasArguments) {
             val builder = if (receiverForInvoke != null) FirImplicitInvokeCallBuilder() else FirFunctionCallBuilder()
@@ -926,12 +951,14 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
 
     private fun Node?.convertShortOrLongStringTemplate(errorReason: String): Collection<FirExpression> {
         val firExpressions = mutableListOf<FirExpression>()
-        this?.forEachChildren {
-            when (it.toTokenId()) {
-                KtTokens.LONG_TEMPLATE_ENTRY_START_ID, KtTokens.LONG_TEMPLATE_ENTRY_END_ID, KtTokens.SHORT_TEMPLATE_ENTRY_START_ID -> return@forEachChildren
-                else -> firExpressions.add(getAsFirExpression(it, errorReason))
+        this?.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtTokens.LONG_TEMPLATE_ENTRY_START_ID, KtTokens.LONG_TEMPLATE_ENTRY_END_ID, KtTokens.SHORT_TEMPLATE_ENTRY_START_ID -> return
+                    else -> firExpressions.add(getAsFirExpression(child, errorReason))
+                }
             }
-        }
+        })
         return firExpressions
     }
 
@@ -951,38 +978,40 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var subjectVariable: FirVariable? = null
         val whenEntryNodes = mutableListOf<Node>()
         val whenEntries = mutableListOf<WhenEntry<Node>>()
-        whenExpression.forEachChildren {
-            when (it.toTokenId()) {
-                KtNodeTypes.PROPERTY_ID -> {
-                    subjectVariable = (declarationBuilder.convertPropertyDeclaration(it) as FirVariable).let { variable ->
-                        buildProperty {
-                            source = it.toFirSourceElement()
-                            origin = FirDeclarationOrigin.Source
-                            moduleData = baseModuleData
-                            returnTypeRef = variable.returnTypeRef
-                            name = variable.name
-                            initializer = variable.initializer
-                            isVar = false
-                            symbol = FirLocalPropertySymbol()
-                            status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
-                            isLocal = true
-                            receiverParameter = variable.receiverParameter?.let { receiverParameter ->
-                                buildReceiverParameterCopy(receiverParameter) {
-                                    symbol = FirReceiverParameterSymbol()
-                                    containingDeclarationSymbol = this@buildProperty.symbol
+        whenExpression.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.PROPERTY_ID -> {
+                        subjectVariable = (declarationBuilder.convertPropertyDeclaration(child) as FirVariable).let { variable ->
+                            buildProperty {
+                                source = child.toFirSourceElement()
+                                origin = FirDeclarationOrigin.Source
+                                moduleData = baseModuleData
+                                returnTypeRef = variable.returnTypeRef
+                                name = variable.name
+                                initializer = variable.initializer
+                                isVar = false
+                                symbol = FirLocalPropertySymbol()
+                                status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                                isLocal = true
+                                receiverParameter = variable.receiverParameter?.let { receiverParameter ->
+                                    buildReceiverParameterCopy(receiverParameter) {
+                                        symbol = FirReceiverParameterSymbol()
+                                        containingDeclarationSymbol = this@buildProperty.symbol
+                                    }
                                 }
+                                annotations += variable.annotations
                             }
-                            annotations += variable.annotations
                         }
                     }
+                    KtNodeTypes.DESTRUCTURING_DECLARATION_ID -> subjectExpression =
+                        getAsFirExpression(child, "Incorrect when subject expression: ${whenExpression.asText}")
+                    KtNodeTypes.WHEN_ENTRY_ID -> whenEntryNodes += child
+                    else -> if (child.isExpression()) subjectExpression =
+                        getAsFirExpression(child, "Incorrect when subject expression: ${whenExpression.asText}")
                 }
-                KtNodeTypes.DESTRUCTURING_DECLARATION_ID -> subjectExpression =
-                    getAsFirExpression(it, "Incorrect when subject expression: ${whenExpression.asText}")
-                KtNodeTypes.WHEN_ENTRY_ID -> whenEntryNodes += it
-                else -> if (it.isExpression()) subjectExpression =
-                    getAsFirExpression(it, "Incorrect when subject expression: ${whenExpression.asText}")
             }
-        }
+        })
         subjectExpression = subjectVariable?.initializer ?: subjectExpression
         val hasSubject = subjectExpression != null
 
@@ -1060,29 +1089,33 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         val conditions = mutableListOf<FirExpression>()
         var guard: FirExpression? = null
         var shouldBindSubject = false
-        whenEntry.forEachChildren {
-            when (it.toTokenId()) {
-                KtNodeTypes.WHEN_CONDITION_EXPRESSION_ID -> conditions += convertWhenConditionExpression(it, subjectVariable)
-                KtNodeTypes.WHEN_CONDITION_IN_RANGE_ID -> {
-                    (val condition = expression, val shouldBind = shouldBindSubject) = convertWhenConditionInRange(it, subjectVariable)
-                    conditions += condition
-                    shouldBindSubject = shouldBindSubject || shouldBind
+        whenEntry.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.WHEN_CONDITION_EXPRESSION_ID -> {
+                        conditions += convertWhenConditionExpression(child, subjectVariable)
+                    }
+                    KtNodeTypes.WHEN_CONDITION_IN_RANGE_ID -> {
+                        (val condition = expression, val shouldBind = shouldBindSubject) = convertWhenConditionInRange(child, subjectVariable)
+                        conditions += condition
+                        shouldBindSubject = shouldBindSubject || shouldBind
+                    }
+                    KtNodeTypes.WHEN_CONDITION_IS_PATTERN_ID -> {
+                        (val condition = expression, val shouldBind = shouldBindSubject) = convertWhenConditionIsPattern(child, subjectVariable)
+                        conditions += condition
+                        shouldBindSubject = shouldBindSubject || shouldBind
+                    }
+                    KtNodeTypes.WHEN_ENTRY_GUARD_ID -> guard = getAsFirExpression(
+                        child.getFirstChildExpressionUnwrapped(),
+                        "No expression in guard",
+                        sourceWhenInvalidExpression = child
+                    )
+                    KtTokens.ELSE_KEYWORD_ID -> isElse = true
+                    KtNodeTypes.BLOCK_ID -> firBlock = declarationBuilder.convertBlock(child)
+                    else -> if (child.isExpression()) firBlock = declarationBuilder.convertBlock(child)
                 }
-                KtNodeTypes.WHEN_CONDITION_IS_PATTERN_ID -> {
-                    (val condition = expression, val shouldBind = shouldBindSubject) = convertWhenConditionIsPattern(it, subjectVariable)
-                    conditions += condition
-                    shouldBindSubject = shouldBindSubject || shouldBind
-                }
-                KtNodeTypes.WHEN_ENTRY_GUARD_ID -> guard = getAsFirExpression(
-                    it.getFirstChildExpressionUnwrapped(),
-                    "No expression in guard",
-                    sourceWhenInvalidExpression = it
-                )
-                KtTokens.ELSE_KEYWORD_ID -> isElse = true
-                KtNodeTypes.BLOCK_ID -> firBlock = declarationBuilder.convertBlock(it)
-                else -> if (it.isExpression()) firBlock = declarationBuilder.convertBlock(it)
             }
-        }
+        })
 
         return WhenEntry(conditions, guard, firBlock, whenEntry, isElse, shouldBindSubject, whenEntry.toFirSourceElement())
     }
@@ -1092,11 +1125,13 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         subjectVariable: FirVariable?,
     ): FirExpression {
         var firExpression: FirExpression? = null
-        whenCondition.forEachChildren {
-            when (it.toTokenId()) {
-                else -> if (it.isExpression()) firExpression = getAsFirExpression(it, "No expression in condition with expression")
+        whenCondition.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    else -> if (child.isExpression()) firExpression = getAsFirExpression(child, "No expression in condition with expression")
+                }
             }
-        }
+        })
 
         val calculatedFirExpression = firExpression ?: buildErrorExpression(
             source = whenCondition.toFirSourceElement(),
@@ -1128,18 +1163,20 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var isNegate = false
         var firExpression: FirExpression? = null
         var conditionSource: KtLightSourceElement? = null
-        whenCondition.forEachChildren {
-            when (it.toTokenId()) {
-                KtNodeTypes.OPERATION_REFERENCE_ID if it.getOperationTokenId() == KtTokens.NOT_IN_ID -> {
-                    conditionSource = it.toFirSourceElement() as KtLightSourceElement
-                    isNegate = true
+        whenCondition.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.OPERATION_REFERENCE_ID if child.getOperationTokenId() == KtTokens.NOT_IN_ID -> {
+                        conditionSource = child.toFirSourceElement() as KtLightSourceElement
+                        isNegate = true
+                    }
+                    KtNodeTypes.OPERATION_REFERENCE_ID -> {
+                        conditionSource = child.toFirSourceElement() as KtLightSourceElement
+                    }
+                    else -> if (child.isExpression()) firExpression = getAsFirExpression(child, "No range in condition with range")
                 }
-                KtNodeTypes.OPERATION_REFERENCE_ID -> {
-                    conditionSource = it.toFirSourceElement() as KtLightSourceElement
-                }
-                else -> if (it.isExpression()) firExpression = getAsFirExpression(it, "No range in condition with range")
             }
-        }
+        })
 
         val subjectExpression = buildWhenSubjectAccess(whenCondition.toFirSourceElement(), subjectVariable)
 
@@ -1163,13 +1200,15 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     ): WhenConditionConvertedResults {
         lateinit var firOperation: FirOperation
         var firType: FirTypeRef? = null
-        whenCondition.forEachChildren {
-            when (it.toTokenId()) {
-                KtNodeTypes.TYPE_REFERENCE_ID -> firType = declarationBuilder.convertType(it)
-                KtTokens.IS_KEYWORD_ID -> firOperation = FirOperation.IS
-                KtTokens.NOT_IS_ID -> firOperation = FirOperation.NOT_IS
+        whenCondition.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.TYPE_REFERENCE_ID -> firType = declarationBuilder.convertType(child)
+                    KtTokens.IS_KEYWORD_ID -> firOperation = FirOperation.IS
+                    KtTokens.NOT_IS_ID -> firOperation = FirOperation.NOT_IS
+                }
             }
-        }
+        })
 
         val subjectExpression = buildWhenSubjectAccess(whenCondition.toFirSourceElement(), subjectVariable)
 
@@ -1215,12 +1254,14 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     private fun convertArrayAccessExpression(arrayAccess: Node): FirExpression {
         var firExpression: FirExpression? = null
         val indices: MutableList<FirExpression> = mutableListOf()
-        arrayAccess.forEachChildren {
-            when (it.toTokenId()) {
-                KtNodeTypes.INDICES_ID -> indices += convertIndices(it)
-                else -> if (it.isExpression()) firExpression = getAsFirExpression(it, "No array expression")
+        arrayAccess.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.INDICES_ID -> indices += convertIndices(child)
+                    else -> if (child.isExpression()) firExpression = getAsFirExpression(child, "No array expression")
+                }
             }
-        }
+        })
         val getArgument = context.arraySetArgument.remove(arrayAccess)
         return buildFunctionCall {
             val isGet = getArgument == null
@@ -1244,9 +1285,14 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
      */
     private fun convertCollectionLiteralExpression(expression: Node): FirCollectionLiteral {
         val firExpressionList = mutableListOf<FirExpression>()
-        expression.forEachChildren {
-            if (it.isExpression()) firExpressionList += getAsFirExpression<FirExpression>(it, "Incorrect collection literal argument")
-        }
+        expression.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                if (child.isExpression()) firExpressionList += getAsFirExpression<FirExpression>(
+                    child,
+                    "Incorrect collection literal argument"
+                )
+            }
+        })
         val arguments = buildArgumentList {
             arguments += firExpressionList
         }
@@ -1261,9 +1307,11 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
      */
     private fun convertIndices(indices: Node): List<FirExpression> {
         val firExpressionList: MutableList<FirExpression> = mutableListOf()
-        indices.forEachChildren {
-            if (it.isExpression()) firExpressionList += getAsFirExpression<FirExpression>(it, "Incorrect index expression")
-        }
+        indices.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                if (child.isExpression()) firExpressionList += getAsFirExpression<FirExpression>(child, "Incorrect index expression")
+            }
+        })
 
         return firExpressionList
     }
@@ -1309,12 +1357,14 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
             source = doWhileLoop.toFirSourceElement()
             // For break/continue in the do-while loop condition, prepare the loop target first so that it can refer to the same loop.
             target = prepareTarget(doWhileLoop)
-            doWhileLoop.forEachChildren {
-                when (it.toTokenId()) {
-                    KtNodeTypes.BODY_ID -> block = it
-                    KtNodeTypes.CONDITION_ID -> firCondition = getAsFirExpression(it, "No condition in do-while loop")
+            doWhileLoop.forEachChildren(object : ChildrenHandler<Node>() {
+                override fun handle(child: Node) {
+                    when (child.toTokenId()) {
+                        KtNodeTypes.BODY_ID -> block = child
+                        KtNodeTypes.CONDITION_ID -> firCondition = getAsFirExpression(child, "No condition in do-while loop")
+                    }
                 }
-            }
+            })
             condition = firCondition ?: buildErrorExpression(
                 doWhileLoop.toFirSourceElement(),
                 ConeSyntaxDiagnostic("No condition in do-while loop")
@@ -1329,12 +1379,14 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     private fun convertWhile(whileLoop: Node): FirLoop {
         var block: Node? = null
         var firCondition: FirExpression? = null
-        whileLoop.forEachChildren {
-            when (it.toTokenId()) {
-                KtNodeTypes.BODY_ID -> block = it
-                KtNodeTypes.CONDITION_ID -> firCondition = getAsFirExpression(it, "No condition in while loop")
+        whileLoop.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.BODY_ID -> block = child
+                    KtNodeTypes.CONDITION_ID -> firCondition = getAsFirExpression(child, "No condition in while loop")
+                }
             }
-        }
+        })
 
         val target: FirLoopTarget
         return FirWhileLoopBuilder().apply {
@@ -1355,13 +1407,16 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var parameter: ValueParameter<Node>? = null
         var rangeExpression: FirExpression? = null
         var blockNode: Node? = null
-        forLoop.forEachChildren {
-            when (it.toTokenId()) {
-                KtNodeTypes.VALUE_PARAMETER_ID -> parameter = declarationBuilder.convertValueParameter(it, null, NodeTypeAnalyzer.ValueParameterDeclaration.FOR_LOOP)
-                KtNodeTypes.LOOP_RANGE_ID -> rangeExpression = getAsFirExpression(it, "No range in for loop")
-                KtNodeTypes.BODY_ID -> blockNode = it
+        forLoop.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.VALUE_PARAMETER_ID -> parameter =
+                        declarationBuilder.convertValueParameter(child, null, NodeTypeAnalyzer.ValueParameterDeclaration.FOR_LOOP)
+                    KtNodeTypes.LOOP_RANGE_ID -> rangeExpression = getAsFirExpression(child, "No range in for loop")
+                    KtNodeTypes.BODY_ID -> blockNode = child
+                }
             }
-        }
+        })
 
         val calculatedRangeExpression =
             rangeExpression ?: buildErrorExpression(forLoop.toFirSourceElement(), ConeSyntaxDiagnostic("No range in for loop"))
@@ -1458,19 +1513,21 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     private fun convertLoopOrIfBody(body: Node?): FirBlock? {
         var firBlock: FirBlock? = null
         var firStatement: FirStatement? = null
-        body?.forEachChildren {
-            when (it.toTokenId()) {
-                KtNodeTypes.BLOCK_ID -> firBlock = declarationBuilder.convertBlockExpression(it)
-                KtNodeTypes.ANNOTATED_EXPRESSION_ID -> {
-                    if (it.getChildNodeByTokenId(KtNodeTypes.BLOCK_ID) != null) {
-                        firBlock = getAsFirExpression(it)
-                    } else {
-                        firStatement = getAsFirStatement(it)
+        body?.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.BLOCK_ID -> firBlock = declarationBuilder.convertBlockExpression(child)
+                    KtNodeTypes.ANNOTATED_EXPRESSION_ID -> {
+                        if (child.getChildNodeByTokenId(KtNodeTypes.BLOCK_ID) != null) {
+                            firBlock = getAsFirExpression(child)
+                        } else {
+                            firStatement = getAsFirStatement(child)
+                        }
                     }
+                    else -> if (child.isExpression()) firStatement = getAsFirStatement(child)
                 }
-                else -> if (it.isExpression()) firStatement = getAsFirStatement(it)
             }
-        }
+        })
 
         return firStatement?.let { FirSingleExpressionBlock(it) } ?: firBlock
     }
@@ -1483,13 +1540,15 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         lateinit var tryBlock: FirBlock
         val catchClauses = mutableListOf<Triple<ValueParameter<Node>?, FirBlock, KtLightSourceElement>>()
         var finallyBlock: FirBlock? = null
-        tryExpression.forEachChildren {
-            when (it.toTokenId()) {
-                KtNodeTypes.BLOCK_ID -> tryBlock = declarationBuilder.convertBlock(it)
-                KtNodeTypes.CATCH_ID -> convertCatchClause(it)?.also { oneClause -> catchClauses += oneClause }
-                KtNodeTypes.FINALLY_ID -> finallyBlock = convertFinally(it)
+        tryExpression.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.BLOCK_ID -> tryBlock = declarationBuilder.convertBlock(child)
+                    KtNodeTypes.CATCH_ID -> convertCatchClause(child)?.also { oneClause -> catchClauses += oneClause }
+                    KtNodeTypes.FINALLY_ID -> finallyBlock = convertFinally(child)
+                }
             }
-        }
+        })
         return buildTryExpression {
             source = tryExpression.toFirSourceElement()
             this.tryBlock = tryBlock
@@ -1525,17 +1584,19 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var valueParameter: ValueParameter<Node>? = null
         var blockNode: Node? = null
         var emptyValueParameterList = false
-        catchClause.forEachChildren {
-            when (it.toTokenId()) {
-                KtNodeTypes.VALUE_PARAMETER_LIST_ID -> valueParameter = declarationBuilder.convertValueParameters(
-                    valueParameters = it,
-                    FirAnonymousFunctionSymbol(),
-                    NodeTypeAnalyzer.ValueParameterDeclaration.CATCH
-                ).firstOrNull() ?: run { emptyValueParameterList = true; null }
+        catchClause.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.VALUE_PARAMETER_LIST_ID -> valueParameter = declarationBuilder.convertValueParameters(
+                        valueParameters = child,
+                        FirAnonymousFunctionSymbol(),
+                        NodeTypeAnalyzer.ValueParameterDeclaration.CATCH
+                    ).firstOrNull() ?: run { emptyValueParameterList = true; null }
 
-                KtNodeTypes.BLOCK_ID -> blockNode = it
+                    KtNodeTypes.BLOCK_ID -> blockNode = child
+                }
             }
-        }
+        })
 
         if (emptyValueParameterList) return null
         return Triple(valueParameter, declarationBuilder.convertBlock(blockNode), catchClause.toFirSourceElement() as KtLightSourceElement)
@@ -1546,11 +1607,13 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
      */
     private fun convertFinally(finallyExpression: Node): FirBlock {
         var blockNode: Node? = null
-        finallyExpression.forEachChildren {
-            when (it.toTokenId()) {
-                KtNodeTypes.BLOCK_ID -> blockNode = it
+        finallyExpression.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.BLOCK_ID -> blockNode = child
+                }
             }
-        }
+        })
 
         return declarationBuilder.convertBlock(blockNode)
     }
@@ -1594,13 +1657,15 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var firCondition: FirExpression? = null
         var thenBlock: Node? = null
         var elseBlock: Node? = null
-        ifExpression.forEachChildren {
-            when (it.toTokenId()) {
-                KtNodeTypes.CONDITION_ID -> firCondition = getAsFirExpression(it, "If statement should have condition")
-                KtNodeTypes.THEN_ID -> thenBlock = it
-                KtNodeTypes.ELSE_ID -> elseBlock = it
+        ifExpression.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.CONDITION_ID -> firCondition = getAsFirExpression(child, "If statement should have condition")
+                    KtNodeTypes.THEN_ID -> thenBlock = child
+                    KtNodeTypes.ELSE_ID -> elseBlock = child
+                }
             }
-        }
+        })
         return IfNodeComponents(firCondition, thenBlock, elseBlock)
     }
 
@@ -1635,12 +1700,14 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
      */
     private fun convertLoopJump(jump: Node): FirLoopJump {
         var isBreak = true
-        jump.forEachChildren {
-            when (it.toTokenId()) {
-                KtTokens.CONTINUE_KEYWORD_ID -> isBreak = false
-                //BREAK -> isBreak = true
+        jump.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtTokens.CONTINUE_KEYWORD_ID -> isBreak = false
+                    //BREAK -> isBreak = true
+                }
             }
-        }
+        })
 
         val jumpBuilder = if (isBreak) FirBreakExpressionBuilder() else FirContinueExpressionBuilder()
         val sourceElement = jump.toFirSourceElement()
@@ -1656,12 +1723,14 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     private fun convertReturn(returnExpression: Node): FirReturnExpression {
         var labelName: String? = null
         var firExpression: FirExpression? = null
-        returnExpression.forEachChildren {
-            when (it.toTokenId()) {
-                KtNodeTypes.LABEL_QUALIFIER_ID -> labelName = it.getAsStringWithoutBacktick().replace("@", "")
-                else -> if (it.isExpression()) firExpression = getAsFirExpression(it, "Incorrect return expression")
+        returnExpression.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.LABEL_QUALIFIER_ID -> labelName = child.getAsStringWithoutBacktick().replace("@", "")
+                    else -> if (child.isExpression()) firExpression = getAsFirExpression(child, "Incorrect return expression")
+                }
             }
-        }
+        })
 
         val calculatedFirExpression = firExpression ?: buildUnitExpression {
             source = returnExpression.toFirSourceElement(KtFakeSourceElementKind.ImplicitUnit.Return)
@@ -1679,9 +1748,11 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
      */
     private fun convertThrow(throwExpression: Node): FirThrowExpression {
         var firExpression: FirExpression? = null
-        throwExpression.forEachChildren {
-            if (it.isExpression()) firExpression = getAsFirExpression(it, "Nothing to throw")
-        }
+        throwExpression.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                if (child.isExpression()) firExpression = getAsFirExpression(child, "Nothing to throw")
+            }
+        })
 
         return buildThrowExpression {
             source = throwExpression.toFirSourceElement()
@@ -1715,11 +1786,13 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     private fun convertSuperExpression(superExpression: Node): FirSuperReceiverExpression {
         val label: String? = superExpression.getLabelName()
         var superTypeRef: FirTypeRef = implicitType
-        superExpression.forEachChildren {
-            when (it.toTokenId()) {
-                KtNodeTypes.TYPE_REFERENCE_ID -> superTypeRef = declarationBuilder.convertType(it)
+        superExpression.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.TYPE_REFERENCE_ID -> superTypeRef = declarationBuilder.convertType(child)
+                }
             }
-        }
+        })
 
         return buildSuperReceiverExpression {
             val sourceElement = superExpression.toFirSourceElement()
@@ -1742,7 +1815,8 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
                 KtNodeTypes.VALUE_ARGUMENT_ID -> container += convertValueArgument(node)
                 KtNodeTypes.LAMBDA_EXPRESSION_ID,
                 KtNodeTypes.LABELED_EXPRESSION_ID,
-                KtNodeTypes.ANNOTATED_EXPRESSION_ID -> container += getAsFirExpression<FirAnonymousFunctionExpression>(node).apply {
+                KtNodeTypes.ANNOTATED_EXPRESSION_ID,
+                    -> container += getAsFirExpression<FirAnonymousFunctionExpression>(node).apply {
                     // TODO(KT-66553) remove and set in builder
                     @OptIn(RawFirApi::class)
                     replaceIsTrailingLambda(newIsTrailingLambda = true)
@@ -1759,13 +1833,15 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         var identifier: String? = null
         var isSpread = false
         var firExpression: FirExpression? = null
-        valueArgument.forEachChildren {
-            when (it.toTokenId()) {
-                KtNodeTypes.VALUE_ARGUMENT_NAME_ID -> identifier = it.asText
-                KtTokens.MUL_ID -> isSpread = true
-                else -> if (it.isExpression()) firExpression = getAsFirExpression(it, "Argument is absent")
+        valueArgument.forEachChildren(object : ChildrenHandler<Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.VALUE_ARGUMENT_NAME_ID -> identifier = child.asText
+                    KtTokens.MUL_ID -> isSpread = true
+                    else -> if (child.isExpression()) firExpression = getAsFirExpression(child, "Argument is absent")
+                }
             }
-        }
+        })
         val calculatedFirExpression =
             firExpression ?: buildErrorExpression(valueArgument.toFirSourceElement(), ConeSyntaxDiagnostic("Argument is absent"))
         return when {
@@ -1824,8 +1900,8 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         TODO("Not yet implemented")
     }
 
-    override fun Node.forEachChildren(f: (Node) -> Unit) {
-        return with(analyzer) { forEachChildren(f) }
+    override fun Node.forEachChildren(handler: ChildrenHandler<Node>) {
+        return with(analyzer) { forEachChildren(handler) }
     }
 
     override fun <T> Node.forEachChildrenReturnList(f: (Node, MutableList<T>) -> Unit): MutableList<T> {
@@ -1844,6 +1920,6 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         get() = with(analyzer) { indexExpressions }
 
     override fun KtSourceElement.isChildInParentheses(): Boolean {
-        return with(analyzer) { isChildInParentheses()}
+        return with(analyzer) { isChildInParentheses() }
     }
 }
