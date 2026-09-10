@@ -73,7 +73,7 @@ class KaptOptions(
         // Initialize this set with the flags that are enabled by default. This set may be changed later (with flags added or removed).
         val flags: MutableSet<KaptFlag> = KaptFlag.entries.filter { it.defaultValue }.toMutableSet()
 
-        var mode: AptMode = AptMode.WITH_COMPILATION
+        var mode: AptMode = AptMode.STUBS_AND_APT
         var detectMemoryLeaks: DetectMemoryLeaksMode = DetectMemoryLeaksMode.DEFAULT
         var stubGenerationScheme: StubGenerationScheme = StubGenerationScheme.JTREE
         var processorsStatsReportFile: File? = null
@@ -142,7 +142,6 @@ enum class StubGenerationScheme(override val stringValue: String) : KaptSelector
 }
 
 enum class AptMode(override val stringValue: String) : KaptSelector {
-    WITH_COMPILATION("compile"),
     STUBS_AND_APT("stubsAndApt"),
     STUBS_ONLY("stubs"),
     APT_ONLY("apt");
