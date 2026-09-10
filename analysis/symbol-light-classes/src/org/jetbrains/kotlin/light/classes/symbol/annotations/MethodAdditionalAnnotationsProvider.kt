@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 
@@ -37,4 +38,8 @@ internal object MethodAdditionalAnnotationsProvider : AdditionalAnnotationsProvi
     override fun isSpecialQualifier(qualifiedName: String): Boolean = false
 }
 
-private fun PsiElement.isMethodWithOverride(): Boolean = this is SymbolLightMethodBase && (isDelegated || isOverride())
+/**
+ * A static method never overrides anything, even if the Kotlin declaration it is created for does, e.g., a bridge in `DefaultImpls`.
+ */
+private fun PsiElement.isMethodWithOverride(): Boolean =
+    this is SymbolLightMethodBase && (isDelegated || isOverride()) && !hasModifierProperty(PsiModifier.STATIC)
