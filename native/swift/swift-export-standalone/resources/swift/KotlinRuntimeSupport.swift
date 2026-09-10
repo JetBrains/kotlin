@@ -371,9 +371,14 @@ public extension TypedList {
     }
 }
 
-struct TypedListImpl<Element> : TypedList { // TODO: Remove Impl test
-    let __rawCollection: KotlinRuntime.KotlinBase
-    let __conformsTo: ((AnyClass?) -> Bool)
+public struct TypedListImpl<Element> : TypedList { // TODO: Remove Impl test
+    public let __rawCollection: KotlinRuntime.KotlinBase
+    public let __conformsTo: ((AnyClass?) -> Bool)
+
+    package init<ElementType>(rawCollection: KotlinRuntime.KotlinBase, conformsTo: ElementType.Type) {
+        self.__rawCollection = rawCollection
+        self.__conformsTo = { wrapperClass in wrapperClass is ElementType }
+    }
 }
 
 public protocol TypedMutableList<Element> : TypedList, MutableList { }
@@ -388,7 +393,12 @@ public extension TypedMutableList {
     }
 }
 
-struct TypedMutableListImpl<Element> : TypedMutableList { // TODO: Remove Impl test
-    let __rawCollection: KotlinRuntime.KotlinBase
-    let __conformsTo: ((AnyClass?) -> Bool)
+public struct TypedMutableListImpl<Element> : TypedMutableList { // TODO: Remove Impl test
+    public let __rawCollection: KotlinRuntime.KotlinBase
+    public let __conformsTo: ((AnyClass?) -> Bool)
+
+    package init<ElementType>(rawCollection: KotlinRuntime.KotlinBase, conformsTo: ElementType.Type) {
+        self.__rawCollection = rawCollection
+        self.__conformsTo = { wrapperClass in wrapperClass is ElementType }
+    }
 }

@@ -602,14 +602,14 @@ internal sealed interface Bridge {
             override val untypedBridge: BidirectionalBridge,
         ) : AsTyped() {
             context(session: SirSession)
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "${valueExpression}.__rawList"
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "${valueExpression}.__rawCollection"
 
             context(session: SirSession)
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                 val structType = SirNominalType(swiftType.typedStruct, listOf(swiftType.elementType))
                 val structFqName = typeNamer.swiftFqName(structType)
                 val elementMetaFqName = typeNamer.swiftFqName(SirType.Metatype(swiftType.elementType.nonOptional()))
-                return "$structFqName(rawList: $valueExpression, conformsTo: $elementMetaFqName.self)"
+                return "$structFqName(rawCollection: $valueExpression, conformsTo: $elementMetaFqName.self)"
             }
         }
     }

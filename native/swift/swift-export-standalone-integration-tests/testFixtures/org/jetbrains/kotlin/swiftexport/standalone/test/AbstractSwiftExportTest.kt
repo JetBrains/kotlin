@@ -48,7 +48,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
     * execution and generation context, simulating a case when a user has a dependency in their Gradle project.
     * */
     var givenModules: Set<TestModule.Given> = emptySet()
-    var minOSVersion: String? = null
+    var minOSVersion: String? = "13.0"
 
     /**
      * Single target gate for all Swift Export suites: skips (does not fail) the test when its `testTarget`

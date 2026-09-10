@@ -69,6 +69,9 @@ public class SirTypeProviderImpl(
             .handleErrors(ctx.reportErrorType, ctx.reportUnsupportedType)
             .handleImports(ctx.processTypeImports)
 
+    private val KaUsualClassType.isCollectionV2Type: Boolean
+        get() = collectionsV2 && classId in listOf(StandardClassIds.List, StandardClassIds.MutableList)
+
     @OptIn(KaNonPublicApi::class)
     private fun buildSirType(ktType: KaType, ctx: TypeTranslationCtx): SirType {
         fun buildRegularType(kaType: KaType): SirType = sirSession.withSessions {
@@ -79,7 +82,8 @@ public class SirTypeProviderImpl(
                         kaType.classId == KaStandardTypeClassIds.ANY -> ctx.anyRepresentativeType()
 
                         else -> {
-                            if (sirSession.isClassIdSupported(kaType.classId)) {
+                            val isCollectionV2Type = kaType.isCollectionV2Type
+                            if (!isCollectionV2Type && sirSession.isClassIdSupported(kaType.classId)) {
                                 val bridgeWrapper = kaType.toSirTypeBridge(ctx)
                                 if (bridgeWrapper != null) return@withSessions bridgeWrapper.bridge.swiftType.optionalIfNeeded(kaType)
                                 if (kaType.classId in COLLECTION_CLASS_IDS) return@withSessions SirUnsupportedType
@@ -114,6 +118,38 @@ public class SirTypeProviderImpl(
                                                 STATE_FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinTypedStateFlowImpl
                                                 MUTABLE_STATE_FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinTypedMutableStateFlowImpl
                                                 else -> KotlinCoroutineSupportModule.kotlinTypedFlowImpl
+                                            },
+                                            elementType = translatedElement,
+                                            untypedType = untypedType,
+                                        ).optionalIfNeeded(kaType)
+                                    }
+                                }
+                            }
+
+                            if (isCollectionV2Type) {
+                                val protocol = kaType.symbol.toSir().primaryDeclaration as SirProtocol
+                                val elementArg = kaType.typeArguments.singleOrNull()
+                                if (elementArg is KaTypeArgumentWithVariance) {
+                                    val elementType = elementArg.type
+                                    val translatedElement = when {
+                                        elementType.classId == KaStandardTypeClassIds.UNIT ->
+                                            ctx.anyRepresentativeType().optionalIfNeeded(elementType)
+
+                                        else -> elementType.translateType(ctx)
+                                    }
+                                    if (translatedElement !is SirErrorType && translatedElement !is SirUnsupportedType) {
+                                        val kotlinType = SirExistentialType(protocol to listOf(translatedElement))
+                                        val untypedType = SirExistentialType.Untyped(kotlinType)
+                                        return@withSessions SirTypedListType(
+                                            typedProtocol = when (kaType.classId) {
+                                                StandardClassIds.List -> KotlinRuntimeSupportModule.typedList
+                                                StandardClassIds.MutableList -> KotlinRuntimeSupportModule.typedMutableList
+                                                else -> KotlinRuntimeSupportModule.typedList
+                                            },
+                                            typedStruct = when (kaType.classId) {
+                                                StandardClassIds.List -> KotlinRuntimeSupportModule.typedListImpl
+                                                StandardClassIds.MutableList -> KotlinRuntimeSupportModule.typedMutableListImpl
+                                                else -> KotlinRuntimeSupportModule.typedListImpl
                                             },
                                             elementType = translatedElement,
                                             untypedType = untypedType,
