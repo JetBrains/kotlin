@@ -1,0 +1,140 @@
+@NoArgsConstructor
+open class ConstructorExample {
+  var boolean: Boolean
+    field = boolean
+    get
+    set
+
+  var char: Char
+    field = char
+    get
+    set
+
+  var int: Int
+    field = int
+    get
+    set
+
+  var str: String
+    field = str
+    get
+    set
+
+  constructor() {
+    super/*Any*/()
+  }
+
+  constructor(boolean: Boolean, char: Char, int: Int, str: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@NoArgsConstructor(force = true)
+@JvmInline
+value class ConstructorExampleOnValueClass {
+  val value: Int
+    field = value
+    get
+
+  constructor(value: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      other !is ConstructorExampleOnValueClass -> return false
+    }
+    val tmp_0: ConstructorExampleOnValueClass = other /*as ConstructorExampleOnValueClass */
+    when {
+      EQEQ(arg0 = <this>.#value, arg1 = tmp_0.#value).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#value.hashCode()
+  }
+
+  override fun toString(): String {
+    return "ConstructorExampleOnValueClass(" + "value=" + <this>.#value + ")"
+  }
+
+}
+
+@NoArgsConstructor(force = true)
+class ConstructorExampleWithForce {
+  val int: Int
+    field = int
+    get
+
+  val x: Int
+    field = 5
+    get
+
+  val z: String /* by */
+    field = lazy<String>(initializer = local fun <anonymous>(): String {
+      return "TEST"
+    }
+)
+    get(): String {
+      return getValue<String>(/* <this> = <this>.#z$delegate, */ thisRef = <this>, property = KProperty1<ConstructorExampleWithForce, String>(
+        /* bound = */ [],
+        /* getter = */        local fun(p0: ConstructorExampleWithForce): String {
+          return p0.<get-z>()
+        }
+      )
+)
+    }
+
+  constructor() {
+    super/*Any*/()
+  }
+
+  constructor(int: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val y: String
+    get(): String {
+      return "y"
+    }
+
+}
+
+@NoArgsConstructor
+class ConstructorExampleWithGenerics<T : Any?> {
+  var param: T
+    field = param
+    get
+    set
+
+  constructor() {
+    super/*Any*/()
+  }
+
+  constructor(param: T) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun box(): String {
+  val zeroObject: ConstructorExample = ConstructorExample()
+  assertEquals<Boolean>(a = false, b = zeroObject.<get-boolean>())
+  assertEquals<Char>(a = Char(code = 0), b = zeroObject.<get-char>())
+  assertEquals<Int>(a = 0, b = zeroObject.<get-int>())
+  assertEquals<String?>(a = null, b = zeroObject.<get-str>())
+  val zeroObjectWithGenerics: ConstructorExampleWithGenerics<Int> = ConstructorExampleWithGenerics<Int>()
+  assertEquals<Int?>(a = null, b = zeroObjectWithGenerics.<get-param>())
+  assertEquals<Int>(a = 0, b = ConstructorExampleWithForce().<get-int>())
+  return "OK"
+}

@@ -16,14 +16,10 @@ FILE: noArgsConstructorStatic.kt
         public final val str: R|kotlin/String| = R|<local>/str|
             public get(): R|kotlin/String|
 
-        public constructor(): R|ConstructorExampleStatic| {
-            super<R|kotlin/Any|>()
-        }
+        public constructor(): R|ConstructorExampleStatic|
 
         public final companion object Companion : R|kotlin/Any| {
-            @R|kotlin/jvm/JvmStatic|() public final fun make(): R|ConstructorExampleStatic| {
-                ^make R|/ConstructorExampleStatic|()
-            }
+            @R|kotlin/jvm/JvmStatic|() public final fun make(): R|ConstructorExampleStatic|
 
             private constructor(): R|ConstructorExampleStatic.Companion| {
                 super<R|kotlin/Any|>()
@@ -49,15 +45,11 @@ FILE: noArgsConstructorStatic.kt
                 ^make Int(42)
             }
 
-            @R|kotlin/jvm/JvmStatic|() public final fun make(): R|ConstructorExampleStaticWithCompanion| {
-                ^make R|/ConstructorExampleStaticWithCompanion|()
-            }
+            @R|kotlin/jvm/JvmStatic|() public final fun make(): R|ConstructorExampleStaticWithCompanion|
 
         }
 
-        public constructor(): R|ConstructorExampleStaticWithCompanion| {
-            super<R|kotlin/Any|>()
-        }
+        public constructor(): R|ConstructorExampleStaticWithCompanion|
 
     }
     @R|lombok/NoArgsConstructor|(staticName = String(make) [evaluated = String(make)], force = Boolean(true) [evaluated = Boolean(true)]) public final class ConstructorExampleStaticWithGenerics<T> : R|kotlin/Any| {
@@ -68,14 +60,10 @@ FILE: noArgsConstructorStatic.kt
         public final val param: R|T| = R|<local>/param|
             public get(): R|T|
 
-        public constructor<T>(): R|ConstructorExampleStaticWithGenerics<T>| {
-            super<R|kotlin/Any|>()
-        }
+        public constructor<T>(): R|ConstructorExampleStaticWithGenerics<T>|
 
         public final companion object Companion : R|kotlin/Any| {
-            @R|kotlin/jvm/JvmStatic|() public final fun <T> make(): R|ConstructorExampleStaticWithGenerics<T>| {
-                ^make R|/ConstructorExampleStaticWithGenerics|<R|T|>()
-            }
+            @R|kotlin/jvm/JvmStatic|() public final fun <T> make(): R|ConstructorExampleStaticWithGenerics<T>|
 
             private constructor(): R|ConstructorExampleStaticWithGenerics.Companion| {
                 super<R|kotlin/Any|>()
@@ -92,14 +80,10 @@ FILE: noArgsConstructorStatic.kt
         public final val param: R|T| = R|<local>/param|
             public get(): R|T|
 
-        public constructor<T : R|kotlin/Comparable<T>|>(): R|ConstructorExampleStaticWithBoundedGenerics<T>| {
-            super<R|kotlin/Any|>()
-        }
+        public constructor<T : R|kotlin/Comparable<T>|>(): R|ConstructorExampleStaticWithBoundedGenerics<T>|
 
         public final companion object Companion : R|kotlin/Any| {
-            @R|kotlin/jvm/JvmStatic|() public final fun <T : R|kotlin/Comparable<T>|> make(): R|ConstructorExampleStaticWithBoundedGenerics<T>| {
-                ^make R|/ConstructorExampleStaticWithBoundedGenerics|<R|T|>()
-            }
+            @R|kotlin/jvm/JvmStatic|() public final fun <T : R|kotlin/Comparable<T>|> make(): R|ConstructorExampleStaticWithBoundedGenerics<T>|
 
             private constructor(): R|ConstructorExampleStaticWithBoundedGenerics.Companion| {
                 super<R|kotlin/Any|>()
