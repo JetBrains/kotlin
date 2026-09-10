@@ -37,7 +37,7 @@ object ClasspathEntrySnapshotter {
     fun snapshot(
         classpathEntry: File,
         settings: Settings,
-        metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric> = DoNothingBuildMetricsReporter
+        metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric> = DoNothingBuildMetricsReporter,
     ): ClasspathEntrySnapshot {
         DirectoryOrJarReader.create(classpathEntry).use { directoryOrJarReader ->
             val classes = metrics.measure(LOAD_CLASSES_PATHS_ONLY) {
@@ -94,8 +94,11 @@ private class DirectoryReader(private val directory: File) : DirectoryOrJarReade
 
     override fun getUnixStyleRelativePaths(filter: (unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean): List<String> {
         return directory.walk()
-            .filter { filter.invoke(it.relativeTo(directory).invariantSeparatorsPath, it.isDirectory) }
-            .map { it.relativeTo(directory).invariantSeparatorsPath }
+            .mapNotNull { file ->
+                val relativePath = file.relativeTo(directory).invariantSeparatorsPath
+                if (!filter.invoke(relativePath, file.isDirectory)) return@mapNotNull null
+                relativePath
+            }
             .sorted()
             .toList()
     }
