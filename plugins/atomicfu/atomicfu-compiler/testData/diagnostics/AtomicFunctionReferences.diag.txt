@@ -1,0 +1,3 @@
+/AtomicFunctionReferences.kt:14:17: error: Callable references to atomic member or extension functions are prohibited.
+
+/AtomicFunctionReferences.kt:16:18: error: Callable references to atomic member or extension functions are prohibited.

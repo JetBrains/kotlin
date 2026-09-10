@@ -1,0 +1,17 @@
+/CallAnyFunctions.kt:15:13: error: Calling equals/hashCode/toString functions on atomic properties is not supported.
+
+/CallAnyFunctions.kt:16:13: error: Calling equals/hashCode/toString functions on atomic properties is not supported.
+
+/CallAnyFunctions.kt:17:13: error: Calling equals/hashCode/toString functions on atomic properties is not supported.
+
+/CallAnyFunctions.kt:19:13: error: Calling equals/hashCode/toString functions on atomic properties is not supported.
+
+/CallAnyFunctions.kt:20:13: error: Calling equals/hashCode/toString functions on atomic properties is not supported.
+
+/CallAnyFunctions.kt:21:13: error: Calling equals/hashCode/toString functions on atomic properties is not supported.
+
+/CallAnyFunctions.kt:23:13: error: Calling equals/hashCode/toString functions on atomic properties is not supported.
+
+/CallAnyFunctions.kt:24:13: error: Calling equals/hashCode/toString functions on atomic properties is not supported.
+
+/CallAnyFunctions.kt:25:13: error: Calling equals/hashCode/toString functions on atomic properties is not supported.
