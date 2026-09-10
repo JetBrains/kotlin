@@ -1919,15 +1919,27 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/export/Sw
 	public abstract fun xcodeIntegration (Lorg/gradle/api/Action;)V
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportDependencyOptionsDsl : org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportModuleOptionsDsl {
+	public abstract fun getVisibility ()Lorg/gradle/api/provider/Property;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportIntegration {
 	public abstract fun configure (Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)V
 	public abstract fun configure (Ljava/lang/Object;Lorg/gradle/api/Action;)V
+	public abstract fun configure (Ljava/lang/Object;Lorg/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportVisibility;)V
 	public abstract fun getSettings ()Lorg/gradle/api/provider/MapProperty;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportModuleOptionsDsl {
 	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 	public abstract fun getRootPackage ()Lorg/gradle/api/provider/Property;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportVisibility : java/lang/Enum {
+	public static final field EXPOSED Lorg/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportVisibility;
+	public static final field HIDDEN Lorg/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportVisibility;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportVisibility;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportVisibility;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportXcodeIntegration : org/jetbrains/kotlin/gradle/plugin/mpp/export/SwiftExportIntegration {
