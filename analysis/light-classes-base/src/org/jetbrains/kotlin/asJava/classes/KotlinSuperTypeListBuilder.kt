@@ -27,6 +27,7 @@ class KotlinSuperTypeListBuilder(
     role,
 ) {
     override fun getParent(): PsiElement = parent
+    override fun getContainingFile(): PsiFile? = parent.containingFile
 
     private val myKotlinOrigin: KtSuperTypeList? = kotlinOrigin
 

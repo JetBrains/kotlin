@@ -79,6 +79,7 @@ internal class LightTypeElementWithParent(
     type: PsiType,
 ) : LightTypeElement(lightParent.manager, type) {
     override fun getParent(): PsiElement = lightParent
+    override fun getContainingFile(): PsiFile? = lightParent.containingFile
 
     /**
      * Avoids delegating to [LightTypeElement.isValid][com.intellij.psi.impl.light.LightTypeElement.isValid]
