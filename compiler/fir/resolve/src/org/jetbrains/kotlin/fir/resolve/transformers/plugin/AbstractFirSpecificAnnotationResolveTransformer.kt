@@ -233,6 +233,9 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             .mapNotNull { (it.toReference(session) as? FirSimpleNamedReference)?.name?.identifier }
             .toList()
 
+        // We could, hypothetically, try "continuing" some existing imported paths further by looking up
+        // the first segment as a classifier or by appending the pre-imported paths as package segments,
+        // but it's non-trivial and we don't have enough motivation for it.
         return when {
             segments.isEmpty() -> scopes.firstNotNullOfOrNull { it.getSingleClassifier(receiver.calleeReference.name) as? FirRegularClassSymbol }
             else -> ClassId(FqName.fromSegments(segments.asReversed()), receiver.calleeReference.name).toSymbol() as? FirRegularClassSymbol
