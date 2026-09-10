@@ -31,13 +31,11 @@ import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackagePartProv
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderFactory
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderMerger
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KotlinAnalysisPermissionOptions
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.standalone.base.KotlinStandalonePlatformSettings
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneAnnotationsResolverFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneDeclarationProviderMerger
-import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneFirCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.modification.KotlinStandaloneModificationTrackerFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageProviderFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalonePackageProviderMerger
@@ -48,13 +46,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElement
 import org.jetbrains.kotlin.analysis.project.structure.builder.KaModuleContainerBuilder
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildModuleContainer
 import org.jetbrains.kotlin.analysis.project.structure.impl.KotlinStandaloneProjectStructureProvider
-import org.jetbrains.kotlin.analysis.project.structure.impl.buildKtModuleProviderByCompilerConfiguration
-import org.jetbrains.kotlin.analysis.project.structure.impl.getPsiFilesFromPaths
-import org.jetbrains.kotlin.analysis.project.structure.impl.getSourceFilePaths
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import kotlin.contracts.ExperimentalContracts
@@ -102,22 +96,6 @@ public class StandaloneAnalysisAPISessionBuilder(
         }
         val [moduleContainer, platform] = buildModuleContainer(kotlinCoreProjectEnvironment.environment, project, init)
         projectStructureProvider = KotlinStandaloneProjectStructureProvider(platform, project, moduleContainer)
-    }
-
-    @Deprecated(
-        "Compiler configuration is not a good fit for specifying multi-module project.",
-        ReplaceWith("buildKtModuleProvider { }"),
-        level = DeprecationLevel.HIDDEN,
-    )
-    public fun buildKtModuleProviderByCompilerConfiguration(
-        compilerConfiguration: CompilerConfiguration,
-    ) {
-        projectStructureProvider = buildKtModuleProviderByCompilerConfiguration(
-            kotlinCoreProjectEnvironment.environment,
-            project,
-            compilerConfiguration,
-            getPsiFilesFromPaths(kotlinCoreProjectEnvironment, getSourceFilePaths(compilerConfiguration)),
-        )
     }
 
     public fun <T : Any> registerApplicationService(serviceInterface: Class<T>, serviceImplementation: T) {
@@ -209,19 +187,6 @@ public class StandaloneAnalysisAPISessionBuilder(
      */
     public fun enableCacheCleaner() {
         isCacheCleanerEnabled = true
-    }
-
-    /**
-     * Registers *optional* services for compiler plugin support.
-     *
-     * @param compilerConfiguration The [CompilerConfiguration] containing information about the registered compiler plugins.
-     */
-    @Deprecated("Obsolete Standalone API", level = DeprecationLevel.HIDDEN)
-    public fun registerCompilerPluginServices(compilerConfiguration: CompilerConfiguration) {
-        registerProjectService(
-            KotlinCompilerPluginsProvider::class.java,
-            KotlinStandaloneFirCompilerPluginsProvider(compilerConfiguration),
-        )
     }
 
     @OptIn(KaExperimentalApi::class)
