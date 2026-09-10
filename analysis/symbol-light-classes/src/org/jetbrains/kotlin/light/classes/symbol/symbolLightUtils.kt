@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.javaInterop.isPrimitiveBacked
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.scopes.memberScope
 import org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope
@@ -27,6 +29,9 @@ import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.asJava.elements.psiType
+import org.jetbrains.kotlin.config.JvmDefaultMode
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.jvmDefaultMode
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterface
@@ -311,6 +316,20 @@ internal val SymbolLightClassBase.isDefaultImplsForInterfaceWithTypeParameters: 
 internal fun KaSymbolPointer<*>.isValid(ktModule: KaModule): Boolean = analyzeForLightClasses(ktModule) {
     restoreSymbol() != null
 }
+
+/**
+ * The `-jvm-default` mode the module is compiled with, or the default mode if the module has no language settings (e.g., a library).
+ */
+internal val KaModule.jvmDefaultMode: JvmDefaultMode
+    get() {
+        val languageVersionSettings = when (this) {
+            is KaSourceModule -> languageVersionSettings
+            is KaScriptModule -> languageVersionSettings
+            else -> LanguageVersionSettingsImpl.DEFAULT
+        }
+
+        return languageVersionSettings.jvmDefaultMode
+    }
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun <T : KaSymbol> compareSymbolPointers(

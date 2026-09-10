@@ -10,7 +10,9 @@ import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.jvmDefaultMode
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
+import org.jetbrains.kotlin.light.classes.symbol.methods.isImplementationWithoutJvmDefault
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.hasBody
@@ -21,15 +23,24 @@ internal class SymbolLightMemberModifierList<T : KtLightMember<*>>(
     annotationsBox: AnnotationsBox = EmptyAnnotationsBox,
 ) : SymbolLightModifierList<T>(containingDeclaration, modifiersBox, annotationsBox) {
     override fun hasModifierProperty(name: String): Boolean = when {
-        name == PsiModifier.ABSTRACT && isImplementationInInterface() -> false
+        name == PsiModifier.ABSTRACT && isJvmDefaultImplementationInInterface() -> false
         // Pretend this method behaves like a `default` method
-        name == PsiModifier.DEFAULT && isImplementationInInterface() && !hasModifierProperty(PsiModifier.STATIC) -> true
+        name == PsiModifier.DEFAULT && isJvmDefaultImplementationInInterface() && !hasModifierProperty(PsiModifier.STATIC) -> true
         // TODO: FINAL && isPossiblyAffectedByAllOpen
         else -> super.hasModifierProperty(name)
     }
 
-    private fun isImplementationInInterface(): Boolean {
-        return owner.containingClass.isInterface && owner is SymbolLightMethodBase && owner.kotlinOrigin?.hasBody() == true
+    /**
+     * Whether the owner is an implementation in an interface which is compiled to a JVM `default` method.
+     *
+     * With `-jvm-default=disable`, the JVM backend moves the implementation to `DefaultImpls` instead, and the method in the
+     * interface itself is abstract, which is reported by the owner, see [isImplementationWithoutJvmDefault].
+     */
+    private fun isJvmDefaultImplementationInInterface(): Boolean {
+        return owner is SymbolLightMethodBase &&
+                owner.containingClass.isInterface &&
+                owner.kotlinOrigin?.hasBody() == true &&
+                owner.ktModule.jvmDefaultMode.isEnabled
     }
 
     override fun hasExplicitModifier(name: String): Boolean {
