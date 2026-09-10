@@ -35,14 +35,14 @@ internal class SymbolLightConstructor private constructor(
     constructorSymbol: KaConstructorSymbol,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
-    jvmExposeBoxedKind: JvmExposeBoxedKind,
+    generationMode: MethodGenerationMode,
     valueParameterPickMask: BitSet? = null,
 ) : SymbolLightMethod<KaConstructorSymbol>(
     functionSymbol = constructorSymbol,
     lightMemberOrigin = null,
     containingClass = containingClass,
     methodIndex = methodIndex,
-    jvmExposeBoxedKind = jvmExposeBoxedKind,
+    generationMode = generationMode,
     valueParameterPickMask = valueParameterPickMask,
 ) {
     private val _name: String? = containingClass.name
@@ -130,26 +130,32 @@ internal class SymbolLightConstructor private constructor(
                             // Private declarations are inaccessible from Java, so they are never exposed as boxed
                             !constructor.isEffectivelyPrivate()
 
-                    if (isBoxedConstructorRequired) {
+                    val generationMode = when {
+                        isBoxedConstructorRequired -> MethodGenerationMode.Boxed(isRegularMethodRequired = !destinationClassIsValueClass)
+
+                        // Only the boxed constructor of a value class can be generated
+                        destinationClassIsValueClass -> null
+
+                        // Explicit mode without a boxed constructor -> the regular constructor retains @JvmExposeBoxed
+                        exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT -> MethodGenerationMode.ExposedAsIs
+                        else -> MethodGenerationMode.Regular
+                    } ?: return@createMethodsJvmOverloadsAware
+
+                    result += SymbolLightConstructor(
+                        constructorSymbol = constructor,
+                        containingClass = lightClass,
+                        methodIndex = methodIndex,
+                        valueParameterPickMask = valueParameterPickMask,
+                        generationMode = generationMode,
+                    )
+
+                    if (generationMode is MethodGenerationMode.Boxed && generationMode.isRegularMethodRequired) {
                         result += SymbolLightConstructor(
                             constructorSymbol = constructor,
                             containingClass = lightClass,
                             methodIndex = methodIndex,
                             valueParameterPickMask = valueParameterPickMask,
-                            jvmExposeBoxedKind = JvmExposeBoxedKind.BOXED,
-                        )
-                    }
-
-                    if (!destinationClassIsValueClass) {
-                        val isExposedAsIs = exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT && !isBoxedConstructorRequired
-                        val jvmExposeBoxedKind = if (isExposedAsIs) JvmExposeBoxedKind.EXPOSED_AS_IS else JvmExposeBoxedKind.REGULAR
-
-                        result += SymbolLightConstructor(
-                            constructorSymbol = constructor,
-                            containingClass = lightClass,
-                            methodIndex = methodIndex,
-                            valueParameterPickMask = valueParameterPickMask,
-                            jvmExposeBoxedKind = jvmExposeBoxedKind,
+                            generationMode = MethodGenerationMode.Regular,
                         )
                     }
                 }
@@ -161,14 +167,14 @@ internal class SymbolLightConstructor private constructor(
                     !destinationClassIsValueClass -> {
                         result += lightClass.noArgConstructor(
                             primaryConstructor = primaryConstructor,
-                            jvmExposeBoxedKind = JvmExposeBoxedKind.REGULAR,
+                            generationMode = MethodGenerationMode.Regular,
                         )
                     }
 
                     primaryConstructor.jvmExposeBoxedMode() != JvmExposeBoxedMode.NONE && !primaryConstructor.isEffectivelyPrivate() -> {
                         result += lightClass.noArgConstructor(
                             primaryConstructor = primaryConstructor,
-                            jvmExposeBoxedKind = JvmExposeBoxedKind.BOXED,
+                            generationMode = MethodGenerationMode.Boxed(isRegularMethodRequired = false),
                         )
                     }
                 }
@@ -217,19 +223,19 @@ internal class SymbolLightConstructor private constructor(
                 visibility,
                 classOrObject,
                 METHOD_INDEX_FOR_DEFAULT_CTOR,
-                jvmExposeBoxedKind = JvmExposeBoxedKind.REGULAR,
+                generationMode = MethodGenerationMode.Regular,
                 functionSymbolPointer = null,
             )
         }
 
         private fun SymbolLightClassBase.noArgConstructor(
             primaryConstructor: KaConstructorSymbol,
-            jvmExposeBoxedKind: JvmExposeBoxedKind,
+            generationMode: MethodGenerationMode,
         ): KtLightMethod = noArgConstructor(
             visibility = primaryConstructor.visibility.asJavaVisibilityModifier(),
             declaration = primaryConstructor.sourcePsiSafe(),
             methodIndex = METHOD_INDEX_FOR_NO_ARG_OVERLOAD_CTOR,
-            jvmExposeBoxedKind = jvmExposeBoxedKind,
+            generationMode = generationMode,
             functionSymbolPointer = primaryConstructor.createPointer(),
         )
 
@@ -237,7 +243,7 @@ internal class SymbolLightConstructor private constructor(
             visibility: String,
             declaration: KtDeclaration?,
             methodIndex: Int,
-            jvmExposeBoxedKind: JvmExposeBoxedKind,
+            generationMode: MethodGenerationMode,
             functionSymbolPointer: KaSymbolPointer<KaConstructorSymbol>?,
         ): KtLightMethod = SymbolLightNoArgConstructor(
             lightMemberOrigin = declaration?.let {
@@ -249,7 +255,7 @@ internal class SymbolLightConstructor private constructor(
             containingClass = this,
             visibility = visibility,
             methodIndex = methodIndex,
-            jvmExposeBoxedKind = jvmExposeBoxedKind,
+            generationMode = generationMode,
             functionSymbolPointer = functionSymbolPointer,
         )
     }

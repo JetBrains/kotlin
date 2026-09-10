@@ -38,12 +38,12 @@ internal abstract class SymbolLightMethodBase(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     protected val methodIndex: Int,
-    val jvmExposeBoxedKind: JvmExposeBoxedKind,
+    val generationMode: MethodGenerationMode,
 ) : SymbolLightMemberBase<PsiMethod>(lightMemberOrigin, containingClass), KtLightMethod {
     /**
      * Whether this method is the Java-facing declaration whose value-class types are boxed.
      */
-    val isJvmExposedBoxed: Boolean get() = jvmExposeBoxedKind == JvmExposeBoxedKind.BOXED
+    val isJvmExposedBoxed: Boolean get() = generationMode is MethodGenerationMode.Boxed
 
     override fun getBody(): PsiCodeBlock? = null
 
@@ -124,20 +124,20 @@ internal abstract class SymbolLightMethodBase(
     /**
      * Computes the Java name of [symbol] for the declaration represented by this light method.
      *
-     * Regular JVM naming applies to [JvmExposeBoxedKind.REGULAR] declarations. An explicit [JvmExposeBoxed] name takes precedence for
-     * [JvmExposeBoxedKind.BOXED] declarations. For [JvmExposeBoxedKind.EXPOSED_AS_IS], [JvmName] takes precedence over [JvmExposeBoxed].
+     * Regular JVM naming applies in [MethodGenerationMode.Regular]. An explicit [JvmExposeBoxed] name takes precedence in
+     * [MethodGenerationMode.Boxed]. In [MethodGenerationMode.ExposedAsIs], [JvmName] takes precedence over [JvmExposeBoxed].
      *
      * Names supplied by either annotation are not subject to `internal` mangling.
      */
     context(_: KaSession)
     protected fun computeMethodName(symbol: KaFunctionSymbol, defaultName: String): String {
-        val methodName = when (jvmExposeBoxedKind) {
-            JvmExposeBoxedKind.REGULAR -> symbol.javaMethodName
-            JvmExposeBoxedKind.BOXED -> {
+        val methodName = when (generationMode) {
+            MethodGenerationMode.Regular -> symbol.javaMethodName
+            is MethodGenerationMode.Boxed -> {
                 symbol.getJvmExposeBoxedNameFromAnnotation()
                     ?: computeJavaMethodName(symbol, defaultName, ignoreValueClassMangling = true)
             }
-            JvmExposeBoxedKind.EXPOSED_AS_IS -> {
+            MethodGenerationMode.ExposedAsIs -> {
                 symbol.jvmNameFromAnnotation ?: symbol.getJvmExposeBoxedNameFromAnnotation() ?: symbol.javaMethodName
             }
         }
@@ -150,10 +150,10 @@ internal abstract class SymbolLightMethodBase(
     internal open fun suppressWildcards(): Boolean? = null
 
     protected val jvmExposeBoxedAwareAnnotationFilter: AnnotationFilter
-        get() = when (jvmExposeBoxedKind) {
-            JvmExposeBoxedKind.REGULAR -> ExcludeAnnotationFilter.JvmExposeBoxed
-            JvmExposeBoxedKind.BOXED -> ExcludeAnnotationFilter.JvmName
-            JvmExposeBoxedKind.EXPOSED_AS_IS -> AlwaysAllowedAnnotationFilter
+        get() = when (generationMode) {
+            MethodGenerationMode.Regular -> ExcludeAnnotationFilter.JvmExposeBoxed
+            is MethodGenerationMode.Boxed -> ExcludeAnnotationFilter.JvmName
+            MethodGenerationMode.ExposedAsIs -> AlwaysAllowedAnnotationFilter
         }
 
     // Inspired by KotlinTypeMapper#forceBoxedReturnType

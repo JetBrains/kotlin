@@ -57,7 +57,7 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
     lightMemberOrigin = null,
     containingClass = containingClass,
     methodIndex = METHOD_INDEX_BASE,
-    jvmExposeBoxedKind = JvmExposeBoxedKind.REGULAR,
+    generationMode = MethodGenerationMode.Regular,
 ),
     SyntheticElement {
 

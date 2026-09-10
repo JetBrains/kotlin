@@ -26,7 +26,7 @@ internal sealed class SymbolLightMethodForScript(
     lightMemberOrigin = LightMemberOriginForDeclaration(ktScript, JvmDeclarationOriginKind.OTHER),
     containingClass = containingClass,
     methodIndex = methodIndex,
-    jvmExposeBoxedKind = JvmExposeBoxedKind.REGULAR,
+    generationMode = MethodGenerationMode.Regular,
 ) {
     abstract override fun getName(): String
 

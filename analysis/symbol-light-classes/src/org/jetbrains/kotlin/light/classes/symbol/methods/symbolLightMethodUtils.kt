@@ -75,45 +75,34 @@ internal fun KaCallableSymbol.jvmExposeBoxedMode(): JvmExposeBoxedMode {
 }
 
 /**
- * Describes the JVM form represented by a symbol light method.
+ * Describes which light methods are generated for a callable and how each of them behaves.
  *
- * For declarations affected by [JvmExposeBoxed], this kind controls type mapping, Java naming, and annotation visibility.
- * An exposed callable usually has two JVM declarations: its ordinary [REGULAR] declaration and a Java-facing [BOXED]
- * wrapper. [EXPOSED_AS_IS] represents an explicitly annotated callable for which the JVM backend emits no separate wrapper.
+ * The mode controls the JVM type mapping, the Java name, and the visible annotations of a light method.
  */
-internal enum class JvmExposeBoxedKind {
+internal sealed class MethodGenerationMode {
     /**
-     * The ordinary JVM declaration.
+     * The regular method with the ordinary JVM type mapping and naming rules.
      *
-     * It uses normal JVM type mapping and naming rules. When a separate [BOXED] wrapper is generated, [JvmExposeBoxed]
-     * is associated with that wrapper and is omitted from this declaration.
+     * [JvmExposeBoxed] is omitted from it, as the annotation belongs to the [Boxed] method.
      */
-    REGULAR,
+    object Regular : MethodGenerationMode()
 
     /**
-     * The Java-facing wrapper generated for boxed exposure.
+     * The boxed method whose value-class parameter and return types use boxed JVM representations.
      *
-     * Value-class parameter and return types use boxed JVM representations. For named callables,
-     * [JvmExposeBoxed.jvmName] takes precedence over [JvmName]. The wrapper retains [JvmExposeBoxed] and omits [JvmName].
+     * [JvmExposeBoxed.jvmName] takes precedence over [JvmName], and [JvmName] is omitted from the method.
+     *
+     * @property isRegularMethodRequired whether the [Regular] method is generated in addition to the boxed one
      */
-    BOXED,
+    data class Boxed(val isRegularMethodRequired: Boolean) : MethodGenerationMode()
 
     /**
-     * The sole JVM declaration emitted for an explicitly annotated callable when no separate [BOXED] wrapper is generated.
+     * The only method generated for an explicitly annotated callable when the JVM backend emits no separate [Boxed] method.
      *
-     * It uses normal JVM type mapping but retains both [JvmExposeBoxed] and [JvmName]. For named callables,
+     * It uses the ordinary JVM type mapping but retains both [JvmExposeBoxed] and [JvmName].
      * [JvmName] takes precedence over [JvmExposeBoxed.jvmName].
      */
-    EXPOSED_AS_IS,
-}
-
-internal class MethodGenerationResult(
-    val isRegularMethodRequired: Boolean,
-    val isBoxedMethodRequired: Boolean,
-    /** The [JvmExposeBoxedKind] of the regular method, if one is generated. */
-    val regularMethodKind: JvmExposeBoxedKind,
-) {
-    val isAnyMethodRequired: Boolean get() = isRegularMethodRequired || isBoxedMethodRequired
+    object ExposedAsIs : MethodGenerationMode()
 }
 
 /**
@@ -146,6 +135,7 @@ internal fun KaDeclarationSymbol.isEffectivelyPrivate(): Boolean {
  * @param hasJvmNameAnnotation Whether the method has a [JvmName] annotation.
  * @param isOverridable Whether the method can be overridden.
  * @param isEffectivelyPrivate Whether the method is effectively private and therefore must not be exposed. @see isEffectivelyPrivate
+ * @return the [MethodGenerationMode] of the methods to generate, or `null` if no method is required
  */
 internal fun methodGeneration(
     exposeBoxedMode: JvmExposeBoxedMode,
@@ -156,7 +146,7 @@ internal fun methodGeneration(
     isSuspend: Boolean,
     isOverridable: Boolean,
     isEffectivelyPrivate: Boolean,
-): MethodGenerationResult {
+): MethodGenerationMode? {
     // Explicit mode -> a boxed method is requested (even if it is a JVM name clash)
     val isBoxedAccessorRequestedExplicitly = exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT &&
             !isEffectivelyPrivate &&
@@ -193,14 +183,14 @@ internal fun methodGeneration(
         else -> hasValueClassInParameterType
     }
 
-    val isExposedAsIs = exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT && !isAffectedByValueClass && !isBoxedMethodRequired
-    val regularMethodKind = if (isExposedAsIs) JvmExposeBoxedKind.EXPOSED_AS_IS else JvmExposeBoxedKind.REGULAR
+    return when {
+        isBoxedMethodRequired -> MethodGenerationMode.Boxed(isRegularMethodRequired)
+        !isRegularMethodRequired -> null
 
-    return MethodGenerationResult(
-        isRegularMethodRequired = isRegularMethodRequired,
-        isBoxedMethodRequired = isBoxedMethodRequired,
-        regularMethodKind = regularMethodKind,
-    )
+        // Explicit mode without a boxed method -> the regular method retains @JvmExposeBoxed
+        exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT && !isAffectedByValueClass -> MethodGenerationMode.ExposedAsIs
+        else -> MethodGenerationMode.Regular
+    }
 }
 
 /**

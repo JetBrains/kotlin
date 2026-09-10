@@ -49,7 +49,7 @@ internal class SymbolLightMethodForMappedKotlinCollectionMethod(
     isTopLevel = false,
     valueParameterPickMask = null,
     suppressStatic = false,
-    jvmExposeBoxedKind = JvmExposeBoxedKind.REGULAR,
+    generationMode = MethodGenerationMode.Regular,
 ) {
     init {
         val javaParameters = javaMethod.parameterList.parameters

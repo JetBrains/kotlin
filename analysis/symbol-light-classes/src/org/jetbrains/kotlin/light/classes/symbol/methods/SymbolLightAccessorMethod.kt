@@ -49,12 +49,12 @@ internal class SymbolLightAccessorMethod private constructor(
     private val containingPropertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
     private val isTopLevel: Boolean,
     private val suppressStatic: Boolean,
-    jvmExposeBoxedKind: JvmExposeBoxedKind,
+    generationMode: MethodGenerationMode,
 ) : SymbolLightMethodBase(
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     methodIndex = methodIndex,
-    jvmExposeBoxedKind = jvmExposeBoxedKind,
+    generationMode = generationMode,
 ) {
     private constructor(
         propertyAccessorSymbol: KaPropertyAccessorSymbol,
@@ -63,7 +63,7 @@ internal class SymbolLightAccessorMethod private constructor(
         containingClass: SymbolLightClassBase,
         isTopLevel: Boolean,
         suppressStatic: Boolean,
-        jvmExposeBoxedKind: JvmExposeBoxedKind,
+        generationMode: MethodGenerationMode,
     ) : this(
         lightMemberOrigin,
         containingClass,
@@ -75,7 +75,7 @@ internal class SymbolLightAccessorMethod private constructor(
         containingPropertySymbolPointer = containingPropertySymbol.createPointer(),
         isTopLevel = isTopLevel,
         suppressStatic = suppressStatic,
-        jvmExposeBoxedKind = jvmExposeBoxedKind,
+        generationMode = generationMode,
     )
 
     private val KaPropertySymbol.accessorSymbol: KaPropertyAccessorSymbol
@@ -265,7 +265,7 @@ internal class SymbolLightAccessorMethod private constructor(
             other.isGetter != isGetter ||
             other.isTopLevel != isTopLevel ||
             other.suppressStatic != suppressStatic ||
-            other.jvmExposeBoxedKind != jvmExposeBoxedKind ||
+            other.generationMode != generationMode ||
             other.ktModule != ktModule
         ) return false
 
@@ -518,7 +518,7 @@ internal class SymbolLightAccessorMethod private constructor(
                         // Overrides are materialized by default
                         !property.isOverride
 
-            val generationResult = methodGeneration(
+            val generationMode = methodGeneration(
                 exposeBoxedMode = exposeBoxedMode,
                 hasValueClassInParameterType = hasValueClassInParameterType,
                 hasValueClassInReturnType = hasValueClassInReturnType,
@@ -528,25 +528,21 @@ internal class SymbolLightAccessorMethod private constructor(
                 isOverridable = accessor.isOverridable(),
                 // An accessor may be private while its property is not (e.g. `var p: IC; private set(value) {}`)
                 isEffectivelyPrivate = accessor.visibility == KaSymbolVisibility.PRIVATE || property.isEffectivelyPrivate(),
-            )
-
-            if (!generationResult.isAnyMethodRequired) return
+            ) ?: return
 
             val lightMemberOrigin = getLightMemberOriginForAccessor(accessor)
 
-            if (generationResult.isBoxedMethodRequired) {
-                result += SymbolLightAccessorMethod(
-                    propertyAccessorSymbol = accessor,
-                    containingPropertySymbol = property,
-                    lightMemberOrigin = lightMemberOrigin,
-                    containingClass = context.destinationLightClass,
-                    isTopLevel = context.isTopLevel,
-                    suppressStatic = context.suppressStatic,
-                    jvmExposeBoxedKind = JvmExposeBoxedKind.BOXED,
-                )
-            }
+            result += SymbolLightAccessorMethod(
+                propertyAccessorSymbol = accessor,
+                containingPropertySymbol = property,
+                lightMemberOrigin = lightMemberOrigin,
+                containingClass = context.destinationLightClass,
+                isTopLevel = context.isTopLevel,
+                suppressStatic = context.suppressStatic,
+                generationMode = generationMode,
+            )
 
-            if (generationResult.isRegularMethodRequired) {
+            if (generationMode is MethodGenerationMode.Boxed && generationMode.isRegularMethodRequired) {
                 result += SymbolLightAccessorMethod(
                     propertyAccessorSymbol = accessor,
                     containingPropertySymbol = property,
@@ -554,7 +550,7 @@ internal class SymbolLightAccessorMethod private constructor(
                     containingClass = context.destinationLightClass,
                     isTopLevel = context.isTopLevel,
                     suppressStatic = context.suppressStatic,
-                    jvmExposeBoxedKind = generationResult.regularMethodKind,
+                    generationMode = MethodGenerationMode.Regular,
                 )
             }
         }
