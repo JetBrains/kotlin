@@ -126,6 +126,7 @@ Js:
  - js/js.translator/src
  - js/npm
  - js/typescript-export-standalone
+ - js/typescript-export-standalone-embeddable
 
 Native:
  - compiler/ir/backend.native
