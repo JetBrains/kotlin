@@ -245,20 +245,22 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         kind: KtFakeSourceElementKind?,
         convertOnlyFirstStatement: Boolean,
     ): FirBlockBuilder {
-        val firStatements = block.forEachChildrenReturnList { node, container ->
-            if (!convertOnlyFirstStatement || container.isEmpty()) {
-                when (node.toTokenId()) {
-                    KtNodeTypes.CLASS_ID, KtNodeTypes.OBJECT_DECLARATION_ID -> container += convertClass(node) as FirStatement
-                    KtNodeTypes.FUNCTION_ID -> container += convertFunctionDeclaration(node)
-                    KtNodeTypes.PROPERTY_ID -> container += convertPropertyDeclaration(node) as FirStatement
-                    KtNodeTypes.DESTRUCTURING_DECLARATION_ID -> container +=
-                        convertDestructingDeclaration(node).toFirDestructingDeclaration(this, context, baseModuleData)
-                    KtNodeTypes.TYPEALIAS_ID -> container += convertTypeAlias(node) as FirStatement
-                    KtNodeTypes.CLASS_INITIALIZER_ID -> shouldNotBeCalled("CLASS_INITIALIZER expected to be processed during class body conversion")
-                    else -> if (node.isExpression()) container += expressionConverter.getAsFirStatement(node)
+        val firStatements = block.forEachChildrenReturnList(object : ChildrenHandlerWithResultAccumulation<Node, FirStatement>() {
+            override fun handle(child: Node) {
+                if (!convertOnlyFirstStatement || container.isEmpty()) {
+                    when (child.toTokenId()) {
+                        KtNodeTypes.CLASS_ID, KtNodeTypes.OBJECT_DECLARATION_ID -> container += convertClass(child) as FirStatement
+                        KtNodeTypes.FUNCTION_ID -> container += convertFunctionDeclaration(child)
+                        KtNodeTypes.PROPERTY_ID -> container += convertPropertyDeclaration(child) as FirStatement
+                        KtNodeTypes.DESTRUCTURING_DECLARATION_ID -> container +=
+                            convertDestructingDeclaration(child).toFirDestructingDeclaration(this@TreeRawFirDeclarationBuilderProxy, context, baseModuleData)
+                        KtNodeTypes.TYPEALIAS_ID -> container += convertTypeAlias(child) as FirStatement
+                        KtNodeTypes.CLASS_INITIALIZER_ID -> shouldNotBeCalled("CLASS_INITIALIZER expected to be processed during class body conversion")
+                        else -> if (child.isExpression()) container += expressionConverter.getAsFirStatement(child)
+                    }
                 }
             }
-        }
+        })
         return FirBlockBuilder().apply {
             source = block.toFirSourceElement(kind)
             firStatements.forEach { firStatement ->
@@ -331,7 +333,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         var result: Pair<String, KtSourceElement>? = null
         importAlias.forEachChildren(object : ChildrenHandler<Node>() {
             override fun handle(child: Node) {
-                if (result != null) return@handle
+                if (result != null) return
                 when (child.toTokenId()) {
                     KtTokens.IDENTIFIER_ID -> result = Pair(child.asText, child.toFirSourceElement())
                 }
@@ -397,11 +399,13 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseImportDirectives
      */
     private fun convertImportDirectives(importList: Node): List<FirImport> {
-        return importList.forEachChildrenReturnList { node, container ->
-            when (node.toTokenId()) {
-                KtNodeTypes.IMPORT_DIRECTIVE_ID -> container += convertImportDirective(node)
+        return importList.forEachChildrenReturnList(object : ChildrenHandlerWithResultAccumulation<Node, FirImport>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.IMPORT_DIRECTIVE_ID -> container += convertImportDirective(child)
+                }
             }
-        }
+        })
     }
 
     /*****    MODIFIERS    *****/
@@ -1071,9 +1075,11 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
      */
     private fun convertClassBody(classBody: Node, classWrapper: ClassWrapper<Node>?): List<FirDeclaration> {
         val modifierLists = mutableListOf<Node>()
-        val firDeclarations = classBody.forEachChildrenReturnList { node, container ->
-            convertDeclarationFromClassBody(node, container, classWrapper, modifierLists)
-        }
+        val firDeclarations = classBody.forEachChildrenReturnList(object : ChildrenHandlerWithResultAccumulation<Node, FirDeclaration>() {
+            override fun handle(child: Node) {
+                convertDeclarationFromClassBody(child, container, classWrapper, modifierLists)
+            }
+        })
 
         convertDanglingModifierListsInClassBody(modifierLists, firDeclarations)
         return firDeclarations
@@ -2531,22 +2537,26 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         typeConstraints: List<TypeConstraint>,
         containingDeclarationSymbol: FirBasedSymbol<*>,
     ): List<FirTypeParameter> {
-        return typeParameterList.forEachChildrenReturnList { node, container ->
-            when (node.toTokenId()) {
-                KtNodeTypes.TYPE_PARAMETER_ID -> container += convertTypeParameter(node, typeConstraints, containingDeclarationSymbol)
+        return typeParameterList.forEachChildrenReturnList(object : ChildrenHandlerWithResultAccumulation<Node, FirTypeParameter>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.TYPE_PARAMETER_ID -> container += convertTypeParameter(child, typeConstraints, containingDeclarationSymbol)
+                }
             }
-        }
+        })
     }
 
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeConstraintList
      */
     private fun convertTypeConstraints(typeConstraints: Node): List<TypeConstraint> {
-        return typeConstraints.forEachChildrenReturnList { node, container ->
-            when (node.toTokenId()) {
-                KtNodeTypes.TYPE_CONSTRAINT_ID -> container += convertTypeConstraint(node)
+        return typeConstraints.forEachChildrenReturnList(object : ChildrenHandlerWithResultAccumulation<Node, TypeConstraint>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.TYPE_CONSTRAINT_ID -> container += convertTypeConstraint(child)
+                }
             }
-        }
+        })
     }
 
     /**
@@ -2718,7 +2728,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         var result: FirTypeRef? = null
         receiverType.forEachChildren(object : ChildrenHandler<Node>() {
             override fun handle(child: Node) {
-                if (result != null) return@handle
+                if (result != null) return
                 when (child.toTokenId()) {
                     KtNodeTypes.TYPE_REFERENCE_ID -> result = convertType(child)
                 }
@@ -2824,11 +2834,13 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeArgumentList
      */
     override fun convertTypeArguments(typeArguments: Node, allowedUnderscoredTypeArgument: Boolean): List<FirTypeProjection> {
-        return typeArguments.forEachChildrenReturnList { node, container ->
-            when (node.toTokenId()) {
-                KtNodeTypes.TYPE_PROJECTION_ID -> container += convertTypeProjection(node, allowedUnderscoredTypeArgument)
+        return typeArguments.forEachChildrenReturnList(object : ChildrenHandlerWithResultAccumulation<Node, FirTypeProjection>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.TYPE_PROJECTION_ID -> container += convertTypeProjection(child, allowedUnderscoredTypeArgument)
+                }
             }
-        }
+        })
     }
 
     /**
@@ -2919,28 +2931,30 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     private fun convertFunctionTypeParameters(
         parameters: Node,
     ): List<FirFunctionTypeParameter> {
-        return parameters.forEachChildrenReturnList { node, container ->
-            when (node.toTokenId()) {
-                KtNodeTypes.VALUE_PARAMETER_ID -> {
-                    var name: Name? = null
-                    var typeRef: FirTypeRef? = null
-                    node.forEachChildren(object : ChildrenHandler<Node>() {
-                        override fun handle(child: Node) {
-                            when (child.toTokenId()) {
-                                KtTokens.IDENTIFIER_ID -> name = child.asText.nameAsSafeName()
-                                KtNodeTypes.TYPE_REFERENCE_ID -> typeRef = convertType(child)
+        return parameters.forEachChildrenReturnList(object : ChildrenHandlerWithResultAccumulation<Node, FirFunctionTypeParameter>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.VALUE_PARAMETER_ID -> {
+                        var name: Name? = null
+                        var typeRef: FirTypeRef? = null
+                        child.forEachChildren(object : ChildrenHandler<Node>() {
+                            override fun handle(child: Node) {
+                                when (child.toTokenId()) {
+                                    KtTokens.IDENTIFIER_ID -> name = child.asText.nameAsSafeName()
+                                    KtNodeTypes.TYPE_REFERENCE_ID -> typeRef = convertType(child)
+                                }
                             }
+                        })
+                        container += buildFunctionTypeParameter {
+                            val parameterSource = child.toFirSourceElement()
+                            source = parameterSource
+                            this.name = name
+                            this.returnTypeRef = typeRef ?: createNoTypeForParameterTypeRef(parameterSource)
                         }
-                    })
-                    container += buildFunctionTypeParameter {
-                        val parameterSource = node.toFirSourceElement()
-                        source = parameterSource
-                        this.name = name
-                        this.returnTypeRef = typeRef ?: createNoTypeForParameterTypeRef(parameterSource)
                     }
                 }
             }
-        }
+        })
     }
 
     /**
@@ -2952,16 +2966,18 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         valueParameterDeclaration: ValueParameterDeclaration,
         additionalAnnotations: List<FirAnnotation>,
     ): List<ValueParameter<Node>> {
-        return valueParameters.forEachChildrenReturnList { node, container ->
-            when (node.toTokenId()) {
-                KtNodeTypes.VALUE_PARAMETER_ID -> container += convertValueParameter(
-                    node,
-                    functionSymbol,
-                    valueParameterDeclaration,
-                    additionalAnnotations
-                )
+        return valueParameters.forEachChildrenReturnList(object : ChildrenHandlerWithResultAccumulation<Node, ValueParameter<Node>>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    KtNodeTypes.VALUE_PARAMETER_ID -> container += convertValueParameter(
+                        child,
+                        functionSymbol,
+                        valueParameterDeclaration,
+                        additionalAnnotations
+                    )
+                }
             }
-        }
+        })
     }
 
     /**
@@ -3215,8 +3231,8 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         return with(analyzer) { forEachChildren(handler) }
     }
 
-    override fun <T> Node.forEachChildrenReturnList(f: (Node, MutableList<T>) -> Unit): MutableList<T> {
-        return with(analyzer) { forEachChildrenReturnList(f) }
+    override fun <T> Node.forEachChildrenReturnList(handler: ChildrenHandlerWithResultAccumulation<Node, T>): MutableList<T> {
+        return with(analyzer) { forEachChildrenReturnList(handler) }
     }
 
     override fun Node.getParent(): Node? {

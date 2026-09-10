@@ -182,11 +182,13 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
     }
 
     fun Node?.getChildNodesByTokenId(tokenId: Int): List<Node> {
-        return this?.forEachChildrenReturnList { node, container ->
-            when (node.toTokenId()) {
-                tokenId -> container += node
+        return this?.forEachChildrenReturnList(object : ChildrenHandlerWithResultAccumulation<Node, Node>() {
+            override fun handle(child: Node) {
+                when (child.toTokenId()) {
+                    tokenId -> container += child
+                }
             }
-        } ?: emptyList()
+        }) ?: emptyList()
     }
 
     fun Node.getFirstChildExpression(): Node? {
@@ -284,7 +286,7 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
     abstract fun convertScriptOrSnippets(declaration: Node, sourceFile: KtSourceFile, fileBuilder: FirFileBuilder?): FirDeclaration
 
     open fun Node.forEachChildren(handler: ChildrenHandler<Node>) {}
-    open fun <T> Node.forEachChildrenReturnList(f: (Node, MutableList<T>) -> Unit): MutableList<T> {
+    open fun <T> Node.forEachChildrenReturnList(handler: ChildrenHandlerWithResultAccumulation<Node, T>): MutableList<T> {
         return mutableListOf()
     }
 
@@ -292,7 +294,9 @@ abstract class NodeTypeAnalyzer<Node : Any, Type : Any> {
         abstract fun handle(child: Node)
     }
 
-    abstract class ChildrenHandlerWithResultAccumulation<Node : Any, T>(val list: MutableList<T>) : ChildrenHandler<Node>()
+    abstract class ChildrenHandlerWithResultAccumulation<Node : Any, T> : ChildrenHandler<Node>() {
+        val container: MutableList<T> = mutableListOf()
+    }
 
     abstract val Node?.receiverExpression: Node?
     abstract val Node?.selectorExpression: Node?

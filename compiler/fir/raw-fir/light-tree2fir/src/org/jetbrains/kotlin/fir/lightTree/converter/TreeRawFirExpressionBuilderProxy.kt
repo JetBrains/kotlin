@@ -1809,20 +1809,22 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseValueArgumentList
      */
     fun convertValueArguments(valueArguments: Node): List<FirExpression> {
-        return valueArguments.forEachChildrenReturnList { node, container ->
-            @Suppress("IncorrectFormatting")
-            when (node.toTokenId()) {
-                KtNodeTypes.VALUE_ARGUMENT_ID -> container += convertValueArgument(node)
-                KtNodeTypes.LAMBDA_EXPRESSION_ID,
-                KtNodeTypes.LABELED_EXPRESSION_ID,
-                KtNodeTypes.ANNOTATED_EXPRESSION_ID,
-                    -> container += getAsFirExpression<FirAnonymousFunctionExpression>(node).apply {
-                    // TODO(KT-66553) remove and set in builder
-                    @OptIn(RawFirApi::class)
-                    replaceIsTrailingLambda(newIsTrailingLambda = true)
+        return valueArguments.forEachChildrenReturnList(object : ChildrenHandlerWithResultAccumulation<Node, FirExpression>() {
+            override fun handle(child: Node) {
+                @Suppress("IncorrectFormatting")
+                when (child.toTokenId()) {
+                    KtNodeTypes.VALUE_ARGUMENT_ID -> container += convertValueArgument(child)
+                    KtNodeTypes.LAMBDA_EXPRESSION_ID,
+                    KtNodeTypes.LABELED_EXPRESSION_ID,
+                    KtNodeTypes.ANNOTATED_EXPRESSION_ID,
+                        -> container += getAsFirExpression<FirAnonymousFunctionExpression>(child).apply {
+                        // TODO(KT-66553) remove and set in builder
+                        @OptIn(RawFirApi::class)
+                        replaceIsTrailingLambda(newIsTrailingLambda = true)
+                    }
                 }
             }
-        }
+        })
     }
 
     /**
@@ -1904,8 +1906,8 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         return with(analyzer) { forEachChildren(handler) }
     }
 
-    override fun <T> Node.forEachChildrenReturnList(f: (Node, MutableList<T>) -> Unit): MutableList<T> {
-        return with(analyzer) { forEachChildrenReturnList(f) }
+    override fun <T> Node.forEachChildrenReturnList(handler: ChildrenHandlerWithResultAccumulation<Node, T>): MutableList<T> {
+        return with(analyzer) { forEachChildrenReturnList(handler) }
     }
 
     override fun Node.getParent(): Node? {

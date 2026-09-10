@@ -115,16 +115,15 @@ abstract class AbstractLightTreeRawFirBuilder(
         }
     }
 
-    override fun <T> LighterASTNode.forEachChildrenReturnList(f: (LighterASTNode, MutableList<T>) -> Unit): MutableList<T> {
+    override fun <T> LighterASTNode.forEachChildrenReturnList(handler: ChildrenHandlerWithResultAccumulation<LighterASTNode, T>): MutableList<T> {
         val kidsArray = this.getChildrenAsArray()
 
-        val container = mutableListOf<T>()
         for (kid in kidsArray) {
             if (kid == null) break
             if (ignoredTokens.contains(kid.tokenType)) continue
-            f(kid, container)
+            handler.handle(kid)
         }
 
-        return container
+        return handler.container
     }
 }

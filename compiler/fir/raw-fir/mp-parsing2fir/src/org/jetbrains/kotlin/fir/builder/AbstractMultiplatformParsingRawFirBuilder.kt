@@ -130,15 +130,14 @@ abstract class AbstractMultiplatformParsingRawFirBuilder(
         }
     }
 
-    override fun <T> LightNode.forEachChildrenReturnList(f: (LightNode, MutableList<T>) -> Unit): MutableList<T> {
+    override fun <T> LightNode.forEachChildrenReturnList(handler: ChildrenHandlerWithResultAccumulation<LightNode, T>): MutableList<T> {
         val kids = tree.getChildren(this)
 
-        val container = mutableListOf<T>()
         for (kid in kids) {
             if (ignoredTokens.contains(kid.tokenType)) continue
-            f(kid, container)
+            handler.handle(kid)
         }
 
-        return container
+        return handler.container
     }
 }
